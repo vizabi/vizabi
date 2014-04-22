@@ -1,0 +1,21 @@
+@mixin font-size($px) {
+    font-size: $px;
+    //font-size: (0.125 * $px / 1px) + rem;
+}
+
+@mixin opacity($v) {
+    opacity: $v;
+}
+
+@mixin user-select-none() {
+    -webkit-user-select: none; // Chrome/Safari
+    -moz-user-select: none; // Firefox
+    -ms-user-select: none; // IE10+
+}
+
+$fontFamily: 'Arial Rounded MT Bold';
+$colorIMgreen: #7394A6;
+$colorIMmediumBlue: #607889;
+$colorTSdarkBlue: #3C6170;
+$colorDarkWhite: #F2FAFC;
+$colorLightWhite: #FDFDFD;

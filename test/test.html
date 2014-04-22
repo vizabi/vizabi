@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>Template Visualization Test</title>
+        <script data-main="../require-config" src="http://requirejs.org/docs/release/2.1.10/minified/require.js"></script>
+        <link rel="stylesheet" href="../css/vizabi.css">
+    </head>
+    <body>
+    <div id="template"></div>
+    </body>
+    <script>
+        require([
+            'core/vizabi'
+        ], function(Core) {
+            var core = new Core();
+            core.start('template', '#template');
+            console.log(core);
+            window.vizabi = core;
+        });
+    </script>
+</html>

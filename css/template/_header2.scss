@@ -1,0 +1,6 @@
+.header2 {
+    @include font-size(34px);
+    @include user-select-none;
+    fill: $colorIMmediumBlue;
+    font-family: $fontFamily;
+}
