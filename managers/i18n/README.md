@@ -51,13 +51,6 @@ Only `url` is needed. The other two properties are decorative properties that ar
 
 If `path` has multiple elements, they are each visited in order when making the request for the translation files.
 
-## Usage
-The snippet below shows how the the i18n Manager is used.
-
-```javascript
-
-```
-
 ## Translation files
 Files used by the `i18n Manager` for translation are outputs of `po2json`. There are several implementations, and we currently recommend [this one](http://jsgettext.berlios.de/doc/html/po2json.html) written by Joshua I. Miller.
 
