@@ -1,68 +1,4 @@
 define([], function() {
-    var eventsManagerSingleton = {    
-        events: {},
-
-        instances: [],
-
-        // Global scope bind
-        bind: function(name, func) {
-            bind(this, name, func);
-        },
-
-        // Global scope unbind
-        unbind: function(name, func) {
-            unbind(this, name, func);
-        },
-
-        // Global scope unbind all
-        unbindAll: function() {
-            this.events = {};
-        },
-
-        // Global scope trigger
-        trigger: function(name, args) {
-            trigger(this, name, args);
-
-            // Global event triggers event on all instances
-            for (var j = 0; j < this.instances.length; j++) {
-                var instance = this.instances[j];
-                instance.trigger(name, args);
-            }
-        },
-
-        // Creates and returns an instance of the events Manager.
-        instance: function() {
-            var instance = {
-                // this instance's events
-                events: {},
-
-                // Instance level binding
-                bind: function(name, func) {
-                    bind(this, name, func);
-                },
-
-                // Instance level unbinding
-                unbind: function(name, func) {
-                    unbind(this, name, func);
-                },
-
-                // Instance level unbind all
-                unbindAll: function() {
-                    this.events = {};
-                },
-
-                // Instance level triggering
-                trigger: function(name, args) {
-                    trigger(this, name, args);
-                }
-            };
-
-            register(this, instance);
-            
-            return instance;
-        }
-    };
-
     // Registers an instance as child of another instance.
     function register(parentInstance, childInstance) {
         parentInstance.instances.push(childInstance);
@@ -158,6 +94,70 @@ define([], function() {
             func(args);
         }
     }
+
+    var eventsManagerSingleton = {    
+        events: {},
+
+        instances: [],
+
+        // Global scope bind
+        bind: function(name, func) {
+            bind(this, name, func);
+        },
+
+        // Global scope unbind
+        unbind: function(name, func) {
+            unbind(this, name, func);
+        },
+
+        // Global scope unbind all
+        unbindAll: function() {
+            this.events = {};
+        },
+
+        // Global scope trigger
+        trigger: function(name, args) {
+            trigger(this, name, args);
+
+            // Global event triggers event on all instances
+            for (var j = 0; j < this.instances.length; j++) {
+                var instance = this.instances[j];
+                instance.trigger(name, args);
+            }
+        },
+
+        // Creates and returns an instance of the events Manager.
+        instance: function() {
+            var instance = {
+                // this instance's events
+                events: {},
+
+                // Instance level binding
+                bind: function(name, func) {
+                    bind(this, name, func);
+                },
+
+                // Instance level unbinding
+                unbind: function(name, func) {
+                    unbind(this, name, func);
+                },
+
+                // Instance level unbind all
+                unbindAll: function() {
+                    this.events = {};
+                },
+
+                // Instance level triggering
+                trigger: function(name, args) {
+                    trigger(this, name, args);
+                }
+            };
+
+            register(this, instance);
+            
+            return instance;
+        }
+    };
 
     return eventsManagerSingleton;
 });

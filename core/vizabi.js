@@ -1,18 +1,18 @@
 define([
     'd3',
-    // 'vizabi.managers.layout',
+    'vizabi.managers.layout',
     'vizabi.managers.events',
     'vizabi.managers.data',
     'vizabi.visualizations.template',
     'vizabi.managers.i18n'
-], function(d3, /*LayoutManager,*/ EventsManager, DataManager, Template) {
+], function(d3, LayoutManager, EventsManager, DataManager, Template) {
     var vizID = 1;
 
     var core = function() {
         this.visualizations = {};
 
         this.managers = {
-            //layout: LayoutManager,
+            layout: LayoutManager,
             data: DataManager,
             events: EventsManager,
             i18n: i18n
@@ -30,7 +30,7 @@ define([
             } else if (manager === 'events') {
                 return this.managers.events.instance();
             } else if (manager === 'layout') {
-                //return this.managers.layout.instance();
+                return this.managers.layout.instance();
             } else if (manager === 'i18n') {
                 return this.managers.i18n.instance();
             }

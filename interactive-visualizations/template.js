@@ -1,21 +1,14 @@
 define([
     'd3',
     'vizabi.base.object',
+    'vizabi.base.svg.rectBox',
     'vizabi.widgets.text',
-], function(d3, object, TextWidget) {
+], function(d3, object, RectBox, TextWidget) {
     var extend = object.extend;
 
     var template = function(core, options) {
         this.id = options.id || 'id-undefined';
         this.selector = options.selector || 'body';
-
-        // Manager instances, obtained from the core
-        this.instances = {
-            events: core.getInstance('events'),
-            data: core.getInstance('data'),
-            layout: core.getInstance('layout'),
-            i18n: core.getInstance('i18n')
-        };
 
         // The visualization *state*. This contains the properties of the
         // visualization that is being displayed to the user.
@@ -34,6 +27,22 @@ define([
 
         this.svg = d3.select('#' + this.wrapperName).append('svg')
             .attr('class', 'template');
+
+        // Manager instances, obtained from the core
+        this.instances = {
+            events: core.getInstance('events'),
+            data: core.getInstance('data'),
+            layout: core.getInstance('layout'),
+            i18n: core.getInstance('i18n')
+        };
+
+        // Sets up Managers
+        this.instances.layout.setProperties({
+            div: this.container,    // d3 object
+            svg: this.svg,          // d3 object
+            schema: 'desktop',
+            defaultMeasures: { width: 900, height: 500 }
+        });
 
         // Widgets that are used by the visualization. On this template,
         // we load the 'text' and the axis Widgets.
@@ -61,32 +70,40 @@ define([
             this.layout = {
                 desktop: {
                     header1: {
-                        g: this.widgets.header1.getGroup(),
+                        rectBox: new RectBox(this.widgets.header1.getGroup()),
                         top: '10',
                         left: '10'
                     },
 
                     header2: {
-                        g: this.widgets.header2.getGroup(),
-                        top: ['header.bottom'],
-                        left: ['header.left']
+                        rectBox: new RectBox(this.widgets.header2.getGroup()),
+                        top: {
+                            parent: 'header1',
+                            anchor: 'bottom'
+                        },
+                        left: {
+                            parent: 'header1',
+                            anchor: 'left'
+                        }
                     }
                 },
 
                 mobile: {
                     header: {
-                        g: this.widgets.header1.getGroup(),
+                        g: new RectBox(this.widgets.header1.getGroup()),
                         top: '5',
                         left: '5'
                     },
 
                     axisUnderHeader: {
-                        g: this.widgets.header2.getGroup(),
+                        g: new RectBox(this.widgets.header2.getGroup()),
                         top: ['header.top'],
                         left: ['header.right']
                     }
                 }
             };
+
+            this.instances.layout.set(this.layout);
 
             // Build/Start Widgets
             this.widgets.header1.start();
@@ -123,6 +140,14 @@ define([
                 });
             });
 
+            window.addEventListener('resize', function() {
+                _this.instances.layout.update();
+            });
+
+            // Runs first layout manager update
+            this.instances.layout.update();
+
+            // returns self
             return this;
         },
 

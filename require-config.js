@@ -14,12 +14,13 @@ require.config({
         // Base
         'vizabi.base.object': 'base/object/object',
         'vizabi.base.loader.json': 'base/loader/json',
+        'vizabi.base.svg.rectBox': 'base/svg/rectBox',
 
         // Core
         'vizabi.core': 'http://core/vizabi',
 
         // Managers
-        //'vizabi.managers.layout': 'managers/layout/layout',
+        'vizabi.managers.layout': 'managers/layout/layout-manager',
         'vizabi.managers.events': 'managers/events/events',
         'vizabi.managers.data': 'managers/data/data',
         'vizabi.managers.i18n': 'managers/i18n/i18n',
@@ -31,7 +32,7 @@ require.config({
         'vizabi.widgets.text': 'widgets/text/text',
 
         // Interactive Visualizations
-        'vizabi.visualizations.template': 'interactive-visualizations/template',
+        'vizabi.visualizations.template': 'interactive-visualizations/template'
     },
     shim: {
         d3: {

@@ -11,10 +11,25 @@ define([
 
     var extend = function(target, object) {
         return $.extend(true, target, object);
-    }
+    };
+
+    var shallowExtend = function(target, object) {
+        return $.extend(target, object);
+    };
+
+    var clearExtend = function(target, object) {
+        for (var i = 0, keys = Object.keys(object); i < keys.length; i++) {
+            console.log(keys, i);
+            target[keys[i]] = undefined;
+        };
+
+        return $.extend(target, object);
+    };
 
     return {
         iterate: iterate,
-        extend: extend
-    }
+        extend: extend,
+        shallowExtend: shallowExtend,
+        clearExtend: clearExtend
+    };
 });
