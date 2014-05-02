@@ -1,13 +1,18 @@
 define([
-    'd3'
-], function(d3) {
+    'd3',
+    'vizabi.base.object'
+], function(d3, object) {
+    var extend = object.extend;
+
     var text = function(sandbox, options) {
         this.options = {
-            text: options.text || 'text',
-            id: options.id || 'text',
-            eventId: options.eventId || 'change:language',
-            cssClass: options.cssClass || undefined,
+            text: 'text',
+            id: 'text',
+            eventId: 'change:language',
+            cssClass: undefined
         };
+
+        extend(this.options, options);
 
         this.svgContainer = sandbox.getSVG();
 
@@ -32,14 +37,13 @@ define([
             return this;
         },
 
-        set: function(options) {
-            extend(this.options, options);
+        stop: function() {
+            this.hide();
             return this;
         },
 
-        update: function() {
-            this.start();
-            return this;
+        destroy: function() {
+            this.svgGroup.remove();
         },
 
         show: function() {
@@ -52,8 +56,19 @@ define([
             return this;
         },
 
-        remove: function() {
-            this.svgGroup.remove();
+        get: function() {
+            return this;
+        },
+
+        set: function(options) {
+            extend(this.options, options);
+            return this;
+        },
+
+        // Modify this to be a 'notify' call
+        update: function() {
+            this.start();
+            return this;
         },
 
         getGroup: function() {

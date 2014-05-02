@@ -170,7 +170,6 @@ define([
 
         setState: function(state) {
             extend(this.state, state);
-            console.log('here')
             this.instances.events.trigger('change:state', this.state);
             return this;
         },
