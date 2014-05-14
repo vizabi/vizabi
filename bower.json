@@ -21,6 +21,10 @@
     "d3": "~3.4.6",
     "jed": "~0.5.4",
     "jquery": "~2.1.0",
-    "sprintf": "*"
+    "sprintf": "*",
+    "i18n-js": "https://github.com/Gapminder/i18n-js.git#develop"
+  },
+  "devDependencies": {
+    "requirejs": "~2.1.11"
   }
 }
