@@ -76,10 +76,11 @@ Clears all existing events in this instance of the Events Manager.
 define(['events-manager'], function(eventsManager) {
     var events = eventsManager.instance();
 
-    events.bind('test', function(num, num2) {
-        console.log('TESTING', num, num2);
+    events.bind('test', function(args) {
+        console.log('TESTING', args.num, args.num2);
     }
 
-    events.trigger('test', 5, 6); // prints 'TESTING 5 6'
+    // prints 'TESTING 5 6'
+    events.trigger('test', { num: 5, num2: 6 });
 });
 ```
