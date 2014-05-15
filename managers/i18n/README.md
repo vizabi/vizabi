@@ -129,12 +129,16 @@ Using the po2json output from above, we have:
 ```javascript
 define(['vizabi.manager.i18n'], function(i18nManager) {
   var translationURL = 'http://example.com/translation.json';
+  
   // Loads an i18n instance
   var i18n = i18nManager.instance();
+  
   // Sets the translation file path
   i18n.setPath({ url: translationURL });
+  
   // Outputs 'Chain'
   console.log(i18n.translate('metal', 'Chain'));
+
   // Now load Brazilian Portuguese ('pt_BR')
   i18n.setLanguage('pt_BR', function(lang) {
     // outputs 'Corrente'
