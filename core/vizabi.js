@@ -3,9 +3,10 @@ define([
     'vizabi.managers.layout',
     'vizabi.managers.events',
     'vizabi.managers.data',
+    'vizabi.managers.i18n',
     'vizabi.visualizations.template',
-    'vizabi.managers.i18n'
-], function(d3, LayoutManager, EventsManager, DataManager, Template) {
+    'vizabi.visualizations.income-mountain'
+], function(d3, LayoutManager, EventsManager, DataManager, thei18n, Template, IncomeMountain) {
     var vizID = 1;
 
     var core = function() {
@@ -37,9 +38,9 @@ define([
         },
 
         start: function(viz, selector) {
-            if (viz === 'template') {
-                var id = this.getId();
+            var id = this.getId();
 
+            if (viz === 'template') {
                 this.visualizations[id] = {
                     type: 'template',
                     id: id,
@@ -49,7 +50,21 @@ define([
                         selector: selector
                     }).start()
                 };
+            } else if (viz === 'income-mountain') {
+                this.visualizations[id] = {
+                    type: 'income-mountain',
+                    id: id,
+                    selector: selector,
+                    visualization: new IncomeMountain(this, {
+                        id: id,
+                        selector: selector
+                    }).start()
+                };
             }
+
+            window.addEventListener('resize', function() {
+                EventsManager.trigger('resize');
+            });
         },
 
         stop: function(id) {

@@ -26,7 +26,7 @@ define([
         if (newAspectRatio < defaultAspectRatio) {
             stage.height = stage.width / newAspectRatio;
         } else if (newAspectRatio > defaultAspectRatio) {
-            stage.width = stage.height / newAspectRatio;
+            stage.width = stage.height * newAspectRatio;
         }
 
         context.setProperties({ stage: stage });
@@ -67,7 +67,7 @@ define([
         svg.attr('height', currentMeasures.height);
     };
 
-    var processItem = function(item) {
+    var processItem = function(item, context) {
         var layout = item.layout;
         var schema = item.schema;
         var item = item.item;
@@ -78,14 +78,18 @@ define([
             switch(anchors[i]) { 
                 case 'rectBox':
                 case 'render':
-                case 'stage':
                     continue;
             }
 
             var point = layout[schema][item][anchors[i]];
 
             if (typeof point === 'object') {
-                var linkedAnchor = layout[schema][point.parent][point.anchor];
+                var linkedAnchor;
+                if (point.parent !== 'stage') {
+                    linkedAnchor = layout[schema][point.parent][point.anchor];
+                } else {
+                    linkedAnchor = context.properties.stage[point.anchor];
+                }
 
                 if (point.padding) linkedAnchor += point.padding;
                 if (point.percentage) linkedAnchor *= (point.percentage / 100);
@@ -102,8 +106,8 @@ define([
 
     var fillHeightWidth = function(item) {
         // 'rectbox' a function/object instead of a plain d3 object!
-        item.height = item.rectBox.getHeight();//g.node().getBBox().height;
-        item.width = item.rectBox.getWidth();//g.node().getBBox().width;
+        item.height = item.rectBox.getHeight();
+        item.width = item.rectBox.getWidth();
     };
 
     var arrange = function(item) {
@@ -174,14 +178,11 @@ define([
                 layout: layout,
                 schema: schema,
                 item: item[i]
-            });
+            }, context);
 
             triggerRender(layout[schema][item[i]]);
-
             fillHeightWidth(layout[schema][item[i]]);
-
             arrange(newAnchor[item[i]]);
-
             place(layout[schema][item[i]]);
         }
     };
@@ -226,7 +227,6 @@ define([
                     this.layout = layout;
                 },
 
-                // returns a COPY, not the ref to the obj (useful for layouts)
                 get: function() {
                     return extend({}, this.layout);
                 },
@@ -243,7 +243,6 @@ define([
                     extend(this.properties, properties);
                 },
 
-                // returns a COPY, not the ref to the obj (useful for layouts)
                 getProperties: function() {
                     return extend({}, this.properties);
                 },

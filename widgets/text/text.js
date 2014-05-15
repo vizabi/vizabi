@@ -19,21 +19,20 @@ define([
         this.svgGroup = this.svgContainer.append('g')
             .attr('id', this.options.id);
 
-        this.svgTextElement = this.svgGroup.append('text')
-            .attr('class', this.options.cssClass)
-            .text(this.options.text);
-
-        var height = this.svgTextElement.node().getBBox().height;
-        this.svgTextElement.attr('y', height);
-
         return this;
     };
 
     text.prototype = {
         start: function() {
-            this.svgTextElement.text(this.options.text);
-            var height = this.svgTextElement.node().getBBox().height;
-            this.svgTextElement.attr('y', height);
+            this.svgTextElement = this.svgGroup.append('text')
+                .attr('class', this.options.cssClass)
+                .text(this.options.text);
+
+            var negativeHeight = this.svgTextElement.node().getBBox().y;
+            this.svgTextElement.attr('y', -negativeHeight);
+            
+            this.show();
+
             return this;
         },
 
@@ -65,9 +64,9 @@ define([
             return this;
         },
 
-        // Modify this to be a 'notify' call
+        // Modify this to be a 'notify' call? Or create a notify call?
         update: function() {
-            this.start();
+            this.svgTextElement.text(this.options.text);
             return this;
         },
 
