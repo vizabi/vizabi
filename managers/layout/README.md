@@ -1,9 +1,10 @@
-# Layout Manager The Layout Manager is a module that controls the positioning
-of `svg:group` elements inside an `svg`. It becomes aware of the size of a
-`svg:group` rectangle and uses that information to place objects inside the
-`svg`. The Layout Manager operates aiming to enable responsive layouts for all
-different aspect-ratios of a visualization across different screen
-resolutions.
+# Layout Manager
+
+The Layout Manager is a module that controls the positioning of `svg:group`
+elements inside an `svg`. It becomes aware of the size of a `svg:group`
+rectangle and uses that information to place objects inside the `svg`. The
+Layout Manager operates aiming to enable responsive layouts for all different
+aspect-ratios of a visualization across different screen resolutions.
 
 ## Should I use it?
 Yes! This is a requirement for all visualizations at Gapminder.
