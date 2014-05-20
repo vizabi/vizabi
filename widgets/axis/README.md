@@ -22,11 +22,7 @@ The default properties for the Axis widget are the following:
 }
 ```
 
-`orientation is the orientation of ticks; it controls where the value labels
-`are supposed to be shown in relation to the axis. Acceptable values are
-`'bottom', 'top', 'left' and 'right'. top, for example, would show the labels
-`above the axis
-`values` is an array of pre-determined labels to be shown by the axis. If left blank (undefined), the list of labels will be set by d3  
+`orientation` is the orientation of ticks; it controls where the value labels are supposed to be shown in relation to the axis. Acceptable values are `bottom`, `top`, `left` and `right`. `top`, for example, would show the labels above the axis `values` is an array of pre-determined labels to be shown by the axis. If left blank (undefined), the list of labels will be set by d3  
 `tickFormat` is a function for customizing the labels  
 `cssClass` is the css class selector to be associated with the axis  
 
