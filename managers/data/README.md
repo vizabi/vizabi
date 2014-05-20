@@ -7,7 +7,9 @@ Yes! Use it to get data when developing the visualizations. This should be the o
 
 ## Including the module
 ```javascript
-define(['data-manager'], function(dataManager) {
+define([
+    'vizabi.managers.data'
+], function(dataManager) {
     // eg. loading indicator 'pop' in English
     dataManager.getIndicator('pop', 'en');
 });

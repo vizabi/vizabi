@@ -7,7 +7,9 @@ Yes! Every UI string that goes into the visualization must be translatable. Use 
 
 ## Including the module
 ```javascript
-define(['vizabi.manager.i18n'], function(i18nManager) {
+define([
+    'vizabi.manager.i18n'
+], function(i18nManager) {
     // Gets an instance of the i18nManager
     var i18n = i18nManager.instance();
 });
