@@ -118,8 +118,11 @@ Let's say you want to create an axis. For this, you will need a scale. Your setu
 ```javascript
 define([
     'vizabi.tools.scale',
-    'vizabi.widgets.axis'
-], function(Scale, Axis) {
+    'vizabi.widgets.axis',
+    ...
+], function(Scale, Axis, ...) {
+    // ... other sandbox code ...
+
     this.tools = {
         horizontalScale: new Scale({
             // ... scale properties ...
