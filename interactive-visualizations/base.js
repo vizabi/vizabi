@@ -14,6 +14,9 @@ define([
 
         };
 
+        // The language of this visualization (*strongly suggested to exist*)
+        this.language = 'dev';
+
         // SVG builder
         this.wrapperName = 'vizabi-bare-minimum-' + this.id;
 
@@ -40,6 +43,11 @@ define([
             defaultMeasures: { width: 900, height: 500 }
         });
 
+        // Tools are used by widgets
+        this.tools = {
+
+        };
+
         // Widgets that are used by the visualization. On this template,
         // we load the 'text' and the axis Widgets.
         this.widgets = {
@@ -56,11 +64,14 @@ define([
                 }
             };
 
-            this.instances.layout.set(this.layout);
+            // Set the layout
+            this.setLayout(this.layout);
 
-            // Build/Start Widgets
-            this.widgets.header1.start();
-            this.widgets.header2.start();
+            // Build tools if necessary
+            //this.tools.TOOL.build();
+            
+            // Start Widgets
+            //this.widgets.WIDGET.start();
 
             // Bindings
             var _this = this;
@@ -84,12 +95,14 @@ define([
             return this;
         },
 
+        // Ignore
         stop: function() {
             this.instances.events.trigger('interactive:halt');
             return this;
         },
 
-        remove: function() {
+        // Improve
+        destroy: function() {
             d3.select('#' + this.wrapperName).remove();
         },
 
@@ -108,10 +121,15 @@ define([
         },
 
         setLanguage: function(lang) {
+            if (!lang) return;  // let it fail silently?
             this.instances.i18n.setLanguage(lang, function(lang) {
                 this.instances.events.trigger('change:language', lang);
             });
             return this;
+        },
+
+        getLanguage: function() {
+            if (this.language) return this.language;
         },
 
         getLayout: function() {
@@ -119,7 +137,9 @@ define([
         },
 
         setLayout: function(layout) {
+            if (!layout) return this;   // let it fail silently.
             this.layout = layout;
+            this.instances.layout.set(layout);
             return this;
         },
 
@@ -132,7 +152,25 @@ define([
                 return this.instances.layout;
             } else if (name === 'i18n') {
                 return this.instances.i18n;
+            } else {
+                return this.instances;
             }
+        },
+
+        getProperties: function() {
+            return { tools: this.tools, widgets: this.widgets };
+        },
+
+        setProperties: function(properties) {
+            if (!properties) return this;   // let it fail silently?!
+            
+            // extend property by property
+            if (properties.tools) extend(this.tools, properties.tools);
+            if (properties.widgets) extend(this.widgets, properties.widgets);
+
+            // Add whatever other conditions you want to set
+
+            return this;
         }
     };
 

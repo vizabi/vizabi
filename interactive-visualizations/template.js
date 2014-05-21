@@ -1,3 +1,7 @@
+// # Creating a new visualization using Vizabi
+
+// In this section, we will show how to implement a simple bar-chart visualization with Vizabi,
+
 define([
     'd3',
     'vizabi.base.object',
@@ -111,8 +115,9 @@ define([
                 cssClass: 'horizontal'
             }),
 
-            rectangle: new RectWidget(this, undefined, this.verticalScale,
-                this.horizontalScale)
+            rectangle: new RectWidget(this, {
+                    widthThickness: 1
+                }, this.verticalScale, this.horizontalScale)
         };
     };
 

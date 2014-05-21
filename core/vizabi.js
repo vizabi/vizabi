@@ -71,8 +71,8 @@ define([
             this.visualizations[id].visualization.stop();
         },
 
-        remove: function(id) {
-            this.visualizations[id].visualization.remove();
+        destroy: function(id) {
+            this.visualizations[id].visualization.destroy();
             delete this.visualizations[id];
         }
     };
