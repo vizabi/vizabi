@@ -116,13 +116,14 @@ define([], function() {
         },
 
         // Global scope trigger
-        trigger: function(name, args) {
-            trigger(this, name, args);
+        trigger: function(name) {
+            var args = Array.prototype.slice.call(arguments).slice(1);
+            trigger.apply(null, [this, name].concat(args));
 
             // Global event triggers event on all instances
             for (var j = 0; j < this.instances.length; j++) {
                 var instance = this.instances[j];
-                instance.trigger(name, args);
+                instance.trigger.apply(instance, [name].concat(args));
             }
         },
 
