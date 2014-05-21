@@ -5,4 +5,8 @@
     @import 'template/template';
     height: 100%;
     width: 100%;
+
+    .fullscreen {
+        @include fixed(0,0,0,0);
+    }
 }
