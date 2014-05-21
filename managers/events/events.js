@@ -84,14 +84,14 @@ define([], function() {
     // @instance - events manager instance's object
     // @event - event to be triggered
     // @args - arguments which are passed to the triggered function
-    function trigger(instance, event, args) {
+    function trigger(instance, event) {
         if (typeof event !== 'string' || !instance.events[event]) return;
 
-        args = Array.prototype.slice.call(arguments).slice(2);
+        var args = Array.prototype.slice.call(arguments).slice(2);
 
         for (var i = 0; i < instance.events[event].length; i++) {
             var func = instance.events[event][i];
-            func(args);
+            func.apply(null, args);
         }
     }
 
@@ -148,8 +148,9 @@ define([], function() {
                 },
 
                 // Instance level triggering
-                trigger: function(name, args) {
-                    trigger(this, name, args);
+                trigger: function(name) {
+                    var args = Array.prototype.slice.call(arguments).slice(1);
+                    trigger.apply(null, [this, name].concat(args));
                 }
             };
 
