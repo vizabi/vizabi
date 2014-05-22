@@ -1,13 +1,27 @@
 Creating a new visualization
 ----------------------------
 
-# A little explanation about the code
+# Architecture
 
-## Expanding the 'base' visualization
+[Soon](link).
+
+# I want to create a new visualization
+
+To make visualizations following our framework, we decided to provide a 'base' implementation, that you'd only have to extend. This base script contains all necessary information that our visualizations 'require' -- from certain objects named a certain way (i.e. state), to functions that must exist (i.e. setLanguage).
+
+# Ok, so what do I need to know?
+
+It's highly likely that you have checked out [d3.js](http://d3js.org). That's a very good start place if you haven't. :)  
+
+To use our widgets, which are either abstractions of d3 functionality (axis, text) or small components (timeslider), see 'vizabi/widgets'. They are small modules that are going to be used by our visualization, and all you have to do is include them. Check their API for information on properties and functions. And, of course, expand or improve them if you want to! We are very welcome to meaningful additions to our project.
+
+# Expanding the 'base' visualization
 
 See 'vizabi/interactive-visualization/base.js'.  
 
-To create new visualizations, it is best to start by expanding the base visualization script. It contains all necessary functions for a Gapminder visualization to exist. The methods and properties described in `base.js` are used to communicate 
+To create new visualizations, it is best to start by expanding the base visualization script. It contains all necessary functions for a Gapminder visualization to exist. The methods and properties described in `base.js` are used to communicate to other tools that we have internally at Gapminder and they follow certain patterns (a property with a certain name, functions, etc).
+
+Here, we describe various aspects of 'base'. This is not a tutorial on how to do a visualization. You can check that [here](link).
 
 ### Visualization properties
 
@@ -204,10 +218,12 @@ Visualization properties should always be set using a proper `setXXX` function a
 Check the code to see what they do and how they do it. It's very straightforward. The interesting one is {get,set}Properties, where we return a bundle of visualization properties in one object. This is to facilitate setting such properties, as it becomes a little handy to use this method instead of creating special functions for all properties of a visualization -- and keeping track of them. It's a convenient method.
 
 ### Start
-It's the function called by the core to start a visualization. Through this function, start all widgets, bind all events, load the data and set the layout.
+
+It's the function called by the core to start a visualization. Through this function, start all widgets, bind all events, load the data and set the layout. It's basically the 'on' button in a switch: when you run this method, start the whole visualization. This should only be executed once per visualization (make sure you safe guard for this).
 
 ### Destroy
-Removes a visualization.
+
+Removes a visualization. This method deactivates a visualization and should contain everything to completely turn off a visualization. It is not simply removing an element from the DOM; it's much more than that. You have to de-register managers, turn off any global binders you have set, de-register any listeners, and remove elements from the DOM. Remember: just because it's not in the screen doesn't mean that it doesn't exist.
 
 ## Testing
 
