@@ -37,7 +37,7 @@ this.tools = {
 };
 
 this.widgets = {
-    widget1: new Widget(this, { /* properties })
+    widget1: new Widget(this, { /* properties */ })
 }
 ```
 
