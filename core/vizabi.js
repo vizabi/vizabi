@@ -5,8 +5,9 @@ define([
     'vizabi.managers.data',
     'vizabi.managers.i18n',
     'vizabi.visualizations.template',
-    'vizabi.visualizations.income-mountain'
-], function(d3, LayoutManager, EventsManager, DataManager, thei18n, Template, IncomeMountain) {
+    'vizabi.visualizations.income-mountain',
+    'vizabi.visualizations.testviz'
+], function(d3, LayoutManager, EventsManager, DataManager, thei18n, Template, IncomeMountain, TestViz) {
     var vizID = 1;
 
     var core = function() {
@@ -56,6 +57,16 @@ define([
                     id: id,
                     selector: selector,
                     visualization: new IncomeMountain(this, {
+                        id: id,
+                        selector: selector
+                    }).start()
+                };
+            } else if (viz === 'testviz') {
+                this.visualizations[id] = {
+                    type: 'testviz',
+                    id: id,
+                    selector: selector,
+                    visualization: new TestViz(this, {
                         id: id,
                         selector: selector
                     }).start()

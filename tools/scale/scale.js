@@ -16,17 +16,22 @@ define([
 
     scale.prototype = {
         get: function() {
+            var scale;
+
             if (this.options.type === 'linear') {
-                return d3.scale.linear()
-                    .domain([this.options.valueStart, this.options.valueEnd])
-                    .range([this.options.rangeStart, this.options.rangeEnd])
-                    .clamp(true);
+                scale = d3.scale.linear();
             } else if (this.options.type === 'log') {
-                return d3.scale.log()
-                    .domain([this.options.valueStart, this.options.valueEnd])
-                    .range([this.options.rangeStart, this.options.rangeEnd])
-                    .clamp(true);
+                scale = d3.scale.log();
             }
+
+            if (!scale) return;
+
+            scale
+                .domain([this.options.valueStart, this.options.valueEnd])
+                .range([this.options.rangeStart, this.options.rangeEnd])
+                .clamp(true);
+
+            return scale;
         },
 
         set: function(options) {

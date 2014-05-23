@@ -1,7 +1,8 @@
 define([
     'd3',
-    'vizabi.base.object'
-], function(d3, object) {
+    'vizabi.base.object',
+    'vizabi.base.svg.rectBox'
+], function(d3, object, RectBox) {
     var extend = object.extend;
 
     var template = function(core, options) {
@@ -84,11 +85,11 @@ define([
                 
             });
 
-            window.addEventListener('resize', function() {
+            this.instances.events.bind('resize', function() {
                 _this.instances.layout.update();
             });
 
-            // Runs first layout manager update
+            // Run the layout manager for the first time
             this.instances.layout.update();
 
             // returns self

@@ -23,7 +23,7 @@ define([
             orientation: 'bottom',
             values: undefined,
             tickFormat: undefined,
-            cssClass: undefined
+            cssClass: 'axis'
         };
 
         extend(this.options, options);
@@ -33,6 +33,9 @@ define([
         this.axisGroup = this.container.append('g')
             .attr('class', 'axis');
         this.axis = undefined;
+
+        // local binding, ensuring the context of render
+        this.render = this.render.bind(this);
     };
 
     axis.prototype = {
@@ -60,8 +63,6 @@ define([
 
             pushElement(this.axisGroup, this.options.orientation);
 
-            this.render = this.render.bind(this);
-
             return this;
         },
 
@@ -78,7 +79,7 @@ define([
 
             if (this.axis) this.axis.remove();
 
-            this.scale.set({ rangeEnd: newLength });
+            this.scale.set({ rangeEnd: +newLength });
             this.start();
         },
 

@@ -5,7 +5,7 @@ define([
 ],
 function(loaderJSON, cache, config) {
     // {{oven-url}}
-    var waffleUrl = config.url.oven + '/waffle/lang/';
+    var waffleUrl = config.url.oven.base + '/waffle/lang/';
 
     var dataManager = {
         cache: cache
@@ -109,7 +109,7 @@ function(loaderJSON, cache, config) {
     // The instance has its own view of the cache; it allows for keeping a more
     // coherent data object for each instance
     dataManager.instance = function() {
-        return 10;
+        return dataManager;
     }
 
     return dataManager;
