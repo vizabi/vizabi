@@ -21,7 +21,7 @@ See 'vizabi/interactive-visualization/base.js'.
 
 To create new visualizations, it is best to start by expanding the base visualization script. It contains all necessary functions for a Gapminder visualization to exist. The methods and properties described in `base.js` are used to communicate to other tools that we have internally at Gapminder and they follow certain patterns (a property with a certain name, functions, etc).
 
-Here, we describe various aspects of 'base'. This is not a tutorial on how to do a visualization. You can check that [here](link).
+Here, we describe various aspects of 'base'. This is not a tutorial on how to do a visualization. You can check that [here](TUTORIAL.md).
 
 ### Visualization properties
 
