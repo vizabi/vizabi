@@ -6,6 +6,7 @@ define([
     };
 
     return {
+        get: load,
         load: load
     }
 });

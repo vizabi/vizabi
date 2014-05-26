@@ -36,6 +36,7 @@ require.config({
         'vizabi.widgets.timeslider.default': 'widgets/timeslider/types/default/default',
         'vizabi.widgets.axis': 'widgets/axis/axis',
         'vizabi.widgets.rectangle': 'widgets/rectangle/rectangle',
+        'vizabi.widgets.mountains': 'widgets/mountains/mountains',
 
         // SubWidgets
         // Timeslider
@@ -46,8 +47,9 @@ require.config({
         'vizabi.widgets.timeslider.parts.timeline.3values': 'widgets/timeslider/parts/timelines/3values',
 
         // Interactive Visualizations
-        'vizabi.visualizations.template': 'interactive-visualizations/template',
-        'vizabi.visualizations.income-mountain': 'interactive-visualizations/income-mountain'
+        'vizabi.visualizations.template': 'visualizations/template',
+        'vizabi.visualizations.income-mountain': 'visualizations/income-mountain',
+        'vizabi.visualizations.testviz': 'visualizations/testviz',
     },
     shim: {
         d3: {
