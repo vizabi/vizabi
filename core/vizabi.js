@@ -8,7 +8,10 @@ define([
     var vizID = 1;
 
     function createVisualization(options, callback) {
-        var path = config.require.path.visualizations + '/' + options.name;
+        var vPath = config.require.path.visualizations;
+        var vName = options.name;
+        var path = vPath + '/' + vName + '/' + vName;
+
         require([path], function(Viz) {
             callback(Viz, options);
         });
@@ -54,7 +57,7 @@ define([
             var opt = extend({}, options);
 
             createVisualization(opt, function(Viz) {
-                var res = new Viz(context, opt).start();
+                var res = new Viz(context, opt);
                 context.visualizations[id] = res;
                 if (typeof fn === 'function') fn(res);
             });
