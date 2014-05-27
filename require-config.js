@@ -9,17 +9,21 @@ require.config({
         'vizabi': '',
 
         // Config
+        'config': 'vizabi-config',
         'vizabi.config': 'config/config',
 
         // Base
+        'base': 'base',
         'vizabi.base.object': 'base/object/object',
         'vizabi.base.loader.json': 'base/loader/json',
         'vizabi.base.svg.rectBox': 'base/svg/rectBox',
 
         // Core
+        'core': 'core',
         'vizabi.core': 'http://core/vizabi',
 
         // Managers
+        'managers': 'managers',
         'vizabi.managers.layout': 'managers/layout/layout-manager',
         'vizabi.managers.events': 'managers/events/events',
         'vizabi.managers.data': 'managers/data/data',
@@ -29,9 +33,11 @@ require.config({
         'vizabi.managers.data.cache': 'managers/data/cache',
 
         // Tools
+        'tools': 'tools',
         'vizabi.tools.scale': 'tools/scale/scale',
 
         // Widgets
+        'widgets': 'widgets',
         'vizabi.widgets.text': 'widgets/text/text',
         'vizabi.widgets.timeslider.default': 'widgets/timeslider/types/default/default',
         'vizabi.widgets.axis': 'widgets/axis/axis',
@@ -47,6 +53,7 @@ require.config({
         'vizabi.widgets.timeslider.parts.timeline.3values': 'widgets/timeslider/parts/timelines/3values',
 
         // Interactive Visualizations
+        'visualizations': 'visualizations',
         'vizabi.visualizations.template': 'visualizations/template',
         'vizabi.visualizations.income-mountain': 'visualizations/income-mountain',
         'vizabi.visualizations.testviz': 'visualizations/testviz',

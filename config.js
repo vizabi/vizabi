@@ -1,8 +1,8 @@
 define({
     require: {
         path: {
-            visualizations: 'visualizations',
-            managers: 'managers',
+            visualizations: 'visualizations/',
+            managers: 'managers/'
         }
     },
     id: {
