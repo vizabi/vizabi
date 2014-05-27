@@ -1,24 +1,28 @@
 define([
     'd3',
-    'vizabi.managers.layout',
-    'vizabi.managers.events',
-    'vizabi.managers.data',
-    'vizabi.managers.i18n',
-    'vizabi.visualizations.template',
-    'vizabi.visualizations.income-mountain',
-    'vizabi.visualizations.testviz'
-], function(d3, LayoutManager, EventsManager, DataManager, thei18n, Template, IncomeMountain, TestViz) {
+    'vizabi.base.object',
+    'vizabi-config',
+    'managers/managers'
+], function(d3, baseObject, config, Managers) {
+    var extend = baseObject.extend;
     var vizID = 1;
+
+    function createVisualization(options, callback) {
+        var path = config.require.path.visualizations + '/' + options.name;
+        require([path], function(Viz) {
+            callback(Viz, options);
+        });
+    }
 
     var core = function() {
         this.visualizations = {};
-
-        this.managers = {
-            layout: LayoutManager,
-            data: DataManager,
-            events: EventsManager,
-            i18n: i18n
-        };
+        this.managers = Managers;
+        
+        var context = this;
+        
+        window.addEventListener('resize', function() {
+            context.managers['events'].trigger('resize');
+        });
     };
 
     core.prototype = {
@@ -27,64 +31,44 @@ define([
         },
 
         getInstance: function(manager) {
-            if (manager === 'data') {
-                return this.managers.data.instance();
-            } else if (manager === 'events') {
-                return this.managers.events.instance();
-            } else if (manager === 'layout') {
-                return this.managers.layout.instance();
-            } else if (manager === 'i18n') {
-                return this.managers.i18n.instance();
-            }
+            return this.managers[manager].instance();
         },
 
-        start: function(viz, selector) {
-            var id = this.getId();
-
-            if (viz === 'template') {
-                this.visualizations[id] = {
-                    type: 'template',
-                    id: id,
-                    selector: selector,
-                    visualization: new Template(this, {
-                        id: id,
-                        selector: selector
-                    }).start()
-                };
-            } else if (viz === 'income-mountain') {
-                this.visualizations[id] = {
-                    type: 'income-mountain',
-                    id: id,
-                    selector: selector,
-                    visualization: new IncomeMountain(this, {
-                        id: id,
-                        selector: selector
-                    }).start()
-                };
-            } else if (viz === 'testviz') {
-                this.visualizations[id] = {
-                    type: 'testviz',
-                    id: id,
-                    selector: selector,
-                    visualization: new TestViz(this, {
-                        id: id,
-                        selector: selector
-                    }).start()
-                };
-            }
-
-            window.addEventListener('resize', function() {
-                EventsManager.trigger('resize');
-            });
+        getVisualization: function(id) {
+            if (!id) return this.visualizations;
+            if (this.visualizations[id]) return this.visualizations[id];
+            return null;
         },
 
-        stop: function(id) {
-            this.visualizations[id].visualization.stop();
+        start: function() {
+            
         },
 
         destroy: function(id) {
-            this.visualizations[id].visualization.destroy();
-            delete this.visualizations[id];
+            
+        },
+
+        spawn: function(options, fn) {
+            var id = this.getId();
+            var context = this;
+            var opt = extend({}, options);
+
+            createVisualization(opt, function(Viz) {
+                var res = new Viz(context, opt).start();
+                context.visualizations[id] = res;
+                if (typeof fn === 'function') fn(res);
+            });
+
+            return id;
+        },
+
+        bind: function(evt, func) {
+            this.managers['events'].bind(evt, func);
+        },
+
+        trigger: function(what) {
+            var args = Array.prototype.slice.call(arguments).slice(1);
+            this.managers['events'].trigger(what, args);
         }
     };
 
