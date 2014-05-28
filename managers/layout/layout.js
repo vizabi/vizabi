@@ -1,7 +1,7 @@
 define([
     'base/object',
     'base/rectBox'
-], function(object, rectBox) {
+], function(object, RectBox) {
     var extend = object.extend;
 
     var register = function(parentInstance, childInstance) {
