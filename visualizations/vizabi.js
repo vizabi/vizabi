@@ -1,113 +1,113 @@
 define([
-    'd3',
-    'base/object',
+  'd3',
+  'base/object',
 ], function(d3, object) {
-    var extend = object.extend;
+  var extend = object.extend;
 
-    var template = function(core, options) {
-        this.id = (options && options.name) || 'id-undefined';
-        this.selector = (options && options.selector) || 'body';
+  var template = function(core, options) {
+    this.id = (options && options.name) || 'id-undefined';
+    this.selector = (options && options.selector) || 'body';
 
-        this.state = {};
-        this.language = 'dev';
+    this.state = {};
+    this.language = 'dev';
 
-        // SVG builder
-        this.wrapperName = 'vizabi-' + this.id;
+    // SVG builder
+    this.wrapperName = 'vizabi-' + this.id;
 
-        this.container = d3.select(this.selector).append('div')
-            .attr('id', this.wrapperName);
+    this.container = d3.select(this.selector).append('div')
+      .attr('id', this.wrapperName);
 
-        this.svg = d3.select('#' + this.wrapperName).append('svg');
+    this.svg = d3.select('#' + this.wrapperName).append('svg');
 
-        // Manager instances, obtained from the core
-        this.managers = {
-            events: core.getInstance('events'),
-            data: core.getInstance('data'),
-            layout: core.getInstance('layout'),
-            i18n: core.getInstance('i18n')
-        };
-
-        // Sets up Managers
-        this.managers.layout.setProperties({
-            div: this.container,    // d3 object
-            svg: this.svg,          // d3 object
-            schema: 'desktop',
-            defaultMeasures: { width: 900, height: 500 }
-        });
-
-        var _this = this;
-
-        this.managers.events.bind('resize', function() {
-            _this.managers.layout.update();
-        });
+    // Manager instances, obtained from the core
+    this.managers = {
+      events: core.getInstance('events'),
+      data: core.getInstance('data'),
+      layout: core.getInstance('layout'),
+      i18n: core.getInstance('i18n')
     };
 
-    template.prototype = {
-        start: function() {
-            // returns self
-            return this;
-        },
+    // Sets up Managers
+    this.managers.layout.setProperties({
+      div: this.container,    // d3 object
+      svg: this.svg,          // d3 object
+      schema: 'desktop',
+      defaultMeasures: { width: 900, height: 500 }
+    });
 
-        // Ignore
-        stop: function() {
-            this.managers.events.trigger('vizabi:halt');
-            return this;
-        },
+    var _this = this;
 
-        // Improve
-        destroy: function() {
-            d3.select('#' + this.wrapperName).remove();
-        },
+    this.managers.events.bind('resize', function() {
+      _this.managers.layout.update();
+    });
+  };
 
-        getSVG: function() {
-            return this.svg;
-        },
+  template.prototype = {
+    start: function() {
+      // returns self
+      return this;
+    },
 
-        getState: function() {
-            return this.state;
-        },
+    // Ignore
+    stop: function() {
+      this.managers.events.trigger('vizabi:halt');
+      return this;
+    },
 
-        setState: function(state) {
-            extend(this.state, state);
-            this.managers.events.trigger('change:state', this.state);
-            return this;
-        },
+    // Improve
+    destroy: function() {
+      d3.select('#' + this.wrapperName).remove();
+    },
 
-        setLanguage: function(lang) {
-            if (!lang) return;  // let it fail silently?
-            this.managers.i18n.setLanguage(lang, function(lang) {
-                this.managers.events.trigger('change:language', lang);
-            });
-            return this;
-        },
+    getSVG: function() {
+      return this.svg;
+    },
 
-        getLanguage: function() {
-            if (this.language) return this.language;
-        },
+    getState: function() {
+      return this.state;
+    },
 
-        getLayout: function() {
-            return this.layout;
-        },
+    setState: function(state) {
+      extend(this.state, state);
+      this.managers.events.trigger('change:state', this.state);
+      return this;
+    },
 
-        setLayout: function(layout) {
-            if (!layout) return this;   // let it fail silently.
-            this.layout = layout;
-            this.managers.layout.set(layout);
-            return this;
-        },
+    setLanguage: function(lang) {
+      if (!lang) return;  // let it fail silently?
+      this.managers.i18n.setLanguage(lang, function(lang) {
+        this.managers.events.trigger('change:language', lang);
+      });
+      return this;
+    },
 
-        getInstance: function(name) {
-            if (!name) return this.managers;
-            if (this.managers[name]) return this.managers[name];
-            return null;
-        },
+    getLanguage: function() {
+      if (this.language) return this.language;
+    },
 
-        setContainerClass: function(cssClass) {
-            this.container.classed(cssClass, true);
-            this.svg.classed(cssClass, true);
-            return this;
-        }
-    };
+    getLayout: function() {
+      return this.layout;
+    },
 
-    return template;
+    setLayout: function(layout) {
+      if (!layout) return this;   // let it fail silently.
+      this.layout = layout;
+      this.managers.layout.set(layout);
+      return this;
+    },
+
+    getInstance: function(name) {
+      if (!name) return this.managers;
+      if (this.managers[name]) return this.managers[name];
+      return null;
+    },
+
+    setContainerClass: function(cssClass) {
+      this.container.classed(cssClass, true);
+      this.svg.classed(cssClass, true);
+      return this;
+    }
+  };
+
+  return template;
 });
