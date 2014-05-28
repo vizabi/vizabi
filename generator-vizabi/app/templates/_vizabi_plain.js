@@ -2,31 +2,31 @@ define([
     'visualizations/vizabi'
 ], function(Vizabi) {
     var newVizabi = function(core, options) {
-        var viz = new Vizabi(core, options);
+        var <%= _.slugify(vizabiName) %> = new Vizabi(core, options);
 
-        viz.name = '<%= _.slugify(vizabiName) %>';
-        viz.setContainerClass('<%= _.slugify(vizabiName) %>');
+        <%= _.slugify(vizabiName) %>.name = '<%= _.slugify(vizabiName) %>';
+        <%= _.slugify(vizabiName) %>.setContainerClass('<%= _.slugify(vizabiName) %>');
 
         // The visualization *state*. This contains the properties of the
         // visualization that is being displayed to the user.
-        viz.state = {
+        <%= _.slugify(vizabiName) %>.state = {
         
         };
 
         // The language of this visualization (*strongly suggested to exist*)
-        viz.language = 'dev';
+        <%= _.slugify(vizabiName) %>.language = 'dev';
 
-        viz.setLayout({
+        <%= _.slugify(vizabiName) %>.setLayout({
             desktop: {
 
             }
         });
 
-        viz.start = function() {
+        <%= _.slugify(vizabiName) %>.start = function() {
             return this;
         };
 
-        return viz;
+        return <%= _.slugify(vizabiName) %>;
     };
 
     return newVizabi;
