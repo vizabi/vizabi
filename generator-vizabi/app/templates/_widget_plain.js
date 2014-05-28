@@ -2,22 +2,20 @@ define([
     'widgets/widget'
 ], function(Widget) {
     var newWidget = function(sandbox) {
-        var widget = new Widget(sandbox);
+        var <%= _.slugify(widgetName) %> = new Widget(sandbox);
 
-        widget.name = '<%= _.slugify(widgetName) %>';
-        widget.setWidgetClass('<%= _.slugify(vizabiName) %>');
+        <%= _.slugify(widgetName) %>.name = '<%= _.slugify(widgetName) %>';
+        <%= _.slugify(widgetName) %>.setWidgetClass('<%= _.slugify(widgetName) %>');
 
-        widget.start = function() {
+        <%= _.slugify(widgetName) %>.start = function() {
             return this;
         }
 
-        widget.render = function(width, height) {
+        <%= _.slugify(widgetName) %>.render = function(width, height) {
             return this;
-        }
+        }.bind(<%= _.slugify(widgetName) %>);
 
-        widget.render = widget.render.bind(widget);
-
-        return widget;
+        return <%= _.slugify(widgetName) %>;
     }
 
     return newWidget;
