@@ -1,0 +1,29 @@
+{
+  "name": "viz-external-dev",
+  "version": "0.0.0",
+  "description": "viz-external-dev ================",
+  "main": "Gruntfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt": "~0.4.5"
+  },
+  "devDependencies": {
+    "yo": "~1.1.2",
+    "generator-generator": "~0.4.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gapminder/viz-external-dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Gapminder/viz-external-dev/issues"
+  },
+  "homepage": "https://github.com/Gapminder/viz-external-dev"
+}
