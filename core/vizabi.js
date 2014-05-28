@@ -1,6 +1,6 @@
 define([
     'd3',
-    'vizabi.base.object',
+    'base/object',
     'vizabi-config',
     'managers/managers'
 ], function(d3, baseObject, config, Managers) {
@@ -8,7 +8,7 @@ define([
     var vizID = 1;
 
     function createVisualization(options, callback) {
-        var vPath = config.require.path.visualizations;
+        var vPath = config.require.paths.visualizations;
         var vName = options.name;
         var path = vPath + '/' + vName + '/' + vName;
 

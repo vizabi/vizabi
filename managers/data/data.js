@@ -1,9 +1,8 @@
 define([
-    'vizabi.base.loader.json',
-    'vizabi.managers.data.cache',
-    'vizabi.config'
-],
-function(loaderJSON, cache, config) {
+    'base/loader',
+    'managers/data/cache',
+    'vizabi-config'
+], function(loaderJSON, cache, config) {
     // {{oven-url}}
     var waffleUrl = config.url.oven.base + '/waffle/lang/';
 

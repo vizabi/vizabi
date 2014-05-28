@@ -1,6 +1,6 @@
 define([
     'd3',
-    'vizabi.base.object'
+    'base/object'
 ], function(d3, object) {
     var extend = object.extend;
 

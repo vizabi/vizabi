@@ -1,8 +1,8 @@
 <html>
     <head>
         <title>Template Visualization Test</title>
-        <script src="http://d3js.org/d3.v3.js" charset='UTF-8'></script>
-        <script data-main="../require-config" src="../bower_components/requirejs/require.js"></script>
+        <script src="../bower_components/d3/d3.js" charset='UTF-8'></script>
+        <script data-main="../vizabi-config" src="../bower_components/requirejs/require.js"></script>
         <link rel="stylesheet" href="../css/vizabi.css">
     </head>
     <body>
@@ -13,7 +13,7 @@
             'core/vizabi'
         ], function(Core) {
             var core = new Core();
-            core.start('template', '#template');
+            //core.start('testviz', '#template');
             console.log(core);
             window.vizabi = core;
         });
