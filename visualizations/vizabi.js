@@ -1,9 +1,7 @@
 define([
     'd3',
-    'vizabi.base.object',
-    'vizabi.base.svg.rectBox',
-    'visualizations/dd/dd'
-], function(d3, object, RectBox, dd) {
+    'base/object',
+], function(d3, object) {
     var extend = object.extend;
 
     var template = function(core, options) {
