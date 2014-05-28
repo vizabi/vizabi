@@ -1,5 +1,5 @@
 define([
-    'managers/layout-manager/layout-manager',
+    'managers/layout/layout',
     'managers/events/events',
     'managers/data/data',
     'bower_components/i18n-js/i18n'
