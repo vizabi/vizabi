@@ -1,12 +1,16 @@
 define([
-    'base/object',
-    'base/rectBox'
-], function(object, RectBox) {
+    'base/object'
+], function(object) {
     var extend = object.extend;
 
     var register = function(parentInstance, childInstance) {
         parentInstance.instances.push(childInstance);
         return parentInstance.instances;
+    };
+
+    var move = function(element, top, left) {
+        var translate = 'translate(' + top + ',' + left + ')';
+        element.attr('transform', translate);
     };
 
     var calculateStage = function(context) {
@@ -106,10 +110,9 @@ define([
     };
 
     var fillHeightWidth = function(item) {
-        // 'rectbox' a function/object instead of a plain d3 object!
-        var rectBox = new RectBox(item.element);
-        item.height = rectBox.getHeight();
-        item.width = rectBox.getWidth();
+        var rectangleBox = item.element.node().getBBox();
+        item.height = rectangleBox.height;
+        item.width = rectangleBox.width;
     };
 
     var arrange = function(item) {
@@ -155,8 +158,7 @@ define([
     };
 
     var place = function(item) {
-        var rectBox = new RectBox(item.element);
-        rectBox.move(item.left, item.top);
+        move(item.element, item.left, item.top);
     };
 
     var triggerRender = function(item) {
