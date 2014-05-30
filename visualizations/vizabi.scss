@@ -1,0 +1,15 @@
+.vizabi {
+    @import '_common';
+    @import '_wrapper';
+    @import '_asasas';
+    @import '_blebliblo';
+    @import '_aplspals';
+    // <?== generator.vizabi.style ==?>
+
+    height: 100%;
+    width: 100%;
+
+    .fullscreen {
+        @include fixed(0,0,0,0);
+    }
+}

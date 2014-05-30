@@ -1,0 +1,39 @@
+@mixin font-size($px) {
+    font-size: $px;
+    //font-size: (0.125 * $px / 1px) + rem;
+}
+
+@mixin opacity($v) {
+    opacity: $v;
+}
+
+@mixin user-select-none() {
+    -webkit-user-select: none; // Chrome/Safari
+    -moz-user-select: none; // Firefox
+    -ms-user-select: none; // IE10+
+}
+
+//makes an element absolute positioned
+@mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
+    position: absolute;
+    top: $top;
+    bottom: $bottom;
+    right: $right;
+    left: $left;
+}
+
+//makes an element fixed
+@mixin fixed($top: auto, $right: auto, $bottom: auto, $left: auto) {
+    position: fixed;
+    top: $top;
+    bottom: $bottom;
+    right: $right;
+    left: $left;
+}
+
+$fontFamily: 'Arial Rounded MT Bold';
+$colorIMgreen: #7394A6;
+$colorIMmediumBlue: #607889;
+$colorTSdarkBlue: #3C6170;
+$colorDarkWhite: #F2FAFC;
+$colorLightWhite: #FDFDFD;

@@ -5,6 +5,9 @@ var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var chalk = require('chalk');
 
+var protectedStrings = {
+  scss: "// <?== generator.vizabi.style ==?>"
+};
 
 var VizabiGenerator = yeoman.generators.Base.extend({
   init: function () {
@@ -56,12 +59,19 @@ var VizabiGenerator = yeoman.generators.Base.extend({
 
   app: function () {
     if (this.vizabiName) {
-      var name = this.vizabiName;
+      var name = this._.slugify(this.vizabiName);
+      var mainStylePath = 'visualizations/vizabi.scss';
+      var mainStyle = this.readFileAsString(mainStylePath);
       this.mkdir('visualizations/' + name);
       this.template('_vizabi_plain.js', 'visualizations/' + name + '/' + name + '.js');
       this.template('_vizabi_plain.scss', 'visualizations/' + name + '/' + name + '.scss');
+      if (mainStyle) {
+        this.write(mainStylePath, 
+          mainStyle.replace(protectedStrings.scss,
+            '@import \'_' + name + '\';\n    ' + protectedStrings.scss));
+      }
     } else if (this.widgetName) {
-      var name = this.widgetName;
+      var name = this._.slugify(this.widgetName);
       this.mkdir('widgets/' + name);
       this.template('_widget_plain.js', 'widgets/' + name + '/' + name + '.js');
       this.template('_widget_plain.scss', 'widgets/' + name + '/' + name + '.scss');
