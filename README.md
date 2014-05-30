@@ -3,6 +3,12 @@ viz-external-dev
 
 # Starting out
 
+```sh
+git clone http://github.com/Gapminder/viz-external-dev vizabi-v2
+cd vizabi-v2
+git checkout develop
+```
+
 Start out by installing the dependencies via bower and npm:
 
 ```sh
