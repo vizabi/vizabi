@@ -5,7 +5,7 @@ define([
         var <%= _.camelize(vizabiName) %> = new Vizabi(core, options);
 
         <%= _.camelize(vizabiName) %>.name = '<%= _.slugify(vizabiName) %>';
-        <%= _.camelize(vizabiName) %>.setContainerClass('<%= _.slugify(vizabiName) %>');
+        <%= _.camelize(vizabiName) %>.getSVG().classed('<%= _.slugify(vizabiName) %>', true);
 
         // The visualization *state*. This contains the properties of the
         // visualization that is being displayed to the user.

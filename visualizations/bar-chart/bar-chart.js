@@ -5,7 +5,7 @@ define([
         var barChart = new Vizabi(core, options);
 
         barChart.name = 'bar-chart';
-        barChart.setContainerClass('bar-chart');
+        barChart.getSVG().classed('bar-chart', true);
 
         // The visualization *state*. This contains the properties of the
         // visualization that is being displayed to the user.

@@ -15,7 +15,8 @@ define([
     this.wrapperName = 'vizabi-' + this.id;
 
     this.container = d3.select(this.selector).append('div')
-      .attr('id', this.wrapperName);
+      .attr('id', this.wrapperName)
+      .classed('vizabi', true);
 
     this.svg = this.container.append('svg');
 
@@ -100,12 +101,6 @@ define([
       if (!name) return this.managers;
       if (this.managers[name]) return this.managers[name];
       return null;
-    },
-
-    setContainerClass: function(cssClass) {
-      this.container.classed(cssClass, true);
-      this.svg.classed(cssClass, true);
-      return this;
     }
   };
 
