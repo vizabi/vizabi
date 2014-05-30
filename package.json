@@ -7,9 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "grunt": "~0.4.5"
-  },
-  "devDependencies": {
+    "grunt": "~0.4.5",
     "yo": "~1.1.2",
     "generator-generator": "~0.4.4",
     "grunt-contrib-sass": "~0.7.3"
