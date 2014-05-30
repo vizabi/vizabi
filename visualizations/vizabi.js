@@ -17,7 +17,7 @@ define([
     this.container = d3.select(this.selector).append('div')
       .attr('id', this.wrapperName);
 
-    this.svg = d3.select('#' + this.wrapperName).append('svg');
+    this.svg = this.container.append('svg');
 
     // Manager instances, obtained from the core
     this.managers = {
