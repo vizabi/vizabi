@@ -60,14 +60,15 @@ var VizabiGenerator = yeoman.generators.Base.extend({
   app: function () {
     if (this.vizabiName) {
       var name = this._.slugify(this.vizabiName);
-      var namePath = name + '/' + name;
+      var vizabiPath = name + '/' + name;
+      var vizabiCssPath = name + '/_' + name;
       
       var mainStylePath = 'visualizations/vizabi.scss';
       var mainStyle = this.readFileAsString(mainStylePath);
 
       this.mkdir('visualizations/' + name);
-      this.template('_vizabi_plain.js', 'visualizations/' + namePath + '.js');
-      this.template('_vizabi_plain.scss', 'visualizations/_' + namePath + '.scss');
+      this.template('_vizabi_plain.js', 'visualizations/' + vizabiPath + '.js');
+      this.template('_vizabi_plain.scss', 'visualizations/' + vizabiCssPath + '.scss');
       
       if (mainStyle) {
         this.write(mainStylePath, 
@@ -76,14 +77,15 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       }
     } else if (this.widgetName) {
       var name = this._.slugify(this.widgetName);
-      var namePath = name + '/' + name;
+      var widgetPath = name + '/' + name;
+      var widgetCssPath = name + '/_' + name;
 
       var mainStylePath = 'widgets/_widgets.scss';
       var mainStyle = this.readFileAsString(mainStylePath);
 
       this.mkdir('widgets/' + name);
-      this.template('_widget_plain.js', 'widgets/' + namePath + '.js');
-      this.template('_widget_plain.scss', 'widgets/_' + namePath + '.scss');
+      this.template('_widget_plain.js', 'widgets/' + widgetPath + '.js');
+      this.template('_widget_plain.scss', 'widgets/' + widgetCssPath + '.scss');
 
       if (mainStyle) {
         this.write(mainStylePath, 
