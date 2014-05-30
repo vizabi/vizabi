@@ -10,7 +10,10 @@
     "grunt": "~0.4.5",
     "yo": "~1.1.2",
     "generator-generator": "~0.4.4",
-    "grunt-contrib-sass": "~0.7.3"
+    "grunt-contrib-sass": "~0.7.3",
+    "chalk": "~0.4.0",
+    "yosay": "~0.2.1",
+    "yeoman-generator": "~0.17.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
