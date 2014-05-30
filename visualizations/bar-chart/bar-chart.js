@@ -98,20 +98,10 @@ define([
               .attr("width", x.rangeBand());
         }.bind(barChart);
 
-        d3.tsv("data.tsv", type, function(error, data) {
-          barChart.data = data;
-          renderXAxis();
-          renderYAxis();
-          render();
-          barChart.managers.layout.update();
-        });
-
         function type(d) {
           d.value = +d.value; // coerce to number
           return d;
         }
-
-        render();
 
         barChart.setLayout({
             desktop: {
@@ -165,10 +155,15 @@ define([
             }
         });
 
-        // console.log('here');
-        barChart.managers.layout.update();
-
         barChart.start = function() {
+            d3.tsv("data.tsv", type, function(error, data) {
+              barChart.data = data;
+              renderXAxis();
+              renderYAxis();
+              render();
+              barChart.managers.layout.update();
+            });
+
             return this;
         };
 

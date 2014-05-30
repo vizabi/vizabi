@@ -20,6 +20,10 @@ yo vizabi
 
 This will ask you what you want to create. Two files will be generated: a JavaScript file and a SCSS file, for styles. (todo: overwrite .scss files by default on prompt).
 
+When asked to overwrite `visualizations/vizabi.scss`, type `y`.
+
+Open `visualizations/your-new-viz`. Write your visualization there :) 
+
 # Compiling scss
 
 ```sh
