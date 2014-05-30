@@ -67,7 +67,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
 
       this.mkdir('visualizations/' + name);
       this.template('_vizabi_plain.js', 'visualizations/' + namePath + '.js');
-      this.template('_vizabi_plain.scss', 'visualizations/' + namePath + '.scss');
+      this.template('_vizabi_plain.scss', 'visualizations/_' + namePath + '.scss');
       
       if (mainStyle) {
         this.write(mainStylePath, 
@@ -83,7 +83,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
 
       this.mkdir('widgets/' + name);
       this.template('_widget_plain.js', 'widgets/' + namePath + '.js');
-      this.template('_widget_plain.scss', 'widgets/' + namePath + '.scss');
+      this.template('_widget_plain.scss', 'widgets/_' + namePath + '.scss');
 
       if (mainStyle) {
         this.write(mainStylePath, 
