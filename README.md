@@ -3,15 +3,19 @@ viz-external-dev
 
 # Starting out
 
-After cloning this repository, you will have to install additional packages
-that are used in the development of Vizabi. To do this, run from the command
-line:
+Start out by installing the dependencies via bower and npm:
 
 ```sh
 bower install
+npm install
 ```
 
-# CSS
+# Creating a new visualization
 
-The CSS is build using compass. The directory is `css`. This will be moved to
-the Grunt builder.
+Type, on the root directory:
+
+```sh
+yo vizabi
+```
+
+Follow the instructions.
