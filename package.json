@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "yo": "~1.1.2",
-    "generator-generator": "~0.4.4"
+    "generator-generator": "~0.4.4",
+    "grunt-contrib-sass": "~0.7.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -18,4 +18,14 @@ Type, on the root directory:
 yo vizabi
 ```
 
-Follow the instructions.
+This will ask you what you want to create. Two files will be generated: a JavaScript file and a SCSS file, for styles. (todo: overwrite .scss files by default on prompt).
+
+# Compiling scss
+
+```sh
+grunt sass
+```
+
+# View
+
+Edit `test/test.html` and load it into your browser.
