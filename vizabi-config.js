@@ -8,6 +8,7 @@ define([], function() {
                 jquery: 'bower_components/jquery/dist/jquery',
                 jed: 'bower_components/jed/jed',
                 sprintf: 'bower_components/sprintf/src/sprintf',
+                i18n: 'bower_components/i18n-js/i18n',
                 base: 'base',
                 core: 'core',
                 managers: 'managers',
@@ -18,6 +19,10 @@ define([], function() {
             shim: {
                 d3: {
                     exports: 'd3'
+                },
+                i18n: {
+                    deps: ['jed', 'sprintf', 'jquery'],
+                    exports: 'i18n'
                 }
             }
         },
