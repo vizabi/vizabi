@@ -4,6 +4,9 @@ define([
     'vizabi-config',
     'managers/managers'
 ], function(d3, baseObject, config, Managers) {
+    // Please remove me soon (when gruntfile is adjusted)
+    if (!window.d3) window.d3 = d3;
+
     var extend = baseObject.extend;
     var vizID = 1;
 
