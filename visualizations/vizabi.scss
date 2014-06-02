@@ -2,7 +2,9 @@
     @import '_common';
     @import '_wrapper';
     @import '../widgets/_widgets';
-    @import 'bar-chart/bar-chart';
+    @import 'bar-chart/_bar-chart';
+    @import 'line-chart/_line-chart';
+    @import 'bubble-chart/bubble-chart';
     // <?== generator.vizabi.style ==?>
 
     height: 100%;
