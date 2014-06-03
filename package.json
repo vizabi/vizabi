@@ -27,5 +27,12 @@
   "bugs": {
     "url": "https://github.com/Gapminder/viz-external-dev/issues"
   },
-  "homepage": "https://github.com/Gapminder/viz-external-dev"
+  "homepage": "https://github.com/Gapminder/viz-external-dev",
+  "devDependencies": {
+    "load-grunt-tasks": "~0.4.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-uglify": "~0.4.0"
+  }
 }
