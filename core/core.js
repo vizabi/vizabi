@@ -2,8 +2,11 @@ define([
     'd3',
     'base/object',
     'vizabi-config',
-    'managers/managers'
-], function(d3, baseObject, config, Managers) {
+    'managers/events/events',
+    'managers/layout/layout',
+    'managers/data/data',
+    'i18n' 
+], function(d3, baseObject, config, EventsManager, LayoutManager, DataManager, i18nManager) {
     // Please remove me soon (when gruntfile is adjusted)
     if (!window.d3) window.d3 = d3;
 
@@ -22,7 +25,12 @@ define([
 
     var core = function() {
         this.visualizations = {};
-        this.managers = Managers;
+        this.managers = {
+            events: EventsManager,
+            layout: LayoutManager,
+            data: DataManager,
+            i18n: i18nManager
+        };
         
         var context = this;
         
