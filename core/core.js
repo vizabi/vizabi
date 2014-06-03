@@ -1,22 +1,19 @@
 define([
-    'd3',
-    'base/object',
     'vizabi-config',
     'managers/events/events',
     'managers/layout/layout',
     'managers/data/data',
     'i18n' 
-], function(d3, baseObject, config, EventsManager, LayoutManager, DataManager, i18nManager) {
+], function(config, EventsManager, LayoutManager, DataManager, i18nManager) {
 
-    var extend = baseObject.extend;
-    var vizID = 1;
-    var managers = {
-        events: EventsManager,
-        layout: LayoutManager,
-        data: DataManager,
-        i18n: i18nManager
-    };
-    var visualizations = {};
+    var vizID = 1,
+        tools = {},
+        managers = {
+            events: EventsManager,
+            layout: LayoutManager,
+            data: DataManager,
+            i18n: i18nManager
+        };
 
     var core = function() {
         window.addEventListener('resize', function() {
@@ -34,20 +31,25 @@ define([
         },
 
         getTool: function(id) {
-            if (!id) return visualizations;
-            if (visualizations[id]) return visualizations[id];
+            if (!id) return tools;
+            if (tools[id]) return tools[id];
             return null;
         },
 
         start: function(tool_name, placeholder, state, ready) {
 
-            var id = this.getId();
-            var t_path = config.require.paths.tools;
-            var path = t_path + '/' + tool_name + '/' + tool_name;
+            var id = this.getId(),
+                t_path = config.require.paths.tools,
+                path = t_path + '/' + tool_name + '/' + tool_name,
+                context = this,
+                option = {
+                    placeholder: placeholder,
+                    state: state
+                }
 
-            require([path], function(tool) {
-                //TODO tool.start();\
-                //console.log(tool);
+            require([path], function(Tool) {
+                tools[id] = new Tool(context, option);
+                tools[id].start();
             });
 
             return id;

@@ -22,6 +22,9 @@ define([
             }
         };
 
+        helloWorld.widgets = {}
+
+
         helloWorld.start = function() {
             return this;
         };
