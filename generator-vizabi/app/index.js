@@ -63,12 +63,12 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       var vizabiPath = name + '/' + name;
       var vizabiCssPath = name + '/_' + name;
       
-      var mainStylePath = 'visualizations/vizabi.scss';
+      var mainStylePath = 'tools/tool.scss';
       var mainStyle = this.readFileAsString(mainStylePath);
 
-      this.mkdir('visualizations/' + name);
-      this.template('_vizabi_plain.js', 'visualizations/' + vizabiPath + '.js');
-      this.template('_vizabi_plain.scss', 'visualizations/' + vizabiCssPath + '.scss');
+      this.mkdir('tools/' + name);
+      this.template('_tool_plain.js', 'tools/' + vizabiPath + '.js');
+      this.template('_tool_plain.scss', 'tools/' + vizabiCssPath + '.scss');
       
       if (mainStyle) {
         this.write(mainStylePath, 
