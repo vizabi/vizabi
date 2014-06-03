@@ -33,13 +33,13 @@ define([
             return managers[manager].instance();
         },
 
-        getVisualization: function(id) {
+        getTool: function(id) {
             if (!id) return visualizations;
             if (visualizations[id]) return visualizations[id];
             return null;
         },
 
-        start: function(tool_name, placeholder, state) {
+        start: function(tool_name, placeholder, state, ready) {
 
             var id = this.getId();
             var t_path = config.require.paths.tools;
@@ -47,7 +47,7 @@ define([
 
             require([path], function(tool) {
                 //TODO tool.start();\
-                console.log("Done");
+                //console.log(tool);
             });
 
             return id;

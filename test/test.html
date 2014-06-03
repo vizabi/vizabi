@@ -13,8 +13,12 @@
            time: 2014,
            ind: 'gdp', 
        };
-        vizabi.start("hello-world", "#placeholder", state);
+        vizabi.start("hello-world", "#placeholder", state, function() {
+            //hello-world is ready
+
+        });
         vizabi.ready(function() {
+            //everything is ready
         });
     </script>
 </html>

@@ -2,15 +2,21 @@
 
     root.vizabi = root.vizabi || {};
     
-    var viz_name, viz_container, viz_state, viz_ready;
-    root.vizabi.start = function(name, container, state) {
-        viz_name = name;
-        viz_container = container;
-        viz_state = state || {};
+    var tool_name,
+    	tool_container,
+    	tool_state,
+    	tool_ready,
+    	vizabi_ready;
+
+    root.vizabi.start = function(name, container, state, ready) {
+        tool_name = name;
+        tool_container = container;
+        tool_state = state || {};
+        tool_ready = ready;
     };
 
     root.vizabi.ready = function(func) {
-    	viz_ready = func;
+    	vizabi_ready = func;
     };
 
     function getScript(src, loaded) {
@@ -34,12 +40,13 @@
             require(["core"], function(core) {
                 var core = new core();
                 //user defined ready function
-                vizabi.viz = core.start(viz_name, viz_container, viz_state);
+                vizabi.viz = core.start(tool_name, tool_container, tool_state, tool_ready);
 
-                if(typeof viz_ready === "function") {
-                	viz_ready();
-                }
-
+                core.bind("ready:all", function() {
+                	if(typeof vizabi_ready === "function") {
+                		vizabi_ready();
+                	}
+                });
             });
         });
     });
