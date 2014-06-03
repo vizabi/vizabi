@@ -1,24 +1,25 @@
 <html>
     <head>
         <title>Test page for Vizabi</title>
-        <script data-main="../vizabi-config" src="../vizabi.js"></script>
-        <link rel="stylesheet" href="../visualizations/vizabi.css">
+        <!-- Includes vizabi main file -->
+        <script src="../dist/vizabi.js"></script>
+        <!-- Includes vizabi css -->
+        <link rel="stylesheet" href="../dist/vizabi.css">
     </head>
     <body>
     <div id="placeholder"></div>
     </body>
     <script>
-        state = {
+        var state = {
            show: [{planet: 'world'}],
            time: 2014,
-           ind: 'gdp', 
-       };
+           ind: 'gdp'
+        };
         vizabi.start("hello-world", "#placeholder", state, function() {
-            //hello-world is ready
-
+            //hello-world is ready at this point
         });
         vizabi.ready(function() {
-            //everything is ready
+            //everything is ready at this point
         });
     </script>
 </html>
