@@ -5,14 +5,39 @@ define([
 ], function(d3, object, Class) {
 
   var Tool = Class.extend({
-
-    init: function(testing) {
-      //console.log("TOOL!!! "+testing);
+    init: function(core, options) {
+      this.name = options.name;
+      this.state = {};
+      
+      this.template = "tools/tool";
+      this.placeholder = d3.select(options.placeholder); // Markup to define where a tool is going to be rendered.
+      this.element = undefined; // Element which embodies the tool
+      this.widgets = {};
+      this.layout_profiles = {
+        "default": {
+            timeslider: true,
+            title: true,
+            button: true
+        }
+      };
     }
-
   });
 
+
+
+
+
   return Tool;
+
+
+
+
+
+
+
+
+
+
 
   var template = function(core, options) {
     this.id = (options && options.name) || 'id-undefined';
