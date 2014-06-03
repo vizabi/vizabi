@@ -36,6 +36,8 @@
     getScript("../bower_components/requirejs/require.js", function() {
         //load configuration and paths
         require(["vizabi-config"], function(config) {
+            //config is now available
+            require.config(config.require);
             //start vizabi
             require(["core"], function(core) {
                 var core = new core();

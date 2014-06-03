@@ -4,6 +4,8 @@ define([
   'widgets/widget'
 ], function(d3, object, Widget) {
 
+  //Tool does everything a widget does, but has different defaults
+  //And possibly some extra methods
   var Tool = Widget.extend({
     init: function(core, options) {
       // Define default template 

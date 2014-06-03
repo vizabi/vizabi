@@ -3,22 +3,23 @@ define([], function() {
         debug: true,
     
         require: {
+            baseUrl: "dist/",
             text: {
                 optimizeAllPluginResources: true
             },
             paths: {
-                d3: 'bower_components/d3/d3',
-                jquery: 'bower_components/jquery/dist/jquery',
-                underscore: 'bower_components/underscore/underscore',
-                jed: 'bower_components/jed/jed',
-                sprintf: 'bower_components/sprintf/src/sprintf',
-                i18n: 'bower_components/i18n-js/i18n',
+                d3: '../bower_components/d3/d3',
+                jquery: '../bower_components/jquery/dist/jquery',
+                underscore: '../bower_components/underscore/underscore',
+                jed: '../bower_components/jed/jed',
+                sprintf: '../bower_components/sprintf/src/sprintf',
+                i18n: '../bower_components/i18n-js/i18n',
                 base: 'base',
                 core: 'core/core',
                 managers: 'managers',
                 tools: 'tools',
                 widgets: 'widgets',
-                text: 'bower_components/requirejs-text/text'
+                text: '../bower_components/requirejs-text/text'
             },
             shim: {
                 d3: {
@@ -52,8 +53,5 @@ define([], function() {
             }
         }
     };
-
-    require.config(configs.require);
-
     return configs;
 });
