@@ -16,14 +16,11 @@ define([
         data: DataManager,
         i18n: i18nManager
     };
+    var visualizations = {};
 
     var core = function() {
-        this.visualizations = {};
-        
-        var context = this;
-        
         window.addEventListener('resize', function() {
-            context.managers['events'].trigger('resize');
+            managers['events'].trigger('resize');
         });
     };
 
@@ -37,22 +34,20 @@ define([
         },
 
         getVisualization: function(id) {
-            if (!id) return this.visualizations;
-            if (this.visualizations[id]) return this.visualizations[id];
+            if (!id) return visualizations;
+            if (visualizations[id]) return visualizations[id];
             return null;
         },
 
         start: function(tool_name, placeholder, state) {
 
             var id = this.getId();
-            var context = this;
-            var opt = extend({}, options);
-
-            var t_path = config.require.paths.visualizations;
+            var t_path = config.require.paths.tools;
             var path = t_path + '/' + tool_name + '/' + tool_name;
 
             require([path], function(tool) {
-                //TODO tool.start();
+                //TODO tool.start();\
+                console.log("Done");
             });
 
             return id;

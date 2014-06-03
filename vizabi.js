@@ -32,7 +32,7 @@
         require(["vizabi-config"], function(config) {
             //start vizabi
             require(["core"], function(core) {
-                var core = new core(config);
+                var core = new core();
                 //user defined ready function
                 vizabi.viz = core.start(viz_name, viz_container, viz_state);
 

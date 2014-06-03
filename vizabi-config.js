@@ -12,9 +12,8 @@ define([], function() {
                 base: 'base',
                 core: 'core/core',
                 managers: 'managers',
-                visualizations: 'visualizations',
+                tools: 'tools',
                 widgets: 'widgets',
-                tools: 'tools'
             },
             shim: {
                 d3: {
