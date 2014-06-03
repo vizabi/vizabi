@@ -1,10 +1,11 @@
 define([
     'vizabi-config',
+    'base/class',
     'managers/events/events',
     'managers/layout/layout',
     'managers/data/data',
     'i18n' 
-], function(config, EventsManager, LayoutManager, DataManager, i18nManager) {
+], function(config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
 
     var vizID = 1,
         tools = {},
@@ -15,30 +16,17 @@ define([
             i18n: i18nManager
         };
 
-    var core = function() {
-        window.addEventListener('resize', function() {
-            managers['events'].trigger('resize');
-        });
-    };
+    var core = Class.extend({
 
-    core.prototype = {
-        getId: function() {
-            return vizID++;
-        },
-
-        getInstance: function(manager) {
-            return managers[manager].instance();
-        },
-
-        getTool: function(id) {
-            if (!id) return tools;
-            if (tools[id]) return tools[id];
-            return null;
+        init: function() {
+            window.addEventListener('resize', function() {
+                managers['events'].trigger('resize');
+            });
         },
 
         start: function(tool_name, placeholder, state, ready) {
 
-            var id = this.getId(),
+            var id = getId(),
                 t_path = config.require.paths.tools,
                 path = t_path + '/' + tool_name + '/' + tool_name,
                 context = this,
@@ -49,14 +37,24 @@ define([
 
             require([path], function(Tool) {
                 tools[id] = new Tool(context, options);
+                tools[id].render();
             });
 
             return id;
         },
-
-        destroy: function(id) {
-            
+        
+        getInstance: function(manager) {
+            return managers[manager].instance();
         },
+
+        getTool: function(id) {
+            if (!id) return tools;
+            if (tools[id]) return tools[id];
+            return null;
+        },
+
+        destroy: function() {},
+
         bind: function(evt, func) {
             EventsManager.bind(evt, func);
         },
@@ -65,7 +63,12 @@ define([
             var args = Array.prototype.slice.call(arguments).slice(1);
             EventsManager.trigger(what, args);
         }
-    };
+
+    });
+
+    function getId() {
+        return vizID++;
+    }
 
     return core;
 });

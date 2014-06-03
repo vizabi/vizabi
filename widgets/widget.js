@@ -63,9 +63,13 @@ var Widget = Class.extend({
 
   loadTemplate: function(ready) {
     var _this = this;
+    //require the template file
     require(["text!" + this.template + ".html"], function(html) {
+      //render template using underscore
       var rendered = _.template(html, _this.template_data);
-
+      //place the contents into the correct placeholder
+      _this.placeholder.html(rendered);
+      
       if (_.isFunction(ready)) {
         ready(rendered);
       }
