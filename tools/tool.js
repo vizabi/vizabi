@@ -1,8 +1,18 @@
 define([
   'd3',
   'base/object',
-], function(d3, object) {
-  var extend = object.extend;
+  'base/class',
+], function(d3, object, Class) {
+
+  var Tool = Class.extend({
+
+    init: function(testing) {
+      //console.log("TOOL!!! "+testing);
+    }
+
+  });
+
+  return Tool;
 
   var template = function(core, options) {
     this.id = (options && options.name) || 'id-undefined';

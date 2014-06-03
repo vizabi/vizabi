@@ -42,14 +42,13 @@ define([
                 t_path = config.require.paths.tools,
                 path = t_path + '/' + tool_name + '/' + tool_name,
                 context = this,
-                option = {
+                options = {
                     placeholder: placeholder,
                     state: state
                 }
 
             require([path], function(Tool) {
-                tools[id] = new Tool(context, option);
-                tools[id].start();
+                tools[id] = new Tool(context, options);
             });
 
             return id;

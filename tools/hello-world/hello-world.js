@@ -1,9 +1,28 @@
 define([
     'tools/tool'
 ], function(Tool) {
-    var newVizabi = function(core, options) {
-        var helloWorld = new Tool(core, options);
 
+    var helloWorld = Tool.extend({
+        init: function(context, options) {
+          //this._super("Testing");
+        }
+    });
+
+    return helloWorld;
+
+
+
+    var newVizabi = function(core, options) {
+
+        var helloWorld = Tool.extend({
+            init: function(context, options) {
+              console.log("HELLO WORLD!!!");
+            }
+        });
+
+        return helloWorld;
+
+       
         /* Initialization part */
 
         helloWorld.name = 'hello-world';
@@ -24,10 +43,13 @@ define([
 
         helloWorld.widgets = {}
 
-
-        helloWorld.start = function() {
+        var parent = helloWorld.start;
+        helloWorld.start(function() {
             return this;
-        };
+        });
+
+
+        helloWorld.start();
 
         return helloWorld;
     };
