@@ -8,7 +8,11 @@
     <div id="placeholder"></div>
     </body>
     <script>
-        var state = {};
+        state = {
+           show: [{planet: 'world'}],
+           time: 2014,
+           ind: 'gdp', 
+       };
         vizabi.start("helloworld", "#placeholder", state);
         vizabi.ready(function() {
         });

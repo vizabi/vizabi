@@ -2,17 +2,15 @@ define([
     'd3',
     'base/object',
     'vizabi-config',
-    'managers/managers'
-], function(d3, baseObject, config, Managers) {
-    // Please remove me soon (when gruntfile is adjusted)
-    if (!window.d3) window.d3 = d3;
+    'managers/events'
+], function(d3, baseObject, config, events) {
 
     var extend = baseObject.extend;
     var vizID = 1;
 
-    function createVisualization(options, callback) {
+    function createVisualization(tool, callback) {
         var vPath = config.require.paths.visualizations;
-        var vName = options.name;
+        var vName = tool;
         var path = vPath + '/' + vName + '/' + vName;
 
         require([path], function(Viz) {
@@ -46,28 +44,25 @@ define([
             return null;
         },
 
-        start: function() {
-            
-        },
+        start: function(tool, placeholder, state) {
 
-        destroy: function(id) {
-            
-        },
-
-        spawn: function(options, fn) {
             var id = this.getId();
             var context = this;
             var opt = extend({}, options);
 
-            createVisualization(opt, function(Viz) {
-                var res = new Viz(context, opt);
-                context.visualizations[id] = res;
-                if (typeof fn === 'function') fn(res);
+            var t_path = config.require.paths.visualizations;
+            var path = t_path + '/_examples/' + tool + '/' + tool;
+
+            require([path], function(Viz) {
+                callback(Viz, options);
             });
 
             return id;
         },
 
+        destroy: function(id) {
+            
+        },
         bind: function(evt, func) {
             this.managers['events'].bind(evt, func);
         },
