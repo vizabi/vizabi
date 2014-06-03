@@ -1,20 +1,16 @@
 <html>
     <head>
-        <title>Template Visualization Test</title>
-        <script data-main="../vizabi-config" src="../bower_components/requirejs/require.js"></script>
+        <title>Test page for Vizabi</title>
+        <script data-main="../vizabi-config" src="../vizabi.js"></script>
         <link rel="stylesheet" href="../visualizations/vizabi.css">
     </head>
     <body>
-    <div id="template"></div>
+    <div id="placeholder"></div>
     </body>
     <script>
-        require([
-            'core/vizabi'
-        ], function(Core) {
-            var core = new Core();
-            //core.start('testviz', '#template');
-            console.log(core);
-            window.vizabi = core;
+        var state = {};
+        vizabi.start("helloworld", "#placeholder", state);
+        vizabi.ready(function() {
         });
     </script>
 </html>
