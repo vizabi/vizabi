@@ -3,9 +3,13 @@ define([], function() {
         debug: true,
     
         require: {
+            text: {
+                optimizeAllPluginResources: true
+            },
             paths: {
                 d3: 'bower_components/d3/d3',
                 jquery: 'bower_components/jquery/dist/jquery',
+                underscore: 'bower_components/underscore/underscore',
                 jed: 'bower_components/jed/jed',
                 sprintf: 'bower_components/sprintf/src/sprintf',
                 i18n: 'bower_components/i18n-js/i18n',
@@ -14,6 +18,7 @@ define([], function() {
                 managers: 'managers',
                 tools: 'tools',
                 widgets: 'widgets',
+                text: 'bower_components/requirejs-text/text'
             },
             shim: {
                 d3: {

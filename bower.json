@@ -22,9 +22,11 @@
     "jed": "~0.5.4",
     "jquery": "~2.1.0",
     "sprintf": "*",
-    "i18n-js": "https://github.com/Gapminder/i18n-js.git#develop"
+    "i18n-js": "https://github.com/Gapminder/i18n-js.git#develop",
+    "requirejs-text": "~2.0.12"
   },
   "devDependencies": {
-    "requirejs": "~2.1.11"
+    "requirejs": "~2.1.11",
+    "underscore": "~1.6.0"
   }
 }
