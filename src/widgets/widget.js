@@ -12,15 +12,15 @@ var Widget = Class.extend({
       this.placeholder = this.placeholder || options.placeholder;
       
       this.template = this.template || "widgets/widget";
-      this.template_data = this.template_data || {};
+      this.template_data = this.template_data || { name: this.name };
       // Markup to define where a Widget is going to be rendered.
       // Element which embodies the Widget
       this.element = this.element || null;
       this.widgets = this.widgets || {};
 
       this.layout = core.getInstance("layout");
-      this.layout.setContainer(this.placeholder);
-      this.layout.setProfile(this.profiles);
+      this.profiles = this.profiles || {};
+      this.parent = parent;
 
       this.events = core.getInstance('events');
       this.loadWidgets(core);
@@ -85,6 +85,9 @@ var Widget = Class.extend({
       //place the contents into the correct placeholder
       _this.placeholder = d3.select(_this.placeholder);
       _this.placeholder.html(rendered);
+      //set layout configurations
+      _this.layout.setContainer(_this.placeholder);
+      _this.layout.setProfile(_this.profiles);
       
       if (_.isFunction(ready)) {
         ready(rendered);
@@ -92,13 +95,18 @@ var Widget = Class.extend({
     });
   },
 
-  resize: function() {
+  parent: function() {
+    return this.parent;
+  },
 
   setState: function(state) {
     this.state = _.extend(this.state, state);
     events.trigger('change:state', this.state);
     return this;
   },
+
+  resize: function() {
+    //what to do when page is resized
   }
 });
 
