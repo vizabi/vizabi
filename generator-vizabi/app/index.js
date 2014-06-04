@@ -80,7 +80,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       if (mainStyle) {
         this.write(mainStylePath, 
           mainStyle.replace(scssImporter.tool,
-            scssImporter.tool + '\n' + '@import \'' + name + '/' + '_' + name + '\';\n    '));
+            scssImporter.tool + '\n' + '@import \'../../' + paths.tools + name + '/' + '_' + name + '\';\n    '));
       }
     } else if (this.widgetName) {
       var name = this._.slugify(this.widgetName);
@@ -97,7 +97,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       if (mainStyle) {
         this.write(mainStylePath, 
           mainStyle.replace(scssImporter.widget,
-            scssImporter.tool + '\n' + '@import \'' + name + '/' + '_' + name + '\';\n    '));
+            scssImporter.tool + '\n' + '@import \'../../' + paths.widgets + name + '/' + '_' + name + '\';\n    '));
       }
     }
   },
