@@ -1,0 +1,69 @@
+<html>
+    <head>
+        <title>Test page for Vizabi</title>
+        <!-- Includes vizabi main file -->
+        <script src="../dist/vizabi.js"></script>
+        <!-- Includes vizabi css -->
+        <link rel="stylesheet" href="../dist/vizabi.css">
+
+        <style>
+            body{
+                margin: 10px;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            #placeholder {
+                position: relative;
+                width: 300px;
+                height: 500px;
+                margin: 20px auto;
+                border: 1px solid #ccc;
+            }
+            p {
+                margin-top: 10px;
+            }
+        </style>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    </head>
+    <body>
+
+        <p>Click to get a random size <button onclick="randomSize()">RANDOM SIZE</button></p>
+
+        <div id="placeholder"></div>
+    </body>
+    <script>
+    var state = {
+            show: {
+                'world': {
+                }
+            },
+            time: 1980,
+            timeRange: [1800, 2000],
+            yaxis: {
+                indicator: 'gdp'
+            }
+        };
+
+        vizabi.start("hello-world", "#placeholder", state);
+        vizabi.ready(function() {
+            console.log("Vizabi is ready!");
+        });
+
+        function randomSize() {
+            var width = Math.floor(Math.random() * 800) + 300;
+            var height = Math.floor(Math.random() * 500) + 300;
+            var container = document.getElementById("placeholder");
+            container.style.width = width + "px";
+            container.style.height = height + "px";
+            
+            //force resize
+            event = document.createEvent("HTMLEvents");
+            event.initEvent("resize", true, true);
+            event.eventName = "resize";
+            window.dispatchEvent(event);
+        }
+    </script>
+</html>
