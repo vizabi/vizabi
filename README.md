@@ -4,8 +4,8 @@ viz-external-dev
 # Starting out
 
 ```sh
-git clone http://github.com/Gapminder/viz-external-dev vizabi-v2
-cd vizabi-v2
+git clone http://github.com/Gapminder/vizabi-experiments
+cd vizabi-experiments
 git checkout develop
 ```
 
@@ -16,7 +16,17 @@ bower install
 npm install
 ```
 
-# Creating a new visualization
+In order to build it, run:
+```sh
+grunt
+```
+
+If you want to build in develop mode, run:
+```sh
+grunt dev
+```
+
+# Creating a new visualization (to be edited)
 
 Type, on the root directory:
 
