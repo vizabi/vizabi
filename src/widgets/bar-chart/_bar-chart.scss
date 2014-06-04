@@ -4,6 +4,11 @@
     .x.axis {
         fill: none;
         stroke: black;
+
+        text {
+            fill: black;
+            stroke: none;
+        }
     }
 
     .y.axis {
@@ -19,5 +24,11 @@
     rect.bar {
         fill: steelblue;
         stroke: black;
+    }
+
+    text {
+        fill: black;
+        stroke: none;
+        text-anchor: middle;
     }
 }
