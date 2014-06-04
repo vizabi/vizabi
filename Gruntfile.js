@@ -31,7 +31,7 @@ module.exports = function (grunt) {
       uglify: {
         files: { 
             cwd: 'src/',          // base path
-            src: '**/*.js',   // source files mask
+            src: '**/*.js',       // source files mask
             dest: 'dist',         // destination folder
             expand: true,         // allow dynamic building
             mangle: false,        // disallow change in names
@@ -59,6 +59,13 @@ module.exports = function (grunt) {
         }
       },
 
+      // Make sure necessary files are built when changes are made
+      watch: {
+        styles: {
+          files: ['src/**/*.scss'],
+          tasks: ['sass:dev']
+        } 
+      }
     });
 
     /* 
@@ -81,7 +88,8 @@ module.exports = function (grunt) {
 
       'clean:dist',   //clean dist folder
       'copy',         //copy js files
-      'sass:dev'      //compile scss
+      'sass:dev',     //compile scss
+      'watch:styles'
 
     ]);
 
