@@ -196,10 +196,12 @@ define([
         container.addClass("playing");
         var yearValue = timesliderClass.getYear();
         playInterval = setInterval(function() {
-            timesliderClass.setYear(yearValue++);
-            if (yearValue >= range[1]) {
+            if (yearValue > range[1]) {
                 stopPlaying();
                 return;
+            }
+            else {
+                timesliderClass.setYear(yearValue++);
             }
         }, speed);
     };
