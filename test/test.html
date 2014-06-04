@@ -10,10 +10,9 @@
     <div id="placeholder"></div>
     </body>
     <script>
-        var state = {
+    var state = {
             show: {
                 'world': {
-
                 }
             },
             time: 1980,
@@ -22,11 +21,10 @@
                 indicator: 'gdp'
             }
         };
-        vizabi.start("hello-world", "#placeholder", state, function() {
-            //hello-world is ready at this point
-        });
+
+        vizabi.start("hello-world", "#placeholder", state);
         vizabi.ready(function() {
-            //everything is ready at this point
+            console.log("Vizabi is ready!");
         });
     </script>
 </html>
