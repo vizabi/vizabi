@@ -17,13 +17,20 @@ module.exports = function (grunt) {
           dist: ["dist"]
       },
 
-      // Copy all js files to dist folder
+      // Copy all js and template files to dist folder
       copy: {
-          build: {
-            cwd: 'src',
-            src: [ '**/*.js', '**/*.html' ],
-            dest: 'dist',
-            expand: true
+            scripts: {
+              cwd: 'src',
+              src: ['**/*.js'],
+              dest: 'dist',
+              expand: true
+            },
+            templates: {
+              cwd: 'src',
+              src: ['**/*.html'],
+              dest: 'dist',
+              expand: true
+            }            
           },
       },
 
@@ -64,7 +71,7 @@ module.exports = function (grunt) {
         styles: {
           files: ['src/**/*.scss'],
           tasks: ['sass:dev']
-        } 
+        }
       }
     });
 
@@ -77,7 +84,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default',[
 
       'clean:dist',   //clean dist folder
-      'copy',         //copy js files
+      'copy:templates',         //copy js and template files
       'uglify',       //uglify js files
       'sass:dist'     //compile scss
 
@@ -87,7 +94,7 @@ module.exports = function (grunt) {
     grunt.registerTask('dev', [
 
       'clean:dist',   //clean dist folder
-      'copy',         //copy js files
+      'copy',         //copy js and template files
       'sass:dev',     //compile scss
       'watch:styles'
 
