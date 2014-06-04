@@ -1,9 +1,8 @@
 define([
   'd3',
   'base/object',
-  'widgets/widget',
-  'managers/layout/layout',
-], function(d3, object, Widget, LayoutMan) {
+  'widgets/widget'
+], function(d3, object, Widget) {
 
   //Tool does everything a widget does, but has different defaults
   //And possibly some extra methods
@@ -19,10 +18,15 @@ define([
         }
       };
       // Same constructor as the superclass
-      this._super(options);
-      
-      LayoutMan.setContainer(this.placeholder);
-      LayoutMan.setProfile(this.profiles);
+      this._super(core, options);
+
+    },
+
+    render: function() {
+
+      this.events.bind('resize', function() {
+        this.layout.update();
+      });
 
     }
   });

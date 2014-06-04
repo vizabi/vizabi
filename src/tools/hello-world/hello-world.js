@@ -19,7 +19,7 @@ define([
                 }
             }, options.state);
 
-            this._super(options);
+            this._super(context, options);
         }
     });
 

@@ -17,6 +17,10 @@ var Widget = Class.extend({
       this.element = this.element || null;
       this.widgets = this.widgets || {};
 
+      this.layout = core.getInstance("layout");
+      this.layout.setContainer(this.placeholder);
+      this.layout.setProfile(this.profiles);
+
       this.placeholder = d3.select(this.placeholder);
       this.loadWidgets();
   },
@@ -29,6 +33,7 @@ var Widget = Class.extend({
       //TODO: Chance of refactoring
       _this.resize();
       events.bind('resize', function() {
+        _this.layout.update();
         _this.resize();
       });
     });

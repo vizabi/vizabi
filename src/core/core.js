@@ -11,9 +11,9 @@ define([
         tools = {},
         managers = {
             events: EventsManager,
-            layout: LayoutManager,
-            data: DataManager,
-            i18n: i18nManager
+            layout: new LayoutManager(),
+            data:   DataManager,
+            i18n:   i18nManager
         };
 
     var core = Class.extend({
@@ -44,6 +44,7 @@ define([
         },
         
         getInstance: function(manager) {
+            if(manager === "layout") return new LayoutManager();
             return managers[manager].instance();
         },
 
