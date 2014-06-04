@@ -1,3 +1,6 @@
 @import "_common";
 
+$fa-font-path: "../bower_components/font-awesome/fonts";
+@import "../../bower_components/font-awesome/scss/font-awesome";
+
 @import "../tools/hello-world/_hello-world";
