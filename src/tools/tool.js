@@ -1,8 +1,8 @@
 define([
   'd3',
-  'base/object',
+  'underscore',
   'widgets/widget'
-], function(d3, object, Widget) {
+], function(d3, _, Widget) {
 
   //Tool does everything a widget does, but has different defaults
   //And possibly some extra methods

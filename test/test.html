@@ -11,9 +11,16 @@
     </body>
     <script>
         var state = {
-           show: [{planet: 'world'}],
-           time: 2014,
-           ind: 'gdp'
+            show: {
+                'world': {
+
+                }
+            },
+            time: 1980,
+            timeRange: [1800, 2000],
+            yaxis: {
+                indicator: 'gdp'
+            }
         };
         vizabi.start("hello-world", "#placeholder", state, function() {
             //hello-world is ready at this point

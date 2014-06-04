@@ -1,6 +1,10 @@
 @import "_common";
 
-// <?== generator.tool.style ==?>  
+$fa-font-path: "../bower_components/font-awesome/fonts";
+@import "../../bower_components/font-awesome/scss/font-awesome";
+
 @import "../tools/hello-world/_hello-world";
+
+// <?== generator.tool.style ==?>  
 
 // <?== generator.widget.style ==?>
