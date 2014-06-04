@@ -6,7 +6,7 @@ define([
 ], function(d3, _, Class, events) {
 
 var Widget = Class.extend({
-    init: function(options) {
+    init: function(core, options) {
       this.name = this.name || options.name;
       this.state = this.state || {};
       this.template = this.template || "widgets/widget";
@@ -20,6 +20,8 @@ var Widget = Class.extend({
       this.layout = core.getInstance("layout");
       this.layout.setContainer(this.placeholder);
       this.layout.setProfile(this.profiles);
+
+      this.events = core.getInstance('events');
 
       this.placeholder = d3.select(this.placeholder);
       this.loadWidgets();
