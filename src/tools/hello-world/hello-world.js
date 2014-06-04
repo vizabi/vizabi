@@ -32,6 +32,14 @@ define([
             }
 
             this._super(context, options);
+        },
+
+        // At tool level, we only pass the callback and return the defered
+        // from super to vizabi.js
+        render: function() {
+            return this._super(function() {
+                console.log("Hello World");
+            });
         }
 
     });
