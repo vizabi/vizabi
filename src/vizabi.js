@@ -35,7 +35,9 @@
     //add requireJS
     getScript("../bower_components/requirejs/require.js", function() {
         //load configuration and paths
-        require(["vizabi-config"], function(config) {
+
+        //TODO: config should have a base url...
+        require(["../dist/config"], function(config) {
             //config is now available
             require.config(config.require);
             //start vizabi

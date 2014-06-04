@@ -1,5 +1,5 @@
 define([
-    'vizabi-config',
+    'config',
     'base/class',
     'managers/events/events',
     'managers/layout/layout',
