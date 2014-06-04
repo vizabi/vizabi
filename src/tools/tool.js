@@ -17,12 +17,13 @@ define([
           title: true
         }
       };
-      // Same constructor as the superclass
-      this._super(core, options);
+      this.layout = core.getInstance("layout");
 
+      // Same constructor as widgets
+      this._super(core, options);
     },
 
-    //Tools renders just like widgets, but they update the layout
+    //Tools renders just like the widgets, but they update the layout
     render: function() {
       var _this = this;
       return this._super(function() {
