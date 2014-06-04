@@ -9,7 +9,7 @@ define([
         init: function() {
             this.screen_sizes = config.screen_sizes;  //accepted sizes
             this.container = null;                    //d3 container
-            this.profiless = {};                       
+            this.profiles = {};                       
             this.current_profiles = null;
         },
 

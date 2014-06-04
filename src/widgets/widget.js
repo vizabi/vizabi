@@ -2,9 +2,10 @@ define([
   'jquery',
   'd3',
   'underscore',
+  'base/utils',
   'base/class',
   'managers/events/events'
-], function($, d3, _, Class, events) {
+], function($, d3, _, utils, Class, events) {
 
   var Widget = Class.extend({
     init: function(core, options) {
@@ -12,6 +13,7 @@ define([
       this.state = this.state || options.state;
       this.placeholder = this.placeholder || options.placeholder;
 
+      this.element = this.element || null;
       this.core = this.core || core;
       this.template = this.template || "widgets/widget";
       this.template_data = this.template_data || {
@@ -41,9 +43,9 @@ define([
         if(_.isFunction(postRender)) postRender();
 
         //TODO: Chance of refactoring
+        //Every widget binds its resize function to the resize event
         _this.resize();
         events.bind('resize', function() {
-          _this.layout.update();
           _this.resize();
         });
 
@@ -129,8 +131,12 @@ define([
         //place the contents into the correct placeholder and define layout
         _this.placeholder = d3.select(_this.placeholder);
         _this.placeholder.html(rendered);
-        _this.layout.setContainer(_this.placeholder);
-        _this.layout.setProfile(_this.profiles);
+
+        //todo: refactor the way we select the first child
+        //define this element inside the placeholder
+        _this.element = utils.jQueryToD3(
+          utils.d3ToJquery(_this.placeholder).children().first()
+          );
 
         //Resolve defer
         defer.resolve();

@@ -20,6 +20,20 @@ define([
       // Same constructor as the superclass
       this._super(core, options);
 
+    },
+
+    //Tools renders just like widgets, but they update the layout
+    render: function() {
+      var _this = this;
+      return this._super(function() {
+        _this.layout.setContainer(_this.element);
+        _this.layout.setProfile(_this.profiles);
+        _this.layout.update();
+        //binds resize event to update
+        _this.events.bind('resize', function() {
+          _this.layout.update();
+        });
+      });
     }
 
   });
