@@ -5,9 +5,16 @@ var yeoman = require('yeoman-generator');
 var yosay = require('yosay');
 var chalk = require('chalk');
 
-var protectedStrings = {
-  scss: "// <?== generator.vizabi.style ==?>"
+var scssImporter = {
+  tool: "// <?== generator.tool.style ==?>",
+  widget: "// <?== generator.widget.style ==?>"
 };
+
+var paths = {
+  widgets: 'src/widgets/',
+  tools: 'src/tools/',
+  style: 'src/style/'
+}
 
 var VizabiGenerator = yeoman.generators.Base.extend({
   init: function () {
@@ -21,7 +28,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
 
     var vizabiPrompt = [{
       name: 'vizabiName',
-      message: 'Name your new visualization:'
+      message: 'Name your new tool:'
     }];
 
     var widgetPrompt = [{
@@ -34,7 +41,7 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       name: 'generateWhat',
       message: 'What do you want to create?',
       choices: [
-        { name: 'A new Vizabi visualization', value: 'vizabi' },
+        { name: 'A new Vizabi tool', value: 'vizabi' },
         { name: 'A new Vizabi widget', value: 'widget' }
       ]
     }];
@@ -63,34 +70,34 @@ var VizabiGenerator = yeoman.generators.Base.extend({
       var vizabiPath = name + '/' + name;
       var vizabiCssPath = name + '/_' + name;
       
-      var mainStylePath = 'tools/tool.scss';
+      var mainStylePath = paths.style + 'vizabi.scss';
       var mainStyle = this.readFileAsString(mainStylePath);
 
-      this.mkdir('tools/' + name);
-      this.template('_tool_plain.js', 'tools/' + vizabiPath + '.js');
-      this.template('_tool_plain.scss', 'tools/' + vizabiCssPath + '.scss');
+      this.mkdir(paths.tools + name);
+      this.template('_tool_plain.js', paths.tools + vizabiPath + '.js');
+      this.template('_tool_plain.scss', paths.tools + vizabiCssPath + '.scss');
       
       if (mainStyle) {
         this.write(mainStylePath, 
-          mainStyle.replace(protectedStrings.scss,
-            '@import \'' + name + '/' + '_' + name + '\';\n    ' + protectedStrings.scss));
+          mainStyle.replace(scssImporter.tool,
+            scssImporter.tool + '\n' + '@import \'' + name + '/' + '_' + name + '\';\n    '));
       }
     } else if (this.widgetName) {
       var name = this._.slugify(this.widgetName);
       var widgetPath = name + '/' + name;
       var widgetCssPath = name + '/_' + name;
 
-      var mainStylePath = 'widgets/_widgets.scss';
+      var mainStylePath = paths.style + 'vizabi.scss';
       var mainStyle = this.readFileAsString(mainStylePath);
 
-      this.mkdir('widgets/' + name);
-      this.template('_widget_plain.js', 'widgets/' + widgetPath + '.js');
-      this.template('_widget_plain.scss', 'widgets/' + widgetCssPath + '.scss');
+      this.mkdir(paths.widgets + name);
+      this.template('_widget_plain.js', paths.widgets + widgetPath + '.js');
+      this.template('_widget_plain.scss', paths.widgets + widgetCssPath + '.scss');
 
       if (mainStyle) {
         this.write(mainStylePath, 
-          mainStyle.replace(protectedStrings.scss,
-            '@import \'' + name + '/' + '_' + name + '\';\n    ' + protectedStrings.scss));
+          mainStyle.replace(scssImporter.widget,
+            scssImporter.tool + '\n' + '@import \'' + name + '/' + '_' + name + '\';\n    '));
       }
     }
   },

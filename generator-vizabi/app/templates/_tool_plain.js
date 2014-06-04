@@ -4,8 +4,7 @@ define([
     var <%= _.camelize(vizabiName) %> = Tool.extend({
         init: function(context, options) {
             this.name = <%= _.slugify(vizabiName) %>;
-
-            this._super(options);
+            this._super(context, options);
         }
     });
 

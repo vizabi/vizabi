@@ -1,22 +1,12 @@
 define([
     'widgets/widget'
 ], function(Widget) {
-    var newWidget = function(sandbox) {
-        var <%= _.camelize(widgetName) %> = new Widget(sandbox);
-
-        <%= _.camelize(widgetName) %>.name = '<%= _.slugify(widgetName) %>';
-        <%= _.camelize(widgetName) %>.setWidgetClass('<%= _.slugify(widgetName) %>');
-
-        <%= _.camelize(widgetName) %>.start = function() {
-            return this;
+    var <%= _.camelize(widgetName) %> = Widget.extend({
+        init: function(context, options) {
+            this.name = <%= _.slugify(widgetName) %>;
+            this._super(context, options);
         }
+    });
 
-        <%= _.camelize(widgetName) %>.render = function(width, height) {
-            return this;
-        }.bind(<%= _.camelize(widgetName) %>);
-
-        return <%= _.camelize(widgetName) %>;
-    }
-
-    return newWidget;
+    return <%= _.camelize(widgetName) %>;
 });
