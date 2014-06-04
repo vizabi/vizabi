@@ -37,7 +37,7 @@ define([
              * example: small { timeslider: false } would produce
              * a class timeslider-off when the screen is small
              */
-            var profile = this.profiles[current] || this.profiles["default"];
+            var profile = this.profiles[_this.current_profile] || this.profiles["default"];
             if(profile) {
                 _.each(profile, function(value, item) {
                     _this.container.classed(item+"-off", !value);

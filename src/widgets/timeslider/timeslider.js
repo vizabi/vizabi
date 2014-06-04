@@ -1,11 +1,15 @@
+//todo: refactor this whole thing
+
 define([
-    'd3',
+    'jquery',
+    'base/utils',
     'widgets/widget'
-], function(d3, Widget) {
+], function($, utils, Widget) {
 
 
     //plugin variables
-    var timeslider,
+    var container,
+        timeslider,
         drag,
         lineBefore,
         lifeAfter,
@@ -13,70 +17,79 @@ define([
         range = null,
         startYear = null,
         playInterval,
-        speed = 300;
+        speed = 300,
+        timesliderClass;
 
 
     var Timeslider = Widget.extend({
-        init: function(core, options) {
+
+        init: function(parent, options) {
             this.template = "widgets/timeslider/timeslider";
 
             // Same constructor as the superclass
-            this._super(core, options);
+            this._super(parent, options);
+
             range = options.state.timeRange;
             startYear = options.state.time;
+            timesliderClass = this;
         },
 
         postRender: function() {
-            timeslider = $("#timeslider #time-slider");
-            drag = $("#timeslider #time-slider-drag");
-            lineBefore = $("#timeslider .time-slider-line.before");
-            lineAfter = $("#timeslider .time-slider-line.after");
 
-            var play = $("#timeslider #time-slider-play"),
-                pause = $("#timeslider #time-slider-pause");
+            this.placeholder = utils.d3ToJquery(this.placeholder);
 
+            container = this.placeholder.find("#time-slider-container");
+            timeslider = container.find("#time-slider");
+            drag = timeslider.find("#time-slider-drag");
+            lineBefore = timeslider.find(".time-slider-line.before");
+            lineAfter = timeslider.find(".time-slider-line.after");
+
+            var play = container.find("#time-slider-play"),
+                pause = container.find("#time-slider-pause");
+
+            var _this = this;
             play.click(function() {
                 startPlaying();
             });
+
             pause.click(function() {
                 stopPlaying();
             });
 
-            setYear(startYear);
+            this.setYear(startYear);
             drag.bind("touchstart mousedown", startDrag);
         },
 
         resize: function() {
-            var yearValue = getYear();
-            setYear(yearValue);
+            var year = this.getYear();
+            this.setYear(year);
+        },
+
+        getYear: function() {
+            return drag.attr('data-year');
+        },
+
+        setYear: function(year) {
+            var maxLeft = timeslider.outerWidth() - drag.outerWidth(),
+                minLeft = 0,
+                numYears = range[1] - range[0], //difference
+                widthPeryear = maxLeft / numYears;
+
+            var posYear = Math.floor(widthPeryear * (year - range[0]));
+            drag.css({
+                left: posYear
+            });
+            drag.attr("data-year", year);
+            setLines();
+
+            //update state
+            this.setState({
+                year: year
+            });
         }
 
     });
 
-    var startDrag = function(event) {
-        stopPlaying();
-        var orig = event.originalEvent;
-        var posTimeSlider = timeslider.position();
-        var posYear = drag.position();
-
-        if (orig.changedTouches) {
-            offset = {
-                x: orig.changedTouches[0].pageX - posYear.left,
-                y: orig.changedTouches[0].pageY - posTimeSlider.top
-            };
-        } else {
-            offset = {
-                x: orig.pageX - posYear.left,
-                y: orig.pageY - posTimeSlider.top
-            };
-        }
-        $(document).bind("touchmove mousemove", moveDrag);
-        $(document).bind("touchend touchcancel mouseup", endDrag);
-        drag.bind("touchend touchcancel mouseup change", endDrag);
-        timeslider.addClass("dragging");
-    };
-
-    //start moving
     var moveDrag = function(event) {
         event.preventDefault();
         var orig = event.originalEvent;
@@ -108,9 +121,32 @@ define([
 
         yearFromPosition();
 
-        var yearValue = getYear();
-        setYear(yearValue);
+        var year = timesliderClass.getYear();
+        timesliderClass.setYear(year);
 
+    };
+
+    var startDrag = function(event) {
+        stopPlaying();
+        var orig = event.originalEvent;
+        var posTimeSlider = timeslider.position();
+        var posYear = drag.position();
+
+        if (orig.changedTouches) {
+            offset = {
+                x: orig.changedTouches[0].pageX - posYear.left,
+                y: orig.changedTouches[0].pageY - posTimeSlider.top
+            };
+        } else {
+            offset = {
+                x: orig.pageX - posYear.left,
+                y: orig.pageY - posTimeSlider.top
+            };
+        }
+        $(document).bind("touchmove mousemove", moveDrag);
+        $(document).bind("touchend touchcancel mouseup", endDrag);
+        drag.bind("touchend touchcancel mouseup change", endDrag);
+        timeslider.addClass("dragging");
     };
 
     var endDrag = function(event) {
@@ -119,8 +155,8 @@ define([
         drag.unbind("touchend touchcancel mouseup");
         timeslider.removeClass("dragging");
 
-        var yearValue = getYear();
-        setYear(yearValue);
+        var year = timesliderClass.getYear();
+        timesliderClass.setYear(year);
     };
 
     var yearFromPosition = function() {
@@ -133,26 +169,6 @@ define([
         var yearValue = Math.floor(posYear / widthPeryear) + range[0];
         drag.attr("data-year", yearValue);
         setLines();
-    };
-
-    var setYear = function(yearValue) {
-        var maxLeft = timeslider.outerWidth() - drag.outerWidth(),
-            minLeft = 0,
-            numYears = range[1] - range[0], //difference
-            widthPeryear = maxLeft / numYears;
-
-        var posYear = Math.floor(widthPeryear * (yearValue - range[0]));
-        drag.css({
-            left: posYear
-        });
-        drag.attr("data-year", yearValue);
-        setLines();
-
-        //update state
-        sandbox.setState({
-            year: yearValue
-        });
-
     };
 
     var setLines = function() {
@@ -173,24 +189,21 @@ define([
     };
 
     var startPlaying = function() {
-        timeslider.closest("#timeslider").addClass("playing");
-        var yearValue = getYear();
+        container.addClass("playing");
+        var yearValue = timesliderClass.getYear();
         playInterval = setInterval(function() {
-            setYear(yearValue++);
+            timesliderClass.setYear(yearValue++);
             if (yearValue >= range[1]) {
                 stopPlaying();
                 return;
             }
         }, speed);
     };
-    var stopPlaying = function() {
-        timeslider.closest("#timeslider").removeClass("playing");
-        clearInterval(playInterval);
-    };
 
-    var getYear = function() {
-        return drag.attr('data-year');
-    };
+    var stopPlaying = function() {
+        container.removeClass("playing");
+        clearInterval(playInterval);
+    }
 
 
     return Timeslider;
