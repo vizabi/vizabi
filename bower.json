@@ -23,7 +23,8 @@
     "jquery": "~2.1.0",
     "sprintf": "*",
     "i18n-js": "https://github.com/Gapminder/i18n-js.git#develop",
-    "requirejs-text": "~2.0.12"
+    "requirejs-text": "~2.0.12",
+    "font-awesome": "~4.1.0"
   },
   "devDependencies": {
     "requirejs": "~2.1.11",
