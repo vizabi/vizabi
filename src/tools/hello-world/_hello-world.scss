@@ -1,3 +1,5 @@
+@import '../_visualization.scss';
+
 .hello-world {
-	
+	@extend .vizabi-tool;
 }

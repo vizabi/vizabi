@@ -1,0 +1,107 @@
+.vizabi-tool {
+
+    $heightTitle: 40px;
+    $sizeButtonList: 60px;
+    $sizeButtonListSmall: 50px;
+    $sizeTimeSlider: 70px;
+    $sizeTimeSliderSmall: 50px;
+
+    @include absoluteAll;
+
+    .vizabi-tool-title{
+        @include box-sizing(border-box);
+        @include absolute(0px,0px,auto,0px);
+        @include font-size(18px);
+        height: $heightTitle;
+        background-color: #f2f2f2;
+        font-family: $fontFamily;
+        padding: 10px;
+        color: $colorIMmediumBlue;
+    }
+
+    .vizabi-tool-content {
+        @include absolute($heightTitle,0px,0px,0px);
+
+        .vizabi-tool-stage{
+            @include absolute(0px,$sizeButtonList,0px,0px);
+            
+            .vizabi-tool-viz {
+                @include absolute(0px,0px,$sizeTimeSlider,0px);
+            }
+            .vizabi-tool-timeslider {
+                @include absolute(auto,0px,0px,0px);
+                height: $sizeTimeSlider;
+            }
+        }
+        .vizabi-tool-buttonlist {
+            @include absolute(0px,0px,0px);
+            width: $sizeButtonList;
+            background-color: #f2f2f2;
+        }
+    }
+
+    // hide sections
+    &.title-off {
+        .vizabi-tool-title{
+            display: none;
+        }
+        .vizabi-tool-content {
+            @include absoluteAll;
+        }
+    }
+    &.timeslider-off {
+        .vizabi-tool-timeslider {
+            display: none;
+        }
+        .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
+            @include absoluteAll;
+        }
+    }
+    &.buttonlist-off {
+        .vizabi-tool-buttonlist {
+            display: none;
+        }
+        .vizabi-tool-content .vizabi-tool-stage {
+            @include absoluteAll;
+        }
+    }
+
+    //Responsiveness
+
+    &.small {
+        .vizabi-tool-title{
+            height: $heightTitle - 8px;
+            @include font-size(14px);
+        }
+        .vizabi-tool-content {
+            @include absolute($heightTitle - 8px,0px,0px,0px);
+
+            .vizabi-tool-stage {
+            
+                @include absolute(0px,$sizeButtonListSmall,0px,0px);
+                
+                .vizabi-tool-viz {
+                    @include absolute(0px,0px,$sizeTimeSliderSmall,0px);
+                }
+                .vizabi-tool-timeslider {
+                    height: $sizeTimeSliderSmall;
+                }
+            }
+            .vizabi-tool-buttonlist {
+                width: $sizeButtonListSmall;
+            }
+        }
+    }
+    &.small.portrait {
+        .vizabi-tool-content {
+            .vizabi-tool-stage {
+                @include absolute(0px,0px,$sizeButtonListSmall,0px);
+            }
+            .vizabi-tool-buttonlist {
+                @include absolute(auto, 0px,0px,0px);
+                width: auto;
+                height: $sizeButtonListSmall;
+            }
+        }
+    }
+}
