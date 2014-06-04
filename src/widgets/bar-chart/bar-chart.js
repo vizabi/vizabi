@@ -37,6 +37,11 @@ define([
                 .attr('transform', 'translate(' + margin + ',' + margin + ')')
                 .call(yAxis);
 
+            svg.append('text')
+                .attr('class', 'title')
+                .attr('transform', 'translate(' + (margin + 15) + ',' + (margin + 15) + ')')
+                .text('The world without numbers');
+
             var chart = svg.selectAll(".bar")
                 .data(mock)
                 .enter();
@@ -49,6 +54,7 @@ define([
                 .attr("height", function(d) { return height - 15 - y(d.value); });
             
             chart.append('text')
+                .classed('bar-title', true)
                 .attr('y', function(d) { return margin + 5 + y(d.value); })
                 .attr('x', function(d) { return margin + x(d.name) + (x.rangeBand() / 2); })
                 .text(function(d) { return d.name; });

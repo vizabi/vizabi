@@ -26,9 +26,14 @@
         stroke: black;
     }
 
-    text {
+    .bar-title {
         fill: black;
         stroke: none;
         text-anchor: middle;
+    }
+
+    .title {
+        fill: black;
+        stroke: none;
     }
 }
