@@ -8,9 +8,9 @@ define([
 var Widget = Class.extend({
     init: function(core, options) {
       this.name = this.name || options.name;
+      this.state = this.state || options.state;
       this.placeholder = this.placeholder || options.placeholder;
       
-      this.state = this.state || {};
       this.template = this.template || "widgets/widget";
       this.template_data = this.template_data || {};
       // Markup to define where a Widget is going to be rendered.
@@ -58,7 +58,8 @@ var Widget = Class.extend({
 
         _this.widgets[widget] = new subwidget(core, {
           name: widget,
-          placeholder: placeholder
+          placeholder: placeholder,
+          state: _this.state
         });
 
       });
