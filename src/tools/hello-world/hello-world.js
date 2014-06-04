@@ -14,10 +14,14 @@ define([
                     }
                 },
                 time: '1980',
+                timeRange: [1800, 2000],
                 yaxis: {
                     indicator: 'gdp'
                 }
             }, options.state);
+
+            //todo: refactor the way we pass the state forward
+            options.state = this.state;
 
             //todo: selectors should be improved
             this.widgets = {

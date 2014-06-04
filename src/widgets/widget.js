@@ -94,6 +94,11 @@ var Widget = Class.extend({
 
   resize: function() {
 
+  setState: function(state) {
+    this.state = _.extend(this.state, state);
+    events.trigger('change:state', this.state);
+    return this;
+  },
   }
 });
 
