@@ -23,6 +23,7 @@ define([
     },
 
     render: function() {
+      this._super();
 
       this.events.bind('resize', function() {
         this.layout.update();
