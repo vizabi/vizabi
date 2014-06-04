@@ -3,8 +3,7 @@ define([
   'd3',
   'underscore',
   'base/utils',
-  'base/class',
-  'managers/events/events'
+  'base/class'
 ], function($, d3, _, utils, Class, events) {
 
   var Widget = Class.extend({
@@ -24,7 +23,6 @@ define([
       this.element = this.element || null;
       this.widgets = this.widgets || {};
 
-      this.layout = core.getInstance("layout");
       this.profiles = this.profiles || {};
       this.parent = parent;
 
@@ -45,7 +43,7 @@ define([
         //TODO: Chance of refactoring
         //Every widget binds its resize function to the resize event
         _this.resize();
-        events.bind('resize', function() {
+        _this.events.bind('resize', function() {
           _this.resize();
         });
 
@@ -128,7 +126,7 @@ define([
         //render template using underscore
         var rendered = _.template(html, _this.template_data);
 
-        //place the contents into the correct placeholder and define layout
+        //place the contents into the correct placeholder
         _this.placeholder = d3.select(_this.placeholder);
         _this.placeholder.html(rendered);
 
@@ -151,7 +149,7 @@ define([
 
     setState: function(state) {
       this.state = _.extend(this.state, state);
-      events.trigger('change:state', this.state);
+      this.events.trigger('change:state', this.state);
       return this;
     },
 
