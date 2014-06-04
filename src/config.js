@@ -51,6 +51,21 @@ define([], function() {
                     po: '/api/i18nCatalog/poJson?id=%(filename)s&lang=%(lang)s',
                 }
             }
+        },
+
+        screen_sizes: {
+            small: {
+                min_width: 0,
+                max_width: 749,
+            },
+            medium: {
+                min_width: 750,
+                max_width: 969,
+            }, 
+            large: {
+                min_width: 970,
+                max_width: Infinity,
+            }
         }
     };
     return configs;
