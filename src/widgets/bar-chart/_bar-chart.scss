@@ -1,3 +1,23 @@
 .bar-chart {
     @import '../../src/style/common';
+
+    .x.axis {
+        fill: none;
+        stroke: black;
+    }
+
+    .y.axis {
+        fill: none;
+        stroke: black;
+
+        text {
+            fill: black;
+            stroke: none;
+        }
+    }
+
+    rect.bar {
+        fill: steelblue;
+        stroke: black;
+    }
 }
