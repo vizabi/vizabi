@@ -20,16 +20,8 @@ define([
       // Same constructor as the superclass
       this._super(core, options);
 
-    },
-
-    render: function() {
-      this._super();
-
-      this.events.bind('resize', function() {
-        this.layout.update();
-      });
-
     }
+
   });
 
   return Tool;

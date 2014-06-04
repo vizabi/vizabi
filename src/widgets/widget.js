@@ -8,11 +8,12 @@ define([
 var Widget = Class.extend({
     init: function(core, options) {
       this.name = this.name || options.name;
+      this.placeholder = this.placeholder || options.placeholder;
+      
       this.state = this.state || {};
       this.template = this.template || "widgets/widget";
       this.template_data = this.template_data || {};
       // Markup to define where a Widget is going to be rendered.
-      this.placeholder = this.placeholder || null;
       // Element which embodies the Widget
       this.element = this.element || null;
       this.widgets = this.widgets || {};
@@ -22,14 +23,15 @@ var Widget = Class.extend({
       this.layout.setProfile(this.profiles);
 
       this.events = core.getInstance('events');
-
-      this.placeholder = d3.select(this.placeholder);
-      this.loadWidgets();
+      this.loadWidgets(core);
   },
 
   render: function() {
     var _this = this;
     this.loadTemplate(function()  {
+      
+      _this.postRender();
+
       _this.renderWidgets();
 
       //TODO: Chance of refactoring
@@ -41,7 +43,12 @@ var Widget = Class.extend({
     });
   },
 
-  loadWidgets: function() {
+  //TODO: 
+  postRender: function() {
+    console.log("This comes after you load the template");
+  },
+
+  loadWidgets: function(core) {
     var _this = this;
     // Loops through widgets, instantiating them. 
     _.each(this.widgets, function(placeholder, widget) {
@@ -49,7 +56,7 @@ var Widget = Class.extend({
       // Loads the file we need
       require([path], function(subwidget) {
 
-        _this.widgets[widget] = new subwidget(_this, {
+        _this.widgets[widget] = new subwidget(core, {
           name: widget,
           placeholder: placeholder
         });
@@ -75,6 +82,7 @@ var Widget = Class.extend({
       //render template using underscore
       var rendered = _.template(html, _this.template_data);
       //place the contents into the correct placeholder
+      _this.placeholder = d3.select(_this.placeholder);
       _this.placeholder.html(rendered);
       
       if (_.isFunction(ready)) {
