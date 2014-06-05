@@ -7,8 +7,8 @@ define([
     'smartpicker'
 ], function($, utils, Component, SmartPicker) {
 
-    var geo_picker = new SmartPicker('geoMult', 'geo-picker');
-    
+    var geo_picker = new SmartPicker('geoMult', 'geo-picker', {width: 320});
+
     var ButtonList = Component.extend({
         init: function(core, options) {
             //set properties
@@ -17,27 +17,32 @@ define([
 
             this.template_data = {
                 buttons: [{
-                    name: "find",
+                    id: "geo",
+                    title: "Country",
+                    icon: "globe"
+                },
+                {
+                    id: "find",
                     title: "Find",
                     icon: "search"
                 }, {
-                    name: "options",
+                    id: "options",
                     title: "Options",
                     icon: "gear"
                 }, {
-                    name: "colors",
+                    id: "colors",
                     title: "Colors",
                     icon: "pencil"
                 }, {
-                    name: "speed",
+                    id: "speed",
                     title: "Speed",
                     icon: "dashboard"
                 }, {
-                    name: "find",
+                    id: "find",
                     title: "Find",
                     icon: "search"
                 }, {
-                    name: "options",
+                    id: "options",
                     title: "Options",
                     icon: "gear"
                 }]
@@ -52,6 +57,12 @@ define([
             return this._super(function() {
                 //TODO: refactor this callback into separate function
                 _this.placeholder = utils.d3ToJquery(_this.placeholder);
+
+                var geo_button = _this.placeholder.find('#geo');
+                geo_button.click(function() {
+                    geo_picker.show();
+                });
+
             });
         },
 
