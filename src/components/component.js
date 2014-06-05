@@ -4,7 +4,7 @@ define([
   'underscore',
   'base/utils',
   'base/class'
-], function($, d3, _, utils, Class, events) {
+], function($, d3, _, utils, Class) {
 
   var Component = Class.extend({
     init: function(core, options) {
@@ -41,7 +41,7 @@ define([
       promise.then(function() {
 
         _this.element.classed("loading", _this.loading);
-        
+
         if(_.isFunction(postRender)) postRender();
 
         //TODO: Chance of refactoring
@@ -51,7 +51,7 @@ define([
           _this.resize();
         });
 
-        return _this.loadComponents(); 
+        return _this.loadComponents();
       })
       // After loading components, render them
       .then(function() {
@@ -73,8 +73,8 @@ define([
       var defer = $.Deferred();
       var defers = [];
       var _this = this;
-      
-      // Loops through components, loading them. 
+
+      // Loops through components, loading them.
       _.each(this.components, function(placeholder, component) {
         var promise = _this.loadComponent(component, placeholder);
         defers.push(promise);
@@ -82,7 +82,7 @@ define([
 
       // When all components have been successfully loaded, resolve the defer
       $.when.apply(null,defers).done(function() {
-        
+
         //todo: remove comments of simulation
         //setTimeout(function() {
           defer.resolve();
@@ -96,7 +96,7 @@ define([
       var _this = this;
       var defer = $.Deferred();
       var path = "components/" + component + "/" + component;
-      
+
       // Loads the file we need
       require([path], function(subcomponent) {
         _this.components[component] = new subcomponent(_this.core, {
@@ -115,8 +115,8 @@ define([
     renderComponents: function() {
       var defer = $.Deferred();
       var defers = [];
-      
-      // Loops through components, rendering them. 
+
+      // Loops through components, rendering them.
       _.each(this.components, function(component) {
         defers.push(component.render());
       });
