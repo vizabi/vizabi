@@ -79,7 +79,7 @@ define([
                 numYears = range[1] - range[0], //difference
                 widthPeryear = maxLeft / numYears;
 
-            var posYear = Math.floor(widthPeryear * (year - range[0]));
+            var posYear = Math.round(widthPeryear * (year - range[0]));
             drag.css({
                 left: posYear
             });
@@ -170,7 +170,7 @@ define([
             widthPeryear = maxLeft / numYears,
             posYear = drag.position().left;
 
-        var yearValue = Math.floor(posYear / widthPeryear) + range[0];
+        var yearValue = Math.round(posYear / widthPeryear) + range[0];
         drag.attr("data-year", yearValue);
         setLines();
     };
