@@ -18,8 +18,9 @@ define([], function() {
                 core: 'core/core',
                 managers: 'managers',
                 tools: 'tools',
-                widgets: 'widgets',
-                text: '../bower_components/requirejs-text/text'
+                components: 'components',
+                text: '../bower_components/requirejs-text/text',
+                smartpicker: '../bower_components/smart-picker/dist/smart-picker'
             },
             shim: {
                 d3: {
@@ -28,6 +29,10 @@ define([], function() {
                 i18n: {
                     deps: ['jed', 'sprintf', 'jquery'],
                     exports: 'i18n'
+                },
+                smartpicker: {
+                    deps: ['underscore', 'jquery'],
+                    exports: 'smartpicker'
                 }
             }
         },

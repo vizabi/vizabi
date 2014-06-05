@@ -1,0 +1,19 @@
+<%
+//buttonlist_template
+%>
+
+<div id="buttonlist">
+
+	<% for(var i=0, size=buttons.length; i<size; i++) {
+		var button = buttons[i]; %>
+		<button title="<%- button.title %>" id="<%- button.id %>" class="button">
+			<span class="icon"><i class="fa fa-<%- button.icon %>"></i></span>
+			<span class="title"><%- button.title %></span>
+		</button>
+	<% } %>
+
+	<button title="More" id="button-more" class="button">
+		<span class="icon"><i class="fa fa-plus"></i></icon></span>
+		<span class="title">More</span>
+	</button>
+</div>

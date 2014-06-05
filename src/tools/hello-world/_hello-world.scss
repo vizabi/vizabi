@@ -2,4 +2,8 @@
 
 .hello-world {
 	@extend .vizabi-tool;
+
+	@import '../../components/barchart/_barchart.scss';
+	@import '../../components/timeslider/_timeslider.scss';
+	@import '../../components/buttonlist/_buttonlist.scss';
 }

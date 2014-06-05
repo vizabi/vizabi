@@ -44,13 +44,15 @@
             require(["core"], function(core) {
                 var core = new core();
                 //user defined ready function
-                vizabi.viz = core.start(tool_name, tool_container, tool_state, tool_ready);
+                var promise = core.start(tool_name, tool_container, tool_state);
 
-                core.bind("ready:all", function() {
-                	if(typeof vizabi_ready === "function") {
-                		vizabi_ready();
-                	}
-                });
+                promise.then(function() {
+                    vizabi_ready();
+                }, 
+                function() {
+                    console.log("Error Core");
+                })
+
             });
         });
     });

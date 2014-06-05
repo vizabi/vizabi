@@ -1,8 +1,17 @@
 @import "_common";
 
-// <?== generator.tool.style ==?>  
-@import "../tools/hello-world/_hello-world";
+// Import default styles for font awesome
+$fa-font-path: "../bower_components/font-awesome/fonts";
+@import "../../bower_components/font-awesome/scss/font-awesome";
+
+//TODO: remove compass from smart-picker (check smart-pick repo later!)
+// Import default styles for smart picker
+@import "../../bower_components/smart-picker/dist/styles/smart-picker";
 
 // <?== generator.tool.style ==?>
-@import '../widgets/bar-chart/_bar-chart';
-    
+@import "../tools/hello-world/_hello-world";
+
+// <?== generator.component.style ==?>
+@import '../components/bar-chart/_bar-chart';
+@import '../components/buttonlist/_buttonlist';
+@import '../components/timeslider/_timeslider';

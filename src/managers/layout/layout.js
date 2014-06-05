@@ -9,7 +9,7 @@ define([
         init: function() {
             this.screen_sizes = config.screen_sizes;  //accepted sizes
             this.container = null;                    //d3 container
-            this.profiless = {};                       
+            this.profiles = {};                       
             this.current_profiles = null;
         },
 
@@ -37,7 +37,7 @@ define([
              * example: small { timeslider: false } would produce
              * a class timeslider-off when the screen is small
              */
-            var profile = this.profiles[current] || this.profiles["default"];
+            var profile = this.profiles[_this.current_profile] || this.profiles["default"];
             if(profile) {
                 _.each(profile, function(value, item) {
                     _this.container.classed(item+"-off", !value);

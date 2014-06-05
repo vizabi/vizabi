@@ -4,7 +4,7 @@ $buttonWidth: 40px;
 $buttonBackground: #666666;
 $lineColor: #cccccc;
 
-#timeslider {
+#time-slider-container {
 
 	@include box-sizing(border-box);
 	@include absoluteAll;

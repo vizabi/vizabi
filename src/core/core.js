@@ -1,11 +1,12 @@
 define([
+    'jquery',
     'config',
     'base/class',
     'managers/events/events',
     'managers/layout/layout',
     'managers/data/data',
     'i18n' 
-], function(config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
+], function($, config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
 
     var vizID = 1,
         tools = {},
@@ -24,8 +25,9 @@ define([
             });
         },
 
-        start: function(tool_name, placeholder, state, ready) {
-
+        start: function(tool_name, placeholder, state) {
+            var defer = $.Deferred();
+            
             var id = getId(),
                 t_path = config.require.paths.tools,
                 path = t_path + '/' + tool_name + '/' + tool_name,
@@ -37,14 +39,19 @@ define([
 
             require([path], function(Tool) {
                 tools[id] = new Tool(context, options);
-                tools[id].render();
+                var promise = tools[id].render();
+                promise.done(function() {
+                    defer.resolve();
+                });
+                
             });
 
-            return id;
+            return defer;
         },
         
         getInstance: function(manager) {
             if(manager === "layout") return new LayoutManager();
+            if(manager === "events") return managers[manager];
             return managers[manager].instance();
         },
 
