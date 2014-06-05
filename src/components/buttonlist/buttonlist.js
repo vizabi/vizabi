@@ -3,9 +3,12 @@
 define([
     'jquery',
     'base/utils',
-    'components/component'
-], function($, utils, Component) {
+    'components/component',
+    'smartpicker'
+], function($, utils, Component, SmartPicker) {
 
+    var geo_picker = new SmartPicker('geoMult', 'geo-picker');
+    
     var ButtonList = Component.extend({
         init: function(core, options) {
             //set properties
@@ -50,7 +53,6 @@ define([
                 //TODO: refactor this callback into separate function
                 _this.placeholder = utils.d3ToJquery(_this.placeholder);
             });
-
         },
 
         resize: function() {
