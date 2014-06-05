@@ -88,7 +88,7 @@ define([
 
             //update state
             this.setState({
-                year: year
+                time: year
             });
         }
 

@@ -51,6 +51,7 @@ define([
         
         getInstance: function(manager) {
             if(manager === "layout") return new LayoutManager();
+            if(manager === "events") return managers[manager];
             return managers[manager].instance();
         },
 
