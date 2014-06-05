@@ -24,7 +24,7 @@ define([
             options.state = this.state;
 
             //todo: selectors should be improved
-            this.widgets = {
+            this.components = {
                 // "bar-chart": ".vizabi-tool-viz",
                 "timeslider": ".vizabi-tool-timeslider"
                 // "button-list": ".vizabi-tool-button-list",

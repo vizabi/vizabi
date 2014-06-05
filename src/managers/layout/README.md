@@ -213,10 +213,10 @@ calculate the width and height of svg groups. It is described under
 `vizabi/base/svg/rectBox`.
 
 ```javascript
-// Each SVG widget has a `getGroup` function, which returns its SVG container
+// Each SVG component has a `getGroup` function, which returns its SVG container
 schema: {
-    widget: {
-        rectBox: new RectBox(widget.getGroup())
+    component: {
+        rectBox: new RectBox(component.getGroup())
     }
 }
 ```
@@ -227,24 +227,24 @@ schema: {
 render
 ```
 
-Certain visualization widget are susceptible to the size determined by the
+Certain visualization component are susceptible to the size determined by the
 Layout Manager (eg. axes, chart areas). They need to be rendered after the
 Layout Manager has calculated the width/height of the rectangle where the
-widget is drawn.  
+component is drawn.  
 
-The way the Layout Manager communicates this to the widget is by evoking a
-function called `render`, which is defined for every widget that needs to be
+The way the Layout Manager communicates this to the component is by evoking a
+function called `render`, which is defined for every component that needs to be
 're-drawn'.  
 
-It is very important to bind the render function of widgets to their
-respective widgets, otherwise `this` will refer to the LayoutManager and not
-the widget in the render function, as expected.
+It is very important to bind the render function of components to their
+respective components, otherwise `this` will refer to the LayoutManager and not
+the component in the render function, as expected.
 
 ```javascript
 // Pass the reference to the render function
 schema: {
-    widget: {
-        render: widget.render
+    component: {
+        render: component.render
     }
 }
 ```
@@ -264,7 +264,7 @@ value (or related box) you set.
 xcenter, ycenter
 ```
 
-The `xcenter` and `ycenter` are used for aligning the widget horizontally or
+The `xcenter` and `ycenter` are used for aligning the component horizontally or
 vertically with a certain value (or related box). These elements are available
 for use to objects that are not dependent on the calculation of the entire
 rectangle to render themselves.
@@ -297,7 +297,7 @@ parent
 
 * Acceptable value: String
 
-The name of the widget which is to be referenced. The widget name follows the
+The name of the component which is to be referenced. The component name follows the
 name that was given in the set of rules for the Layout Manager.
 
 ```
@@ -318,7 +318,7 @@ SVG. For example, if one wants to position a rectangle with its bottom being
 the bottom of the SVG container, a rule would read:
 
 ```javascript
-widget: {
+component: {
     bottom: {
         parent: 'stage',
         anchor: 'height'

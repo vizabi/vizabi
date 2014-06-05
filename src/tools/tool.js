@@ -1,12 +1,12 @@
 define([
   'd3',
   'underscore',
-  'widgets/widget'
-], function(d3, _, Widget) {
+  'components/component'
+], function(d3, _, Component) {
 
-  //Tool does everything a widget does, but has different defaults
+  //Tool does everything a component does, but has different defaults
   //And possibly some extra methods
-  var Tool = Widget.extend({
+  var Tool = Component.extend({
     init: function(core, options) {
       // Define default template 
       this.template = this.template || "tools/tool";

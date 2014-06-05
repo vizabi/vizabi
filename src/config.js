@@ -18,7 +18,7 @@ define([], function() {
                 core: 'core/core',
                 managers: 'managers',
                 tools: 'tools',
-                widgets: 'widgets',
+                components: 'components',
                 text: '../bower_components/requirejs-text/text'
             },
             shim: {

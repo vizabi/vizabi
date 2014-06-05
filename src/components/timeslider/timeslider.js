@@ -3,8 +3,8 @@
 define([
     'jquery',
     'base/utils',
-    'widgets/widget'
-], function($, utils, Widget) {
+    'components/component'
+], function($, utils, Component) {
 
 
     //plugin variables
@@ -21,10 +21,10 @@ define([
         timesliderClass;
 
 
-    var Timeslider = Widget.extend({
+    var Timeslider = Component.extend({
 
         init: function(parent, options) {
-            this.template = "widgets/timeslider/timeslider";
+            this.template = "components/timeslider/timeslider";
 
             // Same constructor as the superclass
             this._super(parent, options);

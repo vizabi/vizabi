@@ -6,7 +6,7 @@ define([
   'base/class'
 ], function($, d3, _, utils, Class, events) {
 
-  var Widget = Class.extend({
+  var Component = Class.extend({
     init: function(core, options) {
       this.name = this.name || options.name;
       this.state = this.state || options.state;
@@ -14,14 +14,14 @@ define([
 
       this.element = this.element || null;
       this.core = this.core || core;
-      this.template = this.template || "widgets/widget";
+      this.template = this.template || "components/component";
       this.template_data = this.template_data || {
         name: this.name
       };
-      // Markup to define where a Widget is going to be rendered.
-      // Element which embodies the Widget
+      // Markup to define where a Component is going to be rendered.
+      // Element which embodies the Component
       this.element = this.element || null;
-      this.widgets = this.widgets || {};
+      this.components = this.components || {};
 
       this.profiles = this.profiles || {};
       this.parent = parent;
@@ -35,7 +35,7 @@ define([
 
       // First, we load the template
       var promise = this.loadTemplate();
-      // After the template is loaded, load widgets
+      // After the template is loaded, load components
       promise.then(function() {
         
         if(_.isFunction(postRender)) postRender();
@@ -47,13 +47,13 @@ define([
           _this.resize();
         });
 
-        return _this.loadWidgets(); 
+        return _this.loadComponents(); 
       })
-      // After loading widgets, render them
+      // After loading components, render them
       .then(function() {
-        return _this.renderWidgets();
+        return _this.renderComponents();
       })
-      // After rendering the widgets, resolve the defer
+      // After rendering the components, resolve the defer
       .done(function() {
         defer.resolve();
       });
@@ -61,18 +61,18 @@ define([
       return defer;
     },
 
-    loadWidgets: function(core) {
+    loadComponents: function(core) {
       var defer = $.Deferred();
       var defers = [];
       var _this = this;
       
-      // Loops through widgets, loading them. 
-      _.each(this.widgets, function(placeholder, widget) {
-        var promise = _this.loadWidget(widget, placeholder);
+      // Loops through components, loading them. 
+      _.each(this.components, function(placeholder, component) {
+        var promise = _this.loadComponent(component, placeholder);
         defers.push(promise);
       });
 
-      // When all widgets have been successfully loaded, resolve the defer
+      // When all components have been successfully loaded, resolve the defer
       $.when.apply(null,defers).done(function() {
         defer.resolve();
       });
@@ -80,15 +80,15 @@ define([
       return defer;
     },
 
-    loadWidget: function(widget,placeholder) {
+    loadComponent: function(component,placeholder) {
       var _this = this;
       var defer = $.Deferred();
-      var path = "widgets/" + widget + "/" + widget;
+      var path = "components/" + component + "/" + component;
       
       // Loads the file we need
-      require([path], function(subwidget) {
-        _this.widgets[widget] = new subwidget(_this.core, {
-          name: widget,
+      require([path], function(subcomponent) {
+        _this.components[component] = new subcomponent(_this.core, {
+          name: component,
           placeholder: placeholder,
           state: _this.state
         });
@@ -100,16 +100,16 @@ define([
       return defer;
     },
 
-    renderWidgets: function() {
+    renderComponents: function() {
       var defer = $.Deferred();
       var defers = [];
       
-      // Loops through widgets, rendering them. 
-      _.each(this.widgets, function(widget) {
-        defers.push(widget.render());
+      // Loops through components, rendering them. 
+      _.each(this.components, function(component) {
+        defers.push(component.render());
       });
 
-      // After all widgets are rendered, resolve the defer
+      // After all components are rendered, resolve the defer
       $.when.apply(null, defers).done(function() {
         defer.resolve();
       });
@@ -159,5 +159,5 @@ define([
   });
 
 
-  return Widget;
+  return Component;
 });

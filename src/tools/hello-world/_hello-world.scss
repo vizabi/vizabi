@@ -3,5 +3,5 @@
 .hello-world {
 	@extend .vizabi-tool;
 
-	@import '../../widgets/timeslider/_timeslider.scss';
+	@import '../../components/timeslider/_timeslider.scss';
 }
