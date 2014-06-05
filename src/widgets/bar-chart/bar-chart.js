@@ -28,13 +28,6 @@ define([
                 indicator = this.state.yaxis.indicator,
                 time = this.state.time;
 
-            var mock = [
-                { name: 'Sweden', value: 10 },
-                { name: 'Angola', value: 100 },
-                { name: 'Magnolia', value: 80 },
-                { name: 'Nicole Kidman', value: 50 }
-            ];
-
             var loadEverything = $.when(
               $.ajax(this.state.data.paths.waffle + 'waffle-' + this.state.language + '.json'),
               $.ajax(this.state.data.paths.stats + this.state.yaxis.indicator + '.json'),
