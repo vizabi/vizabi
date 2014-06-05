@@ -26,6 +26,8 @@ define([
       this.profiles = this.profiles || {};
       this.parent = parent;
 
+      this.loading = true;
+
       this.events = core.getInstance('events');
     },
 
@@ -37,6 +39,8 @@ define([
       var promise = this.loadTemplate();
       // After the template is loaded, load components
       promise.then(function() {
+
+        _this.element.classed("loading", _this.loading);
         
         if(_.isFunction(postRender)) postRender();
 
@@ -55,6 +59,10 @@ define([
       })
       // After rendering the components, resolve the defer
       .done(function() {
+        //not loading anytmore
+        _this.loading = false;
+        _this.element.classed("loading", _this.loading);
+
         defer.resolve();
       });
 
@@ -74,7 +82,11 @@ define([
 
       // When all components have been successfully loaded, resolve the defer
       $.when.apply(null,defers).done(function() {
-        defer.resolve();
+        
+        //todo: remove comments of simulation
+        //setTimeout(function() {
+          defer.resolve();
+        //}, 1000);
       });
 
       return defer;
