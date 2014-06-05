@@ -25,8 +25,8 @@ define([
 
             //todo: selectors should be improved
             this.widgets = {
-                // "bar-chart": ".vizabi-tool-viz",
-                "timeslider": ".vizabi-tool-timeslider"
+                "bar-chart": ".vizabi-tool-viz",
+                // "timeslider": ".vizabi-tool-timeslider"
                 // "button-list": ".vizabi-tool-button-list",
                 // "title": ".vizabi-tool-title",
             }
