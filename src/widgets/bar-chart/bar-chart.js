@@ -1,6 +1,6 @@
 define([
     'd3',
-    'widgets/widget'
+    'widgets/widget',
 ], function(d3, Widget) {
     var barChart = Widget.extend({
         init: function(context, options) {
@@ -12,14 +12,21 @@ define([
             var height = 500,
                 width = 900,
                 margin = 50,
-                svg = d3.select(this.placeholder).append('svg')
+                placeholder = d3.select(this.placeholder),
+                measures = placeholder.node().getBoundingClientRect(),
+                svg = placeholder.append('svg')
+                    .attr('height', measures.height)
+                    .attr('width', measures.width)
                     .classed(this.name, true)
-                    .attr('height', height + margin * 2).attr('width', width + margin * 2)
                     .append('g'),
                 x = d3.scale.ordinal().rangeRoundBands([0, width], .1, .3),
                 y = d3.scale.linear().range([height, 0]),
                 xAxis = d3.svg.axis().scale(x).orient('bottom'),
-                yAxis = d3.svg.axis().scale(y).orient('left');
+                yAxis = d3.svg.axis().scale(y).orient('left'),
+                translate = this.i18n.translate,
+                data = { stats: {} },
+                indicator = this.state.yaxis.indicator,
+                time = this.state.time;
 
             var mock = [
                 { name: 'Sweden', value: 10 },
@@ -28,45 +35,83 @@ define([
                 { name: 'Nicole Kidman', value: 50 }
             ];
 
-            x.domain(mock.map(function(d) { return d.name; }));
-            y.domain([0, d3.max(mock, function(d) { return d.value; })]);
+            var loadEverything = $.when(
+              $.ajax(this.state.data.paths.waffle + 'waffle-' + this.state.language + '.json'),
+              $.ajax(this.state.data.paths.stats + this.state.yaxis.indicator + '.json'),
+              $.ajax(this.state.data.paths.stats + "lex" + '.json')
+            ).then(function(waffle, stats, stats2) {
+              $.extend(true, data, waffle[0]);
+              if (!data.stats[indicator]) data.stats[indicator] = {};
+              $.extend(true, data.stats[this.state.yaxis.indicator], stats[0]);
+            }.bind(this)).done(function() {
+              // Aliases
+              var show = parseShowableObjects(this.state.show);
+              var indicatorData = data.definitions.indicators[indicator];
+              var category = data.definitions.categories;
+              var stats = data.stats[indicator];
 
+              x.domain(show.map(function(d) { return category[d.category].things[d.id].name; }));
+              y.domain([0, d3.max(d3.entries(stats), function(d) { if (d.value[time]) return d.value[time].v; })]);
 
-            svg.append('g')
-                .attr('class', 'y axis')
-                .attr('transform', 'translate(' + margin + ',' + margin + ')')
-                .call(yAxis);
+              var formatValue = d3.format(".1s");
+              yAxis.tickFormat(function(d) { return formatValue(d); })
 
-            svg.append('text')
-                .attr('class', 'title')
-                .attr('transform', 'translate(' + (margin + 15) + ',' + (margin + 15) + ')')
-                .text('The world without numbers');
+              svg.append('g')
+                  .attr('class', 'y axis')
+                  .attr('transform', 'translate(' + margin + ',' + margin + ')')
+                  .call(yAxis);
 
-            var chart = svg.selectAll(".bar")
-                .data(mock)
-                .enter();
+              var chart = svg.selectAll(".bar")
+                  .data(show)
+                  .enter();
 
-            chart.append("rect")
-                .attr("class", "bar")
-                .attr("x", function(d) { return margin + x(d.name); })
-                .attr("width", x.rangeBand())
-                .attr("y", function(d) { return margin + 15 + y(d.value); })
-                .attr("height", function(d) { return height - 15 - y(d.value); });
-            
-            chart.append('text')
-                .classed('bar-title', true)
-                .attr('y', function(d) { return margin + 5 + y(d.value); })
-                .attr('x', function(d) { return margin + x(d.name) + (x.rangeBand() / 2); })
-                .text(function(d) { return d.name; });
+              chart.append("rect")
+                  .attr("class", "bar")
+                  .attr("x", function(d) { return margin + x(category[d.category].things[d.id].name); })
+                  .attr("width", x.rangeBand())
+                  .attr("y", function(d) { return margin + 15 + y(stats[d.id][time].v); })
+                  .attr("height", function(d) { return height - 15 - y(stats[d.id][time].v); });
 
-            svg.append('g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(' + margin + ',' + (margin + height) + ')')
-                .call(xAxis)
-                .selectAll('.tick text')
-                .remove();
-          }
+              chart.append('text')
+                  .classed('bar-title', true)
+                  .attr('y', function(d) { return margin + 5 + y(stats[d.id][time].v); })
+                  .attr('x', function(d) { return margin + x(category[d.category].things[d.id].name) + (x.rangeBand() / 2); })
+                  .text(function(d) { return category[d.category].things[d.id].name; });
+
+              svg.append('g')
+                  .attr('class', 'x axis')
+                  .attr('transform', 'translate(' + margin + ',' + (margin + height) + ')')
+                  .call(xAxis)
+                  .selectAll('.tick text')
+                  .remove();
+
+              svg.append('text')
+                  .attr('class', 'title')
+                  .attr('transform', 'translate(' + (margin + 15) + ',' + (margin + 15) + ')')
+                  .text(indicatorData.name);
+            }.bind(this));
+        },
+
+        resize: function() {
+
+        }
     });
+
+    function parseShowableObjects(show) {
+      var parsed = [];
+
+      for (var category in show) {
+        if ($.isEmptyObject(show[category])) {
+          parsed.push({ category: category, id: category });
+        } else {
+          for (var id in show[category].filter) {
+            parsed.push({ category: category, id: show[category].filter[id] });
+          }
+        }
+      }
+
+      return parsed;
+    }
 
     return barChart;
 });
