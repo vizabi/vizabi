@@ -2,20 +2,24 @@ define([
     'underscore',
     'tools/tool'
 ], function(_, Tool) {
-
     var helloWorld = Tool.extend({
         init: function(context, options) {
             this.name = 'hello-world';
             this.placeholder = options.placeholder;
             this.state = _.extend({
+                language: 'en',
                 show: {
-                    'world': {
-
-                    }
+                    'world': {}
                 },
                 time: '1980',
                 yaxis: {
                     indicator: 'gdp'
+                },
+                data: {
+                  paths: {
+                    waffle: '../src/tools/hello-world/waffles/',
+                    stats: '../src/tools/hello-world/waffles/stats/'
+                  }
                 }
             }, options.state);
 
