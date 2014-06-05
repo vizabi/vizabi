@@ -26,10 +26,10 @@ define([
             //todo: selectors should be improved
             this.components = {
                 // "bar-chart": ".vizabi-tool-viz",
-                "timeslider": ".vizabi-tool-timeslider"
-                // "button-list": ".vizabi-tool-button-list",
+                'timeslider': '.vizabi-tool-timeslider',
+                'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",
-            }
+            };
 
             this._super(context, options);
         },
