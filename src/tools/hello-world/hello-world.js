@@ -25,7 +25,7 @@ define([
 
             //todo: selectors should be improved
             this.components = {
-                // "bar-chart": ".vizabi-tool-viz",
+                "barchart": ".vizabi-tool-viz",
                 'timeslider': '.vizabi-tool-timeslider',
                 'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",
@@ -38,7 +38,6 @@ define([
         // from super to vizabi.js
         render: function() {
             return this._super(function() {
-                console.log("Hello World");
             });
         }
 
