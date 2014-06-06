@@ -31,18 +31,26 @@ define([
       this.events = core.getInstance('events');
     },
 
-    render: function(postRender) {
+    render: function() {
       var defer = $.Deferred();
       var _this = this;
 
       // First, we load the template
       var promise = this.loadTemplate();
-      // After the template is loaded, load components
+      
+      // After the template is loaded, check if postRender exists
       promise.then(function() {
 
+        // add css loading class to hide elements
+        this.loading = true;
         _this.element.classed("loading", _this.loading);
+        
+        // attempt to execute postRender
+        return _this.execute(_this.postRender);
 
-        if(_.isFunction(postRender)) postRender();
+      })
+      // After postRender, resize and load components
+      .then(function() {
 
         //TODO: Chance of refactoring
         //Every widget binds its resize function to the resize event
@@ -59,12 +67,37 @@ define([
       })
       // After rendering the components, resolve the defer
       .done(function() {
-        //not loading anytmore
+        //not loading anytmore, remove class
         _this.loading = false;
         _this.element.classed("loading", _this.loading);
 
         defer.resolve();
       });
+
+      return defer;
+    },
+
+    // Execute function if it exists, with promise support
+    execute: function(func) {
+
+      var defer = $.Deferred(),
+          possiblePromise;
+
+      // only try to execute if it is a function
+      if(_.isFunction(func)) {
+          possiblePromise = func();
+      };
+
+      // if a promise is returned, solve it when its done
+      if(_.isFunction(possiblePromise.then) {
+        possiblePromise.done(function(){
+          defer.resolve();
+        });
+      }
+      // if no promise is returned, resolve right away
+      else {
+        defer.resolve();
+      }
 
       return defer;
     },
