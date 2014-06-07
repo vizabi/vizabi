@@ -38,8 +38,23 @@ define([
         });
 
       });
-    }
+    },
 
+    getInstance: function(manager) {
+      // TODO: Figure out a better way to store managers
+      return this[manager];
+    },
+
+    bind: function(evt, func) {
+      this.events.bind(evt, func);
+      return this;
+    },
+
+    trigger: function(evt) {
+      var args = Array.prototype.slice.call(arguments).slice(1);
+      this.events.trigger(evt, args);
+      return this;
+    }
   });
 
   return Tool;
