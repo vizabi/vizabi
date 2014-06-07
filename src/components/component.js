@@ -55,7 +55,7 @@ define([
         //TODO: Chance of refactoring
         //Every widget binds its resize function to the resize event
         _this.resize();
-        _this.events.bind('resize', function() {
+        _this.core.bind('resize', function() {
           _this.resize();
         });
 
@@ -132,7 +132,7 @@ define([
 
       // Loads the file we need
       require([path], function(subcomponent) {
-        _this.components[component] = new subcomponent(_this.core, {
+        _this.components[component] = new subcomponent(_this, {
           name: component,
           placeholder: placeholder,
           state: _this.state
