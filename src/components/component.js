@@ -89,7 +89,7 @@ define([
       };
 
       // if a promise is returned, solve it when its done
-      if(_.isFunction(possiblePromise.then) {
+      if(possiblePromise && _.isFunction(possiblePromise.then)) {
         possiblePromise.done(function(){
           defer.resolve();
         });
