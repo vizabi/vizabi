@@ -36,7 +36,6 @@ define([
         });
 
         _this.events.bind('change:state', function(state) {
-          console.log(_this.state.time, _this.state.show.countries);
         });
 
       });
