@@ -1,115 +1,96 @@
 define([
-    'base/loader',
-    'managers/data/cache',
-    'config'
-], function(loaderJSON, cache, config) {
-    // {{oven-url}}
-    var waffleUrl = config.url.oven.base + '/waffle/lang/';
+	'base/class',
+	'jquery',
+	'underscore'
+], function(Class, $, _) {
+	var dataManager = Class.extend({
+		init: function() {
+			this.cache = {};
+		},
 
-    var dataManager = {
-        cache: cache
-    };
+		load: function(path, callback) {
+			return $.getJSON(path, function(res) {
+				if (typeof callback === 'function') {
+					callback(res);
+				}
+				return res;
+			});
+		},
 
-    dataManager.getCache = function() {
-        return dataManager.cache;
-    };
+		loadWaffle: function(wafflePath, callback) {
+			if (!this.cache.waffle) this.cache.waffle = {};
+			var waffle = this.cache.waffle;
+			return $.getJSON(wafflePath, function(res) {
+				$.extend(true, waffle, res);
+				if (typeof callback === 'function') {
+					callback(res);
+				}
+			});
+		},
 
-    dataManager.getIMShapes = function(o, callback) {
-        var url = waffleUrl + 'en/shapes/income-mountain/' +
-            o.item + '/' + o.start + '/' + o.end;
+		loadStats: function(statsPath, indicator, callback) {
+			if (!this.cache.stats) this.cache.stats = {};
+			if (!this.cache.stats[indicator]) this.cache.stats[indicator] = {};
+			var cache = this.cache;
+			return $.getJSON(statsPath, function(res) {
+				$.extend(true, cache.stats[indicator], res);
+				if (typeof callback === 'function') {
+					callback(res);
+				}
+			});
+		},
 
-        loaderJSON.get(url, function(json) {
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+		getCache: function() {
+			return this.cache;
+		},
 
-    dataManager.getIMRaw = function(o, callback) {
-        var url = waffleUrl + 'en/raw/income-mountain/' +
-            o.item + '/' + o.start + '/' + o.end;
+		getThing: function(filter) {
+			if (!this.cache.waffle || !this.cache.waffle.definitions) return;
 
-        loaderJSON.get(url, function(json) {
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			var res = {},
+				categories = this.cache.waffle.definitions.categories;
 
-    dataManager.getThing = function(thing, lang, callback) {
-        var url = waffleUrl + lang + '/thing/' + thing;
-        loaderJSON.get(url, function(json) {
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			if (!filter) {
+				// returns all things from all categories
+				for (var category in categories) {
+					_.extend(res, categories[category].things);
+				}
+			} else {
+				if (!_.isArray(filter)) {
+					if (filter.id) {
+						res[filter.id] = categories[filter.category].things[filter.id];
+					} else {
+						res = categories[filter.category].things;
+					}
+				} else {
+					_.each(filter, function(d) {
+						_.extend(res, this.getThing(d));
+					}.bind(this))
+				}
+			}
 
-    dataManager.getCategoryThings = function(category, lang, callback) {
-        var url = waffleUrl + lang + '/category/' + category + '/things';
-        loaderJSON.get(url, function(json) {
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			return res;
+		},
 
-    dataManager.getAvailability = function(toolName, lang, callback) {
-        if (toolName === 'income-mountain') {
-            var url = waffleUrl + lang + '/income-mountain/available';
-            loaderJSON.get(url, function(json) {
-                if (typeof callback === 'function') {
-                    callback(json);
-                }
-            });
-        }
-    };
+		getStats: function(filter, indicator) {
+			if (!indicator) return this.cache.stats;
+			if (!filter) return this.cache.stats[indicator];
 
-    dataManager.getIndicator = function(indicator, lang, callback) {
-        var url = waffleUrl + lang + '/indicator/' + indicator;
-        loaderJSON.get(url, function(json) {
-            cache.definitions.indicators[indicator] = json;
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			var res = [];
 
-    dataManager.getCategory = function(category, lang, callback) {
-        var url = waffleUrl + lang + '/category/' + category;
-        loaderJSON.get(url, function(json) {
-            cache.definitions.categories[category] = json;
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			_.each(filter, function(f) {
+				var temp = _.extend({}, f);
+				temp.stats = this.cache.stats[indicator][f.id];
+				res.push(temp);
+			}, this);
 
-    dataManager.getStats = function(indicator, callback) {
-        var url = waffleUrl + 'en/indicator/' + indicator + '/stats';
-        loaderJSON.get(url, function(json) {
-            cache.stats[indicator] = json;
-            if (typeof callback === 'function') {
-                callback(json);
-            }
-        });
-    };
+			return res;
+		},
 
-    dataManager.retrieve = function(indicator, item, year) {
-        if (cache.stats[indicator] &&
-            cache.stats[indicator][item.toLowerCase()] &&
-            cache.stats[indicator][item.toLowerCase()][year]) {
-            return cache.stats[indicator][item.toLowerCase()][year].v;
-        } else {
-            return undefined;
-        }
-    };
+		getWaffle: function() {
+			return this.cache.waffle;
+		}
+	});
 
-    // The instance has its own view of the cache; it allows for keeping a more
-    // coherent data object for each instance
-    dataManager.instance = function() {
-        return dataManager;
-    }
-
-    return dataManager;
+	return dataManager;
 });
