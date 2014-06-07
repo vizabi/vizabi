@@ -31,7 +31,7 @@ define([
 
             //todo: selectors should be improved
             this.components = {
-                "barchart": ".vizabi-tool-viz",
+                'bar-chart': '.vizabi-tool-viz',
                 'timeslider': '.vizabi-tool-timeslider',
                 'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",
