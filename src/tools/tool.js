@@ -17,7 +17,6 @@ define([
           title: true
         }
       };
-      this.layout = core.getInstance("layout");
 
       // Same constructor as widgets
       this._super(core, options);
