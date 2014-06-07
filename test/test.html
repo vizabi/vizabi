@@ -13,29 +13,27 @@
     </body>
     <script>
     var state = {
-            language: 'en',
-            show: {
-                'world': {
-                },
-                'region': {
-                  filter: [
-                    'eur',
-                    'asi',
-                    'afr',
-                    'ame'
-                  ]
-                }
-            },
-            time: 1980,
-            timeRange: [1800, 2000],
-            yaxis: {
-                indicator: 'gdp'
-            }
-        };
+        language: 'en',
+        show: {
+            'world': {},
+            'region': { filter: ['asi', 'ame'] }
+        },
+        time: 2014,
+        timeRange: [1800, 2018],
+        yaxis: {
+            indicator: 'gdp'
+        },
+        waffle: {
+            path: '../src/tools/hello-world/waffles/'
+        },
+        stats: {
+            path: '../src/tools/hello-world/waffles/stats/'
+        }
+    };
 
-        vizabi.start("hello-world", "#placeholder", state);
-        vizabi.ready(function() {
-            console.log("Vizabi is ready!");
-        });
+    vizabi.start("hello-world", "#placeholder", state);
+    vizabi.ready(function() {
+        console.log("Vizabi is ready!");
+    });
     </script>
 </html>

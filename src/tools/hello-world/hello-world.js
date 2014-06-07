@@ -17,6 +17,12 @@ define([
                 timeRange: [1800, 2000],
                 yaxis: {
                     indicator: 'gdp'
+                },
+                waffle: {
+                    path: '../src/tools/hello-world/waffles/'
+                },
+                stats: {
+                    path: '../src/tools/hello-world/waffles/stats/'
                 }
             }, options.state);
 
