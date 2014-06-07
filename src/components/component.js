@@ -28,6 +28,8 @@ define([
 
       this.loading = true;
 
+      this.dataManager = core.getInstance('dataManager');
+      this.layout = core.getInstance('layout');
       this.events = core.getInstance('events');
     },
 
@@ -37,14 +39,14 @@ define([
 
       // First, we load the template
       var promise = this.loadTemplate();
-      
+
       // After the template is loaded, check if postRender exists
       promise.then(function() {
 
         // add css loading class to hide elements
         this.loading = true;
         _this.element.classed("loading", _this.loading);
-        
+
         // attempt to execute postRender
         return _this.execute(_this.postRender);
 
@@ -79,7 +81,6 @@ define([
 
     // Execute function if it exists, with promise support
     execute: function(func) {
-
       var defer = $.Deferred(),
           possiblePromise;
 
