@@ -33,6 +33,7 @@ define([
       this.events = core.getInstance('events');
     },
 
+    //TODO: change the scary name! :D bootstrap is one good one
     render: function() {
       var defer = $.Deferred();
       var _this = this;
