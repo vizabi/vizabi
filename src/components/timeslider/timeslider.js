@@ -22,7 +22,6 @@ define([
 
 
     var Timeslider = Component.extend({
-
         init: function(parent, options) {
             this.template = "components/timeslider/timeslider";
 
@@ -34,34 +33,28 @@ define([
             timesliderClass = this;
         },
 
-        render: function() {
-            var _this = this;
-            // Return the defer from the superclass 
-            return this._super(function() {
-                //TODO: refactor this callback into separate function
-                _this.placeholder = utils.d3ToJquery(_this.placeholder);
+        postRender: function() {
+            this.placeholder = utils.d3ToJquery(this.placeholder);
+            container = this.placeholder.find("#time-slider-container");
+            timeslider = container.find("#time-slider");
+            drag = timeslider.find("#time-slider-drag");
+            lineBefore = timeslider.find(".time-slider-line.before");
+            lineAfter = timeslider.find(".time-slider-line.after");
 
-                container = _this.placeholder.find("#time-slider-container");
-                timeslider = container.find("#time-slider");
-                drag = timeslider.find("#time-slider-drag");
-                lineBefore = timeslider.find(".time-slider-line.before");
-                lineAfter = timeslider.find(".time-slider-line.after");
-
-                var play = container.find("#time-slider-play"),
-                    pause = container.find("#time-slider-pause");
+            var play = container.find("#time-slider-play"),
+                pause = container.find("#time-slider-pause");
 
 
-                play.click(function() {
-                    startPlaying();
-                });
-
-                pause.click(function() {
-                    stopPlaying();
-                });
-
-                _this.setYear(startYear);
-                drag.bind("touchstart mousedown", startDrag);
+            play.click(function() {
+                startPlaying();
             });
+
+            pause.click(function() {
+                stopPlaying();
+            });
+
+            this.setYear(startYear);
+            drag.bind("touchstart mousedown", startDrag);
         },
 
         resize: function() {
@@ -199,8 +192,7 @@ define([
             if (yearValue > range[1]) {
                 stopPlaying();
                 return;
-            }
-            else {
+            } else {
                 timesliderClass.setYear(yearValue++);
             }
         }, speed);

@@ -86,7 +86,7 @@ define([
 
       // only try to execute if it is a function
       if(_.isFunction(func)) {
-          possiblePromise = func();
+          possiblePromise = func.apply(this);
       };
 
       // if a promise is returned, solve it when its done
@@ -201,6 +201,10 @@ define([
 
     resize: function() {
       //what to do when page is resized
+    },
+
+    postRender: function() {
+
     }
   });
 
