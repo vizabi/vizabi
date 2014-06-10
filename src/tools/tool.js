@@ -17,7 +17,6 @@ define([
           title: true
         }
       };
-      this.layout = core.getInstance("layout");
 
       // Same constructor as widgets
       this._super(core, options);
@@ -36,12 +35,26 @@ define([
         });
 
         _this.events.bind('change:state', function(state) {
-          console.log(_this.state.time, _this.state.show.countries);
         });
 
       });
-    }
+    },
 
+    getInstance: function(manager) {
+      // TODO: Figure out a better way to store managers
+      return this[manager];
+    },
+
+    bind: function(evt, func) {
+      this.events.bind(evt, func);
+      return this;
+    },
+
+    trigger: function(evt) {
+      var args = Array.prototype.slice.call(arguments).slice(1);
+      this.events.trigger(evt, args);
+      return this;
+    }
   });
 
   return Tool;

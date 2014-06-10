@@ -4,7 +4,7 @@ define([
   'underscore',
   'base/utils',
   'base/class'
-], function($, d3, _, utils, Class, events) {
+], function($, d3, _, utils, Class) {
 
   var Component = Class.extend({
     init: function(core, options) {
@@ -28,30 +28,41 @@ define([
 
       this.loading = true;
 
+      this.dataManager = core.getInstance('dataManager');
+      this.layout = core.getInstance('layout');
       this.events = core.getInstance('events');
     },
 
-    render: function(postRender) {
+    //TODO: change the scary name! :D bootstrap is one good one
+    render: function() {
       var defer = $.Deferred();
       var _this = this;
 
       // First, we load the template
       var promise = this.loadTemplate();
-      // After the template is loaded, load components
+
+      // After the template is loaded, check if postRender exists
       promise.then(function() {
 
+        // add css loading class to hide elements
+        this.loading = true;
         _this.element.classed("loading", _this.loading);
-        
-        if(_.isFunction(postRender)) postRender();
+
+        // attempt to execute postRender
+        return _this.execute(_this.postRender);
+
+      })
+      // After postRender, resize and load components
+      .then(function() {
 
         //TODO: Chance of refactoring
         //Every widget binds its resize function to the resize event
         _this.resize();
-        _this.events.bind('resize', function() {
+        _this.core.bind('resize', function() {
           _this.resize();
         });
 
-        return _this.loadComponents(); 
+        return _this.loadComponents();
       })
       // After loading components, render them
       .then(function() {
@@ -59,7 +70,7 @@ define([
       })
       // After rendering the components, resolve the defer
       .done(function() {
-        //not loading anytmore
+        //not loading anytmore, remove class
         _this.loading = false;
         _this.element.classed("loading", _this.loading);
 
@@ -69,12 +80,36 @@ define([
       return defer;
     },
 
+    // Execute function if it exists, with promise support
+    execute: function(func) {
+      var defer = $.Deferred(),
+          possiblePromise;
+
+      // only try to execute if it is a function
+      if(_.isFunction(func)) {
+          possiblePromise = func.apply(this);
+      };
+
+      // if a promise is returned, solve it when its done
+      if(possiblePromise && _.isFunction(possiblePromise.then)) {
+        possiblePromise.done(function(){
+          defer.resolve();
+        });
+      }
+      // if no promise is returned, resolve right away
+      else {
+        defer.resolve();
+      }
+
+      return defer;
+    },
+
     loadComponents: function(core) {
       var defer = $.Deferred();
       var defers = [];
       var _this = this;
-      
-      // Loops through components, loading them. 
+
+      // Loops through components, loading them.
       _.each(this.components, function(placeholder, component) {
         var promise = _this.loadComponent(component, placeholder);
         defers.push(promise);
@@ -82,7 +117,7 @@ define([
 
       // When all components have been successfully loaded, resolve the defer
       $.when.apply(null,defers).done(function() {
-        
+
         //todo: remove comments of simulation
         //setTimeout(function() {
           defer.resolve();
@@ -96,10 +131,10 @@ define([
       var _this = this;
       var defer = $.Deferred();
       var path = "components/" + component + "/" + component;
-      
+
       // Loads the file we need
       require([path], function(subcomponent) {
-        _this.components[component] = new subcomponent(_this.core, {
+        _this.components[component] = new subcomponent(_this, {
           name: component,
           placeholder: placeholder,
           state: _this.state
@@ -115,8 +150,8 @@ define([
     renderComponents: function() {
       var defer = $.Deferred();
       var defers = [];
-      
-      // Loops through components, rendering them. 
+
+      // Loops through components, rendering them.
       _.each(this.components, function(component) {
         defers.push(component.render());
       });
@@ -167,6 +202,10 @@ define([
 
     resize: function() {
       //what to do when page is resized
+    },
+
+    postRender: function() {
+
     }
   });
 

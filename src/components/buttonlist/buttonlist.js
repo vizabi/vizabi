@@ -51,34 +51,29 @@ define([
             this._super(core, options);
         },
 
-        render: function() {
+        postRender: function() {
             var _this = this;
-            // Return the defer from the superclass 
-            return this._super(function() {
-                //TODO: refactor this callback into separate function
-                _this.placeholder = utils.d3ToJquery(_this.placeholder);
+            this.placeholder = utils.d3ToJquery(_this.placeholder);
 
-                //instantiate a new geoMult picker
-                geo_picker = new SmartPicker('geoMult', 'geo-picker', {
-                    width: 320,
-                    confirmButton: "OK",
-                    //what to do after user selects a country
-                    onSet: function(selected) {
-                        //extract the value only
-                        var countries = _.map(selected.selected, function(country) {
-                            return country.value;
-                        });
-                        //pass the selected countries to state
-                        _this.selectCountries(countries);
-                    }
-                });
+            //instantiate a new geoMult picker
+            geo_picker = new SmartPicker('geoMult', 'geo-picker', {
+                width: 320,
+                confirmButton: "OK",
+                //what to do after user selects a country
+                onSet: function(selected) {
+                    //extract the value only
+                    var countries = _.map(selected.selected, function(country) {
+                        return country.value;
+                    });
+                    //pass the selected countries to state
+                    _this.selectCountries(countries);
+                }
+            });
 
-                //show the picker when the correct button is pressed
-                var geo_button = _this.placeholder.find('#geo');
-                geo_button.click(function() {
-                    geo_picker.show();
-                });
-
+            //show the picker when the correct button is pressed
+            var geo_button = this.placeholder.find('#geo');
+            geo_button.click(function() {
+                geo_picker.show();
             });
         },
 

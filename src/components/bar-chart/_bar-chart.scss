@@ -1,0 +1,38 @@
+.bar-chart {
+
+    .x.axis {
+        fill: none;
+        stroke: black;
+
+        text {
+            fill: black;
+            stroke: none;
+        }
+    }
+
+    .y.axis {
+        fill: none;
+        stroke: black;
+
+        text {
+            fill: black;
+            stroke: none;
+        }
+    }
+
+    rect.bar {
+        fill: steelblue;
+        stroke: black;
+    }
+
+    .bar-title {
+        fill: black;
+        stroke: none;
+        text-anchor: middle;
+    }
+
+    .title {
+        fill: black;
+        stroke: none;
+    }
+}

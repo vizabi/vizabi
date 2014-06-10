@@ -3,7 +3,7 @@
 .hello-world {
 	@extend .vizabi-tool;
 
-	@import '../../components/barchart/_barchart.scss';
+	@import '../../components/bar-chart/_bar-chart.scss';
 	@import '../../components/timeslider/_timeslider.scss';
 	@import '../../components/buttonlist/_buttonlist.scss';
 }
