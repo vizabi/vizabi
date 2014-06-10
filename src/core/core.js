@@ -26,17 +26,19 @@ define([
             });
         },
 
-        start: function(tool_name, placeholder, state) {
+        start: function(tool_name, placeholder, options) {
             var defer = $.Deferred();
 
             var id = getId(),
                 t_path = config.require.paths.tools,
                 path = t_path + '/' + tool_name + '/' + tool_name,
-                context = this,
-                options = {
-                    placeholder: placeholder,
-                    state: state
-                }
+                context = this;
+                
+            // extending options with name and tool's placeholder
+            _.extend(options, {
+                name: tool_name,
+                placeholder: placeholder
+            });
 
             require([path], function(Tool) {
                 tools[id] = new Tool(context, options);

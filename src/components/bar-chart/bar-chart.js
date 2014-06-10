@@ -30,13 +30,13 @@ define([
         postRender: function() {
             // Loads data
             var indicator = this.state.yaxis.indicator;
-            var indicatorFile = indicator + '.json';
+            var indicatorFile = 'stats/' + indicator + '.json';
             var waffleFile = 'waffle-' + this.state.language + '.json';
             var dataMan = this.dataManager;
 
             $.when(
-                dataMan.loadWaffle(this.state.waffle.path + waffleFile),
-                dataMan.loadStats(this.state.stats.path + indicatorFile, indicator)
+                dataMan.loadWaffle(this.data.path + waffleFile),
+                dataMan.loadStats(this.data.path + indicatorFile, indicator)
             ).done(function() {
                 var measures = this.placeholder.node().getBoundingClientRect(),
                     width = measures.width - margin.left - margin.right,

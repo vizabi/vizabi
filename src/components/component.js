@@ -11,6 +11,7 @@ define([
       this.name = this.name || options.name;
       this.state = this.state || options.state;
       this.placeholder = this.placeholder || options.placeholder;
+      this.data = this.data || options.data;
 
       this.element = this.element || null;
       this.core = this.core || core;
@@ -137,7 +138,8 @@ define([
         _this.components[component] = new subcomponent(_this, {
           name: component,
           placeholder: placeholder,
-          state: _this.state
+          state: _this.state,
+          data: _this.data
         });
 
         // Resolve the defer after file has been loaded
