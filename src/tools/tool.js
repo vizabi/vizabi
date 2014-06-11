@@ -36,8 +36,11 @@ define([
           _this.layout.update();
         });
 
-        _this.events.bind('change:state', function(state) {
+        _this.model.bind('change:state', function(state) {
+            console.log("HELLO WORLD!");
         });
+
+        _this.model.setState({name: "Amir"});
 
       });
     },

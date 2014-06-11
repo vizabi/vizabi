@@ -31,8 +31,8 @@ define([
             // Same constructor as the superclass
             this._super(parent, options);
 
-            range = options.state.timeRange;
-            startYear = options.state.time;
+            range = this.model.getState("timeRange");
+            startYear = this.model.getState("time");
             timesliderClass = this;
         },
 

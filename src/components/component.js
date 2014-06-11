@@ -13,7 +13,7 @@ define([
       this.placeholder = this.placeholder || options.placeholder;
       this.data = this.data || options.data;
 
-      this.model = this.model;
+      this.model = this.model || options.model;
       this.element = this.element || null;
       this.core = this.core || core;
       this.template = this.template || "components/component";
@@ -36,7 +36,7 @@ define([
     },
 
     //TODO: change the scary name! :D bootstrap is one good one
-    render: function() {
+    render: function(callback) {
       var defer = $.Deferred();
       var _this = this;
 
@@ -51,8 +51,14 @@ define([
         _this.element.classed("loading", _this.loading);
 
         // attempt to execute postRender
-        return _this.execute(_this.postRender);
+        if (typeof callback === 'function') {
+            return callback();
+        }
 
+      })
+      // If there is no callback
+      .then(function() {
+            return _this.execute(_this.postRender);
       })
       // After postRender, resize and load components
       .then(function() {
@@ -139,8 +145,7 @@ define([
         _this.components[component] = new subcomponent(_this, {
           name: component,
           placeholder: placeholder,
-          state: _this.state,
-          data: _this.data
+          model: _this.model
         });
 
         // Resolve the defer after file has been loaded
@@ -198,9 +203,7 @@ define([
     },
 
     setState: function(state) {
-      this.state = _.extend(this.state, state);
-      this.events.trigger('change:state', this.state);
-      return this;
+      this.model.setState(state);
     },
 
     resize: function() {

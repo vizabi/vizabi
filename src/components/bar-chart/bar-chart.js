@@ -29,14 +29,14 @@ define([
 
         postRender: function() {
             // Loads data
-            var indicator = this.state.yaxis.indicator;
+            var indicator = this.model.getState("yaxis").indicator;
             var indicatorFile = 'stats/' + indicator + '.json';
-            var waffleFile = 'waffle-' + this.state.language + '.json';
+            var waffleFile = 'waffle-' + this.model.getState("language") + '.json';
             var dataMan = this.dataManager;
 
             $.when(
-                dataMan.loadWaffle(this.data.path + waffleFile),
-                dataMan.loadStats(this.data.path + indicatorFile, indicator)
+                dataMan.loadWaffle(this.model.getData("path") + waffleFile),
+                dataMan.loadStats(this.model.getData("path") + indicatorFile, indicator)
             ).done(function() {
                 var measures = this.placeholder.node().getBoundingClientRect(),
                     width = measures.width - margin.left - margin.right,
@@ -66,11 +66,11 @@ define([
                 var _this = this;
                 var stats = this.dataManager.getStats();
                 var waffle = this.dataManager.getWaffle();
-                var time = this.state.time;
+                var time = this.model.getState("time");
 
                 // Prepare data
                 var show = _.flatten(
-                    _.map(this.state.show, function(object, region) {
+                    _.map(this.model.getState("show"), function(object, region) {
                         if (object.filter) {
                             return _.map(object.filter, function(d) {
                                 return {
@@ -185,7 +185,7 @@ define([
             if (this.bar_chart.data) {
                 var things = this.bar_chart.data.things,
                     data = this.bar_chart.data.data,
-                    time = this.state.time;
+                    time = this.model.getState("time");
 
                 // reposition rectangles
                 this.chartArea.selectAll('.bar')
