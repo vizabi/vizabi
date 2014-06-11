@@ -4,7 +4,6 @@ define([
 ], function(_, Tool) {
     //TODO: put a convention for the folder to indicate its an example: example-hello-world
     //TODO: put a state validator in a data helper which is responsible for this tools use of data
-    //TODO: enforce a model for the state 
     //TODO: isolate the views update based on data in a single place -- possibly a glue look-alike ?!
     var helloWorld = Tool.extend({
         init: function(context, options) {

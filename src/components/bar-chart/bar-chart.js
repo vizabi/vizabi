@@ -1,9 +1,13 @@
+//TODO: make this more readable
 define([
     'd3',
     'underscore',
     'components/component'
 ], function(d3, _, Component) {
+
+
     // TODO: Move these into barchart's space
+
     var margin = {
         left: 55,
         right: 15,
@@ -20,57 +24,38 @@ define([
             })
             .tickSize(5, 5, 0);
 
-    var barChart = Component.extend({
+    var BarChart = Component.extend({
         init: function(context, options) {
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
             this._super(context, options);
         },
 
-        postRender: function() {
-            // Loads data
+        //load barchart data
+        loadData: function() {
+
+            var _this = this,
+                defer = $.Deferred();
+
             var indicator = this.model.getState("yaxis").indicator;
             var indicatorFile = 'stats/' + indicator + '.json';
             var waffleFile = 'waffle-' + this.model.getState("language") + '.json';
             var dataMan = this.dataManager;
 
+            //load data and resolve the defer when it's done
             $.when(
                 dataMan.loadWaffle(this.model.getData("path") + waffleFile),
                 dataMan.loadStats(this.model.getData("path") + indicatorFile, indicator)
             ).done(function() {
-                var measures = this.placeholder.node().getBoundingClientRect(),
-                    width = measures.width - margin.left - margin.right,
-                    height = measures.height - margin.top - margin.bottom;
 
-                x.rangeRoundBands([0, width], .1, .3);
-                y.range([height, 0]);
-
-                this.chartArea = this.element
-                    .append('g')
-                    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-                this.bar_chart = {}
-
-                this.element.attr('class', this.name);
-
-                this.chartArea.append('g')
-                    .attr('class', 'y axis')
-                    .call(yAxis);
-
-                this.chartArea.append('g')
-                    .attr('class', 'x axis')
-                    .attr('transform', 'translate(0,' + height + ')')
-                    .call(xAxis);
-
-                // Aliases
-                var _this = this;
-                var stats = this.dataManager.getStats();
-                var waffle = this.dataManager.getWaffle();
-                var time = this.model.getState("time");
+                //prepare data
+                var stats = _this.dataManager.getStats();
+                var waffle = _this.dataManager.getWaffle();
+                var time = _this.model.getState("time");
 
                 // Prepare data
                 var show = _.flatten(
-                    _.map(this.model.getState("show"), function(object, region) {
+                    _.map(_this.model.getState("show"), function(object, region) {
                         if (object.filter) {
                             return _.map(object.filter, function(d) {
                                 return {
@@ -93,68 +78,115 @@ define([
                 });
                 var data = _.pick(stats[indicator], ids);
 
-                // save data preparations
-                this.bar_chart.data = {
+                _this.data = {
                     show: show,
                     things: things,
                     ids: ids,
                     data: data
                 };
 
-                // Sets x scale domain
-                x.domain(_.map(things, function(d) {
-                    return d.name;
-                }));
+                defer.resolve();
+            });
 
-                // Sets y scale domain
-                y.domain([0, _.max(_.map(data, function(d) {
-                    return _.max(_.pluck(d, 'v'));
-                }))]);
+            return defer;
+        },
 
-                // draw axis
-                var chart = this.chartArea.selectAll('.bar')
-                    .data(ids)
-                    .enter();
+        draw: function() {
+            var measures = this.placeholder.node().getBoundingClientRect(),
+                width = measures.width - margin.left - margin.right,
+                height = measures.height - margin.top - margin.bottom,
+                _this = this,
+                time = _this.model.getState("time"),
+                waffle = _this.dataManager.getWaffle(),
+                indicator = this.model.getState("yaxis").indicator;
 
-                chart.append('rect')
-                    .attr('class', 'bar')
-                    .attr('x', function(d) {
-                        return x(things[d].name);
-                    })
-                    .attr('width', x.rangeBand())
-                    .attr('y', function(d) {
-                        return y(data[d][time].v);
-                    })
-                    .attr('height', function(d) {
-                        return height - y(data[d][time].v);
-                    });
+            x.rangeRoundBands([0, width], .1, .3);
+            y.range([height, 0]);
 
-                chart.append('text')
-                    .attr('class', 'bar-title')
-                    .attr('y', function(d) {
-                        return y(data[d][time].v) - 5;
-                    })
-                    .attr('x', function(d) {
-                        return x(things[d].name) + (x.rangeBand() / 2);
-                    })
-                    .text(function(d) {
-                        return things[d].name;
-                    });
+            this.chartArea = this.element
+                .append('g')
+                .attr('transform',
+                    'translate(' + margin.left + ',' + margin.top + ')');
 
-                this.chartArea.select('.x.axis')
-                    .attr('transform', 'translate(0,' + height + ')')
-                    .call(xAxis)
-                    .selectAll('.tick text')
-                    .remove();
 
-                this.chartArea.select('.y.axis')
-                    .call(yAxis);
+            this.element.attr('class', this.name);
 
-                this.chartArea.append('text')
-                    .attr('class', 'title')
-                    .attr('transform', 'translate(' + 10 + ',' + 20 + ')')
-                    .text(waffle.definitions.indicators[indicator].name);
-            }.bind(this));
+            this.chartArea.append('g')
+                .attr('class', 'y axis')
+                .call(yAxis);
+
+            this.chartArea.append('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(xAxis);
+
+            // Sets x scale domain
+            x.domain(_.map(this.data.things, function(d) {
+                return d.name;
+            }));
+
+            // Sets y scale domain
+            y.domain([0, _.max(_.map(this.data.data, function(d) {
+                return _.max(_.pluck(d, 'v'));
+            }))]);
+
+            // draw axis
+            var chart = this.chartArea.selectAll('.bar')
+                .data(this.data.ids)
+                .enter();
+
+            chart.append('rect')
+                .attr('class', 'bar')
+                .attr('x', function(d) {
+                    return x(_this.data.things[d].name);
+                })
+                .attr('width', x.rangeBand())
+                .attr('y', function(d) {
+                    return y(_this.data.data[d][time].v);
+                })
+                .attr('height', function(d) {
+                    return height - y(_this.data.data[d][time].v);
+                });
+
+            chart.append('text')
+                .attr('class', 'bar-title')
+                .attr('y', function(d) {
+                    return y(_this.data.data[d][time].v) - 5;
+                })
+                .attr('x', function(d) {
+                    return x(_this.data.things[d].name) + (x.rangeBand() / 2);
+                })
+                .text(function(d) {
+                    return _this.data.things[d].name;
+                });
+
+            this.chartArea.select('.x.axis')
+                .attr('transform', 'translate(0,' + height + ')')
+                .call(xAxis)
+                .selectAll('.tick text')
+                .remove();
+
+            this.chartArea.select('.y.axis')
+                .call(yAxis);
+
+            this.chartArea.append('text')
+                .attr('class', 'title')
+                .attr('transform', 'translate(' + 10 + ',' + 20 + ')')
+                .text(waffle.definitions.indicators[indicator].name);
+
+        },
+
+        postRender: function() {
+
+            var _this = this,
+                promise = this.loadData();
+
+            promise.then(function() {
+
+                _this.draw();
+
+            });
+
         },
 
         update: function() {
@@ -186,9 +218,9 @@ define([
                 .call(yAxis);
 
             // If we have data, be responsive on resize
-            if (this.bar_chart.data) {
-                var things = this.bar_chart.data.things,
-                    data = this.bar_chart.data.data,
+            if (this.data) {
+                var things = this.data.things,
+                    data = this.data.data,
                     time = this.model.getState("time");
 
                 // reposition rectangles
@@ -216,5 +248,5 @@ define([
         }
     });
 
-    return barChart;
+    return BarChart;
 });
