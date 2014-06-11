@@ -62,8 +62,8 @@ define([
 
     //updating the tool is updating the components
     update: function() {
-      for(var i in _this.components) {
-        _this.components[i].update();
+      for(var i in this.components) {
+        this.components[i].update();
       }
     }
   });
