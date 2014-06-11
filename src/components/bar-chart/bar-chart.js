@@ -37,53 +37,26 @@ define([
             var _this = this,
                 defer = $.Deferred();
 
-            var indicator = this.model.getState("yaxis").indicator;
-            var indicatorFile = 'stats/' + indicator + '.json';
-            var waffleFile = 'waffle-' + this.model.getState("language") + '.json';
-            var dataMan = this.dataManager;
+            var indicator = this.model.getState("yaxis").indicator,
+                indicatorFile = 'stats/' + indicator + '.json',
+                waffleFile = 'waffle-' + this.model.getState("language") + '.json',
+                dataMan = this.dataManager;
+
+            var data_filter = prepareDataFilter(this.model.getState("show")),
+                ids = _.map(data_filter, function(i) { return i.id } );
 
             //load data and resolve the defer when it's done
             $.when(
                 dataMan.loadWaffle(this.model.getData("path") + waffleFile),
                 dataMan.loadStats(this.model.getData("path") + indicatorFile, indicator)
             ).done(function() {
-
-                //prepare data
+                //getting data from data manager
                 var stats = _this.dataManager.getStats();
                 var waffle = _this.dataManager.getWaffle();
-                var time = _this.model.getState("time");
-
-                // Prepare data
-                var show = _.flatten(
-                    _.map(_this.model.getState("show"), function(object, region) {
-                        if (object.filter) {
-                            return _.map(object.filter, function(d) {
-                                return {
-                                    category: region,
-                                    id: d
-                                }
-                            });
-                        } else {
-                            return {
-                                category: region,
-                                id: undefined
-                            }
-                        }
-                    })
-                );
-
-                var things = _this.dataManager.getThing(show);
-                var ids = _.map(things, function(t) {
-                    return t.id;
-                });
-                var data = _.pick(stats[indicator], ids);
-
-                _this.data = {
-                    show: show,
-                    things: things,
-                    ids: ids,
-                    data: data
-                };
+                //get more info about each thing
+                _this.things = _this.dataManager.getThing(data_filter);
+                //filter data by id
+                _this.data = _.pick(stats[indicator], ids);
 
                 defer.resolve();
             });
@@ -179,13 +152,20 @@ define([
         postRender: function() {
 
             var _this = this,
+                defer = $.Deferred();
                 promise = this.loadData();
 
             promise.then(function() {
 
+                //draw graph with d3
                 _this.draw();
 
+                //this component is ready
+                defer.resolve();
+
             });
+
+            return defer;
 
         },
 
@@ -209,44 +189,35 @@ define([
 
             x.rangeRoundBands([0, width], .1, .3);
             y.range([height, 0]);
-
-            this.chartArea.select('.x.axis')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(xAxis);
-
-            this.chartArea.select('.y.axis')
-                .call(yAxis);
-
-            // If we have data, be responsive on resize
-            if (this.data) {
-                var things = this.data.things,
-                    data = this.data.data,
-                    time = this.model.getState("time");
-
-                // reposition rectangles
-                this.chartArea.selectAll('.bar')
-                    .each(function(d) {
-                        var rect = d3.select(this),
-                            rectdata = rect.data();
-                        // re-calc bars
-                        rect.attr('x', x(things[rectdata].name))
-                            .attr('width', x.rangeBand())
-                            .attr('y', y(data[rectdata][time].v))
-                            .attr('height', height - y(data[rectdata][time].v));
-                    });
-
-                // re-position titles
-                this.chartArea.selectAll('.bar-title')
-                    .each(function(d) {
-                        var text = d3.select(this),
-                            textData = text.data();
-                        // recalc position
-                        text.attr('y', y(data[textData][time].v) - 5)
-                            .attr('x', x(things[textData].name) + (x.rangeBand() / 2))
-                    })
-            }
         }
     });
+
+
+    //Transform data filter into shallow version
+    function prepareDataFilter(show) {
+
+        var result = [];
+        //iterate over each category we want to show
+        for (var reg_type in show) {
+            //if category has sub filters, add them instead
+            if (show[reg_type].hasOwnProperty("filter")) {
+                for (var reg in show[reg_type].filter) {
+                    result.push({
+                        category: reg_type,
+                        id: show[reg_type].filter[reg]
+                    });
+                }
+            }
+            //if not, add the category itself (e.g.: world)
+            else {
+                result.push({
+                    category: reg_type,
+                    id: reg_type
+                });
+            }
+        }
+        return result;
+    };
 
     return BarChart;
 });
