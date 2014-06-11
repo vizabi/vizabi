@@ -157,6 +157,10 @@ define([
             }.bind(this));
         },
 
+        update: function() {
+            console.log("THE BAR CHART WANTS TO UPDATE!!!");
+        },
+
         resize: function() {
             if (!this.chartArea) return;
 

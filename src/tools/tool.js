@@ -36,11 +36,10 @@ define([
           _this.layout.update();
         });
 
+        //call update of each component when the state changes
         _this.model.bind('change:state', function(state) {
-            console.log("HELLO WORLD!");
+            _this.update();
         });
-
-        _this.model.setState({name: "Amir"});
 
       });
     },
@@ -59,6 +58,13 @@ define([
       var args = Array.prototype.slice.call(arguments).slice(1);
       this.events.trigger(evt, args);
       return this;
+    },
+
+    //updating the tool is updating the components
+    update: function() {
+      for(var i in _this.components) {
+        _this.components[i].update();
+      }
     }
   });
 

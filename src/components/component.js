@@ -206,6 +206,10 @@ define([
       this.model.setState(state);
     },
 
+    update: function() {
+      //what to do when the state changes
+    },
+
     resize: function() {
       //what to do when page is resized
     },
