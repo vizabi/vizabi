@@ -38,31 +38,36 @@
     <div id="placeholder"></div>
 </body>
 <script>
-var state = {
-    language: 'en',
-    show: {
-        'world': {},
-        'region': {
-            filter: ['asi', 'ame']
-        }
-    },
-    time: 2014,
-    timeRange: [1800, 2018],
-    yaxis: {
-        indicator: 'gdp'
-    },
-    waffle: {
-        path: '../src/tools/hello-world/waffles/'
-    },
-    stats: {
-        path: '../src/tools/hello-world/waffles/stats/'
-    }
+var ready = function(err) {
+    console.log("Vizabi is ready!");
 };
 
-vizabi.start("hello-world", "#placeholder", state);
-vizabi.ready(function() {
-    console.log("Vizabi is ready!");
-});
+var options = {
+    //state
+    state: {
+        language: 'en',
+        show: {
+            'world': {},
+            'region': {
+                filter: ['asi', 'ame']
+            }
+        },
+        time: 2014,
+        timeRange: [1800, 2018],
+        yaxis: {
+            indicator: 'gdp'
+        },
+    },
+    //path
+    data: {
+        path: '../src/tools/hello-world/waffles/'
+    },
+
+    //ready function
+    ready: ready
+};
+
+var myVizabi = new Vizabi("hello-world", "#placeholder", options);
 
 function randomSize() {
     var width = Math.floor(Math.random() * 800) + 300;
