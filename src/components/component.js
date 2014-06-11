@@ -13,6 +13,7 @@ define([
       this.placeholder = this.placeholder || options.placeholder;
       this.data = this.data || options.data;
 
+      this.model = this.model;
       this.element = this.element || null;
       this.core = this.core || core;
       this.template = this.template || "components/component";

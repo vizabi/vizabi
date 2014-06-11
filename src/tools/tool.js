@@ -1,8 +1,9 @@
 define([
   'd3',
   'underscore',
-  'components/component'
-], function(d3, _, Component) {
+  'components/component',
+  'base/model'
+], function(d3, _, Component, Model) {
 
   //Tool does everything a component does, but has different defaults
   //And possibly some extra methods
@@ -18,6 +19,7 @@ define([
         }
       };
 
+      this.model = new Model();
       // Same constructor as widgets
       this._super(core, options);
     },
