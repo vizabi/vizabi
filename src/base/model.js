@@ -2,9 +2,11 @@ define([
     'base/class'
 ], function(Class) {
 
+    
     var model = Class.extend({
-        init: function(options) {
+        init: function(initAttr) {
             this.attributes = {};
+            this.set(initAttr);
         },
         get: function(attr) {
             return this.attributes[attr];

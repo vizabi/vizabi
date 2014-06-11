@@ -4,9 +4,9 @@ define([
 
 
     var ToolModel = Model.extend({
-        init: function(options) {
-            this.state = new Model();
-            this.data = new Model();
+        init: function(state, data) {
+            this.state = new Model(state);
+            this.data = new Model(data);
         },
 
         getState: function(attr) {

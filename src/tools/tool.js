@@ -19,7 +19,7 @@ define([
         }
       };
 
-      this.model = new ToolModel();
+      this.model = new ToolModel(options.state, options.data);
       // Same constructor as widgets
       this._super(core, options);
     },
