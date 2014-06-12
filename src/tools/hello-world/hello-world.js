@@ -6,7 +6,7 @@ define([
     //TODO: put a state validator in a data helper which is responsible for this tools use of data
     //TODO: isolate the views update based on data in a single place -- possibly a glue look-alike ?!
     var helloWorld = Tool.extend({
-        init: function(context, options) {
+        init: function(parent, options) {
             this.name = 'hello-world';
             this.placeholder = options.placeholder;
         
@@ -23,7 +23,7 @@ define([
                 // "title": ".vizabi-tool-title",
             };
 
-            this._super(context, options);
+            this._super(parent, options);
 
             //TODO: Here send the state for validation and get back whether its valid or not
             // ---- > add a data layer

@@ -7,7 +7,7 @@ define([
 ], function($, d3, _, utils, Class) {
 
   var Component = Class.extend({
-    init: function(core, options) {
+    init: function(parent, options) {
       this.name = this.name || options.name;
       this.state = this.state || options.state;
       this.placeholder = this.placeholder || options.placeholder;
@@ -15,7 +15,6 @@ define([
 
       this.model = this.model || options.model;
       this.element = this.element || null;
-      this.core = this.core || core;
       this.template = this.template || "components/component";
       this.template_data = this.template_data || {
         name: this.name
@@ -30,9 +29,9 @@ define([
 
       this.loading = true;
 
-      this.dataManager = core.getInstance('dataManager');
-      this.layout = core.getInstance('layout');
-      this.events = core.getInstance('events');
+      this.dataManager = this.getInstance('dataManager');
+      this.layout = this.getInstance('layout');
+      this.events = this.getInstance('events');
     },
 
     //TODO: change the scary name! :D bootstrap is one good one
@@ -66,7 +65,7 @@ define([
         //TODO: Chance of refactoring
         //Every widget binds its resize function to the resize event
         _this.resize();
-        _this.core.bind('resize', function() {
+        _this.events.bind('resize', function() {
           _this.resize();
         });
 
@@ -112,7 +111,7 @@ define([
       return defer;
     },
 
-    loadComponents: function(core) {
+    loadComponents: function() {
       var defer = $.Deferred();
       var defers = [];
       var _this = this;
@@ -216,6 +215,10 @@ define([
 
     postRender: function() {
 
+    },
+
+    getInstance: function(manager) {
+      return this.parent.getInstance(manager);
     }
   });
 

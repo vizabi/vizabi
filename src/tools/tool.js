@@ -8,7 +8,7 @@ define([
   //Tool does everything a component does, but has different defaults
   //And possibly some extra methods
   var Tool = Component.extend({
-    init: function(core, options) {
+    init: function(parent, options) {
       // Define default template 
       this.template = this.template || "tools/tool";
       this.profiles = this.profiles || {
@@ -21,7 +21,7 @@ define([
 
       this.model = new ToolModel(options.state, options.data);
       // Same constructor as widgets
-      this._super(core, options);
+      this._super(parent, options);
     },
 
     //Tools renders just like the widgets, but they update the layout
@@ -42,11 +42,6 @@ define([
         });
 
       });
-    },
-
-    getInstance: function(manager) {
-      // TODO: Figure out a better way to store managers
-      return this[manager];
     },
 
     bind: function(evt, func) {
