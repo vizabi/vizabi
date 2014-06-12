@@ -19,9 +19,11 @@ define([
         }
       };
 
+      
       this.model = new ToolModel(options.state, options.data);
       // Same constructor as widgets
       this._super(parent, options);
+      this.layout = this.getInstance('layout');
     },
 
     //Tools renders just like the widgets, but they update the layout

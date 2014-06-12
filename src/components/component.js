@@ -30,7 +30,6 @@ define([
       this.loading = true;
 
       this.dataManager = this.getInstance('dataManager');
-      this.layout = this.getInstance('layout');
       this.events = this.getInstance('events');
     },
 
@@ -197,10 +196,6 @@ define([
       return defer;
     },
 
-    parent: function() {
-      return this.parent;
-    },
-
     setState: function(state) {
       this.model.setState(state);
     },
@@ -219,6 +214,15 @@ define([
 
     getInstance: function(manager) {
       return this.parent.getInstance(manager);
+    },
+
+    getLayoutProfile: function() {
+        if (this.layout) {
+          return this.layout.currentProfile();
+        }
+        else {
+          return this.parent.getLayoutProfile();  
+        } 
     }
   });
 

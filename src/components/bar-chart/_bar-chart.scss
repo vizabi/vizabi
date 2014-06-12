@@ -1,20 +1,28 @@
 #bar-chart {
-
-    font-size: 12px;
-
+    @include font-size(18px);
     .axis {
         fill: none;
         stroke: #999999;
         color: #666666;
-
         text {
             fill: currentColor;
             stroke: none;
         }
     }
-
     .bar {
         fill: $colorIMmediumBlue;
         stroke: none;
+    }
+}
+
+&.medium {
+    #bar-chart {
+        @include font-size(15px);
+    }
+}
+
+&.small {
+    #bar-chart {
+        @include font-size(12px);
     }
 }

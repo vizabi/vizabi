@@ -69,7 +69,6 @@ define([
                     .attr("class", "bar");
 
                 //draw graph with d3
-                _this.draw();
 
                 //this component is ready
                 defer.resolve();
@@ -81,16 +80,33 @@ define([
         },
 
         //draw the graph for the first time
-        draw: function() {
+        resize: function() {
+            var tick_spacing = 60;
+
+            switch (this.getLayoutProfile()) {
+                case "small":
+                    margin = {top: 20, right: 20, bottom: 30, left: 40}; 
+                    break;
+                case "medium": 
+                    margin = {top: 25, right: 25, bottom: 35, left: 50}; 
+                    tick_spacing = 80;     
+                    break;
+                case "large":
+                default:
+                    margin = {top: 30, right: 30, bottom: 40, left: 60};      
+                    tick_spacing = 100;
+                    break;
+            }
+            
 
             width = parseInt(this.element.style("width"),10) - margin.left - margin.right;
             height = parseInt(this.element.style("height"),10) - margin.top - margin.bottom;
 
-            x.rangeRoundBands([0, width], .1);
+            x.rangeRoundBands([0, width], .1, .2);
             y.range([height, 0]);
 
             //TODO: adjust the number of ticks
-            yAxis.ticks(10);
+            yAxis.ticks(Math.max(height/tick_spacing, 2));
 
             //graph
             graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -108,10 +124,6 @@ define([
                 
         },
 
-        resize: function() {
-
-        },
-        
         update: function() {
             year = this.model.getState("time");
         },
