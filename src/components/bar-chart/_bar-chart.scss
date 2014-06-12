@@ -1,38 +1,20 @@
-.bar-chart {
+#bar-chart {
 
-    .x.axis {
+    font-size: 12px;
+
+    .axis {
         fill: none;
-        stroke: black;
+        stroke: #999999;
+        color: #666666;
 
         text {
-            fill: black;
+            fill: currentColor;
             stroke: none;
         }
     }
 
-    .y.axis {
-        fill: none;
-        stroke: black;
-
-        text {
-            fill: black;
-            stroke: none;
-        }
-    }
-
-    rect.bar {
-        fill: steelblue;
-        stroke: black;
-    }
-
-    .bar-title {
-        fill: black;
-        stroke: none;
-        text-anchor: middle;
-    }
-
-    .title {
-        fill: black;
+    .bar {
+        fill: $colorIMmediumBlue;
         stroke: none;
     }
 }
