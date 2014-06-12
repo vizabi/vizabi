@@ -20,7 +20,7 @@ define([
         range = null,
         startYear = null,
         playInterval,
-        speed = 300,
+        speed = 200,
         timesliderClass;
 
 

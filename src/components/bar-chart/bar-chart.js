@@ -7,7 +7,12 @@ define([
 
     var width,
         height,
-        margin = {top: 20, right: 20, bottom: 30, left: 40},
+        margin = {
+            top: 20,
+            right: 20,
+            bottom: 30,
+            left: 40
+        },
         x = d3.scale.ordinal(),
         y = d3.scale.linear(),
         xAxis = d3.svg.axis().scale(x).orient("bottom"),
@@ -30,7 +35,7 @@ define([
 
             var _this = this,
                 defer = $.Deferred();
-                promise = this.loadData();
+            promise = this.loadData();
 
             promise.then(function() {
 
@@ -41,26 +46,28 @@ define([
                 year = _this.model.getState("time");
 
                 //id is x domain
-                x.domain(_.map(_this.data, function(d, i) { return i; }));
+                x.domain(_.map(_this.data, function(d, i) {
+                    return i;
+                }));
 
                 //TODO: check the max value of all years
                 y.domain([0, 100000000000000]);
 
-                yAxis.tickFormat(function(d){
-                    return d/1000000000000;
+                yAxis.tickFormat(function(d) {
+                    return d / 1000000000000;
                 });
 
-                xAxis.tickFormat(function(d){
+                xAxis.tickFormat(function(d) {
                     return _this.things[d].name;
                 });
 
                 //TODO: remove from draw
                 var year_data = _.map(_this.data, function(d, i) {
-                                        return {
-                                            id: i,
-                                            value: d[year].v
-                                        }
-                                    });
+                    return {
+                        id: i,
+                        value: d[year].v
+                    }
+                });
 
                 bars = bars.selectAll(".bar")
                     .data(year_data)
@@ -85,47 +92,87 @@ define([
 
             switch (this.getLayoutProfile()) {
                 case "small":
-                    margin = {top: 20, right: 20, bottom: 30, left: 40}; 
+                    margin = {
+                        top: 20,
+                        right: 20,
+                        bottom: 30,
+                        left: 40
+                    };
                     break;
-                case "medium": 
-                    margin = {top: 25, right: 25, bottom: 35, left: 50}; 
-                    tick_spacing = 80;     
+                case "medium":
+                    margin = {
+                        top: 25,
+                        right: 25,
+                        bottom: 35,
+                        left: 50
+                    };
+                    tick_spacing = 80;
                     break;
                 case "large":
                 default:
-                    margin = {top: 30, right: 30, bottom: 40, left: 60};      
+                    margin = {
+                        top: 30,
+                        right: 30,
+                        bottom: 40,
+                        left: 60
+                    };
                     tick_spacing = 100;
                     break;
             }
-            
 
-            width = parseInt(this.element.style("width"),10) - margin.left - margin.right;
-            height = parseInt(this.element.style("height"),10) - margin.top - margin.bottom;
+
+            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
 
             x.rangeRoundBands([0, width], .1, .2);
             y.range([height, 0]);
 
             //TODO: adjust the number of ticks
-            yAxis.ticks(Math.max(height/tick_spacing, 2));
+            yAxis.ticks(Math.max(height / tick_spacing, 2));
 
             //graph
             graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
- 
+
             //axes
             xAxisEl.attr("transform", "translate(0," + height + ")")
-                   .call(xAxis);
+                .call(xAxis);
 
             yAxisEl.call(yAxis);
-            
-            bars.attr("x", function(d) { return x(d.id); })
+
+            bars.attr("x", function(d) {
+                return x(d.id);
+            })
                 .attr("width", x.rangeBand())
-                .attr("y", function(d) { return y(d.value); })
-                .attr("height", function(d) { return height - y(d.value); });
-                
+                .attr("y", function(d) {
+                    return y(d.value);
+                })
+                .attr("height", function(d) {
+                    return height - y(d.value);
+                });
+
         },
 
         update: function() {
-            year = this.model.getState("time");
+
+            if (this.data) {
+                year = this.model.getState("time");
+
+                var year_data = _.map(this.data, function(d, i) {
+                    return {
+                        id: i,
+                        value: d[year].v
+                    }
+                });
+
+                bars.data(year_data)
+                    .attr("y", function(d) {
+                        return y(d.value);
+                    })
+                    .attr("height", function(d) {
+                        return height - y(d.value);
+                    });
+            }
+
         },
 
         //load barchart data
@@ -140,7 +187,9 @@ define([
                 dataMan = this.dataManager;
 
             var data_filter = prepareDataFilter(this.model.getState("show")),
-                ids = _.map(data_filter, function(i) { return i.id } );
+                ids = _.map(data_filter, function(i) {
+                    return i.id
+                });
 
             //load data and resolve the defer when it's done
             $.when(
@@ -168,6 +217,7 @@ define([
 
 
     //Transform data filter into shallow version
+
     function prepareDataFilter(show) {
 
         var result = [];
