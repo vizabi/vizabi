@@ -2,10 +2,11 @@
 
 define([
     'jquery',
+    'underscore',
     'base/utils',
     'components/component',
     'smartpicker'
-], function($, utils, Component, SmartPicker) {
+], function($, _, utils, Component, SmartPicker) {
 
     var geo_picker;
 
@@ -118,7 +119,12 @@ define([
         selectCountries: function(countriesArr) {
             var state = {
                 show: {
-                    countries: countriesArr
+                    //TODO: change this mapping (workaround)
+                    region: {
+                        filter: _.map(countriesArr, function(c) {
+                                    return c.toLowerCase();
+                                })
+                    }
                 }
             }
             this.setState(state);

@@ -34,34 +34,45 @@ define([
         postRender: function() {
 
             var _this = this,
-                defer = $.Deferred();
-            promise = this.loadData();
+                defer = $.Deferred(),
+                promise = this.loadData();
+
+            graph = _this.element.select('#graph');
+            xAxisEl = graph.select('#x_axis');
+            yAxisEl = graph.select('#y_axis');
+            bars = graph.select('#bars');
+            year = _this.model.getState("time");
 
             promise.then(function() {
 
-                graph = _this.element.select('#graph');
-                xAxisEl = graph.select('#x_axis');
-                yAxisEl = graph.select('#y_axis');
-                bars = graph.select('#bars');
+                var data_filter = prepareDataFilter(_this.model.getState("show")),
+                    ids = _.map(data_filter, function(i) {
+                        return i.id
+                    });
+
+                var indicator = _this.model.getState("yaxis").indicator,
+                    stats = _this.dataManager.getStats();
+
+                _this.things = _this.dataManager.getThing(data_filter);
+                _this.data = _.pick(stats[indicator], ids);
+
                 year = _this.model.getState("time");
 
-                //id is x domain
-                x.domain(_.map(_this.data, function(d, i) {
-                    return i;
-                }));
-
-                //TODO: check the max value of all years
                 y.domain([0, 100000000000000]);
 
                 yAxis.tickFormat(function(d) {
                     return d / 1000000000000;
                 });
+                yAxisEl.call(yAxis);
+
+                x.domain(_.map(_this.data, function(d, i) {
+                    return i;
+                }));
 
                 xAxis.tickFormat(function(d) {
                     return _this.things[d].name;
                 });
 
-                //TODO: remove from draw
                 var year_data = _.map(_this.data, function(d, i) {
                     return {
                         id: i,
@@ -70,12 +81,10 @@ define([
                 });
 
                 bars = bars.selectAll(".bar")
-                    .data(year_data)
-                    .enter()
-                    .append("rect")
-                    .attr("class", "bar");
-
-                //draw graph with d3
+                            .data(year_data)
+                            .enter()
+                            .append("rect")
+                            .attr("class", "bar");
 
                 //this component is ready
                 defer.resolve();
@@ -140,8 +149,8 @@ define([
             yAxisEl.call(yAxis);
 
             bars.attr("x", function(d) {
-                return x(d.id);
-            })
+                    return x(d.id);
+                })
                 .attr("width", x.rangeBand())
                 .attr("y", function(d) {
                     return y(d.value);
@@ -155,6 +164,37 @@ define([
         update: function() {
 
             if (this.data) {
+
+                var _this = this,
+                    data_filter = prepareDataFilter(this.model.getState("show")),
+                    ids = _.map(data_filter, function(i) {
+                        return i.id
+                    });
+
+                var indicator = this.model.getState("yaxis").indicator,
+                    stats = this.dataManager.getStats();
+
+                this.things = this.dataManager.getThing(data_filter);
+                this.data = _.pick(stats[indicator], ids);
+
+                //TODO: check the max value of all years
+                y.domain([0, 100000000000000]);
+
+                x.domain(_.map(this.data, function(d, i) {
+                    return i;
+                }));
+
+                //TODO: read from data manager
+                xAxis.tickFormat(function(d) {
+                    return d;
+                });
+
+                xAxisEl.call(xAxis);
+
+                yAxis.tickFormat(function(d) {
+                    return d / 1000000000000;
+                });
+
                 year = this.model.getState("time");
 
                 var year_data = _.map(this.data, function(d, i) {
@@ -165,12 +205,19 @@ define([
                 });
 
                 bars.data(year_data)
+                    .attr("x", function(d) {
+                        return x(d.id);
+                    })
+                    .attr("width", x.rangeBand())
                     .attr("y", function(d) {
                         return y(d.value);
                     })
                     .attr("height", function(d) {
                         return height - y(d.value);
-                    });
+                    })
+                    .exit()
+                    .remove();
+
             }
 
         },
