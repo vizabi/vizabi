@@ -5,30 +5,115 @@ define([
     'components/component'
 ], function(d3, _, Component) {
 
-
-    // TODO: Move these into barchart's space
-
-    var margin = {
-        left: 55,
-        right: 15,
-        top: 15,
-        bottom: 10
-    },
-        formatValue = d3.format(',.1s'),
+    var width,
+        height,
+        margin = {top: 20, right: 20, bottom: 30, left: 40},
         x = d3.scale.ordinal(),
-        y = d3.scale.linear().nice(),
-        xAxis = d3.svg.axis().scale(x).orient('bottom'),
-        yAxis = d3.svg.axis().scale(y).orient('left')
-            .tickFormat(function(d) {
-                return formatValue(d);
-            })
-            .tickSize(5, 5, 0);
+        y = d3.scale.linear(),
+        xAxis = d3.svg.axis().scale(x).orient("bottom"),
+        yAxis = d3.svg.axis().scale(y).orient("left"),
+        graph = null,
+        xAxisEl = null,
+        yAxisEl = null,
+        bars = null,
+        year = null;
 
     var BarChart = Component.extend({
         init: function(context, options) {
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
             this._super(context, options);
+        },
+
+        //what to do after we load template
+        postRender: function() {
+
+            var _this = this,
+                defer = $.Deferred();
+                promise = this.loadData();
+
+            promise.then(function() {
+
+                graph = _this.element.select('#graph');
+                xAxisEl = graph.select('#x_axis');
+                yAxisEl = graph.select('#y_axis');
+                bars = graph.select('#bars');
+                year = _this.model.getState("time");
+
+                //id is x domain
+                x.domain(_.map(_this.data, function(d, i) { return i; }));
+
+                //TODO: check the max value of all years
+                y.domain([0, 100000000000000]);
+
+                yAxis.tickFormat(function(d){
+                    return d/1000000000000;
+                });
+
+                xAxis.tickFormat(function(d){
+                    return _this.things[d].name;
+                });
+
+                //TODO: remove from draw
+                var year_data = _.map(_this.data, function(d, i) {
+                                        return {
+                                            id: i,
+                                            value: d[year].v
+                                        }
+                                    });
+
+                bars = bars.selectAll(".bar")
+                    .data(year_data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar");
+
+                //draw graph with d3
+                _this.draw();
+
+                //this component is ready
+                defer.resolve();
+
+            });
+
+            return defer;
+
+        },
+
+        //draw the graph for the first time
+        draw: function() {
+
+            width = parseInt(this.element.style("width"),10) - margin.left - margin.right;
+            height = parseInt(this.element.style("height"),10) - margin.top - margin.bottom;
+
+            x.rangeRoundBands([0, width], .1);
+            y.range([height, 0]);
+
+            //TODO: adjust the number of ticks
+            yAxis.ticks(10);
+
+            //graph
+            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+ 
+            //axes
+            xAxisEl.attr("transform", "translate(0," + height + ")")
+                   .call(xAxis);
+
+            yAxisEl.call(yAxis);
+            
+            bars.attr("x", function(d) { return x(d.id); })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) { return y(d.value); })
+                .attr("height", function(d) { return height - y(d.value); });
+                
+        },
+
+        resize: function() {
+
+        },
+        
+        update: function() {
+            year = this.model.getState("time");
         },
 
         //load barchart data
@@ -62,135 +147,12 @@ define([
             });
 
             return defer;
-        },
-
-        draw: function() {
-            var measures = this.placeholder.node().getBoundingClientRect(),
-                width = measures.width - margin.left - margin.right,
-                height = measures.height - margin.top - margin.bottom,
-                _this = this,
-                time = _this.model.getState("time"),
-                waffle = _this.dataManager.getWaffle(),
-                indicator = this.model.getState("yaxis").indicator;
-
-            x.rangeRoundBands([0, width], .1, .3);
-            y.range([height, 0]);
-
-            this.chartArea = this.element
-                .append('g')
-                .attr('transform',
-                    'translate(' + margin.left + ',' + margin.top + ')');
-
-
-            this.element.attr('class', this.name);
-
-            this.chartArea.append('g')
-                .attr('class', 'y axis')
-                .call(yAxis);
-
-            this.chartArea.append('g')
-                .attr('class', 'x axis')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(xAxis);
-
-            // Sets x scale domain
-            x.domain(_.map(this.data.things, function(d) {
-                return d.name;
-            }));
-
-            // Sets y scale domain
-            y.domain([0, _.max(_.map(this.data.data, function(d) {
-                return _.max(_.pluck(d, 'v'));
-            }))]);
-
-            // draw axis
-            var chart = this.chartArea.selectAll('.bar')
-                .data(this.data.ids)
-                .enter();
-
-            chart.append('rect')
-                .attr('class', 'bar')
-                .attr('x', function(d) {
-                    return x(_this.data.things[d].name);
-                })
-                .attr('width', x.rangeBand())
-                .attr('y', function(d) {
-                    return y(_this.data.data[d][time].v);
-                })
-                .attr('height', function(d) {
-                    return height - y(_this.data.data[d][time].v);
-                });
-
-            chart.append('text')
-                .attr('class', 'bar-title')
-                .attr('y', function(d) {
-                    return y(_this.data.data[d][time].v) - 5;
-                })
-                .attr('x', function(d) {
-                    return x(_this.data.things[d].name) + (x.rangeBand() / 2);
-                })
-                .text(function(d) {
-                    return _this.data.things[d].name;
-                });
-
-            this.chartArea.select('.x.axis')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(xAxis)
-                .selectAll('.tick text')
-                .remove();
-
-            this.chartArea.select('.y.axis')
-                .call(yAxis);
-
-            this.chartArea.append('text')
-                .attr('class', 'title')
-                .attr('transform', 'translate(' + 10 + ',' + 20 + ')')
-                .text(waffle.definitions.indicators[indicator].name);
-
-        },
-
-        postRender: function() {
-
-            var _this = this,
-                defer = $.Deferred();
-                promise = this.loadData();
-
-            promise.then(function() {
-
-                //draw graph with d3
-                _this.draw();
-
-                //this component is ready
-                defer.resolve();
-
-            });
-
-            return defer;
-
-        },
-
-        update: function() {
-            console.log("THE BAR CHART WANTS TO UPDATE!!!");
-        },
-
-        resize: function() {
-            if (!this.chartArea) return;
-
-            var measures = this.placeholder.node().getBoundingClientRect(),
-                width = measures.width - margin.left - margin.right,
-                height = measures.height - margin.top - margin.bottom;
-
-            this.element
-                .attr('height', measures.height)
-                .attr('width', measures.width);
-
-            this.chartArea
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-            x.rangeRoundBands([0, width], .1, .3);
-            y.range([height, 0]);
         }
     });
+
+    function draw() {
+
+    }
 
 
     //Transform data filter into shallow version
