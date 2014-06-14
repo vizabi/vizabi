@@ -27,72 +27,42 @@ define([
         init: function(context, options) {
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
+            
             this._super(context, options);
         },
 
         //what to do after we load template
         postRender: function() {
 
-            var _this = this,
-                defer = $.Deferred(),
-                promise = this.loadData();
+            var _this = this;
 
             graph = _this.element.select('#graph');
             xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
             bars = graph.select('#bars');
-            year = _this.model.getState("time");
 
-            promise.then(function() {
+            y.domain([0, 100000000000000]);
 
-                var data_filter = prepareDataFilter(_this.model.getState("show")),
-                    ids = _.map(data_filter, function(i) {
-                        return i.id
-                    });
+            yAxis.tickFormat(function(d) {
+                return d / 1000000000000;
+            });
+            
+            yAxisEl.call(yAxis);
 
-                var indicator = _this.model.getState("yaxis").indicator,
-                    stats = _this.dataManager.getStats();
+            var yearData = this.model.getYearData();
+            x.domain(_.map(yearData, function(d, i) {
+                return d.id;
+            }));
 
-                _this.things = _this.dataManager.getThing(data_filter);
-                _this.data = _.pick(stats[indicator], ids);
-
-                year = _this.model.getState("time");
-
-                y.domain([0, 100000000000000]);
-
-                yAxis.tickFormat(function(d) {
-                    return d / 1000000000000;
-                });
-                yAxisEl.call(yAxis);
-
-                x.domain(_.map(_this.data, function(d, i) {
-                    return i;
-                }));
-
-                xAxis.tickFormat(function(d) {
-                    return _this.things[d].name;
-                });
-
-                var year_data = _.map(_this.data, function(d, i) {
-                    return {
-                        id: i,
-                        value: d[year].v
-                    }
-                });
-
-                bars = bars.selectAll(".bar")
-                            .data(year_data)
-                            .enter()
-                            .append("rect")
-                            .attr("class", "bar");
-
-                //this component is ready
-                defer.resolve();
-
+            xAxis.tickFormat(function(d) {
+                return _this.model.getData("things")[d].name;
             });
 
-            return defer;
-
+            bars = bars.selectAll(".bar")
+                .data(yearData)
+                .enter()
+                .append("rect")
+                .attr("class", "bar");
         },
 
         //draw the graph for the first time
@@ -136,7 +106,6 @@ define([
             x.rangeRoundBands([0, width], .1, .2);
             y.range([height, 0]);
 
-            //TODO: adjust the number of ticks
             yAxis.ticks(Math.max(height / tick_spacing, 2));
 
             //graph
@@ -149,8 +118,8 @@ define([
             yAxisEl.call(yAxis);
 
             bars.attr("x", function(d) {
-                    return x(d.id);
-                })
+                return x(d.id);
+            })
                 .attr("width", x.rangeBand())
                 .attr("y", function(d) {
                     return y(d.value);
@@ -161,134 +130,48 @@ define([
 
         },
 
-        update: function() {
+        update: function(data) {
 
-            if (this.data) {
+            var yearData = this.model.getYearData();
 
-                var _this = this,
-                    data_filter = prepareDataFilter(this.model.getState("show")),
-                    ids = _.map(data_filter, function(i) {
-                        return i.id
-                    });
+            //TODO: check the max value of all years
+            y.domain([0, 100000000000000]);
 
-                var indicator = this.model.getState("yaxis").indicator,
-                    stats = this.dataManager.getStats();
+            x.domain(_.map(yearData, function(d, i) {
+                return d.id;
+            }));
 
-                this.things = this.dataManager.getThing(data_filter);
-                this.data = _.pick(stats[indicator], ids);
+            //TODO: read from data manager
+            xAxis.tickFormat(function(d) {
+                return d;
+            });
 
-                //TODO: check the max value of all years
-                y.domain([0, 100000000000000]);
+            xAxisEl.call(xAxis);
 
-                x.domain(_.map(this.data, function(d, i) {
-                    return i;
-                }));
+            yAxis.tickFormat(function(d) {
+                return d / 1000000000000;
+            });
 
-                //TODO: read from data manager
-                xAxis.tickFormat(function(d) {
-                    return d;
-                });
 
-                xAxisEl.call(xAxis);
-
-                yAxis.tickFormat(function(d) {
-                    return d / 1000000000000;
-                });
-
-                year = this.model.getState("time");
-
-                var year_data = _.map(this.data, function(d, i) {
-                    return {
-                        id: i,
-                        value: d[year].v
-                    }
-                });
-
-                bars.data(year_data)
-                    .attr("x", function(d) {
-                        return x(d.id);
-                    })
-                    .attr("width", x.rangeBand())
-                    .attr("y", function(d) {
-                        return y(d.value);
-                    })
-                    .attr("height", function(d) {
-                        return height - y(d.value);
-                    })
-                    .exit()
-                    .remove();
-
-            }
-
+            bars.data(yearData)
+                .attr("x", function(d) {
+                    return x(d.id);
+                })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) {
+                    return y(d.value);
+                })
+                .attr("height", function(d) {
+                    return height - y(d.value);
+                })
+                .exit()
+                .remove();
         },
 
         //load barchart data
-        loadData: function() {
 
-            var _this = this,
-                defer = $.Deferred();
-
-            var indicator = this.model.getState("yaxis").indicator,
-                indicatorFile = 'stats/' + indicator + '.json',
-                waffleFile = 'waffle-' + this.model.getState("language") + '.json',
-                dataMan = this.dataManager;
-
-            var data_filter = prepareDataFilter(this.model.getState("show")),
-                ids = _.map(data_filter, function(i) {
-                    return i.id
-                });
-
-            //load data and resolve the defer when it's done
-            $.when(
-                dataMan.loadWaffle(this.model.getData("path") + waffleFile),
-                dataMan.loadStats(this.model.getData("path") + indicatorFile, indicator)
-            ).done(function() {
-                //getting data from data manager
-                var stats = _this.dataManager.getStats();
-                var waffle = _this.dataManager.getWaffle();
-                //get more info about each thing
-                _this.things = _this.dataManager.getThing(data_filter);
-                //filter data by id
-                _this.data = _.pick(stats[indicator], ids);
-
-                defer.resolve();
-            });
-
-            return defer;
-        }
     });
 
-    function draw() {
-
-    }
-
-
-    //Transform data filter into shallow version
-
-    function prepareDataFilter(show) {
-
-        var result = [];
-        //iterate over each category we want to show
-        for (var reg_type in show) {
-            //if category has sub filters, add them instead
-            if (show[reg_type].hasOwnProperty("filter")) {
-                for (var reg in show[reg_type].filter) {
-                    result.push({
-                        category: reg_type,
-                        id: show[reg_type].filter[reg]
-                    });
-                }
-            }
-            //if not, add the category itself (e.g.: world)
-            else {
-                result.push({
-                    category: reg_type,
-                    id: reg_type
-                });
-            }
-        }
-        return result;
-    };
 
     return BarChart;
 });

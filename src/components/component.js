@@ -29,7 +29,6 @@ define([
 
       this.loading = true;
 
-      this.dataManager = this.getInstance('dataManager');
       this.events = this.getInstance('events');
     },
 

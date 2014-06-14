@@ -1,40 +1,59 @@
 define([
     'base/class',
     'managers/events/events',
-], function(Class, Events) {
+    'managers/data/data'
+], function(Class, Events, DataManager) {
 
-    
     var model = Class.extend({
-        
-        init: function(initAttr) {
-            this.attributes = initAttr || {};
-            this.events = Events;
+
+        init: function(datapath) {
+            datapath = datapath ? datapath.path : "";
+            this.attributes = {};
+            this.dataManager = new DataManager(datapath);
         },
-        
+
         get: function(attr) {
             return this.attributes[attr];
         },
-        
-        set: function(attr, value) {
+
+        //set an attribute for the model, or an entire object
+        set: function(attr, value, silent) {
             if (typeof attr !== 'object') {
-                attr = {
-                    attr: value
-                };
+                var attrs = {};
+                attrs[attr] = value;
+                attr = attrs;
+            } else {
+                silent = value;
             }
 
             for (var att in attr) {
                 this.attributes[att] = attr[att];
             }
 
-            this.events.trigger("change");
+            //silent mode is used to avoid event propagation
+            if (!silent) Events.trigger("change");
         },
 
         bind: function(name, func) {
-            this.events.bind(name, func);
+            Events.bind(name, func);
         },
 
         trigger: function(name) {
-            this.events.trigger(name);
+            Events.trigger(name);
+        },
+
+        // options : {identifier: ("waffle" or "stats"), path: ("path/to/data")}
+        load: function(options) {
+            var _this = this,
+                defer = $.Deferred(),
+                promise = this.dataManager.load(options.identifier, options.path);
+
+            //when request is completed, set it
+            $.when(promise).done(function() {
+                _this.set(options.identifier, _this.dataManager.get(options.identifier));
+                defer.resolve();
+            });
+            return defer;
         }
     });
 

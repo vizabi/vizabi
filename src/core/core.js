@@ -4,7 +4,6 @@ define([
     'base/class',
     'managers/events/events',
     'managers/layout/layout',
-    'managers/data/data',
     'i18n'
 ], function($, config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
 
@@ -13,7 +12,6 @@ define([
         managers = {
             events: EventsManager,
             layout: new LayoutManager(),
-            data:   new DataManager(),
             i18n:   i18nManager
         };
 
@@ -55,7 +53,6 @@ define([
         getInstance: function(manager) {
             if(manager === "layout") return new LayoutManager();
             if(manager === "events") return managers[manager];
-            if (manager === 'dataManager') return managers['data'];
             return managers[manager].instance();
         },
 
