@@ -35,13 +35,15 @@ define([
         postRender: function() {
 
             var _this = this;
+            var range = this.model.getRange();
+            var yearData = this.model.getYearData();
 
             graph = _this.element.select('#graph');
             xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
             bars = graph.select('#bars');
 
-            y.domain([0, 100000000000000]);
+            y.domain([0, range.maxValue]);
 
             yAxis.tickFormat(function(d) {
                 return d / 1000000000000;
@@ -49,7 +51,6 @@ define([
             
             yAxisEl.call(yAxis);
 
-            var yearData = this.model.getYearData();
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
             }));
@@ -132,10 +133,10 @@ define([
 
         update: function(data) {
 
+            var range = this.model.getRange();
             var yearData = this.model.getYearData();
 
-            //TODO: check the max value of all years
-            y.domain([0, 100000000000000]);
+            y.domain([0, range.maxValue]);
 
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
@@ -151,6 +152,8 @@ define([
             yAxis.tickFormat(function(d) {
                 return d / 1000000000000;
             });
+
+            yAxisEl.call(yAxis);
 
 
             bars.data(yearData)
