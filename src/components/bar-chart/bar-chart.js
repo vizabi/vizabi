@@ -118,9 +118,10 @@ define([
 
             yAxisEl.call(yAxis);
 
-            bars.attr("x", function(d) {
-                return x(d.id);
-            })
+            bars.selectAll(".bar")
+                .attr("x", function(d) {
+                    return x(d.id);
+                })
                 .attr("width", x.rangeBand())
                 .attr("y", function(d) {
                     return y(d.value);
@@ -131,10 +132,12 @@ define([
 
         },
 
+        //TODO: optimize data binding
         update: function(data) {
 
             var range = this.model.getRange();
             var yearData = this.model.getYearData();
+
 
             y.domain([0, range.maxValue]);
 
@@ -155,8 +158,18 @@ define([
 
             yAxisEl.call(yAxis);
 
+            yTitleEl.text("GDP per capita")
+                    .attr("transform", "translate(10,10)")
 
-            bars.data(yearData)
+            //remove old bars
+            bars.selectAll(".bar").remove();
+
+            //update data bars
+            bars.selectAll(".bar")
+                .data(yearData)
+                .enter()
+                .append("rect")
+                .attr("class", "bar")
                 .attr("x", function(d) {
                     return x(d.id);
                 })
@@ -166,9 +179,8 @@ define([
                 })
                 .attr("height", function(d) {
                     return height - y(d.value);
-                })
-                .exit()
-                .remove();
+                });
+
         },
 
         //load barchart data
