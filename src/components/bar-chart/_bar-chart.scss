@@ -1,17 +1,30 @@
 #bar-chart {
     @include font-size(18px);
+    font-family: $fontFamily;
+    color: #666666;
+
+    .title {
+        color: $colorIMmediumBlue;
+        fill: currentColor;
+    }
     .axis {
         fill: none;
         stroke: #999999;
-        color: #666666;
+        color: #999999;
         text {
             fill: currentColor;
             stroke: none;
         }
     }
     .bar {
-        fill: $colorIMmediumBlue;
+        fill: $colorGreen;
         stroke: none;
+    }
+    .bar:nth-child(2n) {
+        fill: $colorRed;
+    }
+    .bar:nth-child(3n) {
+        fill: $colorBlue;
     }
 }
 

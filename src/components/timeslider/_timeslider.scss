@@ -1,8 +1,10 @@
 $timesliderHeight: 40px;
 $buttonAreaWidth: 50px;
 $buttonWidth: 40px;
-$buttonBackground: #666666;
-$lineColor: #cccccc;
+
+$buttonBackground: $colorBlueDark;
+$lineColor: #A4CBD4;
+$handleColor: $colorBlueDark;
 
 #time-slider-container {
 
@@ -50,7 +52,7 @@ $lineColor: #cccccc;
 
 			#time-slider-drag {
 			    cursor: pointer;
-			    color: $buttonBackground;
+			    color: $handleColor;
 			    padding: 25px 10px;
 			    position: absolute;
 			    font-family: Arial, sans-serif;
@@ -60,7 +62,7 @@ $lineColor: #cccccc;
 				    @include absolute(5px, auto, auto, 5px);
 				    content: ' ';
 				    display: block;
-				    background-color: $buttonBackground;
+				    background-color: $handleColor;
 				    width: $timesliderHeight - 30px;
 				    height: $timesliderHeight - 10px;
 				}
@@ -84,7 +86,7 @@ $lineColor: #cccccc;
 		    .time-slider-line {
 		    	@include absolute(50%);
 			    margin-top: -5px;
-			    height: 10px;
+			    height: 5px;
 			    background-color: $lineColor;
 			    display: block;
 			    -webkit-transition: height 0.1s ease-out;  /* Chrome 1-25, Safari 3.2+ */

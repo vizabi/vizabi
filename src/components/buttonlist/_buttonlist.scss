@@ -1,10 +1,11 @@
 $buttonWidth: 50px;
 $buttonSize: 23px;
 $buttonRadius: $buttonSize + 10;
-$buttonBackground: #999999;
-$buttonMoreBackground: #CCCCCC;
-$buttonColor: #ffffff;
-$buttonTitleColor: $buttonBackground;
+$buttonBackground: #ffffff;
+$buttonMoreBackground: $colorLightWhite;
+$buttonColor: $colorBlueDark;
+$buttonTitleColor: $buttonColor;
+$buttonBorderColor: #DBE8EB;
 
 #buttonlist {
 	@include box-sizing(border-box);
@@ -36,6 +37,7 @@ $buttonTitleColor: $buttonBackground;
 		    width: $buttonSize;
 		    height: $buttonSize;
 			padding: 5px;
+			border: 1px solid $buttonBorderColor;
         }
         &>.title {
         	padding-top: 2px;

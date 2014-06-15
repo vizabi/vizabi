@@ -1,12 +1,15 @@
-$fontFamily: 'Arial Rounded MT Bold', sans-serif;
-$colorIMgreen: #7394A6;
+$fontFamily: 'Arial Rounded MT Bold', Arial, sans-serif;
 $colorIMmediumBlue: #607889;
-$colorTSdarkBlue: #3C6170;
 $colorDarkWhite: #F2FAFC;
 $colorLightWhite: #FDFDFD;
 
-$mediumMinWidth: 750px;
-$largeMinWidth: 970px;
+$colorGrey: #999999;
+
+$colorBlueDark: #4B98AA;
+$colorBlueLight: #F2FAFC;
+$colorBlue: #62CCE3; 
+$colorRed: #F77481; 
+$colorGreen: #B4DE79;
 
 //makes an element absolute positioned
 @mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {

@@ -8,6 +8,7 @@ define([
     var helloWorld = Tool.extend({
         init: function(parent, options) {
             this.name = 'hello-world';
+            this.template = "tools/hello-world/hello-world";
             this.placeholder = options.placeholder;
         
             //TODO: refactor the way we pass the state forward
