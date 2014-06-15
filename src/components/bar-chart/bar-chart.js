@@ -13,6 +13,7 @@ define([
             bottom: 30,
             left: 40
         },
+        bar_radius = 5,
         x = d3.scale.ordinal(),
         y = d3.scale.linear(),
         xAxis = d3.svg.axis().scale(x).orient("bottom"),
@@ -20,6 +21,7 @@ define([
         graph = null,
         xAxisEl = null,
         yAxisEl = null,
+        yTitleEl = null;
         bars = null,
         year = null;
 
@@ -27,7 +29,7 @@ define([
         init: function(context, options) {
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
-            
+
             this._super(context, options);
         },
 
@@ -41,14 +43,16 @@ define([
             graph = _this.element.select('#graph');
             xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
+            yTitleEl = graph.select('#y_axis_title');
             bars = graph.select('#bars');
 
-            y.domain([0, range.maxValue]);
+            var maxY = range.maxValue + range.maxValue/10;
+            y.domain([0, maxY]);
 
             yAxis.tickFormat(function(d) {
                 return d / 1000000000000;
             });
-            
+
             yAxisEl.call(yAxis);
 
             x.domain(_.map(yearData, function(d, i) {
@@ -59,10 +63,11 @@ define([
                 return _this.model.getData("things")[d].name;
             });
 
-            bars = bars.selectAll(".bar")
+            bars.selectAll(".bar")
                 .data(yearData)
                 .enter()
-                .append("rect")
+                // .append("rect")
+                .append("path")
                 .attr("class", "bar");
         },
 
@@ -119,16 +124,24 @@ define([
             yAxisEl.call(yAxis);
 
             bars.selectAll(".bar")
-                .attr("x", function(d) {
-                    return x(d.id);
-                })
-                .attr("width", x.rangeBand())
-                .attr("y", function(d) {
-                    return y(d.value);
-                })
-                .attr("height", function(d) {
-                    return height - y(d.value);
-                });
+                .attr("d", function(d, i) { 
+                                return topRoundedRect(    x(d.id), 
+                                                          y(d.value),
+                                                          x.rangeBand(),
+                                                          height - y(d.value),
+                                                          bar_radius);
+                            });
+
+                // .attr("x", function(d) {
+                //     return x(d.id);
+                // })
+                // .attr("width", x.rangeBand())
+                // .attr("y", function(d) {
+                //     return y(d.value);
+                // })
+                // .attr("height", function(d) {
+                //     return height - y(d.value);
+                // });
 
         },
 
@@ -138,8 +151,8 @@ define([
             var range = this.model.getRange();
             var yearData = this.model.getYearData();
 
-
-            y.domain([0, range.maxValue]);
+            var maxY = range.maxValue + range.maxValue/10;
+            y.domain([0, maxY]);
 
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
@@ -168,18 +181,26 @@ define([
             bars.selectAll(".bar")
                 .data(yearData)
                 .enter()
-                .append("rect")
+                // .append("rect")
+                .append("path")
                 .attr("class", "bar")
-                .attr("x", function(d) {
-                    return x(d.id);
-                })
-                .attr("width", x.rangeBand())
-                .attr("y", function(d) {
-                    return y(d.value);
-                })
-                .attr("height", function(d) {
-                    return height - y(d.value);
-                });
+                .attr("d", function(d, i) { 
+                                return topRoundedRect(    x(d.id), 
+                                                          y(d.value),
+                                                          x.rangeBand(),
+                                                          height - y(d.value),
+                                                          bar_radius);
+                            });
+                // .attr("x", function(d) {
+                //     return x(d.id);
+                // })
+                // .attr("width", x.rangeBand())
+                // .attr("y", function(d) {
+                //     return y(d.value);
+                // })
+                // .attr("height", function(d) {
+                //     return height - y(d.value);
+                // });
 
         },
 
@@ -187,6 +208,17 @@ define([
 
     });
 
+    //draw top rounded paths
+    function topRoundedRect(x, y, width, height, radius) {
+        return "M" + (x + radius) + "," + y
+           + "h" + (width - (radius * 2))
+           + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
+           + "v" + (height - radius)
+           + "h" + (0-width)
+           + "v" + (0-(height-radius))
+           + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius
+           + "z";
+    }  
 
     return BarChart;
 });
