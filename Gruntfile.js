@@ -28,6 +28,12 @@ module.exports = function(grunt) {
         src: ['**/*.html'],
         dest: 'dist',
         expand: true
+      },
+      data: {
+        cwd: 'src',
+        src: ['**/*.json'],
+        dest: 'dist',
+        expand: true
       }
     },
 
@@ -90,9 +96,9 @@ grunt.registerTask('default', [
 
   'clean:dist',     //clean dist folder
   'copy:templates', //copy js and template files
+  'copy:data',
   'uglify',         //uglify js files
   'sass:dist'       //compile scss
-
 ]);
 
 //developer task: grunt dev
