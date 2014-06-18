@@ -60,17 +60,15 @@ define([
             drag.bind("touchstart mousedown", startDrag);
         },
 
+
         resize: function() {
             var year = this.getYear();
             this.setYear(year);
         },
 
-        getYear: function() {
-            return drag.attr('data-year');
-        },
-
-        setYear: function(year) {
-            var maxLeft = timeslider.outerWidth() - drag.outerWidth(),
+        update: function() {
+            var year = this.model.getState("time"),
+                maxLeft = timeslider.outerWidth() - drag.outerWidth(),
                 minLeft = 0,
                 numYears = range[1] - range[0], //difference
                 widthPeryear = maxLeft / numYears;
@@ -81,12 +79,20 @@ define([
             });
             drag.attr("data-year", year);
             setLines();
+        },
 
+        getYear: function() {
+            return this.model.getState("time");
+        },
+
+        setYear: function(year) {
             //update state
-            this.setState({
+            this.model.setState({
                 time: year
             });
-        }
+
+            this.update();
+        },
 
     });
 
@@ -119,9 +125,8 @@ define([
             left: newLeft
         });
 
-        yearFromPosition();
+        year = yearFromPosition();
 
-        var year = timesliderClass.getYear();
         timesliderClass.setYear(year);
 
     };
@@ -167,8 +172,8 @@ define([
             posYear = drag.position().left;
 
         var yearValue = Math.round(posYear / widthPeryear) + range[0];
-        drag.attr("data-year", yearValue);
-        setLines();
+        
+        return yearValue;
     };
 
     var setLines = function() {
@@ -204,7 +209,7 @@ define([
     var stopPlaying = function() {
         container.removeClass("playing");
         clearInterval(playInterval);
-    }
+    };
 
 
     return Timeslider;
