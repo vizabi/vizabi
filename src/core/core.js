@@ -12,26 +12,25 @@ define([
         managers = {
             events: EventsManager,
             layout: new LayoutManager(),
-            i18n:   i18nManager
+            i18n: i18nManager
         };
 
     var core = Class.extend({
 
         init: function() {
-            this.name = 'vizabi core';
             window.addEventListener('resize', function() {
                 managers['events'].trigger('resize');
             });
         },
 
+        //TODO: make it possible for two tools with the same name to co-exist
         start: function(tool_name, placeholder, options) {
             var defer = $.Deferred();
 
-            var id = getId(),
-                t_path = config.require.paths.tools,
+            var t_path = config.require.paths.tools,
                 path = t_path + '/' + tool_name + '/' + tool_name,
                 context = this;
-                
+
             // extending options with name and tool's placeholder
             _.extend(options, {
                 name: tool_name,
@@ -39,8 +38,8 @@ define([
             });
 
             require([path], function(Tool) {
-                tools[id] = new Tool(context, options);
-                var promise = tools[id].render();
+                tools[tool_name] = new Tool(context, options);
+                var promise = tools[tool_name].render();
                 promise.done(function() {
                     defer.resolve();
                 });
@@ -50,19 +49,12 @@ define([
             return defer;
         },
 
+        //TODO: remove ifs
         getInstance: function(manager) {
-            if(manager === "layout") return new LayoutManager();
-            if(manager === "events") return managers[manager];
+            if (manager === "layout") return new LayoutManager();
+            if (manager === "events") return managers[manager];
             return managers[manager].instance();
         },
-
-        getTool: function(id) {
-            if (!id) return tools;
-            if (tools[id]) return tools[id];
-            return null;
-        },
-
-        destroy: function() {},
 
         bind: function(evt, func) {
             EventsManager.bind(evt, func);
@@ -71,13 +63,14 @@ define([
         trigger: function(what) {
             var args = Array.prototype.slice.call(arguments).slice(1);
             EventsManager.trigger(what, args);
+        },
+
+        setOptions: function(name, options) {
+            tools[name].setOptions(options);
         }
 
     });
 
-    function getId() {
-        return vizID++;
-    }
 
     return core;
 });

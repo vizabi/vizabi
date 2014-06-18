@@ -80,12 +80,12 @@ define([
                     _this.components[i].update();
                 }
             });
-
-
-
         },
 
-        // Load data from the state
+        //TODO: expand for other options
+        setOptions: function(options) {
+            this.setState(options.state);
+        }
 
     });
 

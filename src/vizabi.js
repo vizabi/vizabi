@@ -1,15 +1,11 @@
-(function (root) {
-    
+(function(root) {
+
     /*
      * Vizabi initialization
      */
     var Vizabi = function(name, container, options) {
-        this.name = name;
-        this.container = container;
-        this.options = options;
-        //this.readyFunc = function() {};
-
-        var _this = this;
+        var _this = this,
+            core;
 
         //TODO: avoid loading requirejs more than once
         //add requireJS
@@ -21,30 +17,35 @@
                 //config is now available
                 require.config(config.require);
                 //start vizabi
-                require(["core"], function(core) {
-                    var core = new core();
+                require(["core"], function(Core) {
+                    core = new Core();
 
                     //start core
-                    var promise = core.start(_this.name,
-                                             _this.container,
-                                             _this.options);
+                    var promise = core.start(name,
+                        container,
+                        options);
 
                     //tell external page that vizabi is ready
                     promise.then(
-                    function() {
-                        if(typeof _this.options.ready === "function") {
-                             _this.options.ready();
-                        }
-                    },
-                    //or tell external page that there's an error
-                    function(err) {
-                        if(typeof  _this.options.ready === "function") {
-                             _this.options.ready(err);
-                        }
-                    })
+                        function() {
+                            if (typeof options.ready === "function") {
+                                options.ready();
+                            }
+                        },
+                        //or tell external page that there's an error
+
+                        function(err) {
+                            if (typeof options.ready === "function") {
+                                options.ready(err);
+                            }
+                        });
                 });
             });
         });
+
+        this.setOptions  = function (tool_name, opts) {
+            if (core) core.setOptions(tool_name, opts);
+        };
     };
 
     /*
@@ -54,12 +55,13 @@
 
 
     //inject script
+
     function getScript(src, loaded) {
         script = document.createElement('script');
         script.type = 'text/javascript';
         script.async = true;
-        script.onload = function(){
-            if(typeof loaded === "function") {
+        script.onload = function() {
+            if (typeof loaded === "function") {
                 loaded();
             }
         };

@@ -146,7 +146,7 @@ define([
         },
 
         //TODO: optimize data binding
-        update: function(data) {
+        update: function() {
 
             var range = this.model.getRange();
             var yearData = this.model.getYearData();
