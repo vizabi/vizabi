@@ -110,19 +110,10 @@ function setState() {
 function changeIndicator() {
     var newOption = {
         state: {
-            language: 'en',
-            show: {
-                'world': {},
-                'region': {
-                    filter: ['asi']
-                }
-            },
-            time: 1980,
-            timeRange: [1900, 2000],
             yaxis: {
                 indicator: 'lex',
                 scale: 'linear'
-            },
+            }
         }
     };
     myVizabi.setOptions("hello-world", newOption);
