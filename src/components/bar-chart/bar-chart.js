@@ -1,19 +1,14 @@
-//TODO: make this more readable
+//TODO: Rename postrender & resize 
 define([
     'd3',
     'underscore',
     'components/component'
 ], function(d3, _, Component) {
 
-    var width,
+    var bar_radius = 5,
+        width,
         height,
-        margin = {
-            top: 20,
-            right: 20,
-            bottom: 30,
-            left: 40
-        },
-        bar_radius = 5,
+        margin,
         xAxis, yAxis,
         xAxisEl, yAxisEl,
         yTitleEl,
@@ -30,64 +25,69 @@ define([
             this._super(context, options);
         },
 
-        //what to do after we load template
+        // After loading template, select HTML elements
         postRender: function() {
 
-            var _this = this;
-            var range = this.model.getRange();
-            var yearData = this.model.getYearData();
-
-            //HTML elements
-            graph = _this.element.select('#graph');
+            graph = this.element.select('#graph');
             xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
             yTitleEl = graph.select('#y_axis_title');
             bars = graph.select('#bars');
 
-            //Scales and Axis
-            x = d3.scale.ordinal();
-            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
-            xAxis = d3.svg.axis().scale(x).orient("bottom");
-            yAxis = d3.svg.axis().scale(y).orient("left");
+            this.update();
+        },
 
 
-            //Y Domain 
-            var maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10);
-            var minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0);
-            y.domain([minY, maxY]);
+        //TODO: Optimize data binding
+        update: function() {
 
-            var unit = this.model.getState("yaxis").unit || 1;
-            //Y tick format
-            yAxis.tickFormat(function(d) {
-                return d / unit;
-            }).tickSize(6, 0);
-
-            yAxisEl.call(yAxis);
-
-            //TODO: Using yaxis, language and waffle path here is messy
-            var indicator = this.model.getState("yaxis").indicator,
+            var range = this.model.getRange(),
+                yearData = this.model.getYearData(),
+                minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0),
+                maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10),
+                unit = this.model.getState("yaxis").unit || 1,
+                indicator = this.model.getState("yaxis").indicator,
                 language = this.model.getState("language"),
                 indicator_name = this.model.getData("waffle-" + language + ".json").definitions.indicators[indicator].name;
 
-            yTitleEl.text(indicator_name)
-                .attr("transform", "translate(10,10)");
-
-            //X Domain
+            // Create X axis scale, X axis function and call it on element
+            x = d3.scale.ordinal();
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
             }));
+            //TODO: Read from data manager
+            xAxis = d3.svg.axis().scale(x).orient("bottom")
+                .tickFormat(function(d) {
+                    return d;
+                });
 
-            //X tick format
-            xAxis.tickFormat(function(d) {
-                return _this.model.getData("things")[d].name;
-            }).tickSize(6, 0);
+            //xAxisEl.call(xAxis);
 
-            //Actual data
+            // Create Y axis scale, Y axis function and call it on element
+            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
+            y.domain([minY, maxY])
+                .range([height, 0]);
+
+            yAxis = d3.svg.axis().scale(y).orient("left")
+                .tickFormat(function(d) {
+                    return d / unit;
+                }).tickSize(6, 0);
+
+            //yAxisEl.call(yAxis);
+            yTitleEl.text(indicator_name);
+
+            // Remove old bars if exist
+            bars.selectAll(".bar").remove();
+
+            // Update data bars
             bars.selectAll(".bar")
                 .data(yearData)
                 .enter()
                 .append("path")
                 .attr("class", "bar");
+
+            this.resize();
+
         },
 
         //draw the graph for the first time
@@ -124,95 +124,29 @@ define([
                     break;
             }
 
-
+            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
             height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
 
+            // Update range of X and call X axis function on element
             x.rangeRoundBands([0, width], .1, .2);
-            y.range([height, 0]);
-
-            //number of ticks
-            if(this.model.getState("yaxis").scale == "log") {
-                yAxis.ticks(5, '100');
-            } else {
-                yAxis.ticks(Math.max((Math.round(height/tick_spacing)), 2));
-            }
-
-            //graph
-            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            //axes
             xAxisEl.attr("transform", "translate(0," + height + ")")
                 .call(xAxis);
 
-            yAxisEl.call(yAxis);
-
-            bars.selectAll(".bar")
-                .attr("d", function(d, i) {
-                    return topRoundedRect(x(d.id),
-                        y(d.value),
-                        x.rangeBand(),
-                        height - y(d.value),
-                        bar_radius);
-                });
-
-        },
-
-        //TODO: optimize data binding
-        update: function() {
-
-            var range = this.model.getRange();
-            var yearData = this.model.getYearData();
-
-            x.domain(_.map(yearData, function(d, i) {
-                return d.id;
-            }));
-
-            //TODO: read from data manager
-            xAxis.tickFormat(function(d) {
-                return d;
-            });
-
-            xAxisEl.call(xAxis);
-
-            //Scales and Axis
-            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
-            yAxis = d3.svg.axis().scale(y).orient("left");
-
-            //Y Domain 
-            var maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10);
-            var minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0);
-            y.domain([minY, maxY]);
-
+            // Update range of Y and call Y axis function on element
             y.range([height, 0]);
-
-            //Y tick format
-            var unit = this.model.getState("yaxis").unit || 1;
-            //Y tick format
-            yAxis.tickFormat(function(d) {
-                return d / unit;
-            }).tickSize(6, 0);
-
+            // Number of ticks
+            if (this.model.getState("yaxis").scale == "log") {
+                yAxis.ticks(5, '100');
+            } else {
+                yAxis.ticks(Math.max((Math.round(height / tick_spacing)), 2));
+            }
             yAxisEl.call(yAxis);
 
-            //TODO: Using yaxis, language and waffle path here is messy
-            var indicator = this.model.getState("yaxis").indicator,
-                language = this.model.getState("language"),
-                indicator_name = this.model.getData("waffle-" + language + ".json").definitions.indicators[indicator].name;
+            yTitleEl.attr("transform", "translate(10,10)");
 
-            yTitleEl.text(indicator_name);
-
-
-            //remove old bars
-            bars.selectAll(".bar").remove();
-
-            //update data bars
+            // Update size of bars 
             bars.selectAll(".bar")
-                .data(yearData)
-                .enter()
-            // .append("rect")
-            .append("path")
-                .attr("class", "bar")
                 .attr("d", function(d, i) {
                     return topRoundedRect(x(d.id),
                         y(d.value),
@@ -221,11 +155,8 @@ define([
                         bar_radius);
                 });
 
-            this.resize();
-
         },
 
-        //load barchart data
 
     });
 
