@@ -56,14 +56,13 @@ define([
                 stopPlaying();
             });
 
-            this.setYear(startYear);
+            this.update();
             drag.bind("touchstart mousedown", startDrag);
         },
 
 
         resize: function() {
-            var year = this.getYear();
-            this.setYear(year);
+            this.update();
         },
 
         update: function() {
@@ -85,11 +84,11 @@ define([
             return this.model.getState("time");
         },
 
-        setYear: function(year) {
+        setYear: function(year, silent) {
             //update state
             this.model.setState({
                 time: year
-            });
+            }, silent);
 
             this.update();
         },

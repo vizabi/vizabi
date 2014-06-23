@@ -55,6 +55,9 @@ define([
 
             yAxisEl.call(yAxis);
 
+            yTitleEl.text("GDP per capita")
+                    .attr("transform", "translate(10,10)");
+
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
             }));
@@ -170,9 +173,6 @@ define([
             });
 
             yAxisEl.call(yAxis);
-
-            yTitleEl.text("GDP per capita")
-                    .attr("transform", "translate(10,10)")
 
             //remove old bars
             bars.selectAll(".bar").remove();
