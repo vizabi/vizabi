@@ -34,6 +34,7 @@
     <p align="center">Click to get a random size
         <button onclick="randomSize()">RANDOM SIZE</button>
         <button onclick="setState()">SET STATE (WORLD - 1990)</button>
+        <button onclick="changeIndicator()">CHANGE INDICATOR TO LEX</button>
     </p>
 
     <div id="placeholder"></div>
@@ -56,7 +57,9 @@ var options = {
         time: 2014,
         timeRange: [1800, 2018],
         yaxis: {
-            indicator: 'gdp'
+            indicator: 'gdp',
+            scale: 'linear',
+            unit: 1000000000000
         },
     },
     //path
@@ -95,7 +98,30 @@ function setState() {
             time: 1990,
             timeRange: [1800, 2018],
             yaxis: {
-                indicator: 'gdp'
+                indicator: 'gdp',
+                scale: 'linear',
+                unit: 1000000000000
+            },
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function changeIndicator() {
+    var newOption = {
+        state: {
+            language: 'en',
+            show: {
+                'world': {},
+                'region': {
+                    filter: ['asi']
+                }
+            },
+            time: 1980,
+            timeRange: [1900, 2000],
+            yaxis: {
+                indicator: 'lex',
+                scale: 'linear'
             },
         }
     };

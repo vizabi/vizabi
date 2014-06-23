@@ -14,16 +14,13 @@ define([
             left: 40
         },
         bar_radius = 5,
-        x = d3.scale.ordinal(),
-        y = d3.scale.linear(),
-        xAxis = d3.svg.axis().scale(x).orient("bottom"),
-        yAxis = d3.svg.axis().scale(y).orient("left"),
-        graph = null,
-        xAxisEl = null,
-        yAxisEl = null,
-        yTitleEl = null;
-        bars = null,
-        year = null;
+        xAxis, yAxis,
+        xAxisEl, yAxisEl,
+        yTitleEl,
+        x, y,
+        graph,
+        bars,
+        year;
 
     var BarChart = Component.extend({
         init: function(context, options) {
@@ -40,36 +37,55 @@ define([
             var range = this.model.getRange();
             var yearData = this.model.getYearData();
 
+            //HTML elements
             graph = _this.element.select('#graph');
             xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
             yTitleEl = graph.select('#y_axis_title');
             bars = graph.select('#bars');
 
-            var maxY = range.maxValue + range.maxValue/10;
-            y.domain([0, maxY]);
+            //Scales and Axis
+            x = d3.scale.ordinal();
+            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
+            xAxis = d3.svg.axis().scale(x).orient("bottom");
+            yAxis = d3.svg.axis().scale(y).orient("left");
 
+
+            //Y Domain 
+            var maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10);
+            var minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0);
+            y.domain([minY, maxY]);
+
+            var unit = this.model.getState("yaxis").unit || 1;
+            //Y tick format
             yAxis.tickFormat(function(d) {
-                return d / 1000000000000;
-            });
+                return d / unit;
+            }).tickSize(6, 0);
 
             yAxisEl.call(yAxis);
 
-            yTitleEl.text("GDP per capita")
-                    .attr("transform", "translate(10,10)");
+            //TODO: Using yaxis, language and waffle path here is messy
+            var indicator = this.model.getState("yaxis").indicator,
+                language = this.model.getState("language"),
+                indicator_name = this.model.getData("waffle-" + language + ".json").definitions.indicators[indicator].name;
 
+            yTitleEl.text(indicator_name)
+                .attr("transform", "translate(10,10)");
+
+            //X Domain
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
             }));
 
+            //X tick format
             xAxis.tickFormat(function(d) {
                 return _this.model.getData("things")[d].name;
-            });
+            }).tickSize(6, 0);
 
+            //Actual data
             bars.selectAll(".bar")
                 .data(yearData)
                 .enter()
-                // .append("rect")
                 .append("path")
                 .attr("class", "bar");
         },
@@ -115,7 +131,12 @@ define([
             x.rangeRoundBands([0, width], .1, .2);
             y.range([height, 0]);
 
-            yAxis.ticks(Math.max(height / tick_spacing, 2));
+            //number of ticks
+            if(this.model.getState("yaxis").scale == "log") {
+                yAxis.ticks(5, '100');
+            } else {
+                yAxis.ticks(Math.max((Math.round(height/tick_spacing)), 2));
+            }
 
             //graph
             graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -127,24 +148,13 @@ define([
             yAxisEl.call(yAxis);
 
             bars.selectAll(".bar")
-                .attr("d", function(d, i) { 
-                                return topRoundedRect(    x(d.id), 
-                                                          y(d.value),
-                                                          x.rangeBand(),
-                                                          height - y(d.value),
-                                                          bar_radius);
-                            });
-
-                // .attr("x", function(d) {
-                //     return x(d.id);
-                // })
-                // .attr("width", x.rangeBand())
-                // .attr("y", function(d) {
-                //     return y(d.value);
-                // })
-                // .attr("height", function(d) {
-                //     return height - y(d.value);
-                // });
+                .attr("d", function(d, i) {
+                    return topRoundedRect(x(d.id),
+                        y(d.value),
+                        x.rangeBand(),
+                        height - y(d.value),
+                        bar_radius);
+                });
 
         },
 
@@ -153,9 +163,6 @@ define([
 
             var range = this.model.getRange();
             var yearData = this.model.getYearData();
-
-            var maxY = range.maxValue + range.maxValue/10;
-            y.domain([0, maxY]);
 
             x.domain(_.map(yearData, function(d, i) {
                 return d.id;
@@ -168,11 +175,33 @@ define([
 
             xAxisEl.call(xAxis);
 
+            //Scales and Axis
+            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
+            yAxis = d3.svg.axis().scale(y).orient("left");
+
+            //Y Domain 
+            var maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10);
+            var minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0);
+            y.domain([minY, maxY]);
+
+            y.range([height, 0]);
+
+            //Y tick format
+            var unit = this.model.getState("yaxis").unit || 1;
+            //Y tick format
             yAxis.tickFormat(function(d) {
-                return d / 1000000000000;
-            });
+                return d / unit;
+            }).tickSize(6, 0);
 
             yAxisEl.call(yAxis);
+
+            //TODO: Using yaxis, language and waffle path here is messy
+            var indicator = this.model.getState("yaxis").indicator,
+                language = this.model.getState("language"),
+                indicator_name = this.model.getData("waffle-" + language + ".json").definitions.indicators[indicator].name;
+
+            yTitleEl.text(indicator_name);
+
 
             //remove old bars
             bars.selectAll(".bar").remove();
@@ -181,26 +210,18 @@ define([
             bars.selectAll(".bar")
                 .data(yearData)
                 .enter()
-                // .append("rect")
-                .append("path")
+            // .append("rect")
+            .append("path")
                 .attr("class", "bar")
-                .attr("d", function(d, i) { 
-                                return topRoundedRect(    x(d.id), 
-                                                          y(d.value),
-                                                          x.rangeBand(),
-                                                          height - y(d.value),
-                                                          bar_radius);
-                            });
-                // .attr("x", function(d) {
-                //     return x(d.id);
-                // })
-                // .attr("width", x.rangeBand())
-                // .attr("y", function(d) {
-                //     return y(d.value);
-                // })
-                // .attr("height", function(d) {
-                //     return height - y(d.value);
-                // });
+                .attr("d", function(d, i) {
+                    return topRoundedRect(x(d.id),
+                        y(d.value),
+                        x.rangeBand(),
+                        height - y(d.value),
+                        bar_radius);
+                });
+
+            this.resize();
 
         },
 
@@ -209,16 +230,10 @@ define([
     });
 
     //draw top rounded paths
+
     function topRoundedRect(x, y, width, height, radius) {
-        return "M" + (x + radius) + "," + y
-           + "h" + (width - (radius * 2))
-           + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius
-           + "v" + (height - radius)
-           + "h" + (0-width)
-           + "v" + (0-(height-radius))
-           + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius
-           + "z";
-    }  
+        return "M" + (x + radius) + "," + y + "h" + (width - (radius * 2)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius + "v" + (height - radius) + "h" + (0 - width) + "v" + (0 - (height - radius)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius + "z";
+    }
 
     return BarChart;
 });
