@@ -43,14 +43,14 @@ define([
         },
 
         // options : {identifier: ("waffle" or "stats"), path: ("path/to/data")}
-        load: function(options) {
+        load: function(path) {
             var _this = this,
                 defer = $.Deferred(),
-                promise = this.dataManager.load(options.identifier, options.path);
+                promise = this.dataManager.load(path);
 
             //when request is completed, set it
             $.when(promise).done(function() {
-                _this.set(options.identifier, _this.dataManager.get(options.identifier));
+                _this.set(path, _this.dataManager.get(path));
                 defer.resolve();
             });
             return defer;

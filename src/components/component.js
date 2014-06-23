@@ -195,6 +195,8 @@ define([
       return defer;
     },
 
+    //TODO: remove this method - It's just wrapping an already
+    //existing model method
     setState: function(state) {
       this.model.setState(state);
     },

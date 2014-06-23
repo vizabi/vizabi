@@ -44,22 +44,16 @@ define([
                 });
 
             var indicator = this.getState("yaxis").indicator,
-                waffle_options = {
-                    path: 'waffle-' + this.getState("language") + '.json',
-                    identifier: "waffle"
-                },
-                stats_options = {
-                    path: 'stats/' + indicator + '.json',
-                    identifier: "stats"
-                };
+                waffle_path = 'waffle-' + this.getState("language") + '.json',
+                stats_path = 'stats/' + indicator + '.json';
 
             //load data and resolve the defer when it's done
             $.when(
-                this.data.load(waffle_options),
-                this.data.load(stats_options)
+                this.data.load(waffle_path),
+                this.data.load(stats_path)
             ).done(function() {
-                var stats = _this.getData("stats");
-                var waffle = _this.getData("waffle");
+                var stats = _this.getData(stats_path);
+                var waffle = _this.getData(waffle_path);
 
                 //TODO: things is a bad name, too generic
                 _this.data.set("things", getFilteredThings(waffle, data_filter));

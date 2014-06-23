@@ -11,27 +11,27 @@ define([
         },
 
         //load resource
-        load: function(identifier, path, force, reset) {
+        load: function(path, force, reset) {
         	var _this = this;
             //if result is cached, dont load anything unless forced to
-            if (_.isObject(this.cache[identifier]) && !force) {
+            if (_.isObject(this.cache[path]) && !force) {
                 return true;
             }
             //if force or no cache, load it.
             else {
                 return $.getJSON(this.base_path + path, function(res) {
-                    if (_.isUndefined(_this.cache[identifier]) || reset) {
-                        _this.cache[identifier] = res || {};
+                    if (_.isUndefined(_this.cache[path]) || reset) {
+                        _this.cache[path] = res || {};
                     } else {
-                        $.extend(true, _this.cache[identifier], res);
+                        $.extend(true, _this.cache[path], res);
                     }
                 });
             }
         },
 
-        //return requested identifier or entire cache
-        get: function(identifier) {
-            return (identifier) ? this.cache[identifier] : this.cache;
+        //return requested file or entire cache
+        get: function(path) {
+            return (path) ? this.cache[path] : this.cache;
         }
     });
 
