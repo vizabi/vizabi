@@ -7,6 +7,7 @@ define([
     var container,
         play,
         pause,
+        playing,
         playInterval;
 
     var PlayButton = Component.extend({
@@ -18,6 +19,7 @@ define([
         postRender: function() {
             var _this = this;
             container = utils.d3ToJquery(this.element);
+            playing = false;
 
             play = container.find("#play-button-play"),
             pause = container.find("#play-button-pause");
@@ -32,6 +34,9 @@ define([
         },
 
         play: function() {
+            //return if already playing
+            if(playing) return;
+
             container.addClass("playing");
             var _this = this,
                 yearValue = this.model.getState("time"),

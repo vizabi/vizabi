@@ -4,7 +4,7 @@ $lineColor: #A4CBD4;
 $handleColor: $colorBlueDark;
 
 #timeslider2 {
-	padding: 15px 15px;
+	padding: 17px 7px;
 
     & > .ui-slider {
 		background-color: $lineColor;
@@ -17,6 +17,7 @@ $handleColor: $colorBlueDark;
 			top: -15px;
 			width: 10px;
 			height: 30px;
+			cursor: pointer;
 
 			&:focus, &:active {
 				outline: none;

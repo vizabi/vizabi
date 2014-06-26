@@ -1,0 +1,40 @@
+#play-button {
+
+	$buttonWidth: 40px;
+	$buttonBackground: $colorBlueDark;
+	$buttonBackgroundActive: #2F7687;
+
+    .button {
+        @include box-sizing(border-box);
+        @include border-radius($buttonWidth);
+        @include font-size(18px);
+        width: $buttonWidth;
+        height: $buttonWidth;
+        background: $buttonBackground;
+        display: block;
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+        &#play-button-pause {
+            display: none;
+            padding: 10px;
+        }
+
+        &:active, &:focus {
+        	outline: none;
+        	background: $buttonBackgroundActive;
+        }
+    }
+
+    //show pause instead if it's playing
+    &.playing {
+        #play-button-play {
+            display: none;
+        }
+        #play-button-pause {
+            display: block;
+        }
+    }
+}
