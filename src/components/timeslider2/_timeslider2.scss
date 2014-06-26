@@ -1,0 +1,43 @@
+//CUSTOM SCSS
+
+$lineColor: #A4CBD4;
+$handleColor: $colorBlueDark;
+
+#timeslider2 {
+	padding: 15px 15px;
+
+    & > .ui-slider {
+		background-color: $lineColor;
+		height: 5px;
+
+		& > .ui-slider-handle {
+
+			background-color: $handleColor;
+			border: 4px solid $colorWhite;
+			top: -15px;
+			width: 10px;
+			height: 30px;
+
+			&:focus, &:active {
+				outline: none;
+			}
+
+			&:after {
+	        	@include font-size(13px);
+				@include absolute(-15px, auto, auto, -8px);
+				color: $handleColor;
+			    font-family: Arial, sans-serif;
+			    font-weight: bold;
+				content: attr(data-year);
+			    width: 20px;
+			    display: none;
+			}
+
+			&.ui-state-active {
+				&:after {
+					display: block;
+				}
+			}
+    	}
+    }
+}

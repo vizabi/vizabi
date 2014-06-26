@@ -1,7 +1,7 @@
 define([], function() {
     var configs = {
         debug: true,
-    
+
         require: {
             baseUrl: "../dist/",
             text: {
@@ -20,7 +20,14 @@ define([], function() {
                 tools: 'tools',
                 components: 'components',
                 text: '../bower_components/requirejs-text/text',
-                smartpicker: '../bower_components/smart-picker/dist/smart-picker'
+                smartpicker: '../bower_components/smart-picker/dist/smart-picker',
+
+                //TODO: Move this to timeslider2 (component-specific)
+                //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
+                jqueryui_slider: '../bower_components/jqueryui/ui/minified/jquery.ui.slider.min',
+                jqueryui_core: '../bower_components/jqueryui/ui/minified/jquery.ui.core.min',
+                jqueryui_mouse: '../bower_components/jqueryui/ui/minified/jquery.ui.mouse.min',
+                jqueryui_widget: '../bower_components/jqueryui/ui/minified/jquery.ui.widget.min'
             },
             shim: {
                 d3: {
@@ -33,6 +40,21 @@ define([], function() {
                 smartpicker: {
                     deps: ['underscore', 'jquery'],
                     exports: 'smartpicker'
+                },
+                jqueryui_core: {
+                    deps: ['jquery']
+                },
+                jqueryui_widget: {
+                    deps: ['jquery']
+                },
+                jqueryui_mouse: {
+                    deps: ['jqueryui_widget']
+                },
+                jqueryui_slider: {
+                    deps: ['jquery',
+                           'jqueryui_core',
+                           'jqueryui_mouse',
+                           'jqueryui_widget']
                 }
             }
         },
@@ -66,7 +88,7 @@ define([], function() {
             medium: {
                 min_width: 750,
                 max_width: 969,
-            }, 
+            },
             large: {
                 min_width: 970,
                 max_width: Infinity,

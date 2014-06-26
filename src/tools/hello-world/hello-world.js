@@ -19,7 +19,7 @@ define([
                 // TODO: turn the value into an object with their options or state
                 // TODO: put he components into objects with unique ids
                 'bar-chart': '.vizabi-tool-viz',
-                'timeslider': '.vizabi-tool-timeslider',
+                'timeslider2': '.vizabi-tool-timeslider',
                 'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",
             };
