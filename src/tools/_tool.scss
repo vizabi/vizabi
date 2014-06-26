@@ -7,7 +7,7 @@
     $sizeTimeSliderSmall: 50px;
 
     @include absoluteAll;
-
+    
     .vizabi-tool-title{
         @include box-sizing(border-box);
         @include absolute(0px,0px,auto,0px);
@@ -105,14 +105,21 @@
         }
     }
 
-    &.loading {
-        background: $colorBlueLight;
+    &.loading, &.loading-data {
 
-        * {
-            visibility: hidden;
-        }
-        
         //todo: refactor
+        &:before {
+            background: $colorBlueLight;
+            display: block;
+            position: absolute;
+            content: ' ';
+            top: 0px;
+            left: 0px;
+            bottom: 0px;
+            right: 0px;
+            z-index: 1000;
+        }
+
         &:after {
             color: $colorBlueDark;
             font-family: $fontFamily;
@@ -125,6 +132,25 @@
             margin-top: -10px;
             width: 200px;
             text-align: center;
+            z-index:1001;
         }
     }
+
+    &.loading-data {
+        &:before {
+            @include opacity(0.7); 
+        }
+    }
+    
+    &.loading {
+        * {
+            visibility: hidden;
+        }
+
+        &:before {
+            @include opacity(1); 
+        }
+    }
+
+
 }
