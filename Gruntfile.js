@@ -25,7 +25,7 @@ module.exports = function(grunt) {
       },
       templates: {
         cwd: 'src',
-        src: ['**/*.html'],
+        src: ['imgs/**', '**/*.html'],
         dest: 'dist',
         expand: true
       },
