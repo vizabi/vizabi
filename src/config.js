@@ -15,7 +15,7 @@ define([], function() {
                 sprintf: '../bower_components/sprintf/src/sprintf',
                 i18n: '../bower_components/i18n-js/i18n',
                 base: 'base',
-                core: 'core/core',
+                core: 'core',
                 managers: 'managers',
                 tools: 'tools',
                 components: 'components',

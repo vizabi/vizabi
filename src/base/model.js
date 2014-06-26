@@ -42,17 +42,20 @@ define([
             Events.trigger(name);
         },
 
-        // options : {identifier: ("waffle" or "stats"), path: ("path/to/data")}
-        load: function(path) {
+        load: function(options) {
             var _this = this,
                 defer = $.Deferred(),
-                promise = this.dataManager.load(path);
+                promise = this.dataManager.load(options);
 
             //when request is completed, set it
             $.when(promise).done(function() {
-                _this.set(path, _this.dataManager.get(path));
+                _.each(options.paths, function(path) {
+                    _this.set(path, _this.dataManager.get(path));
+                });
+
                 defer.resolve();
             });
+
             return defer;
         }
     });
