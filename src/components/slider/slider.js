@@ -51,6 +51,7 @@ define([
            		value: year,
            		slide: function(evt, ui) {
            			_this.setYear(ui.value);
+                _this.events.trigger("timeslider:dragging");
            		}
            });
 

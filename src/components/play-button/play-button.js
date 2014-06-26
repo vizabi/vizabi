@@ -31,17 +31,21 @@ define([
             pause.click(function() {
                 _this.pause();
             });
+
+            this.events.bind('timeslider:dragging', function() {
+                _this.pause();
+            });
         },
 
         play: function() {
             //return if already playing
-            if(playing) return;
+            if (playing) return;
 
             container.addClass("playing");
             var _this = this,
                 yearValue = this.model.getState("time"),
                 range = this.model.getState("timeRange");
-                
+
             playInterval = setInterval(function() {
                 if (yearValue > range[1]) {
                     _this.pause();

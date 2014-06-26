@@ -78,7 +78,11 @@ define([
                 _this = this;
 
             promise.done(function() {
-                _this._super();
+                for (var i in _this.components) {
+                    if (_this.components.hasOwnProperty(i)) {
+                        _this.components[i].update();
+                    }
+                }
             });
         },
 
@@ -94,19 +98,19 @@ define([
 
         // is executed after loading actaul data
         afterLoading: function() {
-           this.element.classed("loading-data", false);   
+            this.element.classed("loading-data", false);
         },
 
         loadData: function() {
             var _this = this,
-            options = {
-                before: function() {
-                    _this.beforeLoading();
-                },
-                success: function() {
-                    _this.afterLoading();
-                }
-            };
+                options = {
+                    before: function() {
+                        _this.beforeLoading();
+                    },
+                    success: function() {
+                        _this.afterLoading();
+                    }
+                };
 
             return this.model.load(options);
         }
