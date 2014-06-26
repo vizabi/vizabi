@@ -107,38 +107,26 @@
 
     &.loading, &.loading-data {
 
-        //todo: refactor
-        &:before {
-            background: $colorBlueLight;
+        //todo: Make background transparent, but not preloader circles
+        &:after {
+            content: ' ';
+            background-color: $colorWhite;
+            background-image: url('imgs/preloader.gif');
+            background-repeat: no-repeat;
+            background-position: center center;
             display: block;
             position: absolute;
-            content: ' ';
             top: 0px;
             left: 0px;
             bottom: 0px;
             right: 0px;
             z-index: 1000;
         }
-
-        &:after {
-            color: $colorBlueDark;
-            font-family: $fontFamily;
-            display: block;
-            position: absolute;
-            content: 'Loading';
-            top: 50%;
-            left: 50%;
-            margin-left: -100px;
-            margin-top: -10px;
-            width: 200px;
-            text-align: center;
-            z-index:1001;
-        }
     }
 
     &.loading-data {
-        &:before {
-            @include opacity(0.7); 
+        &:after {
+            @include opacity(0.9); 
         }
     }
     
@@ -147,7 +135,7 @@
             visibility: hidden;
         }
 
-        &:before {
+        &:after {
             @include opacity(1); 
         }
     }
