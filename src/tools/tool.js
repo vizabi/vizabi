@@ -78,10 +78,7 @@ define([
                 _this = this;
 
             promise.done(function() {
-                for (var i in _this.components) {
-                    _this.components[i].update();
-                }
-
+                _this._super();
             });
         },
 
