@@ -34,7 +34,7 @@ define([
         },
 
         // TODO: ensure that the state is not empty
-        load: function() {
+        load: function(options) {
             var _this = this,
                 defer = $.Deferred();
 
@@ -47,10 +47,12 @@ define([
                 waffle_path = 'waffle-' + this.getState("language") + '.json',
                 stats_path = 'stats/' + indicator + '.json';
 
+            // include paths to the options 
+            options = _.extend(options, {paths: [waffle_path, stats_path]});
+
             //load data and resolve the defer when it's done
             $.when(
-                this.data.load(waffle_path),
-                this.data.load(stats_path)
+                this.data.load(options)
             ).done(function() {
                 var stats = _this.getData(stats_path);
                 var waffle = _this.getData(waffle_path);

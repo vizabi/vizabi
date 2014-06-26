@@ -22,11 +22,12 @@ define([
 
             this.model = new ToolModel(options.data);
             this.model.setState(options.state, true);
+
+
             // Same constructor as widgets
             this._super(parent, options);
 
             this.layout = this.getInstance('layout');
-
         },
 
         //Tools renders just like the widgets, but they update the layout
@@ -34,7 +35,8 @@ define([
             var _this = this;
             return this._super(function() {
                 var defer = $.Deferred();
-                var promise = _this.model.load();
+
+                var promise = _this.loadData();
 
                 promise.done(function() {
 
@@ -72,22 +74,49 @@ define([
 
         //updating the tool is updating the components
         update: function() {
-            var promise = this.model.load(),
+            var promise = this.loadData(),
                 _this = this;
 
             promise.done(function() {
                 for (var i in _this.components) {
                     _this.components[i].update();
                 }
+
             });
         },
 
         //TODO: expand for other options
         setOptions: function(options) {
             this.setState(options.state);
+        },
+
+        // is executed before loading actaul data
+        beforeLoading: function() {
+            this.element.classed("loading-data", true);
+        },
+
+        // is executed after loading actaul data
+        afterLoading: function() {
+           this.element.classed("loading-data", false);   
+        },
+
+        loadData: function() {
+            var _this = this,
+            options = {
+                before: function() {
+                    _this.beforeLoading();
+                },
+                success: function() {
+                    _this.afterLoading();
+                }
+            };
+
+            return this.model.load(options);
         }
 
     });
+
+
 
 
 

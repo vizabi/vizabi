@@ -27,8 +27,6 @@ define([
       this.profiles = this.profiles || {};
       this.parent = parent;
 
-      this.loading = true;
-
       this.events = this.getInstance('events');
     },
 
@@ -44,8 +42,7 @@ define([
       promise.then(function() {
 
         // add css loading class to hide elements
-        this.loading = true;
-        _this.element.classed("loading", _this.loading);
+        _this.element.classed("loading", true);
 
         // attempt to execute postRender
         if (typeof callback === 'function') {
@@ -76,8 +73,7 @@ define([
       // After rendering the components, resolve the defer
       .done(function() {
         //not loading anytmore, remove class
-        _this.loading = false;
-        _this.element.classed("loading", _this.loading);
+        _this.element.classed("loading", false);
 
         defer.resolve();
       });
@@ -111,17 +107,17 @@ define([
 
     loadComponents: function() {
       var defer = $.Deferred();
-      var defers = [];
+      var promises = [];
       var _this = this;
 
       // Loops through components, loading them.
       _.each(this.components, function(placeholder, component) {
         var promise = _this.loadComponent(component, placeholder);
-        defers.push(promise);
+        promises.push(promise);
       });
 
       // When all components have been successfully loaded, resolve the defer
-      $.when.apply(null,defers).done(function() {
+      $.when.apply(null,promises).done(function() {
 
         //todo: remove comments of simulation
         //setTimeout(function() {
@@ -182,7 +178,7 @@ define([
         _this.placeholder = d3.select(_this.placeholder);
         _this.placeholder.html(rendered);
 
-        //todo: refactor the way we select the first child
+        //TODO: refactor the way we select the first child
         //define this element inside the placeholder
         _this.element = utils.jQueryToD3(
           utils.d3ToJquery(_this.placeholder).children().first()
@@ -225,6 +221,7 @@ define([
           return this.parent.getLayoutProfile();  
         } 
     }
+
   });
 
 
