@@ -33,8 +33,11 @@
 
     <p align="center">Click to get a random size
         <button onclick="randomSize()">RANDOM SIZE</button>
-        <button onclick="setState()">SET STATE (WORLD - 1990)</button>
-        <button onclick="changeIndicator()">LEX (AMERICA, ASIA - 1900s - 1942)</button>
+        <button onclick="setState()">AMERICA, ASIA - 1975</button>
+        <button onclick="setState2()">WORLD - 1990</button>
+        <button onclick="changeIndicatorLEX()">INDICATOR TO LEX</button>
+        <button onclick="changeIndicatorGDP()">INDICATOR TO GDP</button>
+        <button onclick="changeIndicatorGDP2()">INDICATOR TO GDP (no format)</button>
     </p>
 
     <div id="placeholder"></div>
@@ -91,32 +94,57 @@ function randomSize() {
 function setState() {
     var newOption = {
         state: {
-            language: 'en',
-            show: {
-                'world': {},
-            },
-            time: 1990,
-            timeRange: [1800, 2018],
-            yaxis: {
-                indicator: 'gdp',
-                scale: 'linear',
-                unit: 1000000000000
-            },
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
-}
-
-function changeIndicator() {
-    var newOption = {
-        state: {
             show: {
                 'region': {
                     filter: ['asi', 'ame']
                 }
             },
-            time: 1942,
-            timeRange: [1900, 1999],
+            time: 1975
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function setState2() {
+    var newOption = {
+        state: {
+            show: {
+                'world': {},
+            },
+            time: 1990
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function changeIndicatorGDP() {
+    var newOption = {
+        state: {
+            yaxis: {
+                indicator: 'gdp',
+                scale: 'linear',
+                unit: 1000000000000
+            }
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function changeIndicatorGDP2() {
+    var newOption = {
+        state: {
+            yaxis: {
+                indicator: 'gdp',
+                scale: 'linear'
+            }
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function changeIndicatorLEX() {
+    var newOption = {
+        state: {
             yaxis: {
                 indicator: 'lex',
                 scale: 'linear'

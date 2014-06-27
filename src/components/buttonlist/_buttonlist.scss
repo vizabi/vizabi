@@ -1,5 +1,5 @@
 $buttonWidth: 50px;
-$buttonSize: 23px;
+$buttonSize: 26px;
 $buttonRadius: $buttonSize + 10;
 $buttonBackground: #ffffff;
 $buttonMoreBackground: $colorLightWhite;
@@ -28,7 +28,7 @@ $buttonBorderColor: #DBE8EB;
 		&>.icon {
 			@include box-sizing(border-box);
 		    @include border-radius($buttonRadius);
-        	@include font-size(12px);
+        	@include font-size(16px);
 			text-align: center;
 		    display:inline-block;
 		    border: none;
@@ -37,7 +37,7 @@ $buttonBorderColor: #DBE8EB;
 		    width: $buttonSize;
 		    height: $buttonSize;
 			padding: 5px;
-			border: 1px solid $buttonBorderColor;
+			// border: 1px solid $buttonBorderColor;
         }
         &>.title {
         	padding-top: 2px;
@@ -74,8 +74,8 @@ $buttonBorderColor: #DBE8EB;
 		.button {
 			width: $buttonWidth + 10;
 			&>.icon {
-				font-size: 15px;
-				padding: 8px;
+				@include font-size(18px);
+				padding: 9px;
 				width: $buttonSize + 10;
 		        height: $buttonSize + 10;
 			}
