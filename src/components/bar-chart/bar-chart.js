@@ -124,14 +124,7 @@ define([
                     break;
             }
 
-            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
             height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-
-            // Update range of X and call X axis function on element
-            x.rangeRoundBands([0, width], .1, .2);
-            xAxisEl.attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
 
             // Update range of Y and call Y axis function on element
             y.range([height, 0]);
@@ -144,6 +137,22 @@ define([
             yAxisEl.call(yAxis);
 
             yTitleEl.attr("transform", "translate(10,10)");
+
+            //Adjusting margin according to length
+            var yLabels = yAxisEl.selectAll("text")[0],
+                topLabel = yLabels[(yLabels.length - 1)];
+            margin.left = Math.max(margin.left,(topLabel.getBBox().width+ 15));
+
+            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+
+            // Update range of X and call X axis function on element
+            x.rangeRoundBands([0, width], .1, .2);
+            xAxisEl.attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            //adjust graph position
+            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
 
             // Update size of bars 
             bars.selectAll(".bar")

@@ -55,7 +55,7 @@ define([
                         time: yearValue++
                     });
                 }
-            }, 200);
+            }, 100);
         },
 
         pause: function() {
