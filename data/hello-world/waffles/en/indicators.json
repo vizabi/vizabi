@@ -1,0 +1,33 @@
+{
+  "indicators": {
+      "gdp": {
+        "id": "gdp",
+        "name": "GDP total",
+        "short_name": "GDP total",
+        "description": "Gross Domestic Product, adjusted for inflation and price differences",
+        "unit": "pppdollar2005",
+        "type": "numeric",
+        "tags": [
+          "eco"
+        ]
+      },
+      "lex": {
+        "id": "lex",
+        "name": "Life expectancy",
+        "short_name": "Lifespan",
+        "unit": "years_age",
+        "type": "numeric",
+        "tags": [
+          "health"
+        ]
+      },
+      "pop": {
+        "id": "pop",
+        "name": "Population",
+        "short_name": "Population",
+        "description": "Total population",
+        "unit": "num_people",
+        "type": "numeric"
+      }
+    }
+}

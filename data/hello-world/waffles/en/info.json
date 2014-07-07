@@ -1,0 +1,38 @@
+{
+  "body": {
+   "file_format": {
+      "v": "1.0.0"
+    }
+  },
+  "i18n": {
+    "lang": "en",
+    "plural_schema": {
+      "unknown": "null",
+      "none": "n==0",
+      "singular": "n==1",
+      "plural": "n>1"
+    }
+  },
+  "info": {
+    "id": "wafflev1",
+    "title": "First Gapminder Waffle",
+    "short_title": "Waffle",
+    "description": "The Waffle",
+    "version": "0.2.0",
+    "image_small": "http://upload.wikimedia.org/wikipedia/commons/0/07/Emperor_Penguin_Manchot_empereur.jpg",
+    "image_large": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR-M5omD9kFz-AKcqpMnwlZ-QBMpbGs-MEZIlUQh_QfltgQjNmU",
+    "link": "https://github.com/Gapminder/data-kitchen",
+    "publishing_date": "2014-03-26",
+    "url": "https://github.com/Gapminder/data-kitchen/tree/develop",
+    "license": "CC by humnum",
+    "license_link": "http://www.humnum.org/license",
+    "publisher": {
+      "id": "gapminder",
+      "name": "Gapminder Foundation",
+      "description": "The Gapminder Foundation is a Swedish non-profit.",
+      "url": "http://www.gapminder.org",
+      "image_small": "gapminder_logo_small.jpg",
+      "image_large": "gapminder_logo_large.jpg"
+    }
+  }
+}
