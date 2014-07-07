@@ -54,6 +54,8 @@ define([
             $.when(
                 this.data.load(options)
             ).done(function() {
+                //TODO: Ola's input in the meeting: add query to tool-model
+                //var query = _this.getDataQueryFromState(aState)
                 var stats = _this.getData(stats_path);
                 var waffle = _this.getData(waffle_path);
 
@@ -68,7 +70,8 @@ define([
 
             return defer;
         },
-
+        // to be extended
+       
         //TODO: improve code quality here
         getRange: function() {
 

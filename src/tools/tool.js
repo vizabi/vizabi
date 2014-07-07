@@ -19,7 +19,8 @@ define([
                 }
             };
 
-
+            //TODO: Ola's input in the meeting:
+            //dataQuery = get
             this.model = new ToolModel(options.data);
             this.model.setState(options.state, true);
 
@@ -30,6 +31,17 @@ define([
             this.layout = this.getInstance('layout');
         },
 
+
+        //TODO: Ola's input in the meeting
+        /*getDataQueryFromState: function(aState){
+            // default state interpretetaiton if not extended
+            // will only work if using VSSV vizabi standard state vocabulary 
+            for(aState){
+                if "indicator" .
+            }
+        // 
+        }*/
+        
         //Tools renders just like the widgets, but they update the layout
         render: function() {
             var _this = this;
@@ -116,7 +128,6 @@ define([
         }
 
     });
-
 
 
 

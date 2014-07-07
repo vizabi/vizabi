@@ -13,13 +13,16 @@ define([
         
             //TODO: refactor the way we pass the state forward
             this.state = options.state;
+            // this is where hardcoded defaults can kick in (if( missing props in state {....}))
 
             //TODO: selectors should be improved
             this.components = {
                 // TODO: turn the value into an object with their options or state
                 // TODO: put he components into objects with unique ids
                 'bar-chart': '.vizabi-tool-viz',
-                'timeslider2': '.vizabi-tool-timeslider', 
+                'timeslider2': '.vizabi-tool-timeslider',
+                //TODO: Ola's input in the meeting: (The following is how state looks when statemapping is in place)
+                //stateMapping:{{range:"timeRange", time:"startTime"}, 
                 'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",
             };
@@ -31,6 +34,10 @@ define([
             // -----> add a data reader specific to waffle
         }
     });
+    
+    //statePropertyMapping: {time:}
+    
+    //constructDataQueryFromState(){}
 
     return helloWorld;
 });
