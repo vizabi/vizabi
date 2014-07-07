@@ -46,6 +46,16 @@ define([
 
             });
 
+            //bind each of the options
+            if(!_.isUndefined(options.bind) && _.isObject(options.bind)) {
+                for(var evt_name in options.bind) {
+                    var evt = options.bind[evt_name];
+                    if(_.isFunction(evt)) {
+                        this.bind(evt_name, evt);
+                    }
+                }
+            };
+
             return defer;
         },
 

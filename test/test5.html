@@ -40,11 +40,6 @@
 
     <p align="center">Click to get a random size
         <button onclick="randomSize()">RANDOM SIZE</button>
-        <button onclick="setState()">AMERICA, ASIA - 1975</button>
-        <button onclick="setState2()">WORLD - 1990</button>
-        <button onclick="changeIndicatorLEX()">INDICATOR TO LEX</button>
-        <button onclick="changeIndicatorGDP()">INDICATOR TO GDP</button>
-        <button onclick="changeIndicatorGDP2()">INDICATOR TO GDP (no format)</button>
     </p>
 
     <div id="placeholder"></div>
@@ -53,6 +48,7 @@
         <p>Year div on surrounding page:</p>
         <h1 id="year"></h1>
     </div>
+
 </body>
 <script>
 var ready = function(err) {
@@ -69,28 +65,30 @@ var options = {
                 filter: ['asi', 'ame']
             }
         },
-        time: 2000,
+        time: 2014,
         timeRange: [1800, 2018],
         yaxis: {
             indicator: 'gdp',
             scale: 'linear',
             unit: 1000000000000
-        },
+        }
     },
     //path
     data: {
         path: '../dist/tools/hello-world/waffles/'
     },
 
+    //TODO: merge bind and ready into a single object
+
     //ready function
     ready: ready,
 
     //bind to events
     bind: {
-        "change:state": function(state) {
-            var current_year = state.time;
+    	"change:state": function(state) {
+    		var current_year = state.time;
             $("#year").html(current_year);
-        }
+    	}
     }
 };
 
@@ -108,70 +106,6 @@ function randomSize() {
     event.initEvent("resize", true, true);
     event.eventName = "resize";
     window.dispatchEvent(event);
-}
-
-
-function setState() {
-    var newOption = {
-        state: {
-            show: {
-                'region': {
-                    filter: ['asi', 'ame']
-                }
-            },
-            time: 1975
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
-}
-
-function setState2() {
-    var newOption = {
-        state: {
-            show: {
-                'world': {},
-            },
-            time: 1990
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
-}
-
-function changeIndicatorGDP() {
-    var newOption = {
-        state: {
-            yaxis: {
-                indicator: 'gdp',
-                scale: 'linear',
-                unit: 1000000000000
-            }
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
-}
-
-function changeIndicatorGDP2() {
-    var newOption = {
-        state: {
-            yaxis: {
-                indicator: 'gdp',
-                scale: 'linear'
-            }
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
-}
-
-function changeIndicatorLEX() {
-    var newOption = {
-        state: {
-            yaxis: {
-                indicator: 'lex',
-                scale: 'linear'
-            }
-        }
-    };
-    myVizabi.setOptions("hello-world", newOption);
 }
 </script>
 
