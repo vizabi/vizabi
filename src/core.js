@@ -2,8 +2,8 @@ define([
     'jquery',
     'config',
     'base/class',
-    'managers/events/events',
-    'managers/layout/layout',
+    'managers/events',
+    'managers/layout',
     'i18n'
 ], function($, config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
 

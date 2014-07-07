@@ -1,7 +1,7 @@
 define([
     'base/class',
-    'managers/events/events',
-    'managers/data/data'
+    'managers/events',
+    'managers/data'
 ], function(Class, Events, DataManager) {
 
     var model = Class.extend({
