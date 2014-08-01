@@ -1,20 +1,21 @@
 define([
     'base/class',
     'jquery',
-    'underscore'
-], function(Class, $, _) {
+    'underscore',
+    //TODO: factory pattern for readers
+    'readers/json-ajax'
+], function(Class, $, _, Reader) {
 
     var dataManager = Class.extend({
-        init: function(base_path) {
-            this.base_path = base_path || "";
+        init: function(base_path, reader) {
             this.cache = {};
+            this.reader = new Reader(base_path);
         },
 
         //load resource
         load: function(options) {
             var _this = this,
                 defer = $.Deferred(),
-                paths = options.paths,
                 force = true, //options.force,
                 promises = [],
                 isCached = true,
@@ -34,20 +35,7 @@ define([
             //if force or no cache, load it.
             else {
                 isCached = false;
-
-                //create query in partial response format
-                var query = [
-                    "definitions/"+options.language,
-                    "stats/"+options.indicator,
-                ];
-
-                query = {
-                    q: query.join(",")
-                }
-
-                promise = $.getJSON(_this.base_path, query , function(res) {
-                    _this.cache = res || {};
-                });
+                promise = this.reader.read(options);
             }
 
             promises.push(promise);
@@ -57,11 +45,16 @@ define([
             $.when.apply(null, promises).then(
                 // Success
                 function() {
+
                     if (isCached && cached && _.isFunction(cached)) {
                         cached();
-                    } else if (!isCached && success && _.isFunction(success)) {
-                        // Great success! :D
-                        success();
+                    } else if (!isCached && success) {
+
+                        _this.cache = $.extend(true, _this.cache, _this.reader.getData());
+                        if (_.isFunction(success)) {
+                            // Great success! :D
+                            success();
+                        }
                     }
 
                     defer.resolve();

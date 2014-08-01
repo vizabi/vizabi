@@ -17,6 +17,7 @@ define([], function() {
                 base: 'base',
                 core: 'core',
                 managers: 'managers',
+                readers: 'readers',
                 tools: 'tools',
                 components: 'components',
                 text: '../bower_components/requirejs-text/text',
