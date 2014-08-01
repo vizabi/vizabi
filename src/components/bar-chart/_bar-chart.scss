@@ -1,7 +1,10 @@
 #bar-chart {
+    @include absolute(0px,0px,0px,0px);
     @include font-size(18px);
     font-family: $fontFamily;
     color: #666666;
+    width: 100%;
+    height: 100%;
 
     .title {
         color: $colorIMmediumBlue;
