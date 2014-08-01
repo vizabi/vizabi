@@ -48,7 +48,7 @@ define([
                 unit = this.model.getState("yaxis").unit || 1,
                 indicator = this.model.getState("yaxis").indicator,
                 language = this.model.getState("language"),
-                indicator_name = this.model.getData("waffle-" + language + ".json").definitions.indicators[indicator].name;
+                indicator_name = this.model.getData().definitions[language].indicators[indicator].name;
 
             // Create X axis scale, X axis function and call it on element
             x = d3.scale.ordinal();

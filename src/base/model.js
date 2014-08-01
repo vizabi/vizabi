@@ -13,7 +13,7 @@ define([
         },
 
         get: function(attr) {
-            return this.attributes[attr];
+            return (attr) ? this.attributes[attr] : this.attributes;
         },
 
         //set an attribute for the model, or an entire object
@@ -49,10 +49,7 @@ define([
 
             //when request is completed, set it
             $.when(promise).done(function() {
-                _.each(options.paths, function(path) {
-                    _this.set(path, _this.dataManager.get(path));
-                });
-
+                _this.set(_this.dataManager.get());
                 defer.resolve();
             });
 

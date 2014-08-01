@@ -45,11 +45,10 @@ define([
 
             //TODO: crete query here
             var indicator = this.getState("yaxis").indicator,
-                waffle_path = 'waffle-' + this.getState("language") + '.json',
-                stats_path = 'stats/' + indicator + '.json';
+                language = this.getState("language");
 
             // include paths to the options 
-            options = _.extend(options, {paths: [waffle_path, stats_path]});
+            options = _.extend(options, {indicator: indicator, language: language});
 
             //load data and resolve the defer when it's done
             $.when(
@@ -57,14 +56,13 @@ define([
             ).done(function() {
                 //TODO: Ola's input in the meeting: add query to tool-model
                 //var query = _this.getDataQueryFromState(aState)
-                var stats = _this.getData(stats_path);
-                var waffle = _this.getData(waffle_path);
+                var waffle = _this.getData();
 
                 //TODO: things is a bad name, too generic
-                _this.data.set("things", getFilteredThings(waffle, data_filter));
+                _this.data.set("things", getFilteredThings(waffle, language, data_filter));
 
                 //store indicator for the selected ids
-                _this.data.set("filtered", _.pick(stats, ids));
+                _this.data.set("filtered", _.pick(waffle.stats[indicator], ids));
 
                 defer.resolve();
             });
@@ -124,12 +122,12 @@ define([
 
     });
 
-    function getFilteredThings(waffle, filter) {
+    function getFilteredThings(waffle, lang, filter) {
         var things = {};
         if (!filter) {
             // returns all things from all categories
-            for (var category in waffle.definitions.categories) {
-                _.extend(things, waffle.definitions.categories[category].things);
+            for (var category in waffle.definitions[lang].categories) {
+                _.extend(things, waffle.definitions[lang].categories[category].things);
             }
         }
         //grab things in the data structure
@@ -139,7 +137,7 @@ define([
             }
             for (var i = 0, size = filter.length; i < size; i++) {
                 var f = filter[i];
-                things[f.id] = waffle.definitions.categories[f.category].things[f.id];
+                things[f.id] = waffle.definitions[lang].categories[f.category].things[f.id];
             }
         }
         return things;

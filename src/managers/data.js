@@ -15,7 +15,7 @@ define([
             var _this = this,
                 defer = $.Deferred(),
                 paths = options.paths,
-                force = options.force,
+                force = true, //options.force,
                 promises = [],
                 isCached = true,
                 //TODO: rename before cb
@@ -26,23 +26,31 @@ define([
 
             //reset = options.reset;
 
-            _.each(paths, function(path) {
-                var promise;
-                //if result is cached, dont load anything unless forced to
-                if (_.isObject(_this.cache[path]) && !force) {
-                    promise = true;
-                }
-                //if force or no cache, load it.
-                else {
-                    isCached = false;
+            var promise;
+            //if result is cached, dont load anything unless forced to
+            if (!force) {
+                promise = true;
+            }
+            //if force or no cache, load it.
+            else {
+                isCached = false;
 
-                    promise = $.getJSON(_this.base_path + path, function(res) {
-                        _this.cache[path] = res || {};
-                    });
+                //create query in partial response format
+                var query = [
+                    "definitions/"+options.language,
+                    "stats/"+options.indicator,
+                ];
+
+                query = {
+                    q: query.join(",")
                 }
 
-                promises.push(promise);
-            });
+                promise = $.getJSON(_this.base_path, query , function(res) {
+                    _this.cache = res || {};
+                });
+            }
+
+            promises.push(promise);
 
             if (!isCached && before && _.isFunction(before)) before();
 
