@@ -8,7 +8,7 @@ define([
 
     var dataManager = Class.extend({
         init: function(base_path, reader) {
-            this.cache = {};
+            this.data = {};
             this.reader = new Reader(base_path);
         },
 
@@ -16,7 +16,7 @@ define([
         load: function(options) {
             var _this = this,
                 defer = $.Deferred(),
-                force = true, //options.force,
+                force = options.force,
                 promises = [],
                 isCached = true,
                 //TODO: rename before cb
@@ -27,9 +27,11 @@ define([
 
             //reset = options.reset;
 
-            var promise;
+            var promise,
+                isCached = this.isCached(options);
+
             //if result is cached, dont load anything unless forced to
-            if (!force) {
+            if (isCached && !force) {
                 promise = true;
             }
             //if force or no cache, load it.
@@ -50,7 +52,7 @@ define([
                         cached();
                     } else if (!isCached && success) {
 
-                        _this.cache = $.extend(true, _this.cache, _this.reader.getData());
+                        _this.data = $.extend(true, _this.data, _this.reader.getData());
                         if (_.isFunction(success)) {
                             // Great success! :D
                             success();
@@ -71,7 +73,28 @@ define([
 
         //return requested file or entire cache
         get: function(path) {
-            return (path) ? this.cache[path] : this.cache;
+            return (path) ? this.data[path] : this.data;
+        },
+
+        isCached: function(options) {
+            var cached = true;
+
+            if(!this.data.hasOwnProperty("definitions") || 
+               !this.data.definitions.hasOwnProperty(options.language)) {
+                cached = false;
+            }
+
+            if(!this.data.hasOwnProperty("stats") || 
+               !this.data.stats.hasOwnProperty(options.indicator)) {
+                cached = false;
+            }
+
+            return cached;
+        },
+
+        //later we can add an external way of clearing the cached data
+        clear: function() {
+            this.data = {};
         }
     });
 

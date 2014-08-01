@@ -1,45 +1,51 @@
 <html>
-    <head>
-        <title>Test page for Vizabi</title>
-        <!-- Includes vizabi main file -->
-        <script src="../dist/vizabi.js"></script>
-        <!-- Includes vizabi css -->
-        <link rel="stylesheet" href="../dist/vizabi.css">
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    </head>
-    <body>
+<head>
+    <title>Test page for Vizabi</title>
+    <!-- Includes vizabi main file -->
+    <script src="../dist/vizabi.js"></script>
+    <!-- Includes vizabi css -->
+    <link rel="stylesheet" href="../dist/vizabi.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+
+<body>
     <div id="placeholder"></div>
-    </body>
-    <script>
+</body>
+<script>
+var ready = function(err) {
+    console.log("Vizabi is ready!");
+};
 
-        var ready = function(err) {
-            console.log("Vizabi is ready!");
-        };
+var options = {
+    //state
+    state: {
+        language: 'en',
+        show: {
+            'world': {},
+            'region': {
+                filter: ['asi', 'ame']
+            }
+        },
+        time: 2014,
+        timeRange: [1800, 2018],
+        yaxis: {
+            indicator: 'gdp'
+        },
+    },
+    //path
+    data: {
+        //TODO: should we keep the path *here*?
+        path: 'http://188.226.167.164/api/',
+        reader: 'json-ajax'
+    },
 
-        var options = {
-            //state
-            state: {
-                language: 'en',
-                show: {
-                    'world': {},
-                    'region': { filter: ['asi', 'ame'] }
-                },
-                time: 2014,
-                timeRange: [1800, 2018],
-                yaxis: {
-                    indicator: 'gdp'
-                },
-            },
-            //path
-            data: {
-                path: 'http://localhost:3000/api/'
-            },
+    //ready function
+    ready: ready
+};
 
-            //ready function
-            ready: ready
-        };
+var myVizabi = new Vizabi("hello-world", "#placeholder", options);
+</script>
 
-        var myVizabi = new Vizabi("hello-world", "#placeholder", options);
-    </script>
 </html>
