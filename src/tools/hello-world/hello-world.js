@@ -22,6 +22,7 @@ define([
                 'bar-chart': '.vizabi-tool-viz',
                 'timeslider2': '.vizabi-tool-timeslider',
                 //TODO: Ola's input in the meeting: (The following is how state looks when statemapping is in place)
+                //TODO: The exact buttons have to be passed to the button list (not hardcoded)
                 //stateMapping:{{range:"timeRange", time:"startTime"}, 
                 'buttonlist': '.vizabi-tool-buttonlist'
                 // "title": ".vizabi-tool-title",

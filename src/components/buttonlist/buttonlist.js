@@ -115,6 +115,7 @@ define([
             }
         },
 
+        //TODO: this should be separated from the buttonlist (it was hardcoded)
         //pass a list of countries to the state
         selectCountries: function(countriesArr) {
             var state = {
