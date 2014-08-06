@@ -3,7 +3,7 @@ define([], function() {
         debug: true,
 
         require: {
-            baseUrl: "../dist/",
+            baseUrl: "../../dist/",
             text: {
                 optimizeAllPluginResources: true
             },

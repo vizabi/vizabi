@@ -3,9 +3,9 @@
 <head>
     <title>Test page for Vizabi</title>
     <!-- Includes vizabi main file -->
-    <script src="../dist/vizabi.js"></script>
+    <script src="../../dist/vizabi.js"></script>
     <!-- Includes vizabi css -->
-    <link rel="stylesheet" href="../dist/vizabi.css">
+    <link rel="stylesheet" href="../../dist/vizabi.css">
 
     <style>
     body {
@@ -31,8 +31,10 @@
 
 <body>
 
-    <p align="center">Click to get a random size
+    <p align="center">Click below to get a random size
         <button onclick="randomSize()">RANDOM SIZE</button>
+        <button onclick="setState()">SET STATE (WORLD - 1990)</button>
+        <button onclick="changeIndicator()">LEX (AMERICA, ASIA - 1900s - 1942)</button>
     </p>
 
     <div id="placeholder"></div>
@@ -52,13 +54,13 @@ var options = {
                 filter: ['asi', 'ame']
             }
         },
-        time: 2014,
+        time: 2000,
         timeRange: [1800, 2018],
         yaxis: {
             indicator: 'gdp',
             scale: 'linear',
             unit: 1000000000000
-        }
+        },
     },
     //path
     data: {
@@ -85,6 +87,45 @@ function randomSize() {
     event.initEvent("resize", true, true);
     event.eventName = "resize";
     window.dispatchEvent(event);
+}
+
+
+function setState() {
+    var newOption = {
+        state: {
+            language: 'en',
+            show: {
+                'world': {},
+            },
+            time: 1990,
+            timeRange: [1800, 2018],
+            yaxis: {
+                indicator: 'gdp',
+                scale: 'linear',
+                unit: 1000000000000
+            },
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
+}
+
+function changeIndicator() {
+    var newOption = {
+        state: {
+            show: {
+                'region': {
+                    filter: ['asi', 'ame']
+                }
+            },
+            time: 1942,
+            timeRange: [1900, 1999],
+            yaxis: {
+                indicator: 'lex',
+                scale: 'linear'
+            }
+        }
+    };
+    myVizabi.setOptions("hello-world", newOption);
 }
 </script>
 

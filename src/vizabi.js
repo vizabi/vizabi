@@ -9,11 +9,11 @@
 
         //TODO: avoid loading requirejs more than once
         //add requireJS
-        getScript("../bower_components/requirejs/require.js", function() {
+        getScript("../../bower_components/requirejs/require.js", function() {
             //load configuration and paths
 
             //TODO: config should have a base url...
-            require(["../dist/config"], function(config) {
+            require(["../../dist/config"], function(config) {
                 //config is now available
                 require.config(config.require);
                 //start vizabi
