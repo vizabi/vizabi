@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <title>Test page for Vizabi</title>
+    <!-- Includes vizabi main file -->
+    <script src="../../dist/vizabi.js"></script>
+    <!-- Includes vizabi css -->
+    <link rel="stylesheet" href="../../dist/vizabi.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+</head>
+
+<body>
+    <div id="placeholder"></div>
+</body>
+<script>
+var ready = function(err) {
+    console.log("Vizabi is ready!");
+};
+
+
+//TODO: Discuss the optimized way of defining the options
+var options = {
+    //state
+    state: {
+        language: 'en',
+        show: {
+            'country': {
+                filter: ['swe']
+            }
+        },
+        timeRange:[1800, 2018],
+        columns:[ 
+            {
+                category: 'country'
+            },
+            {
+                category: 'year'
+            },
+            {
+                indicator: 'gdp'  
+            },
+            {
+                indicator: 'pop'
+            }
+        ]
+    },
+    //path
+    data: {
+        //TODO: should we keep the path *here*?
+        path: 'http://188.226.167.164/api/',
+        reader: 'json-ajax'
+    },
+
+    //ready function
+    ready: ready
+};
+
+var myVizabi = new Vizabi("table", "#placeholder", options);
+</script>
+
+</html>
