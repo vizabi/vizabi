@@ -125,9 +125,6 @@ define([
                 };
 
             return this.load(options);
-        },
-
-        load: function () {
         }
     });
 
