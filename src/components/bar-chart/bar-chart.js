@@ -22,6 +22,7 @@ define([
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
 
+            this.tool = context;
             this._super(context, options);
         },
 
@@ -42,7 +43,7 @@ define([
         update: function() {
 
             var range = this.model.getRange(),
-                yearData = this.model.getYearData(),
+                yearData = this.tool.getYearData(),
                 minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0),
                 maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10),
                 unit = this.model.getState("yaxis").unit || 1,
