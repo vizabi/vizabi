@@ -98,7 +98,7 @@ define([
             });
         },
 
-        //TODO: expand for other options
+        //TODO: expand for other options 
         setOptions: function(options) {
             this.setState(options.state);
         },
@@ -124,9 +124,11 @@ define([
                     }
                 };
 
-            return this.model.load(options);
-        }
+            return this.load(options);
+        },
 
+        load: function () {
+        }
     });
 
 
