@@ -115,7 +115,7 @@ define([
 
         loadData: function() {
             var _this = this,
-                options = {
+                events = {
                     before: function() {
                         _this.beforeLoading();
                     },
@@ -124,7 +124,7 @@ define([
                     }
                 };
 
-            return this.load(options);
+            return this.load(events);
         }
     });
 

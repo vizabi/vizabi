@@ -25,31 +25,15 @@ var options = {
     state: {
         language: 'en',
         show: {
-            'country': {
-                filter: ['swe']
-            }
+            country: ['swe'],
+            year: [2002, 2007]
         },
-        timeRange:[1800, 2018],
-        columns:[ 
-            {
-                category: 'country'
-            },
-            {
-                category: 'year'
-            },
-            {
-                indicator: 'gdp'  
-            },
-            {
-                indicator: 'pop'
-            }
-        ]
+        columns: ['country','year','gdp']
     },
     //path
     data: {
-        //TODO: should we keep the path *here*?
-        path: 'http://188.226.167.164/api/',
-        reader: 'json-ajax'
+        path: '../../data/hello-world/{{LANGUAGE}}/waffle.json',
+        reader: 'local-json'
     },
 
     //ready function

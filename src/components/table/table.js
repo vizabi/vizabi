@@ -8,44 +8,52 @@ define([
 
     var Table = Component.extend({
         init: function(parent, options) {
-            this.template = "components/slider/slider";
+            this.template = "components/table/table";
             this._super(parent, options);
-
-            range = this.model.getState("timeRange");
-            startYear = this.model.getState("time");
         },
 
         postRender: function() {
-            this.placeholder = utils.d3ToJquery(this.placeholder);
-            container = utils.d3ToJquery(this.element);
-
-            this.update();
-        },
-
-
-        resize: function() {
             this.update();
         },
 
         update: function() {
-           var _this = this,
-           	   year = this.model.getState("time");
+           var _this = this;
 
-           handle.attr("data-year", year);
-        },
+           //TODO: mapping of columns and data
+           var columns = this.model.getState().columns,
+               data = this.model.getData()[0];
 
-        getYear: function() {
-            return this.model.getState("time");
-        },
+           var table = this.element;
+           table.html("");
 
-        setYear: function(year, silent) {
-            //update state
-            this.model.setState({
-                time: year
-            }, silent);
+           var thead = table.append("thead"),
+               tbody = table.append("tbody");
 
-            this.update();
-        },
+            // append the header row
+            thead.append("tr")
+                .selectAll("th")
+                .data(columns)
+                .enter()
+                .append("th")
+                    .text(function(column) { return column; });
+
+            // create a row for each object in the data
+            var rows = tbody.selectAll("tr")
+                .data(data)
+                .enter()
+                .append("tr");
+
+            // create a cell in each row for each column
+            var cells = rows.selectAll("td")
+                .data(function(row) {
+                    return columns.map(function(column) {
+                        return {column: column, value: row[column]};
+                    });
+                })
+                .enter()
+                .append("td")
+                    .text(function(d) { return d.value; });
+        }
 
     });
 
