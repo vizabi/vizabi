@@ -3,7 +3,7 @@ define([
     'jquery',
     'underscore',
     //TODO: factory pattern for readers
-    'readers/json-ajax'
+    'readers/local-json'
 ], function(Class, $, _, Reader) {
 
     var dataManager = Class.extend({
@@ -13,31 +13,31 @@ define([
         },
 
         //load resource
-        load: function(options) {
+        load: function(query, language, events) {
+
             var _this = this,
                 defer = $.Deferred(),
-                force = options.force,
                 promises = [],
                 isCached = true,
-                //TODO: rename before cb
-                before = options.before,
-                success = options.success,
-                error = options.error,
-                cached = options.cached;
+
+                //Events before, after, error and cached for data
+                before = events.before,
+                success = events.success,
+                error = events.error,
+                cached = events.cached;
 
             //reset = options.reset;
 
             var promise,
-                isCached = this.isCached(options);
+                isCached = this.isCached(query, language);
 
             //if result is cached, dont load anything unless forced to
-            if (isCached && !force) {
+            if (isCached) {
                 promise = true;
             }
             //if force or no cache, load it.
             else {
-                isCached = false;
-                promise = this.reader.read(options);
+                promise = this.reader.read(query, language);
             }
 
             promises.push(promise);
@@ -52,7 +52,9 @@ define([
                         cached();
                     } else if (!isCached && success) {
 
-                        _this.data = $.extend(true, _this.data, _this.reader.getData());
+                        //_this.data = $.extend(true, _this.data, _this.reader.getData());
+                        _this.data = _this.reader.getData();
+
                         if (_.isFunction(success)) {
                             // Great success! :D
                             success();
@@ -76,15 +78,12 @@ define([
             return (path) ? this.data[path] : this.data;
         },
 
-        isCached: function(options) {
-            var cached = true;
+        isCached: function(query, language) {
+            var cached = false;
+            //TODO: remove the return true
+            return cached;
 
-            if(!this.data.hasOwnProperty("definitions") || 
-               !this.data.definitions.hasOwnProperty(options.language)) {
-                cached = false;
-            }
-
-            if(!this.data.hasOwnProperty("stats") || 
+            if(!this.data.hasOwnProperty("tables") || 
                !this.data.stats.hasOwnProperty(options.indicator)) {
                 cached = false;
             }

@@ -4,16 +4,17 @@ define([
     'managers/data'
 ], function(Class, Events, DataManager) {
 
+    var dataManager,
+        data = {};
     var model = Class.extend({
 
         init: function(datapath) {
             datapath = datapath ? datapath.path : "";
-            this.attributes = {};
-            this.dataManager = new DataManager(datapath);
+            dataManager = new DataManager(datapath);
         },
 
         get: function(attr) {
-            return (attr) ? this.attributes[attr] : this.attributes;
+            return (attr) ? data[attr] : data;
         },
 
         //set an attribute for the model, or an entire object
@@ -27,7 +28,7 @@ define([
             }
 
             for (var att in attr) {
-                this.attributes[att] = attr[att];
+                data[att] = attr[att];
             }
 
             //silent mode is used to avoid event propagation
@@ -42,14 +43,14 @@ define([
             Events.trigger(name);
         },
 
-        load: function(options) {
+        load: function(query, language, events) {
             var _this = this,
                 defer = $.Deferred(),
-                promise = this.dataManager.load(options);
+                promise = dataManager.load(query, language, events);
 
             //when request is completed, set it
             $.when(promise).done(function() {
-                _this.set(_this.dataManager.get());
+                _this.set(dataManager.get());
                 defer.resolve();
             });
 

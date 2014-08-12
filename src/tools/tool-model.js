@@ -31,43 +31,6 @@ define([
 
             this.data.set(attr, value, silent);
             if (!silent) Events.trigger("change:data", attr, value);
-        },
-       
-        //TODO: improve code quality here
-        getRange: function() {
-
-            var minValue = 0,
-                maxValue = 0,
-                minYear = 0,
-                maxYear = 0;
-
-            var filtered = this.getData("filtered");
-            for(var reg_key in filtered) {
-                var reg = filtered[reg_key];
-
-                curr_year_max = _.max(_.keys(reg));
-                if(curr_year_max > maxYear) maxYear = curr_year_max;
-
-                curr_year_min = _.min(_.keys(reg));
-                if(curr_year_min > minYear) minYear = curr_year_min;
-
-                curr_value_max = _.max(reg, function(value, year) {
-                    return value.v;
-                }).v;
-                if(curr_value_max > maxValue) maxValue = curr_value_max;
-
-                curr_value_min = _.min(reg, function(value, year) {
-                    return value.v;
-                }).v;
-                if(curr_value_min > minValue) minValue = curr_value_min;
-            }
-
-            return {
-                minValue: minValue,
-                maxValue: maxValue,
-                minYear: minYear,
-                maxYear: maxYear
-            }
         }
 
     });
