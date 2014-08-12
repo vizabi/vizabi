@@ -1,7 +1,7 @@
 define([
     'base/class',
-    'managers/events',
-    'managers/data'
+    'base/events',
+    'base/data'
 ], function(Class, Events, DataManager) {
 
     var dataManager,

@@ -17,7 +17,7 @@
                 //config is now available
                 require.config(config.require);
                 //start vizabi
-                require(["core"], function(Core) {
+                require(["base/core"], function(Core) {
                     core = new Core();
 
                     //start core
@@ -43,8 +43,9 @@
             });
         });
 
-        this.setOptions  = function (tool_name, opts) {
-            if (core) core.setOptions(tool_name, opts);
+        //placeholder identifies the tool
+        this.setOptions = function(placeholder, opts) {
+            if (core) core.setOptions(placeholder, opts);
         };
     };
 

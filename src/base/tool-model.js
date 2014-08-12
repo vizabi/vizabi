@@ -1,7 +1,7 @@
 define([
     'underscore',
     'base/model',
-    'managers/events'
+    'base/events'
 ], function(_, Model, Events) {
 
 

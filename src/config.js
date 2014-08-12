@@ -8,18 +8,19 @@ define([], function() {
                 optimizeAllPluginResources: true
             },
             paths: {
+                base: 'base',
+                tools: 'tools',
+                components: 'components',
+                readers: 'readers',
+
                 d3: '../bower_components/d3/d3',
                 jquery: '../bower_components/jquery/dist/jquery',
                 underscore: '../bower_components/underscore/underscore',
+
                 jed: '../bower_components/jed/jed',
                 sprintf: '../bower_components/sprintf/src/sprintf',
                 i18n: '../bower_components/i18n-js/i18n',
-                base: 'base',
-                core: 'core',
-                managers: 'managers',
-                readers: 'readers',
-                tools: 'tools',
-                components: 'components',
+                
                 text: '../bower_components/requirejs-text/text',
                 smartpicker: '../bower_components/smart-picker/dist/smart-picker',
 

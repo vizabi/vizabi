@@ -1,8 +1,8 @@
 define([
     'd3',
     'underscore',
-    'components/component',
-    'tools/tool-model'
+    'base/component',
+    'base/tool-model'
 ], function(d3, _, Component, ToolModel) {
 
     //Tool does everything a component does, but has different defaults
