@@ -8,9 +8,11 @@ define([
             this.template = "tools/table/table";
             this.placeholder = options.placeholder;
             this.state = options.state;
-            this.components = {
-                'table': '.vizabi-tool-viz',
-            };
+
+            //add components
+            this.addComponent('table', {
+                placeholder: '.vizabi-tool-viz'
+            });
 
             this._super(parent, options);
         },

@@ -8,10 +8,13 @@ define([
         init: function(parent, options) {
             this.template = "components/timeslider2/timeslider2";
 
-            this.components = {
-                'play-button': '#timeslider-button',
-                'slider': '#timeslider-slider',
-            };
+            //add sub components
+            this.addComponent('play-button', {
+                placeholder: '#timeslider-button'
+            });
+            this.addComponent('slider', {
+                placeholder: '#timeslider-slider'
+            });
 
             // Same constructor as the superclass
             this._super(parent, options);

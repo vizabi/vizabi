@@ -15,22 +15,18 @@ define([
             this.state = options.state;
             // this is where hardcoded defaults can kick in (if( missing props in state {....}))
 
-            //TODO: selectors should be improved
-            this.components = {
-                // TODO: turn the value into an object with their options or state
-                // TODO: put he components into objects with unique ids
-                'bar-chart': '.vizabi-tool-viz',
-                'timeslider2': '.vizabi-tool-timeslider',
-                //TODO: Ola's input in the meeting: (The following is how state looks when statemapping is in place)
-                //TODO: The exact buttons have to be passed to the button list (not hardcoded)
-                //stateMapping:{{range:"timeRange", time:"startTime"}, 
-                'buttonlist': '.vizabi-tool-buttonlist'
-                // "title": ".vizabi-tool-title",
-            };
+            //add components
+            this.addComponent('bar-chart', {
+                placeholder: '.vizabi-tool-viz'
+            });
+            this.addComponent('timeslider2', {
+                placeholder: '.vizabi-tool-timeslider'
+            });
+            this.addComponent('buttonlist', {
+                placeholder: '.vizabi-tool-buttonlist'
+            });
 
             this._super(parent, options);
-
-
 
             //TODO: Here send the state for validation and get back whether its valid or not
             // ---- > add a data layer
