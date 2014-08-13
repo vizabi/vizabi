@@ -2,7 +2,7 @@
 define([
     'd3',
     'underscore',
-    'components/component'
+    'base/component'
 ], function(d3, _, Component) {
 
     var bar_radius = 5,

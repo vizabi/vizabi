@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'base/utils',
-    'components/component',
+    'base/component',
     'smartpicker'
 ], function($, _, utils, Component, SmartPicker) {
 

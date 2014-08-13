@@ -1,6 +1,6 @@
 define([
     'underscore',
-    'tools/tool'
+    'base/tool'
 ], function(_, Tool) {
     var table = Tool.extend({
         init: function(parent, options) {

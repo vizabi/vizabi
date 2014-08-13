@@ -1,7 +1,7 @@
 define([
     'jquery',
     'base/utils',
-    'components/component',
+    'base/component',
 ], function($, utils, Component) {
 
     var Timeslider2 = Component.extend({

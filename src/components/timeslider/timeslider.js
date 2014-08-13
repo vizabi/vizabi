@@ -6,7 +6,7 @@
 define([
     'jquery',
     'base/utils',
-    'components/component'
+    'base/component'
 ], function($, utils, Component) {
 
 

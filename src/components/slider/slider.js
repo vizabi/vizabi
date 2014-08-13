@@ -6,7 +6,7 @@
 define([
     'jquery',
     'base/utils',
-    'components/component',
+    'base/component',
     'jqueryui_slider'
 ], function($, utils, Component) {
 

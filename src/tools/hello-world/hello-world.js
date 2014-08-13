@@ -1,6 +1,6 @@
 define([
     'underscore',
-    'tools/tool'
+    'base/tool'
 ], function(_, Tool) {
     //TODO: put a convention for the folder to indicate its an example: example-hello-world
     //TODO: put a state validator in a data helper which is responsible for this tools use of data
