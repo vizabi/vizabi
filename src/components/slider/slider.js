@@ -5,14 +5,15 @@
 
 define([
     'jquery',
+    'd3',
     'base/utils',
     'base/component',
     'jqueryui_slider'
-], function($, utils, Component) {
+], function($, d3, utils, Component) {
 
-	var container,
-		timeslider,
-		handle;
+    var container,
+        timeslider,
+        handle;
 
     var Timeslider = Component.extend({
         init: function(parent, options) {
@@ -20,9 +21,6 @@ define([
 
             // Same constructor as the superclass
             this._super(parent, options);
-
-            range = this.model.getState("timeRange");
-            startYear = this.model.getState("time");
         },
 
         postRender: function() {
@@ -42,20 +40,28 @@ define([
         },
 
         update: function() {
-           var _this = this,
-           	   year = this.model.getState("time");
+            var _this = this,
+                year = this.model.getState("time");
 
-           timeslider.slider({
-           		min: this.model.getState("timeRange")[0],
-           		max: this.model.getState("timeRange")[1],
-           		value: year,
-           		slide: function(evt, ui) {
-           			_this.setYear(ui.value);
-                _this.events.trigger("timeslider:dragging");
-           		}
-           });
+            var data = this.model.getData()[0],
+                minValue = d3.min(data, function(d) {
+                    return +d.year;
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d.year;
+                });
 
-           handle.attr("data-year", year);
+            timeslider.slider({
+                min: minValue,
+                max: maxValue,
+                value: year,
+                slide: function(evt, ui) {
+                    _this.setYear(ui.value);
+                    _this.events.trigger("timeslider:dragging");
+                }
+            });
+
+            handle.attr("data-year", year);
         },
 
         getYear: function() {

@@ -1,8 +1,9 @@
 define([
     'jquery',
+    'd3',
     'base/utils',
     'base/component',
-], function($, utils, Component) {
+], function($, d3, utils, Component) {
 
     var container,
         play,
@@ -44,7 +45,14 @@ define([
             container.addClass("playing");
             var _this = this,
                 yearValue = this.model.getState("time"),
-                range = this.model.getState("timeRange");
+                data = this.model.getData()[0],
+                minValue = d3.min(data, function(d) {
+                    return +d.year;
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d.year;
+                }),
+                range = [minValue, maxValue];
 
             playInterval = setInterval(function() {
                 if (yearValue > range[1]) {
