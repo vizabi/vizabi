@@ -19,7 +19,6 @@ define([
         lifeAfter,
         offset = null,
         range = null,
-        startYear = null,
         playInterval,
         speed = 200,
         timesliderClass;
@@ -31,20 +30,6 @@ define([
 
             // Same constructor as the superclass
             this._super(parent, options);
-
-
-
-            var data = this.model.getData()[0],
-                indicator = this.model.getState("indicator"),
-                minValue = d3.min(data, function(d) {
-                    return +d.year;
-                }),
-                maxValue = d3.max(data, function(d) {
-                    return +d.year;
-                });
-
-            range = [minValue, maxValue];
-            startYear = this.model.getState("time");
             timesliderClass = this;
         },
 
@@ -78,6 +63,17 @@ define([
         },
 
         update: function() {
+             var data = this.model.getData()[0],
+                indicator = this.model.getState("indicator"),
+                minValue = d3.min(data, function(d) {
+                    return +d.year;
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d.year;
+                });
+
+            range = [minValue, maxValue];
+
             var year = this.model.getState("time"),
                 maxLeft = timeslider.outerWidth() - drag.outerWidth(),
                 minLeft = 0,
