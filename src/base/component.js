@@ -3,8 +3,9 @@ define([
     'd3',
     'underscore',
     'base/utils',
-    'base/class'
-], function($, d3, _, utils, Class) {
+    'base/class',
+    'base/model'
+], function($, d3, _, utils, Class, Model) {
 
     var Component = Class.extend({
         init: function(parent, options) {
@@ -15,14 +16,14 @@ define([
 
             this.model = this.model || options.model;
             this.element = this.element || null;
-            this.template = this.template || "components/component";
+            this.template = this.template || null;
             this.template_data = this.template_data || {
                 name: this.name
             };
             // Markup to define where a Component is going to be rendered.
             // Element which embodies the Component
             this.element = this.element || null;
-            this.components = this.components || {};
+            this.components = this.components || [];
 
             this.profiles = this.profiles || {};
             this.parent = parent;
@@ -106,42 +107,59 @@ define([
         },
 
         loadComponents: function() {
-            var defer = $.Deferred();
-            var promises = [];
-            var _this = this;
+            var defer = $.Deferred(),
+                _this = this,
+                promises = [],
+                components = this.components;
+
+            //use the same name for the initialized collection           
+            this.components = {};
 
             // Loops through components, loading them.
-            _.each(this.components, function(placeholder, component) {
-                var promise = _this.loadComponent(component, placeholder);
+            _.each(components, function(component) {
+                var promise = _this.loadComponent(component);
                 promises.push(promise);
             });
 
-            // When all components have been successfully loaded, resolve the defer
+            // When all components have been loaded, resolve the defer
             $.when.apply(null, promises).done(function() {
-
-                //todo: remove comments of simulation
-                //setTimeout(function() {
                 defer.resolve();
-                //}, 1000);
             });
 
             return defer;
         },
 
-        loadComponent: function(component, placeholder) {
-            var _this = this;
-            var defer = $.Deferred();
-            var path = "components/" + component + "/" + component;
+        loadComponent: function(component) {
+            var _this = this,
+                defer = $.Deferred(),
+                name = component.name,
+                id = _.uniqueId(name),
+                path = "components/" + name + "/" + name,
+                component_model = this.model;
+
+            //component model mapping
+            if(component.model) {
+                if(_.isFunction(component.model)) {
+                    component_model = new Model(component.model());
+                }
+                else {
+                    component_model = new Model(component.model);
+                }
+            }
+            else if(this.getModelMapping(name)) {
+                component_model = new Model(this.getModelMapping(name));
+            }
+
+            //component options
+            var options = _.extend(component.options, {
+                name: name,
+                model: component_model
+            });
 
             // Loads the file we need
             require([path], function(subcomponent) {
-                _this.components[component] = new subcomponent(_this, {
-                    name: component,
-                    placeholder: placeholder,
-                    model: _this.model
-                });
-
-                // Resolve the defer after file has been loaded
+                //initialize subcomponent
+                _this.components[id] = new subcomponent(_this, options);
                 defer.resolve();
             });
 
@@ -149,16 +167,16 @@ define([
         },
 
         renderComponents: function() {
-            var defer = $.Deferred();
-            var defers = [];
+            var defer = $.Deferred(),
+                promises = [];
 
             // Loops through components, rendering them.
             _.each(this.components, function(component) {
-                defers.push(component.render());
+                promises.push(component.render());
             });
 
             // After all components are rendered, resolve the defer
-            $.when.apply(null, defers).done(function() {
+            $.when.apply(null, promises).done(function() {
                 defer.resolve();
             });
 
@@ -214,6 +232,15 @@ define([
 
         },
 
+        getModelMapping: function(component) {
+            return this.modelMapping()[component];
+        },
+
+        //maps the current model to subcomponents
+        modelMapping: function() {
+            return {};
+        },
+
         getInstance: function(manager) {
             return this.parent.getInstance(manager);
         },
@@ -224,6 +251,14 @@ define([
             } else {
                 return this.parent.getLayoutProfile();
             }
+        },
+
+        addComponent: function(name, options) {
+            if(_.isUndefined(this.components)) this.components = [];
+            this.components.push({
+                name: name,
+                options: options
+            });
         }
 
     });

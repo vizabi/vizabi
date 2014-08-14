@@ -13,14 +13,12 @@
         padding: 0;
         font-family: Arial, sans-serif;
     }
-    #placeholder {
+    #hello-world {
         position: relative;
         width: 300px;
         height: 500px;
         margin: 20px auto;
         border: 1px solid #ccc;
-        overflow: hidden;
-        overflow-y: scroll;
     }
     p {
         margin-top: 10px;
@@ -33,12 +31,15 @@
 
 <body>
 
-    <p align="center">
+    <p align="center">Click below to get a random size
         <button onclick="randomSize()">RANDOM SIZE</button>
-        <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button> <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>
+        <button onclick="setState()">SET STATE (WORLD - 2000)</button>
+        <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
+        <button onclick="setLanguage('en')">ENGLISH</button>
+        <button onclick="setLanguage('pt')">PORTUGUESE</button>
     </p>
 
-    <div id="placeholder"></div>
+    <div id="hello-world"></div>
 </body>
 <script>
 var ready = function(err) {
@@ -49,23 +50,24 @@ var options = {
     //state
     state: {
         language: 'en',
-        show: {
-            country: ['swe'],
-            year: [2002, 2007]
-        },
-        columns: ['country', 'year', 'gdp']
+        entity: ['planet/world', 'country/swe', 'country/nor'],
+        timeRange: ["2000-2009"],
+        time: 2005,
+        indicator: 'gdp',
+        scale: 'linear',
+        unit: 100000000
     },
     //path
     data: {
-        path: '../../data/hello-world/{{LANGUAGE}}/waffle.json',
-        reader: 'local-json'
+        reader: 'local-json',
+        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
     },
 
     //ready function
     ready: ready
 };
 
-var myVizabi = new Vizabi("table", "#placeholder", options);
+var myVizabi = new Vizabi("hello-world", "#hello-world", options);
 
 function randomSize() {
     var width = Math.floor(Math.random() * 800) + 300;
@@ -85,29 +87,34 @@ function randomSize() {
 function setState() {
     var newOption = {
         state: {
-            language: 'pt',
-            show: {
-                country: ['swe', 'nor'],
-                year: [2001, 2009]
-            },
-            columns: ['country', 'year', 'gdp', 'lex']
-        },
+            entity: ['planet/world'],
+            time: 2000,
+            indicator: 'gdp',
+            unit: 100000000
+        }
     };
-    myVizabi.setOptions("table", newOption);
+    myVizabi.setOptions("#hello-world", newOption);
 }
 
-function setState2() {
+function changeIndicator() {
     var newOption = {
         state: {
-            language: 'en',
-            show: {
-                country: ['swe'],
-                year: [2002, 2007]
-            },
-            columns: ['country', 'year', 'gdp']
-        },
+            entity: ['country/swe', 'country/nor'],
+            time: 2007,
+            indicator: 'lex',
+            unit: 1
+        }
     };
-    myVizabi.setOptions("table", newOption);
+    myVizabi.setOptions("#hello-world", newOption);
+}
+
+function setLanguage(language) {
+    var newOption = {
+        state: {
+            language: language
+        }
+    };
+    myVizabi.setOptions("#hello-world", newOption);
 }
 </script>
 

@@ -1,7 +1,7 @@
 define([
     'jquery',
     'base/utils',
-    'components/component',
+    'base/component',
 ], function($, utils, Component) {
 
 	var container;
@@ -21,7 +21,8 @@ define([
 
            //TODO: mapping of columns and data
            var columns = this.model.getState().columns,
-               data = this.model.getData()[0];
+               data = this.model.getData()[0],
+               labels = this.model.getData()[1];
 
            var table = this.element;
            table.html("");
@@ -47,7 +48,15 @@ define([
             var cells = rows.selectAll("td")
                 .data(function(row) {
                     return columns.map(function(column) {
-                        return {column: column, value: row[column]};
+                        var key_value;
+                        if(column === "entity") {
+                            var name = _.findWhere(labels, {entity: row[column]}).name;
+                            key_value = {column: column, value: name };
+                        }
+                        else {
+                            key_value = {column: column, value: row[column]};
+                        }
+                        return key_value;
                     });
                 })
                 .enter()

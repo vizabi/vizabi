@@ -1,12 +1,11 @@
 define([
     'underscore',
-    'tools/tool'
+    'base/tool'
 ], function(_, Tool) {
-    //TODO: put a convention for the folder to indicate its an example: example-hello-world
-    //TODO: put a state validator in a data helper which is responsible for this tools use of data
-    //TODO: isolate the views update based on data in a single place -- possibly a glue look-alike ?!
+
     var helloWorld = Tool.extend({
         init: function(parent, options) {
+            var _this = this;
             this.name = 'hello-world';
             this.template = "tools/hello-world/hello-world";
             this.placeholder = options.placeholder;
@@ -15,60 +14,113 @@ define([
             this.state = options.state;
             // this is where hardcoded defaults can kick in (if( missing props in state {....}))
 
-            //TODO: selectors should be improved
-            this.components = {
-                // TODO: turn the value into an object with their options or state
-                // TODO: put he components into objects with unique ids
-                'bar-chart': '.vizabi-tool-viz',
-                'timeslider2': '.vizabi-tool-timeslider',
-                //TODO: Ola's input in the meeting: (The following is how state looks when statemapping is in place)
-                //TODO: The exact buttons have to be passed to the button list (not hardcoded)
-                //stateMapping:{{range:"timeRange", time:"startTime"}, 
-                'buttonlist': '.vizabi-tool-buttonlist'
-                // "title": ".vizabi-tool-title",
-            };
+            //add components
+            this.addComponent('bar-chart', {
+                placeholder: '.vizabi-tool-viz'
+            });
+            this.addComponent('timeslider', {
+                placeholder: '.vizabi-tool-timeslider'
+            });
+            this.addComponent('buttonlist', {
+                placeholder: '.vizabi-tool-buttonlist',
+                buttons: [{
+                            id: "geo",
+                            title: "Country",
+                            icon: "globe"
+                        }]
+            });
 
             this._super(parent, options);
-
-
 
             //TODO: Here send the state for validation and get back whether its valid or not
             // ---- > add a data layer
             // -----> add a data reader specific to waffle
         },
 
-        load: function(options) {
+        //TODO: Check mapping options
+
+        //1)
+
+        // this.addComponent('timeslider', {
+        //     placeholder: '.vizabi-tool-timeslider',
+        //     model: function() {
+        //         return {
+        //             year: this.model.getState("time"),
+        //         }
+        //     }
+        // });
+
+        //2)
+
+        // modelMapping: function() {
+        //     var _this = this;
+
+        //     return {
+        //         'bar-chart': {
+        //             year: this.model.getState("time"),
+        //             indicator: this.model.getState("yaxis").indicator,
+        //             data: this.model.getData()[0],
+        //             labels: this.model.getData()[1],
+        //             scale: this.model.getState("yaxis").scale,
+        //             unit: this.model.getState("yaxis").unit
+        //         },
+        //         'timeslider': {
+        //             year: this.model.getState("time"),
+        //             min_year: _.min(_.map(this.model.getData()[0],
+        //                 function(d) {
+        //                     return +d.year;
+        //                 })),
+        //             max_year: _.max(_.map(this.model.getData()[0],
+        //                 function(d) {
+        //                     return +d.year;
+        //                 })),
+        //         },
+        //         'buttonlist': {
+        //             buttons: [{
+        //                 id: "geo",
+        //                 title: "Country",
+        //                 icon: "globe"
+        //             }, {
+        //                 id: "find",
+        //                 title: "Find",
+        //                 icon: "search"
+        //             }, {
+        //                 id: "options",
+        //                 title: "Options",
+        //                 icon: "gear"
+        //             }, {
+        //                 id: "colors",
+        //                 title: "Colors",
+        //                 icon: "pencil"
+        //             }, {
+        //                 id: "speed",
+        //                 title: "Speed",
+        //                 icon: "dashboard"
+        //             }, {
+        //                 id: "find",
+        //                 title: "Find",
+        //                 icon: "search"
+        //             }, {
+        //                 id: "options",
+        //                 title: "Options",
+        //                 icon: "gear"
+        //             }]
+        //         }
+        //     };
+        // },
+
+        load: function(events) {
             var _this = this,
                 defer = $.Deferred();
 
-            var data_filter = prepareDataFilter(this.model.getState("show")),
-                ids = _.map(data_filter, function(i) {
-                    return i.id
-                });
-
-            //TODO: crete query here
-            var indicator = this.model.getState("yaxis").indicator,
-                language = this.model.getState("language");
-
-            // include paths to the options 
-            options = _.extend(options, {
-                indicator: indicator,
-                language: language
-            });
+            //get info from state
+            var language = this.model.getState("language"),
+                query = this.getQuery();
 
             //load data and resolve the defer when it's done
             $.when(
-                this.model.data.load(options)
+                this.model.data.load(query, language, events)
             ).done(function() {
-                //TODO: Ola's input in the meeting: add query to tool-model
-                //var query = _this.getDataQueryFromState(aState)
-                var waffle = _this.model.getData();
-
-                //TODO: things is a bad name, too generic
-                _this.model.setData("things", getFilteredThings(waffle, language, data_filter));
-
-                //store indicator for the selected ids
-                _this.model.setData("filtered", _.pick(waffle.stats[indicator], ids));
 
                 defer.resolve();
             });
@@ -76,66 +128,32 @@ define([
             return defer;
         },
 
-        getYearData: function() {
-            var year = this.model.getState("time"),
-                year_data = _.map(this.model.getData("filtered"), function(d, i) {
-                    return {
-                        id: i,
-                        value: d[year].v
-                    }
-                });
+        //build query from state
 
-            return year_data;
+        //TODO: this could be moved to the tool if we find a
+        //common state pattern
+        getQuery: function() {
+            //build query with state info
+            var query = [{
+                from: 'data',
+                select: ['entity', 'year', this.model.getState("indicator")],
+                where: {
+                    entity: this.model.getState("entity"),
+                    year: this.model.getState("timeRange")
+                }
+            }, {
+                from: 'data',
+                select: ['entity', 'name'],
+                where: {
+                    entity: this.model.getState("entity"),
+                }
+            }, ];
+
+            return query;
         }
     });
 
 
-    function prepareDataFilter(show) {
-        var result = [];
-        //iterate over each category we want to show
-        for (var reg_type in show) {
-            //if category has sub filters, add them instead
-            if (show[reg_type].hasOwnProperty("filter")) {
-                for (var reg in show[reg_type].filter) {
-                    result.push({
-                        category: reg_type,
-                        id: show[reg_type].filter[reg]
-                    });
-                }
-            }
-            //if not, add the category itself (e.g.: world)
-            else {
-                result.push({
-                    category: reg_type,
-                    id: reg_type
-                });
-            }
-        }
-        return result;
-    }
-
-
-
-    function getFilteredThings(waffle, lang, filter) {
-        var things = {};
-        if (!filter) {
-            // returns all things from all categories
-            for (var category in waffle.definitions[lang].categories) {
-                _.extend(things, waffle.definitions[lang].categories[category].things);
-            }
-        }
-        //grab things in the data structure
-        else {
-            if (!_.isArray(filter)) {
-                filter = [filter];
-            }
-            for (var i = 0, size = filter.length; i < size; i++) {
-                var f = filter[i];
-                things[f.id] = waffle.definitions[lang].categories[f.category].things[f.id];
-            }
-        }
-        return things;
-    }
 
     //statePropertyMapping: {time:}
 

@@ -79,16 +79,16 @@ define([
         },
 
         isCached: function(query, language) {
-            var cached = false;
-            //TODO: remove the return true
-            return cached;
+            var query = JSON.stringify(query);
 
-            if(!this.data.hasOwnProperty("tables") || 
-               !this.data.stats.hasOwnProperty(options.indicator)) {
-                cached = false;
+            if(this.prevQuery === query && this.prevLang === language) {
+                return true;
             }
-
-            return cached;
+            else {
+                this.prevQuery = query;
+                this.prevLang = language;
+                return false;
+            }
         },
 
         //later we can add an external way of clearing the cached data

@@ -1,8 +1,8 @@
 define([
     'd3',
     'underscore',
-    'components/component',
-    'tools/tool-model'
+    'base/component',
+    'base/tool-model'
 ], function(d3, _, Component, ToolModel) {
 
     //Tool does everything a component does, but has different defaults
@@ -19,28 +19,14 @@ define([
                 }
             };
 
-            //TODO: Ola's input in the meeting:
-            //dataQuery = get
             this.model = new ToolModel(options.data);
             this.model.setState(options.state, true);
-
 
             // Same constructor as widgets
             this._super(parent, options);
 
             this.layout = this.getInstance('layout');
         },
-
-
-        //TODO: Ola's input in the meeting
-        /*getDataQueryFromState: function(aState){
-            // default state interpretetaiton if not extended
-            // will only work if using VSSV vizabi standard state vocabulary 
-            for(aState){
-                if "indicator" .
-            }
-        // 
-        }*/
         
         //Tools renders just like the widgets, but they update the layout
         render: function() {

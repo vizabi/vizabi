@@ -4,7 +4,7 @@ define([
     'jquery',
     'underscore',
     'base/utils',
-    'components/component',
+    'base/component',
     'smartpicker'
 ], function($, _, utils, Component, SmartPicker) {
 
@@ -15,41 +15,11 @@ define([
             //set properties
             this.name = 'buttonlist';
             this.template = "components/" + this.name + "/" + this.name;
-
             //list of buttons to be rendered
-            this.template_data = {
-                buttons: [{
-                    id: "geo",
-                    title: "Country",
-                    icon: "globe"
-                },{
-                    id: "find",
-                    title: "Find",
-                    icon: "search"
-                }, {
-                    id: "options",
-                    title: "Options",
-                    icon: "gear"
-                }, {
-                    id: "colors",
-                    title: "Colors",
-                    icon: "pencil"
-                }, {
-                    id: "speed",
-                    title: "Speed",
-                    icon: "dashboard"
-                }, {
-                    id: "find",
-                    title: "Find",
-                    icon: "search"
-                }, {
-                    id: "options",
-                    title: "Options",
-                    icon: "gear"
-                }]
-            };
-
+            this.template_data = { buttons: options.buttons } || { buttons:[] };
+            
             this._super(core, options);
+
         },
 
         postRender: function() {
@@ -90,9 +60,9 @@ define([
             };
 
             var size_container = {
-                width: this.placeholder.outerWidth(),
-                height: this.placeholder.outerHeight()
-            },
+                    width: this.placeholder.outerWidth(),
+                    height: this.placeholder.outerHeight()
+                },
                 vertical = size_container.width < size_container.height,
                 number_buttons = $buttons.length - 1,
                 compare = (vertical) ? "height" : "width";
@@ -119,15 +89,10 @@ define([
         //pass a list of countries to the state
         selectCountries: function(countriesArr) {
             var state = {
-                show: {
-                    //TODO: change this mapping (workaround)
-                    region: {
-                        filter: _.map(countriesArr, function(c) {
-                                    return c.toLowerCase();
-                                })
-                    }
-                }
-            }
+                entity: _.map(countriesArr, function(c) {
+                    return "country/" + c.toLowerCase();
+                })
+            };
             this.setState(state);
         }
 

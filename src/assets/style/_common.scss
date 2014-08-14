@@ -12,6 +12,8 @@ $colorBlue: #62CCE3;
 $colorRed: #F77481; 
 $colorGreen: #B4DE79;
 
+$preloader: url('assets/imgs/preloader.gif');
+
 //makes an element absolute positioned
 @mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
     position: absolute;

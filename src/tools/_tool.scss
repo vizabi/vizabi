@@ -111,7 +111,7 @@
         &:after {
             content: ' ';
             background-color: $colorWhite;
-            background-image: url('imgs/preloader.gif');
+            background-image: $preloader;
             background-repeat: no-repeat;
             background-position: center center;
             display: block;

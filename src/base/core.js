@@ -2,13 +2,12 @@ define([
     'jquery',
     'config',
     'base/class',
-    'managers/events',
-    'managers/layout',
+    'base/events',
+    'base/layout',
     'i18n'
 ], function($, config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
 
-    var vizID = 1,
-        tools = {},
+    var tools = {},
         managers = {
             events: EventsManager,
             layout: new LayoutManager(),
@@ -23,7 +22,6 @@ define([
             });
         },
 
-        //TODO: make it possible for two tools with the same name to co-exist
         start: function(tool_name, placeholder, options) {
             var defer = $.Deferred();
 
@@ -37,9 +35,10 @@ define([
                 placeholder: placeholder
             });
 
+            //placeholder is id because it's unique on the page
             require([path], function(Tool) {
-                tools[tool_name] = new Tool(context, options);
-                var promise = tools[tool_name].render();
+                tools[placeholder] = new Tool(context, options);
+                var promise = tools[placeholder].render();
                 promise.done(function() {
                     defer.resolve();
                 });
@@ -59,7 +58,7 @@ define([
             return defer;
         },
 
-        //TODO: remove ifs
+        //TODO: remove ifs or getInstance entirely
         getInstance: function(manager) {
             if (manager === "layout") return new LayoutManager();
             if (manager === "events") return managers[manager];

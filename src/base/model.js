@@ -1,38 +1,43 @@
 define([
     'base/class',
-    'managers/events',
-    'managers/data'
+    'base/events',
+    'base/data'
 ], function(Class, Events, DataManager) {
 
-    var dataManager,
-        data = {};
     var model = Class.extend({
 
-        init: function(datapath) {
-            datapath = datapath ? datapath.path : "";
-            dataManager = new DataManager(datapath);
+        init: function(values) {
+            this._data = {};
+            if(values) {
+                this.set(values, true);
+            }
         },
 
         get: function(attr) {
-            return (attr) ? data[attr] : data;
+            return (attr) ? this._data[attr] : this._data;
         },
 
         //set an attribute for the model, or an entire object
         set: function(attr, value, silent) {
             if (typeof attr !== 'object') {
                 var attrs = {};
-                attrs[attr] = value;
+                attrs[attr] = _.clone(value);
                 attr = attrs;
             } else {
                 silent = value;
             }
 
             for (var att in attr) {
-                data[att] = attr[att];
+                this._data[att] = _.clone(attr[att]);
             }
 
             //silent mode is used to avoid event propagation
             if (!silent) Events.trigger("change");
+        },
+
+        reset: function(values, silent) {
+            this.data = {};
+            this.set(values, silent);
         },
 
         bind: function(name, func) {
@@ -43,14 +48,20 @@ define([
             Events.trigger(name);
         },
 
+        //improve source setup;
+        setSource: function(data_source) {
+            datapath = data_source ? data_source.path : "";
+            this._dataManager = new DataManager(datapath);
+        },
+
         load: function(query, language, events) {
             var _this = this,
                 defer = $.Deferred(),
-                promise = dataManager.load(query, language, events);
+                promise = this._dataManager.load(query, language, events);
 
             //when request is completed, set it
             $.when(promise).done(function() {
-                _this.set(dataManager.get());
+                _this.set(_this._dataManager.get());
                 defer.resolve();
             });
 
