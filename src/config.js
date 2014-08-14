@@ -11,7 +11,7 @@ define([], function() {
                 base: 'base',
                 tools: 'tools',
                 components: 'components',
-                readers: 'readers',
+                readers: 'data-reader',
 
                 d3: '../bower_components/d3/d3',
                 jquery: '../bower_components/jquery/dist/jquery',

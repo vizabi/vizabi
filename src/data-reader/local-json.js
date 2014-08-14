@@ -40,8 +40,8 @@
 
      function queryJSON(json, query) {
          if (query.from == "data") {
-             var table_name = getTableName(query);
-             var data = json.tables[table_name].data;
+             var table_name = getTableName(query),
+                 data = json.tables[table_name].data;
              return filterColumns(filterRows(data, query.where), query.select);
          }
      }
@@ -51,6 +51,8 @@
          _.each(query.where, function(value, field) {
              table_name.push(field);
          });
+         //alphabetical order (ex: year, country = table country_year)
+         table_name.sort();
          return table_name.join("_");
      }
 
@@ -77,6 +79,7 @@
 
      function matchValue(field, possible, value) {
 
+        //exception to handle year formats
         if(_.isString(possible)) {
             if(field === "year" && _.contains(possible, "-")) {
                 var years = possible.split("-");
@@ -84,6 +87,18 @@
             } else {
                 possible = [possible];
             }
+        } else if (_.isArray(possible) && field === "year") {
+            var new_possible = [];
+            for(var i in possible) {
+                if(!_.contains(possible[i], "-")) {
+                    new_possible.push(possible[i]);
+                }
+                else {
+                    var years = possible[i].split("-");
+                    new_possible = _.union(new_possible, _.range(parseInt(years[0], 10),parseInt(years[1], 10)+1));
+                }
+            }
+            possible = new_possible;
         }
         //TODO: review string and int incompatibility
         return _.contains(possible, value);
