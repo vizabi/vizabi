@@ -3,8 +3,9 @@ define([
     'jquery',
     'underscore',
     //TODO: factory pattern for readers
-    'readers/local-json'
-], function(Class, $, _, Reader) {
+    'readers/local-json',
+    'base/events'
+], function(Class, $, _, Reader, Events) {
 
     var dataManager = Class.extend({
         init: function(base_path, reader) {
@@ -38,6 +39,10 @@ define([
             //if force or no cache, load it.
             else {
                 promise = this.reader.read(query, language);
+                Events.trigger("change:query", {
+                    query: query,
+                    language: language
+                });
             }
 
             promises.push(promise);
