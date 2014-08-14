@@ -83,6 +83,10 @@ module.exports = function(grunt) {
                 files: ['src/**/*.html'],
                 tasks: ['copy:templates']
             },
+            examples: {
+                files: ['examples/**/*.html', '!examples/index.html'],
+                tasks: ['examples']
+            },
             options: {
                 livereload: {
                     port: '<%= connect.options.livereload %>'
@@ -147,7 +151,7 @@ module.exports = function(grunt) {
             current_dir;
 
         grunt.file.recurse(examples_folder, function(abs, root, dir, file) {
-            if(typeof dir !== 'undefined') {
+            if(typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
               if(current_dir !== dir) {
                 current_dir = dir;
                 contents += "<h2>"+dir+"</h2>";
