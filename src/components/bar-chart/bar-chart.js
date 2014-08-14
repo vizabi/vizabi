@@ -21,7 +21,6 @@ define([
         init: function(context, options) {
             this.name = 'bar-chart';
             this.template = 'components/' + this.name + '/' + this.name;
-
             this.tool = context;
             this._super(context, options);
         },
@@ -42,30 +41,41 @@ define([
         //TODO: Optimize data binding
         update: function() {
 
-            var range = this.model.getRange(),
-                yearData = this.tool.getYearData(),
-                minY = this.model.getState("yaxis").min || ((this.model.getState("yaxis").scale == "log") ? range.minValue : 0),
-                maxY = this.model.getState("yaxis").max || (range.maxValue + range.maxValue / 10),
-                unit = this.model.getState("yaxis").unit || 1,
-                indicator = this.model.getState("yaxis").indicator,
-                language = this.model.getState("language"),
-                indicator_name = this.model.getData().definitions[language].indicators[indicator].name;
+            var indicator = this.model.getState("indicator"),
+                data = this.model.getData()[0],
+                year = this.model.getState("time"),
+                labels = this.model.getData()[1],
+                minValue = d3.min(data, function(d) {
+                    return +d[indicator];
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d[indicator];
+                }),
+                data_curr_year = data.filter(function(row) {
+                    return row.year == year
+                }),
+                scale = this.model.getState("scale"),
+                minY = this.model.getState("min") || ((scale == "log") ? minValue : 0),
+                maxY = this.model.getState("max") || (maxValue + maxValue / 10),
+                unit = this.model.getState("unit") || 1,
+                indicator_name = indicator;
 
             // Create X axis scale, X axis function and call it on element
             x = d3.scale.ordinal();
-            x.domain(_.map(yearData, function(d, i) {
-                return d.id;
+
+            x.domain(_.map(labels, function(d, i) {
+                return d.entity;
             }));
             //TODO: Read from data manager
             xAxis = d3.svg.axis().scale(x).orient("bottom")
                 .tickFormat(function(d) {
-                    return d;
+                    return _.findWhere(labels, {entity: d}).name;
                 });
 
             //xAxisEl.call(xAxis);
 
             // Create Y axis scale, Y axis function and call it on element
-            y = (this.model.getState("yaxis").scale == "log") ? d3.scale.log() : d3.scale.linear();
+            y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
             y.domain([minY, maxY])
                 .range([height, 0]);
 
@@ -82,7 +92,7 @@ define([
 
             // Update data bars
             bars.selectAll(".bar")
-                .data(yearData)
+                .data(data_curr_year)
                 .enter()
                 .append("path")
                 .attr("class", "bar");
@@ -130,7 +140,7 @@ define([
             // Update range of Y and call Y axis function on element
             y.range([height, 0]);
             // Number of ticks
-            if (this.model.getState("yaxis").scale == "log") {
+            if (this.model.getState("scale") == "log") {
                 yAxis.ticks(5, '100');
             } else {
                 yAxis.ticks(Math.max((Math.round(height / tick_spacing)), 2));
@@ -142,7 +152,7 @@ define([
             //Adjusting margin according to length
             var yLabels = yAxisEl.selectAll("text")[0],
                 topLabel = yLabels[(yLabels.length - 1)];
-            margin.left = Math.max(margin.left,(topLabel.getBBox().width+ 15));
+            margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
 
             width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
@@ -154,14 +164,15 @@ define([
             //adjust graph position
             graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+            var indicator = this.model.getState("indicator");
 
             // Update size of bars 
             bars.selectAll(".bar")
                 .attr("d", function(d, i) {
-                    return topRoundedRect(x(d.id),
-                        y(d.value),
+                    return topRoundedRect(x(d.entity),
+                        y(d[indicator]),
                         x.rangeBand(),
-                        height - y(d.value),
+                        height - y(d[indicator]),
                         bar_radius);
                 });
 
@@ -171,7 +182,6 @@ define([
     });
 
     //draw top rounded paths
-
     function topRoundedRect(x, y, width, height, radius) {
         return "M" + (x + radius) + "," + y + "h" + (width - (radius * 2)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius + "v" + (height - radius) + "h" + (0 - width) + "v" + (0 - (height - radius)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius + "z";
     }

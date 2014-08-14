@@ -5,9 +5,10 @@
 
 define([
     'jquery',
+    'd3',
     'base/utils',
     'base/component'
-], function($, utils, Component) {
+], function($, d3, utils, Component) {
 
 
     //plugin variables
@@ -31,7 +32,18 @@ define([
             // Same constructor as the superclass
             this._super(parent, options);
 
-            range = this.model.getState("timeRange");
+
+
+            var data = this.model.getData()[0],
+                indicator = this.model.getState("indicator"),
+                minValue = d3.min(data, function(d) {
+                    return +d.year;
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d.year;
+                });
+
+            range = [minValue, maxValue];
             startYear = this.model.getState("time");
             timesliderClass = this;
         },
@@ -86,7 +98,7 @@ define([
 
         setYear: function(year, silent) {
             //update state
-            this.model.setState({
+            this.setState({
                 time: year
             }, silent);
 
@@ -171,7 +183,7 @@ define([
             posYear = drag.position().left;
 
         var yearValue = Math.round(posYear / widthPeryear) + range[0];
-        
+
         return yearValue;
     };
 

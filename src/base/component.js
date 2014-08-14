@@ -3,8 +3,9 @@ define([
     'd3',
     'underscore',
     'base/utils',
-    'base/class'
-], function($, d3, _, utils, Class) {
+    'base/class',
+    'base/model'
+], function($, d3, _, utils, Class, Model) {
 
     var Component = Class.extend({
         init: function(parent, options) {
@@ -133,11 +134,26 @@ define([
                 defer = $.Deferred(),
                 name = component.name,
                 id = _.uniqueId(name),
-                path = "components/" + name + "/" + name;
+                path = "components/" + name + "/" + name,
+                component_model = this.model;
 
+            //component model mapping
+            if(component.model) {
+                if(_.isFunction(component.model)) {
+                    component_model = new Model(component.model());
+                }
+                else {
+                    component_model = new Model(component.model);
+                }
+            }
+            else if(this.getModelMapping(name)) {
+                component_model = new Model(this.getModelMapping(name));
+            }
+
+            //component options
             var options = _.extend(component.options, {
                 name: name,
-                model: this.model
+                model: component_model
             });
 
             // Loads the file we need
@@ -214,6 +230,15 @@ define([
 
         postRender: function() {
 
+        },
+
+        getModelMapping: function(component) {
+            return this.modelMapping()[component];
+        },
+
+        //maps the current model to subcomponents
+        modelMapping: function() {
+            return {};
         },
 
         getInstance: function(manager) {

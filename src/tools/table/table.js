@@ -25,7 +25,7 @@ define([
 
             //get info from state
             var language = this.model.getState("language"),
-                query = this.getQueryFromState();
+                query = this.getQuery();
                 
             //load data and resolve the defer when it's done
             $.when(
@@ -38,29 +38,25 @@ define([
         },
 
         //build query from state
-        getQueryFromState: function() {
-            //get info from state
-            var countries = this.model.getState("show").country,
-                years = this.model.getState("show").year,
-                columns = this.model.getState("columns");
-
-            var yearQuery = (years.length > 2) ? years : years.join("-");
-
+        
+        //TODO: this could be moved to the tool if we find a
+        //common state pattern
+        getQuery: function() {
             //build query with state info
             var query = [
                 {
                     from: 'data',
-                    select: columns,
+                    select: this.model.getState("columns"),
                     where: {
-                        country: countries,
-                        year: yearQuery
+                        entity: this.model.getState("entity"),
+                        year: this.model.getState("timeRange")
                     }
                 },
                 {
                     from: 'data',
-                    select: ['country', 'name'],
+                    select: ['entity', 'name'],
                     where: {
-                        country: countries
+                        entity: this.model.getState("entity"),
                     }
                 },
             ];

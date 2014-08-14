@@ -58,7 +58,7 @@ define([
             return defer;
         },
 
-        //TODO: remove ifs
+        //TODO: remove ifs or getInstance entirely
         getInstance: function(manager) {
             if (manager === "layout") return new LayoutManager();
             if (manager === "events") return managers[manager];
