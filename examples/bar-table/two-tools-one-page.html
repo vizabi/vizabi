@@ -16,22 +16,19 @@
 <body>
     <div class="container">
         <div class="buttons">
-            <button onclick="randomSize('hello-world')">RANDOM SIZE</button>
-            <label>State:</label>
-            <button onclick="setState()">SET STATE (WORLD - 2000)</button>
-            <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
             <label>Language:</label>
-            <button onclick="setLanguage('hello-world','en')">ENGLISH</button>
-            <button onclick="setLanguage('hello-world','pt')">PORTUGUESE</button>
+            <button onclick="setLanguage('hello-world','en'); setLanguage('table','en')">ENGLISH</button>
+            <button onclick="setLanguage('hello-world','pt'); setLanguage('table','pt')">PORTUGUESE</button>
         </div>
 
         <div id="hello-world" class="placeholder"></div>
+        <div id="table" class="placeholder"></div>
 
     </div>
     <div class="aux">
         <p>Current State:</p>
         <pre id="state" class="json_box" contentEditable="true"></pre>
-        <button onclick="setCurrentState('hello-world')">SET STATE</button>
+        <button onclick="setCurrentState('hello-world'); setCurrentState('table')">SET STATE</button>
         <p>Current Query:</p>
         <pre id="query" class="json_box"></pre>
     </div>
@@ -46,7 +43,8 @@ var options = {
         time: 2005,
         indicator: 'gdp',
         scale: 'linear',
-        unit: 1000000
+        unit: 1000000,
+        columns: ['entity', 'year', 'gdp']
     },
     //path
     data: {
@@ -61,33 +59,16 @@ var options = {
         'change:query': function(query) {
             showQuery(query);
         }
-    }
+    },
+    ready: ready
 };
 
 var myVizabi = new Vizabi("hello-world", "#hello-world", options);
+var myVizabi2;
 
-function setState() {
-    var newOption = {
-        state: {
-            entity: ['planet/world'],
-            time: 2000,
-            indicator: 'gdp',
-            unit: 100000000
-        }
-    };
-    myVizabi.setOptions("#hello-world", newOption);
-}
-
-function changeIndicator() {
-    var newOption = {
-        state: {
-            entity: ['country/swe', 'country/nor'],
-            time: 2007,
-            indicator: 'lex',
-            unit: 1
-        }
-    };
-    myVizabi.setOptions("#hello-world", newOption);
+function ready() {
+    myVizabi2 = new Vizabi("table", "#table", options);
+    options.ready = null;
 }
 </script>
 <!-- Includes scripts -->

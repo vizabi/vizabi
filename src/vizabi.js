@@ -56,18 +56,27 @@
 
 
     //inject script
+    var loaded_scripts = [];
 
     function getScript(src, loaded) {
-        script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        script.onload = function() {
+
+        if (loaded_scripts.indexOf(src) != -1) {
             if (typeof loaded === "function") {
                 loaded();
             }
-        };
-        script.src = src;
-        document.getElementsByTagName('head')[0].appendChild(script);
+        } else {
+            loaded_scripts.push(src);
+            script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.async = true;
+            script.onload = function() {
+                if (typeof loaded === "function") {
+                    loaded();
+                }
+            };
+            script.src = src;
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
     }
 
 

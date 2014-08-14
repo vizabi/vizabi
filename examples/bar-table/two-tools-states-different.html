@@ -1,0 +1,69 @@
+<html>
+
+<head>
+    <title>Test page for Vizabi</title>
+    <!-- Includes vizabi main file -->
+    <script src="../../dist/vizabi.js"></script>
+    <!-- Includes vizabi css -->
+    <link rel="stylesheet" href="../../dist/vizabi.css">
+    <!-- Includes examples css -->
+    <link rel="stylesheet" href="../assets/style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+</head>
+
+<body>
+    <div align="center">
+
+        <div id="hello-world" class="placeholder"></div>
+        <div id="table" class="placeholder"></div>
+
+    </div>
+</body>
+<script>
+var options = {
+    //state
+    state: {
+        language: 'en',
+        entity: ['planet/world', 'country/swe', 'country/nor'],
+        timeRange: ["2000-2009"],
+        time: 2005,
+        indicator: 'gdp',
+        scale: 'linear',
+        unit: 1000000,
+    },
+    //path
+    data: {
+        reader: 'local-json',
+        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+    },
+    ready: ready
+};
+
+var options2 = {
+    //state
+    state: {
+        language: 'pt',
+        entity: ['country/swe', 'country/fin'],
+        timeRange: ["2002-2005"],
+        columns: ['entity', 'year', 'lex']
+    },
+    //path
+    data: {
+        reader: 'local-json',
+        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+    }
+};
+
+var myVizabi = new Vizabi("hello-world", "#hello-world", options);
+
+function ready() {
+    myVizabi2 = new Vizabi("table", "#table", options2);
+}
+
+</script>
+<!-- Includes scripts -->
+<script src="../assets/scripts.js"></script>
+
+</html>

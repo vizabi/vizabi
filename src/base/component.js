@@ -192,8 +192,9 @@ define([
                 //render template using underscore
                 var rendered = _.template(html, _this.template_data);
 
+                var root = _this.parent.element || d3;
                 //place the contents into the correct placeholder
-                _this.placeholder = d3.select(_this.placeholder);
+                _this.placeholder = root.select(_this.placeholder);
                 _this.placeholder.html(rendered);
 
                 //TODO: refactor the way we select the first child
