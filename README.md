@@ -1,5 +1,6 @@
+![Gapminder Vizabi](http://i60.tinypic.com/5bzi9e.jpg)
 Gapminder Vizabi
-================
+===
 
 Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema.
 
