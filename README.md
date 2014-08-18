@@ -1,51 +1,42 @@
-viz-external-dev
+Gapminder Vizabi
 ================
 
-# Starting out
+Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema.
+
+## Overview
+
+This repo consists of:
+
+* the different components that together build up the Vizabi library
+* build scripts and wrapper code that creates the files that are supposed to be distributed to end-users
+
+# Quickstart
 
 ```sh
-git clone http://github.com/Gapminder/vizabi-experiments
-cd vizabi-experiments
+git clone http://github.com/Gapminder/vizabi
+cd vizabi
 git checkout develop
 ```
 
-Start out by installing the dependencies via bower and npm:
+This project uses npm, grunt and bower. For npm, you will need Node.js installed. Then, run the following commands:
 
 ```sh
-bower install
+npm install -g bower grunt-cli
 npm install
+bower install
 ```
 
-In order to build it, run:
-```sh
-grunt
-```
-
-If you want to build in develop mode, run:
+In order to build the project in development mode, type the following.
 ```sh
 grunt dev
 ```
 
-# Creating a new visualization (to be edited)
+*If you omit the option dev, the project will be built in the dist folder, but will not run on a local server*
 
-Type, on the root directory:
+# Examples
 
-```sh
-yo vizabi
-```
+The examples folder contains several examples of Vizabi tools in action. Check them out.
 
-This will ask you what you want to create. Two files will be generated: a JavaScript file and a SCSS file, for styles. (todo: overwrite .scss files by default on prompt).
+## Development Process
 
-When asked to overwrite `visualizations/vizabi.scss`, type `y`.
-
-Open `visualizations/your-new-viz`. Write your visualization there :) 
-
-# Compiling scss
-
-```sh
-grunt sass
-```
-
-# View
-
-Edit `test/test.html` and load it into your browser.
+(to be defined)
