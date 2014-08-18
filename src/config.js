@@ -1,4 +1,7 @@
 define([], function() {
+
+    var lib_folder = "../lib/";
+    
     var configs = {
         debug: true,
 
@@ -13,23 +16,23 @@ define([], function() {
                 components: 'components',
                 readers: 'data-reader',
 
-                d3: '../bower_components/d3/d3',
-                jquery: '../bower_components/jquery/dist/jquery',
-                underscore: '../bower_components/underscore/underscore',
+                d3: lib_folder + '/d3/d3',
+                jquery: lib_folder + '/jquery/dist/jquery',
+                underscore: lib_folder + '/underscore/underscore',
 
-                jed: '../bower_components/jed/jed',
-                sprintf: '../bower_components/sprintf/src/sprintf',
-                i18n: '../bower_components/i18n-js/i18n',
+                jed: lib_folder + '/jed/jed',
+                sprintf: lib_folder + '/sprintf/src/sprintf',
+                i18n: lib_folder + '/i18n-js/i18n',
                 
-                text: '../bower_components/requirejs-text/text',
-                smartpicker: '../bower_components/smart-picker/dist/smart-picker',
+                text: lib_folder + '/requirejs-text/text',
+                smartpicker: lib_folder + '/smart-picker/dist/smart-picker',
 
                 //TODO: Move this to timeslider2 (component-specific)
                 //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
-                jqueryui_slider: '../bower_components/jqueryui/ui/minified/jquery.ui.slider.min',
-                jqueryui_core: '../bower_components/jqueryui/ui/minified/jquery.ui.core.min',
-                jqueryui_mouse: '../bower_components/jqueryui/ui/minified/jquery.ui.mouse.min',
-                jqueryui_widget: '../bower_components/jqueryui/ui/minified/jquery.ui.widget.min'
+                jqueryui_slider: lib_folder + '/jqueryui/ui/minified/jquery.ui.slider.min',
+                jqueryui_core: lib_folder + '/jqueryui/ui/minified/jquery.ui.core.min',
+                jqueryui_mouse: lib_folder + '/jqueryui/ui/minified/jquery.ui.mouse.min',
+                jqueryui_widget: lib_folder + '/jqueryui/ui/minified/jquery.ui.widget.min'
             },
             shim: {
                 d3: {
