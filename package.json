@@ -1,7 +1,7 @@
 {
-  "name": "viz-external-dev",
-  "version": "0.0.0",
-  "description": "viz-external-dev ================",
+  "name": "vizabi",
+  "version": "0.0.1",
+  "description": "vizabi",
   "main": "Gruntfile.js",
   "directories": {
     "test": "test"
@@ -25,9 +25,9 @@
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Gapminder/viz-external-dev/issues"
+    "url": "https://github.com/Gapminder/vizabi/issues"
   },
-  "homepage": "https://github.com/Gapminder/viz-external-dev",
+  "homepage": "https://github.com/Gapminder/vizabi",
   "devDependencies": {
     "load-grunt-tasks": "~0.4.0",
     "grunt-contrib-watch": "~0.6.1",

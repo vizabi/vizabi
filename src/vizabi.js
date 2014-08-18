@@ -9,7 +9,7 @@
 
         //TODO: avoid loading requirejs more than once
         //add requireJS
-        getScript("../../bower_components/requirejs/require.js", function() {
+        getScript("../../lib/requirejs/require.js", function() {
             //load configuration and paths
 
             //TODO: config should have a base url...

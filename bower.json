@@ -1,7 +1,7 @@
 {
-  "name": "viz-external-dev",
-  "version": "0.0.0",
-  "homepage": "https://github.com/Gapminder/viz-external-dev",
+  "name": "vizabi",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Gapminder/vizabi",
   "authors": [
     "Gapminder <dev@gapminder.org>"
   ],
@@ -13,7 +13,7 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
+    "lib",
     "test",
     "tests"
   ],
