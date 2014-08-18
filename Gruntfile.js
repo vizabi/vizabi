@@ -8,6 +8,60 @@ module.exports = function(grunt) {
      */
     require('load-grunt-tasks')(grunt);
 
+    /* 
+     * -----------------------------
+     * Tasks:
+     */
+
+    //default task: grunt
+    grunt.registerTask('default', [
+        'build' //by default, just build
+    ]);
+
+    //build task: grunt
+    // grunt.registerTask('build', [
+    //     'clean:dist', //clean dist folder
+    //     'copy:templates', //copy js and template files
+    //     'uglify', //uglify js files
+    //     'sass:dist', //compile scss
+    //     'examples', //build examples
+    // ]);
+
+    //developer task: grunt dev
+    grunt.registerTask('dev', [
+
+        'clean:dist', //clean dist folder
+        'requirejs:dev', //concatenate all in one file
+        'sass:dev', //compile scss
+        'examples', //build examples
+        'connect', //run locally
+        'watch' //watch for code changes
+
+    ]);
+
+    //developer task: grunt dev
+    grunt.registerTask('build', [
+
+        'clean:dist', //clean dist folder
+        // 'copy', //copy js and template files
+        'requirejs:dist', //use requirejs for amd module
+        'sass:dist', //compile scss
+        'examples', //build examples
+
+    ]);
+
+    //default task with connect
+    grunt.registerTask('serve', [
+        'default', //default build
+        'connect', //run locally
+        'watch' //watch for code changes
+    ]);
+
+    /* 
+     * -----------------------------
+     * Configuration:
+     */
+
     grunt.initConfig({
 
         // Clean dist folder to have a clean start
@@ -26,12 +80,6 @@ module.exports = function(grunt) {
             templates: {
                 cwd: 'src',
                 src: ['assets/imgs/**', '**/*.html'],
-                dest: 'dist',
-                expand: true
-            },
-            data: {
-                cwd: 'src',
-                src: ['**/*.json'],
                 dest: 'dist',
                 expand: true
             }
@@ -109,34 +157,29 @@ module.exports = function(grunt) {
                 }
             }
         },
+
+        requirejs: {
+            // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
+            dist: {
+                options: {
+                    baseUrl: "src/",
+                    mainConfigFile: "src/config.js",
+                    out: "dist/vizabi.js",
+                    optimize: "uglify",
+                    generateSourceMaps: false,
+                }
+            },
+            dev: {
+                options: {
+                    baseUrl: "src/",
+                    mainConfigFile: "src/config.js",
+                    out: "dist/vizabi.js",
+                    optimize: "none",
+                    generateSourceMaps: true
+                }
+            }
+        }
     });
-
-    /* 
-     * -----------------------------
-     * Tasks:
-     */
-
-    //default task: grunt
-    grunt.registerTask('default', [
-        'clean:dist', //clean dist folder
-        'copy:templates', //copy js and template files
-        'copy:data',
-        'uglify', //uglify js files
-        'sass:dist', //compile scss
-        'examples' //build examples
-    ]);
-
-    //developer task: grunt dev
-    grunt.registerTask('dev', [
-
-        'clean:dist', //clean dist folder
-        'copy', //copy js and template files
-        'sass:dev', //compile scss
-        'examples', //build examples
-        'connect', //run locally
-        'watch' //watch for code changes
-
-    ]);
 
     /*
      * ---------
@@ -151,14 +194,14 @@ module.exports = function(grunt) {
             current_dir;
 
         grunt.file.recurse(examples_folder, function(abs, root, dir, file) {
-            if(typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
-              if(current_dir !== dir) {
-                current_dir = dir;
-                contents += "<h2>"+dir+"</h2>";
-              }
-              var link = dir + '/' + file;
-              var example = "<p><a href='"+link+"'>"+file+"</a></p>";
-              contents += example;
+            if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+                if (current_dir !== dir) {
+                    current_dir = dir;
+                    contents += "<h2>" + dir + "</h2>";
+                }
+                var link = dir + '/' + file;
+                var example = "<p><a href='" + link + "'>" + file + "</a></p>";
+                contents += example;
             }
         });
         grunt.file.write(examples_index, contents);

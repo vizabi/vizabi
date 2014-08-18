@@ -1,104 +1,81 @@
-define([], function() {
+//Main Src File
+require.config({
+    text: {
+        optimizeAllPluginResources: true
+    },
+    paths: {
+        base: 'base',
+        tools: 'tools',
+        components: 'components',
+        readers: 'data-reader',
 
-    var lib_folder = "../lib/";
-    
-    var configs = {
-        debug: true,
+        d3: '../lib/d3/d3',
+        jquery: '../lib/jquery/dist/jquery',
+        underscore: '../lib/underscore/underscore',
 
-        require: {
-            baseUrl: "../../dist/",
-            text: {
-                optimizeAllPluginResources: true
-            },
-            paths: {
-                base: 'base',
-                tools: 'tools',
-                components: 'components',
-                readers: 'data-reader',
+        jed: '../lib/jed/jed',
+        sprintf: '../lib/sprintf/src/sprintf',
+        i18n: '../lib/i18n-js/i18n',
 
-                d3: lib_folder + '/d3/d3',
-                jquery: lib_folder + '/jquery/dist/jquery',
-                underscore: lib_folder + '/underscore/underscore',
+        text: '../lib/requirejs-text/text',
+        smartpicker: '../lib/smart-picker/dist/smart-picker',
 
-                jed: lib_folder + '/jed/jed',
-                sprintf: lib_folder + '/sprintf/src/sprintf',
-                i18n: lib_folder + '/i18n-js/i18n',
-                
-                text: lib_folder + '/requirejs-text/text',
-                smartpicker: lib_folder + '/smart-picker/dist/smart-picker',
-
-                //TODO: Move this to timeslider2 (component-specific)
-                //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
-                jqueryui_slider: lib_folder + '/jqueryui/ui/minified/jquery.ui.slider.min',
-                jqueryui_core: lib_folder + '/jqueryui/ui/minified/jquery.ui.core.min',
-                jqueryui_mouse: lib_folder + '/jqueryui/ui/minified/jquery.ui.mouse.min',
-                jqueryui_widget: lib_folder + '/jqueryui/ui/minified/jquery.ui.widget.min'
-            },
-            shim: {
-                d3: {
-                    exports: 'd3'
-                },
-                i18n: {
-                    deps: ['jed', 'sprintf', 'jquery'],
-                    exports: 'i18n'
-                },
-                smartpicker: {
-                    deps: ['underscore', 'jquery'],
-                    exports: 'smartpicker'
-                },
-                jqueryui_core: {
-                    deps: ['jquery']
-                },
-                jqueryui_widget: {
-                    deps: ['jquery']
-                },
-                jqueryui_mouse: {
-                    deps: ['jqueryui_widget']
-                },
-                jqueryui_slider: {
-                    deps: ['jquery',
-                           'jqueryui_core',
-                           'jqueryui_mouse',
-                           'jqueryui_widget']
-                }
-            }
+        //TODO: Move this to timeslider2 (component-specific)
+        //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
+        jqueryui_slider: '../lib/jqueryui/ui/minified/jquery.ui.slider.min',
+        jqueryui_core: '../lib/jqueryui/ui/minified/jquery.ui.core.min',
+        jqueryui_mouse: '../lib/jqueryui/ui/minified/jquery.ui.mouse.min',
+        jqueryui_widget: '../lib/jqueryui/ui/minified/jquery.ui.widget.min'
+    },
+    shim: {
+        d3: {
+            exports: 'd3'
         },
-
-        vizabi: {
-            po: 2
+        i18n: {
+            deps: ['jed', 'sprintf', 'jquery'],
+            exports: 'i18n'
         },
-
-        url: {
-            oven: {
-                base: 'http://oven.gapminder.org:9990', //'{{oven-url}}'
-                api: {
-
-                }
-            },
-
-            cms: {
-                base: 'http://stage.cms.gapminder.org', //'{{cms-url}}'
-                api: {
-                    // sprintf fortmatted string
-                    po: '/api/i18nCatalog/poJson?id=%(filename)s&lang=%(lang)s',
-                }
-            }
+        smartpicker: {
+            deps: ['underscore', 'jquery'],
+            exports: 'smartpicker'
         },
-
-        screen_sizes: {
-            small: {
-                min_width: 0,
-                max_width: 749,
-            },
-            medium: {
-                min_width: 750,
-                max_width: 969,
-            },
-            large: {
-                min_width: 970,
-                max_width: Infinity,
-            }
+        jqueryui_core: {
+            deps: ['jquery']
+        },
+        jqueryui_widget: {
+            deps: ['jquery']
+        },
+        jqueryui_mouse: {
+            deps: ['jqueryui_widget']
+        },
+        jqueryui_slider: {
+            deps: ['jquery',
+                'jqueryui_core',
+                'jqueryui_mouse',
+                'jqueryui_widget'
+            ]
         }
-    };
-    return configs;
+    },
+
+    name: "../lib/almond/almond",
+
+    removeCombined: true,
+    findNestedDependencies: true,
+    wrap: {
+        startFile: 'build/wrap-begin.frag',
+        endFile: 'build/wrap-end.frag'
+    },
+    preserveLicenseComments: false,
+    //optimize: "uglify",
+    //generateSourceMaps: false,
+
+    //allow text! require
+    inlineText: true,
+
+    // exclude: [
+    //             "jquery",
+    //             "d3"
+    //         ],
+
+    include: "vizabi"
 });
