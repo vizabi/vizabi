@@ -22,8 +22,8 @@
     "jed": "~0.5.4",
     "jquery": "~2.1.0",
     "sprintf": "*",
-    "i18n-js": "https://github.com/Gapminder/i18n-js.git#develop",
-    "smart-picker": "https://github.com/Gapminder/smart-picker.git",
+    "i18n-js": "git@github.com:Gapminder/i18n-js.git#develop",
+    "smart-picker": "git@github.com:Gapminder/smart-picker.git",
     "requirejs-text": "~2.0.12",
     "font-awesome": "~4.1.0",
     "jqueryui": "~1.10.4"
