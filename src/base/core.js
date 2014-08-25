@@ -2,15 +2,13 @@ define([
     'jquery',
     'base/class',
     'base/events',
-    'base/layout',
-    'i18n'
-], function($, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
+    'base/layout'
+], function($, Class, EventsManager, LayoutManager, DataManager) {
 
     var tools = {},
         managers = {
             events: EventsManager,
-            layout: new LayoutManager(),
-            i18n: i18nManager
+            layout: new LayoutManager()
         };
 
     var core = Class.extend({

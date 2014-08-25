@@ -13,10 +13,6 @@ require.config({
         jquery: '../lib/jquery/dist/jquery',
         underscore: '../lib/underscore/underscore',
 
-        jed: '../lib/jed/jed',
-        sprintf: '../lib/sprintf/src/sprintf',
-        i18n: '../lib/i18n-js/i18n',
-
         text: '../lib/requirejs-text/text',
         smartpicker: '../lib/smart-picker/dist/smart-picker',
 
@@ -30,10 +26,6 @@ require.config({
     shim: {
         d3: {
             exports: 'd3'
-        },
-        i18n: {
-            deps: ['jed', 'sprintf', 'jquery'],
-            exports: 'i18n'
         },
         smartpicker: {
             deps: ['underscore', 'jquery'],
