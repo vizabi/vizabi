@@ -33,10 +33,12 @@ module.exports = function(grunt) {
         'clean:dist', //clean dist folder
         'requirejs:dev', //concatenate all in one file
         'sass:dev', //compile scss
-        'examples', //build examples
+        'sass:dev', //compile scss
+        'includereplace:examples', //examples folder
+        'examples_index', //build examples
+        'copy:examples', //copies example assets
         'connect', //run locally
         'watch' //watch for code changes
-
     ]);
 
     //developer task: grunt dev
@@ -46,8 +48,9 @@ module.exports = function(grunt) {
         // 'copy', //copy js and template files
         'requirejs:dist', //use requirejs for amd module
         'sass:dist', //compile scss
-        'examples', //build examples
-
+        'includereplace:examples', //examples folder
+        'examples_index', //build examples
+        'copy:examples' //copies example assets
     ]);
 
     //default task with connect
@@ -81,6 +84,12 @@ module.exports = function(grunt) {
                 cwd: 'src',
                 src: ['assets/imgs/**', '**/*.html'],
                 dest: 'dist',
+                expand: true
+            },
+            examples: {
+                cwd: 'examples',
+                src: ['assets/scripts.js', 'assets/style.css'],
+                dest: 'dist/examples/',
                 expand: true
             }
         },
@@ -133,7 +142,7 @@ module.exports = function(grunt) {
             },
             examples: {
                 files: ['examples/**/*.html', '!examples/index.html'],
-                tasks: ['examples']
+                tasks: ['includereplace:examples', 'examples_index', 'copy:examples']
             },
             options: {
                 livereload: {
@@ -153,7 +162,7 @@ module.exports = function(grunt) {
             },
             livereload: {
                 options: {
-                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/examples/'
+                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/examples/'
                 }
             }
         },
@@ -178,6 +187,17 @@ module.exports = function(grunt) {
                     generateSourceMaps: true
                 }
             }
+        },
+
+        includereplace: {
+            examples: {
+                options: {
+                    prefix: '<!-- @@',
+                    suffix: ' -->'
+                },
+                src: 'examples/**/*.html',
+                dest: 'dist/'
+            }
         }
     });
 
@@ -186,9 +206,9 @@ module.exports = function(grunt) {
      * Building custom example index
      */
 
-    grunt.registerTask('examples', 'Writes example.html', function() {
+    grunt.registerTask('examples_index', 'Writes example.html', function() {
 
-        var examples_folder = 'examples/',
+        var examples_folder = 'dist/examples/',
             examples_index = examples_folder + 'index.html',
             contents = "<h1>Vizabi Examples:</h1>",
             current_dir;

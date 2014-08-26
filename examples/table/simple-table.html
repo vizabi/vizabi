@@ -1,48 +1,29 @@
-<html>
+<!-- @@include('../assets/_header.tpl', {"title": "Table - Simple Example"}) -->
+<div class="container">
 
-<head>
-    <title>Test page for Vizabi</title>
-    <!-- Includes vizabi main file -->
-    <script src="../../dist/vizabi.js"></script>
-    <!-- Includes vizabi css -->
-    <link rel="stylesheet" href="../../dist/vizabi.css">
-    <!-- Includes examples css -->
-    <link rel="stylesheet" href="../assets/style.css">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-</head>
-
-<body>
-
-    <div class="container">
-
-        <div class="buttons">
-            <button onclick="randomSize('table_tool')">RANDOM SIZE</button>
-            <label>State:</label>
-            <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button>
-            <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>
-            <button onclick="setState3()">WORLD: 2002 - 2007</button>
-            <label>Language:</label>
-            <button onclick="setLanguage('table_tool','en')">ENGLISH</button>
-            <button onclick="setLanguage('table_tool','pt')">PORTUGUESE</button>
-        </div>
-
-        <div id="table_tool" class="placeholder"></div>
-
-    </div>
-    <div class="aux">
-        <p>Current State:</p>
-        <pre id="state" class="json_box" contentEditable="true"></pre>
-        <button onclick="setCurrentState('table_tool')">SET STATE</button>
-        <p>Current Query:</p>
-        <pre id="query" class="json_box"></pre>
+    <div class="buttons">
+        <button onclick="randomSize('table_tool')">RANDOM SIZE</button>
+        <label>State:</label>
+        <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button>
+        <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>
+        <button onclick="setState3()">WORLD: 2002 - 2007</button>
+        <label>Language:</label>
+        <button onclick="setLanguage('table_tool','en')">ENGLISH</button>
+        <button onclick="setLanguage('table_tool','pt')">PORTUGUESE</button>
     </div>
 
+    <div id="table_tool" class="placeholder"></div>
 
-</body>
+</div>
+<div class="aux">
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('table_tool')">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+
 <script>
-
 var options = {
     //state
     state: {
@@ -114,6 +95,4 @@ function setState3() {
 }
 </script>
 
-<script src="../assets/scripts.js"></script>
-
-</html>
+<!-- @@include('../assets/_footer.tpl') -->

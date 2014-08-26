@@ -1,26 +1,11 @@
-<html>
+<!-- @@include('../assets/_header.tpl', {"title": "Two tools, different states"}) -->
 
-<head>
-    <title>Test page for Vizabi</title>
-    <!-- Includes vizabi main file -->
-    <script src="../../dist/vizabi.js"></script>
-    <!-- Includes vizabi css -->
-    <link rel="stylesheet" href="../../dist/vizabi.css">
-    <!-- Includes examples css -->
-    <link rel="stylesheet" href="../assets/style.css">
+<div align="center">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <div id="hello-world" class="placeholder"></div>
+    <div id="table" class="placeholder"></div>
 
-</head>
-
-<body>
-    <div align="center">
-
-        <div id="hello-world" class="placeholder"></div>
-        <div id="table" class="placeholder"></div>
-
-    </div>
-</body>
+</div>
 <script>
 var options = {
     //state
@@ -61,9 +46,6 @@ var myVizabi = new Vizabi("hello-world", "#hello-world", options);
 function ready() {
     myVizabi2 = new Vizabi("table", "#table", options2);
 }
-
 </script>
-<!-- Includes scripts -->
-<script src="../assets/scripts.js"></script>
 
-</html>
+<!-- @@include('../assets/_footer.tpl') -->
