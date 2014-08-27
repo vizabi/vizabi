@@ -4,7 +4,7 @@ define([], function() {
         var _this = this,
             core;
 
-        require(["base/core"], function(Core) {
+        require(["base/core", "plugins"], function(Core) {
             core = new Core();
 
             //start core

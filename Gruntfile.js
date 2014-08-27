@@ -37,6 +37,8 @@ module.exports = function(grunt) {
         'includereplace:examples', //examples folder
         'examples_index', //build examples
         'copy:examples', //copies example assets
+        'copy:waffles', //copies waffles
+        'copy:assets', //copies assets
         'connect', //run locally
         'watch' //watch for code changes
     ]);
@@ -50,7 +52,9 @@ module.exports = function(grunt) {
         'sass:dist', //compile scss
         'includereplace:examples', //examples folder
         'examples_index', //build examples
-        'copy:examples' //copies example assets
+        'copy:examples', //copies example assets
+        'copy:waffles', //copies waffles
+        'copy:assets' //copies assets
     ]);
 
     //default task with connect
@@ -74,22 +78,22 @@ module.exports = function(grunt) {
 
         // Copy all js and template files to dist folder
         copy: {
-            scripts: {
-                cwd: 'src',
-                src: ['**/*.js'],
-                dest: 'dist',
-                expand: true
-            },
-            templates: {
-                cwd: 'src',
-                src: ['assets/imgs/**', '**/*.html'],
-                dest: 'dist',
-                expand: true
-            },
             examples: {
                 cwd: 'examples',
                 src: ['assets/scripts.js', 'assets/style.css'],
                 dest: 'dist/examples/',
+                expand: true
+            },
+            waffles: {
+                cwd: 'data-waffles',
+                src: ['**/*'],
+                dest: 'dist/data-waffles/',
+                expand: true
+            },
+            assets: {
+                cwd: 'src',
+                src: ['assets/imgs/**/*'],
+                dest: 'dist/',
                 expand: true
             }
         },
@@ -135,10 +139,6 @@ module.exports = function(grunt) {
             scripts: {
                 files: ['src/**/*.js'],
                 tasks: ['copy:scripts']
-            },
-            templates: {
-                files: ['src/**/*.html'],
-                tasks: ['copy:templates']
             },
             examples: {
                 files: ['examples/**/*.html', '!examples/index.html'],
