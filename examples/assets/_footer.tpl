@@ -1,4 +1,4 @@
 <!-- Includes scripts -->
-<script src="../assets/script.js"></script>
+<script src="../assets/scripts.js"></script>
 </body>
 </html>

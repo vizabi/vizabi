@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Vizabi - @@title</title>
+    <title>Vizabi - <!-- @@title --></title>
     <!-- Includes vizabi main file -->
     <script src="../../vizabi.js"></script>
     <!-- Includes vizabi css -->
