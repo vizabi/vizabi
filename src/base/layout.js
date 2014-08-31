@@ -1,28 +1,42 @@
 define([
     "underscore",
-    "base/class",
-    "config"
-], function(_, Class, config) {
+    "base/class"
+], function(_, Class) {
 
     var layoutManager = Class.extend({
 
         init: function() {
-            this.screen_sizes = config.screen_sizes;  //accepted sizes
-            this.container = null;                    //d3 container
-            this.profiles = {};                       
+
+            //TODO: Remove screen sizes from here
+            this.screen_sizes = {
+                small: {
+                    min_width: 0,
+                    max_width: 749,
+                },
+                medium: {
+                    min_width: 750,
+                    max_width: 969,
+                },
+                large: {
+                    min_width: 970,
+                    max_width: Infinity,
+                }
+            };
+            this.container = null; //d3 container
+            this.profiles = {};
             this.current_profiles = null;
         },
 
         update: function() {
             var _this = this,
                 width = this.width();
-            
+
             //remove size classes and find correct one
             _.each(this.screen_sizes, function(range, size) {
                 //remove class
                 _this.container.classed(size, false);
                 //find best fit
-                if(width >= range.min_width && width <= range.max_width) {
+                if (width >= range.min_width && width <= range.max_width) {
                     _this.current_profile = size;
                 }
             });
@@ -32,15 +46,15 @@ define([
 
             //TODO: move this comment to wiki
             /* toggle, untoggle classes based on profile
-             * whenever a size has related classes turned off, you see the 
+             * whenever a size has related classes turned off, you see the
              * corresponding class with the suffix -off
              * example: small { timeslider: false } would produce
              * a class timeslider-off when the screen is small
              */
             var profile = this.profiles[_this.current_profile] || this.profiles["default"];
-            if(profile) {
+            if (profile) {
                 _.each(profile, function(value, item) {
-                    _this.container.classed(item+"-off", !value);
+                    _this.container.classed(item + "-off", !value);
                 });
             }
 
@@ -51,7 +65,7 @@ define([
         },
 
         setProfile: function(profile, profiles) {
-            if(_.isString(profile)) {
+            if (_.isString(profile)) {
                 this.profiles[profile] = profiles;
             } else {
                 this.profiles = profile;
@@ -82,11 +96,11 @@ define([
         },
 
         width: function() {
-            return parseInt(this.container.style("width"),10);
+            return parseInt(this.container.style("width"), 10);
         },
 
         height: function() {
-            return parseInt(this.container.style("height"),10);
+            return parseInt(this.container.style("height"), 10);
         }
 
     });

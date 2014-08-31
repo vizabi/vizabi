@@ -1,41 +1,27 @@
-<html>
+<!-- @@include('../assets/_header.tpl', {"title": "Hello World - Multiple States"}) -->
 
-<head>
-    <title>Test page for Vizabi</title>
-    <!-- Includes vizabi main file -->
-    <script src="../../dist/vizabi.js"></script>
-    <!-- Includes vizabi css -->
-    <link rel="stylesheet" href="../../dist/vizabi.css">
-    <!-- Includes examples css -->
-    <link rel="stylesheet" href="../assets/style.css">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-</head>
-
-<body>
-    <div class="container">
-        <div class="buttons">
-            <button onclick="randomSize('hello-world')">RANDOM SIZE</button>
-            <label>State:</label>
-            <button onclick="setState()">SET STATE (WORLD - 2000)</button>
-            <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
-            <label>Language:</label>
-            <button onclick="setLanguage('hello-world','en')">ENGLISH</button>
-            <button onclick="setLanguage('hello-world','pt')">PORTUGUESE</button>
-        </div>
-
-        <div id="hello-world" class="placeholder"></div>
-
+<div class="container">
+    <div class="buttons">
+        <button onclick="randomSize('hello-world')">RANDOM SIZE</button>
+        <label>State:</label>
+        <button onclick="setState()">SET STATE (WORLD - 2000)</button>
+        <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
+        <label>Language:</label>
+        <button onclick="setLanguage('hello-world','en')">ENGLISH</button>
+        <button onclick="setLanguage('hello-world','pt')">PORTUGUESE</button>
     </div>
-    <div class="aux">
-        <p>Current State:</p>
-        <pre id="state" class="json_box" contentEditable="true"></pre>
-        <button onclick="setCurrentState('hello-world')">SET STATE</button>
-        <p>Current Query:</p>
-        <pre id="query" class="json_box"></pre>
-    </div>
-</body>
+
+    <div id="hello-world" class="placeholder"></div>
+
+</div>
+<div class="aux">
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('hello-world')">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+
 <script>
 var options = {
     //state
@@ -90,7 +76,5 @@ function changeIndicator() {
     myVizabi.setOptions("#hello-world", newOption);
 }
 </script>
-<!-- Includes scripts -->
-<script src="../assets/scripts.js"></script>
 
-</html>
+<!-- @@include('../assets/_footer.tpl') -->

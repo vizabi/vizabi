@@ -18,7 +18,7 @@ define([
             this.addComponent('bar-chart', {
                 placeholder: '.vizabi-tool-viz'
             });
-            this.addComponent('timeslider2', {
+            this.addComponent('timeslider', {
                 placeholder: '.vizabi-tool-timeslider'
             });
             this.addComponent('buttonlist', {

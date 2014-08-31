@@ -1,17 +1,14 @@
 define([
     'jquery',
-    'config',
     'base/class',
     'base/events',
-    'base/layout',
-    'i18n'
-], function($, config, Class, EventsManager, LayoutManager, DataManager, i18nManager) {
+    'base/layout'
+], function($, Class, EventsManager, LayoutManager, DataManager) {
 
     var tools = {},
         managers = {
             events: EventsManager,
-            layout: new LayoutManager(),
-            i18n: i18nManager
+            layout: new LayoutManager()
         };
 
     var core = Class.extend({
@@ -25,8 +22,7 @@ define([
         start: function(tool_name, placeholder, options) {
             var defer = $.Deferred();
 
-            var t_path = config.require.paths.tools,
-                path = t_path + '/' + tool_name + '/' + tool_name,
+            var path = 'tools/' + tool_name + '/' + tool_name,
                 context = this;
 
             // extending options with name and tool's placeholder

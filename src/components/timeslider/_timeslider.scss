@@ -91,7 +91,7 @@ $handleColor: $colorBlueDark;
 			    display: block;
 			    -webkit-transition: height 0.1s ease-out;  /* Chrome 1-25, Safari 3.2+ */
 			     -moz-transition: height 0.1s ease-out;  /* Firefox 4-15 */
-			       -o-transition: height 0.1s ease-out;  /* Opera 10.50–12.00 */
+			     	-o-transition: height 0.1s ease-out;
 			          transition: height 0.1s ease-out;  /* Chrome 26, Firefox 16+, IE 10+, Opera 12.10+ */
 			}
 		}
