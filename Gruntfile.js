@@ -95,6 +95,13 @@ module.exports = function(grunt) {
                 src: ['assets/imgs/**/*'],
                 dest: 'dist/',
                 expand: true
+            },
+
+            js: {
+                cwd: 'src/',
+                src: ['**/*.js'],
+                dest: 'dist/',
+                expand: true
             }
         },
 
