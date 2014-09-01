@@ -7,13 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "grunt": "~0.4.5",
-    "yo": "^1.1.2",
-    "generator-generator": "^0.4.4",
-    "grunt-contrib-sass": "^0.7.4",
-    "chalk": "~0.4.0",
-    "yosay": "^0.2.1",
-    "yeoman-generator": "~0.17.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,6 +22,13 @@
   },
   "homepage": "https://github.com/Gapminder/vizabi",
   "devDependencies": {
+    "grunt": "~0.4.5",
+    "yo": "^1.1.2",
+    "generator-generator": "^0.4.4",
+    "grunt-contrib-sass": "^0.7.4",
+    "chalk": "~0.4.0",
+    "yosay": "^0.2.1",
+    "yeoman-generator": "~0.17.0",
     "load-grunt-tasks": "^0.4.0",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-contrib-clean": "^0.5.0",
