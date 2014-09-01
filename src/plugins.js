@@ -1,8 +1,8 @@
 define([
 	'tools/table/table',
 	'text!tools/table/table.html',
-	'tools/hello-world/hello-world',
-	'text!tools/hello-world/hello-world.html',
+	'tools/bar-chart/bar-chart',
+	'text!tools/bar-chart/bar-chart.html',
 	'components/bar-chart/bar-chart',
 	'text!components/bar-chart/bar-chart.html',
 	'components/buttonlist/buttonlist',

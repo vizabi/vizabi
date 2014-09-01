@@ -3,18 +3,18 @@
 <div class="container">
     <div class="buttons">
         <label>Language:</label>
-        <button onclick="setLanguage('hello-world','en'); setLanguage('table','en')">ENGLISH</button>
-        <button onclick="setLanguage('hello-world','pt'); setLanguage('table','pt')">PORTUGUESE</button>
+        <button onclick="setLanguage('bar-chart','en'); setLanguage('table','en')">ENGLISH</button>
+        <button onclick="setLanguage('bar-chart','pt'); setLanguage('table','pt')">PORTUGUESE</button>
     </div>
 
-    <div id="hello-world" class="placeholder"></div>
+    <div id="bar-chart" class="placeholder"></div>
     <div id="table" class="placeholder"></div>
 
 </div>
 <div class="aux">
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
-    <button onclick="setCurrentState('hello-world'); setCurrentState('table')">SET STATE</button>
+    <button onclick="setCurrentState('bar-chart'); setCurrentState('table')">SET STATE</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -49,7 +49,7 @@ var options = {
     ready: ready
 };
 
-var myVizabi = new Vizabi("hello-world", "#hello-world", options);
+var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
 var myVizabi2;
 
 function ready() {

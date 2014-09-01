@@ -3,11 +3,11 @@ define([
     'base/tool'
 ], function(_, Tool) {
 
-    var helloWorld = Tool.extend({
+    var barChart = Tool.extend({
         init: function(parent, options) {
             var _this = this;
-            this.name = 'hello-world';
-            this.template = "tools/hello-world/hello-world";
+            this.name = 'bar-chart';
+            this.template = "tools/bar-chart/bar-chart";
             this.placeholder = options.placeholder;
 
             //TODO: refactor the way we pass the state forward
@@ -159,5 +159,5 @@ define([
 
     //constructDataQueryFromState(){}
 
-    return helloWorld;
+    return barChart;
 });

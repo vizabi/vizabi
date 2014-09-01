@@ -2,16 +2,16 @@
 
 <div class="container">
     <div class="buttons">
-        <button onclick="randomSize('hello-world')">RANDOM SIZE</button>
+        <button onclick="randomSize('bar-chart')">RANDOM SIZE</button>
         <label>State:</label>
         <button onclick="setState()">SET STATE (WORLD - 2000)</button>
         <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
         <label>Language:</label>
-        <button onclick="setLanguage('hello-world','en')">ENGLISH</button>
-        <button onclick="setLanguage('hello-world','pt')">PORTUGUESE</button>
+        <button onclick="setLanguage('bar-chart','en')">ENGLISH</button>
+        <button onclick="setLanguage('bar-chart','pt')">PORTUGUESE</button>
     </div>
 
-    <div id="hello-world" class="placeholder"></div>
+    <div id="bar-chart" class="placeholder"></div>
 
 </div>
 <div class="aux">
@@ -50,7 +50,7 @@ var options = {
     }
 };
 
-var myVizabi = new Vizabi("hello-world", "#hello-world", options);
+var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
 
 function setState() {
     var newOption = {
@@ -61,7 +61,7 @@ function setState() {
             unit: 100000000
         }
     };
-    myVizabi.setOptions("#hello-world", newOption);
+    myVizabi.setOptions("#bar-chart", newOption);
 }
 
 function changeIndicator() {
@@ -73,7 +73,7 @@ function changeIndicator() {
             unit: 1
         }
     };
-    myVizabi.setOptions("#hello-world", newOption);
+    myVizabi.setOptions("#bar-chart", newOption);
 }
 </script>
 
