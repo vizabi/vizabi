@@ -73,7 +73,7 @@ module.exports = function(grunt) {
 
         // Clean dist folder to have a clean start
         clean: {
-            dist: ["dist"]
+            dist: ["dist/*"]
         },
 
         // Copy all js and template files to dist folder
