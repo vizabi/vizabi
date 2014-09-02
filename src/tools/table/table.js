@@ -24,7 +24,7 @@ define([
                 defer = $.Deferred();
 
             //get info from state
-            var language = this.model.getState("language"),
+            var language = this.model.get("language"),
                 query = this.getQuery();
                 
             //load data and resolve the defer when it's done

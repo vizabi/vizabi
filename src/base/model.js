@@ -8,7 +8,7 @@ define([
 
         init: function(values) {
             this._data = {};
-            if(values) {
+            if (values) {
                 this.set(values, true);
             }
         },
@@ -19,20 +19,17 @@ define([
 
         //set an attribute for the model, or an entire object
         set: function(attr, value, silent) {
+
             if (typeof attr !== 'object') {
-                var attrs = {};
-                attrs[attr] = _.clone(value);
-                attr = attrs;
+                this._data[attr] = _.clone(value);
+                if (!silent) Events.trigger("change:"+attr);
             } else {
                 silent = value;
+                for (var att in attr) {
+                    this._data[att] = _.clone(attr[att]);
+                    if (!silent) Events.trigger("change:"+att);
+                }
             }
-
-            for (var att in attr) {
-                this._data[att] = _.clone(attr[att]);
-            }
-
-            //silent mode is used to avoid event propagation
-            if (!silent) Events.trigger("change");
         },
 
         reset: function(values, silent) {

@@ -22,13 +22,18 @@ define([
 
             this.model = new ToolModel(options.data);
             this.model.setState(options.state, true);
+            //set language parameters
+            this.model.set("language", options.language);
+            this.model.set("ui_strings", options.ui_strings);
+
+            this.layout = new Layout();
+
 
             // Same constructor as widgets
             this._super(parent, options);
 
-            this.layout = new Layout();
         },
-        
+
         //Tools renders just like the widgets, but they update the layout
         render: function() {
             var _this = this;
@@ -47,10 +52,12 @@ define([
                         _this.layout.update();
                     });
 
-                    //call update of each component when the state changes
-                    _this.model.bind('change:state', function(state) {
+                    // call update of each component when the state changes
+                    // or when the language changes
+                    _this.model.bind(['change:state', 'change:language'], function(state) {
                         _this.update();
                     });
+
 
                     defer.resolve();
                 });
@@ -88,6 +95,13 @@ define([
         //TODO: expand for other options 
         setOptions: function(options) {
             this.setState(options.state);
+            if (options.language) {
+                this.model.set("language", options.language);
+            }
+            if (options.ui_strings) {
+                this.model.set("ui_strings", _.extend(this.model.get("ui_strings"), options.ui_strings));
+            }
+
         },
 
         // is executed before loading actaul data
