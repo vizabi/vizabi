@@ -47,14 +47,14 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
 
         'clean:dist', //clean dist folder
-        // 'copy', //copy js and template files
         'requirejs:dist', //use requirejs for amd module
         'sass:dist', //compile scss
         'includereplace:examples', //examples folder
         'examples_index', //build examples
         'copy:examples', //copies example assets
         'copy:waffles', //copies waffles
-        'copy:assets' //copies assets
+        'copy:assets', //copies assets
+
     ]);
 
     //default task with connect
@@ -93,13 +93,6 @@ module.exports = function(grunt) {
             assets: {
                 cwd: 'src',
                 src: ['assets/imgs/**/*'],
-                dest: 'dist/',
-                expand: true
-            },
-
-            js: {
-                cwd: 'src/',
-                src: ['**/*.js'],
                 dest: 'dist/',
                 expand: true
             }
@@ -143,21 +136,19 @@ module.exports = function(grunt) {
                 files: ['src/**/*.scss'],
                 tasks: ['sass:dev']
             },
-            scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['copy:scripts']
-            },
             examples: {
                 files: ['examples/**/*.html', '!examples/index.html'],
                 tasks: ['includereplace:examples', 'examples_index', 'copy:examples']
+            },
+            scripts: {
+                files: ['src/**/*.js'],
+                tasks: ['requirejs:dev']
             },
             options: {
                 livereload: {
                     port: '<%= connect.options.livereload %>'
                 }
             }
-
-
         },
 
         connect: {
