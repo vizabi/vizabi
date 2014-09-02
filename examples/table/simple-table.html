@@ -24,10 +24,23 @@
 </div>
 
 <script>
+
+var lang = {
+    en: {
+        "Table Title": "Table Title",
+        "Play": "Play",
+        "Pause": "Pause"
+    },
+    pt: {
+        "Table Title": "Título da Tabela",
+        "Play": "Iniciar",
+        "Pause": "Parar"
+    }
+}
+
 var options = {
     //state
     state: {
-        language: 'en',
         /*TODO:
         This format:
         entity: {
@@ -44,6 +57,24 @@ var options = {
     data: {
         reader: 'local-json',
         path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+    },
+
+    /*
+     * i18n strings are passed as an object to Vizabi
+     */
+
+    language: "en",
+    ui_strings: {
+        en: {
+            "Table Title": "Table Title",
+            "Play": "Play",
+            "Pause": "Pause"
+        },
+        pt: {
+            "Table Title": "Table Title",
+            "Play": "Play",
+            "Pause": "Pause"
+        }
     },
 
     bind: {
