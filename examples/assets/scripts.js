@@ -14,15 +14,13 @@ function randomSize(id) {
 
 function setLanguage(id, language) {
     var newOption = {
-        state: {
-            language: language
-        }
+        language: language
     };
-    myVizabi.setOptions("#"+id, newOption);
+    myVizabi.setOptions("#" + id, newOption);
 }
 
 function setCurrentState(id, idState) {
-    if(!idState) {
+    if (!idState) {
         idState = "state";
     }
     var state = document.getElementById(idState).innerHTML;
@@ -30,17 +28,18 @@ function setCurrentState(id, idState) {
     var newOption = {
         state: state
     };
-    myVizabi.setOptions("#"+id, newOption);
+    myVizabi.setOptions("#" + id, newOption);
 }
 
 function showState(state, id) {
-    if(!id) {
+    if (!id) {
         id = "state";
     }
     var container = document.getElementById(id);
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 }
+
 function showQuery(query) {
     var container = document.getElementById("query");
     var str = JSON.stringify(query, null, 2);

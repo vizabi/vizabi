@@ -26,7 +26,6 @@
 var options = {
     //state
     state: {
-        language: 'en',
         entity: ['planet/world', 'country/swe', 'country/nor'],
         timeRange: ["2000-2009"],
         time: 2005,
@@ -40,6 +39,20 @@ var options = {
         path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
     },
 
+    language: "en",
+    ui_strings: {
+        en: {
+            "title": "Bar Chart Title",
+            "timeslider/play": "Play",
+            "timeslider/pause": "Pause"
+        },
+        pt: {
+            "title": "Título do Gráfico de Barras",
+            "timeslider/play": "Iniciar",
+            "timeslider/pause": "Parar"
+        }
+    },
+   
     bind: {
         'change:state': function(state) {
             showState(state);

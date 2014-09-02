@@ -23,7 +23,6 @@
 var options = {
     //state
     state: {
-        language: 'en',
         entity: ['planet/world', 'country/swe', 'country/nor'],
         timeRange: ["2000-2009"],
         time: 2005,
@@ -36,6 +35,20 @@ var options = {
     data: {
         reader: 'local-json',
         path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+    },
+
+    language: "en",
+    ui_strings: {
+        en: {
+            "title": "Common Title",
+            "timeslider/play": "Play",
+            "timeslider/pause": "Pause"
+        },
+        pt: {
+            "title": "Título Comum",
+            "timeslider/play": "Iniciar",
+            "timeslider/pause": "Parar"
+        }
     },
 
     bind: {
