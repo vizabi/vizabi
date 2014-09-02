@@ -4,8 +4,9 @@ define([
     'underscore',
     'base/utils',
     'base/class',
-    'base/model'
-], function($, d3, _, utils, Class, Model) {
+    'base/model',
+    'base/events'
+], function($, d3, _, utils, Class, Model, Events) {
 
     var Component = Class.extend({
         init: function(parent, options) {
@@ -28,7 +29,7 @@ define([
             this.profiles = this.profiles || {};
             this.parent = parent;
 
-            this.events = this.getInstance('events');
+            this.events = Events;
         },
 
         //TODO: change the scary name! :D bootstrap is one good one
