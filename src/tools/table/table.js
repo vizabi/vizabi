@@ -10,6 +10,10 @@ define([
             this.state = options.state;
 
             //add components
+            this.addComponent('header', {
+                placeholder: '.vizabi-tool-title'
+            });
+
             this.addComponent('table', {
                 placeholder: '.vizabi-tool-viz'
             });

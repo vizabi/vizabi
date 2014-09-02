@@ -16,5 +16,7 @@ define([
 	'components/timeslider/timeslider',
 	'text!components/timeslider/timeslider.html',
 	'components/timeslider2/timeslider2',
-	'text!components/timeslider2/timeslider2.html'
+	'text!components/timeslider2/timeslider2.html',
+	'components/header/header',
+	'text!components/header/header.html'
 ], function() {});
