@@ -8,6 +8,7 @@ define([
     var container,
         play,
         pause,
+        tooltip,
         playing,
         playInterval;
 
@@ -24,6 +25,7 @@ define([
 
             play = container.find("#play-button-play"),
             pause = container.find("#play-button-pause");
+            tooltip = container.find("#play-button-tooltip");
 
             play.click(function() {
                 _this.play();
@@ -36,6 +38,27 @@ define([
             this.events.bind('timeslider:dragging', function() {
                 _this.pause();
             });
+
+            this.update();
+        },
+
+        update: function() {
+
+            var _this = this;
+            play.hover(function() {
+                tooltip.text(_this.getUIString("timeslider/play"));
+                tooltip.addClass('visible');
+            }, function() {
+                tooltip.removeClass('visible');
+            });
+
+            pause.hover(function() {
+                tooltip.text(_this.getUIString("timeslider/pause"));
+                tooltip.addClass('visible');
+            }, function() {
+                tooltip.removeClass('visible');
+            });
+
         },
 
         play: function() {
