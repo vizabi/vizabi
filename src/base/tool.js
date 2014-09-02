@@ -2,8 +2,9 @@ define([
     'd3',
     'underscore',
     'base/component',
-    'base/tool-model'
-], function(d3, _, Component, ToolModel) {
+    'base/tool-model',
+    'base/layout'
+], function(d3, _, Component, ToolModel, Layout) {
 
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
@@ -25,7 +26,7 @@ define([
             // Same constructor as widgets
             this._super(parent, options);
 
-            this.layout = this.getInstance('layout');
+            this.layout = new Layout();
         },
         
         //Tools renders just like the widgets, but they update the layout
