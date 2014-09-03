@@ -284,7 +284,6 @@ define([
             var ui_strings = this.model.get("ui_strings");
 
             return function(string) {
-                console.log(ui_strings);
                 if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
                     return ui_strings[lang][string];
                 } else {
