@@ -41,7 +41,6 @@ define([
     }
 
     function radius(d, indicator) {
-        console.log(d, indicator);
         return d[indicator] || 1;
     }
 
@@ -50,13 +49,6 @@ define([
     }
 
     function position(dot) {
-
-        console.log(">>>> INDICATORS:");
-        console.log(indicators);
-
-        console.log(">>>> DOT:");
-        console.log(dot);
-
 
         dot.attr("cy", function(d) {
             return yScale(y(d, indicators[0]));
@@ -67,8 +59,6 @@ define([
             .attr("r", function(d) {
                 return radiusScale(radius(d, indicators[2]));
             });
-
-        console.log("!!!!!!!!!!POSITIONED!!!!!!!!");
     }
 
     function order(a, b) {
@@ -129,11 +119,12 @@ define([
                 }),
                 scales = this.model.getState("scale"),
 
+                //10% difference margin in min and max
                 min = _.map(scales, function(scale, i) {
-                    return ((scale == "log") ? 1 : minValue[i]);
+                    return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i])/10));
                 }),
                 max = _.map(scales, function(scale, i) {
-                    return maxValue[i];
+                    return maxValue[i] + (maxValue[i] - minValue[i])/10;
                 }),
                 units = this.model.getState("unit") || [1, 1, 1],
                 indicator_names = indicators;
@@ -189,8 +180,6 @@ define([
                 .domain([min[1], max[1]])
                 .range([0, width])
                 .nice();
-
-            console.log("SCALEEEEEE: ", min[2], max[2]);
 
             radiusScale = d3.scale[scales[2]]()
                 .domain([min[2], max[2]])
