@@ -24,7 +24,10 @@ var options = {
     //state
     state: {
         language: 'en',
-        entity: ['planet/world', 'country/swe', 'country/nor'],
+        show: {
+            geo : ['swe', 'nor', 'world'],
+            'geo.categories': ['country', 'planet']
+        },
         timeRange: ["2000-2009"],
         time: 2005,
         indicator: 'gdp',
@@ -35,7 +38,7 @@ var options = {
     //path
     data: {
         reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+        path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
     },
 
     bind: {

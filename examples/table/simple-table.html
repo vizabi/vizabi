@@ -1,44 +1,34 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Table - Simple Example"}) -->
-<div class="container">
+< div class = "container" >
 
-    <div class="buttons">
-        <button onclick="randomSize('table_tool')">RANDOM SIZE</button>
-        <label>State:</label>
-        <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button>
-        <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>
-        <button onclick="setState3()">WORLD: 2002 - 2007</button>
-        <label>Language:</label>
-        <button onclick="setLanguage('table_tool','en')">ENGLISH</button>
-        <button onclick="setLanguage('table_tool','pt')">PORTUGUESE</button>
-    </div>
+< div class = "buttons" > < button onclick = "randomSize('table_tool')" > RANDOM SIZE < /button>
+        <label>State:</label > < button onclick = "setState()" > GDP and LEX of NOR and SWE: 2001 - 2009) < /button>
+        <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button > < button onclick = "setState3()" > WORLD: 2002 - 2007 < /button>
+        <label>Language:</label > < button onclick = "setLanguage('table_tool','en')" > ENGLISH < /button>
+        <button onclick="setLanguage('table_tool','pt')">PORTUGUESE</button > < /div>
 
-    <div id="table_tool" class="placeholder"></div>
+    <div id="table_tool" class="placeholder"></div >
 
-</div>
+< /div>
 <div class="aux">
-    <p>Current State:</p>
-    <pre id="state" class="json_box" contentEditable="true"></pre>
-    <button onclick="setCurrentState('table_tool')">SET STATE</button>
-    <p>Current Query:</p>
-    <pre id="query" class="json_box"></pre>
-</div>
+    <p>Current State:</p > < pre id = "state"
+class = "json_box"
+contentEditable = "true" > < /pre>
+    <button onclick="setCurrentState('table_tool')">SET STATE</button > < p > Current Query: < /p>
+    <pre id="query" class="json_box"></pre > < /div>
 
 <script>
 var options = {
-    //state
     state: {
         language: 'en',
-        /*TODO:
-        This format:
-        entity: {
-            country: ['swe', 'nor'],
-            planet: ['world'],
-        }
-        */
-        entity: ['country/swe'],
+        show: {
+            geo: ['swe', 'nor'],
+            'geo.category': ['country']
+
+        },
         timeRange: ["2002-2007"],
-        //TODO: improve how we express which columns to show
-        columns: ['entity', 'year', 'gdp']
+        / / TODO: improve how we express which columns to show
+        columns: ['geo', 'year', 'gdp']
     },
     //path
     data: {
@@ -61,7 +51,11 @@ var myVizabi = new Vizabi("table", "#table_tool", options);
 function setState() {
     var newOption = {
         state: {
-            entity: ['country/swe', 'country/nor'],
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.category': ['country']
+
+            },
             timeRange: ["2002-2007"],
             //TODO: improve how we express which columns to show
             columns: ['entity', 'year', 'gdp', 'lex']
@@ -85,14 +79,17 @@ function setState2() {
 function setState3() {
     var newOption = {
         state: {
-            entity: ['planet/world'],
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.category': ['country']
+
+            },
             timeRange: ["2002-2007"],
             //TODO: improve how we express which columns to show
             columns: ['entity', 'year', 'gdp']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
-}
-</script>
+} < /script>
 
-<!-- @@include('../assets/_footer.tpl') -->
+<!-- @@include('../assets / _footer.tpl ') -->

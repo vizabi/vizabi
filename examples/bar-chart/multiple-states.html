@@ -27,7 +27,10 @@ var options = {
     //state
     state: {
         language: 'en',
-        entity: ['planet/world', 'country/swe', 'country/nor'],
+        show: {
+            geo: ['swe', 'nor', 'fi', 'world'],
+            'geo.categories': ['country', 'planet']
+        },
         timeRange: ["2000-2009"],
         time: 2005,
         indicator: 'gdp',
@@ -37,7 +40,7 @@ var options = {
     //path
     data: {
         reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+        path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
     },
 
     bind: {
@@ -55,19 +58,26 @@ var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
 function setState() {
     var newOption = {
         state: {
-            entity: ['planet/world'],
+            show: {
+                geo: ['swe', 'nor', 'world'],
+                'geo.categories': ['country','planet']
+            },
             time: 2000,
             indicator: 'gdp',
             unit: 100000000
         }
     };
+    
     myVizabi.setOptions("#bar-chart", newOption);
 }
 
 function changeIndicator() {
     var newOption = {
         state: {
-            entity: ['country/swe', 'country/nor'],
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.categories': ['country']
+            },
             time: 2007,
             indicator: 'lex',
             unit: 1
