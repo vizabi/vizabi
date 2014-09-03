@@ -1,0 +1,76 @@
+$colorBubble: #999999;
+$colorBubbleStroke: #666666;
+$margin: 10px;
+$marginAxis: 60px;
+$colorAxis: #999999;
+$yearSize: 300px;
+
+#bubble-chart {
+
+    @include absoluteAll;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: 0;
+    overflow: hidden;
+
+    font-family: $fontFamily;
+
+     .bubble {
+        @include opacity(0.8);
+        fill: $colorBubble;
+        stroke: $colorBubbleStroke;
+     }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: $colorAxis;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      fill: $colorAxis;
+      @include font-size(15px);
+    }
+
+    .line {
+      fill: none;
+      stroke: $colorAxis;
+      stroke-width: 1px;
+    }
+
+    #year {
+      @include opacity(0.1);
+      @include font-size(250px);
+      fill: $colorBubble;
+      text-anchor: middle;
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+}
+
+&.medium {
+  #bubble-chart {
+    #year {
+      @include font-size($yearSize / 3 * 2 );
+    }
+  }
+}
+
+&.small {
+  #bubble-chart {
+    .axis text {
+      @include font-size(14px);
+    }
+    #year {
+      @include font-size($yearSize / 3);
+    }
+  }
+}

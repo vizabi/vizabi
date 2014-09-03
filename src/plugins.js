@@ -3,6 +3,8 @@ define([
 	'text!tools/table/table.html',
 	'tools/bar-chart/bar-chart',
 	'text!tools/bar-chart/bar-chart.html',
+	'tools/bubble-chart/bubble-chart',
+	'text!tools/bubble-chart/bubble-chart.html',
 	'components/bar-chart/bar-chart',
 	'text!components/bar-chart/bar-chart.html',
 	'components/buttonlist/buttonlist',
@@ -18,5 +20,7 @@ define([
 	'components/timeslider2/timeslider2',
 	'text!components/timeslider2/timeslider2.html',
 	'components/header/header',
-	'text!components/header/header.html'
+	'text!components/header/header.html',
+	'components/bubble-chart/bubble-chart',
+	'text!components/bubble-chart/bubble-chart.html'
 ], function() {});
