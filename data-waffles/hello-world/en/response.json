@@ -1,4 +1,4 @@
- "response": [
+ {"response": [
  	{
  		"geo": "swe",
  		"time": 2007,
@@ -42,3 +42,4 @@
  		"lex": 50
  	}
  ]
+}
