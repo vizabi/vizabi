@@ -6,7 +6,14 @@ define(['jquery', 'd3'], function($, d3) {
 		},
 		jQueryToD3: function (selector) {
 			return d3.selectAll(selector.toArray() );
-		}
+		},
+		isSubArray: function (subArray, array) {
+	        for (var i = 0 , len = subArray.length; i < len; i++) {
+	            if ($.inArray(subArray[i], array) == -1) return false;
+	        }
+    
+        	return true;
+    	}
 	};
 
 
