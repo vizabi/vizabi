@@ -1,8 +1,9 @@
  define([
      'base/class',
      'jquery',
-     'underscore'
- ], function(Class, $, _) {
+     'underscore',
+     'base/utils'
+ ], function(Class, $, _, Util) {
 
      var LocalJSONReader = Class.extend({
 
@@ -16,16 +17,18 @@
                  defer = $.Deferred();
 
              var path = this.basepath.replace("{{LANGUAGE}}", language);
-
-             //sending request to server
              var promise = $.getJSON(path, function(res) {
                  _this.data = [];
-                 for (var i in queries) {
-                     _this.data.push(queryJSON(res, queries[i]))
+
+                 for (var i=0; i < queries.length; i++) {
+                    _this.data.push(queryJSON(res, queries[i]))
                  }
-             });
+             })
+             .success(function() { console.log("File: " + path + "Loaded, Successfully."); })
+             .error(function() { console.log("Error Happened While Lading File: " + path); });
 
              promise.done(function() {
+                 console.log(_this.data);
                  defer.resolve();
              });
 
@@ -39,71 +42,65 @@
      });
 
      function queryJSON(json, query) {
-         if (query.from == "data") {
-             var table_name = getTableName(query),
-                 data = json.tables[table_name].data;
-             return filterColumns(filterRows(data, query.where), query.select);
-         }
-     }
-
-     function getTableName(query) {
-         var table_name = [];
-         _.each(query.where, function(value, field) {
-             table_name.push(field);
-         });
-         //alphabetical order (ex: year, country = table country_year)
-         table_name.sort();
-         return table_name.join("_");
-     }
-
-     function filterColumns(array, columns) {
-        return _.map(array, function(row) {
-            return _.pick(row, columns);
-        })
-     };
-
-     function filterRows(array, conditions) {
-        return _.filter(array, function(row) {
-                var include = true;
-
-                for(var field in conditions) {
-                    var value = conditions[field];
-                    if(!matchValue(field, value, row[field])) {
-                        include = false;
-                        break;
-                    }
-                }
-                return include;
-             });
-     }
-
-     function matchValue(field, possible, value) {
-
-        //exception to handle year formats
-        if(_.isString(possible)) {
-            if(field === "year" && _.contains(possible, "-")) {
-                var years = possible.split("-");
-                possible = _.range(parseInt(years[0], 10),parseInt(years[1], 10)+1);
-            } else {
-                possible = [possible];
+        var result = [];
+        
+        _.each(json.response, function (resp) {
+            var numOfMetConditions = getNumberOfMetConditions(query.where, resp);
+            var numOfConditions = _.size(query.where);
+            
+            //If all where conditions were satisfied, selected attribute
+            if (numOfConditions === numOfMetConditions) {
+                result.push(getSelectedElements(query.select, resp));
             }
-        } else if (_.isArray(possible) && field === "year") {
-            var new_possible = [];
-            for(var i in possible) {
-                if(!_.contains(possible[i], "-")) {
-                    new_possible.push(possible[i]);
-                }
-                else {
-                    var years = possible[i].split("-");
-                    new_possible = _.union(new_possible, _.range(parseInt(years[0], 10),parseInt(years[1], 10)+1));
-                }
+        });
+
+        return result;
+    }
+
+    // check all where condition in each response object
+    function getNumberOfMetConditions (where, resp) {
+        var i = 1;
+        var num = _.size(where);
+            
+        _.each(where, function(value, key) {
+            if (typeof resp[key] === 'number' && 
+                isInRange(value,resp[key])) {
+                i++;
             }
-            possible = new_possible;
+            else if (Array.isArray(resp[key]) && 
+                Util.isSubArray(resp[key], value)) {
+                    i++;
+            }
+            else  if (value.indexOf(resp[key]) > 0) {
+                i++;
+            }
+        });
+
+        return i;
+    }
+    
+    function getSelectedElements(select, resp) {
+        var res = {};
+        
+        _.each(select, function (attr) {
+            res[attr] = resp[attr];
+        });
+
+        return res;
+
+    }
+
+    function isInRange(ranges, year) {
+        for (var range in ranges) {
+            for (var i = parseInt(range.split("-")[0]); 
+                        i < parseInt(range[0].split[1]); i++) {
+                if (year === i) return true;
+            }
         }
-        //TODO: review string and int incompatibility
-        return _.contains(possible, value);
-     }
 
-     return LocalJSONReader;
+        return false;
+    }
+
+    return LocalJSONReader;
 
  });
