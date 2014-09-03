@@ -5,7 +5,7 @@ define([
 
     var barChart = Tool.extend({
         init: function(parent, options) {
-            var _this = this;
+            
             this.name = 'bar-chart';
             this.template = "tools/bar-chart/bar-chart";
             this.placeholder = options.placeholder;
@@ -111,25 +111,6 @@ define([
         //         }
         //     };
         // },
-
-        load: function(events) {
-            var _this = this,
-                defer = $.Deferred();
-
-            //get info from state
-            var language = this.model.get("language"),
-                query = this.getQuery();
-
-            //load data and resolve the defer when it's done
-            $.when(
-                this.model.data.load(query, language, events)
-            ).done(function() {
-
-                defer.resolve();
-            });
-
-            return defer;
-        },
 
         //build query from state
 
