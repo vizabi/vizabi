@@ -52,16 +52,27 @@ define([
                         year: this.model.getState("timeRange")
                     }
                 },
-                {
-                    from: 'data',
-                    select: ['entity', 'name'],
-                    where: {
-                        entity: this.model.getState("entity"),
-                    }
-                },
+
             ];
 
             return query;
+
+            var query = [{
+                select: [
+                    'geo',
+                    'time',
+                    'geo.name',
+                    'geo.category', 
+                    this.model.getState("columns")
+                ],
+                where: {
+                    geo: this.model.getState("show").geo,
+                    'geo.category': this.model.getState("show")['geo.categories'],
+                    time: this.model.getState("timeRange")
+                }
+            }];
+
+            return {query: query, language: this.model.getState("language")};
         }
     });
 
