@@ -4,7 +4,33 @@ function randomSize(id) {
     var container = document.getElementById(id);
     container.style.width = width + "px";
     container.style.height = height + "px";
+    container.className = "placeholder";
 
+    forceResizeEvt();
+}
+
+function phoneSize(id, mode) {
+    var container = document.getElementById(id);
+    if (mode === 'landscape') {
+        container.style.width = "568px";
+        container.style.height = "320px";
+    } else {
+        container.style.width = "320px";
+        container.style.height = "568px";
+    }
+    container.className = "placeholder";
+    forceResizeEvt();
+}
+
+function fullSize(id) {
+    var container = document.getElementById(id);
+    container.style.width = "auto";
+    container.style.height = "auto";
+    container.className = "placeholder fullscreen";
+    forceResizeEvt();
+}
+
+function forceResizeEvt() {
     //force resize
     event = document.createEvent("HTMLEvents");
     event.initEvent("resize", true, true);

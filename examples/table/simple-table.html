@@ -2,7 +2,11 @@
 <div class="container">
 
     <div class="buttons">
-        <button onclick="randomSize('table_tool')">RANDOM SIZE</button>
+        <label>Size:</label>
+        <button onclick="randomSize('table_tool')">RANDOM</button>
+        <button onclick="phoneSize('table_tool')">PORTRAIT</button>
+        <button onclick="phoneSize('table_tool', 'landscape')">LANDSCAPE</button>
+        <button onclick="fullSize('table_tool')">FULL</button>
         <label>State:</label>
         <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button>
         <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>

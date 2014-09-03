@@ -47,6 +47,9 @@ body {
     background-color: #4b98aa;
     padding: 10px;
     padding-bottom: 0px;
+    height: 42px;
+    overflow: hidden;
+    overflow-x: scroll;
 }
 
 .buttons label {
@@ -77,12 +80,23 @@ body {
 .placeholder {
     display: inline-block;
     position: relative;
-    width: 300px;
-    height: 500px;
+    width: 320px;
+    height: 568px;
     margin: 20px auto;
     border: 1px solid #ccc;
     overflow: hidden;
     overflow-y: scroll;
+}
+.placeholder.fullscreen {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 260px;
+  bottom: 0;
+  margin: auto;
+  border: none;
+  width: auto;
+  height: auto;
 }
 p {
     margin-top: 10px;

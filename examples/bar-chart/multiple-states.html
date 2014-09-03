@@ -2,7 +2,11 @@
 
 <div class="container">
     <div class="buttons">
-        <button onclick="randomSize('bar-chart')">RANDOM SIZE</button>
+        <label>Size:</label>
+        <button onclick="randomSize('bar-chart')">RANDOM</button>
+        <button onclick="phoneSize('bar-chart')">PORTRAIT</button>
+        <button onclick="phoneSize('bar-chart', 'landscape')">LANDSCAPE</button>
+        <button onclick="fullSize('bar-chart')">FULL</button>
         <label>State:</label>
         <button onclick="setState()">SET STATE (WORLD - 2000)</button>
         <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
@@ -52,7 +56,7 @@ var options = {
             "timeslider/pause": "Parar"
         }
     },
-   
+
     bind: {
         'change:state': function(state) {
             showState(state);
