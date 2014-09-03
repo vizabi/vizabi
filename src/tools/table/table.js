@@ -43,20 +43,6 @@ define([
         //common state pattern
         getQuery: function() {
             //build query with state info
-            var query = [
-                {
-                    from: 'data',
-                    select: this.model.getState("columns"),
-                    where: {
-                        entity: this.model.getState("entity"),
-                        year: this.model.getState("timeRange")
-                    }
-                },
-
-            ];
-
-            return query;
-
             var query = [{
                 select: [
                     'geo',
@@ -72,7 +58,7 @@ define([
                 }
             }];
 
-            return {query: query, language: this.model.getState("language")};
+            return query;
         }
     });
 
