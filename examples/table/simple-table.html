@@ -2,24 +2,58 @@
 <div class="container">
 
     <div class="buttons">
-        <label>Size:</label>
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('table_tool')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('table_tool', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('table_tool')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('table_tool')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
         <button onclick="randomSize('table_tool')">RANDOM</button>
-        <button onclick="phoneSize('table_tool')">PORTRAIT</button>
-        <button onclick="phoneSize('table_tool', 'landscape')">LANDSCAPE</button>
-        <button onclick="fullSize('table_tool')">FULL</button>
-        <label>State:</label>
-        <button onclick="setState()">GDP and LEX of NOR and SWE: 2001 - 2009)</button>
-        <button onclick="setState2()">GDP of SWE: 2002 - 2007)</button>
-        <button onclick="setState3()">WORLD: 2002 - 2007</button>
-        <label>Language:</label>
-        <button onclick="setLanguage('table_tool','en')">ENGLISH</button>
-        <button onclick="setLanguage('table_tool','pt')">PORTUGUESE</button>
+
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="setState2()">SWE - GDP </a>
+                </li>
+                <li><a onclick="setState()">SWE/NOR - GDP, LEX</a>
+                </li>
+                <li><a onclick="setState3()">WORLD - GDP</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('table_tool','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('table_tool','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
+
     </div>
 
     <div id="table_tool" class="placeholder"></div>
 
 </div>
 <div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+    
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('table_tool')">SET STATE</button>
@@ -28,56 +62,62 @@
 </div>
 
 <script>
-var options = {
-    //state
-    state: {
-        /*TODO:
+var myVizabi;
+
+$(function() {
+
+    var options = {
+        //state
+        state: url.state || {
+            /*TODO:
         This format:
         entity: {
             country: ['swe', 'nor'],
             planet: ['world'],
         }
         */
-        entity: ['country/swe'],
-        timeRange: ["2002-2007"],
-        //TODO: improve how we express which columns to show
-        columns: ['entity', 'year', 'gdp']
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
-    },
-
-    /*
-     * i18n strings are passed as an object to Vizabi
-     */
-
-    language: "en",
-    ui_strings: {
-        en: {
-            "title": "Table Title",
-            "timeslider/play": "Play",
-            "timeslider/pause": "Pause"
+            entity: ['country/swe'],
+            timeRange: ["2002-2007"],
+            //TODO: improve how we express which columns to show
+            columns: ['entity', 'year', 'gdp']
         },
-        pt: {
-            "title": "Título da Tabela",
-            "timeslider/play": "Iniciar",
-            "timeslider/pause": "Parar"
-        }
-    },
-
-    bind: {
-        'change:state': function(state) {
-            showState(state);
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
         },
-        'change:query': function(query) {
-            showQuery(query);
-        }
-    }
-};
 
-var myVizabi = new Vizabi("table", "#table_tool", options);
+        /*
+         * i18n strings are passed as an object to Vizabi
+         */
+
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Table Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título da Tabela",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        bind: {
+            'change:state': function(state) {
+                showState(state);
+            },
+            'change:query': function(query) {
+                showQuery(query);
+            }
+        }
+    };
+
+    myVizabi = new Vizabi("table", "#table_tool", options);
+
+});
 
 function setState() {
     var newOption = {

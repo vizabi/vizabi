@@ -1,74 +1,113 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
 
-    <div class="container">
-        <div class="buttons">
-            <label>Size:</label>
-            <button onclick="randomSize('bubble-chart')">RANDOM</button>
-            <button onclick="phoneSize('bubble-chart')">PORTRAIT</button>
-            <button onclick="phoneSize('bubble-chart', 'landscape')">LANDSCAPE</button>
-            <button onclick="fullSize('bubble-chart')">FULL</button>
-            <label>State:</label>
-            <button onclick="setState()">SET STATE (WORLD - 2000)</button>
-            <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
-            <label>Language:</label>
-            <button onclick="setLanguage('bubble-chart','en')">ENGLISH</button>
-            <button onclick="setLanguage('bubble-chart','pt')">PORTUGUESE</button>
+<div class="container">
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('bubble-chart')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('bubble-chart', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('bubble-chart')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('bubble-chart')">Full Screen</a>
+                </li>
+            </ul>
         </div>
 
-        <div id="bubble-chart" class="placeholder"></div>
+        <button onclick="randomSize('bubble-chart')">RANDOM</button>
 
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="setState()">WORLD - 2000 </a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('bubble-chart','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('bubble-chart','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="aux">
-        <p>Current State:</p>
-        <pre id="state" class="json_box" contentEditable="true"></pre>
-        <button onclick="setCurrentState('bubble-chart')">SET STATE</button>
-        <p>Current Query:</p>
-        <pre id="query" class="json_box"></pre>
-    </div>
+
+    <div id="bubble-chart" class="placeholder"></div>
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+    
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('bubble-chart')">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
 </body>
 <script>
-var options = {
-    //state
-    state: {
-        entity: ['country/swe', 'country/nor', 'country/fin'],
-        timeRange: ["2000-2009"],
-        time: 2005,
-        indicator: ['lex', 'gdp', 'pop'],
-        scale: ['linear', 'linear', 'linear'],
-        unit: [1,1000000, 1]
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
-    },
+var myVizabi;
 
-    //language
-    language: "en",
-    ui_strings: {
-        en: {
-            "title": "Table Title",
-            "timeslider/play": "Play",
-            "timeslider/pause": "Pause"
+$(function() {
+
+    var options = {
+        //state
+        state: url.state || {
+            entity: ['country/swe', 'country/nor', 'country/fin'],
+            timeRange: ["2000-2009"],
+            time: 2005,
+            indicator: ['lex', 'gdp', 'pop'],
+            scale: ['linear', 'linear', 'linear'],
+            unit: [1, 1000000, 1]
         },
-        pt: {
-            "title": "Título da Tabela",
-            "timeslider/play": "Iniciar",
-            "timeslider/pause": "Parar"
-        }
-    },
-
-    bind: {
-        'change:state': function(state) {
-            showState(state);
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
         },
-        'change:query': function(query) {
-            showQuery(query);
-        }
-    }
-};
 
-var myVizabi = new Vizabi("bubble-chart", "#bubble-chart", options);
+        //language
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Table Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título da Tabela",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        bind: {
+            'change:state': function(state) {
+                showState(state);
+            },
+            'change:query': function(query) {
+                showQuery(query);
+            }
+        }
+    };
+
+    myVizabi = new Vizabi("bubble-chart", "#bubble-chart", options);
+
+});
 
 function setState() {
     var newOption = {

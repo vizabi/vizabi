@@ -2,23 +2,56 @@
 
 <div class="container">
     <div class="buttons">
-        <label>Size:</label>
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('bar-chart')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('bar-chart', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('bar-chart')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('bar-chart')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
         <button onclick="randomSize('bar-chart')">RANDOM</button>
-        <button onclick="phoneSize('bar-chart')">PORTRAIT</button>
-        <button onclick="phoneSize('bar-chart', 'landscape')">LANDSCAPE</button>
-        <button onclick="fullSize('bar-chart')">FULL</button>
-        <label>State:</label>
-        <button onclick="setState()">SET STATE (WORLD - 2000)</button>
-        <button onclick="changeIndicator()">LEX (SWE, NOR - 2007)</button>
-        <label>Language:</label>
-        <button onclick="setLanguage('bar-chart','en')">ENGLISH</button>
-        <button onclick="setLanguage('bar-chart','pt')">PORTUGUESE</button>
+
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="setState()">WORLD - 2000</a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('bar-chart','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('bar-chart','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="bar-chart" class="placeholder"></div>
 
 </div>
 <div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+    
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('hello-world')">SET STATE</button>
@@ -27,47 +60,57 @@
 </div>
 
 <script>
-var options = {
-    //state
-    state: {
-        entity: ['planet/world', 'country/swe', 'country/nor'],
-        timeRange: ["2000-2009"],
-        time: 2005,
-        indicator: 'gdp',
-        scale: 'linear',
-        unit: 1000000
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
-    },
+var myVizabi;
 
-    language: "en",
-    ui_strings: {
-        en: {
-            "title": "Bar Chart Title",
-            "timeslider/play": "Play",
-            "timeslider/pause": "Pause"
+$(function() {
+
+    var options = {
+        //state
+        state: url.state || {
+            entity: ['planet/world', 'country/swe', 'country/nor'],
+            timeRange: ["2000-2009"],
+            time: 2005,
+            indicator: 'gdp',
+            scale: 'linear',
+            unit: 1000000
         },
-        pt: {
-            "title": "Título do Gráfico de Barras",
-            "timeslider/play": "Iniciar",
-            "timeslider/pause": "Parar"
-        }
-    },
-
-    bind: {
-        'change:state': function(state) {
-            showState(state);
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
         },
-        'change:query': function(query) {
-            showQuery(query);
-        }
-    }
-};
 
-var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Bar Chart Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título do Gráfico de Barras",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        bind: {
+            'change:state': function(state) {
+                showState(state);
+            },
+            'change:query': function(query) {
+                showQuery(query);
+            }
+        },
+
+        ready: function() {
+            parseURL();
+        }
+    };
+
+    myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+
+});
 
 function setState() {
     var newOption = {
