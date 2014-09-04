@@ -31,9 +31,11 @@ module.exports = function(grunt) {
     grunt.registerTask('dev', [
 
         'clean:dist', //clean dist folder
+        'write_plugins', //includes all tools and components in plugins.js
         'requirejs:dev', //concatenate all in one file
         'sass:dev', //compile scss
         'sass:dev', //compile scss
+        'examples_menu', //build examples menu template
         'includereplace:examples', //examples folder
         'examples_index', //build examples
         'copy:examples', //copies example assets
@@ -47,8 +49,10 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
 
         'clean:dist', //clean dist folder
+        'write_plugins', //includes all tools and components in plugins.js
         'requirejs:dist', //use requirejs for amd module
         'sass:dist', //compile scss
+        'examples_menu', //build examples menu template
         'includereplace:examples', //examples folder
         'examples_index', //build examples
         'copy:examples', //copies example assets
@@ -204,7 +208,7 @@ module.exports = function(grunt) {
      * Building custom example index
      */
 
-    grunt.registerTask('examples_index', 'Writes example.html', function() {
+    grunt.registerTask('examples_index', 'Writes example index', function() {
 
         var examples_folder = 'dist/examples/',
             examples_index = examples_folder + 'index.html',
@@ -224,6 +228,63 @@ module.exports = function(grunt) {
         });
         grunt.file.write(examples_index, contents);
         grunt.log.writeln("Wrote examples index.");
+    });
+
+    grunt.registerTask('examples_menu', 'Writes _examples.tpl', function() {
+
+        var examples_folder = 'examples/',
+            examples_file = examples_folder + 'assets/_examples.tpl',
+            current_dir,
+            contents = "";
+
+        grunt.file.recurse(examples_folder, function(abs, root, dir, file) {
+            if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+                file = file.replace(".html", "");
+                var link = dir + '/' + file;
+                var example = "<li><a onclick=\"goToExample('"+link+"');\">"+link+"</a></li>";
+                contents += example;
+            }
+        });
+        grunt.file.write(examples_file, contents);
+        grunt.log.writeln("Wrote examples menu template.");
+    });
+
+    /*
+     * ---------
+     * Hotfix to include everything into the AMD
+     * Include every tool and component into src/plugins.js
+     */
+
+    grunt.registerTask('write_plugins', 'Includes every component and tool into the AMD module', function() {
+
+        var tools_folder = 'src/tools/',
+            components_folder = 'src/components/',
+            plugins_file = 'src/plugins.js',
+            contents = [],
+            current_dir;
+
+        grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
+            if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
+                contents.push('"tools/' + dir + '/' + dir+'"');
+            }
+            else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+                contents.push('"text!tools/' + dir + '/' + file+'"');
+            }
+        });
+
+        grunt.file.recurse(components_folder, function(abs, root, dir, file) {
+            if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
+                contents.push('"components/' + dir + '/' + dir+'"');
+            }
+            else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+                contents.push('"text!components/' + dir + '/' + file+'"');
+            }
+        });
+
+        contents = 'define([' + contents.join(",") + '], function() {});';
+        grunt.file.write(plugins_file, contents);
+
+        grunt.log.writeln("All tools and components have been included in the AMD module.");
     });
 
 
