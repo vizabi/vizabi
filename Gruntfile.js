@@ -38,6 +38,8 @@ module.exports = function(grunt) {
         'examples_menu', //build examples menu template
         'includereplace:examples', //examples folder
         'examples_index', //build examples
+        'copy:scripts',
+        'copy:templates',
         'copy:examples', //copies example assets
         'copy:waffles', //copies waffles
         'copy:assets', //copies assets
@@ -99,6 +101,18 @@ module.exports = function(grunt) {
                 src: ['assets/imgs/**/*'],
                 dest: 'dist/',
                 expand: true
+            },
+            scripts: {
+                cwd: 'src',
+                src: ['**/*.js'],
+                dest: 'dist/',
+                expand: true
+            },
+            templates: {
+                cwd: 'src',
+                src: ['**/*.html'],
+                dest: 'dist/',
+                expand: true
             }
         },
 
@@ -146,7 +160,7 @@ module.exports = function(grunt) {
             },
             scripts: {
                 files: ['src/**/*.js'],
-                tasks: ['requirejs:dev']
+                tasks: ['copy:scripts', 'copy:templates']
             },
             options: {
                 livereload: {

@@ -1,4 +1,4 @@
-define([], function() {
+//define([], function() {
 
     var Vizabi = function(name, container, options) {
         var _this = this,
@@ -41,6 +41,6 @@ define([], function() {
 
     };
 
-    return Vizabi;
+    //return Vizabi;
 
-});
+//});
