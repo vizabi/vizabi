@@ -10,6 +10,12 @@ define([
             this.state = new Model();
             this.data = new Model();
             this.data.setSource(data);
+
+            this.language = "en";
+            this.ui_string = {};
+
+            //call parent init since this is also a model
+            this._super();
         },
 
         getState: function(attr) {
@@ -18,7 +24,6 @@ define([
 
         setState: function(attr, value, silent) {
             // TODO: Here we do validation
-
             this.state.set(attr, value, silent);
             if (!silent) Events.trigger("change:state", this.state.get());
         },

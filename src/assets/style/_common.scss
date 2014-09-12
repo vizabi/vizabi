@@ -144,3 +144,45 @@ $preloader: url('assets/imgs/preloader.gif');
     -o-transition: $transition-property $transition-time $method;
     transition: $transition-property $transition-time $method;
 }
+
+@mixin tooltip($background-color: white,
+               $padding: 0.5em,
+               $arrow-base: 1em,
+               $arrow-length: 0.5em,
+               $border-width: 0,
+               $border-color: false) {
+
+  position: absolute;
+  padding: $padding;
+  box-sizing: border-box;
+  margin-bottom: $arrow-length;
+  background-color: $background-color;
+  cursor: default;
+  visibility: hidden;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    width: 0; height: 0;
+    border-top: ($arrow-length - $border-width) solid $background-color;
+    border-left: ($arrow-base / 2 - $border-width) solid transparent;
+    border-right: ($arrow-base / 2 - $border-width) solid transparent;
+    margin-left: ($border-width - $arrow-base / 2);
+  }
+
+  @if $border-width {
+    border: $border-width solid $border-color;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 100%; left: 50%;
+      width: 0; height: 0;
+      border-top: $arrow-length solid $border-color;
+      border-left: ($arrow-base / 2) solid transparent;
+      border-right: ($arrow-base / 2) solid transparent;    
+      margin-left: ($arrow-base / -2);
+    }
+  }
+}

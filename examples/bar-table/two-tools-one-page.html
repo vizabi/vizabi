@@ -2,9 +2,20 @@
 
 <div class="container">
     <div class="buttons">
-        <label>Language:</label>
-        <button onclick="setLanguage('bar-chart','en'); setLanguage('table','en')">ENGLISH</button>
-        <button onclick="setLanguage('bar-chart','pt'); setLanguage('table','pt')">PORTUGUESE</button>
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('bar-chart','en'); setLanguage('table','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('bar-chart','pt'); setLanguage('table','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="bar-chart" class="placeholder"></div>
@@ -12,6 +23,8 @@
 
 </div>
 <div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('bar-chart'); setCurrentState('table')">SET STATE</button>
@@ -20,40 +33,55 @@
 </div>
 
 <script>
-var options = {
-    //state
-    state: {
-        language: 'en',
-        show: {
-            geo : ['swe', 'nor', 'world'],
-            'geo.categories': ['country', 'planet']
-        },
-        timeRange: ["2000-2009"],
-        time: 2005,
-        indicator: 'gdp',
-        scale: 'linear',
-        unit: 1000000,
-        columns: ['entity', 'year', 'gdp']
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
-    },
+var myVizabi, myVizabi2, options;
 
-    bind: {
-        'change:state': function(state) {
-            showState(state);
-        },
-        'change:query': function(query) {
-            showQuery(query);
-        }
-    },
-    ready: ready
-};
+$(function() {
 
-var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
-var myVizabi2;
+    options = {
+        //state
+        state: url.state || {
+            entity: ['planet/world', 'country/swe', 'country/nor'],
+            timeRange: ["2000-2009"],
+            time: 2005,
+            indicator: 'gdp',
+            scale: 'linear',
+            unit: 1000000,
+            columns: ['entity', 'year', 'gdp']
+        },
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+        },
+
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Common Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título Comum",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        bind: {
+            'change:state': function(state) {
+                showState(state);
+            },
+            'change:query': function(query) {
+                showQuery(query);
+            }
+        },
+        ready: ready
+    };
+
+    myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+
+});
 
 function ready() {
     myVizabi2 = new Vizabi("table", "#table", options);

@@ -1,53 +1,89 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Two tools, different states"}) -->
 
-<div align="center">
+<div class="container">
+
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+    </div>
 
     <div id="bar-chart" class="placeholder"></div>
     <div id="table" class="placeholder"></div>
 
 </div>
+<div class="aux">
+</div>
 <script>
-var options = {
-    //state
-    state: {
-        language: 'en',
-        show: {
-            geo : ['swe', 'nor', 'world'],
-            'geo.categories': ['country', 'planet']
-        },
-        timeRange: ["2000-2009"],
-        time: 2005,
-        indicator: 'gdp',
-        scale: 'linear',
-        unit: 1000000,
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
-    },
-    ready: ready
-};
+var myVizabi, myVizabi2, options, options2;
 
-var options2 = {
-    //state
-    state: {
-        language: 'pt',
-        show: {
-            geo : ['swe', 'fi'],
-            'geo.categories': ['country']
+$(function() {
+    options = {
+        //state
+        state: url.state || {
+            entity: ['planet/world', 'country/swe', 'country/nor'],
+            timeRange: ["2000-2009"],
+            time: 2005,
+            indicator: 'gdp',
+            scale: 'linear',
+            unit: 1000000,
         },
-        timeRange: ["2002-2005"],
-        columns: ['entity', 'year', 'lex']
-    },
-    //path
-    data: {
-        reader: 'local-json',
-        path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
-    }
-};
 
-var myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Bar Chart Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título do Gráfico de Barras",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+        },
+
+        ready: ready
+    };
+
+    options2 = {
+        //state
+        state: url.state || {
+            entity: ['country/swe', 'country/fin'],
+            timeRange: ["2002-2005"],
+            columns: ['entity', 'year', 'lex']
+        },
+
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Table title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título da Tabela",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+        }
+    };
+
+    myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+
+});
 
 function ready() {
     myVizabi2 = new Vizabi("table", "#table", options2);

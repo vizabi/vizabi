@@ -4,8 +4,9 @@ define([
     'underscore',
     'base/utils',
     'base/class',
-    'base/model'
-], function($, d3, _, utils, Class, Model) {
+    'base/model',
+    'base/events'
+], function($, d3, _, utils, Class, Model, Events) {
 
     var Component = Class.extend({
         init: function(parent, options) {
@@ -28,7 +29,7 @@ define([
             this.profiles = this.profiles || {};
             this.parent = parent;
 
-            this.events = this.getInstance('events');
+            this.events = Events;
         },
 
         //TODO: change the scary name! :D bootstrap is one good one
@@ -138,15 +139,13 @@ define([
                 component_model = this.model;
 
             //component model mapping
-            if(component.model) {
-                if(_.isFunction(component.model)) {
+            if (component.model) {
+                if (_.isFunction(component.model)) {
                     component_model = new Model(component.model());
-                }
-                else {
+                } else {
                     component_model = new Model(component.model);
                 }
-            }
-            else if(this.getModelMapping(name)) {
+            } else if (this.getModelMapping(name)) {
                 component_model = new Model(this.getModelMapping(name));
             }
 
@@ -187,6 +186,8 @@ define([
             var _this = this;
             var defer = $.Deferred();
 
+            this.template_data = _.extend(this.template_data, { t: this.getTFunction() })
+
             //require the template file
             require(["text!" + this.template + ".html"], function(html) {
                 //render template using underscore
@@ -194,14 +195,19 @@ define([
 
                 var root = _this.parent.element || d3;
                 //place the contents into the correct placeholder
-                _this.placeholder = root.select(_this.placeholder);
+                _this.placeholder = (_.isString(_this.placeholder)) ? root.select(_this.placeholder) : _this.placeholder;
                 _this.placeholder.html(rendered);
 
                 //TODO: refactor the way we select the first child
                 //define this element inside the placeholder
-                _this.element = utils.jQueryToD3(
-                    utils.d3ToJquery(_this.placeholder).children().first()
-                );
+                try {
+                    _this.element = utils.jQueryToD3(
+                        utils.d3ToJquery(_this.placeholder).children().first()
+                    );
+                } catch (err) {
+                    console.error("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
+                    console.error(err);
+                }
 
                 //Resolve defer
                 defer.resolve();
@@ -220,7 +226,7 @@ define([
         update: function() {
             for (var i in this.components) {
                 if (this.components.hasOwnProperty(i)) {
-                  this.components[i].update();
+                    this.components[i].update();
                 }
             }
         },
@@ -255,11 +261,35 @@ define([
         },
 
         addComponent: function(name, options) {
-            if(_.isUndefined(this.components)) this.components = [];
+            if (_.isUndefined(this.components)) this.components = [];
             this.components.push({
                 name: name,
                 options: options
             });
+        },
+
+        getUIString: function(string) {
+            var lang = this.model.get("language");
+            var ui_strings = this.model.get("ui_strings");
+
+            if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
+                return ui_strings[lang][string];
+            } else {
+                return string;
+            }
+        },
+
+        getTFunction: function() {
+            var lang = this.model.get("language");
+            var ui_strings = this.model.get("ui_strings");
+
+            return function(string) {
+                if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
+                    return ui_strings[lang][string];
+                } else {
+                    return string;
+                }
+            }
         }
 
     });

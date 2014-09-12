@@ -37,4 +37,24 @@
             display: block;
         }
     }
+
+    #play-button-tooltip {
+        // display: none;
+        @include tooltip($colorGrey);
+        @include transition(opacity, 0.3s, ease);
+        text-align: center;
+        width: 55px;
+        color: white;
+        visibility: visible;
+        font-size: 11px;
+        text-transform: uppercase;
+        z-index: 100;
+        top: -25px;
+        left: 0px;
+        opacity: 0;
+
+        &.visible {
+            opacity: 1;
+        }
+    }
 }
