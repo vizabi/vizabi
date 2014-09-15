@@ -18,9 +18,18 @@ $yearSize: 300px;
 
      .bubble {
         @include opacity(0.8);
-        fill: $colorBubble;
         stroke: $colorBubbleStroke;
-     }
+        fill: $colorGreen;
+        stroke: $colorGreen;
+    }
+    .bubble:nth-child(2n) {
+        fill: $colorRed;
+        stroke: $colorRed;
+    }
+    .bubble:nth-child(3n) {
+        fill: $colorBlue;
+        stroke: $colorBlue;
+    }
 
     .axis path,
     .axis line {
