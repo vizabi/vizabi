@@ -39,8 +39,17 @@ define([
                     geo: this.model.getState("show").geo,
                     'geo.category': this.model.getState("show")['geo.categories'],
                     time: this.model.getState("timeRange")
-                }
-            }];
+                }},
+                {
+                    select: [
+                        'geo',
+                        'geo.name'
+                    ],
+                    where: {
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
+                    }
+                }];
 
             return query;
         }

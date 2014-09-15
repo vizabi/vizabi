@@ -1,5 +1,26 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Table - Simple Example"}) -->
-< div class = "container" >
+<html>
+
+<head>
+    <title>Vizabi - Hello World - Multiple States</title>
+    <!-- Includes vizabi main file -->
+    <!-- TODO: remove this for grunt build -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>
+    <script src="../../vizabi.js"></script>
+    <!-- Includes vizabi css -->
+    <link rel="stylesheet" href="../../vizabi.css">
+    <!-- Includes examples css -->
+    <link rel="stylesheet" href="../assets/style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+</head>
+
+<body>
+
+<div class = "container">
 
     <div class="buttons">
         <!-- @@include('../assets/_menu.tpl') -->
@@ -50,7 +71,7 @@
 
     <div id="table_tool" class="placeholder"></div >
 
-< /div>
+</div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
     
@@ -65,26 +86,21 @@
 var myVizabi;
 
 $(function() {
-
     var options = {
         //state
         state: url.state || {
-            /*TODO:
-        This format:
-        entity: {
-            country: ['swe', 'nor'],
-            planet: ['world'],
-        }
-        */
-            entity: ['country/swe'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['swe'],
+                'geo.categories': ['country']
+            },
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['geo.name', 'time', 'lex']
         },
         //path
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
         },
 
         /*
@@ -116,7 +132,6 @@ $(function() {
     };
 
     myVizabi = new Vizabi("table", "#table_tool", options);
-
 });
 
 function setState() {
@@ -127,7 +142,7 @@ function setState() {
                 'geo.category': ['country']
 
             },
-            timeRange: ["2002-2007"],
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
             columns: ['entity', 'year', 'gdp', 'lex']
         }
@@ -138,8 +153,12 @@ function setState() {
 function setState2() {
     var newOption = {
         state: {
-            entity: ['country/swe'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['swe'],
+                'geo.category': ['country']
+
+            },
+            timeRange: ["2000-2007"],
             //TODO: improve how we express which columns to show
             columns: ['entity', 'year', 'gdp']
         }
@@ -161,6 +180,10 @@ function setState3() {
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
-} < /script>
+} 
 
 <!-- @@include('../assets / _footer.tpl ') -->
+</script>
+<script src="../assets/scripts.js"></script>
+</body>
+</html>
