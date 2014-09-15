@@ -60,38 +60,24 @@
 </div>
 
 <script>
-var myVizabi;
-
-$(function() {
-
     var options = {
         //state
-        state: url.state || {
-            entity: ['planet/world', 'country/swe', 'country/nor'],
+        state: {
+            language: 'en',
+            show: {
+                geo: ['swe', 'nor', 'fi', 'world'],
+                'geo.categories': ['country', 'planet']
+            },
             timeRange: ["2000-2009"],
-            time: 2005,
-            indicator: 'gdp',
+            time: 2007,
+            indicator: 'lex',
             scale: 'linear',
             unit: 1000000
         },
         //path
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
-        },
-
-        language: url.lang || "en",
-        ui_strings: {
-            en: {
-                "title": "Bar Chart Title",
-                "timeslider/play": "Play",
-                "timeslider/pause": "Pause"
-            },
-            pt: {
-                "title": "Título do Gráfico de Barras",
-                "timeslider/play": "Iniciar",
-                "timeslider/pause": "Parar"
-            }
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
         },
 
         bind: {
@@ -110,8 +96,6 @@ $(function() {
 
     myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
 
-});
-
 function setState() {
     var newOption = {
         state: {
@@ -119,7 +103,7 @@ function setState() {
                 geo: ['swe', 'nor', 'world'],
                 'geo.categories': ['country','planet']
             },
-            time: 2000,
+            time: 2007,
             indicator: 'gdp',
             unit: 100000000
         }

@@ -22,12 +22,11 @@
 
              for (var i=0; i < queries.length; i++) {
                 var fakeResponsePath = path.replace("response", "response_" + i);
-                
                 var promise = $.getJSON(fakeResponsePath, function(res) {
                     _this.data.push(res);
                 })
                 .error(function() { 
-                    console.log("Error Happened While Lading File: " + path); 
+                    console.log("Error Happened While Lading File: " + fakeResponsePath); 
                 });
              }
 

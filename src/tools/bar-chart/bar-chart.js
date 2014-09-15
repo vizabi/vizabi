@@ -112,6 +112,24 @@ define([
         //     };
         // },
 
+        load: function(events) {
+            var _this = this,
+                defer = $.Deferred();
+
+            //get info from state
+            var language = this.model.getState("language"),
+                query = this.getQuery();
+
+            //load data and resolve the defer when it's done
+            $.when(
+                this.model.data.load(query, language, events)
+            ).done(function() {
+                defer.resolve();
+            });
+
+            return defer;
+        },
+
         //build query from state
 
         //TODO: this could be moved to the tool if we find a
@@ -119,21 +137,30 @@ define([
         getQuery: function() {
             //build query with state info
             var query = [{
-                select: [
-                    'geo',
-                    'time',
-                    'geo.name',
-                    'geo.category', 
-                    this.model.getState("indicator")
-                ],
-                where: {
-                    geo: this.model.getState("show").geo,
-                    'geo.category': this.model.getState("show")['geo.categories'],
-                    time: this.model.getState("timeRange")
-                }
-            }];
+                    select: [
+                        'geo',
+                        'time',
+                        'geo.name',
+                        'geo.category', 
+                        this.model.getState("indicator")
+                    ],
+                    where: {
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
+                        time: this.model.getState("timeRange")
+                    }},
+                    {
+                    select: [
+                        'geo',
+                        'geo.name'
+                    ],
+                    where: {
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
+                    }
+                }];
 
-            return {query: query, language: this.model.getState("language")};
+            return query;
         }
     });
 

@@ -1,23 +1,17 @@
  [
  	{
  		"geo": "swe_1",
- 		"time": 2007,
  		"geo.name": "Sweden",
- 		"geo.category": ["country"],
- 		"lex": 78
+ 		"geo.category": ["country"]
  	}, 
  	{
  		"geo": "nor",
- 		"time": 2007,
  		"geo.name": "Norway",
- 		"geo.category": ["country"],
- 		"lex": 87
+ 		"geo.category": ["country"]
  	},
  	{
  		"geo": "world",
- 		"time": 2007,
  		"geo.name": "The World",
- 		"geo.category": ["planet"],
- 		"lex": 97
+ 		"geo.category": ["planet"]
  	}
  ]
