@@ -5,13 +5,37 @@ define([
     'base/component'
 ], function(d3, _, Component) {
 
-    var margin = {
-            top: 30,
-            right: 60,
-            left: 60,
-            bottom: 40
+    var profiles = {
+        "small": {
+            margin: {
+                top: 30,
+                right: 20,
+                left: 40,
+                bottom: 40
+            },
+            tick_spacing: 60
         },
-        size,
+        "medium": {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 80
+        },
+        "large": {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 100
+        }
+    };
+
+    var size,
         //scales
         xScale,
         yScale,
@@ -28,6 +52,8 @@ define([
         //sizes
         height,
         width,
+        margin,
+        tick_spacing,
         //data
         data, labels, indicators;
 
@@ -88,19 +114,16 @@ define([
         },
 
 
-        //TODO: Optimize data binding
+        /*
+         * UPDATE:
+         * Executed whenever data is changed
+         * Ideally, it contains only operations related to data events
+         */
         update: function() {
 
             data = this.model.getData()[0];
             labels = this.model.getData()[1];
             indicators = this.model.getState("indicator");
-
-            this.setYear(this.model.getState("time"));
-
-        },
-
-        //draw the graph for the first time
-        resize: function() {
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -121,47 +144,67 @@ define([
 
                 //10% difference margin in min and max
                 min = _.map(scales, function(scale, i) {
-                    return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i])/10));
+                    return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
                 }),
                 max = _.map(scales, function(scale, i) {
-                    return maxValue[i] + (maxValue[i] - minValue[i])/10;
+                    return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
                 }),
                 units = this.model.getState("unit") || [1, 1, 1],
                 indicator_names = indicators;
 
-            var tick_spacing = 60;
+            //axis
+            yScale = d3.scale[scales[0]]()
+                .domain([min[0], max[0]]);
 
-            switch (this.getLayoutProfile()) {
-                case "small":
-                    margin = {
-                        top: 30,
-                        right: 20,
-                        left: 40,
-                        bottom: 40
-                    };
-                    tick_spacing = 60
-                    break;
-                case "medium":
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
-                    tick_spacing = 80;
-                    break;
-                case "large":
-                default:
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
-                    tick_spacing = 100;
-                    break;
-            }
+            xScale = d3.scale[scales[1]]()
+                .domain([min[1], max[1]]);
 
+            radiusScale = d3.scale[scales[2]]()
+                .domain([min[2], max[2]]);
+
+            yAxis = d3.svg.axis()
+                .tickFormat(function(d) {
+                    return d / units[0];
+                }).tickSize(6, 0);
+
+            xAxis = d3.svg.axis()
+                .tickFormat(function(d) {
+                    return d / units[1];
+                }).tickSize(6, 0);
+
+            //bubbles
+            this.setYear(year);
+
+        },
+
+        /*
+         * RESIZE:
+         * Executed whenever the container is resized
+         * Ideally, it contains only operations related to size
+         */
+        resize: function() {
+
+            margin = profiles[this.getLayoutProfile()].margin;
+            tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
+
+            //size the stage
+            this.resizeStage();
+            //size the bubbles
+            this.resizeBubbles();
+
+            //size year
+            widthAxisY = yAxisEl[0][0].getBBox().width;
+            heightAxisX = xAxisEl[0][0].getBBox().height;
+
+            yearEl.attr("x", "50%")
+                .attr("y", "50%")
+                .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
+
+        },
+
+        resizeStage: function() {
+
+            //stage
             height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
@@ -170,30 +213,6 @@ define([
                 .attr("height", height + margin.top + margin.bottom)
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //scales
-            yScale = d3.scale[scales[0]]()
-                .domain([min[0], max[0]])
-                .range([height, 0])
-                .nice();
-
-            xScale = d3.scale[scales[1]]()
-                .domain([min[1], max[1]])
-                .range([0, width])
-                .nice();
-
-            radiusScale = d3.scale[scales[2]]()
-                .domain([min[2], max[2]])
-                .range([1, 30]);
-
-            //axis
-            yAxis = d3.svg.axis()
-                .scale(yScale)
-                .orient("left");
-
-            xAxis = d3.svg.axis()
-                .scale(xScale)
-                .orient("bottom");
-
             //year
             widthAxisY = yAxisEl[0][0].getBBox().width;
             heightAxisX = xAxisEl[0][0].getBBox().height;
@@ -201,44 +220,46 @@ define([
             yearEl.attr("x", "50%")
                 .attr("y", "50%")
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
+        },
+
+        resizeBubbles: function() {
+            //scales
+            yScale = yScale.range([height, 0]).nice();
+            xScale = xScale.range([0, width]).nice();
+
+            var maxRadius = (this.getLayoutProfile() == "large") ? 50 : 30;
+            radiusScale = radiusScale.range([1, maxRadius]);
 
             //axis
-            xAxisEl
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+            yAxis = yAxis.scale(yScale)
+                .orient("left")
+                .ticks(Math.max(height / tick_spacing, 2));
 
-            yAxis.ticks(Math.max(height / tick_spacing, 2))
-                .tickFormat(function(d) {
-                    return d / units[0];
-                }).tickSize(6, 0);
+            xAxis = xAxis.scale(xScale)
+                .orient("bottom")
+                .ticks(Math.max(width / tick_spacing, 2));
 
-            xAxis.ticks(Math.max(width / tick_spacing, 2))
-                .tickFormat(function(d) {
-                    return d / units[1];
-                }).tickSize(6, 0);
-
-            //setYear
-            var startYear = this.model.getState("time");
-            //add a bubble per country
-            bubbles.selectAll(".bubble")
-                .data(interpolateData(data, labels, indicators, startYear))
-                .enter().append("circle")
-                .attr("class", "bubble")
-                .call(position)
-                .sort(order);
+            xAxisEl.attr("transform", "translate(0," + height + ")");
 
             yAxisEl.call(yAxis);
             xAxisEl.call(xAxis);
 
-            this.setYear(startYear);
-
-
+            //bubbles
+            bubbles.selectAll(".bubble")
+                .call(position)
+                .sort(order);
         },
 
         setYear: function(year) {
+
             yearEl.text(year);
+            bubbles.selectAll(".bubble").remove();
             bubbles.selectAll(".bubble")
-                .data(interpolateData(data, labels, indicators, year)).call(position).sort(order);
+                .data(interpolateData(data, labels, indicators, year))
+                .enter().append("circle")
+                .attr("class", "bubble");
+
+            this.resizeBubbles();
         }
 
 
