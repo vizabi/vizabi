@@ -121,8 +121,6 @@ define([
          */
         update: function() {
 
-            console.log("Updating...");
-
             data = this.model.getData()[0];
             labels = this.model.getData()[1];
             indicators = this.model.getState("indicator");
@@ -153,9 +151,6 @@ define([
                 }),
                 units = this.model.getState("unit") || [1, 1, 1],
                 indicator_names = indicators;
-
-            console.log(min);
-            console.log(max);
 
             //axis
             yScale = d3.scale[scales[0]]()
@@ -188,8 +183,6 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-
-            console.log("Resizing...");
 
             margin = profiles[this.getLayoutProfile()].margin;
             tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
@@ -233,7 +226,9 @@ define([
             //scales
             yScale = yScale.range([height, 0]).nice();
             xScale = xScale.range([0, width]).nice();
-            radiusScale = radiusScale.range([1, 30]);
+
+            var maxRadius = (this.getLayoutProfile() == "large") ? 50 : 30;
+            radiusScale = radiusScale.range([1, maxRadius]);
 
             //axis
             yAxis = yAxis.scale(yScale)
@@ -257,7 +252,6 @@ define([
 
         setYear: function(year) {
 
-            console.log("Setting year... " + year);
             yearEl.text(year);
             bubbles.selectAll(".bubble").remove();
             bubbles.selectAll(".bubble")
