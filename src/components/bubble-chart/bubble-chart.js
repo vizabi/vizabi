@@ -81,7 +81,7 @@ define([
         })
             .attr("cx", function(d) {
                 return xScale(x(d, indicators[1]));
-            })
+            })  
             .attr("r", function(d) {
                 return radiusScale(radius(d, indicators[2]));
             });
@@ -123,7 +123,8 @@ define([
 
             data = this.model.getData()[0];
             labels = this.model.getData()[1];
-            indicators = this.model.getState("indicator");
+            indicators = this.model.getState("indicator"),
+            categories = this.model.getState("show")["geo.categories"];
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -138,7 +139,8 @@ define([
                     })
                 }),
                 data_curr_year = data.filter(function(row) {
-                    return row.year == year
+                    return (row.time == year &&
+                    categories.indexOf(row["geo.category"][0]) >= 0)
                 }),
                 scales = this.model.getState("scale"),
 
@@ -259,7 +261,7 @@ define([
                 .enter().append("circle")
                 .attr("class", "bubble");
 
-            this.resizeBubbles();
+            //this.resizeBubbles();
         }
 
 
@@ -269,14 +271,15 @@ define([
     function interpolateData(data, labels, indicators, year) {
 
         yearData = _.filter(data, function(d) {
-            return d.year == year;
+            return (d.time == year && 
+                        categories.indexOf(d["geo.category"][0]) >= 0);
         });
 
         return yearData.map(function(d) {
             var obj = {
                 name: _.findWhere(labels, {
-                    entity: d.entity
-                }).name,
+                    "geo.name": d["geo.name"]
+                })["geo.name"],
             };
             _.each(indicators, function(indicator) {
                 obj[indicator] = d[indicator];
