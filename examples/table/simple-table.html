@@ -1,27 +1,7 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Table - Simple Example"}) -->
-<html>
 
-<head>
-    <title>Vizabi - Hello World - Multiple States</title>
-    <!-- Includes vizabi main file -->
-    <!-- TODO: remove this for grunt build -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>
-    <script src="../../vizabi.js"></script>
-    <!-- Includes vizabi css -->
-    <link rel="stylesheet" href="../../vizabi.css">
-    <!-- Includes examples css -->
-    <link rel="stylesheet" href="../assets/style.css">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-
-</head>
-
-<body>
 
 <div class = "container">
-
     <div class="buttons">
         <!-- @@include('../assets/_menu.tpl') -->
 
@@ -88,7 +68,7 @@ var myVizabi;
 $(function() {
     var options = {
         //state
-        state: url.state || {
+        state: {
             show: {
                 geo: ['swe'],
                 'geo.categories': ['country']
@@ -107,7 +87,7 @@ $(function() {
          * i18n strings are passed as an object to Vizabi
          */
 
-        language: url.lang || "en",
+        language: "en",
         ui_strings: {
             en: {
                 "title": "Table Title",
@@ -181,9 +161,5 @@ function setState3() {
     };
     myVizabi.setOptions("#table_tool", newOption);
 } 
-
-<!-- @@include('../assets / _footer.tpl ') -->
 </script>
-<script src="../assets/scripts.js"></script>
-</body>
-</html>
+<!-- @@include('../assets / _footer.tpl ') -->
