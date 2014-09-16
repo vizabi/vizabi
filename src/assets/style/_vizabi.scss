@@ -1,0 +1,10 @@
+@import "_common";
+@import "_mixins";
+
+// Import default styles for font awesome
+$fa-font-path: "../lib/font-awesome/fonts";
+@import "../../../lib/font-awesome/scss/font-awesome";
+
+//TODO: remove compass from smart-picker (check smart-pick repo later!)
+// Import default styles for smart picker
+@import "../../../lib/smart-picker/dist/styles/_smart-picker";

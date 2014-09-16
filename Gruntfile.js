@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:dev', //concatenate all in one file
-        'sass:dev', //compile scss
+        'generate_styles', //generate scss
         'sass:dev', //compile scss
         'examples_menu', //build examples menu template
         'includereplace:examples', //examples folder
@@ -53,6 +53,7 @@ module.exports = function(grunt) {
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:dist', //use requirejs for amd module
+        'generate_styles', //generate scss
         'sass:dist', //compile scss
         'examples_menu', //build examples menu template
         'includereplace:examples', //examples folder
@@ -299,6 +300,34 @@ module.exports = function(grunt) {
         grunt.file.write(plugins_file, contents);
 
         grunt.log.writeln("All tools and components have been included in the AMD module.");
+    });
+
+/*
+     * ---------
+     * Include all tool styles into vizabi.scss
+     */
+
+    grunt.registerTask('generate_styles', 'Adds each tool scss to vizabi.scss', function() {
+
+        var tools_folder = 'src/tools/',
+            scss_file = 'src/assets/style/vizabi.scss',
+            includes = ['_vizabi.scss'],
+            contents = '',
+            current_dir;
+
+        grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
+            if (typeof dir !== 'undefined' && file.indexOf('.scss') !== -1) {
+                includes.push('../../tools/' + dir + '/' + file);
+            }
+        });
+
+        for (var i = 0; i < includes.length; i++) {
+            contents += '@import "'+includes[i]+'";\n';
+        };
+
+        grunt.file.write(scss_file, contents);
+
+        grunt.log.writeln("All styles included in vizabi.scss");
     });
 
 
