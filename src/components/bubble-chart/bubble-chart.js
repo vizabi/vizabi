@@ -55,7 +55,11 @@ define([
         margin,
         tick_spacing,
         //data
-        data, labels, indicators;
+        data, 
+        countries = [],
+        labels, 
+        labels_selected_country,
+        indicators;
 
     // Various accessors that specify the dimensions of data to visualize.
     function x(d, indicator) {
@@ -121,10 +125,14 @@ define([
          */
         update: function() {
 
-            data = this.model.getData()[0];
-            labels = this.model.getData()[1];
+            data = this.model.getData()[1][0];
+            labels = this.model.getData()[0][0];
             indicators = this.model.getState("indicator"),
-            categories = this.model.getState("show")["geo.categories"];
+            categories = this.model.getState("show")["geo.categories"],
+            countries = this.model.getState("show")["geo"],
+            labels_selected_country = labels.filter(function(row) {
+                    return countries.indexOf(row["geo"])>= 0;
+            });
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -137,10 +145,6 @@ define([
                     return d3.max(data, function(d) {
                         return +d[indicator];
                     })
-                }),
-                data_curr_year = data.filter(function(row) {
-                    return (row.time == year &&
-                    categories.indexOf(row["geo.category"][0]) >= 0)
                 }),
                 scales = this.model.getState("scale"),
 
@@ -257,7 +261,7 @@ define([
             yearEl.text(year);
             bubbles.selectAll(".bubble").remove();
             bubbles.selectAll(".bubble")
-                .data(interpolateData(data, labels, indicators, year))
+                .data(interpolateData(data, labels_selected_country , indicators, year))
                 .enter().append("circle")
                 .attr("class", "bubble");
 
@@ -272,7 +276,7 @@ define([
 
         yearData = _.filter(data, function(d) {
             return (d.time == year && 
-                        categories.indexOf(d["geo.category"][0]) >= 0);
+                        countries.indexOf(d["geo"]) >= 0);
         });
 
         return yearData.map(function(d) {
