@@ -14,7 +14,8 @@
 
          read: function(queries, language) {
              var _this = this,
-                 defer = $.Deferred();
+                 defer = $.Deferred(),
+                 promises = [];
 
              var path = this.basepath.replace("{{LANGUAGE}}", language);
 
@@ -28,13 +29,14 @@
                 .error(function() { 
                     console.log("Error Happened While Lading File: " + fakeResponsePath); 
                 });
+
+                promises.push(promise);
              }
 
-             promise.done(function() {
-                 console.log(_this.data);   
+             $.when.apply(null, promises).done(function() {
                  defer.resolve();
              });
-
+ 
              return defer;
          },
 
