@@ -10,25 +10,19 @@ define([
 
     var Component = Class.extend({
         init: function(parent, options) {
-            this.name = this.name || options.name;
-            this.state = this.state || options.state;
-            this.placeholder = this.placeholder || options.placeholder;
-            this.data = this.data || options.data;
 
-            this.model = this.model || options.model;
-            this.element = this.element || null;
-            this.template = this.template || null;
+            //properties in this component should be the ones in options,
+            //unless they were already set by a child class
+            _.extend(this, options, this);
+
+            //default values,
+            //in case there's none
             this.template_data = this.template_data || {
                 name: this.name
             };
-            // Markup to define where a Component is going to be rendered.
-            // Element which embodies the Component
-            this.element = this.element || null;
             this.components = this.components || [];
-
             this.profiles = this.profiles || {};
             this.parent = parent;
-
             this.events = Events;
         },
 
