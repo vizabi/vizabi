@@ -43,12 +43,12 @@ define([
             var _this = this,
                 year = this.model.getState("time");
 
-            var data = this.model.getData()[0],
+            var data = this.model.getData()[0][0],
                 minValue = d3.min(data, function(d) {
-                    return +d.year;
+                    return +d.time;
                 }),
                 maxValue = d3.max(data, function(d) {
-                    return +d.year;
+                    return +d.time;
                 });
 
             timeslider.slider({

@@ -21,11 +21,21 @@ define([
 
            //TODO: mapping of columns and data
            var columns = this.model.getState().columns,
-               data = this.model.getData()[0],
-               labels = this.model.getData()[1];
+               data = this.model.getData()[0][0],
+               labels = this.model.getData()[1][0],
+               countries = this.model.getState("show")["geo"],
+               labels_selected_country = labels.filter(function(row) {
+                    return countries.indexOf(row["geo"])>= 0;
+                }),
+               minYear = this.model.getState("timeRange")[0].split("-")[0],
+               maxYear = this.model.getState("timeRange")[0].split("-")[1],
+               data_curr_range = labels_selected_country.filter(function(row) {
+                    return (row.time >= minYear && row.time <= maxYear);
+               });
 
            var table = this.element;
            table.html("");
+
 
            var thead = table.append("thead"),
                tbody = table.append("tbody");
@@ -40,7 +50,7 @@ define([
 
             // create a row for each object in the data
             var rows = tbody.selectAll("tr")
-                .data(data)
+                .data(data_curr_range)
                 .enter()
                 .append("tr");
 
@@ -49,8 +59,8 @@ define([
                 .data(function(row) {
                     return columns.map(function(column) {
                         var key_value;
-                        if(column === "entity") {
-                            var name = _.findWhere(labels, {entity: row[column]}).name;
+                        if(column === "geo.name") {
+                            var name = _.findWhere(labels_selected_country, {'geo.name': row[column]})["geo.name"];
                             key_value = {column: column, value: name };
                         }
                         else {

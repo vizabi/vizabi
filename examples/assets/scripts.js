@@ -3,42 +3,42 @@ function randomSize(id) {
     var width = Math.floor(Math.random() * 800) + 300;
     var height = Math.floor(Math.random() * 500) + 300;
     var container = document.getElementById(id);
-    container.style.width = width + "px";
-    container.style.height = height + "px";
-    container.className = "placeholder";
+    
+    setSize(id, width, height);
 
     forceResizeEvt();
 }
 
 function phoneSize(id, mode) {
-    var container = document.getElementById(id);
+    var container = $("#" + id);
     if (mode === 'landscape') {
-        container.style.width = "568px";
-        container.style.height = "320px";
+        container.width(568);
+        container.height(320);
     } else {
-        container.style.width = "320px";
-        container.style.height = "568px";
+        container.width(320);
+        container.height(568);
     }
-    container.className = "placeholder";
+    container.removeClass('fullscreen');
     forceResizeEvt();
 }
 
 function fullSize(id) {
-    var container = document.getElementById(id);
-    container.style.width = "auto";
-    container.style.height = "auto";
-    container.className = "placeholder fullscreen";
+    var container = $("#" + id);
+    container.width("auto");
+    container.height("auto");
+    container.addClass('fullscreen');
     forceResizeEvt();
 }
 
 function setSize(id, width, height, fullscreen) {
-    var container = document.getElementById(id);
-    container.style.width = width + "px";
-    container.style.height = height + "px";
+    var container = $("#" + id);
+
+    container.width(width);
+    container.height(height);
     if (fullscreen) {
-        container.className = "placeholder fullscreen";
+        container.addClass('fullscreen');
     } else {
-        container.className = "placeholder";
+        container.removeClass('fullscreen');
     }
     forceResizeEvt();
 }
@@ -113,7 +113,7 @@ var url = {};
 
 function parseURL() {
     var hash = window.location.hash;
-    console.log(hash);
+
     if (hash) {
         options = JSON.parse(hash.replace("#", ""));
 
@@ -136,10 +136,9 @@ function shareLink() {
             longUrl: document.URL
         };
     $.getJSON(address, params, function(response) {
-        if(response.status_code == "200") {
+        if (response.status_code == "200") {
             prompt("Copy the following link: ", response.data.url);
-        }
-        else {
+        } else {
             console.log(response);
             alert("Copy the link from the browser");
         }

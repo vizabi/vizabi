@@ -1,8 +1,9 @@
  define([
      'base/class',
      'jquery',
-     'underscore'
- ], function(Class, $, _) {
+     'underscore',
+     'base/utils'
+ ], function(Class, $, _, Util) {
 
      var LocalJSONReader = Class.extend({
 
@@ -13,22 +14,29 @@
 
          read: function(queries, language) {
              var _this = this,
-                 defer = $.Deferred();
+                 defer = $.Deferred(),
+                 promises = [];
 
              var path = this.basepath.replace("{{LANGUAGE}}", language);
 
-             //sending request to server
-             var promise = $.getJSON(path, function(res) {
-                 _this.data = [];
-                 for (var i in queries) {
-                     _this.data.push(queryJSON(res, queries[i]))
-                 }
-             });
+             _this.data = [];
 
-             promise.done(function() {
+             for (var i=0; i < queries.length; i++) {
+                var fakeResponsePath = path.replace("response", "response_" + i);
+                var promise = $.getJSON(fakeResponsePath, function(res) {
+                    _this.data.push(res);
+                })
+                .error(function() { 
+                    console.log("Error Happened While Lading File: " + fakeResponsePath); 
+                });
+
+                promises.push(promise);
+             }
+
+             $.when.apply(null, promises).done(function() {
                  defer.resolve();
              });
-
+ 
              return defer;
          },
 
@@ -38,72 +46,6 @@
 
      });
 
-     function queryJSON(json, query) {
-         if (query.from == "data") {
-             var table_name = getTableName(query),
-                 data = json.tables[table_name].data;
-             return filterColumns(filterRows(data, query.where), query.select);
-         }
-     }
-
-     function getTableName(query) {
-         var table_name = [];
-         _.each(query.where, function(value, field) {
-             table_name.push(field);
-         });
-         //alphabetical order (ex: year, country = table country_year)
-         table_name.sort();
-         return table_name.join("_");
-     }
-
-     function filterColumns(array, columns) {
-        return _.map(array, function(row) {
-            return _.pick(row, columns);
-        })
-     };
-
-     function filterRows(array, conditions) {
-        return _.filter(array, function(row) {
-                var include = true;
-
-                for(var field in conditions) {
-                    var value = conditions[field];
-                    if(!matchValue(field, value, row[field])) {
-                        include = false;
-                        break;
-                    }
-                }
-                return include;
-             });
-     }
-
-     function matchValue(field, possible, value) {
-
-        //exception to handle year formats
-        if(_.isString(possible)) {
-            if(field === "year" && _.contains(possible, "-")) {
-                var years = possible.split("-");
-                possible = _.range(parseInt(years[0], 10),parseInt(years[1], 10)+1);
-            } else {
-                possible = [possible];
-            }
-        } else if (_.isArray(possible) && field === "year") {
-            var new_possible = [];
-            for(var i in possible) {
-                if(!_.contains(possible[i], "-")) {
-                    new_possible.push(possible[i]);
-                }
-                else {
-                    var years = possible[i].split("-");
-                    new_possible = _.union(new_possible, _.range(parseInt(years[0], 10),parseInt(years[1], 10)+1));
-                }
-            }
-            possible = new_possible;
-        }
-        //TODO: review string and int incompatibility
-        return _.contains(possible, value);
-     }
-
-     return LocalJSONReader;
+    return LocalJSONReader;
 
  });

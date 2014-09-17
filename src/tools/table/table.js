@@ -27,23 +27,29 @@ define([
         //common state pattern
         getQuery: function() {
             //build query with state info
-            var query = [
+            var query = [{
+                select: [
+                    'geo',
+                    'time',
+                    'geo.name',
+                    'geo.category', 
+                    this.model.getState("columns")
+                ],
+                where: {
+                    geo: this.model.getState("show").geo,
+                    'geo.category': this.model.getState("show")['geo.categories'],
+                    time: this.model.getState("timeRange")
+                }},
                 {
-                    from: 'data',
-                    select: this.model.getState("columns"),
+                    select: [
+                        'geo',
+                        'geo.name'
+                    ],
                     where: {
-                        entity: this.model.getState("entity"),
-                        year: this.model.getState("timeRange")
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
                     }
-                },
-                {
-                    from: 'data',
-                    select: ['entity', 'name'],
-                    where: {
-                        entity: this.model.getState("entity"),
-                    }
-                },
-            ];
+                }];
 
             return query;
         }

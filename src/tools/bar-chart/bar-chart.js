@@ -119,19 +119,28 @@ define([
         getQuery: function() {
             //build query with state info
             var query = [{
-                from: 'data',
-                select: ['entity', 'year', this.model.getState("indicator")],
-                where: {
-                    entity: this.model.getState("entity"),
-                    year: this.model.getState("timeRange")
-                }
-            }, {
-                from: 'data',
-                select: ['entity', 'name'],
-                where: {
-                    entity: this.model.getState("entity"),
-                }
-            }, ];
+                    select: [
+                        'geo',
+                        'time',
+                        'geo.name',
+                        'geo.category', 
+                        this.model.getState("indicator")
+                    ],
+                    where: {
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
+                        time: this.model.getState("timeRange")
+                    }},
+                    {
+                    select: [
+                        'geo',
+                        'geo.name'
+                    ],
+                    where: {
+                        geo: this.model.getState("show").geo,
+                        'geo.category': this.model.getState("show")['geo.categories'],
+                    }
+                }];
 
             return query;
         }

@@ -40,11 +40,12 @@ define([
 
         //TODO: Optimize data binding
         update: function() {
-
             var indicator = this.model.getState("indicator"),
-                data = this.model.getData()[0],
+                data = this.model.getData()[1][0],
                 year = this.model.getState("time"),
-                labels = this.model.getData()[1],
+                labels = this.model.getData()[0][0],
+                categories = this.model.getState("show")["geo.categories"],
+                countries = this.model.getState("show")["geo"],
                 minValue = d3.min(data, function(d) {
                     return +d[indicator];
                 }),
@@ -52,28 +53,30 @@ define([
                     return +d[indicator];
                 }),
                 data_curr_year = data.filter(function(row) {
-                    return row.year == year
+                    return (row.time == year && countries.indexOf(row["geo"])>= 0);
+                }),
+                labels_selected_country = labels.filter(function(row) {
+                    return countries.indexOf(row["geo"])>= 0;
                 }),
                 scale = this.model.getState("scale"),
                 minY = this.model.getState("min") || ((scale == "log") ? minValue : 0),
                 maxY = this.model.getState("max") || (maxValue + maxValue / 10),
                 unit = this.model.getState("unit") || 1,
                 indicator_name = indicator;
-
             // Create X axis scale, X axis function and call it on element
             x = d3.scale.ordinal();
 
-            x.domain(_.map(labels, function(d, i) {
-                return d.entity;
+            x.domain(_.map(labels_selected_country, function(d, i) {
+                return d["geo.name"];
             }));
+
             //TODO: Read from data manager
             xAxis = d3.svg.axis().scale(x).orient("bottom")
                 .tickFormat(function(d) {
-                    return _.findWhere(labels, {entity: d}).name;
+                    return _.findWhere(labels_selected_country, {"geo.name": d})["geo.name"];
                 });
 
-            //xAxisEl.call(xAxis);
-
+            
             // Create Y axis scale, Y axis function and call it on element
             y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
             y.domain([minY, maxY])
@@ -169,7 +172,7 @@ define([
             // Update size of bars 
             bars.selectAll(".bar")
                 .attr("d", function(d, i) {
-                    return topRoundedRect(x(d.entity),
+                    return topRoundedRect(x(d["geo.name"]),
                         y(d[indicator]),
                         x.rangeBand(),
                         height - y(d[indicator]),

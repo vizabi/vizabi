@@ -28,7 +28,7 @@
         <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
             <span>OPTIONS</span>
             <ul class="dropdown">
-                <li><a onclick="setState()">WORLD - 2000</a>
+                <li><a onclick="setState()">US - 2000</a>
                 </li>
                 <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
                 </li>
@@ -60,35 +60,39 @@
 </div>
 
 <script>
+
 var myVizabi;
 
 $(function() {
-
     var options = {
         //state
         state: url.state || {
-            entity: ['planet/world', 'country/swe', 'country/nor'],
+            show: {
+                geo: ['swe', 'nor', 'fi', 'world'],
+                'geo.categories': ['country', 'planet']
+            },
             timeRange: ["2000-2009"],
-            time: 2005,
-            indicator: 'gdp',
+            time: 2007,
+            indicator: 'lex',
             scale: 'linear',
             unit: 1000000
         },
         //path
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
         },
 
+        //language
         language: url.lang || "en",
         ui_strings: {
             en: {
-                "title": "Bar Chart Title",
+                "title": "Table Title",
                 "timeslider/play": "Play",
                 "timeslider/pause": "Pause"
             },
             pt: {
-                "title": "Título do Gráfico de Barras",
+                "title": "Título da Tabela",
                 "timeslider/play": "Iniciar",
                 "timeslider/pause": "Parar"
             }
@@ -115,19 +119,26 @@ $(function() {
 function setState() {
     var newOption = {
         state: {
-            entity: ['planet/world'],
-            time: 2000,
+            show: {
+                geo: ['usa'],
+                'geo.categories': ['country']
+            },
+            time: 2005,
             indicator: 'gdp',
             unit: 100000000
         }
     };
+    
     myVizabi.setOptions("#bar-chart", newOption);
 }
 
 function changeIndicator() {
     var newOption = {
         state: {
-            entity: ['country/swe', 'country/nor'],
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.categories': ['country']
+            },
             time: 2007,
             indicator: 'lex',
             unit: 1

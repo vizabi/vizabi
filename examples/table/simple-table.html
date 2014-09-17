@@ -1,6 +1,7 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Table - Simple Example"}) -->
-<div class="container">
 
+
+<div class = "container">
     <div class="buttons">
         <!-- @@include('../assets/_menu.tpl') -->
 
@@ -48,7 +49,7 @@
 
     </div>
 
-    <div id="table_tool" class="placeholder"></div>
+    <div id="table_tool" class="placeholder"></div >
 
 </div>
 <div class="aux">
@@ -65,26 +66,21 @@
 var myVizabi;
 
 $(function() {
-
     var options = {
         //state
         state: url.state || {
-            /*TODO:
-        This format:
-        entity: {
-            country: ['swe', 'nor'],
-            planet: ['world'],
-        }
-        */
-            entity: ['country/swe'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['swe'],
+                'geo.categories': ['country']
+            },
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['geo.name', 'time', 'lex']
         },
         //path
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/waffle.json'
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
         },
 
         /*
@@ -116,16 +112,19 @@ $(function() {
     };
 
     myVizabi = new Vizabi("table", "#table_tool", options);
-
 });
 
 function setState() {
     var newOption = {
         state: {
-            entity: ['country/swe', 'country/nor'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.category': ['country']
+
+            },
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp', 'lex']
+            columns: ['geo.name', 'time', 'gdp', 'lex']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
@@ -134,10 +133,14 @@ function setState() {
 function setState2() {
     var newOption = {
         state: {
-            entity: ['country/swe'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['swe'],
+                'geo.category': ['country']
+
+            },
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['entity', 'time', 'gdp']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
@@ -146,14 +149,17 @@ function setState2() {
 function setState3() {
     var newOption = {
         state: {
-            entity: ['planet/world'],
-            timeRange: ["2002-2007"],
+            show: {
+                geo: ['world'],
+                'geo.category': ['planet']
+
+            },
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['geo.name', 'time', 'gdp']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
-}
+} 
 </script>
-
-<!-- @@include('../assets/_footer.tpl') -->
+<!-- @@include('../assets / _footer.tpl ') -->
