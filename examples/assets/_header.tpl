@@ -7,7 +7,7 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>
     <script src="../../vizabi.js"></script>
-    <!-- Includes scripts -->s
+    <!-- Includes scripts -->
     <script src="../assets/scripts.js"></script>
     <!-- Includes vizabi css -->
     <link rel="stylesheet" href="../../vizabi.css">

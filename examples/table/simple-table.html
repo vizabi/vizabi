@@ -124,7 +124,7 @@ function setState() {
             },
             timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp', 'lex']
+            columns: ['geo.name', 'time', 'gdp', 'lex']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
@@ -138,9 +138,9 @@ function setState2() {
                 'geo.category': ['country']
 
             },
-            timeRange: ["2000-2007"],
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['entity', 'time', 'gdp']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);
@@ -150,13 +150,13 @@ function setState3() {
     var newOption = {
         state: {
             show: {
-                geo: ['swe', 'nor'],
-                'geo.category': ['country']
+                geo: ['world'],
+                'geo.category': ['planet']
 
             },
-            timeRange: ["2002-2007"],
+            timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'year', 'gdp']
+            columns: ['geo.name', 'time', 'gdp']
         }
     };
     myVizabi.setOptions("#table_tool", newOption);

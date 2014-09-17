@@ -59,8 +59,8 @@ define([
                 .data(function(row) {
                     return columns.map(function(column) {
                         var key_value;
-                        if(column === "entity") {
-                            var name = _.findWhere(labels_selected_country, {'geo.name': row[column]}).name;
+                        if(column === "geo.name") {
+                            var name = _.findWhere(labels_selected_country, {'geo.name': row[column]})["geo.name"];
                             key_value = {column: column, value: name };
                         }
                         else {
