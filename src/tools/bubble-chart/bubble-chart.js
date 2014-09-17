@@ -42,18 +42,13 @@ define([
 
             var query = [{
                 from: 'data',
-                select: _.union(['entity', 'year'],this.model.getState("indicator")),
+                select: _.union(['geo', 'geo.name', 'time'],this.model.getState("indicator")),
                 where: {
-                    entity: this.model.getState("entity"),
-                    year: this.model.getState("timeRange")
+                    geo: this.model.getState("show").geo,
+                    'geo.category': this.model.getState("show")['geo.category'], 
+                    time: this.model.getState("timeRange")
                 }
-            }, {
-                from: 'data',
-                select: ['entity', 'name'],
-                where: {
-                    entity: this.model.getState("entity"),
-                }
-            }, ];
+            }];
 
             return query;
         }

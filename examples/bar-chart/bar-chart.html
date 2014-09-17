@@ -28,7 +28,9 @@
         <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
             <span>OPTIONS</span>
             <ul class="dropdown">
-                <li><a onclick="setState()">US - 2000</a>
+                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
+                </li>
+                <li><a onclick="setState()">USA - 2000</a>
                 </li>
                 <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
                 </li>
@@ -68,14 +70,14 @@ $(function() {
         //state
         state: url.state || {
             show: {
-                geo: ['swe', 'nor', 'fi', 'world'],
-                'geo.categories': ['country', 'planet']
+                geo: ['swe', 'nor', 'world'],
+                'geo.category': ['country', 'planet']
             },
             timeRange: ["2000-2009"],
             time: 2007,
             indicator: 'lex',
             scale: 'linear',
-            unit: 1000000
+            unit: 1
         },
         //path
         data: {
@@ -121,11 +123,11 @@ function setState() {
         state: {
             show: {
                 geo: ['usa'],
-                'geo.categories': ['country']
+                'geo.category': ['country']
             },
             time: 2005,
             indicator: 'gdp',
-            unit: 100000000
+            unit: 100000000000
         }
     };
     
@@ -137,10 +139,27 @@ function changeIndicator() {
         state: {
             show: {
                 geo: ['swe', 'nor'],
-                'geo.categories': ['country']
+                'geo.category': ['country']
             },
             time: 2007,
             indicator: 'lex',
+            unit: 1
+        }
+    };
+    myVizabi.setOptions("#bar-chart", newOption);
+}
+
+function initialState() {
+    var newOption = {
+        state: {
+            show: {
+                geo: ['swe', 'nor', 'world'],
+                'geo.category': ['country', 'planet']
+            },
+            timeRange: ["2000-2009"],
+            time: 2007,
+            indicator: 'lex',
+            scale: 'linear',
             unit: 1
         }
     };

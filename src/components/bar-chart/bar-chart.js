@@ -41,22 +41,21 @@ define([
         //TODO: Optimize data binding
         update: function() {
             var indicator = this.model.getState("indicator"),
-                data = this.model.getData()[1][0],
+                data = this.model.getData()[0][0],
                 year = this.model.getState("time"),
-                labels = this.model.getData()[0][0],
                 categories = this.model.getState("show")["geo.categories"],
                 countries = this.model.getState("show")["geo"],
-                minValue = d3.min(data, function(d) {
-                    return +d[indicator];
-                }),
-                maxValue = d3.max(data, function(d) {
-                    return +d[indicator];
-                }),
-                data_curr_year = data.filter(function(row) {
-                    return (row.time == year && countries.indexOf(row["geo"])>= 0);
-                }),
-                labels_selected_country = labels.filter(function(row) {
+                data_all_years = data.filter(function(row) {
                     return countries.indexOf(row["geo"])>= 0;
+                }),
+                data_curr_year = data_all_years.filter(function(row) {
+                    return (row.time == year);
+                }),
+                minValue = d3.min(data_all_years, function(d) {
+                    return +d[indicator];
+                }),
+                maxValue = d3.max(data_all_years, function(d) {
+                    return +d[indicator];
                 }),
                 scale = this.model.getState("scale"),
                 minY = this.model.getState("min") || ((scale == "log") ? minValue : 0),
@@ -66,14 +65,14 @@ define([
             // Create X axis scale, X axis function and call it on element
             x = d3.scale.ordinal();
 
-            x.domain(_.map(labels_selected_country, function(d, i) {
+            x.domain(_.map(data_all_years, function(d, i) {
                 return d["geo.name"];
             }));
 
             //TODO: Read from data manager
             xAxis = d3.svg.axis().scale(x).orient("bottom")
                 .tickFormat(function(d) {
-                    return _.findWhere(labels_selected_country, {"geo.name": d})["geo.name"];
+                    return d;
                 });
 
             

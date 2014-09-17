@@ -1,1 +1,1 @@
-<li><a onclick="goToExample('bar-chart/multiple-states');">bar-chart/multiple-states</a></li><li><a onclick="goToExample('bubble-chart/simple-bubbles');">bubble-chart/simple-bubbles</a></li><li><a onclick="goToExample('table/simple-table');">table/simple-table</a></li>
+<li><a onclick="goToExample('bar-chart/bar-chart');">bar-chart/bar-chart</a></li><li><a onclick="goToExample('bubble-chart/bubble-chart');">bubble-chart/bubble-chart</a></li><li><a onclick="goToExample('table/simple-table');">table/simple-table</a></li>

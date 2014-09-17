@@ -135,7 +135,7 @@ define([
             var _this = this,
                 defer = $.Deferred();
 
-            //get info from state
+            //get info from options
             var language = this.model.get("language"),
                 query = this.getQuery();
                 
