@@ -1,14 +1,4 @@
-@import "_common";
-
-// Import default styles for font awesome
-$fa-font-path: "../lib/font-awesome/fonts";
-@import "../../../lib/font-awesome/scss/font-awesome";
-
-//TODO: remove compass from smart-picker (check smart-pick repo later!)
-// Import default styles for smart picker
-@import "../../../lib/smart-picker/dist/styles/smart-picker";
-
-// <?== generator.tool.style ==?>
-@import "../../tools/bar-chart/_bar-chart";
-@import "../../tools/table/_table";
-@import '../../tools/bubble-chart/_bubble-chart.scss';
+@import "_vizabi.scss";
+@import "../../tools/bar-chart/_bar-chart.scss";
+@import "../../tools/bubble-chart/_bubble-chart.scss";
+@import "../../tools/table/_table.scss";

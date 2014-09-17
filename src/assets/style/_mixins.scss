@@ -1,0 +1,172 @@
+//makes an element absolute positioned
+@mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
+    position: absolute;
+    top: $top;
+    bottom: $bottom;
+    right: $right;
+    left: $left;
+}
+
+@mixin absoluteAll() {
+    @include absolute(0px, 0px, 0px, 0px);
+}
+
+//makes an element fixed
+@mixin fixed($top: auto, $right: auto, $bottom: auto, $left: auto) {
+    position: fixed;
+    top: $top;
+    bottom: $bottom;
+    right: $right;
+    left: $left;
+}
+
+@mixin opacity($v) {
+    opacity: $v;
+}
+
+@mixin reset-margin-padding() {
+    padding:0px;
+    margin:0px;
+}
+
+//center a box horizontally (div, anything)
+@mixin center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+//Text overflow. If text is bigger than box, insert ellipsis: text he... Wrapper needs to be block or inline-block
+@mixin text-truncate() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+//Text hidden.
+@mixin text-hidden() {
+  overflow: hidden;
+  text-indent: -9999px;
+}
+
+//converts pixels to em
+@mixin font-size($sizeValue: 12px ){
+  font-size: $sizeValue; //fallback for old browsers
+  font-size: (0.06 * $sizeValue / 1px) + rem;
+}
+
+//same with line height
+@mixin line-height($heightValue: 12px ){
+    line-height: $heightValue + px; //fallback for old browsers
+    line-height: (0.125 * $heightValue / 1px) + rem;
+}
+
+@mixin user-select-none() {
+    -webkit-user-select: none; // Chrome/Safari
+    -moz-user-select: none; // Firefox
+    -ms-user-select: none; // IE10+
+}
+
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+     -moz-box-sizing: $box-model; // Firefox <= 19
+          box-sizing: $box-model;
+}
+
+@mixin border-radius($border-radius) {
+  -webkit-border-radius: $border-radius; // Safari <= 5
+     -moz-border-radius: $border-radius; // Firefox <= 19
+          border-radius: $border-radius;
+}
+
+//overflow mobile y
+@mixin overflow-mobile(){
+  overflow:scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+@mixin breakpoint($point) {
+  @if $point == portrait {
+    @media screen and (orientation: portrait) { @content; }
+  }
+  @else if $point == landscape {
+    @media screen and (orientation: landscape) { @content; }
+  }
+  @else if $point == small {
+    @media (max-width: $mediumMinWidth - 1px) { @content; }
+  }
+  @else if $point == medium {
+    @media (min-width: $mediumMinWidth) { @content; }
+  }
+  @else if $point == large {
+    @media (min-width: $largeMinWidth) { @content; }
+  }
+  @else if $point == small-landscape {
+    @media (max-width: $mediumMinWidth - 1px) and (orientation: landscape) { @content; }
+  }
+  @else if $point == small-portrait {
+    @media (max-width: $mediumMinWidth - 1px) and (orientation: portrait) { @content; }
+  }
+  @else if $point == medium-landscape {
+    @media (min-width: $mediumMinWidth) and (orientation: landscape){ @content; }
+  }
+  @else if $point == medium-portrait {
+    @media (min-width: $mediumMinWidth) and (orientation: portrait){ @content; }
+  }
+  @else if $point == large-landscape {
+    @media (min-width: $largeMinWidth) and (orientation: landscape) { @content; }
+  }
+  @else if $point == large-portrait {
+    @media (min-width: $largeMinWidth) and (orientation: portrait) { @content; }
+  }
+}
+
+@mixin transition($transition-property, $transition-time, $method) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}
+
+@mixin tooltip($background-color: white,
+               $padding: 0.5em,
+               $arrow-base: 1em,
+               $arrow-length: 0.5em,
+               $border-width: 0,
+               $border-color: false) {
+
+  position: absolute;
+  padding: $padding;
+  box-sizing: border-box;
+  margin-bottom: $arrow-length;
+  background-color: $background-color;
+  cursor: default;
+  visibility: hidden;
+
+  &:after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    width: 0; height: 0;
+    border-top: ($arrow-length - $border-width) solid $background-color;
+    border-left: ($arrow-base / 2 - $border-width) solid transparent;
+    border-right: ($arrow-base / 2 - $border-width) solid transparent;
+    margin-left: ($border-width - $arrow-base / 2);
+  }
+
+  @if $border-width {
+    border: $border-width solid $border-color;
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 100%; left: 50%;
+      width: 0; height: 0;
+      border-top: $arrow-length solid $border-color;
+      border-left: ($arrow-base / 2) solid transparent;
+      border-right: ($arrow-base / 2) solid transparent;    
+      margin-left: ($arrow-base / -2);
+    }
+  }
+}

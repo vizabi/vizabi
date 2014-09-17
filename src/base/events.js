@@ -1,165 +1,65 @@
-define([], function() {
-    // Registers an instance as child of another instance.
-    function register(parentInstance, childInstance) {
-        parentInstance.instances.push(childInstance);
-    }
+define(['jquery', 'underscore'], function($, _) {
+    
+    var Events = {
+        events: {}, //holds each event, identified by name
 
-    // Adds an event to an instance
-    //
-    // @instance - events manager instance's object ('this')
-    // @event - name of the event
-    // @func - function to be triggered
-    function addEvent(instance, event, func) {
-        if (!instance) return;
-
-        if (!instance.events[event]) {
-            instance.events[event] = [];
-        }
-
-        if (typeof func === 'function') {
-            instance.events[event].push(func);
-        }
-    }
-
-    // Removes a binded function from the list of triggerable functions.
-    // This is useful if you want to remove a particular function from the list
-    // of triggerable functions. You can remove all by omitting the func
-    // (third) argument. Note that the function deletion occurs by reference
-    //
-    // @instance - events manager instance's object
-    // @event - name of the event
-    // @func - function to be deleted
-    function removeFunction(instance, event, func) {
-        if (typeof event === 'string') {
-            if (instance.events[event]) {
-                if (typeof func === 'function') {
-                    var evts = instance.events[event];
-                    while (evts.indexOf(func) !== -1) {
-                        evts.splice(evts.indexOf(func), 1);
-                    }
-                } else {
-                    instance.events[event] = [];
-                }
-            }
-        }
-    }
-
-    // Binds a function to an event
-    //
-    // @instance - events manager instance's object
-    // @eventArray - event/array of events to be binded
-    // @func - function to be triggered
-    function bind(instance, eventArray, func) {
-        if (typeof eventArray === 'string') {
-            addEvent(instance, eventArray, func);
-        } else if ((Array.isArray && Array.isArray(eventArray)) ||
-            Object.prototype.toString.call(eventArray) === '[object Array]') {
-            for (var i = 0; i < eventArray.length; i++) {
-                if (typeof eventArray[i] === 'string') {
-                    addEvent(instance, eventArray[i], func);
-                }
-            }
-        }
-    }
-
-    // Unbinds a function from the list of triggerable functions by an event.
-    // You can pass one event or an array of events to be unbinded.
-    //
-    // @instance - events manager instance's object
-    // @eventArray - event/array of events to be unbinded
-    // @func - function to be removed
-    function unbind(instance, eventArray, func) {
-        if (typeof eventArray === 'string') {
-            removeFunction(instance, eventArray, func);
-        } else if ((Array.isArray && Array.isArray(eventArray)) ||
-            Object.prototype.toString.call(eventArray) === '[object Array]') {
-            for (var i = 0; i < eventArray.length; i++) {
-                removeFunction(instance, eventArray[i], func);
-            }
-        }
-    }
-
-    // Triggers a function 
-    //
-    // @instance - events manager instance's object
-    // @event - event to be triggered
-    // @args - arguments which are passed to the triggered function
-    function trigger(instance, event) {
-        if (typeof event !== 'string' || !instance.events[event]) return;
-
-        var args = Array.prototype.slice.call(arguments).slice(2);
-
-        for (var i = 0; i < instance.events[event].length; i++) {
-            var func = instance.events[event][i];
-            func.apply(null, args);
-        }
-    }
-
-    var eventsManagerSingleton = {    
-        events: {},
-
-        instances: [],
-
-        // Global scope bind
+        //bind a function to a certain event
         bind: function(name, func) {
-            bind(this, name, func);
-        },
 
-        // Global scope unbind
+            //bind multiple at a time
+            if(_.isArray(name)) {
+                for (var i = 0; i < name.length; i++) {
+                    this.bind(name[i], func);
+                };
+                return;
+            }
+
+            if(!_.isArray(this.events[name])) {
+                this.events[name] = [];
+            }
+            if(_.isFunction(func)) {
+                this.events[name].push(func);
+            } else {
+                throw_msg("Can't bind '"+func+"' to event '"+name+"'. It must be a function!");
+            }
+        },
         unbind: function(name, func) {
-            unbind(this, name, func);
-        },
 
-        // Global scope unbind all
+            //unbind multiple at a time
+            if(_.isArray(name)) {
+                for (var i = 0; i < name.length; i++) {
+                    this.unbind(name[i], func);
+                };
+                return;
+            }
+
+            if(_.isFunction(func)) {
+                this.events[name] = _.without(this.events[name], func);
+            } else {
+                this.events[name] = [];
+            }
+        },
         unbindAll: function() {
             this.events = {};
         },
+        //trigger a certain event, executing each function
+        trigger: function(name, args) {
 
-        // Global scope trigger
-        trigger: function(name) {
-            var args = Array.prototype.slice.call(arguments).slice(1);
-            trigger.apply(null, [this, name].concat(args));
-
-            // Global event triggers event on all instances
-            for (var j = 0; j < this.instances.length; j++) {
-                var instance = this.instances[j];
-                instance.trigger.apply(instance, [name].concat(args));
-            }
-        },
-
-        // Creates and returns an instance of the events Manager.
-        instance: function() {
-            var instance = {
-                // this instance's events
-                events: {},
-
-                // Instance level binding
-                bind: function(name, func) {
-                    bind(this, name, func);
-                },
-
-                // Instance level unbinding
-                unbind: function(name, func) {
-                    unbind(this, name, func);
-                },
-
-                // Instance level unbind all
-                unbindAll: function() {
-                    this.events = {};
-                },
-
-                // Instance level triggering
-                trigger: function(name) {
-                    var args = Array.prototype.slice.call(arguments).slice(1);
-                    trigger.apply(null, [this, name].concat(args));
+            if($.type(this.events[name]) === 'undefined') return;
+            for (var i = 0, size=this.events[name].length; i < size; i++) {
+                var f = this.events[name][i];
+                if($.isFunction(f)) {
+                    if($.type(args) === "undefined") {
+                        f();
+                    } else {
+                        f(args);
+                    }
+                } else {
+                    throw_msg("Can't execute '"+func+"' on event '"+name+"'. It must be a function!");
                 }
             };
-
-            register(this, instance);
-            
-            return instance;
         }
-    };
+    }
 
-    return eventsManagerSingleton;
+    return Events;
 });
