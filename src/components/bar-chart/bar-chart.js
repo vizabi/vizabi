@@ -41,20 +41,16 @@ define([
         //TODO: Optimize data binding
         update: function() {
             var indicator = this.model.getState("indicator"),
-                data = this.model.getData()[0][0],
+                data = this.model.getData()[0],
                 year = this.model.getState("time"),
                 categories = this.model.getState("show")["geo.categories"],
-                countries = this.model.getState("show")["geo"],
-                data_all_years = data.filter(function(row) {
-                    return countries.indexOf(row["geo"])>= 0;
-                }),
-                data_curr_year = data_all_years.filter(function(row) {
+                data_curr_year = data.filter(function(row) {
                     return (row.time == year);
                 }),
-                minValue = d3.min(data_all_years, function(d) {
+                minValue = d3.min(data, function(d) {
                     return +d[indicator];
                 }),
-                maxValue = d3.max(data_all_years, function(d) {
+                maxValue = d3.max(data, function(d) {
                     return +d[indicator];
                 }),
                 scale = this.model.getState("scale"),
@@ -65,7 +61,7 @@ define([
             // Create X axis scale, X axis function and call it on element
             x = d3.scale.ordinal();
 
-            x.domain(_.map(data_all_years, function(d, i) {
+            x.domain(_.map(data, function(d, i) {
                 return d["geo.name"];
             }));
 

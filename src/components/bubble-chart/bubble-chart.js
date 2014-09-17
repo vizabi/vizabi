@@ -122,23 +122,19 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            data = this.model.getData()[0][0];
+            data = this.model.getData()[0];
             indicators = this.model.getState("indicator"),
-            categories = this.model.getState("show")["geo.categories"],
-            countries = this.model.getState("show")["geo"],
-            selected_countries = data.filter(function(row) {
-                    return countries.indexOf(row["geo"])>= 0;
-            });
+            categories = this.model.getState("show")["geo.categories"];
 
             var _this = this,
                 year = this.model.getState("time"),
                 minValue = _.map(indicators, function(indicator) {
-                    return d3.min(selected_countries, function(d) {
+                    return d3.min(data, function(d) {
                         return +d[indicator];
                     })
                 }),
                 maxValue = _.map(indicators, function(indicator) {
-                    return d3.max(selected_countries, function(d) {
+                    return d3.max(data, function(d) {
                         return +d[indicator];
                     })
                 }),
@@ -257,10 +253,10 @@ define([
             yearEl.text(year);
             bubbles.selectAll(".bubble").remove();
             bubbles.selectAll(".bubble")
-                .data(interpolateData(selected_countries , indicators, year))
+                .data(interpolateData(data , indicators, year))
                 .enter().append("circle")
                 .attr("class", "bubble");
-
+ 
             this.resize();
             this.resizeStage();
             this.resizeBubbles();
@@ -273,8 +269,7 @@ define([
     function interpolateData(data, indicators, year) {
 
         yearData = _.filter(data, function(d) {
-            return (d.time == year && 
-                        countries.indexOf(d["geo"]) >= 0);
+            return (d.time == year);
         });
 
         return yearData.map(function(d) {

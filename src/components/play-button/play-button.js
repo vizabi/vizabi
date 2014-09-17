@@ -68,18 +68,11 @@ define([
             container.addClass("playing");
             var _this = this,
                 yearValue = this.model.getState("time"),
-                data = this.model.getData()[0][0],
-                timeRange = this.model.getState("timeRange")[0].split("-"),
-                countries = this.model.getState("show").geo,
-                minYear = timeRange[0],
-                maxYear = timeRange[1],
-                filtered = data.filter(function(row) {
-                    return (countries.indexOf(row.geo) >=0 && row.time >= minYear && row.time <= maxYear);
-                });
-                minValue = d3.min(filtered, function(d) {
+                data = this.model.getData()[0],
+                minValue = d3.min(data, function(d) {
                     return +d.time;
                 }),
-                maxValue = d3.max(filtered, function(d) {
+                maxValue = d3.max(data, function(d) {
                     return +d.time;
                 });
 

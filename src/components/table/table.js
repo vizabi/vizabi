@@ -21,13 +21,7 @@ define([
 
             //TODO: mapping of columns and data
             var columns = this.model.getState().columns,
-                data = this.model.getData()[0][0],
-                countries = this.model.getState("show")["geo"],
-                minYear = this.model.getState("timeRange")[0].split("-")[0],
-                maxYear = this.model.getState("timeRange")[0].split("-")[1],
-                data_curr_range = data.filter(function(row) {
-                    return (countries.indexOf(row["geo"]) >= 0) && (row.time >= minYear && row.time <= maxYear);
-                });
+                data = this.model.getData()[0];
 
             var table = this.element;
             table.html("");
@@ -48,7 +42,7 @@ define([
 
             // create a row for each object in the data
             var rows = tbody.selectAll("tr")
-                .data(data_curr_range)
+                .data(data)
                 .enter()
                 .append("tr");
 
