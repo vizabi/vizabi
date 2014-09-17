@@ -2,10 +2,12 @@ define([
     'jquery',
     'base/utils',
     'base/component',
+    'base/model',
     'smartpicker'
-], function($, utils, Component, SmartPicker) {
+], function($, utils, Component, Model, SmartPicker) {
 
-    var picker;
+    var picker,
+        countries;
 
     var PickerGeo = Component.extend({
         init: function(parent, options) {
@@ -14,11 +16,28 @@ define([
 
         postRender: function() {
             var _this = this;
-            //instantiate a new geoMult picker
-            picker = new SmartPicker('mult', 'geo-picker', {
-                contentData: {
-                    text: "Select the countries",
-                    options: [{
+
+            //load countries and then initialize pickers
+            this.loadCountries().then(function(country_list) {
+                _this.initializePicker(country_list);
+            });
+        },
+
+        //load list of countries
+        loadCountries: function() {
+            var defer = $.Deferred(),
+                language = this.model.get("language"),
+                query = this.getQuery(),
+                countries = new Model();
+
+            //set the correct source
+            countries.setSource(this.data);
+
+            //load data and resolve the defer when it's done
+            $.when(
+                countries.load(query, language, {})
+            ).done(function() {
+                var country_list = [{
                         value: "swe",
                         name: "Sweden"
                     }, {
@@ -27,7 +46,21 @@ define([
                     }, {
                         value: "fin",
                         name: "Finland"
-                    }, ]
+                    }, ];
+                defer.resolve(country_list);
+            });
+
+            return defer;
+
+        },
+
+        //initialize picker with list of countries
+        initializePicker: function(country_list) {
+            //instantiate a new geoMult picker
+            picker = new SmartPicker('mult', 'geo-picker', {
+                contentData: {
+                    text: "Select the countries",
+                    options: country_list || []
                 },
                 width: 320,
                 confirmButton: "OK",
@@ -43,7 +76,6 @@ define([
             });
         },
 
-        //TODO: this should be separated from the buttonlist (it was hardcoded)
         //pass a list of countries to the state
         selectCountries: function(countriesArr) {
             var state = {
@@ -56,11 +88,17 @@ define([
         },
 
         show: function() {
-            picker.show();
+            if (picker && picker.show) {
+                picker.show();
+            }
         },
 
         update: function() {
-           
+
+        },
+
+        getQuery: function() {
+          return "";
         }
 
     });
