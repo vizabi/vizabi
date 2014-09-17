@@ -4,9 +4,8 @@ define([
     'jquery',
     'underscore',
     'base/utils',
-    'base/component',
-    'smartpicker'
-], function($, _, utils, Component, SmartPicker) {
+    'base/component'
+], function($, _, utils, Component) {
 
     var geo_picker;
 
@@ -16,8 +15,15 @@ define([
             this.name = 'buttonlist';
             this.template = "components/" + this.name + "/" + this.name;
             //list of buttons to be rendered
-            this.template_data = { buttons: options.buttons } || { buttons:[] };
-            
+            this.template_data = {
+                buttons: options.buttons
+            } || {
+                buttons: []
+            };
+
+            //add sub components
+            this.addComponent('picker-geo', {});
+
             this._super(core, options);
 
         },
@@ -26,20 +32,7 @@ define([
             var _this = this;
             this.placeholder = utils.d3ToJquery(_this.placeholder);
 
-            //instantiate a new geoMult picker
-            geo_picker = new SmartPicker('geoMult', 'geo-picker', {
-                width: 320,
-                confirmButton: "OK",
-                //what to do after user selects a country
-                onSet: function(selected) {
-                    //extract the value only
-                    var countries = _.map(selected.selected, function(country) {
-                        return country.value;
-                    });
-                    //pass the selected countries to state
-                    _this.selectCountries(countries);
-                }
-            });
+            geo_picker = this.components['picker-geo'];
 
             //show the picker when the correct button is pressed
             var geo_button = this.placeholder.find('#geo');
@@ -83,17 +76,6 @@ define([
                 });
                 $button_more.removeClass('hidden');
             }
-        },
-
-        //TODO: this should be separated from the buttonlist (it was hardcoded)
-        //pass a list of countries to the state
-        selectCountries: function(countriesArr) {
-            var state = {
-                entity: _.map(countriesArr, function(c) {
-                    return "country/" + c.toLowerCase();
-                })
-            };
-            this.setState(state);
         }
 
     });

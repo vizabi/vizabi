@@ -44,7 +44,9 @@ define([
             promise.then(function() {
 
                 // add css loading class to hide elements
-                _this.element.classed("loading", true);
+                if (_this.element) {
+                    _this.element.classed("loading", true);
+                }
 
                 // attempt to execute postRender
                 if (typeof callback === 'function') {
@@ -52,30 +54,30 @@ define([
                 }
 
             })
+            // After postRender, resize and load components
+            .then(function() {
+                return _this.loadComponents();
+            })
             // If there is no callback
             .then(function() {
                 return _this.execute(_this.postRender);
             })
-            // After postRender, resize and load components
+            // After loading components, render them
             .then(function() {
-
                 //TODO: Chance of refactoring
                 //Every widget binds its resize function to the resize event
                 _this.resize();
                 _this.events.bind('resize', function() {
                     _this.resize();
                 });
-
-                return _this.loadComponents();
-            })
-            // After loading components, render them
-            .then(function() {
                 return _this.renderComponents();
             })
             // After rendering the components, resolve the defer
             .done(function() {
                 //not loading anytmore, remove class
-                _this.element.classed("loading", false);
+                if (_this.element) {
+                    _this.element.classed("loading", false);
+                }
 
                 defer.resolve();
             });
@@ -134,7 +136,7 @@ define([
             var _this = this,
                 defer = $.Deferred(),
                 name = component.name,
-                id = _.uniqueId(name),
+                id = name, //_.uniqueId(name),
                 path = "components/" + name + "/" + name,
                 component_model = this.model;
 
@@ -186,32 +188,39 @@ define([
             var _this = this;
             var defer = $.Deferred();
 
-            this.template_data = _.extend(this.template_data, { t: this.getTFunction() })
+            this.template_data = _.extend(this.template_data, {
+                t: this.getTFunction()
+            })
 
-            //require the template file
-            require(["text!" + this.template + ".html"], function(html) {
-                //render template using underscore
-                var rendered = _.template(html, _this.template_data);
+            if (this.template) {
+                //require the template file
+                require(["text!" + this.template + ".html"], function(html) {
+                    //render template using underscore
+                    var rendered = _.template(html, _this.template_data);
 
-                var root = _this.parent.element || d3;
-                //place the contents into the correct placeholder
-                _this.placeholder = (_.isString(_this.placeholder)) ? root.select(_this.placeholder) : _this.placeholder;
-                _this.placeholder.html(rendered);
+                    var root = _this.parent.element || d3;
+                    //place the contents into the correct placeholder
+                    _this.placeholder = (_.isString(_this.placeholder)) ? root.select(_this.placeholder) : _this.placeholder;
+                    _this.placeholder.html(rendered);
 
-                //TODO: refactor the way we select the first child
-                //define this element inside the placeholder
-                try {
-                    _this.element = utils.jQueryToD3(
-                        utils.d3ToJquery(_this.placeholder).children().first()
-                    );
-                } catch (err) {
-                    console.error("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
-                    console.error(err);
-                }
+                    //TODO: refactor the way we select the first child
+                    //define this element inside the placeholder
+                    try {
+                        _this.element = utils.jQueryToD3(
+                            utils.d3ToJquery(_this.placeholder).children().first()
+                        );
+                    } catch (err) {
+                        console.error("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
+                        console.error(err);
+                    }
 
-                //Resolve defer
+                    //Resolve defer
+                    defer.resolve();
+                });
+
+            } else {
                 defer.resolve();
-            });
+            }
 
             return defer;
         },
