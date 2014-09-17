@@ -112,24 +112,6 @@ define([
         //     };
         // },
 
-        load: function(events) {
-            var _this = this,
-                defer = $.Deferred();
-
-            //get info from state
-            var language = this.model.getState("language"),
-                query = this.getQuery();
-
-            //load data and resolve the defer when it's done
-            $.when(
-                this.model.data.load(query, language, events)
-            ).done(function() {
-                defer.resolve();
-            });
-
-            return defer;
-        },
-
         //build query from state
 
         //TODO: this could be moved to the tool if we find a

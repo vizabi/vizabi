@@ -22,6 +22,7 @@ define([
 
             this.model = new ToolModel(options.data);
             this.model.setState(options.state, true);
+
             //set language parameters
             this.model.set("language", options.language);
             this.model.set("ui_strings", options.ui_strings);
