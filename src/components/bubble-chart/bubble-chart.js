@@ -124,7 +124,6 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-
             data = this.model.getData()[1][0];
             labels = this.model.getData()[0][0];
             indicators = this.model.getState("indicator"),
@@ -265,7 +264,9 @@ define([
                 .enter().append("circle")
                 .attr("class", "bubble");
 
-            //this.resizeBubbles();
+            this.resize();
+            this.resizeStage();
+            this.resizeBubbles();
         }
 
 

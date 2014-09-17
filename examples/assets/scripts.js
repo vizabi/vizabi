@@ -113,7 +113,7 @@ var url = {};
 
 function parseURL() {
     var hash = window.location.hash;
-    console.log(hash);
+
     if (hash) {
         options = JSON.parse(hash.replace("#", ""));
 
