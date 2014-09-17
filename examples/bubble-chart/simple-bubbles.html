@@ -115,7 +115,10 @@ $(function() {
 function setState() {
     var newOption = {
         state: {
-            entity: ['planet/world'],
+            show: {
+                geo: ['world'],
+                'geo.categories': ['planet']
+            },
             time: 2000,
             indicator: ['lex', 'gdp', 'pop'],
             scale: ['linear', 'linear', 'linear'],

@@ -28,7 +28,7 @@
         <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
             <span>OPTIONS</span>
             <ul class="dropdown">
-                <li><a onclick="setState()">WORLD - 2000</a>
+                <li><a onclick="setState()">FIN - 2000</a>
                 </li>
                 <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
                 </li>
@@ -100,10 +100,10 @@ function setState() {
     var newOption = {
         state: {
             show: {
-                geo: ['swe', 'nor', 'world'],
-                'geo.categories': ['country','planet']
+                geo: ['fin'],
+                'geo.categories': ['country']
             },
-            time: 2007,
+            time: 2005,
             indicator: 'gdp',
             unit: 100000000
         }
