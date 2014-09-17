@@ -68,7 +68,7 @@ var myVizabi;
 $(function() {
     var options = {
         //state
-        state: {
+        state: url.state || {
             show: {
                 geo: ['swe'],
                 'geo.categories': ['country']
@@ -87,7 +87,7 @@ $(function() {
          * i18n strings are passed as an object to Vizabi
          */
 
-        language: "en",
+        language: url.lang || "en",
         ui_strings: {
             en: {
                 "title": "Table Title",

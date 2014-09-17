@@ -60,10 +60,13 @@
 </div>
 
 <script>
+
+var myVizabi;
+
+$(function() {
     var options = {
         //state
-        state: {
-            language: 'en',
+        state: url.state || {
             show: {
                 geo: ['swe', 'nor', 'fi', 'world'],
                 'geo.categories': ['country', 'planet']
@@ -78,6 +81,21 @@
         data: {
             reader: 'local-json',
             path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
+        },
+
+        //language
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Table Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título da Tabela",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
         },
 
         bind: {
@@ -95,6 +113,8 @@
     };
 
     myVizabi = new Vizabi("bar-chart", "#bar-chart", options);
+
+});
 
 function setState() {
     var newOption = {
