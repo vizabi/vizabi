@@ -39,6 +39,7 @@ define([
         xScale,
         yScale,
         radiusScale,
+        colorScale, 
         //axis
         xAxis,
         yAxis,
@@ -74,6 +75,10 @@ define([
 
     function key(d) {
         return d.name;
+    }
+
+    function color(d) { 
+        return d.region; 
     }
 
     function position(dot) {
@@ -170,6 +175,8 @@ define([
                     return d / units[1];
                 }).tickSize(6, 0);
 
+            colorScale = d3.scale.category10();
+
             //bubbles
             this.setYear(year);
 
@@ -255,7 +262,8 @@ define([
             bubbles.selectAll(".bubble")
                 .data(interpolateData(data , indicators, year))
                 .enter().append("circle")
-                .attr("class", "bubble");
+                .attr("class", "bubble")
+                .style("fill", function(d) { return colorScale(color(d)); });
  
             this.resize();
             this.resizeStage();
@@ -275,6 +283,7 @@ define([
         return yearData.map(function(d) {
             var obj = {
                 name: d["geo.name"],
+                region: d["geo.category"][0]
             };
             _.each(indicators, function(indicator) {
                 obj[indicator] = d[indicator];
@@ -283,6 +292,8 @@ define([
             return obj;
         });
     }
+
+
 
     return BubbleChart;
 });
