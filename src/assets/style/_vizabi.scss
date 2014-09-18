@@ -1,10 +1,20 @@
 @import "_common";
 @import "_mixins";
-
 // Import default styles for font awesome
-$fa-font-path: "../lib/font-awesome/fonts";
+$fa-font-path:"../lib/font-awesome/fonts";
 @import "../../../lib/font-awesome/scss/font-awesome";
-
 //TODO: remove compass from smart-picker (check smart-pick repo later!)
 // Import default styles for smart picker
 @import "../../../lib/smart-picker/dist/styles/_smart-picker";
+
+.simpTooltip {
+    position: absolute;
+    background: #666;
+    padding: 7px 10px;
+    color: white;
+    font-size: 12px;
+    display: none;
+    z-index: 11;
+    @include border-radius(3px);
+    font-weight: 300;
+}
