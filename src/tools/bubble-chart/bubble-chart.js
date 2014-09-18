@@ -42,7 +42,7 @@ define([
 
             var query = [{
                 from: 'data',
-                select: _.union(['geo', 'geo.name', 'time'],this.model.getState("indicator")),
+                select: _.union(['geo', 'geo.name', 'time', 'geo.region'],this.model.getState("indicator")),
                 where: {
                     geo: this.model.getState("show").geo,
                     'geo.category': this.model.getState("show")['geo.category'], 

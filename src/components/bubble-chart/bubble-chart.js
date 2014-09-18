@@ -283,7 +283,7 @@ define([
         return yearData.map(function(d) {
             var obj = {
                 name: d["geo.name"],
-                region: d["geo.category"][0]
+                region: d["geo.region"] || "world"
             };
             _.each(indicators, function(indicator) {
                 obj[indicator] = d[indicator];
