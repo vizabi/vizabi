@@ -28,9 +28,11 @@
         <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
             <span>OPTIONS</span>
             <ul class="dropdown">
+                <li><a onclick="manyCountries()">Many Countries</a>
+                </li>
                 <li><a onclick="setState()">WORLD - 2000 </a>
                 </li>
-                <li><a onclick="changeIndicator()">SWE, NOR</a>
+                <li><a onclick="changeIndicator()">SWE, NOR, ZAF</a>
                 </li>
             </ul>
         </div>
@@ -68,14 +70,14 @@ $(function() {
         //state
         state: url.state || {
             show: {
-                geo: ['swe', 'nor','world'],
-                'geo.category': ['country', 'planet']
+                geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                'geo.category': ['country']
             },
-            timeRange: ["2000-2009"],
+            timeRange: ["1990-2012"],
             time: 2007,
             indicator: ['lex', 'gdp', 'pop'],
             scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000, 1000]
+            unit: [1, 1000000000, 1000]
         },
         //path
         data: {
@@ -132,13 +134,30 @@ function changeIndicator() {
     var newOption = {
         state: {
             show: {
-                geo: ['swe', 'nor'],
+                geo: ['swe', 'nor', 'zaf'],
                 'geo.category': ['country']
             },
             time: 2007,
             indicator: ['pop', 'lex', 'gdp'],
             scale: ['linear', 'linear', 'linear'],
             unit: [100000, 1, 1000000]
+        }
+    };
+    myVizabi.setOptions("#bubble-chart", newOption);
+}
+
+function manyCountries() {
+    var newOption = {
+        state: url.state || {
+            show: {
+                geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                'geo.category': ['country']
+            },
+            timeRange: ["1990-2012"],
+            time: 2007,
+            indicator: ['lex', 'gdp', 'pop'],
+            scale: ['linear', 'linear', 'linear'],
+            unit: [1, 1000000000, 1000]
         }
     };
     myVizabi.setOptions("#bubble-chart", newOption);
