@@ -26,7 +26,8 @@
                      query = queries[i];
 
                  var promise = $.getJSON(fakeResponsePath, function(res) {
-                         var geos = query.where.geo
+                         var geos = query.where.geo,
+                             categories = query.where['geo.category'],
                              timeRange = query.where.time,
                              data = res[0];
 
@@ -34,6 +35,13 @@
                          if (geos[0] != "*") {
                              data = data.filter(function(row) {
                                  return geos.indexOf(row["geo"]) >= 0;
+                             });
+                         }
+
+                         //if geos is not everything, filter geos
+                         if (categories && categories[0] != "*") {
+                             data = data.filter(function(row) {
+                                 return categories.indexOf(row["geo.category"][0]) >= 0;
                              });
                          }
 
