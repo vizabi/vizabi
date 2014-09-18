@@ -30,7 +30,7 @@
             <ul class="dropdown">
                 <li><a onclick="setState()">WORLD - 2000 </a>
                 </li>
-                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                <li><a onclick="changeIndicator()">SWE, NOR</a>
                 </li>
             </ul>
         </div>
@@ -69,7 +69,7 @@ $(function() {
         state: url.state || {
             show: {
                 geo: ['swe', 'nor','world'],
-                'geo.categories': ['country', 'planet']
+                'geo.category': ['country', 'planet']
             },
             timeRange: ["2000-2009"],
             time: 2007,
@@ -117,7 +117,7 @@ function setState() {
         state: {
             show: {
                 geo: ['world'],
-                'geo.categories': ['planet']
+                'geo.category': ['planet']
             },
             time: 2000,
             indicator: ['lex', 'gdp', 'pop'],
@@ -133,12 +133,12 @@ function changeIndicator() {
         state: {
             show: {
                 geo: ['swe', 'nor'],
-                'geo.categories': ['country']
+                'geo.category': ['country']
             },
             time: 2007,
             indicator: ['pop', 'lex', 'gdp'],
             scale: ['linear', 'linear', 'linear'],
-            unit: [1000, 1, 1000000]
+            unit: [100000, 1, 1000000]
         }
     };
     myVizabi.setOptions("#bubble-chart", newOption);

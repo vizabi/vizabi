@@ -1,4 +1,3 @@
-//TODO: Rename postrender & resize 
 define([
     'd3',
     'underscore',
@@ -57,8 +56,7 @@ define([
         //data
         data, 
         countries = [],
-        labels, 
-        labels_selected_country,
+        selected_countries,
         indicators;
 
     // Various accessors that specify the dimensions of data to visualize.
@@ -124,14 +122,9 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            data = this.model.getData()[1][0];
-            labels = this.model.getData()[0][0];
+            data = this.model.getData()[0];
             indicators = this.model.getState("indicator"),
-            categories = this.model.getState("show")["geo.categories"],
-            countries = this.model.getState("show")["geo"],
-            labels_selected_country = labels.filter(function(row) {
-                    return countries.indexOf(row["geo"])>= 0;
-            });
+            categories = this.model.getState("show")["geo.categories"];
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -260,10 +253,10 @@ define([
             yearEl.text(year);
             bubbles.selectAll(".bubble").remove();
             bubbles.selectAll(".bubble")
-                .data(interpolateData(data, labels_selected_country , indicators, year))
+                .data(interpolateData(data , indicators, year))
                 .enter().append("circle")
                 .attr("class", "bubble");
-
+ 
             this.resize();
             this.resizeStage();
             this.resizeBubbles();
@@ -273,18 +266,15 @@ define([
     });
 
     // Interpolates the dataset for the given (fractional) year.
-    function interpolateData(data, labels, indicators, year) {
+    function interpolateData(data, indicators, year) {
 
         yearData = _.filter(data, function(d) {
-            return (d.time == year && 
-                        countries.indexOf(d["geo"]) >= 0);
+            return (d.time == year);
         });
 
         return yearData.map(function(d) {
             var obj = {
-                name: _.findWhere(labels, {
-                    "geo.name": d["geo.name"]
-                })["geo.name"],
+                name: d["geo.name"],
             };
             _.each(indicators, function(indicator) {
                 obj[indicator] = d[indicator];

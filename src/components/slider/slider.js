@@ -43,7 +43,7 @@ define([
             var _this = this,
                 year = this.model.getState("time");
 
-            var data = this.model.getData()[0][0],
+            var data = this.model.getData()[0],
                 minValue = d3.min(data, function(d) {
                     return +d.time;
                 }),

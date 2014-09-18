@@ -21,22 +21,45 @@
 
              _this.data = [];
 
-             for (var i=0; i < queries.length; i++) {
-                var fakeResponsePath = path.replace("response", "response_" + i);
-                var promise = $.getJSON(fakeResponsePath, function(res) {
-                    _this.data.push(res);
-                })
-                .error(function() { 
-                    console.log("Error Happened While Lading File: " + fakeResponsePath); 
-                });
+             for (var i = 0; i < queries.length; i++) {
+                 var fakeResponsePath = path.replace("response", "response_" + i),
+                     query = queries[i];
 
-                promises.push(promise);
+                 var promise = $.getJSON(fakeResponsePath, function(res) {
+                         var geos = query.where.geo
+                             timeRange = query.where.time,
+                             data = res[0];
+
+                         //if geos is not everything, filter geos
+                         if (geos[0] != "*") {
+                             data = data.filter(function(row) {
+                                 return geos.indexOf(row["geo"]) >= 0;
+                             });
+                         }
+
+                         //if there's a timeRange, filter range
+                         if(timeRange) {
+                            timeRange = timeRange[0].split("-");
+                            var min = timeRange[0], max = timeRange[1];
+
+                            data = data.filter(function(row) {
+                                 return row["time"] >= min && row["time"] <= max;
+                             });
+                         }
+
+                         _this.data.push(data);
+                     })
+                     .error(function() {
+                         console.log("Error Happened While Lading File: " + fakeResponsePath);
+                     });
+
+                 promises.push(promise);
              }
 
              $.when.apply(null, promises).done(function() {
                  defer.resolve();
              });
- 
+
              return defer;
          },
 
@@ -46,6 +69,6 @@
 
      });
 
-    return LocalJSONReader;
+     return LocalJSONReader;
 
  });

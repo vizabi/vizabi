@@ -70,12 +70,13 @@ define([
                 yearValue = this.model.getState("time"),
                 data = this.model.getData()[0],
                 minValue = d3.min(data, function(d) {
-                    return +d.year;
+                    return +d.time;
                 }),
                 maxValue = d3.max(data, function(d) {
-                    return +d.year;
-                }),
-                range = [minValue, maxValue];
+                    return +d.time;
+                });
+
+            range = [minValue, maxValue];
 
             playInterval = setInterval(function() {
                 if (yearValue > range[1]) {
