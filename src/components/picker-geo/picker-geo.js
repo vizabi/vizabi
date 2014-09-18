@@ -12,11 +12,12 @@ define([
     var PickerGeo = Component.extend({
         init: function(parent, options) {
             this._super(parent, options);
+            this.data = options.data;
         },
 
         postRender: function() {
             var _this = this;
-
+            
             //load countries and then initialize pickers
             this.loadCountries().then(function(country_list) {
                 _this.initializePicker(country_list);
@@ -25,8 +26,10 @@ define([
 
         //load list of countries
         loadCountries: function() {
-            var defer = $.Deferred(),
+            var _this = this,
+                defer = $.Deferred(),
                 language = this.model.get("language"),
+                state = this.model.get("state"),
                 query = this.getQuery(),
                 countries = new Model();
 
@@ -37,16 +40,8 @@ define([
             $.when(
                 countries.load(query, language, {})
             ).done(function() {
-                var country_list = [{
-                        value: "swe",
-                        name: "Sweden"
-                    }, {
-                        value: "nor",
-                        name: "Norway"
-                    }, {
-                        value: "fin",
-                        name: "Finland"
-                    }, ];
+                country_list = countries.get();
+
                 defer.resolve(country_list);
             });
 
@@ -98,7 +93,16 @@ define([
         },
 
         getQuery: function() {
-          return "";
+          var query = [{
+                    select: [
+                        'geo',
+                        'geo.name',
+                    ],
+                    where: {
+                        geo: ["*"]
+                    }}];
+
+            return query;
         }
 
     });

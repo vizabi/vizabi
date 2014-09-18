@@ -29,8 +29,10 @@ define([
                 buttons: [{
                             id: "geo",
                             title: "Country",
-                            icon: "globe"
-                        }]
+                            icon: "globe",
+
+                        }],
+                data: options.data
             });
 
             this._super(parent, options);

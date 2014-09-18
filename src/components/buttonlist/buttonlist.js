@@ -22,7 +22,9 @@ define([
             };
 
             //add sub components
-            this.addComponent('picker-geo', {});
+            this.addComponent('picker-geo', {
+                data: options.data
+            });
 
             this._super(core, options);
 
