@@ -1,25 +1,45 @@
-![Gapminder Vizabi](http://i60.tinypic.com/5bzi9e.jpg)
-Gapminder Vizabi
-===
+![Gapminder Vizabi 0.4](https://camo.githubusercontent.com/76400d9b1e040adb6ee41490de1c311ce967fd05/687474703a2f2f6936302e74696e797069632e636f6d2f35627a6939652e6a7067)
 
-Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema.
+Welcome to the vizabi repository!
 
-## Overview
+####What is Vizabi?
+Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema. You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
-This repo consists of:
+####Can I see it in action?
+Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi-recent/examples).
 
-* the different components that together build up the Vizabi library
-* build scripts and wrapper code that creates the files that are supposed to be distributed to end-users
+#### Where can I find full documentation?
+See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
 
-# Quickstart
+
+### QuickStart
+####Cloning
+In order to run vizabi locally, clone it:
 
 ```sh
 git clone http://github.com/Gapminder/vizabi
 cd vizabi
-git checkout develop
 ```
 
-This project uses npm, grunt and bower. For npm, you will need Node.js installed. Then, run the following commands:
+####Dependencies
+Vizabi depends on [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Grunt](https://github.com/gruntjs/grunt). 
+
+**Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
+
+**Bower** is a package manager and you can install it with npm:
+```
+$ npm install -g bower
+```
+
+**Grunt** is the Javascript task runner and can also be installed with npm:
+```sh
+$ npm install -g grunt-cli
+```
+Now that you have all Vizabi's dependencies in place, you can install Vizabi.
+
+
+####Installing
+run the following commands in the terminal:
 
 ```sh
 npm install -g bower grunt-cli
@@ -27,17 +47,58 @@ npm install
 bower install
 ```
 
-In order to build the project in development mode, type the following.
+####Running and Developing
+We use grunt to build Vizabi. You can run Vizabi for Development or Production: ```grunt [dev|build]```.
+
+In order to run the project in development mode, type the following:
 ```sh
 grunt dev
 ```
+With this, Grunt will automatically start a local server and open the example pages in your browser at [http://localhost:9000/](http://localhost:9000/). You can see the list of data visualization examples . Vizabi support Grunt tasks such as ```watch```, ```copy``` to ease development in this mode.
 
-*If you omit the option dev, the project will be built in the dist folder, but will not run on a local server*
+In order to build the project, type the following:
+```sh
+grunt build
+```
 
-# Examples
+You can find the build output under ```dist/```.
 
-The examples folder contains several examples of Vizabi tools in action. Check them out.
 
-## Development Process
+### Contribution
+ The following list provides some parts that Vizabi will benefit from your contribution:
+ * Unit Testing: Write Unit Tests for Vizabi. The priority is with base classes, of course.
+ * Tools & Components: Create More tools for Vizabi. [D3js](www.d3js.org) gallery has inspiring examples: [https://github.com/mbostock/d3/wiki/Gallery](D3 Gallery)
+ * Styles: Contribute to Vizabi by enhancing the user experience.
+  
+#### Copyright
 
-(to be defined)
+The source code is released under the BSD open source license.
+
+      BSD LICENSE
+    
+      Copyright (c) 2012, Gapminder Foundation
+    
+      All rights reserved.
+    
+      Redistribution and use in source and binary forms, with or without
+      modification, are permitted provided that the following conditions are met:
+          * Redistributions of source code must retain the above copyright
+            notice, this list of conditions and the following disclaimer.
+          * Redistributions in binary form must reproduce the above copyright
+            notice, this list of conditions and the following disclaimer in the
+            documentation and/or other materials provided with the distribution.
+          * Neither the name of the Gapminder Foundation nor the
+            names of its contributors may be used to endorse or promote products
+            derived from this software without specific prior written permission.
+      
+      THIS SOFTWARE IS PROVIDED BY the Gapminder Foundation ''AS IS'' AND ANY
+      EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+      WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+      DISCLAIMED. IN NO EVENT SHALL Gapminder Foundation BE LIABLE FOR ANY
+      DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+      (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+      LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+      ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+      SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
