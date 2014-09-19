@@ -38,9 +38,22 @@ define([
 
             //load data and resolve the defer when it's done
             $.when(
-                countries.load(query, language, {})
+                countries.load(query, language, _this.events)
             ).done(function() {
-                country_list = countries.get();
+                country_list = countries.get()[0];
+                
+                // TODO: remove hard-coded filtering for indicators
+                country_list = country_list.filter(function(row) {
+                    return (row["geo.category"] == "country" &&
+                        row.time === "2000" && row.lex && row.pop && row.gdp);
+                });
+                
+                country_list = country_list.map(function (country) {
+                    return {
+                        value: country["geo"],
+                        name: country["geo.name"]
+                    };
+                });
 
                 defer.resolve(country_list);
             });
@@ -51,6 +64,7 @@ define([
 
         //initialize picker with list of countries
         initializePicker: function(country_list) {
+            var _this = this;
             //instantiate a new geoMult picker
             picker = new SmartPicker('mult', 'geo-picker', {
                 contentData: {
@@ -79,6 +93,7 @@ define([
                     'geo.categories': ['country']
                 },
             };
+
             this.setState(state);
         },
 

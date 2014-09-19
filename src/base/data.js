@@ -55,7 +55,7 @@ define([
 
                     if (isCached && cached && _.isFunction(cached)) {
                         cached();
-                    } else if (!isCached && success) {
+                    } else if (!isCached) {
 
                         //_this.data = $.extend(true, _this.data, _this.reader.getData());
                         _this.data = _this.reader.getData();
