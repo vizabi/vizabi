@@ -12,11 +12,12 @@ define([
     var PickerGeo = Component.extend({
         init: function(parent, options) {
             this._super(parent, options);
+            this.data = options.data;
         },
 
         postRender: function() {
             var _this = this;
-
+            
             //load countries and then initialize pickers
             this.loadCountries().then(function(country_list) {
                 _this.initializePicker(country_list);
@@ -25,8 +26,10 @@ define([
 
         //load list of countries
         loadCountries: function() {
-            var defer = $.Deferred(),
+            var _this = this,
+                defer = $.Deferred(),
                 language = this.model.get("language"),
+                state = this.model.get("state"),
                 query = this.getQuery(),
                 countries = new Model();
 
@@ -35,18 +38,23 @@ define([
 
             //load data and resolve the defer when it's done
             $.when(
-                countries.load(query, language, {})
+                countries.load(query, language, _this.events)
             ).done(function() {
-                var country_list = [{
-                        value: "swe",
-                        name: "Sweden"
-                    }, {
-                        value: "nor",
-                        name: "Norway"
-                    }, {
-                        value: "fin",
-                        name: "Finland"
-                    }, ];
+                country_list = countries.get()[0];
+                
+                // TODO: remove hard-coded filtering for indicators
+                country_list = country_list.filter(function(row) {
+                    return (row["geo.category"] == "country" &&
+                        row.time === "2000" && row.lex && row.pop && row.gdp);
+                });
+                
+                country_list = country_list.map(function (country) {
+                    return {
+                        value: country["geo"],
+                        name: country["geo.name"]
+                    };
+                });
+
                 defer.resolve(country_list);
             });
 
@@ -56,6 +64,7 @@ define([
 
         //initialize picker with list of countries
         initializePicker: function(country_list) {
+            var _this = this;
             //instantiate a new geoMult picker
             picker = new SmartPicker('mult', 'geo-picker', {
                 contentData: {
@@ -84,6 +93,7 @@ define([
                     'geo.categories': ['country']
                 },
             };
+
             this.setState(state);
         },
 
@@ -98,7 +108,16 @@ define([
         },
 
         getQuery: function() {
-          return "";
+          var query = [{
+                    select: [
+                        'geo',
+                        'geo.name',
+                    ],
+                    where: {
+                        geo: ["*"]
+                    }}];
+
+            return query;
         }
 
     });

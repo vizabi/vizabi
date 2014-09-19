@@ -28,7 +28,8 @@ define([
                     id: "geo",
                     title: "Country",
                     icon: "globe"
-                }]
+                }],
+                data: options.data
             });
 
             this._super(parent, options);
