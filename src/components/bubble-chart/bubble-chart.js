@@ -1,8 +1,9 @@
 define([
+    'jquery',
     'd3',
     'underscore',
     'base/component'
-], function(d3, _, Component) {
+], function($, d3, _, Component) {
 
     var profiles = {
         "small": {
@@ -180,6 +181,8 @@ define([
             //bubbles
             this.setYear(year);
 
+            $.simpTooltip();
+
         },
 
         /*
@@ -263,7 +266,8 @@ define([
                 .data(interpolateData(data , indicators, year))
                 .enter().append("circle")
                 .attr("class", "bubble")
-                .style("fill", function(d) { return colorScale(color(d)); });
+                .style("fill", function(d) { return colorScale(color(d)); })
+                .attr("data-tooltip", function(d) { return d.name; });
  
             this.resize();
             this.resizeStage();
@@ -293,7 +297,32 @@ define([
         });
     }
 
-
+    //tooltip plugin (hotfix)
+    //TODO: remove this plugin from here
+    $.extend({
+        simpTooltip: function(options) {
+            var defaults = {
+                position_x: -30,
+                position_y: 20,
+                target: "[data-tooltip]",
+                extraClass: ""
+            };
+            options = $.extend(defaults, options);
+            var targets = $(options.target);
+            var xOffset = options.position_x;
+            var yOffset = options.position_y;
+            targets.hover(function(e) {
+                var t = $(this).attr('data-tooltip');
+                $("body").append("<div id='simpTooltip' class='simpTooltip " + options.extraClass + "'>" + t + "</div>");
+                $("#simpTooltip").css("top", (e.pageY - xOffset) + "px").css("left", (e.pageX + yOffset) + "px").fadeIn("fast");
+            }, function() {
+                $("#simpTooltip").remove();
+            });
+            targets.mousemove(function(e) {
+                $("#simpTooltip").css("top", (e.pageY + yOffset) + "px").css("left", (e.pageX + xOffset) + "px");
+            });
+        }
+    });
 
     return BubbleChart;
 });
