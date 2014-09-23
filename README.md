@@ -57,7 +57,7 @@ Go to Vizabi directory and run the following commands in the terminal:
 ```sh
 npm install
 bower install
-```sh
+```
 
 
 *Note*: You may need to run ```npm install``` with *sudo*.
