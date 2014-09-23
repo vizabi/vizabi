@@ -27,25 +27,40 @@ Vizabi depends on [Npm](https://github.com/npm/npm), [Bower](https://github.com/
 **Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
 
 **Bower** is a package manager and you can install it with npm:
-```
-$ npm install -g bower
+```sh
+$ sudo npm install -g bower
 ```
 
 **Grunt** is the Javascript task runner and can also be installed with npm:
 ```sh
-$ npm install -g grunt-cli
+$ sudo npm install -g grunt-cli
 ```
+
+**Ruby and Ruby Gems** are needed for building Vizabi. Here you can find tutorial to install *Ruby* and *Rubygems*:
+
+* [Install Ruby] (https://www.ruby-lang.org/en/installation/)
+* [Install Rubygems] (https://rubygems.org/pages/download)
+
+**SASS**
+
+```sh
+sudo gem install sass
+```
+
 Now that you have all Vizabi's dependencies in place, you can install Vizabi.
 
 
+
 ####Installing
-run the following commands in the terminal:
+Go to Vizabi directory and run the following commands in the terminal:
 
 ```sh
-npm install -g bower grunt-cli
 npm install
 bower install
-```
+```sh
+
+
+*Note*: You may need to run ```npm install``` with *sudo*.
 
 ####Running and Developing
 We use grunt to build Vizabi. You can run Vizabi for Development or Production: ```grunt [dev|build]```.
@@ -70,7 +85,7 @@ You can find the build output under ```dist/```.
  * Tools & Components: Create More tools for Vizabi. [D3js](www.d3js.org) gallery has inspiring examples: [https://github.com/mbostock/d3/wiki/Gallery](D3 Gallery)
  * Styles: Contribute to Vizabi by enhancing the user experience.
   
-#### Copyright
+#### License
 
 The source code is released under the BSD open source license.
 
