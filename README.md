@@ -1,4 +1,4 @@
-![Gapminder Vizabi 0.4](https://camo.githubusercontent.com/76400d9b1e040adb6ee41490de1c311ce967fd05/687474703a2f2f6936302e74696e797069632e636f6d2f35627a6939652e6a7067)
+![Gapminder Vizabi 0.4](http://static.gapminder.org/vizabi/vizabi.jpg)
 
 Welcome to the vizabi repository!
 
