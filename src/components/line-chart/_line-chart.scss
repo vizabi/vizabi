@@ -1,0 +1,44 @@
+#line-chart {
+    @include absolute(0px,0px,0px,0px);
+    @include font-size(18px);
+    font-family: $fontFamily;
+    color: #666666;
+    width: 100%;
+    height: 100%;
+
+    .title {
+        color: $colorIMmediumBlue;
+        fill: currentColor;
+    }
+    .axis {
+        fill: none;
+        stroke: #999999;
+        color: #999999;
+        text {
+            fill: currentColor;
+            stroke: none;
+        }
+    }
+    .line {
+        fill: $colorGreen;
+        stroke: none;
+    }
+    .line:nth-child(2n) {
+        fill: $colorRed;
+    }
+    .line:nth-child(3n) {
+        fill: $colorBlue;
+    }
+}
+
+&.medium {
+    #line-chart {
+        @include font-size(15px);
+    }
+}
+
+&.small {
+    #line-chart {
+        @include font-size(12px);
+    }
+}
