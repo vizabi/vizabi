@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src/components/bubble-chart/bubble-chart.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src/components/bubble-chart/bubble-chart.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">71.46</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">328</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">32.31</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">3.32</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">define([
+    &#039;jquery&#039;,
+    &#039;d3&#039;,
+    &#039;underscore&#039;,
+    &#039;base/component&#039;
+], function($, d3, _, Component) {
+
+    var profiles = {
+        &quot;small&quot;: {
+            margin: {
+                top: 30,
+                right: 20,
+                left: 40,
+                bottom: 40
+            },
+            tick_spacing: 60
+        },
+        &quot;medium&quot;: {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 80
+        },
+        &quot;large&quot;: {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 100
+        }
+    };
+
+    var size,
+        //scales
+        xScale,
+        yScale,
+        radiusScale,
+        colorScale, 
+        //axis
+        xAxis,
+        yAxis,
+        //elements
+        graph,
+        bubbles,
+        xAxisEl,
+        yAxisEl,
+        yearEl,
+        //sizes
+        height,
+        width,
+        margin,
+        tick_spacing,
+        //data
+        data, 
+        countries = [],
+        selected_countries,
+        indicators;
+
+    // Various accessors that specify the dimensions of data to visualize.
+    function x(d, indicator) {
+        return d[indicator];
+    }
+
+    function y(d, indicator) {
+        return d[indicator];
+    }
+
+    function radius(d, indicator) {
+        return d[indicator] || 1;
+    }
+
+    function key(d) {
+        return d.name;
+    }
+
+    function color(d) { 
+        return d.region; 
+    }
+
+    function position(dot) {
+
+        dot.attr(&quot;cy&quot;, function(d) {
+            return yScale(y(d, indicators[0]));
+        })
+            .attr(&quot;cx&quot;, function(d) {
+                return xScale(x(d, indicators[1]));
+            })  
+            .attr(&quot;r&quot;, function(d) {
+                return radiusScale(radius(d, indicators[2]));
+            });
+    }
+
+    function order(a, b) {
+        return radius(b) - radius(a);
+    }
+
+    var BubbleChart = Component.extend({
+        init: function(context, options) {
+            this.name = &#039;bubble-chart&#039;;
+            this.template = &#039;components/&#039; + this.name + &#039;/&#039; + this.name;
+            this.tool = context;
+            this._super(context, options);
+        },
+
+        // After loading template, select HTML elements
+        postRender: function() {
+
+            graph = this.element.select(&#039;#graph&#039;);
+            yAxisEl = graph.select(&#039;#y_axis&#039;);
+            xAxisEl = graph.select(&#039;#x_axis&#039;);
+            yTitleEl = graph.select(&#039;#y_axis_title&#039;);
+            xTitleEl = graph.select(&#039;#x_axis_title&#039;);
+            yearEl = graph.select(&#039;#year&#039;);
+            bubbles = graph.select(&#039;#bubbles&#039;);
+
+            this.update();
+        },
+
+
+        /*
+         * UPDATE:
+         * Executed whenever data is changed
+         * Ideally, it contains only operations related to data events
+         */
+        update: function() {
+            data = this.model.getData()[0];
+            indicators = this.model.getState(&quot;indicator&quot;),
+            categories = this.model.getState(&quot;show&quot;)[&quot;geo.categories&quot;];
+
+            var _this = this,
+                year = this.model.getState(&quot;time&quot;),
+                minValue = _.map(indicators, function(indicator) {
+                    return d3.min(data, function(d) {
+                        return +d[indicator];
+                    })
+                }),
+                maxValue = _.map(indicators, function(indicator) {
+                    return d3.max(data, function(d) {
+                        return +d[indicator];
+                    })
+                }),
+                scales = this.model.getState(&quot;scale&quot;),
+
+                //10% difference margin in min and max
+                min = _.map(scales, function(scale, i) {
+                    return ((scale == &quot;log&quot;) ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
+                }),
+                max = _.map(scales, function(scale, i) {
+                    return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
+                }),
+                units = this.model.getState(&quot;unit&quot;) || [1, 1, 1],
+                indicator_names = indicators;
+
+            //axis
+            yScale = d3.scale[scales[0]]()
+                .domain([min[0], max[0]]);
+
+            xScale = d3.scale[scales[1]]()
+                .domain([min[1], max[1]]);
+
+            radiusScale = d3.scale[scales[2]]()
+                .domain([min[2], max[2]]);
+
+            yAxis = d3.svg.axis()
+                .tickFormat(function(d) {
+                    return d / units[0];
+                }).tickSize(6, 0);
+
+            xAxis = d3.svg.axis()
+                .tickFormat(function(d) {
+                    return d / units[1];
+                }).tickSize(6, 0);
+
+            colorScale = d3.scale.category10();
+
+            //bubbles
+            this.setYear(year);
+
+            $.simpTooltip();
+
+        },
+
+        /*
+         * RESIZE:
+         * Executed whenever the container is resized
+         * Ideally, it contains only operations related to size
+         */
+        resize: function() {
+
+            margin = profiles[this.getLayoutProfile()].margin;
+            tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
+
+            //size the stage
+            this.resizeStage();
+            //size the bubbles
+            this.resizeBubbles();
+
+            //size year
+            widthAxisY = yAxisEl[0][0].getBBox().width;
+            heightAxisX = xAxisEl[0][0].getBBox().height;
+
+            yearEl.attr(&quot;x&quot;, &quot;50%&quot;)
+                .attr(&quot;y&quot;, &quot;50%&quot;)
+                .attr(&quot;transform&quot;, &quot;translate(&quot; + (-1 * widthAxisY) + &quot;, &quot; + (heightAxisX) + &quot;)&quot;);
+
+        },
+
+        resizeStage: function() {
+
+            //stage
+            height = parseInt(this.element.style(&quot;height&quot;), 10) - margin.top - margin.bottom;
+            width = parseInt(this.element.style(&quot;width&quot;), 10) - margin.left - margin.right;
+
+            graph
+                .attr(&quot;width&quot;, width + margin.right + margin.left)
+                .attr(&quot;height&quot;, height + margin.top + margin.bottom)
+                .attr(&quot;transform&quot;, &quot;translate(&quot; + margin.left + &quot;,&quot; + margin.top + &quot;)&quot;);
+
+            //year
+            widthAxisY = yAxisEl[0][0].getBBox().width;
+            heightAxisX = xAxisEl[0][0].getBBox().height;
+
+            yearEl.attr(&quot;x&quot;, &quot;50%&quot;)
+                .attr(&quot;y&quot;, &quot;50%&quot;)
+                .attr(&quot;transform&quot;, &quot;translate(&quot; + (-1 * widthAxisY) + &quot;, &quot; + (heightAxisX) + &quot;)&quot;);
+        },
+
+        resizeBubbles: function() {
+            //scales
+            yScale = yScale.range([height, 0]).nice();
+            xScale = xScale.range([0, width]).nice();
+
+            var maxRadius = (this.getLayoutProfile() == &quot;large&quot;) ? 50 : 30;
+            radiusScale = radiusScale.range([1, maxRadius]);
+
+            //axis
+            yAxis = yAxis.scale(yScale)
+                .orient(&quot;left&quot;)
+                .ticks(Math.max(height / tick_spacing, 2));
+
+            xAxis = xAxis.scale(xScale)
+                .orient(&quot;bottom&quot;)
+                .ticks(Math.max(width / tick_spacing, 2));
+
+            xAxisEl.attr(&quot;transform&quot;, &quot;translate(0,&quot; + height + &quot;)&quot;);
+
+            yAxisEl.call(yAxis);
+            xAxisEl.call(xAxis);
+
+            //bubbles
+            bubbles.selectAll(&quot;.bubble&quot;)
+                .call(position)
+                .sort(order);
+        },
+
+        setYear: function(year) {
+
+            yearEl.text(year);
+            bubbles.selectAll(&quot;.bubble&quot;).remove();
+            bubbles.selectAll(&quot;.bubble&quot;)
+                .data(interpolateData(data , indicators, year))
+                .enter().append(&quot;circle&quot;)
+                .attr(&quot;class&quot;, &quot;bubble&quot;)
+                .style(&quot;fill&quot;, function(d) { return colorScale(color(d)); })
+                .attr(&quot;data-tooltip&quot;, function(d) { return d.name; });
+ 
+            this.resize();
+            this.resizeStage();
+            this.resizeBubbles();
+        }
+
+
+    });
+
+    // Interpolates the dataset for the given (fractional) year.
+    function interpolateData(data, indicators, year) {
+
+        yearData = _.filter(data, function(d) {
+            return (d.time == year);
+        });
+
+        return yearData.map(function(d) {
+            var obj = {
+                name: d[&quot;geo.name&quot;],
+                region: d[&quot;geo.region&quot;] || &quot;world&quot;
+            };
+            _.each(indicators, function(indicator) {
+                obj[indicator] = d[indicator];
+            });
+
+            return obj;
+        });
+    }
+
+    //tooltip plugin (hotfix)
+    //TODO: remove this plugin from here
+    $.extend({
+        simpTooltip: function(options) {
+            var defaults = {
+                position_x: -30,
+                position_y: 20,
+                target: &quot;[data-tooltip]&quot;,
+                extraClass: &quot;&quot;
+            };
+            options = $.extend(defaults, options);
+            var targets = $(options.target);
+            var xOffset = options.position_x;
+            var yOffset = options.position_y;
+            targets.hover(function(e) {
+                var t = $(this).attr(&#039;data-tooltip&#039;);
+                $(&quot;body&quot;).append(&quot;&lt;div id=&#039;simpTooltip&#039; class=&#039;simpTooltip &quot; + options.extraClass + &quot;&#039;&gt;&quot; + t + &quot;&lt;/div&gt;&quot;);
+                $(&quot;#simpTooltip&quot;).css(&quot;top&quot;, (e.pageY - xOffset) + &quot;px&quot;).css(&quot;left&quot;, (e.pageX + yOffset) + &quot;px&quot;).fadeIn(&quot;fast&quot;);
+            }, function() {
+                $(&quot;#simpTooltip&quot;).remove();
+            });
+            targets.mousemove(function(e) {
+                $(&quot;#simpTooltip&quot;).css(&quot;top&quot;, (e.pageY + yOffset) + &quot;px&quot;).css(&quot;left&quot;, (e.pageX + xOffset) + &quot;px&quot;);
+            });
+        }
+    });
+
+    return BubbleChart;
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
