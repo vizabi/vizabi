@@ -12,6 +12,10 @@ Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/v
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
 
 
+####Javascript Statis Analysis Visualization
+[Plato](https://github.com/es-analysis/plato)'s static code analysis of version 0.4 can be found here: [Vizabi Plato ](http://static.gapminder.org/vizabi-recent/report/). 
+
+
 ### QuickStart
 ####Cloning
 In order to run vizabi locally, clone it:
