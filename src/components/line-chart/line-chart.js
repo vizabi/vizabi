@@ -156,8 +156,13 @@ define([
                     return yScale(d[indicator]);
                 });
 
+            //data up to year
+            data = _.filter(data, function(d) {
+                return d.time <= year;
+            });
+
             //modify the data format
-            var data_per_geo = _.map(geos, function(g) {
+            data = _.map(geos, function(g) {
                 var geo_values = _.filter(data, function(d) {
                     return d.geo === g.geo;
                 });
@@ -166,8 +171,6 @@ define([
                 })
                 return g;
             });
-
-            data = data_per_geo;
 
             /*
              * at this point, data is formatted as follows:
@@ -248,7 +251,7 @@ define([
             xAxisEl.call(xAxis);
 
             line = d3.svg.line()
-                .interpolate("basis")
+                .interpolate("cardinal")
                 .x(function(d) {
                     return xScale(d.time);
                 })
