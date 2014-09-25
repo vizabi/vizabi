@@ -3,7 +3,7 @@ define([
     'base/tool'
 ], function(_, Tool) {
 
-    var barChart = Tool.extend({
+    var lineChart = Tool.extend({
         init: function(parent, options) {
             
             this.name = 'line-chart';
@@ -62,5 +62,5 @@ define([
 
     //constructDataQueryFromState(){}
 
-    return barChart;
+    return lineChart;
 });

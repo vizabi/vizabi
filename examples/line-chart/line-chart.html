@@ -1,4 +1,4 @@
-<!-- @@include('../assets/_header.tpl', {"title": "Hello World - Multiple States"}) -->
+<!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
 
 <div class="container">
     <div class="buttons">
@@ -28,11 +28,7 @@
         <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
             <span>OPTIONS</span>
             <ul class="dropdown">
-                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
-                </li>
-                <li><a onclick="setState()">USA - 2000</a>
-                </li>
-                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                <li><a onclick="">Change state</a>
                 </li>
             </ul>
         </div>
@@ -56,28 +52,28 @@
     
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
-    <button onclick="setCurrentState('hello-world')">SET STATE</button>
+    <button onclick="setCurrentState('line-chart')">SET STATE</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
-
+</body>
 <script>
-
 var myVizabi;
 
 $(function() {
+
     var options = {
         //state
         state: url.state || {
             show: {
-                geo: ['swe', 'nor', 'world'],
-                'geo.category': ['country', 'planet']
+                geo: ['swe','nor','fin'],
+                'geo.category': ['country']
             },
-            timeRange: ["2000-2009"],
+            timeRange: ["1990-2012"],
             time: 2007,
-            indicator: 'lex',
-            scale: 'linear',
-            unit: 1
+            indicator: ['lex'],
+            scale: ['linear'],
+            unit: [1]
         },
         //path
         data: {
@@ -89,12 +85,12 @@ $(function() {
         language: url.lang || "en",
         ui_strings: {
             en: {
-                "title": "Table Title",
+                "title": "Line Chart",
                 "timeslider/play": "Play",
                 "timeslider/pause": "Pause"
             },
             pt: {
-                "title": "Título da Tabela",
+                "title": "Gráfico de Linhas",
                 "timeslider/play": "Iniciar",
                 "timeslider/pause": "Parar"
             }
@@ -107,10 +103,6 @@ $(function() {
             'change:query': function(query) {
                 showQuery(query);
             }
-        },
-
-        ready: function() {
-            parseURL();
         }
     };
 
@@ -118,53 +110,21 @@ $(function() {
 
 });
 
-function setState() {
-    var newOption = {
-        state: {
-            show: {
-                geo: ['usa'],
-                'geo.category': ['country']
-            },
-            time: 2005,
-            indicator: 'gdp',
-            unit: 100000000000
-        }
-    };
-    
-    myVizabi.setOptions("#line-chart", newOption);
-}
-
-function changeIndicator() {
-    var newOption = {
-        state: {
-            show: {
-                geo: ['swe', 'nor'],
-                'geo.category': ['country']
-            },
-            time: 2007,
-            indicator: 'lex',
-            unit: 1
-        }
-    };
-    myVizabi.setOptions("#line-chart", newOption);
-}
-
-function initialState() {
-    var newOption = {
-        state: {
-            show: {
-                geo: ['swe', 'nor', 'world'],
-                'geo.category': ['country', 'planet']
-            },
-            timeRange: ["2000-2009"],
-            time: 2007,
-            indicator: 'lex',
-            scale: 'linear',
-            unit: 1
-        }
-    };
-    myVizabi.setOptions("#line-chart", newOption);
-}
+// function setState() {
+//     var newOption = {
+//         state: {
+//             show: {
+//                 geo: ['world'],
+//                 'geo.category': ['planet']
+//             },
+//             time: 2000,
+//             indicator: ['lex', 'gdp', 'pop'],
+//             scale: ['linear', 'linear', 'linear'],
+//             unit: [1, 1000000, 1000]
+//         }
+//     };
+//     myVizabi.setOptions("#line-chart", newOption);
+// }
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->

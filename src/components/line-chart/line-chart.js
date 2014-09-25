@@ -1,22 +1,72 @@
-//TODO: Rename postrender & resize 
 define([
+    'jquery',
     'd3',
     'underscore',
     'base/component'
-], function(d3, _, Component) {
+], function($, d3, _, Component) {
 
-    var width,
-        height,
-        margin,
-        xAxis, yAxis,
-        xAxisEl, yAxisEl,
-        yTitleEl,
-        x, y,
+    var profiles = {
+        "small": {
+            margin: {
+                top: 30,
+                right: 20,
+                left: 40,
+                bottom: 40
+            },
+            tick_spacing: 60
+        },
+        "medium": {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 80
+        },
+        "large": {
+            margin: {
+                top: 30,
+                right: 60,
+                left: 60,
+                bottom: 40
+            },
+            tick_spacing: 100
+        }
+    };
+
+    var size,
+        //scales
+        xScale,
+        yScale,
+        colorScale,
+        colors,
+        line,
+        //axis
+        xAxis,
+        yAxis,
+        //elements
         graph,
         lines,
-        year;
+        xAxisEl,
+        yAxisEl,
+        //sizes
+        height,
+        width,
+        margin,
+        tick_spacing,
+        //data
+        data,
+        selected_countries,
+        indicator;
 
-    var BarChart = Component.extend({
+    function color(d) {
+        return d.region;
+    }
+
+    function position(line) {}
+
+    var LineChart = Component.extend({
         init: function(context, options) {
             this.name = 'line-chart';
             this.template = 'components/' + this.name + '/' + this.name;
@@ -28,145 +78,239 @@ define([
         postRender: function() {
 
             graph = this.element.select('#graph');
-            xAxisEl = graph.select('#x_axis');
             yAxisEl = graph.select('#y_axis');
+            xAxisEl = graph.select('#x_axis');
             yTitleEl = graph.select('#y_axis_title');
+            xTitleEl = graph.select('#x_axis_title');
+            yearEl = graph.select('#year');
             lines = graph.select('#lines');
 
             this.update();
         },
 
 
-        //TODO: Optimize data binding
+        /*
+         * UPDATE:
+         * Executed whenever data is changed
+         * Ideally, it contains only operations related to data events
+         */
         update: function() {
-            var indicator = this.model.getState("indicator"),
-                data = this.model.getData()[0],
+            data = this.model.getData()[0];
+            indicator = this.model.getState("indicator")[0];
+
+            var _this = this,
                 year = this.model.getState("time"),
-                categories = this.model.getState("show")["geo.categories"],
-                data_curr_year = data.filter(function(row) {
-                    return (row.time == year);
-                }),
                 minValue = d3.min(data, function(d) {
                     return +d[indicator];
                 }),
                 maxValue = d3.max(data, function(d) {
                     return +d[indicator];
                 }),
-                scale = this.model.getState("scale"),
-                minY = this.model.getState("min") || ((scale == "log") ? minValue : 0),
-                maxY = this.model.getState("max") || (maxValue + maxValue / 10),
-                unit = this.model.getState("unit") || 1,
-                indicator_name = indicator;
-            // Create X axis scale, X axis function and call it on element
-            x = d3.scale.ordinal();
-
-            x.domain(_.map(data, function(d, i) {
-                return d["geo.name"];
-            }));
-
-            //TODO: Read from data manager
-            xAxis = d3.svg.axis().scale(x).orient("bottom")
-                .tickFormat(function(d) {
-                    return d;
+                scale = this.model.getState("scale")[0],
+                geos = _.uniq(_.map(data, function(d) {
+                    return {
+                        geo: d.geo,
+                        name: d['geo.name'],
+                        region: d['geo.region'],
+                        category: d['geo.category']
+                    };
+                }), false, function(d) {
+                    return d.geo;
                 });
 
-            
-            // Create Y axis scale, Y axis function and call it on element
-            y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
-            y.domain([minY, maxY])
-                .range([height, 0]);
+            //10% difference margin in min and max
+            min = ((scale == "log") ? 1 : (minValue - (maxValue - minValue) / 10)),
+            max = maxValue + (maxValue - minValue) / 10,
+            unit = this.model.getState("unit")[0] || 1;
 
-            yAxis = d3.svg.axis().scale(y).orient("left")
+            //axis
+            yScale = d3.scale[scale]()
+                .domain([min, max]);
+
+            xScale = d3.scale.linear()
+                .domain(d3.extent(data, function(d) {
+                    return d['time'];
+                }));
+
+            yAxis = d3.svg.axis()
                 .tickFormat(function(d) {
                     return d / unit;
                 }).tickSize(6, 0);
 
-            //yAxisEl.call(yAxis);
-            yTitleEl.text(indicator_name);
+            xAxis = d3.svg.axis()
+                .tickFormat(function(d) {
+                    return d;
+                }).tickSize(6, 0);
 
-            // Remove old lines if exist
-            lines.selectAll(".line").remove();
+            colorScale = d3.scale.category20()
+                .domain(_.map(geos, function(geo) {
+                    return geo.region;
+                }));
 
-            // Update data lines
-            lines.selectAll(".line")
-                .data(data_curr_year)
-                .enter()
-                .append("path")
-                .attr("class", "line");
+            line = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d) {
+                    return xScale(d.time);
+                })
+                .y(function(d) {
+                    return yScale(d[indicator]);
+                });
 
-            this.resize();
+            //modify the data format
+            var data_per_geo = _.map(geos, function(g) {
+                var geo_values = _.filter(data, function(d) {
+                    return d.geo === g.geo;
+                });
+                g.values = _.map(geo_values, function(d) {
+                    return _.omit(d, ['geo', 'geo.name', 'geo.region', 'geo.category']);
+                })
+                return g;
+            });
+
+            data = data_per_geo;
+
+            /*
+             * at this point, data is formatted as follows:
+             *  data = [{
+             *      "geo": "swe",
+             *      "geo.name": "Sweden",
+             *      "geo.region": "eur",
+             *      "geo.category": ["country"],
+             *      "geo.values": [
+             *          { "time": "1990", "gdp": "65468" },
+             *          { "time": "1991", "gdp": "65468" },
+             *          ...
+             *      ]
+             *  }, ...];
+             */
+
+            //lines
+            this.setYear(year);
+
+            $.simpTooltip();
 
         },
 
-        //draw the graph for the first time
+        /*
+         * RESIZE:
+         * Executed whenever the container is resized
+         * Ideally, it contains only operations related to size
+         */
         resize: function() {
-            var tick_spacing = 60;
 
-            switch (this.getLayoutProfile()) {
-                case "small":
-                    margin = {
-                        top: 20,
-                        right: 20,
-                        bottom: 30,
-                        left: 40
-                    };
-                    break;
-                case "medium":
-                    margin = {
-                        top: 25,
-                        right: 25,
-                        bottom: 35,
-                        left: 50
-                    };
-                    tick_spacing = 80;
-                    break;
-                case "large":
-                default:
-                    margin = {
-                        top: 30,
-                        right: 30,
-                        bottom: 40,
-                        left: 60
-                    };
-                    tick_spacing = 100;
-                    break;
-            }
+            margin = profiles[this.getLayoutProfile()].margin;
+            tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
 
+            //size the stage
+            this.resizeStage();
+            //size the lines
+            this.resizeLines();
+
+            //size year
+            widthAxisY = yAxisEl[0][0].getBBox().width;
+            heightAxisX = xAxisEl[0][0].getBBox().height;
+
+        },
+
+        resizeStage: function() {
+
+            //stage
             height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-
-            // Update range of Y and call Y axis function on element
-            y.range([height, 0]);
-            // Number of ticks
-            if (this.model.getState("scale") == "log") {
-                yAxis.ticks(5, '100');
-            } else {
-                yAxis.ticks(Math.max((Math.round(height / tick_spacing)), 2));
-            }
-            yAxisEl.call(yAxis);
-
-            yTitleEl.attr("transform", "translate(10,10)");
-
-            //Adjusting margin according to length
-            var yLabels = yAxisEl.selectAll("text")[0],
-                topLabel = yLabels[(yLabels.length - 1)];
-            margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
-
             width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-            xAxisEl.attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+            graph
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //adjust graph position
-            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var indicator = this.model.getState("indicator");
-
+            //year
+            widthAxisY = yAxisEl[0][0].getBBox().width;
+            heightAxisX = xAxisEl[0][0].getBBox().height;
         },
+
+        resizeLines: function() {
+            //scales
+            yScale = yScale.range([height, 0]).nice();
+            xScale = xScale.range([0, width]).nice();
+
+            //axis
+            yAxis = yAxis.scale(yScale)
+                .orient("left")
+                .ticks(Math.max(height / tick_spacing, 2));
+
+            xAxis = xAxis.scale(xScale)
+                .orient("bottom")
+                .ticks(Math.max(width / tick_spacing, 2));
+
+            xAxisEl.attr("transform", "translate(0," + height + ")");
+
+            yAxisEl.call(yAxis);
+            xAxisEl.call(xAxis);
+
+            line = d3.svg.line()
+                .interpolate("basis")
+                .x(function(d) {
+                    return xScale(d.time);
+                })
+                .y(function(d) {
+                    return yScale(d[indicator]);
+                });
+
+            //lines
+            lines.selectAll(".line")
+                .attr("d", function(d) {
+                    return line(d.values);
+                });
+        },
+
+        setYear: function(year) {
+
+            lines.selectAll(".line").remove();
+            lines.selectAll(".line")
+                .data(data)
+                .enter().append("path")
+                .attr("class", "line")
+                .style("stroke", function(d) {
+                    return colorScale(color(d));
+                })
+                .attr("data-tooltip", function(d) {
+                    return d.name;
+                });
+
+            this.resize();
+            this.resizeStage();
+            this.resizeLines();
+        }
 
 
     });
 
+    //tooltip plugin (hotfix)
+    //TODO: remove this plugin from here
+    $.extend({
+        simpTooltip: function(options) {
+            var defaults = {
+                position_x: -30,
+                position_y: 20,
+                target: "[data-tooltip]",
+                extraClass: ""
+            };
+            options = $.extend(defaults, options);
+            var targets = $(options.target);
+            var xOffset = options.position_x;
+            var yOffset = options.position_y;
+            targets.hover(function(e) {
+                var t = $(this).attr('data-tooltip');
+                $("body").append("<div id='simpTooltip' class='simpTooltip " + options.extraClass + "'>" + t + "</div>");
+                $("#simpTooltip").css("top", (e.pageY - xOffset) + "px").css("left", (e.pageX + yOffset) + "px").fadeIn("fast");
+            }, function() {
+                $("#simpTooltip").remove();
+            });
+            targets.mousemove(function(e) {
+                $("#simpTooltip").css("top", (e.pageY + yOffset) + "px").css("left", (e.pageX + xOffset) + "px");
+            });
+        }
+    });
 
-
-    return BarChart;
+    return LineChart;
 });
