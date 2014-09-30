@@ -20,6 +20,9 @@ See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapmin
 
 
 ### QuickStart
+
+*Note*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568). 
+
 ####Cloning
 In order to run vizabi locally, clone it:
 
