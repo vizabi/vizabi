@@ -20,7 +20,7 @@
     }
     .line {
         fill: none;
-        stroke-width: 8px;
+        stroke-width: 11px;
     }
 }
 &.medium {
@@ -28,7 +28,7 @@
         @include font-size(15px);
         .line {
             fill: none;
-            stroke-width: 5px;
+            stroke-width: 8px;
         }
     }
 }
@@ -37,7 +37,7 @@
         @include font-size(12px);
         .line {
             fill: none;
-            stroke-width: 3px;
+            stroke-width: 5px;
         }
     }
 }

@@ -163,14 +163,20 @@ define([
 
             //modify the data format
             data = _.map(geos, function(g) {
-                var geo_values = _.filter(data, function(d) {
+                //ordered values of current geo
+                var geo_values = _.sortBy(_.filter(data, function(d) {
                     return d.geo === g.geo;
+                }), function(d) {
+                    return d.time;
                 });
+
                 g.values = _.map(geo_values, function(d) {
                     return _.omit(d, ['geo', 'geo.name', 'geo.region', 'geo.category']);
                 })
                 return g;
             });
+
+            console.log(data);
 
             /*
              * at this point, data is formatted as follows:
