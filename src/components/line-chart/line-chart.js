@@ -211,6 +211,7 @@ define([
             margin = profiles[this.getLayoutProfile()].margin;
             tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
 
+            this.resizeMargins();
             //size the stage
             this.resizeStage();
             //size the lines
@@ -220,6 +221,16 @@ define([
             widthAxisY = yAxisEl[0][0].getBBox().width;
             heightAxisX = xAxisEl[0][0].getBBox().height;
 
+        },
+
+        resizeMargins: function() {
+
+            //adjust right margin according to biggest label
+            var lineLabels = lines.selectAll(".label")[0];
+            var biggest = _.max(_.map(lineLabels, function(label) {
+                return label.getBBox().width;
+            }));
+            margin.right = Math.max(margin.right, biggest + 20);
         },
 
         resizeStage: function() {
