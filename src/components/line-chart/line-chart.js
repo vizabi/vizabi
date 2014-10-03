@@ -13,7 +13,8 @@ define([
                 left: 40,
                 bottom: 40
             },
-            tick_spacing: 60
+            tick_spacing: 60,
+            text_padding: 5
         },
         "medium": {
             margin: {
@@ -22,7 +23,8 @@ define([
                 left: 60,
                 bottom: 40
             },
-            tick_spacing: 80
+            tick_spacing: 80,
+            text_padding: 10
         },
         "large": {
             margin: {
@@ -31,7 +33,8 @@ define([
                 left: 60,
                 bottom: 40
             },
-            tick_spacing: 100
+            tick_spacing: 100,
+            text_padding: 15
         }
     };
 
@@ -176,8 +179,6 @@ define([
                 return g;
             });
 
-            console.log(data);
-
             /*
              * at this point, data is formatted as follows:
              *  data = [{
@@ -270,19 +271,44 @@ define([
                 .attr("d", function(d) {
                     return line(d.values);
                 });
+
+            lines.selectAll(".label")
+                .attr("transform", function(d) {
+                    return "translate(" + xScale(d.value.time) + "," + yScale(d.value[indicator]) + ")";
+                })
+                .attr("x", profiles[this.getLayoutProfile()].text_padding);
         },
 
         setYear: function(year) {
 
-            lines.selectAll(".line").remove();
-            lines.selectAll(".line")
+            lines.selectAll(".entity").remove();
+            var entity = lines.selectAll(".entity")
                 .data(data)
-                .enter().append("path")
+                .enter().append("g")
+                .attr("class", "entity");
+
+            entity.append("path")
                 .attr("class", "line")
+                .attr("d", function(d) {
+                    return line(d.values);
+                })
                 .style("stroke", function(d) {
                     return colorScale(color(d));
                 })
                 .attr("data-tooltip", function(d) {
+                    return d.name;
+                });
+
+            entity.append("text")
+                .attr("class", "label")
+                .datum(function(d) {
+                    return {
+                        name: d.name,
+                        value: d.values[d.values.length - 1]
+                    };
+                })
+                .attr("dy", ".35em")
+                .text(function(d) {
                     return d.name;
                 });
 

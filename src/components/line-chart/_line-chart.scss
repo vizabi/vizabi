@@ -22,6 +22,9 @@
         fill: none;
         stroke-width: 11px;
     }
+    .label {
+        font-size: 1.8em;
+    }
 }
 &.medium {
     #line-chart {
@@ -29,6 +32,9 @@
         .line {
             fill: none;
             stroke-width: 8px;
+        }
+        .label {
+            font-size: 1.5em;
         }
     }
 }
@@ -38,6 +44,9 @@
         .line {
             fill: none;
             stroke-width: 5px;
+        }
+        .label {
+            font-size: 1.2em;
         }
     }
 }
