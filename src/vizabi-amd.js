@@ -1,4 +1,6 @@
-var Vizabi = function(name, container, options) {
+define([], function() {
+
+	var Vizabi = function(name, container, options) {
     var _this = this,
         core;
 
@@ -38,3 +40,7 @@ var Vizabi = function(name, container, options) {
     };
 
 };
+
+	return Vizabi;
+
+});

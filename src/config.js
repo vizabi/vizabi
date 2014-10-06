@@ -69,5 +69,5 @@ require.config({
     //             "d3"
     //         ],
 
-    include: "vizabi"
+    include: "vizabi-amd"
 });
