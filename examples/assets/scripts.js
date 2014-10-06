@@ -1,3 +1,6 @@
+//TODO: Improve the examples scripts -- too hardcoded
+//TODO: Remove hardcoded references to variable myVizabi
+
 //url params
 function randomSize(id) {
     var width = Math.floor(Math.random() * 800) + 300;
@@ -30,7 +33,7 @@ function fullSize(id) {
     forceResizeEvt();
 }
 
-function setSize(id, width, height, fullscreen) {
+function setSize(id, width, height, fullscreen, block_url) {
     var container = $("#" + id);
 
     container.width(width);
@@ -40,17 +43,17 @@ function setSize(id, width, height, fullscreen) {
     } else {
         container.removeClass('fullscreen');
     }
-    forceResizeEvt();
+    forceResizeEvt(block_url);
 }
 
-function forceResizeEvt() {
+function forceResizeEvt(block_url) {
     //force resize
     event = document.createEvent("HTMLEvents");
     event.initEvent("resize", true, true);
     event.eventName = "resize";
     window.dispatchEvent(event);
 
-    updateURL();
+    if(!block_url) updateURL();
 }
 
 function setLanguage(id, language) {
@@ -76,7 +79,7 @@ function forceState(id, state) {
     myVizabi.setOptions("#" + id, newOption);
 }
 
-function showState(state, id) {
+function showState(state, id, block_url) {
     if (!id) {
         id = "state";
     }
@@ -84,7 +87,7 @@ function showState(state, id) {
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 
-    updateURL();
+    if(!block_url) updateURL();
 }
 
 function showQuery(query) {
@@ -111,7 +114,7 @@ function updateURL() {
 
 var url = {};
 
-function parseURL() {
+function parseURL(block_url) {
     var hash = window.location.hash;
 
     if (hash) {
@@ -123,7 +126,7 @@ function parseURL() {
         url.state = state;
         url.lang = options.lang;
 
-        setSize(placeholder, options.width, options.height, options.fullscreen);
+        setSize(placeholder, options.width, options.height, options.fullscreen, block_url);
 
     }
 }
@@ -180,7 +183,31 @@ DropDown.prototype = {
     }
 }
 
+function hashHandler(whenChanged){
+    this.oldHash = window.location.hash;
+    this.Check;
+
+    var that = this;
+    var detect = function(){
+        if(that.oldHash!=window.location.hash){
+            that.oldHash = window.location.hash;
+            if(typeof whenChanged === 'function') whenChanged(that.oldHash);
+        }
+    };
+    this.Check = setInterval(function(){ detect() }, 100);
+}
+
 parseURL();
+var hashDetection = new hashHandler(function(newhash) {
+    console.log("changed: "+newhash);
+    //parseURL blocking the url update
+    parseURL(false);
+    console.log(url.state);
+    var id = $('.container .placeholder').attr('id');
+    //force new state
+    //TODO: Really bad way of looking for id here
+    forceState(id, url.state);
+});
 
 $(function() {
 
