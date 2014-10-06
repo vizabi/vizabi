@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src/components/line-chart/line-chart.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src/components/line-chart/line-chart.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">62.46</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">171</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">28.38</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.63</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">//TODO: Rename postrender &amp; resize 
+define([
+    &#039;d3&#039;,
+    &#039;underscore&#039;,
+    &#039;base/component&#039;
+], function(d3, _, Component) {
+
+    var width,
+        height,
+        margin,
+        xAxis, yAxis,
+        xAxisEl, yAxisEl,
+        yTitleEl,
+        x, y,
+        graph,
+        lines,
+        year;
+
+    var BarChart = Component.extend({
+        init: function(context, options) {
+            this.name = &#039;line-chart&#039;;
+            this.template = &#039;components/&#039; + this.name + &#039;/&#039; + this.name;
+            this.tool = context;
+            this._super(context, options);
+        },
+
+        // After loading template, select HTML elements
+        postRender: function() {
+
+            graph = this.element.select(&#039;#graph&#039;);
+            xAxisEl = graph.select(&#039;#x_axis&#039;);
+            yAxisEl = graph.select(&#039;#y_axis&#039;);
+            yTitleEl = graph.select(&#039;#y_axis_title&#039;);
+            lines = graph.select(&#039;#lines&#039;);
+
+            this.update();
+        },
+
+
+        //TODO: Optimize data binding
+        update: function() {
+            var indicator = this.model.getState(&quot;indicator&quot;),
+                data = this.model.getData()[0],
+                year = this.model.getState(&quot;time&quot;),
+                categories = this.model.getState(&quot;show&quot;)[&quot;geo.categories&quot;],
+                data_curr_year = data.filter(function(row) {
+                    return (row.time == year);
+                }),
+                minValue = d3.min(data, function(d) {
+                    return +d[indicator];
+                }),
+                maxValue = d3.max(data, function(d) {
+                    return +d[indicator];
+                }),
+                scale = this.model.getState(&quot;scale&quot;),
+                minY = this.model.getState(&quot;min&quot;) || ((scale == &quot;log&quot;) ? minValue : 0),
+                maxY = this.model.getState(&quot;max&quot;) || (maxValue + maxValue / 10),
+                unit = this.model.getState(&quot;unit&quot;) || 1,
+                indicator_name = indicator;
+            // Create X axis scale, X axis function and call it on element
+            x = d3.scale.ordinal();
+
+            x.domain(_.map(data, function(d, i) {
+                return d[&quot;geo.name&quot;];
+            }));
+
+            //TODO: Read from data manager
+            xAxis = d3.svg.axis().scale(x).orient(&quot;bottom&quot;)
+                .tickFormat(function(d) {
+                    return d;
+                });
+
+            
+            // Create Y axis scale, Y axis function and call it on element
+            y = (scale == &quot;log&quot;) ? d3.scale.log() : d3.scale.linear();
+            y.domain([minY, maxY])
+                .range([height, 0]);
+
+            yAxis = d3.svg.axis().scale(y).orient(&quot;left&quot;)
+                .tickFormat(function(d) {
+                    return d / unit;
+                }).tickSize(6, 0);
+
+            //yAxisEl.call(yAxis);
+            yTitleEl.text(indicator_name);
+
+            // Remove old lines if exist
+            lines.selectAll(&quot;.line&quot;).remove();
+
+            // Update data lines
+            lines.selectAll(&quot;.line&quot;)
+                .data(data_curr_year)
+                .enter()
+                .append(&quot;path&quot;)
+                .attr(&quot;class&quot;, &quot;line&quot;);
+
+            this.resize();
+
+        },
+
+        //draw the graph for the first time
+        resize: function() {
+            var tick_spacing = 60;
+
+            switch (this.getLayoutProfile()) {
+                case &quot;small&quot;:
+                    margin = {
+                        top: 20,
+                        right: 20,
+                        bottom: 30,
+                        left: 40
+                    };
+                    break;
+                case &quot;medium&quot;:
+                    margin = {
+                        top: 25,
+                        right: 25,
+                        bottom: 35,
+                        left: 50
+                    };
+                    tick_spacing = 80;
+                    break;
+                case &quot;large&quot;:
+                default:
+                    margin = {
+                        top: 30,
+                        right: 30,
+                        bottom: 40,
+                        left: 60
+                    };
+                    tick_spacing = 100;
+                    break;
+            }
+
+            height = parseInt(this.element.style(&quot;height&quot;), 10) - margin.top - margin.bottom;
+
+            // Update range of Y and call Y axis function on element
+            y.range([height, 0]);
+            // Number of ticks
+            if (this.model.getState(&quot;scale&quot;) == &quot;log&quot;) {
+                yAxis.ticks(5, &#039;100&#039;);
+            } else {
+                yAxis.ticks(Math.max((Math.round(height / tick_spacing)), 2));
+            }
+            yAxisEl.call(yAxis);
+
+            yTitleEl.attr(&quot;transform&quot;, &quot;translate(10,10)&quot;);
+
+            //Adjusting margin according to length
+            var yLabels = yAxisEl.selectAll(&quot;text&quot;)[0],
+                topLabel = yLabels[(yLabels.length - 1)];
+            margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
+
+            width = parseInt(this.element.style(&quot;width&quot;), 10) - margin.left - margin.right;
+
+            xAxisEl.attr(&quot;transform&quot;, &quot;translate(0,&quot; + height + &quot;)&quot;)
+                .call(xAxis);
+
+            //adjust graph position
+            graph.attr(&quot;transform&quot;, &quot;translate(&quot; + margin.left + &quot;,&quot; + margin.top + &quot;)&quot;);
+
+            var indicator = this.model.getState(&quot;indicator&quot;);
+
+        },
+
+
+    });
+
+
+
+    return BarChart;
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>

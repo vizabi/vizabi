@@ -32,11 +32,10 @@ module.exports = function(grunt) {
 
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
-        'requirejs:dev', //concatenate all in one file
         'generate_styles', //generate scss
         'sass:dev', //compile scss
         'examples_menu', //build examples menu template
-        'includereplace:examples', //examples folder
+        'includereplace:examples_dev', //examples folder
         'examples_index', //build examples
         'copy:scripts',
         'copy:templates',
@@ -51,12 +50,13 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
 
         'clean:dist', //clean dist folder
+        'includereplace:build', //build AMD wrapper
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:dist', //use requirejs for amd module
         'generate_styles', //generate scss
         'sass:dist', //compile scss
         'examples_menu', //build examples menu template
-        'includereplace:examples', //examples folder
+        'includereplace:examples_build', //examples folder
         'examples_index', //build examples
         'copy:examples', //copies example assets
         'copy:waffles', //copies waffles
@@ -157,7 +157,7 @@ module.exports = function(grunt) {
             },
             examples: {
                 files: ['examples/**/*.html', '!examples/index.html'],
-                tasks: ['includereplace:examples', 'examples_index', 'copy:examples']
+                tasks: ['includereplace:examples_dev', 'examples_index', 'copy:examples']
             },
             scripts: {
                 files: ['src/**/*.js'],
@@ -194,23 +194,38 @@ module.exports = function(grunt) {
                     optimize: "uglify",
                     generateSourceMaps: false,
                 }
-            },
-            dev: {
-                options: {
-                    baseUrl: "src/",
-                    mainConfigFile: "src/config.js",
-                    out: "dist/vizabi.js",
-                    optimize: "none",
-                    generateSourceMaps: true
-                }
             }
         },
 
         includereplace: {
-            examples: {
+            build: {
                 options: {
                     prefix: '<!-- @@',
                     suffix: ' -->'
+                },
+                src: 'src/build/vizabi-amd.frag',
+                dest: 'src/vizabi-amd.js'
+            },
+            //build examples without require
+            examples_build: {
+                options: {
+                    prefix: '<!-- @@',
+                    suffix: ' -->',
+                    globals: {
+                        include_require: ''
+                    }
+                },
+                src: 'examples/**/*.html',
+                dest: 'dist/'
+            },
+            //build examples with require
+            examples_dev: {
+                options: {
+                    prefix: '<!-- @@',
+                    suffix: ' -->',
+                    globals: {
+                        include_require: '<script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>'
+                    }
                 },
                 src: 'examples/**/*.html',
                 dest: 'dist/'

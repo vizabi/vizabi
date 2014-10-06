@@ -1,6 +1,9 @@
 ![Gapminder Vizabi 0.4](http://static.gapminder.org/vizabi/vizabi.jpg)
 
-Welcome to the vizabi repository!
+Welcome to the vizabi repository! 
+
+(Please note that current version of Vizabi is still a work in progress, and Vizabi 1.0.0 will be the public release of the framework).
+
 
 ####What is Vizabi?
 Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema. You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
@@ -12,7 +15,14 @@ Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/v
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
 
 
+####Javascript Statis Analysis Visualization
+[Plato](https://github.com/es-analysis/plato)'s static code analysis of version 0.4 can be found here: [Vizabi Plato ](http://static.gapminder.org/vizabi-recent/report/). 
+
+
 ### QuickStart
+
+*Note*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568). 
+
 ####Cloning
 In order to run vizabi locally, clone it:
 

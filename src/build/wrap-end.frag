@@ -1,3 +1,3 @@
-	return require('vizabi');
+	return require('vizabi-amd');
 	
 }));

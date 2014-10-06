@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - src/base/layout.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>src/base/layout.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">74.07</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">110</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">27.80</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">0.65</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">define([
+    &quot;underscore&quot;,
+    &quot;base/class&quot;
+], function(_, Class) {
+
+    var layoutManager = Class.extend({
+
+        init: function() {
+
+            //TODO: Remove screen sizes from here
+            this.screen_sizes = {
+                small: {
+                    min_width: 0,
+                    max_width: 749,
+                },
+                medium: {
+                    min_width: 750,
+                    max_width: 969,
+                },
+                large: {
+                    min_width: 970,
+                    max_width: Infinity,
+                }
+            };
+            this.container = null; //d3 container
+            this.profiles = {};
+            this.current_profiles = null;
+        },
+
+        update: function() {
+            var _this = this,
+                width = this.width();
+
+            //remove size classes and find correct one
+            _.each(this.screen_sizes, function(range, size) {
+                //remove class
+                _this.container.classed(size, false);
+                //find best fit
+                if (width &gt;= range.min_width &amp;&amp; width &lt;= range.max_width) {
+                    _this.current_profile = size;
+                }
+            });
+
+            //update size class
+            _this.container.classed(_this.current_profile, true);
+
+            //TODO: move this comment to wiki
+            /* toggle, untoggle classes based on profile
+             * whenever a size has related classes turned off, you see the
+             * corresponding class with the suffix -off
+             * example: small { timeslider: false } would produce
+             * a class timeslider-off when the screen is small
+             */
+            var profile = this.profiles[_this.current_profile] || this.profiles[&quot;default&quot;];
+            if (profile) {
+                _.each(profile, function(value, item) {
+                    _this.container.classed(item + &quot;-off&quot;, !value);
+                });
+            }
+
+            //toggle, untoggle classes based on orientation
+            var portrait = this.portrait();
+            _this.container.classed(&quot;portrait&quot;, portrait);
+            _this.container.classed(&quot;landscape&quot;, !portrait);
+        },
+
+        setProfile: function(profile, profiles) {
+            if (_.isString(profile)) {
+                this.profiles[profile] = profiles;
+            } else {
+                this.profiles = profile;
+            }
+        },
+
+        getProfile: function(name) {
+            return this.profiles[name];
+        },
+
+        setContainer: function(container) {
+            this.container = container;
+        },
+
+        currentProfile: function() {
+            return this.current_profile
+        },
+
+        size: function() {
+            return {
+                width: this.width(),
+                height: this.height()
+            }
+        },
+
+        portrait: function() {
+            return this.width() &lt; this.height();
+        },
+
+        width: function() {
+            return parseInt(this.container.style(&quot;width&quot;), 10);
+        },
+
+        height: function() {
+            return parseInt(this.container.style(&quot;height&quot;), 10);
+        }
+
+    });
+
+    return layoutManager;
+
+});</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
