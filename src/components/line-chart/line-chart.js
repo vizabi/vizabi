@@ -38,6 +38,8 @@ define([
         }
     };
 
+    var colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"];
+
     var size,
         //scales
         xScale,
@@ -123,8 +125,8 @@ define([
 
             //10% difference margin in min and max
             min = ((scale == "log") ? 1 : (minValue - (maxValue - minValue) / 10)),
-            max = maxValue + (maxValue - minValue) / 10,
-            unit = this.model.getState("unit")[0] || 1;
+                max = maxValue + (maxValue - minValue) / 10,
+                unit = this.model.getState("unit")[0] || 1;
 
             //axis
             yScale = d3.scale[scale]()
@@ -145,7 +147,7 @@ define([
                     return d;
                 }).tickSize(6, 0);
 
-            colorScale = d3.scale.category10()
+            colorScale = d3.scale.ordinal().range(colors)
                 .domain(_.map(geos, function(geo) {
                     return geo.region;
                 }));
@@ -329,13 +331,17 @@ define([
                 .datum(function(d) {
                     return {
                         name: d.name,
+                        region: d.region,
                         value: d.values[d.values.length - 1]
                     };
                 })
                 .attr("dy", ".35em")
                 .text(function(d) {
                     var size = d.name.length;
-                    return (size < 13) ? d.name : d.name.substring(0,10)+'...'; //only few first letters
+                    return (size < 13) ? d.name : d.name.substring(0, 10) + '...'; //only few first letters
+                })
+                .style("fill", function(d) {
+                    return d3.rgb(colorScale(color(d))).darker(0.3);
                 });
 
             this.resize();
