@@ -66,14 +66,14 @@ $(function() {
         //state
         state: url.state || {
             show: {
-                geo: ['swe','nor','fin'],
+                geo: ["ago","arg","aus","swe"],
                 'geo.category': ['country']
             },
             timeRange: ["1990-2012"],
             time: 2007,
-            indicator: ['lex'],
+            indicator: ['gdp'],
             scale: ['linear'],
-            unit: [1]
+            unit: [10000000000]
         },
         //path
         data: {
@@ -85,12 +85,12 @@ $(function() {
         language: url.lang || "en",
         ui_strings: {
             en: {
-                "title": "Line Chart",
+                "title": "GDP per country",
                 "timeslider/play": "Play",
                 "timeslider/pause": "Pause"
             },
             pt: {
-                "title": "Gráfico de Linhas",
+                "title": "PIB por país",
                 "timeslider/play": "Iniciar",
                 "timeslider/pause": "Parar"
             }
