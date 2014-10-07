@@ -22,6 +22,10 @@
         fill: none;
         stroke-width: 11px;
     }
+    .line-shadow {
+        fill: none;
+        stroke-width: 19px;
+    }
     .label {
         font-size: 1.8em;
     }
@@ -30,8 +34,10 @@
     #line-chart {
         @include font-size(15px);
         .line {
-            fill: none;
             stroke-width: 8px;
+        }
+        .line-shadow {
+            stroke-width: 14px;
         }
         .label {
             font-size: 1.5em;
@@ -42,8 +48,10 @@
     #line-chart {
         @include font-size(12px);
         .line {
-            fill: none;
             stroke-width: 5px;
+        }
+        .line-shadow {
+            stroke-width: 9px;
         }
         .label {
             font-size: 1.2em;

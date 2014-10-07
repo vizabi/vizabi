@@ -145,7 +145,7 @@ define([
                     return d;
                 }).tickSize(6, 0);
 
-            colorScale = d3.scale.category20()
+            colorScale = d3.scale.category10()
                 .domain(_.map(geos, function(geo) {
                     return geo.region;
                 }));
@@ -196,9 +196,6 @@ define([
 
             //lines
             this.setYear(year);
-
-            $.simpTooltip();
-
         },
 
         /*
@@ -278,6 +275,14 @@ define([
                 });
 
             //lines
+            lines.selectAll(".line-shadow")
+                .attr("d", function(d) {
+                    return line(d.values);
+                })
+                .attr("transform", function(d) {
+                    return "translate(0,2)";
+                });
+
             lines.selectAll(".line")
                 .attr("d", function(d) {
                     return line(d.values);
@@ -297,6 +302,15 @@ define([
                 .data(data)
                 .enter().append("g")
                 .attr("class", "entity");
+
+            entity.append("path")
+                .attr("class", "line-shadow")
+                .attr("d", function(d) {
+                    return line(d.values);
+                })
+                .style("stroke", function(d) {
+                    return d3.rgb(colorScale(color(d))).darker(0.3);
+                });
 
             entity.append("path")
                 .attr("class", "line")
@@ -329,33 +343,6 @@ define([
         }
 
 
-    });
-
-    //tooltip plugin (hotfix)
-    //TODO: remove this plugin from here
-    $.extend({
-        simpTooltip: function(options) {
-            var defaults = {
-                position_x: -30,
-                position_y: 20,
-                target: "[data-tooltip]",
-                extraClass: ""
-            };
-            options = $.extend(defaults, options);
-            var targets = $(options.target);
-            var xOffset = options.position_x;
-            var yOffset = options.position_y;
-            targets.hover(function(e) {
-                var t = $(this).attr('data-tooltip');
-                $("body").append("<div id='simpTooltip' class='simpTooltip " + options.extraClass + "'>" + t + "</div>");
-                $("#simpTooltip").css("top", (e.pageY - xOffset) + "px").css("left", (e.pageX + yOffset) + "px").fadeIn("fast");
-            }, function() {
-                $("#simpTooltip").remove();
-            });
-            targets.mousemove(function(e) {
-                $("#simpTooltip").css("top", (e.pageY + yOffset) + "px").css("left", (e.pageX + xOffset) + "px");
-            });
-        }
     });
 
     return LineChart;
