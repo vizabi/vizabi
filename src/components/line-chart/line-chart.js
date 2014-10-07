@@ -334,7 +334,8 @@ define([
                 })
                 .attr("dy", ".35em")
                 .text(function(d) {
-                    return d.name;
+                    var size = d.name.length;
+                    return (size < 13) ? d.name : d.name.substring(0,10)+'...'; //only few first letters
                 });
 
             this.resize();
