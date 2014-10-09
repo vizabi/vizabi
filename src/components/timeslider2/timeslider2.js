@@ -13,7 +13,8 @@ define([
                 placeholder: '#timeslider-button'
             });
             this.addComponent('slider', {
-                placeholder: '#timeslider-slider'
+                placeholder: '#timeslider-slider',
+                visibleValue: true
             });
 
             // Same constructor as the superclass

@@ -1,5 +1,5 @@
 //TODO: refactor this whole thing
-//TODO: timeslider is composed of jquery button and jquery slider and packed into one, since they can extend 
+//TODO: timeslider is composed of jquery button and jquery slider and packed into one, since they can extend
 
 //TODO: differentiate between chart componenst and others by viz- word
 
@@ -13,11 +13,16 @@ define([
 
     var container,
         timeslider,
-        handle;
+        handle,
+        valueContainer;
 
     var Timeslider = Component.extend({
         init: function(parent, options) {
             this.template = "components/slider/slider";
+
+            // TODO: Maybe there's a better way of configuring this
+            // I'm not sure how to access options in other parts of the components
+            this.visibleValue = options.visibleValue;
 
             // Same constructor as the superclass
             this._super(parent, options);
@@ -30,6 +35,10 @@ define([
             timeslider = container.find("#slider");
             timeslider.slider();
             handle = timeslider.find(".ui-slider-handle");
+
+            if (this.visibleValue) {
+                valueContainer = $("<div />", {id: "current-value"}).appendTo(container);
+            }
 
             this.update();
         },
@@ -62,6 +71,10 @@ define([
             });
 
             handle.attr("data-year", year);
+
+            if (this.visibleValue) {
+                valueContainer.text(year);
+            }
         },
 
         getYear: function() {
