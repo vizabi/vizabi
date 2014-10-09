@@ -1,0 +1,172 @@
+<!-- @@include('../assets/_header.tpl', {"title": "Hello World - Multiple States"}) -->
+
+<div class="container">
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('bar-rank')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('bar-rank', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('bar-rank')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('bar-rank')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('bar-rank')">RANDOM</button>
+
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
+                </li>
+                <li><a onclick="setState()">USA - 2000</a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('bar-rank','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('bar-rank','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="bar-rank" class="placeholder"></div>
+
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('bar-rank')">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+
+<script>
+
+var myVizabi;
+
+$(function() {
+    var countryCodes = ['afg','ala','alb','dza','asm','and','ago','aia','ata','atg','arg','arm','abw','aus','aut','aze','bhs','bhr','bgd','brb','blr','bel','blz','ben','bmu','btn','bol','bih','bwa','bvt','bra','vgb','iot','brn','bgr','bfa','bdi','khm','cmr','can','cpv','cym','caf','tcd','chl','chn','hkg','mac','cxr','cck','col','com','cog','cod','cok','cri','civ','hrv','cub','cyp','cze','dnk','dji','dma','dom','ecu','egy','slv','gnq','eri','est','eth','flk','fro','fji','fin','fra','guf','pyf','atf','gab','gmb','geo','deu','gha','gib','grc','grl','grd','glp','gum','gtm','ggy','gin','gnb','guy','hti','hmd','vat','hnd','hun','isl','ind','idn','irn','irq','irl','imn','isr','ita','jam','jpn','jor','kaz','ken','kir','prk','kor','kwt','kgz','lao','lva','lbn','lso','lbr','lby','lie','ltu','lux','mkd','mdg','mwi','mys','mdv','mli','mlt','mhl','mtq','mrt','mus','myt','mex','fsm','mda','mco','mng','mne','msr','mar','moz','mmr','nam','nru','npl','nld','ant','ncl','nzl','nic','ner','nga','niu','mnp','nor','omn','pak','plw','pse','pan','png','pry','per','phl','pcn','pol','prt','pri','qat','reu','rou','rus','rwa','blm','shn','kna','lca','maf','spm','vct','wsm','smr','stp','sau','sen','srb','syc','sle','sgp','svk','svn','slb','som','zaf','sgs','ssd','esp','lka','sdn','sur','swz','swe','che','syr','twn','tjk','tza','tha','tls','tgo','tkl','ton','tto','tun','tur','tkm','tca','tuv','uga','ukr','are','gbr','usa','umi','ury','uzb','vut','ven','vnm','vir','wlf','esh','yem','zmb','zwe'];
+
+    var options = {
+        //state
+        state: url.state || {
+            show: {
+                geo: countryCodes
+            },
+            timeRange: ["2000-2009"],
+            time: 2007,
+            indicator: 'pop',
+            scale: 'linear',
+            unit: 1000000
+        },
+        //path
+        data: {
+            reader: 'local-json',
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
+        },
+
+        //language
+        language: url.lang || "en",
+        ui_strings: {
+            en: {
+                "title": "Table Title",
+                "timeslider/play": "Play",
+                "timeslider/pause": "Pause"
+            },
+            pt: {
+                "title": "Título da Tabela",
+                "timeslider/play": "Iniciar",
+                "timeslider/pause": "Parar"
+            }
+        },
+
+        bind: {
+            'change:state': function(state) {
+                showState(state);
+            },
+            'change:query': function(query) {
+                showQuery(query);
+            }
+        },
+
+        ready: function() {
+            parseURL();
+        }
+    };
+
+    myVizabi = new Vizabi("bar-rank", "#bar-rank", options);
+
+});
+
+function setState() {
+    var newOption = {
+        state: {
+            show: {
+                geo: ['usa'],
+                'geo.category': ['country']
+            },
+            time: 2005,
+            indicator: 'gdp',
+            unit: 1000000
+        }
+    };
+
+    myVizabi.setOptions("#bar-rank", newOption);
+}
+
+function changeIndicator() {
+    var newOption = {
+        state: {
+            show: {
+                geo: ['swe', 'nor'],
+                'geo.category': ['country']
+            },
+            time: 2007,
+            indicator: 'lex',
+            unit: 1000000
+        }
+    };
+    myVizabi.setOptions("#bar-rank", newOption);
+}
+
+function initialState() {
+    var newOption = {
+        state: {
+            show: {
+                geo: ['swe', 'nor', 'world'],
+                'geo.category': ['country', 'planet']
+            },
+            timeRange: ["2000-2009"],
+            time: 2007,
+            indicator: 'lex',
+            scale: 'linear',
+            unit: 1000000
+        }
+    };
+    myVizabi.setOptions("#bar-rank", newOption);
+}
+</script>
+
+<!-- @@include('../assets/_footer.tpl') -->
