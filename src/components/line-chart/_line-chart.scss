@@ -1,0 +1,60 @@
+#line-chart {
+    @include absolute(0px, 0px, 0px, 0px);
+    @include font-size(18px);
+    font-family: $fontFamily;
+    color: #666666;
+    width: 100%;
+    height: 100%;
+    .title {
+        color: $colorIMmediumBlue;
+        fill: currentColor;
+    }
+    .axis {
+        fill: none;
+        stroke: #999999;
+        color: #999999;
+        text {
+            fill: currentColor;
+            stroke: none;
+        }
+    }
+    .line {
+        fill: none;
+        stroke-width: 11px;
+    }
+    .line-shadow {
+        fill: none;
+        stroke-width: 19px;
+    }
+    .label {
+        font-size: 1.8em;
+    }
+}
+&.medium {
+    #line-chart {
+        @include font-size(15px);
+        .line {
+            stroke-width: 8px;
+        }
+        .line-shadow {
+            stroke-width: 14px;
+        }
+        .label {
+            font-size: 1.5em;
+        }
+    }
+}
+&.small {
+    #line-chart {
+        @include font-size(12px);
+        .line {
+            stroke-width: 5px;
+        }
+        .line-shadow {
+            stroke-width: 9px;
+        }
+        .label {
+            font-size: 1.2em;
+        }
+    }
+}
