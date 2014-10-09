@@ -1,0 +1,10 @@
+@import '../_tool.scss';
+
+.bar-rank {
+	@extend .vizabi-tool;
+
+	@import '../../components/header/_header.scss';
+	@import '../../components/bar-rank/_bar-rank.scss';
+	@import '../../components/timeslider2/_timeslider2.scss';
+	@import '../../components/buttonlist/_buttonlist.scss';
+}

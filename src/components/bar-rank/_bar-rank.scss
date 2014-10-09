@@ -1,0 +1,64 @@
+#bar-rank-wrapper {
+    @include absolute(0, 0, 0, 0);
+    @include font-size(18px);
+    font-family: $fontFamily;
+    color: #666666;
+    overflow: auto;
+
+    .item-headers {
+        fill: $colorWhite;
+    }
+
+    .header-title {
+        fill: $colorGrey;
+        text-transform: capitalize;
+    }
+
+    .title {
+        color: $colorIMmediumBlue;
+        fill: currentColor;
+    }
+    .axis {
+        fill: none;
+        stroke: $colorGrey;
+        color: $colorGrey;
+
+        text {
+            fill: currentColor;
+            stroke: none;
+        }
+    }
+    .item {
+
+        &.opaque {
+            opacity: .5;
+        }
+
+        .bar {
+            fill: $colorGreen;
+            stroke: none;
+        }
+
+        &:nth-child(2n) .bar {
+            fill: $colorRed;
+        }
+        &:nth-child(3n) .bar {
+            fill: $colorBlue;
+        }    }
+
+    .value-label {
+        fill: $colorGrey;
+    }
+}
+
+&.medium {
+    #bar-rank-wrapper {
+        @include font-size(15px);
+    }
+}
+
+&.small {
+    #bar-rank-wrapper {
+        @include font-size(12px);
+    }
+}
