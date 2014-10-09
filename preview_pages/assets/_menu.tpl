@@ -1,6 +1,6 @@
 <div id="dropdown-menu" class="wrapper-dropdown wide" tabindex="1">
-	<span>Examples</span>
+	<span>Preview Pages</span>
 	<ul class="dropdown">
-		<!-- @@include('_examples.tpl') -->
+		<!-- @@include('_preview.tpl') -->
 	</ul>
 </div>

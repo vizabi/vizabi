@@ -24,7 +24,7 @@ module.exports = function(grunt) {
     //     'copy:templates', //copy js and template files
     //     'uglify', //uglify js files
     //     'sass:dist', //compile scss
-    //     'examples', //build examples
+    //     'preview_pages', //build preview_pages
     // ]);
 
     //developer task: grunt dev
@@ -34,12 +34,12 @@ module.exports = function(grunt) {
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
         'sass:dev', //compile scss
-        'examples_menu', //build examples menu template
-        'includereplace:examples_dev', //examples folder
-        'examples_index', //build examples
+        'preview_pages_menu', //build preview_pages menu template
+        'includereplace:preview_pages_dev', //preview_pages folder
+        'preview_pages_index', //build preview_pages
         'copy:scripts',
         'copy:templates',
-        'copy:examples', //copies example assets
+        'copy:preview_pages', //copies preview_page assets
         'copy:waffles', //copies waffles
         'copy:assets', //copies assets
         'connect', //run locally
@@ -55,10 +55,10 @@ module.exports = function(grunt) {
         'requirejs:dist', //use requirejs for amd module
         'generate_styles', //generate scss
         'sass:dist', //compile scss
-        'examples_menu', //build examples menu template
-        'includereplace:examples_build', //examples folder
-        'examples_index', //build examples
-        'copy:examples', //copies example assets
+        'preview_pages_menu', //build preview_pages menu template
+        'includereplace:preview_pages_build', //preview_pages folder
+        'preview_pages_index', //build preview_pages
+        'copy:preview_pages', //copies preview_page assets
         'copy:waffles', //copies waffles
         'copy:assets', //copies assets
 
@@ -85,10 +85,10 @@ module.exports = function(grunt) {
 
         // Copy all js and template files to dist folder
         copy: {
-            examples: {
-                cwd: 'examples',
+            preview_pages: {
+                cwd: 'preview_pages',
                 src: ['assets/scripts.js', 'assets/style.css'],
-                dest: 'dist/examples/',
+                dest: 'dist/preview_pages/',
                 expand: true
             },
             waffles: {
@@ -155,9 +155,9 @@ module.exports = function(grunt) {
                 files: ['src/**/*.scss'],
                 tasks: ['sass:dev']
             },
-            examples: {
-                files: ['examples/**/*.html', '!examples/index.html'],
-                tasks: ['includereplace:examples_dev', 'examples_index', 'copy:examples']
+            preview_pages: {
+                files: ['preview_pages/**/*.html', '!preview_pages/index.html'],
+                tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
             },
             scripts: {
                 files: ['src/**/*.js'],
@@ -179,13 +179,13 @@ module.exports = function(grunt) {
             },
             livereload: {
                 options: {
-                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/examples/'
+                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/'
                 }
             }
         },
 
         requirejs: {
-            // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
+            // Options: https://github.com/jrburke/r.js/blob/master/build/preview_page.build.js
             dist: {
                 options: {
                     baseUrl: "src/",
@@ -206,8 +206,8 @@ module.exports = function(grunt) {
                 src: 'src/build/vizabi-amd.frag',
                 dest: 'src/vizabi-amd.js'
             },
-            //build examples without require
-            examples_build: {
+            //build preview_pages without require
+            preview_pages_build: {
                 options: {
                     prefix: '<!-- @@',
                     suffix: ' -->',
@@ -215,11 +215,11 @@ module.exports = function(grunt) {
                         include_require: ''
                     }
                 },
-                src: 'examples/**/*.html',
+                src: 'preview_pages/**/*.html',
                 dest: 'dist/'
             },
-            //build examples with require
-            examples_dev: {
+            //build preview_pages with require
+            preview_pages_dev: {
                 options: {
                     prefix: '<!-- @@',
                     suffix: ' -->',
@@ -227,7 +227,7 @@ module.exports = function(grunt) {
                         include_require: '<script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>'
                     }
                 },
-                src: 'examples/**/*.html',
+                src: 'preview_pages/**/*.html',
                 dest: 'dist/'
             }
         }
@@ -235,48 +235,48 @@ module.exports = function(grunt) {
 
     /*
      * ---------
-     * Building custom example index
+     * Building custom preview_page index
      */
 
-    grunt.registerTask('examples_index', 'Writes example index', function() {
+    grunt.registerTask('preview_pages_index', 'Writes preview_pages index', function() {
 
-        var examples_folder = 'dist/examples/',
-            examples_index = examples_folder + 'index.html',
+        var preview_pages_folder = 'dist/preview_pages/',
+            preview_pages_index = preview_pages_folder + 'index.html',
             contents = "<h1>Vizabi Examples:</h1>",
             current_dir;
 
-        grunt.file.recurse(examples_folder, function(abs, root, dir, file) {
+        grunt.file.recurse(preview_pages_folder, function(abs, root, dir, file) {
             if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
                 if (current_dir !== dir) {
                     current_dir = dir;
                     contents += "<h2>" + dir + "</h2>";
                 }
                 var link = dir + '/' + file;
-                var example = "<p><a href='" + link + "'>" + file + "</a></p>";
-                contents += example;
+                var preview_page = "<p><a href='" + link + "'>" + file + "</a></p>";
+                contents += preview_page;
             }
         });
-        grunt.file.write(examples_index, contents);
-        grunt.log.writeln("Wrote examples index.");
+        grunt.file.write(preview_pages_index, contents);
+        grunt.log.writeln("Wrote preview_pages index.");
     });
 
-    grunt.registerTask('examples_menu', 'Writes _examples.tpl', function() {
+    grunt.registerTask('preview_pages_menu', 'Writes _preview_pages.tpl', function() {
 
-        var examples_folder = 'examples/',
-            examples_file = examples_folder + 'assets/_examples.tpl',
+        var preview_pages_folder = 'preview_pages/',
+            preview_pages_file = preview_pages_folder + 'assets/_preview.tpl',
             current_dir,
             contents = "";
 
-        grunt.file.recurse(examples_folder, function(abs, root, dir, file) {
+        grunt.file.recurse(preview_pages_folder, function(abs, root, dir, file) {
             if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
                 file = file.replace(".html", "");
                 var link = dir + '/' + file;
-                var example = "<li><a onclick=\"goToExample('"+link+"');\">"+link+"</a></li>";
-                contents += example;
+                var preview_page = "<li><a onclick=\"goToExample('"+link+"');\">"+link+"</a></li>";
+                contents += preview_page;
             }
         });
-        grunt.file.write(examples_file, contents);
-        grunt.log.writeln("Wrote examples menu template.");
+        grunt.file.write(preview_pages_file, contents);
+        grunt.log.writeln("Wrote preview_pages menu template.");
     });
 
     /*
