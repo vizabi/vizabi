@@ -8,6 +8,7 @@ define([
 
     var width,
         height,
+        svg,
         chart,
         itemsWrapper,
         item,
@@ -23,14 +24,16 @@ define([
         minX,
         maxX,
         unit,
+        selectedItem,
+        margin = {top: 5, right: 5, bottom: 5, left: 5},
         nameOffset = 100,
         rankOffset = 30,
         barOffset = nameOffset + rankOffset + 30,
         valueOffset = 40,
         totalOffset = barOffset + valueOffset,
         barSpacing = 2,
-        itemHeight = 20,
-        barHeight = 10,
+        itemHeight = 25,
+        barHeight = 15,
         headersHeight = 20;
 
     var BarChart = Component.extend({
@@ -66,52 +69,42 @@ define([
             scale = this.model.getState("scale");
             unit = this.model.getState("unit") || 1;
 
-            height = headersHeight + itemHeight * currentYearData.length;
-            width = $("#bar-rank-wrapper").width();
+            height = (headersHeight + itemHeight * currentYearData.length) - margin.top - margin.bottom;
+            width = $("#bar-rank-wrapper").width() - margin.left - margin.right;
 
             x = d3.scale.linear()
                 .domain([minX, maxX])
                 .range([0, width - totalOffset]);
 
-            chart = d3.select("#bar-rank-wrapper")
-                .append('svg')
-                .attr('width', width)
-                .attr('height', height);
+            svg = d3.select("#bar-rank-wrapper")
+                .append('svg');
 
+            chart = svg.append('g');
 
             // Headers for the chart
             headers = chart.append("g")
                 .attr("class", "item-headers");
 
             headers.append("rect")
-                .attr("class", "item-headers")
-                .attr("width", width)
-                .attr("height", headersHeight);
+                .attr("class", "item-headers");
 
             headers.append("text")
                 .text("Name")
                 .attr("class", "name-title header-title")
-                .attr("x", nameOffset)
-                .attr("y", 15)
                 .attr("text-anchor", "end")
 
             headers.append("text")
                 .text("Rank")
                 .attr("class", "rank-title header-title")
-                .attr("x", nameOffset + rankOffset)
-                .attr("y", 15)
                 .attr("text-anchor", "middle");
 
             headers.append("text")
                 .text(indicator)
-                .attr("class", "indicator-title header-title")
-                .attr("x", barOffset)
-                .attr("y", 15);
+                .attr("class", "indicator-title header-title");
 
             // Wrapper for the items
             itemsWrapper = chart.append('g')
-                .attr('class', 'items-wrapper')
-                .attr('transform', 'translate(0, ' + headersHeight + ')');
+                .attr('class', 'items-wrapper');
 
             this.update();
         },
@@ -164,8 +157,6 @@ define([
 
             // Item name
             itemEnter.append("text")
-                .attr("x", nameOffset)
-                .attr("y", 15)
                 .attr("text-anchor", "end")
                 .attr('class', 'name-label')
                 .text(function (d) { return d['geo.name']});
@@ -174,8 +165,6 @@ define([
             // Item rank
             itemEnter.append("text")
                 .attr("class", "item-rank")
-                .attr("x", nameOffset + rankOffset)
-                .attr("y", 15)
                 .attr("text-anchor", "middle")
                 .text(function(item, i) {
                     return i + 1;
@@ -183,8 +172,6 @@ define([
 
             // Item value
             itemEnter.append("text")
-                .attr("x", function(d) { return x(d[indicator]) + barOffset; })
-                .attr("y", 15)
                 .attr("dx", 5)
                 .attr("text-anchor", "start")
                 .attr('class', 'value-label')
@@ -197,11 +184,7 @@ define([
 
             // Item bar
             itemEnter.append("rect")
-                .attr("class", "bar")
-                .attr("x", barOffset)
-                .attr("y", 5)
-                .attr("width", function (d) { return x(d[indicator]); })
-                .attr("height", barHeight);
+                .attr("class", "bar");
 
             // Remove bars for removed data
             item.exit().remove();
@@ -231,6 +214,11 @@ define([
             item.select(".bar")
                 .attr("width", function (d) { return x(d[indicator]); });
 
+            // If there is a slected item, update the scroll position
+            if (selectedItem) {
+                _this.scrollToSelected(selectedItem, false);
+            }
+
             this.sortBars();
             this.resize();
         },
@@ -241,60 +229,96 @@ define([
             switch(layout) {
                 case 'small':
                     nameOffset = 100;
+                    itemHeight = 25;
+                    barHeight = 15;
+                    headersHeight = 20;
+                    margin = {top: 5, right: 5, bottom: 5, left: 5};
                     break;
 
                 case 'medium':
                     nameOffset = 150;
+                    itemHeight = 25;
+                    barHeight = 15;
+                    headersHeight = 25;
+                    margin = {top: 10, right: 10, bottom: 10, left: 10};
                     break;
 
                 case 'large':
                 default:
                     nameOffset = 200;
+                    itemHeight = 30;
+                    barHeight = 20;
+                    headersHeight = 30;
+                    margin = {top: 20, right: 20, bottom: 20, left: 20};
             }
 
             barOffset = nameOffset + rankOffset + 30;
             totalOffset = barOffset + valueOffset;
 
-            height = headersHeight + itemHeight * currentYearData.length;
-            width = $("#bar-rank-wrapper").width();
+            height = (headersHeight + itemHeight * currentYearData.length) - margin.top - margin.bottom;
+            width = $("#bar-rank-wrapper").width() - margin.left - margin.right;
 
             x.range([0, width - totalOffset]);
 
-            chart
-                .attr('width', width)
-                .attr('height', height);
+            svg
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+
+            chart.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             headers.select("rect")
-                .attr("width", width);
+                .attr("width", width)
+                .attr("height", headersHeight);
 
             headers.select(".name-title")
-                .attr("x", nameOffset);
+                .attr("x", nameOffset)
+                .attr("y", headersHeight - 7);
 
             headers.select(".rank-title")
-                .attr("x", nameOffset + rankOffset);
+                .attr("x", nameOffset + rankOffset)
+                .attr("y", headersHeight - 7);
 
             headers.select(".indicator-title")
-                .attr("x", barOffset);
+                .attr("x", barOffset)
+                .attr("y", headersHeight - 7);
+
+            itemsWrapper.attr('transform', 'translate(0, ' + headersHeight + ')')
+
+            item.attr('height', itemHeight);
 
             item.select(".name-label")
-                .attr("x", nameOffset);
+                .attr("x", nameOffset)
+                .attr("y", function (d) {
+                    var textHeight = this.getBBox().height;
+                    return barHeight - ((barHeight - textHeight));
+                });
 
             // Item rank
             item.select(".item-rank")
-                .attr("x", nameOffset + rankOffset);
+                .attr("x", nameOffset + rankOffset)
+                .attr("y", function (d) {
+                    var textHeight = this.getBBox().height;
+                    return barHeight - ((barHeight - textHeight));
+                });
 
             // Item value
             item.select(".value-label")
                 .attr("x", function(d) { return x(d[indicator]) + barOffset; })
+                .attr("y", function (d) {
+                    var textHeight = this.getBBox().height;
+                    return barHeight - ((barHeight - textHeight));
+                })
                 .text(function (d) {
                     var value = d[indicator],
-                    num = parseInt(value, 10) / unit,
-                    rounded = Math.round(num * 10) / 10;
+                    num = parseFloat(value) / unit,
+                    rounded = num.toFixed(2);
                     return rounded;
                 });
 
             item.select(".bar")
                 .attr("x", barOffset)
+                .attr("y", 2)
+                .attr("height", barHeight)
                 .attr("width", function (d) { return x(d[indicator]); });
         },
 
@@ -336,7 +360,7 @@ define([
         },
 
         selectItem: function (selected, scroll) {
-            var $itemsWrapper, $selected, itemsWrapperHeight, selectedPosition;
+            selectedItem = selected;
 
             itemsWrapper.selectAll('.item')
             .attr('class', 'item opaque');
@@ -346,20 +370,28 @@ define([
             .attr('data-active', true);
 
             if (scroll) {
-                $itemsWrapper = $('#bar-rank-wrapper');
-                $selected = utils.d3ToJquery(selected);
-                itemsWrapperHeight = $itemsWrapper.height();
-                // TODO:
-                // Sure there must be a better way
-                selectedPosition = selected.attr('transform').split(',')[1];
-                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
-                $itemsWrapper.animate({'scrollTop': (selectedPosition - itemsWrapperHeight / 2)}, 150);
+                this.scrollToSelected(selected, true);
             }
         },
 
         deselectItem: function (selected) {
+            selectedItem = null;
+
             itemsWrapper.selectAll('.item').attr('class', 'item');
             selected.attr('data-active', null);
+        },
+
+        scrollToSelected: function (selected, animate) {
+            var $itemsWrapper, $selected, itemsWrapperHeight, selectedPosition;
+
+            $itemsWrapper = $('#bar-rank-wrapper');
+            $selected = utils.d3ToJquery(selected);
+            itemsWrapperHeight = $itemsWrapper.height();
+            // TODO:
+            // Sure there must be a better way
+            selectedPosition = selected.attr('transform').split(',')[1];
+            selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
+            $itemsWrapper.animate({'scrollTop': (selectedPosition - itemsWrapperHeight / 2)}, animate ? 150 : 0);
         }
     });
 

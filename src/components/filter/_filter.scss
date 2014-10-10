@@ -1,6 +1,8 @@
 #filter-wrapper {
   position: relative;
   text-align: left;
+  @include font-size(12px);
+
 
   .ui-helper-hidden-accessible {
     border: 0;
@@ -14,6 +16,7 @@
   }
 
   input {
+    @include font-size(12px);
     display: block;
     width: 100%;
     text-indent: 10px;
@@ -29,7 +32,6 @@
     overflow: auto;
     background: #fff;
     padding: 0;
-    font-size: 12px;
     list-style: none;
     border-bottom: 1px solid #EEE;
 
@@ -44,5 +46,13 @@
       color: #fff;
     }
   }
+}
 
+&.large {
+    #filter-wrapper {
+      @include font-size(16px);
+        input {
+          font-size: 16px;
+        }
+    }
 }
