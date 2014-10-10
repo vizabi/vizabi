@@ -294,20 +294,27 @@ module.exports = function(grunt) {
             current_dir;
 
         grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
+            var clean_abs;
             if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
-                contents.push('"tools/' + dir + '/' + dir+'"');
+                // src/tools/_examples/bar-chart/bar-chart.js --> tools/_examples/bar-chart/bar-chart 
+                clean_abs = abs.replace(".js", "").replace("src/", "");
+                contents.push('"' + clean_abs + '"');
             }
             else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
-                contents.push('"text!tools/' + dir + '/' + file+'"');
+                clean_abs = abs.replace("src/", "");
+                contents.push('"text!' + clean_abs + '"');
             }
         });
 
         grunt.file.recurse(components_folder, function(abs, root, dir, file) {
+            var clean_abs;
             if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
-                contents.push('"components/' + dir + '/' + dir+'"');
+                clean_abs = abs.replace(".js", "").replace("src/", "");
+                contents.push('"' + clean_abs + '"');
             }
             else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
-                contents.push('"text!components/' + dir + '/' + file+'"');
+                clean_abs = abs.replace("src/", "");
+                contents.push('"text!' + clean_abs + '"');
             }
         });
 
@@ -332,7 +339,8 @@ module.exports = function(grunt) {
 
         grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
             if (typeof dir !== 'undefined' && file.indexOf('.scss') !== -1) {
-                includes.push('../../tools/' + dir + '/' + file);
+                var clean_abs = abs.replace("src/", "");
+                includes.push('../../' + clean_abs);
             }
         });
 

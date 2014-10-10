@@ -1,7 +1,0 @@
-@import '../_tool.scss';
-
-.table {
-	@extend .vizabi-tool;
-	@import '../../components/table/_table.scss';
-	@import '../../components/header/_header.scss';
-}

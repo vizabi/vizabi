@@ -14,10 +14,13 @@ define([
             });
         },
 
-        start: function(tool_name, placeholder, options) {
-            var defer = $.Deferred();
+        start: function(tool_path, placeholder, options) {
+            var defer = $.Deferred(),
+                tool_tokens = tool_path.split("/"),
+                tool_name = tool_tokens[tool_tokens.length - 1];
 
-            var path = 'tools/' + tool_name + '/' + tool_name,
+
+            var path = 'tools/' + tool_path + '/' + tool_name,
                 context = this;
 
             // extending options with name and tool's placeholder
