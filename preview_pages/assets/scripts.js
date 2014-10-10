@@ -60,7 +60,7 @@ function setLanguage(id, language) {
     var newOption = {
         language: language
     };
-    myVizabi.setOptions("#" + id, newOption);
+    myVizabi.setOptions(newOption);
 }
 
 function setCurrentState(id, idState) {
@@ -76,7 +76,7 @@ function forceState(id, state) {
     var newOption = {
         state: state
     };
-    myVizabi.setOptions("#" + id, newOption);
+    myVizabi.setOptions(newOption);
 }
 
 function showState(state, id) {

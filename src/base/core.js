@@ -4,7 +4,7 @@ define([
     'base/events'
 ], function($, Class, Events) {
 
-    var tools = {};
+    var tool;
 
     var core = Class.extend({
 
@@ -31,8 +31,8 @@ define([
 
             //placeholder is id because it's unique on the page
             require([path], function(Tool) {
-                tools[placeholder] = new Tool(context, options);
-                var promise = tools[placeholder].render();
+                tool = new Tool(context, options);
+                var promise = tool.render();
                 promise.done(function() {
                     defer.resolve();
                     Events.trigger("resize");
@@ -62,8 +62,8 @@ define([
             Events.trigger(what, args);
         },
 
-        setOptions: function(name, options) {
-            tools[name].setOptions(options);
+        setOptions: function(options) {
+            tool.setOptions(options);
         }
 
     });
