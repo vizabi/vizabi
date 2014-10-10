@@ -19,9 +19,12 @@ require.config({
         //TODO: Move this to timeslider2 (component-specific)
         //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
         jqueryui_slider: '../lib/jqueryui/ui/minified/jquery.ui.slider.min',
+        jqueryui_autocomplete: '../lib/jqueryui/ui/minified/jquery.ui.autocomplete.min',
         jqueryui_core: '../lib/jqueryui/ui/minified/jquery.ui.core.min',
         jqueryui_mouse: '../lib/jqueryui/ui/minified/jquery.ui.mouse.min',
-        jqueryui_widget: '../lib/jqueryui/ui/minified/jquery.ui.widget.min'
+        jqueryui_widget: '../lib/jqueryui/ui/minified/jquery.ui.widget.min',
+        jqueryui_position: '../lib/jqueryui/ui/minified/jquery.ui.position.min',
+        jqueryui_menu: '../lib/jqueryui/ui/minified/jquery.ui.menu.min'
     },
     shim: {
         d3: {
@@ -40,11 +43,26 @@ require.config({
         jqueryui_mouse: {
             deps: ['jqueryui_widget']
         },
+        jqueryui_menu: {
+            deps: [
+                'jqueryui_core',
+                'jqueryui_widget',
+                'jqueryui_position'
+            ]
+        },
         jqueryui_slider: {
             deps: ['jquery',
                 'jqueryui_core',
                 'jqueryui_mouse',
                 'jqueryui_widget'
+            ]
+        },
+        jqueryui_autocomplete: {
+            deps: ['jquery',
+                'jqueryui_core',
+                'jqueryui_widget',
+                'jqueryui_position',
+                'jqueryui_menu'
             ]
         }
     },

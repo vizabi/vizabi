@@ -29,6 +29,7 @@ define([
         },
 
         postRender: function() {
+            var _this = this;
             this.placeholder = utils.d3ToJquery(this.placeholder);
             container = utils.d3ToJquery(this.element);
             //create timeslider

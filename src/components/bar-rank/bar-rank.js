@@ -2,8 +2,9 @@
 define([
     'd3',
     'underscore',
+    'base/utils',
     'base/component'
-], function(d3, _, Component) {
+], function(d3, _, utils, Component) {
 
     var width,
         height,
@@ -42,6 +43,12 @@ define([
 
         // After loading template, build the chart
         postRender: function() {
+            var _this = this;
+
+            // Subscribe to events
+            _this.events.bind('select:item', _this.selectTrigger.bind(_this));
+            _this.events.bind('deselect:item', _this.deselectTrigger.bind(_this));
+
             indicator = this.model.getState("indicator");
             data = this.model.getData()[0];
             year = this.model.getState("time");
@@ -96,8 +103,8 @@ define([
                 .attr("text-anchor", "middle");
 
             headers.append("text")
-                .text("Population")
-                .attr("class", "population-title header-title")
+                .text(indicator)
+                .attr("class", "indicator-title header-title")
                 .attr("x", barOffset)
                 .attr("y", 15);
 
@@ -114,6 +121,7 @@ define([
         update: function() {
             var _this = this;
 
+            indicator = this.model.getState("indicator");
             year = this.model.getState("time");
             data = this.model.getData()[0];
             currentYearData = data.filter(function(row) {
@@ -130,6 +138,9 @@ define([
 
             x.domain([minX, maxX]);
 
+            headers.select(".indicator-title")
+                .text(indicator)
+
             // Add labeled bars for each item
             item = itemsWrapper.selectAll(".item")
                 .data(currentYearData, function (d) { return d.geo; });
@@ -137,6 +148,7 @@ define([
             itemEnter = item
                 .enter().append("g")
                 .attr("class", "item")
+                .attr("id", function (d) { return d.geo; })
                 .attr("transform", function(item, i) {
                     return "translate(0," + (i * itemHeight) + ")";
                 })
@@ -144,14 +156,9 @@ define([
                     var i = d3.select(this);
 
                     if (!i.attr('data-active')) {
-                        itemsWrapper.selectAll('.item').attr('class', 'item opaque');
-                        i
-                            .attr('class', 'item')
-                            .attr('data-active', true);
-                        // _this.updateDetails(d);
+                        _this.selectItem(i, true);
                     } else {
-                        itemsWrapper.selectAll('.item').attr('class', 'item');
-                        i.attr('data-active', null);
+                        _this.deselectItem(i);
                     }
                 });
 
@@ -182,7 +189,7 @@ define([
                 .attr("text-anchor", "start")
                 .attr('class', 'value-label')
                 .text(function (d) {
-                    var value = d[indicator]
+                    var value = d[indicator],
                     num = parseInt(value, 10) / unit,
                     rounded = Math.round(num * 10) / 10;
                     return rounded;
@@ -214,7 +221,7 @@ define([
             item.select(".value-label")
                 .attr("x", function(d) { return x(d[indicator]) + barOffset; })
                 .text(function (d) {
-                    var value = d[indicator]
+                    var value = d[indicator],
                     num = parseInt(value, 10) / unit,
                     rounded = Math.round(num * 10) / 10;
                     return rounded;
@@ -280,7 +287,7 @@ define([
             item.select(".value-label")
                 .attr("x", function(d) { return x(d[indicator]) + barOffset; })
                 .text(function (d) {
-                    var value = d[indicator]
+                    var value = d[indicator],
                     num = parseInt(value, 10) / unit,
                     rounded = Math.round(num * 10) / 10;
                     return rounded;
@@ -316,6 +323,43 @@ define([
 
         updateDetails: function (d) {
             $("#details").html(d['geo.name']);
+        },
+
+        selectTrigger: function (id) {
+            var el = d3.select('#' + id);
+            this.selectItem(el, true);
+        },
+
+        deselectTrigger: function (id) {
+            var el = d3.select('#' + id);
+            this.deselectItem(el);
+        },
+
+        selectItem: function (selected, scroll) {
+            var $itemsWrapper, $selected, itemsWrapperHeight, selectedPosition;
+
+            itemsWrapper.selectAll('.item')
+            .attr('class', 'item opaque');
+
+            selected
+            .attr('class', 'item')
+            .attr('data-active', true);
+
+            if (scroll) {
+                $itemsWrapper = $('#bar-rank-wrapper');
+                $selected = utils.d3ToJquery(selected);
+                itemsWrapperHeight = $itemsWrapper.height();
+                // TODO:
+                // Sure there must be a better way
+                selectedPosition = selected.attr('transform').split(',')[1];
+                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
+                $itemsWrapper.animate({'scrollTop': (selectedPosition - itemsWrapperHeight / 2)}, 150);
+            }
+        },
+
+        deselectItem: function (selected) {
+            itemsWrapper.selectAll('.item').attr('class', 'item');
+            selected.attr('data-active', null);
         }
     });
 

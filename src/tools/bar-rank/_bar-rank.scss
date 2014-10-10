@@ -3,8 +3,23 @@
 .bar-rank {
 	@extend .vizabi-tool;
 
+  // QUESTION:
+  // I don't get it, why the layout is specified in a general _tool.scss file?
+  // Will every tool share the same layout?
+  // This is a quick&dirty solution to get me going,
+  // when I learn the mystery of layouting the tools, I'll fix it
+  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
+    top: 40px!important;
+  }
+
+  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter {
+    position: relative;
+    z-index: 3;
+  }
+
 	@import '../../components/header/_header.scss';
 	@import '../../components/bar-rank/_bar-rank.scss';
-	@import '../../components/timeslider2/_timeslider2.scss';
+  @import '../../components/timeslider2/_timeslider2.scss';
+	@import '../../components/filter/filter.scss';
 	@import '../../components/buttonlist/_buttonlist.scss';
 }

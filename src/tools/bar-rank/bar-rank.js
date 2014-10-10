@@ -21,6 +21,9 @@ define([
             this.addComponent('bar-rank', {
                 placeholder: '.vizabi-tool-viz'
             });
+            this.addComponent('filter', {
+                placeholder: '.vizabi-tool-filter'
+            });
             this.addComponent('timeslider2', {
                 placeholder: '.vizabi-tool-timeslider'
             });

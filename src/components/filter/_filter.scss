@@ -1,0 +1,48 @@
+#filter-wrapper {
+  position: relative;
+  text-align: left;
+
+  .ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    text-indent: 10px;
+    border: none;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .ui-menu {
+    position: absolute;
+    right: 0;
+    max-height: 400px;
+    overflow: auto;
+    background: #fff;
+    padding: 0;
+    font-size: 12px;
+    list-style: none;
+    border-bottom: 1px solid #EEE;
+
+    a {
+      display: block;
+      padding: 5px 10px;
+    }
+
+    .ui-state-focus,
+    .ui-state-active {
+      background: #ccc;
+      color: #fff;
+    }
+  }
+
+}
