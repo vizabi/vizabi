@@ -1,9 +1,8 @@
 define([
     'jquery',
-    'd3',
     'base/component',
     'jqueryui_autocomplete'
-], function($, d3, Component) {
+], function($, Component) {
 
     var $filterInput,
         data,
@@ -43,7 +42,7 @@ define([
                 select: function( event, ui ) {
                     event.preventDefault();
                     $(this).val('');
-                    _this.events.trigger('select:item', ui.item.value);
+                    _this.events.trigger('item:filtered', ui.item.value);
                     selected = ui.item.value;
                 }
             });

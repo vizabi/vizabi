@@ -24,6 +24,9 @@ define([
             this.addComponent('filter', {
                 placeholder: '.vizabi-tool-filter'
             });
+            this.addComponent('info-box', {
+                placeholder: '.vizabi-tool-info-box'
+            });
             this.addComponent('timeslider2', {
                 placeholder: '.vizabi-tool-timeslider'
             });

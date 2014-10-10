@@ -49,8 +49,7 @@ define([
             var _this = this;
 
             // Subscribe to events
-            _this.events.bind('select:item', _this.selectTrigger.bind(_this));
-            _this.events.bind('deselect:item', _this.deselectTrigger.bind(_this));
+            _this.events.bind('item:filtered', _this.selectTrigger.bind(_this));
 
             indicator = this.model.getState("indicator");
             data = this.model.getData()[0];
@@ -128,6 +127,7 @@ define([
             });
             minX = this.model.getState("min") || ((scale == "log") ? minValue : 0);
             maxX = this.model.getState("max") || (maxValue + maxValue / 10);
+            unit = this.model.getState("unit") || 1;
 
             x.domain([minX, maxX]);
 
@@ -351,15 +351,11 @@ define([
 
         selectTrigger: function (id) {
             var el = d3.select('#' + id);
-            this.selectItem(el, true);
-        },
-
-        deselectTrigger: function (id) {
-            var el = d3.select('#' + id);
-            this.deselectItem(el);
+            this.selectItem(el, id, true);
         },
 
         selectItem: function (selected, scroll) {
+            var id = selected.attr('id');
             selectedItem = selected;
 
             itemsWrapper.selectAll('.item')
@@ -372,6 +368,8 @@ define([
             if (scroll) {
                 this.scrollToSelected(selected, true);
             }
+
+            this.events.trigger('item:selected', id);
         },
 
         deselectItem: function (selected) {
@@ -379,6 +377,8 @@ define([
 
             itemsWrapper.selectAll('.item').attr('class', 'item');
             selected.attr('data-active', null);
+
+            this.events.trigger('item:deselected');
         },
 
         scrollToSelected: function (selected, animate) {
@@ -390,7 +390,11 @@ define([
             // TODO:
             // Sure there must be a better way
             selectedPosition = selected.attr('transform').split(',')[1];
-            selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
+            if (selectedPosition) {
+                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
+            } else {
+                selectedPosition = 0;
+            }
             $itemsWrapper.animate({'scrollTop': (selectedPosition - itemsWrapperHeight / 2)}, animate ? 150 : 0);
         }
     });

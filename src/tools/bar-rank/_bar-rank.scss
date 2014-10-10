@@ -11,7 +11,7 @@
   &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz,
   &.medium .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz,
   &.large .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
-    top: 40px!important;
+    top: 100px!important;
   }
 
   &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter,
@@ -23,6 +23,7 @@
 
 	@import '../../components/header/_header.scss';
 	@import '../../components/bar-rank/_bar-rank.scss';
+  @import '../../components/info-box/_info-box.scss';
   @import '../../components/timeslider2/_timeslider2.scss';
 	@import '../../components/filter/filter.scss';
 	@import '../../components/buttonlist/_buttonlist.scss';

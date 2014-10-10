@@ -1,0 +1,14 @@
+#info-box-wrapper {
+  height: 40px;
+  line-height: 20px;
+  text-align: left;
+  padding: 10px;
+  background: #edf9fe;
+  color: #0a5f7c;
+  font-weight: 700;
+  @include font-size(12px);
+}
+
+.info-box-placeholder:first-letter {
+  text-transform: capitalize;
+}
