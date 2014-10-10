@@ -8,7 +8,8 @@ define([
     var $filterInput,
         data,
         year,
-        currentYearData;
+        currentYearData,
+        selected;
 
     var Filter = Component.extend({
         init: function(context, options) {
@@ -30,16 +31,20 @@ define([
 
 
             $filterInput.autocomplete({
-                minLength: 3,
+                minLength: 2,
                 source: _.map(currentYearData, function (country) { return {value: country.geo, label: country['geo.name']}; }),
+                change: function (event, ui) {
+                    console.log(ui);
+                },
                 focus: function(event, ui) {
                     event.preventDefault();
                     $(this).val(ui.item.label);
                 },
                 select: function( event, ui ) {
                     event.preventDefault();
-                    $(this).val(ui.item.label);
+                    $(this).val('');
                     _this.events.trigger('select:item', ui.item.value);
+                    selected = ui.item.value;
                 }
             });
 

@@ -8,11 +8,15 @@
   // Will every tool share the same layout?
   // This is a quick&dirty solution to get me going,
   // when I learn the mystery of layouting the tools, I'll fix it
-  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
+  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz,
+  &.medium .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz,
+  &.large .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
     top: 40px!important;
   }
 
-  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter {
+  &.small .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter,
+  &.medium .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter,
+  &.large .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-filter {
     position: relative;
     z-index: 3;
   }

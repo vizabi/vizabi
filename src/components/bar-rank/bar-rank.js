@@ -273,7 +273,7 @@ define([
             headers.select(".rank-title")
                 .attr("x", nameOffset + rankOffset);
 
-            headers.select(".population-title")
+            headers.select(".indicator-title")
                 .attr("x", barOffset);
 
             item.select(".name-label")
