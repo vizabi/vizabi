@@ -1,4 +1,0 @@
-[submodule "dist"]
-	path = dist
-	url = git@github.com:Gapminder/vizabi-dist.git
-	branch = develop
