@@ -6,14 +6,31 @@
     color: #666666;
     overflow: auto;
 
+    #bar-rank-chart-holder {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 30px;
+        bottom: 0;
+        overflow: scroll;
+    }
+
     header {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         background: #FFF;
-        height: 30px;
-        line-height: 30px;
+        height: 50px;
+        line-height: 50px;
+
+        span {
+            float: left;
+        }
+
+        .header-name {
+            text-align: right;
+        }
     }
 
     .vizabi-tool-viz {
@@ -69,11 +86,21 @@
 &.medium {
     #bar-rank-wrapper {
         @include font-size(15px);
+
+        header {
+            height: 40px;
+            line-height: 40px;
+        }
     }
 }
 
 &.small {
     #bar-rank-wrapper {
         @include font-size(12px);
+
+        header {
+            height: 30px;
+            line-height: 30px;
+        }
     }
 }

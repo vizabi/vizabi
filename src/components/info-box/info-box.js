@@ -16,7 +16,7 @@ define([
         selectedItem,
         unit;
 
-    var Filter = Component.extend({
+    var InfoBox = Component.extend({
         init: function(context, options) {
             this.name = 'info-box';
             this.template = 'components/' + this.name + '/' + this.name;
@@ -73,7 +73,7 @@ define([
                 percent = (value / totalValue * 100).toFixed(2);
 
             $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + (value / unit).toFixed(2));
-            $infoPercent.html(percent + '% of the Wolrd.');
+            $infoPercent.html(percent + '% of the Wolrd');
 
             selectedItem = selected;
         },
@@ -84,8 +84,7 @@ define([
 
             selectedItem = false;
         }
-
     });
 
-    return Filter;
+    return InfoBox;
 });

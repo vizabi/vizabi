@@ -31,13 +31,12 @@ define([
         barOffset = nameOffset + rankOffset + 30,
         valueOffset = 40,
         totalOffset = barOffset + valueOffset,
-        barSpacing = 2,
         itemHeight = 25,
         barHeight = 15,
-        headersHeight = 0,
         $headerName,
         $headerRank,
-        $headerIndicator;
+        $headerIndicator,
+        $barRankWrapper;
 
     var BarChart = Component.extend({
         init: function(context, options) {
@@ -51,6 +50,9 @@ define([
         postRender: function() {
             var _this = this;
 
+            // Get the wrapper ref
+            $barRankWrapper = $("#bar-rank-wrapper");
+
             // Get header refs
             $headerName = $('#header-name');
             $headerRank = $('#header-rank');
@@ -59,59 +61,9 @@ define([
             // Subscribe to events
             _this.events.bind('item:filtered', _this.selectTrigger.bind(_this));
 
-            indicator = this.model.getState("indicator");
-            data = this.model.getData()[0];
-            year = this.model.getState("time");
-            currentYearData = data.filter(function(row) {
-                return (row.time == year);
-            });
-            minValue = d3.min(data, function(d) {
-                return +d[indicator];
-            });
-            maxValue = d3.max(data, function(d) {
-                return +d[indicator];
-            });
-            minX = this.model.getState("min") || ((scale == "log") ? minValue : 0);
-            maxX = this.model.getState("max") || (maxValue + maxValue / 10);
-            scale = this.model.getState("scale");
-            unit = this.model.getState("unit") || 1;
-
-            height = (headersHeight + itemHeight * currentYearData.length) - margin.top - margin.bottom;
-            width = $("#bar-rank-wrapper").width() - margin.left - margin.right;
-
-            x = d3.scale.linear()
-                .domain([minX, maxX])
-                .range([0, width - totalOffset]);
-
-            svg = d3.select("#bar-rank-chart-holder")
-                .append('svg');
-
+            svg = d3.select("#bar-rank-chart-holder").append('svg');
             chart = svg.append('g');
-
-            // // Headers for the chart
-            // headers = chart.append("g")
-            //     .attr("class", "item-headers");
-
-            // headers.append("rect")
-            //     .attr("class", "item-headers");
-
-            // headers.append("text")
-            //     .text("Name")
-            //     .attr("class", "name-title header-title")
-            //     .attr("text-anchor", "end")
-
-            // headers.append("text")
-            //     .text("Rank")
-            //     .attr("class", "rank-title header-title")
-            //     .attr("text-anchor", "middle");
-
-            // headers.append("text")
-            //     .text(indicator)
-            //     .attr("class", "indicator-title header-title");
-
-            // Wrapper for the items
-            itemsHolder = chart.append('g')
-                .attr('class', 'items-wrapper');
+            itemsHolder = chart.append('g').attr('class', 'items-wrapper');
 
             this.update();
         },
@@ -137,10 +89,8 @@ define([
             maxX = this.model.getState("max") || (maxValue + maxValue / 10);
             unit = this.model.getState("unit") || 1;
 
-            x.domain([minX, maxX]);
-
-            // headers.select(".indicator-title")
-            //     .text(indicator)
+            x = d3.scale.linear()
+                .domain([minX, maxX]);
 
             // Add labeled bars for each item
             item = itemsHolder.selectAll(".item")
@@ -239,7 +189,6 @@ define([
                     nameOffset = 100;
                     itemHeight = 25;
                     barHeight = 15;
-                    // headersHeight = 20;
                     margin = {top: 5, right: 5, bottom: 5, left: 5};
                     break;
 
@@ -247,7 +196,6 @@ define([
                     nameOffset = 150;
                     itemHeight = 25;
                     barHeight = 15;
-                    // headersHeight = 25;
                     margin = {top: 10, right: 10, bottom: 10, left: 10};
                     break;
 
@@ -256,15 +204,14 @@ define([
                     nameOffset = 200;
                     itemHeight = 30;
                     barHeight = 20;
-                    // headersHeight = 30;
                     margin = {top: 20, right: 20, bottom: 20, left: 20};
             }
 
             barOffset = nameOffset + rankOffset + 30;
             totalOffset = barOffset + valueOffset;
 
-            height = (headersHeight + itemHeight * currentYearData.length) - margin.top - margin.bottom;
-            width = $("#bar-rank-wrapper").width() - margin.left - margin.right;
+            height = (itemHeight * currentYearData.length) - margin.top - margin.bottom;
+            width = $barRankWrapper.width() - margin.left - margin.right;
 
             x.range([0, width - totalOffset]);
 
@@ -274,23 +221,9 @@ define([
 
             chart.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            // headers.select("rect")
-            //     .attr("width", width)
-            //     .attr("height", headersHeight);
-
-            // headers.select(".name-title")
-            //     .attr("x", nameOffset)
-            //     .attr("y", headersHeight - 7);
-
-            // headers.select(".rank-title")
-            //     .attr("x", nameOffset + rankOffset)
-            //     .attr("y", headersHeight - 7);
-
-            // headers.select(".indicator-title")
-            //     .attr("x", barOffset)
-            //     .attr("y", headersHeight - 7);
-
-            itemsHolder.attr('transform', 'translate(0, ' + headersHeight + ')')
+            // Setup headers
+            $headerName.width(nameOffset + margin.left);
+            $headerRank.width(rankOffset * 2);
 
             item.attr('height', itemHeight);
 
@@ -390,16 +323,15 @@ define([
         },
 
         scrollToSelected: function (selected, animate) {
-            var $itemsHolder, $selected, itemsHolderHeight, selectedPosition;
+            var $itemsHolder, itemsHolderHeight, selectedPosition;
 
             $itemsHolder = $('#bar-rank-chart-holder');
-            $selected = utils.d3ToJquery(selected);
             itemsHolderHeight = $itemsHolder.height();
             // TODO:
             // Sure there must be a better way
             selectedPosition = selected.attr('transform').split(',')[1];
             if (selectedPosition) {
-                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1)) + headersHeight;
+                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1));
             } else {
                 selectedPosition = 0;
             }
