@@ -1,7 +1,7 @@
 #bar-rank-wrapper {
     @include absolute(0, 0, 0, 0);
     @include font-size(18px);
-    padding-top: 30px;
+    padding-top: 50px;
     font-family: $fontFamily;
     color: #666666;
     overflow: auto;
@@ -10,7 +10,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        top: 30px;
+        top: 50px;
         bottom: 0;
         overflow: scroll;
     }
@@ -86,6 +86,11 @@
 &.medium {
     #bar-rank-wrapper {
         @include font-size(15px);
+        padding-top: 40px;
+
+        #bar-rank-chart-holder {
+            top: 40px;
+        }
 
         header {
             height: 40px;
@@ -97,6 +102,11 @@
 &.small {
     #bar-rank-wrapper {
         @include font-size(12px);
+        padding-top: 30px;
+
+        #bar-rank-chart-holder {
+            top: 30px;
+        }
 
         header {
             height: 30px;
