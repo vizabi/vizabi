@@ -1,9 +1,20 @@
 #bar-rank-wrapper {
     @include absolute(0, 0, 0, 0);
     @include font-size(18px);
+    padding-top: 30px;
     font-family: $fontFamily;
     color: #666666;
     overflow: auto;
+
+    header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #FFF;
+        height: 30px;
+        line-height: 30px;
+    }
 
     .vizabi-tool-viz {
         @include absolute(30px, 0, 0, 0);
