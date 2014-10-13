@@ -1,0 +1,9 @@
+@import '../../tool';
+
+.pop-slider {
+	@extend .vizabi-tool;
+
+	@import '../../../components/_examples/year-display/year-display';
+	@import '../../../components/_examples/indicator-display/indicator-display';
+	@import '../../../components/_gapminder/timeslider/timeslider';
+}
