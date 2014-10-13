@@ -29,7 +29,7 @@ define([
     var BarChart = Component.extend({
         init: function(context, options) {
             this.name = 'bar-rank';
-            this.template = 'components/' + this.name + '/' + this.name;
+            this.template = 'components/_gapminder/' + this.name + '/' + this.name;
             this.tool = context;
             this._super(context, options);
         },

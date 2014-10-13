@@ -1,4 +1,4 @@
-@import '../_tool.scss';
+@import '../../_tool.scss';
 
 .bar-rank {
 	@extend .vizabi-tool;
@@ -21,10 +21,10 @@
     z-index: 3;
   }
 
-	@import '../../components/header/_header.scss';
-	@import '../../components/bar-rank/_bar-rank.scss';
-  @import '../../components/info-box/_info-box.scss';
-  @import '../../components/timeslider2/_timeslider2.scss';
-	@import '../../components/filter/filter.scss';
-	@import '../../components/buttonlist/_buttonlist.scss';
+	@import '../../../components/_gapminder/header/_header.scss';
+	@import '../../../components/_gapminder/bar-rank/_bar-rank.scss';
+  @import '../../../components/_gapminder/info-box/_info-box.scss';
+  @import '../../../components/_gapminder/timeslider/_timeslider.scss';
+	@import '../../../components/_gapminder/filter/filter.scss';
+	@import '../../../components/_gapminder/buttonlist/_buttonlist.scss';
 }

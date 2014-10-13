@@ -21,7 +21,7 @@ define([
     var InfoBox = Component.extend({
         init: function(context, options) {
             this.name = 'info-box';
-            this.template = 'components/' + this.name + '/' + this.name;
+            this.template = 'components/_gapminder/' + this.name + '/' + this.name;
             this.tool = context;
             this._super(context, options);
         },
