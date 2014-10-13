@@ -1,7 +1,7 @@
 {
   "name": "vizabi",
   "version": "0.0.1",
-  "description": "vizabi",
+  "description": "Vizabi Framework",
   "main": "Gruntfile.js",
   "directories": {
     "test": "test"
@@ -9,7 +9,7 @@
   "dependencies": {
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt build"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,8 @@
   "homepage": "https://github.com/Gapminder/vizabi",
   "devDependencies": {
     "grunt": "~0.4.5",
+    "grunt-cli": "~0.1.13",
+    "bower": "~1.3.12",
     "grunt-contrib-sass": "^0.7.4",
     "chalk": "~0.4.0",
     "load-grunt-tasks": "^0.4.0",
