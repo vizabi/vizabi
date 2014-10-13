@@ -1,5 +1,4 @@
 define([
-    'underscore',
     'base/tool'
 ], function(_, Tool) {
 

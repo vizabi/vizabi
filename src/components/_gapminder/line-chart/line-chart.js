@@ -79,7 +79,11 @@ define([
             this._super(context, options);
         },
 
-        // After loading template, select HTML elements
+        /*
+         * POSTRENDER:
+         * Executed after template is loaded
+         * Ideally, it contains instantiations related to template
+         */
         postRender: function() {
 
             graph = this.element.select('#graph');
