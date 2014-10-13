@@ -1,0 +1,10 @@
+@import '../../tool';
+
+.bar-chart {
+	@extend .vizabi-tool;
+
+	@import '../../../components/_gapminder/header/header';
+	@import '../../../components/_examples/bar-chart/bar-chart';
+	@import '../../../components/_gapminder/timeslider/timeslider';
+	@import '../../../components/_gapminder/buttonlist/buttonlist';
+}

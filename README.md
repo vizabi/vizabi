@@ -2,7 +2,7 @@
 
 Welcome to the vizabi repository! 
 
-(Please note that current version of Vizabi is still a work in progress, and Vizabi 1.0.0 will be the public release of the framework).
+(Please note that current version of Vizabi is still a work in progress, and Vizabi 1.0.0 will be the public release of the framework). [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)
 
 
 ####What is Vizabi?
