@@ -1,6 +1,6 @@
 define([
     'base/tool'
-], function(_, Tool) {
+], function(Tool) {
 
     var barChart = Tool.extend({
         init: function(parent, options) {
