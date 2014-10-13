@@ -6,25 +6,17 @@ define([
     'base/component'
 ], function(d3, _, utils, Component) {
 
-    var width,
-        height,
-        svg,
-        chart,
-        itemsHolder,
-        item,
-        headers,
-        indicator,
-        data,
-        year,
-        currentYearData,
-        minValue,
-        maxValue,
-        scale,
-        x,
-        minX,
-        maxX,
-        unit,
-        selectedItem,
+    var
+        // SVG related
+        width, height, svg, itemsHolder, item, selectedItem, x, minX, maxX,
+
+        // Data related
+        indicator, data, year, currentYearData, minValue, maxValue, scale, unit,
+
+        // HTML refs
+        $headerName, $headerRank, $headerIndicator, $barRankWrapper,
+
+        // Postioning and spacing
         margin = {top: 5, right: 5, bottom: 5, left: 5},
         nameOffset = 100,
         rankOffset = 30,
@@ -32,11 +24,7 @@ define([
         valueOffset = 40,
         totalOffset = barOffset + valueOffset,
         itemHeight = 25,
-        barHeight = 15,
-        $headerName,
-        $headerRank,
-        $headerIndicator,
-        $barRankWrapper;
+        barHeight = 15;
 
     var BarChart = Component.extend({
         init: function(context, options) {
@@ -59,11 +47,12 @@ define([
             $headerIndicator = $('#header-indicator');
 
             // Subscribe to events
-            _this.events.bind('item:filtered', _this.selectTrigger.bind(_this));
+            _this.events.bind('item:filtered', _this.selectHandler.bind(_this));
+            _this.events.bind('infobox:closed', _this.deselectHandler.bind(_this));
 
+             // Initialize SVG and place
             svg = d3.select("#bar-rank-chart-holder").append('svg');
-            chart = svg.append('g');
-            itemsHolder = chart.append('g').attr('class', 'items-wrapper');
+            itemsHolder = svg.append('g').attr('class', 'items-wrapper');
 
             this.update();
         },
@@ -76,18 +65,14 @@ define([
             indicator = this.model.getState("indicator");
             year = this.model.getState("time");
             data = this.model.getData()[0];
-            currentYearData = data.filter(function(row) {
-                return (row.time == year);
-            });
-            minValue = d3.min(data, function(d) {
-                return +d[indicator];
-            });
-            maxValue = d3.max(data, function(d) {
-                return +d[indicator];
-            });
+            currentYearData = data.filter(function(row) { return (row.time == year); });
+            minValue = d3.min(data, function(d) { return +d[indicator]; });
+            maxValue = d3.max(data, function(d) { return +d[indicator]; });
             minX = this.model.getState("min") || ((scale == "log") ? minValue : 0);
             maxX = this.model.getState("max") || (maxValue + maxValue / 10);
             unit = this.model.getState("unit") || 1;
+
+            $headerIndicator.html(indicator);
 
             x = d3.scale.linear()
                 .domain([minX, maxX]);
@@ -100,16 +85,14 @@ define([
                 .enter().append("g")
                 .attr("class", "item")
                 .attr("id", function (d) { return d.geo; })
-                .attr("transform", function(item, i) {
-                    return "translate(0," + (i * itemHeight) + ")";
-                })
                 .on("click", function(d) {
                     var i = d3.select(this);
 
-                    if (!i.attr('data-active')) {
-                        _this.selectItem(i, true);
-                    } else {
+
+                    if (i.attr('data-active')) {
                         _this.deselectItem(i);
+                    } else {
+                        _this.selectItem(i, true);
                     }
                 });
 
@@ -160,7 +143,7 @@ define([
 
             // Item value
             item.select(".value-label")
-                .attr("x", function(d) { return x(d[indicator]) + barOffset; })
+                .attr("x", function(d) { return x(d[indicator] || 0) + barOffset; })
                 .text(function (d) {
                     var value = d[indicator],
                     num = parseInt(value, 10) / unit,
@@ -170,7 +153,7 @@ define([
 
             // Item bar
             item.select(".bar")
-                .attr("width", function (d) { return x(d[indicator]); });
+                .attr("width", function (d) { return x(d[indicator] || 0); });
 
             // If there is a slected item, update the scroll position
             if (selectedItem) {
@@ -219,13 +202,20 @@ define([
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom);
 
-            chart.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            itemsHolder.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             // Setup headers
             $headerName.width(nameOffset + margin.left);
             $headerRank.width(rankOffset * 2);
 
-            item.attr('height', itemHeight);
+            item
+                .attr('height', itemHeight)
+                .attr("data-position", function(item, i) {
+                    return i * itemHeight;
+                })
+                .attr("transform", function(item, i) {
+                    return "translate(0," + (i * itemHeight) + ")";
+                });
 
             item.select(".name-label")
                 .attr("x", nameOffset)
@@ -244,7 +234,7 @@ define([
 
             // Item value
             item.select(".value-label")
-                .attr("x", function(d) { return x(d[indicator]) + barOffset; })
+                .attr("x", function(d) { return x(d[indicator] || 0) + barOffset; })
                 .attr("y", function (d) {
                     var textHeight = this.getBBox().height;
                     return barHeight - ((barHeight - textHeight));
@@ -260,7 +250,7 @@ define([
                 .attr("x", barOffset)
                 .attr("y", 2)
                 .attr("height", barHeight)
-                .attr("width", function (d) { return x(d[indicator]); });
+                .attr("width", function (d) { return x(d[indicator] || 0); });
         },
 
         sortBars: function () {
@@ -290,9 +280,17 @@ define([
             $("#details").html(d['geo.name']);
         },
 
-        selectTrigger: function (id) {
+        selectHandler: function (id) {
             var el = d3.select('#' + id);
             this.selectItem(el, id, true);
+        },
+
+        deselectHandler: function (id) {
+            var el;
+            if (selectedItem) {
+                el = d3.select('#' + id);
+                this.deselectItem(el);
+            }
         },
 
         selectItem: function (selected, scroll) {
@@ -300,11 +298,12 @@ define([
             selectedItem = selected;
 
             itemsHolder.selectAll('.item')
-            .attr('class', 'item opaque');
+                .attr('class', 'item opaque')
+                .attr('data-active', null);
 
             selected
-            .attr('class', 'item')
-            .attr('data-active', true);
+                .attr('class', 'item')
+                .attr('data-active', true);
 
             if (scroll) {
                 this.scrollToSelected(selected, true);
@@ -316,26 +315,21 @@ define([
         deselectItem: function (selected) {
             selectedItem = null;
 
-            itemsHolder.selectAll('.item').attr('class', 'item');
-            selected.attr('data-active', null);
+            itemsHolder.selectAll('.item')
+                .attr('class', 'item')
+                .attr('data-active', null);
 
             this.events.trigger('item:deselected');
         },
 
         scrollToSelected: function (selected, animate) {
-            var $itemsHolder, itemsHolderHeight, selectedPosition;
+            var $holder = $('#bar-rank-chart-holder'),
+                holderHeight = $holder.height(),
+                selectedPosition = parseInt(selected.attr('data-position'));
 
-            $itemsHolder = $('#bar-rank-chart-holder');
-            itemsHolderHeight = $itemsHolder.height();
-            // TODO:
-            // Sure there must be a better way
-            selectedPosition = selected.attr('transform').split(',')[1];
-            if (selectedPosition) {
-                selectedPosition = parseInt(selectedPosition.substring(0, selectedPosition.length - 1));
-            } else {
-                selectedPosition = 0;
-            }
-            $itemsHolder.animate({'scrollTop': (selectedPosition - itemsHolderHeight / 2)}, animate ? 150 : 0);
+            $('#bar-rank-chart-holder').animate({
+                'scrollTop': (selectedPosition + itemHeight - holderHeight / 2)
+            }, animate ? 150 : 0);
         }
     });
 

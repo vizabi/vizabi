@@ -8,8 +8,10 @@ define([
         year,
         currentYearData,
         indicator,
+        $infoWrapper,
         $infoValue,
         $infoPercent,
+        $infoCloseButton,
         totalValue,
         top5Value,
         top5Percent,
@@ -27,12 +29,19 @@ define([
         postRender: function() {
             var _this = this;
 
+            $infoWrapper = $('#info-box-wrapper');
             $infoValue = $('#info-box-value');
             $infoPercent = $('#info-box-percent');
+            $infoCloseButton = $('#info-box-close');
 
             // Subscribe to events
             _this.events.bind('item:selected', _this.updateSelectedInfo.bind(_this));
-            _this.events.bind('item:deselected', _this.resetInfo.bind(_this));
+            _this.events.bind('item:deselected', _this.deselectedHandler.bind(_this));
+
+            $infoCloseButton.on('click', function (event) {
+                event.preventDefault();
+                _this.deselectedHandler(true);
+            });
 
             this.update();
         },
@@ -75,13 +84,23 @@ define([
             $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + (value / unit).toFixed(2));
             $infoPercent.html(percent + '% of the Wolrd');
 
+            $infoWrapper.addClass('selected');
+
             selectedItem = selected;
         },
 
-        resetInfo: function (selected) {
+        deselectedHandler: function (silent) {
+            if (selectedItem) {
+                this.events.trigger('infobox:closed', selectedItem);
+                this.resetInfo();
+            }
+        },
+
+        resetInfo: function () {
             $infoValue.html(indicator + ' for top 5 countries : ' + (top5Value / unit).toFixed(2));
             $infoPercent.html(top5Percent + '% of the Wolrd');
 
+            $infoWrapper.removeClass('selected');
             selectedItem = false;
         }
     });

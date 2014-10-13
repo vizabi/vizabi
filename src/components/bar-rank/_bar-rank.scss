@@ -28,6 +28,11 @@
             float: left;
         }
 
+        span:first-letter {
+            text-transform: capitalize;
+        }
+
+
         .header-name {
             text-align: right;
         }
