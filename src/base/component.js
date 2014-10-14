@@ -129,9 +129,10 @@ define([
         loadComponent: function(component) {
             var _this = this,
                 defer = $.Deferred(),
+                path = component.path,
                 name = component.name,
                 id = name, //_.uniqueId(name),
-                path = "components/" + name + "/" + name,
+                component_path = "components/" + path + "/" + name,
                 component_model = this.model;
 
             //component model mapping
@@ -152,7 +153,7 @@ define([
             });
 
             // Loads the file we need
-            require([path], function(subcomponent) {
+            require([component_path], function(subcomponent) {
                 //initialize subcomponent
                 _this.components[id] = new subcomponent(_this, options);
                 defer.resolve();
@@ -263,10 +264,14 @@ define([
             }
         },
 
-        addComponent: function(name, options) {
+        addComponent: function(path, options) {
             if (_.isUndefined(this.components)) this.components = [];
+            var name_token = path.split("/"),
+                name = name_token[name_token.length - 1];
+
             this.components.push({
                 name: name,
+                path: path,
                 options: options
             });
         },
