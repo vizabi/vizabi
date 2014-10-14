@@ -53,7 +53,7 @@ define([
         //TODO: Optimize data binding
         update: function() {
             var _this = this,
-                minX, maxX,;
+                minX, maxX;
 
             indicator = this.model.getState('indicator');
             year = this.model.getState('time');
@@ -168,7 +168,7 @@ define([
                     barHeight = 15;
                     rankOffset = 20;
                     valueOffset = 40;
-                    margin = {top: 10, right: 10, bottom: 10, left: 10};
+                    margin = {top: 5, right: 10, bottom: 10, left: 10};
                     break;
 
                 case 'large':
@@ -176,9 +176,9 @@ define([
                     nameOffset = 200;
                     itemHeight = 30;
                     barHeight = 20;
-                    rankOffset = 20;
+                    rankOffset = 30;
                     valueOffset = 40;
-                    margin = {top: 20, right: 20, bottom: 20, left: 20};
+                    margin = {top: 5, right: 20, bottom: 20, left: 20};
             }
 
             barOffset = nameOffset + (rankOffset * 2);
@@ -215,7 +215,8 @@ define([
 
             item.select('.name-label')
                 .attr('x', nameOffset)
-                .attr('y', _this.getTextPosition);
+                .attr('y', _this.getTextPosition)
+                .attr('width', nameOffset);
 
             // Item rank
             item.select('.item-rank')
@@ -237,7 +238,7 @@ define([
         sortBars: function () {
 
             var sortItems = function (a, b) {
-                return parseInt(b[indicator]) - parseInt(a[indicator]);
+                return parseFloat(b[indicator] || 0) - parseFloat(a[indicator] || 0);
             }
 
             item
@@ -319,6 +320,10 @@ define([
 
         getTextPosition: function (d) {
             return barHeight - ((barHeight - this.getBBox().height));
+        },
+
+        getTextWidth: function (d) {
+            return this.getBBox().width;
         },
 
         getScrollbarWidth: function () {

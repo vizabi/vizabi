@@ -4,11 +4,7 @@ define([
     'jqueryui_autocomplete'
 ], function($, Component) {
 
-    var $filterInput,
-        data,
-        year,
-        currentYearData,
-        selected;
+    var $filterInput;
 
     var Filter = Component.extend({
         init: function(context, options) {
@@ -22,16 +18,10 @@ define([
             var _this = this;
 
             $filterInput = $('#filter');
-            data = this.model.getData()[0];
-            year = this.model.getState("time");
-            currentYearData = data.filter(function(row) {
-                return (row.time == year);
-            });
 
 
             $filterInput.autocomplete({
                 minLength: 2,
-                source: _.map(currentYearData, function (country) { return {value: country.geo, label: country['geo.name']}; }),
                 change: function (event, ui) {
                     console.log(ui);
                 },
@@ -51,6 +41,13 @@ define([
         },
 
         update: function() {
+            var data = this.model.getData()[0],
+            year = this.model.getState("time"),
+            currentYearData = data.filter(function(row) { return (row.time == year); }),
+            source = _.map(currentYearData, function (country) { return {value: country.geo, label: country['geo.name']}; });
+
+            $filterInput.autocomplete('option', 'source', source);
+
             this.resize();
         },
 

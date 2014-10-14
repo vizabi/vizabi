@@ -7,7 +7,7 @@
   background: #edf9fe;
   color: #0a5f7c;
   font-weight: 700;
-  @include font-size(12px);
+  @include font-size(16px);
 }
 
 .info-box-placeholder:first-letter {
@@ -34,3 +34,16 @@
 .selected .info-box-close {
   display: block;
 }
+
+&.medium {
+    #info-box-wrapper {
+        @include font-size(14px);
+    }
+}
+
+&.small {
+    #info-box-wrapper {
+        @include font-size(12px);
+    }
+}
+
