@@ -337,7 +337,7 @@ define([
             $inner = $('<div />', {css: {'width': '100%'}}).appendTo($outer);
             widthWithScroll = $inner[0].offsetWidth;
             // remove divs
-            $outer.remove;
+            $outer.remove();
 
             return widthNoScroll - widthWithScroll;
         }
