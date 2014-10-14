@@ -8,7 +8,7 @@ define([
 
     var
         // SVG related
-        svg, itemsHolder, item, selectedItem, x, minX, maxX,
+        svg, itemsHolder, item, selectedItem, x,
 
         // Data related
         data, displayData, minValue, maxValue, scale, unit, decimal, indicator, year,
@@ -52,7 +52,8 @@ define([
 
         //TODO: Optimize data binding
         update: function() {
-            var _this = this;
+            var _this = this,
+                minX, maxX,;
 
             indicator = this.model.getState('indicator');
             year = this.model.getState('time');
