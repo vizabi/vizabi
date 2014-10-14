@@ -116,12 +116,7 @@ define([
                 .attr("dx", 5)
                 .attr("text-anchor", "start")
                 .attr('class', 'value-label')
-                .text(function (d) {
-                    var value = d[indicator],
-                    num = parseInt(value, 10) / unit,
-                    rounded = Math.round(num * 10) / 10;
-                    return rounded;
-                });
+                .text(_this.getValue);
 
             // Item bar
             itemEnter.append("rect")
@@ -144,12 +139,7 @@ define([
             // Item value
             item.select(".value-label")
                 .attr("x", function(d) { return x(d[indicator] || 0) + barOffset; })
-                .text(function (d) {
-                    var value = d[indicator],
-                    num = parseInt(value, 10) / unit,
-                    rounded = Math.round(num * 10) / 10;
-                    return rounded;
-                });
+                .text(_this.getValue);
 
             // Item bar
             item.select(".bar")
@@ -238,12 +228,6 @@ define([
                 .attr("y", function (d) {
                     var textHeight = this.getBBox().height;
                     return barHeight - ((barHeight - textHeight));
-                })
-                .text(function (d) {
-                    var value = d[indicator],
-                    num = parseFloat(value) / unit,
-                    rounded = num.toFixed(2);
-                    return rounded;
                 });
 
             item.select(".bar")
@@ -330,6 +314,10 @@ define([
             $('#bar-rank-chart-holder').animate({
                 'scrollTop': (selectedPosition + itemHeight - holderHeight / 2)
             }, animate ? 150 : 0);
+        },
+
+        getValue: function (d) {
+            return (parseFloat(d[indicator] || 0) / unit).toFixed(2);
         }
     });
 

@@ -47,21 +47,21 @@ define([
         },
 
         update: function() {
+            var _this = this;
+
             data = this.model.getData()[0];
             year = this.model.getState("time");
-            currentYearData = data.filter(function(row) {
-                return (row.time == year);
-            });
             indicator = this.model.getState("indicator");
             unit = this.model.getState("unit") || 1;
-
-            currentYearData.sort(function (a, b) {
-                return parseInt(b[indicator]) - parseInt(a[indicator]);
+            currentYearData = data.filter(function(row) {
+                return (row.time == year);
+            }).sort(function (a, b) {
+                return _this.getValue(b) - _this.getValue(a);
             });
 
 
-            totalValue = currentYearData.reduce(function(pv, cv) { return pv + parseFloat(cv[indicator]); }, 0);
-            top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + parseFloat(cv[indicator]); }, 0);
+            totalValue = currentYearData.reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
+            top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Percent = (top5Value / totalValue * 100).toFixed(2);
 
             if (!selectedItem) {
@@ -78,14 +78,13 @@ define([
 
         updateSelectedInfo: function (selected) {
             var itemData = currentYearData.filter(function (item) { return item.geo == selected; })[0],
-                value = parseFloat(itemData[indicator]),
+                value = this.getValue(itemData),
                 percent = (value / totalValue * 100).toFixed(2);
 
-            $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + (value / unit).toFixed(2));
+            $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + this.getFormattedValue(value));
             $infoPercent.html(percent + '% of the Wolrd');
 
             $infoWrapper.addClass('selected');
-
             selectedItem = selected;
         },
 
@@ -97,11 +96,19 @@ define([
         },
 
         resetInfo: function () {
-            $infoValue.html(indicator + ' for top 5 countries : ' + (top5Value / unit).toFixed(2));
+            $infoValue.html(indicator + ' for top 5 countries: ' + this.getFormattedValue(top5Value));
             $infoPercent.html(top5Percent + '% of the Wolrd');
 
             $infoWrapper.removeClass('selected');
             selectedItem = false;
+        },
+
+        getValue: function (d) {
+            return parseFloat(d[indicator] || 0);
+        },
+
+        getFormattedValue: function (value) {
+            return (value / unit).toFixed(2);
         }
     });
 
