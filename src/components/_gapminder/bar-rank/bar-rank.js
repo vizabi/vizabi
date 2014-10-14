@@ -11,7 +11,7 @@ define([
         width, height, svg, itemsHolder, item, selectedItem, x, minX, maxX,
 
         // Data related
-        indicator, data, year, currentYearData, minValue, maxValue, scale, unit,
+        indicator, data, year, currentYearData, minValue, maxValue, scale, unit, decimal,
 
         // HTML refs
         $headerName, $headerRank, $headerIndicator, $barRankWrapper,
@@ -39,7 +39,7 @@ define([
             var _this = this;
 
             // Get the wrapper ref
-            $barRankWrapper = $("#bar-rank-wrapper");
+            $barRankWrapper = $('#bar-rank-wrapper');
 
             // Get header refs
             $headerName = $('#header-name');
@@ -51,7 +51,7 @@ define([
             _this.events.bind('infobox:closed', _this.deselectHandler.bind(_this));
 
              // Initialize SVG and place
-            svg = d3.select("#bar-rank-chart-holder").append('svg');
+            svg = d3.select('#bar-rank-chart-holder').append('svg');
             itemsHolder = svg.append('g').attr('class', 'items-wrapper');
 
             this.update();
@@ -62,15 +62,16 @@ define([
         update: function() {
             var _this = this;
 
-            indicator = this.model.getState("indicator");
-            year = this.model.getState("time");
+            indicator = this.model.getState('indicator');
+            year = this.model.getState('time');
             data = this.model.getData()[0];
             currentYearData = data.filter(function(row) { return (row.time == year); });
             minValue = d3.min(data, function(d) { return +d[indicator]; });
             maxValue = d3.max(data, function(d) { return +d[indicator]; });
-            minX = this.model.getState("min") || ((scale == "log") ? minValue : 0);
-            maxX = this.model.getState("max") || (maxValue + maxValue / 10);
-            unit = this.model.getState("unit") || 1;
+            minX = this.model.getState('min') || ((scale == 'log') ? minValue : 0);
+            maxX = this.model.getState('max') || (maxValue + maxValue / 10);
+            unit = this.model.getState('unit') || 1;
+            decimal = this.model.getState('decimal') || 0;
 
             $headerIndicator.html(indicator);
 
@@ -78,14 +79,14 @@ define([
                 .domain([minX, maxX]);
 
             // Add labeled bars for each item
-            item = itemsHolder.selectAll(".item")
+            item = itemsHolder.selectAll('.item')
                 .data(currentYearData, function (d) { return d.geo; });
 
             itemEnter = item
-                .enter().append("g")
-                .attr("class", "item")
-                .attr("id", function (d) { return d.geo; })
-                .on("click", function(d) {
+                .enter().append('g')
+                .attr('class', 'item')
+                .attr('id', function (d) { return d.geo; })
+                .on('click', function(d) {
                     var i = d3.select(this);
 
 
@@ -97,53 +98,53 @@ define([
                 });
 
             // Item name
-            itemEnter.append("text")
-                .attr("text-anchor", "end")
+            itemEnter.append('text')
+                .attr('text-anchor', 'end')
                 .attr('class', 'name-label')
                 .text(function (d) { return d['geo.name']});
 
 
             // Item rank
-            itemEnter.append("text")
-                .attr("class", "item-rank")
-                .attr("text-anchor", "middle")
+            itemEnter.append('text')
+                .attr('class', 'item-rank')
+                .attr('text-anchor', 'middle')
                 .text(function(item, i) {
                     return i + 1;
                 });
 
             // Item value
-            itemEnter.append("text")
-                .attr("dx", 5)
-                .attr("text-anchor", "start")
+            itemEnter.append('text')
+                .attr('dx', 5)
+                .attr('text-anchor', 'start')
                 .attr('class', 'value-label')
                 .text(_this.getValue);
 
             // Item bar
-            itemEnter.append("rect")
-                .attr("class", "bar");
+            itemEnter.append('rect')
+                .attr('class', 'bar');
 
             // Remove bars for removed data
             item.exit().remove();
 
             // Update bars for changed data
             // Item name
-            item.select(".name-label")
+            item.select('.name-label')
                 .text(function (d) { return d['geo.name']});
 
             // Item rank
-            item.select(".item-rank")
+            item.select('.item-rank')
                 .text(function(item, i) {
                     return i + 1;
                 });
 
             // Item value
-            item.select(".value-label")
-                .attr("x", function(d) { return x(d[indicator] || 0) + barOffset; })
+            item.select('.value-label')
+                .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
                 .text(_this.getValue);
 
             // Item bar
-            item.select(".bar")
-                .attr("width", function (d) { return x(d[indicator] || 0); });
+            item.select('.bar')
+                .attr('width', function (d) { return x(d[indicator] || 0); });
 
             // If there is a slected item, update the scroll position
             if (selectedItem) {
@@ -186,6 +187,11 @@ define([
             height = (itemHeight * currentYearData.length) - margin.top - margin.bottom;
             width = $barRankWrapper.width() - margin.left - margin.right;
 
+            // Adjust the width to account for the scrollbar
+            if ($barRankWrapper.height() < height) {
+                width -= this.getScrollbarWidth();
+            }
+
             x.range([0, width - totalOffset]);
 
             svg
@@ -200,41 +206,41 @@ define([
 
             item
                 .attr('height', itemHeight)
-                .attr("data-position", function(item, i) {
+                .attr('data-position', function(item, i) {
                     return i * itemHeight;
                 })
-                .attr("transform", function(item, i) {
-                    return "translate(0," + (i * itemHeight) + ")";
+                .attr('transform', function(item, i) {
+                    return 'translate(0,' + (i * itemHeight) + ')';
                 });
 
-            item.select(".name-label")
-                .attr("x", nameOffset)
-                .attr("y", function (d) {
+            item.select('.name-label')
+                .attr('x', nameOffset)
+                .attr('y', function (d) {
                     var textHeight = this.getBBox().height;
                     return barHeight - ((barHeight - textHeight));
                 });
 
             // Item rank
-            item.select(".item-rank")
-                .attr("x", nameOffset + rankOffset)
-                .attr("y", function (d) {
+            item.select('.item-rank')
+                .attr('x', nameOffset + rankOffset)
+                .attr('y', function (d) {
                     var textHeight = this.getBBox().height;
                     return barHeight - ((barHeight - textHeight));
                 });
 
             // Item value
-            item.select(".value-label")
-                .attr("x", function(d) { return x(d[indicator] || 0) + barOffset; })
-                .attr("y", function (d) {
+            item.select('.value-label')
+                .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
+                .attr('y', function (d) {
                     var textHeight = this.getBBox().height;
                     return barHeight - ((barHeight - textHeight));
                 });
 
-            item.select(".bar")
-                .attr("x", barOffset)
-                .attr("y", 2)
-                .attr("height", barHeight)
-                .attr("width", function (d) { return x(d[indicator] || 0); });
+            item.select('.bar')
+                .attr('x', barOffset)
+                .attr('y', 2)
+                .attr('height', barHeight)
+                .attr('width', function (d) { return x(d[indicator] || 0); });
         },
 
         sortBars: function () {
@@ -250,18 +256,18 @@ define([
                 //     return i * 20;
                 // })
                 .duration(150)
-                .attr("transform", function(item, i) {
-                    return "translate(0, " + (i * itemHeight) + ")";
+                .attr('transform', function(item, i) {
+                    return 'translate(0, ' + (i * itemHeight) + ')';
                 });
 
-            item.select(".item-rank")
+            item.select('.item-rank')
                 .text(function(item, i) {
                     return i + 1;
                 });
         },
 
         updateDetails: function (d) {
-            $("#details").html(d['geo.name']);
+            $('#details').html(d['geo.name']);
         },
 
         selectHandler: function (id) {
@@ -317,7 +323,23 @@ define([
         },
 
         getValue: function (d) {
-            return (parseFloat(d[indicator] || 0) / unit).toFixed(2);
+            return (parseFloat(d[indicator] || 0) / unit).toFixed(decimal);
+        },
+
+        getScrollbarWidth: function () {
+            var $outer, $inner, widthNoScroll, widthWithScroll;
+
+            $outer = $('<div />', {css: {'visibility': 'hidden', 'width': '100px'}}).appendTo($('body'));
+            widthNoScroll = $outer[0].offsetWidth;
+            // force scrollbars
+            $outer.css('overflow', 'scroll');
+            // add innerdiv
+            $inner = $('<div />', {css: {'width': '100%'}}).appendTo($outer);
+            widthWithScroll = $inner[0].offsetWidth;
+            // remove divs
+            $outer.remove;
+
+            return widthNoScroll - widthWithScroll;
         }
     });
 

@@ -3,8 +3,7 @@
     @include font-size(18px);
     padding-top: 50px;
     font-family: $fontFamily;
-    color: #666666;
-    overflow: auto;
+    color: #666;
 
     #bar-rank-chart-holder {
         position: absolute;
@@ -12,7 +11,7 @@
         right: 0;
         top: 50px;
         bottom: 0;
-        overflow: scroll;
+        overflow: auto;
     }
 
     header {

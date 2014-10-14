@@ -16,7 +16,8 @@ define([
         top5Value,
         top5Percent,
         selectedItem,
-        unit;
+        unit,
+        decimal;
 
     var InfoBox = Component.extend({
         init: function(context, options) {
@@ -53,16 +54,16 @@ define([
             year = this.model.getState("time");
             indicator = this.model.getState("indicator");
             unit = this.model.getState("unit") || 1;
+            decimal = this.model.getState("decimal") || 0;
             currentYearData = data.filter(function(row) {
                 return (row.time == year);
             }).sort(function (a, b) {
                 return _this.getValue(b) - _this.getValue(a);
             });
 
-
             totalValue = currentYearData.reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
-            top5Percent = (top5Value / totalValue * 100).toFixed(2);
+            top5Percent = (top5Value / totalValue * 100).toFixed(decimal);
 
             if (!selectedItem) {
                 this.resetInfo();
@@ -79,7 +80,7 @@ define([
         updateSelectedInfo: function (selected) {
             var itemData = currentYearData.filter(function (item) { return item.geo == selected; })[0],
                 value = this.getValue(itemData),
-                percent = (value / totalValue * 100).toFixed(2);
+                percent = (value / totalValue * 100).toFixed(decimal);
 
             $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + this.getFormattedValue(value));
             $infoPercent.html(percent + '% of the Wolrd');
@@ -108,7 +109,7 @@ define([
         },
 
         getFormattedValue: function (value) {
-            return (value / unit).toFixed(2);
+            return (value / unit).toFixed(decimal);
         }
     });
 
