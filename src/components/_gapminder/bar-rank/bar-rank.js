@@ -8,23 +8,16 @@ define([
 
     var
         // SVG related
-        width, height, svg, itemsHolder, item, selectedItem, x, minX, maxX,
+        svg, itemsHolder, item, selectedItem, x, minX, maxX,
 
         // Data related
-        indicator, data, year, currentYearData, minValue, maxValue, scale, unit, decimal,
+        data, displayData, minValue, maxValue, scale, unit, decimal, indicator, year,
 
         // HTML refs
         $headerName, $headerRank, $headerIndicator, $barRankWrapper,
 
-        // Postioning and spacing
-        margin = {top: 5, right: 5, bottom: 5, left: 5},
-        nameOffset = 100,
-        rankOffset = 30,
-        barOffset = nameOffset + rankOffset + 30,
-        valueOffset = 40,
-        totalOffset = barOffset + valueOffset,
-        itemHeight = 25,
-        barHeight = 15;
+        // General sizing
+        itemHeight, barHeight;
 
     var BarChart = Component.extend({
         init: function(context, options) {
@@ -57,7 +50,6 @@ define([
             this.update();
         },
 
-
         //TODO: Optimize data binding
         update: function() {
             var _this = this;
@@ -65,7 +57,7 @@ define([
             indicator = this.model.getState('indicator');
             year = this.model.getState('time');
             data = this.model.getData()[0];
-            currentYearData = data.filter(function(row) { return (row.time == year); });
+            displayData = data.filter(function(row) { return (row.time == year); });
             minValue = d3.min(data, function(d) { return +d[indicator]; });
             maxValue = d3.max(data, function(d) { return +d[indicator]; });
             minX = this.model.getState('min') || ((scale == 'log') ? minValue : 0);
@@ -80,7 +72,7 @@ define([
 
             // Add labeled bars for each item
             item = itemsHolder.selectAll('.item')
-                .data(currentYearData, function (d) { return d.geo; });
+                .data(displayData, function (d) { return d.geo; });
 
             itemEnter = item
                 .enter().append('g')
@@ -88,7 +80,6 @@ define([
                 .attr('id', function (d) { return d.geo; })
                 .on('click', function(d) {
                     var i = d3.select(this);
-
 
                     if (i.attr('data-active')) {
                         _this.deselectItem(i);
@@ -139,7 +130,6 @@ define([
 
             // Item value
             item.select('.value-label')
-                .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
                 .text(_this.getValue);
 
             // Item bar
@@ -151,18 +141,23 @@ define([
                 _this.scrollToSelected(selectedItem, false);
             }
 
-            this.sortBars();
             this.resize();
+            this.sortBars();
         },
 
         resize: function() {
-            var layout = this.getLayoutProfile();
+            var _this = this,
+                layout = this.getLayoutProfile(),
+                width, height,
+                margin, nameOffset, rankOffset, barOffset, valueOffset, totalOffset;
 
             switch(layout) {
                 case 'small':
                     nameOffset = 100;
                     itemHeight = 25;
                     barHeight = 15;
+                    rankOffset = 20;
+                    valueOffset = 40;
                     margin = {top: 5, right: 5, bottom: 5, left: 5};
                     break;
 
@@ -170,6 +165,8 @@ define([
                     nameOffset = 150;
                     itemHeight = 25;
                     barHeight = 15;
+                    rankOffset = 20;
+                    valueOffset = 40;
                     margin = {top: 10, right: 10, bottom: 10, left: 10};
                     break;
 
@@ -178,13 +175,15 @@ define([
                     nameOffset = 200;
                     itemHeight = 30;
                     barHeight = 20;
+                    rankOffset = 20;
+                    valueOffset = 40;
                     margin = {top: 20, right: 20, bottom: 20, left: 20};
             }
 
-            barOffset = nameOffset + rankOffset + 30;
+            barOffset = nameOffset + (rankOffset * 2);
             totalOffset = barOffset + valueOffset;
 
-            height = (itemHeight * currentYearData.length) - margin.top - margin.bottom;
+            height = (itemHeight * displayData.length) - margin.top - margin.bottom;
             width = $barRankWrapper.width() - margin.left - margin.right;
 
             // Adjust the width to account for the scrollbar
@@ -215,26 +214,17 @@ define([
 
             item.select('.name-label')
                 .attr('x', nameOffset)
-                .attr('y', function (d) {
-                    var textHeight = this.getBBox().height;
-                    return barHeight - ((barHeight - textHeight));
-                });
+                .attr('y', _this.getTextPosition);
 
             // Item rank
             item.select('.item-rank')
                 .attr('x', nameOffset + rankOffset)
-                .attr('y', function (d) {
-                    var textHeight = this.getBBox().height;
-                    return barHeight - ((barHeight - textHeight));
-                });
+                .attr('y', _this.getTextPosition);
 
             // Item value
             item.select('.value-label')
                 .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
-                .attr('y', function (d) {
-                    var textHeight = this.getBBox().height;
-                    return barHeight - ((barHeight - textHeight));
-                });
+                .attr('y', _this.getTextPosition);
 
             item.select('.bar')
                 .attr('x', barOffset)
@@ -324,6 +314,10 @@ define([
 
         getValue: function (d) {
             return (parseFloat(d[indicator] || 0) / unit).toFixed(decimal);
+        },
+
+        getTextPosition: function (d) {
+            return barHeight - ((barHeight - this.getBBox().height));
         },
 
         getScrollbarWidth: function () {
