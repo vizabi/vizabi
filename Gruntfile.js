@@ -295,12 +295,12 @@ module.exports = function(grunt) {
 
         grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
             var clean_abs;
-            if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
+            if (typeof dir !== 'undefined' && /\.js$/.test(file)) {
                 // src/tools/_examples/bar-chart/bar-chart.js --> tools/_examples/bar-chart/bar-chart 
                 clean_abs = abs.replace(".js", "").replace("src/", "");
                 contents.push('"' + clean_abs + '"');
             }
-            else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+            else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 clean_abs = abs.replace("src/", "");
                 contents.push('"text!' + clean_abs + '"');
             }
@@ -308,11 +308,11 @@ module.exports = function(grunt) {
 
         grunt.file.recurse(components_folder, function(abs, root, dir, file) {
             var clean_abs;
-            if (typeof dir !== 'undefined' && file.indexOf('.js') !== -1) {
+            if (typeof dir !== 'undefined' && /\.js$/.test(file)) {
                 clean_abs = abs.replace(".js", "").replace("src/", "");
                 contents.push('"' + clean_abs + '"');
             }
-            else if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+            else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 clean_abs = abs.replace("src/", "");
                 contents.push('"text!' + clean_abs + '"');
             }
