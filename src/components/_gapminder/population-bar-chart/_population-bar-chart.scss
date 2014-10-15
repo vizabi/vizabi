@@ -1,0 +1,29 @@
+//general styles
+#population-bar-chart {
+    //...
+    .graph {
+        fill: gray;
+        
+    }
+}
+
+//large specific styles
+&.large {
+    #population-bar-chart {
+     	//...
+    }
+}
+
+//medium specific styles
+&.medium {
+    #population-bar-chart {
+        //...
+    }
+}
+
+//small specific styles
+&.small {
+    #population-bar-chart {
+        //...
+    }
+}

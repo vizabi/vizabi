@@ -52,6 +52,7 @@ define([
         },
 
         load: function(query, language, events) {
+            debugger;
             var _this = this,
                 defer = $.Deferred(),
                 promise = this._dataManager.load(query, language, events);
