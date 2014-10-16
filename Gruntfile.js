@@ -163,6 +163,10 @@ module.exports = function(grunt) {
                 files: ['src/**/*.js'],
                 tasks: ['copy:scripts', 'copy:templates']
             },
+            templates: {
+                files: ['src/**/*.html'],
+                tasks: ['copy:templates']
+            },
             options: {
                 livereload: {
                     port: '<%= connect.options.livereload %>'
@@ -271,7 +275,7 @@ module.exports = function(grunt) {
             if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
                 file = file.replace(".html", "");
                 var link = dir + '/' + file;
-                var preview_page = "<li><a onclick=\"goToExample('"+link+"');\">"+link+"</a></li>";
+                var preview_page = "<li><a onclick=\"goToExample('" + link + "');\">" + link + "</a></li>";
                 contents += preview_page;
             }
         });
@@ -299,8 +303,7 @@ module.exports = function(grunt) {
                 // src/tools/_examples/bar-chart/bar-chart.js --> tools/_examples/bar-chart/bar-chart 
                 clean_abs = abs.replace(".js", "").replace("src/", "");
                 contents.push('"' + clean_abs + '"');
-            }
-            else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
+            } else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 clean_abs = abs.replace("src/", "");
                 contents.push('"text!' + clean_abs + '"');
             }
@@ -311,8 +314,7 @@ module.exports = function(grunt) {
             if (typeof dir !== 'undefined' && /\.js$/.test(file)) {
                 clean_abs = abs.replace(".js", "").replace("src/", "");
                 contents.push('"' + clean_abs + '"');
-            }
-            else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
+            } else if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 clean_abs = abs.replace("src/", "");
                 contents.push('"text!' + clean_abs + '"');
             }
@@ -324,7 +326,7 @@ module.exports = function(grunt) {
         grunt.log.writeln("All tools and components have been included in the AMD module.");
     });
 
-/*
+    /*
      * ---------
      * Include all tool styles into vizabi.scss
      */
@@ -345,7 +347,7 @@ module.exports = function(grunt) {
         });
 
         for (var i = 0; i < includes.length; i++) {
-            contents += '@import "'+includes[i]+'";\n';
+            contents += '@import "' + includes[i] + '";\n';
         };
 
         grunt.file.write(scss_file, contents);
