@@ -1,0 +1,127 @@
+<!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
+
+<div class="container">
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('population-by-age')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('population-by-age', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('population-by-age')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('population-by-age')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('population-by-age')">RANDOM</button>
+
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="">Change state</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('population-by-age','en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('population-by-age','pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="population-by-age" class="placeholder"></div>
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('population-by-age')">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+</body>
+<script>
+    var myVizabi;
+
+    $(function()
+    {
+
+        var options = {
+            //state
+            state: url.state ||
+            {
+                show:
+                {
+                    //geo: ["ago", "arg", "aus", "swe"],
+                    geo: "*",
+                    'geo.category': '*'
+                    //'geo.category': ['country']
+                },
+                timeRange: ["1950-2012"],
+                time: 1950,
+                indicator: ['pop'],
+                //scale: ['linear'],
+                //unit: [10000000000]
+            },
+            //path
+            data:
+            {
+                reader: 'local-json',
+                path: '../../data-waffles/hello-world/{{LANGUAGE}}/population-by-age.json'
+            },
+
+            //language
+            language: url.lang || "en",
+            ui_strings:
+            {
+                en:
+                {
+                    "title": "GDP per country",
+                    "timeslider/play": "Play",
+                    "timeslider/pause": "Pause"
+                },
+                pt:
+                {
+                    "title": "PIB por país",
+                    "timeslider/play": "Iniciar",
+                    "timeslider/pause": "Parar"
+                }
+            },
+
+            bind:
+            {
+                'change:state': function(state)
+                {
+                    showState(state);
+                },
+                'change:query': function(query)
+                {
+                    showQuery(query);
+                }
+            }
+        };
+
+        myVizabi = new Vizabi("_gapminder/population-by-age",
+            "#population-by-age", options);
+
+    });
+</script>
+
+<!-- @@include('../assets/_footer.tpl') -->
