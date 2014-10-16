@@ -45,10 +45,12 @@
                              });
                          }
 
-                         //if there's a timeRange, filter range
-                         if(timeRange) {
+                         //if there's a timeRange different than all, filter range
+                         if(timeRange && timeRange != "*") {
                             timeRange = timeRange[0].split("-");
-                            var min = timeRange[0], max = timeRange[1];
+                            var min = timeRange[0],
+                                max = timeRange[1] || min;
+                                //max = min in case there's only one
 
                             data = data.filter(function(row) {
                                  return row["time"] >= min && row["time"] <= max;
@@ -58,7 +60,7 @@
                          _this.data.push(data);
                      })
                      .error(function() {
-                         console.log("Error Happened While Lading File: " + fakeResponsePath);
+                         console.log("Error Happened While Loading File: " + fakeResponsePath);
                      });
 
                  promises.push(promise);
