@@ -8,7 +8,7 @@ define([
 
     var
         // SVG related
-        svg, itemsHolder, item, selectedItem, x,
+        svg, itemsHolder, item, selectedItem, x, gradient, tooltip,
 
         // Data related
         data, displayData, minValue, maxValue, scale, unit, decimal, indicator, year,
@@ -17,7 +17,7 @@ define([
         $headerName, $headerRank, $headerIndicator, $barRankWrapper,
 
         // General sizing
-        itemHeight, barHeight;
+        itemHeight, barHeight, textVerticalOffset;
 
     var BarChart = Component.extend({
         init: function(context, options) {
@@ -40,12 +40,49 @@ define([
             $headerIndicator = $('#header-indicator');
 
             // Subscribe to events
-            _this.events.bind('item:filtered', _this.selectHandler.bind(_this));
-            _this.events.bind('infobox:closed', _this.deselectHandler.bind(_this));
+            _this.events.bind('item:filtered', _this.triggerSelect.bind(_this));
+            _this.events.bind('infobox:closed', _this.triggerDeselect.bind(_this));
 
              // Initialize SVG and place
             svg = d3.select('#bar-rank-chart-holder').append('svg');
-            itemsHolder = svg.append('g').attr('class', 'items-wrapper');
+            itemsHolder = svg.append('g')
+                .attr('class', 'items-wrapper')
+                .on('click', function(d) {
+                    var $target = $(d3.event.target)
+                        item = $target.parent('.item');
+
+                    if (!item) {
+                        return;
+                    }
+
+                    item = utils.jQueryToD3(item);
+                    if (item.attr('data-active')) {
+                        _this.deselectItem(item);
+                    } else {
+                        _this.selectItem(item);
+                    }
+                });
+
+            // Define gradient fading the long names
+            gradient = svg.append("svg:defs")
+                .append("svg:linearGradient")
+                .attr("id", "name-cover");
+
+            // Define the gradient colors
+            gradient.append("svg:stop")
+                .attr("offset", "0")
+                .attr("stop-color", "#ffffff")
+                .attr("stop-opacity", 0.5);
+
+            gradient.append("svg:stop")
+                .attr("offset", "50%")
+                .attr("stop-color", "#ffffff")
+                .attr("stop-opacity", 1);
+
+            gradient.append("svg:stop")
+                .attr("offset", "100%")
+                .attr("stop-color", "#ffffff")
+                .attr("stop-opacity", 1);
 
             this.update();
         },
@@ -56,6 +93,7 @@ define([
                 minX, maxX;
 
             indicator = this.model.getState('indicator');
+            scale = this.model.getState('scale');
             year = this.model.getState('time');
             data = this.model.getData()[0];
             displayData = data.filter(function(row) { return (row.time == year); });
@@ -65,6 +103,9 @@ define([
             maxX = this.model.getState('max') || (maxValue + maxValue / 10);
             unit = this.model.getState('unit') || 1;
             decimal = this.model.getState('decimal') || 0;
+
+            // Keep current version if it's already selected or get it from the state
+            selectedItem = selectedItem || this.model.getState('selected');
 
             $headerIndicator.html(indicator);
 
@@ -78,23 +119,17 @@ define([
             itemEnter = item
                 .enter().append('g')
                 .attr('class', 'item')
-                .attr('id', function (d) { return d.geo; })
-                .on('click', function(d) {
-                    var i = d3.select(this);
+                .attr('id', function (d) { return d.geo; });
 
-                    if (i.attr('data-active')) {
-                        _this.deselectItem(i);
-                    } else {
-                        _this.selectItem(i, true);
-                    }
-                });
+            // Item bar background it makes the whole "row" clickable
+            itemEnter.append('rect')
+                .attr('class', 'bar-bg');
 
             // Item name
             itemEnter.append('text')
-                .attr('text-anchor', 'end')
                 .attr('class', 'name-label')
+                .attr('title', function (d) { return d['geo.name']})
                 .text(function (d) { return d['geo.name']});
-
 
             // Item rank
             itemEnter.append('text')
@@ -104,16 +139,21 @@ define([
                     return i + 1;
                 });
 
+            // Cover for the name if it's too long)
+            itemEnter.append('rect')
+                .attr('class', 'name-cover')
+                .attr('fill', 'url(#name-cover)');
+
+            // Item bar
+            itemEnter.append('rect')
+                .attr('class', 'bar');
+
             // Item value
             itemEnter.append('text')
                 .attr('dx', 5)
                 .attr('text-anchor', 'start')
                 .attr('class', 'value-label')
                 .text(_this.getValue);
-
-            // Item bar
-            itemEnter.append('rect')
-                .attr('class', 'bar');
 
             // Remove bars for removed data
             item.exit().remove();
@@ -133,55 +173,57 @@ define([
             item.select('.value-label')
                 .text(_this.getValue);
 
-            // Item bar
-            item.select('.bar')
-                .attr('width', function (d) { return x(d[indicator] || 0); });
-
-            // If there is a slected item, update the scroll position
-            if (selectedItem) {
-                _this.scrollToSelected(selectedItem, false);
-            }
-
             this.resize();
             this.sortBars();
+
+            // If there is a selected item, update the scroll position
+            if (selectedItem) {
+                _this.triggerSelect(selectedItem);
+            }
         },
 
         resize: function() {
             var _this = this,
                 layout = this.getLayoutProfile(),
                 width, height,
-                margin, nameOffset, rankOffset, barOffset, valueOffset, totalOffset;
+                margin, nameOffset, nameWidth, rankOffset, barOffset, valueOffset, totalOffset;
 
             switch(layout) {
                 case 'small':
-                    nameOffset = 100;
+                    nameOffset = 20;
+                    nameWidth = 100;
                     itemHeight = 25;
                     barHeight = 15;
                     rankOffset = 20;
                     valueOffset = 40;
+                    textVerticalOffset = 1.5;
                     margin = {top: 5, right: 5, bottom: 5, left: 5};
                     break;
 
                 case 'medium':
-                    nameOffset = 150;
+                    nameOffset = 20;
+                    nameWidth = 150;
                     itemHeight = 25;
                     barHeight = 15;
                     rankOffset = 20;
                     valueOffset = 40;
+                    textVerticalOffset = 1.5;
                     margin = {top: 5, right: 10, bottom: 10, left: 10};
                     break;
 
                 case 'large':
                 default:
-                    nameOffset = 200;
+                    nameOffset = 30;
+                    nameWidth = 200;
                     itemHeight = 30;
                     barHeight = 20;
                     rankOffset = 30;
                     valueOffset = 40;
+                    textVerticalOffset = 1.2;
                     margin = {top: 5, right: 20, bottom: 20, left: 20};
             }
 
-            barOffset = nameOffset + (rankOffset * 2);
+            barOffset = nameWidth + nameOffset + (rankOffset * 2);
             totalOffset = barOffset + valueOffset;
 
             height = (itemHeight * displayData.length) - margin.top - margin.bottom;
@@ -201,8 +243,8 @@ define([
             itemsHolder.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             // Setup headers
-            $headerName.width(nameOffset + margin.left);
-            $headerRank.width(rankOffset * 2);
+            $headerName.width(nameWidth + nameOffset);
+            $headerRank.width(rankOffset * 2 + margin.left);
 
             item
                 .attr('height', itemHeight)
@@ -214,25 +256,37 @@ define([
                 });
 
             item.select('.name-label')
-                .attr('x', nameOffset)
+                .attr('x', nameOffset + rankOffset)
                 .attr('y', _this.getTextPosition)
                 .attr('width', nameOffset);
 
             // Item rank
             item.select('.item-rank')
-                .attr('x', nameOffset + rankOffset)
+                .attr('x', rankOffset)
                 .attr('y', _this.getTextPosition);
+
+            item.select('.name-cover')
+                .attr('x', barOffset - 30)
+                .attr('y', 0)
+                .attr('height', itemHeight)
+                .attr('width', 30);
+
+            item.select('.bar-bg')
+                .attr('x', 0)
+                .attr('y', 0)
+                .attr('height', itemHeight)
+                .attr('width', width);
+
+            item.select('.bar')
+                .attr('x', barOffset)
+                .attr('y', (itemHeight - barHeight) / 2)
+                .attr('height', barHeight)
+                .attr('width', function (d) { return x(d[indicator] || 0); });
 
             // Item value
             item.select('.value-label')
                 .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
                 .attr('y', _this.getTextPosition);
-
-            item.select('.bar')
-                .attr('x', barOffset)
-                .attr('y', 2)
-                .attr('height', barHeight)
-                .attr('width', function (d) { return x(d[indicator] || 0); });
         },
 
         sortBars: function () {
@@ -243,6 +297,9 @@ define([
 
             item
                 .sort(sortItems)
+                .attr('data-position', function(item, i) {
+                    return i * itemHeight;
+                })
                 .transition()
                 // .delay(function (d, i) {
                 //     return i * 20;
@@ -262,12 +319,12 @@ define([
             $('#details').html(d['geo.name']);
         },
 
-        selectHandler: function (id) {
+        triggerSelect: function (id) {
             var el = d3.select('#' + id);
-            this.selectItem(el, id, true);
+            this.selectItem(el, true);
         },
 
-        deselectHandler: function (id) {
+        triggerDeselect: function (id) {
             var el;
             if (selectedItem) {
                 el = d3.select('#' + id);
@@ -277,14 +334,15 @@ define([
 
         selectItem: function (selected, scroll) {
             var id = selected.attr('id');
-            selectedItem = selected;
+
+            selectedItem = id;
 
             itemsHolder.selectAll('.item')
                 .attr('class', 'item opaque')
                 .attr('data-active', null);
 
             selected
-                .attr('class', 'item')
+                .attr('class', 'item selected')
                 .attr('data-active', true);
 
             if (scroll) {
@@ -319,7 +377,10 @@ define([
         },
 
         getTextPosition: function (d) {
-            return barHeight - ((barHeight - this.getBBox().height));
+            var textHeight = Math.floor(this.getBBox().height),
+                diff = itemHeight - textHeight;
+
+            return itemHeight - diff  / textVerticalOffset;
         },
 
         getTextWidth: function (d) {
@@ -339,7 +400,7 @@ define([
             // remove divs
             $outer.remove();
 
-            return widthNoScroll - widthWithScroll;
+            return widthNoScroll - widthWithScroll
         }
     });
 

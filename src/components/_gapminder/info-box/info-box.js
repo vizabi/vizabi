@@ -51,15 +51,16 @@ define([
             var _this = this;
 
             data = this.model.getData()[0];
-            year = this.model.getState("time");
-            indicator = this.model.getState("indicator");
-            unit = this.model.getState("unit") || 1;
-            decimal = this.model.getState("decimal") || 0;
+            year = this.model.getState('time');
+            indicator = this.model.getState('indicator');
+            unit = this.model.getState('unit') || 1;
+            decimal = this.model.getState('decimal') || 0;
             currentYearData = data.filter(function(row) {
                 return (row.time == year);
             }).sort(function (a, b) {
                 return _this.getValue(b) - _this.getValue(a);
             });
+            selectedItem = this.model.getState('selected');
 
             totalValue = currentYearData.reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);

@@ -31,9 +31,8 @@
             text-transform: capitalize;
         }
 
-
         .header-name {
-            text-align: right;
+            text-align: left;
         }
     }
 
@@ -67,7 +66,11 @@
     .item {
 
         &.opaque {
-            opacity: .5;
+            opacity: .4;
+        }
+
+        .bar-bg {
+            fill: $colorWhite;
         }
 
         .bar {
@@ -80,7 +83,16 @@
         }
         &:nth-child(3n) .bar {
             fill: $colorBlue;
-        }    }
+        }
+    }
+
+    .tooltip {
+        fill: red;
+
+        &.hidden {
+            display: none;
+        }
+    }
 
     .value-label {
         fill: $colorGrey;
