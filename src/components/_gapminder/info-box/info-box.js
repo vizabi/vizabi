@@ -60,7 +60,7 @@ define([
             }).sort(function (a, b) {
                 return _this.getValue(b) - _this.getValue(a);
             });
-            selectedItem = this.model.getState('selected');
+            selectedItem = selectedItem || this.model.getState('selected');
 
             totalValue = currentYearData.reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
