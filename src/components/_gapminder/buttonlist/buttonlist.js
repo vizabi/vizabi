@@ -16,9 +16,7 @@ define([
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
             //list of buttons to be rendered
             this.template_data = {
-                buttons: options.buttons
-            } || {
-                buttons: []
+                buttons: options.buttons || []
             };
 
             //add sub components
