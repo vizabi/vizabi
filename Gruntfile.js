@@ -249,7 +249,7 @@ module.exports = function(grunt) {
             current_dir;
 
         grunt.file.recurse(preview_pages_folder, function(abs, root, dir, file) {
-            if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+            if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 if (current_dir !== dir) {
                     current_dir = dir;
                     contents += "<h2>" + dir + "</h2>";
@@ -271,7 +271,7 @@ module.exports = function(grunt) {
             contents = "";
 
         grunt.file.recurse(preview_pages_folder, function(abs, root, dir, file) {
-            if (typeof dir !== 'undefined' && file.indexOf('.html') !== -1) {
+            if (typeof dir !== 'undefined' && /\.html$/.test(file)) {
                 file = file.replace(".html", "");
                 var link = dir + '/' + file;
                 var preview_page = "<li><a onclick=\"goToExample('" + link + "');\">" + link + "</a></li>";
@@ -339,7 +339,7 @@ module.exports = function(grunt) {
             current_dir;
 
         grunt.file.recurse(tools_folder, function(abs, root, dir, file) {
-            if (typeof dir !== 'undefined' && file.indexOf('.scss') !== -1) {
+            if (typeof dir !== 'undefined' && /\.scss$/.test(file)) {
                 var clean_abs = abs.replace("src/", "");
                 includes.push('../../' + clean_abs);
             }
