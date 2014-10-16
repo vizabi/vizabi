@@ -71,7 +71,7 @@ define([
         },
 
         interpolateSet: function(set, step) {
-            var result [];
+            var result = [];
             for(var i=0, size = set.length; i<(size-1); i++) {
                 var j = i+1;
                 for (var k=0; k<1; k+=step) {
