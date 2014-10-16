@@ -3,6 +3,9 @@ define([
     'base/tool'
 ], function(Tool) {
 
+    var $currentYear,
+        $selectedGroupBirthYear;
+
     var PopulationbyAge = Tool.extend({
         init: function(parent, options) {
 
@@ -19,7 +22,13 @@ define([
             });
 
             this.addComponent('_gapminder/buttonlist', {
-                placeholder: '.vizabi-tool-buttonlist'
+                placeholder: '.vizabi-tool-buttonlist',
+                buttons: [{
+                    id: "geo",
+                    title: "Country",
+                    icon: "globe",
+
+                }],
             });
 
             this.addComponent('_gapminder/header', {
@@ -54,6 +63,22 @@ define([
             }];
 
             return query;
+        },
+
+        postRender: function() {
+            $currentYear = this.element.select('.current-year span');
+            $selectedGroupBirthYear = this.element.select('.selected-group-birth-year span');
+            this.updateYears();
+        },
+
+        update: function() {
+            this.updateYears();
+            this._super();
+        },
+
+        updateYears: function() {
+            $currentYear.text(this.model.getState('time'));
+            $selectedGroupBirthYear.text(this.model.getState('selectedGroupBirthYear'));
         }
     });
 

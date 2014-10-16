@@ -51,6 +51,7 @@ define([
         data,
         height,
         width,
+        selectedGroupBirthYear,
         unit = 1;
 
     var PopulationBarChart = Component.extend({
@@ -89,6 +90,7 @@ define([
          */
         update: function() {
             //code here
+            var _this = this;
             data = this.model.getData()[0];
             var time = this.model.getState('time');
 
@@ -126,11 +128,18 @@ define([
             //BARS
             bars = plotEl
                 .selectAll('.bar')
-                .data(oneYearData);
+                .data(oneYearData, this.barId);
 
             bars.enter()
                 .append('g')
                 .attr('class', 'bar')
+                .on('click', function(d) {
+                    var y = parseInt(d.time) - parseInt(d.age_group);
+                    _this.model.setState('selectedGroupBirthYear', y);
+
+                    bars.classed('selected', false);
+                    d3.select(this).classed('selected', true);
+                })
                 .append('rect');
 
             bars.exit().remove();
@@ -145,9 +154,6 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-
-
-
             this.updateAxis();
             this.updateBars();
         },
@@ -184,7 +190,7 @@ define([
         updateBars: function() {
             var barHeight = Math.max(height / bars.size(), 1);
             bars.attr('transform', function(d) {
-                    return 'translate(0,' + yScale(d.age_group) + ')';
+                    return 'translate(0,' + (yScale(d.age_group) - barHeight) + ')';
                 })
                 .select('rect')
                 .attr('height', barHeight)
@@ -192,8 +198,11 @@ define([
                     return xScale(d.pop);
                 });
 
-        }
+        },
 
+        barId: function(d) {
+            return parseInt(d.time) - parseInt(d.age_group);
+        }
 
     });
 
