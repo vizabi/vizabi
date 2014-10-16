@@ -121,9 +121,9 @@ define([
                 .attr('class', 'item')
                 .attr('id', function (d) { return d.geo; });
 
-            // Item bar background it makes the whole "row" clickable
+            // Item background it makes the whole "row" clickable
             itemEnter.append('rect')
-                .attr('class', 'bar-bg');
+                .attr('class', 'item-bg');
 
             // Item name
             itemEnter.append('text')
@@ -139,10 +139,14 @@ define([
                     return i + 1;
                 });
 
-            // Cover for the name if it's too long)
+            // Fade out the long name
             itemEnter.append('rect')
                 .attr('class', 'name-cover')
                 .attr('fill', 'url(#name-cover)');
+
+            // Cover for the name if it's too long when it slips into the bar area
+            itemEnter.append('rect')
+                .attr('class', 'bar-bg');
 
             // Item bar
             itemEnter.append('rect')
@@ -271,11 +275,17 @@ define([
                 .attr('height', itemHeight)
                 .attr('width', 30);
 
-            item.select('.bar-bg')
+            item.select('.item-bg')
                 .attr('x', 0)
                 .attr('y', 0)
                 .attr('height', itemHeight)
                 .attr('width', width);
+
+            item.select('.bar-bg')
+                .attr('x', barOffset)
+                .attr('y', 0)
+                .attr('height', itemHeight)
+                .attr('width', width - totalOffset);
 
             item.select('.bar')
                 .attr('x', barOffset)
