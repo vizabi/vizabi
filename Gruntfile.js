@@ -18,15 +18,6 @@ module.exports = function(grunt) {
         'build' //by default, just build
     ]);
 
-    //build task: grunt
-    // grunt.registerTask('build', [
-    //     'clean:dist', //clean dist folder
-    //     'copy:templates', //copy js and template files
-    //     'uglify', //uglify js files
-    //     'sass:dist', //compile scss
-    //     'preview_pages', //build preview_pages
-    // ]);
-
     //developer task: grunt dev
     grunt.registerTask('dev', [
 
@@ -42,6 +33,7 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:waffles', //copies waffles
         'copy:assets', //copies assets
+        'copy:fonts', //copies fonts (font awesome)
         'connect', //run locally
         'watch' //watch for code changes
     ]);
@@ -61,6 +53,7 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:waffles', //copies waffles
         'copy:assets', //copies assets
+        'copy:fonts', //copies fonts (font awesome)
 
     ]);
 
@@ -101,6 +94,12 @@ module.exports = function(grunt) {
                 cwd: 'src',
                 src: ['assets/imgs/**/*'],
                 dest: 'dist/',
+                expand: true
+            },
+            fonts: {
+                cwd: 'lib/font-awesome',
+                src: ['fonts/*'],
+                dest: 'dist/assets/',
                 expand: true
             },
             scripts: {
