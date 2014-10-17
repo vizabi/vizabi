@@ -125,57 +125,57 @@ define([
             itemEnter.append('rect')
                 .attr('class', 'item-bg');
 
-            // // Item name
-            // itemEnter.append('text')
-            //     .attr('class', 'name-label')
-            //     .attr('title', function (d) { return d['geo.name']})
-            //     .text(function (d) { return d['geo.name']});
+            // Item name
+            itemEnter.append('text')
+                .attr('class', 'name-label')
+                .attr('title', function (d) { return d['geo.name']})
+                .text(function (d) { return d['geo.name']});
 
-            // // Item rank
-            // itemEnter.append('text')
-            //     .attr('class', 'item-rank')
-            //     .attr('text-anchor', 'middle')
-            //     .text(function(item, i) {
-            //         return i + 1;
-            //     });
+            // Item rank
+            itemEnter.append('text')
+                .attr('class', 'item-rank')
+                .attr('text-anchor', 'middle')
+                .text(function(item, i) {
+                    return i + 1;
+                });
 
-            // // Fade out the long name
-            // itemEnter.append('rect')
-            //     .attr('class', 'name-cover')
-            //     .attr('fill', 'url(#name-cover)');
+            // Fade out the long name
+            itemEnter.append('rect')
+                .attr('class', 'name-cover')
+                .attr('fill', 'url(#name-cover)');
 
-            // // Cover for the name if it's too long when it slips into the bar area
-            // itemEnter.append('rect')
-            //     .attr('class', 'bar-bg');
+            // Cover for the name if it's too long when it slips into the bar area
+            itemEnter.append('rect')
+                .attr('class', 'bar-bg');
 
-            // // Item bar
-            // itemEnter.append('rect')
-            //     .attr('class', 'bar');
+            // Item bar
+            itemEnter.append('rect')
+                .attr('class', 'bar');
 
-            // // Item value
-            // itemEnter.append('text')
-            //     .attr('dx', 5)
-            //     .attr('text-anchor', 'start')
-            //     .attr('class', 'value-label')
-            //     .text(_this.getValue);
+            // Item value
+            itemEnter.append('text')
+                .attr('dx', 5)
+                .attr('text-anchor', 'start')
+                .attr('class', 'value-label')
+                .text(_this.getValue);
 
             // Remove bars for removed data
             item.exit().remove();
 
-            // // Update bars for changed data
-            // // Item name
-            // item.select('.name-label')
-            //     .text(function (d) { return d['geo.name']});
+            // Update bars for changed data
+            // Item name
+            item.select('.name-label')
+                .text(function (d) { return d['geo.name']});
 
-            // // Item rank
-            // item.select('.item-rank')
-            //     .text(function(item, i) {
-            //         return i + 1;
-            //     });
+            // Item rank
+            item.select('.item-rank')
+                .text(function(item, i) {
+                    return i + 1;
+                });
 
-            // // Item value
-            // item.select('.value-label')
-            //     .text(_this.getValue);
+            // Item value
+            item.select('.value-label')
+                .text(_this.getValue);
 
             this.resize();
             this.sortBars();
@@ -259,21 +259,21 @@ define([
                     return 'translate(0,' + (i * itemHeight) + ')';
                 });
 
-            // item.select('.name-label')
-            //     .attr('x', nameOffset + rankOffset)
-            //     .attr('y', _this.getTextPosition)
-            //     .attr('width', nameOffset);
+            item.select('.name-label')
+                .attr('x', nameOffset + rankOffset)
+                .attr('y', _this.getTextPosition)
+                .attr('width', nameOffset);
 
-            // // Item rank
-            // item.select('.item-rank')
-            //     .attr('x', rankOffset)
-            //     .attr('y', _this.getTextPosition);
+            // Item rank
+            item.select('.item-rank')
+                .attr('x', rankOffset)
+                .attr('y', _this.getTextPosition);
 
-            // item.select('.name-cover')
-            //     .attr('x', barOffset - 30)
-            //     .attr('y', 0)
-            //     .attr('height', itemHeight)
-            //     .attr('width', 30);
+            item.select('.name-cover')
+                .attr('x', barOffset - 30)
+                .attr('y', 0)
+                .attr('height', itemHeight)
+                .attr('width', 30);
 
             item.select('.item-bg')
                 .attr('x', 0)
@@ -281,22 +281,22 @@ define([
                 .attr('height', itemHeight)
                 .attr('width', width);
 
-            // item.select('.bar-bg')
-            //     .attr('x', barOffset)
-            //     .attr('y', 0)
-            //     .attr('height', itemHeight)
-            //     .attr('width', width - totalOffset);
+            item.select('.bar-bg')
+                .attr('x', barOffset)
+                .attr('y', 0)
+                .attr('height', itemHeight)
+                .attr('width', width - totalOffset);
 
-            // item.select('.bar')
-            //     .attr('x', barOffset)
-            //     .attr('y', (itemHeight - barHeight) / 2)
-            //     .attr('height', barHeight)
-            //     .attr('width', function (d) { return x(d[indicator] || 0); });
+            item.select('.bar')
+                .attr('x', barOffset)
+                .attr('y', (itemHeight - barHeight) / 2)
+                .attr('height', barHeight)
+                .attr('width', function (d) { return x(d[indicator] || 0); });
 
-            // // Item value
-            // item.select('.value-label')
-            //     .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
-            //     .attr('y', _this.getTextPosition);
+            // Item value
+            item.select('.value-label')
+                .attr('x', function(d) { return x(d[indicator] || 0) + barOffset; })
+                .attr('y', _this.getTextPosition);
         },
 
         sortBars: function () {
@@ -319,10 +319,10 @@ define([
                     return 'translate(0, ' + (i * itemHeight) + ')';
                 });
 
-            // item.select('.item-rank')
-            //     .text(function(item, i) {
-            //         return i + 1;
-            //     });
+            item.select('.item-rank')
+                .text(function(item, i) {
+                    return i + 1;
+                });
         },
 
         updateDetails: function (d) {
