@@ -1,13 +1,13 @@
 #info-box-wrapper {
   position: relative;
-  height: 40px;
+  min-height: 40px;
   line-height: 20px;
   text-align: left;
-  padding: 10px;
+  padding: 10px 40px 10px 10px;
   background: #edf9fe;
   color: #0a5f7c;
   font-weight: 700;
-  @include font-size(16px);
+  @include font-size(12px);
 }
 
 .info-box-placeholder:first-letter {
@@ -36,14 +36,20 @@
 }
 
 &.medium {
-    #info-box-wrapper {
-        @include font-size(14px);
-    }
+  #info-box-wrapper {
+    @include font-size(14px);
+  }
 }
 
-&.small {
-    #info-box-wrapper {
-        @include font-size(12px);
-    }
+&.large {
+  #info-box-wrapper {
+    @include font-size(16px);
+    background: #CDEEFC;
+    color: #0A5F7C;
+    font-weight: 700;
+    font-size: 16px;
+    font-size: 0.96rem;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
 }
-

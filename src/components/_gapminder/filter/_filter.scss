@@ -23,6 +23,14 @@
     border: none;
     padding: 10px 0;
     border-bottom: 1px solid #eee;
+    height: 30px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+
+    &:focus {
+      outline: none;
+      border-color: #ccc;
+    }
   }
 
   .ui-menu {
@@ -51,8 +59,13 @@
 &.large {
     #filter-wrapper {
       @include font-size(16px);
+      padding-bottom: 10px;
+
         input {
           font-size: 16px;
+          height: 40px;
+          border-radius: 5px;
+          border-color: #ccc;
         }
     }
 }
