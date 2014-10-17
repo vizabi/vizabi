@@ -13,8 +13,8 @@
         @include absolute(0px,0px,auto,0px);
         @include font-size(18px);
         height: $heightTitle;
-        background-color: $colorBlueLight;
-        font-family: $fontFamily;
+        background-color: $vzb-color-primary-lightest;
+        font-family: $vzb-font-family;
         padding: 10px;
         color: #666666;
     }
@@ -36,7 +36,7 @@
         .vizabi-tool-buttonlist {
             @include absolute(0px,0px,0px);
             width: $sizeButtonList;
-            background-color: $colorBlueLight;
+            background-color: $vzb-color-primary-lightest;
         }
     }
 
@@ -110,8 +110,8 @@
         //todo: Make background transparent, but not preloader circles
         &:after {
             content: ' ';
-            background-color: $colorWhite;
-            background-image: $preloader;
+            background-color: $vzb-color-white;
+            background-image: $vzb-image-preloader;
             background-repeat: no-repeat;
             background-position: center center;
             display: block;

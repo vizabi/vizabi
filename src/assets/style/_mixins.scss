@@ -93,31 +93,31 @@
     @media screen and (orientation: landscape) { @content; }
   }
   @else if $point == small {
-    @media (max-width: $mediumMinWidth - 1px) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) { @content; }
   }
   @else if $point == medium {
-    @media (min-width: $mediumMinWidth) { @content; }
+    @media (min-width: $vzb-resolution-medium) { @content; }
   }
   @else if $point == large {
-    @media (min-width: $largeMinWidth) { @content; }
+    @media (min-width: $vzb-resolution-large) { @content; }
   }
   @else if $point == small-landscape {
-    @media (max-width: $mediumMinWidth - 1px) and (orientation: landscape) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: landscape) { @content; }
   }
   @else if $point == small-portrait {
-    @media (max-width: $mediumMinWidth - 1px) and (orientation: portrait) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: portrait) { @content; }
   }
   @else if $point == medium-landscape {
-    @media (min-width: $mediumMinWidth) and (orientation: landscape){ @content; }
+    @media (min-width: $vzb-resolution-medium) and (orientation: landscape){ @content; }
   }
   @else if $point == medium-portrait {
-    @media (min-width: $mediumMinWidth) and (orientation: portrait){ @content; }
+    @media (min-width: $vzb-resolution-medium) and (orientation: portrait){ @content; }
   }
   @else if $point == large-landscape {
-    @media (min-width: $largeMinWidth) and (orientation: landscape) { @content; }
+    @media (min-width: $vzb-resolution-large) and (orientation: landscape) { @content; }
   }
   @else if $point == large-portrait {
-    @media (min-width: $largeMinWidth) and (orientation: portrait) { @content; }
+    @media (min-width: $vzb-resolution-large) and (orientation: portrait) { @content; }
   }
 }
 

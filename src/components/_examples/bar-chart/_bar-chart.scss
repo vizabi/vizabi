@@ -1,13 +1,13 @@
 #bar-chart {
     @include absolute(0px,0px,0px,0px);
     @include font-size(18px);
-    font-family: $fontFamily;
+    font-family: $vzb-font-family;
     color: #666666;
     width: 100%;
     height: 100%;
 
     .title {
-        color: $colorIMmediumBlue;
+        color: $vzb-color-primary;
         fill: currentColor;
     }
     .axis {
@@ -20,14 +20,14 @@
         }
     }
     .bar {
-        fill: $colorGreen;
+        fill: $vzb-color-green;
         stroke: none;
     }
     .bar:nth-child(2n) {
-        fill: $colorRed;
+        fill: $vzb-color-red;
     }
     .bar:nth-child(3n) {
-        fill: $colorBlue;
+        fill: $vzb-color-blue;
     }
 }
 

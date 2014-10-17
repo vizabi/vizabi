@@ -11,7 +11,7 @@ $colorBubble:#999999;
     position: absolute;
     margin: 0;
     overflow: hidden;
-    font-family: $fontFamily;
+    font-family: $vzb-font-family;
     .bubble {
         @include opacity(0.8);
         cursor: pointer;
