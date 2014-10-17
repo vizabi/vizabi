@@ -15,7 +15,7 @@ define([
         totalValue,
         top5Value,
         top5Percent,
-        selectedItem,
+        selectedItems,
         unit,
         decimal;
 
@@ -41,7 +41,7 @@ define([
 
             $infoCloseButton.on('click', function (event) {
                 event.preventDefault();
-                _this.deselectedHandler(true);
+                _this.deselectedHandler($(this).data('selected'));
             });
 
             this.update();
@@ -60,16 +60,16 @@ define([
             }).sort(function (a, b) {
                 return _this.getValue(b) - _this.getValue(a);
             });
-            selectedItem = selectedItem || this.model.getState('selected');
+            selectedItems = selectedItems || _.clone(this.model.getState('selected'));
 
             totalValue = currentYearData.reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Value = currentYearData.slice(0, 5).reduce(function(pv, cv) { return pv + _this.getValue(cv); }, 0);
             top5Percent = (top5Value / totalValue * 100).toFixed(decimal);
 
-            if (!selectedItem) {
+            if (!selectedItems) {
                 this.resetInfo();
             } else {
-                this.updateSelectedInfo(selectedItem);
+                this.updateSelectedInfo(_.last(selectedItems));
             }
 
             this.resize();
@@ -87,14 +87,22 @@ define([
             $infoPercent.html(percent + '% of the Wolrd');
 
             $infoWrapper.addClass('selected');
-            selectedItem = selected;
+            $infoCloseButton.data('selected', selected);
+
+            selectedItems.push(selected);
+            selectedItems = _.uniq(selectedItems);
         },
 
-        deselectedHandler: function (silent) {
-            if (selectedItem) {
-                this.events.trigger('infobox:closed', selectedItem);
+        deselectedHandler: function (item) {
+            selectedItems = _.reject(selectedItems, function (i) { return i === item; });
+
+            if (selectedItems.length) {
+                this.updateSelectedInfo(_.last(selectedItems));
+            } else {
                 this.resetInfo();
             }
+
+            this.events.trigger('infobox:closed', item);
         },
 
         resetInfo: function () {
@@ -102,7 +110,7 @@ define([
             $infoPercent.html(top5Percent + '% of the Wolrd');
 
             $infoWrapper.removeClass('selected');
-            selectedItem = false;
+            $infoCloseButton.data('selected', '');
         },
 
         getValue: function (d) {

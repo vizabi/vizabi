@@ -8,7 +8,7 @@ define([
 
     var
         // SVG related
-        svg, itemsHolder, item, selectedItem, x, gradient, tooltip,
+        svg, itemsHolder, item, selectedItems, x, gradient, tooltip,
 
         // Data related
         data, displayData, minValue, maxValue, scale, unit, decimal, indicator, year,
@@ -105,7 +105,7 @@ define([
             decimal = this.model.getState('decimal') || 0;
 
             // Keep current version if it's already selected or get it from the state
-            selectedItem = selectedItem || this.model.getState('selected');
+            selectedItems = selectedItems || _.clone(this.model.getState('selected'));
 
             $headerIndicator.html(indicator);
 
@@ -181,8 +181,8 @@ define([
             this.sortBars();
 
             // If there is a selected item, update the scroll position
-            if (selectedItem) {
-                _this.triggerSelect(selectedItem);
+            if (selectedItems.length) {
+                selectedItems.forEach(function (item, index, items) { _this.triggerSelect(item) });
             }
         },
 
@@ -262,7 +262,7 @@ define([
             item.select('.name-label')
                 .attr('x', nameOffset + rankOffset)
                 .attr('y', _this.getTextPosition)
-                .attr('width', nameOffset);
+                .attr('width', nameOffset + nameWidth);
 
             // Item rank
             item.select('.item-rank')
@@ -336,7 +336,7 @@ define([
 
         triggerDeselect: function (id) {
             var el;
-            if (selectedItem) {
+            if (selectedItems.length && selectedItems.indexOf(id) > -1) {
                 el = d3.select('#' + id);
                 this.deselectItem(el);
             }
@@ -345,9 +345,14 @@ define([
         selectItem: function (selected, scroll) {
             var id = selected.attr('id');
 
-            selectedItem = id;
+            selectedItems.push(id);
+            selectedItems = _.uniq(selectedItems);
 
             itemsHolder.selectAll('.item')
+                .filter(function (d, i) {
+                    return selectedItems.indexOf(d.geo) === -1;
+                    // return !d3.select(this).attr('data-active');
+                })
                 .attr('class', 'item opaque')
                 .attr('data-active', null);
 
@@ -363,13 +368,26 @@ define([
         },
 
         deselectItem: function (selected) {
-            selectedItem = null;
+            var id = selected.attr('id');
 
-            itemsHolder.selectAll('.item')
-                .attr('class', 'item')
+            selectedItems = _.reject(selectedItems, function (item) { return item === id; });
+
+            selected
                 .attr('data-active', null);
 
-            this.events.trigger('item:deselected');
+            // Clear all items if nothing is left selected
+            if (!selectedItems.length) {
+                itemsHolder.selectAll('.item')
+                    .attr('class', 'item')
+                    .attr('data-active', null);
+            } else {
+                selected
+                    .attr('class', 'item opaque');
+
+                this.scrollToSelected(d3.select('#' + _.last(selectedItems)), true);
+            }
+
+            this.events.trigger('item:deselected', id);
         },
 
         scrollToSelected: function (selected, animate) {
