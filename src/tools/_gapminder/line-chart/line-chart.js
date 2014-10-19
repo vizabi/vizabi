@@ -16,7 +16,8 @@ define([
                 placeholder: '.vizabi-tool-title'
             });
             this.addComponent('_gapminder/line-chart', {
-                placeholder: '.vizabi-tool-viz'
+                placeholder: '.vizabi-tool-viz',
+                state: options.state
             });
             this.addComponent('_gapminder/timeslider', {
                 placeholder: '.vizabi-tool-timeslider'

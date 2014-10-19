@@ -2,8 +2,9 @@ define([
     'jquery',
     'd3',
     'underscore',
-    'base/component'
-], function($, d3, _, Component) {
+    'base/component',
+    'components/_gapminder/line-chart/line-chart-model'
+], function($, d3, _, Component, LineChartModel) {
 
     var profiles = {
         "small": {
@@ -76,6 +77,7 @@ define([
             this.name = 'line-chart';
             this.template = 'components/_gapminder/' + this.name + '/' + this.name;
             this.tool = context;
+            this.model = new LineChartModel(options.state);
             this._super(context, options);
         },
 
