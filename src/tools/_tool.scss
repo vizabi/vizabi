@@ -41,7 +41,7 @@
     }
 
     // hide sections
-    &.title-off {
+    &.vzb-title-off {
         .vzb-tool-title{
             display: none;
         }
@@ -49,7 +49,7 @@
             @include absoluteAll;
         }
     }
-    &.timeslider-off {
+    &.vzb-timeslider-off {
         .vzb-tool-timeslider {
             display: none;
         }
@@ -57,7 +57,7 @@
             @include absoluteAll;
         }
     }
-    &.buttonlist-off {
+    &.vzb-buttonlist-off {
         .vzb-tool-buttonlist {
             display: none;
         }
@@ -68,7 +68,7 @@
 
     //Responsiveness
 
-    &.small {
+    &.vzb-small {
         .vzb-tool-title{
             height: $heightTitle - 8px;
             @include font-size(14px);
@@ -92,7 +92,7 @@
             }
         }
     }
-    &.small.portrait {
+    &.vzb-small.vzb-portrait {
         .vzb-tool-content {
             .vzb-tool-stage {
                 @include absolute(0px,0px,$sizeButtonListSmall,0px);
@@ -105,7 +105,7 @@
         }
     }
 
-    &.loading, &.loading-data {
+    &.vzb-loading, &.vzb-loading-data {
 
         //todo: Make background transparent, but not preloader circles
         &:after {
@@ -124,13 +124,13 @@
         }
     }
 
-    &.loading-data {
+    &.vzb-loading-data {
         &:after {
             @include opacity(0.9); 
         }
     }
     
-    &.loading {
+    &.vzb-loading {
         * {
             visibility: hidden;
         }

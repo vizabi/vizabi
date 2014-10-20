@@ -3,6 +3,11 @@ define([
     "base/class"
 ], function(_, Class) {
 
+    //classes are vzb-portrait, vzb-landscape...
+    var class_prefix = "vzb-",
+        class_portrait = class_prefix + "portrait",
+        class_lansdcape = class_prefix + "vzb-landscape";
+
     var layoutManager = Class.extend({
 
         init: function() {
@@ -42,26 +47,26 @@ define([
             });
 
             //update size class
-            _this.container.classed(_this.current_profile, true);
+            _this.container.classed(class_prefix + _this.current_profile, true);
 
             //TODO: move this comment to wiki
             /* toggle, untoggle classes based on profile
              * whenever a size has related classes turned off, you see the
              * corresponding class with the suffix -off
              * example: small { timeslider: false } would produce
-             * a class timeslider-off when the screen is small
+             * a class viz-timeslider-off when the screen is small
              */
             var profile = this.profiles[_this.current_profile] || this.profiles["default"];
             if (profile) {
                 _.each(profile, function(value, item) {
-                    _this.container.classed(item + "-off", !value);
+                    _this.container.classed(class_prefix + item + "-off", !value);
                 });
             }
 
             //toggle, untoggle classes based on orientation
             var portrait = this.portrait();
-            _this.container.classed("portrait", portrait);
-            _this.container.classed("landscape", !portrait);
+            _this.container.classed(class_portrait, portrait);
+            _this.container.classed(class_lansdcape, !portrait);
         },
 
         setProfile: function(profile, profiles) {

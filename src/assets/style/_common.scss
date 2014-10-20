@@ -45,3 +45,14 @@ $vzb-color-yellow: #E1CE00;
 // ----------------------------------------------------------------------------
 
 $vzb-image-preloader: url('assets/imgs/preloader.gif');
+
+// ----------------------------------------------------------------------------
+//   Common styles
+// ----------------------------------------------------------------------------
+
+.vzb-hidden {
+	display: none !important;
+}
+.vzb-invisible {
+	visibility: hidden !important;
+}
