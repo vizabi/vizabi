@@ -40,7 +40,7 @@ define([
         xScale,
         yScale,
         radiusScale,
-        colorScale, 
+        colorScale,
         //axis
         xAxis,
         yAxis,
@@ -56,7 +56,7 @@ define([
         margin,
         tick_spacing,
         //data
-        data, 
+        data,
         countries = [],
         selected_countries,
         indicators;
@@ -78,18 +78,18 @@ define([
         return d.name;
     }
 
-    function color(d) { 
-        return d.region; 
+    function color(d) {
+        return d.region;
     }
 
     function position(dot) {
 
         dot.attr("cy", function(d) {
-            return yScale(y(d, indicators[0]));
-        })
+                return yScale(y(d, indicators[0]));
+            })
             .attr("cx", function(d) {
                 return xScale(x(d, indicators[1]));
-            })  
+            })
             .attr("r", function(d) {
                 return radiusScale(radius(d, indicators[2]));
             });
@@ -110,13 +110,13 @@ define([
         // After loading template, select HTML elements
         postRender: function() {
 
-            graph = this.element.select('#graph');
-            yAxisEl = graph.select('#y_axis');
-            xAxisEl = graph.select('#x_axis');
-            yTitleEl = graph.select('#y_axis_title');
-            xTitleEl = graph.select('#x_axis_title');
-            yearEl = graph.select('#year');
-            bubbles = graph.select('#bubbles');
+            graph = this.element.select('.vzb-bc-graph');
+            yAxisEl = graph.select('.vzb-bc-axis-y');
+            xAxisEl = graph.select('.vzb-bc-axis-x');
+            yTitleEl = graph.select('.vzb-bc-axis-y-title');
+            xTitleEl = graph.select('.vzb-bc-axis-x-title');
+            yearEl = graph.select('.vzb-bc-year');
+            bubbles = graph.select('.vzb-bc-bubbles');
 
             this.update();
         },
@@ -130,7 +130,7 @@ define([
         update: function() {
             data = this.model.getData()[0];
             indicators = this.model.getState("indicator"),
-            categories = this.model.getState("show")["geo.categories"];
+                categories = this.model.getState("show")["geo.categories"];
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -253,7 +253,7 @@ define([
             xAxisEl.call(xAxis);
 
             //bubbles
-            bubbles.selectAll(".bubble")
+            bubbles.selectAll(".vzb-bc-bubble")
                 .call(position)
                 .sort(order);
         },
@@ -261,14 +261,18 @@ define([
         setYear: function(year) {
 
             yearEl.text(year);
-            bubbles.selectAll(".bubble").remove();
-            bubbles.selectAll(".bubble")
-                .data(interpolateData(data , indicators, year))
+            bubbles.selectAll(".vzb-bc-bubble").remove();
+            bubbles.selectAll(".vzb-bc-bubble")
+                .data(interpolateData(data, indicators, year))
                 .enter().append("circle")
-                .attr("class", "bubble")
-                .style("fill", function(d) { return colorScale(color(d)); })
-                .attr("data-tooltip", function(d) { return d.name; });
- 
+                .attr("class", "vzb-bc-bubble")
+                .style("fill", function(d) {
+                    return colorScale(color(d));
+                })
+                .attr("data-tooltip", function(d) {
+                    return d.name;
+                });
+
             this.resize();
             this.resizeStage();
             this.resizeBubbles();
