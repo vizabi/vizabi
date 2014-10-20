@@ -1,38 +1,40 @@
-.timeslider {
-    $buttonAreaWidth: 50px;
-    $buttonWidth: 40px;
-    $buttonBackground: $colorBlueDark;
-    $buttonBackgroundActive: #2F7687;
-    $lineColor: #A4CBD4;
-    $handleColor: $colorBlueDark;
-    #timeslider-play-button {
+$vzb-ts-btn-area: 50px;
+$vzb-ts-btn-width: 40px;
+$vzb-ts-btn-bg: $vzb-color-primary;
+$vzb-ts-btn-bg-active: #2F7687;
+$vzb-ts-line-color: #A4CBD4;
+$vzb-ts-handle-color: $vzb-color-primary;
+
+.vzb-timeslider {
+
+    .vzb-ts-btns {
         @include absolute(0px, auto, 0px, 5px);
-        width: $buttonAreaWidth;
-        .button {
+        width: $vzb-ts-btn-area;
+        .vzb-ts-btn {
             @include box-sizing(border-box);
-            @include border-radius($buttonWidth);
+            @include border-radius($vzb-ts-btn-width);
             @include font-size(18px);
-            width: $buttonWidth;
-            height: $buttonWidth;
-            background: $buttonBackground;
+            width: $vzb-ts-btn-width;
+            height: $vzb-ts-btn-width;
+            background: $vzb-ts-btn-bg;
             display: block;
             border: none;
             color: white;
             padding: 10px 15px;
             margin: 5px;
             cursor: pointer;
-            &#play-button-pause {
+            &.vzb-ts-btn-pause {
                 display: none;
                 padding: 10px;
             }
             &:active, &:focus {
                 outline: none;
-                background: $buttonBackgroundActive;
+                background: $vzb-ts-btn-bg-active;
             }
         }
-        #play-button-tooltip, #pause-button-tooltip {
+        .vzb-ts-btn-play-tooltip, .vzb-ts-btn-pause-tooltip{
             // display: none;
-            @include tooltip($colorGrey);
+            @include tooltip($vzb-color-grey);
             @include transition(opacity, 0.3s, ease);
             text-align: center;
             width: 55px;
@@ -45,18 +47,18 @@
             left: 0px;
             opacity: 0;
         }
-        &:hover #play-button-tooltip {
+        &:hover .vzb-ts-btn-play-tooltip {
             opacity: 1;
         }
     }
-    #time-slider-wrapper {
-        @include absolute(5px, 9px, 5px, $buttonAreaWidth+5);
+    .vzb-ts-slider-wrapper {
+        @include absolute(5px, 9px, 5px, $vzb-ts-btn-area+5);
         margin: 17px 7px;
         // Slider
-        .input-range {
+        .vzb-ts-slider {
             -webkit-appearance: none;
             @include border-radius(2px);
-            background: $lineColor;
+            background: $vzb-ts-line-color;
             height: 5px;
             width: 100%;
             outline: none !important;
@@ -67,8 +69,8 @@
                 cursor: pointer;
                 @include border-radius(7px);
                 @include transition(left, 0.1s, ease-in-out);
-                background-color: $handleColor;
-                border: 4px solid $colorWhite;
+                background-color: $vzb-ts-handle-color;
+                border: 4px solid $vzb-color-white;
                 top: -16px;
                 width: 16px;
                 height: 30px;
@@ -77,26 +79,26 @@
                 cursor: pointer;
                 @include border-radius(7px);
                 @include transition(left, 0.1s, ease-in-out);
-                background: $handleColor;
-                border: 4px solid $colorWhite;
+                background: $vzb-ts-handle-color;
+                border: 4px solid $vzb-color-white;
                 top: -16px;
                 width: 8px;
                 height: 24px;
             }
         }
         // Tooltip Tag
-        .range-value {
+        .vzb-ts-slider-value {
             @include absolute(-20px);
             @include font-size(13px);
             margin-left: -3px;
-            color: $handleColor;
+            color: $vzb-ts-handle-color;
             font-family: Arial, sans-serif;
             font-weight: bold;
             width: 10px;
             text-align: center;
             display: none;
         }
-        &:active .range-value {
+        &:active .vzb-ts-slider-value {
             display: block;
         }
         // Firefox Overrides
@@ -108,33 +110,33 @@
         }
     }
     //show pause instead if it's playing
-    &.playing {
-        #timeslider-play-button {
-            #play-button-play {
-                display: none;
+    &.vzb-playing {
+        .vzb-ts-btns {
+            .vzb-ts-btn-play {
+                @extend .vzb-hidden;
             }
-            #play-button-pause {
+            .vzb-ts-btn-pause {
                 display: block;
             }
-            &:hover #pause-button-tooltip {
+            &:hover .vzb-ts-btn-pause-tooltip {
                 opacity: 1;
             }
-            &:hover #play-button-tooltip {
+            &:hover .vzb-ts-btn-play-tooltip {
                 opacity: 0;
             }
         }
-        #time-slider-wrapper .range-value {
+        .vzb-ts-slider .vzb-ts-slider-value {
             display: block;
         }
 
 
     }
 
-    &.hide-play-button {
-        #timeslider-play-button {
-            display: none;
+    &.vzb-ts-hide-play-button {
+        .vzb-ts-btns {
+            @extend .vzb-hidden;
         }
-        #time-slider-wrapper {
+        .vzb-ts-slider {
             @include absolute(5px, 9px, 5px, 5px);
         }
     }
