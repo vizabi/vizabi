@@ -1,15 +1,16 @@
-#line-chart {
+.vzb-line-chart {
     @include absolute(0px, 0px, 0px, 0px);
     @include font-size(18px);
     font-family: $vzb-font-family;
     color: #666666;
     width: 100%;
     height: 100%;
-    .title {
+
+    .vzb-lc-title {
         color: $vzb-color-primary;
         fill: currentColor;
     }
-    .axis {
+    .vzb-lc-axis {
         fill: none;
         stroke: #999999;
         color: #999999;
@@ -18,42 +19,49 @@
             stroke: none;
         }
     }
-    .line {
+    .vzb-lc-axis-x, .vzb-lc-axis-y {
+        @extend .vzb-lc-axis;
+    }
+    .vzb-lc-title-x, .vzb-lc-title-y {
+        @extend .vzb-lc-title;
+    }
+
+    .vzb-lc-line {
         fill: none;
         stroke-width: 11px;
     }
-    .line-shadow {
+    .vzb-lc-line-shadow {
         fill: none;
         stroke-width: 19px;
     }
-    .label {
+    .vzb-lc-label {
         font-size: 1.8em;
     }
 }
-&.medium {
-    #line-chart {
+&.vzb-medium {
+    .vzb-line-chart {
         @include font-size(15px);
-        .line {
+        .vzb-lc-line {
             stroke-width: 8px;
         }
-        .line-shadow {
+        .vzb-lc-line-shadow {
             stroke-width: 14px;
         }
-        .label {
+        .vzb-lc-label {
             font-size: 1.5em;
         }
     }
 }
-&.small {
-    #line-chart {
+&.vzb-small {
+    .vzb-line-chart {
         @include font-size(12px);
-        .line {
+        .vzb-lc-line {
             stroke-width: 5px;
         }
-        .line-shadow {
+        .vzb-lc-line-shadow {
             stroke-width: 9px;
         }
-        .label {
+        .vzb-lc-label {
             font-size: 1.2em;
         }
     }
