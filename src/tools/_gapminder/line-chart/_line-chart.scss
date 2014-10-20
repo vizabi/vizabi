@@ -1,7 +1,8 @@
 @import '../../tool';
 
-.line-chart {
-	@extend .vizabi-tool;
+.vzb-tool-line-chart {
+
+	@extend .vzb-tool;
 
 	@import '../../../components/_gapminder/header/header';
 	@import '../../../components/_gapminder/line-chart/line-chart';

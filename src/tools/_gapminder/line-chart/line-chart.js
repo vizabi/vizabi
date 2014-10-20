@@ -13,16 +13,16 @@ define([
 
             //add components
             this.addComponent('_gapminder/header', {
-                placeholder: '.vizabi-tool-title'
+                placeholder: '.vzb-tool-title'
             });
             this.addComponent('_gapminder/line-chart', {
-                placeholder: '.vizabi-tool-viz'
+                placeholder: '.vzb-tool-viz'
             });
             this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vizabi-tool-timeslider'
+                placeholder: '.vzb-tool-timeslider'
             });
             this.addComponent('_gapminder/buttonlist', {
-                placeholder: '.vizabi-tool-buttonlist',
+                placeholder: '.vzb-tool-buttonlist',
                 buttons: [{
                             id: "geo",
                             title: "Country",
