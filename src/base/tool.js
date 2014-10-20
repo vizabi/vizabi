@@ -42,9 +42,9 @@ define([
             return this._super(function() {
                 var defer = $.Deferred();
 
-                var promise = _this.loadData();
-
-                promise.done(function() {
+                $.when(
+                    _this.loadData()
+                ).done(function() {
 
                     _this.layout.setContainer(_this.element);
                     _this.layout.setProfile(_this.profiles);
@@ -139,15 +139,24 @@ define([
             //get info from options
             var language = this.model.get("language"),
                 query = this.getQuery();
-                
-            //load data and resolve the defer when it's done
-            $.when(
-                this.model.data.load(query, language, events)
-            ).done(function() {
-                defer.resolve();
-            });
+
+            if (query) {
+                //load data and resolve the defer when it's done
+                $.when(
+                    this.model.data.load(query, language, events)
+                ).done(function() {
+                    defer.resolve();
+                });
+            } else {
+                defer = true;
+            }
 
             return defer;
+        },
+
+        //empty getQuery
+        getQuery: function() {
+            return false;
         }
     });
 
