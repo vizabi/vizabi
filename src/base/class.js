@@ -14,7 +14,7 @@ define([], function() {
 	  // Create a new Class that inherits from this class
 	  Class.extend = function(prop) {
 	    var _super = this.prototype;
-	   
+	   	console.log(prop);
 	    // Instantiate a base class (but only create the instance,
 	    // don't run the init constructor)
 	    initializing = true;
