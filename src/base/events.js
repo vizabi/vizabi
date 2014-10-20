@@ -1,7 +1,13 @@
-define(['jquery', 'underscore'], function($, _) {
+define([
+    "underscore",
+    "base/class"
+], function(_, Class) {
     
-    var Events = {
-        events: {}, //holds each event, identified by name
+    var Events = Class.extend({
+
+        init: function() {
+            this.events = {};
+        },
 
         //bind a function to a certain event
         bind: function(name, func) {
@@ -45,11 +51,11 @@ define(['jquery', 'underscore'], function($, _) {
         //trigger a certain event, executing each function
         trigger: function(name, args) {
 
-            if($.type(this.events[name]) === 'undefined') return;
+            if(_.isUndefined(this.events[name])) return;
             for (var i = 0, size=this.events[name].length; i < size; i++) {
                 var f = this.events[name][i];
-                if($.isFunction(f)) {
-                    if($.type(args) === "undefined") {
+                if(_.isFunction(f)) {
+                    if(_.isUndefined(args)) {
                         f();
                     } else {
                         f(args);
@@ -59,7 +65,7 @@ define(['jquery', 'underscore'], function($, _) {
                 }
             };
         }
-    }
+    });
 
     return Events;
 });

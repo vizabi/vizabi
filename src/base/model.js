@@ -8,6 +8,7 @@ define([
 
         init: function(values) {
             this._data = {};
+            this.events = new Events();
             if (values) {
                 this.set(values, true);
             }
@@ -22,12 +23,12 @@ define([
 
             if (typeof attr !== 'object') {
                 this._data[attr] = _.clone(value);
-                if (!silent) Events.trigger("change:"+attr);
+                if (!silent) this.events.trigger("change:"+attr);
             } else {
                 silent = value;
                 for (var att in attr) {
                     this._data[att] = _.clone(attr[att]);
-                    if (!silent) Events.trigger("change:"+att);
+                    if (!silent) this.events.trigger("change:"+att);
                 }
             }
         },
@@ -38,11 +39,11 @@ define([
         },
 
         bind: function(name, func) {
-            Events.bind(name, func);
+            this.events.bind(name, func);
         },
 
         trigger: function(name) {
-            Events.trigger(name);
+            this.events.trigger(name);
         },
 
         //improve source setup;
@@ -80,7 +81,12 @@ define([
             }
             result.push(set[set.length-1]); //add the last element
             return result;
+        },
+
+        validate: function() {
+            // placeholder for validate function
         }
+
     });
 
     return model;
