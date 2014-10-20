@@ -39,7 +39,7 @@ define([
             //remove size classes and find correct one
             _.each(this.screen_sizes, function(range, size) {
                 //remove class
-                _this.container.classed(size, false);
+                _this.container.classed(class_prefix + size, false);
                 //find best fit
                 if (width >= range.min_width && width <= range.max_width) {
                     _this.current_profile = size;
