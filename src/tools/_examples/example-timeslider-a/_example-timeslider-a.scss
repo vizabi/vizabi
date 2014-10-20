@@ -1,0 +1,10 @@
+
+@import '../../tool';
+
+.vzb-tool-example-timeslider-a {
+	@extend .vzb-tool;
+
+    @include absoluteAll;
+	
+	@import '../../../components/_gapminder/timeslider/timeslider';
+}
