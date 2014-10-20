@@ -7,13 +7,13 @@ $buttonColor: $vzb-color-primary-dark;
 $buttonTitleColor: $buttonColor;
 $buttonBorderColor: #DBE8EB;
 
-#buttonlist {
+.vzb-buttonlist {
 	@include box-sizing(border-box);
 	@include absoluteAll;
 	overflow: hidden;
 	text-align: center;
 	text-overflow: clip;
-	.button {
+	.vzb-buttonlist-btn {
 
 		outline: none;
 		@include box-sizing(border-box);
@@ -25,7 +25,7 @@ $buttonBorderColor: #DBE8EB;
 	    cursor: pointer;
 	    width: $buttonWidth;
 
-		&>.icon {
+		&>.vzb-btn-icon {
 			@include box-sizing(border-box);
 		    @include border-radius($buttonRadius);
         	@include font-size(16px);
@@ -39,7 +39,7 @@ $buttonBorderColor: #DBE8EB;
 			padding: 5px;
 			// border: 1px solid $buttonBorderColor;
         }
-        &>.title {
+        &>.vzb-btn-title {
         	padding-top: 2px;
 			text-align: center;
         	display:block;
@@ -48,32 +48,28 @@ $buttonBorderColor: #DBE8EB;
         	@include font-size(10px);
         }
 
-		&#button-more > .icon{
+		&.vzb-buttonlist-btn-more > .btn-icon{
 			background-color: $buttonMoreBackground;
 		}
-
-        &.hidden {
-        	display: none;
-        }
 	}
 
 }
 
 
 //responsiveness
-&.small.portrait {
-	#buttonlist {
-		.button {
+&.vzb-small.vzb-portrait {
+	.vzb-buttonlist {
+		.vzb-buttonlist-btn {
 			width: $buttonWidth + 8;
 		}
 	}
 }
 
-&.medium, &.large {
-	#buttonlist {
-		.button {
+&.vzb-medium, &.vzb-large {
+	.vzb-buttonlist {
+		.vzb-buttonlist-btn {
 			width: $buttonWidth + 10;
-			&>.icon {
+			&>.vzb-btn-icon {
 				@include font-size(18px);
 				padding: 9px;
 				width: $buttonSize + 10;
