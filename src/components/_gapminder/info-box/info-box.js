@@ -9,15 +9,22 @@ define([
         currentYearData,
         indicator,
         $infoWrapper,
-        $infoValue,
-        $infoPercent,
-        $infoCloseButton,
         totalValue,
         top5Value,
         top5Percent,
         selectedItems,
         unit,
-        decimal;
+        decimal,
+        unitLabel,
+        units = {
+            '1000000': 'million'
+        },
+        infoTemplate = _.template([
+            '<div id="<%= id %>">',
+                '<a href="#" class="info-box-close">x</a>',
+                '<div class="info-box-placeholder"><%= indicator %> for <%= name %>: <%= total %> <%= unitLabel %></div>',
+                '<div class="info-box-placeholder"><%= percent %>% of the World</div>',
+            '</div>'].join(''));
 
     var InfoBox = Component.extend({
         init: function(context, options) {
@@ -31,17 +38,14 @@ define([
             var _this = this;
 
             $infoWrapper = $('#info-box-wrapper');
-            $infoValue = $('#info-box-value');
-            $infoPercent = $('#info-box-percent');
-            $infoCloseButton = $('#info-box-close');
 
             // Subscribe to events
             _this.events.bind('item:selected', _this.updateSelectedInfo.bind(_this));
             _this.events.bind('item:deselected', _this.deselectedHandler.bind(_this));
 
-            $infoCloseButton.on('click', function (event) {
+            $infoWrapper.on('click', '.info-box-close', function (event) {
                 event.preventDefault();
-                _this.deselectedHandler($(this).data('selected'));
+                _this.deselectedHandler($(this).parent().data('selected'));
             });
 
             this.update();
@@ -54,6 +58,7 @@ define([
             year = this.model.getState('time');
             indicator = this.model.getState('indicator');
             unit = this.model.getState('unit') || 1;
+            unitLabel = units[unit] || '';
             decimal = this.model.getState('decimal') || 0;
             currentYearData = data.filter(function(row) {
                 return (row.time == year);
@@ -69,7 +74,7 @@ define([
             if (!selectedItems) {
                 this.resetInfo();
             } else {
-                this.updateSelectedInfo(_.last(selectedItems));
+                selectedItems.forEach(function (item, index, items) { _this.updateSelectedInfo(item); });
             }
 
             this.resize();
@@ -79,15 +84,31 @@ define([
         },
 
         updateSelectedInfo: function (selected) {
+            // TODO: Waiting for a final solution for double fired events
+            // for now this simple check will prevent double update
+            if ($('#info-' + selected).length) {
+                return;
+            }
+
             var itemData = currentYearData.filter(function (item) { return item.geo == selected; })[0],
                 value = this.getValue(itemData),
-                percent = (value / totalValue * 100).toFixed(decimal);
+                percent = (value / totalValue * 100).toFixed(decimal),
+                currentHeight = $infoWrapper.height(),
+                templateData = {
+                    indicator: indicator,
+                    name: itemData['geo.name'],
+                    total: this.getFormattedValue(value),
+                    percent: percent,
+                    unitLabel: unitLabel,
+                    id: 'info-' + selected
+                }
 
-            $infoValue.html(indicator + ' for ' + itemData['geo.name'] + ': ' + this.getFormattedValue(value));
-            $infoPercent.html(percent + '% of the Wolrd');
+            $(infoTemplate(templateData))
+                .data('selected', selected)
+                .prependTo($infoWrapper)
+                .fadeIn(150);
 
-            $infoWrapper.addClass('selected');
-            $infoCloseButton.data('selected', selected);
+            $('#info-top5').remove();
 
             selectedItems.push(selected);
             selectedItems = _.uniq(selectedItems);
@@ -95,6 +116,8 @@ define([
 
         deselectedHandler: function (item) {
             selectedItems = _.reject(selectedItems, function (i) { return i === item; });
+
+            $('#info-' + item).fadeOut(150, function () { this.remove(); });
 
             if (selectedItems.length) {
                 this.updateSelectedInfo(_.last(selectedItems));
@@ -106,11 +129,19 @@ define([
         },
 
         resetInfo: function () {
-            $infoValue.html(indicator + ' for top 5 countries: ' + this.getFormattedValue(top5Value));
-            $infoPercent.html(top5Percent + '% of the Wolrd');
+            var templateData = {
+                    indicator: indicator,
+                    name: 'top 5 countries',
+                    total: this.getFormattedValue(top5Value),
+                    percent: top5Percent,
+                    unitLabel: unitLabel,
+                    id: 'info-top5'
+                }
 
-            $infoWrapper.removeClass('selected');
-            $infoCloseButton.data('selected', '');
+            $infoWrapper.empty();
+            $(infoTemplate(templateData))
+                .appendTo($infoWrapper)
+                .fadeIn(150);
         },
 
         getValue: function (d) {
