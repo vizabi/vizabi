@@ -1,7 +1,7 @@
 //CUSTOM SCSS
 
 $lineColor: #A4CBD4;
-$handleColor: $colorBlueDark;
+$handleColor: $vzb-color-primary-dark;
 
 #timeslider-slider {
 	padding: 17px 7px;
@@ -16,7 +16,7 @@ $handleColor: $colorBlueDark;
 	    	@include border-radius(7px);
 			@include transition(left, 0.1s, linear);
 			background-color: $handleColor;
-			border: 4px solid $colorWhite;
+			border: 4px solid $vzb-color-white;
 			top: -16px;
 			width: 10px;
 			height: 30px;

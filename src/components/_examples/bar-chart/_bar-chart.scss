@@ -1,16 +1,16 @@
-#bar-chart {
+.vzb-bar-chart {
     @include absolute(0px,0px,0px,0px);
     @include font-size(18px);
-    font-family: $fontFamily;
+    font-family: $vzb-font-family;
     color: #666666;
     width: 100%;
     height: 100%;
 
-    .title {
-        color: $colorIMmediumBlue;
+    .vzb-bc-title {
+        color: $vzb-color-primary;
         fill: currentColor;
     }
-    .axis {
+    .vzb-bc-axis {
         fill: none;
         stroke: #999999;
         color: #999999;
@@ -19,26 +19,33 @@
             stroke: none;
         }
     }
-    .bar {
-        fill: $colorGreen;
+    .vzb-bc-axis-x, .vzb-bc-axis-y {
+        @extend .vzb-bc-axis;
+    }
+    .vzb-bc-axis-x-title, .vzb-bc-axis-y-title {
+        @extend .vzb-bc-title;
+    }
+
+    .vzb-bc-bar {
+        fill: $vzb-color-green;
         stroke: none;
     }
-    .bar:nth-child(2n) {
-        fill: $colorRed;
+    .vzb-bc-bar:nth-child(2n) {
+        fill: $vzb-color-red;
     }
-    .bar:nth-child(3n) {
-        fill: $colorBlue;
+    .vzb-bc-bar:nth-child(3n) {
+        fill: $vzb-color-blue;
     }
 }
 
-&.medium {
-    #bar-chart {
+&.vzb-medium {
+    .vzb-bar-chart {
         @include font-size(15px);
     }
 }
 
-&.small {
-    #bar-chart {
+&.vzb-small {
+    .vzb-bar-chart {
         @include font-size(12px);
     }
 }

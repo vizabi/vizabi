@@ -1,7 +1,7 @@
 #timeslider-play-button {
 
 	$buttonWidth: 40px;
-	$buttonBackground: $colorBlueDark;
+	$buttonBackground: $vzb-color-primary-dark;
 	$buttonBackgroundActive: #2F7687;
 
     .button {
@@ -40,7 +40,7 @@
 
     #play-button-tooltip {
         // display: none;
-        @include tooltip($colorGrey);
+        @include tooltip($vzb-color-grey);
         @include transition(opacity, 0.3s, ease);
         text-align: center;
         width: 55px;

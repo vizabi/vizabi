@@ -86,13 +86,11 @@ define([
          */
         postRender: function() {
 
-            graph = this.element.select('#graph');
-            yAxisEl = graph.select('#y_axis');
-            xAxisEl = graph.select('#x_axis');
-            yTitleEl = graph.select('#y_axis_title');
-            xTitleEl = graph.select('#x_axis_title');
-            yearEl = graph.select('#year');
-            lines = graph.select('#lines');
+            graph = this.element.select('.vzb-lc-graph');
+            yAxisEl = graph.select('.vzb-lc-axis-y');
+            xAxisEl = graph.select('.vzb-lc-axis-x');
+            yTitleEl = graph.select('.vzb-lc-axis-y-title');
+            lines = graph.select('.vzb-lc-lines');
 
             this.update();
         },
@@ -229,7 +227,7 @@ define([
         resizeMargins: function() {
 
             //adjust right margin according to biggest label
-            var lineLabels = lines.selectAll(".label")[0];
+            var lineLabels = lines.selectAll(".vzb-lc-label")[0];
             var biggest = _.max(_.map(lineLabels, function(label) {
                 return label.getBBox().width;
             }));
@@ -281,7 +279,7 @@ define([
                 });
 
             //lines
-            lines.selectAll(".line-shadow")
+            lines.selectAll(".vzb-lc-line-shadow")
                 .attr("d", function(d) {
                     return line(d.values);
                 })
@@ -289,12 +287,12 @@ define([
                     return "translate(0,2)";
                 });
 
-            lines.selectAll(".line")
+            lines.selectAll(".vzb-lc-line")
                 .attr("d", function(d) {
                     return line(d.values);
                 });
 
-            lines.selectAll(".label")
+            lines.selectAll(".vzb-lc-label")
                 .attr("transform", function(d) {
                     return "translate(" + xScale(d.value.time) + "," + yScale(d.value[indicator]) + ")";
                 })
@@ -303,14 +301,14 @@ define([
 
         setYear: function(year) {
 
-            lines.selectAll(".entity").remove();
-            var entity = lines.selectAll(".entity")
+            lines.selectAll(".vzb-lc-entity").remove();
+            var entity = lines.selectAll(".vzb-lc-entity")
                 .data(data)
                 .enter().append("g")
-                .attr("class", "entity");
+                .attr("class", "vzb-lc-entity");
 
             entity.append("path")
-                .attr("class", "line-shadow")
+                .attr("class", "vzb-lc-line-shadow")
                 .attr("d", function(d) {
                     return line(d.values);
                 })
@@ -319,7 +317,7 @@ define([
                 });
 
             entity.append("path")
-                .attr("class", "line")
+                .attr("class", "vzb-lc-line")
                 .attr("d", function(d) {
                     return line(d.values);
                 })
@@ -331,7 +329,7 @@ define([
                 });
 
             entity.append("text")
-                .attr("class", "label")
+                .attr("class", "vzb-lc-label")
                 .datum(function(d) {
                     return {
                         name: d.name,

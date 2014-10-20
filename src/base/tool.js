@@ -6,6 +6,7 @@ define([
     'base/layout'
 ], function(d3, _, Component, ToolModel, Layout) {
 
+    var class_loading_data = "vzb-loading-data";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
     var Tool = Component.extend({
@@ -107,12 +108,12 @@ define([
 
         // is executed before loading actaul data
         beforeLoading: function() {
-            this.element.classed("loading-data", true);
+            this.element.classed(class_loading_data, true);
         },
 
         // is executed after loading actaul data
         afterLoading: function() {
-            this.element.classed("loading-data", false);
+            this.element.classed(class_loading_data, false);
         },
 
         loadData: function() {

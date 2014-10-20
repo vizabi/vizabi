@@ -1,4 +1,4 @@
-.vizabi-tool {
+.vzb-tool {
 
     $heightTitle: 40px;
     $sizeButtonList: 60px;
@@ -8,96 +8,96 @@
 
     @include absoluteAll;
     
-    .vizabi-tool-title{
+    .vzb-tool-title{
         @include box-sizing(border-box);
         @include absolute(0px,0px,auto,0px);
         @include font-size(18px);
         height: $heightTitle;
-        background-color: $colorBlueLight;
-        font-family: $fontFamily;
+        background-color: $vzb-color-primary-lightest;
+        font-family: $vzb-font-family;
         padding: 10px;
         color: #666666;
     }
 
-    .vizabi-tool-content {
+    .vzb-tool-content {
         @include absolute($heightTitle,0px,0px,0px);
 
-        .vizabi-tool-stage{
+        .vzb-tool-stage{
             @include absolute(0px,$sizeButtonList,0px,0px);
             
-            .vizabi-tool-viz {
+            .vzb-tool-viz {
                 @include absolute(0px,0px,$sizeTimeSlider,0px);
             }
-            .vizabi-tool-timeslider {
+            .vzb-tool-timeslider {
                 @include absolute(auto,0px,0px,0px);
                 height: $sizeTimeSlider;
             }
         }
-        .vizabi-tool-buttonlist {
+        .vzb-tool-buttonlist {
             @include absolute(0px,0px,0px);
             width: $sizeButtonList;
-            background-color: $colorBlueLight;
+            background-color: $vzb-color-primary-lightest;
         }
     }
 
     // hide sections
-    &.title-off {
-        .vizabi-tool-title{
+    &.vzb-title-off {
+        .vzb-tool-title{
             display: none;
         }
-        .vizabi-tool-content {
+        .vzb-tool-content {
             @include absoluteAll;
         }
     }
-    &.timeslider-off {
-        .vizabi-tool-timeslider {
+    &.vzb-timeslider-off {
+        .vzb-tool-timeslider {
             display: none;
         }
-        .vizabi-tool-content .vizabi-tool-stage .vizabi-tool-viz {
+        .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
             @include absoluteAll;
         }
     }
-    &.buttonlist-off {
-        .vizabi-tool-buttonlist {
+    &.vzb-buttonlist-off {
+        .vzb-tool-buttonlist {
             display: none;
         }
-        .vizabi-tool-content .vizabi-tool-stage {
+        .vzb-tool-content .vzb-tool-stage {
             @include absoluteAll;
         }
     }
 
     //Responsiveness
 
-    &.small {
-        .vizabi-tool-title{
+    &.vzb-small {
+        .vzb-tool-title{
             height: $heightTitle - 8px;
             @include font-size(14px);
         }
-        .vizabi-tool-content {
+        .vzb-tool-content {
             @include absolute($heightTitle - 8px,0px,0px,0px);
 
-            .vizabi-tool-stage {
+            .vzb-tool-stage {
             
                 @include absolute(0px,$sizeButtonListSmall,0px,0px);
                 
-                .vizabi-tool-viz {
+                .vzb-tool-viz {
                     @include absolute(0px,0px,$sizeTimeSliderSmall,0px);
                 }
-                .vizabi-tool-timeslider {
+                .vzb-tool-timeslider {
                     height: $sizeTimeSliderSmall;
                 }
             }
-            .vizabi-tool-buttonlist {
+            .vzb-tool-buttonlist {
                 width: $sizeButtonListSmall;
             }
         }
     }
-    &.small.portrait {
-        .vizabi-tool-content {
-            .vizabi-tool-stage {
+    &.vzb-small.vzb-portrait {
+        .vzb-tool-content {
+            .vzb-tool-stage {
                 @include absolute(0px,0px,$sizeButtonListSmall,0px);
             }
-            .vizabi-tool-buttonlist {
+            .vzb-tool-buttonlist {
                 @include absolute(auto, 0px,0px,0px);
                 width: auto;
                 height: $sizeButtonListSmall;
@@ -105,13 +105,13 @@
         }
     }
 
-    &.loading, &.loading-data {
+    &.vzb-loading, &.vzb-loading-data {
 
         //todo: Make background transparent, but not preloader circles
         &:after {
             content: ' ';
-            background-color: $colorWhite;
-            background-image: $preloader;
+            background-color: $vzb-color-white;
+            background-image: $vzb-image-preloader;
             background-repeat: no-repeat;
             background-position: center center;
             display: block;
@@ -124,13 +124,13 @@
         }
     }
 
-    &.loading-data {
+    &.vzb-loading-data {
         &:after {
             @include opacity(0.9); 
         }
     }
     
-    &.loading {
+    &.vzb-loading {
         * {
             visibility: hidden;
         }

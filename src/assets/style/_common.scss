@@ -1,15 +1,58 @@
-$fontFamily: 'Arial Rounded MT Bold', Arial, sans-serif;
-$colorIMmediumBlue: #607889;
-$colorDarkWhite: #F2FAFC;
-$colorLightWhite: #FDFDFD;
-$colorWhite: #FFFFFF;
+// ****************************************************************************
+//
+//   Common Variables
+//   variables across tools & components
+//
+//   -> Naming convention:
+//      general -> specific
+//      E.g: $vzb-border-color-blue;
+//
+// ****************************************************************************
 
-$colorGrey: #999999;
+// ----------------------------------------------------------------------------
+//   Sizes
+// ----------------------------------------------------------------------------
+$vzb-resolution-medium: 750px;
+$vzb-resolution-large: 970px;
 
-$colorBlueDark: #4B98AA;
-$colorBlueLight: #F2FAFC;
-$colorBlue: #62CCE3; 
-$colorRed: #F77481; 
-$colorGreen: #B4DE79;
+$vzb-font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
 
-$preloader: url('assets/imgs/preloader.gif');
+// ----------------------------------------------------------------------------
+//   Colors
+//   -> Naming convention:
+//   darkest, darker, dark, color, light, lighter, lightest
+// ----------------------------------------------------------------------------
+
+// Primary = Low saturated Blue
+$vzb-color-primary: #607889;
+$vzb-color-primary-dark: #4B98AA;
+$vzb-color-primary-lightest: #F2FAFC;
+
+// Grayscale
+$vzb-color-white: #FFFFFF;
+$vzb-color-grey: #999999;
+$vzb-color-grey-light: #F2FAFC;
+$vzb-color-grey-lightest: #FDFDFD;
+
+// Vizabi main colors
+$vzb-color-blue: #62CCE3; 
+$vzb-color-red: #F77481; 
+$vzb-color-green: #B4DE79;
+$vzb-color-yellow: #E1CE00;
+
+// ----------------------------------------------------------------------------
+//   Images
+// ----------------------------------------------------------------------------
+
+$vzb-image-preloader: url('assets/imgs/preloader.gif');
+
+// ----------------------------------------------------------------------------
+//   Common styles
+// ----------------------------------------------------------------------------
+
+.vzb-hidden {
+	display: none !important;
+}
+.vzb-invisible {
+	visibility: hidden !important;
+}

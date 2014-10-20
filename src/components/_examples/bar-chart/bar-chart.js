@@ -28,11 +28,11 @@ define([
         // After loading template, select HTML elements
         postRender: function() {
 
-            graph = this.element.select('#graph');
-            xAxisEl = graph.select('#x_axis');
-            yAxisEl = graph.select('#y_axis');
-            yTitleEl = graph.select('#y_axis_title');
-            bars = graph.select('#bars');
+            graph = this.element.select('.vzb-bc-graph');
+            yAxisEl = graph.select('.vzb-bc-axis-y');
+            xAxisEl = graph.select('.vzb-bc-axis-x');
+            yTitleEl = graph.select('.vzb-bc-axis-y-title');
+            bars = graph.select('.vzb-bc-bars');
 
             this.update();
         },
@@ -86,14 +86,14 @@ define([
             yTitleEl.text(indicator_name);
 
             // Remove old bars if exist
-            bars.selectAll(".bar").remove();
+            bars.selectAll(".vzb-bc-bar").remove();
 
             // Update data bars
-            bars.selectAll(".bar")
+            bars.selectAll(".vzb-bc-bar")
                 .data(data_curr_year)
                 .enter()
                 .append("path")
-                .attr("class", "bar");
+                .attr("class", "vzb-bc-bar");
 
             this.resize();
 
@@ -165,7 +165,7 @@ define([
             var indicator = this.model.getState("indicator");
 
             // Update size of bars 
-            bars.selectAll(".bar")
+            bars.selectAll(".vzb-bc-bar")
                 .attr("d", function(d, i) {
                     return topRoundedRect(x(d["geo.name"]),
                         y(d[indicator]),

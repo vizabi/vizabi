@@ -1,7 +1,7 @@
 @import '../../tool';
 
-.bubble-chart {
-	@extend .vizabi-tool;
+.vzb-tool-bubble-chart {
+	@extend .vzb-tool;
 
 	@import '../../../components/_gapminder/header/header';
 	@import '../../../components/_gapminder/timeslider/timeslider';

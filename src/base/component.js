@@ -8,6 +8,8 @@ define([
     'base/events'
 ], function($, d3, _, utils, Class, Model, Events) {
 
+    var class_loading = "vzb-loading";
+
     var Component = Class.extend({
         init: function(parent, options) {
 
@@ -39,7 +41,7 @@ define([
 
                 // add css loading class to hide elements
                 if (_this.element) {
-                    _this.element.classed("loading", true);
+                    _this.element.classed(class_loading, true);
                 }
 
                 // attempt to execute postRender
@@ -70,7 +72,7 @@ define([
             .done(function() {
                 //not loading anytmore, remove class
                 if (_this.element) {
-                    _this.element.classed("loading", false);
+                    _this.element.classed(class_loading, false);
                 }
 
                 defer.resolve();

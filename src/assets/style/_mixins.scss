@@ -1,3 +1,18 @@
+// ****************************************************************************
+//
+//   Common Mixins
+//   mixins can be used across all scss files, at all levels
+//
+//   -> Naming convention:
+//      general -> specific
+//      E.g: $vzb-border-color-blue;
+//
+// ****************************************************************************
+
+// ----------------------------------------------------------------------------
+//   Positioning
+// ----------------------------------------------------------------------------
+
 //makes an element absolute positioned
 @mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
     position: absolute;
@@ -20,9 +35,9 @@
     left: $left;
 }
 
-@mixin opacity($v) {
-    opacity: $v;
-}
+// ----------------------------------------------------------------------------
+//   Sizes, borders and margins
+// ----------------------------------------------------------------------------
 
 @mixin reset-margin-padding() {
     padding:0px;
@@ -35,6 +50,46 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+@mixin box-sizing($box-model) {
+  -webkit-box-sizing: $box-model; // Safari <= 5
+     -moz-box-sizing: $box-model; // Firefox <= 19
+          box-sizing: $box-model;
+}
+
+@mixin border-radius($border-radius) {
+  -webkit-border-radius: $border-radius; // Safari <= 5
+     -moz-border-radius: $border-radius; // Firefox <= 19
+          border-radius: $border-radius;
+}
+
+@mixin translate($x, $y) {
+    -webkit-transform: translate($x,$y);
+       -moz-transform: translate($x,$y);
+        -ms-transform: translate($x,$y);
+         -o-transform: translate($x,$y);
+            transform: translate($x,$y);
+}
+
+// ----------------------------------------------------------------------------
+//   Color and Transformation
+// ----------------------------------------------------------------------------
+
+@mixin opacity($v) {
+    opacity: $v;
+}
+
+@mixin transition($transition-property, $transition-time, $method) {
+    -webkit-transition: $transition-property $transition-time $method;
+    -moz-transition: $transition-property $transition-time $method;
+    -ms-transition: $transition-property $transition-time $method;
+    -o-transition: $transition-property $transition-time $method;
+    transition: $transition-property $transition-time $method;
+}
+
+// ----------------------------------------------------------------------------
+//   Text
+// ----------------------------------------------------------------------------
 
 //Text overflow. If text is bigger than box, insert ellipsis: text he... Wrapper needs to be block or inline-block
 @mixin text-truncate() {
@@ -67,17 +122,9 @@
     -ms-user-select: none; // IE10+
 }
 
-@mixin box-sizing($box-model) {
-  -webkit-box-sizing: $box-model; // Safari <= 5
-     -moz-box-sizing: $box-model; // Firefox <= 19
-          box-sizing: $box-model;
-}
-
-@mixin border-radius($border-radius) {
-  -webkit-border-radius: $border-radius; // Safari <= 5
-     -moz-border-radius: $border-radius; // Firefox <= 19
-          border-radius: $border-radius;
-}
+// ----------------------------------------------------------------------------
+//   Responsiveness
+// ----------------------------------------------------------------------------
 
 //overflow mobile y
 @mixin overflow-mobile(){
@@ -85,6 +132,8 @@
   -webkit-overflow-scrolling: touch;
 }
 
+//wraps styles in the correct media query
+//todo: is this used?
 @mixin breakpoint($point) {
   @if $point == portrait {
     @media screen and (orientation: portrait) { @content; }
@@ -93,50 +142,39 @@
     @media screen and (orientation: landscape) { @content; }
   }
   @else if $point == small {
-    @media (max-width: $mediumMinWidth - 1px) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) { @content; }
   }
   @else if $point == medium {
-    @media (min-width: $mediumMinWidth) { @content; }
+    @media (min-width: $vzb-resolution-medium) { @content; }
   }
   @else if $point == large {
-    @media (min-width: $largeMinWidth) { @content; }
+    @media (min-width: $vzb-resolution-large) { @content; }
   }
   @else if $point == small-landscape {
-    @media (max-width: $mediumMinWidth - 1px) and (orientation: landscape) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: landscape) { @content; }
   }
   @else if $point == small-portrait {
-    @media (max-width: $mediumMinWidth - 1px) and (orientation: portrait) { @content; }
+    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: portrait) { @content; }
   }
   @else if $point == medium-landscape {
-    @media (min-width: $mediumMinWidth) and (orientation: landscape){ @content; }
+    @media (min-width: $vzb-resolution-medium) and (orientation: landscape){ @content; }
   }
   @else if $point == medium-portrait {
-    @media (min-width: $mediumMinWidth) and (orientation: portrait){ @content; }
+    @media (min-width: $vzb-resolution-medium) and (orientation: portrait){ @content; }
   }
   @else if $point == large-landscape {
-    @media (min-width: $largeMinWidth) and (orientation: landscape) { @content; }
+    @media (min-width: $vzb-resolution-large) and (orientation: landscape) { @content; }
   }
   @else if $point == large-portrait {
-    @media (min-width: $largeMinWidth) and (orientation: portrait) { @content; }
+    @media (min-width: $vzb-resolution-large) and (orientation: portrait) { @content; }
   }
 }
 
-@mixin transition($transition-property, $transition-time, $method) {
-    -webkit-transition: $transition-property $transition-time $method;
-    -moz-transition: $transition-property $transition-time $method;
-    -ms-transition: $transition-property $transition-time $method;
-    -o-transition: $transition-property $transition-time $method;
-    transition: $transition-property $transition-time $method;
-}
+// ----------------------------------------------------------------------------
+//   Other
+// ----------------------------------------------------------------------------
 
-@mixin translate($x, $y) {
-    -webkit-transform: translate($x,$y);
-       -moz-transform: translate($x,$y);
-        -ms-transform: translate($x,$y);
-         -o-transform: translate($x,$y);
-            transform: translate($x,$y);
-}
-
+//TODO: evaluate if this mixin should be included at all
 @mixin tooltip($background-color: white,
                $padding: 0.5em,
                $arrow-base: 1em,

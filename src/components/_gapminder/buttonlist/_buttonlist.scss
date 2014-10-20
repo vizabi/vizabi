@@ -1,19 +1,20 @@
-$buttonWidth: 50px;
-$buttonSize: 26px;
-$buttonRadius: $buttonSize + 10;
-$buttonBackground: #ffffff;
-$buttonMoreBackground: $colorLightWhite;
-$buttonColor: $colorBlueDark;
-$buttonTitleColor: $buttonColor;
-$buttonBorderColor: #DBE8EB;
+$vzb-button-width: 50px;
+$vzb-button-size: 26px;
+$vzb-button-radius: $vzb-button-size + 10;
+$vzb-button-bg: #ffffff;
+$vzb-button-more-bg: $vzb-color-grey-lightest;
+$vzb-button-color: $vzb-color-primary-dark;
+$vzb-button-color-title: $vzb-button-color;
+$vzb-button-color-border: #DBE8EB;
 
-#buttonlist {
+.vzb-buttonlist {
+
 	@include box-sizing(border-box);
 	@include absoluteAll;
 	overflow: hidden;
 	text-align: center;
 	text-overflow: clip;
-	.button {
+	.vzb-buttonlist-btn {
 
 		outline: none;
 		@include box-sizing(border-box);
@@ -23,61 +24,57 @@ $buttonBorderColor: #DBE8EB;
 		display: inline-block;
 		padding: 5px;
 	    cursor: pointer;
-	    width: $buttonWidth;
+	    width: $vzb-button-width;
 
-		&>.icon {
+		&>.vzb-btn-icon {
 			@include box-sizing(border-box);
-		    @include border-radius($buttonRadius);
+		    @include border-radius($vzb-button-radius);
         	@include font-size(16px);
 			text-align: center;
 		    display:inline-block;
 		    border: none;
-		    background-color: $buttonBackground;
-		    color: $buttonColor;
-		    width: $buttonSize;
-		    height: $buttonSize;
+		    background-color: $vzb-button-bg;
+		    color: $vzb-button-color;
+		    width: $vzb-button-size;
+		    height: $vzb-button-size;
 			padding: 5px;
-			// border: 1px solid $buttonBorderColor;
+			// border: 1px solid $vzb-button-color-border;
         }
-        &>.title {
+        &>.vzb-btn-title {
         	padding-top: 2px;
 			text-align: center;
         	display:block;
-        	color: $buttonTitleColor;
+        	color: $vzb-button-color-title;
         	text-transform: uppercase;
         	@include font-size(10px);
         }
 
-		&#button-more > .icon{
-			background-color: $buttonMoreBackground;
+		&.vzb-buttonlist-btn-more > .btn-icon{
+			background-color: $vzb-button-more-bg;
 		}
-
-        &.hidden {
-        	display: none;
-        }
 	}
 
 }
 
 
 //responsiveness
-&.small.portrait {
-	#buttonlist {
-		.button {
-			width: $buttonWidth + 8;
+&.vzb-small.vzb-portrait {
+	.vzb-buttonlist {
+		.vzb-buttonlist-btn {
+			width: $vzb-button-width + 8;
 		}
 	}
 }
 
-&.medium, &.large {
-	#buttonlist {
-		.button {
-			width: $buttonWidth + 10;
-			&>.icon {
+&.vzb-medium, &.vzb-large {
+	.vzb-buttonlist {
+		.vzb-buttonlist-btn {
+			width: $vzb-button-width + 10;
+			&>.vzb-btn-icon {
 				@include font-size(18px);
 				padding: 9px;
-				width: $buttonSize + 10;
-		        height: $buttonSize + 10;
+				width: $vzb-button-size + 10;
+		        height: $vzb-button-size + 10;
 			}
 		}
 	}

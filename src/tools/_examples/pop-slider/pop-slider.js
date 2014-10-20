@@ -12,15 +12,15 @@ define([
             this.state = options.state;
 
             this.addComponent('_examples/year-display', {
-                placeholder: '.vizabi-tool-year'
+                placeholder: '.vzb-tool-year'
             });
 
             this.addComponent('_examples/indicator-display', {
-                placeholder: '.vizabi-tool-display'
+                placeholder: '.vzb-tool-display'
             });
 
             this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vizabi-tool-timeslider'
+                placeholder: '.vzb-tool-timeslider'
             });
 
             this._super(parent, options);
