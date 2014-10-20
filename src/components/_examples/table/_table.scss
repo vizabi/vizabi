@@ -1,4 +1,4 @@
-#table {
+.vzb-table {
     width: 100%;
     font-family: $vzb-font-family;
     font-size: 12px;
@@ -13,8 +13,8 @@
         color: black;
     }
 }
-&.medium, &.large {
-    #table {
+&.vzb-medium, &.vzb-large {
+    .vzb-table {
         font-size: 14px;
     }
 }
