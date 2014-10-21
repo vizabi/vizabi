@@ -32,7 +32,6 @@ define([
                 var promise = tool.render();
                 promise.done(function() {
                     defer.resolve();
-                    Events.trigger("resize");
                 });
 
             });

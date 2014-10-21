@@ -44,13 +44,13 @@ define([
                         _this.element.classed(class_loading, true);
                     }
 
-                    // attempt to execute postRender
+                    // attempt to execute callback
                     if (typeof callback === 'function') {
                         return callback();
                     }
 
                 })
-                // After postRender, resize and load components
+                // After load components
                 .then(function() {
                     return _this.loadComponents();
                 })
@@ -62,8 +62,8 @@ define([
                 .then(function() {
                     //TODO: Chance of refactoring
                     //Every widget binds its resize function to the resize event
-                    _this.resize();
                     return _this.renderComponents();
+                    _this.resize();
                 })
                 // After rendering the components, resolve the defer
                 .done(function() {
