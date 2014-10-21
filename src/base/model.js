@@ -20,8 +20,6 @@ define([
         //set an attribute for the model, or an entire object
         set: function(attr, value, silent, block_validation) {
 
-            console.log("setting model");
-
             if (typeof attr !== 'object') {
                 this._data[attr] = _.clone(value);
             } else {

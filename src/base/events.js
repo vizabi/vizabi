@@ -56,30 +56,21 @@ define([
 
         //trigger event and all parents. E.g: change:language and change
         trigger: function(name, args) {
-            var parts = name.split(":"),
-                new_name;
 
-            while (parts.length > 0) {
-                new_name = parts.join(":");
-                this.triggerEach(name, new_name, args);
-                parts.pop();
-            }
-        },
-        //trigger one specific event
-        triggerEach: function(original, name, args) {
             if (_.isUndefined(this.events[name])) return;
             for (var i = 0, size = this.events[name].length; i < size; i++) {
                 var f = this.events[name][i];
                 if (_.isFunction(f)) {
                     if (_.isUndefined(args)) {
-                        f(original);
+                        f(name);
                     } else {
-                        f(original, args);
+                        f(name, args);
                     }
                 } else {
-                    throw_msg("Can't execute '" + func + "' on event '" + name + "', triggetred by '"+original+"'. It must be a function!");
+                    throw_msg("Can't execute '" + func + "' on event '" + name + ". It must be a function!");
                 }
             };
+
         }
     });
 
