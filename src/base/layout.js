@@ -47,7 +47,7 @@ define([
             });
 
             //update size class
-            _this.container.classed(class_prefix + _this.current_profile, true);
+            this.container.classed(class_prefix + _this.current_profile, true);
 
             //TODO: move this comment to wiki
             /* toggle, untoggle classes based on profile
@@ -65,8 +65,10 @@ define([
 
             //toggle, untoggle classes based on orientation
             var portrait = this.portrait();
-            _this.container.classed(class_portrait, portrait);
-            _this.container.classed(class_lansdcape, !portrait);
+            this.container.classed(class_portrait, portrait);
+            this.container.classed(class_lansdcape, !portrait);
+
+            this.events.trigger('resize');
         },
 
         setProfile: function(profile, profiles) {
