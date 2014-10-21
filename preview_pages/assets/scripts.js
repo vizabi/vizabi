@@ -87,7 +87,7 @@ function showState(state, id) {
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 
-    updateURL();
+    // updateURL();
 }
 
 function showQuery(query) {

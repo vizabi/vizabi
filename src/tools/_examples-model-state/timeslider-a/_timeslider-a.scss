@@ -1,10 +1,10 @@
 @import'../../tool';
-.vzb-tool-example-timeslider-a {
+.vzb-tool-timeslider-a {
     @extend .vzb-tool;
     @include absoluteAll;
     padding: 30px;
     
-    .vzb-tool-timeslider-1 {
+    .vzb-tool-timeslider-1, .vzb-tool-timeslider-2 {
         position: relative;
     }
     h2 {
