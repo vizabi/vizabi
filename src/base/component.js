@@ -155,7 +155,11 @@ define([
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
                 _this.components[id] = new subcomponent(_this, options);
-
+                if(component_model) {
+                    component_model.on("change", function() {
+                        _this.components[id].update();
+                    });
+                }
                 defer.resolve();
             });
 

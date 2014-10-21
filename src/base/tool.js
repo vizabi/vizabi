@@ -50,14 +50,14 @@ define([
 
                     // call update of each component when the state changes
                     // or when the language changes
-                    _this.model.on([
-                        'change:state',
-                        'change:language',
-                        'change:data'
-                    ], function(evt, new_values) {
-                        _this.update();
-                        _this.trigger(evt, new_values);
-                    });
+                    // _this.model.on([
+                    //     'change:state',
+                    //     'change:language',
+                    //     'change:data'
+                    // ], function(evt, new_values) {
+                    //     _this.update();
+                    //     _this.trigger(evt, new_values);
+                    // });
 
 
                     defer.resolve();

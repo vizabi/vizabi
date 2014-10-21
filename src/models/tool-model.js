@@ -11,6 +11,8 @@ define([
         init: function(options) {
             var model_config = this._generateModelConfig(options);
             this._super(model_config);
+
+            this.bindEvents(options.bind);
         },
 
         _generateModelConfig: function(options) {
@@ -68,6 +70,13 @@ define([
                 return new available_models[model_name](values);
             } else {
                 return new Model(values);
+            }
+        },
+
+        bindEvents: function(evts) {
+            var _this = this;
+            for(var i in evts) {
+                _this.on(i, evts[i]);
             }
         }
 
