@@ -39,44 +39,41 @@ define([
             // After the template is loaded, check if postRender exists
             promise.then(function() {
 
-                // add css loading class to hide elements
-                if (_this.element) {
-                    _this.element.classed(class_loading, true);
-                }
+                    // add css loading class to hide elements
+                    if (_this.element) {
+                        _this.element.classed(class_loading, true);
+                    }
 
-                // attempt to execute postRender
-                if (typeof callback === 'function') {
-                    return callback();
-                }
+                    // attempt to execute postRender
+                    if (typeof callback === 'function') {
+                        return callback();
+                    }
 
-            })
-            // After postRender, resize and load components
-            .then(function() {
-                return _this.loadComponents();
-            })
-            // If there is no callback
-            .then(function() {
-                return _this.execute(_this.postRender);
-            })
-            // After loading components, render them
-            .then(function() {
-                //TODO: Chance of refactoring
-                //Every widget binds its resize function to the resize event
-                _this.resize();
-                _this.events.bind('resize', function() {
+                })
+                // After postRender, resize and load components
+                .then(function() {
+                    return _this.loadComponents();
+                })
+                // If there is no callback
+                .then(function() {
+                    return _this.execute(_this.postRender);
+                })
+                // After loading components, render them
+                .then(function() {
+                    //TODO: Chance of refactoring
+                    //Every widget binds its resize function to the resize event
                     _this.resize();
-                });
-                return _this.renderComponents();
-            })
-            // After rendering the components, resolve the defer
-            .done(function() {
-                //not loading anytmore, remove class
-                if (_this.element) {
-                    _this.element.classed(class_loading, false);
-                }
+                    return _this.renderComponents();
+                })
+                // After rendering the components, resolve the defer
+                .done(function() {
+                    //not loading anytmore, remove class
+                    if (_this.element) {
+                        _this.element.classed(class_loading, false);
+                    }
 
-                defer.resolve();
-            });
+                    defer.resolve();
+                });
 
             return defer;
         },
@@ -129,27 +126,27 @@ define([
         },
 
         loadComponent: function(component) {
-            var _this = this,
-                defer = $.Deferred(),
-                path = component.path,
-                name = component.name,
-                id = name, //_.uniqueId(name),
-                component_path = "components/" + path + "/" + name,
-                component_model = this.model;
 
-            //component model mapping
-            if (component.model) {
-                if (_.isFunction(component.model)) {
-                    component_model = new Model(component.model());
-                } else {
-                    component_model = new Model(component.model);
-                }
-            } else if (this.getModelMapping(name)) {
-                component_model = new Model(this.getModelMapping(name));
+            if (!component.component || !component.placeholder) {
+                console.log("Error loading component");
+                return true;
             }
 
+            //name and path
+            var _this = this,
+                defer = $.Deferred(),
+                path = component.component,
+                name_token = path.split("/"),
+                name = name_token[name_token.length - 1],
+                id = name,
+                component_path = "components/" + path + "/" + name,
+                component_model;
+
+            //component model mapping
+            component_model = this._modelMapping(component.model);
+
             //component options
-            var options = _.extend(component.options, {
+            var options = _.extend(component, {
                 name: name,
                 model: component_model
             });
@@ -228,6 +225,8 @@ define([
             this.model.setState(state);
         },
 
+        postRender: function() {},
+
         // Component-level update updates the sub-components
         update: function() {
             for (var i in this.components) {
@@ -237,21 +236,32 @@ define([
             }
         },
 
-        resize: function() {
-            //what to do when page is resized
-        },
+        //what to do when page is resized
+        resize: function() {},
 
-        postRender: function() {
-
-        },
-
-        getModelMapping: function(component) {
-            return this.modelMapping()[component];
-        },
 
         //maps the current model to subcomponents
-        modelMapping: function() {
-            return {};
+        //model_config may be array or string
+        _modelMapping: function(model_config) {
+
+            if (_.isUndefined(model_config)) {
+                return;
+            }
+
+            if (_.isArray(model_config) && model_config.length > 1) {
+                var values = {};
+                for (var i = 0, size = component.model.length; i < size; i++) {
+                    values[i] = this.model.get(i);
+                }
+                return new Model(values);
+            } else if (_.isArray(model_config) && model_config.length == 1) {
+                return this.model.get(model_config[0]);
+            } else if (_.isString(model_config) && model_config.length > 0) {
+                return this.model.get(model_config);
+            } else {
+                return new Model({});
+            }
+
         },
 
         getInstance: function(manager) {
@@ -259,6 +269,7 @@ define([
         },
 
         getLayoutProfile: function() {
+            //get profile from parent if layout is not available
             if (this.layout) {
                 return this.layout.currentProfile();
             } else {

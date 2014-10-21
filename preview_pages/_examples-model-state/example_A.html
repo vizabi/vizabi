@@ -46,34 +46,11 @@ $(function() {
     var options = {
         //state
         state: url.state || {
-            show: {
-                geo: ['swe', 'nor', 'world'],
-                'geo.category': ['country', 'planet']
-            },
-            timeRange: ["2000-2009"],
-            time: 2007,
-            indicator: 'lex',
-            scale: 'linear',
-            unit: 1
-        },
-        //path
-        data: {
-            reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
-        },
-
-        //language
-        language: url.lang || "en",
-        ui_strings: {
-            en: {
-                "title": "Table Title",
-                "timeslider/play": "Play",
-                "timeslider/pause": "Pause"
-            },
-            pt: {
-                "title": "Título da Tabela",
-                "timeslider/play": "Iniciar",
-                "timeslider/pause": "Parar"
+            time: {
+                start: 0,
+                end: 1000,
+                step: 5,
+                value: 30
             }
         },
 

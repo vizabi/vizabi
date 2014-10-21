@@ -5,19 +5,17 @@ define([
 
     var ExampleTimesliderA = Tool.extend({
         init: function(parent, options) {
-            
-            this.name = "example-timeslider-a";
-            this.template = "tools/_examples/example-timeslider-a/example-timeslider-a";
-            this.placeholder = options.placeholder;
 
-            this.state = options.state;
+            //tool basic settings
+            this.name = 'example-timeslider-a';
+            this.template = 'tools/_examples/example-timeslider-a/example-timeslider-a';
 
-	        //add components
-            
-            this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vzb-tool-timeslider-1'
-            });
-            
+            //instantiating components
+            this.components = [{
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-tool-timeslider-1', //div to render
+                model: ['time']  //model name and type derived from state
+            }];
 
             this._super(parent, options);
         }

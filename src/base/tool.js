@@ -2,9 +2,9 @@ define([
     'd3',
     'underscore',
     'base/component',
-    'base/tool-model',
-    'base/layout'
-], function(d3, _, Component, ToolModel, Layout) {
+    'base/layout',
+    'models/tool-model'
+], function(d3, _, Component, Layout, ToolModel) {
 
     var class_loading_data = "vzb-loading-data";
     //Tool does everything a component does, but has different defaults
@@ -21,15 +21,8 @@ define([
                 }
             };
 
-            this.model = new ToolModel(options.data);
-            this.model.setState(options.state, true);
-
-            //set language parameters
-            this.model.set("language", options.language);
-            this.model.set("ui_strings", options.ui_strings);
-
             this.layout = new Layout();
-
+            this.model = new ToolModel(options);
 
             // Same constructor as widgets
             this._super(parent, options);

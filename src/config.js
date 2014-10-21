@@ -7,6 +7,7 @@ require.config({
         base: 'base',
         tools: 'tools',
         components: 'components',
+        models: 'models',
         readers: 'readers',
 
         d3: '../lib/d3/d3',
