@@ -32,24 +32,6 @@ $vzb-ts-handle-color: $vzb-color-primary;
                 background: $vzb-ts-btn-bg-active;
             }
         }
-        .vzb-ts-btn-play-tooltip, .vzb-ts-btn-pause-tooltip{
-            // display: none;
-            @include tooltip($vzb-color-grey);
-            @include transition(opacity, 0.3s, ease);
-            text-align: center;
-            width: 55px;
-            color: white;
-            visibility: visible;
-            font-size: 11px;
-            text-transform: uppercase;
-            z-index: 100;
-            top: -25px;
-            left: 0px;
-            opacity: 0;
-        }
-        &:hover .vzb-ts-btn-play-tooltip {
-            opacity: 1;
-        }
     }
     .vzb-ts-slider-wrapper {
         @include absolute(5px, 9px, 5px, $vzb-ts-btn-area+5);
@@ -125,11 +107,9 @@ $vzb-ts-handle-color: $vzb-color-primary;
                 opacity: 0;
             }
         }
-        .vzb-ts-slider .vzb-ts-slider-value {
+        .vzb-ts-slider-value {
             display: block;
         }
-
-
     }
 
     &.vzb-ts-hide-play-button {

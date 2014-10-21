@@ -3,8 +3,8 @@ define([
     'd3',
     'base/utils',
     'base/component',
-    'jqueryui_slider'
-], function($, d3, utils, Component) {
+    'models/time-model'
+], function($, d3, utils, Component, TimeModel) {
 
     var container,
         timeslider,
@@ -13,8 +13,6 @@ define([
         data,
         minValue,
         maxValue,
-        playing,
-        playInterval,
         hidePlayButton,
         step;
 
@@ -34,25 +32,42 @@ define([
 
         postRender: function() {
             var _this = this;
-            playing = false;
 
+            /* 
+             * html elements
+             */
             container = utils.d3ToJquery(this.element);
-
             range = container.find(".vzb-ts-slider");
             value = container.find('.vzb-ts-slider-value');
             play = container.find(".vzb-ts-btn-play"),
             pause = container.find(".vzb-ts-btn-pause");
 
+            /* 
+             * model and related events
+             */
+
+            //create default time model if no model is provided
+            if(!this.model) this.model = new TimeModel();
+
             range.on('input', function(){
                 _this._setTime(parseFloat(this.value));
+                _this.model.pause();
             });
 
+            //play action
             play.click(function() {
-                _this._play();
+                _this.model.play();
+            });
+            this.model.on("play", function() {
+                container.addClass(class_playing);
             });
 
+            //pause action
             pause.click(function() {
-                _this._pause();
+                _this.model.pause();
+            });
+            this.model.on("pause", function() {
+                container.removeClass(class_playing);
             });
 
             this.update();
@@ -60,8 +75,9 @@ define([
 
 
         resize: function() {
-            if (hidePlayButton == true) container.addClass(class_hide_play);
-            this.update();
+            if (!this.model.get("showPlayPause")) {
+                container.addClass(class_hide_play);
+            }
         },
 
         update: function() {
@@ -84,31 +100,6 @@ define([
             //update state
             this.model.set("value", time, silent);
             this.update();
-        },
-
-       _play: function() {
-            //return if already playing
-            if (playing) return;
-
-            container.addClass(class_playing);
-
-            var _this = this,
-                year = this.model.get("value");
-                
-            playInterval = setInterval(function() {
-                if (year >= maxValue) {
-                    _this._pause();
-                    return;
-                } else {
-                    year = year + step;
-                    _this._setTime(year);
-                }
-            }, 100);
-        },
-
-        _pause: function() {
-            container.removeClass(class_playing);
-            clearInterval(playInterval);
         },
 
         _setTimePosition: function () {

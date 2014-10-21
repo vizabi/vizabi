@@ -1,26 +1,24 @@
-
-@import '../../tool';
-
+@import'../../tool';
 .vzb-tool-example-timeslider-a {
-	@extend .vzb-tool;
-
+    @extend .vzb-tool;
     @include absoluteAll;
     padding: 30px;
-
+    
     .vzb-tool-timeslider-1 {
-    	position: relative;
+        position: relative;
     }
-
     h2 {
-    	font-family: $vzb-font-family;
-    	color: $vzb-color-primary;
+        font-family: $vzb-font-family;
+        color: $vzb-color-primary;
     }
-
+    p {
+        font-size: 14px;
+        line-height: 1.5em;
+    }
     pre {
-    	background: $vzb-color-grey-light;
-    	padding: 15px;
-    	color: $vzb-color-grey-dark;
+        background: $vzb-color-grey-light;
+        padding: 15px;
+        color: $vzb-color-grey-dark;
     }
-	
-	@import '../../../components/_gapminder/timeslider/timeslider';
+    @import'../../../components/_gapminder/timeslider/timeslider';
 }
