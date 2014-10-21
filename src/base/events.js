@@ -61,23 +61,23 @@ define([
 
             while (parts.length > 0) {
                 new_name = parts.join(":");
-                this.triggerEach(new_name, args);
+                this.triggerEach(name, new_name, args);
                 parts.pop();
             }
         },
         //trigger one specific event
-        triggerEach: function(name, args) {
+        triggerEach: function(original, name, args) {
             if (_.isUndefined(this.events[name])) return;
             for (var i = 0, size = this.events[name].length; i < size; i++) {
                 var f = this.events[name][i];
                 if (_.isFunction(f)) {
                     if (_.isUndefined(args)) {
-                        f();
+                        f(original);
                     } else {
-                        f(args);
+                        f(original, args);
                     }
                 } else {
-                    throw_msg("Can't execute '" + func + "' on event '" + name + "'. It must be a function!");
+                    throw_msg("Can't execute '" + func + "' on event '" + name + "', triggetred by '"+original+"'. It must be a function!");
                 }
             };
         }

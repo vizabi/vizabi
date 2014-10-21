@@ -25,7 +25,7 @@ define([
             this.components = this.components || [];
             this.profiles = this.profiles || {};
             this.parent = parent;
-            this.events = Events;
+            this.events = new Events();
         },
 
         //TODO: change the scary name! :D bootstrap is one good one
@@ -155,6 +155,7 @@ define([
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
                 _this.components[id] = new subcomponent(_this, options);
+
                 defer.resolve();
             });
 

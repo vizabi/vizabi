@@ -9,6 +9,8 @@ define([
     var core = Class.extend({
 
         init: function() {
+            //events instance triggers events to the outside world
+            this.events = new Events();
         },
 
         start: function(tool_path, placeholder, options) {
@@ -18,7 +20,7 @@ define([
 
 
             var path = 'tools/' + tool_path + '/' + tool_name,
-                context = this;
+                _this = this;
 
             // extending options with name and tool's placeholder
             _.extend(options, {
@@ -28,7 +30,14 @@ define([
 
             //placeholder is id because it's unique on the page
             require([path], function(Tool) {
-                tool = new Tool(context, options);
+                tool = new Tool(_this, options);
+
+                //bind external events after loading
+                //when anything changes in the tool, trigger event
+                tool.on("change", function(evt, values) {
+                    _this.events.trigger(evt, values);
+                });
+
                 var promise = tool.render();
                 promise.done(function() {
                     defer.resolve();
@@ -37,10 +46,10 @@ define([
             });
 
             //bind each of the options
-            if(!_.isUndefined(options.bind) && _.isObject(options.bind)) {
-                for(var evt_name in options.bind) {
+            if (!_.isUndefined(options.bind) && _.isObject(options.bind)) {
+                for (var evt_name in options.bind) {
                     var evt = options.bind[evt_name];
-                    if(_.isFunction(evt)) {
+                    if (_.isFunction(evt)) {
                         this.bind(evt_name, evt);
                     }
                 }
@@ -49,13 +58,12 @@ define([
             return defer;
         },
 
-        bind: function(evt, func) {
-            Events.bind(evt, func);
+        on: function(evt, func) {
+            this.bind(evt, func);
         },
 
-        trigger: function(what) {
-            var args = Array.prototype.slice.call(arguments).slice(1);
-            Events.trigger(what, args);
+        bind: function(evt, func) {
+            this.events.bind(evt, func);
         },
 
         setOptions: function(options) {

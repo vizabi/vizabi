@@ -18,18 +18,23 @@ define([
         },
 
         //set an attribute for the model, or an entire object
-        set: function(attr, value, silent) {
+        set: function(attr, value, silent, block_validation) {
+
+            console.log("setting model");
 
             if (typeof attr !== 'object') {
                 this._data[attr] = _.clone(value);
-                if (!silent) this.events.trigger("change:"+attr, this._data);
             } else {
+                block_validation = silent;
                 silent = value;
                 for (var att in attr) {
                     this._data[att] = _.clone(attr[att]);
-                    if (!silent) this.events.trigger("change:"+att, attr[att]);
                 }
             }
+            //trigger change if not silent
+            if (!silent) this.events.trigger("change");
+            //if we don't block validation, validate
+            if (!block_validation) this.validate(silent);
         },
 
         reset: function(values, silent) {
@@ -41,8 +46,8 @@ define([
             this.events.bind(name, func);
         },
 
-        trigger: function(name) {
-            this.events.trigger(name);
+        trigger: function(name, val) {
+            this.events.trigger(name, val);
         },
 
         load: function(query, language, events) {
@@ -66,13 +71,13 @@ define([
 
         interpolateSet: function(set, step) {
             var result = [];
-            for(var i=0, size = set.length; i<(size-1); i++) {
-                var j = i+1;
-                for (var k=0; k<1; k+=step) {
+            for (var i = 0, size = set.length; i < (size - 1); i++) {
+                var j = i + 1;
+                for (var k = 0; k < 1; k += step) {
                     result.push(this.interpolate(set[i], set[j], k));
                 }
             }
-            result.push(set[set.length-1]); //add the last element
+            result.push(set[set.length - 1]); //add the last element
             return result;
         },
 

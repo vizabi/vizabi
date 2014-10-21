@@ -50,28 +50,28 @@ define([
 
                     // call update of each component when the state changes
                     // or when the language changes
-                    _this.model.on(['change:state', 'change:language'], function(state) {
+                    _this.model.on([
+                        'change:state',
+                        'change:language',
+                        'change:data'
+                    ], function(evt, new_values) {
                         _this.update();
+                        _this.trigger(evt, new_values);
                     });
 
 
                     defer.resolve();
                 });
-
                 return defer;
-
             });
         },
 
-        bind: function(evt, func) {
+        on: function(evt, func) {
             this.events.bind(evt, func);
-            return this;
         },
 
-        trigger: function(evt) {
-            var args = Array.prototype.slice.call(arguments).slice(1);
-            this.events.trigger(evt, args);
-            return this;
+        trigger: function(evt, values) {
+            this.events.trigger(evt, values);
         },
 
         //resizing the tool is resizing the components
@@ -88,7 +88,7 @@ define([
             var promise = this.loadData(),
                 _this = this;
 
-            promise.done(function() {
+            $.when([promise]).done(function() {
                 for (var i in _this.components) {
                     if (_this.components.hasOwnProperty(i)) {
                         _this.components[i].update();
@@ -162,10 +162,6 @@ define([
             return false;
         }
     });
-
-
-
-
 
     return Tool;
 });
