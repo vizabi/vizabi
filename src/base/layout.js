@@ -1,7 +1,8 @@
 define([
     "underscore",
-    "base/class"
-], function(_, Class) {
+    "base/class",
+    "base/events"
+], function(_, Class, Events) {
 
     //classes are vzb-portrait, vzb-landscape...
     var class_prefix = "vzb-",
@@ -30,9 +31,18 @@ define([
             this.container = null; //d3 container
             this.profiles = {};
             this.current_profiles = null;
+
+            //capture layout events
+            this.events = new Events();
+
+            //resize when window resizes
+            var _this = this;
+            window.addEventListener('resize', function() {
+                _this.resize();
+            });
         },
 
-        update: function() {
+        resize: function() {
             var _this = this,
                 width = this.width();
 
@@ -108,6 +118,10 @@ define([
 
         height: function() {
             return parseInt(this.container.style("height"), 10);
+        },
+
+        on: function(name, func) {
+            this.events.bind(name, func);
         }
 
     });

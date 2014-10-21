@@ -48,15 +48,16 @@ define([
 
                     _this.layout.setContainer(_this.element);
                     _this.layout.setProfile(_this.profiles);
-                    _this.layout.update();
+                    _this.layout.resize();
+
                     //binds resize event to update
-                    _this.events.bind('resize', function() {
-                        _this.layout.update();
+                    _this.layout.on('resize', function() {
+                        _this.resize();
                     });
 
                     // call update of each component when the state changes
                     // or when the language changes
-                    _this.model.bind(['change:state', 'change:language'], function(state) {
+                    _this.model.on(['change:state', 'change:language'], function(state) {
                         _this.update();
                     });
 
@@ -78,6 +79,15 @@ define([
             var args = Array.prototype.slice.call(arguments).slice(1);
             this.events.trigger(evt, args);
             return this;
+        },
+
+        //resizing the tool is resizing the components
+        resize: function() {
+            for (var i in this.components) {
+                if (this.components.hasOwnProperty(i)) {
+                    this.components[i].resize();
+                }
+            }
         },
 
         //updating the tool is updating the components

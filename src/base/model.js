@@ -38,7 +38,7 @@ define([
             this.set(values, silent);
         },
 
-        bind: function(name, func) {
+        on: function(name, func) {
             this.events.bind(name, func);
         },
 
