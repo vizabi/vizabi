@@ -43,20 +43,16 @@ define([
             play = container.find(".vzb-ts-btn-play"),
             pause = container.find(".vzb-ts-btn-pause");
 
+            range.on('input', function(){
+                _this._setTime(parseFloat(this.value));
+            });
+
             play.click(function() {
-                _this.play();
+                _this._play();
             });
 
             pause.click(function() {
-                _this.pause();
-            });
-
-            this.events.bind('timeslider:dragging', function() {
-                _this.pause();
-            });
-
-            range.on('input', function(){
-                _this.setYear(parseFloat(this.value));
+                _this._pause();
             });
 
             this.update();
@@ -69,71 +65,57 @@ define([
         },
 
         update: function() {
-            var _this = this,
-                year = this.model.getState("time");
-
-            data = this.model.getData()[0],
-                minValue = d3.min(data, function(d) {
-                    return +d.time;
-                }),
-                maxValue = d3.max(data, function(d) {
-                    return +d.time;
-                });
+            //time slider should always receive a time model
+            var time = this.model.get("value"),
+                minValue = this.model.get("start")
+                maxValue = this.model.get("end")
+                step = this.model.get("step");
             
             range.attr("min", minValue)
                  .attr("max", maxValue)
-                 .attr("data-year", year)
                  .attr("step", step)
-                 .val(year);        
-                 
+                 .val(time);        
 
-            value.html(year);
-            this.setYearPosition();
+            value.html(time);
+            this._setTimePosition();
         },
 
-        getYear: function() {
-            return this.model.getState("time");
-        },
-
-        setYear: function(year, silent) {
+        _setTime: function(time, silent) {
             //update state
-            this.model.setState({
-                time: year
-            }, silent);
-
+            this.model.set("value", time, silent);
             this.update();
         },
 
-       play: function() {
+       _play: function() {
             //return if already playing
             if (playing) return;
 
             container.addClass(class_playing);
 
             var _this = this,
-                year = this.model.getState("time");
+                year = this.model.get("value");
                 
             playInterval = setInterval(function() {
                 if (year >= maxValue) {
-                    _this.pause();
+                    _this._pause();
                     return;
                 } else {
                     year = year + step;
-                    _this.setYear(year);
+                    _this._setTime(year);
                 }
             }, 100);
         },
 
-        pause: function() {
+        _pause: function() {
             container.removeClass(class_playing);
             clearInterval(playInterval);
         },
 
-        setYearPosition: function () {
+        _setTimePosition: function () {
             var inputWidth = range.width() - 16,
-                timeRange = maxValue - minValue,
-                currentYear = this.model.getState("time") - minValue,
-                newPosition = Math.round(inputWidth * currentYear / timeRange);
+                timeRange = this.model.get("end") - this.model.get("start"),
+                currTime = this.model.get("value") - this.model.get("start"),
+                newPosition = Math.round(inputWidth * currTime / timeRange) + 10;
                 
             value.css("left", newPosition + "px");
         }

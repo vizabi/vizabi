@@ -7,6 +7,7 @@
     $sizeTimeSliderSmall: 50px;
 
     @include absoluteAll;
+    text-align: left;
     
     .vzb-tool-title{
         @include box-sizing(border-box);

@@ -90,11 +90,11 @@ $vzb-ts-handle-color: $vzb-color-primary;
         .vzb-ts-slider-value {
             @include absolute(-20px);
             @include font-size(13px);
-            margin-left: -3px;
+            width: 100px;
+            margin-left: -50px;
             color: $vzb-ts-handle-color;
             font-family: Arial, sans-serif;
             font-weight: bold;
-            width: 10px;
             text-align: center;
             display: none;
         }

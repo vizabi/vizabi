@@ -5,6 +5,22 @@
 	@extend .vzb-tool;
 
     @include absoluteAll;
+    padding: 30px;
+
+    .vzb-tool-timeslider-1 {
+    	position: relative;
+    }
+
+    h2 {
+    	font-family: $vzb-font-family;
+    	color: $vzb-color-primary;
+    }
+
+    pre {
+    	background: $vzb-color-grey-light;
+    	padding: 15px;
+    	color: $vzb-color-grey-dark;
+    }
 	
 	@import '../../../components/_gapminder/timeslider/timeslider';
 }
