@@ -1,8 +1,7 @@
 define([
     'base/class',
-    'base/events',
-    'base/data'
-], function(Class, Events, DataManager) {
+    'base/events'
+], function(Class, Events) {
 
     var model = Class.extend({
 
@@ -23,12 +22,12 @@ define([
 
             if (typeof attr !== 'object') {
                 this._data[attr] = _.clone(value);
-                if (!silent) this.events.trigger("change:"+attr);
+                if (!silent) this.events.trigger("change:"+attr, this._data);
             } else {
                 silent = value;
                 for (var att in attr) {
                     this._data[att] = _.clone(attr[att]);
-                    if (!silent) this.events.trigger("change:"+att);
+                    if (!silent) this.events.trigger("change:"+att, attr[att]);
                 }
             }
         },
@@ -44,12 +43,6 @@ define([
 
         trigger: function(name) {
             this.events.trigger(name);
-        },
-
-        //improve source setup;
-        setSource: function(data_source) {
-            datapath = data_source ? data_source.path : "";
-            this._dataManager = new DataManager(datapath);
         },
 
         load: function(query, language, events) {
