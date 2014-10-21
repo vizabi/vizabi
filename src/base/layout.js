@@ -113,11 +113,11 @@ define([
         },
 
         width: function() {
-            return parseInt(this.container.style("width"), 10);
+            return (this.container) ? parseInt(this.container.style("width"), 10) : 0;
         },
 
         height: function() {
-            return parseInt(this.container.style("height"), 10);
+            return (this.container) ? parseInt(this.container.style("height"), 10) : 0;
         },
 
         on: function(name, func) {

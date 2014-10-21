@@ -9,9 +9,6 @@ define([
     var core = Class.extend({
 
         init: function() {
-            window.addEventListener('resize', function() {
-                Events.trigger('resize');
-            });
         },
 
         start: function(tool_path, placeholder, options) {
