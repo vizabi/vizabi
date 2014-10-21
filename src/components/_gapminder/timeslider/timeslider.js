@@ -26,6 +26,8 @@ define([
             hidePlayButton = options.hidePlayButton || false;
             step = options.step || 1;
 
+            if(!options.model) options.model = new TimeModel();
+
             // Same constructor as the superclass
             this._super(parent, options);
         },
@@ -45,9 +47,6 @@ define([
             /* 
              * model and related events
              */
-
-            //create default time model if no model is provided
-            if(!this.model) this.model = new TimeModel();
 
             range.on('input', function(){
                 _this._setTime(parseFloat(this.value));

@@ -96,17 +96,11 @@ define([
                 }
             });
         },
-
-        //TODO: expand for other options 
+ 
         setOptions: function(options) {
-            this.setState(options.state);
-            if (options.language) {
-                this.model.set("language", options.language);
-            }
-            if (options.ui_strings) {
-                this.model.set("ui_strings", _.extend(this.model.get("ui_strings"), options.ui_strings));
-            }
-
+            this.model.reset(options);
+            this.reassignModel();
+            this.update();
         },
 
         // is executed before loading actaul data

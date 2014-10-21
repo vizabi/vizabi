@@ -23,9 +23,15 @@ define([
                 name: this.name
             };
             this.components = this.components || [];
+            this.components_config = this.components;
             this.profiles = this.profiles || {};
             this.parent = parent;
             this.events = new Events();
+
+            var _this = this;
+            this.model.on("change", function() {
+                _this.update();
+            })
         },
 
         //TODO: change the scary name! :D bootstrap is one good one
@@ -108,6 +114,8 @@ define([
                 promises = [],
                 components = this.components;
 
+            //save initial config
+            this.components_config = _.map(components, _.clone);
             //use the same name for the initialized collection           
             this.components = {};
 
@@ -155,11 +163,6 @@ define([
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
                 _this.components[id] = new subcomponent(_this, options);
-                if(component_model) {
-                    component_model.on("change", function() {
-                        _this.components[id].update();
-                    });
-                }
                 defer.resolve();
             });
 
@@ -244,6 +247,27 @@ define([
         //what to do when page is resized
         resize: function() {},
 
+        reassignModel: function() {
+            //only reassign if it's loaded already
+            if (_.isArray(this.components)) return;
+
+            var _this = this;
+            //for each subcomponent, reassign model
+            for (var i in this.components_config) {
+                var c = this.components_config[i],
+                    name_token = c.component.split("/"),
+                    id = name_token[name_token.length - 1],
+                    model = this._modelMapping(c.model);
+
+                if (model) {
+                    model.on("change", function() {
+                        _this.components[id].update();
+                    });
+                    this.components[id].model = model;
+                    this.components[id].reassignModel();
+                }
+            }
+        },
 
         //maps the current model to subcomponents
         //model_config may be array or string

@@ -30,13 +30,14 @@ define([
                 }
             }
             //trigger change if not silent
-            if (!silent) this.events.trigger("change");
+            if (!silent) this.events.trigger("change", this._data);
             //if we don't block validation, validate
             if (!block_validation) this.validate(silent);
         },
 
         reset: function(values, silent) {
-            this.data = {};
+            this.events.unbindAll();
+            this._data = {};
             this.set(values, silent);
         },
 

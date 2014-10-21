@@ -73,6 +73,11 @@ define([
             }
         },
 
+        reset: function(new_options) {
+            var model_config = this._generateModelConfig(new_options);
+            this._super(model_config);
+        },
+
         bindEvents: function(evts) {
             var _this = this;
             for(var i in evts) {
