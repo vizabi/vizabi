@@ -7,7 +7,7 @@ require.config({
         base: 'base',
         tools: 'tools',
         components: 'components',
-        readers: 'data-reader',
+        readers: 'readers',
 
         d3: '../lib/d3/d3',
         jquery: '../lib/jquery/dist/jquery',
