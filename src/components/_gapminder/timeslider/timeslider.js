@@ -6,12 +6,7 @@ define([
     'models/time-model'
 ], function($, d3, utils, Component, TimeModel) {
 
-    var container,
-        range,
-        value,
-        play,
-        pause;
-
+    //contants
     var class_playing = "vzb-playing",
         class_hide_play = "vzb-ts-hide-play-button";
 
@@ -34,17 +29,18 @@ define([
             /* 
              * html elements
              */
-            container = utils.d3ToJquery(this.element);
-            range = container.find(".vzb-ts-slider");
-            value = container.find('.vzb-ts-slider-value');
-            play = container.find(".vzb-ts-btn-play"),
-            pause = container.find(".vzb-ts-btn-pause");
+            this.container = utils.d3ToJquery(this.element);
+            this.range = this.container.find(".vzb-ts-slider");
+            this.value = this.container.find('.vzb-ts-slider-value');
+
+            var play = this.container.find(".vzb-ts-btn-play"),
+                pause = this.container.find(".vzb-ts-btn-pause");
 
             /* 
              * model and related events
              */
 
-            range.on('input', function(){
+            this.range.on('input', function(){
                 _this._setTime(parseFloat(this.value));
                 _this.model.pause();
             });
@@ -54,7 +50,7 @@ define([
                 _this.model.play();
             });
             this.model.on("play", function() {
-                container.addClass(class_playing);
+                _this.container.addClass(class_playing);
             });
 
             //pause action
@@ -62,7 +58,7 @@ define([
                 _this.model.pause();
             });
             this.model.on("pause", function() {
-                container.removeClass(class_playing);
+                _this.container.removeClass(class_playing);
             });
 
             this.update();
@@ -80,18 +76,18 @@ define([
                 maxValue = this.model.get("end")
                 step = this.model.get("step");
             
-            range.attr("min", minValue)
+            this.range.attr("min", minValue)
                  .attr("max", maxValue)
                  .attr("step", step)
                  .val(time);        
 
             if (!this.model.get("playable")) {
-                container.addClass(class_hide_play);
+                this.container.addClass(class_hide_play);
             } else {
-                container.removeClass(class_hide_play);
+                this.container.removeClass(class_hide_play);
             }
 
-            value.html(time);
+            this.value.html(time);
             this._setTimePosition();
         },
 
@@ -102,12 +98,12 @@ define([
         },
 
         _setTimePosition: function () {
-            var inputWidth = range.width() - 16,
+            var inputWidth = this.range.width() - 16,
                 timeRange = this.model.get("end") - this.model.get("start"),
                 currTime = this.model.get("value") - this.model.get("start"),
                 newPosition = Math.round(inputWidth * currTime / timeRange) + 10;
                 
-            value.css("left", newPosition + "px");
+            this.value.css("left", newPosition + "px");
         }
     });
 
