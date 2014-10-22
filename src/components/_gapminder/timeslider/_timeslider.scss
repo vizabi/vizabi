@@ -116,7 +116,7 @@ $vzb-ts-handle-color: $vzb-color-primary;
         .vzb-ts-btns {
             @extend .vzb-hidden;
         }
-        .vzb-ts-slider {
+        .vzb-ts-slider-wrapper {
             @include absolute(5px, 9px, 5px, 5px);
         }
     }

@@ -7,17 +7,13 @@ define([
 ], function($, d3, utils, Component, TimeModel) {
 
     var container,
-        timeslider,
         range,
         value,
-        data,
-        minValue,
-        maxValue,
-        hidePlayButton,
-        step;
+        play,
+        pause;
 
     var class_playing = "vzb-playing",
-        class_hide_play = "vzb-hide-play-button";
+        class_hide_play = "vzb-ts-hide-play-button";
 
 
     var TimeTimeslider = Component.extend({
@@ -74,9 +70,7 @@ define([
 
 
         resize: function() {
-            if (!this.model.get("showPlayPause")) {
-                container.addClass(class_hide_play);
-            }
+            //
         },
 
         update: function() {
@@ -90,6 +84,12 @@ define([
                  .attr("max", maxValue)
                  .attr("step", step)
                  .val(time);        
+
+            if (!this.model.get("playable")) {
+                container.addClass(class_hide_play);
+            } else {
+                container.removeClass(class_hide_play);
+            }
 
             value.html(time);
             this._setTimePosition();
