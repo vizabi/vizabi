@@ -1,10 +1,10 @@
 @import'../../tool';
-.vzb-tool-timeslider-a {
+.vzb-tool-no-ts-one-model {
     @extend .vzb-tool;
     @include absoluteAll;
     padding: 30px;
     
-    .vzb-tool-timeslider-1, .vzb-tool-timeslider-2 {
+    .vzb-year-display {
         position: relative;
     }
     h2 {
@@ -20,5 +20,5 @@
         padding: 15px;
         color: $vzb-color-grey-dark;
     }
-    @import'../../../components/_gapminder/timeslider/timeslider';
+    @import'../../../components/_examples/year-display/year-display';
 }
