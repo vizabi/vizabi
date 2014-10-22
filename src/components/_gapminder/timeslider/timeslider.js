@@ -11,11 +11,9 @@ define([
         class_hide_play = "vzb-ts-hide-play-button";
 
 
-    var TimeTimeslider = Component.extend({
+    var Timeslider = Component.extend({
         init: function(parent, options) {
             this.template = "components/_gapminder/timeslider/timeslider";
-            hidePlayButton = options.hidePlayButton || false;
-            step = options.step || 1;
 
             if(!options.model) options.model = new TimeModel();
 
@@ -107,5 +105,5 @@ define([
         }
     });
 
-    return TimeTimeslider;
+    return Timeslider;
 });

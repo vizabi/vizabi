@@ -3,8 +3,6 @@ define([
     'base/model'
 ], function(_, Model) {
 
-    var playing_now;
-
     var TimeModel = Model.extend({
 
         //receive intervals as well
@@ -24,6 +22,7 @@ define([
             this._super(values, intervals);
 
             var _this = this;
+
             //bing play method to model change
             this.on("change:playing", function() {
                 if(_this.get("playing")) {
@@ -33,6 +32,7 @@ define([
                     _this._stopPlaying();
                 }
             });
+
 
             //auto play if playing is true by reseting variable
             if(this.get("playing") === true) {
@@ -65,7 +65,7 @@ define([
 
         play: function(silent) {
             //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || playing_now) return;
+            if (!this.get("playable") || this.playing_now) return;
             this.set("playing", true);
         },
 
@@ -75,7 +75,7 @@ define([
 
         _startPlaying: function() {
             //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || playing_now) return;
+            if (!this.get("playable") || this.playing_now) return;
 
             var _this = this,
                 time = this.get("value"),
@@ -88,7 +88,7 @@ define([
             }
 
             //create interval
-            playing_now = true;
+            this.playing_now = true;
 
             //we don't create intervals directly
             this.intervals.setInterval('playInterval_'+this._id, function() {
@@ -106,7 +106,7 @@ define([
 
         _stopPlaying: function() {
             this.intervals.clearInterval('playInterval_'+this._id);
-            playing_now = false;
+            this.playing_now = false;
             this.trigger("pause");
         }
 
