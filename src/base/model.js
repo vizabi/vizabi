@@ -89,27 +89,6 @@ define([
 
         trigger: function(name, val) {
             this.events.trigger(name, val);
-        },
-
-        /*
-         * Other methods
-         */
-
-        //model is able to interpolate values
-        interpolate: function(value1, value2, fraction) {
-            return value1 + ((value2 - value1) * fraction);
-        },
-
-        interpolateSet: function(set, step) {
-            var result = [];
-            for (var i = 0, size = set.length; i < (size - 1); i++) {
-                var j = i + 1;
-                for (var k = 0; k < 1; k += step) {
-                    result.push(this.interpolate(set[i], set[j], k));
-                }
-            }
-            result.push(set[set.length - 1]); //add the last element
-            return result;
         }
 
     });

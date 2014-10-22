@@ -31,6 +31,13 @@ define(['jquery', 'd3', 'underscore'], function($, d3, _) {
                 }
             }
             return target;
+        },
+        interpolate: function(value1, value2, fraction) {
+            return value1 + ((value2 - value1) * fraction);
+        },
+
+        interpolateRange: function(val1, val2, step) {
+            return d3.range(val1, val2, step);
         }
     }
 
