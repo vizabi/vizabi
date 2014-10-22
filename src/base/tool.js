@@ -24,8 +24,10 @@ define([
             this.layout = new Layout();
             this.model = new ToolModel(options);
 
-            // Same constructor as widgets
+            // Same constructor as components
             this._super(parent, options);
+
+            this._id = _.uniqueId("t");
 
         },
 

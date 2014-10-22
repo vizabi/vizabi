@@ -17,6 +17,8 @@ define([
             //unless they were already set by a child class
             _.extend(this, options, this);
 
+            this._id = _.uniqueId("c");
+            
             //default values,
             //in case there's none
             this.template_data = this.template_data || {
@@ -146,7 +148,7 @@ define([
                 path = component.component,
                 name_token = path.split("/"),
                 name = name_token[name_token.length - 1],
-                id = name,
+                id = component.placeholder,
                 component_path = "components/" + path + "/" + name,
                 component_model;
 
@@ -255,8 +257,7 @@ define([
             //for each subcomponent, reassign model
             for (var i in this.components_config) {
                 var c = this.components_config[i],
-                    name_token = c.component.split("/"),
-                    id = name_token[name_token.length - 1],
+                    id = c.placeholder, //placeholder is used as id
                     model = this._modelMapping(c.model);
 
                 if (model) {
