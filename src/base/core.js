@@ -1,8 +1,9 @@
 define([
     'jquery',
+    'base/utils',
     'base/class',
     'base/events'
-], function($, Class, Events) {
+], function($, utils, Class, Events) {
 
     var tool;
 
@@ -42,8 +43,8 @@ define([
             return defer;
         },
 
-        setOptions: function(options) {
-            tool.setOptions(options);
+        setOptions: function(options, overwrite) {
+            tool.setOptions(options, overwrite);
         }
 
     });

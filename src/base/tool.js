@@ -97,9 +97,14 @@ define([
             });
         },
  
-        setOptions: function(options) {
-            this.model.reset(options);
-            this.reassignModel();
+        setOptions: function(options, overwrite, silent) {
+            if(overwrite) {
+                this.model.reset(options, silent);
+                this.reassignModel();
+            }
+            else {
+                this.model.propagate(options, silent);
+            }
             this.update();
         },
 

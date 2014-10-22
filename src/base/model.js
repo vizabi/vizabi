@@ -20,20 +20,27 @@ define([
             }
         },
 
+        /*
+         * Getters and Setters
+         */
+
         get: function(attr) {
             return (attr) ? this._data[attr] : this._data;
         },
 
         //set an attribute for the model, or an entire object
-        set: function(attr, value, silent, block_validation) {
+        set: function(attr, val, silent, block_validation) {
 
             if (typeof attr !== 'object') {
-                this._data[attr] = _.clone(value);
+                this._data[attr] = (typeof val === 'object') ? _.clone(val) : val;
+                if (!silent) this.events.trigger("change:"+attr, this._data);
             } else {
                 block_validation = silent;
-                silent = value;
+                silent = val;
                 for (var att in attr) {
-                    this._data[att] = _.clone(attr[att]);
+                    var val = attr[att];
+                    this._data[att] = (typeof val === 'object') ? _.clone(val) : val;
+                    if (!silent) this.events.trigger("change:"+att, this._data);
                 }
             }
             //trigger change if not silent
@@ -44,9 +51,37 @@ define([
 
         reset: function(values, silent) {
             this.events.unbindAll();
+            this.intervals.clearAllIntervals();
             this._data = {};
             this.set(values, silent);
         },
+
+        getObject: function() {
+            var obj = {};
+            for (var i in this._data) {
+                //if it's a submodel
+                if(this._data[i]
+                   && typeof this._data[i].getObject === 'function') {
+                    obj[i] = this._data[i].getObject();
+                }
+                else {
+                    obj[i] = this._data[i];
+                }
+            }
+            return obj;
+        },
+
+        /*
+         * Validation methods
+         */
+
+        validate: function() {
+            // placeholder for validate function
+        },
+
+        /*
+         * Event methods
+         */
 
         on: function(name, func) {
             this.events.bind(name, func);
@@ -56,6 +91,9 @@ define([
             this.events.trigger(name, val);
         },
 
+        /*
+         * Other methods
+         */
 
         //model is able to interpolate values
         interpolate: function(value1, value2, fraction) {
@@ -72,10 +110,6 @@ define([
             }
             result.push(set[set.length - 1]); //add the last element
             return result;
-        },
-
-        validate: function() {
-            // placeholder for validate function
         }
 
     });
