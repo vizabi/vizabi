@@ -1,10 +1,8 @@
 define([
-    'jquery',
     'd3',
-    'base/utils',
     'base/component',
     'models/time-model'
-], function($, d3, utils, Component, TimeModel) {
+], function(d3, Component, TimeModel) {
 
     //contants
     var class_playing = "vzb-playing",
@@ -15,7 +13,7 @@ define([
         init: function(parent, options) {
             this.template = "components/_gapminder/timeslider/timeslider";
 
-            if(!options.model) options.model = new TimeModel();
+            if (!options.model) options.model = new TimeModel();
 
             // Same constructor as the superclass
             this._super(parent, options);
@@ -27,36 +25,28 @@ define([
             /* 
              * html elements
              */
-            this.container = utils.d3ToJquery(this.element);
-            this.range = this.container.find(".vzb-ts-slider");
-            this.value = this.container.find('.vzb-ts-slider-value');
+            this.range = this.element.select(".vzb-ts-slider");
+            this.value = this.element.select('.vzb-ts-slider-value');
 
-            var play = this.container.find(".vzb-ts-btn-play"),
-                pause = this.container.find(".vzb-ts-btn-pause");
+            var play = this.element.select(".vzb-ts-btn-play"),
+                pause = this.element.select(".vzb-ts-btn-pause");
 
             /* 
              * model and related events
              */
 
-            this.range.on('input', function(){
+            this.range.on('input', function() {
                 _this._setTime(parseFloat(this.value));
                 _this.model.pause();
             });
 
             //play action
-            play.click(function() {
+            play.on('click', function() {
                 _this.model.play();
             });
-            this.model.on("play", function() {
-                _this.container.addClass(class_playing);
-            });
-
             //pause action
-            pause.click(function() {
+            pause.on('click', function() {
                 _this.model.pause();
-            });
-            this.model.on("pause", function() {
-                _this.container.removeClass(class_playing);
             });
 
             this.update();
@@ -71,20 +61,28 @@ define([
             //time slider should always receive a time model
             var time = this.model.get("value"),
                 minValue = this.model.get("start")
-                maxValue = this.model.get("end")
-                step = this.model.get("step");
-            
+            maxValue = this.model.get("end")
+            step = this.model.get("step");
+
             this.range.attr("min", minValue)
-                 .attr("max", maxValue)
-                 .attr("step", step)
-                 .val(time);        
+                .attr("max", maxValue)
+                .attr("step", step);
+
+            this.range[0][0].value = time;
 
             if (!this.model.get("playable")) {
-                this.container.addClass(class_hide_play);
+                this.element.classed(class_hide_play, true);
             } else {
-                this.container.removeClass(class_hide_play);
+                this.element.classed(class_hide_play, false);
             }
 
+            if (this.model.get("playing")) {
+                this.element.classed(class_playing, true);
+            } else {
+                this.element.classed(class_playing, false);
+            }
+
+            time = time.toFixed(0); //without decimals for display
             this.value.html(time);
             this._setTimePosition();
         },
@@ -95,13 +93,13 @@ define([
             this.update();
         },
 
-        _setTimePosition: function () {
-            var inputWidth = this.range.width() - 16,
+        _setTimePosition: function() {
+            var rangeW = parseInt(this.range.style('width'),10) - 16,
                 timeRange = this.model.get("end") - this.model.get("start"),
                 currTime = this.model.get("value") - this.model.get("start"),
-                newPosition = Math.round(inputWidth * currTime / timeRange) + 10;
-                
-            this.value.css("left", newPosition + "px");
+                newPosition = Math.round(rangeW * currTime / timeRange) + 10;
+
+            this.value.style("left", newPosition + "px");
         }
     });
 
