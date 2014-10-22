@@ -29,8 +29,8 @@ define([], function() {
     });
 
     //placeholder identifies the tool
-    function setOptions(placeholder, opts) {
-        if (core) core.setOptions(placeholder, opts);
+    function setOptions(opts, overwrite) {
+        if (core) core.setOptions(opts, overwrite);
     };
 
     /* Vizabi API Methods*/
