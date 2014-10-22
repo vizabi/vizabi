@@ -31,7 +31,8 @@ define([
             if (_.isFunction(func)) {
                 this.events[name].push(func);
             } else {
-                throw_msg("Can't bind '" + func + "' to event '" + name + "'. It must be a function!");
+                console.log("Can't bind event '" + name + "'. It must be a function:");
+                console.log(func);
             }
         },
         unbind: function(name, func) {
@@ -67,7 +68,8 @@ define([
                         f(name, args);
                     }
                 } else {
-                    throw_msg("Can't execute '" + func + "' on event '" + name + ". It must be a function!");
+                    console.log("Can't execute event '" + name + ". The following must be a function: ");
+                    console.log(func);
                 }
             };
 
