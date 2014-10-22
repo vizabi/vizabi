@@ -1,0 +1,23 @@
+//general styles
+.vzb-year-display {
+    color: $vzb-color-green;
+    font-family: $vzb-font-family;
+    font-weight: 700;
+    font-size: 5em;
+    padding: 20px;
+}
+
+//large specific styles
+&.vzb-large, &.vzb-medium {
+    .vzb-year-display {
+     	@include absolute(0, 50%, auto, 0);
+        font-size: 8em;
+    }
+}
+
+//medium specific styles
+&.vzb-large {
+    .vzb-year-display {
+        font-size: 10em;
+    }
+}
