@@ -3,25 +3,41 @@ define([
     'base/model'
 ], function(_, Model) {
 
-    var playInterval,
-        playing;
+    var playing_now;
 
     var TimeModel = Model.extend({
-        init: function(values) {
+
+        //receive intervals as well
+        init: function(values, intervals) {
 
             //default values for time model
             values = _.extend({
                 value: 50,
                 start: 0,
                 end: 100,
-                show_playpause: true,
                 playable: true,
                 playing: false,
                 step: 1,
-                speed: 5
+                speed: 1
             }, values);
 
-            this._super(values);
+            this._super(values, intervals);
+
+            var _this = this;
+            //bing play method to model change
+            this.on("change:playing", function() {
+                if(_this.get("playing")) {
+                    _this._startPlaying();
+                }
+                else {
+                    _this._stopPlaying();
+                }
+            });
+
+            //auto play if playing is true by reseting variable
+            if(this.get("playing") === true) {
+                this.set("playing", true);
+            }
         },
 
         validate: function(silent) {
@@ -41,11 +57,25 @@ define([
             else if(this.get('value') > this.get('end')) {
                 this.set('value', this.get('end'), silent, atomic);
             }
+
+            if(this.get('playable') === false && this.get('playing') === true) {
+                this.set('playing', false, silent, atomic);
+            }
         },
 
         play: function(silent) {
             //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || this.get("playing")) return;
+            if (!this.get("playable") || playing_now) return;
+            this.set("playing", true);
+        },
+
+        pause: function(silent) {
+            this.set("playing", false);
+        },
+
+        _startPlaying: function() {
+            //don't play if it's not playable or if it's already playing
+            if (!this.get("playable") || playing_now) return;
 
             var _this = this,
                 time = this.get("value"),
@@ -58,8 +88,10 @@ define([
             }
 
             //create interval
-            this.set("playing", true);
-            playInterval = setInterval(function() {
+            playing_now = true;
+
+            //we don't create intervals directly
+            this.intervals.setInterval('playInterval_'+this._id, function() {
                 if (time >= _this.get("end")) {
                     _this.pause();
                     return;
@@ -72,12 +104,11 @@ define([
             this.trigger("play");
         },
 
-        pause: function(silent) {
-            this.set("playing", false);
-            clearInterval(playInterval);
-
+        _stopPlaying: function() {
+            this.intervals.clearInterval('playInterval_'+this._id);
+            playing_now = false;
             this.trigger("pause");
-        },
+        }
 
     });
 

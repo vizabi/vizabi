@@ -1,13 +1,20 @@
 define([
+    'underscore',
+    'base/utils',
     'base/class',
+    'base/intervals',
     'base/events'
-], function(Class, Events) {
+], function(_, utils, Class, Intervals, Events) {
 
     var model = Class.extend({
 
-        init: function(values) {
+        //receives values and, optionally, external intervals and events
+        init: function(values, intervals, events) {
+            this._id = _.uniqueId("m"); //model unique id
             this._data = {};
-            this.events = new Events();
+            this.intervals = (this.intervals || intervals) || new Intervals();
+            this.events = events || new Events();
+
             if (values) {
                 this.set(values, true);
             }

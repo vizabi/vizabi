@@ -1,17 +1,23 @@
 define([
     'underscore',
+    'base/utils',
     'base/model',
+    'base/intervals',
     'models/data-model',
     'models/language-model',
     'models/state-model',
     'models/time-model'
-], function(_, Model, DataModel, LanguageModel, StateModel, TimeModel) {
+], function(_, utils, Model, Intervals, DataModel, LanguageModel, StateModel, TimeModel) {
 
     var ToolModel = Model.extend({
         init: function(options) {
+            //all intervals are managed at tool level
+            this.intervals = new Intervals();
+
             var model_config = this._generateModelConfig(options);
             this._super(model_config);
 
+            //bind external events
             this.bindEvents(options.bind);
         },
 
@@ -67,9 +73,9 @@ define([
                 }
                 //use specific model if it exists
             if (available_models.hasOwnProperty(model_name)) {
-                return new available_models[model_name](values);
+                return new available_models[model_name](values, this.intervals);
             } else {
-                return new Model(values);
+                return new Model(values, this.intervals);
             }
         },
 
