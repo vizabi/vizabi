@@ -18,6 +18,20 @@ define([
 
         validate: function() {
             //validate
+        },
+
+        load: function(query, language, events) {
+            var _this = this,
+                defer = $.Deferred(),
+                promise = this._dataManager.load(query, language, events);
+
+            //when request is completed, set it
+            $.when(promise).done(function() {
+                _this.set(_this._dataManager.get());
+                defer.resolve();
+            });
+
+            return defer;
         }
 
     });
