@@ -7,6 +7,10 @@ define(['jquery', 'd3', 'underscore'], function($, d3, _) {
         jQueryToD3: function(selector) {
             return d3.selectAll(selector.toArray());
         },
+        countDecimals: function(number) {
+            if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
+            return number.toString().split(".")[1].length || 0;
+        },
         deepClone: function(obj, depth) {
             if (typeof obj !== 'object') return obj;
             if (_.isString(obj)) return obj.splice();

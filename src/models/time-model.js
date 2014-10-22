@@ -1,7 +1,8 @@
 define([
     'underscore',
+    'base/utils',
     'base/model'
-], function(_, Model) {
+], function(_, utils, Model) {
 
     var TimeModel = Model.extend({
 
@@ -22,10 +23,11 @@ define([
             this._super(values, intervals);
 
             var _this = this;
+            this.playing_now = false;
 
             //bing play method to model change
             this.on("change:playing", function() {
-                if(_this.get("playing")) {
+                if(_this.get("playing") === true) {
                     _this._startPlaying();
                 }
                 else {
@@ -63,19 +65,19 @@ define([
             }
         },
 
-        play: function(silent) {
-            //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || this.playing_now) return;
+        play: function() {
             this.set("playing", true);
         },
 
-        pause: function(silent) {
+        pause: function() {
             this.set("playing", false);
         },
 
         _startPlaying: function() {
             //don't play if it's not playable or if it's already playing
             if (!this.get("playable") || this.playing_now) return;
+
+            this.playing_now = true;
 
             var _this = this,
                 time = this.get("value"),
@@ -88,15 +90,16 @@ define([
             }
 
             //create interval
-            this.playing_now = true;
 
             //we don't create intervals directly
             this.intervals.setInterval('playInterval_'+this._id, function() {
                 if (time >= _this.get("end")) {
-                    _this.pause();
+                    _this.set("playing", false);
                     return;
                 } else {
+                    var decs = utils.countDecimals(_this.get("step"))
                     time = time + _this.get("step");
+                    time = +time.toFixed(decs);
                     _this.set("value", time);
                 }
             }, interval);
@@ -105,8 +108,8 @@ define([
         },
 
         _stopPlaying: function() {
-            this.intervals.clearInterval('playInterval_'+this._id);
             this.playing_now = false;
+            this.intervals.clearInterval('playInterval_'+this._id);
             this.trigger("pause");
         }
 
