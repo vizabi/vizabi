@@ -37,8 +37,7 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var year = this.model.getState("time");
-            
+            var year = this.model.get("value");
             this.element.html(year);
         },
 

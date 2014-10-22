@@ -4,8 +4,9 @@
     @include absoluteAll;
     padding: 30px;
     
-    .vzb-year-display {
+    .vzb-year-display-wrapper {
         position: relative;
+        text-align: center;
     }
     h2 {
         font-family: $vzb-font-family;

@@ -13,7 +13,7 @@ define([
             //instantiating components
             this.components = [{
                 component: '_examples/year-display',
-                placeholder: '.vzb-year-display', //div to render
+                placeholder: '.vzb-year-display-wrapper', //div to render
                 model: ["time"]
             }];
 
