@@ -46,22 +46,25 @@ define([
         //set an attribute for the model, or an entire object
         set: function(attr, val, silent, block_validation) {
 
+            var events = [];
             if (typeof attr !== 'object') {
                 this._data[attr] = (typeof val === 'object') ? _.clone(val) : val;
-                if (!silent) this.events.trigger("change:" + attr, this._data);
+                events.push("change:" + attr);
             } else {
                 block_validation = silent;
                 silent = val;
                 for (var att in attr) {
                     var val = attr[att];
                     this._data[att] = (typeof val === 'object') ? _.clone(val) : val;
-                    if (!silent) this.events.trigger("change:" + att, this._data);
+                    events.push("change:" + att);
                 }
             }
-            //trigger change if not silent
-            if (!silent) this.events.trigger("change", this._data);
+            events.push("change");
+
             //if we don't block validation, validate
             if (!block_validation) this.validate(silent);
+            //trigger change if not silent
+            if (!silent) this.events.trigger(events, this._data);
         },
 
         reset: function(values, silent) {

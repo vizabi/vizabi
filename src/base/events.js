@@ -57,21 +57,26 @@ define([
 
         //trigger event and all parents. E.g: change:language and change
         trigger: function(name, args) {
-
-            if (_.isUndefined(this.events[name])) return;
-            for (var i = 0, size = this.events[name].length; i < size; i++) {
-                var f = this.events[name][i];
-                if (_.isFunction(f)) {
-                    if (_.isUndefined(args)) {
-                        f(name);
-                    } else {
-                        f(name, args);
-                    }
-                } else {
-                    console.log("Can't execute event '" + name + ". The following must be a function: ");
-                    console.log(func);
+            if (_.isArray(name)) {
+                for (var i = 0, size = name.length; i < size; i++) {
+                    this.trigger(name[i], args);
                 }
-            };
+            } else {
+                if (_.isUndefined(this.events[name])) return;
+                for (var i = 0, size = this.events[name].length; i < size; i++) {
+                    var f = this.events[name][i];
+                    if (_.isFunction(f)) {
+                        if (_.isUndefined(args)) {
+                            f(name);
+                        } else {
+                            f(name, args);
+                        }
+                    } else {
+                        console.log("Can't execute event '" + name + ". The following must be a function: ");
+                        console.log(func);
+                    }
+                }
+            }
 
         }
     });
