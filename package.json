@@ -8,7 +8,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "test": "grunt build-deploy"
+    "test": "grunt build"
   },
   "repository": {
     "type": "git",
