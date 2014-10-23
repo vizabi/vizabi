@@ -8,6 +8,23 @@ module.exports = function(grunt) {
      */
     require('load-grunt-tasks')(grunt);
 
+    /*
+     * -----------------------------
+     * Deployment keys
+     */
+
+    var aws = {};
+    try {
+        aws = grunt.file.readJSON('.deploy-keys.json');
+    } catch (err) {
+        aws = {
+            "AWS_ACCESS_KEY_ID": process.env.AWS_ACCESS_KEY_ID,
+            "AWS_SECRET_KEY": process.env.AWS_SECRET_KEY,
+            "AWS_BUCKET": process.env.AWS_BUCKET || 'static.gapminder.org',
+            "AWS_SUBFOLDER": process.env.AWS_SUBFOLDER || 'vizabi'
+        };
+    }
+
     /* 
      * -----------------------------
      * Tasks:
@@ -18,9 +35,14 @@ module.exports = function(grunt) {
         'build' //by default, just build
     ]);
 
+    //build and deploy
+    grunt.registerTask('build-deploy', [
+        'build',
+        'deploy'
+    ]);
+
     //developer task: grunt dev
     grunt.registerTask('dev', [
-
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
@@ -64,6 +86,12 @@ module.exports = function(grunt) {
         'watch' //watch for code changes
     ]);
 
+    //deploy dist folder to s3
+    grunt.registerTask('deploy', [
+        'gitinfo',
+        'aws_s3'
+    ]);
+
     /* 
      * -----------------------------
      * Configuration:
@@ -75,6 +103,9 @@ module.exports = function(grunt) {
         clean: {
             dist: ["dist/*"]
         },
+
+        //gitinfo task
+        gitinfo: {},
 
         // Copy all js and template files to dist folder
         copy: {
@@ -233,6 +264,29 @@ module.exports = function(grunt) {
                 src: 'preview_pages/**/*.html',
                 dest: 'dist/'
             }
+        },
+
+        //upload to s3 task
+        aws_s3: {
+            options: {
+                accessKeyId: aws.AWS_ACCESS_KEY_ID,
+                secretAccessKey: aws.AWS_SECRET_KEY,
+                region: 'eu-west-1'
+            },
+            staging: {
+                options: {
+                    bucket: aws.AWS_BUCKET
+                },
+                files: [{
+                    dest: aws.AWS_SUBFOLDER + '/<%= gitinfo.local.branch.current.name %>/',
+                    action: 'delete'
+                }, {
+                    expand: true,
+                    cwd: 'dist/',
+                    src: ['**'],
+                    dest: aws.AWS_SUBFOLDER + '/<%= gitinfo.local.branch.current.name %>/'
+                }]
+            }
         }
     });
 
@@ -356,6 +410,4 @@ module.exports = function(grunt) {
 
         grunt.log.writeln("All styles included in vizabi.scss");
     });
-
-
 }
