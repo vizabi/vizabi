@@ -10,7 +10,7 @@ define([
 ], function(_, utils, Model, Intervals, DataModel, LanguageModel, StateModel, TimeModel) {
 
     var ToolModel = Model.extend({
-        init: function(options) {
+        init: function(options, state_validate) {
             //all intervals are managed at tool level
             this.intervals = new Intervals();
 
@@ -19,6 +19,10 @@ define([
 
             //bind external events
             this.bindEvents(options.bind);
+
+            //create validation method
+            this.validate = this._generateValidate(state_validate);
+            this.validate();
         },
 
         reset: function(new_options, silent) {
@@ -66,7 +70,7 @@ define([
 
             //generate state, data and language models by default and bind
             var default_models = ["state", "data", "bind", "language"];
-            for (var i=0, size=default_models.length; i<size; i++) {
+            for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
                 model_config[m] = this._generateModel(m, options[m]);
                 model_config[m].on("change", this._subModelOnChange(m));
@@ -105,16 +109,93 @@ define([
         _subModelOnChange: function(submodel) {
             var _this = this;
             return function(evt, new_values) {
-                _this.trigger("change:"+submodel, new_values);
+                _this.trigger("change:" + submodel, new_values);
             }
         },
 
         _subStateOnChange: function(substate) {
             var _this = this;
             return function(evt, new_values) {
-                _this.get("state").set(substate, new_values);
+                _this.validate();
+                _this.get("state").set(substate, new_values, false, true);
                 _this.trigger("change:state:" + substate, new_values);
             };
+        },
+
+        _generateValidate: function(state_validate) {
+            if (state_validate.length === 0) return;
+
+            var val_functions = [];
+            for (var i = 0, size = state_validate.length; i < size; i++) {
+                var rule = state_validate[i];
+                if(rule.length !== 3) {
+                    console.log("State validation format error: Rule "+i+". Skipping...");
+                    continue;
+                }
+                var m1 = rule[0].split("."),
+                    v1 = m1.pop(),
+                    m2 = rule[2].split("."),
+                    v2 = m2.pop(),
+                    sign = rule[1];
+                    m1 = this.get(m1.join(".")); //get submodel 1
+                    m2 = this.get(m2.join(".")); //get submodel 2
+
+                //generate validation for a single rule
+                var evaluate = this._generateValidateRule(m1,v1,sign,m2,v2);
+                val_functions.push(evaluate);
+            };
+
+            //validate is the execution of each rule
+            return function validate(silent) {
+                for (var i = 0; i < val_functions.length; i++) {
+                    val_functions[i](silent);
+                };
+            }
+        },
+
+        //arguments: model1, value1, sign, model2, value2:
+        //example: 'time', 'value', '=', 'time_2', 'value'
+        _generateValidateRule: function(m1, v1, sign, m2, v2) {
+            var rule = function() {};
+            switch (sign) {
+                case '>':
+                    rule = function(silent) {
+                        if (m1.get(v1) <= m2.get(v2)) {
+                            m1.set(v1, m2.get(v2) + 1, silent);
+                        }
+                    };
+                    break;
+                case '<':
+                    rule = function(silent) {
+                        if (m1.get(v1) >= m2.get(v2)) {
+                            m1.set(v1, m2.get(v2) - 1, silent);
+                        }
+                    };
+                    break;
+                case '>=':
+                    rule = function(silent) {
+                        if (m1.get(v1) < m2.get(v2)) {
+                            m1.set(v1, m2.get(v2), silent);
+                        }
+                    };
+                    break;
+                case '<=':
+                    rule = function(silent) {
+                        if (m1.get(v1) > m2.get(v2)) {
+                            m1.set(v1, m2.get(v2), silent);
+                        }
+                    };
+                    break;
+                case '=':
+                default:
+                    rule = function(silent) {
+                        if (m1.get(v1) != m2.get(v2)) {
+                            m1.set(v1, m2.get(v2), silent);
+                        }
+                    };
+                    break;
+            }
+            return rule;
         }
 
     });

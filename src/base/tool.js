@@ -22,7 +22,10 @@ define([
             };
 
             this.layout = new Layout();
-            this.model = new ToolModel(options);
+
+            //state validation is preset or empty
+            this.state_validate = this.state_validate || [];
+            this.model = new ToolModel(options, this.state_validate);
 
             // Same constructor as components
             this._super(parent, options);
