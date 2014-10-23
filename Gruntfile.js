@@ -278,9 +278,6 @@ module.exports = function(grunt) {
                     bucket: aws.AWS_BUCKET
                 },
                 files: [{
-                    dest: aws.AWS_SUBFOLDER + '/<%= gitinfo.local.branch.current.name %>/',
-                    action: 'delete'
-                }, {
                     expand: true,
                     cwd: 'dist/',
                     src: ['**'],
