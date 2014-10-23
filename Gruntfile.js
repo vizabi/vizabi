@@ -245,7 +245,9 @@ module.exports = function(grunt) {
 
         var preview_pages_folder = 'dist/preview_pages/',
             preview_pages_index = preview_pages_folder + 'index.html',
-            contents = "<h1>Vizabi Examples:</h1>",
+            contents = '<link rel="stylesheet" href="assets/style.css">' +
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' +
+            '<div class="index"><h1>Vizabi Preview Pages:</h1>',
             current_dir;
 
         grunt.file.recurse(preview_pages_folder, function(abs, root, dir, file) {
@@ -259,6 +261,7 @@ module.exports = function(grunt) {
                 contents += preview_page;
             }
         });
+        contents += "</div>";
         grunt.file.write(preview_pages_index, contents);
         grunt.log.writeln("Wrote preview_pages index.");
     });
