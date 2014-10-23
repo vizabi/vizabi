@@ -281,7 +281,7 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'dist/',
                     src: ['**'],
-                    dest: aws.AWS_SUBFOLDER + '/<%= gitinfo.local.branch.current.name %>/'
+                    dest: aws.AWS_SUBFOLDER + '/<%= (process.env.TRAVIS_BRANCH || gitinfo.local.branch.current.name) %>/'
                 }]
             }
         }
