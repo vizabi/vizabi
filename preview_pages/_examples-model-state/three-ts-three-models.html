@@ -35,9 +35,9 @@
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('placeholder')">SET STATE</button>
     <p>External buttons:</p>
-    <button id="play_button" onclick="play('time')">PLAY 1</button>
-    <button id="play_button2" onclick="play('time_2')">PLAY 2</button>
-    <button id="play_button3" onclick="play('time_3')">PLAY 3</button>
+    <button id="play_button" onclick="play('time_start')">PLAY 1</button>
+    <button id="play_button2" onclick="play('time_end')">PLAY 2</button>
+    <button id="play_button3" onclick="play('time')">PLAY 3</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -55,21 +55,21 @@ $(function() {
     var options = {
         //state
         state: {
-            time: {
-                start: 1800,
-                end: 2014,
-                step: 1,
-                value: 2000,
-                playing: false
-            },
-            time_2: {
+            time_start: {
                 start: 1800,
                 end: 2014,
                 step: 1,
                 value: 1850,
                 playing: false
             },
-            time_3: {
+            time_end: {
+                start: 1800,
+                end: 2014,
+                step: 1,
+                value: 2000,
+                playing: false
+            },
+            time: {
                 start: 1800,
                 end: 2014,
                 step: 1,
@@ -82,30 +82,30 @@ $(function() {
             'change:state': function(evt, state) {
                 showState(state);
             },
-            'change:state:time': function(evt, time) {
+            'change:state:time_start': function(evt, time) {
                 if (time.playing) {
-                    playButton.attr('onclick', 'pause("time")');
+                    playButton.attr('onclick', 'pause("time_start")');
                     playButton.text("PAUSE 1");
                 } else {
-                    playButton.attr('onclick', 'play("time")');
+                    playButton.attr('onclick', 'play("time_start")');
                     playButton.text("PLAY 1");
                 }
             },
-            'change:state:time_2': function(evt, time) {
+            'change:state:time_end': function(evt, time) {
                 if (time.playing) {
-                    playButton2.attr('onclick', 'pause("time_2")');
+                    playButton2.attr('onclick', 'pause("time_end")');
                     playButton2.text("PAUSE 2");
                 } else {
-                    playButton2.attr('onclick', 'play("time_2")');
+                    playButton2.attr('onclick', 'play("time_end")');
                     playButton2.text("PLAY 2");
                 }
             },
-            'change:state:time_3': function(evt, time) {
+            'change:state:time': function(evt, time) {
                 if (time.playing) {
-                    playButton3.attr('onclick', 'pause("time_3")');
+                    playButton3.attr('onclick', 'pause("time")');
                     playButton3.text("PAUSE 3");
                 } else {
-                    playButton3.attr('onclick', 'play("time_3")');
+                    playButton3.attr('onclick', 'play("time")');
                     playButton3.text("PLAY 3");
                 }
             }

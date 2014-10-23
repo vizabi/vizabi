@@ -14,28 +14,26 @@ define([
             this.components = [{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-1', //div to render
-                model: ["time"]
+                model: ["time_start"]
             },{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-2', //div to render
-                model: ["time_2"]
+                model: ["time_end"]
             },{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-3', //div to render
-                model: ["time_3"]
+                model: ["time"]
             }];
 
+            //rules to validate state
+            this.state_validate = [
+                ["time_end.start", ">", "time_start.value"],
+                ["time.start", "=", "time_start.value"],
+                ["time.end", "=", "time_end.value"]
+            ];
+
             this._super(parent, options);
-        },
-
-        // mapping: function() {
-            
-        // },
-
-        validate: function() {
-
-        },
-
+        }
 
     });
 
