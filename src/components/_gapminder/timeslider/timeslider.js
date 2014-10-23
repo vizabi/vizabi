@@ -69,6 +69,9 @@ define([
                 .attr("step", step);
 
             this.range[0][0].value = time;
+            time = time.toFixed(0); //without decimals for display
+            this.value.html(time);
+            this._setTimePosition();
 
             if (!this.model.get("playable")) {
                 this.element.classed(class_hide_play, true);
@@ -81,10 +84,6 @@ define([
             } else {
                 this.element.classed(class_playing, false);
             }
-
-            time = time.toFixed(0); //without decimals for display
-            this.value.html(time);
-            this._setTimePosition();
         },
 
         _setTime: function(time, silent) {
@@ -98,7 +97,6 @@ define([
                 timeRange = this.model.get("end") - this.model.get("start"),
                 currTime = this.model.get("value") - this.model.get("start"),
                 newPosition = Math.round(rangeW * currTime / timeRange) + 10;
-
             this.value.style("left", newPosition + "px");
         }
     });
