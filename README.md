@@ -9,7 +9,7 @@ Welcome to the vizabi repository!
 Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema. You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
 ####Can I see it in action?
-Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi-recent/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
+Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi/develop/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
 
 #### Where can I find full documentation?
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
