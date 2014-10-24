@@ -1,10 +1,9 @@
 //Year Display
 define([
     'd3',
-    'underscore',
     'base/component',
     'base/utils'
-], function(d3, _, Component, utils) {
+], function(d3, Component, utils) {
 
 
     var YearDisplay = Component.extend({
@@ -37,8 +36,9 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var year = this.model.get("value");
-            this.element.html(year);
+            var time = this.model.get("value");
+            time = time.toFixed(0);
+            this.element.html(time);
         },
 
         /*
