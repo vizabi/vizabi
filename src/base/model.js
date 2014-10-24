@@ -24,7 +24,7 @@ define([
          * Getters and Setters
          */
 
-        //get accepts multiple levels. e.g: get("time.start.value")
+        //get accepts multiple levels. e.g: get("model.object.property")
         get: function(attr) {
             //optimize for common cases
             if (!attr) return this._data;
@@ -33,7 +33,7 @@ define([
             var attrs = attr.split('.'),
                 current = this;
             while (attrs.length) {
-                curr_attr = attrs.shift();
+                var curr_attr = attrs.shift();
                 if (typeof current.get === 'function') {
                     current = current.get(curr_attr);
                 } else {
@@ -43,19 +43,38 @@ define([
             return current;
         },
 
-        //set an attribute for the model, or an entire object
+        // set an attribute for the model, or an entire object
+        // accepts multiple levels. e.g: set("model.object.property", 3)
         set: function(attr, val, silent, block_validation) {
 
             var events = [];
             if (typeof attr !== 'object') {
-                this._data[attr] = (typeof val === 'object') ? _.clone(val) : val;
-                events.push("change:" + attr);
+                //if its a string, check for multiple levels
+                if (attr.indexOf('.') === -1) {
+                    this._data[attr] = _.clone(val);
+                    events.push("change:" + attr);
+                } else {
+                    //todo: improve recursion
+                    var attrs = attr.split('.'),
+                        current = this.get(attrs.shift());
+                    while (attrs.length) {
+                        if (typeof current.set === 'function') {
+                            current.set(attrs, val);
+                        }
+                        else if (attrs.length === 1){
+                            current[attrs.shift()] = _.clone(val);
+                        }
+                        else {
+                            current = current[attrs.shift()];
+                        }
+                    }
+                }
             } else {
                 block_validation = silent;
                 silent = val;
                 for (var att in attr) {
                     var val = attr[att];
-                    this._data[att] = (typeof val === 'object') ? _.clone(val) : val;
+                    this._data[att] = _.clone(val);
                     events.push("change:" + att);
                 }
             }

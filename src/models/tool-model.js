@@ -20,7 +20,7 @@ define([
             //bind external events
             this.bindEvents(options.bind);
 
-            //create validation method
+            //create validation method and trigger for the first time
             this.validate = this._generateValidate(state_validate);
             this.validate();
         },
@@ -69,7 +69,7 @@ define([
                 _this = this;
 
             //generate state, data and language models by default and bind
-            var default_models = ["state", "data", "bind", "language"];
+            var default_models = ["state", "bind", "language"];
             for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
                 model_config[m] = this._generateModel(m, options[m]);
@@ -121,7 +121,7 @@ define([
                 _this.trigger("change:state:" + substate, new_values);
             };
         },
-
+        
         _generateValidate: function(state_validate) {
             if (!state_validate || state_validate.length === 0) {
                 this.validate; //return generic model validation
@@ -134,13 +134,16 @@ define([
                     console.log("State validation format error: Rule "+i+". Skipping...");
                     continue;
                 }
-                var m1 = rule[0].split("."),
-                    v1 = m1.pop(),
-                    m2 = rule[2].split("."),
-                    v2 = m2.pop(),
-                    sign = rule[1];
-                    m1 = this.get(m1.join(".")); //get submodel 1
-                    m2 = this.get(m2.join(".")); //get submodel 2
+                
+                //rule is of the format [operand1, sign, operand2]
+                //operand is a chain defined by a string: "model1.part.value"
+                var v1 = rule[0].split("."),   //split parts by "."
+                    m1 = this.get(v1.shift()), //model is first part before "."
+                    v1 = v1.join("."),         //value is the rest, next parts
+                    v2 = rule[2].split("."),
+                    m2 = this.get(v2.shift()),
+                    v2 = v2.join("."),
+                    sign = rule[1];            //sign
 
                 //generate validation for a single rule
                 var evaluate = this._generateValidateRule(m1,v1,sign,m2,v2);
