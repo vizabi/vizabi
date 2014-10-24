@@ -123,7 +123,9 @@ define([
         },
 
         _generateValidate: function(state_validate) {
-            if (state_validate.length === 0) return;
+            if (!state_validate || state_validate.length === 0) {
+                this.validate; //return generic model validation
+            }
 
             var val_functions = [];
             for (var i = 0, size = state_validate.length; i < size; i++) {
