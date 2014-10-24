@@ -27,7 +27,7 @@ define([
 
             //rules to validate state
             this.state_validate = [
-                ["time_end.start", ">", "time_start.value"],
+                ["time_end.start", "=", "time_start.value"],
                 ["time.start", "=", "time_start.value"],
                 ["time.end", "=", "time_end.value"]
             ];

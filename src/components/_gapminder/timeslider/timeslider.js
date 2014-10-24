@@ -96,7 +96,8 @@ define([
             var rangeW = parseInt(this.range.style('width'),10) - 16,
                 timeRange = this.model.get("end") - this.model.get("start"),
                 currTime = this.model.get("value") - this.model.get("start"),
-                newPosition = Math.round(rangeW * currTime / timeRange) + 10;
+                newPosition = (timeRange > 0) ? Math.round(rangeW * currTime / timeRange) : 0;
+                newPosition += 10;
             this.value.style("left", newPosition + "px");
         }
     });

@@ -145,8 +145,15 @@ define([
                 val_functions.push(evaluate);
             };
 
+            var validate_loop = false;
             //validate is the execution of each rule
             return function validate(silent) {
+                //avoid validation loop
+                if(validate_loop) {
+                    validate_loop = false;
+                    return;
+                }
+                validate_loop = true;
                 for (var i = 0; i < val_functions.length; i++) {
                     val_functions[i](silent);
                 };
