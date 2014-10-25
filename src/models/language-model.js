@@ -3,7 +3,7 @@ define([
     'base/model'
 ], function(_, Model) {
 
-    var StateModel = Model.extend({
+    var LanguageModel = Model.extend({
         init: function(values) {
             //default values for state model
             values = _.extend({
@@ -15,5 +15,5 @@ define([
 
     });
 
-    return StateModel;
+    return LanguageModel;
 });

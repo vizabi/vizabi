@@ -5,9 +5,8 @@ define([
     'base/intervals',
     'models/data-model',
     'models/language-model',
-    'models/state-model',
     'models/time-model'
-], function(_, utils, Model, Intervals, DataModel, LanguageModel, StateModel, TimeModel) {
+], function(_, utils, Model, Intervals, DataModel, LanguageModel, TimeModel) {
 
     var ToolModel = Model.extend({
         init: function(options, state_validate) {
@@ -41,14 +40,6 @@ define([
                     this.get(i).set(options.state[i], silent);
                 }
             }
-            //data properties
-            if (options.data) {
-                this.get("data").set(options.data);
-            }
-            //language properties
-            if (options.language) {
-                this.get("language").set(options.language);
-            }
             //bind properties
             if (options.bind) {
                 this.get("bind").set(options.bind);
@@ -69,7 +60,7 @@ define([
                 _this = this;
 
             //generate state, data and language models by default and bind
-            var default_models = ["state", "bind", "language"];
+            var default_models = ["state", "bind"];
             for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
                 model_config[m] = this._generateModel(m, options[m]);
@@ -94,7 +85,6 @@ define([
             var available_models = {
                     data: DataModel,
                     language: LanguageModel,
-                    state: StateModel,
                     time: TimeModel,
                     bind: Model
                 }
