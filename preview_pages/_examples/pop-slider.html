@@ -25,32 +25,51 @@
     </div>
 
     <div id="placeholder" class="placeholder"></div>
-    
+
 
 </div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
-    
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('placeholder')">SET STATE</button>
     <p>External buttons:</p>
     <button id="play_button" onclick="play()">PLAY</button>
+    <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
 
 <script>
-
 var myVizabi,
     playButton;
 
 $(function() {
 
     playButton = $("#play_button");
+    languageButton = $("#language_button");
     var options = {
         //state
         state: {
+            data: {
+                show: {
+                    geo: ["swe", "nor", "usa"],
+                    geo_category: ["country"],
+                    time_start: 1900,
+                    time_end: 2014 
+                },
+                selected: {
+                    time: 2008
+                },
+                source: {
+                    reader: "local-json",
+                    path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
+                }
+            },
+            language: {
+                value: "pt"
+            },
             time: {
                 start: 1800,
                 end: 2014,
@@ -66,12 +85,21 @@ $(function() {
                 showState(state);
             },
             'change:state:time': function(evt, time) {
-                if(time.playing) {
+                if (time.playing) {
                     playButton.attr('onclick', 'pause()');
                     playButton.text("PAUSE");
                 } else {
                     playButton.attr('onclick', 'play()');
                     playButton.text("PLAY");
+                }
+            },
+            'change:state:language': function(evt, language) {
+                if (language.value === "en") {
+                    languageButton.attr('onclick', "language('pt')");
+                    languageButton.text("SET LANGUAGE: PT");
+                } else {
+                    languageButton.attr('onclick', "language('en')");
+                    languageButton.text("SET LANGUAGE: EN");
                 }
             }
         },
@@ -102,6 +130,17 @@ function pause() {
         state: {
             time: {
                 playing: false
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function language(lang) {
+    var options = {
+        state: {
+            language: {
+                value: lang
             }
         }
     };

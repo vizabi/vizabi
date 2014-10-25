@@ -33,9 +33,11 @@ body {
     color: #666;
     background: #E0E8EA;
     padding: 10px;
-    font-size: 14px;
+    font-size: 11px;
     line-height: 1.5;
     margin-bottom: 10px;
+    max-height: 300px;
+    overflow: scroll;
 }
 .aux button {
     width: 100%;
