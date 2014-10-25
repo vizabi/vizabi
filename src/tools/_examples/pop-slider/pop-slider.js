@@ -19,6 +19,14 @@ define([
                 model: ["time"]
             }];
 
+            //rules to validate state
+            this.state_validate = [
+                ["time.start", "=", "data.show.time_start"],
+                ["time.end", "=", "data.show.time_end"],
+                ["data.selected.time", "=", "time.value"],
+                ["data.language", "=", "language.value"],
+            ];
+
             this._super(parent, options);
         }
     });
