@@ -107,6 +107,14 @@ define([
         },
 
         /*
+         * Model loading method
+         */
+
+        load: function() {
+            // placeholder for load method
+        },
+
+        /*
          * Validation methods
          */
 

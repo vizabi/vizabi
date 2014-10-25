@@ -37,7 +37,7 @@ define([
         //overwrite get method
         //it is done simply to make get("data") an alias of getData()
         get: function(pars) {
-            if(pars === "data") {
+            if (pars === "data") {
                 return this.getData();
             }
             return this._super(pars);
@@ -47,14 +47,36 @@ define([
             return this._dataset;
         },
 
-        load: function(query, language) {
-            var _this = this;
+        getQuery: function() {
+            
+        },
+
+        load: function() {
+            var _this = this,
+                query = this.getQuery(),
+                language = this.get("language"),
+                callbacks = {
+                    cached: function() {
+                        _this.trigger("load:cached", query);
+                    },
+                    before_loading: function() {
+                        _this.trigger("load:before", query);
+                    },
+                    after_loading: function() {
+                        _this.trigger("load:after", query);
+                    }
+                };
             //when request is completed, set it
-            $.when(this._dataManager.load(query, _this.get("language"))).done(function() {
-                _this._dataset = _this._dataManager.get();
-                _this.validate();
-                _this.trigger("change");
-            });
+            this._dataManager.load(query, language, callbacks)
+                .done(function(data) {
+                    if (data === 'error') {
+                        _this.trigger("load:error", query);
+                    } else {
+                        _this._dataset = _this._dataManager.get();
+                        _this.validate();
+                        _this.trigger("load:success", query);
+                    }
+                });
         }
 
     });

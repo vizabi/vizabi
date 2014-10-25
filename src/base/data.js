@@ -21,9 +21,8 @@ define([
                 isCached = true,
 
                 //Events before, after, error and cached for data
-                before = callbacks.before,
-                success = callbacks.success,
-                error = callbacks.error,
+                before_loading = callbacks.before_loading,
+                after_loading = callbacks.after_loading,
                 cached = callbacks.cached;
 
             var promise,
@@ -35,7 +34,9 @@ define([
             }
             //if force or no cache, load it.
             else {
-                if (before && _.isFunction(before)) before();
+                if (before_loading && _.isFunction(before_loading)) {
+                    before_loading();
+                }
                 promise = this.reader.read(query, language);
             }
 
@@ -50,17 +51,14 @@ define([
 
                         _this.data = _this.reader.getData();
 
-                        if (_.isFunction(success)) {
-                            success();
+                        if (_.isFunction(after_loading)) {
+                            after_loading();
                         }
                     }
                     defer.resolve(_this.get());
                 },
                 // Unfortunate error
                 function() {
-                    if (error && _.isFunction(error)) {
-                        error();
-                    }
                     defer.resolve('error');
                 });
 
