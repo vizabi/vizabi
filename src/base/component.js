@@ -207,13 +207,10 @@ define([
             var defer = $.Deferred();
 
             //todo: improve t function getter + generalize this
-            if (this.model &&
-                (this.model.language || this.model.getTFunction)) {
-                var translate = (this.model.language) ? this.model.language.getTFunction() : this.model.getTFunction();
-                this.template_data = _.extend(this.template_data, {
-                    t: translate
-                });
-            }
+            this.template_data = _.extend(this.template_data, {
+                t: this.getTranslationFunction()
+            });
+
 
             if (this.template) {
                 //require the template file
@@ -335,10 +332,21 @@ define([
         },
 
         /*
+         * Translation function for templates
+         */
+        getTranslationFunction: function() {
+            if (this.model && this.model.get("language") && this.model.get("language").getTFunction) {
+                return this.model.get("language").getTFunction();
+            } else if (this.parent && this.parent != this) {
+                this.parent.getTranslationFunction();
+            }
+        },
+
+        /*
          * Event binding methods
          */
 
-        on: function(evt, func) {
+            on: function(evt, func) {
             this.events.bind(evt, func);
         },
 

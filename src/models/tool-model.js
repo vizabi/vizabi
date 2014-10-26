@@ -103,7 +103,7 @@ define([
                 _this = this;
 
             //generate state, data and language models by default and bind
-            var default_models = ["state", "bind"];
+            var default_models = ["state", "language", "bind"];
             for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
                 model_config[m] = this._generateModel(m, options[m]);
@@ -117,6 +117,11 @@ define([
                 queries = model_queries[i] || false;
 
                 model_config[i] = this._generateModel(name, options.state[i], queries);
+                //todo: generalize to anytime of model
+                if(name === 'data' && queries) {
+                    model_config[i].set("query", queries(model_config[i]));
+                    model_config[i].set("language", model_config["language"].get("value"));
+                }
                 model_config[i].on("change", _this._subStateOnChange(i));
             }
 
@@ -135,10 +140,6 @@ define([
             //use specific model if it exists
             if (available_models.hasOwnProperty(model_name)) {
                 model = new available_models[model_name](values, this.intervals);
-                //todo: generalize to anytime of model
-                if(model_name === 'data' && queries) {
-                    model.setQuery(queries(model));
-                }
             } else {
                 model = new Model(values, this.intervals);
             }
