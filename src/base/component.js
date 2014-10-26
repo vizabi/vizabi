@@ -206,9 +206,14 @@ define([
             var _this = this;
             var defer = $.Deferred();
 
-            this.template_data = _.extend(this.template_data, {
-                t: this.getTFunction()
-            })
+            //todo: improve t function getter + generalize this
+            if (this.model &&
+                (this.model.language || this.model.getTFunction)) {
+                var translate = (this.model.language) ? this.model.language.getTFunction() : this.model.getTFunction();
+                this.template_data = _.extend(this.template_data, {
+                    t: translate
+                });
+            }
 
             if (this.template) {
                 //require the template file
@@ -327,30 +332,6 @@ define([
                 path: path,
                 options: options
             });
-        },
-
-        getUIString: function(string) {
-            var lang = this.model.get("language");
-            var ui_strings = this.model.get("ui_strings");
-
-            if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
-                return ui_strings[lang][string];
-            } else {
-                return string;
-            }
-        },
-
-        getTFunction: function() {
-            var lang = this.model.get("language");
-            var ui_strings = this.model.get("ui_strings");
-
-            return function(string) {
-                if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
-                    return ui_strings[lang][string];
-                } else {
-                    return string;
-                }
-            }
         },
 
         /*
