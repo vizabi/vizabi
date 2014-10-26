@@ -33,12 +33,12 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var indicator = this.model.getState("indicator"),
-                countries = this.model.getData()[0],
-                year = this.model.getState("time");
+            var indicator = this.model.get("show.indicator"),
+                countries = this.model.get("data"),
+                time = this.model.get("selected.time");
             
-            var countriesCurr = countries.filter(function(d) {
-                return (d.time == year);
+            var countriesCurr = _.filter(countries, function(d) {
+                return (d.time == time);
             });
 
             this.element.selectAll("p").remove();
@@ -58,7 +58,7 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var indicator = this.model.getState("indicator");
+            var indicator = this.model.get("show.indicator");
 
             if (this.getLayoutProfile() === 'small') {
                 this.element.selectAll("p")

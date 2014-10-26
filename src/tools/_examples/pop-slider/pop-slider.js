@@ -15,6 +15,10 @@ define([
                 placeholder: '.vzb-tool-year', //div to render
                 model: ["time"]
             }, {
+                component: '_examples/indicator-display',
+                placeholder: '.vzb-tool-display', //div to render
+                model: ["data"]
+            }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["time"]
@@ -24,8 +28,7 @@ define([
             this.state_validate = [
                 ["time.start", "=", "data.show.time_start"],
                 ["time.end", "=", "data.show.time_end"],
-                ["data.selected.time", "=", "time.value"],
-                ["data.language", "=", "language.value"],
+                ["data.selected.time", "=", "time.value"]
             ];
 
             //todo: improve format

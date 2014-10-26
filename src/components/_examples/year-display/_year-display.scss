@@ -10,7 +10,6 @@
 //large specific styles
 &.vzb-large, &.vzb-medium {
     .vzb-year-display {
-     	@include absolute(0, 50%, auto, 0);
         font-size: 8em;
     }
 }

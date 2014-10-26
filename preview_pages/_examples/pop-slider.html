@@ -60,7 +60,7 @@ $(function() {
                     geo_category: ["country"],
                     indicator: ['pop'],
                     time_start: 1900,
-                    time_end: 2014 
+                    time_end: 2014
                 },
                 //what part of data to we want to show now?
                 selected: {
@@ -72,21 +72,30 @@ $(function() {
                     path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
                 }
             },
-            //language properties
-            language: {
-                value: "pt"
-            },
             //time properties
             time: {
                 start: 1800,
                 end: 2014,
-                step: 0.2,
+                step: 1,
                 speed: 100,
-                value: 1800,
+                value: 1995,
                 playing: false
             }
         },
-        
+
+        //language properties
+        language: {
+            value: "en",
+            ui_strings: {
+                "en": {
+                    "intro_text": "This example shows the tool Pop Slider with model adaptations, data support and translation."
+                },
+                "pt": {
+                    "intro_text": "Esse exemplo mostra a Pop Slider com adaptações em model, suporte a dados e tradução."
+                }
+            }
+        },
+
         //ui (how should vizabi look)
         ui: {},
 
