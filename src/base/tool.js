@@ -10,7 +10,7 @@ define([
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
     var Tool = Component.extend({
-        init: function(parent, options) {
+        init: function(options) {
             // Define default template 
             this.template = this.template || "tools/tool";
             this.profiles = this.profiles || {
@@ -28,7 +28,8 @@ define([
             this.model = new ToolModel(options, this.state_validate);
 
             // Same constructor as components
-            this._super(parent, options);
+            // this passed as root parent
+            this._super(this, options);
 
             this._id = _.uniqueId("t");
 

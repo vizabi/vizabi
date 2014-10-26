@@ -1,6 +1,5 @@
 var Vizabi = function(tool_path, container, options) {
-    var _this = this,
-        loaded = false,
+    var loaded = false,
         tool;
 
     //require to import all tools, components, etc to AMD version
@@ -14,7 +13,7 @@ var Vizabi = function(tool_path, container, options) {
 
         //require and render tool
         require([path], function(Tool) {
-            tool = new Tool(_this, options);
+            tool = new Tool(options);
             tool.render();
         });
 
