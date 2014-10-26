@@ -11,12 +11,10 @@ define([
          * INIT:
          * Executed once, before template loading
          */
-        init: function(context, options) {
+        init: function(options, context) {
             this.name = "indicator-display";
-            this.template = "components/_examples/indicator-display/indicator-display";
-            this.tool = context;
-            
-            this._super(context, options);
+            this.template = "components/_examples/indicator-display/indicator-display";            
+            this._super(options, context);
         },
 
         /*

@@ -4,7 +4,7 @@ define([
 ], function(Tool) {
 
     var NoTSOneModel = Tool.extend({
-        init: function(parent, options) {
+        init: function(options) {
 
             //tool basic settings
             this.name = 'no-ts-one-model';
@@ -17,7 +17,7 @@ define([
                 model: ["time"]
             }];
 
-            this._super(parent, options);
+            this._super(options);
         },
 
         // mapping: function() {

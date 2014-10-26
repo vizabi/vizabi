@@ -4,7 +4,7 @@ define([
 ], function(Tool) {
 
     var TwoTSOneModel = Tool.extend({
-        init: function(parent, options) {
+        init: function(options) {
 
             //tool basic settings
             this.name = 'two-ts-two-models';
@@ -21,7 +21,7 @@ define([
                 model: ["time_2"]
             }];
 
-            this._super(parent, options);
+            this._super(options);
         },
 
         // mapping: function() {

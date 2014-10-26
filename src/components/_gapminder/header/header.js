@@ -8,13 +8,11 @@ define([
 ], function($, _, utils, Component) {
 
     var Header = Component.extend({
-        init: function(core, options) {
+        init: function(options, context) {
             //set properties
             this.name = 'header';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
-            
-            this._super(core, options);
-
+            this._super(options, context);
         },
 
         postRender: function() {

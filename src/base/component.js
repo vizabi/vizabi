@@ -31,10 +31,12 @@ define([
             this.parent = parent;
             this.events = new Events();
 
-            var _this = this;
-            this.model.on("change", function() {
-                _this.update();
-            });
+            if (this.model) {
+                var _this = this;
+                this.model.on("change", function() {
+                    _this.update();
+                });
+            }
         },
 
         //by default, it just considers data loaded
@@ -66,7 +68,7 @@ define([
                         _this.element.classed(class_loading, true);
                     }
                     //attempt to load data
-                    if (typeof _this.model.load === 'function') {
+                    if (_this.model && typeof _this.model.load === 'function') {
                         return _this.model.load();
                     }
 

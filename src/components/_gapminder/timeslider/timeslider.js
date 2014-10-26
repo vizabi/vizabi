@@ -10,13 +10,11 @@ define([
 
 
     var Timeslider = Component.extend({
-        init: function(parent, options) {
+        init: function(options, context) {
             this.template = "components/_gapminder/timeslider/timeslider";
-
             if (!options.model) options.model = new TimeModel();
-
             // Same constructor as the superclass
-            this._super(parent, options);
+            this._super(options, context);
         },
 
         postRender: function() {

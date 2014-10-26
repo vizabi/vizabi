@@ -5,7 +5,7 @@ define([
 
 
     var OneTSOneModel = Tool.extend({
-        init: function(parent, options) {
+        init: function(options) {
 
             //tool basic settings
             this.name = 'one-ts-one-model';
@@ -18,7 +18,7 @@ define([
                 model: ["time"]
             }];
 
-            this._super(parent, options);
+            this._super(options);
         },
 
         validate: function() {

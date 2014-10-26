@@ -4,7 +4,7 @@ define([
 ], function(Tool) {
 
     var ThreeTSThreeModel = Tool.extend({
-        init: function(parent, options) {
+        init: function(options) {
 
             //tool basic settings
             this.name = 'three-ts-three-models';
@@ -32,7 +32,7 @@ define([
                 ["time.end", "=", "time_end.value"]
             ];
 
-            this._super(parent, options);
+            this._super(options);
         }
 
     });

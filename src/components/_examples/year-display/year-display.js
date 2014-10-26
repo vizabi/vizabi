@@ -12,12 +12,10 @@ define([
          * INIT:
          * Executed once, before template loading
          */
-        init: function(context, options) {
+        init: function(options, context) {
             this.name = "year-display";
             this.template = "components/_examples/year-display/year-display";
-            this.tool = context;
-            
-            this._super(context, options);
+            this._super(options, context);
         },
 
         /*
