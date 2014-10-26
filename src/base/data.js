@@ -13,20 +13,13 @@ define([
         },
 
         //load resource
-        load: function(query, language, callbacks) {
+        load: function(query, language) {
 
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
-                isCached = true,
-
-                //Events before, after, error and cached for data
-                before_loading = callbacks.before_loading,
-                after_loading = callbacks.after_loading,
-                cached = callbacks.cached;
-
-            var promise,
-                isCached = this.isCached(query, language);
+                isCached = this.isCached(query, language),
+                promise;
 
             //if result is cached, dont load anything unless forced to
             if (isCached) {
@@ -34,9 +27,6 @@ define([
             }
             //if force or no cache, load it.
             else {
-                if (before_loading && _.isFunction(before_loading)) {
-                    before_loading();
-                }
                 promise = this.reader.read(query, language);
             }
 
@@ -45,15 +35,8 @@ define([
             $.when.apply(null, promises).then(
                 // Great success! :D
                 function() {
-                    if (isCached && cached && _.isFunction(cached)) {
-                        cached();
-                    } else if (!isCached) {
-
+                    if (!isCached) {
                         _this.data = _this.reader.getData();
-
-                        if (_.isFunction(after_loading)) {
-                            after_loading();
-                        }
                     }
                     defer.resolve(_this.get());
                 },

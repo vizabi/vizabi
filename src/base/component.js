@@ -11,16 +11,17 @@ define([
     var class_loading = "vzb-loading";
 
     var Component = Class.extend({
-        init: function(parent, options) {
+        init: function(options, parent) {
 
             //properties in this component should be the ones in options,
             //unless they were already set by a child class
             _.extend(this, options, this);
 
             this._id = _.uniqueId("c");
-            
+
             //default values,
             //in case there's none
+            this.placeholder = this.placeholder || options.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
             };
@@ -33,28 +34,40 @@ define([
             var _this = this;
             this.model.on("change", function() {
                 _this.update();
-            })
+            });
         },
 
-        //TODO: change the scary name! :D bootstrap is one good one
-        render: function(callback) {
+        //by default, it just considers data loaded
+        loadData: function() {
+            return true;
+        },
+
+        //
+        render: function() {
             var defer = $.Deferred();
             var _this = this;
 
             // First, we load the template
             var promise = this.loadTemplate();
 
-            // After the template is loaded, check if postRender exists
+            // After the template is loaded, its loading data
             promise.then(function() {
-
+                    // attempt to setup layout
+                    if (_this.layout) {
+                        _this.layout.setContainer(_this.element);
+                        _this.layout.setProfile(_this.profiles);
+                        _this.layout.resize();
+                        _this.layout.on('resize', function() {
+                            _this.resize();
+                        });
+                    }
                     // add css loading class to hide elements
                     if (_this.element) {
                         _this.element.classed(class_loading, true);
                     }
-
-                    // attempt to execute callback
-                    if (typeof callback === 'function') {
-                        return callback();
+                    //attempt to load data
+                    if (typeof _this.model.load === 'function') {
+                        return _this.model.load();
                     }
 
                 })
@@ -62,7 +75,7 @@ define([
                 .then(function() {
                     return _this.loadComponents();
                 })
-                // If there is no callback
+                //execute post render
                 .then(function() {
                     return _this.execute(_this.postRender);
                 })
@@ -71,7 +84,6 @@ define([
                     //TODO: Chance of refactoring
                     //Every widget binds its resize function to the resize event
                     return _this.renderComponents();
-                    _this.resize();
                 })
                 // After rendering the components, resolve the defer
                 .done(function() {
@@ -79,7 +91,7 @@ define([
                     if (_this.element) {
                         _this.element.classed(class_loading, false);
                     }
-
+                    _this.trigger('ready');
                     defer.resolve();
                 });
 
@@ -164,7 +176,7 @@ define([
             // Loads the file we need
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
-                _this.components[id] = new subcomponent(_this, options);
+                _this.components[id] = new subcomponent(options, _this);
                 defer.resolve();
             });
 
@@ -294,10 +306,6 @@ define([
 
         },
 
-        getInstance: function(manager) {
-            return this.parent.getInstance(manager);
-        },
-
         getLayoutProfile: function() {
             //get profile from parent if layout is not available
             if (this.layout) {
@@ -341,7 +349,19 @@ define([
                     return string;
                 }
             }
-        }
+        },
+
+        /*
+         * Event binding methods
+         */
+
+        on: function(evt, func) {
+            this.events.bind(evt, func);
+        },
+
+        trigger: function(evt, values) {
+            this.events.trigger(evt, values);
+        },
 
     });
 

@@ -25,59 +25,26 @@ define([
 
             //state validation is preset or empty
             this.state_validate = this.state_validate || [];
-            this.model = new ToolModel(options, this.state_validate);
+            //model queries might be present or not
+            this.model_queries = this.model_queries || {};
+
+            this.model = new ToolModel(options, this.state_validate, this.model_queries);
 
             // Same constructor as components
             // this passed as root parent
-            this._super(this, options);
+            this._super(options, this);
 
             this._id = _.uniqueId("t");
 
-        },
-
-        //Tools renders just like the widgets, but they update the layout
-        render: function() {
+            //todo: improve these events
+            //bind loading events
             var _this = this;
-            return this._super(function() {
-                var defer = $.Deferred();
-
-                $.when(
-                    _this.loadData()
-                ).done(function() {
-
-                    _this.layout.setContainer(_this.element);
-                    _this.layout.setProfile(_this.profiles);
-                    _this.layout.resize();
-
-                    //binds resize event to update
-                    _this.layout.on('resize', function() {
-                        _this.resize();
-                    });
-
-                    // call update of each component when the state changes
-                    // or when the language changes
-                    // _this.model.on([
-                    //     'change:state',
-                    //     'change:language',
-                    //     'change:data'
-                    // ], function(evt, new_values) {
-                    //     _this.update();
-                    //     _this.trigger(evt, new_values);
-                    // });
-
-
-                    defer.resolve();
-                });
-                return defer;
+            this.model.on("load:start", function() {
+                _this.beforeLoading();
             });
-        },
-
-        on: function(evt, func) {
-            this.events.bind(evt, func);
-        },
-
-        trigger: function(evt, values) {
-            this.events.trigger(evt, values);
+            this.model.on("load:end", function() {
+                _this.afterLoading();
+            });
         },
 
         //resizing the tool is resizing the components
@@ -91,24 +58,29 @@ define([
 
         //updating the tool is updating the components
         update: function() {
-            var promise = this.loadData(),
-                _this = this;
+            // var promise = this.loadData(),
+            //     _this = this;
 
-            $.when([promise]).done(function() {
-                for (var i in _this.components) {
-                    if (_this.components.hasOwnProperty(i)) {
-                        _this.components[i].update();
-                    }
+            // promise.done(function() {
+            //     for (var i in _this.components) {
+            //         if (_this.components.hasOwnProperty(i)) {
+            //             _this.components[i].update();
+            //         }
+            //     }
+            // });
+            var _this = this;
+            for (var i in _this.components) {
+                if (_this.components.hasOwnProperty(i)) {
+                    _this.components[i].update();
                 }
-            });
+            }
         },
- 
+
         setOptions: function(options, overwrite, silent) {
-            if(overwrite) {
+            if (overwrite) {
                 this.model.reset(options, silent);
                 this.reassignModel();
-            }
-            else {
+            } else {
                 this.model.propagate(options, silent);
             }
             this.update();
@@ -122,20 +94,6 @@ define([
         // is executed after loading actaul data
         afterLoading: function() {
             this.element.classed(class_loading_data, false);
-        },
-
-        loadData: function() {
-            var _this = this,
-                events = {
-                    before: function() {
-                        _this.beforeLoading();
-                    },
-                    success: function() {
-                        _this.afterLoading();
-                    }
-                };
-
-            return this.load(events);
         },
 
         // Load must be implemented here

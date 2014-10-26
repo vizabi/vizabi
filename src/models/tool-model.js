@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'underscore',
     'base/utils',
     'base/model',
@@ -6,15 +7,15 @@ define([
     'models/data-model',
     'models/language-model',
     'models/time-model'
-], function(_, utils, Model, Intervals, DataModel, LanguageModel, TimeModel) {
+], function($, _, utils, Model, Intervals, DataModel, LanguageModel, TimeModel) {
 
     var ToolModel = Model.extend({
-        init: function(options, state_validate) {
+        init: function(options, state_validate, model_queries) {
             //all intervals are managed at tool level
             this.intervals = new Intervals();
 
-            var model_config = this._generateModelConfig(options);
-            this._super(model_config);
+            var config = this._generateModelConfig(options, model_queries);
+            this._super(config);
 
             //bind external events
             this.bindEvents(options.bind);
@@ -22,6 +23,48 @@ define([
             //create validation method and trigger for the first time
             this.validate = this._generateValidate(state_validate);
             this.validate();
+
+            //bind loading to each submodel
+            var _this = this;
+            submodels = this.get();
+            for (var i = 0; i < submodels.length; i++) {
+                var submodel = submodels[i];
+                if (submodel.load) {
+                    submodel.on("load:start", function() {
+                        _this.trigger("load:start");
+                    });
+                    submodel.on("load:end", function() {
+                        _this.trigger("load:end");
+                    });
+                    submodel.on("load:error", function() {
+                        _this.trigger("load:error");
+                    });
+                }
+            };
+        },
+
+        //load method (hotfix)
+        //TODO: improve the whole loading logic. It should load, then render
+        load: function() {
+            var _this = this,
+                defer = $.Deferred(),
+                promises = [],
+                submodels = this.get();
+
+            //load each submodel
+            for (var i = 0; i < submodels.length; i++) {
+                var submodel = submodels[i];
+                if (submodel.load) {
+                    promises.push(submodel.load());
+                }
+            };
+
+            $.when.apply(null, promises).then(function() {
+                _this.validate();
+                defer.resolve();
+            });
+
+            return defer;
         },
 
         reset: function(new_options, silent) {
@@ -54,7 +97,7 @@ define([
             }
         },
 
-        _generateModelConfig: function(options) {
+        _generateModelConfig: function(options, model_queries) {
 
             var model_config = {},
                 _this = this;
@@ -70,8 +113,10 @@ define([
             //include a model for each property in the state and bind
             for (var i in options.state) {
                 //naming convention: underscore -> time, time_2, time_overlay
-                var name = i.split("_")[0];
-                model_config[i] = this._generateModel(name, options.state[i]);
+                var name = i.split("_")[0]
+                queries = model_queries[i] || false;
+
+                model_config[i] = this._generateModel(name, options.state[i], queries);
                 model_config[i].on("change", _this._subStateOnChange(i));
             }
 
@@ -79,21 +124,26 @@ define([
         },
 
         //generate model
-        _generateModel: function(model_name, values) {
-
+        _generateModel: function(model_name, values, queries) {
             //todo: possible improvement (load via require)
             var available_models = {
                     data: DataModel,
                     language: LanguageModel,
-                    time: TimeModel,
-                    bind: Model
-                }
-                //use specific model if it exists
+                    time: TimeModel
+                },
+                model;
+            //use specific model if it exists
             if (available_models.hasOwnProperty(model_name)) {
-                return new available_models[model_name](values, this.intervals);
+                model = new available_models[model_name](values, this.intervals);
+                //todo: generalize to anytime of model
+                if(model_name === 'data' && queries) {
+                    model.setQuery(queries(model));
+                }
             } else {
-                return new Model(values, this.intervals);
+                model = new Model(values, this.intervals);
             }
+            return model;
+
         },
 
         _subModelOnChange: function(submodel) {
@@ -111,7 +161,7 @@ define([
                 _this.trigger("change:state:" + substate, new_values);
             };
         },
-        
+
         _generateValidate: function(state_validate) {
             if (!state_validate || state_validate.length === 0) {
                 this.validate; //return generic model validation
@@ -120,23 +170,23 @@ define([
             var val_functions = [];
             for (var i = 0, size = state_validate.length; i < size; i++) {
                 var rule = state_validate[i];
-                if(rule.length !== 3) {
-                    console.log("State validation format error: Rule "+i+". Skipping...");
+                if (rule.length !== 3) {
+                    console.log("State validation format error: Rule " + i + ". Skipping...");
                     continue;
                 }
-                
+
                 //rule is of the format [operand1, sign, operand2]
                 //operand is a chain defined by a string: "model1.part.value"
-                var v1 = rule[0].split("."),   //split parts by "."
+                var v1 = rule[0].split("."), //split parts by "."
                     m1 = this.get(v1.shift()), //model is first part before "."
-                    v1 = v1.join("."),         //value is the rest, next parts
+                    v1 = v1.join("."), //value is the rest, next parts
                     v2 = rule[2].split("."),
                     m2 = this.get(v2.shift()),
                     v2 = v2.join("."),
-                    sign = rule[1];            //sign
+                    sign = rule[1]; //sign
 
                 //generate validation for a single rule
-                var evaluate = this._generateValidateRule(m1,v1,sign,m2,v2);
+                var evaluate = this._generateValidateRule(m1, v1, sign, m2, v2);
                 val_functions.push(evaluate);
             };
 
@@ -144,7 +194,7 @@ define([
             //validate is the execution of each rule
             return function validate(silent) {
                 //avoid validation loop
-                if(validate_loop) {
+                if (validate_loop) {
                     validate_loop = false;
                     return;
                 }

@@ -109,9 +109,10 @@ define([
         /*
          * Model loading method
          */
-
+         
+          //TODO: improve the whole loading logic. It should load, then render
         load: function() {
-            // placeholder for load method
+            return true; // by default it just returns true
         },
 
         /*
