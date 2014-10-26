@@ -50,26 +50,33 @@ $(function() {
     playButton = $("#play_button");
     languageButton = $("#language_button");
     var options = {
-        //state
+        //state (how vizabi should work)
         state: {
+            //data related properties
             data: {
+                //what data do we want to present?
                 show: {
                     geo: ["swe", "nor", "usa"],
                     geo_category: ["country"],
+                    indicator: ['pop'],
                     time_start: 1900,
                     time_end: 2014 
                 },
+                //what part of data to we want to show now?
                 selected: {
                     time: 2008
                 },
+                //where is the data source?
                 source: {
                     reader: "local-json",
                     path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
                 }
             },
+            //language properties
             language: {
                 value: "pt"
             },
+            //time properties
             time: {
                 start: 1800,
                 end: 2014,
@@ -79,8 +86,15 @@ $(function() {
                 playing: false
             }
         },
+        
+        //ui (how should vizabi look)
+        ui: {},
 
+        //bind (what vizabi should tell to the world outside)
         bind: {
+            'ready': function() {
+                parseURL();
+            },
             'change:state': function(evt, state) {
                 showState(state);
             },
@@ -102,10 +116,6 @@ $(function() {
                     languageButton.text("SET LANGUAGE: EN");
                 }
             }
-        },
-
-        ready: function() {
-            parseURL();
         }
     };
 

@@ -1,10 +1,11 @@
 define([
+    'underscore',
     'base/tool'
-], function(Tool) {
+], function(_, Tool) {
 
-    var lineChart = Tool.extend({
-        init: function(parent, options) {
-            
+    var popSlider = Tool.extend({
+        init: function(options) {
+
             this.name = 'pop-slider';
             this.template = "tools/_examples/pop-slider/pop-slider";
 
@@ -13,7 +14,7 @@ define([
                 component: '_examples/year-display',
                 placeholder: '.vzb-tool-year', //div to render
                 model: ["time"]
-            },{
+            }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["time"]
@@ -27,10 +28,25 @@ define([
                 ["data.language", "=", "language.value"],
             ];
 
-            this._super(parent, options);
+            //todo: improve format
+            this.model_queries = {
+                "data": function(model) {
+                    return [{
+                        "from": "data",
+                        "select": _.union(["geo", "geo.name", "time", "geo.region"], model.get("show.indicator")),
+                        "where": {
+                            "geo": model.get("show.geo"),
+                            "geo.category": model.get("show.geo_category"),
+                            "time": [model.get("show.time_start")+"-"+model.get("show.time_end")]
+                        }
+                    }];
+                }
+            };
+
+            this._super(options);
         }
     });
 
 
-    return lineChart;
+    return popSlider;
 });
