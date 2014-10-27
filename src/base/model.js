@@ -28,7 +28,7 @@ define([
                 if (submodel.on) {
                     for (var i = 0; i < watch_events.length; i++) {
                         var evt = watch_events[i];
-                        submodel.on(evt, function() {
+                        submodel.on(evt, function(evt) {
                             _this.trigger(evt);
                         });
                     };
