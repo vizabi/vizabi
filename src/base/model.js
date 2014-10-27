@@ -20,18 +20,23 @@ define([
             }
 
             //watch certain events for each submodel
-            var _this = this,
-                watch_events = ["change", "load:start", "load:end", "load:error"];
-            submodels = this.get();
-            for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.on) {
-                    for (var i = 0; i < watch_events.length; i++) {
-                        var evt = watch_events[i];
-                        submodel.on(evt, function(evt) {
-                            _this.trigger(evt);
-                        });
-                    };
+            //horrible hotfix only for non tool-models
+            //todo: improve this
+
+            if (this._id.indexOf("tm") === -1) {
+                var _this = this,
+                    watch_events = ["change", "load:start", "load:end", "load:error"];
+                submodels = this.get();
+                for (var i in submodels) {
+                    var submodel = submodels[i];
+                    if (submodel.on) {
+                        for (var i = 0; i < watch_events.length; i++) {
+                            var evt = watch_events[i];
+                            submodel.on(evt, function(evt, values) {
+                                _this.trigger(evt, values);
+                            });
+                        };
+                    }
                 }
             }
         },

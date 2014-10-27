@@ -11,8 +11,9 @@ define([
 
     var ToolModel = Model.extend({
         init: function(options) {
+            this._id = _.uniqueId("tm");
             //all intervals are managed at tool level
-            this._intervals = new Intervals();
+            this.intervals = new Intervals();
 
             /*
              * Instantiation of SubModels
@@ -47,6 +48,7 @@ define([
 
             //bind external events
             this.bindEvents(options.bind);
+
         },
 
         /* ==========================
@@ -63,7 +65,7 @@ define([
                 submodels = this.get();
 
             //load each submodel
-            for (var i = 0; i < submodels.length; i++) {
+            for (var i in submodels) {
                 var submodel = submodels[i];
                 if (submodel.load) {
                     promises.push(submodel.load());
@@ -153,9 +155,9 @@ define([
                 model;
             //use specific model if it exists
             if (available_models.hasOwnProperty(model_name)) {
-                model = new available_models[model_name](values, this._intervals);
+                model = new available_models[model_name](values, this.intervals);
             } else {
-                model = new Model(values, this._intervals);
+                model = new Model(values, this.intervals);
             }
             return model;
 
@@ -165,6 +167,7 @@ define([
             var _this = this;
             return function(evt, new_values) {
                 _this.trigger("change:" + submodel, new_values);
+                _this.trigger("change", _this.get());
             }
         },
 
@@ -174,6 +177,7 @@ define([
                 _this.validate();
                 _this.get("state").set(substate, new_values, false, true);
                 _this.trigger("change:state:" + substate, new_values);
+                _this.trigger("change", _this.get());
             };
         },
 
