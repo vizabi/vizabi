@@ -11,33 +11,26 @@ define([
     //And possibly some extra methods
     var Tool = Component.extend({
         init: function(options) {
-            // Define default template 
+            //tool-specific values
+            this._id = _.uniqueId("t");
             this.template = this.template || "tools/tool";
-            this.profiles = this.profiles || {
-                'default': {
-                    timeslider: true,
-                    buttonlist: true,
-                    title: true
-                }
-            };
-
             this.layout = new Layout();
 
-            //state validation is preset or empty
-            this.state_validate = this.state_validate || [];
-            //model queries might be present or not
-            this.model_queries = this.model_queries || {};
+            /*
+             * Building Tool Model
+             */
+            options.validate = options.validate || this.toolModelValidation;
+            options.query = options.query || this.getQuery;
+            this.model = new ToolModel(options);
 
-            this.model = new ToolModel(options, this.state_validate, this.model_queries);
-
-            // Same constructor as components
-            // this passed as root parent
+            /*
+             * Parent Constructor (this = root parent)
+             */
             this._super(options, this);
 
-            this._id = _.uniqueId("t");
-
-            //todo: improve these events
-            //bind loading events
+            /*
+             * Specific binding for tools
+             */
             var _this = this;
             this.model.on("load:start", function() {
                 _this.beforeLoading();
@@ -46,6 +39,11 @@ define([
                 _this.afterLoading();
             });
         },
+
+        /* ==========================
+         * Rendering
+         * ==========================
+         */
 
         //resizing the tool is resizing the components
         resize: function() {
@@ -76,6 +74,11 @@ define([
             }
         },
 
+        /* ==========================
+         * Set Options from outside
+         * ==========================
+         */
+
         setOptions: function(options, overwrite, silent) {
             if (overwrite) {
                 this.model.reset(options, silent);
@@ -85,6 +88,11 @@ define([
             }
             this.update();
         },
+
+        /* ==========================
+         * Data loading methods
+         * ==========================
+         */
 
         // is executed before loading actaul data
         beforeLoading: function() {
@@ -120,10 +128,20 @@ define([
             return defer;
         },
 
-        //empty getQuery
+        /* ==========================
+         * Validation and query
+         * ==========================
+         */
+
+        toolModelValidation: function() {
+            //placeholder for tool validation methos
+        },
+
         getQuery: function() {
-            return false;
+            return false; //return tool queries
         }
+
+
     });
 
     return Tool;

@@ -17,7 +17,7 @@ define([
             //unless they were already set by a child class
             _.extend(this, options, this);
 
-            this._id = _.uniqueId("c");
+            this._id = this._id || _.uniqueId("c");
 
             //default values,
             //in case there's none
@@ -293,11 +293,11 @@ define([
             if (_.isUndefined(model_config)) {
                 return;
             }
-
             if (_.isArray(model_config) && model_config.length > 1) {
                 var values = {};
-                for (var i = 0, size = component.model.length; i < size; i++) {
-                    values[i] = this.model.get(i);
+                for (var i = 0, size = model_config.length; i < size; i++) {
+                    var model_name = model_config[i];
+                    values[model_name] = this.model.get(model_name);
                 }
                 return new Model(values);
             } else if (_.isArray(model_config) && model_config.length == 1) {

@@ -18,10 +18,27 @@ define([
             if (values) {
                 this.set(values, true);
             }
+
+            //watch certain events for each submodel
+            var _this = this,
+                watch_events = ["change", "load:start", "load:end", "load:error"];
+            submodels = this.get();
+            for (var i in submodels) {
+                var submodel = submodels[i];
+                if (submodel.on) {
+                    for (var i = 0; i < watch_events.length; i++) {
+                        var evt = watch_events[i];
+                        submodel.on(evt, function() {
+                            _this.trigger(evt);
+                        });
+                    };
+                }
+            }
         },
 
-        /*
+        /* ==========================
          * Getters and Setters
+         * ==========================
          */
 
         //get accepts multiple levels. e.g: get("model.object.property")
@@ -57,16 +74,18 @@ define([
                     //todo: improve recursion
                     var attrs = attr.split('.'),
                         current = this.get(attrs.shift());
-                    while (attrs.length) {
+                    while (attrs.length > 1) {
                         if (typeof current.set === 'function') {
-                            current.set(attrs, val);
-                        }
-                        else if (attrs.length === 1){
-                            current[attrs.shift()] = _.clone(val);
-                        }
-                        else {
+                            current.set(attrs, val, silent);
+                        } else {
                             current = current[attrs.shift()];
                         }
+                    }
+                    attr = attrs.shift();
+                    if (typeof current.set === 'function') {
+                        current.set(attr, val, silent);
+                    } else {
+                        current[attr] = _.clone(val);
                     }
                 }
             } else {
@@ -106,25 +125,28 @@ define([
             return obj;
         },
 
-        /*
+        /* ==========================
          * Model loading method
+         * ==========================
          */
-         
-          //TODO: improve the whole loading logic. It should load, then render
+
+        //TODO: improve the whole loading logic. It should load, then render
         load: function() {
             return true; // by default it just returns true
         },
 
-        /*
-         * Validation methods
+        /* ==========================
+         * Validation
+         * ==========================
          */
 
         validate: function() {
             // placeholder for validate function
         },
 
-        /*
-         * Event methods
+        /* ==========================
+         * Event binding methods
+         * ==========================
          */
 
         on: function(name, func) {

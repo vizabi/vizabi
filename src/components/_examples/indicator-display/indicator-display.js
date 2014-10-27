@@ -34,8 +34,8 @@ define([
          */
         update: function() {
             var indicator = this.model.get("show.indicator"),
-                countries = this.model.get("data"),
-                time = this.model.get("selected.time");
+                countries = this.model.get("data.data"),
+                time = this.model.get("time.value");
             
             var countriesCurr = _.filter(countries, function(d) {
                 return (d.time == time);

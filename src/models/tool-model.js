@@ -10,38 +10,49 @@ define([
 ], function($, _, utils, Model, Intervals, DataModel, LanguageModel, TimeModel) {
 
     var ToolModel = Model.extend({
-        init: function(options, state_validate, model_queries) {
+        init: function(options) {
             //all intervals are managed at tool level
-            this.intervals = new Intervals();
+            this._intervals = new Intervals();
 
-            var config = this._generateModelConfig(options, model_queries);
+            /*
+             * Instantiation of SubModels
+             */
+            //these submodels are automatically instantiated (in options)
+            this._default_models = ["state", "language", "data", "bind"];
+
+            //generate model config and instantiate tool model
+            var config = this._generateModelConfig(options);
             this._super(config);
+
+            // todo: this is too specific and hardcoded
+            // data needs to grab queries and 
+            if (this.get("data") && typeof options.query === "function") {
+                this.set("data.query", options.query(this), true);
+                if(this.get("language")) {
+                    this.set("data.language", this.get("language.value"), true);
+                }
+            }
+
+            /*
+             * Validation
+             */
+
+            //generate validation function
+            this.validate = this._generateValidate(options.validate);
+            this.validate();
+
+            /*
+             * Binding Events
+             */
 
             //bind external events
             this.bindEvents(options.bind);
-
-            //create validation method and trigger for the first time
-            this.validate = this._generateValidate(state_validate);
-            this.validate();
-
-            //bind loading to each submodel
-            var _this = this;
-            submodels = this.get();
-            for (var i = 0; i < submodels.length; i++) {
-                var submodel = submodels[i];
-                if (submodel.load) {
-                    submodel.on("load:start", function() {
-                        _this.trigger("load:start");
-                    });
-                    submodel.on("load:end", function() {
-                        _this.trigger("load:end");
-                    });
-                    submodel.on("load:error", function() {
-                        _this.trigger("load:error");
-                    });
-                }
-            };
         },
+
+        /* ==========================
+         * Loading and resetting
+         * ==========================
+         */
 
         //load method (hotfix)
         //TODO: improve the whole loading logic. It should load, then render
@@ -74,6 +85,18 @@ define([
             this.bindEvents(new_options.bind);
         },
 
+        /* ==========================
+         * Binding and propagation
+         * ==========================
+         */
+
+        bindEvents: function(evts) {
+            var _this = this;
+            for (var i in evts) {
+                _this.on(i, evts[i]);
+            }
+        },
+
         //propagate option changes to model
         //todo: improve propagation of models
         propagate: function(options, silent) {
@@ -90,20 +113,18 @@ define([
             //binding
         },
 
-        bindEvents: function(evts) {
-            var _this = this;
-            for (var i in evts) {
-                _this.on(i, evts[i]);
-            }
-        },
+        /* ==========================
+         * Model instantiation
+         * ==========================
+         */
 
-        _generateModelConfig: function(options, model_queries) {
+        _generateModelConfig: function(options) {
 
             var model_config = {},
                 _this = this;
 
-            //generate state, data and language models by default and bind
-            var default_models = ["state", "language", "bind"];
+            //generate submodels for each default submodel defined in init
+            var default_models = this._default_models;
             for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
                 model_config[m] = this._generateModel(m, options[m]);
@@ -114,14 +135,7 @@ define([
             for (var i in options.state) {
                 //naming convention: underscore -> time, time_2, time_overlay
                 var name = i.split("_")[0]
-                queries = model_queries[i] || false;
-
-                model_config[i] = this._generateModel(name, options.state[i], queries);
-                //todo: generalize to anytime of model
-                if(name === 'data' && queries) {
-                    model_config[i].set("query", queries(model_config[i]));
-                    model_config[i].set("language", model_config["language"].get("value"));
-                }
+                model_config[i] = this._generateModel(name, options.state[i]);
                 model_config[i].on("change", _this._subStateOnChange(i));
             }
 
@@ -129,7 +143,7 @@ define([
         },
 
         //generate model
-        _generateModel: function(model_name, values, queries) {
+        _generateModel: function(model_name, values) {
             //todo: possible improvement (load via require)
             var available_models = {
                     data: DataModel,
@@ -139,9 +153,9 @@ define([
                 model;
             //use specific model if it exists
             if (available_models.hasOwnProperty(model_name)) {
-                model = new available_models[model_name](values, this.intervals);
+                model = new available_models[model_name](values, this._intervals);
             } else {
-                model = new Model(values, this.intervals);
+                model = new Model(values, this._intervals);
             }
             return model;
 
@@ -163,14 +177,49 @@ define([
             };
         },
 
-        _generateValidate: function(state_validate) {
-            if (!state_validate || state_validate.length === 0) {
+        /* ==========================
+         * Validation methods
+         * ==========================
+         */
+
+        _generateValidate: function(validate) {
+            /*
+             * Function format
+             * validate = function(model) {
+             *     //change model
+             *     //return model if changes were made
+             *     //return false if no changes were made
+             * }
+             */
+
+            if (typeof validate === 'function') {
+                var _this = this;
+                return function() {
+                    while (validate(_this));
+                    return;
+                }
+            }
+            /*
+             * Rules format
+             * validate = [
+             *     ["time.start", "=", "data.show.time_start"],
+             *     ["time.end", "=", "data.show.time_end"],
+             *     ["data.selected.time", "=", "time.value"]
+             * ];
+             */
+            else {
+                return this._parseValidate(validate);
+            }
+        },
+
+        _parseValidate: function(validate) {
+            if (!validate || validate.length === 0) {
                 this.validate; //return generic model validation
             }
 
             var val_functions = [];
-            for (var i = 0, size = state_validate.length; i < size; i++) {
-                var rule = state_validate[i];
+            for (var i = 0, size = validate.length; i < size; i++) {
+                var rule = validate[i];
                 if (rule.length !== 3) {
                     console.log("State validation format error: Rule " + i + ". Skipping...");
                     continue;

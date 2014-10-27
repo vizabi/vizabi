@@ -9,19 +9,17 @@ define([
         init: function(values, interval) {
 
             values = _.extend({
-                show: {},
-                selected: {},
-                source: {},
+                language: "en",
+                reader: "local-json",
+                path: ""
             }, values);
 
             this._super(values, interval);
-            this._query = this._query || [];
-            this._language = this._language || "en";
             this.setSource();
 
             //reload data everytime parameter show, source or language changes
             var _this = this;
-            this.on(["change:show", "change:language", "change:query"], function(evt) {
+            this.on(["change:language", "change:query", "change:reader"], function(evt) {
                 _this.load();
             });
             //reload if source changes
@@ -34,17 +32,14 @@ define([
 
         //set data
         setSource: function() {
-            var datapath = this.get("source.path") || "";
+            var datapath = this.get("path") || "";
             this._dataManager = new DataManager(datapath);
         },
 
         //validation
         //todo: improve this validation
         validate: function() {
-            var indicator = this.get("show.indicator");
-            if (_.isArray(indicator) && indicator.length === 1) {
-                this.set("show.indicator", indicator[0]);
-            }
+            
             if (_.isArray(this._dataset) && this._dataset.length === 1) {
                 this._dataset = this._dataset[0];
             }
@@ -56,12 +51,12 @@ define([
             if (times.length > 0) {
                 var min_time = _.min(times),
                     max_time = _.max(times);
-                if (this.get("show.time_start") < min_time) {
-                    this.set("show.time_start", min_time);
+                if (!this.get("time_start") || this.get("time_start") < min_time) {
+                    this.set("time_start", min_time);
                 }
 
-                if (this.get("show.time_end") > max_time) {
-                    this.set("show.time_end", max_time);
+                if (!this.get("time_end") || this.get("time_end") > max_time) {
+                    this.set("time_end", max_time);
                 }
             }
         },
@@ -72,43 +67,18 @@ define([
             if (pars === "data") {
                 return this.getData();
             }
-            if (pars === "language") {
-                return this._language;
-            }
             return this._super(pars);
-        },
-
-        //overwrite set method
-        //it is done simply to make set("language", val) an alias
-        set: function(pars, value) {
-            if (pars === "query") {
-                this.setQuery(value);
-                this.trigger("change:query");
-            } else if (pars === "language") {
-                this.setLanguage(value);
-                this.trigger("change:language");
-            } else {
-                this._super(pars, value);
-            }
         },
 
         getData: function() {
             return this._dataset;
         },
 
-        setQuery: function(query) {
-            this._query = query;
-        },
-
-        setLanguage: function(lang) {
-            this._language = lang;
-        },
-
         //todo: remove deferred from this
         load: function() {
             var _this = this,
-                query = this._query,
-                language = this._language
+                query = this.get("query"),
+                language = this.get("language")
             defer = $.Deferred();
 
             this.trigger("load:start");
