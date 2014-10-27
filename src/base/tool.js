@@ -38,39 +38,14 @@ define([
             this.model.on("load:end", function() {
                 _this.afterLoading();
             });
-        },
 
-        /* ==========================
-         * Rendering
-         * ==========================
-         */
-
-        //resizing the tool is resizing the components
-        resize: function() {
-            for (var i in this.components) {
-                if (this.components.hasOwnProperty(i)) {
-                    this.components[i].resize();
-                }
-            }
-        },
-
-        //updating the tool is updating the components
-        update: function() {
-            // var promise = this.loadData(),
-            //     _this = this;
-
-            // promise.done(function() {
-            //     for (var i in _this.components) {
-            //         if (_this.components.hasOwnProperty(i)) {
-            //             _this.components[i].update();
-            //         }
-            //     }
-            // });
-            var _this = this;
-            for (var i in _this.components) {
-                if (_this.components.hasOwnProperty(i)) {
-                    _this.components[i].update();
-                }
+            if (this.model) {
+                var _this = this;
+                this.model.on("change", function() {
+                    if (_this._ready) {
+                        _this.update();
+                    }
+                });
             }
         },
 

@@ -18,6 +18,8 @@ define([
             _.extend(this, options, this);
 
             this._id = this._id || _.uniqueId("c");
+            this._rendered = false;
+            this._ready = false;
 
             //default values,
             //in case there's none
@@ -30,13 +32,8 @@ define([
             this.profiles = this.profiles || {};
             this.parent = parent;
             this.events = new Events();
+            this.frameRate = 10;
 
-            if (this.model) {
-                var _this = this;
-                this.model.on("change", function() {
-                    _this.update();
-                });
-            }
         },
 
         //by default, it just considers data loaded
@@ -67,10 +64,8 @@ define([
                     if (_this.element) {
                         _this.element.classed(class_loading, true);
                     }
-                    //attempt to load data
-                    if (_this.model && typeof _this.model.load === 'function') {
-                        return _this.model.load();
-                    }
+
+                    _this._rendered = true; //template is in place
 
                 })
                 // After load components
@@ -87,12 +82,20 @@ define([
                     //Every widget binds its resize function to the resize event
                     return _this.renderComponents();
                 })
+                // After that, attempt to load data
+                .then(function() {
+                    //attempt to load data
+                    if (_this.model && typeof _this.model.load === 'function') {
+                        return _this.model.load();
+                    }
+                })
                 // After rendering the components, resolve the defer
                 .done(function() {
                     //not loading anytmore, remove class
                     if (_this.element) {
                         _this.element.classed(class_loading, false);
                     }
+                    _this._ready = true; //everything is ready
                     _this.trigger('ready');
                     defer.resolve();
                 });
@@ -255,15 +258,29 @@ define([
 
         // Component-level update updates the sub-components
         update: function() {
-            for (var i in this.components) {
-                if (this.components.hasOwnProperty(i)) {
-                    this.components[i].update();
+            var _this = this;
+            this._update = this._update || _.throttle(function() {
+                for (var i in _this.components) {
+                    if (_this.components.hasOwnProperty(i)) {
+                        _this.components[i].update();
+                    }
                 }
-            }
+            }, this.frameRate);
+            this._update();
         },
 
-        //what to do when page is resized
-        resize: function() {},
+        // Component-level update updates the sub-components
+        resize: function() {
+            var _this = this;
+            this._resize = this._resize || _.throttle(function() {
+                for (var i in _this.components) {
+                    if (_this.components.hasOwnProperty(i)) {
+                        _this.components[i].resize();
+                    }
+                }
+            }, this.frameRate);
+            this._resize();
+        },
 
         reassignModel: function() {
             //only reassign if it's loaded already
@@ -277,9 +294,6 @@ define([
                     model = this._modelMapping(c.model);
 
                 if (model) {
-                    model.on("change", function() {
-                        _this.components[id].update();
-                    });
                     this.components[id].model = model;
                     this.components[id].reassignModel();
                 }
@@ -346,7 +360,7 @@ define([
          * Event binding methods
          */
 
-            on: function(evt, func) {
+        on: function(evt, func) {
             this.events.bind(evt, func);
         },
 
