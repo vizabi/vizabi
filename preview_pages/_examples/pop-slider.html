@@ -53,34 +53,28 @@ $(function() {
         //state (how vizabi should work)
         state: {
             //data related properties
-            data: {
-                //what data do we want to present?
-                show: {
-                    geo: ["swe", "nor", "usa"],
-                    geo_category: ["country"],
-                    indicator: ['pop'],
-                    time_start: 1900,
-                    time_end: 2014
-                },
-                //what part of data to we want to show now?
-                selected: {
-                    time: 2008
-                },
-                //where is the data source?
-                source: {
-                    reader: "local-json",
-                    path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
-                }
+            show: {
+                geo: ["swe", "nor", "usa"],
+                geo_category: ["country"],
+                indicator: ['pop'],
+                time_start: 1900,
+                time_end: 2014
             },
             //time properties
             time: {
                 start: 1800,
                 end: 2014,
-                step: 1,
-                speed: 100,
+                step: 0.1,
+                speed: 20,
                 value: 1995,
                 playing: false
             }
+        },
+
+        //data properties
+        data: {
+            reader: "local-json",
+            path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
         },
 
         //language properties
