@@ -14,10 +14,7 @@ define([
             //set properties
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
-            //list of buttons to be rendered
-            this.template_data = {
-                buttons: options.buttons || []
-            };
+            this.buttons = options.buttons;
 
             //add sub components
             this.addComponent('_gapminder/picker-geo', {
@@ -30,15 +27,9 @@ define([
 
         postRender: function() {
             var _this = this;
+
             this.placeholder = utils.d3ToJquery(_this.placeholder);
-
-            geo_picker = this.components['picker-geo'];
-
-            //show the picker when the correct button is pressed
-            var geo_button = this.placeholder.find('.vzb-buttonlist-geo');
-            geo_button.click(function() {
-                geo_picker.show();
-            });
+            this.createButtons(this.buttons);
         },
 
         //make button list responsive
@@ -57,12 +48,13 @@ define([
                     height: this.placeholder.outerHeight()
                 },
                 vertical = size_container.width < size_container.height,
+                
                 number_buttons = $buttons.length - 1,
                 compare = (vertical) ? "height" : "width";
 
             offset = size_button[compare] / 2;
 
-            if ((number_buttons * size_button[compare]) <= size_container[compare] - offset) {
+            /*if ((number_buttons * size_button[compare]) <= size_container[compare] - offset) {
                 $buttons.removeClass('vzb-hidden');
                 $button_more.addClass('vzb-hidden');
             } else {
@@ -75,7 +67,49 @@ define([
                     if (i >= max) return false;
                 });
                 $button_more.removeClass('vzb-hidden');
-            }
+            }*/
+        },
+
+        createButtons: function(button_list) {
+            var root = this.placeholder.find('.vzb-buttonlist');
+            var moreButton = this.placeholder.find('.vzb-buttonlist-btn-more');
+
+            geo_picker = this.components['picker-geo'];
+
+            //show the picker when the correct button is pressed
+            var geo_button = this.placeholder.find('.vzb-buttonlist-geo');
+            geo_button.click(function() {
+                geo_picker.show();
+            });
+
+            button_list.map(function(btn) {
+                var button = $('<button>').attr({
+                    title: btn.title,
+                    class: 'vzb-buttonlist-btn vzb-buttonlist-btn-' +  btn.id 
+                });
+                
+                var icon = $('<span>').attr({
+                    class: 'vzb-btn-icon'
+                });
+
+                icon.appendTo(button)
+                
+                var i = $('<i>').attr({
+                    class: 'fa fa-' + btn.icon
+                });
+
+                i.appendTo(icon);
+
+
+                var title = $('<span>').attr({
+                    class: 'vzb-btn-title',
+                });
+
+                title.html(btn.title);
+                title.appendTo(button);
+
+                moreButton.before(button);
+            });
         }
 
     });
