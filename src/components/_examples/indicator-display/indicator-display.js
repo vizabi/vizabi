@@ -1,9 +1,10 @@
 //Indicator Display
 define([
     'd3',
-    'underscore',
+    'lodash',
+    'base/utils',
     'base/component'
-], function(d3, _, Component) {
+], function(d3, _, utils, Component) {
 
     var IndicatorDisplay = Component.extend({
 
@@ -35,8 +36,8 @@ define([
         update: function() {
             var indicator = this.model.show.get("indicator")[0],
                 time = this.model.time.get("value"),
-                countries = this.model.data.get("data"),
-                decimals = _.countDecimals(time),
+                countries = _.cloneDeep(this.model.data.get("data")),
+                decimals = utils.countDecimals(time),
                 countriesCurr = [];
 
             if (decimals) {
@@ -50,11 +51,11 @@ define([
 
                 for (var i = 0; i < countriesCurr.length; i++) {
                     var d = countriesCurr[i],
-                        diff = time - Math.floor(time);
+                        diff = (time - Math.floor(time)).toFixed(decimals);
                     d.time = time;
-                    var valBefore = d[indicator],
-                        valAfter = dataAfter[i][indicator];
-                    d[indicator] = _.interpolate(valBefore, valAfter, diff);
+                    var valBefore = _.parseInt(d[indicator]),
+                        valAfter = _.parseInt(dataAfter[i][indicator]);
+                    d[indicator] = utils.interpolate(valBefore, valAfter, diff);
                 };
 
 
@@ -92,7 +93,7 @@ define([
             } else {
                 this.element.selectAll("p")
                     .text(function(d) {
-                        return d["geo.name"] + ": " + d[indicator];
+                        return d["geo.name"] + ": " + Math.round(d[indicator]).toLocaleString();
                     });
             }
         },
