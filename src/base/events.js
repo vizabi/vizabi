@@ -63,7 +63,7 @@ define([
                 }
             } else {
                 if (_.isUndefined(this.events[name])) return;
-                for (var i = 0, size = this.events[name].length; i < size; i++) {
+                for (var i = 0; i < this.events[name].length; i++) {
                     var f = this.events[name][i];
                     if (_.isFunction(f)) {
                         if (_.isUndefined(args)) {

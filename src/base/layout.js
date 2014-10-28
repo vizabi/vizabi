@@ -38,7 +38,9 @@ define([
             //resize when window resizes
             var _this = this;
             window.addEventListener('resize', function() {
-                _this.resize();
+                if (this.container) {
+                    _this.resize();
+                }
             });
         },
 
@@ -122,6 +124,12 @@ define([
 
         on: function(name, func) {
             this.events.bind(name, func);
+        },
+
+        destroy: function() {
+            this.events = new Events();
+            this.container = null;
+            this.profiles = {};
         }
 
     });

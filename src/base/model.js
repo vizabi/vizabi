@@ -115,10 +115,21 @@ define([
         },
 
         reset: function(values, silent) {
+            this.clear();
+            this.set(values, silent);
+        },
+
+        clear: function() {
+            var submodels = this.get();
+            for (var i in submodels) {
+                var submodel = submodels[i];
+                if (submodel.clear) {
+                    submodel.clear();
+                }
+            }
             this.events.unbindAll();
             this.intervals.clearAllIntervals();
             this._data = {};
-            this.set(values, silent);
         },
 
         getObject: function() {

@@ -108,9 +108,16 @@ define([
                     this.get(i).set(options.state[i], silent);
                 }
             }
+            //language properties
+            if (options.language) {
+                this.get("language").set(options.language, silent);
+            }
+            if (options.data) {
+                this.get("data").set(options.data, silent);
+            }
             //bind properties
             if (options.bind) {
-                this.get("bind").set(options.bind);
+                this.get("bind").set(options.bind, silent);
             }
             //binding
         },

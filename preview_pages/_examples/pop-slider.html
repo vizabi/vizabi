@@ -82,10 +82,10 @@ $(function() {
             value: "en",
             ui_strings: {
                 "en": {
-                    "intro_text": "This example shows the tool Pop Slider with model adaptations, data support and translation."
+                    "intro_text": "This example shows the tool Pop Slider with model adaptations and data support"
                 },
                 "pt": {
-                    "intro_text": "Esse exemplo mostra a Pop Slider com adaptações em model, suporte a dados e tradução."
+                    "intro_text": "Esse exemplo mostra a Pop Slider com adaptações em model and suporte a dados"
                 }
             }
         },
@@ -110,7 +110,7 @@ $(function() {
                     playButton.text("PLAY");
                 }
             },
-            'change:state:language': function(evt, language) {
+            'change:language': function(evt, language) {
                 if (language.value === "en") {
                     languageButton.attr('onclick', "language('pt')");
                     languageButton.text("SET LANGUAGE: PT");
@@ -151,10 +151,8 @@ function pause() {
 
 function language(lang) {
     var options = {
-        state: {
-            language: {
-                value: lang
-            }
+        language: {
+            value: lang
         }
     };
     myVizabi.setOptions(options);

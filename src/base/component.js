@@ -41,7 +41,7 @@ define([
             return true;
         },
 
-        //
+        //render
         render: function() {
             var defer = $.Deferred();
             var _this = this;
@@ -259,6 +259,7 @@ define([
 
         // Component-level update updates the sub-components
         update: function() {
+            if(this._blockUpdate) return;
             var _this = this;
             this._update = this._update || _.throttle(function() {
                 for (var i in _this.components) {
@@ -272,6 +273,7 @@ define([
 
         // Component-level update updates the sub-components
         resize: function() {
+            if(this._blockResize) return;
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
                 for (var i in _this.components) {
@@ -281,6 +283,25 @@ define([
                 }
             }, this.frameRate);
             this._resize();
+        },
+
+        blockUpdate: function(val) {
+            if(typeof val === 'undefined') val = true;
+            this._blockUpdate = val;
+        },
+
+        blockResize: function(val) {
+            if(typeof val === 'undefined') val = true;
+            this._blockResize = val;
+        },
+
+        destroy: function() {
+            if(this.model) this.model.clear();
+            if(this.layout) this.layout.destroy();
+            if(this.events) this.events.unbindAll();
+            if(this.intervals) this.intervals.clearAllIntervals();
+            if(this.components) this.components = [];
+            if(this.placeholder) this.placeholder.html('');
         },
 
         reassignModel: function() {
@@ -350,12 +371,13 @@ define([
          * Translation function for templates
          */
         getTranslationFunction: function() {
-            var func = function(a) { return a };
+            var func = function(a) {
+                return a
+            };
             try {
                 func = this.model.get("language").getTFunction();
-            }
-            catch (err) {
-                if(this.parent && this.parent != this) {
+            } catch (err) {
+                if (this.parent && this.parent != this) {
                     func = this.parent.getTranslationFunction();
                 }
             }
