@@ -25,15 +25,33 @@ define([
                 model: ["time"]
             }];
 
-            //rules to validate state
-            this.state_validate = [
-                ["time_end.start", "=", "time_start.value"],
-                ["time.start", "=", "time_start.value"],
-                ["time.end", "=", "time_end.value"]
-            ];
+            //rules to validate state (alterative method)
+            // options.validate = [
+            //     ["time_end.start", "=", "time_start.value"],
+            //     ["time.start", "=", "time_start.value"],
+            //     ["time.end", "=", "time_end.value"]
+            // ];
 
             this._super(options);
-        }
+        },
+
+        toolModelValidation: function(model) {
+            var changes = false;
+            if (model.get("time_end.start") != model.get("time_start.value")) {
+                model.set("time_end.start", model.get("time_start.value"));
+                changes = model;
+            }
+            if (model.get("time.start") != model.get("time_start.value")) {
+                model.set("time.start", model.get("time_start.value"));
+                changes = model;
+            }
+            if (model.get("time.end") != model.get("time_end.value")) {
+                model.set("time.end", model.get("time_end.value"));
+                changes = model;
+            }
+            
+            return changes;
+        },
 
     });
 
