@@ -3,20 +3,20 @@
     color: $vzb-color-green;
     font-family: $vzb-font-family;
     font-weight: 700;
-    font-size: 5em;
+    font-size: 4em;
     padding: 20px;
 }
 
 //large specific styles
 &.vzb-large, &.vzb-medium {
     .vzb-year-display {
-        font-size: 8em;
+        font-size: 7em;
     }
 }
 
 //medium specific styles
 &.vzb-large {
     .vzb-year-display {
-        font-size: 10em;
+        font-size: 9em;
     }
 }

@@ -17,7 +17,7 @@ define([
                 playable: true,
                 playing: false,
                 step: 1,
-                speed: 5
+                speed: 500
             }, values);
 
             this._super(values, intervals);
@@ -81,7 +81,7 @@ define([
 
             var _this = this,
                 time = this.get("value"),
-                interval = 1000/this.get("speed");
+                interval = this.get("speed") * this.get("step");
 
             //go to start if we start from end point
             if(time === _this.get("end")) {

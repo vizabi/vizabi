@@ -67,7 +67,7 @@ define([
                 .attr("step", step);
 
             this.range[0][0].value = time;
-            time = time.toFixed(0); //without decimals for display
+            time = Math.floor(time); //without decimals for display
             this.value.html(time);
             this._setTimePosition();
 
