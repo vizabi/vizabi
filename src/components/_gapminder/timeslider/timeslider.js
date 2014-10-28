@@ -46,8 +46,6 @@ define([
             pause.on('click', function() {
                 _this.model.pause();
             });
-
-            this.update();
         },
 
 

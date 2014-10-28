@@ -49,20 +49,24 @@ define([
         //get accepts multiple levels. e.g: get("model.object.property")
         get: function(attr) {
             //optimize for common cases
-            if (!attr) return this._data;
-            else if (attr.indexOf('.') === -1) return this._data[attr];
-            //search deeper levels
-            var attrs = attr.split('.'),
-                current = this;
-            while (attrs.length) {
-                var curr_attr = attrs.shift();
-                if (typeof current.get === 'function') {
-                    current = current.get(curr_attr);
-                } else {
-                    current = current[curr_attr];
+            var response;
+            if (!attr) response = this._data;
+            else if (attr.indexOf('.') === -1) response = this._data[attr];
+            else {
+                //search deeper levels
+                var attrs = attr.split('.'),
+                    current = this;
+                while (attrs.length) {
+                    var curr_attr = attrs.shift();
+                    if (typeof current.get === 'function') {
+                        current = current.get(curr_attr);
+                    } else {
+                        current = current[curr_attr];
+                    }
                 }
+                return current;
             }
-            return current;
+            return response
         },
 
         // set an attribute for the model, or an entire object

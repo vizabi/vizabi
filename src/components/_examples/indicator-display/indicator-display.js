@@ -23,7 +23,7 @@ define([
          * Ideally, it contains instantiations related to template
          */
         postRender: function() {
-            this.update();
+
         },
 
 
@@ -33,13 +33,37 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var indicator = this.model.get("show.indicator"),
-                countries = this.model.get("data.data"),
-                time = this.model.get("time.value");
+            var indicator = this.model.show.get("indicator")[0],
+                time = this.model.time.get("value"),
+                countries = this.model.data.get("data"),
+                decimals = _.countDecimals(time),
+                countriesCurr = [];
 
-            var countriesCurr = _.filter(countries, function(d) {
-                return (d.time == time);
-            });
+            if (decimals) {
+
+                var countriesCurr = _.filter(countries, function(d) {
+                    return (d.time == Math.floor(time));
+                });
+                var dataAfter = _.filter(countries, function(d) {
+                    return (d.time == Math.ceil(time));
+                });
+
+                for (var i = 0; i < countriesCurr.length; i++) {
+                    var d = countriesCurr[i],
+                        diff = time - Math.floor(time);
+                    d.time = time;
+                    var valBefore = d[indicator],
+                        valAfter = dataAfter[i][indicator];
+                    d[indicator] = _.interpolate(valBefore, valAfter, diff);
+                };
+
+
+            } else {
+                countriesCurr = _.filter(countries, function(d) {
+                    return (d.time == time);
+                });
+            }
+
 
             this.element.selectAll("p").remove();
 
@@ -47,9 +71,9 @@ define([
                 .data(countriesCurr)
                 .enter()
                 .append("p");
-            
-            this.resize(); 
-                
+
+            this.resize();
+
         },
 
         /*
@@ -58,19 +82,18 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var indicator = this.model.get("show.indicator");
+            var indicator = this.model.show.get("indicator");
 
             if (this.getLayoutProfile() === 'small') {
                 this.element.selectAll("p")
-                .text(function(d) {
-                    return d["geo.name"] + ": " + Math.round(d[indicator] / 100000) / 10 + " M"; 
-                });
-            }
-            else {
+                    .text(function(d) {
+                        return d["geo.name"] + ": " + Math.round(d[indicator] / 100000) / 10 + " M";
+                    });
+            } else {
                 this.element.selectAll("p")
-                .text(function(d) {
-                    return d["geo.name"] + ": " + d[indicator]; 
-                });
+                    .text(function(d) {
+                        return d["geo.name"] + ": " + d[indicator];
+                    });
             }
         },
 

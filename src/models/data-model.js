@@ -15,6 +15,7 @@ define([
             }, values);
 
             this._super(values, interval);
+            this._dataset = [];
             this.setSource();
 
             //reload data everytime parameter show, source or language changes
@@ -39,13 +40,13 @@ define([
         //validation
         //todo: improve this validation
         validate: function() {
-            
+
             if (_.isArray(this._dataset) && this._dataset.length === 1) {
                 this._dataset = this._dataset[0];
             }
 
             var times = _.map(this._dataset, function(d) {
-                return parseInt(d.time,10);
+                return parseInt(d.time, 10);
             });
 
             if (times.length > 0) {
@@ -71,6 +72,7 @@ define([
         },
 
         getData: function() {
+            if (this._dataset.length === 1) return this._dataset[0];
             return this._dataset;
         },
 

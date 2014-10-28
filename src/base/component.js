@@ -95,6 +95,7 @@ define([
                     if (_this.element) {
                         _this.element.classed(class_loading, false);
                     }
+                    _this.update();
                     _this._ready = true; //everything is ready
                     _this.trigger('ready');
                     defer.resolve();
@@ -313,7 +314,7 @@ define([
                     var model_name = model_config[i];
                     values[model_name] = this.model.get(model_name);
                 }
-                return new Model(values);
+                return values;
             } else if (_.isArray(model_config) && model_config.length == 1) {
                 return this.model.get(model_config[0]);
             } else if (_.isString(model_config) && model_config.length > 0) {
@@ -349,11 +350,16 @@ define([
          * Translation function for templates
          */
         getTranslationFunction: function() {
-            if (this.model && this.model.get("language") && this.model.get("language").getTFunction) {
-                return this.model.get("language").getTFunction();
-            } else if (this.parent && this.parent != this) {
-                this.parent.getTranslationFunction();
+            var func;
+            try {
+                func = this.model.get("language").getTFunction();
             }
+            catch (err) {
+                if(this.parent && this.parent != this) {
+                    func = this.parent.getTranslationFunction();
+                }
+            }
+            return func;
         },
 
         /*

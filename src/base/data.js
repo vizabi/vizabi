@@ -9,7 +9,7 @@ define([
     var dataManager = Class.extend({
         init: function(base_path, reader) {
             this.reader = new Reader(base_path);
-            this.data = {};
+            this.data = [];
         },
 
         //load resource
@@ -48,9 +48,9 @@ define([
             return defer;
         },
 
-        //return requested file or entire cache
-        get: function(path) {
-            return (path) ? this.data[path] : this.data;
+        //return entire data
+        get: function() {
+            return this.data;
         },
 
         //todo: larger caching system
@@ -69,7 +69,7 @@ define([
         //clearing cached data
         clear: function() {
             this.prevQuery = undefined;
-            this.data = {};
+            this.data = [];
         }
     });
 

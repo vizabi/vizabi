@@ -1,10 +1,10 @@
 //Year Display
 define([
     'd3',
-    'base/utils',
+    'underscore',
     'base/component',
     'base/utils'
-], function(d3, utils, Component, utils) {
+], function(d3, _, Component, utils) {
 
 
     var YearDisplay = Component.extend({
@@ -25,7 +25,7 @@ define([
          * Ideally, it contains instantiations related to template
          */
         postRender: function() {
-            this.update();
+
         },
 
 
