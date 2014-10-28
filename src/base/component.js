@@ -350,7 +350,7 @@ define([
          * Translation function for templates
          */
         getTranslationFunction: function() {
-            var func;
+            var func = function(a) { return a };
             try {
                 func = this.model.get("language").getTFunction();
             }
