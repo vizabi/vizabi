@@ -9,7 +9,6 @@ define([
         init: function(values, interval) {
 
             values = _.extend({
-                language: "en",
                 reader: "local-json",
                 path: ""
             }, values);
@@ -18,16 +17,10 @@ define([
             this._dataset = [];
             this.setSource();
 
-            //reload data everytime parameter show, source or language changes
-            var _this = this;
-            this.on(["change:language", "change:query", "change:reader"], function(evt) {
-                _this.load();
-            });
             //reload if source changes
+            var _this = this;
             this.on(["change:source"], function(evt) {
-                _this.reset();
                 _this.setSource();
-                _this.load();
             });
         },
 
@@ -77,12 +70,13 @@ define([
         },
 
         //todo: remove deferred from this
-        load: function() {
+        load: function(query, language) {
             var _this = this,
-                query = this.get("query"),
-                language = this.get("language")
-            defer = $.Deferred();
+                defer = $.Deferred();
 
+            if(!query || !language || this.get("loading")) return true;
+
+            this.set("loading", true);
             this.trigger("load:start");
             //when request is completed, set it
             this._dataManager.load(query, language)
@@ -91,6 +85,7 @@ define([
                         _this.trigger("load:error", query);
                         _this.trigger("load:error");
                     } else {
+                        _this.set("loading", false);
                         _this._dataset = _this._dataManager.get();
                         _this.validate();
                         _this.trigger("load:end");
@@ -98,6 +93,7 @@ define([
                         defer.resolve();
                     }
                 });
+
             return defer;
         }
 

@@ -28,6 +28,9 @@ define([
             //if force or no cache, load it.
             else {
                 promise = this.reader.read(query, language);
+                promise.then(function() {
+                    _this.data = _this.reader.getData();
+                });
             }
 
             promises.push(promise);
@@ -35,9 +38,6 @@ define([
             $.when.apply(null, promises).then(
                 // Great success! :D
                 function() {
-                    if (!isCached) {
-                        _this.data = _this.reader.getData();
-                    }
                     defer.resolve(_this.get());
                 },
                 // Unfortunate error

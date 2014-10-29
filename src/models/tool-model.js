@@ -25,20 +25,12 @@ define([
             var config = this._generateModelConfig(options);
             this._super(config);
 
-            // todo: this is too specific and hardcoded
-            // data needs to grab queries and 
-            if (this.get("data") && typeof options.query === "function") {
-                this.set("data.query", options.query(this), true);
-                if(this.get("language")) {
-                    this.set("data.language", this.get("language.value"), true);
-                }
-            }
-
             /*
              * Validation
              */
 
             //generate validation function
+            this._query = options.query;
             this.validate = this._generateValidate(options.validate);
             this.validate();
 
@@ -49,6 +41,14 @@ define([
             //bind external events
             this.bindEvents(options.bind);
 
+            var _this = this;
+
+            //load whenever show or language changes
+            this.on(["change:state:show", "change:language"], function() {
+                _this.load().done(function() {
+                    _this.trigger("reloaded");
+                });
+            });
         },
 
         /* ==========================
@@ -62,13 +62,15 @@ define([
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
-                submodels = this.get();
+                submodels = this.get(),
+                query = this._query(this),
+                language = this.get("language.value");
 
             //load each submodel
             for (var i in submodels) {
                 var submodel = submodels[i];
                 if (submodel.load) {
-                    promises.push(submodel.load());
+                    promises.push(submodel.load(query, language));
                 }
             };
 
@@ -136,7 +138,7 @@ define([
             var default_models = this._default_models;
             for (var i = 0, size = default_models.length; i < size; i++) {
                 var m = default_models[i];
-                model_config[m] = this._generateModel(m, options[m]);
+                model_config[m] = this._generateModel(m, (options[m] || {}));
                 model_config[m].on("change", this._subModelOnChange(m));
             }
 
