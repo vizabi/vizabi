@@ -1,6 +1,6 @@
 define([
     'jquery',
-    'underscore',
+    'lodash',
     'base/utils',
     'base/model',
     'base/intervals',
@@ -144,6 +144,7 @@ define([
 
             //include a model for each property in the state and bind
             for (var i in options.state) {
+                if(!_.isPlainObject(options.state[i])) continue; //objects only
                 //naming convention: underscore -> time, time_2, time_overlay
                 var name = i.split("_")[0]
                 model_config[i] = this._generateModel(name, options.state[i]);
