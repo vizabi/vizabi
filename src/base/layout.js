@@ -1,7 +1,8 @@
 define([
     "underscore",
-    "base/class"
-], function(_, Class) {
+    "base/class",
+    "base/events"
+], function(_, Class, Events) {
 
     //classes are vzb-portrait, vzb-landscape...
     var class_prefix = "vzb-",
@@ -30,9 +31,20 @@ define([
             this.container = null; //d3 container
             this.profiles = {};
             this.current_profiles = null;
+
+            //capture layout events
+            this.events = new Events();
+
+            //resize when window resizes
+            var _this = this;
+            window.addEventListener('resize', function() {
+                if (_this.container) {
+                    _this.resize();
+                }
+            });
         },
 
-        update: function() {
+        resize: function() {
             var _this = this,
                 width = this.width();
 
@@ -47,7 +59,7 @@ define([
             });
 
             //update size class
-            _this.container.classed(class_prefix + _this.current_profile, true);
+            this.container.classed(class_prefix + _this.current_profile, true);
 
             //TODO: move this comment to wiki
             /* toggle, untoggle classes based on profile
@@ -65,8 +77,10 @@ define([
 
             //toggle, untoggle classes based on orientation
             var portrait = this.portrait();
-            _this.container.classed(class_portrait, portrait);
-            _this.container.classed(class_lansdcape, !portrait);
+            this.container.classed(class_portrait, portrait);
+            this.container.classed(class_lansdcape, !portrait);
+
+            this.events.trigger('resize');
         },
 
         setProfile: function(profile, profiles) {
@@ -101,11 +115,21 @@ define([
         },
 
         width: function() {
-            return parseInt(this.container.style("width"), 10);
+            return (this.container) ? parseInt(this.container.style("width"), 10) : 0;
         },
 
         height: function() {
-            return parseInt(this.container.style("height"), 10);
+            return (this.container) ? parseInt(this.container.style("height"), 10) : 0;
+        },
+
+        on: function(name, func) {
+            this.events.bind(name, func);
+        },
+
+        destroy: function() {
+            this.events = new Events();
+            this.container = null;
+            this.profiles = {};
         }
 
     });

@@ -1,86 +1,182 @@
 define([
+    'underscore',
+    'base/utils',
     'base/class',
-    'base/events',
-    'base/data'
-], function(Class, Events, DataManager) {
+    'base/intervals',
+    'base/events'
+], function(_, utils, Class, Intervals, Events) {
 
     var model = Class.extend({
 
-        init: function(values) {
+        //receives values and, optionally, external intervals and events
+        init: function(values, intervals, events) {
+            this._id = _.uniqueId("m"); //model unique id
             this._data = {};
+            this.intervals = (this.intervals || intervals) || new Intervals();
+            this.events = events || new Events();
+
             if (values) {
                 this.set(values, true);
             }
-        },
 
-        get: function(attr) {
-            return (attr) ? this._data[attr] : this._data;
-        },
+            //watch certain events for each submodel
+            //horrible hotfix only for non tool-models
+            //todo: improve this
 
-        //set an attribute for the model, or an entire object
-        set: function(attr, value, silent) {
-
-            if (typeof attr !== 'object') {
-                this._data[attr] = _.clone(value);
-                if (!silent) Events.trigger("change:"+attr);
-            } else {
-                silent = value;
-                for (var att in attr) {
-                    this._data[att] = _.clone(attr[att]);
-                    if (!silent) Events.trigger("change:"+att);
+            if (this._id.indexOf("tm") === -1) {
+                var _this = this,
+                    watch_events = ["change", "load:start", "load:end", "load:error"];
+                submodels = this.get();
+                for (var i in submodels) {
+                    var submodel = submodels[i];
+                    if (submodel.on) {
+                        for (var i = 0; i < watch_events.length; i++) {
+                            var evt = watch_events[i];
+                            submodel.on(evt, function(evt, values) {
+                                _this.trigger(evt, values);
+                            });
+                        };
+                    }
                 }
             }
+        },
+
+        /* ==========================
+         * Getters and Setters
+         * ==========================
+         */
+
+        //get accepts multiple levels. e.g: get("model.object.property")
+        get: function(attr) {
+            //optimize for common cases
+            var response;
+            if (!attr) response = this._data;
+            else if (attr.indexOf('.') === -1) response = this._data[attr];
+            else {
+                //search deeper levels
+                var attrs = attr.split('.'),
+                    current = this;
+                while (attrs.length) {
+                    var curr_attr = attrs.shift();
+                    if (typeof current.get === 'function') {
+                        current = current.get(curr_attr);
+                    } else {
+                        current = current[curr_attr];
+                    }
+                }
+                return current;
+            }
+            return response
+        },
+
+        // set an attribute for the model, or an entire object
+        // accepts multiple levels. e.g: set("model.object.property", 3)
+        set: function(attr, val, silent, block_validation) {
+
+            var events = [];
+            if (typeof attr !== 'object') {
+                //if its a string, check for multiple levels
+                if (attr.indexOf('.') === -1) {
+                    this._data[attr] = _.clone(val);
+                    events.push("change:" + attr);
+                } else {
+                    //todo: improve recursion
+                    var attrs = attr.split('.'),
+                        current = this.get(attrs.shift());
+                    while (attrs.length > 1) {
+                        if (typeof current.set === 'function') {
+                            current.set(attrs, val, silent);
+                        } else {
+                            current = current[attrs.shift()];
+                        }
+                    }
+                    attr = attrs.shift();
+                    if (typeof current.set === 'function') {
+                        current.set(attr, val, silent);
+                    } else {
+                        current[attr] = _.clone(val);
+                    }
+                }
+            } else {
+                block_validation = silent;
+                silent = val;
+                for (var att in attr) {
+                    var val = attr[att];
+                    this._data[att] = _.clone(val);
+                    events.push("change:" + att);
+                }
+            }
+            events.push("change");
+
+            //if we don't block validation, validate
+            if (!block_validation) this.validate(silent);
+            //trigger change if not silent
+            if (!silent) this.events.trigger(events, this._data);
         },
 
         reset: function(values, silent) {
-            this.data = {};
+            this.clear();
             this.set(values, silent);
         },
 
-        bind: function(name, func) {
-            Events.bind(name, func);
-        },
-
-        trigger: function(name) {
-            Events.trigger(name);
-        },
-
-        //improve source setup;
-        setSource: function(data_source) {
-            datapath = data_source ? data_source.path : "";
-            this._dataManager = new DataManager(datapath);
-        },
-
-        load: function(query, language, events) {
-            var _this = this,
-                defer = $.Deferred(),
-                promise = this._dataManager.load(query, language, events);
-
-            //when request is completed, set it
-            $.when(promise).done(function() {
-                _this.set(_this._dataManager.get());
-                defer.resolve();
-            });
-
-            return defer;
-        },
-
-        //model is able to interpolate values
-        interpolate: function(value1, value2, fraction) {
-            return value1 + ((value2 - value1) * fraction);
-        },
-
-        interpolateSet: function(set, step) {
-            var result = [];
-            for(var i=0, size = set.length; i<(size-1); i++) {
-                var j = i+1;
-                for (var k=0; k<1; k+=step) {
-                    result.push(this.interpolate(set[i], set[j], k));
+        clear: function() {
+            var submodels = this.get();
+            for (var i in submodels) {
+                var submodel = submodels[i];
+                if (submodel.clear) {
+                    submodel.clear();
                 }
             }
-            result.push(set[set.length-1]); //add the last element
-            return result;
+            this.events.unbindAll();
+            this.intervals.clearAllIntervals();
+            this._data = {};
+        },
+
+        getObject: function() {
+            var obj = {};
+            for (var i in this._data) {
+                //if it's a submodel
+                if (this._data[i] && typeof this._data[i].getObject === 'function') {
+                    obj[i] = this._data[i].getObject();
+                } else {
+                    obj[i] = this._data[i];
+                }
+            }
+            return obj;
+        },
+
+        /* ==========================
+         * Model loading method
+         * ==========================
+         */
+
+        //TODO: improve the whole loading logic. It should load, then render
+        load: function() {
+            return true; // by default it just returns true
+        },
+
+        /* ==========================
+         * Validation
+         * ==========================
+         */
+
+        validate: function() {
+            // placeholder for validate function
+        },
+
+        /* ==========================
+         * Event binding methods
+         * ==========================
+         */
+
+        on: function(name, func) {
+            this.events.bind(name, func);
+        },
+
+        trigger: function(name, val) {
+            this.events.trigger(name, val);
         }
+
     });
 
     return model;

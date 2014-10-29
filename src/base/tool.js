@@ -2,109 +2,77 @@ define([
     'd3',
     'underscore',
     'base/component',
-    'base/tool-model',
-    'base/layout'
-], function(d3, _, Component, ToolModel, Layout) {
+    'base/layout',
+    'models/tool-model'
+], function(d3, _, Component, Layout, ToolModel) {
 
     var class_loading_data = "vzb-loading-data";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
     var Tool = Component.extend({
-        init: function(parent, options) {
-            // Define default template 
+        init: function(options) {
+            //tool-specific values
+            this._id = _.uniqueId("t");
             this.template = this.template || "tools/tool";
-            this.profiles = this.profiles || {
-                'default': {
-                    timeslider: true,
-                    buttonlist: true,
-                    title: true
-                }
-            };
-
-            this.model = new ToolModel(options.data);
-            this.model.setState(options.state, true);
-
-            //set language parameters
-            this.model.set("language", options.language);
-            this.model.set("ui_strings", options.ui_strings);
-
             this.layout = new Layout();
 
+            /*
+             * Building Tool Model
+             */
+            options.validate = options.validate || this.toolModelValidation;
+            options.query = options.query || this.getQuery;
+            this.model = new ToolModel(options);
 
-            // Same constructor as widgets
-            this._super(parent, options);
+            /*
+             * Parent Constructor (this = root parent)
+             */
+            this._super(options, this);
 
-        },
-
-        //Tools renders just like the widgets, but they update the layout
-        render: function() {
+            /*
+             * Specific binding for tools
+             */
             var _this = this;
-            return this._super(function() {
-                var defer = $.Deferred();
+            this.model.on("load:start", function() {
+                _this.beforeLoading();
+            });
+            this.model.on("load:end", function() {
+                _this.afterLoading();
+            });
 
-                var promise = _this.loadData();
-
-                promise.done(function() {
-
-                    _this.layout.setContainer(_this.element);
-                    _this.layout.setProfile(_this.profiles);
-                    _this.layout.update();
-                    //binds resize event to update
-                    _this.events.bind('resize', function() {
-                        _this.layout.update();
-                    });
-
-                    // call update of each component when the state changes
-                    // or when the language changes
-                    _this.model.bind(['change:state', 'change:language'], function(state) {
+            if (this.model) {
+                var _this = this;
+                this.model.on("change", function() {
+                    if (_this._ready) {
                         _this.update();
-                    });
-
-
-                    defer.resolve();
-                });
-
-                return defer;
-
-            });
-        },
-
-        bind: function(evt, func) {
-            this.events.bind(evt, func);
-            return this;
-        },
-
-        trigger: function(evt) {
-            var args = Array.prototype.slice.call(arguments).slice(1);
-            this.events.trigger(evt, args);
-            return this;
-        },
-
-        //updating the tool is updating the components
-        update: function() {
-            var promise = this.loadData(),
-                _this = this;
-
-            promise.done(function() {
-                for (var i in _this.components) {
-                    if (_this.components.hasOwnProperty(i)) {
-                        _this.components[i].update();
                     }
-                }
-            });
+                });
+                this.model.on("reloaded", function() {
+                    if (_this._ready) {
+                        _this.translateStrings();
+                    }
+                });
+            }
         },
 
-        //TODO: expand for other options 
-        setOptions: function(options) {
-            this.setState(options.state);
-            if (options.language) {
-                this.model.set("language", options.language);
-            }
-            if (options.ui_strings) {
-                this.model.set("ui_strings", _.extend(this.model.get("ui_strings"), options.ui_strings));
-            }
+        /* ==========================
+         * Set Options from outside
+         * ==========================
+         */
 
+        setOptions: function(options, overwrite, silent) {
+            if (overwrite) {
+                this.model.reset(options, silent);
+                this.reassignModel();
+            } else {
+                this.model.propagate(options, silent);
+            }
+            this.update();
         },
+
+        /* ==========================
+         * Data loading methods
+         * ==========================
+         */
 
         // is executed before loading actaul data
         beforeLoading: function() {
@@ -116,20 +84,6 @@ define([
             this.element.classed(class_loading_data, false);
         },
 
-        loadData: function() {
-            var _this = this,
-                events = {
-                    before: function() {
-                        _this.beforeLoading();
-                    },
-                    success: function() {
-                        _this.afterLoading();
-                    }
-                };
-
-            return this.load(events);
-        },
-
         // Load must be implemented here
         load: function(events) {
 
@@ -139,21 +93,36 @@ define([
             //get info from options
             var language = this.model.get("language"),
                 query = this.getQuery();
-                
-            //load data and resolve the defer when it's done
-            $.when(
-                this.model.data.load(query, language, events)
-            ).done(function() {
-                defer.resolve();
-            });
+
+            if (query) {
+                //load data and resolve the defer when it's done
+                $.when(
+                    this.model.data.load(query, language, events)
+                ).done(function() {
+                    defer.resolve();
+                });
+            } else {
+                defer = true;
+            }
 
             return defer;
+        },
+
+        /* ==========================
+         * Validation and query
+         * ==========================
+         */
+
+        toolModelValidation: function() {
+            //placeholder for tool validation methos
+        },
+
+        getQuery: function() {
+            return false; //return tool queries
         }
+
+
     });
-
-
-
-
 
     return Tool;
 });

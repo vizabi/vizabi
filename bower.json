@@ -17,8 +17,7 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "d3": "~3.4.6",
     "jed": "~0.5.4",
@@ -28,6 +27,7 @@
     "jqueryui": "~1.10.4",
     "requirejs": "~2.1.11",
     "underscore": "~1.6.0",
-    "almond": "~0.2.9"
+    "almond": "~0.2.9",
+    "lodash": "~2.4.1"
   }
 }

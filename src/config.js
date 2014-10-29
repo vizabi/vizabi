@@ -7,11 +7,14 @@ require.config({
         base: 'base',
         tools: 'tools',
         components: 'components',
-        readers: 'data-reader',
+        models: 'models',
+        readers: 'readers',
 
         d3: '../lib/d3/d3',
         jquery: '../lib/jquery/dist/jquery',
         underscore: '../lib/underscore/underscore',
+        //todo: replace underscore with lodash
+        lodash: '../lib/lodash/dist/lodash',
 
         text: '../lib/requirejs-text/text',
         smartpicker: '../lib/smart-picker/dist/smart-picker',

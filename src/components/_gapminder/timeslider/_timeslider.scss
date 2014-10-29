@@ -1,24 +1,123 @@
-#timeslider {
+$vzb-ts-btn-area: 50px;
+$vzb-ts-btn-width: 40px;
+$vzb-ts-btn-bg: $vzb-color-primary;
+$vzb-ts-btn-bg-active: #2F7687;
+$vzb-ts-line-color: #A4CBD4;
+$vzb-ts-handle-color: $vzb-color-primary;
 
-	$buttonAreaWidth: 50px;
+.vzb-timeslider {
 
-	@include box-sizing(border-box);
-	@include absoluteAll;
-	overflow: visible;
+    .vzb-ts-btns {
+        @include absolute(0px, auto, 0px, 5px);
+        width: $vzb-ts-btn-area;
+        .vzb-ts-btn {
+            @include box-sizing(border-box);
+            @include border-radius($vzb-ts-btn-width);
+            @include font-size(18px);
+            width: $vzb-ts-btn-width;
+            height: $vzb-ts-btn-width;
+            background: $vzb-ts-btn-bg;
+            display: block;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+            &.vzb-ts-btn-pause {
+                display: none;
+                padding: 10px;
+            }
+            &:active, &:focus {
+                outline: none;
+                background: $vzb-ts-btn-bg-active;
+            }
+        }
+    }
+    .vzb-ts-slider-wrapper {
+        @include absolute(5px, 9px, 5px, $vzb-ts-btn-area+5);
+        margin: 17px 7px;
+        // Slider
+        .vzb-ts-slider {
+            -webkit-appearance: none;
+            @include border-radius(2px);
+            background: $vzb-ts-line-color;
+            height: 5px;
+            width: 100%;
+            outline: none !important;
+            border: 0;
+            // Slider Handle
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                cursor: pointer;
+                @include border-radius(7px);
+                @include transition(left, 0.1s, ease-in-out);
+                background-color: $vzb-ts-handle-color;
+                border: 4px solid $vzb-color-white;
+                top: -16px;
+                width: 16px;
+                height: 30px;
+            }
+            &::-moz-range-thumb {
+                cursor: pointer;
+                @include border-radius(7px);
+                @include transition(left, 0.1s, ease-in-out);
+                background: $vzb-ts-handle-color;
+                border: 4px solid $vzb-color-white;
+                top: -16px;
+                width: 8px;
+                height: 24px;
+            }
+        }
+        // Tooltip Tag
+        .vzb-ts-slider-value {
+            @include absolute(-20px);
+            @include font-size(13px);
+            width: 100px;
+            margin-left: -50px;
+            color: $vzb-ts-handle-color;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+        &:active .vzb-ts-slider-value {
+            display: block;
+        }
+        // Firefox Overrides
+        ::-moz-range-track {
+            border: 0;
+        }
+        input::-moz-focus-inner {
+            border: 0;
+        }
+    }
+    //show pause instead if it's playing
+    &.vzb-playing {
+        .vzb-ts-btns {
+            .vzb-ts-btn-play {
+                @extend .vzb-hidden;
+            }
+            .vzb-ts-btn-pause {
+                display: block;
+            }
+            &:hover .vzb-ts-btn-pause-tooltip {
+                opacity: 1;
+            }
+            &:hover .vzb-ts-btn-play-tooltip {
+                opacity: 0;
+            }
+        }
+        .vzb-ts-slider-value {
+            display: block;
+        }
+    }
 
-	#timeslider-button {
-		@include absolute(0px, auto, 0px, 5px);
-		width: $buttonAreaWidth;
-
-		//import specific play button styles
-		@import'../../../components/_gapminder/timeslider-play-button/timeslider-play-button';
-	}
-
-	#timeslider-slider-wrapper {
-		@include absolute(5px, 9px, 5px, $buttonAreaWidth+5);
-		
-		//import specific slider styles
-	    @import'../../../components/_gapminder/timeslider-slider/timeslider-slider';
-	}
-
+    &.vzb-ts-hide-play-button {
+        .vzb-ts-btns {
+            @extend .vzb-hidden;
+        }
+        .vzb-ts-slider-wrapper {
+            @include absolute(5px, 9px, 5px, 5px);
+        }
+    }
 }

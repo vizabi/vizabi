@@ -4,55 +4,71 @@ define([
 
     var barChart = Tool.extend({
         init: function(parent, options) {
-            
+
             this.name = 'bar-chart';
             this.template = "tools/_examples/bar-chart/bar-chart";
-            this.placeholder = options.placeholder;
 
-            this.state = options.state;
-
-
-            //add components
-            this.addComponent('_gapminder/header', {
+            //instantiating components
+            this.components = [{
+                component: '_gapminder/header',
                 placeholder: '.vzb-tool-title'
-            });
-            this.addComponent('_examples/bar-chart', {
-                placeholder: '.vzb-tool-viz'
-            });
-            this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vzb-tool-timeslider'
-            });
-            this.addComponent('_gapminder/buttonlist', {
-                placeholder: '.vzb-tool-buttonlist',
-                buttons: [{
-                            id: "geo",
-                            title: "Country",
-                            icon: "globe",
-
-                        }],
-                data: options.data
-            });
+            }, {
+                component: '_examples/bar-chart',
+                placeholder: '.vzb-tool-viz', //div to render
+                model: ["show", "data", "time"]
+            }, {
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-tool-timeslider', //div to render
+                model: ["time"]
+            }, {
+                component: '_gapminder/buttonlist',
+                placeholder: '.vzb-tool-buttonlist'
+            }];
 
             this._super(parent, options);
         },
 
-        //TODO: Check mapping options
+        toolModelValidation: function(model) {
+            var changes = false;
 
-        getQuery: function() {
+            if (!model.get("show.time_start") || model.get("time.start") != model.get("show.time_start")) {
+                model.set("show.time_start", model.get("time.start"));
+                changes = model;
+            }
+            if (!model.get("show.time_end") || model.get("time.end") != model.get("show.time_end")) {
+                model.set("show.time_end", model.get("time.end"));
+                changes = model;
+            }
+            if (model.get("show.time_start") < model.get("data.time_start")) {
+                model.set("show.time_start", model.get("data.time_start"));
+                changes = model;
+            }
+            if (model.get("show.time_end") > model.get("data.time_end")) {
+                model.set("show.time_end", model.get("data.time_end"));
+                changes = model;
+            }
+            if (model.get("time.start") < model.get("show.time_start")) {
+                model.set("time.start", model.get("show.time_start"));
+                changes = model;
+            }
+            if (model.get("time.end") > model.get("show.time_end")) {
+                model.set("time.end", model.get("show.time_end"));
+                changes = model;
+            }
+            return changes;
+        },
+
+        getQuery: function(model) {
             //build query with state info
             var query = [{
-                    select: [
-                        'geo',
-                        'time',
-                        'geo.name',
-                        'geo.category', 
-                        this.model.getState("indicator")
-                    ],
-                    where: {
-                        geo: this.model.getState("show").geo,
-                        'geo.category': this.model.getState("show")['geo.category'],
-                        time: this.model.getState("timeRange")
-                    }}];
+                "from": "data",
+                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", model.get("show.indicator")],
+                "where": {
+                    "geo": model.get("show.geo"),
+                    "geo.category": model.get("show.geo_category"),
+                    "time": [model.get("show.time_start") + "-" + model.get("show.time_end")]
+                }
+            }];
 
             return query;
         }

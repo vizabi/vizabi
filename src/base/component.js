@@ -11,72 +11,95 @@ define([
     var class_loading = "vzb-loading";
 
     var Component = Class.extend({
-        init: function(parent, options) {
+        init: function(options, parent) {
 
             //properties in this component should be the ones in options,
             //unless they were already set by a child class
             _.extend(this, options, this);
 
+            this._id = this._id || _.uniqueId("c");
+            this._rendered = false;
+            this._ready = false;
+
             //default values,
             //in case there's none
+            this.placeholder = this.placeholder || options.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
             };
             this.components = this.components || [];
+            this.components_config = this.components;
             this.profiles = this.profiles || {};
             this.parent = parent;
-            this.events = Events;
+            this.events = new Events();
+            this.frameRate = 10;
+
         },
 
-        //TODO: change the scary name! :D bootstrap is one good one
-        render: function(callback) {
+        //by default, it just considers data loaded
+        loadData: function() {
+            return true;
+        },
+
+        //render
+        render: function() {
             var defer = $.Deferred();
             var _this = this;
 
             // First, we load the template
             var promise = this.loadTemplate();
 
-            // After the template is loaded, check if postRender exists
+            // After the template is loaded, its loading data
             promise.then(function() {
+                    // attempt to setup layout
+                    if (_this.layout) {
+                        _this.layout.setContainer(_this.element);
+                        _this.layout.setProfile(_this.profiles);
+                        _this.layout.resize();
+                        _this.layout.on('resize', function() {
+                            _this.resize();
+                        });
+                    }
+                    // add css loading class to hide elements
+                    if (_this.element) {
+                        _this.element.classed(class_loading, true);
+                    }
 
-                // add css loading class to hide elements
-                if (_this.element) {
-                    _this.element.classed(class_loading, true);
-                }
+                    _this._rendered = true; //template is in place
 
-                // attempt to execute postRender
-                if (typeof callback === 'function') {
-                    return callback();
-                }
-
-            })
-            // After postRender, resize and load components
-            .then(function() {
-                return _this.loadComponents();
-            })
-            // If there is no callback
-            .then(function() {
-                return _this.execute(_this.postRender);
-            })
-            // After loading components, render them
-            .then(function() {
-                //TODO: Chance of refactoring
-                //Every widget binds its resize function to the resize event
-                _this.resize();
-                _this.events.bind('resize', function() {
-                    _this.resize();
+                })
+                // After load components
+                .then(function() {
+                    return _this.loadComponents();
+                })
+                //execute post render
+                .then(function() {
+                    return _this.execute(_this.postRender);
+                })
+                // After loading components, render them
+                .then(function() {
+                    //TODO: Chance of refactoring
+                    //Every widget binds its resize function to the resize event
+                    return _this.renderComponents();
+                })
+                // After that, attempt to load data
+                .then(function() {
+                    //attempt to load data
+                    if (_this.model && typeof _this.model.load === 'function') {
+                        return _this.model.load();
+                    }
+                })
+                // After rendering the components, resolve the defer
+                .done(function() {
+                    //not loading anytmore, remove class
+                    if (_this.element) {
+                        _this.element.classed(class_loading, false);
+                    }
+                    _this.update();
+                    _this._ready = true; //everything is ready
+                    _this.trigger('ready');
+                    defer.resolve();
                 });
-                return _this.renderComponents();
-            })
-            // After rendering the components, resolve the defer
-            .done(function() {
-                //not loading anytmore, remove class
-                if (_this.element) {
-                    _this.element.classed(class_loading, false);
-                }
-
-                defer.resolve();
-            });
 
             return defer;
         },
@@ -111,6 +134,8 @@ define([
                 promises = [],
                 components = this.components;
 
+            //save initial config
+            this.components_config = _.map(components, _.clone);
             //use the same name for the initialized collection           
             this.components = {};
 
@@ -129,27 +154,27 @@ define([
         },
 
         loadComponent: function(component) {
-            var _this = this,
-                defer = $.Deferred(),
-                path = component.path,
-                name = component.name,
-                id = name, //_.uniqueId(name),
-                component_path = "components/" + path + "/" + name,
-                component_model = this.model;
 
-            //component model mapping
-            if (component.model) {
-                if (_.isFunction(component.model)) {
-                    component_model = new Model(component.model());
-                } else {
-                    component_model = new Model(component.model);
-                }
-            } else if (this.getModelMapping(name)) {
-                component_model = new Model(this.getModelMapping(name));
+            if (!component.component || !component.placeholder) {
+                console.log("Error loading component");
+                return true;
             }
 
+            //name and path
+            var _this = this,
+                defer = $.Deferred(),
+                path = component.component,
+                name_token = path.split("/"),
+                name = name_token[name_token.length - 1],
+                id = component.placeholder,
+                component_path = "components/" + path + "/" + name,
+                component_model;
+
+            //component model mapping
+            component_model = this._modelMapping(component.model);
+
             //component options
-            var options = _.extend(component.options, {
+            var options = _.extend(component, {
                 name: name,
                 model: component_model
             });
@@ -157,7 +182,7 @@ define([
             // Loads the file we need
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
-                _this.components[id] = new subcomponent(_this, options);
+                _this.components[id] = new subcomponent(options, _this);
                 defer.resolve();
             });
 
@@ -185,9 +210,11 @@ define([
             var _this = this;
             var defer = $.Deferred();
 
+            //todo: improve t function getter + generalize this
             this.template_data = _.extend(this.template_data, {
-                t: this.getTFunction()
-            })
+                t: this.getTranslationFunction(true)
+            });
+
 
             if (this.template) {
                 //require the template file
@@ -228,37 +255,99 @@ define([
             this.model.setState(state);
         },
 
+        postRender: function() {},
+
         // Component-level update updates the sub-components
         update: function() {
-            for (var i in this.components) {
-                if (this.components.hasOwnProperty(i)) {
-                    this.components[i].update();
+            if(this._blockUpdate) return;
+            var _this = this;
+            this._update = this._update || _.throttle(function() {
+                for (var i in _this.components) {
+                    if (_this.components.hasOwnProperty(i)) {
+                        _this.components[i].update();
+                    }
+                }
+            }, this.frameRate);
+            this._update();
+        },
+
+        // Component-level update updates the sub-components
+        resize: function() {
+            if(this._blockResize) return;
+            var _this = this;
+            this._resize = this._resize || _.throttle(function() {
+                for (var i in _this.components) {
+                    if (_this.components.hasOwnProperty(i)) {
+                        _this.components[i].resize();
+                    }
+                }
+            }, this.frameRate);
+            this._resize();
+        },
+
+        blockUpdate: function(val) {
+            if(typeof val === 'undefined') val = true;
+            this._blockUpdate = val;
+        },
+
+        blockResize: function(val) {
+            if(typeof val === 'undefined') val = true;
+            this._blockResize = val;
+        },
+
+        destroy: function() {
+            if(this.model) this.model.clear();
+            if(this.layout) this.layout.destroy();
+            if(this.events) this.events.unbindAll();
+            if(this.intervals) this.intervals.clearAllIntervals();
+            if(this.components) this.components = [];
+            if(this.placeholder) this.placeholder.html('');
+        },
+
+        reassignModel: function() {
+            //only reassign if it's loaded already
+            if (_.isArray(this.components)) return;
+
+            var _this = this;
+            //for each subcomponent, reassign model
+            for (var i in this.components_config) {
+                var c = this.components_config[i],
+                    id = c.placeholder, //placeholder is used as id
+                    model = this._modelMapping(c.model);
+
+                if (model) {
+                    this.components[id].model = model;
+                    this.components[id].reassignModel();
                 }
             }
         },
 
-        resize: function() {
-            //what to do when page is resized
-        },
-
-        postRender: function() {
-
-        },
-
-        getModelMapping: function(component) {
-            return this.modelMapping()[component];
-        },
-
         //maps the current model to subcomponents
-        modelMapping: function() {
-            return {};
-        },
+        //model_config may be array or string
+        _modelMapping: function(model_config) {
 
-        getInstance: function(manager) {
-            return this.parent.getInstance(manager);
+            if (_.isUndefined(model_config)) {
+                return;
+            }
+            if (_.isArray(model_config) && model_config.length > 1) {
+                var values = {};
+                for (var i = 0, size = model_config.length; i < size; i++) {
+                    var model_name = model_config[i];
+                    values[model_name] = this.model.get(model_name);
+                }
+                return values;
+            } else if (_.isArray(model_config) && model_config.length == 1) {
+                return this.model.get(model_config[0]);
+            } else if (_.isString(model_config) && model_config.length > 0) {
+                return this.model.get(model_config);
+            } else {
+                return new Model({});
+            }
+
         },
 
         getLayoutProfile: function() {
+            //get profile from parent if layout is not available
             if (this.layout) {
                 return this.layout.currentProfile();
             } else {
@@ -278,29 +367,55 @@ define([
             });
         },
 
-        getUIString: function(string) {
-            var lang = this.model.get("language");
-            var ui_strings = this.model.get("ui_strings");
+        /*
+         * Translation function for templates
+         */
+        getTranslationFunction: function(wrap) {
+            var t_func;
+            try {
+                t_func = this.model.get("language").getTFunction();
+            } catch (err) {
+                if (this.parent && this.parent != this) {
+                    t_func = this.parent.getTranslationFunction();
+                }
+            }
 
-            if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
-                return ui_strings[lang][string];
-            } else {
-                return string;
+            if(!t_func) {
+                t_func = function(s) { return s; };
+            }
+            if(wrap) return this._translatedStringFunction(t_func);
+            else return t_func;
+        },
+
+        _translatedStringFunction: function(translation_function) {
+            return function(string) {
+                var translated = translation_function(string);
+                return '<span data-vzb-translate="'+string+'">'+translated+'</span>';
             }
         },
 
-        getTFunction: function() {
-            var lang = this.model.get("language");
-            var ui_strings = this.model.get("ui_strings");
-
-            return function(string) {
-                if (ui_strings && ui_strings.hasOwnProperty(lang) && ui_strings[lang].hasOwnProperty(string)) {
-                    return ui_strings[lang][string];
-                } else {
-                    return string;
-                }
+        //todo: improve translation of strings
+        translateStrings: function() {
+            var t = this.getTranslationFunction();
+            var strings = this.placeholder.selectAll('[data-vzb-translate]');
+            for(var i=0; i<strings[0].length; i++) {
+                var string = strings[0][i];
+                var original = string.getAttribute("data-vzb-translate");
+                string.innerHTML = t(original);
             }
-        }
+        },
+
+        /*
+         * Event binding methods
+         */
+
+        on: function(evt, func) {
+            this.events.bind(evt, func);
+        },
+
+        trigger: function(evt, values) {
+            this.events.trigger(evt, values);
+        },
 
     });
 

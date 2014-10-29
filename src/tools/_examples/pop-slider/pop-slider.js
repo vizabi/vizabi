@@ -1,49 +1,67 @@
 define([
+    'underscore',
     'base/tool'
-], function(Tool) {
+], function(_, Tool) {
 
-    var lineChart = Tool.extend({
-        init: function(parent, options) {
-            
+    var popSlider = Tool.extend({
+        init: function(options) {
+
             this.name = 'pop-slider';
             this.template = "tools/_examples/pop-slider/pop-slider";
-            this.placeholder = options.placeholder;
 
-            this.state = options.state;
+            //instantiating components
+            this.components = [{
+                component: '_examples/year-display',
+                placeholder: '.vzb-tool-year', //div to render
+                model: ["time"]
+            }, {
+                component: '_examples/indicator-display',
+                placeholder: '.vzb-tool-display', //div to render
+                model: ["show", "data", "time"]
+            }, {
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-tool-timeslider', //div to render
+                model: ["time"]
+            }];
 
-            this.addComponent('_examples/year-display', {
-                placeholder: '.vzb-tool-year'
-            });
-
-            this.addComponent('_examples/indicator-display', {
-                placeholder: '.vzb-tool-display'
-            });
-
-            this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vzb-tool-timeslider'
-            });
-
-            this._super(parent, options);
+            this._super(options);
         },
 
-        getQuery: function() {
-            var query = [{
-                    select: [
-                        'geo',
-                        'time',
-                        'geo.name',
-                        this.model.getState("indicator")
-                    ],
-                    where: {
-                        geo: this.model.getState("show").geo,
-                        'geo.category': this.model.getState("show")['geo.category'],
-                        time: this.model.getState("timeRange")
-                    }}];
+        toolModelValidation: function(model) {
+            var changes = false;
+            if (model.get("show.time_start") < model.get("data.time_start")) {
+                model.set("show.time_start", model.get("data.time_start"));
+                changes = model;
+            }
+            if (model.get("show.time_end") > model.get("data.time_end")) {
+                model.set("show.time_end", model.get("data.time_end"));
+                changes = model;
+            }
+            if (model.get("time.start") < model.get("show.time_start")) {
+                model.set("time.start", model.get("show.time_start"));
+                changes = model;
+            }
+            if (model.get("time.end") > model.get("show.time_end")) {
+                model.set("time.end", model.get("show.time_end"));
+                changes = model;
+            }
+            return changes;
+        },
 
-            return query;
+        getQuery: function(toolModel) {
+            return [{
+                "from": "data",
+                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", toolModel.get("show.indicator")],
+                "where": {
+                    "geo": toolModel.get("show.geo"),
+                    "geo.category": toolModel.get("show.geo_category"),
+                    "time": [toolModel.get("show.time_start") + "-" + toolModel.get("show.time_end")]
+                }
+            }];
         }
+
     });
 
 
-    return lineChart;
+    return popSlider;
 });
