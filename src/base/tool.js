@@ -46,6 +46,11 @@ define([
                         _this.update();
                     }
                 });
+                this.model.on("reloaded", function() {
+                    if (_this._ready) {
+                        _this.translateStrings();
+                    }
+                });
             }
         },
 

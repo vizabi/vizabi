@@ -212,7 +212,7 @@ define([
 
             //todo: improve t function getter + generalize this
             this.template_data = _.extend(this.template_data, {
-                t: this.getTranslationFunction()
+                t: this.getTranslationFunction(true)
             });
 
 
@@ -370,18 +370,39 @@ define([
         /*
          * Translation function for templates
          */
-        getTranslationFunction: function() {
-            var func = function(a) {
-                return a
-            };
+        getTranslationFunction: function(wrap) {
+            var t_func;
             try {
-                func = this.model.get("language").getTFunction();
+                t_func = this.model.get("language").getTFunction();
             } catch (err) {
                 if (this.parent && this.parent != this) {
-                    func = this.parent.getTranslationFunction();
+                    t_func = this.parent.getTranslationFunction();
                 }
             }
-            return func;
+
+            if(!t_func) {
+                t_func = function(s) { return s; };
+            }
+            if(wrap) return this._translatedStringFunction(t_func);
+            else return t_func;
+        },
+
+        _translatedStringFunction: function(translation_function) {
+            return function(string) {
+                var translated = translation_function(string);
+                return '<span data-vzb-translate="'+string+'">'+translated+'</span>';
+            }
+        },
+
+        //todo: improve translation of strings
+        translateStrings: function() {
+            var t = this.getTranslationFunction();
+            var strings = this.placeholder.selectAll('[data-vzb-translate]');
+            for(var i=0; i<strings[0].length; i++) {
+                var string = strings[0][i];
+                var original = string.getAttribute("data-vzb-translate");
+                string.innerHTML = t(original);
+            }
         },
 
         /*
