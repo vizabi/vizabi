@@ -45,13 +45,10 @@ define([
         validate: function(silent) {
             //don't cross validate everything
             var atomic = true;
-            //end has to be bigger than start
+            //end has to be >= than start
             if(this.get('end') < this.get('start')) {
-                var temp = this.get('start');
-                this.set('start', this.get('end'), silent, atomic);
-                this.set('end', temp, silent, atomic);
+                this.set('end', this.get('start'), silent, atomic);
             }
-
             //value has to be between start and end
             if(this.get('value') < this.get('start')) {
                 this.set('value', this.get('start'), silent, atomic);
