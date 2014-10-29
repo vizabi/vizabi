@@ -1,38 +1,34 @@
 //TODO: Rename postrender & resize 
 define([
     'd3',
-    'underscore',
+    'lodash',
     'base/component'
 ], function(d3, _, Component) {
 
-    var bar_radius = 5,
-        width,
-        height,
-        margin,
-        xAxis, yAxis,
-        xAxisEl, yAxisEl,
-        yTitleEl,
-        x, y,
-        graph,
-        bars,
-        year;
-
     var BarChart = Component.extend({
-        init: function(context, options) {
+
+        /*
+         * INIT:
+         * Executed once, before template loading
+         */
+        init: function(options, context) {
             this.name = 'bar-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this.tool = context;
-            this._super(context, options);
+            this._super(options, context);
         },
 
-        // After loading template, select HTML elements
+        /*
+         * POSTRENDER:
+         * Executed after template is loaded
+         * Ideally, it contains instantiations related to template
+         */
         postRender: function() {
 
-            graph = this.element.select('.vzb-bc-graph');
-            yAxisEl = graph.select('.vzb-bc-axis-y');
-            xAxisEl = graph.select('.vzb-bc-axis-x');
-            yTitleEl = graph.select('.vzb-bc-axis-y-title');
-            bars = graph.select('.vzb-bc-bars');
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
+            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+            this.bars = this.graph.select('.vzb-bc-bars');
 
             this.update();
         },
@@ -40,56 +36,57 @@ define([
 
         //TODO: Optimize data binding
         update: function() {
-            var indicator = this.model.getState("indicator"),
-                data = this.model.getData()[0],
-                year = this.model.getState("time"),
-                categories = this.model.getState("show")["geo.categories"],
-                data_curr_year = data.filter(function(row) {
-                    return (row.time == year);
+            var indicator = this.model.show.get("indicator"),
+                data = _.cloneDeep(this.model.data.get("data")),
+                time = this.model.time.get("value"),
+                categories = this.model.show.get("geo_categories"),
+
+                data_curr_year = data.filter(function(d) {
+                    return (d.time == time);
                 }),
+
                 minValue = d3.min(data, function(d) {
                     return +d[indicator];
                 }),
                 maxValue = d3.max(data, function(d) {
                     return +d[indicator];
                 }),
-                scale = this.model.getState("scale"),
-                minY = this.model.getState("min") || ((scale == "log") ? minValue : 0),
-                maxY = this.model.getState("max") || (maxValue + maxValue / 10),
-                unit = this.model.getState("unit") || 1,
+                scale = this.model.show.get("scale"),
+                minY = this.model.show.get("min") || ((scale == "log") ? minValue : 0),
+                maxY = this.model.show.get("max") || (maxValue + maxValue / 10),
+                unit = this.model.show.get("unit") || 1,
                 indicator_name = indicator;
-            // Create X axis scale, X axis function and call it on element
-            x = d3.scale.ordinal();
 
-            x.domain(_.map(data, function(d, i) {
+            // Create X axis scale, X axis function and call it on element
+            this.x = d3.scale.ordinal();
+
+            this.x.domain(_.map(data, function(d, i) {
                 return d["geo.name"];
             }));
 
-            //TODO: Read from data manager
-            xAxis = d3.svg.axis().scale(x).orient("bottom")
+            this.xAxis = d3.svg.axis().scale(this.x).orient("bottom")
                 .tickFormat(function(d) {
                     return d;
                 });
 
             
-            // Create Y axis scale, Y axis function and call it on element
-            y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
-            y.domain([minY, maxY])
-                .range([height, 0]);
+            this.y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
+            this.y.domain([minY, maxY])
+                .range([this.height, 0]);
 
-            yAxis = d3.svg.axis().scale(y).orient("left")
+            this.yAxis = d3.svg.axis().scale(this.y).orient("left")
                 .tickFormat(function(d) {
                     return d / unit;
                 }).tickSize(6, 0);
 
-            //yAxisEl.call(yAxis);
-            yTitleEl.text(indicator_name);
+            //this.yAxisEl.call(yAxis);
+            this.yTitleEl.text(indicator_name);
 
-            // Remove old bars if exist
-            bars.selectAll(".vzb-bc-bar").remove();
+            // Remove old this.bars if exist
+            this.bars.selectAll(".vzb-bc-bar").remove();
 
-            // Update data bars
-            bars.selectAll(".vzb-bc-bar")
+            // Update data this.bars
+            this.bars.selectAll(".vzb-bc-bar")
                 .data(data_curr_year)
                 .enter()
                 .append("path")
@@ -99,9 +96,11 @@ define([
 
         },
 
-        //draw the graph for the first time
+        //draw the this.graph for the first time
         resize: function() {
-            var tick_spacing = 60;
+            var tick_spacing = 60,
+                bar_radius = 5,
+                margin;
 
             switch (this.getLayoutProfile()) {
                 case "small":
@@ -133,44 +132,48 @@ define([
                     break;
             }
 
-            height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
 
             // Update range of Y and call Y axis function on element
-            y.range([height, 0]);
+            this.y.range([this.height, 0]);
             // Number of ticks
-            if (this.model.getState("scale") == "log") {
-                yAxis.ticks(5, '100');
+            if (this.model.show.get("scale") == "log") {
+                this.yAxis.ticks(5, '100');
             } else {
-                yAxis.ticks(Math.max((Math.round(height / tick_spacing)), 2));
+                this.yAxis.ticks(Math.max((Math.round(this.height / tick_spacing)), 2));
             }
-            yAxisEl.call(yAxis);
+            this.yAxisEl.call(this.yAxis);
 
-            yTitleEl.attr("transform", "translate(10,10)");
+            this.yTitleEl.attr("transform", "translate(10,10)");
 
             //Adjusting margin according to length
-            var yLabels = yAxisEl.selectAll("text")[0],
-                topLabel = yLabels[(yLabels.length - 1)];
-            margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
+            var yLabels = this.yAxisEl.selectAll("text")[0];
 
-            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            if(yLabels && yLabels.length) {
+                var topLabel = yLabels[(yLabels.length - 1)];
+                margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
+            }
+
+            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             // Update range of X and call X axis function on element
-            x.rangeRoundBands([0, width], .1, .2);
-            xAxisEl.attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+            this.x.rangeRoundBands([0, width], .1, .2);
+            this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
+                .call(this.xAxis);
 
-            //adjust graph position
-            graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            //adjust this.graph position
+            this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            var indicator = this.model.getState("indicator");
+            var indicator = this.model.show.get("indicator");
 
-            // Update size of bars 
-            bars.selectAll(".vzb-bc-bar")
+            // Update size of this.bars 
+            var _this = this;
+            this.bars.selectAll(".vzb-bc-bar")
                 .attr("d", function(d, i) {
-                    return topRoundedRect(x(d["geo.name"]),
-                        y(d[indicator]),
-                        x.rangeBand(),
-                        height - y(d[indicator]),
+                    return topRoundedRect(_this.x(d["geo.name"]),
+                        _this.y(d[indicator]),
+                        _this.x.rangeBand(),
+                        _this.height - _this.y(d[indicator]),
                         bar_radius);
                 });
 

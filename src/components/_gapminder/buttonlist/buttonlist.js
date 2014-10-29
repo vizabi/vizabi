@@ -10,21 +10,17 @@ define([
     var geo_picker;
 
     var ButtonList = Component.extend({
-        init: function(core, options) {
+        init: function(options, context) {
             //set properties
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
-            //list of buttons to be rendered
-            this.template_data = {
-                buttons: options.buttons || []
-            };
 
-            //add sub components
-            this.addComponent('_gapminder/picker-geo', {
-                data: options.data
-            });
+            // //add sub components
+            // this.addComponent('_gapminder/picker-geo', {
+            //     data: options.data
+            // });
 
-            this._super(core, options);
+            this._super(options, context);
 
         },
 
