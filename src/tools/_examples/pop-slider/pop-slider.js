@@ -37,11 +37,11 @@ define([
                 model.set("show.time_end", model.get("data.time_end"));
                 changes = model;
             }
-            if (model.get("time.start") != model.get("show.time_start")) {
+            if (model.get("time.start") < model.get("show.time_start")) {
                 model.set("time.start", model.get("show.time_start"));
                 changes = model;
             }
-            if (model.get("time.end") != model.get("show.time_end")) {
+            if (model.get("time.end") > model.get("show.time_end")) {
                 model.set("time.end", model.get("show.time_end"));
                 changes = model;
             }
