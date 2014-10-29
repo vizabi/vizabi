@@ -37,6 +37,7 @@
     <p>External buttons:</p>
     <button id="play_button" onclick="play()">PLAY</button>
     <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
+    <button id="indicator_button" onclick="indicator('lex')">SET INDICATOR: LEX</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -49,6 +50,7 @@ $(function() {
 
     playButton = $("#play_button");
     languageButton = $("#language_button");
+    indicatorButton = $("#indicator_button");
     var options = {
         //state (how vizabi should work)
         state: {
@@ -56,7 +58,7 @@ $(function() {
             show: {
                 geo: ["swe", "nor", "usa"],
                 geo_category: ["country"],
-                indicator: ['pop'],
+                indicator: 'pop',
                 time_start: 1900,
                 time_end: 2014
             },
@@ -110,6 +112,15 @@ $(function() {
                     playButton.text("PLAY");
                 }
             },
+            'change:state:show': function(evt, show) {
+                if (show.indicator == 'lex') {
+                    indicatorButton.attr('onclick', 'indicator("pop")');
+                    indicatorButton.text("SET INDICATOR: POP");
+                } else {
+                    indicatorButton.attr('onclick', 'indicator("lex")');
+                    indicatorButton.text("SET INDICATOR: LEX");
+                }
+            },
             'change:language': function(evt, language) {
                 if (language.value === "en") {
                     languageButton.attr('onclick', "language('pt')");
@@ -153,6 +164,17 @@ function language(lang) {
     var options = {
         language: {
             value: lang
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function indicator(indicator) {
+    var options = {
+        state: {
+            show: {
+                indicator: indicator
+            }
         }
     };
     myVizabi.setOptions(options);

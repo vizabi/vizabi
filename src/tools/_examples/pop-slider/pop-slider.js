@@ -45,17 +45,13 @@ define([
                 model.set("time.end", model.get("show.time_end"));
                 changes = model;
             }
-            if (model.get("data.language") != model.get("language.value")) {
-                model.set("data.language", model.get("language.value"));
-                changes = model;
-            }
             return changes;
         },
 
         getQuery: function(toolModel) {
             return [{
                 "from": "data",
-                "select": _.union(["geo", "geo.name", "time", "geo.region"], toolModel.get("show.indicator")),
+                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", toolModel.get("show.indicator")],
                 "where": {
                     "geo": toolModel.get("show.geo"),
                     "geo.category": toolModel.get("show.geo_category"),

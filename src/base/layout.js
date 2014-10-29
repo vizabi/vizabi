@@ -38,7 +38,7 @@ define([
             //resize when window resizes
             var _this = this;
             window.addEventListener('resize', function() {
-                if (this.container) {
+                if (_this.container) {
                     _this.resize();
                 }
             });

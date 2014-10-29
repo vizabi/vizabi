@@ -34,7 +34,7 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var indicator = this.model.show.get("indicator")[0],
+            var indicator = this.model.show.get("indicator"),
                 time = this.model.time.get("value"),
                 countries = _.cloneDeep(this.model.data.get("data")),
                 decimals = utils.countDecimals(time),
@@ -85,15 +85,21 @@ define([
         resize: function() {
             var indicator = this.model.show.get("indicator");
 
-            if (this.getLayoutProfile() === 'small') {
+            if (this.getLayoutProfile() === 'small' && indicator === 'pop') {
                 this.element.selectAll("p")
                     .text(function(d) {
                         return d["geo.name"] + ": " + Math.round(d[indicator] / 100000) / 10 + " M";
                     });
-            } else {
+            } else if (indicator === 'pop') {
                 this.element.selectAll("p")
                     .text(function(d) {
                         return d["geo.name"] + ": " + Math.round(d[indicator]).toLocaleString();
+                    });
+            }
+            else  {
+                this.element.selectAll("p")
+                    .text(function(d) {
+                        return d["geo.name"] + ": " + d[indicator].toLocaleString();
                     });
             }
         },
