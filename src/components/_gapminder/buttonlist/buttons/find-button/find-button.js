@@ -55,6 +55,10 @@ define([
             this.loadCountries().then(function(country_list) {
                 _this.initializePicker(country_list);
             });
+
+            button.click(function() {
+                _this.show();
+            });
         },
 
         //load list of countries
