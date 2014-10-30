@@ -37,14 +37,14 @@ Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm)
 
 **Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
 
-**Bower** is a package manager and you can install it with npm:
+**Bower** is a package manager and you can install it with npm (with administrative privillages):
 ```sh
-$ sudo npm install -g bower
+npm install -g bower
 ```
 
-**Grunt** is the Javascript task runner and can also be installed with npm:
+**Grunt** is the Javascript task runner and can also be installed with npm (with administrative privillages):
 ```sh
-$ sudo npm install -g grunt-cli
+npm install -g grunt-cli
 ```
 
 **Ruby and Ruby Gems** are needed for building Vizabi. Here you can find tutorial to install *Ruby* and *Rubygems*:
@@ -52,10 +52,10 @@ $ sudo npm install -g grunt-cli
 * [Install Ruby] (https://www.ruby-lang.org/en/installation/)
 * [Install Rubygems] (https://rubygems.org/pages/download)
 
-**SASS**
+**SASS** is grade CSS extension language. To install it, run the following command with administrative privillages: 
 
 ```sh
-sudo gem install sass
+gem install sass
 ```
 
 Now that you have all Vizabi's dependencies in place, you can clone and install Vizabi.
@@ -88,7 +88,7 @@ bower install
 ```
 
 
-*Note*: You may need to run ```npm install``` with *sudo*.
+*Note*: You may need to run ```npm install``` with administrative privilages.
 
 
 ####Running and Developing
