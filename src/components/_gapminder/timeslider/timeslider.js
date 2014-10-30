@@ -6,7 +6,11 @@ define([
 
     //contants
     var class_playing = "vzb-playing",
-        class_hide_play = "vzb-ts-hide-play-button";
+        class_hide_play = "vzb-ts-hide-play-button",
+        class_show_limits = "vzb-ts-show-limits",
+        class_show_limits_no_start = "vzb-ts-show-limits-no-start",
+        class_show_limits_no_end = "vzb-ts-show-limits-no-end",
+        class_show_value = "vzb-ts-show-value";
 
     var Timeslider = Component.extend({
 
@@ -34,6 +38,8 @@ define([
             //html elements
             this.range = this.element.select(".vzb-ts-slider");
             this.value = this.element.select('.vzb-ts-slider-value');
+            this.start = this.element.select('.vzb-ts-slider-limit-start');
+            this.end = this.element.select('.vzb-ts-slider-limit-end');
 
             var play = this.element.select(".vzb-ts-btn-play"),
                 pause = this.element.select(".vzb-ts-btn-pause");
@@ -72,19 +78,33 @@ define([
             this.range[0][0].value = time;
             time = Math.floor(time); //without decimals for display
             this.value.html(time);
+            this.start.html(minValue);
+            this.end.html(maxValue);
+
             this._setTimePosition();
 
-            if (!this.model.get("playable")) {
-                this.element.classed(class_hide_play, true);
-            } else {
-                this.element.classed(class_hide_play, false);
-            }
+            this.element.classed(class_hide_play, !this.model.get("playable"));
+            this.element.classed(class_playing, this.model.get("playing"));
 
-            if (this.model.get("playing")) {
-                this.element.classed(class_playing, true);
-            } else {
-                this.element.classed(class_playing, false);
-            }
+            var show_limits = false,
+                show_value = false;
+            try {
+                show_limits = (this.ui.timeslider.show_limits);
+            } catch(e) {}
+            try {
+                show_value = (this.ui.timeslider.show_value);
+            } catch(e) {}
+
+            this.element.classed(class_show_limits, show_limits);
+            this.element.classed(class_show_value, show_value);
+        },
+
+        /**
+         * Executes everytime the container or vizabi is resized
+         * Ideally,it contains only operations related to size
+         */
+        resize: function() {
+            this._setTimePosition();
         },
 
         /**
@@ -101,12 +121,18 @@ define([
          * Sets position of time value string
          */
         _setTimePosition: function() {
-            var rangeW = parseInt(this.range.style('width'),10) - 16,
+            var offset = 10,
+                rangeW = parseInt(this.range.style('width'),10) - 16,
                 timeRange = this.model.get("end") - this.model.get("start"),
                 currTime = this.model.get("value") - this.model.get("start"),
                 newPosition = (timeRange > 0) ? Math.round(rangeW * currTime / timeRange) : 0;
-                newPosition += 10;
+                newPosition += offset;
             this.value.style("left", newPosition + "px");
+
+            var hide_start = (newPosition < offset + 10),
+                hide_end = (newPosition > rangeW);
+            this.element.classed(class_show_limits_no_start, hide_start);
+            this.element.classed(class_show_limits_no_end, hide_end);
         }
     });
 

@@ -4,9 +4,9 @@ $vzb-ts-btn-bg: $vzb-color-primary;
 $vzb-ts-btn-bg-active: #2F7687;
 $vzb-ts-line-color: #A4CBD4;
 $vzb-ts-handle-color: $vzb-color-primary;
-
+$vzb-ts-limits-color: #A4CBD4;
+$vzb-ts-value-width: 40px;
 .vzb-timeslider {
-
     .vzb-ts-btns {
         @include absolute(0px, auto, 0px, 5px);
         width: $vzb-ts-btn-area;
@@ -72,10 +72,10 @@ $vzb-ts-handle-color: $vzb-color-primary;
         .vzb-ts-slider-value {
             @include absolute(-20px);
             @include font-size(13px);
-            width: 100px;
-            margin-left: -50px;
+            width: $vzb-ts-value-width;
+            margin-left: -1 * $vzb-ts-value-width/2;
             color: $vzb-ts-handle-color;
-            font-family: Arial, sans-serif;
+            font-family: $vzb-font-family-alt;
             font-weight: bold;
             text-align: center;
             display: none;
@@ -91,6 +91,27 @@ $vzb-ts-handle-color: $vzb-color-primary;
             border: 0;
         }
     }
+
+    %vzb-ts-slider-limit {
+        @include absolute(auto, auto, -10px, auto);
+        @include font-size(11px);
+        @include opacity(1);
+        @include transition(opacity, 0.2s, ease-in-out);
+        color: $vzb-ts-limits-color;
+        font-family: $vzb-font-family-alt;
+        font-weight: bold;
+        display: none;
+    }
+
+    .vzb-ts-slider-limit-start {
+        @extend %vzb-ts-slider-limit;
+        left: -5px;
+    }
+    .vzb-ts-slider-limit-end {
+        @extend %vzb-ts-slider-limit;
+        right: -5px;
+    }
+
     //show pause instead if it's playing
     &.vzb-playing {
         .vzb-ts-btns {
@@ -111,13 +132,33 @@ $vzb-ts-handle-color: $vzb-color-primary;
             display: block;
         }
     }
-
     &.vzb-ts-hide-play-button {
         .vzb-ts-btns {
             @extend .vzb-hidden;
         }
         .vzb-ts-slider-wrapper {
             @include absolute(5px, 9px, 5px, 5px);
+        }
+    }
+    &.vzb-ts-show-value {
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
+    }
+    &.vzb-ts-show-limits {
+        .vzb-ts-slider-limit-start, .vzb-ts-slider-limit-end {
+            display: block !important;
+        }
+
+        &.vzb-ts-show-limits-no-start {
+            .vzb-ts-slider-limit-start {
+                @include opacity(0);
+            }
+        }
+        &.vzb-ts-show-limits-no-end {
+            .vzb-ts-slider-limit-end {
+                @include opacity(0);
+            }
         }
     }
 }
