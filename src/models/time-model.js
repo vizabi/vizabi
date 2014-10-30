@@ -1,12 +1,16 @@
 define([
-    'underscore',
+    'lodash',
     'base/utils',
     'base/model'
 ], function(_, utils, Model) {
 
     var TimeModel = Model.extend({
 
-        //receive intervals as well
+        /**
+         * Initializes the time model.
+         * @param values Initial values for time model
+         * @param intervals Common tool intervals
+         */
         init: function(values, intervals) {
 
             //default values for time model
@@ -36,13 +40,16 @@ define([
                 }
             });
 
-
             //auto play if playing is true by reseting variable
             if (this.get("playing") === true) {
                 this.set("playing", true);
             }
         },
 
+        /**
+         * Validates the model
+         * @param {boolean} silent Block triggering of events
+         */
         validate: function(silent) {
             //don't cross validate everything
             var atomic = true;
@@ -62,14 +69,23 @@ define([
             }
         },
 
+        /**
+         * Plays time
+         */
         play: function() {
             this.set("playing", true);
         },
 
+        /**
+         * Pauses time
+         */
         pause: function() {
             this.set("playing", false);
         },
 
+        /**
+         * Starts playing the time, initializing the interval
+         */
         _startPlaying: function() {
             //don't play if it's not playable or if it's already playing
             if (!this.get("playable") || this.playing_now) return;
@@ -109,6 +125,9 @@ define([
             this.trigger("play");
         },
 
+        /**
+         * Stops playing the time, clearing the interval
+         */
         _stopPlaying: function() {
             this.playing_now = false;
             this.intervals.clearInterval('playInterval_' + this._id);
