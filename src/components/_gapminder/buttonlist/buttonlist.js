@@ -117,6 +117,10 @@ define([
                         break;
                 }
             })
+        },
+
+        addButton: function(btn) {
+            this.addButtons(btn.split(" "));
         }
 
     });
