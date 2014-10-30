@@ -23,18 +23,17 @@ See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapmin
 
 ### QuickStart
 
-*Note*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568). 
+*Note 1*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568).
 
-####Cloning
-In order to run vizabi locally, clone it:
+*Note 2*: This guide explains how you set up your environment to develop Vizabi. If you just want to use Vizabi, skip this chapter and [move on](https://github.com/Gapminder/vizabi/wiki/How-to-use-Vizabi)
 
-```sh
-git clone http://github.com/Gapminder/vizabi
-cd vizabi
-```
+*Note 3*: If you are on Windows platform, we highly recommend using [Cygwin](https://www.cygwin.com/). Cygwin is a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. Cygwin makes your development more efficient with running terminal commands like in UNIX.
+
 
 ####Dependencies
-Vizabi depends on [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Grunt](https://github.com/gruntjs/grunt). 
+Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Grunt](https://github.com/gruntjs/grunt). 
+
+**Git** Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. Git's official [Installing Git](http://git-scm.com/book/en/v2/Getting-Started-Installing-Git) is the best way to install Git.
 
 **Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
 
@@ -59,11 +58,28 @@ $ sudo npm install -g grunt-cli
 sudo gem install sass
 ```
 
-Now that you have all Vizabi's dependencies in place, you can install Vizabi.
+Now that you have all Vizabi's dependencies in place, you can clone and install Vizabi.
+
+####Clone
+In order to run vizabi locally, clone it:
+
+```sh
+git clone https://github.com/Gapminder/vizabi
+cd vizabi
+```
+
+*Note*: If you are using any of Github's GUI clients such as [Github for Windows](https://windows.github.com/) or [Github for Mac](https://mac.github.com/), Go to the right-hand side of the project repository homepage, click on *Clone in Desktop*. 
+
+<img src="http://i.imgur.com/S1Bb7H5.png" width=400 height=700 align="middle">
+
+You will be prompt with a window asking your permission to launch your Github GUI client. Allow the execution:
 
 
+<img src="http://i.imgur.com/fdZQXPV.png" alt="Commercial Photography" width=600 height=400 align="middle">
 
-####Installing
+Click on Clone after selecting the path you want to have Vizabi in and you are good to go.
+
+####Install
 Go to Vizabi directory and run the following commands in the terminal:
 
 ```sh
@@ -73,6 +89,7 @@ bower install
 
 
 *Note*: You may need to run ```npm install``` with *sudo*.
+
 
 ####Running and Developing
 We use grunt to build Vizabi. You can run Vizabi for Development or Production: ```grunt [dev|build]```.
