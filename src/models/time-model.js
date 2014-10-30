@@ -14,10 +14,12 @@ define([
                 value: 50,
                 start: 0,
                 end: 100,
+                step: 1,
+                speed: 500,
                 playable: true,
                 playing: false,
-                step: 1,
-                speed: 500
+                loop: false,
+                roundOnPause: true
             }, values);
 
             this._super(values, intervals);
@@ -27,17 +29,16 @@ define([
 
             //bing play method to model change
             this.on("change:playing", function() {
-                if(_this.get("playing") === true) {
+                if (_this.get("playing") === true) {
                     _this._startPlaying();
-                }
-                else {
+                } else {
                     _this._stopPlaying();
                 }
             });
 
 
             //auto play if playing is true by reseting variable
-            if(this.get("playing") === true) {
+            if (this.get("playing") === true) {
                 this.set("playing", true);
             }
         },
@@ -46,18 +47,17 @@ define([
             //don't cross validate everything
             var atomic = true;
             //end has to be >= than start
-            if(this.get('end') < this.get('start')) {
+            if (this.get('end') < this.get('start')) {
                 this.set('end', this.get('start'), silent, atomic);
             }
             //value has to be between start and end
-            if(this.get('value') < this.get('start')) {
+            if (this.get('value') < this.get('start')) {
                 this.set('value', this.get('start'), silent, atomic);
-            }
-            else if(this.get('value') > this.get('end')) {
+            } else if (this.get('value') > this.get('end')) {
                 this.set('value', this.get('end'), silent, atomic);
             }
 
-            if(this.get('playable') === false && this.get('playing') === true) {
+            if (this.get('playable') === false && this.get('playing') === true) {
                 this.set('playing', false, silent, atomic);
             }
         },
@@ -81,7 +81,7 @@ define([
                 interval = this.get("speed") * this.get("step");
 
             //go to start if we start from end point
-            if(time === _this.get("end")) {
+            if (time === _this.get("end")) {
                 time = this.get("start");
                 _this.set("value", time);
             }
@@ -89,9 +89,14 @@ define([
             //create interval
 
             //we don't create intervals directly
-            this.intervals.setInterval('playInterval_'+this._id, function() {
+            this.intervals.setInterval('playInterval_' + this._id, function() {
                 if (time >= _this.get("end")) {
-                    _this.set("playing", false);
+                    if (_this.get("loop")) {
+                        time = _this.get("start");
+                        _this.set("value", time);
+                    } else {
+                        _this.set("playing", false);
+                    }
                     return;
                 } else {
                     var decs = utils.countDecimals(_this.get("step"))
@@ -106,7 +111,18 @@ define([
 
         _stopPlaying: function() {
             this.playing_now = false;
-            this.intervals.clearInterval('playInterval_'+this._id);
+            this.intervals.clearInterval('playInterval_' + this._id);
+
+            //snap to integer
+            if(this.get("roundOnPause")) {
+                var op = 'floor';
+                if(this.get("roundOnPause") === 'ceil') op = 'ceil';
+                if(this.get("roundOnPause") === 'round') op = 'round';
+                var time = this.get("value");
+                time = Math[op](time);
+                this.set("value", time);
+            }
+
             this.trigger("pause");
         }
 
