@@ -24,6 +24,14 @@ define([
                 model: ["time"]
             }];
 
+            //rules to validate state (alterative method)
+            // options.validate = [
+            //     ["show.time_start", ">=", "data.time_start"],
+            //     ["show.time_end", "<=", "data.time_end"],
+            //     ["time.start", ">=", "show.time_start"],
+            //     ["time.end", "<=", "show.time_end"]
+            // ];
+
             this._super(options);
         },
 
