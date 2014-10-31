@@ -30,6 +30,7 @@ define([
             this.components = this.components || [];
             this.components_config = this.components;
             this.profiles = this.profiles || {};
+            this.ui = options.ui || {};
             this.parent = parent;
             this.events = new Events();
             this.frameRate = 10;
@@ -176,7 +177,8 @@ define([
             //component options
             var options = _.extend(component, {
                 name: name,
-                model: component_model
+                model: component_model,
+                ui: this.ui //ui options are passed to all components
             });
 
             // Loads the file we need

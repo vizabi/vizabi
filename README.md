@@ -2,14 +2,16 @@
 
 Welcome to the vizabi repository! 
 
-(Please note that current version of Vizabi is still a work in progress, and Vizabi 1.0.0 will be the public release of the framework). [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)
+(Please note; Vizabi is work in progress! Vizabi 1.0.0 will be the public Alpha release of the framework, and we're not there yet). [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi) [![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)
 
 
 ####What is Vizabi?
-Gapminder Vizabi is our framework for developing data visualizations supporting mobile devices, responsiveness, localization, embedding support and unified data schema. You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
+Vizabi is a framework for building Maintainable Visual Exploration Tools, with consistent support for the following five core features: 1) Embedding with configurations, 2) Responsive layout, 3) Support devices native UI Controls & Interactions, 4) Enable Instant Translation & Localization by end user, 5) Unifying data-schema for multi dimensional statistics.
+
+You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
 ####Can I see it in action?
-Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi-recent/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
+Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi/develop/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
 
 #### Where can I find full documentation?
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 

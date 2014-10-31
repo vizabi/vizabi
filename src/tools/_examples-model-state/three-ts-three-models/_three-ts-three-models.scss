@@ -23,9 +23,4 @@
         color: $vzb-color-grey-dark;
     }
     @import'../../../components/_gapminder/timeslider/timeslider';
-
-    //force display year
-    .vzb-ts-slider-value {
-        display: block !important;
-    }
 }
