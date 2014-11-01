@@ -102,26 +102,17 @@ define([
         },
 
         //propagate option changes to model
-        //todo: improve propagation of models
-        propagate: function(options, silent) {
+        propagate: function(options) {
             //state properties
-            if (options.state) {
-                for (var i in options.state) {
-                    this.get(i).set(options.state[i], silent);
+            for (var prop in options) {
+                if (prop === 'state') {
+                    for (var i in options.state) {
+                        this[i] = options.state[i]
+                    }
+                } else {
+                    this[prop] = options[prop];
                 }
             }
-            //language properties
-            if (options.language) {
-                this.get("language").set(options.language, silent);
-            }
-            if (options.data) {
-                this.get("data").set(options.data, silent);
-            }
-            //bind properties
-            if (options.bind) {
-                this.get("bind").set(options.bind, silent);
-            }
-            //binding
         },
 
         /* ==========================
@@ -144,7 +135,7 @@ define([
 
             //include a model for each property in the state and bind
             for (var i in options.state) {
-                if(!_.isPlainObject(options.state[i])) continue; //objects only
+                if (!_.isPlainObject(options.state[i])) continue; //objects only
                 //naming convention: underscore -> time, time_2, time_overlay
                 var name = i.split("_")[0]
                 model_config[i] = this._generateModel(name, options.state[i]);
