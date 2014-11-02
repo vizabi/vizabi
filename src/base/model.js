@@ -1,44 +1,34 @@
 define([
-    'underscore',
+    'jquery',
+    'lodash',
     'base/utils',
     'base/class',
     'base/intervals',
     'base/events'
-], function(_, utils, Class, Intervals, Events) {
+], function($, _, utils, Class, Intervals, Events) {
 
     var model = Class.extend({
 
-        //receives values and, optionally, external intervals and events
-        init: function(values, intervals, events) {
+        /**
+         * Initializes the model.
+         * @param values The initial values of this model
+         * @param intervals A parent intervals handler (from tool)
+         */
+        init: function(values, intervals) {
             this._id = _.uniqueId("m"); //model unique id
             this._data = {};
-            this.intervals = (this.intervals || intervals) || new Intervals();
-            this.events = events || new Events();
+            this._intervals = (this._intervals || intervals) || new Intervals();
+            //each model has its own event handling
+            this._events = new Events();
 
+            var promises = [];
             if (values) {
-                this.set(values, true);
+                promises.push(this.set(values, true));
             }
-
-            //watch certain events for each submodel
-            //horrible hotfix only for non tool-models
-            //todo: improve this
-
-            if (this._id.indexOf("tm") === -1) {
-                var _this = this,
-                    watch_events = ["change", "load:start", "load:end", "load:error"];
-                submodels = this.get();
-                for (var i in submodels) {
-                    var submodel = submodels[i];
-                    if (submodel.on) {
-                        for (var i = 0; i < watch_events.length; i++) {
-                            var evt = watch_events[i];
-                            submodel.on(evt, function(evt, values) {
-                                _this.trigger(evt, values);
-                            });
-                        };
-                    }
-                }
-            }
+            var _this = this;
+            $.when.apply(null, promises).then(function() {
+                _this.trigger("ready");
+            });
         },
 
         /* ==========================
@@ -46,79 +36,131 @@ define([
          * ==========================
          */
 
-        //get accepts multiple levels. e.g: get("model.object.property")
+        /**
+         * Gets an attribute from this model or all fields.
+         * @param attr Optional attribute. Returns everything when undefined
+         */
         get: function(attr) {
-            //optimize for common cases
-            var response;
-            if (!attr) response = this._data;
-            else if (attr.indexOf('.') === -1) response = this._data[attr];
-            else {
-                //search deeper levels
-                var attrs = attr.split('.'),
-                    current = this;
-                while (attrs.length) {
-                    var curr_attr = attrs.shift();
-                    if (typeof current.get === 'function') {
-                        current = current.get(curr_attr);
-                    } else {
-                        current = current[curr_attr];
-                    }
-                }
-                return current;
-            }
-            return response
+            if (!attr) return this._data;
+            return this._data[attr];
         },
 
-        // set an attribute for the model, or an entire object
-        // accepts multiple levels. e.g: set("model.object.property", 3)
+        /**
+         * Sets an attribute or multiple for this model
+         * @param attr property name
+         * @param val property value (object or value)
+         * @param {boolean} silent Prevents events from being fired
+         * @param {boolean} block_validation prevents model validation
+         */
         set: function(attr, val, silent, block_validation) {
 
-            var events = [];
-            if (typeof attr !== 'object') {
-                //if its a string, check for multiple levels
-                if (attr.indexOf('.') === -1) {
-                    this._data[attr] = _.clone(val);
-                    events.push("change:" + attr);
-                } else {
-                    //todo: improve recursion
-                    var attrs = attr.split('.'),
-                        current = this.get(attrs.shift());
-                    while (attrs.length > 1) {
-                        if (typeof current.set === 'function') {
-                            current.set(attrs, val, silent);
-                        } else {
-                            current = current[attrs.shift()];
-                        }
+            var defer = $.Deferred(),
+                promises = [],
+                events = [];
+
+            //expect object as default
+            if (!_.isPlainObject(attr)) {
+                var obj = {};
+                obj[attr] = val;
+                return this.set(obj, silent, block_validation);
+            }
+
+            //correct format
+            block_validation = silent;
+            silent = val;
+            for (var a in attr) {
+                var vals = attr[a];
+                //if it's an object, set or create submodel
+                if (_.isPlainObject(vals)) {
+                    if (this._data[a] && utils.isModel(this._data[a])) {
+                        promise = this._data[a].set(vals, silent, block_validation);
                     }
-                    attr = attrs.shift();
-                    if (typeof current.set === 'function') {
-                        current.set(attr, val, silent);
-                    } else {
-                        current[attr] = _.clone(val);
+                    //submodel doesnt exist, create it
+                    else {
+                        promise = this._initSubmodel(a, vals);
                     }
                 }
-            } else {
-                block_validation = silent;
-                silent = val;
-                for (var att in attr) {
-                    var val = attr[att];
-                    this._data[att] = _.clone(val);
-                    events.push("change:" + att);
+                //otherwise, just set value :)
+                else {
+                    this._data[a] = vals;
+                    promise = true;
                 }
+                events.push("change:" + attr);
+                promises.push(promise);
             }
             events.push("change");
 
-            //if we don't block validation, validate
-            if (!block_validation) this.validate(silent);
-            //trigger change if not silent
-            if (!silent) this.events.trigger(events, this._data);
+            //after all is done
+            var _this = this;
+            $.when.apply(null, promises).then(function() {
+                //if we don't block validation, validate
+                if (!block_validation) _this.validate(silent);
+                //trigger change if not silent
+                if (!silent) _this.trigger(events, _this.get());
+                defer.resolve(_this.get());
+            });
+
+            return defer;
         },
 
+        /**
+         * Loads a submodel, when necessaary
+         * @param attr Name of submodel
+         * @param val Initial values
+         */
+        _initSubmodel: function(attr, val) {
+            //naming convention: underscore -> time, time_2, time_overlay
+            var name = attr.split("_")[0],
+                module = 'models/' + name,
+                defer = $.Deferred(),
+                _this = this;
+
+            //special model
+            if (require.defined(module)) {
+                require([module], function(model) {
+                    _this._instantiateSubmodel(attr, val, model, defer);
+                });
+            //regular model
+            } else {
+                var model = Class.extend(_this);
+                _this._instantiateSubmodel(attr, val, model, defer);
+            }
+
+            return defer;
+        },
+
+        /**
+         * Instantiates a new model as a submodel of this one
+         * @param name Name of submodel
+         * @param values Initial values
+         * @param model Model class
+         * @param defer defer to be resolved when model is ready
+         */
+        _instantiateSubmodel: function(name, values, model, defer) {
+            var _this = this;
+            this._data[name] = new model(values, this._intervals);
+            this._data[name].on('change', function(evt, vals) {
+                var evt = evt.replace('change', 'change:'+name);
+                _this.trigger(evt, vals);
+            });
+            this._data[name].on('ready', function() {
+                defer.resolve();
+            });
+        },
+
+        /**
+         * Resets this model
+         * @param values new values
+         * @param {boolean} prevent events from being fired
+         */
         reset: function(values, silent) {
             this.clear();
             this.set(values, silent);
         },
 
+        /**
+         * Clears this model, submodels, data and events
+         */
         clear: function() {
             var submodels = this.get();
             for (var i in submodels) {
@@ -127,11 +169,14 @@ define([
                     submodel.clear();
                 }
             }
-            this.events.unbindAll();
-            this.intervals.clearAllIntervals();
+            this._events.unbindAll();
+            this._intervals.clearAllIntervals();
             this._data = {};
         },
 
+        /**
+         * Gets the current model and submodel values as a JS object
+         */
         getObject: function() {
             var obj = {};
             for (var i in this._data) {
@@ -150,7 +195,10 @@ define([
          * ==========================
          */
 
-        //TODO: improve the whole loading logic. It should load, then render
+        /**
+         * Loads data.
+         * This is a placeholder for any loading data implemented by a model
+         */
         load: function() {
             return true; // by default it just returns true
         },
@@ -160,6 +208,10 @@ define([
          * ==========================
          */
 
+        /**
+         * Validates data.
+         * This is a placeholder for any validation implemented by a model
+         */
         validate: function() {
             // placeholder for validate function
         },
@@ -169,12 +221,22 @@ define([
          * ==========================
          */
 
+        /**
+         * Binds function to an event in this model
+         * @param {string} name name of event
+         * @param {function} func function to be executed
+         */
         on: function(name, func) {
-            this.events.bind(name, func);
+            this._events.bind(name, func);
         },
 
+        /**
+         * Triggers an event from this model
+         * @param {string} name name of event
+         * @param val Optional values to be sent to callback function
+         */
         trigger: function(name, val) {
-            this.events.trigger(name, val);
+            this._events.trigger(name, val);
         }
 
     });
