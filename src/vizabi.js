@@ -9,12 +9,14 @@ var Vizabi = function(tool_path, container, options) {
             path = 'tools/' + tool_path + '/' + tool_name;
 
         // extending options with name and tool's placeholder
-        options.name = tool_name;
-        options.placeholder = container;
+        var config = {
+            name: tool_name,
+            placeholder: container
+        };
 
         //require and render tool
         require([path], function(Tool) {
-            tool = new Tool(options);
+            tool = new Tool(config, options);
             tool.render();
         });
 

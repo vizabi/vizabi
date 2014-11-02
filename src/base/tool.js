@@ -3,14 +3,14 @@ define([
     'underscore',
     'base/component',
     'base/layout',
-    'models/tool-model'
+    'base/model'
 ], function(d3, _, Component, Layout, ToolModel) {
 
     var class_loading_data = "vzb-loading-data";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
     var Tool = Component.extend({
-        init: function(options) {
+        init: function(config, options) {
             //tool-specific values
             this._id = _.uniqueId("t");
             this.template = this.template || "tools/tool";
@@ -19,14 +19,14 @@ define([
             /*
              * Building Tool Model
              */
-            options.validate = options.validate || this.toolModelValidation;
-            options.query = options.query || this.getQuery;
+            // options.validate = options.validate || this.toolModelValidation;
+            // options.query = options.query || this.getQuery;
             this.model = new ToolModel(options);
 
             /*
              * Parent Constructor (this = root parent)
              */
-            this._super(options, this);
+            this._super(config, this);
 
             /*
              * Specific binding for tools

@@ -11,11 +11,7 @@ define([
     var class_loading = "vzb-loading";
 
     var Component = Class.extend({
-        init: function(options, parent) {
-
-            //properties in this component should be the ones in options,
-            //unless they were already set by a child class
-            _.extend(this, options, this);
+        init: function(config, parent) {
 
             this._id = this._id || _.uniqueId("c");
             this._rendered = false;
@@ -23,18 +19,22 @@ define([
 
             //default values,
             //in case there's none
-            this.placeholder = this.placeholder || options.placeholder;
+            this.name = this.name || config.name;
+            this.template = this.template || config.template;
+            this.placeholder = this.placeholder || config.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
             };
             this.components = this.components || [];
             this.components_config = this.components;
             this.profiles = this.profiles || {};
-            this.ui = options.ui || {};
+            this.ui = config.ui || {};
             this.parent = parent;
             this.events = new Events();
             this.frameRate = 10;
 
+            //model
+            this.model = this.model || config.model;
         },
 
         //by default, it just considers data loaded
@@ -175,7 +175,7 @@ define([
             component_model = this._modelMapping(component.model);
 
             //component options
-            var options = _.extend(component, {
+            var config = _.extend(component, {
                 name: name,
                 model: component_model,
                 ui: this.ui //ui options are passed to all components
@@ -184,7 +184,7 @@ define([
             // Loads the file we need
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
-                _this.components[id] = new subcomponent(options, _this);
+                _this.components[id] = new subcomponent(config, _this);
                 defer.resolve();
             });
 
