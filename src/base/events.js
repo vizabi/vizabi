@@ -87,7 +87,6 @@ define([
                     this.trigger(name[i], args);
                 }
             } else {
-                console.log('triggered => name: ' + name + ' , original: ' + original);
                 if (_.isUndefined(this.events[name])) return;
                 for (var i = 0; i < this.events[name].length; i++) {
                     var f = this.events[name][i];
