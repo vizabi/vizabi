@@ -46,7 +46,7 @@ define([
 
             //model and related events
             this.range.on('input', function() {
-                _this._setTime(parseFloat(_this.model.value));
+                _this._setTime(parseFloat(this.value));
                 _this.model.pause();
             });
 
@@ -66,10 +66,10 @@ define([
          */
         update: function() {
             //time slider should always receive a time model
-            var time = this.model.value,
-                minValue = this.model.start
-            maxValue = this.model.end
-            step = this.model.step;
+            var time = this.model.get("value"),
+                minValue = this.model.get("start")
+            maxValue = this.model.get("end")
+            step = this.model.get("step");
 
             this.range.attr("min", minValue)
                 .attr("max", maxValue)
@@ -83,17 +83,17 @@ define([
 
             this._setTimePosition();
 
-            this.element.classed(class_hide_play, !this.model.playable);
-            this.element.classed(class_playing, this.model.playing);
+            this.element.classed(class_hide_play, !this.model.get("playable"));
+            this.element.classed(class_playing, this.model.get("playing"));
 
             var show_limits = false,
                 show_value = false;
             try {
                 show_limits = (this.ui.timeslider.show_limits);
-            } catch (e) {}
+            } catch(e) {}
             try {
                 show_value = (this.ui.timeslider.show_value);
-            } catch (e) {}
+            } catch(e) {}
 
             this.element.classed(class_show_limits, show_limits);
             this.element.classed(class_show_value, show_value);
@@ -114,7 +114,7 @@ define([
          */
         _setTime: function(time, silent) {
             //update state
-            this.model.value = time;
+            this.model.set("value", time, silent);
         },
 
         /**
@@ -122,11 +122,11 @@ define([
          */
         _setTimePosition: function() {
             var offset = 10,
-                rangeW = parseInt(this.range.style('width'), offset) - 16,
-                timeRange = this.model.end - this.model.start,
-                currTime = this.model.value - this.model.start,
+                rangeW = parseInt(this.range.style('width'),10) - 16,
+                timeRange = this.model.get("end") - this.model.get("start"),
+                currTime = this.model.get("value") - this.model.get("start"),
                 newPosition = (timeRange > 0) ? Math.round(rangeW * currTime / timeRange) : 0;
-            newPosition += offset;
+                newPosition += offset;
             this.value.style("left", newPosition + "px");
 
             var hide_start = (newPosition < offset + 10),

@@ -39,7 +39,6 @@ define([
             var changes = false;
             if (model.get("show.time_start") < model.get("data.time_start")) {
                 model.set("show.time_start", model.get("data.time_start"));
-                model.set("show.indicator", "lex");
                 changes = model;
             }
             if (model.get("show.time_end") > model.get("data.time_end")) {

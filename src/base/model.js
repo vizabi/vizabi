@@ -12,16 +12,9 @@ define([
         init: function(values, intervals, events) {
             this._id = _.uniqueId("m"); //model unique id
             this._data = {};
-            this._intervals = (this._intervals || intervals) || new Intervals();
-            this._events = events || new Events();
+            this.intervals = (this.intervals || intervals) || new Intervals();
+            this.events = events || new Events();
 
-            //bind getters and setters
-            for (var prop in values) {
-                this.__defineGetter__(prop, this._funcGetter(prop));
-                this.__defineSetter__(prop, this._funcSetter(prop));
-            }
-
-            //set initial values
             if (values) {
                 this.set(values, true);
             }
@@ -29,6 +22,7 @@ define([
             //watch certain events for each submodel
             //horrible hotfix only for non tool-models
             //todo: improve this
+
             if (this._id.indexOf("tm") === -1) {
                 var _this = this,
                     watch_events = ["change", "load:start", "load:end", "load:error"];
@@ -51,20 +45,6 @@ define([
          * Getters and Setters
          * ==========================
          */
-
-        _funcGetter: function(prop) {
-            var _this = this;
-            return function() {
-                return _this.get(prop);
-            };
-        },
-
-        _funcSetter: function(prop) {
-            var _this = this;
-            return function(val) {
-                return _this.set(prop, val);
-            };
-        },
 
         //get accepts multiple levels. e.g: get("model.object.property")
         get: function(attr) {
@@ -131,7 +111,7 @@ define([
             //if we don't block validation, validate
             if (!block_validation) this.validate(silent);
             //trigger change if not silent
-            if (!silent) this._events.trigger(events, this._data);
+            if (!silent) this.events.trigger(events, this._data);
         },
 
         reset: function(values, silent) {
@@ -147,8 +127,8 @@ define([
                     submodel.clear();
                 }
             }
-            this._events.unbindAll();
-            this._intervals.clearAllIntervals();
+            this.events.unbindAll();
+            this.intervals.clearAllIntervals();
             this._data = {};
         },
 
@@ -190,11 +170,11 @@ define([
          */
 
         on: function(name, func) {
-            this._events.bind(name, func);
+            this.events.bind(name, func);
         },
 
         trigger: function(name, val) {
-            this._events.trigger(name, val);
+            this.events.trigger(name, val);
         }
 
     });
