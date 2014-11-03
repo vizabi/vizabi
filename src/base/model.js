@@ -18,6 +18,8 @@ define([
         init: function(values, intervals, bind) {
             this._id = _.uniqueId("m"); //model unique id
             this._data = {};
+            this._ready = false;
+            this._initialized = false;
             this._intervals = (this._intervals || intervals) || new Intervals();
             //each model has its own event handling
             this._events = new Events();
@@ -30,7 +32,7 @@ define([
             }
             //initial values
             if (values) {
-                this.set(values, true);
+                this.set(values);
             }
         },
 
@@ -53,8 +55,8 @@ define([
          * Sets an attribute or multiple for this model
          * @param attr property name
          * @param val property value (object or value)
-         * @param {boolean} silent Prevents events from being fired
-         * @param {boolean} block_validation prevents model validation
+         * @param {Boolean} silent Prevents events from being fired
+         * @param {Boolean} block_validation prevents model validation
          * @returns defer defer that will be resolved when set is done
          */
         set: function(attr, val, silent, block_validation) {
@@ -74,6 +76,7 @@ define([
             block_validation = silent;
             silent = val;
             for (var a in attr) {
+
                 var vals = attr[a];
                 //if it's an object, set or create submodel
                 if (_.isPlainObject(vals)) {
@@ -89,22 +92,34 @@ define([
                 else {
                     this._data[a] = vals;
                     promise = true;
-                    events.push("change:" + a);
+                    //different events whether it's first time or not
+                    var evt_name = (this._initialized) ? "change" : "init";
+                    events.push(evt_name + ":" + a);
                 }
                 promises.push(promise);
             }
 
+            //not ready at this point
+            this.ready = false;
+
             //after all is done
             var _this = this;
+            var size = promises.length;
             $.when.apply(null, promises).then(function() {
+
                 //bind magic getters and setters
                 _this._bindSettersGetters();
                 //if we don't block validation, validate
-                if (!block_validation) _this.validate(silent);
+                if (!block_validation) {
+                    _this.validate(silent);
+                }
                 //trigger change if not silent
-                if (!silent) _this.triggerAll(events, _this.getObject());
-                //ready is always triggered, even when silent
-                _this.trigger("ready", _this.getObject());
+                if (!silent) {
+                    _this.triggerAll(events, _this.getObject());
+                    _this.trigger("ready", _this.getObject());
+                }
+                _this._ready = true;
+                _this._initialized = true;
                 defer.resolve();
             });
 
@@ -120,19 +135,19 @@ define([
         _initSubmodel: function(attr, val) {
             //naming convention: underscore -> time, time_2, time_overlay
             var name = attr.split("_")[0],
-                module = 'models/' + name,
+                modl = 'models/' + name,
                 defer = $.Deferred(),
                 _this = this;
 
             //special model
-            if (require.defined(module)) {
-                require([module], function(model) {
+            if (require.defined(modl)) {
+                require([modl], function(model) {
                     _this._instantiateSubmodel(attr, val, model, defer);
                 });
-                //regular model
             } else {
-                var model = Class.extend(_this);
-                _this._instantiateSubmodel(attr, val, model, defer);
+                //always implement base model if not found
+                var model = _getBaseModelClass();
+                this._instantiateSubmodel(attr, val, model, defer);
             }
             return defer;
         },
@@ -147,8 +162,25 @@ define([
         _instantiateSubmodel: function(name, values, model, defer) {
             var _this = this;
             this._data[name] = new model(values, this._intervals, {
+                //todo: remove repetition
                 'change': function(evt, vals) {
                     evt = evt.replace('change', 'change:' + name);
+                    _this.triggerAll(evt, _this.getObject());
+                },
+                'init': function(evt, vals) {
+                    evt = evt.replace('init', 'init:' + name);
+                    _this.triggerAll(evt, _this.getObject());
+                },
+                'load_start': function(evt, vals) {
+                    evt = evt.replace('load_start', 'load_start:' + name);
+                    _this.triggerAll(evt, _this.getObject());
+                },
+                'load_end': function(evt, vals) {
+                    evt = evt.replace('load_end', 'load_end:' + name);
+                    _this.triggerAll(evt, _this.getObject());
+                },
+                'load_error': function(evt, vals) {
+                    evt = evt.replace('load_error', 'load_error:' + name);
                     _this.triggerAll(evt, _this.getObject());
                 },
                 'ready': function() {
@@ -160,7 +192,7 @@ define([
         /**
          * Generate getter for a certain attribute
          * @param prop name of attribute
-         * @returns {function} getter function
+         * @returns {Function} getter function
          */
         _funcGetter: function(prop) {
             var _this = this;
@@ -172,7 +204,7 @@ define([
         /**
          * Generate setter for a certain attribute
          * @param prop name of attribute
-         * @returns {function} setter function
+         * @returns {Function} setter function
          */
         _funcSetter: function(prop) {
             var _this = this;
@@ -195,7 +227,7 @@ define([
         /**
          * Resets this model
          * @param values new values
-         * @param {boolean} prevent events from being fired
+         * @param {Boolean} prevent events from being fired
          * @returns defer defer that will be resolved when reset is done
          */
         reset: function(values, silent) {
@@ -214,6 +246,8 @@ define([
                     submodel.clear();
                 }
             }
+            this._ready = false;
+            this._initialized = false;
             this._events.unbindAll();
             this._intervals.clearAllIntervals();
             this._data = {};
@@ -262,6 +296,14 @@ define([
             // placeholder for validate function
         },
 
+        /**
+         * Checks if model is ready
+         * @returns {Boolean}
+         */
+        isReady: function() {
+            return this._ready;
+        },
+
         /* ==========================
          * Event binding methods
          * ==========================
@@ -269,8 +311,8 @@ define([
 
         /**
          * Binds function to an event in this model
-         * @param {string} name name of event
-         * @param {function} func function to be executed
+         * @param {String} name name of event
+         * @param {Function} func function to be executed
          */
         on: function(name, func) {
             this._events.bind(name, func);
@@ -278,7 +320,7 @@ define([
 
         /**
          * Triggers an event from this model
-         * @param {string} name name of event
+         * @param {String} name name of event
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
@@ -287,7 +329,7 @@ define([
 
         /**
          * Triggers an event from this model and all parent events
-         * @param {string} name name of event
+         * @param {String} name name of event
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
@@ -295,6 +337,14 @@ define([
         }
 
     });
+
+    /**
+     * //todo: remove from global scope
+     * get base Model Class;
+     */
+    function _getBaseModelClass() {
+        return model;
+    }
 
     return model;
 

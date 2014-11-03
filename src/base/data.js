@@ -1,40 +1,40 @@
 define([
     'base/class',
     'jquery',
-    'underscore',
-    //TODO: factory pattern for readers
-    'readers/local-json',
-], function(Class, $, _, Reader, Events) {
+    'lodash'
+], function(Class, $, _) {
 
     var dataManager = Class.extend({
-        init: function(base_path, reader) {
-            this.reader = new Reader(base_path);
-            this.data = [];
+
+        /**
+         * Initializes the data manager.
+         */
+        init: function() {
+            this._data = [];
         },
 
-        //load resource
-        load: function(query, language) {
+        /**
+         * Loads resource from reader or cache
+         * @param {Array} query Array with queries to be loaded
+         * @param {String} language Language
+         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {String} path Where data is located
+         */
+        load: function(query, language, reader, path) {
 
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
-                isCached = this.isCached(query, language),
+                isCached = this.isCached(query, language, reader, path),
                 promise;
 
-            //if result is cached, dont load anything unless forced to
+            //if result is cached, dont load anything
             if (isCached) {
                 promise = true;
+            } else {
+                promise = this.loadFromReader(query, language, reader, path);
             }
-            //if force or no cache, load it.
-            else {
-                promise = this.reader.read(query, language);
-                promise.then(function() {
-                    _this.data = _this.reader.getData();
-                });
-            }
-
             promises.push(promise);
-
             $.when.apply(null, promises).then(
                 // Great success! :D
                 function() {
@@ -48,28 +48,56 @@ define([
             return defer;
         },
 
-        //return entire data
-        get: function() {
-            return this.data;
+        /**
+         * Loads resource from reader
+         * @param {Array} query Array with queries to be loaded
+         * @param {String} language Language
+         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {String} path Where data is located
+         */
+        loadFromReader: function(query, language, reader, path) {
+            var _this = this,
+                defer = $.Deferred();
+            require(["readers/" + reader], function(Reader) {
+                var reader = new Reader(path);
+                reader.read(query, language).then(function() {
+                    _this._data = reader.getData();
+                });
+                defer.resolve();
+            });
+            return defer;
         },
 
-        //todo: larger caching system
-        isCached: function(query, language) {
-            var query = JSON.stringify(query);
+        /**
+         * Gets all items
+         * @returns {Array} items
+         */
+        get: function() {
+            return this._data;
+        },
+
+        /**
+         * Checks whether it's already cached
+         * @returns {Boolean}
+         */
+        isCached: function(query, language, reader, path) {
+            //encode in one string
+            var query = JSON.stringify(query) + language + reader + path;
             //compare to previous string
-            if (this.prevQuery === query && this.prevLang === language) {
+            if (this._prevQuery === query) {
                 return true;
             } else {
-                this.prevQuery = query;
-                this.prevLang = language;
+                this._prevQuery = query;
                 return false;
             }
         },
 
-        //clearing cached data
+        /**
+         * Clears all data and querying
+         */
         clear: function() {
-            this.prevQuery = undefined;
-            this.data = [];
+            this._prevQuery = undefined;
+            this._data = [];
         }
     });
 
