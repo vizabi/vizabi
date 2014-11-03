@@ -7,7 +7,7 @@ define([
         init: function(config, options) {
 
             this.name = 'pop-slider';
-            this.template = "tools/_examples/pop-slider/pop-slider";
+            this.template = "tools/_examples-model-state/crazy-pop-slider/crazy-pop-slider";
 
             //instantiating components
             this.components = [{

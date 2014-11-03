@@ -35,6 +35,7 @@
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('placeholder')">SET STATE</button>
     <p>External buttons:</p>
+    <button onclick="twoGeos()">2 GEOS and POP (legal)</button>
     <button onclick="fiveGeos()">5 GEOS and POP (illegal)</button>
     <button id="play_button" onclick="play()">PLAY</button>
     <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
@@ -189,6 +190,18 @@ function fiveGeos() {
         state: {
             show: {
                 geo: ["swe", "nor", "usa", "fin", "fra"],
+                indicator: "pop"
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function twoGeos() {
+    var options = {
+        state: {
+            show: {
+                geo: ["swe", "nor"],
                 indicator: "pop"
             }
         }
