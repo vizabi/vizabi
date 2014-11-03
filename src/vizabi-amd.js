@@ -19,7 +19,6 @@ define([], function() {
         //require and render tool
         require([path], function(Tool) {
             tool = new Tool(config, options);
-            tool.render();
         });
 
     });
