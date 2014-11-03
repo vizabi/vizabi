@@ -75,6 +75,11 @@ body {
     top: 1px;
     outline: none;
 }
+
+.buttons .github-btn {
+    font-size: 1.5em;
+}
+
 .placeholder {
     display: inline-block;
     position: relative;
