@@ -7,11 +7,12 @@ define([
     var TimeModel = Model.extend({
 
         /**
-         * Initializes the time model.
-         * @param values Initial values for time model
-         * @param intervals Common tool intervals
+         * Initializes the language model.
+         * @param {Object} values The initial values of this model
+         * @param intervals A parent intervals handler (from tool)
+         * @param {Object} bind Initial events to bind
          */
-        init: function(values, intervals) {
+        init: function(values, intervals, bind) {
 
             //default values for time model
             values = _.extend({
@@ -26,10 +27,11 @@ define([
                 roundOnPause: true
             }, values);
 
-            this._super(values, intervals);
+            //same constructor
+            this._super(values, intervals, bind);
 
             var _this = this;
-            this.playing_now = false;
+            this._playing_now = false;
 
             //bing play method to model change
             this.on("change:playing", function() {
@@ -88,9 +90,9 @@ define([
          */
         _startPlaying: function() {
             //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || this.playing_now) return;
+            if (!this.get("playable") || this._playing_now) return;
 
-            this.playing_now = true;
+            this._playing_now = true;
 
             var _this = this,
                 time = this.get("value"),
@@ -105,7 +107,7 @@ define([
             //create interval
 
             //we don't create intervals directly
-            this.intervals.setInterval('playInterval_' + this._id, function() {
+            this._intervals.setInterval('playInterval_' + this._id, function() {
                 if (time >= _this.get("end")) {
                     if (_this.get("loop")) {
                         time = _this.get("start");
@@ -129,8 +131,8 @@ define([
          * Stops playing the time, clearing the interval
          */
         _stopPlaying: function() {
-            this.playing_now = false;
-            this.intervals.clearInterval('playInterval_' + this._id);
+            this._playing_now = false;
+            this._intervals.clearInterval('playInterval_' + this._id);
 
             //snap to integer
             if(this.get("roundOnPause")) {
