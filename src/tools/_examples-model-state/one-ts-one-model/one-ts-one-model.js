@@ -5,7 +5,7 @@ define([
 
 
     var OneTSOneModel = Tool.extend({
-        init: function(options) {
+        init: function(config, options) {
 
             //tool basic settings
             this.name = 'one-ts-one-model';
@@ -15,17 +15,11 @@ define([
             this.components = [{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-1', //div to render
-                model: ["time"]
+                model: ["state.time"]
             }];
 
-            this._super(options);
-        },
-
-        validate: function() {
-
-        },
-
-
+            this._super(config, options);
+        }
     });
 
     return OneTSOneModel;

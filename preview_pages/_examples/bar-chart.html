@@ -114,8 +114,8 @@ $(function() {
             'ready': function() {
                 parseURL();
             },
-            'change:state': function(evt, new_state) {
-                showState(new_state);
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             }
         }
     };

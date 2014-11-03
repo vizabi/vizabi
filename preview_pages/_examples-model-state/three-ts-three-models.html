@@ -86,11 +86,11 @@ $(function() {
         },
 
         bind: {
-            'change:state': function(evt, state) {
-                showState(state);
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             },
-            'change:state:time_start': function(evt, time) {
-                if (time.playing) {
+            'change:state:time_start': function(evt, vals) {
+                if (vals.state.time.playing) {
                     playButton.attr('onclick', 'pause("time_start")');
                     playButton.text("PAUSE 1");
                 } else {
@@ -98,8 +98,8 @@ $(function() {
                     playButton.text("PLAY 1");
                 }
             },
-            'change:state:time_end': function(evt, time) {
-                if (time.playing) {
+            'change:state:time_end': function(evt, vals) {
+                if (vals.state.time.playing) {
                     playButton2.attr('onclick', 'pause("time_end")');
                     playButton2.text("PAUSE 2");
                 } else {
@@ -107,19 +107,18 @@ $(function() {
                     playButton2.text("PLAY 2");
                 }
             },
-            'change:state:time': function(evt, time) {
-                if (time.playing) {
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
                     playButton3.attr('onclick', 'pause("time")');
                     playButton3.text("PAUSE 3");
                 } else {
                     playButton3.attr('onclick', 'play("time")');
                     playButton3.text("PLAY 3");
                 }
+            },
+            ready: function() {
+                parseURL();
             }
-        },
-
-        ready: function() {
-            parseURL();
         }
     };
 

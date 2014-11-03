@@ -4,7 +4,7 @@ define([
 ], function(Tool) {
 
     var NoTSOneModel = Tool.extend({
-        init: function(options) {
+        init: function(config, options) {
 
             //tool basic settings
             this.name = 'no-ts-one-model';
@@ -14,21 +14,11 @@ define([
             this.components = [{
                 component: '_examples/year-display',
                 placeholder: '.vzb-year-display-wrapper', //div to render
-                model: ["time"]
+                model: ["state.time"]
             }];
 
-            this._super(options);
-        },
-
-        // mapping: function() {
-            
-        // },
-
-        validate: function() {
-
-        },
-
-
+            this._super(config, options);
+        }
     });
 
     return NoTSOneModel;

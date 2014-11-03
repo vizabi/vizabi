@@ -22,7 +22,9 @@ define([
          */
         init: function(config, context) {
             this.template = "components/_gapminder/timeslider/timeslider";
-            if (!config.model) config.model = new TimeModel();
+            //default model if none is provided
+            this.default_model = TimeModel;
+
             // Same constructor as the superclass
             this._super(config, context);
         },
@@ -66,10 +68,10 @@ define([
          */
         update: function() {
             //time slider should always receive a time model
-            var time = this.model.get("value"),
-                minValue = this.model.get("start")
-            maxValue = this.model.get("end")
-            step = this.model.get("step");
+            var time = this.model.value,
+                minValue = this.model.start
+            maxValue = this.model.end
+            step = this.model.step;
 
             this.range.attr("min", minValue)
                 .attr("max", maxValue)
@@ -83,8 +85,8 @@ define([
 
             this._setTimePosition();
 
-            this.element.classed(class_hide_play, !this.model.get("playable"));
-            this.element.classed(class_playing, this.model.get("playing"));
+            this.element.classed(class_hide_play, !this.model.playable);
+            this.element.classed(class_playing, this.model.playing);
 
             var show_limits = false,
                 show_value = false;
@@ -110,11 +112,10 @@ define([
         /**
          * Sets the time to current time model
          * @param {number} time The time
-         * @param {boolean} silent Silent option does not trigger events
          */
-        _setTime: function(time, silent) {
+        _setTime: function(time) {
             //update state
-            this.model.set("value", time, silent);
+            this.model.value = time;
         },
 
         /**
@@ -123,8 +124,8 @@ define([
         _setTimePosition: function() {
             var offset = 10,
                 rangeW = parseInt(this.range.style('width'),10) - 16,
-                timeRange = this.model.get("end") - this.model.get("start"),
-                currTime = this.model.get("value") - this.model.get("start"),
+                timeRange = this.model.end - this.model.start,
+                currTime = this.model.value - this.model.start,
                 newPosition = (timeRange > 0) ? Math.round(rangeW * currTime / timeRange) : 0;
                 newPosition += offset;
             this.value.style("left", newPosition + "px");

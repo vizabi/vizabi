@@ -25,12 +25,12 @@
     </div>
 
     <div id="placeholder" class="placeholder"></div>
-    
+
 
 </div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
-    
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState('placeholder')">SET STATE</button>
@@ -39,7 +39,6 @@
 </div>
 
 <script>
-
 var myVizabi,
     playButton;
 
@@ -48,27 +47,26 @@ $(function() {
     playButton = $("#play_button");
     var options = {
         //state
-        state: {
-        },
+        state: {},
 
         bind: {
-            'change:state': function(evt, state) {
-                showState(state);
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             },
-            'change:state:time': function(evt, time) {
-                if(time.playing) {
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
                     playButton.attr('onclick', 'pause()');
                     playButton.text("PAUSE");
                 } else {
                     playButton.attr('onclick', 'play()');
                     playButton.text("PLAY");
                 }
+            },
+            ready: function() {
+                parseURL();
             }
-        },
-
-        ready: function() {
-            parseURL();
         }
+
     };
 
     showState(options.state);

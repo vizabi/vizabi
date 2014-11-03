@@ -14,43 +14,30 @@ define([
             this.components = [{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-1', //div to render
-                model: ["time_start"]
+                model: ["state.time_start"]
             },{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-2', //div to render
-                model: ["time_end"]
+                model: ["state.time_end"]
             },{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-3', //div to render
-                model: ["time"]
+                model: ["state.time"]
             }];
-
-            //rules to validate state (alterative method)
-            // options.validate = [
-            //     ["time_end.start", "=", "time_start.value"],
-            //     ["time.start", "=", "time_start.value"],
-            //     ["time.end", "=", "time_end.value"]
-            // ];
 
             this._super(config, options);
         },
 
         toolModelValidation: function(model) {
-            var changes = false;
-            if (model.get("time_end.start") != model.get("time_start.value")) {
-                model.set("time_end.start", model.get("time_start.value"));
-                changes = model;
+            if (model.state.time_end.start != model.state.time_start.value) {
+                model.state.time_end.start = model.state.time_start.value;
             }
-            if (model.get("time.start") != model.get("time_start.value")) {
-                model.set("time.start", model.get("time_start.value"));
-                changes = model;
+            if (model.state.time.start != model.state.time_start.value) {
+                model.state.time.start = model.state.time_start.value;
             }
-            if (model.get("time.end") != model.get("time_end.value")) {
-                model.set("time.end", model.get("time_end.value"));
-                changes = model;
+            if (model.state.time.end != model.state.time_end.value) {
+                model.state.time.end = model.state.time_end.value;
             }
-            
-            return changes;
         },
 
     });

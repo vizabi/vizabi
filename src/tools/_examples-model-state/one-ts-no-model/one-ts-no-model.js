@@ -5,7 +5,7 @@ define([
 
 
     var OneTSNoModel = Tool.extend({
-        init: function(options) {
+        init: function(config, options) {
 
             //tool basic settings
             this.name = 'one-ts-no-model';
@@ -17,14 +17,8 @@ define([
                 placeholder: '.vzb-tool-timeslider-1', //div to render
             }];
 
-            this._super(options);
-        },
-
-        validate: function() {
-
-        },
-
-
+            this._super(config, options);
+        }
     });
 
     return OneTSNoModel;

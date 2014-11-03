@@ -29,17 +29,15 @@ define([
             this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.bars = this.graph.select('.vzb-bc-bars');
-
-            this.update();
         },
 
 
         //TODO: Optimize data binding
         update: function() {
-            var indicator = this.model.show.get("indicator"),
-                data = _.cloneDeep(this.model.data.get("data")),
-                time = this.model.time.get("value"),
-                categories = this.model.show.get("geo_categories"),
+            var indicator = this.model.show.indicator,
+                data = _.cloneDeep(this.model.data.getItems()),
+                time = this.model.time.value,
+                categories = this.model.show.geo_categories,
 
                 data_curr_year = data.filter(function(d) {
                     return (d.time == time);
@@ -51,10 +49,10 @@ define([
                 maxValue = d3.max(data, function(d) {
                     return +d[indicator];
                 }),
-                scale = this.model.show.get("scale"),
-                minY = this.model.show.get("min") || ((scale == "log") ? minValue : 0),
-                maxY = this.model.show.get("max") || (maxValue + maxValue / 10),
-                unit = this.model.show.get("unit") || 1,
+                scale = this.model.show.scale,
+                minY = this.model.show.min || ((scale == "log") ? minValue : 0),
+                maxY = this.model.show.max || (maxValue + maxValue / 10),
+                unit = this.model.show.unit || 1,
                 indicator_name = indicator;
 
             // Create X axis scale, X axis function and call it on element
@@ -137,7 +135,7 @@ define([
             // Update range of Y and call Y axis function on element
             this.y.range([this.height, 0]);
             // Number of ticks
-            if (this.model.show.get("scale") == "log") {
+            if (this.model.show.scale == "log") {
                 this.yAxis.ticks(5, '100');
             } else {
                 this.yAxis.ticks(Math.max((Math.round(this.height / tick_spacing)), 2));
@@ -164,7 +162,7 @@ define([
             //adjust this.graph position
             this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            var indicator = this.model.show.get("indicator");
+            var indicator = this.model.show.indicator;
 
             // Update size of this.bars 
             var _this = this;
