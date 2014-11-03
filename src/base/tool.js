@@ -31,12 +31,14 @@ define([
             this.model = new ToolModel(options, {
                 'change': function(evt, val) {
                     if (_this._ready) {
+                        _this.model.validate();
                         _this.update();
                     }
                     _this.triggerAll(evt, val);
                 },
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
+                        _this.model.validate();
                         _this.update();
                         _this.translateStrings();
                     }
