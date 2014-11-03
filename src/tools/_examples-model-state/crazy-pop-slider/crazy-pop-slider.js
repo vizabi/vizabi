@@ -40,7 +40,7 @@ define([
                 model.state.time.end = model.data.getLimits('time').max;
             }
 
-            if (model.state.show.geo.length > 3) {
+            if (model.state.show.geo.length > 3 && model.state.show.indicator != "lex") {
                 model.state.show.indicator = "lex";
             }
         },
