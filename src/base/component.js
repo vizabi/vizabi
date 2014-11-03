@@ -39,6 +39,13 @@ define([
             this._components_config = this.components;
             this._frameRate = 10;
 
+            this.default_model = this.default_model || Model;
+
+            //if there's no model, we create our own
+            if (!config.model) {
+                config.model = this._defaultModels(this.default_model);
+            }
+
             //model
             this.model = this.model || config.model;
             this.ui = this.ui || config.ui;
@@ -405,9 +412,32 @@ define([
             } else if (_.isString(model_config) && model_config.length > 0) {
                 return _mapOne(model_config).model;
             } else {
-                return new Model({});
+                return false;
             }
 
+        },
+
+        /**
+         * Instantiates default models if there's none provided
+         * @param {String|Array} model_config Configuration of model
+         * @returns {Object} the model
+         */
+        _defaultModels: function(defaults) {
+            var _this = this,
+                config;
+            if (_.isPlainObject(defaults) || _.isArray(defaults)) {
+                config = {};
+                for (var i in defaults) {
+                    config[i] = this._defaultModels(defaults[i]);
+                }
+            } else {
+                config = new defaults({}, undefined, {
+                    'change': function() {
+                        _this.update();
+                    }
+                });
+            }
+            return config;
         },
 
         /**
