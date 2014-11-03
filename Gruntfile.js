@@ -392,7 +392,8 @@ module.exports = function(grunt) {
             }
         });
 
-        contents = 'define([' + contents.join(",") + '], function() {});';
+        //hotfix all files in global variable AS WELL
+        contents = 'var _vzb_available_plugins=[' + contents.join(",") + ']; define([' + contents.join(",") + '], function() {});';
         grunt.file.write(plugins_file, contents);
 
         grunt.log.writeln("All tools and components have been included in the AMD module.");

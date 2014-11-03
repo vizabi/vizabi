@@ -142,7 +142,8 @@ define([
                 _this = this;
 
             //special model
-            if (require.defined(modl)) {
+            //hotfix: global _vzb_available_plugins has all variable modules
+            if (_vzb_available_plugins.indexOf(modl) !== -1) {
                 require([modl], function(model) {
                     _this._instantiateSubmodel(attr, val, model, defer);
                 });
