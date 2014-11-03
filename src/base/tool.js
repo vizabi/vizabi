@@ -22,6 +22,7 @@ define([
             this._id = _.uniqueId("t");
             this.template = this.template || "tools/tool";
             this.layout = new Layout();
+            this.ui = options.ui || {};
 
             var validate = config.validate || this.toolModelValidation,
                 query = config.query || this.getQuery;
@@ -55,6 +56,8 @@ define([
                 'ready': function() {
                     //binding external events
                     _this._bindEvents();
+                    //this ui is the model
+                    _this.ui = _this.model.ui;
                     //rendering
                     _this.render();
                 }

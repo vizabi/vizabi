@@ -41,6 +41,7 @@ define([
 
             //model
             this.model = this.model || config.model;
+            this.ui = this.ui || config.ui;
         },
 
         /**
@@ -188,7 +189,8 @@ define([
             //component options
             var config = _.extend(component, {
                 name: name,
-                model: component_model
+                model: component_model,
+                ui: this.ui
             });
 
             // Loads the file we need
@@ -381,6 +383,8 @@ define([
                     current_name = parts.shift();
                     current = current.get(current_name);
                 }
+                //normalize name (show_2 -> show)
+                current_name = current_name.split("_")[0];
                 return {
                     name: current_name,
                     model: current
