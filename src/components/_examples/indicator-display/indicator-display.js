@@ -34,9 +34,9 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var indicator = this.model.show.get("indicator"),
-                time = this.model.time.get("value"),
-                countries = _.cloneDeep(this.model.data.get("data")),
+            var indicator = this.model.show.indicator,
+                time = this.model.time.value,
+                countries = _.cloneDeep(this.model.data.getItems()),
                 decimals = utils.countDecimals(time),
                 countriesCurr = [];
 
@@ -83,7 +83,7 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var indicator = this.model.show.get("indicator");
+            var indicator = this.model.show.indicator;
 
             if (this.getLayoutProfile() === 'small' && indicator === 'pop') {
                 this.element.selectAll("p")

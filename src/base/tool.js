@@ -37,6 +37,7 @@ define([
                 },
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
+                        _this.update();
                         _this.translateStrings();
                     }
                 },
@@ -92,7 +93,6 @@ define([
             } else {
                 this.model.set(options, silent);
             }
-            this.update();
         },
 
         /* ==========================
@@ -104,6 +104,8 @@ define([
          * Displays loading class
          */
         beforeLoading: function() {
+            //do not update if it's loading
+            this.blockUpdate(true);
             this.element.classed(class_loading_data, true);
         },
 
@@ -111,6 +113,8 @@ define([
          * Removes loading class
          */
         afterLoading: function() {
+            //it's ok to update if not loading
+            this.blockUpdate(false);
             this.element.classed(class_loading_data, false);
         },
 
