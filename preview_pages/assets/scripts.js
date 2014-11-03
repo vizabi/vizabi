@@ -186,7 +186,7 @@ DropDown.prototype = {
 function viewOnGithub() {
     //rly hacked way of finding the address
     var github_base = "https://github.com/Gapminder/vizabi/tree/",
-        address = window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
+        address = github_link || window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
     window.open(address,'_blank');
 }
 
