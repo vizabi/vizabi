@@ -3,7 +3,7 @@ define([
 ], function(Tool) {
 
     var barChart = Tool.extend({
-        init: function(parent, options) {
+        init: function(config, options) {
 
             this.name = 'bar-chart';
             this.template = "tools/_examples/bar-chart/bar-chart";
@@ -25,7 +25,7 @@ define([
                 placeholder: '.vzb-tool-buttonlist'
             }];
 
-            this._super(parent, options);
+            this._super(config, options);
         },
 
         toolModelValidation: function(model) {

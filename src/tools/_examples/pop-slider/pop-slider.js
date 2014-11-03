@@ -4,7 +4,7 @@ define([
 ], function(_, Tool) {
 
     var popSlider = Tool.extend({
-        init: function(options) {
+        init: function(config, options) {
 
             this.name = 'pop-slider';
             this.template = "tools/_examples/pop-slider/pop-slider";
@@ -13,57 +13,51 @@ define([
             this.components = [{
                 component: '_examples/year-display',
                 placeholder: '.vzb-tool-year', //div to render
-                model: ["time"]
+                model: ["state.time"]
             }, {
                 component: '_examples/indicator-display',
                 placeholder: '.vzb-tool-display', //div to render
-                model: ["show", "data", "time"]
+                model: ["state.show", "data", "state.time"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
-                model: ["time"]
+                model: ["state.time"]
             }];
 
             //rules to validate state (alterative method)
-            // options.validate = [
+            // config.validate = [
             //     ["show.time_start", ">=", "data.time_start"],
             //     ["show.time_end", "<=", "data.time_end"],
             //     ["time.start", ">=", "show.time_start"],
             //     ["time.end", "<=", "show.time_end"]
             // ];
 
-            this._super(options);
+            this._super(config, options);
         },
 
         toolModelValidation: function(model) {
-            var changes = false;
-            if (model.get("show.time_start") < model.get("data.time_start")) {
-                model.set("show.time_start", model.get("data.time_start"));
-                changes = model;
+            if (model.state.show.time_start < model.data.getLimits().min) {
+                model.state.show.time_start = model.data.getLimits().min;
             }
-            if (model.get("show.time_end") > model.get("data.time_end")) {
-                model.set("show.time_end", model.get("data.time_end"));
-                changes = model;
+            if (model.state.show.time_end < model.data.getLimits().max) {
+                model.state.show.time_end = model.data.getLimits().max;
             }
-            if (model.get("time.start") < model.get("show.time_start")) {
-                model.set("time.start", model.get("show.time_start"));
-                changes = model;
+            if (model.state.time.start < model.state.show.time_start) {
+                model.state.time.start = model.state.show.time_start;
             }
-            if (model.get("time.end") > model.get("show.time_end")) {
-                model.set("time.end", model.get("show.time_end"));
-                changes = model;
+            if (model.state.time.end > model.state.show.time_end) {
+                model.state.time.end = model.state.show.time_end;
             }
-            return changes;
         },
 
-        getQuery: function(toolModel) {
+        getQuery: function(model) {
             return [{
                 "from": "data",
-                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", toolModel.get("show.indicator")],
+                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", model.state.show.indicator],
                 "where": {
-                    "geo": toolModel.get("show.geo"),
-                    "geo.category": toolModel.get("show.geo_category"),
-                    "time": [toolModel.get("show.time_start") + "-" + toolModel.get("show.time_end")]
+                    "geo": model.state.show.geo,
+                    "geo.category": model.state.show.geo_category,
+                    "time": [model.state.show.time_start + "-" + model.state.show.time_end]
                 }
             }];
         }

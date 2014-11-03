@@ -1,7 +1,7 @@
 define([
     'd3',
     'base/component',
-    'models/time-model'
+    'models/time'
 ], function(d3, Component, TimeModel) {
 
     //contants
@@ -17,14 +17,14 @@ define([
         /**
          * Initializes the timeslider.
          * Executed once before any template is rendered.
-         * @param options The options passed to the component
+         * @param config The options passed to the component
          * @param context The component's parent
          */
-        init: function(options, context) {
+        init: function(config, context) {
             this.template = "components/_gapminder/timeslider/timeslider";
-            if (!options.model) options.model = new TimeModel();
+            if (!config.model) config.model = new TimeModel();
             // Same constructor as the superclass
-            this._super(options, context);
+            this._super(config, context);
         },
 
         /**
