@@ -1,7 +1,7 @@
 //Year Display
 define([
     'd3',
-    'underscore',
+    'lodash',
     'base/component',
     'base/utils'
 ], function(d3, _, Component, utils) {

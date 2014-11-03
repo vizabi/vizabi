@@ -31,7 +31,7 @@ require.config({
             exports: 'd3'
         },
         smartpicker: {
-            deps: ['underscore', 'jquery'],
+            deps: ['lodash', 'jquery'],
             exports: 'smartpicker'
         },
         jqueryui_core: {

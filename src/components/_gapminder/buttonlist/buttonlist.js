@@ -2,7 +2,7 @@
 
 define([
     'jquery',
-    'underscore',
+    'lodash',
     'base/utils',
     'base/component'
 ], function($, _, utils, Component) {

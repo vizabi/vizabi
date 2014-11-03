@@ -1,5 +1,5 @@
 define([
-    'underscore',
+    'lodash',
     'base/tool'
 ], function(_, Tool) {
 

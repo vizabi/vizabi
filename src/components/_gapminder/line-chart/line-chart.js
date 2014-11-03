@@ -1,7 +1,7 @@
 define([
     'jquery',
     'd3',
-    'underscore',
+    'lodash',
     'base/component'
 ], function($, d3, _, Component) {
 
