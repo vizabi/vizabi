@@ -1,7 +1,6 @@
 define([
-    'lodash',
     'base/tool'
-], function(_, Tool) {
+], function(Tool) {
 
     var popSlider = Tool.extend({
         init: function(config, options) {
