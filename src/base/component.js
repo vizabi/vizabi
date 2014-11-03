@@ -1,7 +1,7 @@
 define([
     'jquery',
     'd3',
-    'underscore',
+    'lodash',
     'base/utils',
     'base/class',
     'base/model',

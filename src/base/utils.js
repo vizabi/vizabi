@@ -1,4 +1,4 @@
-define(['jquery', 'd3', 'underscore'], function($, d3, _) {
+define(['jquery', 'd3', 'lodash'], function($, d3, _) {
 
     var util = {
         /**
