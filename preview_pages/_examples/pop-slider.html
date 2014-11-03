@@ -58,9 +58,7 @@ $(function() {
             show: {
                 geo: ["swe", "nor", "usa"],
                 geo_category: ["country"],
-                indicator: 'pop',
-                time_start: 1900,
-                time_end: 2014
+                indicator: 'pop'
             },
             //time properties
             time: {
@@ -101,6 +99,7 @@ $(function() {
                 parseURL();
             },
             'change:state': function(evt, state) {
+                console.log('changed state');
                 showState(state);
             },
             'change:state:time': function(evt, time) {

@@ -36,17 +36,17 @@ define([
         },
 
         toolModelValidation: function(model) {
-            if (model.state.show.time_start < model.data.getLimits().min) {
-                model.state.show.time_start = model.data.getLimits().min;
+
+            //don't do anything if data hasn't been loaded
+            if(!model.data.getItems() || model.data.getItems().length < 1) {
+                return;
             }
-            if (model.state.show.time_end < model.data.getLimits().max) {
-                model.state.show.time_end = model.data.getLimits().max;
+
+            if (model.state.time.start < model.data.getLimits('time').min) {
+                model.state.time.start = model.data.getLimits('time').min;
             }
-            if (model.state.time.start < model.state.show.time_start) {
-                model.state.time.start = model.state.show.time_start;
-            }
-            if (model.state.time.end > model.state.show.time_end) {
-                model.state.time.end = model.state.show.time_end;
+            if (model.state.time.end > model.data.getLimits('time').max) {
+                model.state.time.end = model.data.getLimits('time').max;
             }
         },
 
@@ -57,7 +57,7 @@ define([
                 "where": {
                     "geo": model.state.show.geo,
                     "geo.category": model.state.show.geo_category,
-                    "time": [model.state.show.time_start + "-" + model.state.show.time_end]
+                    "time": [model.state.time.start + "-" + model.state.time.end]
                 }
             }];
         }
