@@ -33,12 +33,15 @@ define([
             if(!model.data.getItems() || model.data.getItems().length < 1) {
                 return;
             }
-
             if (model.state.time.start < model.data.getLimits('time').min) {
                 model.state.time.start = model.data.getLimits('time').min;
             }
             if (model.state.time.end > model.data.getLimits('time').max) {
                 model.state.time.end = model.data.getLimits('time').max;
+            }
+
+            if (model.state.show.geo.length > 3) {
+                model.state.show.indicator = "lex";
             }
         },
 
