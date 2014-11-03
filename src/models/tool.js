@@ -35,26 +35,25 @@ define([
 
             //constructor is similar to model
             this._super(values, this._intervals, binds);
-
-            /*
-             * Binding Events
-             */
+            
             //load whenever show or language changes
-            // var _this = this;
-            // this.on(["change:state:show", "change:language"], function() {
-            //     _this.load().done(function() {
-            //         _this.trigger("reloaded");
-            //     });
-            // });
+            var _this = this;
+            this.on(["change:state:show", "change:language"], function() {
+                _this.load().done(function() {
+                    _this.trigger("reloaded");
+                });
+            });
         },
 
         /* ==========================
-         * Loading and resetting
+         * Loading
          * ==========================
          */
 
-        //load method (hotfix)
-        //TODO: improve the whole loading logic. It should load, then render
+        /**
+         * Loads all submodels
+         * @returns defer to be resolved when everything is loaded
+         */
         load: function() {
             var _this = this,
                 defer = $.Deferred(),
@@ -79,60 +78,23 @@ define([
             return defer;
         },
 
-        reset: function(new_options, silent) {
-            var model_config = this._generateModelConfig(new_options);
-            this._super(model_config, silent);
-            //rebind events
-            this.bindEvents(new_options.bind);
-        },
-
-        /* ==========================
-         * Binding and propagation
-         * ==========================
-         */
-
-        bindEvents: function(evts) {
-            var _this = this;
-            for (var i in evts) {
-                _this.on(i, evts[i]);
-            }
-        },
-
-        //propagate option changes to model
-        //todo: improve propagation of models
-        propagate: function(options, silent) {
-            //state properties
-            // if (options.state) {
-            //     for (var i in options.state) {
-            //         this.get(i).set(options.state[i], silent);
-            //     }
-            // }
-            // //language properties
-            // if (options.language) {
-            //     this.get("language").set(options.language, silent);
-            // }
-            // if (options.data) {
-            //     this.get("data").set(options.data, silent);
-            // }
-            // //bind properties
-            // if (options.bind) {
-            //     this.get("bind").set(options.bind, silent);
-            // }
-            //binding
-        },
-
         /* ==========================
          * Validation methods
          * ==========================
          */
 
+        /**
+         * Generates a validation function based on specific model validation
+         * @returns {Function} validate function
+         */
+        //todo: improve loops and maybe generalize to all components
         _generateValidate: function(validate) {
 
             var _this = this;
             return function() {
                 var model = JSON.stringify(_this.getObject()),
                     c = 0,
-                    max = 10;
+                    max = 20;
                 while (c < max) {
                     validate(_this);
                     model2 = JSON.stringify(_this.getObject());

@@ -98,12 +98,11 @@ $(function() {
             'ready': function() {
                 parseURL();
             },
-            'change:state': function(evt, state) {
-                console.log('changed state');
-                showState(state);
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             },
-            'change:state:time': function(evt, time) {
-                if (time.playing) {
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
                     playButton.attr('onclick', 'pause()');
                     playButton.text("PAUSE");
                 } else {
@@ -111,8 +110,8 @@ $(function() {
                     playButton.text("PLAY");
                 }
             },
-            'change:state:show': function(evt, show) {
-                if (show.indicator == 'lex') {
+            'change:state:show': function(evt, vals) {
+                if (vals.state.show.indicator == 'lex') {
                     indicatorButton.attr('onclick', 'indicator("pop")');
                     indicatorButton.text("SET INDICATOR: POP");
                 } else {
@@ -120,8 +119,8 @@ $(function() {
                     indicatorButton.text("SET INDICATOR: LEX");
                 }
             },
-            'change:language': function(evt, language) {
-                if (language.value === "en") {
+            'change:language': function(evt, vals) {
+                if (vals.language.id === "en") {
                     languageButton.attr('onclick', "language('pt')");
                     languageButton.text("SET LANGUAGE: PT");
                 } else {
@@ -162,7 +161,7 @@ function pause() {
 function language(lang) {
     var options = {
         language: {
-            value: lang
+            id: lang
         }
     };
     myVizabi.setOptions(options);

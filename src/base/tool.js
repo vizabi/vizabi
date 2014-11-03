@@ -1,6 +1,6 @@
 define([
     'd3',
-    'underscore',
+    'lodash',
     'base/component',
     'base/layout',
     'models/tool'
@@ -26,11 +26,20 @@ define([
             var validate = config.validate || this.toolModelValidation,
                 query = config.query || this.getQuery;
 
-            /*
-             * Building Tool Model
-             */
+            //build tool model
             var _this = this;
             this.model = new ToolModel(options, {
+                'change': function(evt, val) {
+                    if (_this._ready) {
+                        _this.update();
+                    }
+                    _this.triggerAll(evt, val);
+                },
+                'reloaded': function(evt, val) {
+                    if (_this._ready) {
+                        _this.translateStrings();
+                    }
+                },
                 'load_start': function() {
                     _this.beforeLoading();
                 },
@@ -41,41 +50,15 @@ define([
                     _this.errorLoading();
                 },
                 'ready': function() {
-                    //model is ready, we can load data for the first time
-                    //_this.model.load();
+                    //binding external events
+                    _this._bindEvents();
+                    //rendering
                     _this.render();
                 }
             }, validate, query);
 
-            /*
-             * Parent Constructor (this = root parent)
-             */
+            // Parent Constructor (this = root parent)
             this._super(config, this);
-
-            /*
-             * Specific binding for tools
-             */
-            // var _this = this;
-            // this.model.on("load:start", function() {
-            //     _this.beforeLoading();
-            // });
-            // this.model.on("load:end", function() {
-            //     _this.afterLoading();
-            // });
-
-            // if (this.model) {
-            //     var _this = this;
-            //     this.model.on("change", function() {
-            //         if (_this._ready) {
-            //             _this.update();
-            //         }
-            //     });
-            //     this.model.on("reloaded", function() {
-            //         if (_this._ready) {
-            //             _this.translateStrings();
-            //         }
-            //     });
-            // }
         },
 
         /**
@@ -84,6 +67,16 @@ define([
          */
         postRender: function() {
             return this.model.load();
+        },
+
+        /**
+         * Binds events in model to outside world
+         */
+        _bindEvents: function() {
+            if(!this.model.bind) return;
+            for (var i in this.model.bind.get()) {
+                this.on(i, this.model.bind.get(i));
+            }
         },
 
         /**
@@ -97,7 +90,7 @@ define([
                 this.model.reset(options, silent);
                 this.reassignModel();
             } else {
-                this.model.propagate(options, silent);
+                this.model.set(options, silent);
             }
             this.update();
         },

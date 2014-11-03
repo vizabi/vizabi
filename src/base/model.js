@@ -19,7 +19,6 @@ define([
             this._id = _.uniqueId("m"); //model unique id
             this._data = {};
             this._ready = false;
-            this._initialized = false;
             this._intervals = (this._intervals || intervals) || new Intervals();
             //each model has its own event handling
             this._events = new Events();
@@ -93,7 +92,7 @@ define([
                     this._data[a] = vals;
                     promise = true;
                     //different events whether it's first time or not
-                    var evt_name = (this._initialized) ? "change" : "init";
+                    var evt_name = (this._ready) ? "change" : "init";
                     events.push(evt_name + ":" + a);
                 }
                 promises.push(promise);
@@ -114,14 +113,13 @@ define([
                     _this.validate(silent);
                 }
                 //trigger change if not silent
-                _this._ready = true;
-                _this._initialized = true;
+                if (!_this._ready) {
+                    _this._ready = true;
+                    events.push("ready");
+                }
                 if (!silent) {
-
-                    //todo: hotfix: defer to force delay of 1
                     _.defer(function() {
                         _this.triggerAll(events, _this.getObject());
-                        _this.trigger("ready", _this.getObject());
                     });
                 }
                 defer.resolve();
@@ -251,7 +249,6 @@ define([
                 }
             }
             this._ready = false;
-            this._initialized = false;
             this._events.unbindAll();
             this._intervals.clearAllIntervals();
             this._data = {};
@@ -298,14 +295,6 @@ define([
          */
         validate: function() {
             // placeholder for validate function
-        },
-
-        /**
-         * Checks if model is ready
-         * @returns {Boolean}
-         */
-        isReady: function() {
-            return this._ready;
         },
 
         /* ==========================
