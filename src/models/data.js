@@ -61,6 +61,7 @@ define([
             if (_.isArray(this._items) && this._items.length === 1) {
                 this._items = this._items[0];
             }
+            if(!attr) attr = 'time'; //fallback in case no attr is provided
             var limits = {
                     min: 0,
                     max: 0
@@ -83,7 +84,7 @@ define([
             var _this = this,
                 defer = $.Deferred();
 
-            if (query || language || this._loading) {
+            if (!query || !language || this._loading) {
                 return true;
             }
 
@@ -95,10 +96,10 @@ define([
                     this.reader,
                     this.path)
                 .done(function(data) {
+                    _this._loading = false;
                     if (data === 'error') {
                         _this.trigger("load_error", query);
                     } else {
-                        _this._loading = false;
                         _this._items = _this._dataManager.get();
                         _this.trigger(["load_end", "change"]);
                         defer.resolve();

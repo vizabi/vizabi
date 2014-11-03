@@ -62,8 +62,8 @@ define([
                 var reader = new Reader(path);
                 reader.read(query, language).then(function() {
                     _this._data = reader.getData();
+                    defer.resolve();
                 });
-                defer.resolve();
             });
             return defer;
         },

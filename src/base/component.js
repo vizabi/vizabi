@@ -34,7 +34,7 @@ define([
             this.components = this.components || [];
             this.profiles = this.profiles || {};
             this.parent = parent;
-            
+
             this._events = new Events();
             this._components_config = this.components;
             this._frameRate = 10;
@@ -44,10 +44,10 @@ define([
         },
 
         /**
-         * Renders the component, step by step
+         * Renders the component, step by step - Assumes data is ready
          * @returns defer a promise to be resolved when component is rendered
          */
-        render: function() {
+        render: function(posTemplate) {
             var defer = $.Deferred();
             var _this = this;
 
@@ -107,7 +107,7 @@ define([
          * @param {Function} function any function
          * @returns defer a promise to be resolved when function is resolved
          */
-         //todo: check if this is actually necessary here
+        //todo: check if this is actually necessary here
         execute: function(func) {
             var defer = $.Deferred(),
                 possiblePromise;
@@ -125,7 +125,7 @@ define([
             }
             // if no promise is returned, resolve right away
             else {
-                defer.resolve();
+                return true;
             }
 
             return defer;
@@ -284,7 +284,7 @@ define([
          * Update calls update for all sub-components
          */
         update: function() {
-            if(this._blockUpdate) return;
+            if (this._blockUpdate) return;
             var _this = this;
             this._update = this._update || _.throttle(function() {
                 for (var i in _this.components) {
@@ -300,7 +300,7 @@ define([
          * Resize calls resize for all sub-components
          */
         resize: function() {
-            if(this._blockResize) return;
+            if (this._blockResize) return;
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
                 for (var i in _this.components) {
@@ -317,7 +317,7 @@ define([
          * @param {Boolean} val
          */
         blockUpdate: function(val) {
-            if(typeof val === 'undefined') val = true;
+            if (typeof val === 'undefined') val = true;
             this._blockUpdate = val;
         },
 
@@ -326,7 +326,7 @@ define([
          * @param {Boolean} val
          */
         blockResize: function(val) {
-            if(typeof val === 'undefined') val = true;
+            if (typeof val === 'undefined') val = true;
             this._blockResize = val;
         },
 
@@ -334,12 +334,12 @@ define([
          * Destroys component
          */
         destroy: function() {
-            if(this.model) this.model.clear();
-            if(this.layout) this.layout.destroy();
-            if(this.intervals) this.intervals.clearAllIntervals();
-            if(this._events) this._events.unbindAll();
-            if(this.components) this.components = [];
-            if(this.placeholder) this.placeholder.html('');
+            if (this.model) this.model.clear();
+            if (this.layout) this.layout.destroy();
+            if (this.intervals) this.intervals.clearAllIntervals();
+            if (this._events) this._events.unbindAll();
+            if (this.components) this.components = [];
+            if (this.placeholder) this.placeholder.html('');
         },
 
         /**
@@ -368,19 +368,23 @@ define([
          * @param {String|Array} model_config Configuration of model
          * @returns {Object} the model
          */
-         //todo: make it more readable
+        //todo: make it more readable
         _modelMapping: function(model_config) {
 
             var _this = this;
+
             function _mapOne(name) {
                 var parts = name.split("."),
                     current = _this.model,
                     current_name = "";
-                while(parts.length) {
+                while (parts.length) {
                     current_name = parts.shift();
                     current = current.get(current_name);
                 }
-                return { name: current_name, model: current};
+                return {
+                    name: current_name,
+                    model: current
+                };
             }
             if (_.isUndefined(model_config)) {
                 return;
@@ -404,7 +408,7 @@ define([
 
         /**
          * Get layout profile of the current resolution
-         * @returns {String} profile 
+         * @returns {String} profile
          */
         getLayoutProfile: function() {
             //get profile from parent if layout is not available
@@ -430,10 +434,12 @@ define([
                 }
             }
 
-            if(!t_func) {
-                t_func = function(s) { return s; };
+            if (!t_func) {
+                t_func = function(s) {
+                    return s;
+                };
             }
-            if(wrap) return this._translatedStringFunction(t_func);
+            if (wrap) return this._translatedStringFunction(t_func);
             else return t_func;
         },
 
@@ -445,7 +451,7 @@ define([
         _translatedStringFunction: function(translation_function) {
             return function(string) {
                 var translated = translation_function(string);
-                return '<span data-vzb-translate="'+string+'">'+translated+'</span>';
+                return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
             }
         },
 
@@ -456,11 +462,19 @@ define([
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.selectAll('[data-vzb-translate]');
-            for(var i=0; i<strings[0].length; i++) {
+            for (var i = 0; i < strings[0].length; i++) {
                 var string = strings[0][i];
                 var original = string.getAttribute("data-vzb-translate");
                 string.innerHTML = t(original);
             }
+        },
+
+        /**
+         * Loads data
+         * @returns true assume it's loaded
+         */
+        loadData: function() {
+            return true;
         },
 
         /*

@@ -17,7 +17,6 @@ var Vizabi = function(tool_path, container, options) {
         //require and render tool
         require([path], function(Tool) {
             tool = new Tool(config, options);
-            tool.render();
         });
 
     });

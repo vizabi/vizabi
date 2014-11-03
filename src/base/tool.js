@@ -42,7 +42,8 @@ define([
                 },
                 'ready': function() {
                     //model is ready, we can load data for the first time
-                    _this.model.load();
+                    //_this.model.load();
+                    _this.render();
                 }
             }, validate, query);
 
@@ -75,6 +76,14 @@ define([
             //         }
             //     });
             // }
+        },
+
+        /**
+         * Loads the model as a postRender function
+         * @returns defer a promise to be resolved when model is loaded
+         */
+        postRender: function() {
+            return this.model.load();
         },
 
         /**

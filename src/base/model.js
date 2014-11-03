@@ -177,15 +177,15 @@ define([
                 },
                 'load_start': function(evt, vals) {
                     evt = evt.replace('load_start', 'load_start:' + name);
-                    _this.triggerAll(evt, _this.getObject());
+                    _this.triggerAll(evt, vals);
                 },
                 'load_end': function(evt, vals) {
                     evt = evt.replace('load_end', 'load_end:' + name);
-                    _this.triggerAll(evt, _this.getObject());
+                    _this.triggerAll(evt, vals);
                 },
                 'load_error': function(evt, vals) {
                     evt = evt.replace('load_error', 'load_error:' + name);
-                    _this.triggerAll(evt, _this.getObject());
+                    _this.triggerAll(evt, vals);
                 },
                 'ready': function() {
                     defer.resolve();
