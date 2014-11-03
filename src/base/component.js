@@ -11,6 +11,12 @@ define([
     var class_loading = "vzb-loading";
 
     var Component = Class.extend({
+
+        /**
+         * Initializes the component
+         * @param {Object} config Initial config, with name and placeholder
+         * @param {Object} parent Reference to tool
+         */
         init: function(config, parent) {
 
             this._id = this._id || _.uniqueId("c");
@@ -26,23 +32,21 @@ define([
                 name: this.name
             };
             this.components = this.components || [];
-            this.components_config = this.components;
             this.profiles = this.profiles || {};
-            this.ui = config.ui || {};
             this.parent = parent;
-            this.events = new Events();
-            this.frameRate = 10;
+            
+            this._events = new Events();
+            this._components_config = this.components;
+            this._frameRate = 10;
 
             //model
             this.model = this.model || config.model;
         },
 
-        //by default, it just considers data loaded
-        loadData: function() {
-            return true;
-        },
-
-        //render
+        /**
+         * Renders the component, step by step
+         * @returns defer a promise to be resolved when component is rendered
+         */
         render: function() {
             var defer = $.Deferred();
             var _this = this;
@@ -83,13 +87,6 @@ define([
                     //Every widget binds its resize function to the resize event
                     return _this.renderComponents();
                 })
-                // After that, attempt to load data
-                .then(function() {
-                    //attempt to load data
-                    if (_this.model && typeof _this.model.load === 'function') {
-                        return _this.model.load();
-                    }
-                })
                 // After rendering the components, resolve the defer
                 .done(function() {
                     //not loading anytmore, remove class
@@ -105,7 +102,12 @@ define([
             return defer;
         },
 
-        // Execute function if it exists, with promise support
+        /**
+         * Execute function with promise support
+         * @param {Function} function any function
+         * @returns defer a promise to be resolved when function is resolved
+         */
+         //todo: check if this is actually necessary here
         execute: function(func) {
             var defer = $.Deferred(),
                 possiblePromise;
@@ -129,6 +131,10 @@ define([
             return defer;
         },
 
+        /**
+         * Loads all subcomponents
+         * @returns defer a promise to be resolved when components are loaded
+         */
         loadComponents: function() {
             var defer = $.Deferred(),
                 _this = this,
@@ -136,7 +142,7 @@ define([
                 components = this.components;
 
             //save initial config
-            this.components_config = _.map(components, _.clone);
+            this._components_config = _.map(components, _.clone);
             //use the same name for the initialized collection           
             this.components = {};
 
@@ -154,6 +160,11 @@ define([
             return defer;
         },
 
+        /**
+         * Load component
+         * @param {Object} component the configuration for a component
+         * @returns defer a promise to be resolved when the component is loaded
+         */
         loadComponent: function(component) {
 
             if (!component.component || !component.placeholder) {
@@ -177,8 +188,7 @@ define([
             //component options
             var config = _.extend(component, {
                 name: name,
-                model: component_model,
-                ui: this.ui //ui options are passed to all components
+                model: component_model
             });
 
             // Loads the file we need
@@ -191,6 +201,10 @@ define([
             return defer;
         },
 
+        /**
+         * Renders subcomponents
+         * @returns defer a promise to be resolved when components are rendered
+         */
         renderComponents: function() {
             var defer = $.Deferred(),
                 promises = [];
@@ -208,6 +222,10 @@ define([
             return defer;
         },
 
+        /**
+         * Loads the template
+         * @returns defer a promise to be resolved when template is loaded
+         */
         loadTemplate: function() {
             var _this = this;
             var defer = $.Deferred();
@@ -257,9 +275,14 @@ define([
             this.model.setState(state);
         },
 
+        /**
+         * Interface for postRender
+         */
         postRender: function() {},
 
-        // Component-level update updates the sub-components
+        /**
+         * Update calls update for all sub-components
+         */
         update: function() {
             if(this._blockUpdate) return;
             var _this = this;
@@ -269,11 +292,13 @@ define([
                         _this.components[i].update();
                     }
                 }
-            }, this.frameRate);
+            }, this._frameRate);
             this._update();
         },
 
-        // Component-level update updates the sub-components
+        /**
+         * Resize calls resize for all sub-components
+         */
         resize: function() {
             if(this._blockResize) return;
             var _this = this;
@@ -283,37 +308,51 @@ define([
                         _this.components[i].resize();
                     }
                 }
-            }, this.frameRate);
+            }, this._frameRate);
             this._resize();
         },
 
+        /**
+         * Blocks execution of update method
+         * @param {Boolean} val
+         */
         blockUpdate: function(val) {
             if(typeof val === 'undefined') val = true;
             this._blockUpdate = val;
         },
 
+        /**
+         * Blocks execution of resize method
+         * @param {Boolean} val
+         */
         blockResize: function(val) {
             if(typeof val === 'undefined') val = true;
             this._blockResize = val;
         },
 
+        /**
+         * Destroys component
+         */
         destroy: function() {
             if(this.model) this.model.clear();
             if(this.layout) this.layout.destroy();
-            if(this.events) this.events.unbindAll();
             if(this.intervals) this.intervals.clearAllIntervals();
+            if(this._events) this._events.unbindAll();
             if(this.components) this.components = [];
             if(this.placeholder) this.placeholder.html('');
         },
 
+        /**
+         * Reassigns all models (on overwrite
+         */
         reassignModel: function() {
             //only reassign if it's loaded already
             if (_.isArray(this.components)) return;
 
             var _this = this;
             //for each subcomponent, reassign model
-            for (var i in this.components_config) {
-                var c = this.components_config[i],
+            for (var i in this._components_config) {
+                var c = this._components_config[i],
                     id = c.placeholder, //placeholder is used as id
                     model = this._modelMapping(c.model);
 
@@ -324,30 +363,49 @@ define([
             }
         },
 
-        //maps the current model to subcomponents
-        //model_config may be array or string
+        /**
+         * Maps the current model to the subcomponents
+         * @param {String|Array} model_config Configuration of model
+         * @returns {Object} the model
+         */
+         //todo: make it more readable
         _modelMapping: function(model_config) {
 
+            var _this = this;
+            function _mapOne(name) {
+                var parts = name.split("."),
+                    current = _this.model,
+                    current_name = "";
+                while(parts.length) {
+                    current_name = parts.shift();
+                    current = current.get(current_name);
+                }
+                return { name: current_name, model: current};
+            }
             if (_.isUndefined(model_config)) {
                 return;
             }
             if (_.isArray(model_config) && model_config.length > 1) {
                 var values = {};
                 for (var i = 0, size = model_config.length; i < size; i++) {
-                    var model_name = model_config[i];
-                    values[model_name] = this.model.get(model_name);
+                    var model_info = _mapOne(model_config[i]);
+                    values[model_info.name] = model_info.model;
                 }
                 return values;
             } else if (_.isArray(model_config) && model_config.length == 1) {
-                return this.model.get(model_config[0]);
+                return _mapOne(model_config[0]).model;
             } else if (_.isString(model_config) && model_config.length > 0) {
-                return this.model.get(model_config);
+                return _mapOne(model_config).model;
             } else {
                 return new Model({});
             }
 
         },
 
+        /**
+         * Get layout profile of the current resolution
+         * @returns {String} profile 
+         */
         getLayoutProfile: function() {
             //get profile from parent if layout is not available
             if (this.layout) {
@@ -357,20 +415,10 @@ define([
             }
         },
 
-        addComponent: function(path, options) {
-            if (_.isUndefined(this.components)) this.components = [];
-            var name_token = path.split("/"),
-                name = name_token[name_token.length - 1];
-
-            this.components.push({
-                name: name,
-                path: path,
-                options: options
-            });
-        },
-
-        /*
-         * Translation function for templates
+        /**
+         * Get translation function for templates
+         * @param {Boolean} wrap wrap in spam tags
+         * @returns {Function}
          */
         getTranslationFunction: function(wrap) {
             var t_func;
@@ -389,6 +437,11 @@ define([
             else return t_func;
         },
 
+        /**
+         * Get function for translated string
+         * @param {Function} translation_function The translation function
+         * @returns {Function}
+         */
         _translatedStringFunction: function(translation_function) {
             return function(string) {
                 var translated = translation_function(string);
@@ -396,6 +449,9 @@ define([
             }
         },
 
+        /**
+         * Translate all strings in the template
+         */
         //todo: improve translation of strings
         translateStrings: function() {
             var t = this.getTranslationFunction();
@@ -411,13 +467,32 @@ define([
          * Event binding methods
          */
 
-        on: function(evt, func) {
-            this.events.bind(evt, func);
+        /**
+         * Binds function to an event in this model
+         * @param {String} name name of event
+         * @param {Function} func function to be executed
+         */
+        on: function(name, func) {
+            this._events.bind(name, func);
         },
 
-        trigger: function(evt, values) {
-            this.events.trigger(evt, values);
+        /**
+         * Triggers an event from this model
+         * @param {String} name name of event
+         * @param val Optional values to be sent to callback function
+         */
+        trigger: function(name, val) {
+            this._events.trigger(name, val);
         },
+
+        /**
+         * Triggers an event from this model and all parent events
+         * @param {String} name name of event
+         * @param val Optional values to be sent to callback function
+         */
+        triggerAll: function(name, val) {
+            this._events.triggerAll(name, val);
+        }
 
     });
 

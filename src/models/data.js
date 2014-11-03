@@ -53,25 +53,26 @@ define([
         },
 
         /**
-         * Gets limits time
+         * Gets limits
          * @returns {Object} time limits
          */
-        getLimitsTime: function() {
+        //todo: this only works for int
+        getLimits: function(attr) {
             if (_.isArray(this._items) && this._items.length === 1) {
                 this._items = this._items[0];
             }
-            var times = _.map(this._items, function(d) {
-                return parseInt(d.time, 10);
-            });
-            if (times.length > 0) {
-                var min_time = _.min(times),
-                    max_time = _.max(times);
-                return {
-                    start: min_time,
-                    end: max_time
-                }
+            var limits = {
+                    min: 0,
+                    max: 0
+                },
+                filtered = _.map(this._items, function(d) {
+                    return parseInt(d[attr], 10);
+                });
+            if (filtered.length > 0) {
+                limits.min = _.min(filtered);
+                limits.max = _.max(filtered);
             }
-            return {};
+            return limits;
         },
 
         /**

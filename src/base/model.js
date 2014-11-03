@@ -114,12 +114,16 @@ define([
                     _this.validate(silent);
                 }
                 //trigger change if not silent
-                if (!silent) {
-                    _this.triggerAll(events, _this.getObject());
-                    _this.trigger("ready", _this.getObject());
-                }
                 _this._ready = true;
                 _this._initialized = true;
+                if (!silent) {
+
+                    //todo: hotfix: defer to force delay of 1
+                    _.defer(function() {
+                        _this.triggerAll(events, _this.getObject());
+                        _this.trigger("ready", _this.getObject());
+                    });
+                }
                 defer.resolve();
             });
 

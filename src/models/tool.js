@@ -141,7 +141,25 @@ define([
             if (typeof validate === 'function') {
                 var _this = this;
                 return function() {
-                    while (validate(_this));
+                    var model = JSON.stringify(_this.getObject()),
+                        c = 0,
+                        max = 10;
+                    while (c<max) {
+                        validate(_this);
+                        model2 = JSON.stringify(_this.getObject());
+                        if(model === model2) {
+                            break;
+                        }
+                        else {
+                            c++;
+                            model = model2;
+                            if(c>=max) {
+                                console.log("Validation error: "+_this._id);
+                                console.log(model);
+                                break;
+                            }
+                        }
+                    }
                     return;
                 }
             }
