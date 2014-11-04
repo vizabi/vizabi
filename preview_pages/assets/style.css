@@ -33,9 +33,11 @@ body {
     color: #666;
     background: #E0E8EA;
     padding: 10px;
-    font-size: 14px;
+    font-size: 11px;
     line-height: 1.5;
     margin-bottom: 10px;
+    max-height: 300px;
+    overflow: scroll;
 }
 .aux button {
     width: 100%;
@@ -73,6 +75,11 @@ body {
     top: 1px;
     outline: none;
 }
+
+.buttons .github-btn {
+    font-size: 1.5em;
+}
+
 .placeholder {
     display: inline-block;
     position: relative;
@@ -81,7 +88,7 @@ body {
     margin: 20px auto;
     border: 1px solid #ccc;
     overflow: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .placeholder.fullscreen {
     position: absolute;
@@ -105,7 +112,7 @@ p {
     position: relative;
     width: 150px;
     margin: 0 1px;
-    padding: 9px 6px;
+    padding: 9px 15px;
     /* Styles */
     
     background: #75ADBB;
@@ -116,7 +123,7 @@ p {
     text-transform: uppercase;
     font-size: 12px;
     color: white;
-    text-align: center;
+    text-align: left;
     display: inline-block;
     z-index: 100;
 }

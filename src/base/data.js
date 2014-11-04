@@ -1,104 +1,103 @@
 define([
     'base/class',
     'jquery',
-    'underscore',
-    //TODO: factory pattern for readers
-    'readers/local-json',
-    'base/events'
-], function(Class, $, _, Reader, Events) {
+    'lodash'
+], function(Class, $, _) {
 
     var dataManager = Class.extend({
-        init: function(base_path, reader) {
-            this.data = {};
-            this.reader = new Reader(base_path);
+
+        /**
+         * Initializes the data manager.
+         */
+        init: function() {
+            this._data = [];
         },
 
-        //load resource
-        load: function(query, language, events) {
+        /**
+         * Loads resource from reader or cache
+         * @param {Array} query Array with queries to be loaded
+         * @param {String} language Language
+         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {String} path Where data is located
+         */
+        load: function(query, language, reader, path) {
 
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
-                isCached = true,
+                isCached = this.isCached(query, language, reader, path),
+                promise;
 
-                //Events before, after, error and cached for data
-                before = events.before,
-                success = events.success,
-                error = events.error,
-                cached = events.cached;
-
-            //reset = options.reset;
-
-            var promise,
-                isCached = this.isCached(query, language);
-
-            //if result is cached, dont load anything unless forced to
+            //if result is cached, dont load anything
             if (isCached) {
                 promise = true;
+            } else {
+                promise = this.loadFromReader(query, language, reader, path);
             }
-            //if force or no cache, load it.
-            else {
-                promise = this.reader.read(query, language);
-                Events.trigger("change:query", {
-                    query: query,
-                    language: language
-                });
-            }
-
             promises.push(promise);
-
-            if (!isCached && before && _.isFunction(before)) before();
-
             $.when.apply(null, promises).then(
-                // Success
+                // Great success! :D
                 function() {
-
-                    if (isCached && cached && _.isFunction(cached)) {
-                        cached();
-                    } else if (!isCached) {
-
-                        //_this.data = $.extend(true, _this.data, _this.reader.getData());
-                        _this.data = _this.reader.getData();
-
-                        if (_.isFunction(success)) {
-                            // Great success! :D
-                            success();
-                        }
-                    }
-
-                    defer.resolve();
+                    defer.resolve(_this.get());
                 },
-                // Error
+                // Unfortunate error
                 function() {
-                    if (error && _.isFunction(error)) {
-                        error();
-                    }
+                    defer.resolve('error');
                 });
 
             return defer;
         },
 
-        //return requested file or entire cache
-        get: function(path) {
-            return (path) ? this.data[path] : this.data;
+        /**
+         * Loads resource from reader
+         * @param {Array} query Array with queries to be loaded
+         * @param {String} language Language
+         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {String} path Where data is located
+         */
+        loadFromReader: function(query, language, reader, path) {
+            var _this = this,
+                defer = $.Deferred();
+            require(["readers/" + reader], function(Reader) {
+                var reader = new Reader(path);
+                reader.read(query, language).then(function() {
+                    _this._data = reader.getData();
+                    defer.resolve();
+                });
+            });
+            return defer;
         },
 
-        isCached: function(query, language) {
-            var query = JSON.stringify(query);
+        /**
+         * Gets all items
+         * @returns {Array} items
+         */
+        get: function() {
+            return this._data;
+        },
 
-            if(this.prevQuery === query && this.prevLang === language) {
+        /**
+         * Checks whether it's already cached
+         * @returns {Boolean}
+         */
+        isCached: function(query, language, reader, path) {
+            //encode in one string
+            var query = JSON.stringify(query) + language + reader + path;
+            //compare to previous string
+            if (this._prevQuery === query) {
                 return true;
-            }
-            else {
-                this.prevQuery = query;
-                this.prevLang = language;
+            } else {
+                this._prevQuery = query;
                 return false;
             }
         },
 
-        //later we can add an external way of clearing the cached data
+        /**
+         * Clears all data and querying
+         */
         clear: function() {
-            this.data = {};
+            this._prevQuery = undefined;
+            this._data = [];
         }
     });
 

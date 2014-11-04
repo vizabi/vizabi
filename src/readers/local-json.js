@@ -1,25 +1,34 @@
  define([
-     'base/class',
      'jquery',
-     'underscore',
-     'base/utils'
- ], function(Class, $, _, Util) {
+     'base/class',
+ ], function($, Class) {
 
      var LocalJSONReader = Class.extend({
 
+         /**
+          * Initializes the reader.
+          * @param {String} basepath The basepath of this reader (file)
+          */
          init: function(basepath) {
-             this.data = [];
-             this.basepath = basepath;
+             this._name = 'local-json';
+             this._data = [];
+             this._basepath = basepath;
          },
 
+         /**
+          * Reads from source
+          * @param {Array} queries Queries to be performed
+          * @param {String} language language
+          * @returns a promise that will be resolved when data is read
+          */
          read: function(queries, language) {
              var _this = this,
                  defer = $.Deferred(),
                  promises = [];
 
-             var path = this.basepath.replace("{{LANGUAGE}}", language);
+             var path = this._basepath.replace("{{LANGUAGE}}", language);
 
-             _this.data = [];
+             _this._data = [];
 
              for (var i = 0; i < queries.length; i++) {
                  var fakeResponsePath = path.replace("response", "response_" + i),
@@ -46,18 +55,18 @@
                          }
 
                          //if there's a timeRange different than all, filter range
-                         if(timeRange && timeRange != "*") {
-                            timeRange = timeRange[0].split("-");
-                            var min = timeRange[0],
-                                max = timeRange[1] || min;
-                                //max = min in case there's only one
+                         if (timeRange && timeRange != "*") {
+                             timeRange = timeRange[0].split("-");
+                             var min = timeRange[0],
+                                 max = timeRange[1] || min;
+                             //max = min in case there's only one
 
-                            data = data.filter(function(row) {
+                             data = data.filter(function(row) {
                                  return row["time"] >= min && row["time"] <= max;
                              });
                          }
 
-                         _this.data.push(data);
+                         _this._data.push(data);
                      })
                      .error(function() {
                          console.log("Error Happened While Loading File: " + fakeResponsePath);
@@ -73,8 +82,12 @@
              return defer;
          },
 
+         /**
+          * Gets the data
+          * @returns all data
+          */
          getData: function() {
-             return this.data;
+             return this._data;
          }
 
      });

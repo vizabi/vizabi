@@ -1,0 +1,110 @@
+<!-- @@include('../assets/_header.tpl', {"title": "Model View Example - No timeslider, one model"}) -->
+
+<div class="container">
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('placeholder')">RANDOM</button>
+    </div>
+
+    <div id="placeholder" class="placeholder"></div>
+
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState('placeholder')">SET STATE</button>
+    <p>External buttons:</p>
+    <button id="play_button" onclick="play()">PLAY</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+
+<script>
+var myVizabi,
+    playButton;
+
+$(function() {
+
+    playButton = $("#play_button");
+    var options = {
+        //state
+        state: {
+            time: {
+                start: 1800,
+                end: 2014,
+                step: 1,
+                value: 1800,
+                playing: true
+            }
+        },
+
+        bind: {
+            'change:state': function(evt, vals) {
+                showState(vals.state);
+            },
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
+                    playButton.attr('onclick', 'pause()');
+                    playButton.text("PAUSE");
+                } else {
+                    playButton.attr('onclick', 'play()');
+                    playButton.text("PLAY");
+                }
+            },
+            ready: function() {
+                parseURL();
+            }
+        }
+
+    };
+
+    showState(options.state);
+    myVizabi = new Vizabi("_examples-model/no-ts-one-model", "#placeholder", options);
+
+});
+
+function play() {
+    var options = {
+        state: {
+            time: {
+                playing: true
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function pause() {
+    var options = {
+        state: {
+            time: {
+                playing: false
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+</script>
+
+<!-- @@include('../assets/_footer.tpl') -->

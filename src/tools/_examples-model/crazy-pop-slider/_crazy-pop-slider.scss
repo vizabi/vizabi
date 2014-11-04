@@ -1,0 +1,43 @@
+@import'../../tool';
+.vzb-tool-crazy-pop-slider {
+    @extend .vzb-tool;
+    @import'../../../components/_examples/year-display/year-display';
+    @import'../../../components/_examples/indicator-display/indicator-display';
+    @import'../../../components/_gapminder/timeslider/timeslider';
+    //overwrite content style
+    .vzb-tool-content {
+        top: 0px !important;
+    }
+    .vzb-tool-intro {
+        text-align: center;
+        font-size: 14px;
+        margin: 0px;
+        padding: 20px 20px 0px 20px;
+        line-height: 1.5;
+        color: $vzb-color-grey;
+    }
+    .vzb-tool-year {
+        text-align: center;
+    }
+    .vzb-tool-display {
+        text-align: center;
+    }
+    .vzb-year-display {
+        color: $vzb-color-red;
+    }
+    .vzb-tool-timeslider {
+        @include absolute(auto, 20px, 20px, 20px);
+        display: block;
+        height: 50px;
+    }
+
+    &.vzb-large, &.vzb-medium {
+        .vzb-tool-year {
+            @include absolute(40px, 50%, auto, 0px);
+        }
+        .vzb-tool-display {
+        	@include absolute(40px, 0px, 10px, 50%);
+        	text-align: left;
+        }
+    }
+}
