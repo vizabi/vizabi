@@ -1,55 +1,76 @@
 define([
+    'lodash',
     'base/tool'
-], function(Tool) {
+], function(_, Tool) {
 
     var bubbleChart = Tool.extend({
-        init: function(parent, options) {
+        /**
+         * Initialized the tool
+         * @param config tool configurations, such as placeholder div
+         * @param options tool options, such as state, data, etc
+         */
+        init: function(config, options) {
 
             this.name = 'bubble-chart';
             this.template = "tools/_examples/bubble-chart/bubble-chart";
-            this.placeholder = options.placeholder;
-
-            this.state = options.state;
-
-            //add components
-            this.addComponent('_gapminder/header', {
+            
+            //instantiating components
+            this.components = [{
+                component: '_gapminder/header',
                 placeholder: '.vzb-tool-title'
-            });
-            this.addComponent('_examples/bubble-chart', {
-                placeholder: '.vzb-tool-viz'
-            });
-            this.addComponent('_gapminder/timeslider', {
-                placeholder: '.vzb-tool-timeslider'
-            });
-            this.addComponent('_gapminder/buttonlist', {
-                placeholder: '.vzb-tool-buttonlist',
-                buttons: [{
-                    id: "geo",
-                    title: "Country",
-                    icon: "globe"
-                }],
-                data: options.data
-            });
+            }, {
+                component: '_examples/bubble-chart',
+                placeholder: '.vzb-tool-viz', //div to render
+                model: ["state.show", "data", "state.time"]
+            }, {
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-tool-timeslider', //div to render
+                model: ["state.time"]
+            }, {
+                component: '_gapminder/buttonlist',
+                placeholder: '.vzb-tool-buttonlist'
+            }];
 
-            this._super(parent, options);
+            this._super(config, options);
 
         },
 
+        /**
+         * Validating the tool model
+         * @param model the current tool model to be validated
+         */
+        toolModelValidation: function(model) {
 
-        getQuery: function() {
-            //build query with state info
+            var state = model.state,
+                data = model.data;
 
-            var query = [{
-                from: 'data',
-                select: _.union(['geo', 'geo.name', 'time', 'geo.region'],this.model.getState("indicator")),
-                where: {
-                    geo: this.model.getState("show").geo,
-                    'geo.category': this.model.getState("show")['geo.category'], 
-                    time: this.model.getState("timeRange")
+            //don't validate anything if data hasn't been loaded
+            if(!data.getItems() || data.getItems().length < 1) {
+                return;
+            }
+            if (state.time.start < data.getLimits('time').min) {
+                state.time.start = data.getLimits('time').min;
+            }
+            if (state.time.end > data.getLimits('time').max) {
+                state.time.end = data.getLimits('time').max;
+            }
+        },
+
+        /**
+         * Returns the query (or queries) to be performed by this tool
+         * @param model the tool model will be received
+         */
+        getQuery: function(model) {
+            var state = model.state;
+            return [{
+                "from": "data",
+                "select": _.union(["geo", "geo.name", "time", "geo.region", state.show.indicator]),
+                "where": {
+                    "geo": state.show.geo,
+                    "geo.category": state.show.geo_category,
+                    "time": [state.time.start + "-" + state.time.end]
                 }
             }];
-
-            return query;
         }
     });
 

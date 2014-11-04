@@ -86,10 +86,10 @@ $(function() {
             id: "en",
             strings: {
                 "en": {
-                    "intro_text": "This example uses a slow data reader on purpose. In this crazy example, if there are more than 3 geos, the tool model validation forces the indicator to be lex, forcing the loader to be triggered 2X."
+                    "intro_text": "The purpose of this example is to show that the screen in only updated once when dealing with data fetching and translation. It uses a slow data reader intentionally. In this example, if there are more than 3 geos, the tool model validation forces the indicator to be lex, forcing the loader to be triggered 2X."
                 },
                 "pt": {
-                    "intro_text": "Esse exemplo usa um data reader lento de propósito. Se houverem mais de 3 geos, a validação força que o indicador seja lex, forçando o carregamento de dados 2X."
+                    "intro_text": "O proposito desse exemplo é mostrar que a tela é atualizada apenas uma vez ao recuperar dados ou traduzir. Usamos um loader lento intencionalmente. Nesse exemplo, se existem mais de 3 geos, a validacao forca o indicador a ser lex, forcando dupla recuperacao de dados."
                 }
             }
         },
@@ -140,7 +140,7 @@ $(function() {
     };
 
     showState(options.state);
-    myVizabi = new Vizabi("_examples-model-state/crazy-pop-slider", "#placeholder", options);
+    myVizabi = new Vizabi("_examples-model/crazy-pop-slider", "#placeholder", options);
 
 });
 

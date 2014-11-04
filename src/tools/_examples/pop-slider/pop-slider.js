@@ -4,6 +4,12 @@ define([
 ], function(_, Tool) {
 
     var popSlider = Tool.extend({
+
+        /**
+         * Initialized the tool
+         * @param config tool configurations, such as placeholder div
+         * @param options tool options, such as state, data, etc
+         */
         init: function(config, options) {
 
             this.name = 'pop-slider';
@@ -27,29 +33,40 @@ define([
             this._super(config, options);
         },
 
+        /**
+         * Validating the tool model
+         * @param model the current tool model to be validated
+         */
         toolModelValidation: function(model) {
 
-            //don't do anything if data hasn't been loaded
-            if(!model.data.getItems() || model.data.getItems().length < 1) {
+            var state = model.state,
+                data = model.data;
+
+            //don't validate anything if data hasn't been loaded
+            if(!data.getItems() || data.getItems().length < 1) {
                 return;
             }
-
-            if (model.state.time.start < model.data.getLimits('time').min) {
-                model.state.time.start = model.data.getLimits('time').min;
+            if (state.time.start < data.getLimits('time').min) {
+                state.time.start = data.getLimits('time').min;
             }
-            if (model.state.time.end > model.data.getLimits('time').max) {
-                model.state.time.end = model.data.getLimits('time').max;
+            if (state.time.end > data.getLimits('time').max) {
+                state.time.end = data.getLimits('time').max;
             }
         },
 
+        /**
+         * Returns the query (or queries) to be performed by this tool
+         * @param model the tool model will be received
+         */
         getQuery: function(model) {
+            var state = model.state;
             return [{
                 "from": "data",
-                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", model.state.show.indicator],
+                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator],
                 "where": {
-                    "geo": model.state.show.geo,
-                    "geo.category": model.state.show.geo_category,
-                    "time": [model.state.time.start + "-" + model.state.time.end]
+                    "geo": state.show.geo,
+                    "geo.category": state.show.geo_category,
+                    "time": [state.time.start + "-" + state.time.end]
                 }
             }];
         }

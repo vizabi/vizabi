@@ -1,4 +1,4 @@
-<!-- @@include('../assets/_header.tpl', {"title": "Model View Example - One timeslider, one model"}) -->
+<!-- @@include('../assets/_header.tpl', {"title": "Model View Example - No timeslider, one model"}) -->
 
 <div class="container">
     <div class="buttons">
@@ -54,8 +54,8 @@ $(function() {
                 start: 1800,
                 end: 2014,
                 step: 1,
-                value: 1950,
-                playing: false
+                value: 1800,
+                playing: true
             }
         },
 
@@ -80,7 +80,7 @@ $(function() {
     };
 
     showState(options.state);
-    myVizabi = new Vizabi("_examples-model-state/one-ts-one-model", "#placeholder", options);
+    myVizabi = new Vizabi("_examples-model/no-ts-one-model", "#placeholder", options);
 
 });
 

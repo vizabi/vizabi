@@ -4,11 +4,17 @@ define([
 ], function(Tool) {
 
     var TwoTSOneModel = Tool.extend({
+
+        /**
+         * Initialized the tool
+         * @param config tool configurations, such as placeholder div
+         * @param options tool options, such as state, data, etc
+         */
         init: function(config, options) {
 
             //tool basic settings
-            this.name = 'two-ts-two-models';
-            this.template = 'tools/_examples-model-state/two-ts-two-models/two-ts-two-models';
+            this.name = 'two-ts-one-model';
+            this.template = 'tools/_examples-model-state/two-ts-one-model/two-ts-one-model';
 
             //instantiating components
             this.components = [{
@@ -18,13 +24,11 @@ define([
             },{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider-2', //div to render
-                model: ["state.time_2"]
+                model: ["state.time"]
             }];
 
             this._super(config, options);
         }
-
-
     });
 
     return TwoTSOneModel;

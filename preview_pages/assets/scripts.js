@@ -56,23 +56,25 @@ function forceResizeEvt() {
     updateURL();
 }
 
-function setLanguage(id, language) {
-    var newOption = {
-        language: language
+function setLanguage(lang) {
+    var options = {
+        language: {
+            id: lang
+        }
     };
-    myVizabi.setOptions(newOption);
+    myVizabi.setOptions(options);
 }
 
-function setCurrentState(id, idState) {
+function setCurrentState(idState) {
     if (!idState) {
         idState = "state";
     }
     var state = document.getElementById(idState).innerHTML;
     state = JSON.parse(state);
-    forceState(id, state);
+    forceState(state);
 }
 
-function forceState(id, state) {
+function forceState(state) {
     var newOption = {
         state: state
     };
@@ -186,7 +188,7 @@ DropDown.prototype = {
 function viewOnGithub() {
     //rly hacked way of finding the address
     var github_base = "https://github.com/Gapminder/vizabi/tree/",
-        address = github_link || window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
+        address = window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
     window.open(address,'_blank');
 }
 

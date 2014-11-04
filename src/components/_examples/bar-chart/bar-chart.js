@@ -7,20 +7,19 @@ define([
 
     var BarChart = Component.extend({
 
-        /*
-         * INIT:
-         * Executed once, before template loading
+        /**
+         * Initializes the barchart
+         * @param config component configuration
+         * @param context component context (parent)
          */
-        init: function(options, context) {
+        init: function(config, context) {
             this.name = 'bar-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this._super(options, context);
+            this._super(config, context);
         },
 
-        /*
-         * POSTRENDER:
-         * Executed after template is loaded
-         * Ideally, it contains instantiations related to template
+        /**
+         * Executes right after the template is in place
          */
         postRender: function() {
 
@@ -32,7 +31,9 @@ define([
         },
 
 
-        //TODO: Optimize data binding
+        /**
+         * Updates the component as soon as the model/models change
+         */
         update: function() {
             var indicator = this.model.show.indicator,
                 data = _.cloneDeep(this.model.data.getItems()),
@@ -94,7 +95,9 @@ define([
 
         },
 
-        //draw the this.graph for the first time
+        /**
+         * Resizes the component
+         */
         resize: function() {
             var tick_spacing = 60,
                 bar_radius = 5,

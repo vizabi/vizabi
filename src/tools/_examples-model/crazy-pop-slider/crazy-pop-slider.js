@@ -2,8 +2,8 @@ define([
     'base/tool'
 ], function(Tool) {
 
-    var barChart = Tool.extend({
-        
+    var crazyPopSlider = Tool.extend({
+
         /**
          * Initialized the tool
          * @param config tool configurations, such as placeholder div
@@ -11,26 +11,25 @@ define([
          */
         init: function(config, options) {
 
-            this.name = 'bar-chart';
-            this.template = "tools/_examples/bar-chart/bar-chart";
+            this.name = 'pop-slider';
+            this.template = "tools/_examples-model/crazy-pop-slider/crazy-pop-slider";
 
             //instantiating components
             this.components = [{
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
+                component: '_examples/year-display',
+                placeholder: '.vzb-tool-year', //div to render
+                model: ["state.time"]
             }, {
-                component: '_examples/bar-chart',
-                placeholder: '.vzb-tool-viz', //div to render
+                component: '_examples/indicator-display',
+                placeholder: '.vzb-tool-display', //div to render
                 model: ["state.show", "data", "state.time"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["state.time"]
-            }, {
-                component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist'
             }];
 
+            //constructor is the same
             this._super(config, options);
         },
 
@@ -53,6 +52,9 @@ define([
             if (state.time.end > data.getLimits('time').max) {
                 state.time.end = data.getLimits('time').max;
             }
+            if (state.show.geo.length > 3 && state.show.indicator != "lex") {
+                state.show.indicator = "lex";
+            }
         },
 
         /**
@@ -71,8 +73,9 @@ define([
                 }
             }];
         }
+
     });
 
 
-    return barChart;
+    return crazyPopSlider;
 });

@@ -40,9 +40,9 @@
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
             <ul class="dropdown">
-                <li><a onclick="language('en')">English</a>
+                <li><a onclick="setLanguage('en')">English</a>
                 </li>
-                <li><a onclick="language('pt')">Portuguese</a>
+                <li><a onclick="setLanguage('pt')">Portuguese</a>
                 </li>
             </ul>
         </div>
@@ -95,17 +95,13 @@ $(function() {
 
         //language properties
         language: url.lang || {
-            value: "en",
-            ui_strings: {
+            id: "en",
+            strings: {
                 en: {
-                    "title": "Table Title",
-                    "timeslider/play": "Play",
-                    "timeslider/pause": "Pause"
+                    "title": "Bar Chart Title"
                 },
                 pt: {
-                    "title": "Título da Tabela",
-                    "timeslider/play": "Iniciar",
-                    "timeslider/pause": "Parar"
+                    "title": "Título do Bar Chart"
                 }
             }
         },

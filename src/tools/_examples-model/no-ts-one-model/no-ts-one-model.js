@@ -4,11 +4,17 @@ define([
 ], function(Tool) {
 
     var NoTSOneModel = Tool.extend({
+
+        /**
+         * Initialized the tool
+         * @param config tool configurations, such as placeholder div
+         * @param options tool options, such as state, data, etc
+         */
         init: function(config, options) {
 
             //tool basic settings
             this.name = 'no-ts-one-model';
-            this.template = 'tools/_examples-model-state/no-ts-one-model/no-ts-one-model';
+            this.template = 'tools/_examples-model/no-ts-one-model/no-ts-one-model';
 
             //instantiating components
             this.components = [{
