@@ -14,7 +14,7 @@ define([
 
             //tool basic settings
             this.name = 'two-ts-one-model';
-            this.template = 'tools/_examples-model-state/two-ts-one-model/two-ts-one-model';
+            this.template = 'tools/_examples-model/two-ts-one-model/two-ts-one-model';
 
             //instantiating components
             this.components = [{
