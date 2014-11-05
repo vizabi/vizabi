@@ -5,6 +5,7 @@ define([
     'base/component'
 ], function($, d3, _, Component) {
 
+    var _this = null;
 
     // Various accessors that specify the dimensions of data to visualize
     function mean(d, indicator) {
@@ -64,9 +65,9 @@ define([
         // we need to generate the distributions based on mu, sigma and scale
         // we span a uniform range of 'points' across the entire X scale,
         // resolution: 1 point per pixel. If width not defined assume it equal 500px
-        var rangeFrom = Math.log(xScale.domain()[0]);
-        var rangeTo = Math.log(xScale.domain()[1]);
-        var rangeStep = (rangeTo - rangeFrom)/(width==null?500:width);
+        var rangeFrom = Math.log(_this.xScale.domain()[0]);
+        var rangeTo = Math.log(_this.xScale.domain()[1]);
+        var rangeStep = (rangeTo - rangeFrom)/500;//(width?500:width);
 
         d.points = d3.range(rangeFrom, rangeTo, rangeStep)
             .map(function(dX){
@@ -88,6 +89,7 @@ define([
         * @param context component context (parent)
         */
         init: function(config, context) {
+            _this = this;
             this.name = 'mountain-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
             this._super(config, context);
@@ -99,9 +101,9 @@ define([
             
             // define path generator
             this.area = d3.svg.area()
-                .x(function(d) { return xScale(d.x) })
-                .y0(function(d) { return yScale(d.y0) })
-                .y1(function(d) { return yScale(d.y0+d.y) });
+                .x(function(d) { return _this.xScale(d.x) })
+                .y0(function(d) { return _this.yScale(d.y0) })
+                .y1(function(d) { return _this.yScale(d.y0+d.y) });
 
             this.stack = d3.layout.stack()
                 //.order("inside-out")
@@ -136,54 +138,46 @@ define([
         //FIXME when sliding through years, data is not changing (only year),
         // but the function is still called. is it ok?
         update: function() {
-            var indicator = this.model.show.indicator;
-            var data = this.model.data.getItems();
-            var time = this.model.time.value;
-            var stackingIsOn = this.model.show.stack;
-            var scale = this.model.show.scale;
+            this.indicator = this.model.show.indicator;
+            this.data = this.model.data.getItems();
+            this.time = this.model.time.value;
+            this.stackingIsOn = this.model.show.stack;
+            this.scale = this.model.show.scale;
+            this.units = this.model.show.unit || [1, 1, 1];
 
-            var minValue = indicator.map(function(ind) {
-                    return d3.min(data, function(d) {
+            var minValue = this.indicator.map(function(ind) {
+                    return d3.min(_this.data, function(d) {
                         return +d[ind];
                     })
                 });
-            var maxValue = indicator.map(function(ind) {
-                    return d3.max(data, function(d) {
+            var maxValue = this.indicator.map(function(ind) {
+                    return d3.max(_this.data, function(d) {
                         return +d[ind];
                     })
                 });
 
             //FIXME min and max should not really be used direclty on indicators.
             //FIXME instead they should be applied to arrays of XY points
-            var min = scale.map(function(scale, i) {
+            var min = this.scale.map(function(scale, i) {
                     return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
                 });
-            var max = scale.map(function(scale, i) {
+            var max = this.scale.map(function(scale, i) {
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
                 });
             
-            var units = this.model.show.unit || [1, 1, 1];
-            var indicator_names = indicator;
 
             //axis
-            this.yScale = d3.scale[scale[2]]()
+            this.yScale = d3.scale[this.scale[2]]()
                 //TODO remove magic constant
-                .domain([0, /*max[2]*/ 50000]);
+                .domain([0, max[2]/6]);
 
-            this.xScale = d3.scale[scale[1]]()
+            this.xScale = d3.scale[this.scale[1]]()
                 //TODO remove magic constant
-                .domain(scale[1]=="log"?[0.01,1000]:[0,20]);
+                .domain(this.scale[1]=="log"?[0.01,1000]:[0,20]);
 
-            this.xAxis.tickFormat(function(d) {
-                    if(d==0.1)return "$/day";
-                    if(d!=0.1&&d!=1&&d!=10&&d!=100)return "";
-                    return d / units[1];
-                }).tickSize(6, 0);
-
-
+            
             //mountains
-            this.setYear(time);
-
+            this.setYear(this.time);
             $.simpTooltip();
         },
 
@@ -231,9 +225,16 @@ define([
             //axis is updated
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
+                .tickSize(6, 0)
                 //FIXME: ticks() not working in log scale. why?
                 .ticks(Math.max(width / tick_spacing, 2))
-                .tickValues([0.1, 1, 10, 100]);
+                .tickValues([0.1, 1, 10, 100])
+                .tickFormat(function(d) {
+                    if(d==0.1)return "$/day";
+                    // throw away all ticks except of the few
+                    if(d!=0.1&&d!=1&&d!=10&&d!=100)return "";
+                    return d;
+                });
 
             this.xAxisEl
                 .attr("transform", "translate(0," + height + ")")
@@ -249,7 +250,6 @@ define([
 
 
         setYear: function(time) {
-            _this = this;
             this.yearEl.text(time);
 
 
@@ -268,7 +268,7 @@ define([
                 .enter().append("path")
                 .attr("class", "vzb-bc-mountain")
                 .style("fill", function(d) {
-                    return colorScale(color(d));
+                    return _this.colorScale(color(d));
                 })
                 .attr("data-tooltip", function(d) {
                     return d.name;
