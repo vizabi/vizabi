@@ -5,19 +5,6 @@ define([
     'base/component'
 ], function($, d3, _, Component) {
 
-    var size,
-        //scales
-        xScale,
-        yScale,
-        colorScale,
-        //axis
-        xAxis,
-        yAxis,
-        //data
-        countries = [],
-        selected_countries;
-
-
 
     // Various accessors that specify the dimensions of data to visualize
     function mean(d, indicator) {
@@ -105,6 +92,11 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
             this._super(config, context);
 
+            this.xScale = null;
+            this.yScale = null;
+            this.colorScale = d3.scale.category10();
+            this.xAxis = d3.svg.axis();
+            
             // define path generator
             this.area = d3.svg.area()
                 .x(function(d) { return xScale(d.x) })
@@ -127,6 +119,7 @@ define([
          */
         postRender: function() {
 
+            // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
             this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
@@ -146,49 +139,47 @@ define([
             var indicator = this.model.show.indicator;
             var data = this.model.data.getItems();
             var time = this.model.time.value;
-            var categories = this.model.show.geo_categories;
             var stackingIsOn = this.model.show.stack;
+            var scale = this.model.show.scale;
 
-            var minValue = _.map(indicator, function(indicator) {
+            var minValue = indicator.map(function(ind) {
                     return d3.min(data, function(d) {
-                        return +d[indicator];
+                        return +d[ind];
                     })
                 });
-            var maxValue = _.map(indicator, function(indicator) {
+            var maxValue = indicator.map(function(ind) {
                     return d3.max(data, function(d) {
-                        return +d[indicator];
+                        return +d[ind];
                     })
                 });
-            var scales = this.model.show.scale;
 
-                //10% difference margin in min and max
-            var min = _.map(scales, function(scale, i) {
+            //FIXME min and max should not really be used direclty on indicators.
+            //FIXME instead they should be applied to arrays of XY points
+            var min = scale.map(function(scale, i) {
                     return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
                 });
-            var max = _.map(scales, function(scale, i) {
+            var max = scale.map(function(scale, i) {
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
                 });
+            
             var units = this.model.show.unit || [1, 1, 1];
             var indicator_names = indicator;
 
             //axis
-            yScale = d3.scale[scales[2]]()
+            this.yScale = d3.scale[scale[2]]()
                 //TODO remove magic constant
                 .domain([0, /*max[2]*/ 50000]);
 
-            xScale = d3.scale[scales[1]]()
+            this.xScale = d3.scale[scale[1]]()
                 //TODO remove magic constant
-                .domain(scales[1]=="log"?[0.01,100]:[0,20]);
+                .domain(scale[1]=="log"?[0.01,1000]:[0,20]);
 
-
-            xAxis = d3.svg.axis()
-                .tickFormat(function(d) {
+            this.xAxis.tickFormat(function(d) {
                     if(d==0.1)return "$/day";
                     if(d!=0.1&&d!=1&&d!=10&&d!=100)return "";
                     return d / units[1];
                 }).tickSize(6, 0);
 
-            colorScale = d3.scale.category10();
 
             //mountains
             this.setYear(time);
@@ -220,29 +211,25 @@ define([
                     break;
             };
 
-
-            //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
+            //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
-                //FIXME: why translating? if reasonable, then why width and height wit margin?
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //year
+            //year is centered
             this.yearEl
                 .attr("x", "50%")
                 .attr("y", "50%")
-                .attr("transform", "translate(" + 0 + ", " + (this.xAxisEl[0][0].getBBox().height) + ")");
+                .attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")");
 
-            //scales
-            yScale = yScale.range([height, 0]).nice();
-            xScale = xScale.range([0, width]).nice();
+            //scales are adjusted to cover width and height
+            this.yScale.range([height, 0]).nice();
+            this.xScale.range([0, width]).nice();
 
-            //axis
-            xAxis = xAxis.scale(xScale)
+            //axis is updated
+            this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 //FIXME: ticks() not working in log scale. why?
                 .ticks(Math.max(width / tick_spacing, 2))
@@ -250,7 +237,7 @@ define([
 
             this.xAxisEl
                 .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
+                .call(this.xAxis);
 
             //mountains
             //FIXME: cache mountains and move order somewhere else
