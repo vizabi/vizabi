@@ -3,7 +3,7 @@ define([
 ], function(Tool) {
 
     var barChart = Tool.extend({
-        
+
         /**
          * Initialized the tool
          * @param config tool configurations, such as placeholder div

@@ -14,7 +14,7 @@ define([
          */
         init: function(options, context) {
             this.name = "indicator-display";
-            this.template = "components/_examples/indicator-display/indicator-display";            
+            this.template = "components/_examples/indicator-display/indicator-display";
             this._super(options, context);
         },
 

@@ -4,7 +4,7 @@ define([
 ], function(_, Model) {
 
     var LanguageModel = Model.extend({
-        
+
         /**
          * Initializes the language model.
          * @param {Object} values The initial values of this model

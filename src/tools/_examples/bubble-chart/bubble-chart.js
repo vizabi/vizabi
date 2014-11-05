@@ -13,7 +13,7 @@ define([
 
             this.name = 'bubble-chart';
             this.template = "tools/_examples/bubble-chart/bubble-chart";
-            
+
             //instantiating components
             this.components = [{
                 component: '_gapminder/header',

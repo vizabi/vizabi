@@ -1,4 +1,4 @@
-<!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
+<!-- @@include('../assets/_header.tpl', {"title": "Mountain Chart"}) -->
 
 <div class="container">
     <div class="buttons">
@@ -10,18 +10,18 @@
         <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
             <span>Size</span>
             <ul class="dropdown">
-                <li><a onclick="phoneSize('bubble-chart')">Mobile Portrait</a>
+                <li><a onclick="phoneSize('mountain-chart')">Mobile Portrait</a>
                 </li>
-                <li><a onclick="phoneSize('bubble-chart', 'landscape')">Mobile Landscape</a>
+                <li><a onclick="phoneSize('mountain-chart', 'landscape')">Mobile Landscape</a>
                 </li>
-                <li><a onclick="randomSize('bubble-chart')">Random Size</a>
+                <li><a onclick="randomSize('mountain-chart')">Random Size</a>
                 </li>
-                <li><a onclick="fullSize('bubble-chart')">Full Screen</a>
+                <li><a onclick="fullSize('mountain-chart')">Full Screen</a>
                 </li>
             </ul>
         </div>
 
-        <button onclick="randomSize('bubble-chart')">RANDOM</button>
+        <button onclick="randomSize('mountain-chart')">RANDOM</button>
 
         <label>|</label>
 
@@ -40,23 +40,23 @@
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
             <ul class="dropdown">
-                <li><a onclick="setLanguage('en')">English</a>
+                <li><a onclick="setLanguage('mountain-chart','en')">English</a>
                 </li>
-                <li><a onclick="setLanguage('pt')">Portuguese</a>
+                <li><a onclick="setLanguage('mountain-chart','pt')">Portuguese</a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div id="bubble-chart" class="placeholder"></div>
+    <div id="mountain-chart" class="placeholder"></div>
 
 </div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
-    
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
-    <button onclick="setCurrentState('bubble-chart')">SET STATE</button>
+    <button onclick="setCurrentState('mountain-chart')">SET STATE</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -73,28 +73,29 @@ $(function() {
                 geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                 'geo.category': ['country']
             },
-            timeRange: ["1990-2012"],
-            time: 2007,
-            indicator: ['lex', 'gdp', 'pop'],
-            scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000000, 1000]
+            timeRange: ["1970-2006"],
+            time: 1970,
+            indicator: ['variance', 'mean', 'pop'],
+            scale: ['linear', 'log', 'linear'],
+            unit: [1, 1, 1000],
+            stack: true
         },
         //path
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
+            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response-mountains.json'
         },
 
         //language
         language: url.lang || "en",
         ui_strings: {
             en: {
-                "title": "Table Title",
+                "title": "Distributions chart",
                 "timeslider/play": "Play",
                 "timeslider/pause": "Pause"
             },
             pt: {
-                "title": "Título da Tabela",
+                "title": "Gráfico de Distribuições",
                 "timeslider/play": "Iniciar",
                 "timeslider/pause": "Parar"
             }
@@ -110,7 +111,7 @@ $(function() {
         }
     };
 
-    myVizabi = new Vizabi("_examples/bubble-chart", "#bubble-chart", options);
+    myVizabi = new Vizabi("_examples/mountain-chart", "#mountain-chart", options);
 
 });
 
@@ -124,7 +125,7 @@ function setState() {
             time: 2000,
             indicator: ['lex', 'gdp', 'pop'],
             scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000, 1000]
+            unit: [1, 1, 1000]
         }
     };
     myVizabi.setOptions(newOption);
@@ -140,7 +141,7 @@ function changeIndicator() {
             time: 2007,
             indicator: ['pop', 'lex', 'gdp'],
             scale: ['linear', 'linear', 'linear'],
-            unit: [100000, 1, 1000000]
+            unit: [100000, 1, 1]
         }
     };
     myVizabi.setOptions(newOption);
@@ -157,7 +158,7 @@ function manyCountries() {
             time: 2007,
             indicator: ['lex', 'gdp', 'pop'],
             scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000000, 1000]
+            unit: [1, 1, 1000]
         }
     };
     myVizabi.setOptions(newOption);

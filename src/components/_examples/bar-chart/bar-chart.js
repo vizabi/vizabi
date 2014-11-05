@@ -167,7 +167,7 @@ define([
 
             var indicator = this.model.show.indicator;
 
-            // Update size of this.bars 
+            // Update size of this.bars
             var _this = this;
             this.bars.selectAll(".vzb-bc-bar")
                 .attr("d", function(d, i) {

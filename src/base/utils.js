@@ -9,7 +9,7 @@ define(['jquery', 'd3', 'lodash'], function($, d3, _) {
         d3ToJquery: function(selector) {
             return $(selector[0]);
         },
-        
+
         /**
          * Converts a jQuery selection to d3
          * @param selector selection in jQuery

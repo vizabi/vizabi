@@ -1,7 +1,7 @@
 define([
     'jquery',
     'd3',
-    'lodash',
+    'underscore',
     'base/component'
 ], function($, d3, _, Component) {
 
@@ -10,7 +10,7 @@ define([
             margin: {
                 top: 30,
                 right: 20,
-                left: 40,
+                left: 20,
                 bottom: 40
             },
             tick_spacing: 60
@@ -18,8 +18,8 @@ define([
         "medium": {
             margin: {
                 top: 30,
-                right: 60,
-                left: 60,
+                right: 30,
+                left: 30,
                 bottom: 40
             },
             tick_spacing: 80
@@ -27,8 +27,8 @@ define([
         "large": {
             margin: {
                 top: 30,
-                right: 60,
-                left: 60,
+                right: 30,
+                left: 30,
                 bottom: 40
             },
             tick_spacing: 100
@@ -36,17 +36,17 @@ define([
     };
 
     var size,
+        stackingIsOn,
         //scales
         xScale,
         yScale,
-        radiusScale,
         colorScale,
         //axis
         xAxis,
         yAxis,
         //elements
         graph,
-        bubbles,
+        mountains,
         xAxisEl,
         yAxisEl,
         yearEl,
@@ -61,17 +61,26 @@ define([
         selected_countries,
         indicators;
 
-    // Various accessors that specify the dimensions of data to visualize.
-    function x(d, indicator) {
+
+
+
+    // Various accessors that specify the dimensions of data to visualize
+    function mean(d, indicator) {
+        // TODO figure out where should the data pre-processing go
+        if(indicator==null) return d.mean;
         return d[indicator];
     }
 
-    function y(d, indicator) {
+    function stdev(d, indicator) {
+        // TODO figure out where should the data pre-processing go
+        if(indicator==null) return Math.sqrt(d.variance);
         return d[indicator];
     }
 
-    function radius(d, indicator) {
-        return d[indicator] || 1;
+    function peak(d, indicator) {
+        // TODO figure out where should the data pre-processing go
+        if(indicator==null) return d.pop;
+        return d[indicator];
     }
 
     function key(d) {
@@ -82,26 +91,70 @@ define([
         return d.region;
     }
 
-    function position(dot) {
+    //constants
+    var DISTRIBUTIONS_NORMAL = "normal distribution",
+        DISTRIBUTIONS_LOGNORMAL = "lognormal distribution";
 
-        dot.attr("cy", function(d) {
-                return yScale(y(d, indicators[0]));
-            })
-            .attr("cx", function(d) {
-                return xScale(x(d, indicators[1]));
-            })
-            .attr("r", function(d) {
-                return radiusScale(radius(d, indicators[2]));
+    // this function returns PDF values for a specified distribution
+    // TODO this is in fact a universal utility function and thus it can go somewhere else
+    function pdf(x, mu, sigma, type) {
+        if (type==null) type = DISTRIBUTIONS_NORMAL;
+        switch(type){
+            case DISTRIBUTIONS_NORMAL:
+            return Math.exp(
+                - 0.5 * Math.log(2 * Math.PI)
+                - Math.log(sigma)
+                - Math.pow(x - mu, 2) / (2 * sigma * sigma)
+                );
+
+            case DISTRIBUTIONS_LOGNORMAL:
+            return Math.exp(
+                - 0.5 * Math.log(2 * Math.PI) - Math.log(x)
+                - Math.log(sigma)
+                - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
+                );
+        }
+    };
+
+    function log(d){console.log(d)};
+
+    function populateDistributionsInto(d){
+        // we need to generate the distributions based on mu, sigma and scale
+        // we span a uniform range of 'points' across the entire X scale,
+        // resolution: 1 point per pixel. If width not defined assume it equal 500px
+        var rangeFrom = Math.log(xScale.domain()[0]),
+            rangeTo = Math.log(xScale.domain()[1]),
+            rangeStep = (rangeTo - rangeFrom)/(width==null?500:width);
+
+        d.points = d3.range(rangeFrom, rangeTo, rangeStep)
+            .map(function(dX){
+                // get Y value for every X
+                return {x: Math.exp(dX),
+                        y0: 0, // the initial base of areas is at zero
+                        y:peak(d) * pdf(Math.exp(dX), Math.log(mean(d)), stdev(d), DISTRIBUTIONS_LOGNORMAL)}
             });
+        return d;
     }
 
+
+    // define path generator
+    var area = d3.svg.area()
+        .x(function(d) { return xScale(d.x) })
+        .y0(function(d) { return yScale(d.y0) })
+        .y1(function(d) { return yScale(d.y0+d.y) });
+
+    var stack = d3.layout.stack()
+        //.order("inside-out")
+        .values(function(d) {return d.points; });
+
+    // define sorting order: lower peaks to front for easier selection
     function order(a, b) {
-        return radius(b) - radius(a);
+        return peak(b) - peak(a);
     }
 
-    var BubbleChart = Component.extend({
+    var MountainChart = Component.extend({
         init: function(context, options) {
-            this.name = 'bubble-chart';
+            this.name = 'mountain-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
             this.tool = context;
             this._super(context, options);
@@ -116,7 +169,7 @@ define([
             yTitleEl = graph.select('.vzb-bc-axis-y-title');
             xTitleEl = graph.select('.vzb-bc-axis-x-title');
             yearEl = graph.select('.vzb-bc-year');
-            bubbles = graph.select('.vzb-bc-bubbles');
+            mountains = graph.select('.vzb-bc-mountains');
 
             this.update();
         },
@@ -127,10 +180,13 @@ define([
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
+        //TODO when sliding through years, data is not changing (only year),
+        // but the function is still called. is it ok?
         update: function() {
             data = this.model.getData()[0];
             indicators = this.model.getState("indicator"),
-                categories = this.model.getState("show")["geo.categories"];
+            categories = this.model.getState("show")["geo.categories"];
+            stackingIsOn = this.model.getState("stack");
 
             var _this = this,
                 year = this.model.getState("time"),
@@ -157,32 +213,32 @@ define([
                 indicator_names = indicators;
 
             //axis
-            yScale = d3.scale[scales[0]]()
-                .domain([min[0], max[0]]);
+            yScale = d3.scale[scales[2]]()
+                //TODO remove magic constant
+                .domain([0, /*max[2]*/ 50000]);
 
             xScale = d3.scale[scales[1]]()
-                .domain([min[1], max[1]]);
-
-            radiusScale = d3.scale[scales[2]]()
-                .domain([min[2], max[2]]);
+                //TODO remove magic constant
+                .domain(scales[1]=="log"?[0.01,100]:[0,20]);
 
             yAxis = d3.svg.axis()
                 .tickFormat(function(d) {
-                    return d / units[0];
+                    return d / units[2];
                 }).tickSize(6, 0);
 
             xAxis = d3.svg.axis()
                 .tickFormat(function(d) {
+                    if(d==0.1)return "$/day";
+                    if(d!=0.1&&d!=1&&d!=10&&d!=100)return "";
                     return d / units[1];
                 }).tickSize(6, 0);
 
             colorScale = d3.scale.category10();
 
-            //bubbles
+            //mountains
             this.setYear(year);
 
             $.simpTooltip();
-
         },
 
         /*
@@ -197,11 +253,11 @@ define([
 
             //size the stage
             this.resizeStage();
-            //size the bubbles
-            this.resizeBubbles();
+            //size the mountains
+            this.resizeMountains();
 
             //size year
-            widthAxisY = yAxisEl[0][0].getBBox().width;
+            widthAxisY = 20; //yAxisEl[0][0].getBBox().width;
             heightAxisX = xAxisEl[0][0].getBBox().height;
 
             yearEl.attr("x", "50%")
@@ -230,13 +286,10 @@ define([
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
         },
 
-        resizeBubbles: function() {
+        resizeMountains: function() {
             //scales
             yScale = yScale.range([height, 0]).nice();
             xScale = xScale.range([0, width]).nice();
-
-            var maxRadius = (this.getLayoutProfile() == "large") ? 50 : 30;
-            radiusScale = radiusScale.range([1, maxRadius]);
 
             //axis
             yAxis = yAxis.scale(yScale)
@@ -245,27 +298,35 @@ define([
 
             xAxis = xAxis.scale(xScale)
                 .orient("bottom")
-                .ticks(Math.max(width / tick_spacing, 2));
+                .ticks(Math.max(width / tick_spacing, 2))
+                .tickValues([0.1, 1, 10, 100]);
 
             xAxisEl.attr("transform", "translate(0," + height + ")");
 
-            yAxisEl.call(yAxis);
+            //yAxisEl.call(yAxis);
             xAxisEl.call(xAxis);
 
-            //bubbles
-            bubbles.selectAll(".vzb-bc-bubble")
-                .call(position)
+            //mountains
+            mountains.selectAll(".vzb-bc-mountain")
+                .attr("d", function(d) { return area(d.points); })
                 .sort(order);
         },
 
         setYear: function(year) {
-
             yearEl.text(year);
-            bubbles.selectAll(".vzb-bc-bubble").remove();
-            bubbles.selectAll(".vzb-bc-bubble")
-                .data(interpolateData(data, indicators, year))
-                .enter().append("circle")
-                .attr("class", "vzb-bc-bubble")
+
+            //TODO: inefficiency of removing and then redrawing everything
+            // i could not solve it because all interpolateData invokes a totally different selection
+            // so everything falls into .exit() anyway and needs to .enter() again
+            // need to understand how interpolateData works and why it returns something weird
+            mountains.selectAll(".vzb-bc-mountain").remove();
+            mountains.selectAll(".vzb-bc-mountain")
+                .data(function(){
+                    var result = interpolateData(data, indicators, year).map(function(dd){return populateDistributionsInto(dd)});
+                    return stackingIsOn?stack(result):result;
+                })
+                .enter().append("path")
+                .attr("class", "vzb-bc-mountain")
                 .style("fill", function(d) {
                     return colorScale(color(d));
                 })
@@ -275,7 +336,7 @@ define([
 
             this.resize();
             this.resizeStage();
-            this.resizeBubbles();
+            this.resizeMountains();
         }
 
 
@@ -328,5 +389,5 @@ define([
         }
     });
 
-    return BubbleChart;
+    return MountainChart;
 });

@@ -7,7 +7,7 @@ define([
     var container;
 
     var Table = Component.extend({
-        
+
         /**
          * Initializes the barchart
          * @param config component configuration
@@ -29,7 +29,7 @@ define([
          * Updates the component as soon as the model/models change
          */
         update: function() {
-            
+
             var indicator = this.model.show.indicator,
                 data = this.model.data.getItems(),
                 columns = ["geo.name", "time", indicator];
