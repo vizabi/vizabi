@@ -5,38 +5,7 @@ define([
     'base/component'
 ], function($, d3, _, Component) {
 
-    var profiles = {
-        "small": {
-            margin: {
-                top: 30,
-                right: 20,
-                left: 20,
-                bottom: 40
-            },
-            tick_spacing: 60
-        },
-        "medium": {
-            margin: {
-                top: 30,
-                right: 30,
-                left: 30,
-                bottom: 40
-            },
-            tick_spacing: 80
-        },
-        "large": {
-            margin: {
-                top: 30,
-                right: 30,
-                left: 30,
-                bottom: 40
-            },
-            tick_spacing: 100
-        }
-    };
-
     var size,
-        stackingIsOn,
         //scales
         xScale,
         yScale,
@@ -44,23 +13,9 @@ define([
         //axis
         xAxis,
         yAxis,
-        //elements
-        graph,
-        mountains,
-        xAxisEl,
-        yAxisEl,
-        yearEl,
-        //sizes
-        height,
-        width,
-        margin,
-        tick_spacing,
         //data
-        data,
         countries = [],
-        selected_countries,
-        indicators;
-
+        selected_countries;
 
 
 
@@ -122,9 +77,9 @@ define([
         // we need to generate the distributions based on mu, sigma and scale
         // we span a uniform range of 'points' across the entire X scale,
         // resolution: 1 point per pixel. If width not defined assume it equal 500px
-        var rangeFrom = Math.log(xScale.domain()[0]),
-            rangeTo = Math.log(xScale.domain()[1]),
-            rangeStep = (rangeTo - rangeFrom)/(width==null?500:width);
+        var rangeFrom = Math.log(xScale.domain()[0]);
+        var rangeTo = Math.log(xScale.domain()[1]);
+        var rangeStep = (rangeTo - rangeFrom)/(width==null?500:width);
 
         d.points = d3.range(rangeFrom, rangeTo, rangeStep)
             .map(function(dX){
@@ -137,80 +92,84 @@ define([
     }
 
 
-    // define path generator
-    var area = d3.svg.area()
-        .x(function(d) { return xScale(d.x) })
-        .y0(function(d) { return yScale(d.y0) })
-        .y1(function(d) { return yScale(d.y0+d.y) });
-
-    var stack = d3.layout.stack()
-        //.order("inside-out")
-        .values(function(d) {return d.points; });
-
-    // define sorting order: lower peaks to front for easier selection
-    function order(a, b) {
-        return peak(b) - peak(a);
-    }
 
     var MountainChart = Component.extend({
-        init: function(context, options) {
+
+        /**
+        * Initializes the chart
+        * @param config component configuration
+        * @param context component context (parent)
+        */
+        init: function(config, context) {
             this.name = 'mountain-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this.tool = context;
-            this._super(context, options);
+            this._super(config, context);
+
+            // define path generator
+            this.area = d3.svg.area()
+                .x(function(d) { return xScale(d.x) })
+                .y0(function(d) { return yScale(d.y0) })
+                .y1(function(d) { return yScale(d.y0+d.y) });
+
+            this.stack = d3.layout.stack()
+                //.order("inside-out")
+                .values(function(d) {return d.points; });
+
+            // define sorting order: lower peaks to front for easier selection
+            this.order = function order(a, b) {
+                return peak(b) - peak(a);
+            }
         },
 
-        // After loading template, select HTML elements
+        /**
+         * POST RENDER
+         * Executes right after the template is in place
+         */
         postRender: function() {
 
-            graph = this.element.select('.vzb-bc-graph');
-            yAxisEl = graph.select('.vzb-bc-axis-y');
-            xAxisEl = graph.select('.vzb-bc-axis-x');
-            yTitleEl = graph.select('.vzb-bc-axis-y-title');
-            xTitleEl = graph.select('.vzb-bc-axis-x-title');
-            yearEl = graph.select('.vzb-bc-year');
-            mountains = graph.select('.vzb-bc-mountains');
-
-            this.update();
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
+            this.yearEl = this.graph.select('.vzb-bc-year');
+            this.mountains = this.graph.select('.vzb-bc-mountains');
         },
 
 
         /*
          * UPDATE:
-         * Executed whenever data is changed
+         * Updates the component as soon as the model/models change
          * Ideally, it contains only operations related to data events
          */
-        //TODO when sliding through years, data is not changing (only year),
+        //FIXME when sliding through years, data is not changing (only year),
         // but the function is still called. is it ok?
         update: function() {
-            data = this.model.getData()[0];
-            indicators = this.model.getState("indicator"),
-            categories = this.model.getState("show")["geo.categories"];
-            stackingIsOn = this.model.getState("stack");
+            var indicator = this.model.show.indicator;
+            var data = this.model.data.getItems();
+            var time = this.model.time.value;
+            var categories = this.model.show.geo_categories;
+            var stackingIsOn = this.model.show.stack;
 
-            var _this = this,
-                year = this.model.getState("time"),
-                minValue = _.map(indicators, function(indicator) {
+            var minValue = _.map(indicator, function(indicator) {
                     return d3.min(data, function(d) {
                         return +d[indicator];
                     })
-                }),
-                maxValue = _.map(indicators, function(indicator) {
+                });
+            var maxValue = _.map(indicator, function(indicator) {
                     return d3.max(data, function(d) {
                         return +d[indicator];
                     })
-                }),
-                scales = this.model.getState("scale"),
+                });
+            var scales = this.model.show.scale;
 
                 //10% difference margin in min and max
-                min = _.map(scales, function(scale, i) {
+            var min = _.map(scales, function(scale, i) {
                     return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
-                }),
-                max = _.map(scales, function(scale, i) {
+                });
+            var max = _.map(scales, function(scale, i) {
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
-                }),
-                units = this.model.getState("unit") || [1, 1, 1],
-                indicator_names = indicators;
+                });
+            var units = this.model.show.unit || [1, 1, 1];
+            var indicator_names = indicator;
 
             //axis
             yScale = d3.scale[scales[2]]()
@@ -221,10 +180,6 @@ define([
                 //TODO remove magic constant
                 .domain(scales[1]=="log"?[0.01,100]:[0,20]);
 
-            yAxis = d3.svg.axis()
-                .tickFormat(function(d) {
-                    return d / units[2];
-                }).tickSize(6, 0);
 
             xAxis = d3.svg.axis()
                 .tickFormat(function(d) {
@@ -236,7 +191,7 @@ define([
             colorScale = d3.scale.category10();
 
             //mountains
-            this.setYear(year);
+            this.setYear(time);
 
             $.simpTooltip();
         },
@@ -247,83 +202,81 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
+            var tick_spacing;
+            var margin;
 
-            margin = profiles[this.getLayoutProfile()].margin;
-            tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
+            switch (this.getLayoutProfile()) {
+                case "small":
+                    margin = {top: 30, right: 20, left: 20, bottom: 40};
+                    tick_spacing = 60;
+                    break;
+                case "medium":
+                    margin = {top: 30, right: 30, left: 30, bottom: 40};
+                    tick_spacing = 80;
+                    break;
+                case "large":
+                    margin = {top: 30, right: 30, left: 30, bottom: 40};
+                    tick_spacing = 100;
+                    break;
+            };
 
-            //size the stage
-            this.resizeStage();
-            //size the mountains
-            this.resizeMountains();
-
-            //size year
-            widthAxisY = 20; //yAxisEl[0][0].getBBox().width;
-            heightAxisX = xAxisEl[0][0].getBBox().height;
-
-            yearEl.attr("x", "50%")
-                .attr("y", "50%")
-                .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
-
-        },
-
-        resizeStage: function() {
 
             //stage
-            height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-            graph
+            this.graph
                 .attr("width", width + margin.right + margin.left)
                 .attr("height", height + margin.top + margin.bottom)
+                //FIXME: why translating? if reasonable, then why width and height wit margin?
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //year
-            widthAxisY = yAxisEl[0][0].getBBox().width;
-            heightAxisX = xAxisEl[0][0].getBBox().height;
-
-            yearEl.attr("x", "50%")
+            this.yearEl
+                .attr("x", "50%")
                 .attr("y", "50%")
-                .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
-        },
+                .attr("transform", "translate(" + 0 + ", " + (this.xAxisEl[0][0].getBBox().height) + ")");
 
-        resizeMountains: function() {
             //scales
             yScale = yScale.range([height, 0]).nice();
             xScale = xScale.range([0, width]).nice();
 
             //axis
-            yAxis = yAxis.scale(yScale)
-                .orient("left")
-                .ticks(Math.max(height / tick_spacing, 2));
-
             xAxis = xAxis.scale(xScale)
                 .orient("bottom")
+                //FIXME: ticks() not working in log scale. why?
                 .ticks(Math.max(width / tick_spacing, 2))
                 .tickValues([0.1, 1, 10, 100]);
 
-            xAxisEl.attr("transform", "translate(0," + height + ")");
-
-            //yAxisEl.call(yAxis);
-            xAxisEl.call(xAxis);
+            this.xAxisEl
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
             //mountains
-            mountains.selectAll(".vzb-bc-mountain")
-                .attr("d", function(d) { return area(d.points); })
-                .sort(order);
+            //FIXME: cache mountains and move order somewhere else
+            this.mountains.selectAll(".vzb-bc-mountain")
+                .attr("d", function(d) { return _this.area(d.points); })
+                .sort(this.order);
         },
 
-        setYear: function(year) {
-            yearEl.text(year);
 
-            //TODO: inefficiency of removing and then redrawing everything
+
+        setYear: function(time) {
+            _this = this;
+            this.yearEl.text(time);
+
+
+            //FIXME: inefficiency of removing and then redrawing everything
             // i could not solve it because all interpolateData invokes a totally different selection
             // so everything falls into .exit() anyway and needs to .enter() again
             // need to understand how interpolateData works and why it returns something weird
-            mountains.selectAll(".vzb-bc-mountain").remove();
-            mountains.selectAll(".vzb-bc-mountain")
+            this.mountains.selectAll(".vzb-bc-mountain").remove();
+            this.mountains.selectAll(".vzb-bc-mountain")
                 .data(function(){
-                    var result = interpolateData(data, indicators, year).map(function(dd){return populateDistributionsInto(dd)});
-                    return stackingIsOn?stack(result):result;
+                    var result = interpolateData(_this.data, _this.indicator, time)
+                        .map(function(dd){return populateDistributionsInto(dd)});
+
+                    return _this.stackingIsOn?_this.stack(result):result;
                 })
                 .enter().append("path")
                 .attr("class", "vzb-bc-mountain")
@@ -334,16 +287,15 @@ define([
                     return d.name;
                 });
 
+            //FIXME: and then resize is being called in the end! WHYY?
             this.resize();
-            this.resizeStage();
-            this.resizeMountains();
         }
 
 
     });
 
     // Interpolates the dataset for the given (fractional) year.
-    function interpolateData(data, indicators, year) {
+    function interpolateData(data, indicator, year) {
 
         yearData = _.filter(data, function(d) {
             return (d.time == year);
@@ -354,7 +306,7 @@ define([
                 name: d["geo.name"],
                 region: d["geo.region"] || "world"
             };
-            _.each(indicators, function(indicator) {
+            _.each(indicator, function(indicator) {
                 obj[indicator] = d[indicator];
             });
 
