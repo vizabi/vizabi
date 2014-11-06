@@ -69,40 +69,57 @@ $(function() {
     var options = {
         //state
         state: url.state || {
+
+            //what to show
             show: {
                 geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                'geo.category': ['country']
+                geo_category: ['country'],
+                indicator: ['lex', 'gdp', 'pop'],
+                scale: ['linear', 'linear', 'linear'],
+                unit: [1, 1000000000, 1000]
             },
-            timeRange: ["1990-2012"],
-            time: 2007,
-            indicator: ['lex', 'gdp', 'pop'],
-            scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000000, 1000]
+
+            //time properties
+            time: {
+                start: 1990,
+                end: 2012,
+                value: 1990,
+                step: 1,
+                speed: 100
+            }
         },
-        //path
+
+
+        //data properties
         data: {
             reader: 'local-json',
             path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
         },
 
-        //language
-        language: url.lang || "en",
-        ui_strings: {
-            en: {
-                "title": "Table Title",
-                "timeslider/play": "Play",
-                "timeslider/pause": "Pause"
-            },
-            pt: {
-                "title": "Título da Tabela",
-                "timeslider/play": "Iniciar",
-                "timeslider/pause": "Parar"
+        //language properties
+        language: url.lang || {
+            id: "en",
+            strings: {
+                en: {
+                    "title": "Table Title",
+                    "timeslider/play": "Play",
+                    "timeslider/pause": "Pause"
+                },
+                pt: {
+                    "title": "Título da Tabela",
+                    "timeslider/play": "Iniciar",
+                    "timeslider/pause": "Parar"
+                }
             }
         },
 
+
         bind: {
-            'change:state': function(state) {
-                showState(state);
+            'ready': function() {
+                parseURL();
+            },
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             },
             'change:query': function(query) {
                 showQuery(query);
@@ -110,8 +127,8 @@ $(function() {
         }
     };
 
-    myVizabi = new Vizabi("_examples/bubble-chart", "#bubble-chart", options);
 
+    myVizabi = new Vizabi("_examples/bubble-chart", "#bubble-chart", options);
 });
 
 function setState() {
@@ -119,12 +136,14 @@ function setState() {
         state: {
             show: {
                 geo: ['world'],
-                'geo.category': ['planet']
+                geo_category: ['planet'],
+                indicator: ['lex', 'gdp', 'pop'],
+                scale: ['linear', 'linear', 'linear'],
+                unit: [1, 1000000, 1000]
             },
-            time: 2000,
-            indicator: ['lex', 'gdp', 'pop'],
-            scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000, 1000]
+            time: {
+                value: 2000
+            }
         }
     };
     myVizabi.setOptions(newOption);
@@ -135,12 +154,14 @@ function changeIndicator() {
         state: {
             show: {
                 geo: ['swe', 'nor', 'zaf'],
-                'geo.category': ['country']
+                geo_category: ['country'],
+                indicator: ['pop', 'lex', 'gdp'],
+                scale: ['linear', 'linear', 'linear'],
+                unit: [100000, 1, 1000000]
             },
-            time: 2007,
-            indicator: ['pop', 'lex', 'gdp'],
-            scale: ['linear', 'linear', 'linear'],
-            unit: [100000, 1, 1000000]
+            time: {
+                value: 2007
+            }
         }
     };
     myVizabi.setOptions(newOption);
@@ -151,13 +172,14 @@ function manyCountries() {
         state: url.state || {
             show: {
                 geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                'geo.category': ['country']
+                geo_category: ['country'],
+                indicator: ['lex', 'gdp', 'pop'],
+                scale: ['linear', 'linear', 'linear'],
+                unit: [1, 1000000000, 1000]
             },
-            timeRange: ["1990-2012"],
-            time: 2007,
-            indicator: ['lex', 'gdp', 'pop'],
-            scale: ['linear', 'linear', 'linear'],
-            unit: [1, 1000000000, 1000]
+            time: {
+                value: 2007
+            }
         }
     };
     myVizabi.setOptions(newOption);

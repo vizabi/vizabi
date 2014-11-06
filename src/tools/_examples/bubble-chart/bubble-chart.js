@@ -64,6 +64,7 @@ define([
             var state = model.state;
             return [{
                 "from": "data",
+                //FIXME not sure if we need union here. barchart doesn't have it
                 "select": _.union(["geo", "geo.name", "time", "geo.region", state.show.indicator]),
                 "where": {
                     "geo": state.show.geo,

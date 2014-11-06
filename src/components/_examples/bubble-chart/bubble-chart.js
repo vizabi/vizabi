@@ -1,65 +1,22 @@
 define([
     'jquery',
     'd3',
-    'lodash',
     'base/component'
-], function($, d3, _, Component) {
+], function($, d3, Component) {
 
-    var profiles = {
-        "small": {
-            margin: {
-                top: 30,
-                right: 20,
-                left: 40,
-                bottom: 40
-            },
-            tick_spacing: 60
-        },
-        "medium": {
-            margin: {
-                top: 30,
-                right: 60,
-                left: 60,
-                bottom: 40
-            },
-            tick_spacing: 80
-        },
-        "large": {
-            margin: {
-                top: 30,
-                right: 60,
-                left: 60,
-                bottom: 40
-            },
-            tick_spacing: 100
-        }
-    };
+    var _this = null;
 
-    var size,
-        //scales
-        xScale,
-        yScale,
-        radiusScale,
-        colorScale,
-        //axis
-        xAxis,
-        yAxis,
-        //elements
-        graph,
-        bubbles,
-        xAxisEl,
-        yAxisEl,
-        yearEl,
-        //sizes
-        height,
-        width,
-        margin,
-        tick_spacing,
-        //data
-        data,
-        countries = [],
-        selected_countries,
-        indicators;
+    var DURATION_FAST = 100; //ms
+    var xScale;
+    var yScale;
+    var rScale;
+    var colorScale;
+    //axis
+    var xAxis;
+    var yAxis;
+    //sizes
+    var height;
+    var width;
 
     // Various accessors that specify the dimensions of data to visualize.
     function x(d, indicator) {
@@ -74,10 +31,6 @@ define([
         return d[indicator] || 1;
     }
 
-    function key(d) {
-        return d.name;
-    }
-
     function color(d) {
         return d.region;
     }
@@ -85,13 +38,13 @@ define([
     function position(dot) {
 
         dot.attr("cy", function(d) {
-                return yScale(y(d, indicators[0]));
+                return yScale(y(d, _this.indicator[0]));
             })
             .attr("cx", function(d) {
-                return xScale(x(d, indicators[1]));
+                return xScale(x(d, _this.indicator[1]));
             })
             .attr("r", function(d) {
-                return radiusScale(radius(d, indicators[2]));
+                return rScale(radius(d, _this.indicator[2]));
             });
     }
 
@@ -101,85 +54,87 @@ define([
 
     var BubbleChart = Component.extend({
         init: function(context, options) {
+            _this = this;
             this.name = 'bubble-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
             this.tool = context;
             this._super(context, options);
         },
 
-        // After loading template, select HTML elements
+        /**
+         * POST RENDER
+         * Executes right after the template is in place
+         */
         postRender: function() {
 
-            graph = this.element.select('.vzb-bc-graph');
-            yAxisEl = graph.select('.vzb-bc-axis-y');
-            xAxisEl = graph.select('.vzb-bc-axis-x');
-            yTitleEl = graph.select('.vzb-bc-axis-y-title');
-            xTitleEl = graph.select('.vzb-bc-axis-x-title');
-            yearEl = graph.select('.vzb-bc-year');
-            bubbles = graph.select('.vzb-bc-bubbles');
-
-            this.update();
+            // reference elements
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
+            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+            this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
+            this.yearEl = this.graph.select('.vzb-bc-year');
+            this.bubbles = this.graph.select('.vzb-bc-bubbles');
         },
 
 
         /*
          * UPDATE:
-         * Executed whenever data is changed
+         * Updates the component as soon as the model/models change
          * Ideally, it contains only operations related to data events
          */
+        //FIXME when sliding through years, data is not changing (only year),
+        // but the function is still called. is it ok?
         update: function() {
-            data = this.model.getData()[0];
-            indicators = this.model.getState("indicator"),
-                categories = this.model.getState("show")["geo.categories"];
+            this.indicator = this.model.show.indicator;
+            this.data = this.model.data.getItems();
+            this.time = this.model.time.value;
+            this.scale = this.model.show.scale;
+            this.units = this.model.show.unit || [1, 1, 1];
 
-            var _this = this,
-                year = this.model.getState("time"),
-                minValue = _.map(indicators, function(indicator) {
-                    return d3.min(data, function(d) {
-                        return +d[indicator];
+            var minValue = this.indicator.map(function(ind) {
+                    return d3.min(_this.data, function(d) {
+                        return +d[ind];
                     })
-                }),
-                maxValue = _.map(indicators, function(indicator) {
-                    return d3.max(data, function(d) {
-                        return +d[indicator];
+                });
+            var maxValue = this.indicator.map(function(ind) {
+                    return d3.max(_this.data, function(d) {
+                        return +d[ind];
                     })
-                }),
-                scales = this.model.getState("scale"),
+                });
 
-                //10% difference margin in min and max
-                min = _.map(scales, function(scale, i) {
+            //10% difference margin in min and max
+            var min = this.scale.map(function(scale, i) {
                     return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
-                }),
-                max = _.map(scales, function(scale, i) {
+                });
+            var max = this.scale.map(function(scale, i) {
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
-                }),
-                units = this.model.getState("unit") || [1, 1, 1],
-                indicator_names = indicators;
+                });
 
             //axis
-            yScale = d3.scale[scales[0]]()
+            yScale = d3.scale[this.scale[0]]()
                 .domain([min[0], max[0]]);
 
-            xScale = d3.scale[scales[1]]()
+            xScale = d3.scale[this.scale[1]]()
                 .domain([min[1], max[1]]);
 
-            radiusScale = d3.scale[scales[2]]()
+            rScale = d3.scale[this.scale[2]]()
                 .domain([min[2], max[2]]);
 
             yAxis = d3.svg.axis()
                 .tickFormat(function(d) {
-                    return d / units[0];
+                    return d / _this.units[0];
                 }).tickSize(6, 0);
 
             xAxis = d3.svg.axis()
                 .tickFormat(function(d) {
-                    return d / units[1];
+                    return d / _this.units[1];
                 }).tickSize(6, 0);
 
             colorScale = d3.scale.category10();
 
             //bubbles
-            this.setYear(year);
+            this.setYear(this.time);
 
             $.simpTooltip();
 
@@ -191,79 +146,84 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
+            var margin;
+            var tick_spacing;
 
-            margin = profiles[this.getLayoutProfile()].margin;
-            tick_spacing = profiles[this.getLayoutProfile()].tick_spacing;
+            switch (this.getLayoutProfile()) {
+                case "small":
+                    margin = {top: 30, right: 20, left: 40, bottom: 40};
+                    tick_spacing = 60;
+                    break;
+                case "medium":
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    tick_spacing = 80;
+                    break;
+                case "large":
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    tick_spacing = 100;
+                    break;
+            };
 
             //size the stage
-            this.resizeStage();
+            this.resizeStage(margin);
             //size the bubbles
-            this.resizeBubbles();
-
-            //size year
-            widthAxisY = yAxisEl[0][0].getBBox().width;
-            heightAxisX = xAxisEl[0][0].getBBox().height;
-
-            yearEl.attr("x", "50%")
-                .attr("y", "50%")
-                .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
-
+            this.resizeBubbles(tick_spacing);
         },
 
-        resizeStage: function() {
+        resizeStage: function(margin) {
 
             //stage
             height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-            graph
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
+            //graph group is shifted according to margins (while svg element is at 100 by 100%)
+            this.graph
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //year
-            widthAxisY = yAxisEl[0][0].getBBox().width;
-            heightAxisX = xAxisEl[0][0].getBBox().height;
-
-            yearEl.attr("x", "50%")
+            //year is centered
+            var widthAxisY = this.yAxisEl[0][0].getBBox().width;
+            var heightAxisX = this.xAxisEl[0][0].getBBox().height;
+            this.yearEl
+                .attr("x", "50%")
                 .attr("y", "50%")
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
         },
 
-        resizeBubbles: function() {
+        resizeBubbles: function(tick_spacing) {
             //scales
             yScale = yScale.range([height, 0]).nice();
             xScale = xScale.range([0, width]).nice();
 
             var maxRadius = (this.getLayoutProfile() == "large") ? 50 : 30;
-            radiusScale = radiusScale.range([1, maxRadius]);
+            rScale = rScale.range([1, maxRadius]);
 
             //axis
-            yAxis = yAxis.scale(yScale)
+            yAxis.scale(yScale)
                 .orient("left")
                 .ticks(Math.max(height / tick_spacing, 2));
 
-            xAxis = xAxis.scale(xScale)
+            xAxis.scale(xScale)
                 .orient("bottom")
                 .ticks(Math.max(width / tick_spacing, 2));
 
-            xAxisEl.attr("transform", "translate(0," + height + ")");
+            this.xAxisEl.attr("transform", "translate(0," + height + ")");
 
-            yAxisEl.call(yAxis);
-            xAxisEl.call(xAxis);
+            this.yAxisEl.call(yAxis);
+            this.xAxisEl.call(xAxis);
 
             //bubbles
-            bubbles.selectAll(".vzb-bc-bubble")
+            this.bubbles.selectAll(".vzb-bc-bubble")
+                .transition().duration(DURATION_FAST).ease("linear")
                 .call(position)
                 .sort(order);
         },
 
-        setYear: function(year) {
+        setYear: function(time) {
 
-            yearEl.text(year);
-            bubbles.selectAll(".vzb-bc-bubble").remove();
-            bubbles.selectAll(".vzb-bc-bubble")
-                .data(interpolateData(data, indicators, year))
+            this.yearEl.text(time);
+            //this.bubbles.selectAll(".vzb-bc-bubble").remove();
+            this.bubbles.selectAll(".vzb-bc-bubble")
+                .data(interpolateData(_this.data, _this.indicator, time))
                 .enter().append("circle")
                 .attr("class", "vzb-bc-bubble")
                 .style("fill", function(d) {
@@ -274,17 +234,15 @@ define([
                 });
 
             this.resize();
-            this.resizeStage();
-            this.resizeBubbles();
         }
 
 
     });
 
     // Interpolates the dataset for the given (fractional) year.
-    function interpolateData(data, indicators, year) {
+    function interpolateData(data, indicator, year) {
 
-        yearData = _.filter(data, function(d) {
+        yearData = data.filter(function(d) {
             return (d.time == year);
         });
 
@@ -293,7 +251,7 @@ define([
                 name: d["geo.name"],
                 region: d["geo.region"] || "world"
             };
-            _.each(indicators, function(indicator) {
+            indicator.forEach(function(indicator) {
                 obj[indicator] = d[indicator];
             });
 
