@@ -1,6 +1,7 @@
 define([
+    'lodash',
     'base/tool'
-], function(Tool) {
+], function(_, Tool) {
 
     var mountainChart = Tool.extend({
 
@@ -71,7 +72,8 @@ define([
             var state = model.state;
             return [{
                 'from': 'data',
-                'select': ["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator],
+                //FIXME not sure if we need union here. barchart doesn't have it
+                'select': _.union(["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator]),
                 'where': {
                     'geo': state.show.geo,
                     'geo.category': state.show.geo_category,

@@ -1,9 +1,8 @@
 define([
     'jquery',
     'd3',
-    'underscore',
     'base/component'
-], function($, d3, _, Component) {
+], function($, d3, Component) {
 
     var _this = null;
 
@@ -284,7 +283,7 @@ define([
     // Interpolates the dataset for the given (fractional) year.
     function interpolateData(data, indicator, year) {
 
-        yearData = _.filter(data, function(d) {
+        yearData = data.filter(function(d) {
             return (d.time == year);
         });
 
@@ -293,7 +292,7 @@ define([
                 name: d["geo.name"],
                 region: d["geo.region"] || "world"
             };
-            _.each(indicator, function(indicator) {
+            indicator.forEach(function(indicator) {
                 obj[indicator] = d[indicator];
             });
 
