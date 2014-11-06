@@ -15,6 +15,7 @@ $vzb-bc-year-size:300px;
     font-family: $vzb-font-family;
     .vzb-bc-bubble {
         @include opacity(0.8);
+        stroke: white; 
         cursor: pointer;
         &:hover {
             @include opacity(1);

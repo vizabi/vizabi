@@ -5,45 +5,17 @@ define([
 ], function($, d3, Component) {
 
     var DURATION_FAST = 100; //ms
-
-
-    // Various accessors that specify the dimensions of data to visualize.
-    function x(d, indicator) {
-        return d[indicator];
-    }
-
-    function y(d, indicator) {
-        return d[indicator];
-    }
-
-    function radius(d, indicator) {
-        return d[indicator] || 1;
-    }
-
-    function color(d) {
-        return d.region;
-    }
-
-
-    function position(dot, context) {
-        var _this = context;
-
-        dot.attr("cy", function(d) {
-                return _this.yScale(y(d, _this.indicator[0]));
-            })
-            .attr("cx", function(d) {
-                return _this.xScale(x(d, _this.indicator[1]));
-            })
-            .attr("r", function(d) {
-                return _this.rScale(radius(d, _this.indicator[2]));
-            });
-    }
-
-
+    
     function order(a, b) {
         return radius(b) - radius(a);
     }
+    
+    function radius(d, indicator){
+        return d.pop;
+    }
 
+    
+    
     var BubbleChart = Component.extend({
         init: function(context, options) {
             var _this = this;
@@ -59,8 +31,11 @@ define([
 
             this.xAxis = d3.svg.axis();
             this.yAxis = d3.svg.axis();
+            
+            this.isDataPreprocessed = false;            
         },
 
+        
         /**
          * POST RENDER
          * Executes right after the template is in place
@@ -74,25 +49,49 @@ define([
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-bc-year');
-            this.bubbles = this.graph.select('.vzb-bc-bubbles');
+            this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
+            this.bubbles = null;
         },
 
 
         /*
          * UPDATE:
          * Updates the component as soon as the model/models change
-         * Ideally it contains only operations related to data events
          */
-        //FIXME when sliding through years, data is not changing (only year),
-        // but the function is still called. is it ok?
         update: function() {
+            //TODO: preprocessing should go somewhere else, when the data is loaded
             var _this = this;
-            this.indicator = this.model.show.indicator;
+            if(!this.isDataPreprocessed){                  
+                _this.model.data.getItems().forEach(function(d){
+                    d.name = d["geo.name"]; 
+                    d.region = d["geo.region"] || "world";
+                    _this.model.show.indicator.forEach(function(ind) { d[ind] = +d[ind]; });
+                })
+                this.isDataPreprocessed = true;
+            }
+            
             this.data = this.model.data.getItems();
-            this.time = this.model.time.value;
+            this.indicator = this.model.show.indicator;
             this.scale = this.model.show.scale;
             this.units = this.model.show.unit || [1, 1, 1];
-
+            this.time = this.model.time.value;
+            
+            //TODO: #32 run only if data or show models changed
+            this.updateShow();
+            //TODO: #32 run only if data or time models changed
+            this.updateTime();
+            //TODO: #32 run only on resize or on init
+            this.resize();
+        },
+        
+        
+        /*
+         * UPDATE SHOW:
+         * Ideally should only update when show parameters change or data changes
+         */
+        updateShow: function(){
+            var _this = this;
+            
             var minValue = this.indicator.map(function(ind) {
                     return d3.min(_this.data, function(d) {
                         return +d[ind];
@@ -112,7 +111,7 @@ define([
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
                 });
 
-            //axis
+            //scales
             this.yScale = d3.scale[this.scale[0]]()
                 .domain([min[0], max[0]]);
             
@@ -120,52 +119,93 @@ define([
                 .domain([min[1], max[1]]);
             
             this.rScale = d3.scale[this.scale[2]]()
-                .domain([min[2], max[2]]);
+                .domain([0, max[2]]);
 
-            this.yAxis = d3.svg.axis()
-                .tickFormat(function(d) {
-                    return d / _this.units[0];
-                }).tickSize(6, 0);
-
-            this.xAxis = d3.svg.axis()
-                .tickFormat(function(d) {
-                    return d / _this.units[1];
-                }).tickSize(6, 0);
-
-
-
-            //bubbles
-            this.setYear(this.time);
-
+            this.yAxis.tickFormat(function (d) {
+                return d / _this.units[0];
+            });
+            this.xAxis.tickFormat(function (d) {
+                return d / _this.units[1];
+            });
+            
             $.simpTooltip();
-
         },
+        
+                
+        /*
+         * UPDATE TIME:
+         * Ideally should only update when time or data changes
+         */
+        updateTime: function(){
+            var _this = this;
+
+            this.yearEl.text(this.time);
+            this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
+                .data(this.data.filter(function(d){return (d.time == _this.time)}));
+        },
+        
+        
+        /*
+         * REDRAW DATA POINTS:
+         * Here plotting happens
+         */     
+        redrawDataPoints: function() {
+            var _this = this;
+
+            //exit selection
+            this.bubbles.exit().remove();
+            
+            //enter selection -- init circles
+            this.bubbles.enter().append("circle")            
+                .attr("class", "vzb-bc-bubble")
+                .style("fill", function(d) {
+                    return _this.cScale(d.region);
+                })
+                .attr("data-tooltip", function(d) {
+                    return d.name;
+                });
+            
+            //update selection
+            this.bubbles.transition().duration(DURATION_FAST).ease("linear")            
+                .attr("cy", function(d) {
+                    return _this.yScale(d[_this.indicator[0]]);
+                })
+                .attr("cx", function(d) {
+                    return _this.xScale(d[_this.indicator[1]]);
+                })
+                .attr("r", function(d) {
+                    return _this.rScale(d[_this.indicator[2]] || 1)
+                });
+        },
+        
 
         /*
          * RESIZE:
          * Executed whenever the container is resized
-         * Ideally, it contains only operations related to size
          */
         resize: function() {
             var _this = this;
             var margin;
             var tick_spacing;
+            var maxRadius;
 
             switch (this.getLayoutProfile()) {
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
+                    maxRadius = 30;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
+                    maxRadius = 30;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
+                    maxRadius = 50;
                     break;
             }
-
 
             //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -175,7 +215,7 @@ define([
             this.graph
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //year is centered
+            //center year 
             var widthAxisY = this.yAxisEl[0][0].getBBox().width;
             var heightAxisX = this.xAxisEl[0][0].getBBox().height;
             this.yearEl
@@ -183,20 +223,20 @@ define([
                 .attr("y", "50%")
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
 
-            //scales
+            //update scales to the new range
             this.yScale.range([height, 0]).nice();
             this.xScale.range([0, width]).nice();
-
-            var maxRadius = (this.getLayoutProfile() === "large") ? 50 : 30;
             this.rScale.range([1, maxRadius]);
 
-            //axis
+            //apply scales to axes and redraw
             this.yAxis.scale(this.yScale)
                 .orient("left")
+                .tickSize(6, 0)
                 .ticks(Math.max(height / tick_spacing, 2));
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
+                .tickSize(6, 0)
                 .ticks(Math.max(width / tick_spacing, 2));
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
@@ -204,55 +244,13 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
 
-            //bubbles
-            this.bubbles.selectAll(".vzb-bc-bubble")
-                .transition().duration(DURATION_FAST).ease("linear")
-                .call(function(d){position(d, _this);})
-                .sort(order);
-        },
-
-
-        setYear: function(time) {
-            var _this = this;
-
-            this.yearEl.text(time);
-            //this.bubbles.selectAll(".vzb-bc-bubble").remove();
-            this.bubbles.selectAll(".vzb-bc-bubble")
-                .data(interpolateData(_this.data, _this.indicator, time))
-                .enter().append("circle")
-                .attr("class", "vzb-bc-bubble")
-                .style("fill", function(d) {
-                    return _this.cScale(color(d));
-                })
-                .attr("data-tooltip", function(d) {
-                    return d.name;
-                });
-
-            this.resize();
+            this.redrawDataPoints();
         }
-
 
     });
 
-    // Interpolates the dataset for the given (fractional) year.
-    function interpolateData(data, indicator, year) {
-
-        var yearData = data.filter(function(d) {
-            return (d.time == year);
-        });
-
-        return yearData.map(function(d) {
-            var obj = {
-                name: d["geo.name"],
-                region: d["geo.region"] || "world"
-            };
-            indicator.forEach(function(indicator) {
-                obj[indicator] = d[indicator];
-            });
-
-            return obj;
-        });
-    }
+    
+    
 
     //tooltip plugin (hotfix)
     //TODO: remove this plugin from here
