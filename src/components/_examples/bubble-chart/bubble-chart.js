@@ -4,19 +4,8 @@ define([
     'base/component'
 ], function($, d3, Component) {
 
-    var _this = null;
-
     var DURATION_FAST = 100; //ms
-    var xScale;
-    var yScale;
-    var rScale;
-    var colorScale;
-    //axis
-    var xAxis;
-    var yAxis;
-    //sizes
-    var height;
-    var width;
+
 
     // Various accessors that specify the dimensions of data to visualize.
     function x(d, indicator) {
@@ -35,18 +24,21 @@ define([
         return d.region;
     }
 
-    function position(dot) {
+
+    function position(dot, context) {
+        var _this = context;
 
         dot.attr("cy", function(d) {
-                return yScale(y(d, _this.indicator[0]));
+                return _this.yScale(y(d, _this.indicator[0]));
             })
             .attr("cx", function(d) {
-                return xScale(x(d, _this.indicator[1]));
+                return _this.xScale(x(d, _this.indicator[1]));
             })
             .attr("r", function(d) {
-                return rScale(radius(d, _this.indicator[2]));
+                return _this.rScale(radius(d, _this.indicator[2]));
             });
     }
+
 
     function order(a, b) {
         return radius(b) - radius(a);
@@ -54,11 +46,19 @@ define([
 
     var BubbleChart = Component.extend({
         init: function(context, options) {
-            _this = this;
+            var _this = this;
             this.name = 'bubble-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
             this.tool = context;
             this._super(context, options);
+
+            this.xScale = null;
+            this.yScale = null;
+            this.rScale = null;
+            this.cScale = d3.scale.category10();
+
+            this.xAxis = d3.svg.axis();
+            this.yAxis = d3.svg.axis();
         },
 
         /**
@@ -86,6 +86,7 @@ define([
         //FIXME when sliding through years, data is not changing (only year),
         // but the function is still called. is it ok?
         update: function() {
+            var _this = this;
             this.indicator = this.model.show.indicator;
             this.data = this.model.data.getItems();
             this.time = this.model.time.value;
@@ -112,26 +113,26 @@ define([
                 });
 
             //axis
-            yScale = d3.scale[this.scale[0]]()
+            this.yScale = d3.scale[this.scale[0]]()
                 .domain([min[0], max[0]]);
 
-            xScale = d3.scale[this.scale[1]]()
+            this.xScale = d3.scale[this.scale[1]]()
                 .domain([min[1], max[1]]);
 
-            rScale = d3.scale[this.scale[2]]()
+            this.rScale = d3.scale[this.scale[2]]()
                 .domain([min[2], max[2]]);
 
-            yAxis = d3.svg.axis()
+            this.yAxis = d3.svg.axis()
                 .tickFormat(function(d) {
                     return d / _this.units[0];
                 }).tickSize(6, 0);
 
-            xAxis = d3.svg.axis()
+            this.xAxis = d3.svg.axis()
                 .tickFormat(function(d) {
                     return d / _this.units[1];
                 }).tickSize(6, 0);
 
-            colorScale = d3.scale.category10();
+
 
             //bubbles
             this.setYear(this.time);
@@ -146,6 +147,7 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
+            var _this = this;
             var margin;
             var tick_spacing;
 
@@ -164,17 +166,10 @@ define([
                     break;
             }
 
-            //size the stage
-            this.resizeStage(margin);
-            //size the bubbles
-            this.resizeBubbles(tick_spacing);
-        },
-
-        resizeStage: function(margin) {
 
             //stage
-            height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
@@ -187,38 +182,38 @@ define([
                 .attr("x", "50%")
                 .attr("y", "50%")
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
-        },
 
-        resizeBubbles: function(tick_spacing) {
             //scales
-            yScale = yScale.range([height, 0]).nice();
-            xScale = xScale.range([0, width]).nice();
+            this.yScale.range([height, 0]).nice();
+            this.xScale.range([0, width]).nice();
 
             var maxRadius = (this.getLayoutProfile() === "large") ? 50 : 30;
-            rScale = rScale.range([1, maxRadius]);
+            this.rScale.range([1, maxRadius]);
 
             //axis
-            yAxis.scale(yScale)
+            this.yAxis.scale(this.yScale)
                 .orient("left")
                 .ticks(Math.max(height / tick_spacing, 2));
 
-            xAxis.scale(xScale)
+            this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 .ticks(Math.max(width / tick_spacing, 2));
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
 
-            this.yAxisEl.call(yAxis);
-            this.xAxisEl.call(xAxis);
+            this.yAxisEl.call(this.yAxis);
+            this.xAxisEl.call(this.xAxis);
 
             //bubbles
             this.bubbles.selectAll(".vzb-bc-bubble")
                 .transition().duration(DURATION_FAST).ease("linear")
-                .call(position)
+                .call(function(d){position(d, _this);})
                 .sort(order);
         },
 
+
         setYear: function(time) {
+            var _this = this;
 
             this.yearEl.text(time);
             //this.bubbles.selectAll(".vzb-bc-bubble").remove();
@@ -227,7 +222,7 @@ define([
                 .enter().append("circle")
                 .attr("class", "vzb-bc-bubble")
                 .style("fill", function(d) {
-                    return colorScale(color(d));
+                    return _this.cScale(color(d));
                 })
                 .attr("data-tooltip", function(d) {
                     return d.name;
