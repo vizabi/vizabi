@@ -66,7 +66,7 @@ define([
                     d.name = d["geo.name"]; 
                     d.region = d["geo.region"] || "world";
                     _this.model.show.indicator.forEach(function(ind) { d[ind] = +d[ind]; });
-                })
+                });
                 this.isDataPreprocessed = true;
             }
             
@@ -74,7 +74,7 @@ define([
             this.indicator = this.model.show.indicator;
             this.scale = this.model.show.scale;
             this.units = this.model.show.unit || [1, 1, 1];
-            this.time = this.model.time.value;
+            this.time = +this.model.time.value;
             
             //TODO: #32 run only if data or show models changed
             this.updateShow();
@@ -141,7 +141,7 @@ define([
 
             this.yearEl.text(this.time);
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data.filter(function(d){return (d.time == _this.time)}));
+                .data(this.data.filter(function(d){return (+d.time === _this.time);}));
         },
         
         
@@ -174,7 +174,7 @@ define([
                     return _this.xScale(d[_this.indicator[1]]);
                 })
                 .attr("r", function(d) {
-                    return _this.rScale(d[_this.indicator[2]] || 1)
+                    return _this.rScale(d[_this.indicator[2]] || 1);
                 });
         },
         
