@@ -81,7 +81,7 @@ define([
         /*
          * UPDATE:
          * Updates the component as soon as the model/models change
-         * Ideally, it contains only operations related to data events
+         * Ideally it contains only operations related to data events
          */
         //FIXME when sliding through years, data is not changing (only year),
         // but the function is still called. is it ok?
@@ -115,10 +115,10 @@ define([
             //axis
             this.yScale = d3.scale[this.scale[0]]()
                 .domain([min[0], max[0]]);
-
+            
             this.xScale = d3.scale[this.scale[1]]()
                 .domain([min[1], max[1]]);
-
+            
             this.rScale = d3.scale[this.scale[2]]()
                 .domain([min[2], max[2]]);
 
