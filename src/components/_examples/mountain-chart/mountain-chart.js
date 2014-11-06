@@ -186,8 +186,8 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var tick_spacing;
             var margin;
+            var tick_spacing;
 
             switch (this.getLayoutProfile()) {
                 case "small":
@@ -283,7 +283,7 @@ define([
     // Interpolates the dataset for the given (fractional) year.
     function interpolateData(data, indicator, year) {
 
-        yearData = data.filter(function(d) {
+        var yearData = data.filter(function(d) {
             return (d.time == year);
         });
 

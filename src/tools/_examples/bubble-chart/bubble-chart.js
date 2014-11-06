@@ -41,8 +41,8 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var state = model.state,
-                data = model.data;
+            var state = model.state;
+            var data = model.data;
 
             //don't validate anything if data hasn't been loaded
             if(!data.getItems() || data.getItems().length < 1) {

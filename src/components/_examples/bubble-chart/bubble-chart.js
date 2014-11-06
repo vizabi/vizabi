@@ -95,17 +95,17 @@ define([
             var minValue = this.indicator.map(function(ind) {
                     return d3.min(_this.data, function(d) {
                         return +d[ind];
-                    })
+                    });
                 });
             var maxValue = this.indicator.map(function(ind) {
                     return d3.max(_this.data, function(d) {
                         return +d[ind];
-                    })
+                    });
                 });
 
             //10% difference margin in min and max
             var min = this.scale.map(function(scale, i) {
-                    return ((scale == "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
+                    return ((scale === "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
                 });
             var max = this.scale.map(function(scale, i) {
                     return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
@@ -162,7 +162,7 @@ define([
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
                     break;
-            };
+            }
 
             //size the stage
             this.resizeStage(margin);
@@ -194,7 +194,7 @@ define([
             yScale = yScale.range([height, 0]).nice();
             xScale = xScale.range([0, width]).nice();
 
-            var maxRadius = (this.getLayoutProfile() == "large") ? 50 : 30;
+            var maxRadius = (this.getLayoutProfile() === "large") ? 50 : 30;
             rScale = rScale.range([1, maxRadius]);
 
             //axis
@@ -242,7 +242,7 @@ define([
     // Interpolates the dataset for the given (fractional) year.
     function interpolateData(data, indicator, year) {
 
-        yearData = data.filter(function(d) {
+        var yearData = data.filter(function(d) {
             return (d.time == year);
         });
 
