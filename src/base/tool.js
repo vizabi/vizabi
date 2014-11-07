@@ -32,15 +32,19 @@ define([
             this.model = new ToolModel(options, {
                 'change': function(evt, val) {
                     if (_this._ready) {
-                        _this.model.validate();
-                        _this.update();
+                        _this.model.validate().done(function() {
+                             _.defer(function() {
+                                _this.update();
+                            });
+                        });
                     }
                     _this.triggerAll(evt, val);
                 },
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
-                        _this.model.validate();
-                        _this.update();
+                        _this.model.validate().done(function() {
+                             _this.update();
+                        });
                         _this.translateStrings();
                     }
                 },
@@ -79,7 +83,7 @@ define([
          * Binds events in model to outside world
          */
         _bindEvents: function() {
-            if(!this.model.bind) return;
+            if (!this.model.bind) return;
             for (var i in this.model.bind.get()) {
                 this.on(i, this.model.bind.get(i));
             }
