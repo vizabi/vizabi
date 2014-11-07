@@ -16,13 +16,13 @@ define([
         init: function(parent, options) {
             this._super(parent, options);
             this.data = options.data;
-            this.root = options.root;
+            this.placeholder = options.placeholder;
         },
 
         postRender: function() {
             var _this = this;
             
-            var parent = $(this.root);
+            var parent = $(this.placeholder);
 
             var button = $('<button>').attr({
                 title: button_title,
