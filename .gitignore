@@ -2,4 +2,8 @@
 .sass-cache/
 lib/
 node_modules/
+dist/
 *.swp
+/preview_pages/assets/_preview.tpl
+/src/assets/style/vizabi.scss
+/src/plugins.js

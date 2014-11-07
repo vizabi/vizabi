@@ -7,21 +7,32 @@ define([
     var container;
 
     var Table = Component.extend({
-        init: function(parent, options) {
+
+        /**
+         * Initializes the barchart
+         * @param config component configuration
+         * @param context component context (parent)
+         */
+        init: function(config, context) {
             this.template = "components/_examples/table/table";
-            this._super(parent, options);
+            this._super(config, context);
         },
 
+        /**
+         * Executes right after the template is in place
+         */
         postRender: function() {
-            this.update();
+            //
         },
 
+        /**
+         * Updates the component as soon as the model/models change
+         */
         update: function() {
-            var _this = this;
 
-            //TODO: mapping of columns and data
-            var columns = this.model.getState().columns,
-                data = this.model.getData()[0];
+            var indicator = this.model.show.indicator,
+                data = this.model.data.getItems(),
+                columns = ["geo.name", "time", indicator];
 
             var table = this.element;
             table.html("");

@@ -4,3 +4,4 @@
 		<!-- @@include('_preview.tpl') -->
 	</ul>
 </div>
+<button class='github-btn' onclick="viewOnGithub()" title="VIEW TOOL ON GITHUB"><i class='fa fa-github'></i></button>

@@ -1,0 +1,26 @@
+@import'../../tool';
+.vzb-tool-two-ts-one-model {
+    @extend .vzb-tool;
+    @include absoluteAll;
+    padding: 30px;
+
+    .vzb-tool-timeslider-1, .vzb-tool-timeslider-2 {
+        position: relative;
+        height: 60px;
+    }
+    h2 {
+        font-family: $vzb-font-family;
+        color: $vzb-color-primary;
+        margin: 0px;
+    }
+    p {
+        font-size: 14px;
+        line-height: 1.5em;
+    }
+    pre {
+        background: $vzb-color-grey-light;
+        padding: 15px;
+        color: $vzb-color-grey-dark;
+    }
+    @import'../../../components/_gapminder/timeslider/timeslider';
+}

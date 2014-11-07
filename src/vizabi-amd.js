@@ -1,42 +1,33 @@
 define([], function() {
 
-	var Vizabi = function(name, container, options) {
-    var _this = this,
-        core;
+	var Vizabi = function(tool_path, container, options) {
+    var loaded = false,
+        tool;
 
-    require(["base/core", "plugins"], function(Core) {
-        core = new Core();
+    //require to import all tools, components, etc to AMD version
+    require(["plugins"], function() {
 
-        //start core
-        var promise = core.start(name,
-            container,
-            options);
+        var tool_name = tool_path.split("/").pop(),
+            path = 'tools/' + tool_path + '/' + tool_name;
 
-        //tell external page that vizabi is ready
-        promise.then(
-            function() {
-                if (typeof options.ready === "function") {
-                    options.ready();
-                }
-            },
-            //or tell external page that there's an error
+        // extending options with name and tool's placeholder
+        var config = {
+            name: tool_name,
+            placeholder: container
+        };
 
-            function(err) {
-                if (typeof options.ready === "function") {
-                    options.ready(err);
-                }
-            });
+        //require and render tool
+        require([path], function(Tool) {
+            tool = new Tool(config, options);
+        });
+
     });
 
-    //placeholder identifies the tool
-    function setOptions(placeholder, opts) {
-        if (core) core.setOptions(placeholder, opts);
-    };
-
     /* Vizabi API Methods*/
-
     return {
-        setOptions: setOptions
+        setOptions: function(opts, overwrite) {
+            if (tool) tool.setOptions(opts, overwrite);
+        }
     };
 
 };

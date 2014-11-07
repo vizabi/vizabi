@@ -40,9 +40,9 @@
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
             <ul class="dropdown">
-                <li><a onclick="setLanguage('table_tool','en')">English</a>
+                <li><a onclick="setLanguage('en')">English</a>
                 </li>
-                <li><a onclick="setLanguage('table_tool','pt')">Portuguese</a>
+                <li><a onclick="setLanguage('pt')">Portuguese</a>
                 </li>
             </ul>
         </div>
@@ -57,7 +57,7 @@
     
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
-    <button onclick="setCurrentState('table_tool')">SET STATE</button>
+    <button onclick="setCurrentState()">SET STATE</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -66,51 +66,54 @@
 var myVizabi;
 
 $(function() {
+
     var options = {
         //state
         state: url.state || {
+            //what to show
             show: {
-                'geo': ['swe'],
-                'geo.category': ['country']
+                geo: ["swe", "nor", "fin"],
+                geo_category: ["country", "planet"],
+                indicator: 'pop',
+                scale: 'linear',
+                unit: 1
             },
-            timeRange: ["2000-2009"],
-            //TODO: improve how we express which columns to show
-            columns: ['geo.name', 'time', 'lex']
+            time: {
+                start: 2000,
+                end: 2009
+            }
         },
-        //path
+
+        //data properties
         data: {
-            reader: 'local-json',
-            path: '../../data-waffles/hello-world/{{LANGUAGE}}/response.json'
+            reader: "local-json",
+            path: "../../data-waffles/hello-world/{{LANGUAGE}}/response.json"
         },
 
-        /*
-         * i18n strings are passed as an object to Vizabi
-         */
-
-        language: url.lang || "en",
-        ui_strings: {
-            en: {
-                "title": "Table Title",
-                "timeslider/play": "Play",
-                "timeslider/pause": "Pause"
-            },
-            pt: {
-                "title": "Título da Tabela",
-                "timeslider/play": "Iniciar",
-                "timeslider/pause": "Parar"
+        //language properties
+        language: url.lang || {
+            id: "en",
+            strings: {
+                en: {
+                    "title": "Table Title"
+                },
+                pt: {
+                    "title": "Título da Tabela"
+                }
             }
         },
 
         bind: {
-            'change:state': function(state) {
-                showState(state);
+            'ready': function() {
+                parseURL();
             },
-            'change:query': function(query) {
-                showQuery(query);
+            'change:state': function(evt, vals) {
+                showState(vals.state);
             }
         }
     };
 
+    showState(options.state);
     myVizabi = new Vizabi("_examples/table", "#table_tool", options);
 });
 
@@ -119,7 +122,7 @@ function setState() {
         state: {
             show: {
                 'geo': ['swe', 'nor'],
-                'geo.category': ['country']
+                'geo_category': ['country']
 
             },
             timeRange: ["2000-2009"],
@@ -135,7 +138,7 @@ function setState2() {
         state: {
             show: {
                 'geo': ['swe'],
-                'geo.category': ['country']
+                'geo_category': ['country']
 
             },
             timeRange: ["2000-2009"],
@@ -151,7 +154,7 @@ function setState3() {
         state: {
             show: {
                 'geo': ['world'],
-                'geo.category': ['planet']
+                'geo_category': ['planet']
 
             },
             timeRange: ["2000-2009"],

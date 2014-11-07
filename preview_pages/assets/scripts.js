@@ -56,23 +56,25 @@ function forceResizeEvt() {
     updateURL();
 }
 
-function setLanguage(id, language) {
-    var newOption = {
-        language: language
+function setLanguage(lang) {
+    var options = {
+        language: {
+            id: lang
+        }
     };
-    myVizabi.setOptions(newOption);
+    myVizabi.setOptions(options);
 }
 
-function setCurrentState(id, idState) {
+function setCurrentState(idState) {
     if (!idState) {
         idState = "state";
     }
     var state = document.getElementById(idState).innerHTML;
     state = JSON.parse(state);
-    forceState(id, state);
+    forceState(state);
 }
 
-function forceState(id, state) {
+function forceState(state) {
     var newOption = {
         state: state
     };
@@ -87,7 +89,7 @@ function showState(state, id) {
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 
-    updateURL();
+    // updateURL();
 }
 
 function showQuery(query) {
@@ -121,8 +123,12 @@ function parseURL() {
         options = JSON.parse(hash.replace("#", ""));
 
         var placeholder = $(".placeholder").attr("id");
-        var state = JSON.parse(options.state);
-
+        
+        
+        console.error('FIXME: parse attempt throws error when options.state is empty')
+        console.error('see related issues #20 and #24')
+        var state = ""; //should be JSON.parse(options.state);
+        
         url.state = state;
         url.lang = options.lang;
 
@@ -181,6 +187,13 @@ DropDown.prototype = {
     getIndex: function() {
         return this.index;
     }
+}
+
+function viewOnGithub() {
+    //rly hacked way of finding the address
+    var github_base = "https://github.com/Gapminder/vizabi/tree/",
+        address = window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
+    window.open(address,'_blank');
 }
 
 parseURL();

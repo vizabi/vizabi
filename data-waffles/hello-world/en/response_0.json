@@ -4,7 +4,7 @@
       "time": "1990",
       "geo": "world",
       "lex": 65.76636887721764,
-      "pop": 0,
+      "pop": 54000000000,
       "gdp": "9246382633.149479",
       "geo.name": "World",
       "geo.category": [
@@ -15,7 +15,7 @@
       "time": "1991",
       "geo": "world",
       "lex": 65.9312482842701,
-      "pop": 0,
+      "pop": 55000000000,
       "gdp": "9925519392.073666",
       "geo.name": "World",
       "geo.category": [
@@ -26,7 +26,7 @@
       "time": "1992",
       "geo": "world",
       "lex": 66.08596956547132,
-      "pop": 0,
+      "pop": 56000000000,
       "gdp": "10046659415.815136",
       "geo.name": "World",
       "geo.category": [
@@ -37,7 +37,7 @@
       "time": "1993",
       "geo": "world",
       "lex": 66.14267066569764,
-      "pop": 0,
+      "pop": 57000000000,
       "gdp": "9530243362.0338",
       "geo.name": "World",
       "geo.category": [
@@ -48,7 +48,7 @@
       "time": "1994",
       "geo": "world",
       "lex": 66.27255771185433,
-      "pop": 0,
+      "pop": 58000000000,
       "gdp": "9285248464.744822",
       "geo.name": "World",
       "geo.category": [
@@ -59,7 +59,7 @@
       "time": "1995",
       "geo": "world",
       "lex": 66.44633963262235,
-      "pop": 0,
+      "pop": 59000000000,
       "gdp": "11911018388.501276",
       "geo.name": "World",
       "geo.category": [
@@ -70,7 +70,7 @@
       "time": "1996",
       "geo": "world",
       "lex": 66.70513848915718,
-      "pop": 0,
+      "pop": 59500000000,
       "gdp": "12781470382.813482",
       "geo.name": "World",
       "geo.category": [
@@ -81,7 +81,7 @@
       "time": "1997",
       "geo": "world",
       "lex": 66.9737486918435,
-      "pop": 0,
+      "pop": 60000000000,
       "gdp": "13532357804.805237",
       "geo.name": "World",
       "geo.category": [
@@ -92,7 +92,7 @@
       "time": "1998",
       "geo": "world",
       "lex": 67.22757443616415,
-      "pop": 0,
+      "pop": 60500000000,
       "gdp": "14210681051.012476",
       "geo.name": "World",
       "geo.category": [
@@ -103,7 +103,7 @@
       "time": "2000",
       "geo": "world",
       "lex": 67.7132566385467,
-      "pop": 0,
+      "pop": 61000000000,
       "gdp": "15174524666.202812",
       "geo.name": "World",
       "geo.category": [
@@ -114,7 +114,7 @@
       "time": "2001",
       "geo": "world",
       "lex": 67.99811444564155,
-      "pop": 0,
+      "pop": 62000000000,
       "gdp": "14088961361.448349",
       "geo.name": "World",
       "geo.category": [
@@ -125,7 +125,7 @@
       "time": "1999",
       "geo": "world",
       "lex": 67.43648856382337,
-      "pop": 0,
+      "pop": 63000000000,
       "gdp": "14914397305.383116",
       "geo.name": "World",
       "geo.category": [
@@ -136,7 +136,7 @@
       "time": "2002",
       "geo": "world",
       "lex": 68.26021437545671,
-      "pop": 0,
+      "pop": 64000000000,
       "gdp": "17906611559.064487",
       "geo.name": "World",
       "geo.category": [
@@ -147,7 +147,7 @@
       "time": "2003",
       "geo": "world",
       "lex": 68.52420088714935,
-      "pop": 0,
+      "pop": 65000000000,
       "gdp": "20161007467.42916",
       "geo.name": "World",
       "geo.category": [
@@ -158,7 +158,7 @@
       "time": "2004",
       "geo": "world",
       "lex": 68.83788230695195,
-      "pop": 0,
+      "pop": 67000000000,
       "gdp": "21480714192.378525",
       "geo.name": "World",
       "geo.category": [
@@ -169,7 +169,7 @@
       "time": "2005",
       "geo": "world",
       "lex": 69.06362760319892,
-      "pop": 0,
+      "pop": 67500000000,
       "gdp": "24135263532",
       "geo.name": "World",
       "geo.category": [
@@ -180,7 +180,7 @@
       "time": "2006",
       "geo": "world",
       "lex": 69.36717640046201,
-      "pop": 0,
+      "pop": 68000000000,
       "gdp": "25235397125.981106",
       "geo.name": "World",
       "geo.category": [
@@ -191,7 +191,7 @@
       "time": "2008",
       "geo": "world",
       "lex": 69.80822753026796,
-      "pop": 0,
+      "pop": 68500000000,
       "gdp": "29386600399.55551",
       "geo.name": "World",
       "geo.category": [
@@ -202,7 +202,7 @@
       "time": "2007",
       "geo": "world",
       "lex": 69.61029033139698,
-      "pop": 0,
+      "pop": 69000000000,
       "gdp": "28669373933.653675",
       "geo.name": "World",
       "geo.category": [
@@ -213,7 +213,7 @@
       "time": "2009",
       "geo": "world",
       "lex": 70.03931514812126,
-      "pop": 0,
+      "pop": 69500000000,
       "gdp": "35313007873.30983",
       "geo.name": "World",
       "geo.category": [
@@ -224,7 +224,7 @@
       "time": "2010",
       "geo": "world",
       "lex": 70.23287124664998,
-      "pop": 0,
+      "pop": 70000000000,
       "gdp": "38153131914.21188",
       "geo.name": "World",
       "geo.category": [
@@ -235,7 +235,7 @@
       "time": "2011",
       "geo": "world",
       "lex": 70.4517948034964,
-      "pop": 0,
+      "pop": 70500000000,
       "gdp": "40815226653.81539",
       "geo.name": "World",
       "geo.category": [
@@ -246,7 +246,7 @@
       "time": "2012",
       "geo": "world",
       "lex": 70.65224361395475,
-      "pop": 0,
+      "pop": 71000000000,
       "gdp": "45075907021.66752",
       "geo.name": "World",
       "geo.category": [

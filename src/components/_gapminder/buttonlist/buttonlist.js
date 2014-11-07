@@ -2,7 +2,7 @@
 
 define([
     'jquery',
-    'underscore',
+    'lodash',
     'base/utils',
     'base/component'
 ], function($, _, utils, Component) {
@@ -10,7 +10,7 @@ define([
     var geo_picker;
 
     var ButtonList = Component.extend({
-        init: function(core, options) {
+        init: function(options, context) {
             //set properties
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
