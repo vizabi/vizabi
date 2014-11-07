@@ -64,13 +64,7 @@ define([
         },
 
         geopicker: function(button_list) {
-            geo_picker = this.components['picker-geo'];
 
-            //show the picker when the correct button is pressed
-            var geo_button = this.placeholder.find('.vzb-buttonlist-geo');
-            geo_button.click(function() {
-                geo_picker.show();
-            });
         },
 
         addButtons: function(button_list) {
@@ -115,12 +109,14 @@ define([
                             root: '.vzb-tool-buttonlist .vzb-buttonlist'
                         });
                         break;
+                    case 'size':
+                        _this.addComponent('_gapminder/buttonlist/buttons/size-button', {
+                            data: _this.data,
+                            root: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        });
+                        break;
                 }
             })
-        },
-
-        addButton: function(btn) {
-            this.addButtons(btn.split(" "));
         }
 
     });
