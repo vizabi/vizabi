@@ -254,18 +254,17 @@ define([
                     _this.placeholder = (_.isString(_this.placeholder)) ? root.select(_this.placeholder) : _this.placeholder;
                     _this.placeholder.html(rendered);
 
-                    //TODO: refactor the way we select the first child
-                    //define this element inside the placeholder
                     try {
-                        _this.element = utils.jQueryToD3(
-                            utils.d3ToJquery(_this.placeholder).children().first()
-                        );
+                        var element = _this.placeholder.node().children[0];
+                        _this.element = d3.select(element);
+
+                        if(!_this.element.node()) {
+                            console.warn("Component element not found (root HTML node in the component's markup). Verify that " + this.template + "contains valid HTML/template.");
+                        }
                     } catch (err) {
-                        console.error("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
-                        console.error(err);
+                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
                     }
 
-                    //Resolve defer
                     defer.resolve();
                 });
 
