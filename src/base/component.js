@@ -32,7 +32,6 @@ define([
                 name: this.name
             };
             this.components = this.components || [];
-            this.profiles = this.profiles || {};
             this.parent = parent;
 
             this._events = new Events();
@@ -67,7 +66,6 @@ define([
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
-                        _this.layout.setProfile(_this.profiles);
                         _this.layout.resize();
                         _this.layout.on('resize', function() {
                             _this.resize();

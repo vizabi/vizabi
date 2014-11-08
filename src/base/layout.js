@@ -16,7 +16,7 @@ define([
          */
         init: function() {
 
-            //TODO: Remove screen sizes from here
+            //TODO: Remove screen sizes from here ?
             this.screen_sizes = {
                 small: {
                     min_width: 0,
@@ -32,8 +32,7 @@ define([
                 }
             };
             this.container = null; //d3 container
-            this.profiles = {};
-            this.current_profiles = null;
+            this.current_profile = null;
 
             //capture layout events
             this._events = new Events();
@@ -69,47 +68,12 @@ define([
             //update size class
             this.container.classed(class_prefix + _this.current_profile, true);
 
-            //TODO: move this comment to wiki
-            /* toggle, untoggle classes based on profile
-             * whenever a size has related classes turned off, you see the
-             * corresponding class with the suffix -off
-             * example: small { timeslider: false } would produce
-             * a class viz-timeslider-off when the screen is small
-             */
-            var profile = this.profiles[_this.current_profile] || this.profiles["default"];
-            if (profile) {
-                _.each(profile, function(value, item) {
-                    _this.container.classed(class_prefix + item + "-off", !value);
-                });
-            }
-
             //toggle, untoggle classes based on orientation
             var portrait = this.isPortrait();
             this.container.classed(class_portrait, portrait);
             this.container.classed(class_lansdcape, !portrait);
 
             this.trigger('resize');
-        },
-
-        /**
-         * Sets profiles for the current layout
-         */
-        //todo: potentially remove profiles and simplify to screen sizes
-        setProfile: function(profile, profiles) {
-            if (_.isString(profile)) {
-                this.profiles[profile] = profiles;
-            } else {
-                this.profiles = profile;
-            }
-        },
-
-        /**
-         * Gets the configuration for a certain profile
-         * @param {String} name name of profile
-         * @returns {Object} profile configuration
-         */
-        getProfile: function(name) {
-            return this.profiles[name];
         },
 
         /**
@@ -172,7 +136,6 @@ define([
         destroy: function() {
             this._events = new Events();
             this.container = null;
-            this.profiles = {};
         },
 
         /*
