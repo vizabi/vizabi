@@ -15,6 +15,7 @@ require.config({
         underscore: '../lib/underscore/underscore',
         //todo: replace underscore with lodash
         lodash: '../lib/lodash/dist/lodash',
+        moment: '../lib/momentjs/min/moment.min',
 
         text: '../lib/requirejs-text/text',
         smartpicker: '../lib/smart-picker/dist/smart-picker',

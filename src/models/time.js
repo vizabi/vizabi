@@ -1,8 +1,9 @@
 define([
     'lodash',
+    'moment', //library for handling time operations
     'base/utils',
     'base/model'
-], function(_, utils, Model) {
+], function(_, moment, utils, Model) {
 
     var TimeModel = Model.extend({
 
@@ -16,9 +17,10 @@ define([
 
             //default values for time model
             values = _.extend({
-                value: 1800,
-                start: 2014,
-                end: 2014,
+                unit: "year", //defaults to year
+                value: "1800",
+                start: "2014",
+                end: "2014",
                 step: 1,
                 speed: 500,
                 playable: true,
