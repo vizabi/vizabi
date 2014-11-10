@@ -7,49 +7,28 @@ define([
 ], function($, utils, Component, Model, SmartPicker) {
 
     var picker,
-        countries,
-        button_title = 'search',
-        button_id = 'search',
-        button_text = 'find';
+        countries;
 
     var FindButton = Component.extend({
-        init: function(parent, options) {
-            this._super(parent, options);
-            this.data = options.data;
+        init: function(config, parent) {
+            this.name = 'find-button';
+            this.id = 'search';
+            this.title = 'Search';
+
             this.placeholder = options.placeholder;
+            
+            this.template = 'components/_gapminder/button-list/button.html';
+            this.template_data = this.template_data || {
+                name: this.name,
+                title: this.title,
+                id: this.id,
+            };
+
+            this._super(config, parent);
         },
 
         postRender: function() {
             var _this = this;
-            
-            var parent = $(this.placeholder);
-
-            var button = $('<button>').attr({
-                title: button_title,
-                class: 'vzb-buttonlist-btn vzb-buttonlist-btn-' + button_id
-            });
-
-            var icon = $('<span>').attr({
-                class: 'vzb-btn-icon'
-            });
-
-            icon.appendTo(button)
-
-            var i = $('<i>').attr({
-                class: 'fa fa-' + button_id
-            });
-
-            i.appendTo(icon);
-
-
-            var title = $('<span>').attr({
-                class: 'vzb-btn-title',
-            });
-
-            title.html(button_text);
-            title.appendTo(button);
-
-            parent.append(button);
 
             //load countries and then initialize pickers
             this.loadCountries().then(function(country_list) {
@@ -71,21 +50,21 @@ define([
                 countries = new Model();
 
             //set the correct source
-            countries.setSource(this.data);
+            countries.setSource(this.model._data);
 
             //load data and resolve the defer when it's done
             $.when(
                 countries.load(query, language, _this.events)
             ).done(function() {
                 country_list = countries.get()[0];
-                
+
                 // TODO: remove hard-coded filtering for indicators
                 country_list = country_list.filter(function(row) {
                     return (row["geo.category"] == "country" &&
                         row.time === "2000" && row.lex && row.pop && row.gdp);
                 });
-                
-                country_list = country_list.map(function (country) {
+
+                country_list = country_list.map(function(country) {
                     return {
                         value: country["geo"],
                         name: country["geo.name"]
@@ -145,14 +124,15 @@ define([
         },
 
         getQuery: function() {
-          var query = [{
-                    select: [
-                        'geo',
-                        'geo.name',
-                    ],
-                    where: {
-                        geo: ["*"]
-                    }}];
+            var query = [{
+                select: [
+                    'geo',
+                    'geo.name',
+                ],
+                where: {
+                    geo: ["*"]
+                }
+            }];
 
             return query;
         }

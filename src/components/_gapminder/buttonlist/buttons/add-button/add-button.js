@@ -6,47 +6,27 @@ define([
 ], function($, utils, Component, Model) {
 
     var picker,
-        countries,
-        button_id = 'plus',
-        button_title = 'plus',
-        button_text = 'Add';
+        countries;
 
     var AddButton = Component.extend({
         init: function(parent, options) {
-            this._super(parent, options);
-            this.data = options.data;
+            this.name = 'add-button';
+            this.id = 'add';
+            this.title = 'Add';
+
             this.placeholder = options.placeholder;
+            
+            this.template = 'components/_gapminder/button-list/button.html';
+            this.template_data = this.template_data || {
+                name: this.name,
+                title: this.title,
+                id: this.id
+            };
+
+            this._super(parent, options);
         },
 
         postRender: function() {
-            var parent = $(this.placeholder);
-
-            var button = $('<button>').attr({
-                title: button_title,
-                class: 'vzb-buttonlist-btn vzb-buttonlist-btn-' + button_id
-            });
-
-            var icon = $('<span>').attr({
-                class: 'vzb-btn-icon'
-            });
-
-            icon.appendTo(button)
-
-            var i = $('<i>').attr({
-                class: 'fa fa-' + button_id
-            });
-
-            i.appendTo(icon);
-
-
-            var title = $('<span>').attr({
-                class: 'vzb-btn-title',
-            });
-
-            title.html(button_text);
-            title.appendTo(button);
-
-            parent.append(button);
         },
 
 
