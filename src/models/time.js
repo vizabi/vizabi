@@ -1,9 +1,23 @@
 define([
     'lodash',
-    'moment', //library for handling time operations
+    'd3',
     'base/utils',
     'base/model'
-], function(_, moment, utils, Model) {
+], function(_, d3, utils, Model) {
+
+    //constant time formats
+    var time_formats = {
+        "year": d3.time.format("%Y"),
+        "month": d3.time.format("%Y-%m"),
+        "week": d3.time.format("%Y-W%W"),
+        "day": d3.time.format("%Y-%m-%d"),
+        "hour": d3.time.format("%Y-%m-%d %H"),
+        "minute": d3.time.format("%Y-%m-%d %H:%M"),
+        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+    };
+
+    var time_units = _.keys(time_formats),
+        formatters = _.values(time_formats);
 
     var TimeModel = Model.extend({
 
@@ -17,16 +31,16 @@ define([
 
             //default values for time model
             values = _.extend({
-                unit: "year", //defaults to year
                 value: "1800",
                 start: "2014",
                 end: "2014",
-                step: 1,
-                speed: 500,
                 playable: true,
                 playing: false,
                 loop: false,
-                roundOnPause: true
+                roundOnPause: true,
+                speed: 500,
+                unit: "year", //defaults to year
+                step: 1 //step must be integer
             }, values);
 
             //same constructor
@@ -51,12 +65,47 @@ define([
         },
 
         /**
+         * Formats value, start and end dates to actual Date objects
+         */
+        _formatToDates: function() {
+            var date_attr = ["value", "start", "end"];
+            for (var i = 0; i < date_attr.length; i++) {
+                var attr = date_attr[i];
+                if (!_.isDate(this[attr])) {
+                    for (var i = 0; i < formatters.length; i++) {
+                        var formatter = formatters[i];
+                        var date = formatter.parse(this[attr].toString());
+                        if (_.isDate(date)) {
+                            this[attr] = date;
+                            break;
+                        }
+                    };
+                }
+            };
+        },
+
+        /**
          * Validates the model
          * @param {boolean} silent Block triggering of events
          */
         validate: function(silent) {
             //don't cross validate everything
             var atomic = true;
+
+            //unit has to be one of the available_time_units
+            if (time_units.indexOf(this.unit) === -1) {
+                this.unit = "year";
+            }
+
+            if (this.step < 1) {
+                this.step = 1;
+            }
+
+            //make sure dates are transformed into dates at all times
+            if (!_.isDate(this.start) || !_.isDate(this.end) || !_.isDate(this.value)) {
+                this._formatToDates();
+            }
+
             //end has to be >= than start
             if (this.end < this.start) {
                 this.set('end', this.start, silent, atomic);
@@ -88,6 +137,28 @@ define([
         },
 
         /**
+         * gets time range
+         * @returns range between start and end
+         */
+        getRange: function() {
+            return d3.time[this.unit].range(this.start, this.end, this.step);
+        },
+
+        /**
+         * gets formatted value
+         * @param {String} f Optional format. Defaults to YYYY
+         * @param {String} attr Optional attribute. Defaults to "value"
+         * @returns {String} formatted value
+         */
+        getFormatted: function(f, attr) {
+            if (!f) f = "%Y";
+            if (!attr) attr = "value";
+
+            var format = d3.time.format(f);
+            return format(this[attr]);
+        },
+
+        /**
          * Starts playing the time, initializing the interval
          */
         _startPlaying: function() {
@@ -98,15 +169,13 @@ define([
 
             var _this = this,
                 time = this.value,
-                interval = this.speed * this.step;
+                interval = this.speed; // * this.step;
 
             //go to start if we start from end point
-            if (time === _this.end) {
+            if (_this.end - time <= 0) {
                 time = this.start;
-                _this.value = time
+                _this.value = time;
             }
-
-            //create interval
 
             //we don't create intervals directly
             this._intervals.setInterval('playInterval_' + this._id, function() {
@@ -119,9 +188,7 @@ define([
                     }
                     return;
                 } else {
-                    var decs = utils.countDecimals(_this.step)
-                    time = time + _this.step;
-                    time = +time.toFixed(decs);
+                    time = d3.time[_this.unit].offset(time, _this.step);
                     _this.value = time;
                 }
             }, interval);
@@ -137,12 +204,11 @@ define([
             this._intervals.clearInterval('playInterval_' + this._id);
 
             //snap to integer
-            if(this.roundOnPause) {
+            if (this.roundOnPause) {
                 var op = 'floor';
-                if(this.roundOnPause === 'ceil') op = 'ceil';
-                if(this.roundOnPause === 'round') op = 'round';
-                var time = this.value;
-                time = Math[op](time);
+                if (this.roundOnPause === 'ceil') op = 'ceil';
+                if (this.roundOnPause === 'round') op = 'round';
+                var time = d3.time[this.unit][op](this.value);
                 this.value = time;
             }
 
