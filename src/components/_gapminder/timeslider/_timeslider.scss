@@ -76,6 +76,7 @@ $vzb-ts-value-width: 40px;
             }
 
             .vzb-ts-slider-value {
+                display: none;
                 @include user-select-none();
                 font: 11px $vzb-font-family;
                 fill: $vzb-ts-slider-color;
@@ -100,7 +101,7 @@ $vzb-ts-value-width: 40px;
             }
         }
         .vzb-ts-slider-value {
-            display: block;
+            display: block !important;
         }
     }
     &.vzb-ts-hide-play-button {
@@ -111,24 +112,9 @@ $vzb-ts-value-width: 40px;
             @include absolute(5px, 9px, 5px, 5px);
         }
     }
-    &.vzb-ts-show-value {
+    &.vzb-ts-show-value, &.vzb-ts-dragging {
         .vzb-ts-slider-value {
             display: block !important;
-        }
-    }
-    &.vzb-ts-show-limits {
-        .vzb-ts-slider-limit-start, .vzb-ts-slider-limit-end {
-            display: block !important;
-        }
-        &.vzb-ts-show-limits-no-start {
-            .vzb-ts-slider-limit-start {
-                @include opacity(0);
-            }
-        }
-        &.vzb-ts-show-limits-no-end {
-            .vzb-ts-slider-limit-end {
-                @include opacity(0);
-            }
         }
     }
 }

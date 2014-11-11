@@ -1,3 +1,5 @@
+//TODO: different sizes according to resolution
+
 define([
     'd3',
     'base/component',
@@ -7,9 +9,7 @@ define([
     //constants
     var class_playing = "vzb-playing",
         class_hide_play = "vzb-ts-hide-play-button",
-        class_show_limits = "vzb-ts-show-limits",
-        class_show_limits_no_start = "vzb-ts-show-limits-no-start",
-        class_show_limits_no_end = "vzb-ts-show-limits-no-end",
+        class_dragging = "vzb-ts-dragging",
         class_show_value = "vzb-ts-show-value";
 
     var time_formats = {
@@ -56,12 +56,6 @@ define([
 
             var play = this.element.select(".vzb-ts-btn-play"),
                 pause = this.element.select(".vzb-ts-btn-pause");
-
-            //model and related events
-            // this.range.on('input', function() {
-            //     _this._setTime(parseFloat(this.value));
-            //     _this.model.pause();
-            // });
 
             play.on('click', function() {
                 _this.model.play();
@@ -124,11 +118,10 @@ define([
             this.xAxis.tickValues([minValue, maxValue])
                 .tickFormat(this.format);
 
-            //resize
-            this.resize();
-
             //special classes
             this._optionClasses();
+            //resize
+            this.resize();
         },
 
         /**
@@ -159,7 +152,7 @@ define([
 
             //adjust axis with scale
             this.xAxis = this.xAxis.scale(this.xScale)
-                .tickPadding(12);
+                .tickPadding(10);
 
             this.axis.attr("transform", "translate(0," + height / 2 + ")")
                 .call(this.xAxis);
@@ -187,6 +180,7 @@ define([
                     _this.model.pause();
                     _this._optionClasses();
                     _this._blockUpdate = true;
+                    _this.element.classed(class_dragging, true);
                 }
 
                 var value = _this.brush.extent()[0];
@@ -214,6 +208,7 @@ define([
             return function() {
                 _this._blockUpdate = false;
                 _this.model.pause();
+                _this.element.classed(class_dragging, false);
             }
         },
 
@@ -226,7 +221,7 @@ define([
             this.slide.call(this.brush.extent([value, value]));
             this.valueText.text(this.format(value));
 
-            if(this.model.start - this.model.value === 0) {
+            if (this.model.start - this.model.value === 0) {
                 transition = false;
             }
 
@@ -280,27 +275,10 @@ define([
                 show_value = (this.ui.timeslider.show_value);
             } catch (e) {}
 
-            this.element.classed(class_show_limits, show_limits);
+            if (!show_limits) this.xAxis.tickValues([]).ticks(0);
+
             this.element.classed(class_show_value, show_value);
         },
-
-        /**
-         * Sets position of time value string
-         */
-        _setTimePosition: function() {
-            // var offset = 10,
-            //     rangeW = parseInt(this.range.style('width'),10) - 16,
-            //     timeRange = this.model.end - this.model.start,
-            //     currTime = this.model.value - this.model.start,
-            //     newPosition = (timeRange > 0) ? Math.round(rangeW * currTime / timeRange) : 0;
-            //     newPosition += offset;
-            // this.value.style("left", newPosition + "px");
-
-            // var hide_start = (newPosition < offset + 10),
-            //     hide_end = (newPosition > rangeW);
-            // this.element.classed(class_show_limits_no_start, hide_start);
-            // this.element.classed(class_show_limits_no_end, hide_end);
-        }
     });
 
     return Timeslider;
