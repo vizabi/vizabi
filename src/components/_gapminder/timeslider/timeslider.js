@@ -22,6 +22,40 @@ define([
         "second": d3.time.format("%d/%m/%Y %H:%M:%S")
     };
 
+    //margins for slider
+    var profiles = {
+        small: {
+            margin: {
+                top: 9,
+                right: 15,
+                bottom: 10,
+                left: 15
+            },
+            radius: 8,
+            label_spacing: 10
+        },
+        medium: {
+            margin: {
+                top: 9,
+                right: 15,
+                bottom: 10,
+                left: 15
+            },
+            radius: 10,
+            label_spacing: 12
+        },
+        large: {
+            margin: {
+                top: 9,
+                right: 15,
+                bottom: 10,
+                left: 15
+            },
+            radius: 11,
+            label_spacing: 14
+        }
+    };
+
     var Timeslider = Component.extend({
 
         /**
@@ -130,29 +164,23 @@ define([
          */
         resize: function() {
 
-            //margins for slider
-            var margin = {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            };
+            this.profile = profiles[this.getLayoutProfile()];
 
             var slider_w = parseInt(this.slider_outer.style("width"), 10),
                 slider_h = parseInt(this.slider_outer.style("height"), 10),
-                width = slider_w - margin.left - margin.right,
-                height = slider_h - margin.bottom - margin.top,
+                width = slider_w - this.profile.margin.left - this.profile.margin.right,
+                height = slider_h - this.profile.margin.bottom - this.profile.margin.top,
                 _this = this;
 
             //translate according to margins
-            this.slider.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
             //adjust scale with width
             this.xScale.range([0, width]);
 
             //adjust axis with scale
             this.xAxis = this.xAxis.scale(this.xScale)
-                .tickPadding(10);
+                .tickPadding(this.profile.label_spacing);
 
             this.axis.attr("transform", "translate(0," + height / 2 + ")")
                 .call(this.xAxis);
@@ -162,7 +190,7 @@ define([
 
             //size of handle
             this.handle.attr("transform", "translate(0," + height / 2 + ")")
-                .attr("r", 8);
+                .attr("r", this.profile.radius);
 
             //set handle at current position
             this._setHandle(this.model.playing);

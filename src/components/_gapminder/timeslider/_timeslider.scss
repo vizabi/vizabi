@@ -45,11 +45,9 @@ $vzb-ts-value-width: 40px;
             color: $vzb-ts-slider-color;
             width: 100%;
             height: 100%;
-
             .background {
                 cursor: pointer !important;
             }
-            
             .vzb-ts-slider-axis {
                 @include user-select-none();
                 font: 9px $vzb-font-family;
@@ -57,7 +55,6 @@ $vzb-ts-value-width: 40px;
                 opacity: 0.6;
                 font-weight: bold;
                 cursor: pointer;
-
                 .domain {
                     fill: none;
                     opacity: 1 !important;
@@ -67,14 +64,12 @@ $vzb-ts-value-width: 40px;
                     stroke-linecap: round;
                 }
             }
-
             .vzb-ts-slider-handle {
                 fill: $vzb-ts-slider-color;
                 stroke: #FFFFFF;
                 stroke-width: 4px;
                 cursor: pointer;
             }
-
             .vzb-ts-slider-value {
                 display: none;
                 @include user-select-none();
@@ -115,6 +110,44 @@ $vzb-ts-value-width: 40px;
     &.vzb-ts-show-value, &.vzb-ts-dragging {
         .vzb-ts-slider-value {
             display: block !important;
+        }
+    }
+}
+&.vzb-medium {
+    .vzb-timeslider {
+        min-height: $vzb-ts-btn-area + 5;
+        .vzb-ts-slider-wrapper {
+            .vzb-ts-slider-axis {
+                font-size: 11px;
+            }
+            .vzb-ts-slider-axis .domain {
+                stroke-width: 7px;
+            }
+            .vzb-ts-slider-handle {
+                stroke-width: 5px;
+            }
+            .vzb-ts-slider-value {
+                font-size: 13px;
+            }
+        }
+    }
+}
+&.vzb-large {
+    .vzb-timeslider {
+        min-height: $vzb-ts-btn-area + 10;
+        .vzb-ts-slider-wrapper {
+            .vzb-ts-slider-axis {
+                font-size: 13px;
+            }
+            .vzb-ts-slider-axis .domain {
+                stroke-width: 9px;
+            }
+            .vzb-ts-slider-handle {
+                stroke-width: 6px;
+            }
+            .vzb-ts-slider-value {
+                font-size: 15px;
+            }
         }
     }
 }
