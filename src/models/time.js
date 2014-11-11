@@ -67,7 +67,7 @@ define([
         /**
          * Formats value, start and end dates to actual Date objects
          */
-        _formatToDates: function() {
+        _formatToDates: function(silent) {
             var date_attr = ["value", "start", "end"];
             for (var i = 0; i < date_attr.length; i++) {
                 var attr = date_attr[i];
@@ -76,7 +76,7 @@ define([
                         var formatter = formatters[i];
                         var date = formatter.parse(this[attr].toString());
                         if (_.isDate(date)) {
-                            this[attr] = date;
+                            this.set(attr, date, silent, true);
                             break;
                         }
                     };
@@ -94,16 +94,16 @@ define([
 
             //unit has to be one of the available_time_units
             if (time_units.indexOf(this.unit) === -1) {
-                this.unit = "year";
+                this.set("unit", "year", silent, atomic);
             }
 
             if (this.step < 1) {
-                this.step = 1;
+                this.set("step", "year", silent, atomic);
             }
 
             //make sure dates are transformed into dates at all times
             if (!_.isDate(this.start) || !_.isDate(this.end) || !_.isDate(this.value)) {
-                this._formatToDates();
+                this._formatToDates(silent);
             }
 
             //end has to be >= than start

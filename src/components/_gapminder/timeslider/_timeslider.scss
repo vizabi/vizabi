@@ -2,11 +2,11 @@ $vzb-ts-btn-area: 50px;
 $vzb-ts-btn-width: 40px;
 $vzb-ts-btn-bg: $vzb-color-primary;
 $vzb-ts-btn-bg-active: #2F7687;
-$vzb-ts-line-color: #A4CBD4;
-$vzb-ts-handle-color: $vzb-color-primary;
-$vzb-ts-limits-color: #A4CBD4;
+$vzb-ts-slider-color: $vzb-color-primary;
 $vzb-ts-value-width: 40px;
 .vzb-timeslider {
+    min-height: $vzb-ts-btn-area;
+    position: relative;
     .vzb-ts-btns {
         @include absolute(0px, auto, 0px, 5px);
         width: $vzb-ts-btn-area;
@@ -35,83 +35,44 @@ $vzb-ts-value-width: 40px;
     }
     .vzb-ts-slider-wrapper {
         @include absolute(5px, 9px, 5px, $vzb-ts-btn-area+5);
-        margin: 17px 7px;
+        // margin: 17px 7px;
         // Slider
         .vzb-ts-slider {
-            -webkit-appearance: none;
-            @include border-radius(2px);
-            background: $vzb-ts-line-color;
-            height: 5px;
+            @include absolute(0px, 0px, 0px, 0px);
+            @include font-size(12px);
+            font-family: $vzb-font-family;
+            color: $vzb-ts-slider-color;
             width: 100%;
-            outline: none !important;
-            border: 0;
-            // Slider Handle
-            &::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                cursor: pointer;
-                @include border-radius(7px);
-                @include transition(left, 0.1s, ease-in-out);
-                background-color: $vzb-ts-handle-color;
-                border: 4px solid $vzb-color-white;
-                top: -16px;
-                width: 16px;
-                height: 30px;
+            height: 100%;
+
+            .background {
+                cursor: pointer !important;
             }
-            &::-moz-range-thumb {
+            
+            .vzb-ts-slider-axis {
+                @include user-select-none();
+                font: 11px $vzb-font-family;
+                fill: $vzb-ts-slider-color;
+                font-weight: bold;
                 cursor: pointer;
-                @include border-radius(7px);
-                @include transition(left, 0.1s, ease-in-out);
-                background: $vzb-ts-handle-color;
-                border: 4px solid $vzb-color-white;
-                top: -16px;
-                width: 8px;
-                height: 24px;
+
+                .domain {
+                    fill: none;
+                    stroke: $vzb-ts-slider-color;
+                    stroke-opacity: 0.3;
+                    stroke-width: 5px;
+                    stroke-linecap: round;
+                }
+            }
+
+            .vzb-ts-slider-handle {
+                fill: $vzb-ts-slider-color;
+                stroke: #FFFFFF;
+                stroke-width: 4px;
+                cursor: pointer;
             }
         }
-        // Tooltip Tag
-        .vzb-ts-slider-value {
-            @include absolute(-20px);
-            @include font-size(13px);
-            width: $vzb-ts-value-width;
-            margin-left: -1 * $vzb-ts-value-width/2;
-            color: $vzb-ts-handle-color;
-            font-family: $vzb-font-family-alt;
-            font-weight: bold;
-            text-align: center;
-            display: none;
-        }
-        &:active .vzb-ts-slider-value {
-            display: block;
-        }
-        // Firefox Overrides
-        ::-moz-range-track {
-            border: 0;
-        }
-        input::-moz-focus-inner {
-            border: 0;
-        }
     }
-
-    %vzb-ts-slider-limit {
-        @include absolute(auto, auto, -10px, auto);
-        @include font-size(11px);
-        @include opacity(1);
-        @include transition(opacity, 0.2s, ease-in-out);
-        color: $vzb-ts-limits-color;
-        font-family: $vzb-font-family-alt;
-        font-weight: bold;
-        display: none;
-    }
-
-    .vzb-ts-slider-limit-start {
-        @extend %vzb-ts-slider-limit;
-        left: -5px;
-    }
-    .vzb-ts-slider-limit-end {
-        @extend %vzb-ts-slider-limit;
-        right: -5px;
-    }
-
     //show pause instead if it's playing
     &.vzb-playing {
         .vzb-ts-btns {
@@ -149,7 +110,6 @@ $vzb-ts-value-width: 40px;
         .vzb-ts-slider-limit-start, .vzb-ts-slider-limit-end {
             display: block !important;
         }
-
         &.vzb-ts-show-limits-no-start {
             .vzb-ts-slider-limit-start {
                 @include opacity(0);
