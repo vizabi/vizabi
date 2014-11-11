@@ -32,7 +32,7 @@ define([
             //default values for time model
             values = _.extend({
                 value: "1800",
-                start: "2014",
+                start: "1800",
                 end: "2014",
                 playable: true,
                 playing: false,

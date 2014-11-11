@@ -12,6 +12,16 @@ define([
         class_show_limits_no_end = "vzb-ts-show-limits-no-end",
         class_show_value = "vzb-ts-show-value";
 
+    var time_formats = {
+        "year": d3.time.format("%Y"),
+        "month": d3.time.format("%M"),
+        "week": d3.time.format("%W"),
+        "day": d3.time.format("%d/%m/%Y"),
+        "hour": d3.time.format("%d/%m/%Y %H"),
+        "minute": d3.time.format("%d/%m/%Y %H:%M"),
+        "second": d3.time.format("%d/%m/%Y %H:%M:%S")
+    };
+
     var Timeslider = Component.extend({
 
         /**
@@ -42,7 +52,7 @@ define([
             this.axis = this.element.select(".vzb-ts-slider-axis");
             this.slide = this.element.select(".vzb-ts-slider-slide");
             this.handle = this.slide.select(".vzb-ts-slider-handle");
-            this.value = this.slide.select('.vzb-ts-slider-value');
+            this.valueText = this.slide.select('.vzb-ts-slider-value');
 
             var play = this.element.select(".vzb-ts-btn-play"),
                 pause = this.element.select(".vzb-ts-btn-pause");
@@ -69,22 +79,23 @@ define([
                 .orient("bottom")
                 .tickSize(0);
 
+            //Value
+            this.valueText.attr("text-anchor", "middle");
+
+            var brushed = _this._getBrushed(),
+                brushedEnd = _this._getBrushedEnd();
+
             //Brush for dragging
             this.brush = d3.svg.brush()
                 .x(this.xScale)
                 .extent([0, 0])
-                .on("brush", function() {
-                    _this._brushed(this);
-                })
-                .on("brushend", function() {
-                    _this._brushedEnd(this);
-                });
+                .on("brush", brushed)
+                .on("brushend", brushedEnd);
 
             //Slide
             this.slide.call(this.brush);
             this.slide.selectAll(".extent,.resize")
                 .remove();
-
 
         },
 
@@ -95,7 +106,7 @@ define([
          */
         update: function() {
 
-            if(this._blockUpdate) return;
+            if (this._blockUpdate) return;
 
             //time slider should always receive a time model
             var time = this.model.value,
@@ -104,14 +115,23 @@ define([
                 unit = this.model.unit,
                 _this = this;
 
+            //format
+            this.format = time_formats[unit];
+
             //scale
             this.xScale.domain([minValue, maxValue]);
             //axis
             this.xAxis.tickValues([minValue, maxValue])
-                .tickFormat(d3.time.format('%Y'));
+                .tickFormat(this.format);
 
+            //resize
             this.resize();
 
+            //set handle at current position
+            this._setHandle(this.model.playing);
+
+            //special classes
+            this._optionClasses();
         },
 
         /**
@@ -122,9 +142,9 @@ define([
 
             //margins for slider
             var margin = {
-                top: 8,
+                top: 9,
                 right: 15,
-                bottom: 12,
+                bottom: 10,
                 left: 15
             };
 
@@ -156,53 +176,108 @@ define([
 
         },
 
-        _brushed: function(target) {
-            this._blockUpdate = true;
-            var value = this.brush.extent()[0];
+        /**
+         * Gets brushed function to be executed when dragging
+         * @returns {Function} brushed function
+         */
+        _getBrushed: function() {
+            var _this = this;
+            return function() {
+                if (!_this._blockUpdate) {
+                    _this.model.pause();
+                    _this._optionClasses();
+                    _this._blockUpdate = true;
+                }
 
-            //set brushed properties
-            if (d3.event.sourceEvent) {
-                value = this.xScale.invert(d3.mouse(target)[0]);
-                this.brush.extent([value, value]);
+                var value = _this.brush.extent()[0];
+
+                //set brushed properties
+                if (d3.event.sourceEvent) {
+                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                }
+
+                //set time according to dragged position
+                if (value - _this.model.value !== 0) {
+                    _this._setTime(value);
+                }
+                //position handle
+                _this._setHandle();
             }
-
-            //set time according to dragged position
-            if (value - this.model.value !== 0) {
-                this._setTime(value);
-            }
-            //position handle
-            this.handle.attr("cx", this.xScale(value));
-        },
-
-        _brushedEnd: function(target) {
-            this._blockUpdate = false;
-        },
-
-        _setValue: function(transition) {
-            var value = this.model.value,
-                speed = this.model.speed;
-
-            if (transition) {
-                this.slide.call(this.brush.event)
-                    .transition()
-                    .duration(speed)
-                    .ease("linear")
-                    .call(this.brush.extent([value, value]))
-                    .call(this.brush.event);
-            } else {
-                this.slide.call(this.brush.extent([value, value]))
-                    .call(this.brush.event);
-            }
-
         },
 
         /**
-         * Sets the time to current time model
+         * Gets brushedEnd function to be executed when dragging ends
+         * @returns {Function} brushedEnd function
+         */
+        _getBrushedEnd: function() {
+            var _this = this;
+            return function() {
+                _this._blockUpdate = false;
+                _this.model.pause();
+            }
+        },
+
+        /**
+         * Sets the handle to the correct position
+         * @param {Boolean} transition whether to use transition or not
+         */
+        _setHandle: function(transition) {
+            var value = this.model.value;
+            this.slide.call(this.brush.extent([value, value]));
+            this.valueText.text(this.format(value));
+
+            if (transition) {
+                var speed = this.model.speed,
+                    old_pos = this.handle.attr("cx"),
+                    new_pos = this.xScale(value);
+
+                this.handle.attr("cx", old_pos)
+                    .transition()
+                    .duration(speed)
+                    .ease("linear")
+                    .attr("cx", new_pos);
+
+                this.valueText.attr("transform", "translate(" + old_pos + ",0)")
+                    .transition()
+                    .duration(speed)
+                    .ease("linear")
+                    .attr("transform", "translate(" + new_pos + ",0)");
+
+            } else {
+                var pos = this.xScale(value);
+                this.handle.attr("cx", pos);
+                this.valueText.attr("transform", "translate(" + pos + ",0)");
+            }
+        },
+
+        /**
+         * Sets the current time model to time
          * @param {number} time The time
          */
         _setTime: function(time) {
             //update state
             this.model.value = time;
+        },
+
+        /**
+         * Applies some classes to the element according to options
+         */
+        _optionClasses: function() {
+            //show/hide classes
+            this.element.classed(class_hide_play, !this.model.playable);
+            this.element.classed(class_playing, this.model.playing);
+
+            var show_limits = false,
+                show_value = false;
+            try {
+                show_limits = (this.ui.timeslider.show_limits);
+            } catch (e) {}
+            try {
+                show_value = (this.ui.timeslider.show_value);
+            } catch (e) {}
+
+            this.element.classed(class_show_limits, show_limits);
+            this.element.classed(class_show_value, show_value);
         },
 
         /**

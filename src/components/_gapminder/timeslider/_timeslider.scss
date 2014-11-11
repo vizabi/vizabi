@@ -51,13 +51,15 @@ $vzb-ts-value-width: 40px;
             
             .vzb-ts-slider-axis {
                 @include user-select-none();
-                font: 11px $vzb-font-family;
+                font: 9px $vzb-font-family;
                 fill: $vzb-ts-slider-color;
+                opacity: 0.6;
                 font-weight: bold;
                 cursor: pointer;
 
                 .domain {
                     fill: none;
+                    opacity: 1 !important;
                     stroke: $vzb-ts-slider-color;
                     stroke-opacity: 0.3;
                     stroke-width: 5px;
@@ -70,6 +72,13 @@ $vzb-ts-value-width: 40px;
                 stroke: #FFFFFF;
                 stroke-width: 4px;
                 cursor: pointer;
+            }
+
+            .vzb-ts-slider-value {
+                @include user-select-none();
+                font: 11px $vzb-font-family;
+                fill: $vzb-ts-slider-color;
+                font-weight: bold;
             }
         }
     }
