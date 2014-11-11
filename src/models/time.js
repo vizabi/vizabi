@@ -62,6 +62,19 @@ define([
             if (this.playing === true) {
                 this.playing = true;
             }
+
+            //snap values
+            if (this.roundOnPause) {
+                var op = 'floor';
+                if (this.roundOnPause === 'ceil') op = 'ceil';
+                if (this.roundOnPause === 'round') op = 'round';
+                var start = d3.time[this.unit][op](this.start),
+                    end = d3.time[this.unit][op](this.end),
+                    time = d3.time[this.unit][op](this.value);
+                this.set('start', start);
+                this.set('end', end);
+                this.set('value', time);
+            }
         },
 
         /**
