@@ -166,7 +166,8 @@ define([
                 });
             
             //update selection
-            this.bubbles.transition().duration(DURATION_FAST).ease("linear")            
+            var speed = this.model.time.speed;
+            this.bubbles.transition().duration(speed).ease("linear")            
                 .attr("cy", function(d) {
                     return _this.yScale(d[_this.indicator[0]]);
                 })
