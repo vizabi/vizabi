@@ -40,6 +40,7 @@ $vzb-ts-value-width: 40px;
         .vzb-ts-slider {
             @include absolute(0px, 0px, 0px, 0px);
             @include font-size(12px);
+            overflow: visible;
             font-family: $vzb-font-family;
             color: $vzb-ts-slider-color;
             width: 100%;

@@ -14,8 +14,8 @@ define([
 
     var time_formats = {
         "year": d3.time.format("%Y"),
-        "month": d3.time.format("%M"),
-        "week": d3.time.format("%W"),
+        "month": d3.time.format("%b"),
+        "week": d3.time.format("week %U"),
         "day": d3.time.format("%d/%m/%Y"),
         "hour": d3.time.format("%d/%m/%Y %H"),
         "minute": d3.time.format("%d/%m/%Y %H:%M"),
@@ -127,9 +127,6 @@ define([
             //resize
             this.resize();
 
-            //set handle at current position
-            this._setHandle(this.model.playing);
-
             //special classes
             this._optionClasses();
         },
@@ -173,6 +170,9 @@ define([
             //size of handle
             this.handle.attr("transform", "translate(0," + height / 2 + ")")
                 .attr("r", 8);
+
+            //set handle at current position
+            this._setHandle(this.model.playing);
 
         },
 
@@ -225,6 +225,10 @@ define([
             var value = this.model.value;
             this.slide.call(this.brush.extent([value, value]));
             this.valueText.text(this.format(value));
+
+            if(this.model.start - this.model.value === 0) {
+                transition = false;
+            }
 
             if (transition) {
                 var speed = this.model.speed,
