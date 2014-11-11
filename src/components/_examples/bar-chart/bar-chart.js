@@ -37,7 +37,7 @@ define([
         update: function() {
             var indicator = this.model.show.indicator,
                 data = _.cloneDeep(this.model.data.getItems()),
-                time = this.model.time.value,
+                time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
                 categories = this.model.show.geo_categories,
 
                 data_curr_year = data.filter(function(d) {

@@ -1,6 +1,7 @@
 define([
+    'd3',
     'base/tool'
-], function(Tool) {
+], function(d3, Tool) {
 
     var crazyPopSlider = Tool.extend({
 
@@ -39,18 +40,22 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var state = model.state,
-                data = model.data;
+            var state = model.state;
+            var data = model.data;
 
             //don't validate anything if data hasn't been loaded
             if(!data.getItems() || data.getItems().length < 1) {
                 return;
             }
-            if (state.time.start < data.getLimits('time').min) {
-                state.time.start = data.getLimits('time').min;
+
+            var dateMin = new Date(data.getLimits('time').min.toString()),
+                dateMax = new Date(data.getLimits('time').max.toString());
+
+            if (state.time.start < dateMin) {
+                state.time.start = dateMin;
             }
-            if (state.time.end > data.getLimits('time').max) {
-                state.time.end = data.getLimits('time').max;
+            if (state.time.end > dateMax) {
+                state.time.end = dateMax;
             }
             if (state.show.geo.length > 3 && state.show.indicator != "lex") {
                 state.show.indicator = "lex";
@@ -62,14 +67,16 @@ define([
          * @param model the tool model will be received
          */
         getQuery: function(model) {
-            var state = model.state;
+            var state = model.state,
+                time_start = d3.time.format("%Y")(state.time.start),
+                time_end = d3.time.format("%Y")(state.time.end);
             return [{
                 "from": "data",
                 "select": ["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator],
                 "where": {
                     "geo": state.show.geo,
                     "geo.category": state.show.geo_category,
-                    "time": [state.time.start + "-" + state.time.end]
+                    "time": [time_start + "-" + time_end]
                 }
             }];
         }
