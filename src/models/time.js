@@ -65,9 +65,9 @@ define([
 
             //snap values
             if (this.roundOnPause) {
-                var op = 'floor';
+                var op = 'round';
                 if (this.roundOnPause === 'ceil') op = 'ceil';
-                if (this.roundOnPause === 'round') op = 'round';
+                if (this.roundOnPause === 'floor') op = 'floor';
                 var start = d3.time[this.unit][op](this.start),
                     end = d3.time[this.unit][op](this.end),
                     time = d3.time[this.unit][op](this.value);
@@ -218,9 +218,9 @@ define([
 
             //snap to integer
             if (this.roundOnPause) {
-                var op = 'floor';
+                var op = 'round';
                 if (this.roundOnPause === 'ceil') op = 'ceil';
-                if (this.roundOnPause === 'round') op = 'round';
+                if (this.roundOnPause === 'floor') op = 'floor';
                 var time = d3.time[this.unit][op](this.value);
                 this.value = time;
             }
