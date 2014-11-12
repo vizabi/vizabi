@@ -53,8 +53,8 @@ define([
                 return;
             }
 
-            var dateMin = new Date(data.getLimits('time').min.toString()),
-                dateMax = new Date(data.getLimits('time').max.toString());
+            var dateMin = data.getLimits('time').min,
+                dateMax = data.getLimits('time').max;
 
             if (state.time.start < dateMin) {
                 state.time.start = dateMin;

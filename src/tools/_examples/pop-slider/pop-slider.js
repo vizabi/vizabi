@@ -44,13 +44,13 @@ define([
             var data = model.data;
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!data.getItems() || data.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = new Date(data.getLimits('time').min.toString()),
-                dateMax = new Date(data.getLimits('time').max.toString());
-
+            var dateMin = data.getLimits('time').min,
+                dateMax = data.getLimits('time').max;
+                
             if (state.time.start < dateMin) {
                 state.time.start = dateMin;
             }
