@@ -18,6 +18,7 @@ define([
             this.components = [];
 
             this.addButtons(config.buttons);
+
             this._super(config, context);
 
         },
@@ -81,55 +82,21 @@ define([
         },
 
         addButtons: function(button_list) {
-            var _this = this;
 
-            button_list.map(function(btn) {
-                switch (btn) {
-                    case 'full-screen':
-                        _this.components.push({
-                            component: '_gapminder/buttonlist/buttons/full-screen-button',
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
+            //add buttons to template to load a container for each
+            this.template_data = {
+                buttons: button_list
+            }
 
-                    case 'add':
-                        _this.components.push({
-                            component: '_gapminder/buttonlist/buttons/add-button',
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    case 'colors':
-                        _this.components.push({
-                            component: '_gapminder/buttonlist/buttons/colors-button',
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    case 'find':
-                        _this.components.push({
-                            component:'_gapminder/buttonlist/buttons/find-button', 
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    case 'play':
-                        _this.components.push({
-                            component:'_gapminder/buttonlist/buttons/play-button', 
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    case 'more-options':
-                        _this.components.push({
-                            component:'_gapminder/buttonlist/buttons/more-options-button .vzb-button-more', 
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    case 'size':
-                        _this.components.push({
-                            component:'_gapminder/buttonlist/buttons/size-button', 
-                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
-                        });
-                        break;
-                    }
-            })
+            //add a component for each button
+            for (var i = 0; i < button_list.length; i++) {
+                var btn = button_list[i];
+                this.components.push({
+                    component: '_gapminder/buttonlist/buttons/'+btn+'-button',
+                    placeholder: '.vzb-buttonlist-btn-' + btn
+                });
+            };
+
         }
 
     });

@@ -13,8 +13,6 @@ define([
             this.name = 'size-button';
             this.id = 'size';
             this.title = 'Size';
-
-            this.placeholder = options.placeholder;
             
             this.template = 'components/_gapminder/buttonlist/buttons/button';
             this.template_data = this.template_data || {

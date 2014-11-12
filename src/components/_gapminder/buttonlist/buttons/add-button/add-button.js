@@ -9,12 +9,10 @@ define([
         countries;
 
     var AddButton = Component.extend({
-        init: function(parent, options) {
+        init: function(config, parent) {
             this.name = 'add-button';
             this.id = 'plus';
             this.title = 'Add';
-
-            this.placeholder = options.placeholder;
             
             this.template = 'components/_gapminder/buttonlist/buttons/button';
             this.template_data = this.template_data || {
@@ -23,7 +21,7 @@ define([
                 id: this.id
             };
 
-            this._super(parent, options);
+            this._super(config, parent);
         },
 
         postRender: function() {

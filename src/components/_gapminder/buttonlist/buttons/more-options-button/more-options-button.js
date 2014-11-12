@@ -13,8 +13,6 @@ define([
             this.name = 'more-options-button';
             this.id = 'cog';
             this.title = 'More Options';
-
-            this.placeholder = options.placeholder;
             
             this.template = 'components/_gapminder/buttonlist/buttons/button';
             this.template_data = this.template_data || {
