@@ -25,14 +25,15 @@ define([
 
             //default values,
             //in case there's none
+            //TODO: evaluate what should be accessible or not
             this.name = this.name || config.name;
             this.template = this.template || config.template;
             this.placeholder = this.placeholder || config.placeholder;
+            this.selector = this.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
             };
             this.components = this.components || [];
-            this.profiles = this.profiles || {};
             this.parent = parent;
 
             this._events = new Events();
@@ -67,14 +68,13 @@ define([
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
-                        _this.layout.setProfile(_this.profiles);
                         _this.layout.resize();
                         _this.layout.on('resize', function() {
                             _this.resize();
                         });
                     }
                     // add css loading class to hide elements
-                    if (_this.element) {
+                    if (_this.element.node()) {
                         _this.element.classed(class_loading, true);
                     }
 
@@ -152,11 +152,14 @@ define([
             //save initial config
             this._components_config = _.map(components, _.clone);
             //use the same name for the initialized collection           
-            this.components = {};
+            this.components = [];
 
             // Loops through components, loading them.
             _.each(components, function(component) {
-                var promise = _this.loadComponent(component);
+                var promise = _this.loadComponent(component)
+                    .then(function(loaded_comp) {
+                        _this.components.push(loaded_comp);
+                    });
                 promises.push(promise);
             });
 
@@ -203,8 +206,8 @@ define([
             // Loads the file we need
             require([component_path], function(subcomponent) {
                 //initialize subcomponent
-                _this.components[id] = new subcomponent(config, _this);
-                defer.resolve();
+                var comp = new subcomponent(config, _this);
+                defer.resolve(comp);
             });
 
             return defer;
@@ -253,21 +256,20 @@ define([
 
                     var root = _this.parent.element || d3;
                     //place the contents into the correct placeholder
-                    _this.placeholder = (_.isString(_this.placeholder)) ? root.select(_this.placeholder) : _this.placeholder;
+                    _this.placeholder = (_.isString(_this.selector)) ? root.select(_this.selector) : _this.placeholder;
                     _this.placeholder.html(rendered);
 
-                    //TODO: refactor the way we select the first child
-                    //define this element inside the placeholder
                     try {
-                        _this.element = utils.jQueryToD3(
-                            utils.d3ToJquery(_this.placeholder).children().first()
-                        );
+                        var element = _this.placeholder.node().children[0];
+                        _this.element = d3.select(element);
+
+                        if (!_this.element.node()) {
+                            console.warn("Component element not found (root HTML node in the component's markup). Verify that " + this.template + "contains valid HTML/template.");
+                        }
                     } catch (err) {
-                        console.error("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
-                        console.error(err);
+                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
                     }
 
-                    //Resolve defer
                     defer.resolve();
                 });
 
@@ -296,11 +298,9 @@ define([
             if (this._blockUpdate) return;
             var _this = this;
             this._update = this._update || _.throttle(function() {
-                for (var i in _this.components) {
-                    if (_this.components.hasOwnProperty(i)) {
-                        _this.components[i].update();
-                    }
-                }
+                _.each(_this.components, function(component) {
+                    component.update();
+                });
             }, this._frameRate);
             this._update();
         },
@@ -312,11 +312,9 @@ define([
             if (this._blockResize) return;
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
-                for (var i in _this.components) {
-                    if (_this.components.hasOwnProperty(i)) {
-                        _this.components[i].resize();
-                    }
-                }
+                _.each(_this.components, function(component) {
+                    component.resize();
+                });
             }, this._frameRate);
             this._resize();
         },
@@ -355,21 +353,18 @@ define([
          * Reassigns all models (on overwrite
          */
         reassignModel: function() {
-            //only reassign if it's loaded already
-            if (_.isArray(this.components)) return;
+            //only reassign if it's already initialized
+            if (!this._ready) return;
 
             var _this = this;
-            //for each subcomponent, reassign model
-            for (var i in this._components_config) {
-                var c = this._components_config[i],
-                    id = c.placeholder, //placeholder is used as id
-                    model = this._modelMapping(c.model);
-
+            //for each subcomponent configuration, reassign model
+            _.each(this._components_config, function(c, i) {
+                var model = _this._modelMapping(c.model);
                 if (model) {
-                    this.components[id].model = model;
-                    this.components[id].reassignModel();
+                    _this.components[i].model = model;
+                    _this.components[i].reassignModel();
                 }
-            }
+            });
         },
 
         /**
