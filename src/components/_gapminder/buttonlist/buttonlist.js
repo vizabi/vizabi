@@ -10,19 +10,20 @@ define([
     var geo_picker;
 
     var ButtonList = Component.extend({
-        init: function(options, context) {
+        init: function(config, context) {
             //set properties
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
-            this.data = options.data;
+            //this.data = this.model.data.getItems();
+            this.components = [];
 
-            this.addButtons(options.buttons);
-            this._super(core, options);
+            this.addButtons(config.buttons);
+            this._super(config, context);
 
         },
 
         postRender: function() {
-            this.placeholder = utils.d3ToJquery(this.placeholder);
+
         },
 
         //make button list responsive
@@ -57,28 +58,26 @@ define([
                     $(this).removeClass('vzb-hidden');
                     if (i >= max) return false;
                 });
-            }*/
+            }
 
-            var numOfVisibleButtons;
+            var visible_bttons;
             switch (this.getLayoutProfile()) {
                 case "small":
-                    numOfVisibleButtons = 5;
+                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'more-options'];
                     break;
                 case "medium":
-                    numOfVisibleButtons = 7;
+                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'size', 'more-options'];
                     break;
                 case "large":
-                    numOfVisibleButtons = 10;
+                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'size', 'more-options'];
                 default:
-                    numOfVisibleButtons = 5;
+                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'more-options'];
                     break;
             }
 
-            console.log(this.components.placeholder);
-        },
-
-        geopicker: function(button_list) {
-
+            this.placeholder = utils.d3ToJquery(this.placeholder);
+            buttons = this.placeholder.find('.vzb-buttonlist .vzb-buttonlist-btn');
+            */
         },
 
         addButtons: function(button_list) {
@@ -87,49 +86,49 @@ define([
             button_list.map(function(btn) {
                 switch (btn) {
                     case 'full-screen':
-                        _this.addComponent('_gapminder/buttonlist/buttons/full-screen-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component: '_gapminder/buttonlist/buttons/full-screen-button',
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
 
                     case 'add':
-                        _this.addComponent('_gapminder/buttonlist/buttons/add-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component: '_gapminder/buttonlist/buttons/add-button',
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
                     case 'colors':
-                        _this.addComponent('_gapminder/buttonlist/buttons/colors-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component: '_gapminder/buttonlist/buttons/colors-button',
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
                     case 'find':
-                        _this.addComponent('_gapminder/buttonlist/buttons/find-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component:'_gapminder/buttonlist/buttons/find-button', 
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
                     case 'play':
-                        _this.addComponent('_gapminder/buttonlist/buttons/play-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component:'_gapminder/buttonlist/buttons/play-button', 
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
                     case 'more-options':
-                        _this.addComponent('_gapminder/buttonlist/buttons/more-options-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component:'_gapminder/buttonlist/buttons/more-options-button .vzb-button-more', 
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
                     case 'size':
-                        _this.addComponent('_gapminder/buttonlist/buttons/size-button', {
-                            data: _this.data,
-                            placeholder: '.vzb-tool-buttonlist .vzb-buttonlist'
+                        _this.components.push({
+                            component:'_gapminder/buttonlist/buttons/size-button', 
+                            placeholder: '.vzb-buttonlist .vzb-buttonlist-btn'
                         });
                         break;
-                }
+                    }
             })
         }
 
