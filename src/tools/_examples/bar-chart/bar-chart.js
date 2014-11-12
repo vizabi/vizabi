@@ -34,9 +34,8 @@ define([
             ,{
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
-                buttons: ['full-screen', 'add', 'colors', 'find', 'play'],
-                //buttons: ['add'],
-                model: ['data', 'language']
+                model: ['data', 'language'],
+                buttons: ['more-options']
             }
             ];
 
@@ -85,10 +84,6 @@ define([
                     "time": [time_start + "-" + time_end]
                 }
             }];
-        },
-
-        postRender: function() {
-            console.log(this.components);
         }
     });
 

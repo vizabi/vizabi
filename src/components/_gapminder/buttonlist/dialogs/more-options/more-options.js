@@ -14,7 +14,7 @@ define([
             this.id = 'cog';
             this.title = 'More Options';
             
-            this.template = 'components/_gapminder/buttonlist/buttons/button';
+            this.template = 'components/_gapminder/buttonlist/dialogs/dialog';
             this.template_data = this.template_data || {
                 name: this.name,
                 title: this.title,

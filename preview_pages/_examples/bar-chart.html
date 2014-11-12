@@ -58,12 +58,14 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
+    <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
 
 <script>
-var myVizabi;
+var myVizabi,
+    languageButton = $("#language_button");
 
 $(function() {
     var options = {
@@ -98,10 +100,12 @@ $(function() {
             id: "en",
             strings: {
                 en: {
-                    "title": "Bar Chart Title"
+                    "title": "Bar Chart Title",
+                    "buttons/more_options": "Options"
                 },
                 pt: {
-                    "title": "Título do Bar Chart"
+                    "title": "Título do Bar Chart",
+                    "buttons/more_options": "Opções"
                 }
             }
         },
@@ -112,6 +116,15 @@ $(function() {
             },
             'change:state': function(evt, vals) {
                 showState(vals.state);
+            },
+            'change:language': function(evt, vals) {
+                if (vals.language.id === "en") {
+                    languageButton.attr('onclick', "language('pt')");
+                    languageButton.text("SET LANGUAGE: PT");
+                } else {
+                    languageButton.attr('onclick', "language('en')");
+                    languageButton.text("SET LANGUAGE: EN");
+                }
             }
         }
     };
@@ -182,7 +195,7 @@ function initialState() {
 function language(lang) {
     var options = {
         language: {
-            value: lang
+            id: lang
         }
     };
     myVizabi.setOptions(options);

@@ -1,102 +1,108 @@
 //TODO: refactor this whole thing!
 
 define([
-    'jquery',
+    'd3',
     'lodash',
     'base/utils',
     'base/component'
-], function($, _, utils, Component) {
+], function(d3, _, utils, Component) {
 
-    var geo_picker;
+    //default existing buttons
+    var class_active = "vzb-active",
+        available_buttons = {
+            'more-options': {
+                title: "buttons/more_options",
+                icon: "gear"
+            },
+            '_default': {
+                title: "Button",
+                icon: "asterisk"
+            }
+        };
 
     var ButtonList = Component.extend({
+
+        /**
+         * Initializes the buttonlist
+         * @param config component configuration
+         * @param context component context (parent)
+         */
         init: function(config, context) {
             //set properties
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
-            //this.data = this.model.data.getItems();
-            this.components = [];
 
-            this.addButtons(config.buttons);
+            this.components = [];
+            this._addButtons(config.buttons);
 
             this._super(config, context);
 
         },
 
-        postRender: function() {
-
-        },
-
-        //make button list responsive
-        resize: function() {
-            /*var buttons = this.placeholder.find('.vzb-buttonlist .vzb-buttonlist-btn'),
-                offset = 30;
-
-            var size_buttonlist = {
-                width: buttons.first().outerWidth(),
-                height: buttons.first().outerHeight()
-            };
-
-            var size_container = {
-                    width: this.placeholder.outerWidth(),
-                    height: this.placeholder.outerHeight()
-                },
-                vertical = size_container.width < size_container.height,
-
-                number_buttons = buttons.length - 1,
-                compare = (vertical) ? "height" : "width";
-
-            offset = size_buttonlist[compare] / 2;
-
-            if ((number_buttons * size_buttonlist[compare]) <= size_container[compare] - offset) {
-                buttons.removeClass('vzb-hidden');
-            } else {
-                var max = Math.floor((size_container[compare] - offset) / size_buttonlist[compare]) - 1,
-                    i = 0;
-                buttons.addClass('vzb-hidden');
-                buttons.each(function() {
-                    i++;
-                    $(this).removeClass('vzb-hidden');
-                    if (i >= max) return false;
-                });
-            }
-
-            var visible_bttons;
-            switch (this.getLayoutProfile()) {
-                case "small":
-                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'more-options'];
-                    break;
-                case "medium":
-                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'size', 'more-options'];
-                    break;
-                case "large":
-                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'size', 'more-options'];
-                default:
-                    visible_bttons = ['play', 'add', 'colors', 'full-screen', 'more-options'];
-                    break;
-            }
-
-            this.placeholder = utils.d3ToJquery(this.placeholder);
-            buttons = this.placeholder.find('.vzb-buttonlist .vzb-buttonlist-btn');
-            */
-        },
-
-        addButtons: function(button_list) {
+        /*
+         * adds buttons configuration to the components and template_data
+         * @param {Array} button_list list of buttons to be added
+         */
+        _addButtons: function(button_list) {
 
             //add buttons to template to load a container for each
             this.template_data = {
-                buttons: button_list
-            }
+                buttons: []
+            };
 
             //add a component for each button
             for (var i = 0; i < button_list.length; i++) {
+
                 var btn = button_list[i];
+
+                //add corresponding component
                 this.components.push({
-                    component: '_gapminder/buttonlist/buttons/'+btn+'-button',
-                    placeholder: '.vzb-buttonlist-btn-' + btn
+                    component: '_gapminder/buttonlist/dialogs/' + btn,
+                    placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]'
                 });
+
+                //add template data
+                var d = (available_buttons[btn]) ? btn : "_default",
+                    details_btn = available_buttons[d];
+
+                details_btn.id = btn;
+                this.template_data.buttons.push(details_btn);
+
             };
 
+        },
+
+        /*
+         * POSTRENDER:
+         * Executed once after loading
+         */
+        postRender: function() {
+            var _this = this,
+                buttons = d3.selectAll(".vzb-buttonlist-btn");
+
+            //activate each dialog when clicking the button
+            buttons.on('click', function() {
+                var id = d3.select(this).attr("data-btn");
+                _this._activateDialog(id);
+            });
+        },
+
+        /*
+         * RESIZE:
+         * Executed whenever the container is resized
+         * Ideally, it contains only operations related to size
+         */
+        resize: function() {
+            //TODO: what to do when resizing?
+        },
+
+        //TODO: make activation via update and model
+        /*
+         * Activate a button dialog
+         * Executed once after loading
+         */
+        _activateDialog: function(id) {
+            alert(id);
         }
 
     });

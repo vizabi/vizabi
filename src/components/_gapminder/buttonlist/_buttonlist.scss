@@ -6,76 +6,70 @@ $vzb-button-more-bg: $vzb-color-grey-lightest;
 $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-color-title: $vzb-button-color;
 $vzb-button-color-border: #DBE8EB;
-
 .vzb-buttonlist {
-
-	@include box-sizing(border-box);
-	@include absoluteAll;
-	overflow: hidden;
-	text-align: center;
-	text-overflow: clip;
-	.vzb-buttonlist-btn {
-
-		outline: none;
-		@include box-sizing(border-box);
-		background: none;
-		border: 0px;
-		text-align: center;
-		display: inline-block;
-		padding: 5px;
-	    cursor: pointer;
-	    width: $vzb-button-width;
-
-		&>.vzb-btn-icon {
-			@include box-sizing(border-box);
-		    @include border-radius($vzb-button-radius);
-        	@include font-size(16px);
-			text-align: center;
-		    display:inline-block;
-		    border: none;
-		    background-color: $vzb-button-bg;
-		    color: $vzb-button-color;
-		    width: $vzb-button-size;
-		    height: $vzb-button-size;
-			padding: 5px;
-			// border: 1px solid $vzb-button-color-border;
+    @include box-sizing(border-box);
+    @include absoluteAll;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: clip;
+    .vzb-buttonlist-btn {
+        outline: none;
+        @include box-sizing(border-box);
+        background: none;
+        border: 0px;
+        text-align: center;
+        display: inline-block;
+        padding: 5px;
+        cursor: pointer;
+        width: $vzb-button-width;
+        &>.vzb-buttonlist-btn-icon {
+            @include box-sizing(border-box);
+            @include border-radius($vzb-button-radius);
+            @include font-size(16px);
+            text-align: center;
+            display: inline-block;
+            border: none;
+            background-color: $vzb-button-bg;
+            color: $vzb-button-color;
+            width: $vzb-button-size;
+            height: $vzb-button-size;
+            padding: 5px;
+            // border: 1px solid $vzb-button-color-border;
         }
-        &>.vzb-btn-title {
-        	padding-top: 2px;
-			text-align: center;
-        	display:block;
-        	color: $vzb-button-color-title;
-        	text-transform: uppercase;
-        	@include font-size(10px);
+        &>.vzb-buttonlist-btn-title {
+            padding-top: 2px;
+            text-align: center;
+            display: block;
+            color: $vzb-button-color-title;
+            text-transform: uppercase;
+            @include font-size(10px);
         }
-
-		&.vzb-buttonlist-btn-more > .btn-icon{
-			background-color: $vzb-button-more-bg;
-		}
-	}
-
+        &.vzb-buttonlist-btn-more > .btn-icon {
+            background-color: $vzb-button-more-bg;
+        }
+    }
+    .vzb-buttonlist-dialog {
+        display: none;
+    }
 }
-
-
 //responsiveness
 &.vzb-small.vzb-portrait {
-	.vzb-buttonlist {
-		.vzb-buttonlist-btn {
-			width: $vzb-button-width + 3;
-		}
-	}
+    .vzb-buttonlist {
+        .vzb-buttonlist-btn {
+            width: $vzb-button-width + 3;
+        }
+    }
 }
-
 &.vzb-medium, &.vzb-large {
-	.vzb-buttonlist {
-		.vzb-buttonlist-btn {
-			width: $vzb-button-width + 10;
-			&>.vzb-btn-icon {
-				@include font-size(18px);
-				padding: 9px;
-				width: $vzb-button-size + 10;
-		        height: $vzb-button-size + 10;
-			}
-		}
-	}
+    .vzb-buttonlist {
+        .vzb-buttonlist-btn {
+            width: $vzb-button-width + 10;
+            &>.vzb-btn-icon {
+                @include font-size(18px);
+                padding: 9px;
+                width: $vzb-button-size + 10;
+                height: $vzb-button-size + 10;
+            }
+        }
+    }
 }
