@@ -26,10 +26,15 @@ define([
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["state.time"]
-            }, {
+            }
+            ,{
                 component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist'
-            }];
+                placeholder: '.vzb-tool-buttonlist',
+                buttons: ['full-screen', 'add', 'colors', 'find', 'play'],
+                //buttons: ['add'],
+                model: ['data', 'language']
+            }
+            ];
 
             this._super(config, options);
         },
@@ -70,6 +75,10 @@ define([
                     "time": [state.time.start + "-" + state.time.end]
                 }
             }];
+        },
+
+        postRender: function() {
+            console.log(this.components);
         }
     });
 
