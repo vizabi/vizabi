@@ -81,12 +81,13 @@ define([
          * Formats value, start and end dates to actual Date objects
          */
         _formatToDates: function(silent) {
+
             var date_attr = ["value", "start", "end"];
             for (var i = 0; i < date_attr.length; i++) {
                 var attr = date_attr[i];
                 if (!_.isDate(this[attr])) {
-                    for (var i = 0; i < formatters.length; i++) {
-                        var formatter = formatters[i];
+                    for (var j = 0; j < formatters.length; j++) {
+                        var formatter = formatters[j];
                         var date = formatter.parse(this[attr].toString());
                         if (_.isDate(date)) {
                             this.set(attr, date, silent, true);
