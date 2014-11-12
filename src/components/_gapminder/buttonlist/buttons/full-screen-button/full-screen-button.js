@@ -14,9 +14,8 @@ define([
             this.id = 'arrows-alt';
             this.title = 'Full Screen';
 
-            this.placeholder = options.placeholder;
-            
-            this.template = 'components/_gapminder/button-list/button.html';
+
+            this.template = 'components/_gapminder/buttonlist/buttons/button';
             this.template_data = this.template_data || {
                 name: this.name,
                 title: this.title,
