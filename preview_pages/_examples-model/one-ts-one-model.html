@@ -51,14 +51,14 @@ $(function() {
         //state
         state: {
             time: {
-                start: 1800,
-                end: 2014,
+                start: "2014-01-01",
+                end: "2014-12-01",
+                unit: "day",
                 step: 1,
-                value: 1950,
+                speed: 100,
                 playing: false
             }
         },
-
         bind: {
             'change:state': function(evt, vals) {
                 showState(vals.state);

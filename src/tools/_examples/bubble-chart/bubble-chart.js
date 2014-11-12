@@ -1,7 +1,11 @@
+//FIXME: refactor hardcoded dates
+//FIXME: remove date formatting from here
+
 define([
     'lodash',
+    'd3',
     'base/tool'
-], function(_, Tool) {
+], function(_, d3, Tool) {
 
     var bubbleChart = Tool.extend({
         /**
@@ -48,11 +52,15 @@ define([
             if(!data.getItems() || data.getItems().length < 1) {
                 return;
             }
-            if (state.time.start < data.getLimits('time').min) {
-                state.time.start = data.getLimits('time').min;
+
+            var dateMin = data.getLimits('time').min,
+                dateMax = data.getLimits('time').max;
+
+            if (state.time.start < dateMin) {
+                state.time.start = dateMin;
             }
-            if (state.time.end > data.getLimits('time').max) {
-                state.time.end = data.getLimits('time').max;
+            if (state.time.end > dateMax) {
+                state.time.end = dateMax;
             }
         },
 
@@ -61,7 +69,9 @@ define([
          * @param model the tool model will be received
          */
         getQuery: function(model) {
-            var state = model.state;
+            var state = model.state,
+                time_start = d3.time.format("%Y")(state.time.start),
+                time_end = d3.time.format("%Y")(state.time.end);
             return [{
                 "from": "data",
                 //FIXME not sure if we need union here. barchart doesn't have it
@@ -69,7 +79,7 @@ define([
                 "where": {
                     "geo": state.show.geo,
                     "geo.category": state.show.geo_category,
-                    "time": [state.time.start + "-" + state.time.end]
+                    "time": [time_start + "-" + time_end]
                 }
             }];
         }

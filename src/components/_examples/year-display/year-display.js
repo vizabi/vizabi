@@ -28,16 +28,13 @@ define([
 
         },
 
-
         /*
          * UPDATE:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var time = this.model.get("value"),
-                decimals = utils.countDecimals(this.model.get("step")),
-                time = time.toFixed(decimals);
+            var time = this.model.getFormatted(); //gets formatted year
             this.element.html(time);
         },
 

@@ -35,7 +35,7 @@ define([
          */
         update: function() {
             var indicator = this.model.show.indicator,
-                time = this.model.time.value,
+                time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
                 countries = _.cloneDeep(this.model.data.getItems()),
                 decimals = utils.countDecimals(time),
                 countriesCurr = [];

@@ -74,7 +74,7 @@ define([
             this.indicator = this.model.show.indicator;
             this.scale = this.model.show.scale;
             this.units = this.model.show.unit || [1, 1, 1];
-            this.time = +this.model.time.value;
+            this.time = parseInt(d3.time.format("%Y")(this.model.time.value),10);
             
             //TODO: #32 run only if data or show models changed
             this.updateShow();
@@ -166,7 +166,8 @@ define([
                 });
             
             //update selection
-            this.bubbles.transition().duration(DURATION_FAST).ease("linear")            
+            var speed = this.model.time.speed;
+            this.bubbles.transition().duration(speed).ease("linear")            
                 .attr("cy", function(d) {
                     return _this.yScale(d[_this.indicator[0]]);
                 })

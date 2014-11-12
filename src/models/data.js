@@ -56,18 +56,19 @@ define([
          * Gets limits
          * @returns {Object} time limits
          */
-        //todo: this only works for int
+        //TODO: this only works for acceptable formats for new Date()
         getLimits: function(attr) {
             if (_.isArray(this._items) && this._items.length === 1) {
                 this._items = this._items[0];
             }
-            if(!attr) attr = 'time'; //fallback in case no attr is provided
+            if (!attr) attr = 'time'; //fallback in case no attr is provided
             var limits = {
                     min: 0,
                     max: 0
                 },
                 filtered = _.map(this._items, function(d) {
-                    return parseInt(d[attr], 10);
+                    //TODO: Move this up to readers ?
+                    return new Date(d[attr]);
                 });
             if (filtered.length > 0) {
                 limits.min = _.min(filtered);

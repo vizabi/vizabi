@@ -48,7 +48,7 @@ define([
 
             var _this = this,
                 indicator = this.model.show.indicator,
-                year = this.model.time.value,
+                year = parseInt(d3.time.format("%Y")(this.model.time.value),10),
                 minValue = d3.min(this.data, function(d) {
                     return +d[indicator];
                 }),

@@ -1,8 +1,23 @@
 define([
     'lodash',
+    'd3',
     'base/utils',
     'base/model'
-], function(_, utils, Model) {
+], function(_, d3, utils, Model) {
+
+    //constant time formats
+    var time_formats = {
+        "year": d3.time.format("%Y"),
+        "month": d3.time.format("%Y-%m"),
+        "week": d3.time.format("%Y-W%W"),
+        "day": d3.time.format("%Y-%m-%d"),
+        "hour": d3.time.format("%Y-%m-%d %H"),
+        "minute": d3.time.format("%Y-%m-%d %H:%M"),
+        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+    };
+
+    var time_units = _.keys(time_formats),
+        formatters = _.values(time_formats);
 
     var TimeModel = Model.extend({
 
@@ -16,15 +31,16 @@ define([
 
             //default values for time model
             values = _.extend({
-                value: 50,
-                start: 0,
-                end: 100,
-                step: 1,
-                speed: 500,
+                value: "1800",
+                start: "1800",
+                end: "2014",
                 playable: true,
                 playing: false,
                 loop: false,
-                roundOnPause: true
+                roundOnPause: true,
+                speed: 500,
+                unit: "year", //defaults to year
+                step: 1 //step must be integer
             }, values);
 
             //same constructor
@@ -35,7 +51,7 @@ define([
 
             //bing play method to model change
             this.on("change:playing", function() {
-                if (_this.get("playing") === true) {
+                if (_this.playing === true) {
                     _this._startPlaying();
                 } else {
                     _this._stopPlaying();
@@ -43,9 +59,43 @@ define([
             });
 
             //auto play if playing is true by reseting variable
-            if (this.get("playing") === true) {
-                this.set("playing", true);
+            if (this.playing === true) {
+                this.playing = true;
             }
+
+            //snap values
+            if (this.roundOnPause) {
+                var op = 'round';
+                if (this.roundOnPause === 'ceil') op = 'ceil';
+                if (this.roundOnPause === 'floor') op = 'floor';
+                var start = d3.time[this.unit][op](this.start),
+                    end = d3.time[this.unit][op](this.end),
+                    time = d3.time[this.unit][op](this.value);
+                this.set('start', start);
+                this.set('end', end);
+                this.set('value', time);
+            }
+        },
+
+        /**
+         * Formats value, start and end dates to actual Date objects
+         */
+        _formatToDates: function(silent) {
+
+            var date_attr = ["value", "start", "end"];
+            for (var i = 0; i < date_attr.length; i++) {
+                var attr = date_attr[i];
+                if (!_.isDate(this[attr])) {
+                    for (var j = 0; j < formatters.length; j++) {
+                        var formatter = formatters[j];
+                        var date = formatter.parse(this[attr].toString());
+                        if (_.isDate(date)) {
+                            this.set(attr, date, silent, true);
+                            break;
+                        }
+                    };
+                }
+            };
         },
 
         /**
@@ -55,18 +105,33 @@ define([
         validate: function(silent) {
             //don't cross validate everything
             var atomic = true;
-            //end has to be >= than start
-            if (this.get('end') < this.get('start')) {
-                this.set('end', this.get('start'), silent, atomic);
-            }
-            //value has to be between start and end
-            if (this.get('value') < this.get('start')) {
-                this.set('value', this.get('start'), silent, atomic);
-            } else if (this.get('value') > this.get('end')) {
-                this.set('value', this.get('end'), silent, atomic);
+
+            //unit has to be one of the available_time_units
+            if (time_units.indexOf(this.unit) === -1) {
+                this.set("unit", "year", silent, atomic);
             }
 
-            if (this.get('playable') === false && this.get('playing') === true) {
+            if (this.step < 1) {
+                this.set("step", "year", silent, atomic);
+            }
+
+            //make sure dates are transformed into dates at all times
+            if (!_.isDate(this.start) || !_.isDate(this.end) || !_.isDate(this.value)) {
+                this._formatToDates(silent);
+            }
+
+            //end has to be >= than start
+            if (this.end < this.start) {
+                this.set('end', this.start, silent, atomic);
+            }
+            //value has to be between start and end
+            if (this.value < this.start) {
+                this.set('value', this.start, silent, atomic);
+            } else if (this.value > this.end) {
+                this.set('value', this.end, silent, atomic);
+            }
+
+            if (this.playable === false && this.playing === true) {
                 this.set('playing', false, silent, atomic);
             }
         },
@@ -75,14 +140,36 @@ define([
          * Plays time
          */
         play: function() {
-            this.set("playing", true);
+            this.playing = true;
         },
 
         /**
          * Pauses time
          */
         pause: function() {
-            this.set("playing", false);
+            this.playing = false;
+        },
+
+        /**
+         * gets time range
+         * @returns range between start and end
+         */
+        getRange: function() {
+            return d3.time[this.unit].range(this.start, this.end, this.step);
+        },
+
+        /**
+         * gets formatted value
+         * @param {String} f Optional format. Defaults to YYYY
+         * @param {String} attr Optional attribute. Defaults to "value"
+         * @returns {String} formatted value
+         */
+        getFormatted: function(f, attr) {
+            if (!f) f = "%Y";
+            if (!attr) attr = "value";
+
+            var format = d3.time.format(f);
+            return format(this[attr]);
         },
 
         /**
@@ -90,37 +177,33 @@ define([
          */
         _startPlaying: function() {
             //don't play if it's not playable or if it's already playing
-            if (!this.get("playable") || this._playing_now) return;
+            if (!this.playable || this._playing_now) return;
 
             this._playing_now = true;
 
             var _this = this,
-                time = this.get("value"),
-                interval = this.get("speed") * this.get("step");
+                time = this.value,
+                interval = this.speed; // * this.step;
 
             //go to start if we start from end point
-            if (time === _this.get("end")) {
-                time = this.get("start");
-                _this.set("value", time);
+            if (_this.end - time <= 0) {
+                time = this.start;
+                _this.value = time;
             }
-
-            //create interval
 
             //we don't create intervals directly
             this._intervals.setInterval('playInterval_' + this._id, function() {
-                if (time >= _this.get("end")) {
-                    if (_this.get("loop")) {
-                        time = _this.get("start");
-                        _this.set("value", time);
+                if (time >= _this.end) {
+                    if (_this.loop) {
+                        time = _this.start;
+                        _this.value = time
                     } else {
-                        _this.set("playing", false);
+                        _this.playing = false;
                     }
                     return;
                 } else {
-                    var decs = utils.countDecimals(_this.get("step"))
-                    time = time + _this.get("step");
-                    time = +time.toFixed(decs);
-                    _this.set("value", time);
+                    time = d3.time[_this.unit].offset(time, _this.step);
+                    _this.value = time;
                 }
             }, interval);
 
@@ -135,13 +218,12 @@ define([
             this._intervals.clearInterval('playInterval_' + this._id);
 
             //snap to integer
-            if(this.get("roundOnPause")) {
-                var op = 'floor';
-                if(this.get("roundOnPause") === 'ceil') op = 'ceil';
-                if(this.get("roundOnPause") === 'round') op = 'round';
-                var time = this.get("value");
-                time = Math[op](time);
-                this.set("value", time);
+            if (this.roundOnPause) {
+                var op = 'round';
+                if (this.roundOnPause === 'ceil') op = 'ceil';
+                if (this.roundOnPause === 'floor') op = 'floor';
+                var time = d3.time[this.unit][op](this.value);
+                this.value = time;
             }
 
             this.trigger("pause");
