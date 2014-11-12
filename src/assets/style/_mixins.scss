@@ -71,6 +71,18 @@
             transform: translate($x,$y);
 }
 
+@mixin box-shadow($x, $y, $blur, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow:inset $x $y $blur $color;
+    -moz-box-shadow:inset $x $y $blur $color;
+    box-shadow:inset $x $y $blur $color;
+  } @else {
+    -webkit-box-shadow: $x $y $blur $color;
+    -moz-box-shadow: $x $y $blur $color;
+    box-shadow: $x $y $blur $color;
+  }
+}
+
 // ----------------------------------------------------------------------------
 //   Color and Transformation
 // ----------------------------------------------------------------------------
