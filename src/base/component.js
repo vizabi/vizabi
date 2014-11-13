@@ -196,7 +196,7 @@ define([
 
             //component model mapping
             component_model = this._modelMapping(component.model);
-            component_ui = this._uiMapping(id);
+            component_ui = this._uiMapping(id, component.ui);
 
             //component options
             var config = _.extend(component, {
@@ -443,10 +443,17 @@ define([
         /**
          * Maps the current ui to the subcomponents
          * @param {String} id subcomponent id (placeholder)
+         * @param {Object} ui Optional ui parameters to overwrite existing
          * @returns {Object} the UI object
          */
         //todo: make it more powerful
-        _uiMapping: function(id) {
+        _uiMapping: function(id, ui) {
+
+            //if overwritting UI
+            if(ui) {
+                return new Model(ui);
+            }
+
             if(id) {
                 id = id.replace(".", ""); //remove trailing period
                 var sub_ui = this.ui[id];

@@ -15,7 +15,10 @@ define([
             this.components = [{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider',
-                model: ["time"]
+                model: ["time"],
+                ui: {
+                    show_button: false
+                }
             }];
 
             this._super(config, parent);
