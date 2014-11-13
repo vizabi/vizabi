@@ -33,7 +33,14 @@ define([
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
 
             this.components = [];
-            this._addButtons(config.buttons);
+            //basic template data for buttons
+            this.template_data = {
+                buttons: []
+            };
+
+            if(config.buttons && config.buttons.length > 0) {
+                this._addButtons(config.buttons);
+            }
 
             this._super(config, context);
 
@@ -44,11 +51,6 @@ define([
          * @param {Array} button_list list of buttons to be added
          */
         _addButtons: function(button_list) {
-
-            //add buttons to template to load a container for each
-            this.template_data = {
-                buttons: []
-            };
 
             //add a component for each button
             for (var i = 0; i < button_list.length; i++) {

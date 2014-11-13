@@ -32,7 +32,9 @@ define([
                 model: ["state.time"]
             }, {
                 component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist'
+                placeholder: '.vzb-tool-buttonlist',
+                model: ['data', 'language'],
+                buttons: ['more-options']
             }];
 
             this._super(config, options);

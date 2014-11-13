@@ -4,7 +4,8 @@ $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: #ffffff;
 $vzb-button-more-bg: $vzb-color-grey-lightest;
 $vzb-button-color: $vzb-color-primary-dark;
-$vzb-button-color-title: $vzb-button-color;
+$vzb-button-color-title: #9FBBC1;
+$vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #DBE8EB;
 .vzb-buttonlist {
     @include box-sizing(border-box);
@@ -21,6 +22,7 @@ $vzb-button-color-border: #DBE8EB;
         cursor: pointer;
         width: $vzb-button-width;
         &>.vzb-buttonlist-btn-icon {
+        	@include transition(all, 100ms, ease-in);
             @include box-sizing(border-box);
             @include border-radius($vzb-button-radius);
             @include font-size(16px);
@@ -35,12 +37,13 @@ $vzb-button-color-border: #DBE8EB;
             // border: 1px solid $vzb-button-color-border;
         }
         &>.vzb-buttonlist-btn-title {
+            @include font-size(9px);
             padding-top: 2px;
             text-align: center;
             display: block;
             color: $vzb-button-color-title;
+            font-family: $vzb-font-family;
             text-transform: uppercase;
-            @include font-size(10px);
         }
         &.vzb-buttonlist-btn-more > .btn-icon {
             background-color: $vzb-button-more-bg;
@@ -49,6 +52,9 @@ $vzb-button-color-border: #DBE8EB;
             &>.vzb-buttonlist-btn-icon {
                 color: $vzb-button-bg;
                 background-color: $vzb-button-color;
+            }
+            &>.vzb-buttonlist-btn-title {
+				color: $vzb-button-color-title-active;
             }
         }
     }
