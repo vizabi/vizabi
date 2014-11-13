@@ -2,9 +2,10 @@
 
 define([
     'd3',
+    'lodash',
     'base/component',
     'models/time'
-], function(d3, Component, TimeModel) {
+], function(d3, _, Component, TimeModel) {
 
     //constants
     var class_playing = "vzb-playing",
@@ -68,8 +69,16 @@ define([
             this.template = "components/_gapminder/timeslider/timeslider";
             //default model if none is provided
             this.default_model = TimeModel;
+
             // Same constructor as the superclass
             this._super(config, context);
+            
+            //default ui
+            this.ui = _.extend({
+                show_limits: false,
+                show_value: false,
+                show_button: true
+            }, this.ui);
         },
 
         /**
@@ -291,7 +300,8 @@ define([
          */
         _optionClasses: function() {
             //show/hide classes
-            this.element.classed(class_hide_play, !this.model.playable);
+            var hide_play = (!this.model.playable);
+            this.element.classed(class_hide_play, hide_play);
             this.element.classed(class_playing, this.model.playing);
 
             var show_limits = false,
