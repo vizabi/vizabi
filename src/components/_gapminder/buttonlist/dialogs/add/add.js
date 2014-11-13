@@ -1,43 +1,20 @@
 define([
-    'jquery',
-    'base/utils',
-    'base/component',
-    'base/model'
-], function($, utils, Component, Model) {
+    'components/_gapminder/buttonlist/dialogs/dialog'
+], function(Dialog) {
 
-    var picker,
-        countries;
+    var AddDialog = Dialog.extend({
 
-    var AddButton = Component.extend({
+        /**
+         * Initializes the dialog component
+         * @param config component configuration
+         * @param context component context (parent)
+         */
         init: function(config, parent) {
-            this.name = 'add-button';
-            this.id = 'plus';
-            this.title = 'Add';
-            
-            this.template = 'components/_gapminder/buttonlist/buttons/button';
-            this.template_data = this.template_data || {
-                name: this.name,
-                title: this.title,
-                id: this.id
-            };
+            this.name = 'add';
 
             this._super(config, parent);
-        },
-
-        postRender: function() {
-        },
-
-
-        resize: function() {
-
-        },
-
-
-        update: function() {
-
         }
-
     });
 
-    return AddButton;
+    return AddDialog;
 });

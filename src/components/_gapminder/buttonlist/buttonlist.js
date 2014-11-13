@@ -10,6 +10,10 @@ define([
     //default existing buttons
     var class_active = "vzb-active",
         available_buttons = {
+            'find': {
+                title: "buttons/find",
+                icon: "search"
+            },
             'more-options': {
                 title: "buttons/more_options",
                 icon: "gear"

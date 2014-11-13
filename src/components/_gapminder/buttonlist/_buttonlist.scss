@@ -125,7 +125,7 @@ $vzb-button-color-border: #DBE8EB;
     }
 }
 //responsiveness
-&.vzb-landscape {
+&.vzb-landscape, &.vzb-large {
     .vzb-buttonlist {
         .vzb-buttonlist-dialog {
             @include absolute(-500px, 40px);
