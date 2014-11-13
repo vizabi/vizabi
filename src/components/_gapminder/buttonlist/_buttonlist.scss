@@ -8,6 +8,10 @@ $vzb-button-color-title: #9FBBC1;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #DBE8EB;
 .vzb-buttonlist {
+
+    @import '../timeslider/timeslider';
+    @import '../bubble-size/bubble-size';
+
     @include box-sizing(border-box);
     @include absoluteAll;
     text-align: center;

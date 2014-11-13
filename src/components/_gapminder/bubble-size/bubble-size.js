@@ -4,7 +4,7 @@ define([
     'base/component'
 ], function(d3, Component) {
 
-    var indicator, min = 2, max = 20;
+    var indicator, min = 1, max = 100;
 
     var BubbleSize = Component.extend({
 
