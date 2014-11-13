@@ -1,7 +1,8 @@
 define([
     'd3',
+    'base/layout',
     'base/component'
-], function(d3, Component) {
+], function(d3, Layout, Component) {
 
     var Dialog = Component.extend({
         init: function(config, parent) {
@@ -9,6 +10,8 @@ define([
             
             this.template = 'components/_gapminder/buttonlist/'+
                             'dialogs/'+this.name+'/'+this.name;
+
+            this.layout = new Layout();
 
             this._super(config, parent);
         },
