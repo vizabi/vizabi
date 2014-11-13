@@ -12,6 +12,15 @@ define([
         init: function(config, parent) {
             this.name = 'size';
 
+            this.components = [{
+                component: '_gapminder/bubble-size',
+                placeholder: '.vzb-dialog-bubble-size',
+                model: ["show"],
+                ui: {
+                    show_button: false
+                }
+            }];
+
             this._super(config, parent);
         }
     });
