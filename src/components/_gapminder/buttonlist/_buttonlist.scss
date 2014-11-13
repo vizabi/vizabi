@@ -45,6 +45,13 @@ $vzb-button-color-border: #DBE8EB;
         &.vzb-buttonlist-btn-more > .btn-icon {
             background-color: $vzb-button-more-bg;
         }
+
+        &.vzb-active {
+            &>.vzb-buttonlist-btn-icon {
+				color: $vzb-button-bg;
+            	background-color: $vzb-button-color;
+            }
+        }
     }
     .vzb-buttonlist-dialog {
         position: absolute;
@@ -52,45 +59,40 @@ $vzb-button-color-border: #DBE8EB;
         left: 50%;
         margin-left: -140px;
         bottom: 65px;
-
-        &> .vzb-dialog-modal {
-            @include box-shadow(0, 10px, 15px, rgba(0, 0, 0, 0.24));
-            @include box-sizing(border-box);
-
-            position: relative;
-            display: inline-block;
-            width: 280px;
-            vertical-align: top;
-            background-color: #fff;
-            text-align: left;
-            padding: 25px;
-            font-size: 0.9em;
-
-            .vzb-dialog-title {
-            	color: $vzb-color-primary;
-                font-size: 1.3em;
-                font-family: $vzb-font-family;
+        @include box-shadow(0, 10px, 15px, rgba(0, 0, 0, 0.24));
+        @include box-sizing(border-box);
+        width: 280px;
+        vertical-align: top;
+        background-color: #fff;
+        text-align: left;
+        padding: 25px;
+        font-size: 0.9em;
+        display: none;
+        &.vzb-active {
+            display: block;
+        }
+        .vzb-dialog-title {
+            color: $vzb-color-primary;
+            font-size: 1.3em;
+            font-family: $vzb-font-family;
+        }
+        .vzb-dialog-buttons {
+            padding: 40px 10px 10px 15px;
+        }
+        .vzb-dialog-button {
+            cursor: pointer;
+            padding: 10px;
+            float: right;
+            color: $vzb-color-primary;
+            font-family: $vzb-font-family;
+            font-size: 0.8em;
+            text-align: center;
+            &.vzb-label-primary {
+                color: $vzb-color-primary-dark;
+                font-weight: bold;
             }
-            .vzb-dialog-buttons {
-                padding: 40px 10px 10px 15px;
-            }
-            .vzb-dialog-button {
-            	cursor: pointer;
-                padding: 10px;
-                float: right;
-                color: $vzb-color-primary;
-                font-family: $vzb-font-family;
-                font-size: 0.8em;
-                text-align: center;
-
-                &.vzb-label-primary {
-                	color: $vzb-color-primary-dark;
-                	font-weight: bold;
-                }
-
-                &:hover {
-                	color: $vzb-color-grey-dark;
-                }
+            &:hover {
+                color: $vzb-color-grey-dark;
             }
         }
     }

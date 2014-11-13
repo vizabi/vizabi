@@ -82,8 +82,16 @@ define([
 
             //activate each dialog when clicking the button
             buttons.on('click', function() {
-                var id = d3.select(this).attr("data-btn");
-                _this._activateDialog(id);
+                var btn = d3.select(this),
+                    id = btn.attr("data-btn"),
+                    classes = btn.attr("class");
+
+                //close if it's open
+                if (classes.indexOf(class_active) !== -1) {
+                    _this._closeDialog(id);
+                } else {
+                    _this._openDialog(id);
+                }
             });
         },
 
@@ -96,13 +104,45 @@ define([
             //TODO: what to do when resizing?
         },
 
-        //TODO: make activation via update and model
+        //TODO: make opening/closing a dialog via update and model
         /*
          * Activate a button dialog
-         * Executed once after loading
+         * @param {String} id button id
          */
-        _activateDialog: function(id) {
-            alert(id);
+        _openDialog: function(id) {
+
+            this._closeAllDialogs();
+            var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+                dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+
+            //remove classes
+            btn.classed(class_active, true);
+            dialog.classed(class_active, true);
+        },
+
+        /*
+         * Closes a button dialog
+         * @param {String} id button id
+         */
+        _closeDialog: function(id) {
+
+            var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+                dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+
+            //remove classes
+            btn.classed(class_active, false);
+            dialog.classed(class_active, false);
+        },
+
+        /*
+         * Close all dialogs
+         */
+        _closeAllDialogs: function() {
+            //remove classes
+            var all_btns = d3.selectAll(".vzb-buttonlist-btn"),
+                all_dialogs = d3.selectAll(".vzb-buttonlist-dialog");
+            all_btns.classed(class_active, false);
+            all_dialogs.classed(class_active, false);
         }
 
     });
