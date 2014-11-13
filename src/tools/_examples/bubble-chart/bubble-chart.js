@@ -33,7 +33,7 @@ define([
             }, {
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
-                model: ['data', 'language'],
+                model: ['state', 'data', 'language'],
                 buttons: ['colors', 'size', 'more-options']
             }];
 

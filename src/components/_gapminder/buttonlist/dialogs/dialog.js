@@ -15,8 +15,10 @@ define([
 
         postRender: function() {
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
+
+            var _this = this;
             close_buttons.on('click', function() {
-                alert("Close!");
+                _this.parent.closeAllDialogs();
             });
         }
 

@@ -5,6 +5,13 @@ define([
     var MoreOptionsDialog = Dialog.extend({
         init: function(config, parent) {
             this.name = 'more-options';
+
+            this.components = [{
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-dialog-timeslider',
+                model: ["time"]
+            }];
+
             this._super(config, parent);
         }
     });

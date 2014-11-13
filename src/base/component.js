@@ -383,7 +383,7 @@ define([
                     current_name = "";
                 while (parts.length) {
                     current_name = parts.shift();
-                    current = current.get(current_name);
+                    current = current[current_name];
                 }
                 //normalize name (show_2 -> show)
                 current_name = current_name.split("_")[0];

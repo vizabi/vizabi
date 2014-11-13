@@ -69,7 +69,8 @@ define([
                 //add corresponding component
                 this.components.push({
                     component: '_gapminder/buttonlist/dialogs/' + btn,
-                    placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]'
+                    placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
+                    model: ['state']
                 });
 
                 //add template data
@@ -99,15 +100,15 @@ define([
 
                 //close if it's open
                 if (classes.indexOf(class_active) !== -1) {
-                    _this._closeDialog(id);
+                    _this.closeDialog(id);
                 } else {
-                    _this._openDialog(id);
+                    _this.openDialog(id);
                 }
             });
 
             close_buttons = d3.selectAll("[data-click='closeDialog']");
             close_buttons.on('click', function() {
-                _this._closeAllDialogs();
+                _this.closeAllDialogs();
             });
         },
 
@@ -125,9 +126,9 @@ define([
          * Activate a button dialog
          * @param {String} id button id
          */
-        _openDialog: function(id) {
+        openDialog: function(id) {
 
-            this._closeAllDialogs();
+            this.closeAllDialogs();
             var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
                 dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -140,7 +141,7 @@ define([
          * Closes a button dialog
          * @param {String} id button id
          */
-        _closeDialog: function(id) {
+        closeDialog: function(id) {
 
             var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
                 dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -153,7 +154,7 @@ define([
         /*
          * Close all dialogs
          */
-        _closeAllDialogs: function() {
+        closeAllDialogs: function() {
             //remove classes
             var all_btns = d3.selectAll(".vzb-buttonlist-btn"),
                 all_dialogs = d3.selectAll(".vzb-buttonlist-dialog");
