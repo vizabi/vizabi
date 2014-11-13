@@ -8,6 +8,7 @@
 
     @include absoluteAll;
     text-align: left;
+    overflow: hidden;
     
     .vzb-tool-title{
         @include box-sizing(border-box);

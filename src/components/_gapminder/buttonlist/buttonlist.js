@@ -14,6 +14,14 @@ define([
                 title: "buttons/more_options",
                 icon: "gear"
             },
+            'colors': {
+                title: "buttons/colors",
+                icon: "paint-brush"
+            },
+            'size': {
+                title: "buttons/size",
+                icon: "circle"
+            },
             '_default': {
                 title: "Button",
                 icon: "asterisk"
@@ -39,6 +47,7 @@ define([
             };
 
             if(config.buttons && config.buttons.length > 0) {
+                //TODO: FIXME: Buttons should be a model, not config
                 this._addButtons(config.buttons);
             }
 
@@ -94,6 +103,11 @@ define([
                 } else {
                     _this._openDialog(id);
                 }
+            });
+
+            close_buttons = d3.selectAll("[data-click='closeDialog']");
+            close_buttons.on('click', function() {
+                _this._closeAllDialogs();
             });
         },
 

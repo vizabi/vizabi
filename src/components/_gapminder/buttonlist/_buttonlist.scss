@@ -59,10 +59,11 @@ $vzb-button-color-border: #DBE8EB;
         }
     }
     .vzb-buttonlist-dialog {
-        @include box-shadow(0, 10px, 15px, rgba(0, 0, 0, 0.24));
+        @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
         @include box-sizing(border-box);
         @include transition(all, 300ms, ease-in-out);
         @include absolute(auto, auto, -450px, 50%);
+        border-top: 1px solid #f7f7f7;
         width: 280px;
         max-height: 400px;
         margin-left: -140px;

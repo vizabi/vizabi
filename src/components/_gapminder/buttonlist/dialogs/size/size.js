@@ -2,12 +2,12 @@ define([
     'components/_gapminder/buttonlist/dialogs/dialog'
 ], function(Dialog) {
 
-    var MoreOptionsDialog = Dialog.extend({
+    var SizeDialog = Dialog.extend({
         init: function(config, parent) {
-            this.name = 'more-options';
+            this.name = 'size';
             this._super(config, parent);
         }
     });
 
-    return MoreOptionsDialog;
+    return SizeDialog;
 });
