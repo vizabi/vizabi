@@ -194,19 +194,21 @@ define([
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
-                    maxRadius = 30;
+                    maxRadius = 60;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
-                    maxRadius = 30;
+                    maxRadius = 75;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
-                    maxRadius = 50;
+                    maxRadius = 100;
                     break;
             }
+
+            maxRadius = maxRadius * (this.model.show.size/100 || 1)
 
             //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
