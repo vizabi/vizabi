@@ -2,9 +2,10 @@
 
 define([
     'd3',
+    'lodash',
     'base/component',
     'models/time'
-], function(d3, Component, TimeModel) {
+], function(d3, _, Component, TimeModel) {
 
     //constants
     var class_playing = "vzb-playing",
@@ -68,8 +69,17 @@ define([
             this.template = "components/_gapminder/timeslider/timeslider";
             //default model if none is provided
             this.default_model = TimeModel;
+
             // Same constructor as the superclass
             this._super(config, context);
+            
+            //default ui
+            this.ui = _.extend({
+                show_limits: false,
+                show_value: false,
+                show_button: true,
+                format: this.model.unit
+            }, this.ui);
         },
 
         /**
@@ -140,11 +150,10 @@ define([
             var time = this.model.value,
                 minValue = this.model.start,
                 maxValue = this.model.end,
-                unit = this.model.unit,
                 _this = this;
 
             //format
-            this.format = time_formats[unit];
+            this.format = time_formats[this.ui.format];
 
             //scale
             this.xScale.domain([minValue, maxValue]);
@@ -291,20 +300,15 @@ define([
          */
         _optionClasses: function() {
             //show/hide classes
-            this.element.classed(class_hide_play, !this.model.playable);
-            this.element.classed(class_playing, this.model.playing);
 
-            var show_limits = false,
-                show_value = false;
-            try {
-                show_limits = (this.ui.timeslider.show_limits);
-            } catch (e) {}
-            try {
-                show_value = (this.ui.timeslider.show_value);
-            } catch (e) {}
+            var show_limits = this.ui.show_limits,
+                show_value = this.ui.show_value,
+                show_play = (this.ui.show_button) && (this.model.playable);
 
             if (!show_limits) this.xAxis.tickValues([]).ticks(0);
 
+            this.element.classed(class_hide_play, !show_play);
+            this.element.classed(class_playing, this.model.playing);
             this.element.classed(class_show_value, show_value);
         },
     });

@@ -67,11 +67,12 @@ $(function() {
             time: {
                 start: 1800,
                 end: 2014,
-                step: 0.1,
                 speed: 1000,
                 value: 1995,
                 playing: false,
-                roundOnPause: false
+                roundOnPause: false,
+                unit: "month",
+                step: 1
             }
         },
 
@@ -96,8 +97,9 @@ $(function() {
 
         //ui (how should vizabi look)
         ui: {
-            timeslider: {
-                show_value: true
+            'vzb-tool-timeslider': {
+                show_value: true,
+                format: "year"
             }
         },
 

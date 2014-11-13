@@ -1,0 +1,80 @@
+//general styles
+.vzb-bs-holder {
+    position: absolute;
+    right: 120px;
+    top: 0;
+    width: 60px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    text-align: center;
+
+    &:before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        margin-top: -9px;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 8px 50px 8px 0;
+        border-color: transparent #A4CBD3 transparent transparent;
+        border-radius: 0 50px 50px 0;
+    }
+
+    .vzb-bs-slider {
+        position: absolute;
+        left: 6px;
+        top: 50%;
+        margin-top: -3px;
+        height: 3px;
+        width: 50px;
+        -webkit-appearance: none;
+        background: transparent;
+        outline: none !important;
+        border: 0;
+        @include border-radius(2px);
+
+        // Slider Handle
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            cursor: pointer;
+            @include border-radius(8px);
+            @include transition(left, 0.1s, ease-in-out);
+            background-color: $vzb-color-primary;
+            top: -12px;
+            width: 16px;
+            height: 16px;
+        }
+        &::-moz-range-thumb {
+            cursor: pointer;
+            @include border-radius(8px);
+            @include transition(left, 0.1s, ease-in-out);
+            background: $vzb-color-primary;
+            top: -12px;
+            width: 8px;
+            height: 8px;
+        }
+    }
+}
+
+//large specific styles
+&.vzb-large {
+    .vzb-bs-holder {
+        //...
+    }
+}
+
+//medium specific styles
+&.vzb-medium {
+    .vzb-bs-holder {
+        //...
+    }
+}
+
+//small specific styles
+&.vzb-small {
+    .vzb-bs-holder {
+        //...
+    }
+}

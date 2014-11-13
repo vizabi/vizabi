@@ -191,16 +191,18 @@ define([
                 name = name_token[name_token.length - 1],
                 id = component.placeholder,
                 component_path = "components/" + path + "/" + name,
-                component_model;
+                component_model,
+                component_ui;
 
             //component model mapping
             component_model = this._modelMapping(component.model);
+            component_ui = this._uiMapping(id);
 
             //component options
             var config = _.extend(component, {
                 name: name,
                 model: component_model,
-                ui: this.ui
+                ui: component_ui
             });
 
             // Loads the file we need
@@ -257,6 +259,9 @@ define([
                     var root = _this.parent.element || d3;
                     //place the contents into the correct placeholder
                     _this.placeholder = (_.isString(_this.selector)) ? root.select(_this.selector) : _this.placeholder;
+
+                    //add placeholder identifiers
+                    _this.placeholder.attr("data-component", "true");
                     _this.placeholder.html(rendered);
 
                     try {
@@ -433,6 +438,23 @@ define([
                 });
             }
             return config;
+        },
+
+        /**
+         * Maps the current ui to the subcomponents
+         * @param {String} id subcomponent id (placeholder)
+         * @returns {Object} the UI object
+         */
+        //todo: make it more powerful
+        _uiMapping: function(id) {
+            if(id) {
+                id = id.replace(".", ""); //remove trailing period
+                var sub_ui = this.ui[id];
+                if(sub_ui) {
+                    return sub_ui;
+                }
+            }
+            return this.ui;
         },
 
         /**
