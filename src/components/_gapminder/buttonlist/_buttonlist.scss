@@ -45,31 +45,31 @@ $vzb-button-color-border: #DBE8EB;
         &.vzb-buttonlist-btn-more > .btn-icon {
             background-color: $vzb-button-more-bg;
         }
-
         &.vzb-active {
             &>.vzb-buttonlist-btn-icon {
-				color: $vzb-button-bg;
-            	background-color: $vzb-button-color;
+                color: $vzb-button-bg;
+                background-color: $vzb-button-color;
             }
         }
     }
     .vzb-buttonlist-dialog {
-        position: absolute;
-        z-index: 2;
-        left: 50%;
-        margin-left: -140px;
-        bottom: 65px;
         @include box-shadow(0, 10px, 15px, rgba(0, 0, 0, 0.24));
         @include box-sizing(border-box);
+        @include transition(all, 300ms, ease-in-out);
+        @include absolute(auto, auto, -450px, 50%);
         width: 280px;
+        max-height: 400px;
+        margin-left: -140px;
+        z-index: -2;
         vertical-align: top;
         background-color: #fff;
         text-align: left;
         padding: 25px;
         font-size: 0.9em;
-        display: none;
+        display: block;
         &.vzb-active {
-            display: block;
+            @include absolute(auto, auto, 45px, 50%);
+            z-index: 2;
         }
         .vzb-dialog-title {
             color: $vzb-color-primary;
@@ -83,21 +83,31 @@ $vzb-button-color-border: #DBE8EB;
             cursor: pointer;
             padding: 10px;
             float: right;
-            color: $vzb-color-primary;
+            color: $vzb-color-grey;
             font-family: $vzb-font-family;
             font-size: 0.8em;
             text-align: center;
             &.vzb-label-primary {
-                color: $vzb-color-primary-dark;
+                color: $vzb-color-primary;
                 font-weight: bold;
             }
             &:hover {
-                color: $vzb-color-grey-dark;
+                color: $vzb-color-primary-dark;
             }
         }
     }
 }
 //responsiveness
+&.vzb-landscape {
+    .vzb-buttonlist {
+        .vzb-buttonlist-dialog {
+            @include absolute(-500px, 40px);
+            &.vzb-active {
+                @include absolute(-20px, 40px);
+            }
+        }
+    }
+}
 &.vzb-small.vzb-portrait {
     .vzb-buttonlist {
         .vzb-buttonlist-btn {
