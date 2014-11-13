@@ -69,13 +69,11 @@ $vzb-button-color-border: #DBE8EB;
         @include absolute(auto, auto, -450px, 50%);
         border-top: 1px solid #f7f7f7;
         width: 280px;
-        max-height: 400px;
         margin-left: -140px;
         z-index: -2;
         vertical-align: top;
         background-color: #fff;
         text-align: left;
-        padding: 25px;
         font-size: 0.9em;
         display: block;
         &.vzb-active {
@@ -86,14 +84,23 @@ $vzb-button-color-border: #DBE8EB;
             color: $vzb-color-primary;
             font-size: 1.3em;
             font-family: $vzb-font-family;
+            padding: 25px 25px 10px 25px;
+        }
+        .vzb-dialog-content {
+            color: $vzb-color-grey-dark;
+            padding: 0px 25px 10px 25px;
+            max-height: 250px;
+            overflow: hidden;
+            overflow-y: auto;
         }
         .vzb-dialog-buttons {
-            padding: 40px 10px 10px 15px;
+            text-align: right;
+            padding: 15px 25px 20px 25px;
         }
         .vzb-dialog-button {
             cursor: pointer;
             padding: 10px;
-            float: right;
+            display: inline-block;
             color: $vzb-color-grey;
             font-family: $vzb-font-family;
             font-size: 0.8em;

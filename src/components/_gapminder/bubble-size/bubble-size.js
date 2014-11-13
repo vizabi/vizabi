@@ -20,9 +20,6 @@ define([
             //specifying subcomponents
             this.components = [];
 
-            // how to specify a default model if none is provided (and if not Model)
-            // this.default_model = TimeModel;
-
             //contructor is the same as any component
             this._super(config, context);
         },
