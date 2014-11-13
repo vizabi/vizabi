@@ -23,7 +23,7 @@
     "jed": "~0.5.4",
     "smart-picker": "https://github.com/Gapminder/smart-picker.git",
     "requirejs-text": "~2.0.12",
-    "font-awesome": "~4.1.0",
+    "font-awesome": "~4.2.0",
     "jqueryui": "~1.10.4",
     "requirejs": "~2.1.11",
     "underscore": "~1.6.0",
