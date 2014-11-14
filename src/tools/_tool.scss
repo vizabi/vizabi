@@ -7,6 +7,7 @@
     $sizeTimeSliderSmall: 50px;
 
     @include absoluteAll;
+    @include user-select-none;
     text-align: left;
     overflow: hidden;
     
