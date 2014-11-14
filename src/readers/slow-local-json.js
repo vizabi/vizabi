@@ -31,48 +31,56 @@
              _this._data = [];
 
              for (var i = 0; i < queries.length; i++) {
-                 var fakeResponsePath = path.replace("response", "response_" + i),
-                     query = queries[i];
 
-                 var promise = $.getJSON(fakeResponsePath, function(res) {
-                         var geos = query.where.geo,
-                             categories = query.where['geo.category'],
-                             timeRange = query.where.time,
-                             data = res[0];
+                 var i;
+                 this._data[i] = {};
 
-                         //if geos is not everything, filter geos
-                         if (geos[0] != "*") {
-                             data = data.filter(function(row) {
-                                 return geos.indexOf(row["geo"]) >= 0;
-                             });
-                         }
+                 (function(order) {
 
-                         //if geos is not everything, filter geos
-                         if (categories && categories[0] != "*") {
-                             data = data.filter(function(row) {
-                                 return categories.indexOf(row["geo.category"][0]) >= 0;
-                             });
-                         }
+                     var fakeResponsePath = path.replace("response", "response_" + i),
+                         query = queries[i];
 
-                         //if there's a timeRange different than all, filter range
-                         if (timeRange && timeRange != "*") {
-                             timeRange = timeRange[0].split("-");
-                             var min = timeRange[0],
-                                 max = timeRange[1] || min;
-                             //max = min in case there's only one
+                     var promise = $.getJSON(fakeResponsePath, function(res) {
+                             var geos = query.where.geo,
+                                 categories = query.where['geo.category'],
+                                 timeRange = query.where.time,
+                                 data = res[0];
 
-                             data = data.filter(function(row) {
-                                 return row["time"] >= min && row["time"] <= max;
-                             });
-                         }
+                             //if geos is not everything, filter geos
+                             if (geos[0] != "*") {
+                                 data = data.filter(function(row) {
+                                     return geos.indexOf(row["geo"]) >= 0;
+                                 });
+                             }
 
-                         _this._data.push(data);
-                     })
-                     .error(function() {
-                         console.log("Error Happened While Loading File: " + fakeResponsePath);
-                     });
+                             //if geos is not everything, filter geos
+                             if (categories && categories[0] != "*") {
+                                 data = data.filter(function(row) {
+                                     return categories.indexOf(row["geo.category"][0]) >= 0;
+                                 });
+                             }
 
-                 promises.push(promise);
+                             //if there's a timeRange different than all, filter range
+                             if (timeRange && timeRange != "*") {
+                                 timeRange = timeRange[0].split("-");
+                                 var min = timeRange[0],
+                                     max = timeRange[1] || min;
+                                 //max = min in case there's only one
+
+                                 data = data.filter(function(row) {
+                                     return row["time"] >= min && row["time"] <= max;
+                                 });
+                             }
+
+                             _this._data[order] = data;
+                         })
+                         .error(function() {
+                             console.log("Error Happened While Loading File: " + fakeResponsePath);
+                         });
+
+                     promises.push(promise);
+
+                 })(i);
              }
 
              $.when.apply(null, promises).done(function() {
