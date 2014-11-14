@@ -34,8 +34,8 @@ define([
             ,{
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
-                model: ['state', 'language'],
-                buttons: ['find', 'colors', 'more-options']
+                model: ['state', 'data', 'language'],
+                buttons: ['colors', 'more-options']
             }
             ];
 
