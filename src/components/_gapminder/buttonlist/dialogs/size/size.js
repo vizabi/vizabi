@@ -15,7 +15,7 @@ define([
             this.components = [{
                 component: '_gapminder/bubble-size',
                 placeholder: '.vzb-dialog-bubble-size',
-                model: ["show"],
+                model: ["state.show"],
                 ui: {
                     show_button: false
                 }

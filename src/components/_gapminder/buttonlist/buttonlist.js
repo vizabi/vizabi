@@ -74,7 +74,7 @@ define([
                 this.components.push({
                     component: '_gapminder/buttonlist/dialogs/' + btn,
                     placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-                    model: ['state']
+                    model: ['state', 'data']
                 });
 
                 //add template data

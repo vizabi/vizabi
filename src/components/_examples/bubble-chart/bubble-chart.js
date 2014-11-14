@@ -62,7 +62,7 @@ define([
             //TODO: preprocessing should go somewhere else, when the data is loaded
             var _this = this;
             if(!this.isDataPreprocessed){                  
-                _this.model.data.getItems().forEach(function(d){
+                _this.model.data.getItems()[0].forEach(function(d){
                     d.name = d["geo.name"]; 
                     d.region = d["geo.region"] || "world";
                     _this.model.show.indicator.forEach(function(ind) { d[ind] = +d[ind]; });
@@ -70,7 +70,7 @@ define([
                 this.isDataPreprocessed = true;
             }
             
-            this.data = this.model.data.getItems();
+            this.data = this.model.data.getItems()[0];
             this.indicator = this.model.show.indicator;
             this.scale = this.model.show.scale;
             this.units = this.model.show.unit || [1, 1, 1];

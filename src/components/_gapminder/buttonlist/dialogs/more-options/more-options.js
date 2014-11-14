@@ -15,7 +15,7 @@ define([
             this.components = [{
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider',
-                model: ["time"],
+                model: ["state.time"],
                 ui: {
                     show_button: false,
                     show_value: true
@@ -23,14 +23,14 @@ define([
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider-2',
-                model: ["time"],
+                model: ["state.time"],
                 ui: {
                     show_button: true
                 }
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider-3',
-                model: ["time"],
+                model: ["state.time"],
                 ui: {
                     show_button: false,
                     show_limits: true
@@ -38,7 +38,7 @@ define([
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider-4',
-                model: ["time"],
+                model: ["state.time"],
                 ui: {
                     show_button: true,
                     show_value: true
@@ -46,7 +46,7 @@ define([
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-dialog-timeslider-5',
-                model: ["time"],
+                model: ["state.time"],
                 ui: {
                     show_button: false,
                     show_limits: true

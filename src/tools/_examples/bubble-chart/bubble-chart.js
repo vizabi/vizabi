@@ -76,12 +76,18 @@ define([
                 time_end = d3.time.format("%Y")(state.time.end);
             return [{
                 "from": "data",
-                //FIXME not sure if we need union here. barchart doesn't have it
                 "select": _.union(["geo", "geo.name", "time", "geo.region", state.show.indicator]),
                 "where": {
                     "geo": state.show.geo,
                     "geo.category": state.show.geo_category,
                     "time": [time_start + "-" + time_end]
+                }
+            }, {
+                "from": "data",
+                "select": ["geo", "geo.name", "geo.region", "geo.category"],
+                "where": {
+                    "geo": ["*"],
+                    "geo.category": ["*"]
                 }
             }];
         }
