@@ -217,10 +217,10 @@ DropDown.prototype = {
 }
 
 function viewOnGithub() {
-    //rly hacked way of finding the address
-    var github_base = "https://github.com/Gapminder/vizabi/tree/",
-        address = window.location.pathname.replace("preview_pages/", "src/tools/").replace(".html", "").replace("/vizabi/", github_base);
-    window.open(address,'_blank');
+    var github_base = "https://github.com/Gapminder/vizabi/tree/develop/src/tools/",
+        tool_path = window.location.pathname.substring(window.location.pathname.indexOf("preview_pages/") + 14 , window.location.pathname.indexOf(".html"));
+        
+    window.open(github_base + tool_path,'_blank');
 }
 
 parseURL();
