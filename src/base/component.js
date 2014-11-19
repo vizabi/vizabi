@@ -580,7 +580,16 @@ define([
          */
         triggerAll: function(name, val) {
             this._events.triggerAll(name, val);
+        },
+
+        resize_print: function() {
+
+        },
+
+        update_print: function() {
+
         }
+
 
     });
 
