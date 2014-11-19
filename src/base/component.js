@@ -27,6 +27,7 @@ define([
             //in case there's none
             //TODO: evaluate what should be accessible or not
             this.name = this.name || config.name;
+            this.print_version = config.print_version || false;
             this.template = this.template || config.template;
             this.placeholder = this.placeholder || config.placeholder;
             this.selector = this.placeholder;
@@ -101,7 +102,12 @@ define([
                     if (_this.element) {
                         _this.element.classed(class_loading, false);
                     }
-                    _this.update();
+                    if (_this.print_version) {
+                        _this.update_print();
+                    }
+                    else {
+                        _this.update();    
+                    }
                     _this._ready = true; //everything is ready
                     _this.trigger('ready');
                     defer.resolve();
@@ -304,7 +310,12 @@ define([
             var _this = this;
             this._update = this._update || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.update();
+                    if (component.print_version) {
+                        component.update_print();
+                    }   
+                    else {
+                        component.update();
+                    }
                 });
             }, this._frameRate);
             this._update();
@@ -318,7 +329,12 @@ define([
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.resize();
+                    if (component.print_version) {
+                        component.resize_print();
+                    }
+                    else {
+                        component.resize();
+                    }
                 });
             }, this._frameRate);
             this._resize();
