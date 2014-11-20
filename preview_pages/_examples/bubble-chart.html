@@ -53,7 +53,7 @@
 </div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
-    
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
@@ -70,28 +70,60 @@ $(function() {
         //state
         state: url.state || {
 
-            //what to show
-            show: {
-                geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                geo_category: ['country'],
-                indicator: ['lex', 'gdp_per_cap', 'pop'],
-                scale: ['linear', 'linear', 'sqrt'],
-                unit: [1, 1000000000, 1000],
-                size: 50
-            },
-
-            //time properties
+            //timespan of the visualization
             time: {
                 start: 1990,
                 end: 2012,
                 value: 1990,
                 step: 1,
                 speed: 300
+            },
+
+            //entities we want to show
+            entity: {
+                show: [{
+                    dim: "geo",
+                    filter: {
+                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo.category": ["country"]
+                    }
+                }]
+            },
+
+            //how we show it
+            marker: {
+                type: "geometry",
+                shape: "CIRCLE",
+                axis_y: {
+                    use: "indicator",
+                    indicator: "gdp",
+                    scale: 'linear'
+                },
+                axis_x: {
+                    use: "indicator",
+                    indicator: "lex",
+                    scale: 'linear'
+                },
+                size: {
+                    value: 0.5 //between 0 and 1
+                },
+                fill: {
+                    color: {
+                        use: "indicator",
+                        indicator: "pop",
+                        scale: ["#FFFFFF", "#000000"]
+                    }
+                },
+                stroke: {
+                    color: {
+                        use: "value",
+                        value: "#000000"
+                    }
+                }
             }
         },
 
-
-        //data properties
+        //where do we get data from?
         data: {
             reader: 'local-json',
             path: '../../data-waffles/examples/{{LANGUAGE}}/response.json'
@@ -118,77 +150,22 @@ $(function() {
             }
         },
 
-
+        //bind these events to external page
         bind: {
             'ready': function() {
                 parseURL();
             },
             'change:state': function(evt, vals) {
                 showState(vals.state);
-            },
-            'change:query': function(query) {
-                showQuery(query);
             }
         }
     };
 
 
     myVizabi = new Vizabi("_examples/bubble-chart", "#bubble-chart", options);
+
+    showState(options.state);
 });
-
-function setState() {
-    var newOption = {
-        state: {
-            show: {
-                geo: ['world'],
-                geo_category: ['planet'],
-                indicator: ['lex', 'gdp_per_cap', 'pop'],
-                scale: ['linear', 'linear', 'sqrt'],
-                unit: [1, 1000000, 1000]
-            },
-            time: {
-                value: 2000
-            }
-        }
-    };
-    myVizabi.setOptions(newOption);
-}
-
-function changeIndicator() {
-    var newOption = {
-        state: {
-            show: {
-                geo: ['swe', 'nor', 'zaf'],
-                geo_category: ['country'],
-                indicator: ['pop', 'lex', 'gdp_per_cap'],
-                scale: ['linear', 'linear', 'sqrt'],
-                unit: [100000, 1, 1000000]
-            },
-            time: {
-                value: 2007
-            }
-        }
-    };
-    myVizabi.setOptions(newOption);
-}
-
-function manyCountries() {
-    var newOption = {
-        state: url.state || {
-            show: {
-                geo: ['swe','nor','fin','bra','usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                geo_category: ['country'],
-                indicator: ['lex', 'gdp_per_cap', 'pop'],
-                scale: ['linear', 'linear', 'sqrt'],
-                unit: [1, 1000000000, 1000]
-            },
-            time: {
-                value: 2007
-            }
-        }
-    };
-    myVizabi.setOptions(newOption);
-}
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->
