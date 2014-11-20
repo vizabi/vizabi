@@ -38,7 +38,9 @@ define([
 
             //load whenever show or language changes
             var _this = this;
-            this.on(["change:state:show", "change:language"], function() {
+
+            //TODO: entity is not enough anymore, we need to check for missing
+            this.on(["change:state:entity", "change:language"], function() {
                 _this.load().done(function() {
                     _this.trigger("reloaded");
                 });
@@ -59,7 +61,7 @@ define([
                 defer = $.Deferred(),
                 promises = [],
                 submodels = this.get(),
-                query = this._query(this),
+                query = this._query(this),//TODO: we should not require a query
                 language = this.language.id;
 
             //load each submodel

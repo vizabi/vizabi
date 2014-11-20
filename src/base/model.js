@@ -272,6 +272,46 @@ define([
             return obj;
         },
 
+        /**
+         * gets all sub values for a certain use
+         * only hooks have a use.
+         * @param {String} use specific use to lookup
+         * @returns {Array} all unique values with specific use
+         */
+        getUseValues: function(use) {
+            var values = [];
+            if(this.use && this.use === use) {
+                //add if it has use and it's a string
+                var val = this[this.use]; //e.g. this.indicator
+                if(val && _.isString(val)) values.push(val);
+            }
+            //repeat for each submodel
+            var submodels = this.get();
+            for (var i in submodels) {
+                if(!submodels[i].getUseValues) continue;
+                values = _.union(values, submodels[i].getUseValues(use));
+            }
+            //now we have an array with all values in a use for hooks.
+            return values;
+        },
+        
+        /**
+         * gets all sub values for indicators in this model
+         * @returns {Array} all unique values with specific use
+         */
+        getIndicators: function() {
+            return this.getUseValues("indicator");
+        },
+
+        /**
+         * gets all sub values for indicators in this model
+         * @returns {Array} all unique values with specific use
+         */
+        getProperties: function() {
+            return this.getUseValues("property");
+        },
+
+
         /* ==========================
          * Model loading method
          * ==========================
