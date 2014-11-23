@@ -93,15 +93,15 @@ $(function() {
             //how we show it
             marker: {
                 type: "geometry",
-                shape: "CIRCLE",
+                shape: "circle",
                 axis_y: {
                     use: "indicator",
-                    indicator: "gdp",
+                    value: "gdp",
                     scale: 'linear'
                 },
                 axis_x: {
                     use: "indicator",
-                    indicator: "lex",
+                    value: "lex",
                     scale: 'linear'
                 },
                 size: {
@@ -110,13 +110,13 @@ $(function() {
                 fill: {
                     color: {
                         use: "indicator",
-                        indicator: "pop",
-                        scale: ["#FFFFFF", "#000000"]
+                        value: "pop",
+                        domain: ["#FFFFFF", "#000000"],
+                        domain_type: "continuous" //or discrete
                     }
                 },
                 stroke: {
                     color: {
-                        use: "value",
                         value: "#000000"
                     }
                 }

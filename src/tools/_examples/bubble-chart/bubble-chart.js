@@ -70,16 +70,21 @@ define([
          * Returns the query (or queries) to be performed by this tool
          * @param model the tool model will be received
          */
+         //TODO: remove specific references to "geo", "geo.category", ...
+         //TODO: improve generalization of querying
         getQuery: function(model) {
             var state = model.state,
                 time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end);
+                time_end = d3.time.format("%Y")(state.time.end),
+                indicators = state.getIndicators(),
+                properties = state.getProperties();
             return [{
                 "from": "data",
-                "select": _.union(["geo", "geo.name", "time", "geo.region", state.show.indicator]),
+                "select": _.union(["geo", "geo.name", "time", "geo.region"], indicators, properties),
                 "where": {
-                    "geo": state.show.geo,
-                    "geo.category": state.show.geo_category,
+                    //TODO: remove this hack for getting geo and geo.category
+                    "geo": state.entity.show[0].filter["geo"],
+                    "geo.category": state.entity.show[0].filter["geo.category"],
                     "time": [time_start + "-" + time_end]
                 }
             }, {
