@@ -288,7 +288,7 @@ define([
             //repeat for each submodel
             var submodels = this.get();
             for (var i in submodels) {
-                if(!submodels[i].getUseValues) continue;
+                if(!submodels[i] || !submodels[i].getUseValues) continue;
                 values = _.union(values, submodels[i].getUseValues(use));
             }
             //now we have an array with all values in a use for hooks.
