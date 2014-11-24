@@ -21,7 +21,6 @@ define([
             var _this = this;
             this.name = 'bubble-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this.tool = context;
             this._super(context, options);
 
             this.xScale = null;
@@ -65,13 +64,13 @@ define([
                 _this.model.data.getItems()[0].forEach(function(d){
                     d.name = d["geo.name"]; 
                     d.region = d["geo.region"] || "world";
-                    _this.model.show.indicator.forEach(function(ind) { d[ind] = +d[ind]; });
+                    _this.model.state.getIndicators().forEach(function(ind) { d[ind] = +d[ind]; });
                 });
                 this.isDataPreprocessed = true;
             }
             
             this.data = this.model.data.getItems()[0];
-            this.indicator = this.model.show.indicator;
+            this.indicator = this.model.state.getIndicators();
             this.scale = this.model.show.scale;
             this.units = this.model.show.unit || [1, 1, 1];
             this.time = parseInt(d3.time.format("%Y")(this.model.time.value),10);
