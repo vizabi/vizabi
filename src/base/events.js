@@ -94,52 +94,67 @@ define([
                 for (var i = 0; i < this._events[name].length; i++) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
-                    if (_.isFunction(f) && !this._inBuffer(name)) {
-                        this._addToBuffer(name);
-                        var _this = this;
-                        _.defer(function() {
-                            _this._removeFromBuffer(name);
-                            if (_.isUndefined(args)) {
-                                f.apply(_this, [(original || name)]);
-                            } else {
-                                f.apply(_this, [(original || name), args]);
-                            }
-                        });
-                    }
-                    //log error in case it's not even a function
-                    else if (!_.isFunction(f)) {
-                        console.log("Can't execute event '" + name + ". The following must be a function: ");
-                        console.log(func);
-                    }
+                    this._executeFunction(f, name, original, args);
                 }
             }
         },
 
         /**
          * Checks whether an event is scheduled to be triggered already
-         * @param {String} name name of event
+         * @param {Function} func function to be checked
          * returns {Boolean}
          */
-        _inBuffer: function(name) {
-            return this._buffer.indexOf(name) !== -1;
+        _inBuffer: function(func) {
+            return this._buffer.indexOf(func) !== -1;
         },
 
         /**
          * Adds an event to the internal buffer
-         * @param {String} name name of event
+         * @param {Function} func function to be executed
          */
-        _addToBuffer: function(name) {
-            this._buffer.push(name);
+        _addToBuffer: function(func) {
+            this._buffer.push(func);
         },
 
         /**
          * Removes an event from the internal buffer
-         * @param {String} name name of event
+         * @param {Function} func function to be removed
          */
-        _removeFromBuffer: function(name) {
-            var index = this._buffer.indexOf(name);
+        _removeFromBuffer: function(func) {
+            var index = this._buffer.indexOf(func);
             if (index > -1) {
                 this._buffer.splice(index, 1);
+            }
+        },
+
+        /**
+         * Executes function, making sure we only execute once per buffer time
+         * @param {Function} func function to be executed
+         * @param {String} name name of event that triggered this
+         * @param {String} original original name of event that triggered this
+         * @param {Array} args Arguments
+         */
+        _executeFunction: function(func, name, original, args) {
+
+            //execute it if it's not in the buffer
+            if (_.isFunction(func) && !this._inBuffer(func)) {
+                this._addToBuffer(func);
+                var _this = this;
+                _.defer(function() {
+                    //remove it from buffer to allow new execution
+                    _this._removeFromBuffer(func);
+                    if (_.isUndefined(args)) {
+                        func.apply(_this, [(original || name)]);
+                    } else {
+                        func.apply(_this, [(original || name), args]);
+                    }
+
+                });
+            }
+            //log error in case it's not even a function
+            else if (!_.isFunction(func)) {
+                console.log("Can't execute event '" + name + ". The following must be a function: ");
+                console.log(func);
             }
         },
 
