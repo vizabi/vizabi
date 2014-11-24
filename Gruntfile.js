@@ -186,7 +186,7 @@ module.exports = function(grunt) {
                 tasks: ['sass:dev']
             },
             preview_pages: {
-                files: ['preview_pages/**/*.html', '!preview_pages/index.html'],
+                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js'],
                 tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
             },
             scripts: {
