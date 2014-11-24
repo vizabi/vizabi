@@ -33,6 +33,7 @@ define([
             this.template_data = this.template_data || {
                 name: this.name
             };
+            this.intervals = this.intervals;
             this.components = this.components || [];
             this.parent = parent;
 
@@ -40,15 +41,9 @@ define([
             this._components_config = this.components;
             this._frameRate = 10;
 
-            this.default_model = this.default_model || Model;
+            //define expected models for this component
+            this.model_expects = this.model_expects || [];
 
-            //if there's no model, we create our own
-            if (!config.model) {
-                config.model = this._defaultModels(this.default_model);
-            }
-
-            //model
-            this.model = this.model || config.model;
             this.ui = this.ui || config.ui;
         },
 
@@ -190,26 +185,26 @@ define([
                 name_token = path.split("/"),
                 name = name_token[name_token.length - 1],
                 id = component.placeholder,
-                component_path = "components/" + path + "/" + name,
-                component_model,
-                component_ui;
-
-            //component model mapping
-            component_model = this._modelMapping(component.model);
-            component_ui = this._uiMapping(id, component.ui);
+                comp_path = "components/" + path + "/" + name,
+                comp_model = component.model,
+                comp_ui = this._uiMapping(id, component.ui);
 
             //component options
             var config = _.extend(component, {
                 name: name,
-                model: component_model,
-                ui: component_ui
+                ui: comp_ui
             });
 
             // Loads the file we need
-            require([component_path], function(subcomponent) {
+            require([comp_path], function(subcomponent) {
                 //initialize subcomponent
-                var comp = new subcomponent(config, _this);
-                defer.resolve(comp);
+                var c = new subcomponent(config, _this);
+                //setup model later with expected models
+                c.model = _this._modelMapping(comp_model,
+                    c.model_expects,
+                    function() {
+                        defer.resolve(c);
+                    });
             });
 
             return defer;
@@ -285,12 +280,6 @@ define([
             return defer;
         },
 
-        //TODO: remove this method - It's just wrapping an already
-        //existing model method
-        setState: function(state) {
-            this.model.setState(state);
-        },
-
         /**
          * Interface for postRender
          */
@@ -357,6 +346,7 @@ define([
         /**
          * Reassigns all models (on overwrite
          */
+         //TODO: After changes in _modelMapping, this won't work. Fix it!
         reassignModel: function() {
             //only reassign if it's already initialized
             if (!this._ready) return;
@@ -375,13 +365,50 @@ define([
         /**
          * Maps the current model to the subcomponents
          * @param {String|Array} model_config Configuration of model
+         * @param {String|Array} model_expects Expected models
          * @returns {Object} the model
          */
-        //todo: make it more readable
-        _modelMapping: function(model_config) {
+        _modelMapping: function(model_config, model_expects, ready) {
 
-            var _this = this;
+            var _this = this,
+                values = {};
 
+            //If model_config is an array, we map it
+            if (_.isArray(model_config)) {
+
+                //map current submodels to new model
+                for (var i = 0, s = model_config.length; i < s; i++) {
+                    //get current model and rename if necessary
+                    var model_info = _mapOne(model_config[i]),
+                        new_name = model_expects[i] || model_info.name;
+                    values[new_name] = model_info.model;
+                }
+
+                //check for remaining expected models
+                var existing = model_config.length,
+                    expected = model_expects.length;
+                if (expected > existing) {
+                    //skip existing
+                    model_expects.splice(0, existing);
+                    //adds new expected models if needed
+                    for (var i = 0; i < expected; i++) {
+                        //force new empty model
+                        values[model_expects[i]] = {};
+                    }
+                }
+            }
+
+            //return a new model with the defined submodels
+            return new Model(values, this.intervals, {
+                //bind callback after model is ready
+                'ready': function() {
+                    if (_.isFunction(ready)) {
+                        ready();
+                    }
+                }
+            });
+
+            //map one model to current submodels
             function _mapOne(name) {
                 var parts = name.split("."),
                     current = _this.model,
@@ -390,54 +417,12 @@ define([
                     current_name = parts.shift();
                     current = current[current_name];
                 }
-                //normalize name (show_2 -> show)
-                current_name = current_name.split("_")[0];
                 return {
-                    name: current_name,
+                    name: name,
                     model: current
                 };
             }
-            if (_.isUndefined(model_config)) {
-                return;
-            }
-            if (_.isArray(model_config) && model_config.length > 1) {
-                var values = {};
-                for (var i = 0, size = model_config.length; i < size; i++) {
-                    var model_info = _mapOne(model_config[i]);
-                    values[model_info.name] = model_info.model;
-                }
-                return values;
-            } else if (_.isArray(model_config) && model_config.length == 1) {
-                return _mapOne(model_config[0]).model;
-            } else if (_.isString(model_config) && model_config.length > 0) {
-                return _mapOne(model_config).model;
-            } else {
-                return false;
-            }
 
-        },
-
-        /**
-         * Instantiates default models if there's none provided
-         * @param {String|Array} model_config Configuration of model
-         * @returns {Object} the model
-         */
-        _defaultModels: function(defaults) {
-            var _this = this,
-                config;
-            if (_.isPlainObject(defaults) || _.isArray(defaults)) {
-                config = {};
-                for (var i in defaults) {
-                    config[i] = this._defaultModels(defaults[i]);
-                }
-            } else {
-                config = new defaults({}, undefined, {
-                    'change': function() {
-                        _this.update();
-                    }
-                });
-            }
-            return config;
         },
 
         /**
@@ -450,14 +435,14 @@ define([
         _uiMapping: function(id, ui) {
 
             //if overwritting UI
-            if(ui) {
+            if (ui) {
                 return new Model(ui);
             }
 
-            if(id) {
+            if (id) {
                 id = id.replace(".", ""); //remove trailing period
                 var sub_ui = this.ui[id];
-                if(sub_ui) {
+                if (sub_ui) {
                     return sub_ui;
                 }
             }
