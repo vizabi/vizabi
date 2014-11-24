@@ -25,7 +25,7 @@ define([
             }, {
                 component: '_examples/bubble-chart',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.show", "data", "state.time"]
+                model: ["state.time", "state.entity", "state.marker", "data"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render

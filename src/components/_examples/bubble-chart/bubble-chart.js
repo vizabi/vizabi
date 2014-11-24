@@ -4,8 +4,6 @@ define([
     'base/component'
 ], function($, d3, Component) {
 
-    var DURATION_FAST = 100; //ms
-    
     function order(a, b) {
         return radius(b) - radius(a);
     }
@@ -13,8 +11,6 @@ define([
     function radius(d, indicator){
         return d.pop;
     }
-
-    
     
     var BubbleChart = Component.extend({
         init: function(context, options) {
@@ -64,15 +60,13 @@ define([
                 _this.model.data.getItems()[0].forEach(function(d){
                     d.name = d["geo.name"]; 
                     d.region = d["geo.region"] || "world";
-                    _this.model.state.getIndicators().forEach(function(ind) { d[ind] = +d[ind]; });
+                    _this.model.marker.getIndicators().forEach(function(ind) { d[ind] = +d[ind]; });
                 });
                 this.isDataPreprocessed = true;
             }
             
             this.data = this.model.data.getItems()[0];
-            this.indicator = this.model.state.getIndicators();
-            this.scale = this.model.show.scale;
-            this.units = this.model.show.unit || [1, 1, 1];
+            this.indicator = this.model.marker.getIndicators();
             this.time = parseInt(d3.time.format("%Y")(this.model.time.value),10);
             
             //TODO: #32 run only if data or show models changed
