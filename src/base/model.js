@@ -282,7 +282,7 @@ define([
             var values = [];
             if(this.use && this.use === use) {
                 //add if it has use and it's a string
-                var val = this[this.use]; //e.g. this.indicator
+                var val = this.value; //e.g. this.value = "lex"
                 if(val && _.isString(val)) values.push(val);
             }
             //repeat for each submodel
