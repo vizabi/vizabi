@@ -27,6 +27,11 @@ define([
             //each model has its own event handling
             this._events = new Events();
 
+            //will the model be hooked to data?
+            this._data_hook = null; // holds reference to dataset
+            this._entity_hook = null; // holds reference to dataset
+            this._time_hook = null; // holds reference to dataset
+
             //bind initial events
             for (var evt in bind) {
                 if (typeof bind[evt] === 'function') {
@@ -194,6 +199,10 @@ define([
                     defer.resolve();
                 }
             });
+
+            if (this._data[name].isHook()) {
+                this._hookSubmodel(name);
+            }
         },
 
         /**
