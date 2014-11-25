@@ -12,14 +12,16 @@ define([
         /**
          * Initializes the model.
          * @param {Object} values The initial values of this model
-         * @param intervals A parent intervals handler (from tool)
+         * @param {Object} parent reference to parent
          * @param {Object} bind Initial events to bind
          */
-        init: function(values, intervals, bind) {
+        init: function(values, parent, bind) {
+            
             this._id = _.uniqueId("m"); //model unique id
             this._data = {};
             this._ready = false;
             this._intervals = (this._intervals || intervals) || new Intervals();
+            this._parent = parent; //parent model
             //each model has its own event handling
             this._events = new Events();
 
@@ -164,7 +166,7 @@ define([
          */
         _instantiateSubmodel: function(name, values, model, defer) {
             var _this = this;
-            this._data[name] = new model(values, this._intervals, {
+            this._data[name] = new model(values, this, {
                 //todo: remove repetition
                 'change': function(evt, vals) {
                     evt = evt.replace('change', 'change:' + name);
