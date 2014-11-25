@@ -56,10 +56,9 @@ define([
          * Gets limits
          * @param {String} attr parameter
          * @param {Number} res result order
-         * @returns {Object} time limits
+         * @returns {Object} limits (min and max)
          */
         //FIX ME improve way limits are checked
-        //TODO: this only works for acceptable formats for new Date()
         getLimits: function(attr, res) {
             if (!attr) attr = 'time'; //fallback in case no attr is provided
             if (!res) res = 0; //fallback in case no order is provided
@@ -69,13 +68,35 @@ define([
                 },
                 filtered = _.map(this._items[res], function(d) {
                     //TODO: Move this up to readers ?
-                    return new Date(d[attr]);
+                    return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr]);
                 });
             if (filtered.length > 0) {
                 limits.min = _.min(filtered);
                 limits.max = _.max(filtered);
             }
             return limits;
+        },
+
+        /**
+         * Gets unique values in a column
+         * @param {String} attr parameter
+         * @param {Number} res result order
+         * @returns {Array} unique values
+         */
+        //FIX ME improve way limits are checked
+        getUnique: function(attr, res) {
+            if (!attr) attr = 'time'; //fallback in case no attr is provided
+            if (!res) res = 0; //fallback in case no order is provided
+            var limits = {
+                    min: 0,
+                    max: 0
+                },
+                filtered = _.map(this._items[res], function(d) {
+                    //TODO: Move this up to readers ?
+                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                });
+            
+            return _.unique(filtered);
         },
 
         /**

@@ -86,6 +86,10 @@ define([
                     }
 
                     return string;
+                })
+                .style("color", function(d) {
+                    var id = _.pick(d, ["geo", "time"]);
+                    return _this.model.rows.color.getValue(id);
                 });
         },
 

@@ -7,21 +7,69 @@
 
         <label>|</label>
 
-        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
-            <span>Size</span>
+        <button onclick="randomSize('placeholder')">RANDOM SIZE</button>
+
+        <label>|</label>
+
+        <div id="dropdown-color" class="wrapper-dropdown" tabindex="1">
+            <span>COLOR HOOK</span>
             <ul class="dropdown">
-                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
                 </li>
-                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
                 </li>
-                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
                 </li>
-                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                <li><a onclick="hook('color', 'indicator', 'lex', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'gdp_per_cap', ['#CCCCCC', '#62CCE3'])">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'pop', ['#CCCCCC', '#B4DE79'])">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('color', 'value', '#FFCC00', [])">Value: #FFCC00</a>
                 </li>
             </ul>
         </div>
 
-        <button onclick="randomSize('placeholder')">RANDOM</button>
+        <div id="dropdown-number" class="wrapper-dropdown" tabindex="1">
+            <span>NUMBER HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('number', 'property', 'geo.region')">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('number', 'value', '42')">Value: 42</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" class="wrapper-dropdown" tabindex="1">
+            <span>LABEL HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="placeholder" class="placeholder"></div>
@@ -37,7 +85,6 @@
     <p>External buttons:</p>
     <button id="play_button" onclick="play()">PLAY</button>
     <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
-    <button id="indicator_button" onclick="indicator('lex')">SET INDICATOR: LEX</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
@@ -61,15 +108,14 @@ $(function() {
                 end: "2014",
                 step: 1,
                 speed: 300,
-                value: "1995",
-                playing: false
+                value: "1995"
             },
             //entities we want to show
             entity: {
                 show: [{
                     dim: "geo",
                     filter: {
-                        "geo": ['swe', 'nor', 'usa'],
+                        "geo": ['swe', 'nor', 'usa', 'aus'],
                         "geo.category": ["country"]
                     }
                 }]
@@ -83,6 +129,12 @@ $(function() {
                 number: {
                     use: "indicator",
                     value: "pop"
+                },
+                color: {
+                    use: "property",
+                    value: "geo.region",
+                    //red, yellow, green, blue
+                    domain: ["#F77481", "#E1CE00", "#B4DE79", "#62CCE3"]
                 }
             }
         },
@@ -124,15 +176,6 @@ $(function() {
                 } else {
                     playButton.attr('onclick', 'play()');
                     playButton.text("PLAY");
-                }
-            },
-            'change:state:show': function(evt, vals) {
-                if (vals.state.show.indicator == 'lex') {
-                    indicatorButton.attr('onclick', 'indicator("pop")');
-                    indicatorButton.text("SET INDICATOR: POP");
-                } else {
-                    indicatorButton.attr('onclick', 'indicator("lex")');
-                    indicatorButton.text("SET INDICATOR: LEX");
                 }
             },
             'change:language': function(evt, vals) {
@@ -183,14 +226,17 @@ function language(lang) {
     myVizabi.setOptions(options);
 }
 
-function indicator(indicator) {
+function hook(hook, use, value, domain) {
     var options = {
-        state: {
-            show: {
-                indicator: indicator
-            }
-        }
+        state: { row: {} }
     };
+    options.state.row[hook] = {
+        use: use,
+        value: value
+    };
+
+    if(domain) options.state.row[hook].domain = domain;
+
     myVizabi.setOptions(options);
 }
 </script>
