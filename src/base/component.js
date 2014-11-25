@@ -96,7 +96,6 @@ define([
                     if (_this.element) {
                         _this.element.classed(class_loading, false);
                     }
-                    _this.update();
                     _this._ready = true; //everything is ready
                     _this.trigger('ready');
                     defer.resolve();

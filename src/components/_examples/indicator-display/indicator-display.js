@@ -8,7 +8,7 @@ define([
 
     var IndicatorDisplay = Component.extend({
 
-		/*
+        /*
          * INIT:
          * Executed once, before template loading
          */
@@ -38,14 +38,14 @@ define([
          * Ideally, it contains only operations related to data events
          */
         update: function() {
-            var indicator = this.model.show.indicator,
-                time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
-                rows = this.model.rows.getItems(),
+
+            var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
+                rows = this.model.rows.label.getValues(),
                 countriesCurr = [];
 
-            countriesCurr = _.filter(countries, function(d) {
-                    return (d.time == time);
-                });
+            countriesCurr = _.filter(rows, function(d) {
+                return (d.time == time);
+            });
 
 
             this.element.selectAll("p").remove();
@@ -65,25 +65,28 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var indicator = this.model.show.indicator;
+            var indicator = this.model.rows.number.value,
+                _this = this;
 
-            if (this.getLayoutProfile() === 'small' && indicator === 'pop') {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + Math.round(d[indicator] / 100000) / 10 + " M";
-                    });
-            } else if (indicator === 'pop') {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + Math.round(d[indicator]).toLocaleString();
-                    });
-            }
-            else  {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + d[indicator].toLocaleString();
-                    });
-            }
+            //todo: hooks can't be hacked like this
+            this.element.selectAll("p")
+                .text(function(d) {
+
+                    var id = _.pick(d, ["geo", "time"]),
+                        label = _this.model.rows.label.getValue(id),
+                        number = _this.model.rows.number.getValue(id),
+                        string = label + ": ";
+
+                    if (_this.getLayoutProfile() === 'small' && indicator === 'pop') {
+                        string += Math.round(number / 100000) / 10 + " M";
+                    } else if (indicator === 'pop') {
+                        string += Math.round(number).toLocaleString();
+                    } else {
+                        string += number.toLocaleString();
+                    }
+
+                    return string;
+                });
         },
 
 

@@ -451,6 +451,11 @@ define([
             return _.findWhere(this._data_hook.getItems(), filter)[this.value];
         },
 
+        //TODO: remove this method
+        getValues: function() {
+            return this._data_hook.getItems();
+        },
+
         /**
          * gets closest prefix model moving up the model tree
          * @param {String} prefix

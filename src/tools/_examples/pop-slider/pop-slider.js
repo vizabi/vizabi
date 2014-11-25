@@ -50,7 +50,7 @@ define([
 
             var dateMin = data.getLimits('time').min,
                 dateMax = data.getLimits('time').max;
-                
+
             if (state.time.start < dateMin) {
                 state.time.start = dateMin;
             }
@@ -63,19 +63,33 @@ define([
          * Returns the query (or queries) to be performed by this tool
          * @param model the tool model will be received
          */
+
+        //TODO: separate into queries
         getQuery: function(model) {
             var state = model.state,
                 time_start = d3.time.format("%Y")(state.time.start),
                 time_end = d3.time.format("%Y")(state.time.end);
-            return [{
-                "from": "data",
-                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator],
-                "where": {
-                    "geo": state.show.geo,
-                    "geo.category": state.show.geo_category,
-                    "time": [time_start + "-" + time_end]
-                }
-            }];
+
+            var dimensions = state.entity.getDimensions(),
+                indicators = state.getIndicators(),
+                properties = state.getProperties();
+
+            var queries = [];
+
+            for (var i = 0; i < dimensions.length; i++) {
+                var dim = dimensions[i],
+                    query = {
+                        "from": "data",
+                        "select": _.union([dim, "time"], indicators, properties),
+                        "where": _.extend({
+                            "time": [time_start + "-" + time_end]
+                        }, state.entity.show[i].filter)
+                    };
+
+                queries.push(query);
+            };
+
+            return queries;
         }
 
     });

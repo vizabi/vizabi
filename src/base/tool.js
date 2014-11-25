@@ -34,6 +34,8 @@ define([
                     if (_this._ready) {
                         _this.model.validate().done(function() {
                              _.defer(function() {
+                                //TODO: set hooks somewhere else
+                                _this.model.setHooks();
                                 _this.update();
                             });
                         });
