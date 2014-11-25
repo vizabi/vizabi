@@ -8,16 +8,16 @@ define([
         /**
          * Initializes the color hook
          * @param {Object} values The initial values of this model
-         * @param intervals A parent intervals handler (from tool)
+         * @param parent A reference to the parent model
          * @param {Object} bind Initial events to bind
          */
-        init: function(values, intervals, bind) {
+        init: function(values, parent, bind) {
 
             values = _.extend({
                 use: "value",
                 value: undefined
             }, values);
-            this._super(values, intervals, bind);
+            this._super(values, parent, bind);
         },
 
         validate: function() {
