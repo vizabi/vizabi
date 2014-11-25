@@ -24,7 +24,7 @@ define([
             }, {
                 component: '_examples/indicator-display',
                 placeholder: '.vzb-tool-display', //div to render
-                model: ["state.show", "data", "state.time"]
+                model: ["state.row", "state.time"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render

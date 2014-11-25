@@ -15,6 +15,10 @@ define([
         init: function(options, context) {
             this.name = "indicator-display";
             this.template = "components/_examples/indicator-display/indicator-display";
+
+            //define expected models for this component
+            this.model_expects = ["rows", "time"];
+
             this._super(options, context);
         },
 
@@ -36,34 +40,12 @@ define([
         update: function() {
             var indicator = this.model.show.indicator,
                 time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
-                countries = _.cloneDeep(this.model.data.getItems()),
-                decimals = utils.countDecimals(time),
+                rows = this.model.rows.getItems(),
                 countriesCurr = [];
 
-            if (decimals) {
-
-                var countriesCurr = _.filter(countries, function(d) {
-                    return (d.time == Math.floor(time));
-                });
-                var dataAfter = _.filter(countries, function(d) {
-                    return (d.time == Math.ceil(time));
-                });
-
-                for (var i = 0; i < countriesCurr.length; i++) {
-                    var d = countriesCurr[i],
-                        diff = (time - Math.floor(time)).toFixed(decimals);
-                    d.time = time;
-                    var valBefore = _.parseInt(d[indicator]),
-                        valAfter = _.parseInt(dataAfter[i][indicator]);
-                    d[indicator] = utils.interpolate(valBefore, valAfter, diff);
-                };
-
-
-            } else {
-                countriesCurr = _.filter(countries, function(d) {
+            countriesCurr = _.filter(countries, function(d) {
                     return (d.time == time);
                 });
-            }
 
 
             this.element.selectAll("p").remove();

@@ -54,12 +54,6 @@ $(function() {
     var options = {
         //state (how vizabi should work)
         state: {
-            //data related properties
-            show: {
-                geo: ["swe", "nor", "usa"],
-                geo_category: ["country"],
-                indicator: 'pop'
-            },
             //time properties
             time: {
                 unit: "year",
@@ -69,6 +63,27 @@ $(function() {
                 speed: 300,
                 value: "1995",
                 playing: false
+            },
+            //entities we want to show
+            entity: {
+                show: [{
+                    dim: "geo",
+                    filter: {
+                        "geo": ['swe', 'nor', 'usa'],
+                        "geo.category": ["country"]
+                    }
+                }]
+            },
+
+            row: {
+                label: {
+                    use: "property",
+                    value: "geo.name"
+                },
+                number: {
+                    use: "indicator",
+                    value: "pop"
+                }
             }
         },
 
