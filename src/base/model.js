@@ -368,6 +368,126 @@ define([
          */
         triggerAll: function(name, val) {
             this._events.triggerAll(name, val);
+        },
+
+        /* ===============================
+         * Hooking model to external data
+         * ===============================
+         */
+
+        /**
+         * Hooks this model to data, entity and time
+         * @param {Object} h Object containing the hooks
+         */
+        setHooks: function(h) {
+            //hooks must be an object
+            if (!_.isObject(h)) return;
+            //if it contains the right properties, add them.
+            if (_.isObject(h.data_hook)) this._data_hook = obj.data_hook;
+            if (_.isObject(h.entity_hook)) this._entity_hook = obj.entity_hook;
+            if (_.isObject(h.time_hook)) this._time_hook = obj.time_hook;
+        },
+
+        /**
+         * is this model hooked to data?
+         */
+        isHook: function() {
+            return (this.use) ? true : false;
+        },
+
+        /**
+         * gets all sub values for a certain use
+         * only hooks have a use.
+         * @param {String} use specific use to lookup
+         * @returns {Array} all unique values with specific use
+         */
+        getUseValues: function(use) {
+            var values = [];
+            if (this.use && this.use === use) {
+                //add if it has use and it's a string
+                var val = this.value; //e.g. this.value = "lex"
+                if (val && _.isString(val)) values.push(val);
+            }
+            //repeat for each submodel
+            var submodels = this.get();
+            for (var i in submodels) {
+                if (!submodels[i] || !submodels[i].getUseValues) continue;
+                values = _.union(values, submodels[i].getUseValues(use));
+            }
+            //now we have an array with all values in a use for hooks.
+            return values;
+        },
+
+        /**
+         * gets all sub values for indicators in this model
+         * @returns {Array} all unique values with specific use
+         */
+        getIndicators: function() {
+            return this.getUseValues("indicator");
+        },
+
+        /**
+         * gets all sub values for indicators in this model
+         * @returns {Array} all unique values with specific use
+         */
+        getProperties: function() {
+            return this.getUseValues("property");
+        },
+
+        /**
+         * gets the value specified by this hook
+         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * @returns hooked value
+         */
+        getValue: function(filter) {
+            if (!this.isHook()) {
+                console.warn("getValue method needs the model to be hooked to data.");
+                return;
+            }
+            if (this.use === "value") return this.value;
+            if (this.use === "time") return this._time_hook[this.value];
+            return _.findWhere(this._data_hook, filter)[this.value];
+        },
+
+        /**
+         * Hook submodel to closest data, entity and time
+         * @param {String} submodel Submodel name
+         */
+        _hookSubmodel: function(submodel) {
+            var hooks = {
+                data_hook: this._getClosestModelPrefix("data"),
+                entity_hook: this._getClosestModelPrefix("entity"),
+                time_hook: this._getClosestModelPrefix("time")
+            }
+            this._data[submodel].setHooks(hooks);
+        },
+
+        /**
+         * gets closest prefix model moving up the model tree
+         * @param {String} prefix
+         * @returns {Object} submodel
+         */
+        _getClosestModelPrefix: function(prefix) {
+            var model = this._findSubmodelPrefix(prefix);
+            if (model) return model;
+            else if (this._parent) {
+                return this._parent._getClosestModelPrefix(prefix);
+            }
+        },
+
+        //TODO: hacked way to figure out the type of submodel from naming convention
+        /**
+         * find submodel with name that starts with prefix
+         * @param {String} prefix
+         * @returns {Object} submodel or false if nothing is found
+         */
+        _findSubmodelPrefix: function(prefix) {
+            for (var i in this._data) {
+                //found submodel
+                if (i.indexOf(prefix) === 0 && isObject(this._data[i])) {
+                    return this._data[i];
+                }
+            }
         }
 
     });
