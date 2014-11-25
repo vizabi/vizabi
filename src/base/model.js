@@ -199,10 +199,6 @@ define([
                     defer.resolve();
                 }
             });
-
-            if (this._data[name].isHook()) {
-                this._hookSubmodel(name);
-            }
         },
 
         /**
@@ -364,16 +360,34 @@ define([
          */
 
         /**
+         * Hooks all hookable submodels to data
+         */
+        setHooks: function() {
+            if (this.isHook()) {
+                this.hookModel();
+            }
+            for (var i in this._data) {
+                var child = this._data[i];
+                if(child && child.setHooks) {
+                    child.setHooks();
+                }
+            }
+        },
+
+        /**
          * Hooks this model to data, entity and time
          * @param {Object} h Object containing the hooks
          */
-        setHooks: function(h) {
-            //hooks must be an object
-            if (!_.isObject(h)) return;
+        hookModel: function() {
+            var hooks = {
+                data_hook: this._getClosestModelPrefix("data"),
+                entity_hook: this._getClosestModelPrefix("entity"),
+                time_hook: this._getClosestModelPrefix("time")
+            }
             //if it contains the right properties, add them.
-            if (_.isObject(h.data_hook)) this._data_hook = obj.data_hook;
-            if (_.isObject(h.entity_hook)) this._entity_hook = obj.entity_hook;
-            if (_.isObject(h.time_hook)) this._time_hook = obj.time_hook;
+            if (hooks.data_hook) this._data_hook = hooks.data_hook;
+            if (hooks.entity_hook) this._entity_hook = hooks.entity_hook;
+            if (hooks.time_hook) this._time_hook = hooks.time_hook;
         },
 
         /**
@@ -434,20 +448,7 @@ define([
             }
             if (this.use === "value") return this.value;
             if (this.use === "time") return this._time_hook[this.value];
-            return _.findWhere(this._data_hook, filter)[this.value];
-        },
-
-        /**
-         * Hook submodel to closest data, entity and time
-         * @param {String} submodel Submodel name
-         */
-        _hookSubmodel: function(submodel) {
-            var hooks = {
-                data_hook: this._getClosestModelPrefix("data"),
-                entity_hook: this._getClosestModelPrefix("entity"),
-                time_hook: this._getClosestModelPrefix("time")
-            }
-            this._data[submodel].setHooks(hooks);
+            return _.findWhere(this._data_hook.getItems(), filter)[this.value];
         },
 
         /**
@@ -463,7 +464,8 @@ define([
             }
         },
 
-        //TODO: hacked way to figure out the type of submodel from naming convention
+        //TODO: hacked way to find the type of submodel from naming convention.
+        //Is there a better way to figure out the type while keeping it simple?
         /**
          * find submodel with name that starts with prefix
          * @param {String} prefix
@@ -472,7 +474,7 @@ define([
         _findSubmodelPrefix: function(prefix) {
             for (var i in this._data) {
                 //found submodel
-                if (i.indexOf(prefix) === 0 && isObject(this._data[i])) {
+                if (i.indexOf(prefix) === 0 && _.isObject(this._data[i])) {
                     return this._data[i];
                 }
             }
