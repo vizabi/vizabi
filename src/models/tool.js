@@ -34,7 +34,7 @@ define([
             }, values);
 
             //constructor is similar to model
-            this._super(values, this._intervals, binds);
+            this._super(values, null, binds);
 
             //load whenever show or language changes
             var _this = this;

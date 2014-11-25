@@ -18,10 +18,12 @@ define([
         init: function(values, parent, bind) {
             
             this._id = _.uniqueId("m"); //model unique id
-            this._data = {};
-            this._ready = false;
-            this._intervals = (this._intervals || intervals) || new Intervals();
+            this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
+            this._ready = false; //is this model ready?
+
+            //intervals should be the same from tool
+            this._intervals = this.getIntervals();
             //each model has its own event handling
             this._events = new Events();
 
@@ -275,42 +277,17 @@ define([
         },
 
         /**
-         * gets all sub values for a certain use
-         * only hooks have a use.
-         * @param {String} use specific use to lookup
-         * @returns {Array} all unique values with specific use
+         * gets intervals from this model or parent
+         * @returns {Object} Intervals object
          */
-        getUseValues: function(use) {
-            var values = [];
-            if(this.use && this.use === use) {
-                //add if it has use and it's a string
-                var val = this.value; //e.g. this.value = "lex"
-                if(val && _.isString(val)) values.push(val);
+        getIntervals: function() {
+            if (this.intervals) {
+                return this.intervals;
+            } else if (this._parent && this._parent.getIntervals) {
+                return this._parent.getIntervals();
+            } else {
+                return new Intervals();
             }
-            //repeat for each submodel
-            var submodels = this.get();
-            for (var i in submodels) {
-                if(!submodels[i] || !submodels[i].getUseValues) continue;
-                values = _.union(values, submodels[i].getUseValues(use));
-            }
-            //now we have an array with all values in a use for hooks.
-            return values;
-        },
-        
-        /**
-         * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
-         */
-        getIndicators: function() {
-            return this.getUseValues("indicator");
-        },
-
-        /**
-         * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
-         */
-        getProperties: function() {
-            return this.getUseValues("property");
         },
 
 
