@@ -34,7 +34,7 @@ define([
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'data', 'language'],
-                buttons: ['find', 'colors', 'size', 'more-options']
+                buttons: ['colors', 'size', 'more-options']
             }];
 
             this._super(config, options);
@@ -51,7 +51,7 @@ define([
             var data = model.data;
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!data.getItems() || data.getItems().length < 1) {
                 return;
             }
 
@@ -70,31 +70,31 @@ define([
          * Returns the query (or queries) to be performed by this tool
          * @param model the tool model will be received
          */
-         //TODO: remove specific references to "geo", "geo.category", ...
-         //TODO: improve generalization of querying
         getQuery: function(model) {
             var state = model.state,
                 time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end),
+                time_end = d3.time.format("%Y")(state.time.end);
+
+            var dimensions = state.entity.getDimensions(),
                 indicators = state.getIndicators(),
                 properties = state.getProperties();
-            return [{
-                "from": "data",
-                "select": _.union(["geo", "geo.name", "time", "geo.region"], indicators, properties),
-                "where": {
-                    //TODO: remove this hack for getting geo and geo.category
-                    "geo": state.entity.show[0].filter["geo"],
-                    "geo.category": state.entity.show[0].filter["geo.category"],
-                    "time": [time_start + "-" + time_end]
-                }
-            }, {
-                "from": "data",
-                "select": ["geo", "geo.name", "geo.region", "geo.category"],
-                "where": {
-                    "geo": ["*"],
-                    "geo.category": ["*"]
-                }
-            }];
+
+            var queries = [];
+
+            for (var i = 0; i < dimensions.length; i++) {
+                var dim = dimensions[i],
+                    query = {
+                        "from": "data",
+                        "select": _.union([dim, "time"], indicators, properties),
+                        "where": _.extend({
+                            "time": [time_start + "-" + time_end]
+                        }, state.entity.show[i].filter)
+                    };
+
+                queries.push(query);
+            };
+
+            return queries;
         }
     });
 

@@ -40,7 +40,7 @@ define([
         update: function() {
 
             var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
-                rows = this.model.rows.label.getValues(),
+                rows = this.model.rows.label.getItems(),
                 countriesCurr = [];
 
             countriesCurr = _.filter(rows, function(d) {

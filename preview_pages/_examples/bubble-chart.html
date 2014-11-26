@@ -7,42 +7,108 @@
 
         <label>|</label>
 
-        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
-            <span>Size</span>
-            <ul class="dropdown">
-                <li><a onclick="phoneSize('bubble-chart')">Mobile Portrait</a>
-                </li>
-                <li><a onclick="phoneSize('bubble-chart', 'landscape')">Mobile Landscape</a>
-                </li>
-                <li><a onclick="randomSize('bubble-chart')">Random Size</a>
-                </li>
-                <li><a onclick="fullSize('bubble-chart')">Full Screen</a>
-                </li>
-            </ul>
-        </div>
+        <button onclick="fullSize('bubble-chart')">FULL</button>
 
         <button onclick="randomSize('bubble-chart')">RANDOM</button>
 
         <label>|</label>
 
-        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
-            <span>OPTIONS</span>
+        <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown small" tabindex="1">
+            <span>Y</span>
             <ul class="dropdown">
-                <li><a onclick="manyCountries()">Many Countries</a>
+                <li><a onclick="hook('axis_y', 'property', 'geo.region')">Prop: geo.region</a>
                 </li>
-                <li><a onclick="setState()">WORLD - 2000 </a>
+                <li><a onclick="hook('axis_y', 'property', 'geo')">Prop: geo</a>
                 </li>
-                <li><a onclick="changeIndicator()">SWE, NOR, ZAF</a>
+                <li><a onclick="hook('axis_y', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'value', '42')">Value: 42</a>
                 </li>
             </ul>
         </div>
 
-        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
-            <span>Language</span>
+        <div id="dropdown-color" title="X Axis"  class="wrapper-dropdown small" tabindex="1">
+            <span>X</span>
             <ul class="dropdown">
-                <li><a onclick="setLanguage('en')">English</a>
+                <li><a onclick="hook('axis_x', 'property', 'geo.region')">Prop: geo.region</a>
                 </li>
-                <li><a onclick="setLanguage('pt')">Portuguese</a>
+                <li><a onclick="hook('axis_x', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('axis_x', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('axis_x', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('axis_x', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('axis_x', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('axis_x', 'value', '42')">Value: 42</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" title="Color of Bubbles"  class="wrapper-dropdown small" tabindex="1">
+            <span>COLOR</span>
+            <ul class="dropdown">
+               <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'lex', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'gdp_per_cap', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'pop', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('color', 'value', '#F77481', [])">Value: #F77481</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" title="Size of Bubbles"  class="wrapper-dropdown small" tabindex="1">
+            <span>SIZE</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('size', 'property', 'geo.region')">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('size', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('size', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('size', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('size', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('size', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('size', 'value', '0.5')">Value: 0.5</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" title="Label when hovering"  class="wrapper-dropdown small" tabindex="1">
+            <span>LABEL</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
                 </li>
             </ul>
         </div>
@@ -94,9 +160,13 @@ $(function() {
             marker: {
                 type: "geometry",
                 shape: "circle",
+                label: {
+                    use: "property",
+                    value: "geo.name"
+                },
                 axis_y: {
                     use: "indicator",
-                    value: "gdp",
+                    value: "gdp_per_cap",
                     scale: 'linear'
                 },
                 axis_x: {
@@ -105,20 +175,15 @@ $(function() {
                     scale: 'linear'
                 },
                 size: {
-                    value: 0.5 //between 0 and 1
+                    use: "indicator",
+                    value: "pop",
+                    scale: 'log'
                 },
-                fill: {
-                    color: {
-                        use: "indicator",
-                        value: "pop",
-                        domain: ["#FFFFFF", "#000000"],
-                        domain_type: "continuous" //or discrete
-                    }
-                },
-                stroke: {
-                    color: {
-                        value: "#000000"
-                    }
+                color: {
+                    use: "indicator",
+                    value: "gdp_per_cap",
+                    domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
+                    scale: "log"
                 }
             }
         },
@@ -134,14 +199,14 @@ $(function() {
             id: "en",
             strings: {
                 en: {
-                    "title": "Bar Chart Title",
+                    "title": "Bubble Chart Title",
                     "buttons/find": "Find",
                     "buttons/colors": "Colors",
                     "buttons/size": "Size",
                     "buttons/more_options": "Options"
                 },
                 pt: {
-                    "title": "Título do Bar Chart",
+                    "title": "Título do Bubble Chart",
                     "buttons/find": "Encontre",
                     "buttons/colors": "Cores",
                     "buttons/size": "Tamanho",
@@ -166,6 +231,23 @@ $(function() {
 
     showState(options.state);
 });
+
+function hook(hook, use, value, domain) {
+    var options = {
+        state: {
+            marker: {}
+        }
+    };
+    options.state.marker[hook] = {
+        use: use,
+        value: value
+    };
+
+    //for color only
+    if (domain) options.state.marker[hook].domain = domain;
+
+    myVizabi.setOptions(options);
+}
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->

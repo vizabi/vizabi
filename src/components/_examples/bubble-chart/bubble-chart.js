@@ -19,7 +19,7 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["time","entity","marker","data"];
+            this.model_expects = ["time","entity","marker", "data"];
 
             this._super(context, options);
 
@@ -58,19 +58,17 @@ define([
          * Updates the component as soon as the model/models change
          */
         update: function() {
-            //TODO: preprocessing should go somewhere else, when the data is loaded
             var _this = this;
+
+            //TODO: preprocessing should go somewhere else, when the data is loaded
             if(!this.isDataPreprocessed){                  
-                _this.model.data.getItems()[0].forEach(function(d){
-                    d.name = d["geo.name"]; 
-                    d.region = d["geo.region"] || "world";
-                    _this.model.marker.getIndicators().forEach(function(ind) { d[ind] = +d[ind]; });
+                _this.model.marker.label.getItems().forEach(function(d){
+                    d["geo.region"] = d["geo.region"] || "world";
                 });
                 this.isDataPreprocessed = true;
             }
             
-            this.data = this.model.data.getItems()[0];
-            this.indicator = this.model.marker.getIndicators();
+            this.data = this.model.marker.label.getItems();
             this.time = parseInt(d3.time.format("%Y")(this.model.time.value),10);
             
             //TODO: #32 run only if data or show models changed
@@ -87,42 +85,18 @@ define([
          * Ideally should only update when show parameters change or data changes
          */
         updateShow: function(){
-            var _this = this;
             
-            var minValue = this.indicator.map(function(ind) {
-                    return d3.min(_this.data, function(d) {
-                        return +d[ind];
-                    });
-                });
-            var maxValue = this.indicator.map(function(ind) {
-                    return d3.max(_this.data, function(d) {
-                        return +d[ind];
-                    });
-                });
-
-            //10% difference margin in min and max
-            var min = this.scale.map(function(scale, i) {
-                    return ((scale === "log") ? 1 : (minValue[i] - (maxValue[i] - minValue[i]) / 10));
-                });
-            var max = this.scale.map(function(scale, i) {
-                    return maxValue[i] + (maxValue[i] - minValue[i]) / 10;
-                });
-
             //scales
-            this.yScale = d3.scale[this.scale[0]]()
-                .domain([min[0], max[0]]);
-            
-            this.xScale = d3.scale[this.scale[1]]()
-                .domain([min[1], max[1]]);
-            
-            this.rScale = d3.scale[this.scale[2]]()
-                .domain([0, max[2]]);
+            this.yScale = this.model.marker.axis_y.getDomain();
+            this.xScale = this.model.marker.axis_x.getDomain();
+            this.rScale = this.model.marker.size.getDomain();
 
+            var _this = this;
             this.yAxis.tickFormat(function (d) {
-                return d / _this.units[0];
+                return _this.model.marker.axis_y.getTick(d);
             });
             this.xAxis.tickFormat(function (d) {
-                return d / _this.units[1];
+                return _this.model.marker.axis_x.getTick(d);
             });
             
             $.simpTooltip();
@@ -139,73 +113,48 @@ define([
             this.yearEl.text(this.time);
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
                 .data(this.data.filter(function(d){return (+d.time === _this.time);}));
-        },
-        
-        
-        /*
-         * REDRAW DATA POINTS:
-         * Here plotting happens
-         */     
-        redrawDataPoints: function() {
-            var _this = this;
-
-            //exit selection
-            this.bubbles.exit().remove();
-            
-            //enter selection -- init circles
-            this.bubbles.enter().append("circle")            
-                .attr("class", "vzb-bc-bubble")
-                .style("fill", function(d) {
-                    return _this.cScale(d.region);
-                })
-                .attr("data-tooltip", function(d) {
-                    return d.name;
-                });
-            
-            //update selection
-            var speed = this.model.time.speed;
-            this.bubbles.transition().duration(speed).ease("linear")            
-                .attr("cy", function(d) {
-                    return _this.yScale(d[_this.indicator[0]]);
-                })
-                .attr("cx", function(d) {
-                    return _this.xScale(d[_this.indicator[1]]);
-                })
-                .attr("r", function(d) {
-                    return _this.rScale(d[_this.indicator[2]] || 1);
-                });
-        },
-        
+        },        
 
         /*
          * RESIZE:
          * Executed whenever the container is resized
          */
         resize: function() {
-            var _this = this;
-            var margin;
-            var tick_spacing;
-            var maxRadius;
+
+            if(!this.isDataPreprocessed) return;
+
+            var _this = this,
+                margin,
+                tick_spacing,
+                maxRadius,
+                minRadius,
+                maxRadiusNormalized = this.model.marker.size.max,
+                minRadiusNormalized = this.model.marker.size.min,
+                padding;
 
             switch (this.getLayoutProfile()) {
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
-                    maxRadius = 60;
+                    maxRadius = 40,
+                    padding = 2;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
-                    maxRadius = 75;
+                    maxRadius = 80,
+                    padding = 4;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
-                    maxRadius = 100;
+                    maxRadius = 120,
+                    padding = 6;
                     break;
             }
 
-            maxRadius = maxRadius * (this.model.show.size/100 || 1)
+            minRadius = maxRadius * minRadiusNormalized;
+            maxRadius = maxRadius * maxRadiusNormalized;
 
             //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -224,9 +173,24 @@ define([
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
 
             //update scales to the new range
-            this.yScale.range([height, 0]).nice();
-            this.xScale.range([0, width]).nice();
-            this.rScale.range([1, maxRadius]);
+            if(this.model.marker.axis_y.scale !== "ordinal") {
+                this.yScale.range([height, 0]).nice();
+            }
+            else {
+                this.yScale.rangePoints([height, 0], padding).range();
+            }
+            if(this.model.marker.axis_x.scale !== "ordinal") {
+                this.xScale.range([0, width]).nice();
+            }
+            else {
+                this.xScale.rangePoints([0, width], padding).range();
+            }
+            if(this.model.marker.size.scale !== "ordinal") {
+                this.rScale.range([minRadius, maxRadius]);
+            }
+            else {
+                this.rScale.rangePoints([minRadius, maxRadius], 0).range();
+            }
 
             //apply scales to axes and redraw
             this.yAxis.scale(this.yScale)
@@ -245,6 +209,54 @@ define([
             this.xAxisEl.call(this.xAxis);
 
             this.redrawDataPoints();
+        },
+
+        /*
+         * REDRAW DATA POINTS:
+         * Here plotting happens
+         */     
+        redrawDataPoints: function() {
+            var _this = this;
+
+            //exit selection
+            this.bubbles.exit().remove();
+
+            //enter selection -- init circles
+            this.bubbles.enter().append("circle")            
+                .attr("class", "vzb-bc-bubble");
+            
+            //update selection
+            var speed = this.model.time.speed;
+            this.bubbles
+                .style("fill", function(d) {
+                    var id = getPointId(d);
+                    return _this.model.marker.color.getValue(id);
+                })
+                .attr("data-tooltip", function(d) {
+                    var id = getPointId(d);
+                    return _this.model.marker.label.getValue(id);
+                })
+                .transition().duration(speed).ease("linear")            
+                .attr("cy", function(d) {
+                    var id = getPointId(d),
+                        value = _this.model.marker.axis_y.getValue(id);
+                    return _this.yScale(value);
+                })
+                .attr("cx", function(d) {
+                    var id = getPointId(d),
+                        value = _this.model.marker.axis_x.getValue(id);
+                    return _this.xScale(value);
+                })
+                .attr("r", function(d) {
+                    var id = getPointId(d),
+                        value = _this.model.marker.size.getValue(id);
+                    return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
+                });
+
+            //todo: remove id funciton
+            function getPointId(point) {
+                return _.pick(point, ["geo", "time"]);
+            }
         }
 
     });

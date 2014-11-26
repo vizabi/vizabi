@@ -452,8 +452,38 @@ define([
         },
 
         //TODO: remove this method
-        getValues: function() {
-            return this._data_hook.getItems();
+        getItems: function() {
+
+            
+            if(!this.isHook()) return;
+            return (this._data_hook) ? this._data_hook.getItems() : [];
+        },
+
+        /**
+         * Gets the domain for this hook
+         * @returns {Array} domain
+         */
+        getDomain: function() {
+
+            if(!this.isHook()) return;
+
+            var domain,
+                scale = this.scale || "linear";
+            switch (this.use) {
+                case "indicator":
+                    var limits = this._data_hook.getLimits(this.value);
+                    domain = [limits.min, limits.max];
+                    break;
+                case "property":
+                    domain = this._data_hook.getUnique(this.value);
+                    break;
+                case "value":
+                default:
+                    domain = [this.value];
+                    break;
+            }
+
+            return d3.scale[scale]().domain(domain);
         },
 
         /**

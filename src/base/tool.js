@@ -33,9 +33,7 @@ define([
                 'change': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                             _.defer(function() {
-                                //TODO: set hooks somewhere else
-                                _this.model.setHooks();
+                            _.defer(function() {
                                 _this.update();
                             });
                         });
@@ -45,7 +43,7 @@ define([
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                             _this.update();
+                            _this.update();
                         });
                         _this.translateStrings();
                     }
@@ -66,6 +64,15 @@ define([
                     _this.ui = _this.model.ui;
                     //rendering
                     _this.render();
+
+                    _this.model.on("load_end", function() {
+                        _.defer(function() {
+                            //TODO: set hooks somewhere else
+                            _this.model.setHooks();
+                            _this.update();
+                        });
+                    });
+
                 }
             }, validate, query);
 
