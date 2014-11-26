@@ -7,11 +7,11 @@ define([
     function order(a, b) {
         return radius(b) - radius(a);
     }
-    
-    function radius(d, indicator){
+
+    function radius(d, indicator) {
         return d.pop;
     }
-    
+
     var BubbleChart = Component.extend({
         init: function(context, options) {
             var _this = this;
@@ -19,7 +19,7 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["time","entity","marker", "data"];
+            this.model_expects = ["time", "entity", "marker", "data"];
 
             this._super(context, options);
 
@@ -30,11 +30,11 @@ define([
 
             this.xAxis = d3.svg.axis();
             this.yAxis = d3.svg.axis();
-            
-            this.isDataPreprocessed = false;            
+
+            this.isDataPreprocessed = false;
         },
 
-        
+
         /**
          * POST RENDER
          * Executes right after the template is in place
@@ -61,59 +61,63 @@ define([
             var _this = this;
 
             //TODO: preprocessing should go somewhere else, when the data is loaded
-            if(!this.isDataPreprocessed){                  
-                _this.model.marker.label.getItems().forEach(function(d){
+            if (!this.isDataPreprocessed) {
+                _this.model.marker.label.getItems().forEach(function(d) {
                     d["geo.region"] = d["geo.region"] || "world";
                 });
                 this.isDataPreprocessed = true;
             }
-            
+
             this.data = this.model.marker.label.getItems();
-            this.time = parseInt(d3.time.format("%Y")(this.model.time.value),10);
-            
-            //TODO: #32 run only if data or show models changed
-            this.updateShow();
-            //TODO: #32 run only if data or time models changed
-            this.updateTime();
-            //TODO: #32 run only on resize or on init
-            this.resize();
+            this.time = parseInt(d3.time.format("%Y")(this.model.time.value), 10);
+
+            if (this.isDataPreprocessed) {
+                //TODO: #32 run only if data or show models changed
+                this.updateShow();
+                //TODO: #32 run only if data or time models changed
+                this.updateTime();
+                //TODO: #32 run only on resize or on init
+                this.resize();
+            }
         },
-        
-        
+
+
         /*
          * UPDATE SHOW:
          * Ideally should only update when show parameters change or data changes
          */
-        updateShow: function(){
-            
+        updateShow: function() {
+
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
             this.rScale = this.model.marker.size.getDomain();
 
             var _this = this;
-            this.yAxis.tickFormat(function (d) {
+            this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
             });
-            this.xAxis.tickFormat(function (d) {
+            this.xAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_x.getTick(d);
             });
-            
+
             $.simpTooltip();
         },
-        
-                
+
+
         /*
          * UPDATE TIME:
          * Ideally should only update when time or data changes
          */
-        updateTime: function(){
+        updateTime: function() {
             var _this = this;
 
             this.yearEl.text(this.time);
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data.filter(function(d){return (+d.time === _this.time);}));
-        },        
+                .data(this.data.filter(function(d) {
+                    return (+d.time === _this.time);
+                }));
+        },
 
         /*
          * RESIZE:
@@ -121,7 +125,7 @@ define([
          */
         resize: function() {
 
-            if(!this.isDataPreprocessed) return;
+            if (!this.isDataPreprocessed) return;
 
             var _this = this,
                 margin,
@@ -134,22 +138,37 @@ define([
 
             switch (this.getLayoutProfile()) {
                 case "small":
-                    margin = {top: 30, right: 20, left: 40, bottom: 40};
+                    margin = {
+                        top: 30,
+                        right: 20,
+                        left: 40,
+                        bottom: 40
+                    };
                     tick_spacing = 60;
-                    maxRadius = 40,
-                    padding = 2;
+                    maxRadius = 20,
+                        padding = 2;
                     break;
                 case "medium":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    margin = {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    };
                     tick_spacing = 80;
-                    maxRadius = 80,
-                    padding = 4;
+                    maxRadius = 40,
+                        padding = 4;
                     break;
                 case "large":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    margin = {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    };
                     tick_spacing = 100;
-                    maxRadius = 120,
-                    padding = 6;
+                    maxRadius = 60,
+                        padding = 6;
                     break;
             }
 
@@ -173,22 +192,19 @@ define([
                 .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
 
             //update scales to the new range
-            if(this.model.marker.axis_y.scale !== "ordinal") {
+            if (this.model.marker.axis_y.scale !== "ordinal") {
                 this.yScale.range([height, 0]).nice();
-            }
-            else {
+            } else {
                 this.yScale.rangePoints([height, 0], padding).range();
             }
-            if(this.model.marker.axis_x.scale !== "ordinal") {
+            if (this.model.marker.axis_x.scale !== "ordinal") {
                 this.xScale.range([0, width]).nice();
-            }
-            else {
+            } else {
                 this.xScale.rangePoints([0, width], padding).range();
             }
-            if(this.model.marker.size.scale !== "ordinal") {
+            if (this.model.marker.size.scale !== "ordinal") {
                 this.rScale.range([minRadius, maxRadius]);
-            }
-            else {
+            } else {
                 this.rScale.rangePoints([minRadius, maxRadius], 0).range();
             }
 
@@ -214,7 +230,7 @@ define([
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
-         */     
+         */
         redrawDataPoints: function() {
             var _this = this;
 
@@ -222,9 +238,9 @@ define([
             this.bubbles.exit().remove();
 
             //enter selection -- init circles
-            this.bubbles.enter().append("circle")            
+            this.bubbles.enter().append("circle")
                 .attr("class", "vzb-bc-bubble");
-            
+
             //update selection
             var speed = this.model.time.speed;
             this.bubbles
@@ -236,7 +252,7 @@ define([
                     var id = getPointId(d);
                     return _this.model.marker.label.getValue(id);
                 })
-                .transition().duration(speed).ease("linear")            
+                .transition().duration(speed).ease("linear")
                 .attr("cy", function(d) {
                     var id = getPointId(d),
                         value = _this.model.marker.axis_y.getValue(id);
@@ -261,8 +277,8 @@ define([
 
     });
 
-    
-    
+
+
 
     //tooltip plugin (hotfix)
     //TODO: remove this plugin from here

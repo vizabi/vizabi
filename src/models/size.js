@@ -27,10 +27,10 @@ define([
         validate: function(silent) {
 
             //there must be a min and a max
-            if (!this.min || this.min < 0) {
+            if (_.isUndefined(this.min) || this.min < 0) {
                 this.set("min", 0 , silent, true);
             }
-            if (!this.max || this.max > 1) {
+            if (_.isUndefined(this.max) || this.max > 1) {
                 this.set("max", 1, silent, true);
             }
 
