@@ -16,7 +16,7 @@ define([
          * @param {Object} bind Initial events to bind
          */
         init: function(values, parent, bind) {
-            
+
             this._id = _.uniqueId("m"); //model unique id
             this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
@@ -28,9 +28,7 @@ define([
             this._events = new Events();
 
             //will the model be hooked to data?
-            this._data_hook = null; // holds reference to dataset
-            this._entity_hook = null; // holds reference to dataset
-            this._time_hook = null; // holds reference to dataset
+            this._hooks = {};
 
             //bind initial events
             for (var evt in bind) {
@@ -364,11 +362,19 @@ define([
          */
         setHooks: function() {
             if (this.isHook()) {
+
+                //accepts hooking to anything, but defaults to data/entity/time
+                if (!_.isArray(this.hook_to) || _.rest(this.hook_to, _.isString).length) {
+                    this.hook_to = ["data", "entity", "time"]
+                }
+
                 this.hookModel();
             }
+
+            //hook submodels
             for (var i in this._data) {
                 var child = this._data[i];
-                if(child && child.setHooks) {
+                if (child && child.setHooks) {
                     child.setHooks();
                 }
             }
@@ -379,15 +385,15 @@ define([
          * @param {Object} h Object containing the hooks
          */
         hookModel: function() {
-            var hooks = {
-                data_hook: this._getClosestModelPrefix("data"),
-                entity_hook: this._getClosestModelPrefix("entity"),
-                time_hook: this._getClosestModelPrefix("time")
-            }
-            //if it contains the right properties, add them.
-            if (hooks.data_hook) this._data_hook = hooks.data_hook;
-            if (hooks.entity_hook) this._entity_hook = hooks.entity_hook;
-            if (hooks.time_hook) this._time_hook = hooks.time_hook;
+
+            //check what we want to hook
+            for (var i = 0; i < this.hook_to.length; i++) {
+                var prefix = this.hook_to[i];
+                //naming convention for hooks is similar from models
+                var name = prefix.split("_")[0];
+                //hook with the closest prefix to this model
+                this._hooks[name] = this._getClosestModelPrefix(prefix);
+            };
         },
 
         /**
@@ -395,6 +401,14 @@ define([
          */
         isHook: function() {
             return (this.use) ? true : false;
+        },
+
+        /**
+         * gets a certain hook reference
+         * @returns {Object} defined hook or undefined
+         */
+        getHook: function(hook) {
+            return this._hooks[hook];
         },
 
         /**
@@ -446,17 +460,39 @@ define([
                 console.warn("getValue method needs the model to be hooked to data.");
                 return;
             }
-            if (this.use === "value") return this.value;
-            if (this.use === "time") return this._time_hook[this.value];
-            return _.findWhere(this._data_hook.getItems(), filter)[this.value];
+
+            var value;
+            switch (this.use) {
+                case "value":
+                    value = this.value;
+                    break;
+                case "time":
+                    if (this.getHook("time")) {
+                        value = this.getHook("time")[this.value];
+                    }
+                    break;
+                case "entity":
+                    if (this.getHook("entity")) {
+                        value = this.getHook("entity")[this.value];
+                    }
+                    break;
+                default:
+                    if (this.getHook("data")) {
+                        value = _.findWhere(this.getHook("data").getItems(), filter)[this.value];
+                    }
+                    break;
+            }
+
+            return value;
         },
 
         //TODO: remove this method
         getItems: function() {
-
-            
-            if(!this.isHook()) return;
-            return (this._data_hook) ? this._data_hook.getItems() : [];
+            if (this.isHook() && this.getHook("data")) {
+                return this.getHook("data").getItems();
+            } else {
+                return [];
+            }
         },
 
         /**
@@ -465,17 +501,17 @@ define([
          */
         getDomain: function() {
 
-            if(!this.isHook()) return;
+            if (!this.isHook()) return;
 
             var domain,
                 scale = this.scale || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this._data_hook.getLimits(this.value);
+                    var limits = this.getHook("data").getLimits(this.value);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this._data_hook.getUnique(this.value);
+                    domain = this.getHook("data").getUnique(this.value);
                     break;
                 case "value":
                 default:

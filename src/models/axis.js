@@ -65,12 +65,12 @@ define([
 
             switch (this.use) {
                 case "indicator":
-                    var limits = this._data_hook.getLimits(this.value),
+                    var limits = this.getHook("data").getLimits(this.value),
                         margin = (limits.max - limits.min) / 10;
                     domain = [(limits.min - margin), (limits.max + margin)];
                     break;
                 case "property":
-                    domain = this._data_hook.getUnique(this.value);
+                    domain = this.getHook("data").getUnique(this.value);
                     break;
                 case "value":
                 default:
