@@ -452,46 +452,115 @@ define([
 
         /**
          * gets the value specified by this hook
-         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999"}
          * @returns hooked value
          */
+
         getValue: function(filter) {
-            if (!this.isHook()) {
-                console.warn("getValue method needs the model to be hooked to data.");
-                return;
-            }
 
-            var value;
-            switch (this.use) {
-                case "value":
-                    value = this.value;
-                    break;
-                case "time":
-                    if (this.getHook("time")) {
-                        value = this.getHook("time")[this.value];
-                    }
-                    break;
-                case "entity":
-                    if (this.getHook("entity")) {
-                        value = this.getHook("entity")[this.value];
-                    }
-                    break;
-                default:
-                    if (this.getHook("data")) {
-                        value = _.findWhere(this.getHook("data").getItems(), filter)[this.value];
-                    }
-                    break;
+            //get id from filter
+            //TODO: improve the way a row is identified
+            //(maybe like the commented code above)
+            var id_keys = [];
+            if (this.getHook("entity")) {
+                id_keys = this.getHook("entity").getDimensions();
             }
+            if (this.getHook("time")) {
+                id_keys.push("time");
+            }
+            //extract id from original filter
+            var id = _.pick(filter, id_keys);
 
+            return this.mapValue(this._getHookedValue(id));
+        },
+
+        /**
+         * maps the value to this hook's specifications
+         * @param value Original value
+         * @returns hooked value
+         */
+        mapValue: function(value) {
             return value;
         },
 
-        //TODO: remove this method
-        getItems: function() {
+        /**
+         * gets the items associated with this hook with values
+         * @param value Original value
+         * @returns hooked value
+         */
+        getItems: function(filter) {
             if (this.isHook() && this.getHook("data")) {
-                return this.getHook("data").getItems();
+
+                //get all items from data hook
+                var items = this.getHook("data").getItems(this._id),
+                    _this = this,
+                    values = _.map(items, function(row) {
+                        //if the value is present, map and rename
+                        if (!_.isUndefined(row[_this.value])) {
+                            row["value"] = _this.mapValue(row[_this.value]);
+                        }
+                        return _.omit(row, _this.value);
+                    });
+
+                //filter only necessary fields
+                if (filter) {
+                    values = _.map(values, function(r) {
+                        return _.pick(r, filter)
+                    });
+                }
+
+                return values;
             } else {
                 return [];
+            }
+        },
+
+        /**
+         * gets query that this model/hook needs to get data
+         * @returns {Array} query
+         */
+        getQuery: function() {
+            //only perform query in these two uses
+            var needs_query = ["property", "indicator"];
+            //if it's not a hook, property or indicator, no query is necessary
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1 || !this.getHook("entity")) {
+                return [];
+            }
+
+            //else, its a hook (indicator or property) and it needs to query
+            else {
+
+                var entity = this.getHook("entity"),
+                    time = this.getHook("time"),
+                    dimensions = entity.getDimensions(),
+                    filters = entity.getFilters(),
+                    //include time or not
+                    select = (time) ? [this.value, "time"] : [this.value],
+                    time_filter = {};
+
+                //if there's hooked time, include time in query filter
+                if (time) {
+                    //TODO: support any time format
+                    var time_start = d3.time.format("%Y")(time.start),
+                        time_end = d3.time.format("%Y")(time.end),
+                        time_filter = {
+                            "time": [time_start + "-" + time_end]
+                        };
+                }
+
+                //write queries in array
+                var queries = [];
+                for (var i = 0; i < dimensions.length; i++) {
+                    var dim = dimensions[i],
+                        query = {
+                            "from": "data",
+                            "select": _.union([dim], select),
+                            "where": _.extend(time_filter, filters[i])
+                        };
+
+                    queries.push(query);
+                };
+                return queries;
             }
         },
 
@@ -521,6 +590,44 @@ define([
 
             return d3.scale[scale]().domain(domain);
         },
+
+        /**
+         * gets the value of the hook point
+         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * @returns hooked value
+         */
+        _getHookedValue: function(filter) {
+
+            if (!this.isHook()) {
+                console.warn("_getHookedValue method needs the model to be hooked to data.");
+                return;
+            }
+
+            var value;
+            switch (this.use) {
+                case "value":
+                    value = this.value;
+                    break;
+                case "time":
+                    if (this.getHook("time")) {
+                        value = this.getHook("time")[this.value];
+                    }
+                    break;
+                case "entity":
+                    if (this.getHook("entity")) {
+                        value = this.getHook("entity")[this.value];
+                    }
+                    break;
+                default:
+                    if (this.getHook("data")) {
+                        value = _.findWhere(this.getHook("data").getItems(this._id), filter)[this.value];
+                    }
+                    break;
+            }
+
+            return value;
+        },
+
 
         /**
          * gets closest prefix model moving up the model tree

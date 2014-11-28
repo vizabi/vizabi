@@ -35,12 +35,11 @@ define([
         },
 
         /**
-         * Gets value for this hook
+         * Maps value for this hook
+         * @param value Original value
          * @returns {String} color
          */
-        getValue: function(filters) {
-
-            var value = this._super(filters);
+        mapValue: function(value) {
 
             var color;
             switch (this.use) {
