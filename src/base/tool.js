@@ -93,9 +93,7 @@ define([
          */
         _bindEvents: function() {
             if (!this.model.bind) return;
-            for (var i in this.model.bind.get()) {
-                this.on(i, this.model.bind.get(i));
-            }
+            this.on(this.model.bind.get());
         },
 
         /**

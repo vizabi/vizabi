@@ -31,11 +31,8 @@ define([
             this._hooks = {};
 
             //bind initial events
-            for (var evt in bind) {
-                if (typeof bind[evt] === 'function') {
-                    this.on(evt, bind[evt]);
-                }
-            }
+            this.on(bind);
+
             //initial values
             if (values) {
                 this.set(values);

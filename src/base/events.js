@@ -39,6 +39,14 @@ define([
                 return;
             }
 
+            //multiple at a time with plain object format
+            if (_.isPlainObject(name)) {
+                for(var i in name) {
+                    this.bind(i, name[i]);
+                }
+                return;
+            }
+
             if (!_.isArray(this._events[name])) {
                 this._events[name] = [];
             }
