@@ -20,19 +20,26 @@ define([
          * @param {String} reader Which reader to use. E.g.: "local-json"
          * @param {String} path Where data is located
          */
-        load: function(query, language, reader, path) {
+        load: function(query, language, reader, path, evts) {
 
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
                 cached = this.isCached(query, language, reader, path),
+                loaded = false,
                 promise;
 
             //if result is cached, dont load anything
             if (cached) {
                 promise = true;
             } else {
+
+                if(evts && _.isFunction(evts["load_start"])) {
+                    evts["load_start"]();
+                }
+
                 promise = this.loadFromReader(query, language, reader, path).then(function(queryId) {
+                    loaded = true;
                     cached = queryId;
                 });
             }
@@ -40,6 +47,11 @@ define([
             $.when.apply(null, promises).then(
                 // Great success! :D
                 function() {
+                    //not loading anymore
+                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                        evts["load_end"]();
+                    }
+                    //pass the data forward
                     defer.resolve(_this.get(cached));
                 },
                 // Unfortunate error

@@ -205,7 +205,7 @@ define([
                     evt = evt.replace('load_error', 'load_error:' + name);
                     _this.triggerAll(evt, vals);
                 },
-                //loading has eneded in this submodel (multiple times)
+                //loading has ended in this submodel (multiple times)
                 'load_end': function(evt, vals) {
                     //trigger only for submodel
                     evt = evt.replace('load_end', 'load_end:' + name);
@@ -213,7 +213,7 @@ define([
 
                     //if all are ready, trigger for this model
                     if (_.every(submodels, function(sm) {
-                            return sm._ready;
+                            return !sm._loading;
                         })) {
                         _this.trigger('load_end', vals);
                     }
@@ -346,10 +346,6 @@ define([
                 defer = $.Deferred(),
                 query = this.getQuery();
 
-            //start loading
-            this._loading = true;
-            _this.trigger("load_start");
-
             //load hook
             if (this.isHook() && data_hook && query.length) {
 
@@ -359,7 +355,18 @@ define([
                     path = data_hook.path,
                     lang = "en"; //TODO: hook to language
 
-                this._dataManager.load(query, lang, reader, path)
+                var evts = {
+                    'load_start': function() {
+                        _this._loading = true;
+                        _this.trigger("load_start");
+                    },
+                    'load_end': function() {
+                        _this._loading = false;
+                        _this.trigger("load_end");
+                    }
+                }
+
+                this._dataManager.load(query, lang, reader, path, evts)
                     .done(function(data) {
                         if (data === 'error') {
                             _this.trigger("load_error", query);
@@ -385,9 +392,10 @@ define([
 
             $.when.apply(null, promises).then(function() {
                 if(_this.validate) _this.validate();
+                _this._ready = true;
                 _this._loading = false;
-                _this.trigger("load_end");
                 defer.resolve();
+                _this.trigger("ready");
             });
 
             return defer;
