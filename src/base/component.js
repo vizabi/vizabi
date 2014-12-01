@@ -536,7 +536,7 @@ define([
          */
         on: function(name, func) {
 
-            if (this._debugEvents) {
+            if (this._debugEvents && this._debugEvents !== "trigger") {
                 if (_.isPlainObject(name)) {
                     for (var i in name) {
                         console.log("Component > bind:", i, this);
@@ -560,7 +560,7 @@ define([
          */
         trigger: function(name, val) {
 
-            if (this._debugEvents) {
+            if (this._debugEvents && this._debugEvents !== "bind") {
                 if (_.isArray(name)) {
                     for (var i in name) {
                         console.log("Component > triggered:", name[i], this);
@@ -580,7 +580,7 @@ define([
          */
         triggerAll: function(name, val) {
 
-            if (this._debugEvents) {
+            if (this._debugEvents && this._debugEvents !== "bind") {
                 if (_.isArray(name)) {
                     for (var i in name) {
                         console.log("Component > triggered all:", name[i], this);

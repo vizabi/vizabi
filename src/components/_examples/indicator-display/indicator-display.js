@@ -16,8 +16,6 @@ define([
             this.name = "indicator-display";
             this.template = "components/_examples/indicator-display/indicator-display";
 
-            this._debugEvents = true;
-
             //define expected models for this component
             this.model_expects = ["rows", "time"];
 
