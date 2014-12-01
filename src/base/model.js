@@ -21,6 +21,7 @@ define([
             this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
             this._ready = false; //is this model ready?
+            this._debugEvents = this._debugEvents || false;
 
             //intervals should be the same from tool
             this._intervals = this.getIntervals();
@@ -328,7 +329,20 @@ define([
          * @param {Function} func function to be executed
          */
         on: function(name, func) {
-            this._events.bind(name, func);
+            if(this._debugEvents) {
+                if(_.isPlainObject(name)) {
+                    for(var i in name) {
+                        console.log("Model > bind:", i, this);
+                    }
+                } else if(_.isArray(name)) {
+                    for(var i in name) {
+                        console.log("Model > bind:", name[i], this);
+                    }
+                } else {
+                    console.log("Model > bind:", name, this);
+                }
+            }
+            this._events.on(name, func);
         },
 
         /**
@@ -337,6 +351,15 @@ define([
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
+            if(this._debugEvents) {
+                if(_.isArray(name)) {
+                    for(var i in name) {
+                        console.log("Model > triggered:", name[i], this);
+                    }
+                } else {
+                    console.log("Model > triggered:", name, this);
+                }
+            }
             this._events.trigger(name, val);
         },
 

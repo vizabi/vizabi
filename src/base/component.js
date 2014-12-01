@@ -22,6 +22,7 @@ define([
             this._id = this._id || _.uniqueId("c");
             this._rendered = false;
             this._ready = false;
+            this._debugEvents = this._debugEvents || false;
 
             //default values,
             //in case there's none
@@ -530,6 +531,21 @@ define([
          * @param {Function} func function to be executed
          */
         on: function(name, func) {
+
+            if(this._debugEvents) {
+                if(_.isPlainObject(name)) {
+                    for(var i in name) {
+                        console.log("Component > bind:", i, this);
+                    }
+                } else if(_.isArray(name)) {
+                    for(var i in name) {
+                        console.log("Component > bind:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > bind:", name, this);
+                }
+            }
+
             this._events.bind(name, func);
         },
 
@@ -539,6 +555,17 @@ define([
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
+
+            if(this._debugEvents) {
+                if(_.isArray(name)) {
+                    for(var i in name) {
+                        console.log("Component > triggered:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > triggered:", name, this);
+                }
+            }
+
             this._events.trigger(name, val);
         },
 
@@ -548,6 +575,17 @@ define([
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
+
+            if(this._debugEvents) {
+                if(_.isArray(name)) {
+                    for(var i in name) {
+                        console.log("Component > triggered all:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > triggered all:", name, this);
+                }
+            }
+
             this._events.triggerAll(name, val);
         }
 
