@@ -4,8 +4,9 @@ define([
     'base/utils',
     'base/class',
     'base/intervals',
-    'base/events'
-], function($, _, utils, Class, Intervals, Events) {
+    'base/events',
+    'base/data',
+], function($, _, utils, Class, Intervals, Events, DataManager) {
 
     var model = Class.extend({
 
@@ -31,6 +32,8 @@ define([
 
             //will the model be hooked to data?
             this._hooks = {};
+            this._loading = false; //is this loading any data?
+            this._items = []; //holds hook items for this hook
 
             //bind initial events
             this.on(bind);
@@ -209,9 +212,9 @@ define([
                     _this.trigger(evt, vals);
 
                     //if all are ready, trigger for this model
-                    if(_.every(submodels, function(sm) {
-                        return sm._ready;
-                    })) {
+                    if (_.every(submodels, function(sm) {
+                            return sm._ready;
+                        })) {
                         _this.trigger('load_end', vals);
                     }
                 },
@@ -222,9 +225,9 @@ define([
                     _this.trigger(evt, vals);
 
                     //if all are ready, trigger for this model
-                    if(_.every(submodels, function(sm) {
-                        return sm._ready;
-                    })) {
+                    if (_.every(submodels, function(sm) {
+                            return sm._ready;
+                        })) {
                         _this.trigger('ready', vals);
                     }
                 }
@@ -332,11 +335,62 @@ define([
          */
 
         /**
-         * Loads data.
-         * Interface for the load function implemented by a model
+         * Hooks loads data, models ask children to load data
          */
         load: function() {
-            return true; // by default it just returns true
+            //we dont need to load if it's a hook
+            var _this = this,
+                promises = [],
+                submodels = this.get(),
+                data_hook = this.getHook("data"),
+                defer = $.Deferred(),
+                query = this.getQuery();
+
+            //start loading
+            this._loading = true;
+            _this.trigger("load_start");
+
+            //load hook
+            if (this.isHook() && data_hook && query.length) {
+
+                //get reader omfp
+                var promise = $.Deferred(),
+                    reader = data_hook.reader,
+                    path = data_hook.path,
+                    lang = "en"; //TODO: hook to language
+
+                this._dataManager.load(query, lang, reader, path)
+                    .done(function(data) {
+                        if (data === 'error') {
+                            _this.trigger("load_error", query);
+                            promise.resolve();
+                        } else {
+                            _this._items = _.flatten(data);
+                            _this.trigger("change");
+                            promise.resolve();
+                        }
+                    });
+
+                promises.push(promise)
+
+            }
+
+            //load submodels as well
+            for (var i in submodels) {
+                var submodel = submodels[i];
+                if (submodel.load) {
+                    promises.push(submodel.load());
+                }
+            };
+
+            $.when.apply(null, promises).then(function() {
+                if(_this.validate) _this.validate();
+                _this._loading = false;
+                _this.trigger("load_end");
+                defer.resolve();
+            });
+
+            return defer;
         },
 
         /* ==========================
@@ -363,13 +417,13 @@ define([
          * @param {Function} func function to be executed
          */
         on: function(name, func) {
-            if(this._debugEvents) {
-                if(_.isPlainObject(name)) {
-                    for(var i in name) {
+            if (this._debugEvents && this._debugEvents !== "trigger") {
+                if (_.isPlainObject(name)) {
+                    for (var i in name) {
                         console.log("Model > bind:", i, this);
                     }
-                } else if(_.isArray(name)) {
-                    for(var i in name) {
+                } else if (_.isArray(name)) {
+                    for (var i in name) {
                         console.log("Model > bind:", name[i], this);
                     }
                 } else {
@@ -385,9 +439,9 @@ define([
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
-            if(this._debugEvents) {
-                if(_.isArray(name)) {
-                    for(var i in name) {
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                if (_.isArray(name)) {
+                    for (var i in name) {
                         console.log("Model > triggered:", name[i], this);
                     }
                 } else {
@@ -439,6 +493,8 @@ define([
          * @param {Object} h Object containing the hooks
          */
         hookModel: function() {
+
+            this._dataManager = new DataManager();
 
             //check what we want to hook
             for (var i = 0; i < this.hook_to.length; i++) {
@@ -546,9 +602,8 @@ define([
             if (this.isHook() && this.getHook("data")) {
 
                 //get all items from data hook
-                var items = this.getHook("data").getItems(this._id),
-                    _this = this,
-                    values = _.map(items, function(row) {
+                var _this = this,
+                    values = _.map(this._items, function(row) {
                         //if the value is present, map and rename
                         if (!_.isUndefined(row[_this.value])) {
                             row["value"] = _this.mapValue(row[_this.value]);
@@ -630,11 +685,11 @@ define([
                 scale = this.scale || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getHook("data").getLimits(this.value);
+                    var limits = this.getHook("data").getLimits(this._id, this.value);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this.getHook("data").getUnique(this.value);
+                    domain = this.getHook("data").getUnique(this._id, this.value);
                     break;
                 case "value":
                 default:
@@ -643,6 +698,54 @@ define([
             }
 
             return d3.scale[scale]().domain(domain);
+        },
+
+        /**
+         * Gets limits
+         * @param {String} attr parameter
+         * @returns {Object} limits (min and max)
+         */
+        //TODO: improve way limits are checked
+        getLimits: function(attr) {
+
+            if (!this.isHook()) return;
+
+            if (!attr) attr = 'time'; //fallback in case no attr is provided
+            var limits = {
+                    min: 0,
+                    max: 0
+                },
+                filtered = _.map(this._items, function(d) {
+                    //TODO: Move this up to readers ?
+                    return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr]);
+                });
+            if (filtered.length > 0) {
+                limits.min = _.min(filtered);
+                limits.max = _.max(filtered);
+            }
+            return limits;
+        },
+
+        /**
+         * Gets unique values in a column
+         * @param {String} attr parameter
+         * @returns {Array} unique values
+         */
+        getUnique: function(attr) {
+
+            if (!this.isHook()) return;
+
+            if (!attr) attr = 'time'; //fallback in case no attr is provided
+            var limits = {
+                    min: 0,
+                    max: 0
+                },
+                filtered = _.map(this._items, function(d) {
+                    //TODO: Move this up to readers ?
+                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                });
+
+            return _.unique(filtered);
         },
 
         /**
@@ -674,7 +777,7 @@ define([
                     break;
                 default:
                     if (this.getHook("data")) {
-                        value = _.findWhere(this.getHook("data").getItems(this._id), filter)[this.value];
+                        value = _.findWhere(this._items, filter)[this.value];
                     }
                     break;
             }

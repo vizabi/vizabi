@@ -63,7 +63,7 @@ define([
          */
         _getColorLinear: function(value) {
 
-            var limits = this.getHook("data").getLimits(this.value),
+            var limits = this.getLimits(this.value),
                 min = parseFloat(limits.min),
                 max = parseFloat(limits.max),
                 step = ((max-min) / (this.domain.length - 1));
@@ -88,7 +88,7 @@ define([
          */
         _getColorOrdinal: function(value) {
 
-            var possible = this.getHook("data").getUnique(this.value);
+            var possible = this.getUnique(this.value);
 
             var s = d3.scale.ordinal()
                 .domain(possible)
