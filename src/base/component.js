@@ -45,6 +45,11 @@ define([
             this.model_expects = this.model_expects || [];
 
             this.ui = this.ui || config.ui;
+
+            var _this = this;
+            this.on('dom_ready', function() {
+                _this.execute(_this.postRender);
+            });
         },
 
         /**
@@ -80,10 +85,6 @@ define([
                 .then(function() {
                     return _this.loadComponents();
                 })
-                //execute post render
-                .then(function() {
-                    return _this.execute(_this.postRender);
-                })
                 // After loading components, render them
                 .then(function() {
                     //TODO: Chance of refactoring
@@ -97,7 +98,7 @@ define([
                         _this.element.classed(class_loading, false);
                     }
                     _this._ready = true; //everything is ready
-                    _this.trigger('ready');
+                    _this.trigger('dom_ready');
                     defer.resolve();
                 });
 
@@ -266,7 +267,7 @@ define([
                             console.warn("Component element not found (root HTML node in the component's markup). Verify that " + this.template + "contains valid HTML/template.");
                         }
                     } catch (err) {
-                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
+                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + _this.template);
                     }
 
                     defer.resolve();
@@ -399,8 +400,8 @@ define([
 
             //return a new model with the defined submodels
             return new Model(values, this.intervals, {
-                //bind callback after model is ready
-                'ready': function() {
+                //bind callback after model is all set
+                'set': function() {
                     if (_.isFunction(ready)) {
                         ready();
                     }
@@ -438,7 +439,7 @@ define([
                 return new Model(ui);
             }
 
-            if (id) {
+            if (id && this.ui) {
                 id = id.replace(".", ""); //remove trailing period
                 var sub_ui = this.ui[id];
                 if (sub_ui) {
