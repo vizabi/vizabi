@@ -28,7 +28,7 @@ define([
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 object
          */
-        postRender: function() {
+        domReady: function() {
             var value = this.model.size.max;
             indicator = this.element.select('#vzb-bs-indicator');
             slider = this.element.selectAll('#vzb-bs-slider');
@@ -42,11 +42,11 @@ define([
         },
 
         /**
-         * Executes everytime there's an update event.
+         * Executes everytime there's a data event.
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        update: function() {
+        dataReady: function() {
             indicator.text(this.model.size.max);
         },
 

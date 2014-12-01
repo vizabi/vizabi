@@ -47,7 +47,7 @@ define([
                     if (_this._ready) {
                         _this.model.validate().done(function() {
                             _.defer(function() {
-                                _this.update();
+                                _this.dataReady();
                             });
                         });
                     }
@@ -56,7 +56,7 @@ define([
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                            _this.update();
+                            _this.dataReady();
                         });
                         _this.translateStrings();
                     }
@@ -68,25 +68,17 @@ define([
                     _this.errorLoading();
                 },
                 'load_end': function(evt, vals) {
-                    _this.afterLoading();
                     console.log("Load End");
                 },
                 'ready': function() {
                     console.log("Ready");
-                    _this.update();
+                    _this.afterLoading();
+                    _this.dataReady();
                 }
             }, validate, query);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
-        },
-
-        /**
-         * Loads the model as a postRender function
-         * @returns defer a promise to be resolved when model is loaded
-         */
-        postRender: function() {
-            //return this.model.load();
         },
 
         /**

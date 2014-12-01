@@ -50,7 +50,7 @@ define([
             var _this = this;
             this.on({
                 'dom_ready': function() {
-                    _this.execute(_this.postRender);
+                    _this.domReady();
                 },
                 'resize': function() {
                     _this.resize();
@@ -74,9 +74,7 @@ define([
 
             // After the template is loaded, its loading data
             promise.then(function() {
-                    //this template is ready
-                    _this.trigger('dom_ready');
-                    
+
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
@@ -85,7 +83,7 @@ define([
                             _this.trigger('resize');
                         });
                     }
-                    
+
                     // add css loading class to hide elements
                     if (_this.element.node()) {
                         _this.element.classed(class_loading, true);
@@ -103,42 +101,18 @@ define([
                 })
                 // After rendering the components, resolve the defer
                 .done(function() {
-                    //not loading anytmore, remove class
-                    if (_this.element) {
-                        _this.element.classed(class_loading, false);
-                    }
                     _this._ready = true; //everything is ready
+                    //this template is ready
+                    _this.trigger('dom_ready');
                     defer.resolve();
+
+                    //not loading anymore, remove class one frame later
+                    if (_this.element) {
+                        _.defer(function() {
+                            _this.element.classed(class_loading, false);
+                        });
+                    }
                 });
-
-            return defer;
-        },
-
-        /**
-         * Execute function with promise support
-         * @param {Function} function any function
-         * @returns defer a promise to be resolved when function is resolved
-         */
-        //todo: check if this is actually necessary here
-        execute: function(func) {
-            var defer = $.Deferred(),
-                possiblePromise;
-
-            // only try to execute if it is a function
-            if (_.isFunction(func)) {
-                possiblePromise = func.apply(this);
-            };
-
-            // if a promise is returned, solve it when its done
-            if (possiblePromise && _.isFunction(possiblePromise.then)) {
-                possiblePromise.done(function() {
-                    defer.resolve();
-                });
-            }
-            // if no promise is returned, resolve right away
-            else {
-                return true;
-            }
 
             return defer;
         },
@@ -195,7 +169,7 @@ define([
                 name = name_token[name_token.length - 1],
                 id = component.placeholder,
                 comp_path = "components/" + path + "/" + name,
-                comp_model = component.model,
+                comp_model = component.model || [],
                 comp_ui = this._uiMapping(id, component.ui);
 
             //component options
@@ -290,22 +264,23 @@ define([
         },
 
         /**
-         * Interface for postRender
+         * Interface for domReady
+         * To be called whenever the template is finally ready
          */
-        postRender: function() {},
+        domReady: function() {},
 
         /**
-         * Update calls update for all sub-components
+         * dataReady calls dataReady for all sub-components
          */
-        update: function() {
+        dataReady: function() {
             if (this._blockUpdate) return;
             var _this = this;
-            this._update = this._update || _.throttle(function() {
+            this._dataReady = this._update || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.update();
+                    component.dataReady();
                 });
             }, this._frameRate);
-            this._update();
+            this._dataReady();
         },
 
         /**
@@ -510,7 +485,7 @@ define([
         /**
          * Translate all strings in the template
          */
-        //todo: improve translation of strings
+        //TODO: improve translation of strings
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.selectAll('[data-vzb-translate]');

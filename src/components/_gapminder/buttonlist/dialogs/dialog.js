@@ -18,7 +18,7 @@ define([
             this._super(config, parent);
         },
 
-        postRender: function() {
+        domReady: function() {
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
 
             var _this = this;

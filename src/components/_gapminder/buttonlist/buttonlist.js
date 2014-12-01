@@ -94,7 +94,7 @@ define([
          * POSTRENDER:
          * Executed once after loading
          */
-        postRender: function() {
+        domReady: function() {
             var _this = this,
                 buttons = d3.selectAll(".vzb-buttonlist-btn");
 

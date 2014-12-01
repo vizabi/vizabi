@@ -36,10 +36,9 @@ define([
 
 
         /**
-         * POST RENDER
          * Executes right after the template is in place
          */
-        postRender: function() {
+        domReady: function() {
 
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
@@ -54,10 +53,9 @@ define([
 
 
         /*
-         * UPDATE:
          * Updates the component as soon as the model/models change
          */
-        update: function() {
+        dataReady: function() {
             var _this = this;
 
             //TODO: preprocessing should go somewhere else, when the data is loaded

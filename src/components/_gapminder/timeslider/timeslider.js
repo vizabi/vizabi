@@ -87,7 +87,7 @@ define([
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 objects
          */
-        postRender: function() {
+        domReady: function() {
             var _this = this;
 
             //html elements
@@ -138,11 +138,11 @@ define([
         },
 
         /**
-         * Executes everytime there's an update event.
+         * Executes everytime there's a data event.
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        update: function() {
+        dataReady: function() {
 
             if (this._blockUpdate) return;
 

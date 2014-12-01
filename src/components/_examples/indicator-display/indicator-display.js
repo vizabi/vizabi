@@ -23,21 +23,21 @@ define([
         },
 
         /*
-         * POSTRENDER:
+         * domReady:
          * Executed after template is loaded
          * Ideally, it contains instantiations related to template
          */
-        postRender: function() {
+        domReady: function() {
 
         },
 
 
         /*
-         * UPDATE:
+         * dataReady:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        update: function() {
+        dataReady: function() {
 
             var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
                 rows = this.model.rows.label.getItems(),
