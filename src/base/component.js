@@ -48,8 +48,13 @@ define([
             this.ui = this.ui || config.ui;
 
             var _this = this;
-            this.on('dom_ready', function() {
-                _this.execute(_this.postRender);
+            this.on({
+                'dom_ready': function() {
+                    _this.execute(_this.postRender);
+                },
+                'resize': function() {
+                    _this.resize();
+                }
             });
         },
 
@@ -66,12 +71,14 @@ define([
 
             // After the template is loaded, its loading data
             promise.then(function() {
+                    //this template is ready
+                    _this.trigger('dom_ready');
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
                         _this.layout.resize();
                         _this.layout.on('resize', function() {
-                            _this.resize();
+                            _this.trigger('resize');
                         });
                     }
                     // add css loading class to hide elements
@@ -88,8 +95,6 @@ define([
                 })
                 // After loading components, render them
                 .then(function() {
-                    //TODO: Chance of refactoring
-                    //Every widget binds its resize function to the resize event
                     return _this.renderComponents();
                 })
                 // After rendering the components, resolve the defer
@@ -99,7 +104,6 @@ define([
                         _this.element.classed(class_loading, false);
                     }
                     _this._ready = true; //everything is ready
-                    _this.trigger('dom_ready');
                     defer.resolve();
                 });
 
@@ -308,7 +312,7 @@ define([
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.resize();
+                    component.trigger('resize');
                 });
             }, this._frameRate);
             this._resize();
@@ -347,7 +351,7 @@ define([
         /**
          * Reassigns all models (on overwrite
          */
-         //TODO: After changes in _modelMapping, this won't work. Fix it!
+        //TODO: After changes in _modelMapping, this won't work. Fix it!
         reassignModel: function() {
             //only reassign if it's already initialized
             if (!this._ready) return;
@@ -532,13 +536,13 @@ define([
          */
         on: function(name, func) {
 
-            if(this._debugEvents) {
-                if(_.isPlainObject(name)) {
-                    for(var i in name) {
+            if (this._debugEvents) {
+                if (_.isPlainObject(name)) {
+                    for (var i in name) {
                         console.log("Component > bind:", i, this);
                     }
-                } else if(_.isArray(name)) {
-                    for(var i in name) {
+                } else if (_.isArray(name)) {
+                    for (var i in name) {
                         console.log("Component > bind:", name[i], this);
                     }
                 } else {
@@ -556,9 +560,9 @@ define([
          */
         trigger: function(name, val) {
 
-            if(this._debugEvents) {
-                if(_.isArray(name)) {
-                    for(var i in name) {
+            if (this._debugEvents) {
+                if (_.isArray(name)) {
+                    for (var i in name) {
                         console.log("Component > triggered:", name[i], this);
                     }
                 } else {
@@ -576,9 +580,9 @@ define([
          */
         triggerAll: function(name, val) {
 
-            if(this._debugEvents) {
-                if(_.isArray(name)) {
-                    for(var i in name) {
+            if (this._debugEvents) {
+                if (_.isArray(name)) {
+                    for (var i in name) {
                         console.log("Component > triggered all:", name[i], this);
                     }
                 } else {
