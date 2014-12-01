@@ -63,6 +63,9 @@ define([
          * @returns defer a promise to be resolved when component is rendered
          */
         render: function(posTemplate) {
+
+            if(this._ready) return; //a component only renders once
+
             var defer = $.Deferred();
             var _this = this;
 
@@ -73,6 +76,7 @@ define([
             promise.then(function() {
                     //this template is ready
                     _this.trigger('dom_ready');
+                    
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
@@ -81,13 +85,13 @@ define([
                             _this.trigger('resize');
                         });
                     }
+                    
                     // add css loading class to hide elements
                     if (_this.element.node()) {
                         _this.element.classed(class_loading, true);
                     }
 
                     _this._rendered = true; //template is in place
-
                 })
                 // After load components
                 .then(function() {
