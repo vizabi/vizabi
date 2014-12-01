@@ -30,6 +30,19 @@ define([
             //build tool model
             var _this = this;
             this.model = new ToolModel(options, {
+                'set': function() {
+                    //binding external events
+                    _this._bindEvents();
+                    //this ui is the model
+                    _this.ui = _this.model.ui;
+                    //rendering
+                    _this.render();
+                    //set hooks after all submodels are set
+                    _this.model.setHooks();
+                    //load after we have all hooks in place
+                    _this.model.load();
+
+                },
                 'change': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
@@ -48,16 +61,6 @@ define([
                         _this.translateStrings();
                     }
                 },
-                'set': function() {
-                    //binding external events
-                    _this._bindEvents();
-                    //this ui is the model
-                    _this.ui = _this.model.ui;
-                    //rendering
-                    _this.render();
-                    //set hooks after all submodels are set
-                    _this.model.setHooks();
-                },
                 'load_start': function() {
                     _this.beforeLoading();
                 },
@@ -67,7 +70,6 @@ define([
                 'load_end': function(evt, vals) {
                     _this.afterLoading();
                     console.log("Load End");
-                    console.log(evt, vals);
                 },
                 'ready': function() {
                     console.log("Ready");
@@ -84,7 +86,7 @@ define([
          * @returns defer a promise to be resolved when model is loaded
          */
         postRender: function() {
-            return this.model.load();
+            //return this.model.load();
         },
 
         /**
