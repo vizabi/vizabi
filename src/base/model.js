@@ -693,11 +693,11 @@ define([
                 scale = this.scale || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getHook("data").getLimits(this._id, this.value);
+                    var limits = this.getLimits(this._id, this.value);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this.getHook("data").getUnique(this._id, this.value);
+                    domain = this.getUnique(this._id, this.value);
                     break;
                 case "value":
                 default:

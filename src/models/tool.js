@@ -36,13 +36,7 @@ define([
 
             //load whenever show or language changes
             var _this = this;
-
-            //TODO: entity is not enough anymore, we need to check for missing
-            this.on(["change:state:entity", "change:language"], function() {
-                _this.load().done(function() {
-                    _this.trigger("reloaded");
-                });
-            });
+            
         },
 
         /* ==========================

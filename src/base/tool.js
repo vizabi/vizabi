@@ -36,12 +36,14 @@ define([
                     //this ui is the model
                     _this.ui = _this.model.ui;
                     //rendering
-                    _this.render();
-                    //set hooks after all submodels are set
-                    _this.model.setHooks();
-                    //load after we have all hooks in place
-                    _this.model.load();
-
+                    var promise = _this.render();
+                    //after rendering, we can set up hooks and load
+                    $.when.apply(null, [promise]).then(function() {
+                        //set hooks after all submodels are set
+                        _this.model.setHooks();
+                        //load after we have all hooks in place
+                        _this.model.load();
+                    });
                 },
                 'change': function(evt, val) {
                     if (_this._ready) {
