@@ -20,6 +20,7 @@ define([
             this._id = _.uniqueId("m"); //model unique id
             this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
+            this._set = false; //is this model set?
             this._ready = false; //is this model ready?
             this._debugEvents = this._debugEvents || false;
 
@@ -97,14 +98,15 @@ define([
                     this._data[a] = vals;
                     promise = true;
                     //different events whether it's first time or not
-                    var evt_name = (this._ready) ? "change" : "init";
+                    var evt_name = (this._set) ? "change" : "init";
                     events.push(evt_name + ":" + a);
                 }
                 promises.push(promise);
             }
 
             //not ready at this point
-            this.ready = false;
+            this._ready = false;
+            this._set = false;
 
             //after all is done
             var _this = this;
@@ -118,9 +120,9 @@ define([
                     _this.validate(silent);
                 }
                 //trigger change if not silent
-                if (!_this._ready) {
-                    _this._ready = true;
-                    events.push("ready");
+                if (!_this._set) {
+                    _this._set = true;
+                    events.push("set");
                 }
                 if (!silent) {
                     _.defer(function() {
@@ -168,31 +170,63 @@ define([
          * @param defer defer to be resolved when model is ready
          */
         _instantiateSubmodel: function(name, values, model, defer) {
-            var _this = this;
+
+            var _this = this,
+                submodels = _.filter(this._data, function(attr) {
+                    return !_.isUndefined(attr._id);
+                });
+
             this._data[name] = new model(values, this, {
-                //todo: remove repetition
-                'change': function(evt, vals) {
-                    evt = evt.replace('change', 'change:' + name);
-                    _this.triggerAll(evt, _this.getObject());
+                //the submodel has been set (only once)
+                'set': function(evt, vals) {
+                    //solve the defer after it's been set
+                    defer.resolve();
                 },
+                //the submodel has initialized (only once)
                 'init': function(evt, vals) {
                     evt = evt.replace('init', 'init:' + name);
                     _this.triggerAll(evt, _this.getObject());
                 },
+                //the submodel has changed (multiple times)
+                'change': function(evt, vals) {
+                    evt = evt.replace('change', 'change:' + name);
+                    _this.triggerAll(evt, _this.getObject());
+                },
+                //loading has started in this submodel (multiple times)
                 'load_start': function(evt, vals) {
                     evt = evt.replace('load_start', 'load_start:' + name);
                     _this.triggerAll(evt, vals);
                 },
-                'load_end': function(evt, vals) {
-                    evt = evt.replace('load_end', 'load_end:' + name);
-                    _this.triggerAll(evt, vals);
-                },
+                //loading has failed in this submodel (multiple times)
                 'load_error': function(evt, vals) {
                     evt = evt.replace('load_error', 'load_error:' + name);
                     _this.triggerAll(evt, vals);
                 },
-                'ready': function() {
-                    defer.resolve();
+                //loading has eneded in this submodel (multiple times)
+                'load_end': function(evt, vals) {
+                    //trigger only for submodel
+                    evt = evt.replace('load_end', 'load_end:' + name);
+                    _this.trigger(evt, vals);
+
+                    //if all are ready, trigger for this model
+                    if(_.every(submodels, function(sm) {
+                        return sm._ready;
+                    })) {
+                        _this.trigger('load_end', vals);
+                    }
+                },
+                //the submodel is ready
+                'ready': function(evt, vals) {
+                    //trigger only for submodel
+                    evt = evt.replace('ready', 'ready:' + name);
+                    _this.trigger(evt, vals);
+
+                    //if all are ready, trigger for this model
+                    if(_.every(submodels, function(sm) {
+                        return sm._ready;
+                    })) {
+                        _this.trigger('ready', vals);
+                    }
                 }
             });
         },

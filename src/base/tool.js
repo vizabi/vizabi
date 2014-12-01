@@ -48,31 +48,30 @@ define([
                         _this.translateStrings();
                     }
                 },
-                'load_start': function() {
-                    _this.beforeLoading();
-                },
-                'load_end': function() {
-                    _this.afterLoading();
-                },
-                'load_error': function() {
-                    _this.errorLoading();
-                },
-                'ready': function() {
+                'set': function() {
                     //binding external events
                     _this._bindEvents();
                     //this ui is the model
                     _this.ui = _this.model.ui;
                     //rendering
                     _this.render();
-
-                    _this.model.on("load_end", function() {
-                        _.defer(function() {
-                            //TODO: set hooks somewhere else
-                            _this.model.setHooks();
-                            _this.update();
-                        });
-                    });
-
+                    //set hooks after all submodels are set
+                    _this.model.setHooks();
+                },
+                'load_start': function() {
+                    _this.beforeLoading();
+                },
+                'load_error': function() {
+                    _this.errorLoading();
+                },
+                'load_end': function(evt, vals) {
+                    _this.afterLoading();
+                    console.log("Load End");
+                    console.log(evt, vals);
+                },
+                'ready': function() {
+                    console.log("Ready");
+                    _this.update();
                 }
             }, validate, query);
 
