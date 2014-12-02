@@ -64,7 +64,7 @@ define([
          */
         render: function(posTemplate) {
 
-            if(this._ready) return; //a component only renders once
+            if (this._ready) return; //a component only renders once
 
             var defer = $.Deferred();
             var _this = this;
@@ -106,12 +106,12 @@ define([
                     _this.trigger('dom_ready');
                     defer.resolve();
 
-                    //not loading anymore, remove class one frame later
-                    if (_this.element) {
-                        _.defer(function() {
+                    //TODO: delay is a hotfix to visually avoid flickering
+                    _.delay(function() {
+                        if (_this.element) {
                             _this.element.classed(class_loading, false);
-                        });
-                    }
+                        }
+                    }, 100);
                 });
 
             return defer;

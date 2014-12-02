@@ -70,10 +70,8 @@ define([
                     _this.errorLoading();
                 },
                 'load_end': function(evt, vals) {
-                    console.log("Load End");
                 },
                 'ready': function() {
-                    console.log("Ready");
                     _this.afterLoading();
                     _this.dataReady();
                 }
@@ -105,11 +103,6 @@ define([
                 this.model.set(options, silent);
             }
         },
-
-        /* ==========================
-         * Loading methods
-         * ==========================
-         */
 
         /**
          * Displays loading class

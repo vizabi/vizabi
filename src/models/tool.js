@@ -33,9 +33,6 @@ define([
 
             //constructor is similar to model
             this._super(values, null, binds);
-
-            //load whenever show or language changes
-            var _this = this;
             
         },
 
