@@ -30,7 +30,7 @@ define([
             //build tool model
             var _this = this;
             this.model = new ToolModel(options, {
-                'set': function() {
+                'set': function(evt, val) {
                     //binding external events
                     _this._bindEvents();
                     //this ui is the model
@@ -42,7 +42,11 @@ define([
                         //set hooks after all submodels are set
                         _this.model.setHooks();
                         //load after we have all hooks in place
-                        _this.model.load();
+                        _this.model.load().done(function() {
+                            _this.model.validate().done(function() {
+                                _this.triggerAll(evt, val);
+                            });
+                        });
                     });
                 },
                 'change': function(evt, val) {
@@ -67,8 +71,7 @@ define([
                 'load_error': function() {
                     _this.errorLoading();
                 },
-                'load_end': function(evt, vals) {
-                },
+                'load_end': function(evt, vals) {},
                 'ready': function() {
                     _this.afterLoading();
                     if (_this._ready) {

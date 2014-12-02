@@ -51,6 +51,13 @@ define([
             this.on({
                 'dom_ready': function() {
                     _this.domReady();
+
+                    //TODO: hotfix for non-data viz
+                    _.defer(function() {
+                        if (_this.model._ready) {
+                            _this.modelReady();
+                        } 
+                    });
                 },
                 'resize': function() {
                     _this.resize();
