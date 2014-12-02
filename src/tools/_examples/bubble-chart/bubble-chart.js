@@ -47,54 +47,23 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var state = model.state;
-            var data = model.data;
+            var time = model.state.time,
+                markers = model.state.marker.label;
 
             //don't validate anything if data hasn't been loaded
-            if (!data.getItems() || data.getItems().length < 1) {
+            if (!markers.getItems() || markers.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = data.getLimits('time').min,
-                dateMax = data.getLimits('time').max;
+            var dateMin = markers.getLimits('time').min,
+                dateMax = markers.getLimits('time').max;
 
-            if (state.time.start < dateMin) {
-                state.time.start = dateMin;
+            if (time.start < dateMin) {
+                time.start = dateMin;
             }
-            if (state.time.end > dateMax) {
-                state.time.end = dateMax;
+            if (time.end > dateMax) {
+                time.end = dateMax;
             }
-        },
-
-        /**
-         * Returns the query (or queries) to be performed by this tool
-         * @param model the tool model will be received
-         */
-        getQuery: function(model) {
-            var state = model.state,
-                time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end);
-
-            var dimensions = state.entities.getDimensions(),
-                indicators = state.getIndicators(),
-                properties = state.getProperties();
-
-            var queries = [];
-
-            for (var i = 0; i < dimensions.length; i++) {
-                var dim = dimensions[i],
-                    query = {
-                        "from": "data",
-                        "select": _.union([dim, "time"], indicators, properties),
-                        "where": _.extend({
-                            "time": [time_start + "-" + time_end]
-                        }, state.entities.show[i].filter)
-                    };
-
-                queries.push(query);
-            };
-
-            return queries;
         }
     });
 

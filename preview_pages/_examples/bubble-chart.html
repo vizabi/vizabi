@@ -3,17 +3,9 @@
 <div class="container">
     <div class="buttons">
 
-        <!-- @@include('../assets/_menu.tpl') -->
+        <button disabled>CHANGE HOOKS:</button>
 
-        <label>|</label>
-
-        <button onclick="fullSize('bubble-chart')">FULL</button>
-
-        <button onclick="randomSize('bubble-chart')">RANDOM</button>
-
-        <label>|</label>
-
-        <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown small" tabindex="1">
+        <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
             <span>Y</span>
             <ul class="dropdown">
                 <li><a onclick="hook('axis_y', 'property', 'geo.region')">Prop: geo.region</a>
@@ -33,7 +25,7 @@
             </ul>
         </div>
 
-        <div id="dropdown-color" title="X Axis" class="wrapper-dropdown small" tabindex="1">
+        <div id="dropdown-color" title="X Axis" class="wrapper-dropdown" tabindex="1">
             <span>X</span>
             <ul class="dropdown">
                 <li><a onclick="hook('axis_x', 'property', 'geo.region')">Prop: geo.region</a>
@@ -53,7 +45,7 @@
             </ul>
         </div>
 
-        <div id="dropdown-label" title="Color of Bubbles" class="wrapper-dropdown small" tabindex="1">
+        <div id="dropdown-label" title="Color of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>COLOR</span>
             <ul class="dropdown">
                 <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
@@ -73,7 +65,7 @@
             </ul>
         </div>
 
-        <div id="dropdown-label" title="Size of Bubbles" class="wrapper-dropdown small" tabindex="1">
+        <div id="dropdown-label" title="Size of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>SIZE</span>
             <ul class="dropdown">
                 <li><a onclick="hook('size', 'property', 'geo.region')">Prop: geo.region</a>
@@ -93,7 +85,7 @@
             </ul>
         </div>
 
-        <div id="dropdown-label" title="Label when hovering" class="wrapper-dropdown small" tabindex="1">
+        <div id="dropdown-label" title="Label when hovering" class="wrapper-dropdown" tabindex="1">
             <span>LABEL</span>
             <ul class="dropdown">
                 <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
@@ -114,7 +106,7 @@
         </div>
     </div>
 
-    <div id="bubble-chart" class="placeholder"></div>
+    <div id="bubble-chart" class="placeholder fullscreen"></div>
 
 </div>
 <div class="aux">
@@ -123,14 +115,19 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
-    <p>Current Query:</p>
-    <pre id="query" class="json_box"></pre>
+    <p>Change Language:</p>
+    <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
+    <p>Play Bubbles</p>
+    <button id="play_button" onclick="play()">PLAY</button>
 </div>
 </body>
 <script>
 var myVizabi;
 
 $(function() {
+
+    var playButton = $("#play_button");
+    var languageButton = $("#language_button");
 
     var options = {
         //state
@@ -167,13 +164,14 @@ $(function() {
                 },
                 axis_y: {
                     use: "indicator",
-                    value: "gdp_per_cap",
+                    value: "lex",
                     scale: 'linear'
                 },
                 axis_x: {
                     use: "indicator",
-                    value: "lex",
-                    scale: 'linear'
+                    value: "gdp_per_cap",
+                    scale: 'linear',
+                    unit: 100
                 },
                 size: {
                     use: "indicator",
@@ -182,8 +180,8 @@ $(function() {
                 },
                 color: {
                     use: "indicator",
-                    value: "gdp_per_cap",
-                    domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
+                    value: "lex",
+                    domain: ['#F77481', '#E1CE00', '#B4DE79'],
                     scale: "log"
                 }
             }
@@ -223,6 +221,24 @@ $(function() {
             },
             'change:state': function(evt, vals) {
                 showState(vals.state);
+            },
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
+                    playButton.attr('onclick', 'pause()');
+                    playButton.text("PAUSE");
+                } else {
+                    playButton.attr('onclick', 'play()');
+                    playButton.text("PLAY");
+                }
+            },
+            'change:language': function(evt, vals) {
+                if (vals.language.id === "en") {
+                    languageButton.attr('onclick', "language('pt')");
+                    languageButton.text("SET LANGUAGE: PT");
+                } else {
+                    languageButton.attr('onclick', "language('en')");
+                    languageButton.text("SET LANGUAGE: EN");
+                }
             }
         }
     };
@@ -232,6 +248,37 @@ $(function() {
 
     showState(options.state);
 });
+
+function play() {
+    var options = {
+        state: {
+            time: {
+                playing: true
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function pause() {
+    var options = {
+        state: {
+            time: {
+                playing: false
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function language(lang) {
+    var options = {
+        language: {
+            id: lang
+        }
+    };
+    myVizabi.setOptions(options);
+}
 
 function hook(hook, use, value, domain) {
     var options = {

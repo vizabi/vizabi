@@ -132,7 +132,7 @@ define([
                 minRadius,
                 maxRadiusNormalized = this.model.marker.size.max,
                 minRadiusNormalized = this.model.marker.size.min,
-                padding;
+                padding = 2;
 
             switch (this.getLayoutProfile()) {
                 case "small":
@@ -143,8 +143,7 @@ define([
                         bottom: 40
                     };
                     tick_spacing = 60;
-                    maxRadius = 20,
-                        padding = 2;
+                    maxRadius = 20;
                     break;
                 case "medium":
                     margin = {
@@ -154,8 +153,7 @@ define([
                         bottom: 40
                     };
                     tick_spacing = 80;
-                    maxRadius = 40,
-                        padding = 4;
+                    maxRadius = 40;
                     break;
                 case "large":
                     margin = {
@@ -165,8 +163,7 @@ define([
                         bottom: 40
                     };
                     tick_spacing = 100;
-                    maxRadius = 60,
-                        padding = 6;
+                    maxRadius = 60;
                     break;
             }
 
@@ -184,6 +181,7 @@ define([
             //center year 
             var widthAxisY = this.yAxisEl[0][0].getBBox().width;
             var heightAxisX = this.xAxisEl[0][0].getBBox().height;
+            
             this.yearEl
                 .attr("x", "50%")
                 .attr("y", "50%")
@@ -264,7 +262,8 @@ define([
                 .attr("r", function(d) {
                     var id = getPointId(d),
                         value = _this.model.marker.size.getValue(id);
-                    return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
+                    var val = _this.rScale(value);
+                    return Math.sqrt(val / Math.PI) * 10;
                 });
 
             //todo: remove id funciton
