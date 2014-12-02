@@ -352,6 +352,7 @@ define([
                 promises = [],
                 submodels = this.get(),
                 data_hook = this.getHook("data"),
+                language_hook = this.getHook("language"),
                 defer = $.Deferred(),
                 query = this.getQuery();
 
@@ -361,7 +362,12 @@ define([
                 //get reader omfp
                 var promise = $.Deferred(),
                     reader = data_hook.getObject(),
-                    lang = "en"; //TODO: hook to language
+                    lang = "en";
+
+                //get current language
+                if(language_hook) {
+                    lang = language_hook.id || "en";
+                }
 
                 var evts = {
                     'load_start': function() {
@@ -506,7 +512,7 @@ define([
 
                 //accepts hooking to anything, but defaults to data/entities/time
                 if (!_.isArray(this.hook_to) || _.rest(this.hook_to, _.isString).length) {
-                    this.hook_to = ["data", "entities", "time"]
+                    this.hook_to = ["data", "entities", "time", "language"]
                 }
 
                 this.hookModel();

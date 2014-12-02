@@ -57,12 +57,14 @@ define([
                         });
                     }
                 },
-                'reloaded': function(evt, val) {
+                'translate': function(evt, val) {
                     if (_this._ready) {
-                        _this.model.validate().done(function() {
-                            _this.modelReady();
+                        _this.model.load().done(function() {
+                            _this.model.validate().done(function() {
+                                _this.modelReady();
+                            });
+                            _this.translateStrings();
                         });
-                        _this.translateStrings();
                     }
                 },
                 'load_start': function() {

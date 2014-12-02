@@ -33,6 +33,14 @@ define([
 
             //constructor is similar to model
             this._super(values, null, binds);
+
+            // change language
+            if(values.language) {
+                var _this = this;
+                this.on("change:language", function() {
+                    _this.trigger("translate");
+                });
+            }
             
         },
 
