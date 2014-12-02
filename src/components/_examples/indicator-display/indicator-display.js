@@ -28,16 +28,24 @@ define([
          * Ideally, it contains instantiations related to template
          */
         domReady: function() {
-
+            // this.model.time.on("set", function(evt) {
+            //     console.log("set!!!", evt);
+            // })
+            // this.model.rows.on("change", function(evt) {
+            //     console.log("changed!!!", evt);
+            // });
+            // this.model.rows.on("load_start", function(evt) {
+            //     console.log("LOADSTRAT!!!", evt);
+            // })
         },
 
 
         /*
-         * dataReady:
+         * modelReady:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        dataReady: function() {
+        modelReady: function() {
 
             var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
                 rows = this.model.rows.label.getItems(),

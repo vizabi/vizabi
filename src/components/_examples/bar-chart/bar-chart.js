@@ -34,7 +34,7 @@ define([
         /**
          * Updates the component as soon as the model/models change
          */
-        dataReady: function() {
+        modelReady: function() {
             var indicator = this.model.show.indicator,
                 data = _.cloneDeep(this.model.data.getItems()),
                 time = parseInt(d3.time.format("%Y")(this.model.time.value),10),

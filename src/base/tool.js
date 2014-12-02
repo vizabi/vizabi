@@ -49,14 +49,14 @@ define([
                     if (_this._ready) {
                         _this.model.validate().done(function() {
                             _this.triggerAll(evt, val);
-                            _this.dataReady();
+                            _this.modelReady();
                         });
                     }
                 },
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                            _this.dataReady();
+                            _this.modelReady();
                         });
                         _this.translateStrings();
                     }
@@ -73,7 +73,7 @@ define([
                     _this.afterLoading();
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                            _this.dataReady();
+                            _this.modelReady();
                         });
                     }
                 }

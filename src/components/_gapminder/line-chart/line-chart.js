@@ -39,11 +39,11 @@ define([
 
 
         /*
-         * dataReady:
+         * modelReady:
          * Executed whenever this.data is changed
          * Ideally, it contains only operations related to this.data events
          */
-        dataReady: function() {
+        modelReady: function() {
             this.data = this.model.data.getItems();
 
             var _this = this,

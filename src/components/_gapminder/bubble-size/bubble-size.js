@@ -46,7 +46,7 @@ define([
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        dataReady: function() {
+        modelReady: function() {
             indicator.text(this.model.size.max);
         },
 

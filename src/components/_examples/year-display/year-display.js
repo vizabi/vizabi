@@ -33,11 +33,11 @@ define([
         },
 
         /*
-         * dataReady:
+         * modelReady:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        dataReady: function() {
+        modelReady: function() {
             var time = this.model.time.getFormatted(); //gets formatted year
             this.element.html(time);
         },

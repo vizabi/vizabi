@@ -27,7 +27,7 @@ define([
         /**
          * Build the list everytime it updates
          */
-        dataReady: function() {
+        modelReady: function() {
             var _this = this;
             listed = this.model.state.show.geo,
                 data = this.model.data.getItems()[1].map(function(d) {

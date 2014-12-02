@@ -28,7 +28,7 @@ define([
         /**
          * Updates the component as soon as the model/models change
          */
-        dataReady: function() {
+        modelReady: function() {
 
             var indicator = this.model.show.indicator,
                 data = this.model.data.getItems(),

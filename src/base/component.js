@@ -275,17 +275,17 @@ define([
         domReady: function() {},
 
         /**
-         * dataReady calls dataReady for all sub-components
+         * modelReady calls modelReady for all sub-components
          */
-        dataReady: function() {
+        modelReady: function() {
             if (this._blockUpdate) return;
             var _this = this;
-            this._dataReady = this._update || _.throttle(function() {
+            this._modelReady = this._update || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.dataReady();
+                    component.modelReady();
                 });
             }, this._frameRate);
-            this._dataReady();
+            this._modelReady();
         },
 
         /**

@@ -399,10 +399,10 @@ define([
 
             $.when.apply(null, promises).then(function() {
                 if (_this.validate) _this.validate();
-                defer.resolve();
                 _this._ready = true;
                 _this._loading = false;
                 _this.trigger("ready");
+                defer.resolve();
             });
 
             return defer;
