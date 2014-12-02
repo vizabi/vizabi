@@ -239,6 +239,8 @@ define([
 
             //update selection
             var speed = this.model.time.speed;
+            var some_selected = (_this.model.entities.select.length > 0);
+
             this.bubbles
                 .style("fill", function(d) {
                     return _this.model.marker.color.getValue(d);
@@ -257,6 +259,13 @@ define([
                     return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
                 });
 
+            this.bubbles.classed("vzb-bc-selected", function(d) {
+                    return some_selected && _this.model.entities.isSelected(d)
+                })
+            this.bubbles.classed("vzb-bc-unselected", function(d) {
+                    return some_selected && !_this.model.entities.isSelected(d)
+                });
+
             /* TOOLTIP */
             //TODO: improve tooltip
             this.bubbles.on("mousemove", function(d, i) {
@@ -272,6 +281,9 @@ define([
                 })
                 .on("mouseout", function(d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function(d, i) {
+                    _this.model.entities.selectEntity(d);
                 });
         }
 

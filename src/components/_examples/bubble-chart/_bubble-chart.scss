@@ -24,6 +24,16 @@ $vzb-bc-year-size:300px;
         &:hover {
             @include opacity(1);
         }
+
+        &.vzb-bc-unselected {
+            @include opacity(0.4);
+            &:hover {
+                @include opacity(0.6);
+            }
+        }
+        &.vzb-bc-selected {
+            @include opacity(0.9);
+        }
     }
     .vzb-bc-axis {
         path, line {

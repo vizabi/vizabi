@@ -44,6 +44,47 @@ define([
          */
         getFilters: function() {
             return _.unique(_.pluck(this.show, "filter"));
+        },
+
+        selectEntity: function(d) {
+            var id = _.pick(d, this.getDimensions());
+            //TODO: include in select array in the correct format
+            var select_array = this.select;
+            if(this.isSelected(id)) {
+                select_array = _.reject(select_array, id);
+            } else {
+                select_array.push(id);
+            }
+            this.set("select", select_array);
+        },
+
+        isSelected: function(d) {
+            var id = _.pick(d, this.getDimensions());
+            var select_array = this.select;
+            if(_.findIndex(select_array, id) !== -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        /**
+         * Gets the flattened version of the entities arrays
+         * @returns {Array} flat array
+         */
+        _flatten: function(field) {
+            var target = this[field],
+                flat = [];
+            _.each(target, function(dimension) {
+                var dim = dimension.dim,
+                    objs = dimension.filter[dim];
+                _.each(objs, function(entity) {
+                    var new_obj = {};
+                    new_obj[dim] = entity;
+                    flat.push(new_obj);
+                });
+            });
+            return flat;
         }
 
     });
