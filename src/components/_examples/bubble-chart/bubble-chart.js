@@ -49,6 +49,7 @@ define([
             this.yearEl = this.graph.select('.vzb-bc-year');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.bubbles = null;
+            this.tooltip = this.element.select('.vzb-tooltip');
         },
 
 
@@ -99,7 +100,6 @@ define([
                 return _this.model.marker.axis_x.getTick(d);
             });
 
-            $.simpTooltip();
         },
 
 
@@ -181,7 +181,7 @@ define([
             //center year 
             var widthAxisY = this.yAxisEl[0][0].getBBox().width;
             var heightAxisX = this.xAxisEl[0][0].getBBox().height;
-            
+
             this.yearEl
                 .attr("x", "50%")
                 .attr("y", "50%")
@@ -241,67 +241,40 @@ define([
             var speed = this.model.time.speed;
             this.bubbles
                 .style("fill", function(d) {
-                    var id = getPointId(d);
-                    return _this.model.marker.color.getValue(id);
-                })
-                .attr("data-tooltip", function(d) {
-                    var id = getPointId(d);
-                    return _this.model.marker.label.getValue(id);
+                    return _this.model.marker.color.getValue(d);
                 })
                 .transition().duration(speed).ease("linear")
                 .attr("cy", function(d) {
-                    var id = getPointId(d),
-                        value = _this.model.marker.axis_y.getValue(id);
+                    var value = _this.model.marker.axis_y.getValue(d);
                     return _this.yScale(value);
                 })
                 .attr("cx", function(d) {
-                    var id = getPointId(d),
-                        value = _this.model.marker.axis_x.getValue(id);
+                    var value = _this.model.marker.axis_x.getValue(d);
                     return _this.xScale(value);
                 })
                 .attr("r", function(d) {
-                    var id = getPointId(d),
-                        value = _this.model.marker.size.getValue(id);
-                    var val = _this.rScale(value);
-                    return Math.sqrt(val / Math.PI) * 10;
+                    var value = _this.model.marker.size.getValue(d);
+                    return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
                 });
 
-            //todo: remove id funciton
-            function getPointId(point) {
-                return _.pick(point, ["geo", "time"]);
-            }
+            /* TOOLTIP */
+            //TODO: improve tooltip
+            this.bubbles.on("mousemove", function(d, i) {
+                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                        return parseInt(d);
+                    });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                        .html(_this.model.marker.label.getValue(d));
+
+                })
+                .on("mouseout", function(d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                });
         }
 
-    });
-
-
-
-
-    //tooltip plugin (hotfix)
-    //TODO: remove this plugin from here
-    $.extend({
-        simpTooltip: function(options) {
-            var defaults = {
-                position_x: -30,
-                position_y: 20,
-                target: "[data-tooltip]",
-                extraClass: ""
-            };
-            options = $.extend(defaults, options);
-            var targets = $(options.target);
-            var xOffset = options.position_x;
-            var yOffset = options.position_y;
-            targets.hover(function(e) {
-                var t = $(this).attr('data-tooltip');
-                $("body").append("<div id='simpTooltip' class='simpTooltip " + options.extraClass + "'>" + t + "</div>");
-                $("#simpTooltip").css("top", (e.pageY - xOffset) + "px").css("left", (e.pageX + yOffset) + "px").fadeIn("fast");
-            }, function() {
-                $("#simpTooltip").remove();
-            });
-            targets.mousemove(function(e) {
-                $("#simpTooltip").css("top", (e.pageY + yOffset) + "px").css("left", (e.pageX + xOffset) + "px");
-            });
-        }
     });
 
     return BubbleChart;
