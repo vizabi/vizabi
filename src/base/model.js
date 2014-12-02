@@ -42,6 +42,14 @@ define([
             if (values) {
                 this.set(values);
             }
+
+            //if it's a hook
+            var _this = this;
+            this.on("change", function() {
+                if (_this.isHook()) {
+                    _this.load();
+                }
+            });
         },
 
         /* ==========================
@@ -334,7 +342,9 @@ define([
          */
 
         /**
+         * loads data (if hook)
          * Hooks loads data, models ask children to load data
+         * @returns defer
          */
         load: function() {
             //we dont need to load if it's a hook
@@ -371,7 +381,6 @@ define([
                             promise.resolve();
                         } else {
                             _this._items = _.flatten(data);
-                            _this.trigger("change");
                             promise.resolve();
                         }
                     });
@@ -389,11 +398,11 @@ define([
             };
 
             $.when.apply(null, promises).then(function() {
-                if(_this.validate) _this.validate();
+                if (_this.validate) _this.validate();
                 defer.resolve();
-                _this.trigger("ready");
                 _this._ready = true;
                 _this._loading = false;
+                _this.trigger("ready");
             });
 
             return defer;

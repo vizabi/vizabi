@@ -101,17 +101,22 @@ define([
                 })
                 // After rendering the components, resolve the defer
                 .done(function() {
-                    _this._ready = true; //everything is ready
                     //this template is ready
-                    _this.trigger('dom_ready');
                     defer.resolve();
+                    _this.trigger('dom_ready');
 
-                    //TODO: delay is a hotfix to visually avoid flickering
-                    _.delay(function() {
-                        if (_this.element) {
-                            _this.element.classed(class_loading, false);
-                        }
-                    }, 100);
+                    //ready when model is also ready
+                    _this.model.on("ready", function() {
+                        _this._ready = true;
+
+                        //TODO: delay is a hotfix to visually avoid flickering
+                        _.delay(function() {
+                            if (_this.element) {
+                                _this.element.classed(class_loading, false);
+                            }
+                        });
+                    });
+
                 });
 
             return defer;
@@ -383,7 +388,7 @@ define([
             }
 
             //return a new model with the defined submodels
-            return new Model(values, this.intervals, {
+            var model = new Model(values, this.intervals, {
                 //bind callback after model is all set
                 'set': function() {
                     if (_.isFunction(ready)) {
@@ -391,6 +396,80 @@ define([
                     }
                 }
             });
+
+            var _this = this,
+                submodels = _.filter(model.get(), function(attr) {
+                    return !_.isUndefined(attr._id);
+                });
+
+            for (var submodel in model.get()) {
+
+                model[submodel].on({
+                    //the submodel has been set (only once)
+                    'set': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('set', 'set:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return sm._set;
+                            })) {
+                            model.triggerOnce('set', vals);
+                        }
+                    },
+                    //the submodel has initialized (only once)
+                    'init': function(evt, vals) {
+                        evt = evt.replace('init', 'init:' + name);
+                        model.triggerAll(evt, model.getObject());
+                    },
+                    //the submodel has changed (multiple times)
+                    'change': function(evt, vals) {
+                        evt = evt.replace('change', 'change:' + name);
+                        model.triggerAll(evt, model.getObject());
+                    },
+                    //loading has started in this submodel (multiple times)
+                    'load_start': function(evt, vals) {
+                        evt = evt.replace('load_start', 'load_start:' + name);
+                        model.triggerAll(evt, vals);
+                    },
+                    //loading has failed in this submodel (multiple times)
+                    'load_error': function(evt, vals) {
+                        evt = evt.replace('load_error', 'load_error:' + name);
+                        model.triggerAll(evt, vals);
+                    },
+                    //loading has ended in this submodel (multiple times)
+                    'load_end': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('load_end', 'load_end:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return !sm._loading;
+                            })) {
+                            model.triggerOnce('load_end', vals);
+                        }
+                    },
+                    //the submodel is ready
+                    'ready': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('ready', 'ready:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return sm._ready;
+                            })) {
+                            model.triggerOnce('ready', vals);
+                        }
+                    }
+                });
+
+            }
+
+
+            return model;
 
             //map one model to current submodels
             function _mapOne(name) {

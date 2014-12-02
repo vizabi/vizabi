@@ -48,10 +48,10 @@ define([
                 'change': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
+                            _this.triggerAll(evt, val);
                             _this.dataReady();
                         });
                     }
-                    _this.triggerAll(evt, val);
                 },
                 'reloaded': function(evt, val) {
                     if (_this._ready) {
@@ -71,7 +71,11 @@ define([
                 },
                 'ready': function() {
                     _this.afterLoading();
-                    _this.dataReady();
+                    if (_this._ready) {
+                        _this.model.validate().done(function() {
+                            _this.dataReady();
+                        });
+                    }
                 }
             }, validate, query);
 
@@ -107,8 +111,8 @@ define([
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.blockUpdate(true);
             this.element.classed(class_loading_data, true);
+            this.blockUpdate(true);
         },
 
         /**
@@ -117,7 +121,11 @@ define([
         afterLoading: function() {
             //it's ok to update if not loading
             this.blockUpdate(false);
-            this.element.classed(class_loading_data, false);
+            //defer to make sure it's updated
+            var _this = this;
+            _.defer(function() {
+                _this.element.classed(class_loading_data, false);
+            });
         },
 
         /**
