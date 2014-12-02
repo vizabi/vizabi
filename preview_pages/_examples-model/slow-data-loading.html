@@ -7,21 +7,69 @@
 
         <label>|</label>
 
-        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
-            <span>Size</span>
+        <button onclick="randomSize('placeholder')">RANDOM SIZE</button>
+
+        <label>|</label>
+
+        <div id="dropdown-color" class="wrapper-dropdown" tabindex="1">
+            <span>COLOR HOOK</span>
             <ul class="dropdown">
-                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
                 </li>
-                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
                 </li>
-                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
                 </li>
-                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                <li><a onclick="hook('color', 'indicator', 'lex', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'gdp_per_cap', ['#CCCCCC', '#62CCE3'])">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'pop', ['#CCCCCC', '#B4DE79'])">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('color', 'value', '#FFCC00', [])">Value: #FFCC00</a>
                 </li>
             </ul>
         </div>
 
-        <button onclick="randomSize('placeholder')">RANDOM</button>
+        <div id="dropdown-number" class="wrapper-dropdown" tabindex="1">
+            <span>NUMBER HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('number', 'property', 'geo.region')">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('number', 'value', '42')">Value: 42</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" class="wrapper-dropdown" tabindex="1">
+            <span>LABEL HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
+                </li>
+            </ul>
+        </div>
     </div>
 
     <div id="placeholder" class="placeholder"></div>
@@ -35,19 +83,15 @@
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
     <p>External buttons:</p>
-    <button onclick="twoGeos()">2 GEOS and POP (legal)</button>
-    <button onclick="fiveGeos()">5 GEOS and POP (illegal)</button>
     <button id="play_button" onclick="play()">PLAY</button>
     <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
-    <button id="indicator_button" onclick="indicator('lex')">SET INDICATOR: LEX</button>
     <p>Current Query:</p>
     <pre id="query" class="json_box"></pre>
 </div>
 
 <script>
 var myVizabi,
-    playButton,
-    github_link = "https://github.com/Gapminder/vizabi/blob/feature/model-refactoring/src/tools/_examples-model-state/crazy-pop-slider/crazy-pop-slider.js";
+    playButton;
 
 $(function() {
 
@@ -57,22 +101,41 @@ $(function() {
     var options = {
         //state (how vizabi should work)
         state: {
-            //data related properties
-            show: {
-                geo: ["swe", "nor", "usa"],
-                geo_category: ["country"],
-                indicator: 'pop'
-            },
             //time properties
             time: {
-                start: 1800,
-                end: 2014,
-                speed: 1000,
-                value: 1995,
-                playing: false,
-                roundOnPause: false,
-                unit: "month",
-                step: 1
+                unit: "year",
+                start: "1800",
+                end: "2014",
+                step: 1,
+                speed: 300,
+                value: "1995"
+            },
+            //entities we want to show
+            entity: {
+                show: [{
+                    dim: "geo",
+                    filter: {
+                        "geo": ['swe', 'nor', 'usa', 'aus'],
+                        "geo.category": ["country"]
+                    }
+                }]
+            },
+
+            row: {
+                label: {
+                    use: "property",
+                    value: "geo.name"
+                },
+                number: {
+                    use: "indicator",
+                    value: "pop"
+                },
+                color: {
+                    use: "property",
+                    value: "geo.region",
+                    //red, yellow, green, blue
+                    domain: ["#F77481", "#E1CE00", "#B4DE79", "#62CCE3"]
+                }
             }
         },
 
@@ -87,21 +150,16 @@ $(function() {
             id: "en",
             strings: {
                 "en": {
-                    "intro_text": "The purpose of this example is to show that the screen in only updated once when dealing with data fetching and translation. It uses a slow data reader intentionally. In this example, if there are more than 3 geos, the tool model validation forces the indicator to be lex, forcing the loader to be triggered 2X."
+                    "intro_text": "This example shows the tool Pop Slider with model adaptations and data support. A slow reader is being used on purpose."
                 },
                 "pt": {
-                    "intro_text": "O proposito desse exemplo é mostrar que a tela é atualizada apenas uma vez ao recuperar dados ou traduzir. Usamos um loader lento intencionalmente. Nesse exemplo, se existem mais de 3 geos, a validacao forca o indicador a ser lex, forcando dupla recuperacao de dados."
+                    "intro_text": "Esse exemplo mostra a Pop Slider com adaptações em model and suporte a dados. Um reader lento está sendo usado de propósito"
                 }
             }
         },
 
         //ui (how should vizabi look)
-        ui: {
-            'vzb-tool-timeslider': {
-                show_value: true,
-                format: "year"
-            }
-        },
+        ui: {},
 
         //bind (what vizabi should tell to the world outside)
         bind: {
@@ -120,15 +178,6 @@ $(function() {
                     playButton.text("PLAY");
                 }
             },
-            'change:state:show': function(evt, vals) {
-                if (vals.state.show.indicator == 'lex') {
-                    indicatorButton.attr('onclick', 'indicator("pop")');
-                    indicatorButton.text("SET INDICATOR: POP");
-                } else {
-                    indicatorButton.attr('onclick', 'indicator("lex")');
-                    indicatorButton.text("SET INDICATOR: LEX");
-                }
-            },
             'change:language': function(evt, vals) {
                 if (vals.language.id === "en") {
                     languageButton.attr('onclick', "language('pt')");
@@ -142,7 +191,7 @@ $(function() {
     };
 
     showState(options.state);
-    myVizabi = new Vizabi("_examples-model/crazy-pop-slider", "#placeholder", options);
+    myVizabi = new Vizabi("_examples/pop-slider", "#placeholder", options);
 
 });
 
@@ -177,38 +226,17 @@ function language(lang) {
     myVizabi.setOptions(options);
 }
 
-function indicator(indicator) {
+function hook(hook, use, value, domain) {
     var options = {
-        state: {
-            show: {
-                indicator: indicator
-            }
-        }
+        state: { row: {} }
     };
-    myVizabi.setOptions(options);
-}
+    options.state.row[hook] = {
+        use: use,
+        value: value
+    };
 
-function fiveGeos() {
-    var options = {
-        state: {
-            show: {
-                geo: ["swe", "nor", "usa", "fin", "fra"],
-                indicator: "pop"
-            }
-        }
-    };
-    myVizabi.setOptions(options);
-}
+    if(domain) options.state.row[hook].domain = domain;
 
-function twoGeos() {
-    var options = {
-        state: {
-            show: {
-                geo: ["swe", "nor"],
-                indicator: "pop"
-            }
-        }
-    };
     myVizabi.setOptions(options);
 }
 </script>

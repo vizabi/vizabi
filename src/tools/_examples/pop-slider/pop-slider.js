@@ -58,39 +58,6 @@ define([
             if (time.end > dateMax) {
                 time.end = dateMax;
             }
-        },
-
-        /**
-         * Returns the query (or queries) to be performed by this tool
-         * @param model the tool model will be received
-         */
-
-        //TODO: separate into queries
-        getQuery: function(model) {
-            var state = model.state,
-                time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end);
-
-            var dimensions = state.entity.getDimensions(),
-                indicators = state.getIndicators(),
-                properties = state.getProperties();
-
-            var queries = [];
-
-            for (var i = 0; i < dimensions.length; i++) {
-                var dim = dimensions[i],
-                    query = {
-                        "from": "data",
-                        "select": _.union([dim, "time"], indicators, properties),
-                        "where": _.extend({
-                            "time": [time_start + "-" + time_end]
-                        }, state.entity.show[i].filter)
-                    };
-
-                queries.push(query);
-            };
-
-            return queries;
         }
 
     });

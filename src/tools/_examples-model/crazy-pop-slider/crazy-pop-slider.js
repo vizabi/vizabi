@@ -1,9 +1,10 @@
 define([
     'd3',
+    'lodash',
     'base/tool'
-], function(d3, Tool) {
+], function(d3, _, Tool) {
 
-    var crazyPopSlider = Tool.extend({
+    var popSlider = Tool.extend({
 
         /**
          * Initialized the tool
@@ -13,7 +14,7 @@ define([
         init: function(config, options) {
 
             this.name = 'pop-slider';
-            this.template = "tools/_examples-model/crazy-pop-slider/crazy-pop-slider";
+            this.template = "tools/_examples/pop-slider/pop-slider";
 
             //instantiating components
             this.components = [{
@@ -23,14 +24,13 @@ define([
             }, {
                 component: '_examples/indicator-display',
                 placeholder: '.vzb-tool-display', //div to render
-                model: ["state.show", "data", "state.time"]
+                model: ["state.row", "state.time"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["state.time"]
             }];
 
-            //constructor is the same
             this._super(config, options);
         },
 
@@ -40,49 +40,28 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var state = model.state;
-            var data = model.data;
+            var time = model.state.time,
+                rows = model.state.row.label;
+
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!rows.getItems() || rows.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = data.getLimits('time').min,
-                dateMax = data.getLimits('time').max;
+            var dateMin = rows.getLimits('time').min,
+                dateMax = rows.getLimits('time').max;
 
-            if (state.time.start < dateMin) {
-                state.time.start = dateMin;
+            if (time.start < dateMin) {
+                time.start = dateMin;
             }
-            if (state.time.end > dateMax) {
-                state.time.end = dateMax;
+            if (time.end > dateMax) {
+                time.end = dateMax;
             }
-            if (state.show.geo.length > 3 && state.show.indicator != "lex") {
-                state.show.indicator = "lex";
-            }
-        },
-
-        /**
-         * Returns the query (or queries) to be performed by this tool
-         * @param model the tool model will be received
-         */
-        getQuery: function(model) {
-            var state = model.state,
-                time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end);
-            return [{
-                "from": "data",
-                "select": ["geo", "geo.name", "time", "geo.region", "geo.category", state.show.indicator],
-                "where": {
-                    "geo": state.show.geo,
-                    "geo.category": state.show.geo_category,
-                    "time": [time_start + "-" + time_end]
-                }
-            }];
         }
 
     });
 
 
-    return crazyPopSlider;
+    return popSlider;
 });
