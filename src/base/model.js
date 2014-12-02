@@ -758,7 +758,7 @@ define([
                 },
                 filtered = _.map(this._items, function(d) {
                     //TODO: Move this up to readers ?
-                    return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr]);
+                    return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
                 });
             if (filtered.length > 0) {
                 limits.min = _.min(filtered);
