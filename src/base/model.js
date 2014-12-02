@@ -504,9 +504,9 @@ define([
         setHooks: function() {
             if (this.isHook()) {
 
-                //accepts hooking to anything, but defaults to data/entity/time
+                //accepts hooking to anything, but defaults to data/entities/time
                 if (!_.isArray(this.hook_to) || _.rest(this.hook_to, _.isString).length) {
-                    this.hook_to = ["data", "entity", "time"]
+                    this.hook_to = ["data", "entities", "time"]
                 }
 
                 this.hookModel();
@@ -522,7 +522,7 @@ define([
         },
 
         /**
-         * Hooks this model to data, entity and time
+         * Hooks this model to data, entities and time
          * @param {Object} h Object containing the hooks
          */
         hookModel: function() {
@@ -605,8 +605,8 @@ define([
             //TODO: improve the way a row is identified
             //(maybe like the commented code above)
             var id_keys = [];
-            if (this.getHook("entity")) {
-                id_keys = this.getHook("entity").getDimensions();
+            if (this.getHook("entities")) {
+                id_keys = this.getHook("entities").getDimensions();
             }
             if (this.getHook("time")) {
                 id_keys.push("time");
@@ -665,17 +665,17 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this.use) === -1 || !this.getHook("entity")) {
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1 || !this.getHook("entities")) {
                 return [];
             }
 
             //else, its a hook (indicator or property) and it needs to query
             else {
 
-                var entity = this.getHook("entity"),
+                var entities = this.getHook("entities"),
                     time = this.getHook("time"),
-                    dimensions = entity.getDimensions(),
-                    filters = entity.getFilters(),
+                    dimensions = entities.getDimensions(),
+                    filters = entities.getFilters(),
                     //include time or not
                     select = (time) ? [this.value, "time"] : [this.value],
                     time_filter = {};
@@ -803,9 +803,9 @@ define([
                         value = this.getHook("time")[this.value];
                     }
                     break;
-                case "entity":
-                    if (this.getHook("entity")) {
-                        value = this.getHook("entity")[this.value];
+                case "entities":
+                    if (this.getHook("entities")) {
+                        value = this.getHook("entities")[this.value];
                     }
                     break;
                 default:

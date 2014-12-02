@@ -81,7 +81,7 @@ $(function() {
             },
 
             //entities we want to show
-            entity: {
+            entities: {
                 show: [{
                     dim: "geo",
                     filter: {
@@ -167,7 +167,7 @@ function setState2() {
             },
             timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'time', 'gdp_per_cap']
+            columns: ['entities', 'time', 'gdp_per_cap']
         }
     };
     myVizabi.setOptions(newOption);

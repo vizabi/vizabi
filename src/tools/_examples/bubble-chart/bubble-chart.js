@@ -25,7 +25,7 @@ define([
             }, {
                 component: '_examples/bubble-chart',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.time", "state.entity", "state.marker", "data"]
+                model: ["state.time", "state.entities", "state.marker", "data"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
@@ -75,7 +75,7 @@ define([
                 time_start = d3.time.format("%Y")(state.time.start),
                 time_end = d3.time.format("%Y")(state.time.end);
 
-            var dimensions = state.entity.getDimensions(),
+            var dimensions = state.entities.getDimensions(),
                 indicators = state.getIndicators(),
                 properties = state.getProperties();
 
@@ -88,7 +88,7 @@ define([
                         "select": _.union([dim, "time"], indicators, properties),
                         "where": _.extend({
                             "time": [time_start + "-" + time_end]
-                        }, state.entity.show[i].filter)
+                        }, state.entities.show[i].filter)
                     };
 
                 queries.push(query);

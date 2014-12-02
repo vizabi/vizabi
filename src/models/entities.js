@@ -6,7 +6,7 @@ define([
     var Entity = Model.extend({
 
         /**
-         * Initializes the entity model.
+         * Initializes the entities model.
          * @param {Object} values The initial values of this model
          * @param parent A reference to the parent model
          * @param {Object} bind Initial events to bind
@@ -31,7 +31,7 @@ define([
         },
 
         /**
-         * Gets the dimensions in this entity
+         * Gets the dimensions in this entities
          * @returns {Array} Array of unique values
          */
         getDimensions: function() {
@@ -39,7 +39,7 @@ define([
         },
 
         /**
-         * Gets the filters in this entity
+         * Gets the filters in this entities
          * @returns {Array} Array of unique values
          */
         getFilters: function() {

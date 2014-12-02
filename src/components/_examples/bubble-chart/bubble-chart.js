@@ -19,7 +19,7 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["time", "entity", "marker", "data"];
+            this.model_expects = ["time", "entities", "marker", "data"];
 
             this._super(context, options);
 
