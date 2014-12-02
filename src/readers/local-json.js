@@ -1,105 +1,115 @@
- define([
-     'jquery',
-     'base/class',
- ], function($, Class) {
+define([
+    'jquery',
+    'lodash',
+    'base/class',
+], function($, _, Class) {
 
-     var LocalJSONReader = Class.extend({
+    var LocalJSONReader = Class.extend({
 
-         /**
-          * Initializes the reader.
-          * @param {String} basepath The basepath of this reader (file)
-          */
-         init: function(basepath) {
-             this._name = 'local-json';
-             this._data = [];
-             this._basepath = basepath;
-         },
+        /**
+         * Initializes the reader.
+         * @param {Object} reader_info Information about the reader
+         */
+        init: function(reader_info) {
+            this._name = 'local-json';
+            this._data = [];
+            this._basepath = reader_info.path;
+        },
 
-         /**
-          * Reads from source
-          * @param {Array} queries Queries to be performed
-          * @param {String} language language
-          * @returns a promise that will be resolved when data is read
-          */
-         read: function(queries, language) {
-             var _this = this,
-                 defer = $.Deferred(),
-                 promises = [];
+        /**
+         * Reads from source
+         * @param {Array} queries Queries to be performed
+         * @param {String} language language
+         * @returns a promise that will be resolved when data is read
+         */
+        read: function(queries, language) {
+            var _this = this,
+                defer = $.Deferred(),
+                promises = [];
 
-             var path = this._basepath.replace("{{LANGUAGE}}", language);
+            //this specific reader has support for the tag {{LANGUAGE}}
+            var path = this._basepath.replace("{{LANGUAGE}}", language);
+            _this._data = [];
 
-             _this._data = [];
+            //Loops through each query
+            for (var i = 0; i < queries.length; i++) {
 
-             for (var i = 0; i < queries.length; i++) {
+                this._data[i] = {};
 
-                 var i;
-                 this._data[i] = {};
+                (function(order) {
+                    var query = queries[i];
+                    var promise = $.getJSON(path, function(res) {
 
-                 (function(order) {
+                            //TODO: Improve local json filtering
+                            var data = res[0];
 
-                     var fakeResponsePath = path.replace("response", "response_" + i),
-                         query = queries[i];
+                            for (var filter in query.where) {
+                                var wanted = query.where[filter];
 
-                     var promise = $.getJSON(fakeResponsePath, function(res) {
-                             var geos = query.where.geo,
-                                 categories = query.where['geo.category'],
-                                 timeRange = query.where.time,
-                                 data = res[0];
+                                if (wanted[0] === "*") {
+                                    continue;
+                                }
 
-                             //if geos is not everything, filter geos
-                             if (geos[0] != "*") {
-                                 data = data.filter(function(row) {
-                                     return geos.indexOf(row["geo"]) >= 0;
-                                 });
-                             }
+                                //if not time, normal filtering
+                                if (filter !== "time") {
+                                    data = _.filter(data, function(row) {
+                                        var val = row[filter],
+                                            found = -1;
+                                        //normalize
+                                        if (!_.isArray(val)) {
+                                            val = [val];
+                                        }
+                                        //find first occurence
+                                        var found = _.findIndex(val, function(j) {
+                                            return wanted.indexOf(j) !== -1;
+                                        });
 
-                             //if geos is not everything, filter geos
-                             if (categories && categories[0] != "*") {
-                                 data = data.filter(function(row) {
-                                     return categories.indexOf(row["geo.category"][0]) >= 0;
-                                 });
-                             }
+                                        //if found, include
+                                        return found !== -1;
+                                    });
+                                }
+                                //in case it's time, special filtering
+                                else {
+                                    var timeRange = wanted[0].split("-"),
+                                        min = timeRange[0],
+                                        max = timeRange[1] || min;
 
-                             //if there's a timeRange different than all, filter range
-                             if (timeRange && timeRange != "*") {
-                                 timeRange = timeRange[0].split("-");
-                                 var min = timeRange[0],
-                                     max = timeRange[1] || min;
-                                 //max = min in case there's only one
+                                    data = _.filter(data, function(row) {
+                                        var val = row[filter]
+                                        return val >= min && val <= max;
+                                    });
+                                }
+                            }
 
-                                 data = data.filter(function(row) {
-                                     return row["time"] >= min && row["time"] <= max;
-                                 });
-                             }
-                             
-                             _this._data[order] = data;
-                         })
-                         .error(function() {
-                             console.log("Error Happened While Loading File: " + fakeResponsePath);
-                         });
+                            //only selected items get returned
+                            data = _.map(data, function(row) {
+                                return _.pick(row, query.select);
+                            })
 
-                     promises.push(promise);
+                            _this._data[order] = data;
+                        })
+                        .error(function() {
+                            console.log("Error Happened While Loading File: " + fakeResponsePath);
+                        });
+                    promises.push(promise);
+                })(i);
+            }
 
-                 })(i);
-             }
+            $.when.apply(null, promises).done(function() {
+                defer.resolve();
+            });
 
-             $.when.apply(null, promises).done(function() {
-                 defer.resolve();
-             });
+            return defer;
+        },
 
-             return defer;
-         },
+        /**
+         * Gets the data
+         * @returns all data
+         */
+        getData: function() {
+            return this._data;
+        }
+    });
 
-         /**
-          * Gets the data
-          * @returns all data
-          */
-         getData: function() {
-             return this._data;
-         }
-
-     });
-
-     return LocalJSONReader;
-
- });
+    return LocalJSONReader;
+});

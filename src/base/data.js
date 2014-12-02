@@ -17,15 +17,15 @@ define([
          * Loads resource from reader or cache
          * @param {Array} query Array with queries to be loaded
          * @param {String} language Language
-         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use. E.g.: "local-json"
          * @param {String} path Where data is located
          */
-        load: function(query, language, reader, path, evts) {
+        load: function(query, language, reader, evts) {
 
             var _this = this,
                 defer = $.Deferred(),
                 promises = [],
-                cached = this.isCached(query, language, reader, path),
+                cached = this.isCached(query, language, reader),
                 loaded = false,
                 promise;
 
@@ -38,7 +38,7 @@ define([
                     evts["load_start"]();
                 }
 
-                promise = this.loadFromReader(query, language, reader, path).then(function(queryId) {
+                promise = this.loadFromReader(query, language, reader).then(function(queryId) {
                     loaded = true;
                     cached = queryId;
                 });
@@ -66,17 +66,18 @@ define([
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
          * @param {String} lang Language
-         * @param {String} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use. E.g.: "local-json"
          * @param {String} path Where data is located
          */
-        loadFromReader: function(query, lang, reader, path) {
+        loadFromReader: function(query, lang, reader) {
             var _this = this,
-                defer = $.Deferred();
-            require(["readers/" + reader], function(Reader) {
-                var reader = new Reader(path);
-                reader.read(query, lang).then(function() {
-                    var queryId = _this._idQuery(query, lang, reader, path);
-                    _this._data[queryId] = reader.getData();
+                defer = $.Deferred(),
+                reader_name = reader.reader;
+            require(["readers/" + reader_name], function(Reader) {
+                var r = new Reader(reader);
+                r.read(query, lang).then(function() {
+                    var queryId = _this._idQuery(query, lang, reader);
+                    _this._data[queryId] = r.getData();
                     defer.resolve(queryId);
                 });
             });
@@ -99,9 +100,9 @@ define([
          * Checks whether it's already cached
          * @returns {Boolean}
          */
-        isCached: function(query, language, reader, path) {
+        isCached: function(query, language, reader) {
             //encode in one string
-            var query = this._idQuery(query, language, reader, path);
+            var query = this._idQuery(query, language, reader);
             //simply check if we have this in internal data
             if(_.keys(this._data).indexOf(query) !== -1) {
                 return query;
@@ -112,8 +113,8 @@ define([
         /**
          * Encodes query into a string
          */
-        _idQuery: function(query, language, reader, path) {
-            return JSON.stringify(query) + language + reader + path;
+        _idQuery: function(query, language, reader) {
+            return JSON.stringify(query) + language + JSON.stringify(reader);
         },
 
         /**

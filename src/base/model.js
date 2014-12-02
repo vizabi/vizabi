@@ -109,7 +109,6 @@ define([
 
             //not ready at this point
             this._ready = false;
-            this._set = false;
 
             //after all is done
             var _this = this;
@@ -351,8 +350,7 @@ define([
 
                 //get reader omfp
                 var promise = $.Deferred(),
-                    reader = data_hook.reader,
-                    path = data_hook.path,
+                    reader = data_hook.getObject(),
                     lang = "en"; //TODO: hook to language
 
                 var evts = {
@@ -366,7 +364,7 @@ define([
                     }
                 }
 
-                this._dataManager.load(query, lang, reader, path, evts)
+                this._dataManager.load(query, lang, reader, evts)
                     .done(function(data) {
                         if (data === 'error') {
                             _this.trigger("load_error", query);
