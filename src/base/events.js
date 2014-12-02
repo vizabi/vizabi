@@ -13,6 +13,10 @@ define([
             //events should not be triggered twice simultaneously,
             //therefore, we keep them in a buffer for 1 execution loop
             this._buffer = [];
+
+            //keep track of events to be triggered once
+            this._frameWindow = 10;
+            this._once = [];
         },
 
         /**
@@ -108,6 +112,52 @@ define([
         },
 
         /**
+         * Triggers an and all parent events
+         * @param {String|Array} name name of event or array with names
+         * @param args Optional arguments (values to be passed)
+         */
+        triggerAll: function(name, args) {
+
+            if (_.isArray(name)) {
+                for (var i = 0, size = name.length; i < size; i++) {
+                    this.triggerAll(name[i], args);
+                }
+            } else {
+                var original = name,
+                    parts = name.split(":");
+                while (parts.length) {
+                    this.trigger(name, args, original);
+                    parts.pop();
+                    name = parts.join(":");
+                }
+            }
+        },
+
+        /**
+         * Triggers an and all parent events
+         * @param {String|Array} name name of event or array with names
+         * @param args Optional arguments (values to be passed)
+         */
+        triggerOnce: function(name, args) {
+
+            if (_.isArray(name)) {
+                for (var i = 0, size = name.length; i < size; i++) {
+                    this.triggerOnce(name[i], args);
+                }
+            } else if(this._once.indexOf(name) === -1) {
+                //now we can trigger
+                this._once.push(name);
+                this.trigger(name, args);
+
+                var _this = this;
+                _.delay(function() {
+                    _this._once = _.without(_this._once, name); //allow
+                }, this._frameWindow);
+
+            }
+        },
+
+        /**
          * Checks whether an event is scheduled to be triggered already
          * @param {Function} func function to be checked
          * returns {Boolean}
@@ -164,29 +214,7 @@ define([
                 console.log("Can't execute event '" + name + ". The following must be a function: ");
                 console.log(func);
             }
-        },
-
-        /**
-         * Triggers an and all parent events
-         * @param {String|Array} name name of event or array with names
-         * @param args Optional arguments (values to be passed)
-         */
-        triggerAll: function(name, args) {
-
-            if (_.isArray(name)) {
-                for (var i = 0, size = name.length; i < size; i++) {
-                    this.triggerAll(name[i], args);
-                }
-            } else {
-                var original = name,
-                    parts = name.split(":");
-                while (parts.length) {
-                    this.trigger(name, args, original);
-                    parts.pop();
-                    name = parts.join(":");
-                }
-            }
-        },
+        }
 
     });
 

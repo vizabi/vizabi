@@ -215,7 +215,7 @@ define([
                     if (_.every(submodels, function(sm) {
                             return !sm._loading;
                         })) {
-                        _this.trigger('load_end', vals);
+                        _this.triggerOnce('load_end', vals);
                     }
                 },
                 //the submodel is ready
@@ -228,7 +228,7 @@ define([
                     if (_.every(submodels, function(sm) {
                             return sm._ready;
                         })) {
-                        _this.trigger('ready', vals);
+                        _this.triggerOnce('ready', vals);
                     }
                 }
             });
@@ -392,10 +392,10 @@ define([
 
             $.when.apply(null, promises).then(function() {
                 if(_this.validate) _this.validate();
-                _this._ready = true;
-                _this._loading = false;
                 defer.resolve();
                 _this.trigger("ready");
+                _this._ready = true;
+                _this._loading = false;
             });
 
             return defer;
@@ -457,6 +457,24 @@ define([
                 }
             }
             this._events.trigger(name, val);
+        },
+
+        /**
+         * Triggers an event from this model only once
+         * @param {String} name name of event
+         * @param val Optional values to be sent to callback function
+         */
+        triggerOnce: function(name, val) {
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Model > triggered once:", name[i], this);
+                    }
+                } else {
+                    console.log("Model > triggered once:", name, this);
+                }
+            }
+            this._events.triggerOnce(name, val);
         },
 
         /**

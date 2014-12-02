@@ -48,9 +48,7 @@ define([
                 'change': function(evt, val) {
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                            _.defer(function() {
-                                _this.dataReady();
-                            });
+                            _this.dataReady();
                         });
                     }
                     _this.triggerAll(evt, val);
