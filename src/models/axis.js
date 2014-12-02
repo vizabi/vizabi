@@ -68,6 +68,10 @@ define([
                     var limits = this.getLimits(this.value),
                         margin = (limits.max - limits.min) / 10;
                     domain = [(limits.min - margin), (limits.max + margin)];
+                    if(scale == "log") {
+                        domain = [limits.min/2, (limits.max + limits.max/2)];
+                    }
+
                     break;
                 case "property":
                     domain = this.getUnique(this.value);
