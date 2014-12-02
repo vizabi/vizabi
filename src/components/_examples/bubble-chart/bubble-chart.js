@@ -32,6 +32,7 @@ define([
             this.yAxis = d3.svg.axis();
 
             this.isDataPreprocessed = false;
+
         },
 
 
@@ -50,6 +51,25 @@ define([
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.bubbles = null;
             this.tooltip = this.element.select('.vzb-tooltip');
+
+            //model events
+            this.model.on({
+                "change": function(evt) {
+                    console.log("Changed!");
+                },
+                "load_start": function(evt) {
+                    console.log("Started to load!");
+                },
+                "load_end": function() {
+                    console.log("Finished Loading!");
+                }
+            });
+
+            //component events
+            this.on("resize", function() {
+                console.log("Ops! Gotta resize...");
+            })
+
         },
 
 
@@ -67,8 +87,8 @@ define([
                 this.isDataPreprocessed = true;
             }
 
-            this.data = this.model.marker.label.getItems();
             this.time = parseInt(d3.time.format("%Y")(this.model.time.value), 10);
+            this.data = this.model.marker.label.getItems({ time: this.time.toString() });
 
             if (this.isDataPreprocessed) {
                 //TODO: #32 run only if data or show models changed
@@ -112,9 +132,7 @@ define([
 
             this.yearEl.text(this.time);
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data.filter(function(d) {
-                    return (+d.time === _this.time);
-                }));
+                .data(this.data);
         },
 
         /*
