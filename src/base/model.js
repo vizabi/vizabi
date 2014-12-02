@@ -653,10 +653,14 @@ define([
                     });
 
                 //filter only necessary fields
-                if (filter) {
+                if (_.isArray(filter)) {
                     values = _.map(values, function(r) {
                         return _.pick(r, filter)
                     });
+                }
+                //filter only matching results
+                else if (_.isPlainObject(filter)) {
+                    values = _.filter(values, filter);
                 }
 
                 return values;
