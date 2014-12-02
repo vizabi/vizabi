@@ -57,14 +57,7 @@ $(function() {
     var options = {
         //state
         state: url.state || {
-            //what to show
-            show: {
-                geo: ["ago","arg","aus","swe"],
-                geo_category: ["country"],
-                indicator: 'gdp_per_cap',
-                scale: 'linear',
-                unit: 1000000000,
-            },
+            
             //time properties
             time: {
                 start: "1990",
@@ -72,13 +65,53 @@ $(function() {
                 step: 1,
                 speed: 300,
                 value: "2007"
+            },
+
+            //entities we want to show
+            entities: {
+                show: [{
+                    dim: "geo",
+                    filter: {
+                        "geo": ["ago","arg","aus","swe"],
+                        "geo.category": ["country"]
+                    }
+                }]
+            },
+
+            //how we show it
+            lines: {
+                label: {
+                    use: "property",
+                    value: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    value: "gdp_per_cap",
+                    scale: "linear",
+                    unit: 1000000000
+                },
+                axis_x: {
+                    use: "property",
+                    value: "time"
+                },
+                stroke: {
+                    size: {
+                        value: 0.5
+                    },
+                    color: {
+                        use: "property",
+                        value: "geo.region",
+                        domain: ["#FFFFFF", "#000000"],
+                        domain_type: "continuous" //or discrete
+                    }
+                }
             }
 
         },
         //data properties
         data: {
             reader: "local-json",
-            path: "../../data-waffles/examples/{{LANGUAGE}}/response.json"
+            path: "../../data-waffles/examples/{{LANGUAGE}}/basic-indicators.json"
         },
 
         //language properties

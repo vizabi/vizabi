@@ -7,9 +7,13 @@ $vzb-bc-year-size:300px;
 
 .vzb-bubble-chart {
     @include absoluteAll;
+    overflow: hidden;
+}
+
+.vzb-bubble-chart-svg {
+    @include absoluteAll;
     width: 100%;
     height: 100%;
-    position: absolute;
     margin: 0;
     overflow: hidden;
     font-family: $vzb-font-family;
@@ -19,6 +23,16 @@ $vzb-bc-year-size:300px;
         cursor: pointer;
         &:hover {
             @include opacity(1);
+        }
+
+        &.vzb-bc-unselected {
+            @include opacity(0.4);
+            &:hover {
+                @include opacity(0.6);
+            }
+        }
+        &.vzb-bc-selected {
+            @include opacity(0.9);
         }
     }
     .vzb-bc-axis {

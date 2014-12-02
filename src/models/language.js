@@ -8,10 +8,10 @@ define([
         /**
          * Initializes the language model.
          * @param {Object} values The initial values of this model
-         * @param intervals A parent intervals handler (from tool)
+         * @param parent A reference to the parent model
          * @param {Object} bind Initial events to bind
          */
-        init: function(values, intervals, bind) {
+        init: function(values, parent, bind) {
             //default values for state model
             values = _.extend({
                 id: "en",
@@ -19,7 +19,7 @@ define([
             }, values);
 
             //same constructor, with same arguments
-            this._super(values, intervals, bind);
+            this._super(values, parent, bind);
         },
 
         /**

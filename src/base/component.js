@@ -22,6 +22,7 @@ define([
             this._id = this._id || _.uniqueId("c");
             this._rendered = false;
             this._ready = false;
+            this._debugEvents = this._debugEvents || false;
 
             //default values,
             //in case there's none
@@ -33,6 +34,7 @@ define([
             this.template_data = this.template_data || {
                 name: this.name
             };
+            this.intervals = this.intervals;
             this.components = this.components || [];
             this.parent = parent;
 
@@ -40,16 +42,27 @@ define([
             this._components_config = this.components;
             this._frameRate = 10;
 
-            this.default_model = this.default_model || Model;
+            //define expected models for this component
+            this.model_expects = this.model_expects || [];
 
-            //if there's no model, we create our own
-            if (!config.model) {
-                config.model = this._defaultModels(this.default_model);
-            }
-
-            //model
-            this.model = this.model || config.model;
             this.ui = this.ui || config.ui;
+
+            var _this = this;
+            this.on({
+                'dom_ready': function() {
+                    _this.domReady();
+
+                    //TODO: hotfix for non-data viz
+                    _.defer(function() {
+                        if (_this.model._ready) {
+                            _this.modelReady();
+                        } 
+                    });
+                },
+                'resize': function() {
+                    _this.resize();
+                }
+            });
         },
 
         /**
@@ -57,6 +70,9 @@ define([
          * @returns defer a promise to be resolved when component is rendered
          */
         render: function(posTemplate) {
+
+            if (this._ready) return; //a component only renders once
+
             var defer = $.Deferred();
             var _this = this;
 
@@ -65,76 +81,50 @@ define([
 
             // After the template is loaded, its loading data
             promise.then(function() {
+
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
                         _this.layout.resize();
                         _this.layout.on('resize', function() {
-                            _this.resize();
+                            _this.trigger('resize');
                         });
                     }
+
                     // add css loading class to hide elements
                     if (_this.element.node()) {
                         _this.element.classed(class_loading, true);
                     }
 
                     _this._rendered = true; //template is in place
-
                 })
                 // After load components
                 .then(function() {
                     return _this.loadComponents();
                 })
-                //execute post render
-                .then(function() {
-                    return _this.execute(_this.postRender);
-                })
                 // After loading components, render them
                 .then(function() {
-                    //TODO: Chance of refactoring
-                    //Every widget binds its resize function to the resize event
                     return _this.renderComponents();
                 })
                 // After rendering the components, resolve the defer
                 .done(function() {
-                    //not loading anytmore, remove class
-                    if (_this.element) {
-                        _this.element.classed(class_loading, false);
-                    }
-                    _this.update();
-                    _this._ready = true; //everything is ready
-                    _this.trigger('ready');
+                    //this template is ready
                     defer.resolve();
+                    _this.trigger('dom_ready');
+
+                    //ready when model is also ready
+                    _this.model.on("ready", function() {
+                        _this._ready = true;
+
+                        //TODO: delay is a hotfix to visually avoid flickering
+                        _.delay(function() {
+                            if (_this.element) {
+                                _this.element.classed(class_loading, false);
+                            }
+                        });
+                    });
+
                 });
-
-            return defer;
-        },
-
-        /**
-         * Execute function with promise support
-         * @param {Function} function any function
-         * @returns defer a promise to be resolved when function is resolved
-         */
-        //todo: check if this is actually necessary here
-        execute: function(func) {
-            var defer = $.Deferred(),
-                possiblePromise;
-
-            // only try to execute if it is a function
-            if (_.isFunction(func)) {
-                possiblePromise = func.apply(this);
-            };
-
-            // if a promise is returned, solve it when its done
-            if (possiblePromise && _.isFunction(possiblePromise.then)) {
-                possiblePromise.done(function() {
-                    defer.resolve();
-                });
-            }
-            // if no promise is returned, resolve right away
-            else {
-                return true;
-            }
 
             return defer;
         },
@@ -190,26 +180,26 @@ define([
                 name_token = path.split("/"),
                 name = name_token[name_token.length - 1],
                 id = component.placeholder,
-                component_path = "components/" + path + "/" + name,
-                component_model,
-                component_ui;
-
-            //component model mapping
-            component_model = this._modelMapping(component.model);
-            component_ui = this._uiMapping(id, component.ui);
+                comp_path = "components/" + path + "/" + name,
+                comp_model = component.model || [],
+                comp_ui = this._uiMapping(id, component.ui);
 
             //component options
             var config = _.extend(component, {
                 name: name,
-                model: component_model,
-                ui: component_ui
+                ui: comp_ui
             });
 
             // Loads the file we need
-            require([component_path], function(subcomponent) {
+            require([comp_path], function(subcomponent) {
                 //initialize subcomponent
-                var comp = new subcomponent(config, _this);
-                defer.resolve(comp);
+                var c = new subcomponent(config, _this);
+                //setup model later with expected models
+                c.model = _this._modelMapping(comp_model,
+                    c.model_expects,
+                    function() {
+                        defer.resolve(c);
+                    });
             });
 
             return defer;
@@ -272,7 +262,7 @@ define([
                             console.warn("Component element not found (root HTML node in the component's markup). Verify that " + this.template + "contains valid HTML/template.");
                         }
                     } catch (err) {
-                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + this.template);
+                        console.warn("Placeholder div not found! Check the name of the placeholder for the component " + _this.template);
                     }
 
                     defer.resolve();
@@ -285,29 +275,24 @@ define([
             return defer;
         },
 
-        //TODO: remove this method - It's just wrapping an already
-        //existing model method
-        setState: function(state) {
-            this.model.setState(state);
-        },
+        /**
+         * Interface for domReady
+         * To be called whenever the template is finally ready
+         */
+        domReady: function() {},
 
         /**
-         * Interface for postRender
+         * modelReady calls modelReady for all sub-components
          */
-        postRender: function() {},
-
-        /**
-         * Update calls update for all sub-components
-         */
-        update: function() {
+        modelReady: function() {
             if (this._blockUpdate) return;
             var _this = this;
-            this._update = this._update || _.throttle(function() {
+            this._modelReady = this._update || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.update();
+                    component.modelReady();
                 });
             }, this._frameRate);
-            this._update();
+            this._modelReady();
         },
 
         /**
@@ -318,7 +303,7 @@ define([
             var _this = this;
             this._resize = this._resize || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.resize();
+                    component.trigger('resize');
                 });
             }, this._frameRate);
             this._resize();
@@ -357,6 +342,7 @@ define([
         /**
          * Reassigns all models (on overwrite
          */
+        //TODO: After changes in _modelMapping, this won't work. Fix it!
         reassignModel: function() {
             //only reassign if it's already initialized
             if (!this._ready) return;
@@ -375,13 +361,124 @@ define([
         /**
          * Maps the current model to the subcomponents
          * @param {String|Array} model_config Configuration of model
+         * @param {String|Array} model_expects Expected models
          * @returns {Object} the model
          */
-        //todo: make it more readable
-        _modelMapping: function(model_config) {
+        _modelMapping: function(model_config, model_expects, ready) {
 
-            var _this = this;
+            var _this = this,
+                values = {};
 
+            //If model_config is an array, we map it
+            if (_.isArray(model_config)) {
+
+                //map current submodels to new model
+                for (var i = 0, s = model_config.length; i < s; i++) {
+                    //get current model and rename if necessary
+                    var model_info = _mapOne(model_config[i]),
+                        new_name = model_expects[i] || model_info.name;
+                    values[new_name] = model_info.model;
+                }
+
+                //check for remaining expected models
+                var existing = model_config.length,
+                    expected = model_expects.length;
+                if (expected > existing) {
+                    //skip existing
+                    model_expects.splice(0, existing);
+                    //adds new expected models if needed
+                    for (var i = 0; i < expected; i++) {
+                        //force new empty model
+                        values[model_expects[i]] = {};
+                    }
+                }
+            }
+
+            //return a new model with the defined submodels
+            var model = new Model(values, this.intervals, {
+                //bind callback after model is all set
+                'set': function() {
+                    if (_.isFunction(ready)) {
+                        ready();
+                    }
+                }
+            });
+
+            var _this = this,
+                submodels = _.filter(model.get(), function(attr) {
+                    return !_.isUndefined(attr._id);
+                });
+
+            for (var submodel in model.get()) {
+
+                model[submodel].on({
+                    //the submodel has been set (only once)
+                    'set': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('set', 'set:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return sm._set;
+                            })) {
+                            model.triggerOnce('set', vals);
+                        }
+                    },
+                    //the submodel has initialized (only once)
+                    'init': function(evt, vals) {
+                        evt = evt.replace('init', 'init:' + name);
+                        model.triggerAll(evt, model.getObject());
+                    },
+                    //the submodel has changed (multiple times)
+                    'change': function(evt, vals) {
+                        evt = evt.replace('change', 'change:' + name);
+                        model.triggerAll(evt, model.getObject());
+                    },
+                    //loading has started in this submodel (multiple times)
+                    'load_start': function(evt, vals) {
+                        evt = evt.replace('load_start', 'load_start:' + name);
+                        model.triggerAll(evt, vals);
+                    },
+                    //loading has failed in this submodel (multiple times)
+                    'load_error': function(evt, vals) {
+                        evt = evt.replace('load_error', 'load_error:' + name);
+                        model.triggerAll(evt, vals);
+                    },
+                    //loading has ended in this submodel (multiple times)
+                    'load_end': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('load_end', 'load_end:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return !sm._loading;
+                            })) {
+                            model.triggerOnce('load_end', vals);
+                        }
+                    },
+                    //the submodel is ready
+                    'ready': function(evt, vals) {
+                        //trigger only for submodel
+                        evt = evt.replace('ready', 'ready:' + name);
+                        model.trigger(evt, vals);
+
+                        //if all are ready, trigger for this model
+                        if (_.every(submodels, function(sm) {
+                                return sm._ready;
+                            })) {
+                            model.triggerOnce('ready', vals);
+                        }
+                    }
+                });
+
+            }
+
+
+            return model;
+
+            //map one model to current submodels
             function _mapOne(name) {
                 var parts = name.split("."),
                     current = _this.model,
@@ -390,54 +487,12 @@ define([
                     current_name = parts.shift();
                     current = current[current_name];
                 }
-                //normalize name (show_2 -> show)
-                current_name = current_name.split("_")[0];
                 return {
-                    name: current_name,
+                    name: name,
                     model: current
                 };
             }
-            if (_.isUndefined(model_config)) {
-                return;
-            }
-            if (_.isArray(model_config) && model_config.length > 1) {
-                var values = {};
-                for (var i = 0, size = model_config.length; i < size; i++) {
-                    var model_info = _mapOne(model_config[i]);
-                    values[model_info.name] = model_info.model;
-                }
-                return values;
-            } else if (_.isArray(model_config) && model_config.length == 1) {
-                return _mapOne(model_config[0]).model;
-            } else if (_.isString(model_config) && model_config.length > 0) {
-                return _mapOne(model_config).model;
-            } else {
-                return false;
-            }
 
-        },
-
-        /**
-         * Instantiates default models if there's none provided
-         * @param {String|Array} model_config Configuration of model
-         * @returns {Object} the model
-         */
-        _defaultModels: function(defaults) {
-            var _this = this,
-                config;
-            if (_.isPlainObject(defaults) || _.isArray(defaults)) {
-                config = {};
-                for (var i in defaults) {
-                    config[i] = this._defaultModels(defaults[i]);
-                }
-            } else {
-                config = new defaults({}, undefined, {
-                    'change': function() {
-                        _this.update();
-                    }
-                });
-            }
-            return config;
         },
 
         /**
@@ -450,14 +505,14 @@ define([
         _uiMapping: function(id, ui) {
 
             //if overwritting UI
-            if(ui) {
+            if (ui) {
                 return new Model(ui);
             }
 
-            if(id) {
+            if (id && this.ui) {
                 id = id.replace(".", ""); //remove trailing period
                 var sub_ui = this.ui[id];
-                if(sub_ui) {
+                if (sub_ui) {
                     return sub_ui;
                 }
             }
@@ -516,7 +571,7 @@ define([
         /**
          * Translate all strings in the template
          */
-        //todo: improve translation of strings
+        //TODO: improve translation of strings
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.selectAll('[data-vzb-translate]');
@@ -545,6 +600,21 @@ define([
          * @param {Function} func function to be executed
          */
         on: function(name, func) {
+
+            if (this._debugEvents && this._debugEvents !== "trigger") {
+                if (_.isPlainObject(name)) {
+                    for (var i in name) {
+                        console.log("Component > bind:", i, this);
+                    }
+                } else if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Component > bind:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > bind:", name, this);
+                }
+            }
+
             this._events.bind(name, func);
         },
 
@@ -554,6 +624,17 @@ define([
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
+
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Component > triggered:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > triggered:", name, this);
+                }
+            }
+
             this._events.trigger(name, val);
         },
 
@@ -563,6 +644,17 @@ define([
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
+
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Component > triggered all:", name[i], this);
+                    }
+                } else {
+                    console.log("Component > triggered all:", name, this);
+                }
+            }
+
             this._events.triggerAll(name, val);
         }
 

@@ -67,8 +67,9 @@ define([
          */
         init: function(config, context) {
             this.template = "components/_gapminder/timeslider/timeslider";
-            //default model if none is provided
-            this.default_model = TimeModel;
+
+            //define expected models/hooks for this component
+            this.model_expects = ["time"];
 
             // Same constructor as the superclass
             this._super(config, context);
@@ -77,8 +78,7 @@ define([
             this.ui = _.extend({
                 show_limits: false,
                 show_value: false,
-                show_button: true,
-                format: this.model.unit
+                show_button: true
             }, this.ui);
         },
 
@@ -87,7 +87,7 @@ define([
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 objects
          */
-        postRender: function() {
+        domReady: function() {
             var _this = this;
 
             //html elements
@@ -102,11 +102,11 @@ define([
                 pause = this.element.select(".vzb-ts-btn-pause");
 
             play.on('click', function() {
-                _this.model.play();
+                _this.model.time.play();
             });
 
             pause.on('click', function() {
-                _this.model.pause();
+                _this.model.time.pause();
             });
 
             //Scale
@@ -138,18 +138,20 @@ define([
         },
 
         /**
-         * Executes everytime there's an update event.
+         * Executes everytime there's a data event.
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        update: function() {
+        modelReady: function() {
 
             if (this._blockUpdate) return;
 
+            this.ui.format = this.model.time.unit;
+
             //time slider should always receive a time model
-            var time = this.model.value,
-                minValue = this.model.start,
-                maxValue = this.model.end,
+            var time = this.model.time.value,
+                minValue = this.model.time.start,
+                maxValue = this.model.time.end,
                 _this = this;
 
             //format
@@ -202,7 +204,7 @@ define([
                 .attr("r", this.profile.radius);
 
             //set handle at current position
-            this._setHandle(this.model.playing);
+            this._setHandle(this.model.time.playing);
 
         },
 
@@ -214,7 +216,7 @@ define([
             var _this = this;
             return function() {
                 if (!_this._blockUpdate) {
-                    _this.model.pause();
+                    _this.model.time.pause();
                     _this._optionClasses();
                     _this._blockUpdate = true;
                     _this.element.classed(class_dragging, true);
@@ -228,7 +230,7 @@ define([
                 }
 
                 //set time according to dragged position
-                if (value - _this.model.value !== 0) {
+                if (value - _this.model.time.value !== 0) {
                     _this._setTime(value);
                 }
                 //position handle
@@ -244,7 +246,7 @@ define([
             var _this = this;
             return function() {
                 _this._blockUpdate = false;
-                _this.model.pause();
+                _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
             }
         },
@@ -254,16 +256,16 @@ define([
          * @param {Boolean} transition whether to use transition or not
          */
         _setHandle: function(transition) {
-            var value = this.model.value;
+            var value = this.model.time.value;
             this.slide.call(this.brush.extent([value, value]));
             this.valueText.text(this.format(value));
 
-            if (this.model.start - this.model.value === 0) {
+            if (this.model.time.start - this.model.time.value === 0) {
                 transition = false;
             }
 
             if (transition) {
-                var speed = this.model.speed,
+                var speed = this.model.time.speed,
                     old_pos = this.handle.attr("cx"),
                     new_pos = this.xScale(value);
 
@@ -292,7 +294,7 @@ define([
          */
         _setTime: function(time) {
             //update state
-            this.model.value = time;
+            this.model.time.value = time;
         },
 
         /**
@@ -303,12 +305,12 @@ define([
 
             var show_limits = this.ui.show_limits,
                 show_value = this.ui.show_value,
-                show_play = (this.ui.show_button) && (this.model.playable);
+                show_play = (this.ui.show_button) && (this.model.time.playable);
 
             if (!show_limits) this.xAxis.tickValues([]).ticks(0);
 
             this.element.classed(class_hide_play, !show_play);
-            this.element.classed(class_playing, this.model.playing);
+            this.element.classed(class_playing, this.model.time.playing);
             this.element.classed(class_show_value, show_value);
         },
     });

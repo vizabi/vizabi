@@ -12,10 +12,13 @@ define([
         init: function(config, parent) {
             this.name = 'size';
 
+            // in dialog, this.model_expects = ["state", "data"];
+
             this.components = [{
                 component: '_gapminder/bubble-size',
                 placeholder: '.vzb-dialog-bubble-size',
-                model: ["state.show"],
+                //TODO: this can't be specific because it's not always marker
+                model: ["state.marker.size"],
                 ui: {
                     show_button: false
                 }

@@ -8,62 +8,52 @@ define([
 
     var IndicatorDisplay = Component.extend({
 
-		/*
+        /*
          * INIT:
          * Executed once, before template loading
          */
         init: function(options, context) {
             this.name = "indicator-display";
             this.template = "components/_examples/indicator-display/indicator-display";
+
+            //define expected models for this component
+            this.model_expects = ["rows", "time"];
+
             this._super(options, context);
         },
 
         /*
-         * POSTRENDER:
+         * domReady:
          * Executed after template is loaded
          * Ideally, it contains instantiations related to template
          */
-        postRender: function() {
-
+        domReady: function() {
+            // this.model.time.on("set", function(evt) {
+            //     console.log("set!!!", evt);
+            // })
+            // this.model.rows.on("change", function(evt) {
+            //     console.log("changed!!!", evt);
+            // });
+            // this.model.rows.on("load_start", function(evt) {
+            //     console.log("LOADSTRAT!!!", evt);
+            // })
         },
 
 
         /*
-         * UPDATE:
+         * modelReady:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        update: function() {
-            var indicator = this.model.show.indicator,
-                time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
-                countries = _.cloneDeep(this.model.data.getItems()),
-                decimals = utils.countDecimals(time),
+        modelReady: function() {
+
+            var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
+                rows = this.model.rows.label.getItems(),
                 countriesCurr = [];
 
-            if (decimals) {
-
-                var countriesCurr = _.filter(countries, function(d) {
-                    return (d.time == Math.floor(time));
-                });
-                var dataAfter = _.filter(countries, function(d) {
-                    return (d.time == Math.ceil(time));
-                });
-
-                for (var i = 0; i < countriesCurr.length; i++) {
-                    var d = countriesCurr[i],
-                        diff = (time - Math.floor(time)).toFixed(decimals);
-                    d.time = time;
-                    var valBefore = _.parseInt(d[indicator]),
-                        valAfter = _.parseInt(dataAfter[i][indicator]);
-                    d[indicator] = utils.interpolate(valBefore, valAfter, diff);
-                };
-
-
-            } else {
-                countriesCurr = _.filter(countries, function(d) {
-                    return (d.time == time);
-                });
-            }
+            countriesCurr = _.filter(rows, function(d) {
+                return (d.time == time);
+            });
 
 
             this.element.selectAll("p").remove();
@@ -83,25 +73,31 @@ define([
          * Ideally, it contains only operations related to size
          */
         resize: function() {
-            var indicator = this.model.show.indicator;
+            var indicator = this.model.rows.number.value,
+                _this = this;
 
-            if (this.getLayoutProfile() === 'small' && indicator === 'pop') {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + Math.round(d[indicator] / 100000) / 10 + " M";
-                    });
-            } else if (indicator === 'pop') {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + Math.round(d[indicator]).toLocaleString();
-                    });
-            }
-            else  {
-                this.element.selectAll("p")
-                    .text(function(d) {
-                        return d["geo.name"] + ": " + d[indicator].toLocaleString();
-                    });
-            }
+            //todo: hooks can't be hacked like this
+            this.element.selectAll("p")
+                .text(function(d) {
+
+                    var id = _.pick(d, ["geo", "time"]),
+                        label = _this.model.rows.label.getValue(id),
+                        number = _this.model.rows.number.getValue(id),
+                        string = label + ": ";
+
+                    if (_this.getLayoutProfile() === 'small' && indicator === 'pop') {
+                        string += Math.round(number / 100000) / 10 + " M";
+                    } else if (indicator === 'pop') {
+                        string += Math.round(number).toLocaleString();
+                    } else {
+                        string += number.toLocaleString();
+                    }
+
+                    return string;
+                })
+                .style("color", function(d) {
+                    return _this.model.rows.color.getValue(d);
+                });
         },
 
 

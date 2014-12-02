@@ -71,24 +71,47 @@ $(function() {
         //state
         state: url.state || {
             //what to show
-            show: {
-                geo: ["swe", "nor", "fin"],
-                geo_category: ["country", "planet"],
-                indicator: 'pop',
-                scale: 'linear',
-                unit: 1
-            },
+            //timespan of the visualization
             time: {
-                unit: "year",
-                start: "2000",
-                end: "2009"
+                start: 2000,
+                end: 2009,
+                value: 2002,
+                step: 1,
+                speed: 300
+            },
+
+            //entities we want to show
+            entities: {
+                show: [{
+                    dim: "geo",
+                    filter: {
+                        "geo": ["swe", "nor", "fin"],
+                        "geo.category": ["country"]
+                    }
+                }]
+            },
+
+            //how we show it
+            row: {
+                column: [{
+                    use: "property",
+                    value: "geo.name"
+                },{
+                    use: "indicator",
+                    value: "gdp",
+                    scale: 'linear'
+                },{
+                    use: "indicator",
+                    value: "lex",
+                    scale: 'linear'
+                }]
             }
         },
 
         //data properties
         data: {
             reader: "local-json",
-            path: "../../data-waffles/examples/{{LANGUAGE}}/response.json"
+            path: "../../data-waffles/examples/{{LANGUAGE}}/basic-indicators.json"
         },
 
         //language properties
@@ -144,7 +167,7 @@ function setState2() {
             },
             timeRange: ["2000-2009"],
             //TODO: improve how we express which columns to show
-            columns: ['entity', 'time', 'gdp_per_cap']
+            columns: ['entities', 'time', 'gdp_per_cap']
         }
     };
     myVizabi.setOptions(newOption);

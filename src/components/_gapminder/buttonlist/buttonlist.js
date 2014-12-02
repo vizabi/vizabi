@@ -44,6 +44,8 @@ define([
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
 
+            this.model_expects = ["state", "data"];
+
             this.components = [];
             //basic template data for buttons
             this.template_data = {
@@ -74,7 +76,7 @@ define([
                 this.components.push({
                     component: '_gapminder/buttonlist/dialogs/' + btn,
                     placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-                    model: ['state', 'data']
+                    model: ["state", "data"]
                 });
 
                 //add template data
@@ -92,7 +94,7 @@ define([
          * POSTRENDER:
          * Executed once after loading
          */
-        postRender: function() {
+        domReady: function() {
             var _this = this,
                 buttons = d3.selectAll(".vzb-buttonlist-btn");
 

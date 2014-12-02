@@ -25,11 +25,11 @@ define([
         },
 
         /*
-         * POSTRENDER:
+         * domReady:
          * Executed after template is loaded
          * Ideally, it contains instantiations related to template
          */
-        postRender: function() {
+        domReady: function() {
             this.graph = this.element.select('.vzb-lc-graph');
             this.yAxisEl = this.graph.select('.vzb-lc-axis-y');
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
@@ -39,11 +39,11 @@ define([
 
 
         /*
-         * UPDATE:
+         * modelReady:
          * Executed whenever this.data is changed
          * Ideally, it contains only operations related to this.data events
          */
-        update: function() {
+        modelReady: function() {
             this.data = this.model.data.getItems();
 
             var _this = this,

@@ -21,14 +21,14 @@ define([
         /**
          * Executes right after the template is in place
          */
-        postRender: function() {
+        domReady: function() {
             //
         },
 
         /**
          * Updates the component as soon as the model/models change
          */
-        update: function() {
+        modelReady: function() {
 
             var indicator = this.model.show.indicator,
                 data = this.model.data.getItems(),

@@ -25,7 +25,7 @@ define([
             }, {
                 component: '_examples/bubble-chart',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.show", "data", "state.time"]
+                model: ["state.time", "state.entities", "state.marker", "data"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
@@ -34,7 +34,7 @@ define([
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'data', 'language'],
-                buttons: ['find', 'colors', 'size', 'more-options']
+                buttons: ['colors', 'size', 'more-options']
             }];
 
             this._super(config, options);
@@ -47,49 +47,23 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var state = model.state;
-            var data = model.data;
+            var time = model.state.time,
+                markers = model.state.marker.label;
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!markers.getItems() || markers.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = data.getLimits('time').min,
-                dateMax = data.getLimits('time').max;
+            var dateMin = markers.getLimits('time').min,
+                dateMax = markers.getLimits('time').max;
 
-            if (state.time.start < dateMin) {
-                state.time.start = dateMin;
+            if (time.start < dateMin) {
+                time.start = dateMin;
             }
-            if (state.time.end > dateMax) {
-                state.time.end = dateMax;
+            if (time.end > dateMax) {
+                time.end = dateMax;
             }
-        },
-
-        /**
-         * Returns the query (or queries) to be performed by this tool
-         * @param model the tool model will be received
-         */
-        getQuery: function(model) {
-            var state = model.state,
-                time_start = d3.time.format("%Y")(state.time.start),
-                time_end = d3.time.format("%Y")(state.time.end);
-            return [{
-                "from": "data",
-                "select": _.union(["geo", "geo.name", "time", "geo.region", state.show.indicator]),
-                "where": {
-                    "geo": state.show.geo,
-                    "geo.category": state.show.geo_category,
-                    "time": [time_start + "-" + time_end]
-                }
-            }, {
-                "from": "data",
-                "select": ["geo", "geo.name", "geo.region", "geo.category"],
-                "where": {
-                    "geo": ["*"],
-                    "geo.category": ["*"]
-                }
-            }];
         }
     });
 

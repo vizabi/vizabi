@@ -130,6 +130,12 @@ p {
 .wrapper-dropdown.wide {
     width: 250px;
 }
+
+.wrapper-dropdown.small {
+    width: 80px;
+    font-size: 10px;
+    text-transform: none;
+}
 .wrapper-dropdown:after {
     content: "";
     width: 0;

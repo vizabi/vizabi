@@ -7,6 +7,8 @@ define([
     var Dialog = Component.extend({
         init: function(config, parent) {
             this.name = this.name || '';
+
+            this.model_expects = ["state", "data"];
             
             this.template = 'components/_gapminder/buttonlist/'+
                             'dialogs/'+this.name+'/'+this.name;
@@ -16,7 +18,7 @@ define([
             this._super(config, parent);
         },
 
-        postRender: function() {
+        domReady: function() {
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
 
             var _this = this;

@@ -1,27 +1,29 @@
-define([
-    'jquery',
-    'lodash',
-    'base/model',
-    'base/data'
-], function($, _, Model, DataManager) {
+/*
+ * Some models may extend Hook if they always want to be hooked to data
+ */
 
-    var ButtonModel = Model.extend({
+define([
+    'lodash',
+    'base/model'
+], function(_, Model) {
+
+    var Hook = Model.extend({
 
         /**
-         * Initializes the button model.
+         * Initializes the hook
          * @param {Object} values The initial values of this model
          * @param parent A reference to the parent model
          * @param {Object} bind Initial events to bind
          */
         init: function(values, parent, bind) {
-
             values = _.extend({
-                buttons: [],
+                use: "value",
+                value: undefined
             }, values);
-
             this._super(values, parent, bind);
         }
+
     });
 
-    return ButtonModel;
+    return Hook;
 });

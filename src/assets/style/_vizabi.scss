@@ -10,14 +10,14 @@ $fa-font-path:"assets/fonts";
 @import "../../../lib/smart-picker/dist/styles/_smart-picker";
 
 //TODO: remove tool tip styles from here (this is too specific)
-.simpTooltip {
+.vzb-tooltip {
+    @include border-radius(3px);
+    @include opacity(0.9);
     position: absolute;
     background: #666;
     padding: 7px 10px;
     color: white;
     font-size: 12px;
-    display: none;
     z-index: 11;
-    @include border-radius(3px);
     font-weight: 300;
 }

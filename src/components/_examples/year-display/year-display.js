@@ -16,25 +16,29 @@ define([
         init: function(options, context) {
             this.name = "year-display";
             this.template = "components/_examples/year-display/year-display";
+
+            //define expected models for this component
+            this.model_expects = ["time"];
+
             this._super(options, context);
         },
 
         /*
-         * POSTRENDER:
+         * domReady:
          * Executed after template is loaded
          * Ideally, it contains instantiations related to template
          */
-        postRender: function() {
+        domReady: function() {
 
         },
 
         /*
-         * UPDATE:
+         * modelReady:
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        update: function() {
-            var time = this.model.getFormatted(); //gets formatted year
+        modelReady: function() {
+            var time = this.model.time.getFormatted(); //gets formatted year
             this.element.html(time);
         },
 

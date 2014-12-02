@@ -13,16 +13,14 @@ define([
          * @param {Object} values The initial values of this model
          * @param {Object} binds contains initial bindings for the model
          * @param {Function|Array} validade validate rules
-         * @param {Function} query getQuery function
          */
-        init: function(values, binds, validate, query) {
+        init: function(values, binds, validate) {
             this._id = _.uniqueId("tm");
             //all intervals are managed at tool level
             this._intervals = new Intervals();
 
             //generate validation function
             this.validate = this._generateValidate(validate);
-            this._query = query;
 
             //default submodels
             values = _.extend({
@@ -34,48 +32,16 @@ define([
             }, values);
 
             //constructor is similar to model
-            this._super(values, this._intervals, binds);
+            this._super(values, null, binds);
 
-            //load whenever show or language changes
-            var _this = this;
-            this.on(["change:state:show", "change:language"], function() {
-                _this.load().done(function() {
-                    _this.trigger("reloaded");
+            // change language
+            if(values.language) {
+                var _this = this;
+                this.on("change:language", function() {
+                    _this.trigger("translate");
                 });
-            });
-        },
-
-        /* ==========================
-         * Loading
-         * ==========================
-         */
-
-        /**
-         * Loads all submodels
-         * @returns defer to be resolved when everything is loaded
-         */
-        load: function() {
-            var _this = this,
-                defer = $.Deferred(),
-                promises = [],
-                submodels = this.get(),
-                query = this._query(this),
-                language = this.language.id;
-
-            //load each submodel
-            for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.load) {
-                    promises.push(submodel.load(query, language));
-                }
-            };
-
-            $.when.apply(null, promises).then(function() {
-                _this.validate();
-                defer.resolve();
-            });
-
-            return defer;
+            }
+            
         },
 
         /* ==========================

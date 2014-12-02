@@ -19,7 +19,7 @@ define([
         /**
          * Grab the list div
          */
-        postRender: function() {
+        domReady: function() {
             this.list = this.element.select(".vzb-find-list");
             this._super();
         },
@@ -27,7 +27,7 @@ define([
         /**
          * Build the list everytime it updates
          */
-        update: function() {
+        modelReady: function() {
             var _this = this;
             listed = this.model.state.show.geo,
                 data = this.model.data.getItems()[1].map(function(d) {

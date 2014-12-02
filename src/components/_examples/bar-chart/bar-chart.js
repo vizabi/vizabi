@@ -21,7 +21,7 @@ define([
         /**
          * Executes right after the template is in place
          */
-        postRender: function() {
+        domReady: function() {
 
             this.graph = this.element.select('.vzb-bc-graph');
             this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
@@ -34,7 +34,7 @@ define([
         /**
          * Updates the component as soon as the model/models change
          */
-        update: function() {
+        modelReady: function() {
             var indicator = this.model.show.indicator,
                 data = _.cloneDeep(this.model.data.getItems()),
                 time = parseInt(d3.time.format("%Y")(this.model.time.value),10),

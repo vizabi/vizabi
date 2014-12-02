@@ -30,40 +30,60 @@ define([
             //build tool model
             var _this = this;
             this.model = new ToolModel(options, {
-                'change': function(evt, val) {
-                    if (_this._ready) {
-                        _this.model.validate().done(function() {
-                             _.defer(function() {
-                                _this.update();
-                            });
-                        });
-                    }
-                    _this.triggerAll(evt, val);
-                },
-                'reloaded': function(evt, val) {
-                    if (_this._ready) {
-                        _this.model.validate().done(function() {
-                             _this.update();
-                        });
-                        _this.translateStrings();
-                    }
-                },
-                'load_start': function() {
-                    _this.beforeLoading();
-                },
-                'load_end': function() {
-                    _this.afterLoading();
-                },
-                'load_error': function() {
-                    _this.errorLoading();
-                },
-                'ready': function() {
+                'set': function(evt, val) {
                     //binding external events
                     _this._bindEvents();
                     //this ui is the model
                     _this.ui = _this.model.ui;
                     //rendering
-                    _this.render();
+                    var promise = _this.render();
+                    //after rendering, we can set up hooks and load
+                    $.when.apply(null, [promise]).then(function() {
+                        //set hooks after all submodels are set
+                        _this.model.setHooks();
+                        //load after we have all hooks in place
+                        _this.model.load().done(function() {
+                            _this.model.validate().done(function() {
+                                _this.triggerAll(evt, val);
+                            });
+                        });
+                    });
+                },
+                'change': function(evt, val) {
+                    //defer to give time for loading
+                    _.defer(function() {
+                        if (_this._ready) {
+                            _this.model.validate().done(function() {
+                                _this.triggerAll(evt, val);
+                                _this.modelReady();
+                            });
+                        }
+                    });
+                },
+                'translate': function(evt, val) {
+                    if (_this._ready) {
+                        _this.model.load().done(function() {
+                            _this.model.validate().done(function() {
+                                _this.modelReady();
+                            });
+                            _this.translateStrings();
+                        });
+                    }
+                },
+                'load_start': function() {
+                    _this.beforeLoading();
+                },
+                'load_error': function() {
+                    _this.errorLoading();
+                },
+                'load_end': function(evt, vals) {},
+                'ready': function() {
+                    _this.afterLoading();
+                    if (_this._ready) {
+                        _this.model.validate().done(function() {
+                            _this.modelReady();
+                        });
+                    }
                 }
             }, validate, query);
 
@@ -72,21 +92,11 @@ define([
         },
 
         /**
-         * Loads the model as a postRender function
-         * @returns defer a promise to be resolved when model is loaded
-         */
-        postRender: function() {
-            return this.model.load();
-        },
-
-        /**
          * Binds events in model to outside world
          */
         _bindEvents: function() {
             if (!this.model.bind) return;
-            for (var i in this.model.bind.get()) {
-                this.on(i, this.model.bind.get(i));
-            }
+            this.on(this.model.bind.get());
         },
 
         /**
@@ -104,18 +114,13 @@ define([
             }
         },
 
-        /* ==========================
-         * Loading methods
-         * ==========================
-         */
-
         /**
          * Displays loading class
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.blockUpdate(true);
             this.element.classed(class_loading_data, true);
+            this.blockUpdate(true);
         },
 
         /**
@@ -124,7 +129,11 @@ define([
         afterLoading: function() {
             //it's ok to update if not loading
             this.blockUpdate(false);
-            this.element.classed(class_loading_data, false);
+            //defer to make sure it's updated
+            var _this = this;
+            _.defer(function() {
+                _this.element.classed(class_loading_data, false);
+            });
         },
 
         /**
