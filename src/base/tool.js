@@ -50,12 +50,15 @@ define([
                     });
                 },
                 'change': function(evt, val) {
-                    if (_this._ready) {
-                        _this.model.validate().done(function() {
-                            _this.triggerAll(evt, val);
-                            _this.modelReady();
-                        });
-                    }
+                    //defer to give time for loading
+                    _.defer(function() {
+                        if (_this._ready) {
+                            _this.model.validate().done(function() {
+                                _this.triggerAll(evt, val);
+                                _this.modelReady();
+                            });
+                        }
+                    });
                 },
                 'translate': function(evt, val) {
                     if (_this._ready) {

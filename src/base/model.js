@@ -36,7 +36,9 @@ define([
             this._items = []; //holds hook items for this hook
 
             //bind initial events
-            this.on(bind);
+            if(bind) {
+                this.on(bind);
+            }
 
             //initial values
             if (values) {
@@ -724,11 +726,11 @@ define([
                 scale = this.scale || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this._id, this.value);
+                    var limits = this.getLimits(this.value);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this.getUnique(this._id, this.value);
+                    domain = this.getUnique(this.value);
                     break;
                 case "value":
                 default:
