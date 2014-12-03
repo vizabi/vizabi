@@ -3,8 +3,10 @@
   "eqeqeq": true,
   "undef": true,
   "jquery" : true,
+  "devel": true,
   "globals": {
     "define": true,
-    "require": true
+    "require": true,
+    "_vzb_available_plugins": true
   }
 }

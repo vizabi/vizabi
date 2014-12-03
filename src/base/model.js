@@ -1,12 +1,13 @@
 define([
     'jquery',
+    'd3',
     'lodash',
     'base/utils',
     'base/class',
     'base/intervals',
     'base/events',
     'base/data',
-], function($, _, utils, Class, Intervals, Events, DataManager) {
+], function($, d3, _, utils, Class, Intervals, Events, DataManager) {
 
     var model = Class.extend({
 
@@ -65,7 +66,9 @@ define([
          * @returns attr value or all values if attr is undefined
          */
         get: function(attr) {
-            if (!attr) return this._data;
+            if (!attr) {
+                return this._data;
+            }
             return this._data[attr];
         },
 
@@ -95,7 +98,8 @@ define([
             silent = val;
             for (var a in attr) {
 
-                var vals = attr[a];
+                var vals = attr[a],
+                    promise;
                 //if it's an object, set or create submodel
                 if (_.isPlainObject(vals)) {
                     if (this._data[a] && utils.isModel(this._data[a])) {
@@ -380,7 +384,7 @@ define([
                         _this._loading = false;
                         _this.trigger("load_end");
                     }
-                }
+                };
 
                 this._dataManager.load(query, lang, reader, evts)
                     .done(function(data) {
@@ -393,7 +397,7 @@ define([
                         }
                     });
 
-                promises.push(promise)
+                promises.push(promise);
 
             }
 
@@ -403,10 +407,12 @@ define([
                 if (submodel.load) {
                     promises.push(submodel.load());
                 }
-            };
+            }
 
             $.when.apply(null, promises).then(function() {
-                if (_this.validate) _this.validate();
+                if (_this.validate) {
+                    _this.validate();
+                }
                 _this._ready = true;
                 _this._loading = false;
                 _this.trigger("ready");
@@ -514,7 +520,7 @@ define([
 
                 //accepts hooking to anything, but defaults to data/entities/time
                 if (!_.isArray(this.hook_to) || _.rest(this.hook_to, _.isString).length) {
-                    this.hook_to = ["data", "entities", "time", "language"]
+                    this.hook_to = ["data", "entities", "time", "language"];
                 }
 
                 this.hookModel();
@@ -544,7 +550,7 @@ define([
                 var name = prefix.split("_")[0];
                 //hook with the closest prefix to this model
                 this._hooks[name] = this._getClosestModelPrefix(prefix);
-            };
+            }
         },
 
         /**
@@ -573,12 +579,16 @@ define([
             if (this.use && this.use === use) {
                 //add if it has use and it's a string
                 var val = this.value; //e.g. this.value = "lex"
-                if (val && _.isString(val)) values.push(val);
+                if (val && _.isString(val)) {
+                    values.push(val);
+                }
             }
             //repeat for each submodel
             var submodels = this.get();
             for (var i in submodels) {
-                if (!submodels[i] || !submodels[i].getUseValues) continue;
+                if (!submodels[i] || !submodels[i].getUseValues) {
+                    continue;
+                }
                 values = _.union(values, submodels[i].getUseValues(use));
             }
             //now we have an array with all values in a use for hooks.
@@ -647,7 +657,7 @@ define([
                     values = _.map(this._items, function(row) {
                         //if the value is present, map and rename
                         if (!_.isUndefined(row[_this.value])) {
-                            row["value"] = _this.mapValue(row[_this.value]);
+                            row.value = _this.mapValue(row[_this.value]);
                         }
                         return _.omit(row, _this.value);
                     });
@@ -655,7 +665,7 @@ define([
                 //filter only necessary fields
                 if (_.isArray(filter)) {
                     values = _.map(values, function(r) {
-                        return _.pick(r, filter)
+                        return _.pick(r, filter);
                     });
                 }
                 //filter only matching results
@@ -713,7 +723,7 @@ define([
                         };
 
                     queries.push(query);
-                };
+                }
                 return queries;
             }
         },
@@ -724,7 +734,9 @@ define([
          */
         getDomain: function() {
 
-            if (!this.isHook()) return;
+            if (!this.isHook()) {
+                return;
+            }
 
             var domain,
                 scale = this.scale || "linear";
@@ -753,9 +765,13 @@ define([
         //TODO: improve way limits are checked
         getLimits: function(attr) {
 
-            if (!this.isHook()) return;
+            if (!this.isHook()) {
+                return;
+            }
 
-            if (!attr) attr = 'time'; //fallback in case no attr is provided
+            if (!attr) {
+                attr = 'time'; //fallback in case no attr is provided
+            }
             var limits = {
                     min: 0,
                     max: 0
@@ -838,7 +854,9 @@ define([
          */
         _getClosestModelPrefix: function(prefix) {
             var model = this._findSubmodelPrefix(prefix);
-            if (model) return model;
+            if (model) {
+                return model;
+            }
             else if (this._parent) {
                 return this._parent._getClosestModelPrefix(prefix);
             }
