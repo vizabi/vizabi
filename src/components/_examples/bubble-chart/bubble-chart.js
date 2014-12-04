@@ -76,7 +76,8 @@ define([
         /*
          * Updates the component as soon as the model/models change
          */
-        modelReady: function() {
+        modelReady: function(evt) {
+
             var _this = this;
 
             //TODO: preprocessing should go somewhere else, when the data is loaded

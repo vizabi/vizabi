@@ -55,7 +55,7 @@ define([
                         if (_this._ready) {
                             _this.model.validate().done(function() {
                                 _this.triggerAll(evt, val);
-                                _this.modelReady();
+                                _this.modelReady(evt);
                             });
                         }
                     });
@@ -64,7 +64,7 @@ define([
                     if (_this._ready) {
                         _this.model.load().done(function() {
                             _this.model.validate().done(function() {
-                                _this.modelReady();
+                                _this.modelReady(evt);
                             });
                             _this.translateStrings();
                         });
@@ -77,11 +77,11 @@ define([
                     _this.errorLoading();
                 },
                 'load_end': function(evt, vals) {},
-                'ready': function() {
+                'ready': function(evt) {
                     _this.afterLoading();
                     if (_this._ready) {
                         _this.model.validate().done(function() {
-                            _this.modelReady();
+                            _this.modelReady(evt);
                         });
                     }
                 }

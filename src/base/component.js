@@ -55,7 +55,7 @@ define([
                     //TODO: hotfix for non-data viz
                     _.defer(function() {
                         if (_this.model._ready) {
-                            _this.modelReady();
+                            _this.modelReady('dom_ready');
                         } 
                     });
                 },
@@ -284,12 +284,12 @@ define([
         /**
          * modelReady calls modelReady for all sub-components
          */
-        modelReady: function() {
+        modelReady: function(evt) {
             if (this._blockUpdate) return;
             var _this = this;
             this._modelReady = this._update || _.throttle(function() {
                 _.each(_this.components, function(component) {
-                    component.modelReady();
+                    component.modelReady(evt);
                 });
             }, this._frameRate);
             this._modelReady();
