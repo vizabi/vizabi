@@ -70,7 +70,7 @@ define([
                                 }
                                 //in case it's time, special filtering
                                 else {
-                                    var timeRange = wanted[0].split("-"),
+                                    var timeRange = wanted[0],
                                         min = timeRange[0],
                                         max = timeRange[1] || min;
 

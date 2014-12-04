@@ -705,10 +705,10 @@ define([
                 //if there's hooked time, include time in query filter
                 if (time) {
                     //TODO: support any time format
-                    var time_start = d3.time.format("%Y")(time.start),
-                        time_end = d3.time.format("%Y")(time.end),
+                    var time_start = d3.time.format(time.format || "%Y")(time.start),
+                        time_end = d3.time.format(time.format || "%Y")(time.end),
                         time_filter = {
-                            "time": [time_start + "-" + time_end]
+                            "time": [[time_start, time_end]]
                         };
                 }
 
