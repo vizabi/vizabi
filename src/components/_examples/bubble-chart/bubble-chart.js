@@ -32,6 +32,8 @@ define([
             this.yAxis = d3.svg.axis();
 
             this.isDataPreprocessed = false;
+            this.timeUpdatedOnce = false;
+            this.sizeUpdatedOnce = false;
 
         },
 
@@ -40,6 +42,7 @@ define([
          * Executes right after the template is in place
          */
         domReady: function() {
+            var _this = this;
 
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
@@ -55,21 +58,47 @@ define([
             //model events
             this.model.on({
                 "change": function(evt) {
-                    console.log("Changed!");
+                    console.log("Changed!", evt);
                 },
                 "load_start": function(evt) {
-                    console.log("Started to load!");
+                    console.log("Started to load!", evt);
                 },
-                "load_end": function() {
-                    console.log("Finished Loading!");
+                "load_end":  function() {
+                    console.log("Finished loading!");
+                    _this.updateShow();
+                    _this.redrawDataPoints();
+                },
+                "ready": function() {
+                    console.log("Model ready!");
+//TODO: put here the following and remove it from "load_end" and from redrawDataPoints()
+//                    _this.preprocessData();
+//                    _this.updateShow();
+//                    _this.updateTime();
+//                    _this.redrawDataPoints();
+                }
+            });
+            
+            this.model.time.on({
+                'change:value': function() {
+                    _this.updateTime();
+                    _this.redrawDataPoints();
                 }
             });
 
             //component events
             this.on("resize", function() {
                 console.log("Ops! Gotta resize...");
+                _this.resize();
+                _this.redrawDataPoints();
             })
 
+        },
+        
+        preprocessData: function(){
+            this.model.marker.label.getItems().forEach(function(d) {
+                d["geo.region"] = d["geo.region"] || "world";
+            });
+            this.isDataPreprocessed = true;
         },
 
 
@@ -77,28 +106,7 @@ define([
          * Updates the component as soon as the model/models change
          */
         modelReady: function(evt) {
-
-            var _this = this;
-
-            //TODO: preprocessing should go somewhere else, when the data is loaded
-            if (!this.isDataPreprocessed) {
-                _this.model.marker.label.getItems().forEach(function(d) {
-                    d["geo.region"] = d["geo.region"] || "world";
-                });
-                this.isDataPreprocessed = true;
-            }
-
-            this.time = parseInt(d3.time.format("%Y")(this.model.time.value), 10);
-            this.data = this.model.marker.label.getItems({ time: this.time.toString() });
-
-            if (this.isDataPreprocessed) {
-                //TODO: #32 run only if data or show models changed
-                this.updateShow();
-                //TODO: #32 run only if data or time models changed
-                this.updateTime();
-                //TODO: #32 run only on resize or on init
-                this.resize();
-            }
+            if (!this.isDataPreprocessed) this.preprocessData();
         },
 
 
@@ -131,9 +139,14 @@ define([
         updateTime: function() {
             var _this = this;
 
+            this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
+            this.data = this.model.marker.label.getItems({ time: this.time.toString() });
+            
             this.yearEl.text(this.time);
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
                 .data(this.data);
+            
+            this.timeUpdatedOnce = true;
         },
 
         /*
@@ -224,15 +237,17 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
 
-            this.redrawDataPoints();
+            this.sizeUpdatedOnce = false;
         },
 
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
          */
-        redrawDataPoints: function() {
+        redrawDataPoints: function() {            
             var _this = this;
+            if(!this.timeUpdatedOnce) this.updateTime();
+            if(!this.sizeUpdatedOnce) this.resize();
 
             //exit selection
             this.bubbles.exit().remove();
