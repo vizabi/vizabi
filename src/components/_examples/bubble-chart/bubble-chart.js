@@ -88,7 +88,7 @@ define([
             //component events
             this.on("resize", function() {
                 console.log("Ops! Gotta resize...");
-                _this.resize();
+                _this.updateSize();
                 _this.redrawDataPoints();
             })
 
@@ -153,7 +153,7 @@ define([
          * RESIZE:
          * Executed whenever the container is resized
          */
-        resize: function() {
+        updateSize: function() {
 
             if (!this.isDataPreprocessed) return;
 
@@ -247,7 +247,7 @@ define([
         redrawDataPoints: function() {            
             var _this = this;
             if(!this.timeUpdatedOnce) this.updateTime();
-            if(!this.sizeUpdatedOnce) this.resize();
+            if(!this.sizeUpdatedOnce) this.updateSize();
 
             //exit selection
             this.bubbles.exit().remove();
