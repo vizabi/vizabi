@@ -53,7 +53,7 @@ define([
             };
 
             if(config.buttons && config.buttons.length > 0) {
-                //TODO: FIXME: Buttons should be a model, not config
+                //TODO: Buttons should be a model, not config //former FIXME
                 this._addButtons(config.buttons);
             }
 

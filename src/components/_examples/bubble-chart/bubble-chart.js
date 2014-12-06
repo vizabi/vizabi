@@ -155,32 +155,17 @@ define([
 
             switch (this.getLayoutProfile()) {
                 case "small":
-                    margin = {
-                        top: 30,
-                        right: 20,
-                        left: 40,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
                     maxRadius = 20;
                     break;
                 case "medium":
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
                     maxRadius = 40;
                     break;
                 case "large":
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
                     maxRadius = 60;
                     break;

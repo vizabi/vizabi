@@ -1,5 +1,5 @@
-//FIXME: refactor hardcoded dates
-//FIXME: remove date formatting from here
+//TODO: refactor hardcoded dates //former FIXME
+//TODO: remove date formatting from here //former FIXME
 
 define([
     'd3',
