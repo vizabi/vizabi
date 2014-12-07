@@ -518,10 +518,8 @@ define([
         setHooks: function() {
             if (this.isHook()) {
 
-                //accepts hooking to anything, but defaults to data/entities/time
-                if (!_.isArray(this.hook_to) || _.rest(this.hook_to, _.isString).length) {
-                    this.hook_to = ["data", "entities", "time", "language"];
-                }
+                //what should this hook to?
+                this.hook_to = this._getHookTo();
 
                 this.hookModel();
             }
@@ -566,6 +564,22 @@ define([
          */
         getHook: function(hook) {
             return this._hooks[hook];
+        },
+
+        /**
+         * Learn what this model should hook to
+         * @returns {Array} hook_to array
+         */
+        _getHookTo: function() {
+            if (_.isArray(this.hook_to) && !_.rest(this.hook_to, _.isString).length) {
+                return this.hook_to;
+            }
+            else if (this._parent) {
+                return this._parent._getHookTo();
+            }
+            else {
+                return ["entities", "time", "data", "language"]; //default
+            }
         },
 
         /**
