@@ -257,7 +257,8 @@ define([
                 .attr("class", "vzb-bc-bubble");
 
             //update selection
-            var speed = this.model.time.speed;
+            var speed = (this.model.time.playing) ? this.model.time.speed : 0;
+
             var some_selected = (_this.model.entities.select.length > 0);
 
             this.bubbles
