@@ -65,8 +65,6 @@ define([
                 },
                 "load_end":  function() {
                     console.log("Finished loading!");
-                    _this.updateShow();
-                    _this.redrawDataPoints();
                 },
                 "ready": function() {
                     console.log("Model ready!");
@@ -107,6 +105,8 @@ define([
          */
         modelReady: function(evt) {
             if (!this.isDataPreprocessed) this.preprocessData();
+            this.updateShow();
+            this.redrawDataPoints();
         },
 
 
