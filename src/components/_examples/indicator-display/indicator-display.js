@@ -18,6 +18,20 @@ define([
 
             //define expected models for this component
             this.model_expects = ["rows", "time"];
+            this.model_binds = {
+                'init': function() {
+                    console.log("The model started");
+                },
+                'set': function() {
+                    console.log("The model is now set");
+                },
+                'change': function(evt) {
+                    console.log("The model changed:", evt);
+                },
+                'load_start': function() {
+                    console.log("Start loading!");
+                }
+            };
 
             this._super(options, context);
         },

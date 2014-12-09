@@ -44,6 +44,7 @@ define([
 
             //define expected models for this component
             this.model_expects = this.model_expects || [];
+            this.model_binds = this.model_binds || {};
 
             this.ui = this.ui || config.ui;
 
@@ -56,7 +57,7 @@ define([
                     _.defer(function() {
                         if (_this.model._ready) {
                             _this.modelReady('dom_ready');
-                        } 
+                        }
                     });
                 },
                 'resize': function() {
@@ -197,6 +198,7 @@ define([
                 //setup model later with expected models
                 c.model = _this._modelMapping(comp_model,
                     c.model_expects,
+                    c.model_binds,
                     function() {
                         defer.resolve(c);
                     });
@@ -362,9 +364,10 @@ define([
          * Maps the current model to the subcomponents
          * @param {String|Array} model_config Configuration of model
          * @param {String|Array} model_expects Expected models
+         * @param {Object} model_binds Initial model bindings
          * @returns {Object} the model
          */
-        _modelMapping: function(model_config, model_expects, ready) {
+        _modelMapping: function(model_config, model_expects, model_binds, ready) {
 
             var _this = this,
                 values = {};
@@ -403,6 +406,11 @@ define([
                     }
                 }
             });
+
+            //binds init bindings to this model
+            if (_.isPlainObject(model_binds)) {
+                model.on(model_binds);
+            };
 
             var _this = this,
                 submodels = _.filter(model.get(), function(attr) {
