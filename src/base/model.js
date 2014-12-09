@@ -627,7 +627,7 @@ define([
 
         /**
          * gets the value specified by this hook
-         * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999"}
+         * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
          * @returns hooked value
          */
 
@@ -701,6 +701,8 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
+            //if its not equipped to entities, I cant query either
+            //TODO: Throw error in case entities is not available
             if (!this.isHook() || needs_query.indexOf(this.use) === -1 || !this.getHook("entities")) {
                 return [];
             }
@@ -718,7 +720,7 @@ define([
 
                 //if there's hooked time, include time in query filter
                 if (time) {
-                    //TODO: support any time format
+        
                     var time_start = d3.time.format(time.format || "%Y")(time.start),
                         time_end = d3.time.format(time.format || "%Y")(time.end),
                         time_filter = {
@@ -727,6 +729,7 @@ define([
                 }
 
                 //write queries in array
+                //TODO: Evaluate the union of dimensions or multiple queries (only if multiple dimensions)
                 var queries = [];
                 for (var i = 0; i < dimensions.length; i++) {
                     var dim = dimensions[i],
