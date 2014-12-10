@@ -14,7 +14,7 @@ define([
         init: function(values, parent, bind) {
 
             values = _.extend({
-                show: [],
+                show: {},
                 select: [],
                 brush: []
             }, values);
@@ -34,8 +34,8 @@ define([
          * Gets the dimensions in this entities
          * @returns {Array} Array of unique values
          */
-        getDimensions: function() {
-            return _.unique(_.pluck(this.show, "dim"));
+        getDimension: function() {
+            return this.show.dim;
         },
 
         /**
@@ -43,48 +43,28 @@ define([
          * @returns {Array} Array of unique values
          */
         getFilters: function() {
-            return _.unique(_.pluck(this.show, "filter"));
+            return this.show.filter;
         },
 
         selectEntity: function(d) {
-            var id = _.pick(d, this.getDimensions());
-            //TODO: include in select array in the correct format
-            var select_array = this.select;
-            if(this.isSelected(id)) {
-                select_array = _.reject(select_array, id);
+            var value = d[this.getDimension()],
+                select_array = this.select;
+            if(this.isSelected(d)) {
+                select_array = _.without(select_array, value);
             } else {
-                select_array.push(id);
+                select_array.push(value);
             }
             this.set("select", select_array);
         },
 
         isSelected: function(d) {
-            var id = _.pick(d, this.getDimensions());
+            var value = d[this.getDimension()];
             var select_array = this.select;
-            if(_.findIndex(select_array, id) !== -1) {
+            if(_.indexOf(select_array, value) !== -1) {
                 return true;
             } else {
                 return false;
             }
-        },
-
-        /**
-         * Gets the flattened version of the entities arrays
-         * @returns {Array} flat array
-         */
-        _flatten: function(field) {
-            var target = this[field],
-                flat = [];
-            _.each(target, function(dimension) {
-                var dim = dimension.dim,
-                    objs = dimension.filter[dim];
-                _.each(objs, function(entity) {
-                    var new_obj = {};
-                    new_obj[dim] = entity;
-                    flat.push(new_obj);
-                });
-            });
-            return flat;
         }
 
     });

@@ -638,7 +638,7 @@ define([
             //(maybe like the commented code above)
             var id_keys = [];
             if (this.getHook("entities")) {
-                id_keys = this.getHook("entities").getDimensions();
+                id_keys.push(this.getHook("entities").getDimension());
             }
             if (this.getHook("time")) {
                 id_keys.push("time");
@@ -701,19 +701,21 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            //if its not equipped to entities, I cant query either
-            //TODO: Throw error in case entities is not available
-            if (!this.isHook() || needs_query.indexOf(this.use) === -1 || !this.getHook("entities")) {
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
                 return [];
             }
-
+            //error if there's no entities
+            else if(!this.getHook("entities")) {
+                console.error("Error:", this._id, "can't find the entities");
+                return []; 
+            }
             //else, its a hook (indicator or property) and it needs to query
             else {
 
                 var entities = this.getHook("entities"),
                     time = this.getHook("time"),
-                    dimensions = entities.getDimensions(),
-                    filters = entities.getFilters(),
+                    dimension = entities.getDimension(),
+                    filters = entities.getFilters().getObject(),
                     //include time or not
                     select = (time) ? [this.value, "time"] : [this.value],
                     time_filter = {};
@@ -728,20 +730,12 @@ define([
                         };
                 }
 
-                //write queries in array
-                //TODO: Evaluate the union of dimensions or multiple queries (only if multiple dimensions)
-                var queries = [];
-                for (var i = 0; i < dimensions.length; i++) {
-                    var dim = dimensions[i],
-                        query = {
-                            "from": "data",
-                            "select": _.union([dim], select),
-                            "where": _.extend(time_filter, filters[i])
-                        };
-
-                    queries.push(query);
-                }
-                return queries;
+                //return query
+                return [{
+                    "from": "data",
+                    "select": _.union([dimension], select),
+                    "where": _.extend(time_filter, filters)
+                }];
             }
         },
 
