@@ -25,6 +25,7 @@ define([
             this.ui = options.ui || {};
 
             var validate = config.validate || this.toolModelValidation,
+                //TODO: remove query from here
                 query = config.query || this.getQuery;
 
             //build tool model
@@ -155,6 +156,7 @@ define([
             //placeholder for tool validation methods
         },
 
+        //TODO: remove query from here
         /**
          * Placeholder for query
          */

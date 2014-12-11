@@ -4,7 +4,7 @@ define([
     'models/hook'
 ], function(d3, _, Hook) {
 
-    var Size = Hook.extend({
+    var Axis = Hook.extend({
 
         /**
          * Initializes the color hook
@@ -87,5 +87,5 @@ define([
 
     });
 
-    return Size;
+    return Axis;
 });
