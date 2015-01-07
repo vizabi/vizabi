@@ -9,7 +9,6 @@ $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #DBE8EB;
 .vzb-buttonlist {
 
-    @import '../timeslider/timeslider';
     @import '../bubble-size/bubble-size';
 
     @include box-sizing(border-box);
@@ -111,26 +110,6 @@ $vzb-button-color-border: #DBE8EB;
             }
             &:hover {
                 color: $vzb-color-primary-dark;
-            }
-        }
-    }
-    //TODO: remove timeslider style from here //former FIXME
-    .vzb-small {
-        .vzb-timeslider {
-            min-height: 45;
-            .vzb-ts-slider-wrapper {
-                .vzb-ts-slider-axis {
-                    font-size: 9px;
-                }
-                .vzb-ts-slider-axis .domain {
-                    stroke-width: 5px;
-                }
-                .vzb-ts-slider-handle {
-                    stroke-width: 4px;
-                }
-                .vzb-ts-slider-value {
-                    font-size: 11px;
-                }
             }
         }
     }
