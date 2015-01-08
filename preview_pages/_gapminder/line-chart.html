@@ -60,11 +60,11 @@ $(function() {
             
             //time properties
             time: {
-                start: "1990",
-                end: "2012",
+                start: 1990,
+                end: 2012,
                 step: 1,
                 speed: 300,
-                value: "2007"
+                value: 2007
             },
 
             //entities we want to show
@@ -79,7 +79,9 @@ $(function() {
             },
 
             //how we show it
-            lines: {
+            marker: {
+                type: "geometry",
+                shape: "line",
                 label: {
                     use: "property",
                     value: "geo.name"
@@ -94,17 +96,15 @@ $(function() {
                     use: "property",
                     value: "time"
                 },
-                stroke: {
-                    size: {
-                        value: 0.5
-                    },
-                    color: {
+                color: {
                         use: "property",
                         value: "geo.region",
                         domain: ["#FFFFFF", "#000000"],
                         domain_type: "continuous" //or discrete
-                    }
-                }
+                },
+                size: {
+                        value: 0.5
+                },
             }
 
         },
