@@ -43,23 +43,23 @@ define([
          * Ideally, it contains only operations related to this.data events
          */
         modelReady: function() {
-            this.data = this.model.data.getItems();
+            this.data = this.model.marker.axis_y.getItems();
 
             var _this = this,
-                indicator = this.model.marker.axis_y.indicator,
+                indicator = this.model.marker.axis_y.value,
                 year = parseInt(d3.time.format("%Y")(this.model.time.value),10),
                 minValue = d3.min(this.data, function(d) {
-                    return +d[indicator];
+                    return d.value;
                 }),
                 maxValue = d3.max(this.data, function(d) {
-                    return +d[indicator];
+                    return d.value;
                 }),
                 scale = this.model.marker.axis_y.scale,
-                geos = _.uniq(_.map(this.data, function(d) {
+                geos = _.uniq(_.map(this.model.marker.label.getItems(), function(d) {
                     return {
                         geo: d.geo,
-                        name: d['geo.name'],
-                        region: d['geo.region'],
+                        name: d.value,
+                        region: d['geo.region'] || "world",
                         category: d['geo.category']
                     };
                 }), false, function(d) {
@@ -102,7 +102,7 @@ define([
                     return _this.xScale(d.time);
                 })
                 .y(function(d) {
-                    return _this.yScale(d[indicator]);
+                    return _this.yScale(d.value);
                 });
 
             //this.data up to year
@@ -228,7 +228,7 @@ define([
         resizeLines: function() {
 
             var _this = this,
-                indicator = this.model.marker.axis_y.indicator;
+                indicator = this.model.marker.axis_y.value;
 
             //scales
             this.yScale = this.yScale.range([this.height, 0]).nice();
@@ -254,7 +254,7 @@ define([
                     return this.xScale(d.time);
                 })
                 .y(function(d) {
-                    return this.yScale(d[indicator]);
+                    return this.yScale(d.value);
                 });
 
             //lines
@@ -273,7 +273,7 @@ define([
 
             this.lines.selectAll(".vzb-lc-label")
                 .attr("transform", function(d) {
-                    return "translate(" + _this.xScale(d.value.time) + "," + _this.yScale(d.value[indicator]) + ")";
+                    return "translate(" + _this.xScale(d.value.time) + "," + _this.yScale(d.value.value) + ")";
                 })
                 .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
         },
