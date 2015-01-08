@@ -16,10 +16,12 @@ define([
         init: function(context, options) {
             this.name = 'line-chart';
             this.template = 'components/_gapminder/' + this.name + '/' + this.name;
-            
+
             //define expected models for this component
             this.model_expects = ["time", "entities", "marker", "data"];
-
+            
+            this.isDataPreprocessed = false;
+            
             this._super(context, options);
         },
 
@@ -47,7 +49,7 @@ define([
 
             var _this = this,
                 indicator = this.model.marker.axis_y.value,
-                year = parseInt(d3.time.format("%Y")(this.model.time.value),10),
+                year = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
                 minValue = d3.min(this.data, function(d) {
                     return d.value;
                 }),
@@ -55,17 +57,22 @@ define([
                     return d.value;
                 }),
                 scale = this.model.marker.axis_y.scale,
+                colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"];
+
+            if (!this.isDataPreprocessed) {
                 geos = _.uniq(_.map(this.model.marker.label.getItems(), function(d) {
-                    return {
-                        geo: d.geo,
-                        name: d.value,
-                        region: d['geo.region'] || "world",
-                        category: d['geo.category']
-                    };
-                }), false, function(d) {
-                    return d.geo;
-                }),
-                colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"],
+                        return {
+                            geo: d.geo,
+                            name: d.value,
+                            region: d['geo.region'] || "world",
+                            category: d['geo.category']
+                        };
+                    }), false, function(d) {
+                        return d.geo;
+                    });
+
+                this.isDataPreprocessed = true;
+            }
 
             //10% difference this.margin in min and max
             min = ((scale == "log") ? 1 : (minValue - (maxValue - minValue) / 10)),
@@ -139,8 +146,11 @@ define([
              *      ]
              *  }, ...];
              */
-
-             this.setYear(year);
+            
+            if (this.isDataPreprocessed) {
+                this.updateEntities();
+                this.resize();
+            }
         },
 
         /*
@@ -278,7 +288,7 @@ define([
                 .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
         },
 
-        setYear: function(year) {
+        updateEntities: function() {
 
             var _this = this;
 
@@ -326,10 +336,6 @@ define([
                 .style("fill", function(d) {
                     return d3.rgb(_this.colorScale(color(d))).darker(0.3);
                 });
-
-            this.resize();
-            this.resizeStage();
-            this.resizeLines();
         }
 
 
