@@ -13,15 +13,14 @@ define([
 
     var LineChart = Component.extend({
 
-        /**
-         * Initializes the linechart
-         * @param config component configuration
-         * @param context component context (parent)
-         */
-        init: function(config, context) {
+        init: function(context, options) {
             this.name = 'line-chart';
             this.template = 'components/_gapminder/' + this.name + '/' + this.name;
-            this._super(config, context);
+            
+            //define expected models for this component
+            this.model_expects = ["time", "entities", "marker", "data"];
+
+            this._super(context, options);
         },
 
         /*
@@ -47,7 +46,7 @@ define([
             this.data = this.model.data.getItems();
 
             var _this = this,
-                indicator = this.model.show.indicator,
+                indicator = this.model.marker.axis_y.indicator,
                 year = parseInt(d3.time.format("%Y")(this.model.time.value),10),
                 minValue = d3.min(this.data, function(d) {
                     return +d[indicator];
@@ -55,7 +54,7 @@ define([
                 maxValue = d3.max(this.data, function(d) {
                     return +d[indicator];
                 }),
-                scale = this.model.show.scale,
+                scale = this.model.marker.axis_y.scale,
                 geos = _.uniq(_.map(this.data, function(d) {
                     return {
                         geo: d.geo,
@@ -71,7 +70,7 @@ define([
             //10% difference this.margin in min and max
             min = ((scale == "log") ? 1 : (minValue - (maxValue - minValue) / 10)),
                 max = maxValue + (maxValue - minValue) / 10,
-                unit = this.model.show.unit || 1;
+                unit = this.model.marker.axis_y.unit || 1;
 
             //axis
             this.yScale = d3.scale[scale]()
@@ -229,7 +228,7 @@ define([
         resizeLines: function() {
 
             var _this = this,
-                indicator = this.model.show.indicator;
+                indicator = this.model.marker.axis_y.indicator;
 
             //scales
             this.yScale = this.yScale.range([this.height, 0]).nice();
