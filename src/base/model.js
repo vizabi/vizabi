@@ -112,11 +112,18 @@ define([
                 }
                 //otherwise, just set value :)
                 else {
-                    this._data[a] = vals;
-                    promise = true;
-                    //different events whether it's first time or not
-                    var evt_name = (this._set) ? "change" : "init";
-                    events.push(evt_name + ":" + a);
+
+                    //if it's the same value, do not change anything
+                    if(this._data[a] === vals) {
+                        return;
+                    }
+                    else {
+                        this._data[a] = vals;
+                        //different events whether it's first time or not
+                        var evt_name = (this._set) ? "change" : "init";
+                        events.push(evt_name + ":" + a);
+                        promise = true;
+                    }
                 }
                 promises.push(promise);
             }
