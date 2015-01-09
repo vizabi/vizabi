@@ -35,9 +35,7 @@ define([
                 this.set("unit", 1 , silent, true);
             }
 
-            //TODO: Remove the unnecessary check for the second condition after model is able to avoid triggering change for setting same values
-            //Github issue: https://github.com/Gapminder/vizabi/issues/57
-            if (this.use !== "indicator" && this.scale !== "ordinal") {
+            if (this.use !== "indicator") {
                 this.set("scale", "ordinal" , silent, true);
             }
 
