@@ -32,6 +32,7 @@ define([], function() {
 
 };
 
+
 	return Vizabi;
 
 });
