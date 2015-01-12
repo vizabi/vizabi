@@ -37,7 +37,7 @@ define([
             this._items = []; //holds hook items for this hook
 
             //bind initial events
-            if(bind) {
+            if (bind) {
                 this.on(bind);
             }
 
@@ -45,14 +45,6 @@ define([
             if (values) {
                 this.set(values);
             }
-
-            //if it's a hook
-            var _this = this;
-            this.on("change", function() {
-                if (_this.isHook()) {
-                    _this.load();
-                }
-            });
         },
 
         /* ==========================
@@ -114,10 +106,9 @@ define([
                 else {
 
                     //if it's the same value, do not change anything
-                    if(this._data[a] === vals) {
+                    if (this._data[a] === vals) {
                         return;
-                    }
-                    else {
+                    } else {
                         this._data[a] = vals;
                         //different events whether it's first time or not
                         var evt_name = (this._set) ? "change" : "init";
@@ -378,7 +369,7 @@ define([
                     lang = "en";
 
                 //get current language
-                if(language_hook) {
+                if (language_hook) {
                     lang = language_hook.id || "en";
                 }
 
@@ -556,6 +547,12 @@ define([
                 //hook with the closest prefix to this model
                 this._hooks[name] = this._getClosestModelPrefix(prefix);
             }
+
+            //this is a hook, therefore it needs to reload when date changes
+            var _this = this;
+            this.on("change", function() {
+                _this.load();
+            });
         },
 
         /**
@@ -580,11 +577,9 @@ define([
         _getHookTo: function() {
             if (_.isArray(this.hook_to) && !_.rest(this.hook_to, _.isString).length) {
                 return this.hook_to;
-            }
-            else if (this._parent) {
+            } else if (this._parent) {
                 return this._parent._getHookTo();
-            }
-            else {
+            } else {
                 return ["entities", "time", "data", "language"]; //default
             }
         },
@@ -712,9 +707,9 @@ define([
                 return [];
             }
             //error if there's no entities
-            else if(!this.getHook("entities")) {
+            else if (!this.getHook("entities")) {
                 console.error("Error:", this._id, "can't find the entities");
-                return []; 
+                return [];
             }
             //else, its a hook (indicator or property) and it needs to query
             else {
@@ -729,11 +724,13 @@ define([
 
                 //if there's hooked time, include time in query filter
                 if (time) {
-        
+
                     var time_start = d3.time.format(time.format || "%Y")(time.start),
                         time_end = d3.time.format(time.format || "%Y")(time.end),
                         time_filter = {
-                            "time": [[time_start, time_end]]
+                            "time": [
+                                [time_start, time_end]
+                            ]
                         };
                 }
 
@@ -874,8 +871,7 @@ define([
             var model = this._findSubmodelPrefix(prefix);
             if (model) {
                 return model;
-            }
-            else if (this._parent) {
+            } else if (this._parent) {
                 return this._parent._getClosestModelPrefix(prefix);
             }
         },
