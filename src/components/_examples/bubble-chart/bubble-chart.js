@@ -138,11 +138,14 @@ define([
          */
         updateTime: function() {
             var _this = this;
-
-            this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
-            this.data = this.model.marker.label.getItems({ time: this.time.toString() });
+            //TLDR
+            //this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
+            this.time = this.model.time.value;
             
-            this.yearEl.text(this.time);
+            this.data = this.model.marker.label.getItems({ time: this.time });
+            
+            
+            this.yearEl.text(this.time.getFullYear().toString());
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
                 .data(this.data);
             

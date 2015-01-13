@@ -391,6 +391,12 @@ define([
                             promise.resolve();
                         } else {
                             _this._items = _.flatten(data);
+                            
+                            //TODO this is a temporary solution for filtering by dates
+                            _this._items = _this._items
+                                .map(function(d){d.time = new Date(d.time); d.time.setHours(0); return d;})
+                                .sort(function(a,b){return a.timeAsObj - b.timeAsObj});
+                            
                             promise.resolve();
                         }
                     });
@@ -647,7 +653,7 @@ define([
             }
             //extract id from original filter
             var id = _.pick(filter, id_keys);
-
+            
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -669,31 +675,19 @@ define([
             if (this.isHook() && this.getHook("data")) {
 
                 //get all items from data hook
-                var _this = this,
-                    values = _.map(this._items, function(row) {
-                        //if the value is present, map and rename
-                        if (!_.isUndefined(row[_this.value])) {
-                            row.value = _this.mapValue(row[_this.value]);
-                        }
-                        return _.omit(row, _this.value);
-                    });
-
-                //filter only necessary fields
-                if (_.isArray(filter)) {
-                    values = _.map(values, function(r) {
-                        return _.pick(r, filter);
-                    });
-                }
-                //filter only matching results
-                else if (_.isPlainObject(filter)) {
-                    values = _.filter(values, filter);
-                }
+                return _.map(this.getUnique("geo"), function(geo){
+                    return (filter && filter.time) ? {
+                        geo: geo,
+                        time: filter.time
+                    } : { geo: geo }
+                })
 
                 return values;
             } else {
                 return [];
             }
         },
+        
 
         /**
          * gets query that this model/hook needs to get data
@@ -853,14 +847,43 @@ define([
                     break;
                 default:
                     if (this.getHook("data")) {
-                        value = _.findWhere(this._items, filter)[this.value];
+                        existingValue = _.findWhere(this._items, filter);
+                        if(1||existingValue==null){
+                            value = this._interpolateValue(filter);
+                        }else{
+                            value = existingValue[this.value];
+                        }
                     }
                     break;
             }
-
             return value;
         },
 
+        /**
+         * interpolates the specific value if missing
+         * @param time
+         * @returns interpolated value
+         */
+        _interpolateValue: function(filter) {
+            var time = new Date(filter.time);
+            delete filter.time;
+            
+            var items = _.filter(this._items, filter);
+
+            
+            var indexNext = d3.bisectLeft(items.map(function(d){return d.time}), time);
+            if(indexNext==0) return items[0][this.value];
+            if(indexNext==items.length) return items[items.length-1][this.value];
+            
+            var fraction = 
+                (time - items[indexNext-1].time)
+                /(items[indexNext].time - items[indexNext-1].time);
+            
+            var value = 
+                + items[indexNext-1][this.value] 
+                + (items[indexNext][this.value] - items[indexNext-1][this.value])*fraction;
+            return value;
+        },
 
         /**
          * gets closest prefix model moving up the model tree
