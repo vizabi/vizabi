@@ -601,7 +601,11 @@ define([
             } else if (this._parent) {
                 return this._parent._getHookTo();
             } else {
-                return ["entities", "time", "data", "language"]; //default
+                
+                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time", "data", "language"]');
+
+                //DEPRECATED: returning default hooks
+                //return ["entities", "time", "data", "language"]; //default
             }
         },
 
