@@ -159,27 +159,27 @@ $(function() {
                 type: "geometry",
                 shape: "circle",
                 label: {
-                    use: "property",
+                    hook: "property",
                     value: "geo.name"
                 },
                 axis_y: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "lex",
                     scale: 'linear'
                 },
                 axis_x: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "gdp_per_cap",
                     scale: 'linear',
                     unit: 100
                 },
                 size: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "pop",
                     scale: 'log'
                 },
                 color: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "lex",
                     domain: ['#F77481', '#E1CE00', '#B4DE79']
                 }
@@ -286,7 +286,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.marker[hook] = {
-        use: use,
+        hook: use,
         value: value
     };
 

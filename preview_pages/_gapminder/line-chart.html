@@ -81,17 +81,17 @@ $(function() {
             //how we show it
             lines: {
                 label: {
-                    use: "property",
+                    hook: "property",
                     value: "geo.name"
                 },
                 axis_y: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "gdp_per_cap",
                     scale: "linear",
                     unit: 1000000000
                 },
                 axis_x: {
-                    use: "property",
+                    hook: "property",
                     value: "time"
                 },
                 stroke: {
@@ -99,7 +99,7 @@ $(function() {
                         value: 0.5
                     },
                     color: {
-                        use: "property",
+                        hook: "property",
                         value: "geo.region",
                         domain: ["#FFFFFF", "#000000"],
                         domain_type: "continuous" //or discrete

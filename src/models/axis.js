@@ -4,7 +4,7 @@ define([
     'models/hook'
 ], function(d3, _, Hook) {
 
-    var Axis = Hook.extend({
+    var Axis = Hook.extend(   {
 
         /**
          * Initializes the color hook
@@ -27,15 +27,15 @@ define([
         validate: function(silent) {
 
             var possibleScales = ["log", "linear", "pow"];
-            if (!this.scale || (this.use === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
+            if (!this.scale || (this.hook === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
                 this.set("scale", "linear" , silent, true);
             }
 
-            if (!this.unit && this.use === "indicator") {
+            if (!this.unit && this.hook === "indicator") {
                 this.set("unit", 1 , silent, true);
             }
 
-            if (this.use !== "indicator") {
+            if (this.hook !== "indicator") {
                 this.set("scale", "ordinal" , silent, true);
             }
 
@@ -49,7 +49,7 @@ define([
          */
         getTick: function(tick_value) {
             var value = tick_value;
-            if (this.use == "indicator") {
+            if (this.hook == "indicator") {
                 value = parseFloat(value) / this.unit;
             }
             return value;
@@ -63,7 +63,7 @@ define([
             var domain,
                 scale = this.scale || "linear";
 
-            switch (this.use) {
+            switch (this.hook) {
                 case "indicator":
                     var limits = this.getLimits(this.value),
                         margin = (limits.max - limits.min) / 10;

@@ -447,14 +447,14 @@ define([
             if (this._debugEvents && this._debugEvents !== "trigger") {
                 if (_.isPlainObject(name)) {
                     for (var i in name) {
-                        console.log("Model > bind:", i, this);
+                        console.log("Model", this._id ,"> bind:", i);
                     }
                 } else if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > bind:", name[i], this);
+                        console.log("Model", this._id ,"> bind:", name[i]);
                     }
                 } else {
-                    console.log("Model > bind:", name, this);
+                    console.log("Model", this._id ,"> bind:", name);
                 }
             }
             this._events.on(name, func);
@@ -467,13 +467,17 @@ define([
          */
         trigger: function(name, val) {
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > triggered:", name[i], this);
+                        console.log("Model", this._id ,"> triggered:", name[i]);
                     }
                 } else {
-                    console.log("Model > triggered:", name, this);
+                    console.log("Model", this._id ,"> triggered:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
             this._events.trigger(name, val);
         },
@@ -485,13 +489,17 @@ define([
          */
         triggerOnce: function(name, val) {
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > triggered once:", name[i], this);
+                        console.log("Model", this._id ,"> triggered once:", name[i]);
                     }
                 } else {
-                    console.log("Model > triggered once:", name, this);
+                    console.log("Model", this._id ,"> triggered once:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
             this._events.triggerOnce(name, val);
         },
@@ -502,6 +510,19 @@ define([
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
+                if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Model", this._id ,"> triggered all:", name[i]);
+                    }
+                } else {
+                    console.log("Model", this._id ,"> triggered all:", name);
+                }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
+            }
             this._events.triggerAll(name, val);
         },
 
@@ -559,7 +580,7 @@ define([
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this.use) ? true : false;
+            return (this.hook) ? true : false;
         },
 
         /**
@@ -585,15 +606,15 @@ define([
         },
 
         /**
-         * gets all sub values for a certain use
-         * only hooks have a use.
-         * @param {String} use specific use to lookup
-         * @returns {Array} all unique values with specific use
+         * gets all sub values for a certain hook
+         * only hooks have the "hook" attribute.
+         * @param {String} type specific type to lookup
+         * @returns {Array} all unique values with specific hook use
          */
-        getUseValues: function(use) {
+        getHookValues: function(type) {
             var values = [];
-            if (this.use && this.use === use) {
-                //add if it has use and it's a string
+            if (this.hook && this.hook === type) {
+                //add if it has "hook" and it's a string
                 var val = this.value; //e.g. this.value = "lex"
                 if (val && _.isString(val)) {
                     values.push(val);
@@ -602,29 +623,29 @@ define([
             //repeat for each submodel
             var submodels = this.get();
             for (var i in submodels) {
-                if (!submodels[i] || !submodels[i].getUseValues) {
+                if (!submodels[i] || !submodels[i].getHookValues) {
                     continue;
                 }
-                values = _.union(values, submodels[i].getUseValues(use));
+                values = _.union(values, submodels[i].getHookValues(type));
             }
-            //now we have an array with all values in a use for hooks.
+            //now we have an array with all values in a type of hook for hooks.
             return values;
         },
 
         /**
          * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
+         * @returns {Array} all unique values of indicator hooks
          */
         getIndicators: function() {
-            return this.getUseValues("indicator");
+            return this.getHookValues("indicator");
         },
 
         /**
          * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
+         * @returns {Array} all unique values of property hooks
          */
         getProperties: function() {
-            return this.getUseValues("property");
+            return this.getHookValues("property");
         },
 
         /**
@@ -703,7 +724,7 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
+            if (!this.isHook() || needs_query.indexOf(this.hook) === -1) {
                 return [];
             }
             //error if there's no entities
@@ -755,7 +776,7 @@ define([
 
             var domain,
                 scale = this.scale || "linear";
-            switch (this.use) {
+            switch (this.hook) {
                 case "indicator":
                     var limits = this.getLimits(this.value);
                     domain = [limits.min, limits.max];
@@ -837,7 +858,7 @@ define([
             }
 
             var value;
-            switch (this.use) {
+            switch (this.hook) {
                 case "value":
                     value = this.value;
                     break;
@@ -853,6 +874,7 @@ define([
                     break;
                 default:
                     if (this.getHook("data")) {
+                        //getting the first value in this._items for an indicator (eg: "gdp", "lex") or property
                         value = _.findWhere(this._items, filter)[this.value];
                     }
                     break;

@@ -39,16 +39,16 @@ define([
             }
 
             //value must always be between 0 and 1
-            if (this.use === "value" && this.value > this.max) {
+            if (this.hook === "value" && this.value > this.max) {
                 this.set("value", this.max , silent, true);
             }
-            else if (this.use === "value" && this.value < this.min) {
+            else if (this.hook === "value" && this.value < this.min) {
                 this.set("value", this.min , silent, true);
             }
             if (!this.scale) {
                 this.set("scale", "linear", silent, true);
             }
-            if (this.use === "property") {
+            if (this.hook === "property") {
                 this.set("scale", "ordinal", silent, true);
             }
         },
@@ -58,7 +58,7 @@ define([
          * @returns {Array} domain
          */
         getDomain: function() {
-            if(this.use === "value") {
+            if(this.hook === "value") {
                 return d3.scale.linear().domain([0,1]);
             }
             return this._super();
