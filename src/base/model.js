@@ -392,10 +392,12 @@ define([
                         } else {
                             _this._items = _.flatten(data);
                             
-                            //TODO this is a temporary solution for filtering by dates
+                            //TODO this is a temporary solution that does preprocessing of data
+                            // data should have time as Dates and be sorted by time
+                            // put me in the proper place please!
                             _this._items = _this._items
                                 .map(function(d){d.time = new Date(d.time); d.time.setHours(0); return d;})
-                                .sort(function(a,b){return a.timeAsObj - b.timeAsObj});
+                                .sort(function(a,b){return a.time - b.time});
                             
                             promise.resolve();
                         }
@@ -674,6 +676,7 @@ define([
         getItems: function(filter) {
             if (this.isHook() && this.getHook("data")) {
 
+                //TODO: dirty hack, which angie and arthur did when trying to get the right keys
                 //get all items from data hook
                 return _.map(this.getUnique("geo"), function(geo){
                     return (filter && filter.time) ? {
@@ -847,10 +850,14 @@ define([
                     break;
                 default:
                     if (this.getHook("data")) {
+                        // search the data point among existing points
                         existingValue = _.findWhere(this._items, filter);
-                        if(1||existingValue==null){
-                            value = this._interpolateValue(filter);
+
+                        if(existingValue==null){
+                            // if not found then interpolate
+                            value = +this._interpolateValue(filter);
                         }else{
+                            // otherwise supply the existing value
                             value = existingValue[this.value];
                         }
                     }
@@ -859,29 +866,37 @@ define([
             return value;
         },
 
+
         /**
          * interpolates the specific value if missing
-         * @param time
+         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * filter SHOULD contain time property
          * @returns interpolated value
          */
         _interpolateValue: function(filter) {
+
+            // fetch time from filter object and remove it from there
             var time = new Date(filter.time);
             delete filter.time;
             
+            // filter items so that we only have a dataset for certain keys, like "geo"
             var items = _.filter(this._items, filter);
-
             
+            // search where the desired value should fall between the known points
             var indexNext = d3.bisectLeft(items.map(function(d){return d.time}), time);
+
+            // check if the desired value is out of range. 0-order extrapolation
             if(indexNext==0) return items[0][this.value];
             if(indexNext==items.length) return items[items.length-1][this.value];
             
+            // perform a simple linear interpolation
             var fraction = 
                 (time - items[indexNext-1].time)
                 /(items[indexNext].time - items[indexNext-1].time);
-            
             var value = 
                 + items[indexNext-1][this.value] 
                 + (items[indexNext][this.value] - items[indexNext-1][this.value])*fraction;
+
             return value;
         },
 
