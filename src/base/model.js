@@ -862,7 +862,7 @@ define([
 
                         if(existingValue==null){
                             // if not found then interpolate
-                            value = this._interpolateValue(filter, this.use);
+                            value = this._interpolateValue(this._items, filter, this.use);
                         }else{
                             // otherwise supply the existing value
                             value = existingValue[this.value];
@@ -880,14 +880,15 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(filter, use) {
+        _interpolateValue: function(items, filter, use) {
+            if(items==null || items.length == 0) {console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem"); return null;}
 
             // fetch time from filter object and remove it from there
             var time = new Date(filter.time);
             delete filter.time;
             
             // filter items so that we only have a dataset for certain keys, like "geo"
-            var items = _.filter(this._items, filter);
+            var items = _.filter(items, filter);
             
             // return constant for the use of "values"
             if(use == "value") return items[0][this.value];
