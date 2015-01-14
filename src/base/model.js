@@ -678,11 +678,18 @@ define([
 
                 //TODO: dirty hack, which angie and arthur did when trying to get the right keys
                 //get all items from data hook
-                return _.map(this.getUnique("geo"), function(geo){
-                    return (filter && filter.time) ? {
-                        geo: geo,
-                        time: filter.time
-                    } : { geo: geo }
+
+                var dimension = this.getHook("entities").getDimension();
+                return _.map(this.getUnique(dimension), function(dim){
+                    // item is an object similar to the following:
+                    //     { geo: 'usa', time: DateObj }
+                    // or  { geo: 'usa' } if filter.time is not available
+                    var item = {};
+                    item[dimension] = dim;
+                    if(filter && filter.time) {
+                        item.time = filter.time;
+                    }
+                    return item;
                 })
 
                 return values;
