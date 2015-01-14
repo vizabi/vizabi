@@ -266,19 +266,19 @@ define([
 
             this.bubbles
                 .style("fill", function(d) {
-                    return _this.model.marker.color.getValue(d);
+                    return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
                 })
                 .transition().duration(speed).ease("linear")
                 .attr("cy", function(d) {
-                    var value = _this.model.marker.axis_y.getValue(d);
+                    var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
                     return _this.yScale(value);
                 })
                 .attr("cx", function(d) {
-                    var value = _this.model.marker.axis_x.getValue(d);
+                    var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
                     return _this.xScale(value);
                 })
                 .attr("r", function(d) {
-                    var value = _this.model.marker.size.getValue(d);
+                    var value = _this.model.marker.size.getValue(d)||_this.rScale.domain()[0];
                     return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
                 });
 
