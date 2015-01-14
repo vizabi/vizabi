@@ -16,6 +16,7 @@ define([
          */
         init: function(values, binds, validate) {
             this._id = _.uniqueId("tm");
+            this._type = "tool";
             //all intervals are managed at tool level
             this._intervals = new Intervals();
 

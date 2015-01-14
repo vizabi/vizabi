@@ -19,6 +19,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = this._type || "model"; //type of this model
             this._id = _.uniqueId("m"); //model unique id
             this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
@@ -147,6 +148,14 @@ define([
             });
 
             return defer;
+        },
+
+        /**
+         * Gets the type of this model
+         * @returns {String} type of the model
+         */
+        getType: function() {
+            return this._type;
         },
 
         /**

@@ -29,6 +29,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "time";
             //default values for time model
             values = _.extend({
                 value: "1800",

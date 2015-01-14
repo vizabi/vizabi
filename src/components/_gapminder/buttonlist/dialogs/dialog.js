@@ -8,7 +8,13 @@ define([
         init: function(config, parent) {
             this.name = this.name || '';
 
-            this.model_expects = ["state", "data"];
+            this.model_expects = [{
+                name: "state",
+                type: "model"
+            }, {
+                name: "data",
+                type: "data"
+            }];
             
             this.template = 'components/_gapminder/buttonlist/'+
                             'dialogs/'+this.name+'/'+this.name;

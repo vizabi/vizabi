@@ -14,6 +14,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "axis";
             values = _.extend({
                 use: "value",
                 value: undefined

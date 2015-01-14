@@ -13,6 +13,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "entities";
             values = _.extend({
                 show: {},
                 select: [],

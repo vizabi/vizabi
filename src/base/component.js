@@ -196,7 +196,8 @@ define([
                 //initialize subcomponent
                 var c = new subcomponent(config, _this);
                 //setup model later with expected models
-                c.model = _this._modelMapping(comp_model,
+                c.model = _this._modelMapping(c.name,
+                    comp_model,
                     c.model_expects,
                     c.model_binds,
                     function() {
@@ -352,7 +353,7 @@ define([
             var _this = this;
             //for each subcomponent configuration, reassign model
             _.each(this._components_config, function(c, i) {
-                var model = _this._modelMapping(c.model);
+                var model = _this._modelMapping(c.name, c.model);
                 if (model) {
                     _this.components[i].model = model;
                     _this.components[i].reassignModel();
@@ -362,12 +363,13 @@ define([
 
         /**
          * Maps the current model to the subcomponents
+         * @param {String} subcomponent name of the subcomponent
          * @param {String|Array} model_config Configuration of model
          * @param {String|Array} model_expects Expected models
          * @param {Object} model_binds Initial model bindings
          * @returns {Object} the model
          */
-        _modelMapping: function(model_config, model_expects, model_binds, ready) {
+        _modelMapping: function(subcomponent, model_config, model_expects, model_binds, ready) {
 
             var _this = this,
                 values = {};
@@ -375,11 +377,39 @@ define([
             //If model_config is an array, we map it
             if (_.isArray(model_config)) {
 
+                //if there's a different number of models received and expected
+                if (model_expects.length !== model_config.length) {
+                    console.groupCollapsed("DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED");
+                    console.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + this.name + "'\nSubcomponent: '" + subcomponent + "'\nNumber of Models Expected: " + model_expects.length + "\nNumber of Models Received: " + model_config.length);
+                    console.groupEnd();
+                }
+
                 //map current submodels to new model
                 for (var i = 0, s = model_config.length; i < s; i++) {
                     //get current model and rename if necessary
                     var model_info = _mapOne(model_config[i]),
-                        new_name = model_expects[i] || model_info.name;
+                        new_name;
+
+                    if (model_expects[i]) {
+                        new_name = model_expects[i].name;
+
+                        if (model_info.type !== model_expects[i].type) {
+
+                            //TODO: add link to the documentation about model_expects
+                            console.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + model_expects[i].type + "'");
+                            console.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + this.name + "'\nSubcomponent: '" + subcomponent + "'\nExpected Model: '" + model_expects[i].type + "'\nReceived Model'" + model_info.type + "'\nModel order: " + i);
+                            console.groupEnd();
+                        }
+
+                    } else {
+                        //TODO: add link to the documentation about model_expects
+                        console.groupCollapsed("UNEXPECTED MODEL: '" + model_config[i] + "'");
+                        console.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + this.name + "'\nSubcomponent: '" + subcomponent + "'\nNumber of Models Expected: " + model_expects.length + "\nNumber of Models Received: " + model_config.length);
+                        console.groupEnd();
+
+                        new_name = model_info.name;
+                    }
+
                     values[new_name] = model_info.model;
                 }
 
@@ -486,7 +516,11 @@ define([
 
             return model;
 
-            //map one model to current submodels
+            /**
+             * Maps one model name to current submodel and returns info
+             * @param {String} name Full model path. E.g.: "state.marker.color"
+             * @returns {Object} the model info, with name and the actual model
+             */
             function _mapOne(name) {
                 var parts = name.split("."),
                     current = _this.model,
@@ -497,7 +531,8 @@ define([
                 }
                 return {
                     name: name,
-                    model: current
+                    model: current,
+                    type: current.getType()
                 };
             }
 

@@ -15,6 +15,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "data";
             values = _.extend({
                 reader: "local-json",
                 path: "data.json"

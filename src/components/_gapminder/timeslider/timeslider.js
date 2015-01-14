@@ -69,7 +69,10 @@ define([
             this.template = "components/_gapminder/timeslider/timeslider";
 
             //define expected models/hooks for this component
-            this.model_expects = ["time"];
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }];
 
             // Same constructor as the superclass
             this._super(config, context);
