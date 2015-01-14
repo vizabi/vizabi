@@ -862,7 +862,7 @@ define([
 
                         if(existingValue==null){
                             // if not found then interpolate
-                            value = +this._interpolateValue(filter);
+                            value = this._interpolateValue(filter, this.use);
                         }else{
                             // otherwise supply the existing value
                             value = existingValue[this.value];
@@ -880,7 +880,7 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(filter) {
+        _interpolateValue: function(filter, use) {
 
             // fetch time from filter object and remove it from there
             var time = new Date(filter.time);
@@ -889,8 +889,17 @@ define([
             // filter items so that we only have a dataset for certain keys, like "geo"
             var items = _.filter(this._items, filter);
             
+            // return constant for the use of "values"
+            if(use == "value") return items[0][this.value];
+
             // search where the desired value should fall between the known points
             var indexNext = d3.bisectLeft(items.map(function(d){return d.time}), time);
+
+            // zero-order interpolation for the use of properties
+            if(use == "property" && indexNext==0) return items[0][this.value];
+            if(use == "property") return items[indexNext-1][this.value];
+
+            // the rest is for the use of "indicators"
 
             // check if the desired value is out of range. 0-order extrapolation
             if(indexNext==0) return items[0][this.value];
