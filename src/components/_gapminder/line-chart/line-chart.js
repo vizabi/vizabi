@@ -19,10 +19,16 @@ define([
 
             //define expected models for this component
             this.model_expects = ["time", "entities", "marker", "data"];
-            
-            this.isDataPreprocessed = false;
-            
+
             this._super(context, options);
+
+            this.xScale = null;
+            this.yScale = null;
+
+            this.xAxis = d3.svg.axis();
+            this.yAxis = d3.svg.axis();
+
+            this.isDataPreprocessed = false;
         },
 
         /*
@@ -36,6 +42,24 @@ define([
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
             this.lines = this.graph.select('.vzb-lc-lines');
+
+            //model events
+            this.model.on({
+                "change": function(evt) {
+                    console.log("Changed!");
+                },
+                "load_start": function(evt) {
+                    console.log("Started to load!");
+                },
+                "load_end": function() {
+                    console.log("Finished Loading!");
+                }
+            });
+
+            //component events
+            this.on("resize", function() {
+                console.log("Ops! Gotta resize...");
+            })
         },
 
 
@@ -45,72 +69,25 @@ define([
          * Ideally, it contains only operations related to this.data events
          */
         modelReady: function() {
-            this.data = this.model.marker.axis_y.getItems();
-
             var _this = this,
-                indicator = this.model.marker.axis_y.value,
-                year = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
-                minValue = d3.min(this.data, function(d) {
-                    return d.value;
-                }),
-                maxValue = d3.max(this.data, function(d) {
-                    return d.value;
-                }),
-                scale = this.model.marker.axis_y.scale,
-                colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"];
+                year = parseInt(d3.time.format("%Y")(this.model.time.value), 10)
+
+            this.data = this.model.marker.axis_y.getItems();
 
             if (!this.isDataPreprocessed) {
                 geos = _.uniq(_.map(this.model.marker.label.getItems(), function(d) {
-                        return {
-                            geo: d.geo,
-                            name: d.value,
-                            region: d['geo.region'] || "world",
-                            category: d['geo.category']
-                        };
-                    }), false, function(d) {
-                        return d.geo;
-                    });
+                    return {
+                        geo: d.geo,
+                        name: d.value,
+                        region: d['geo.region'] || "world",
+                        category: d['geo.category']
+                    };
+                }), false, function(d) {
+                    return d.geo;
+                });
 
                 this.isDataPreprocessed = true;
             }
-
-            //10% difference this.margin in min and max
-            min = ((scale == "log") ? 1 : (minValue - (maxValue - minValue) / 10)),
-                max = maxValue + (maxValue - minValue) / 10,
-                unit = this.model.marker.axis_y.unit || 1;
-
-            //axis
-            this.yScale = d3.scale[scale]()
-                .domain([min, max]);
-
-            this.xScale = d3.scale.linear()
-                .domain(d3.extent(this.data, function(d) {
-                    return d['time'];
-                }));
-
-            this.yAxis = d3.svg.axis()
-                .tickFormat(function(d) {
-                    return d / unit;
-                }).tickSize(6, 0);
-
-            this.xAxis = d3.svg.axis()
-                .tickFormat(function(d) {
-                    return d;
-                }).tickSize(6, 0);
-
-            this.colorScale = d3.scale.ordinal().range(colors)
-                .domain(_.map(geos, function(geo) {
-                    return geo.region;
-                }));
-
-            this.line = d3.svg.line()
-                .interpolate("basis")
-                .x(function(d) {
-                    return _this.xScale(d.time);
-                })
-                .y(function(d) {
-                    return _this.yScale(d.value);
-                });
 
             //this.data up to year
             this.data = _.filter(this.data, function(d) {
@@ -132,24 +109,18 @@ define([
                 return g;
             });
 
-            /*
-             * at this point, this.data is formatted as follows:
-             *  this.data = [{
-             *      "geo": "swe",
-             *      "name": "Sweden",
-             *      "region": "eur",
-             *      "category": ["country"],
-             *      "values": [
-             *          { "time": "1990", "gdp": "65468" },
-             *          { "time": "1991", "gdp": "65468" },
-             *          ...
-             *      ]
-             *  }, ...];
-             */
-            
+
             if (this.isDataPreprocessed) {
-                this.updateEntities();
+                this.setScale();                
+                
                 this.resize();
+                this.resizeStage();
+                this.resizeMargins();
+                
+
+                this.drawAxes();
+                this.drawLines();
+                this.drawEntities();
             }
         },
 
@@ -196,16 +167,10 @@ define([
             this.margin = this.profiles[this.getLayoutProfile()].margin;
             this.tick_spacing = this.profiles[this.getLayoutProfile()].tick_spacing;
 
-            this.resizeMargins();
-            //this.size the stage
-            this.resizeStage();
-            //this.size the this.lines
-            this.resizeLines();
 
             //this.size year
             this.widthAxisY = this.yAxisEl[0][0].getBBox().width;
             this.heightAxisX = this.xAxisEl[0][0].getBBox().height;
-
         },
 
         resizeMargins: function() {
@@ -235,60 +200,62 @@ define([
             this.heightAxisX = this.xAxisEl[0][0].getBBox().height;
         },
 
-        resizeLines: function() {
-
+        setScale: function() {
             var _this = this,
-                indicator = this.model.marker.axis_y.value;
+                indicator = this.model.marker.axis_y.value,
+                year = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
+                colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"],
+                padding = 2;
 
             //scales
-            this.yScale = this.yScale.range([this.height, 0]).nice();
-            this.xScale = this.xScale.range([0, this.width]).nice();
+            this.yScale = this.model.marker.axis_y.getDomain();
+            this.xScale = this.model.marker.axis_x.getDomain();
 
-            //axis
-            this.yAxis = this.yAxis.scale(this.yScale)
+            if (this.model.marker.axis_y.scale !== "ordinal") {
+                this.yScale.range([this.height, 0]).nice();
+            } else {
+                this.yScale.rangePoints([this.height, 0], padding).range();
+            }
+            if (this.model.marker.axis_x.scale !== "ordinal") {
+                this.xScale.range([0, this.width]).nice();
+            } else {
+                this.xScale.rangePoints([0, this.width], padding).range();
+            }
+
+            this.colorScale = d3.scale.ordinal().range(colors)
+                .domain(_.map(geos, function(geo) {
+                    return geo.region;
+                }));
+        },
+
+
+        drawAxes: function() {
+            var _this = this;
+
+            this.yAxis.scale(this.yScale)
                 .orient("left")
-                .ticks(Math.max(this.height / this.tick_spacing, 2));
+                .ticks(Math.max(this.height / this.tick_spacing, 2))
+                .tickSize(6, 0)
+                .tickFormat(function(d) {
+                    return _this.model.marker.axis_y.getTick(d);
+                });
 
-            this.xAxis = this.xAxis.scale(this.xScale)
+
+            this.xAxis.scale(this.xScale)
                 .orient("bottom")
-                .ticks(Math.max(this.width / this.tick_spacing, 2));
+                .ticks(Math.max(this.width / this.tick_spacing, 2))
+                .tickSize(6, 0)
+                .tickFormat(function(d) {
+                    return _this.model.marker.axis_x.getTick(d);
+                });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
 
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
-
-            this.line = d3.svg.line()
-                .interpolate("cardinal")
-                .x(function(d) {
-                    return this.xScale(d.time);
-                })
-                .y(function(d) {
-                    return this.yScale(d.value);
-                });
-
-            //lines
-            this.lines.selectAll(".vzb-lc-line-shadow")
-                .attr("d", function(d) {
-                    return _this.line(d.values);
-                })
-                .attr("transform", function(d) {
-                    return "translate(0,2)";
-                });
-
-            this.lines.selectAll(".vzb-lc-line")
-                .attr("d", function(d) {
-                    return _this.line(d.values);
-                });
-
-            this.lines.selectAll(".vzb-lc-label")
-                .attr("transform", function(d) {
-                    return "translate(" + _this.xScale(d.value.time) + "," + _this.yScale(d.value.value) + ")";
-                })
-                .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
         },
 
-        updateEntities: function() {
+        drawEntities: function() {
 
             var _this = this;
 
@@ -336,9 +303,39 @@ define([
                 .style("fill", function(d) {
                     return d3.rgb(_this.colorScale(color(d))).darker(0.3);
                 });
+        },
+
+        drawLines: function() {
+            var _this = this;
+
+            this.line = d3.svg.line()
+                .interpolate("cardinal")
+                .x(function(d) {
+                    return this.xScale(d.time);
+                })
+                .y(function(d) {
+                    return this.yScale(d.value);
+                });
+
+            this.lines.selectAll(".vzb-lc-line-shadow")
+                .attr("d", function(d) {
+                    return _this.line(d.values);
+                })
+                .attr("transform", function(d) {
+                    return "translate(0,2)";
+                });
+
+            this.lines.selectAll(".vzb-lc-line")
+                .attr("d", function(d) {
+                    return _this.line(d.values);
+                });
+
+            this.lines.selectAll(".vzb-lc-label")
+                .attr("transform", function(d) {
+                    return "translate(" + _this.xScale(d.value.time) + "," + _this.yScale(d.value.value) + ")";
+                })
+                .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
         }
-
-
     });
 
     return LineChart;
