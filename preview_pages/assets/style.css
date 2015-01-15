@@ -125,7 +125,6 @@ p {
     color: white;
     text-align: left;
     display: inline-block;
-    z-index: 100;
 }
 .wrapper-dropdown.wide {
     width: 250px;
