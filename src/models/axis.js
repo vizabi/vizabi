@@ -4,7 +4,7 @@ define([
     'models/hook'
 ], function(d3, _, Hook) {
 
-    var Size = Hook.extend({
+    var AxisModel = Hook.extend({
 
         /**
          * Initializes the color hook
@@ -52,6 +52,11 @@ define([
             if (this.use == "indicator") {
                 value = parseFloat(value) / this.unit;
             }
+            if (value instanceof Date) {
+                //TODO: support multiple date formats
+                value = value.getFullYear();
+            }
+            return "a";
             return value;
         },
 
@@ -83,9 +88,17 @@ define([
             }
 
             return d3.scale[scale]().domain(domain);
+        },
+
+        mapValue: function(value) {
+            if (this.use === 'property' && value instanceof Date) {
+                return value.getFullYear()
+            }
+
+
         }
 
     });
 
-    return Size;
+    return AxisModel;
 });
