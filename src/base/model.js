@@ -107,7 +107,7 @@ define([
 
                     //if it's the same value, do not change anything
                     if (this._data[a] === vals) {
-                        return;
+                        continue;
                     } else {
                         this._data[a] = vals;
                         //different events whether it's first time or not
