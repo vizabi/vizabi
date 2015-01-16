@@ -34,7 +34,7 @@ define([
 
             //will the model be hooked to data?
             this._hooks = {};
-            this._loading = false; //is this loading any data?
+            this._loading = []; //array of processes that are loading
             this._items = []; //holds hook items for this hook
 
             //bind initial events
@@ -233,7 +233,7 @@ define([
 
                     //if all are ready, trigger for this model
                     if (_.every(submodels, function(sm) {
-                            return !sm._loading;
+                            return !sm.isLoading();
                         })) {
                         _this.triggerOnce('load_end', vals);
                     }
@@ -355,6 +355,40 @@ define([
          */
 
         /**
+         * checks whether this model is loading anything
+         * @returns {Boolean} is it loading?
+         */
+        isLoading: function() {
+            return (this._loading.length > 0);
+        },
+
+        /**
+         * specifies that the model is loading data
+         * @param {String} id of the loading process
+         */
+        setLoading: function(p_id) {
+            //if this is the first time we're loading anything
+            if(!this.isLoading()) {
+                this.trigger("load_start");
+            }
+            //add id to the list of processes that are loading
+            this._loading.push(p_id);
+        },
+
+        /**
+         * specifies that the model is done with loading data
+         * @param {String} id of the loading process
+         */
+        setLoadingDone: function(p_id) {
+            //remove he process from the list of things that are loading
+            this._loading = _.without(this._loading, p_id);
+            //if this is the first time we're loading anything
+            if(!this.isLoading()) {
+                this.trigger("load_end");
+            }
+        },
+
+        /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
          * @returns defer
@@ -384,12 +418,10 @@ define([
 
                 var evts = {
                     'load_start': function() {
-                        _this._loading = true;
-                        _this.trigger("load_start");
+                        _this.setLoading("_hook_data");
                     },
                     'load_end': function() {
-                        _this._loading = false;
-                        _this.trigger("load_end");
+                       _this.setLoadingDone("_hook_data");
                     }
                 };
 
@@ -421,7 +453,6 @@ define([
                     _this.validate();
                 }
                 _this._ready = true;
-                _this._loading = false;
                 _this.trigger("ready");
                 defer.resolve();
             });

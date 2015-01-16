@@ -491,7 +491,7 @@ define([
 
                         //if all are ready, trigger for this model
                         if (_.every(submodels, function(sm) {
-                                return !sm._loading;
+                                return !sm.isLoading();
                             })) {
                             model.triggerOnce('load_end', vals);
                         }
