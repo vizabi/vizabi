@@ -1,0 +1,25 @@
+//general styles
+.vzb-display-json {
+    //...
+}
+
+//large specific styles
+&.vzb-large {
+    .vzb-display-json {
+     	//...
+    }
+}
+
+//medium specific styles
+&.vzb-medium {
+    .vzb-display-json {
+        //...
+    }
+}
+
+//small specific styles
+&.vzb-small {
+    .vzb-display-json {
+        //...
+    }
+}

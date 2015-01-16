@@ -1,0 +1,18 @@
+.vzb-tool-data-loading-1-file {
+	@extend .vzb-tool;
+
+	@include absoluteAll;
+    padding: 30px;
+    
+    h2 {
+        font-family: $vzb-font-family;
+        color: $vzb-color-primary;
+        margin: 0px;
+    }
+    p {
+        font-size: 14px;
+        line-height: 1.5em;
+    }
+	
+	@import '../../../components/_examples/display-json/display-json';
+}
