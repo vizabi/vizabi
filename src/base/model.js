@@ -356,9 +356,13 @@ define([
 
         /**
          * checks whether this model is loading anything
+         * @param {String} optional process id (to check only one)
          * @returns {Boolean} is it loading?
          */
-        isLoading: function() {
+        isLoading: function(p_id) {
+            if(p_id) {
+                return (this._loading.indexOf(p_id) !== -1);
+            }
             return (this._loading.length > 0);
         },
 
