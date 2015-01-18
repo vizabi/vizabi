@@ -12,10 +12,10 @@ define([
         return d.pop;
     }
 
-    var BubbleChart = Component.extend({
+    var AxisLabeler = Component.extend({
         init: function(context, options) {
             var _this = this;
-            this.name = 'bubble-chart';
+            this.name = 'axis-labeler';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
@@ -25,8 +25,6 @@ define([
 
             this.xScale = null;
             this.yScale = null;
-            this.rScale = null;
-            this.cScale = d3.scale.category10();
 
             this.xAxis = d3.svg.axis();
             this.yAxis = d3.svg.axis();
@@ -87,6 +85,7 @@ define([
             this.on("resize", function() {
                 console.log("Ops! Gotta resize...");
                 _this.updateSize();
+                _this.updateTime();
                 _this.redrawDataPoints();
             })
 
@@ -119,7 +118,6 @@ define([
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
-            this.rScale = this.model.marker.size.getDomain();
 
             var _this = this;
             this.yAxis.tickFormat(function(d) {
@@ -138,17 +136,10 @@ define([
          */
         updateTime: function() {
             var _this = this;
-            //TLDR
-            //this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
             this.time = this.model.time.value;
-
             this.data = this.model.marker.label.getItems({ time: this.time });
-
-
             this.yearEl.text(this.time.getFullYear().toString());
-            this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data);
-
+            this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble').data(this.data);
             this.timeUpdatedOnce = true;
         },
 
@@ -163,32 +154,23 @@ define([
             var _this = this,
                 margin,
                 tick_spacing,
-                maxRadius,
-                minRadius,
-                maxRadiusNormalized = this.model.marker.size.max,
-                minRadiusNormalized = this.model.marker.size.min,
                 padding = 2;
 
             switch (this.getLayoutProfile()) {
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
-                    maxRadius = 20;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
-                    maxRadius = 40;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
-                    maxRadius = 60;
                     break;
             }
 
-            minRadius = maxRadius * minRadiusNormalized;
-            maxRadius = maxRadius * maxRadiusNormalized;
 
             //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -218,11 +200,7 @@ define([
             } else {
                 this.xScale.rangePoints([0, width], padding).range();
             }
-            if (this.model.marker.size.scale !== "ordinal") {
-                this.rScale.range([minRadius, maxRadius]);
-            } else {
-                this.rScale.rangePoints([minRadius, maxRadius], 0).range();
-            }
+
 
             //apply scales to axes and redraw
             this.yAxis.scale(this.yScale)
@@ -230,10 +208,65 @@ define([
                 .tickSize(6, 0)
                 .ticks(Math.max(height / tick_spacing, 2));
 
+            this.xAxis.smartLabeler = function(options){
+                var axis = this;
+
+                axis.METHOD_REPEATING = 'repeating specified powers';
+                axis.METHOD_DOUBLING = 'doubling the value';
+                axis.DEFAULT_LOGBASE = 10;
+
+                if(options==null) options = {}
+                if(options.scaleType==null) {console.warn('please set scaleType to "lin", "log", "ordinal"'); return axis;};
+                if(options.scaleType=='ordinal') return axis.tickValues(null);
+                if(options.logBase==null) options.logBase = axis.DEFAULT_LOGBASE;
+                if(options.method==null) options.method = axis.METHOD_REPEATING;
+                if(options.baseValues==null) options.stops = [1,2,5,7];
+                if(options.spaceOne==null) options.spaceOne = 75; //px
+                if(options.isPivotAuto==null) options.isPivotAuto = false;
+
+                var tickValues = [];
+                var lengthDomain = axis.scale().domain()[1] - axis.scale().domain()[0];
+                var lengthRange = axis.scale().range()[1] - axis.scale().range()[0];
+                var getBaseLog = function(x, base) {
+                    if(base == null) base = options.logBase;
+                    return Math.log(x) / Math.log(base);
+                };
+
+                //console.log(getBaseLog(this.scale().domain()[0]))
+
+                if(options.method == axis.METHOD_REPEATING){
+                    var spawn = d3.range(
+                            Math.ceil(getBaseLog(this.scale().domain()[0])),
+                            Math.ceil(getBaseLog(this.scale().domain()[1])))
+                        .map(function(d){return Math.pow(options.logBase, d)});
+
+                    options.stops.forEach(function(stop){
+                        if(lengthRange/tickValues.length<options.spaceOne) return;
+                        tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
+                    })
+
+                }else if(options.method == axis.METHOD_DOUBLING) {
+                    var spawn = d3.range(
+                            Math.ceil(getBaseLog(this.scale().domain()[0],2)),
+                            Math.ceil(getBaseLog(this.scale().domain()[1],2)))
+                        .map(function(d){return Math.pow(2, d)});
+
+                    tickValues = spawn;
+                        //console.log(this.scale())
+                }
+
+
+                return axis
+                    .tickFormat(d3.format(",.1s"))
+                    .tickValues(tickValues);
+            }
+
+
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
+                //.ticks(Math.max(width / tick_spacing, 2));
                 .tickSize(6, 0)
-                .ticks(Math.max(width / tick_spacing, 2));
+                .smartLabeler({scaleType: this.model.marker.axis_x.scale});
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
 
@@ -262,12 +295,8 @@ define([
             //update selection
             var speed = (this.model.time.playing) ? this.model.time.speed : 0;
 
-            var some_selected = (_this.model.entities.select.length > 0);
-
             this.bubbles
-                .style("fill", function(d) {
-                    return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
-                })
+                .style("fill", "#b5bf00")
                 .transition().duration(speed).ease("linear")
                 .attr("cy", function(d) {
                     var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
@@ -277,40 +306,11 @@ define([
                     var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
                     return _this.xScale(value);
                 })
-                .attr("r", function(d) {
-                    var value = _this.model.marker.size.getValue(d)||_this.rScale.domain()[0];
-                    return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
-                });
+                .attr("r", 5);
 
-            this.bubbles.classed("vzb-bc-selected", function(d) {
-                    return some_selected && _this.model.entities.isSelected(d)
-                })
-            this.bubbles.classed("vzb-bc-unselected", function(d) {
-                    return some_selected && !_this.model.entities.isSelected(d)
-                });
-
-            /* TOOLTIP */
-            //TODO: improve tooltip
-            this.bubbles.on("mousemove", function(d, i) {
-                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                        return parseInt(d);
-                    });
-
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                        .html(_this.model.marker.label.getValue(d));
-
-                })
-                .on("mouseout", function(d, i) {
-                    _this.tooltip.classed("vzb-hidden", true);
-                })
-                .on("click", function(d, i) {
-                    _this.model.entities.selectEntity(d);
-                });
         }
 
     });
 
-    return BubbleChart;
+    return AxisLabeler;
 });

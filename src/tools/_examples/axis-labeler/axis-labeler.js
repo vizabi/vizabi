@@ -7,7 +7,7 @@ define([
     'base/tool'
 ], function(_, d3, Tool) {
 
-    var bubbleChart = Tool.extend({
+    var axisLabeler = Tool.extend({
         /**
          * Initialized the tool
          * @param config tool configurations, such as placeholder div
@@ -15,26 +15,18 @@ define([
          */
         init: function(config, options) {
 
-            this.name = 'bubble-chart';
-            this.template = "tools/_examples/bubble-chart/bubble-chart";
+            this.name = 'axis-labeler';
+            this.template = "tools/_examples/axis-labeler/axis-labeler";
 
             //instantiating components
-            this.components = [{
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
-            }, {
-                component: '_examples/bubble-chart',
+            this.components = [ {
+                component: '_examples/axis-labeler',
                 placeholder: '.vzb-tool-viz', //div to render
                 model: ["state.time", "state.entities", "state.marker", "data"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render
                 model: ["state.time"]
-            }, {
-                component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist',
-                model: ['state', 'data', 'language'],
-                buttons: ['colors', 'size', 'more-options']
             }];
 
             this._super(config, options);
@@ -67,5 +59,5 @@ define([
         }
     });
 
-    return bubbleChart;
+    return axisLabeler;
 });
