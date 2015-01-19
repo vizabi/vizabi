@@ -33,6 +33,8 @@ define([
             if(options.cssMarginRight==null||options.cssMarginRight=="0px") options.cssMarginRight = "10px";
             if(options.tickSpacing==null)options.tickSpacing = 50;
             if(options.showOuter==null)options.showOuter = true;
+            if(options.limitMinTickNumber==null)options.limitMinTickNumber = 2;
+            if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
 
             if(options.widthOfOneDigit==null) options.widthOfOneDigit =
                 parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
@@ -78,11 +80,13 @@ define([
                             min>max? -1 : 1)
                         .map(function(d){return Math.pow(options.logBase, d)});
 
+
                     if(options.showOuter)tickValues.push(max);
 
                     options.stops.forEach(function(stop){
                         //skip populating when there is no space on the screen
-                        if(lengthRange/tickValues.length<spaceOneLabel) return;
+                        if(lengthRange / tickValues.length < spaceOneLabel) return;
+                        if(tickValues.length > options.limitMaxTickNumber) return;
                         //populate the stops in the order of importance
                         tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
                     })
@@ -100,7 +104,7 @@ define([
                 }
 
 
-            tickValues = tickValues.filter(function(d){return Math.min(min,max)<=d && d<=Math.max(min,max)});
+            tickValues = tickValues.filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); });
             } //logarithmic
 
             if(options.scaleType=="linear"){
@@ -253,7 +257,7 @@ define([
 
             // measure the width of one digit
             var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('0');
+            widthSampleT = widthSampleG.append('text').text('M');
             this.axisTextFontSize = widthSampleT.style("font-size");
             this.widthOfOneDigit = widthSampleT[0][0].getComputedTextLength();
             widthSampleG.remove();
