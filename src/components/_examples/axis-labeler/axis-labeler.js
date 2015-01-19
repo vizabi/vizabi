@@ -5,55 +5,72 @@ define([
 ], function($, d3, Component) {
 
 
-    var smartlabeler = function(options){
-                var axis = this;
-
-                axis.METHOD_REPEATING = 'repeating specified powers';
-                axis.METHOD_DOUBLING = 'doubling the value';
-                axis.DEFAULT_LOGBASE = 10;
-
-                if(options==null) options = {}
-                if(options.scaleType==null) {console.warn('please set scaleType to "lin", "log", "ordinal"'); return axis;};
-                if(options.scaleType=='ordinal') return axis.tickValues(null);
-                if(options.logBase==null) options.logBase = axis.DEFAULT_LOGBASE;
-                if(options.method==null) options.method = axis.METHOD_REPEATING;
-                if(options.baseValues==null) options.stops = [1,2,5,7];
-                if(options.isPivotAuto==null) options.isPivotAuto = false;
-                if(options.formatter==null) options.formatter = d3.format(",.1s");
-                if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
-                if(options.cssFontSize==null) options.cssFontSize = "13px";
-                if(options.cssMarginLeft==null||options.cssMarginLeft=="0px") options.cssMarginLeft = "10px";
-                if(options.cssMarginRight==null||options.cssMarginRight=="0px") options.cssMarginRight = "10px";
-
-                if(options.widthOfOneDigit==null) options.widthOfOneDigit =
-                    parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
-
-                var spaceOneLabel =
-                    //calculate a typical number of symbols needed for the values
-                    (d3.format(",.1s")(d3.mean(axis.scale().domain())).length + 1)
-                    //multiply this by width of one digit
-                    *options.widthOfOneDigit
-                    //add left and right margins
-                    +parseInt(options.cssMarginLeft)
-                    +parseInt(options.cssMarginRight)
-                ;
-
-                var tickValues = [];
-                var lengthDomain = axis.scale().domain()[1] - axis.scale().domain()[0];
-                var lengthRange = axis.scale().range()[1] - axis.scale().range()[0];
+    var Smartlabeler = function(orientation){
+        var _this = this;
+        this.VERTICAL = 'ordinate axis';
+        this.HORIZONTAL = 'absciss axis';
+        this.METHOD_REPEATING = 'repeating specified powers';
+        this.METHOD_DOUBLING = 'doubling the value';
+        this.DEFAULT_LOGBASE = 10;
 
 
-                console.log("expected digits " + (d3.format(",.1s")(d3.mean(axis.scale().domain())).length + 1));
-                console.log("space for one label " + Math.round(spaceOneLabel));
+        this.update = function(options){
+            var axis = this;
 
-                var getBaseLog = function(x, base) {
-                    if(base == null) base = options.logBase;
-                    return Math.log(x) / Math.log(base);
-                };
+            if(options==null) options = {}
+            if(options.scaleType==null) {console.warn('please set scaleType to "lin", "log", "ordinal"'); return axis;};
+            if(options.scaleType=='ordinal') return axis.tickValues(null);
 
-                //console.log(getBaseLog(this.scale().domain()[0]))
+            if(options.logBase==null) options.logBase = _this.DEFAULT_LOGBASE;
+            if(options.method==null) options.method = _this.METHOD_REPEATING;
+            if(options.baseValues==null) options.stops = [1,2,5,7];
+            if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
+            if(options.isPivotAuto==null) options.isPivotAuto = true;
+            if(options.formatter==null) options.formatter = d3.format(",.1s");
+            if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
+            if(options.cssFontSize==null) options.cssFontSize = "13px";
+            if(options.cssMarginLeft==null||options.cssMarginLeft=="0px") options.cssMarginLeft = "10px";
+            if(options.cssMarginRight==null||options.cssMarginRight=="0px") options.cssMarginRight = "10px";
+            if(options.tickSpacing==null)options.tickSpacing = 50;
 
-                if(options.method == axis.METHOD_REPEATING){
+            if(options.widthOfOneDigit==null) options.widthOfOneDigit =
+                parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
+
+            var min = axis.scale().domain()[0];
+            var max = axis.scale().domain()[1];
+
+            //measure the longest formatted label
+            var longestLabelLength = d3.max(
+                d3.range(min, max, (max-min)/13).map(function(d){return options.formatter(d).length})
+                );
+
+            var spaceOneLabel =
+                //calculate the number of symbols needed for the values
+                longestLabelLength*options.widthOfOneDigit
+                //add left and right margins
+                +parseInt(options.cssMarginLeft)
+                +parseInt(options.cssMarginRight)
+            ;
+
+            var ticksNumber = 5;
+            var tickValues = [];
+            var lengthDomain = Math.abs(axis.scale().domain()[1] - axis.scale().domain()[0]);
+            var lengthRange = Math.abs(axis.scale().range()[1] - axis.scale().range()[0]);
+
+
+            console.log(orientation);
+            console.log("expected digits " + longestLabelLength);
+            console.log("space for one label " + Math.round(spaceOneLabel));
+            console.log("===========");
+
+            var getBaseLog = function(x, base) {
+                if(base == null) base = options.logBase;
+                return Math.log(x) / Math.log(base);
+            };
+
+
+            if(options.scaleType=="log"){
+                if(options.method == _this.METHOD_REPEATING){
                     var spawn = d3.range(
                             Math.ceil(getBaseLog(this.scale().domain()[0])),
                             Math.ceil(getBaseLog(this.scale().domain()[1])))
@@ -66,7 +83,7 @@ define([
                         tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
                     })
 
-                }else if(options.method == axis.METHOD_DOUBLING) {
+                }else if(options.method == _this.METHOD_DOUBLING) {
                     var spawn = d3.range(
                             Math.ceil(getBaseLog(this.scale().domain()[0],2)),
                             Math.ceil(getBaseLog(this.scale().domain()[1],2)))
@@ -75,12 +92,33 @@ define([
                     tickValues = spawn;
                         //console.log(this.scale())
                 }
+            }
+
+            if(options.scaleType=="linear"){
+                tickValues = null;
+                ticksNumber = Math.max(lengthRange / options.tickSpacing, 2);
+            }
+
+            if(options.isPivotAuto){
+                axis.pivot = spaceOneLabel>options.lengthWhenPivoting;
+            }else{
+                axis.pivot = false;
+            }
+
+            return axis
+                .ticks(ticksNumber)
+                .tickFormat(options.formatter)
+                .tickValues(tickValues);
+        }
+    };
 
 
-                return axis
-                    .tickFormat(options.formatter)
-                    .tickValues(tickValues);
-            };
+
+
+
+
+
+
 
     var AxisLabeler = Component.extend({
         init: function(context, options) {
@@ -89,14 +127,17 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["domain"];
+            this.model_expects = ["scales"];
 
             this._super(context, options);
             this.xAxis = d3.svg.axis();
             this.yAxis = d3.svg.axis();
 
-            this.xAxis.smartLabeler = smartlabeler;
-            this.yAxis.smartLabeler = smartlabeler;
+            var smartlabelerX = new Smartlabeler("HORIZONTAL");
+            var smartlabelerY = new Smartlabeler("VERTICAL");
+
+            this.xAxis.smartLabeler = smartlabelerX.update;
+            this.yAxis.smartLabeler = smartlabelerY.update;
 
         },
 
@@ -116,9 +157,9 @@ define([
 
 
             //model events
-            this.model.domain.on({
+            this.model.scales.on({
                 'change': function() {
-                console.log("Model.domain updated!");
+                console.log("Model.scales updated!");
                 _this.initScales();
                 _this.update();
                 }
@@ -142,9 +183,10 @@ define([
 
 
         initScales: function(){
-            this.scaleType = "log";
-            this.xScale = d3.scale.log().domain([this.model.domain.from, this.model.domain.to]);
-            this.yScale = d3.scale.log().domain([this.model.domain.from, this.model.domain.to]);
+            this.xScale = d3.scale[this.model.scales.xScaleType]()
+                .domain([this.model.scales.from, this.model.scales.to]);
+            this.yScale = d3.scale[this.model.scales.yScaleType]()
+                .domain([this.model.scales.from, this.model.scales.to]);
         },
 
         /*
@@ -183,14 +225,17 @@ define([
 
 
             //update scales to the new range
-            if (this.scaleType !== "ordinal") {
+            if (this.model.scales.xScaleType !== "ordinal") {
                 this.xScale.range([0, width]).nice();
-                this.yScale.range([height, 0]).nice();
             } else {
                 this.xScale.rangePoints([0, width], padding).range();
-                this.yScale.rangePoints([height, 0], padding).range();
             }
 
+            if (this.model.scales.yScaleType !== "ordinal") {
+                this.yScale.range([height, 0]).nice();
+            } else {
+                this.yScale.rangePoints([height, 0], padding).range();
+            }
 
             // measure the width of one digit
             var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
@@ -201,23 +246,45 @@ define([
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
-                //.ticks(Math.max(width / tick_spacing, 2));
                 .tickSize(6, 0)
                 .smartLabeler({
-                    scaleType: this.scaleType,
+                    scaleType: this.model.scales.xScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
-                    cssFontSize: this.axisTextFontSize
+                    cssFontSize: this.axisTextFontSize,
+                    lengthWhenPivoting: margin.bottom,
+                    tickSpacing: tick_spacing
                 });
 
             this.yAxis.scale(this.yScale)
                 .orient("left")
-                .ticks(Math.max(height / tick_spacing, 2))
-                .tickSize(6, 0);
+                .tickSize(6, 0)
+                .smartLabeler({
+                    scaleType: this.model.scales.yScaleType,
+                    widthOfOneDigit: this.widthOfOneDigit,
+                    cssFontSize: this.axisTextFontSize,
+                    lengthWhenPivoting: margin.left,
+                    tickSpacing: tick_spacing
+                });
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
 
-            this.xAxisEl.call(this.xAxis);
-            this.yAxisEl.call(this.yAxis);
+            this.xAxisEl
+                .call(this.xAxis)
+                .selectAll("text")
+                    .attr("transform","rotate("+(this.xAxis.pivot?-90:0)+")")
+                    .style("text-anchor", this.xAxis.pivot?"end":"middle")
+                    .attr("dx", this.xAxis.pivot?"-0.71em":"0.00em")
+                    .attr("dy", this.xAxis.pivot?"-0.32em":"0.71em")
+
+            this.yAxisEl
+                .call(this.yAxis)
+                .selectAll("text")
+                    .attr("transform","rotate("+(this.yAxis.pivot?-90:0)+")")
+                    .style("text-anchor", this.yAxis.pivot?"middle":"end")
+                    .attr("dx", this.yAxis.pivot?"+0.71em":"0.00em")
+                    .attr("dy", this.yAxis.pivot?"-0.71em":"0.32em")
+
+
         }
 
 

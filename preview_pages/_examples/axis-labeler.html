@@ -21,18 +21,33 @@
 
         <label>|</label>
 
-        <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
-            <span>Set domain</span>
+        <div id="dropdown-number" title="axis domain" class="wrapper-dropdown" tabindex="1">
+            <span>Set axis domain</span>
             <ul class="dropdown">
                 <li><a onclick="setDomain('0.006', '123')">0.006 — 123</a></li>
                 <li><a onclick="setDomain('4.000', '123')">4 — 123</a></li>
-                <li><a onclick="setDomain('102.0', '123')">102 — 123</a></li>
+                <li><a onclick="setDomain('5.000', '8.0')">5 — 8</a></li>
                 <li><a onclick="setDomain('-12.0', '2.0')">-12 — 2</a></li>
                 <li><a onclick="setDomain('0.00005', '455484715')">0.00005 — 455484715</a></li>
                 <li><a onclick="setDomain('545.0', '4.00')">545 — 4</a></li>
                 <li><a onclick="setDomain('42.00', '42.0')">42 — 42</a></li>
             </ul>
         </div>
+        <div id="dropdown-number" title="X axis type" class="wrapper-dropdown" tabindex="1">
+            <span>X type</span>
+            <ul class="dropdown">
+                <li><a onclick="setType('linear', 'x')">X linear</a></li>
+                <li><a onclick="setType('log', 'x')">X log</a></li>
+            </ul>
+        </div>
+        <div id="dropdown-number" title="Y xis type" class="wrapper-dropdown" tabindex="1">
+            <span>Y type</span>
+            <ul class="dropdown">
+                <li><a onclick="setType('linear', 'y')">Y linear</a></li>
+                <li><a onclick="setType('log', 'y')">Y log</a></li>
+            </ul>
+        </div>
+
 
     </div>
 
@@ -59,9 +74,11 @@ $(function() {
     var options = {
         //state
         state: url.state || {
-            domain:{
+            scales:{
                 from: 1,
-                to: 10000
+                to: 10000,
+                xScaleType: 'log',
+                yScaleType: 'log'
             }
         },
 
@@ -82,14 +99,15 @@ $(function() {
 
 
 function setDomain(from, to) {
-    var options = {
-        state: {
-            domain: {}
-        }
-    };
-    options.state.domain.from = +from;
-    options.state.domain.to = +to;
+    var options = { state: { scales: {} }};
+    options.state.scales.from = +from;
+    options.state.scales.to = +to;
+    myVizabi.setOptions(options);
+};
 
+function setType(type, axis) {
+    var options = { state: { scales: {} }};
+    options.state.scales[axis+"ScaleType"] = type;
     myVizabi.setOptions(options);
 }
 
