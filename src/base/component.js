@@ -48,6 +48,13 @@ define([
 
             this.ui = this.ui || config.ui;
 
+            //set placeholder as d3 entity already
+            if(_.isString(this.placeholder)) {
+                this.placeholder = d3.select(this.placeholder);
+            } else {
+                console.error('ERROR: the placeholder argument should be a string');
+            }
+
             var _this = this;
             this.on({
                 'dom_ready': function() {

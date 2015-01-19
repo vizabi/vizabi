@@ -120,7 +120,7 @@ define([
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.element.classed(class_loading_data, true);
+            this.placeholder.classed(class_loading_data, true);
             this.blockUpdate(true);
         },
 
@@ -133,7 +133,7 @@ define([
             //defer to make sure it's updated
             var _this = this;
             _.defer(function() {
-                _this.element.classed(class_loading_data, false);
+                _this.placeholder.classed(class_loading_data, false);
             });
         },
 
@@ -141,7 +141,7 @@ define([
          * Adds loading error class
          */
         errorLoading: function() {
-            this.element.classed(class_loading_error, false);
+            this.placeholder.classed(class_loading_error, false);
         },
 
         /* ==========================
