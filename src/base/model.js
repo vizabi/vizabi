@@ -481,7 +481,6 @@ define([
 
                 //confirm that the model has been validated
                 val_promise.always(function() {
-                    console.log("REMOVE: Model", _this._id, "has been validated!");
                     _this._ready = true;
                     _this.trigger("ready");
                     defer.resolve();
