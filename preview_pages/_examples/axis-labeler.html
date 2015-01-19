@@ -21,44 +21,16 @@
 
         <label>|</label>
 
-
         <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
-            <span>Y</span>
+            <span>Set domain</span>
             <ul class="dropdown">
-                <li><a onclick="hook('axis_y', 'property', 'geo.region')">Prop: geo.region</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'property', 'geo')">Prop: geo</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'property', 'geo.category')">Prop: geo.category</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Ind: lex</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Ind: pop</a>
-                </li>
-                <li><a onclick="hook('axis_y', 'value', '42')">Value: 42</a>
-                </li>
-            </ul>
-        </div>
-
-        <div id="dropdown-color" title="X Axis" class="wrapper-dropdown" tabindex="1">
-            <span>X</span>
-            <ul class="dropdown">
-                <li><a onclick="hook('axis_x', 'property', 'geo.region')">Prop: geo.region</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'property', 'geo')">Prop: geo</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'property', 'geo.category')">Prop: geo.category</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'lex')">Ind: lex</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'pop')">Ind: pop</a>
-                </li>
-                <li><a onclick="hook('axis_x', 'value', '42')">Value: 42</a>
-                </li>
+                <li><a onclick="setDomain('0.006', '123')">0.006 — 123</a></li>
+                <li><a onclick="setDomain('4.000', '123')">4 — 123</a></li>
+                <li><a onclick="setDomain('102.0', '123')">102 — 123</a></li>
+                <li><a onclick="setDomain('-12.0', '2.0')">-12 — 2</a></li>
+                <li><a onclick="setDomain('0.00005', '455484715')">0.00005 — 455484715</a></li>
+                <li><a onclick="setDomain('545.0', '4.00')">545 — 4</a></li>
+                <li><a onclick="setDomain('42.00', '42.0')">42 — 42</a></li>
             </ul>
         </div>
 
@@ -74,10 +46,6 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
-    <p>Change Language:</p>
-    <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
-    <p>Play</p>
-    <button id="play_button" onclick="play()">PLAY</button>
 </div>
 </body>
 <script>
@@ -91,73 +59,9 @@ $(function() {
     var options = {
         //state
         state: url.state || {
-
-            //timespan of the visualization
-            time: {
-                start: 1990,
-                end: 2012,
-                value: 1995,
-                step: 1,
-                speed: 300,
-                formatInput: "%Y"
-            },
-
-            //entities we want to show
-            entities: {
-                show: {
-                    dim: "geo",
-                    filter: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                        "geo.category": ["country"]
-                    }
-                }
-            },
-
-            //how we show it
-            marker: {
-                type: "geometry",
-                shape: "circle",
-                label: {
-                    use: "property",
-                    value: "geo.name"
-                },
-                axis_y: {
-                    use: "indicator",
-                    value: "lex",
-                    scale: 'log'
-                },
-                axis_x: {
-                    use: "indicator",
-                    value: "gdp_per_cap",
-                    scale: 'log'
-                }
-            }
-        },
-
-        //where do we get data from?
-        data: {
-            reader: 'local-json',
-            path: '../../data-waffles/examples/{{LANGUAGE}}/basic-indicators.json'
-        },
-
-        //language properties
-        language: url.lang || {
-            id: "en",
-            strings: {
-                en: {
-                    "title": "Axis labeler demo",
-                    "buttons/find": "Find",
-                    "buttons/colors": "Colors",
-                    "buttons/size": "Size",
-                    "buttons/more_options": "Options"
-                },
-                pt: {
-                    "title": "Axisso labelessp demore",
-                    "buttons/find": "Encontre",
-                    "buttons/colors": "Cores",
-                    "buttons/size": "Tamanho",
-                    "buttons/more_options": "Opções"
-                }
+            domain:{
+                from: 1,
+                to: 10000
             }
         },
 
@@ -168,82 +72,26 @@ $(function() {
             },
             'change:state': function(evt, vals) {
                 showState(vals.state);
-            },
-            'change:state:time': function(evt, vals) {
-                if (vals.state.time.playing) {
-                    playButton.attr('onclick', 'pause()');
-                    playButton.text("PAUSE");
-                } else {
-                    playButton.attr('onclick', 'play()');
-                    playButton.text("PLAY");
-                }
-            },
-            'change:language': function(evt, vals) {
-                if (vals.language.id === "en") {
-                    languageButton.attr('onclick', "language('pt')");
-                    languageButton.text("SET LANGUAGE: PT");
-                } else {
-                    languageButton.attr('onclick', "language('en')");
-                    languageButton.text("SET LANGUAGE: EN");
-                }
             }
         }
     };
 
-
     myVizabi = new Vizabi("_examples/axis-labeler", "#axis-labeler", options);
-
     showState(options.state);
 });
 
-function play() {
+
+function setDomain(from, to) {
     var options = {
         state: {
-            time: {
-                playing: true
-            }
+            domain: {}
         }
     };
-    myVizabi.setOptions(options);
-}
-
-function pause() {
-    var options = {
-        state: {
-            time: {
-                playing: false
-            }
-        }
-    };
-    myVizabi.setOptions(options);
-}
-
-function language(lang) {
-    var options = {
-        language: {
-            id: lang
-        }
-    };
-    myVizabi.setOptions(options);
-}
-
-function hook(hook, use, value, domain) {
-    var options = {
-        state: {
-            marker: {}
-        }
-    };
-    options.state.marker[hook] = {
-        use: use,
-        value: value
-    };
-
-    //for color only
-    if (domain) options.state.marker[hook].domain = domain;
+    options.state.domain.from = +from;
+    options.state.domain.to = +to;
 
     myVizabi.setOptions(options);
 }
-
 
 </script>
 

@@ -22,11 +22,7 @@ define([
             this.components = [ {
                 component: '_examples/axis-labeler',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.time", "state.entities", "state.marker", "data"]
-            }, {
-                component: '_gapminder/timeslider',
-                placeholder: '.vzb-tool-timeslider', //div to render
-                model: ["state.time"]
+                model: ["state.domain"]
             }];
 
             this._super(config, options);
@@ -37,26 +33,7 @@ define([
          * Validating the tool model
          * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
-
-            var time = model.state.time,
-                markers = model.state.marker.label;
-
-            //don't validate anything if data hasn't been loaded
-            if (!markers.getItems() || markers.getItems().length < 1) {
-                return;
-            }
-
-            var dateMin = markers.getLimits('time').min,
-                dateMax = markers.getLimits('time').max;
-
-            if (time.start < dateMin) {
-                time.start = dateMin;
-            }
-            if (time.end > dateMax) {
-                time.end = dateMax;
-            }
-        }
+        toolModelValidation: function(model) {}
     });
 
     return axisLabeler;

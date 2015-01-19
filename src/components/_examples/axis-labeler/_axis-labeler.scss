@@ -17,24 +17,7 @@ $vzb-bc-year-size:300px;
     margin: 0;
     overflow: hidden;
     font-family: $vzb-font-family;
-    .vzb-bc-bubble {
-        @include opacity(0.8);
-        stroke: white;
-        cursor: pointer;
-        &:hover {
-            @include opacity(1);
-        }
 
-        &.vzb-bc-unselected {
-            @include opacity(0.4);
-            &:hover {
-                @include opacity(0.6);
-            }
-        }
-        &.vzb-bc-selected {
-            @include opacity(0.9);
-        }
-    }
     .vzb-bc-axis {
         path, line {
             fill: none;
@@ -54,18 +37,7 @@ $vzb-bc-year-size:300px;
         stroke: $vzb-bc-color-axis;
         stroke-width: 1px;
     }
-    .vzb-bc-year {
-        @include opacity(0.1);
-        @include font-size(250px);
-        fill: $vzb-bc-color-bubble;
-        text-anchor: middle;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
+
 }
 &.vzb-medium {
     .vzb-axis-labeler {
