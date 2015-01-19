@@ -58,6 +58,8 @@ define([
          */
         modelReady: function() {
             //E.g: var year = this.model.get('value');
+
+            console.log("Data: ", this.model.data.profits);
         },
 
         /**

@@ -132,19 +132,33 @@ define([
                 _this._bindSettersGetters();
                 //if we don't block validation, validate
                 if (!block_validation) {
-                    _this.validate(silent);
-                }
-                //trigger change if not silent
-                if (!_this._set) {
-                    _this._set = true;
-                    events.push("set");
-                }
-                if (!silent) {
-                    _.defer(function() {
-                        _this.triggerAll(events, _this.getObject());
+
+                    //attempt to validate
+                    var val_promise = false;
+                    if (_this.validate) {
+                        val_promise = _this.validate();
+                    }
+
+                    //if validation is not a promise, make it a confirmed one
+                    if (!val_promise || !val_promise.always) {
+                        val_promise = $.when.apply(null, [this]);
+                    }
+
+                    //confirm that the model has been validated
+                    val_promise.always(function() {
+                        //trigger change if not silent
+                        if (!_this._set) {
+                            _this._set = true;
+                            events.push("set");
+                        }
+                        if (!silent) {
+                            _.defer(function() {
+                                _this.triggerAll(events, _this.getObject());
+                            });
+                        }
+                        defer.resolve();
                     });
                 }
-                defer.resolve();
             });
 
             return defer;
@@ -360,7 +374,7 @@ define([
          * @returns {Boolean} is it loading?
          */
         isLoading: function(p_id) {
-            if(p_id) {
+            if (p_id) {
                 return (this._loading.indexOf(p_id) !== -1);
             }
             return (this._loading.length > 0);
@@ -372,7 +386,7 @@ define([
          */
         setLoading: function(p_id) {
             //if this is the first time we're loading anything
-            if(!this.isLoading()) {
+            if (!this.isLoading()) {
                 this.trigger("load_start");
             }
             //add id to the list of processes that are loading
@@ -387,7 +401,7 @@ define([
             //remove he process from the list of things that are loading
             this._loading = _.without(this._loading, p_id);
             //if this is the first time we're loading anything
-            if(!this.isLoading()) {
+            if (!this.isLoading()) {
                 this.trigger("load_end");
             }
         },
@@ -425,7 +439,7 @@ define([
                         _this.setLoading("_hook_data");
                     },
                     'load_end': function() {
-                       _this.setLoadingDone("_hook_data");
+                        _this.setLoadingDone("_hook_data");
                     }
                 };
 
@@ -452,13 +466,26 @@ define([
                 }
             }
 
+            //after all elements are set, we consider the object ready
+            //if validation exists, this happens only after validation
             $.when.apply(null, promises).then(function() {
+                var val_promise = false;
                 if (_this.validate) {
-                    _this.validate();
+                    val_promise = _this.validate();
                 }
-                _this._ready = true;
-                _this.trigger("ready");
-                defer.resolve();
+
+                //if validation is not a promise, make it a confirmed one
+                if (!val_promise || !val_promise.always) {
+                    val_promise = $.when.apply(null, [this]);
+                }
+
+                //confirm that the model has been validated
+                val_promise.always(function() {
+                    console.log("REMOVE: Model", _this._id, "has been validated!");
+                    _this._ready = true;
+                    _this.trigger("ready");
+                    defer.resolve();
+                });
             });
 
             return defer;
@@ -472,9 +499,10 @@ define([
         /**
          * Validates data.
          * Interface for the validation function implemented by a model
+         * @returns Promise or nothing
          */
         validate: function() {
-            // placeholder for validate function
+            //placeholder for validate function
         },
 
         /* ==========================
@@ -491,14 +519,14 @@ define([
             if (this._debugEvents && this._debugEvents !== "trigger") {
                 if (_.isPlainObject(name)) {
                     for (var i in name) {
-                        console.log("Model", this._id ,"> bind:", i);
+                        console.log("Model", this._id, "> bind:", i);
                     }
                 } else if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model", this._id ,"> bind:", name[i]);
+                        console.log("Model", this._id, "> bind:", name[i]);
                     }
                 } else {
-                    console.log("Model", this._id ,"> bind:", name);
+                    console.log("Model", this._id, "> bind:", name);
                 }
             }
             this._events.on(name, func);
@@ -514,10 +542,10 @@ define([
                 console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model", this._id ,"> triggered:", name[i]);
+                        console.log("Model", this._id, "> triggered:", name[i]);
                     }
                 } else {
-                    console.log("Model", this._id ,"> triggered:", name);
+                    console.log("Model", this._id, "> triggered:", name);
                 }
                 console.log('\n')
                 console.info(utils.formatStacktrace(utils.stacktrace()));
@@ -536,10 +564,10 @@ define([
                 console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model", this._id ,"> triggered once:", name[i]);
+                        console.log("Model", this._id, "> triggered once:", name[i]);
                     }
                 } else {
-                    console.log("Model", this._id ,"> triggered once:", name);
+                    console.log("Model", this._id, "> triggered once:", name);
                 }
                 console.log('\n')
                 console.info(utils.formatStacktrace(utils.stacktrace()));
@@ -558,10 +586,10 @@ define([
                 console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model", this._id ,"> triggered all:", name[i]);
+                        console.log("Model", this._id, "> triggered all:", name[i]);
                     }
                 } else {
-                    console.log("Model", this._id ,"> triggered all:", name);
+                    console.log("Model", this._id, "> triggered all:", name);
                 }
                 console.log('\n')
                 console.info(utils.formatStacktrace(utils.stacktrace()));
@@ -645,7 +673,7 @@ define([
             } else if (this._parent) {
                 return this._parent._getHookTo();
             } else {
-                
+
                 console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time", "data", "language"]');
 
                 //DEPRECATED: returning default hooks

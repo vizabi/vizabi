@@ -34,6 +34,8 @@ define([
          */
         toolModelValidation: function(model) {
 
+            var defer = $.Deferred();
+
             //if mydata is not there and if it's not loading mydata
             if (!model.data.profits && !model.data.isLoading("profits")) {
                 model.data.setLoading("profits");
@@ -47,27 +49,13 @@ define([
                         model.data.profits = data;
 
                         model.data.setLoadingDone("profits");
+                        defer.resolve();
                     }, 2000);
                 });
             }
 
-            /* Example of model validation for time, show and data 
+            return defer;
 
-            var state = model.state,
-                data = model.data;
-
-            //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
-                return;
-            }
-            if (state.time.start < data.getLimits('time').min) {
-                state.time.start = data.getLimits('time').min;
-            }
-            if (state.time.end > data.getLimits('time').max) {
-                state.time.end = data.getLimits('time').max;
-            }
-
-            * End of example */
         }
     });
 
