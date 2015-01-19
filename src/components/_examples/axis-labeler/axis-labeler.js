@@ -23,7 +23,7 @@ define([
 
             if(options.logBase==null) options.logBase = _this.DEFAULT_LOGBASE;
             if(options.method==null) options.method = _this.METHOD_REPEATING;
-            if(options.baseValues==null) options.stops = [1,2,5,7];
+            if(options.baseValues==null) options.stops = [1,2,5,7,3,4,6,8,9];
             if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
             if(options.isPivotAuto==null) options.isPivotAuto = true;
             if(options.formatter==null) options.formatter = d3.format(",.1s");
@@ -32,6 +32,7 @@ define([
             if(options.cssMarginLeft==null||options.cssMarginLeft=="0px") options.cssMarginLeft = "10px";
             if(options.cssMarginRight==null||options.cssMarginRight=="0px") options.cssMarginRight = "10px";
             if(options.tickSpacing==null)options.tickSpacing = 50;
+            if(options.showOuter==null)options.showOuter = true;
 
             if(options.widthOfOneDigit==null) options.widthOfOneDigit =
                 parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
@@ -61,7 +62,7 @@ define([
             console.log(orientation);
             console.log("expected digits " + longestLabelLength);
             console.log("space for one label " + Math.round(spaceOneLabel));
-            console.log("===========");
+
 
             var getBaseLog = function(x, base) {
                 if(base == null) base = options.logBase;
@@ -72,9 +73,12 @@ define([
             if(options.scaleType=="log"){
                 if(options.method == _this.METHOD_REPEATING){
                     var spawn = d3.range(
-                            Math.ceil(getBaseLog(this.scale().domain()[0])),
-                            Math.ceil(getBaseLog(this.scale().domain()[1])))
+                            Math.ceil(getBaseLog(axis.scale().domain()[0])),
+                            Math.ceil(getBaseLog(axis.scale().domain()[1])),
+                            min>max? -1 : 1)
                         .map(function(d){return Math.pow(options.logBase, d)});
+
+                    if(options.showOuter)tickValues.push(max);
 
                     options.stops.forEach(function(stop){
                         //skip populating when there is no space on the screen
@@ -83,16 +87,21 @@ define([
                         tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
                     })
 
+                    if(!options.showOuter)tickValues.splice(tickValues.indexOf(min),1);
+
                 }else if(options.method == _this.METHOD_DOUBLING) {
                     var spawn = d3.range(
                             Math.ceil(getBaseLog(this.scale().domain()[0],2)),
-                            Math.ceil(getBaseLog(this.scale().domain()[1],2)))
+                            Math.ceil(getBaseLog(this.scale().domain()[1],2)),
+                            min>max? -1 : 1)
                         .map(function(d){return Math.pow(2, d)});
 
                     tickValues = spawn;
-                        //console.log(this.scale())
                 }
-            }
+
+
+            tickValues = tickValues.filter(function(d){return Math.min(min,max)<=d && d<=Math.max(min,max)});
+            } //logarithmic
 
             if(options.scaleType=="linear"){
                 tickValues = null;
@@ -105,6 +114,11 @@ define([
                 axis.pivot = false;
             }
 
+            //if(min==max)tickValues = [min];
+
+
+            console.log(tickValues);
+            console.log("===========");
             return axis
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
