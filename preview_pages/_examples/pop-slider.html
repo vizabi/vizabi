@@ -1,15 +1,54 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Model View Example - One timeslider, one model"}) -->
 
 <div class="container">
-    <div class="buttons">
+        <div class="buttons">
 
         <!-- @@include('../assets/_menu.tpl') -->
 
         <label>|</label>
 
-        <button onclick="randomSize('placeholder')">RANDOM SIZE</button>
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('placeholder')">RANDOM</button>
 
         <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
+                </li>
+                <li><a onclick="setState()">USA - 2000</a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="buttons">
+
 
         <div id="dropdown-color" class="wrapper-dropdown" tabindex="1">
             <span>COLOR HOOK</span>
@@ -71,6 +110,7 @@
             </ul>
         </div>
     </div>
+
 
     <div id="placeholder" class="placeholder"></div>
 
@@ -229,16 +269,88 @@ function language(lang) {
 
 function hook(hook, use, value, domain) {
     var options = {
-        state: { row: {} }
+        state: {
+            row: {}
+        }
     };
     options.state.row[hook] = {
         hook: use,
         value: value
     };
 
-    if(domain) options.state.row[hook].domain = domain;
+    if (domain) options.state.row[hook].domain = domain;
 
     myVizabi.setOptions(options);
+}
+
+function initialState() {
+    var newOption = {
+        state: {
+            entities: {
+                show: {
+                    dim: "geo",
+                    filter: {
+                        "geo": ['swe', 'nor'],
+                        "geo.category": ["country"]
+                    }
+                }
+            }
+        }
+    };
+
+    myVizabi.setOptions(newOption);
+    showState(newOption.state);
+}
+
+function changeIndicator() {
+    var newOption = {
+        state: {
+            marker: {
+                axis_y: {
+                    use: "indicator",
+                    value: "gdp_per_cap",
+                    scale: 'linear',
+                    unit: 100
+                }
+            }
+        }
+    };
+
+    myVizabi.setOptions(newOption);
+}
+
+function setState() {
+    var newOption = {
+        state: {
+            entities: {
+                show: {
+                    dim: "geo",
+                    filter: {
+                        "geo": ['usa'],
+                        "geo.category": ["country"]
+                    }
+                }
+            },
+            marker: {
+                axis_x: {
+                    use: "indicator",
+                    value: "gdp_per_cap",
+                    scale: 'linear',
+                    unit: 100
+                }
+            },
+            time: {
+                start: 1990,
+                end: 2012,
+                value: 2005,
+                step: 1,
+                speed: 300,
+                formatInput: "%Y"
+            }
+        }
+    };
+
+    myVizabi.setOptions(newOption);
 }
 </script>
 

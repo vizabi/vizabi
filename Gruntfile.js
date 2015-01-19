@@ -182,11 +182,11 @@ module.exports = function(grunt) {
         // Make sure necessary files are built when changes are made
         watch: {
             styles: {
-                files: ['src/**/*.scss'],
+                files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
                 tasks: ['sass:dev']
             },
             preview_pages: {
-                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js'],
+                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
                 tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
             },
             scripts: {

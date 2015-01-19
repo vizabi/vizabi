@@ -654,14 +654,14 @@ define([
             if (this._debugEvents && this._debugEvents !== "trigger") {
                 if (_.isPlainObject(name)) {
                     for (var i in name) {
-                        console.log("Component > bind:", i, this);
+                        console.log("Component", this.name, "> bind:", i);
                     }
                 } else if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Component > bind:", name[i], this);
+                        console.log("Component", this.name, "> bind:", name[i]);
                     }
                 } else {
-                    console.log("Component > bind:", name, this);
+                    console.log("Component", this.name, "> bind:", name);
                 }
             }
 
@@ -676,13 +676,17 @@ define([
         trigger: function(name, val) {
 
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Component > triggered:", name[i], this);
+                        console.log("Component", this.name ,"> triggered:", name[i]);
                     }
                 } else {
-                    console.log("Component > triggered:", name, this);
+                    console.log("Component", this.name ,"> triggered:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
 
             this._events.trigger(name, val);
@@ -696,13 +700,17 @@ define([
         triggerAll: function(name, val) {
 
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Component > triggered all:", name[i], this);
+                        console.log("Component", this.name ,"> triggered all:", name[i]);
                     }
                 } else {
-                    console.log("Component > triggered all:", name, this);
+                    console.log("Component", this.name ,"> triggered all:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
 
             this._events.triggerAll(name, val);

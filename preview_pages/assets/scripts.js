@@ -150,10 +150,6 @@ function parseURL() {
         options = JSON.parse(hash.replace("#", ""));
 
         var placeholder = $(".placeholder").attr("id");
-
-
-        console.error('TODO: parse attempt throws error when options.state is empty')
-        console.error('see related issues #20 and #24')
         var state = ""; //should be JSON.parse(options.state);
 
         url.state = state;
