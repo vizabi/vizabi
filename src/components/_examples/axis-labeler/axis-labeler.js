@@ -221,12 +221,34 @@ define([
                 if(options.logBase==null) options.logBase = axis.DEFAULT_LOGBASE;
                 if(options.method==null) options.method = axis.METHOD_REPEATING;
                 if(options.baseValues==null) options.stops = [1,2,5,7];
-                if(options.spaceOne==null) options.spaceOne = 75; //px
                 if(options.isPivotAuto==null) options.isPivotAuto = false;
+                if(options.formatter==null) options.formatter = d3.format(",.1s");
+                if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
+                if(options.cssFontSize==null) options.cssFontSize = "13px";
+                if(options.cssMarginLeft==null||options.cssMarginLeft=="0px") options.cssMarginLeft = "10px";
+                if(options.cssMarginRight==null||options.cssMarginRight=="0px") options.cssMarginRight = "10px";
+
+                if(options.widthOfOneDigit==null) options.widthOfOneDigit =
+                    parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
+
+                var spaceOneLabel =
+                    //calculate a typical number of symbols needed for the values
+                    d3.format(",.1s")(d3.mean(axis.scale().domain())).length
+                    //multiply this by width of one digit
+                    *options.widthOfOneDigit
+                    //add left and right margins
+                    +parseInt(options.cssMarginLeft)
+                    +parseInt(options.cssMarginRight)
+                ;
 
                 var tickValues = [];
                 var lengthDomain = axis.scale().domain()[1] - axis.scale().domain()[0];
                 var lengthRange = axis.scale().range()[1] - axis.scale().range()[0];
+
+
+                console.log("spaceOneLabel " + spaceOneLabel);
+                console.log("digits " + d3.format(",.1s")(d3.mean(axis.scale().domain())).length);
+
                 var getBaseLog = function(x, base) {
                     if(base == null) base = options.logBase;
                     return Math.log(x) / Math.log(base);
@@ -241,7 +263,9 @@ define([
                         .map(function(d){return Math.pow(options.logBase, d)});
 
                     options.stops.forEach(function(stop){
-                        if(lengthRange/tickValues.length<options.spaceOne) return;
+                        //skip populating when there is no space on the screen
+                        if(lengthRange/tickValues.length<spaceOneLabel) return;
+                        //populate the stops in the order of importance
                         tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
                     })
 
@@ -257,16 +281,29 @@ define([
 
 
                 return axis
-                    .tickFormat(d3.format(",.1s"))
+                    .tickFormat(options.formatter)
                     .tickValues(tickValues);
             }
 
+
+
+
+            // measure the width of one digit
+            var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
+            widthSampleT = widthSampleG.append('text').text('0');
+            this.axisTextFontSize = widthSampleT.style("font-size");
+            this.widthOfOneDigit = widthSampleT[0][0].getComputedTextLength();
+            widthSampleG.remove();
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 //.ticks(Math.max(width / tick_spacing, 2));
                 .tickSize(6, 0)
-                .smartLabeler({scaleType: this.model.marker.axis_x.scale});
+                .smartLabeler({
+                    scaleType: this.model.marker.axis_x.scale,
+                    widthOfOneDigit: this.widthOfOneDigit,
+                    cssFontSize: this.axisTextFontSize
+                });
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
 
@@ -275,6 +312,12 @@ define([
 
             this.sizeUpdatedOnce = false;
         },
+
+
+
+
+
+
 
         /*
          * REDRAW DATA POINTS:
