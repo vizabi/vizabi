@@ -57,9 +57,17 @@ define([
          * At this point, this.element is available as a d3 object
          */
         modelReady: function() {
-            //E.g: var year = this.model.get('value');
+            var profits = this.model.data.profits;
 
-            console.log("Data: ", this.model.data.profits);
+            this.element.html('');
+            this.element.selectAll('.profit-year')
+                .data(profits)
+                .enter()
+                .append('p')
+                .attr('class', 'profit-year')
+                .html(function(d) {
+                    return "Year: "+d.year+" - Profit: "+d.profit;
+                })
         },
 
         /**

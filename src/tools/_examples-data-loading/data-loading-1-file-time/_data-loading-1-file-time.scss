@@ -1,7 +1,7 @@
-.vzb-tool-data-loading-1-file {
-	@extend .vzb-tool;
+.vzb-tool-data-loading-1-file-time {
+    @extend .vzb-tool;
 
-	@include absoluteAll;
+    @include absoluteAll;
     padding: 30px;
     text-align: center;
     
@@ -14,6 +14,7 @@
         font-size: 14px;
         line-height: 1.5em;
     }
-	
-	@import '../../../components/_examples/display-json/display-json';
+
+    @import '../../../components/_examples/display-json/display-json';
+    @import '../../../components/_gapminder/timeslider/timeslider';
 }
