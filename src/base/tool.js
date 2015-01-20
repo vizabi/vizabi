@@ -81,9 +81,7 @@ define([
                 'ready': function(evt) {
                     _this.afterLoading();
                     if (_this._ready) {
-                        _this.model.validate().done(function() {
-                            _this.modelReady(evt);
-                        });
+                        _this.modelReady(evt);
                     }
                 }
             }, validate, query);

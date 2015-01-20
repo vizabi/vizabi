@@ -119,11 +119,10 @@ define([
                     //this template is ready
                     defer.resolve();
                     _this.trigger('dom_ready');
+                    _this._ready = true;
 
                     //ready when model is also ready
                     _this.model.on("ready", function() {
-                        _this._ready = true;
-
                         //TODO: delay is a hotfix to visually avoid flickering
                         _.delay(function() {
                             if (_this.element) {
