@@ -7,7 +7,7 @@ define([
     'base/tool'
 ], function(_, d3, Tool) {
 
-    var axisLabeler = Tool.extend({
+    var axisLabelerDemo = Tool.extend({
         /**
          * Initialized the tool
          * @param config tool configurations, such as placeholder div
@@ -36,5 +36,5 @@ define([
         toolModelValidation: function(model) {}
     });
 
-    return axisLabeler;
+    return axisLabelerDemo;
 });
