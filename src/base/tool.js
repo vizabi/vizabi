@@ -77,7 +77,9 @@ define([
                 'load_error': function() {
                     _this.errorLoading();
                 },
-                'load_end': function(evt, vals) {},
+                'load_end': function(evt, vals) {
+                    _this.afterLoading();
+                },
                 'ready': function(evt) {
                     _this.afterLoading();
                     if (_this._ready) {
@@ -118,8 +120,10 @@ define([
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.placeholder.classed(class_loading_data, true);
-            this.blockUpdate(true);
+            if (!this.placeholder.classed(class_loading_data)) {
+                this.placeholder.classed(class_loading_data, true);
+                this.blockUpdate(true);
+            };
         },
 
         /**
@@ -130,9 +134,9 @@ define([
             this.blockUpdate(false);
             //defer to make sure it's updated
             var _this = this;
-            _.defer(function() {
-                _this.placeholder.classed(class_loading_data, false);
-            });
+            if (_this.placeholder.classed(class_loading_data)) {
+                    _this.placeholder.classed(class_loading_data, false);
+                };
         },
 
         /**

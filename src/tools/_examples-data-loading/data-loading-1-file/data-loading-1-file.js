@@ -38,6 +38,7 @@ define([
 
             //if mydata is not there and if it's not loading mydata
             if (!model.data.profits && !model.data.isLoading("profits")) {
+                //set loading of model
                 model.data.setLoading("profits");
 
                 d3.json("../../../local_data/myfile.json", function(err, data) {

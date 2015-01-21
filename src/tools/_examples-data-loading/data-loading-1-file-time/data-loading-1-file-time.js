@@ -14,22 +14,20 @@ define([
          * @param {Object} options Options such as state, data, etc
          */
         init: function(config, options) {
-            
+
             this.name = "data-loading-1-file-time";
             this.template = "tools/_examples-data-loading/data-loading-1-file-time/data-loading-1-file-time";
 
-	        //specifying components
+            //specifying components
             this.components = [{
                 component: '_examples/display-json',
                 placeholder: '.vzb-display-json-wrapper',
-                model: ['data'] 
-            },
-            {
+                model: ['data']
+            }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
-                model: ['state.time'] 
-            },
-            ];
+                model: ['state.time']
+            }, ];
 
             //constructor is the same as any tool
             this._super(config, options);
@@ -42,39 +40,37 @@ define([
         toolModelValidation: function(model) {
 
             var defer = $.Deferred();
-
-            //current year
             var year = model.state.time.value.getFullYear().toString();
+            var all_profits = this.all_profits;
             var profits = model.data.profits;
+            var playing = model.state.time.playing;
+            var _this = this;
 
-            /*
-             * ALTERNATIVE 1: Reading the file all the time, every change
-             */
-            if (!profits && !model.data.isLoading("profits") || (profits && profits[0].year != year)) {
-                
+            //load files first
+            if (!this.all_profits && !model.data.isLoading("profits")) {
+
                 model.data.setLoading("profits");
-                console.log("loading...");
                 //loading local file
                 d3.json("../../../local_data/myfile.json", function(err, data) {
-                    console.log("loaded...");
+                    //make only first year available to model
+                    _this.all_profits = data;
                     model.data.profits = [];
-                    model.data.profits.push(_.find(data, { year: year }));
+                    model.data.profits.push(_.find(data, {
+                        year: year
+                    }));
                     model.data.setLoadingDone("profits");
                     defer.resolve();
                 });
             }
 
-            /*
-             * ==============================================
-             *
-             * ALTERNATIVE 2: Reading the file when needed only
-             */
-
-
-
-             /*
-             * ==============================================
-             */
+            //in case it's been loaded, just grab the current year
+            else if (this.all_profits && year != model.data.profits[0].year) {
+                model.data.profits = [];
+                model.data.profits.push(_.find(this.all_profits, {
+                    year: year
+                }));
+                defer = false;
+            }
 
             return defer;
         }
