@@ -28,13 +28,15 @@ define(['d3'], function(d3){
             if(options.tickSpacing==null)options.tickSpacing = 50;
             if(options.showOuter==null)options.showOuter = true;
             if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
-            if(options.zeroEpsilon==null)options.zeroEpsilon = 0.00001;
+
 
             if(options.widthOfOneDigit==null) options.widthOfOneDigit =
                 parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
 
             var min = d3.min(axis.scale().domain());
             var max = d3.max(axis.scale().domain());
+
+
 
             var zero;
             if(min==0){}
@@ -70,11 +72,17 @@ define(['d3'], function(d3){
             };
 
 
-            if(options.scaleType=="log"){
+            if(options.scaleType=="genericLog"){
+                var zeroEpsilonDomain = axis.scale().zeroEpsilonDomain();
+
+                var minLog = Math.max(min, zeroEpsilonDomain)
+                var maxLog = max;
+
+
                 if(options.method == METHOD_REPEATING){
                     var spawn = d3.range(
-                            Math.ceil(getBaseLog(axis.scale().domain()[0])),
-                            Math.ceil(getBaseLog(axis.scale().domain()[1])),
+                            Math.ceil(getBaseLog(minLog)),
+                            Math.ceil(getBaseLog(maxLog)),
                             min>max? -1 : 1)
                         .map(function(d){return Math.pow(options.logBase, d)});
 

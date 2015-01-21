@@ -6,30 +6,18 @@ define([
     'd3axisWithLabelPicker'
 ], function($, d3, Component) {
 
-
-
     var AxisLabelerDemo = Component.extend({
         init: function(context, options) {
             var _this = this;
             this.name = 'axis-labeler';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-
-            //define expected models for this component
             this.model_expects = ["scales"];
-
             this._super(context, options);
-            this.xAxis = d3.svg.axisSmart();
-            this.yAxis = d3.svg.axisSmart();
-
-
         },
 
 
 
 
-        /**
-         * Executes right after the template is in place
-         */
         domReady: function() {
             var _this = this;
 
@@ -37,7 +25,8 @@ define([
             this.graph = this.element.select('.vzb-bc-graph');
             this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
             this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-
+            this.xAxis = d3.svg.axisSmart();
+            this.yAxis = d3.svg.axisSmart();
 
             //model events
             this.model.scales.on({
@@ -66,16 +55,34 @@ define([
 
 
         initScales: function(){
+            var _this = this;
+
             this.xScale = d3.scale[this.model.scales.xScaleType]()
                 .domain([this.model.scales.from, this.model.scales.to]);
             this.yScale = d3.scale[this.model.scales.yScaleType]()
                 .domain([this.model.scales.from, this.model.scales.to]);
+
+
+            this.mockData = d3.range(
+                this.model.scales.from,
+                this.model.scales.to,
+                (this.model.scales.to-this.model.scales.from)/100
+                );
+
+
+            this.line = d3.svg.line()
+                .x(function(d) { return _this.xScale(d); })
+                .y(function(d) { return _this.yScale(d); });
+
         },
 
-        /*
-         * RESIZE:
-         * Executed whenever the container is resized
-         */
+
+
+
+
+
+
+
         update: function() {
             var _this = this,
                 margin,
@@ -114,6 +121,7 @@ define([
                 this.xScale.rangePoints([0, width], padding).range();
             }
 
+            //update scales to the new range
             if (this.model.scales.yScaleType !== "ordinal") {
                 this.yScale.range([height, 0]).nice();
             } else {
@@ -146,6 +154,7 @@ define([
                     widthOfOneDigit: this.widthOfOneDigit,
                     cssFontSize: this.axisTextFontSize,
                     lengthWhenPivoting: margin.left,
+                    limitMaxTickNumber: 50,
                     tickSpacing: tick_spacing
                 });
 
@@ -166,6 +175,26 @@ define([
                     .style("text-anchor", this.yAxis.pivot?"middle":"end")
                     .attr("dx", this.yAxis.pivot?"+0.71em":"0.00em")
                     .attr("dy", this.yAxis.pivot?"-0.71em":"0.32em")
+
+
+
+
+
+            var path = this.graph.selectAll(".line").data([0]);
+            path.enter().append("path")
+                .attr("class", "line")
+                .style("stroke", "black")
+                .style("fill", "none");
+
+            path.datum(this.mockData).attr("d", this.line);
+
+
+
+console.log(JSON.stringify(this.mockData.map(function(d){return [d3.format(",.2s")(d),d3.format(",.2s")(height-_this.yScale(d))] })).replace(/"/g , ""));
+
+//
+y = this.yScale;
+
 
 
         }

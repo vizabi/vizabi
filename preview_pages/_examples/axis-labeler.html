@@ -24,11 +24,11 @@
         <div id="dropdown-number" title="axis domain" class="wrapper-dropdown" tabindex="1">
             <span>Set axis domain</span>
             <ul class="dropdown">
-                <li><a onclick="setDomain('0.006', '123')">0.006 -- 123</a></li>
+                <li><a onclick="setDomain('0.0000006', '123')">0.0000006 -- 123</a></li>
                 <li><a onclick="setDomain('4.000', '123')">4 -- 123</a></li>
                 <li><a onclick="setDomain('5.000', '8.0')">5 -- 8</a></li>
                 <li><a onclick="setDomain('-12.0', '-2.')">-12 -- -2</a></li>
-                <li><a onclick="setDomain('-12.0', '2.0')">-12 -- 2</a></li>
+                <li><a onclick="setDomain('-50.0', '40.')">-50 -- 40</a></li>
                 <li><a onclick="setDomain('0.00005', '455484715')">0.00005 -- 455484715</a></li>
                 <li><a onclick="setDomain('545.0', '4.00')">545 -- 4</a></li>
                 <li><a onclick="setDomain('42.00', '42.0')">42 -- 42</a></li>
@@ -78,8 +78,8 @@ $(function() {
             scales:{
                 from: 1,
                 to: 10000,
-                xScaleType: 'log',
-                yScaleType: 'log'
+                xScaleType: 'linear',
+                yScaleType: 'genericLog'
             }
         },
 
