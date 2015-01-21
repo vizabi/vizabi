@@ -41,7 +41,7 @@ define([
                 //set loading of model
                 model.data.setLoading("profits");
 
-                d3.json("local_data/myfile.json", function(err, data) {
+                d3.json("../../local_data/myfile.json", function(err, data) {
 
                     //simulate slow data loading
                     setTimeout(function() {
