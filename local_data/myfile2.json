@@ -1,0 +1,42 @@
+[
+  {
+    "year": "2000",
+    "profit": 1
+  },
+  {
+    "year": "2001",
+    "profit": 2
+  },
+  {
+    "year": "2002",
+    "profit": 3
+  },
+  {
+    "year": "2003",
+    "profit": 4
+  },
+  {
+    "year": "2004",
+    "profit": 5
+  },
+  {
+    "year": "2005",
+    "profit": 6
+  },
+  {
+    "year": "2006",
+    "profit": 7
+  },
+  {
+    "year": "2007",
+    "profit": 8
+  },
+  {
+    "year": "2008",
+    "profit": 9
+  },
+  {
+    "year": "2009",
+    "profit": 10
+  }
+]

@@ -51,7 +51,7 @@ define([
 
                 model.data.setLoading("profits");
                 //loading local file
-                d3.json("../../../local_data/myfile.json", function(err, data) {
+                d3.json("local_data/myfile.json", function(err, data) {
                     //make only first year available to model
                     _this.all_profits = data;
                     model.data.profits = [];
