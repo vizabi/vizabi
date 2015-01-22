@@ -28,14 +28,14 @@ define([
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
 
-            //model events
-            this.model.scales.on({
-                'change': function() {
-                console.log("Model.scales updated!");
-                _this.initScales();
-                _this.update();
-                }
-            });
+//            //model events
+//            this.model.scales.on({
+//                'change': function() {
+//                console.log("Model.scales updated!");
+//                _this.initScales();
+//                _this.update();
+//                }
+//            });
 
             //component events
             this.on("resize", function() {
@@ -46,6 +46,7 @@ define([
         },
 
         modelReady: function(evt) {
+            console.log("Model ready");
             this.initScales();
             this.update();
         },
@@ -68,6 +69,7 @@ define([
                 this.model.scales.to,
                 (this.model.scales.to-this.model.scales.from)/100
                 );
+            this.mockData.push(this.model.scales.to);
 
 
             this.line = d3.svg.line()
@@ -116,14 +118,14 @@ define([
 
             //update scales to the new range
             if (this.model.scales.xScaleType !== "ordinal") {
-                this.xScale.range([0, width]).nice();
+                this.xScale.range([0, width])//.nice();
             } else {
                 this.xScale.rangePoints([0, width], padding).range();
             }
 
             //update scales to the new range
             if (this.model.scales.yScaleType !== "ordinal") {
-                this.yScale.range([height, 0]).nice();
+                this.yScale.range([height, 0])//.nice();
             } else {
                 this.yScale.rangePoints([height, 0], padding).range();
             }
@@ -190,7 +192,7 @@ define([
 
 
 
-console.log(JSON.stringify(this.mockData.map(function(d){return [d3.format(",.2s")(d),d3.format(",.2s")(height-_this.yScale(d))] })).replace(/"/g , ""));
+a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(height-_this.yScale(d))] })).replace(/"/g , "");
 
 //
 y = this.yScale;

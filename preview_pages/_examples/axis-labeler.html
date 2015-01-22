@@ -22,16 +22,9 @@
         <label>|</label>
 
         <div id="dropdown-number" title="axis domain" class="wrapper-dropdown" tabindex="1">
-            <span>Set axis domain</span>
-            <ul class="dropdown">
-                <li><a onclick="setDomain('0.0000006', '123')">0.0000006 -- 123</a></li>
-                <li><a onclick="setDomain('4.000', '123')">4 -- 123</a></li>
-                <li><a onclick="setDomain('5.000', '8.0')">5 -- 8</a></li>
-                <li><a onclick="setDomain('-12.0', '-2.')">-12 -- -2</a></li>
-                <li><a onclick="setDomain('-50.0', '40.')">-50 -- 40</a></li>
-                <li><a onclick="setDomain('0.00005', '455484715')">0.00005 -- 455484715</a></li>
-                <li><a onclick="setDomain('545.0', '4.00')">545 -- 4</a></li>
-                <li><a onclick="setDomain('42.00', '42.0')">42 -- 42</a></li>
+            <span id="listLabel">Set axis domain</span>
+            <ul class="dropdown automaticListOfOptions">
+
             </ul>
         </div>
         <div id="dropdown-number" title="X axis type" class="wrapper-dropdown" tabindex="1">
@@ -39,6 +32,7 @@
             <ul class="dropdown">
                 <li><a onclick="setType('linear', 'x')">X linear</a></li>
                 <li><a onclick="setType('log', 'x')">X log</a></li>
+                <li><a onclick="setType('genericLog', 'x')">X generic log</a></li>
             </ul>
         </div>
         <div id="dropdown-number" title="Y xis type" class="wrapper-dropdown" tabindex="1">
@@ -46,6 +40,7 @@
             <ul class="dropdown">
                 <li><a onclick="setType('linear', 'y')">Y linear</a></li>
                 <li><a onclick="setType('log', 'y')">Y log</a></li>
+                <li><a onclick="setType('genericLog', 'y')">Y generic log</a></li>
             </ul>
         </div>
 
@@ -111,6 +106,60 @@ function setType(type, axis) {
     options.state.scales[axis+"ScaleType"] = type;
     myVizabi.setOptions(options);
 }
+
+var listPointer = 0;
+var listData = [
+    {from: 1.00000, to: 10000.0},
+    {from: 4.00000, to: 123.000},
+    {from: 0.00060, to: 123.000},
+    {from: 123.000, to: 4.00000},
+    {from: 123.000, to: 0.00060},
+    {from: -123.00, to: -4.0000},
+    {from: -123.00, to: -0.0006},
+    {from: -4.0000, to: -123.00},
+    {from: -0.0006, to: -123.00},
+    {from: -123.00, to: 1800.00},
+    {from: 1800.00, to: -123.00},
+    {from: 123.000, to: -18000.},
+    {from: -18000., to: 123.000},
+    {from: -0.0006, to: 1800.00},
+    {from: 1800.00, to: -0.0006},
+    {from: 0.00060, to: -1800.0},
+    {from: -1800.0, to: 0.00060},
+    {from: -12.000, to: -2.0000},
+    {from: -80.000, to: 40.0000},
+    {from: 5.00000, to: 8.00000},
+    {from: 42.0000, to: 42.0000}
+];
+
+var list = $(".automaticListOfOptions");
+listData.forEach(function(d,i){
+    var el = $("<li><a>"+d.from + " -- " + d.to+"</a></li>")
+        .on("click", function(){
+            setDomain(d.from, d.to);
+            listPointer = i;
+            $("#listLabel").text(d.from + " -- " + d.to);
+        })
+        .appendTo(list);
+})
+
+
+
+//<li><a onclick="setDomain('0.0000005', '455484715')">0.0000005 -- 455484715</a></li>
+
+
+
+window.onkeypress = function(e) {
+    e = e || window.event;
+    var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+    if (String.fromCharCode(charCode) == "q") {
+        listPointer++;
+        if(listPointer==listData.length)listPointer=0;
+        var d = listData[listPointer];
+        setDomain(d.from, d.to);
+        $("#listLabel").text(d.from + " -- " + d.to);
+    }
+};
 
 </script>
 

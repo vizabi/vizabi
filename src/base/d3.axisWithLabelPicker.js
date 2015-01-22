@@ -62,8 +62,8 @@ define(['d3'], function(d3){
 
 
             //console.log(orientation);
-            console.log("expected digits " + longestLabelLength);
-            console.log("space for one label " + Math.round(spaceOneLabel));
+//            console.log("expected digits " + longestLabelLength);
+//            console.log("space for one label " + Math.round(spaceOneLabel));
 
 
             var getBaseLog = function(x, base) {
@@ -73,7 +73,7 @@ define(['d3'], function(d3){
 
 
             if(options.scaleType=="genericLog"){
-                var zeroEpsilonDomain = axis.scale().zeroEpsilonDomain();
+                var zeroEpsilonDomain = axis.scale().eps();
 
                 var minLog = Math.max(min, zeroEpsilonDomain)
                 var maxLog = max;
@@ -128,7 +128,7 @@ define(['d3'], function(d3){
 
 
             console.log(tickValues);
-            console.log("===========");
+//            console.log("===========");
             return axis
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
