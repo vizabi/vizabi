@@ -459,67 +459,72 @@ define([
 
             for (var submodel in model.get()) {
 
-                model[submodel].on({
-                    //the submodel has been set (only once)
-                    'set': function(evt, vals) {
-                        //trigger only for submodel
-                        evt = evt.replace('set', 'set:' + name);
-                        model.trigger(evt, vals);
+                //closure to set up the submodel
+                (function(model, submodel) {
 
-                        //if all are ready, trigger for this model
-                        if (_.every(submodels, function(sm) {
-                                return sm._set;
-                            })) {
-                            model.triggerOnce('set', vals);
-                        }
-                    },
-                    //the submodel has initialized (only once)
-                    'init': function(evt, vals) {
-                        evt = evt.replace('init', 'init:' + name);
-                        model.triggerAll(evt, model.getObject());
-                    },
-                    //the submodel has changed (multiple times)
-                    'change': function(evt, vals) {
-                        evt = evt.replace('change', 'change:' + name);
-                        model.triggerAll(evt, model.getObject());
-                    },
-                    //loading has started in this submodel (multiple times)
-                    'load_start': function(evt, vals) {
-                        evt = evt.replace('load_start', 'load_start:' + name);
-                        model.triggerAll(evt, vals);
-                    },
-                    //loading has failed in this submodel (multiple times)
-                    'load_error': function(evt, vals) {
-                        evt = evt.replace('load_error', 'load_error:' + name);
-                        model.triggerAll(evt, vals);
-                    },
-                    //loading has ended in this submodel (multiple times)
-                    'load_end': function(evt, vals) {
-                        //trigger only for submodel
-                        evt = evt.replace('load_end', 'load_end:' + name);
-                        model.trigger(evt, vals);
+                    model[submodel].on({
+                        //the submodel has been set (only once)
+                        'set': function(evt, vals) {
+                            //trigger only for submodel
+                            evt = evt.replace('set', 'set:' + submodel);
+                            model.trigger(evt, vals);
 
-                        //if all are ready, trigger for this model
-                        if (_.every(submodels, function(sm) {
-                                return !sm.isLoading();
-                            })) {
-                            model.triggerOnce('load_end', vals);
-                        }
-                    },
-                    //the submodel is ready
-                    'ready': function(evt, vals) {
-                        //trigger only for submodel
-                        evt = evt.replace('ready', 'ready:' + name);
-                        model.trigger(evt, vals);
+                            //if all are ready, trigger for this model
+                            if (_.every(submodels, function(sm) {
+                                    return sm._set;
+                                })) {
+                                model.triggerOnce('set', vals);
+                            }
+                        },
+                        //the submodel has initialized (only once)
+                        'init': function(evt, vals) {
+                            evt = evt.replace('init', 'init:' + submodel);
+                            model.triggerAll(evt, model.getObject());
+                        },
+                        //the submodel has changed (multiple times)
+                        'change': function(evt, vals) {
+                            evt = evt.replace('change', 'change:' + submodel);
+                            model.triggerAll(evt, model.getObject());
+                        },
+                        //loading has started in this submodel (multiple times)
+                        'load_start': function(evt, vals) {
+                            evt = evt.replace('load_start', 'load_start:' + submodel);
+                            model.triggerAll(evt, vals);
+                        },
+                        //loading has failed in this submodel (multiple times)
+                        'load_error': function(evt, vals) {
+                            evt = evt.replace('load_error', 'load_error:' + submodel);
+                            model.triggerAll(evt, vals);
+                        },
+                        //loading has ended in this submodel (multiple times)
+                        'load_end': function(evt, vals) {
+                            //trigger only for submodel
+                            evt = evt.replace('load_end', 'load_end:' + submodel);
+                            model.trigger(evt, vals);
 
-                        //if all are ready, trigger for this model
-                        if (_.every(submodels, function(sm) {
-                                return sm._ready;
-                            })) {
-                            model.triggerOnce('ready', vals);
+                            //if all are ready, trigger for this model
+                            if (_.every(submodels, function(sm) {
+                                    return !sm.isLoading();
+                                })) {
+                                model.triggerOnce('load_end', vals);
+                            }
+                        },
+                        //the submodel is ready
+                        'ready': function(evt, vals) {
+                            //trigger only for submodel
+                            evt = evt.replace('ready', 'ready:' + submodel);
+                            model.trigger(evt, vals);
+
+                            //if all are ready, trigger for this model
+                            if (_.every(submodels, function(sm) {
+                                    return sm._ready;
+                                })) {
+                                model.triggerOnce('ready', vals);
+                            }
                         }
-                    }
-                });
+                    });
+
+                })(model, submodel); //self executing function
 
             }
 
