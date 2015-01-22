@@ -443,6 +443,8 @@ define([
                     }
                 };
 
+                console.timeStamp("Vizabi Model: Loading Data: " +_this._id);
+
                 this._dataManager.load(query, lang, reader, evts)
                     .done(function(data) {
                         if (data === 'error') {
@@ -457,6 +459,8 @@ define([
                             _this._items = _this._items
                                 .map(function(d){d.time = new Date(d.time); d.time.setHours(0); return d;})
                                 .sort(function(a,b){return a.time - b.time});
+
+                                console.timeStamp("Vizabi Model: Data loaded: " +_this._id);
                             
                             promise.resolve();
                         }
@@ -489,6 +493,8 @@ define([
 
                 //confirm that the model has been validated
                 val_promise.always(function() {
+
+                    console.timeStamp("Vizabi Model: Model ready: " +_this._id);
                     _this._ready = true;
                     _this.trigger("ready");
                     defer.resolve();

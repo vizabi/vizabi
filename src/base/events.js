@@ -201,6 +201,9 @@ define([
                 _.defer(function() {
                     //remove it from buffer to allow new execution
                     _this._removeFromBuffer(func);
+
+                    console.timeStamp("Vizabi Event: " + name + " - " + original);
+
                     if (_.isUndefined(args)) {
                         func.apply(_this, [(original || name)]);
                     } else {

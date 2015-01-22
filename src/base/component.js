@@ -49,7 +49,7 @@ define([
             this.ui = this.ui || config.ui;
 
             //set placeholder as d3 entity already
-            if(_.isString(this.placeholder)) {
+            if (_.isString(this.placeholder)) {
                 this.placeholder = d3.select(this.placeholder);
             } else {
                 console.error('ERROR: the placeholder argument should be a string');
@@ -90,6 +90,8 @@ define([
             // After the template is loaded, its loading data
             promise.then(function() {
 
+                    console.timeStamp("Vizabi Component: Template loaded - " + _this.name);
+
                     // attempt to setup layout
                     if (_this.layout) {
                         _this.layout.setContainer(_this.element);
@@ -117,9 +119,11 @@ define([
                 // After rendering the components, resolve the defer
                 .done(function() {
                     //this template is ready
-                    defer.resolve();
-                    _this.trigger('dom_ready');
                     _this._ready = true;
+                    _this.trigger('dom_ready');
+                    defer.resolve();
+
+                    console.timeStamp("Vizabi Component: DOM ready - " + _this.name);
 
                     //ready when model is also ready
                     _this.model.on("ready", function() {
