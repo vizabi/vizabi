@@ -6,7 +6,8 @@ define([
     'models/tool'
 ], function(d3, _, Component, Layout, ToolModel) {
 
-    var class_loading_data = "vzb-loading-data",
+    var class_placeholder = "vzb-placeholder",
+        class_loading_data = "vzb-loading-data",
         class_loading_error = "vzb-loading-error";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
@@ -90,6 +91,11 @@ define([
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
+            
+            //placeholder should have the placeholder class
+            if (!this.placeholder.classed(class_placeholder)) {
+                this.placeholder.classed(class_placeholder, true);
+            }
         },
 
         /**

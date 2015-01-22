@@ -49,36 +49,37 @@ $vzb-image-preloader: url('assets/imgs/preloader.gif');
 .vzb-invisible {
     visibility: hidden !important;
 }
-//loading
-.vzb-loading, .vzb-loading-data {
-    //todo: Make background transparent, but not preloader circles
-    &:after {
-        content: ' ';
-        background-color: $vzb-color-white;
-        background-image: $vzb-image-preloader;
-        background-repeat: no-repeat;
-        background-position: center center;
-        display: block;
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        bottom: 0px;
-        right: 0px;
-        z-index: 2;
+.vzb-placeholder {
+    &.vzb-loading, &.vzb-loading-data {
+        //todo: Make background transparent, but not preloader circles
+        &:after {
+            content: ' ';
+            background-color: $vzb-color-white;
+            background-image: $vzb-image-preloader;
+            background-repeat: no-repeat;
+            background-position: center center;
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            bottom: 0px;
+            right: 0px;
+            z-index: 2;
+        }
     }
-}
-//loading data specifically
-.vzb-loading-data {
-    &:after {
-        @include opacity(0.9);
+    //loading data specifically
+    &.vzb-loading-data {
+        &:after {
+            @include opacity(0.9);
+        }
     }
-}
-//loading anything
-.vzb-loading {
-    * {
-        visibility: hidden;
-    }
-    &:after {
-        @include opacity(1);
+    //loading anything
+    &.vzb-loading {
+        * {
+            visibility: hidden;
+        }
+        &:after {
+            @include opacity(1);
+        }
     }
 }
