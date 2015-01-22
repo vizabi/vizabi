@@ -28,9 +28,9 @@ define(['d3'], function (d3) {
 
             function scale(x) {
                 if (x > eps) return logScale(x);
-                if (x < -eps) return -logScale(-x)+d3.max(linScale.range());
+                if (x < -eps) return -logScale(-x)+d3.max(logScale.range());
                 if (0 <= x && x <= eps) return linScale(x);
-                if (-eps <= x && x < 0) return -linScale(-x)+d3.max(linScale.range());
+                if (-eps <= x && x < 0) return -linScale(-x)+d3.max(logScale.range());
             }
             scale.eps = function (arg) {
                 if (!arguments.length) return eps;
@@ -168,8 +168,13 @@ if(useLinear)console.log("LIN scale domain:", linScale.domain());
                         linScale.range([0, delta]);
                     }else{
                         //range is pointing left
-                        logScale.range([arg[0]-delta, 0]);
-                        linScale.range([arg[0], arg[0]-delta]);
+                        if(domain[0]>=domain[1]){
+                            logScale.range([arg[0], delta]);
+                            linScale.range([delta, 0]);
+                        }else{
+                            logScale.range([arg[0]-delta, 0]);
+                            linScale.range([arg[0], arg[0]-delta]);
+                        }
                     }
                 }
 

@@ -129,7 +129,10 @@ var listData = [
     {from: -12.000, to: -2.0000},
     {from: -80.000, to: 40.0000},
     {from: 5.00000, to: 8.00000},
-    {from: 42.0000, to: 42.0000}
+    {from: 42.0000, to: 42.0000},
+    {from: 0.00000000005, to: 4554545484715},
+    {from: -2611968678575, to: 4554545484715}
+
 ];
 
 var list = $(".automaticListOfOptions");
@@ -145,16 +148,16 @@ listData.forEach(function(d,i){
 
 
 
-//<li><a onclick="setDomain('0.0000005', '455484715')">0.0000005 -- 455484715</a></li>
-
-
 
 window.onkeypress = function(e) {
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
-    if (String.fromCharCode(charCode) == "q") {
-        listPointer++;
+    if (String.fromCharCode(charCode) == "w" || String.fromCharCode(charCode) == "q") {
+    if (String.fromCharCode(charCode) == "w") listPointer++;
+    if (String.fromCharCode(charCode) == "q") listPointer--;
         if(listPointer==listData.length)listPointer=0;
+        if(listPointer==-1)listPointer=listData.length-1;
+
         var d = listData[listPointer];
         setDomain(d.from, d.to);
         $("#listLabel").text(d.from + " -- " + d.to);

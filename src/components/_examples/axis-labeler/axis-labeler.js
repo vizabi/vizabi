@@ -145,6 +145,7 @@ define([
                     widthOfOneDigit: this.widthOfOneDigit,
                     cssFontSize: this.axisTextFontSize,
                     lengthWhenPivoting: margin.bottom,
+                    isPivotAuto: false,
                     tickSpacing: tick_spacing
                 });
 
@@ -155,7 +156,7 @@ define([
                     scaleType: this.model.scales.yScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
                     cssFontSize: this.axisTextFontSize,
-                    lengthWhenPivoting: margin.left,
+                    lengthWhenPivoting: margin.left+20,
                     limitMaxTickNumber: 50,
                     tickSpacing: tick_spacing
                 });
@@ -192,7 +193,7 @@ define([
 
 
 
-a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(height-_this.yScale(d))] })).replace(/"/g , "");
+a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(_this.yScale(d))] })).replace(/"/g , "");
 
 //
 y = this.yScale;

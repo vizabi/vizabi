@@ -44,7 +44,7 @@ define(['d3'], function(d3){
 
             //measure the longest formatted label
             var longestLabelLength = d3.max(
-                d3.range(min, max, (max-min)/13).map(function(d){return options.formatter(d).length})
+                d3.range(min, max, (max-min)/17).map(function(d){return options.formatter(d).length})
                 );
 
             var spaceOneLabel =
@@ -62,8 +62,8 @@ define(['d3'], function(d3){
 
 
             //console.log(orientation);
-//            console.log("expected digits " + longestLabelLength);
-//            console.log("space for one label " + Math.round(spaceOneLabel));
+            console.log("expected digits " + longestLabelLength);
+            console.log("space for one label " + Math.round(spaceOneLabel));
 
 
             var getBaseLog = function(x, base) {
