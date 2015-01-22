@@ -682,17 +682,17 @@ define([
                 console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Component", this.name ,"> triggered:", name[i]);
+                        console.log("Component", this.name, "> triggered:", name[i]);
                     }
                 } else {
-                    console.log("Component", this.name ,"> triggered:", name);
+                    console.log("Component", this.name, "> triggered:", name);
                 }
                 console.log('\n')
                 console.info(utils.formatStacktrace(utils.stacktrace()));
                 console.log("____________________________________________")
             }
 
-            this._events.trigger(name, val);
+            this._events.trigger(this, name, val);
         },
 
         /**
@@ -706,17 +706,17 @@ define([
                 console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Component", this.name ,"> triggered all:", name[i]);
+                        console.log("Component", this.name, "> triggered all:", name[i]);
                     }
                 } else {
-                    console.log("Component", this.name ,"> triggered all:", name);
+                    console.log("Component", this.name, "> triggered all:", name);
                 }
                 console.log('\n')
                 console.info(utils.formatStacktrace(utils.stacktrace()));
                 console.log("____________________________________________")
             }
 
-            this._events.triggerAll(name, val);
+            this._events.triggerAll(this, name, val);
         }
 
     });

@@ -564,7 +564,7 @@ define([
                 console.info(utils.formatStacktrace(utils.stacktrace()));
                 console.log("____________________________________________")
             }
-            this._events.trigger(name, val);
+            this._events.trigger(this, name, val);
         },
 
         /**
@@ -586,7 +586,7 @@ define([
                 console.info(utils.formatStacktrace(utils.stacktrace()));
                 console.log("____________________________________________")
             }
-            this._events.triggerOnce(name, val);
+            this._events.triggerOnce(this, name, val);
         },
 
         /**
@@ -608,7 +608,7 @@ define([
                 console.info(utils.formatStacktrace(utils.stacktrace()));
                 console.log("____________________________________________")
             }
-            this._events.triggerAll(name, val);
+            this._events.triggerAll(this, name, val);
         },
 
         /* ===============================

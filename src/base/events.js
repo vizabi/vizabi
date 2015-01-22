@@ -96,17 +96,18 @@ define([
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
-        trigger: function(name, args, original) {
+        trigger: function(context, name, args, original) {
+
             if (_.isArray(name)) {
                 for (var i = 0, size = name.length; i < size; i++) {
-                    this.trigger(name[i], args);
+                    this.trigger(context, name[i], args);
                 }
             } else {
                 if (_.isUndefined(this._events[name])) return;
                 for (var i = 0; i < this._events[name].length; i++) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
-                    this._executeFunction(f, name, original, args);
+                    this._executeFunction(context, f, name, original, args);
                 }
             }
         },
@@ -116,17 +117,17 @@ define([
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
-        triggerAll: function(name, args) {
+        triggerAll: function(context, name, args) {
 
             if (_.isArray(name)) {
                 for (var i = 0, size = name.length; i < size; i++) {
-                    this.triggerAll(name[i], args);
+                    this.triggerAll(context, name[i], args);
                 }
             } else {
                 var original = name,
                     parts = name.split(":");
                 while (parts.length) {
-                    this.trigger(name, args, original);
+                    this.trigger(context, name, args, original);
                     parts.pop();
                     name = parts.join(":");
                 }
@@ -138,16 +139,16 @@ define([
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
-        triggerOnce: function(name, args) {
+        triggerOnce: function(context, name, args) {
 
             if (_.isArray(name)) {
                 for (var i = 0, size = name.length; i < size; i++) {
-                    this.triggerOnce(name[i], args);
+                    this.triggerOnce(context, name[i], args);
                 }
             } else if(this._once.indexOf(name) === -1) {
                 //now we can trigger
                 this._once.push(name);
-                this.trigger(name, args);
+                this.trigger(context, name, args);
 
                 var _this = this;
                 _.delay(function() {
@@ -192,7 +193,7 @@ define([
          * @param {String} original original name of event that triggered this
          * @param {Array} args Arguments
          */
-        _executeFunction: function(func, name, original, args) {
+        _executeFunction: function(context, func, name, original, args) {
 
             //execute it if it's not in the buffer
             if (_.isFunction(func) && !this._inBuffer(func)) {
@@ -205,11 +206,10 @@ define([
                     console.timeStamp("Vizabi Event: " + name + " - " + original);
 
                     if (_.isUndefined(args)) {
-                        func.apply(_this, [(original || name)]);
+                        func.apply(context, [(original || name)]);
                     } else {
-                        func.apply(_this, [(original || name), args]);
+                        func.apply(context, [(original || name), args]);
                     }
-
                 });
             }
             //log error in case it's not even a function
