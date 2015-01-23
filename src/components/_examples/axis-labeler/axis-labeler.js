@@ -64,6 +64,9 @@ define([
                 .domain([this.model.scales.from, this.model.scales.to]);
 
 
+            if(this.model.scales.xScaleType == "genericLog")this.xScale.eps(this.model.scales.xEps);
+            if(this.model.scales.yScaleType == "genericLog")this.yScale.eps(this.model.scales.yEps);
+
             this.mockData = d3.range(
                 this.model.scales.from,
                 this.model.scales.to,

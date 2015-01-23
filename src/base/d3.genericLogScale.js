@@ -29,26 +29,32 @@ define(['d3'], function (d3) {
             function scale(x) {
                 var ratio = 1;
                 var shift = 0;
-                console.log(domain, range)
+                var shift2 = 0;
+                //console.log(domain, range)
                 if(d3.min(domain)<0 && d3.max(domain)>0){
                     //ratio shows how the + and - scale should fit as compared to a simple + or - scale
-                    var ratio = ( Math.log10(d3.max(abs(domain))) + Math.log10(d3.min(abs(domain))) ) / Math.log10(d3.max(abs(domain)));
+                    var ratio = ( d3.max(range) + d3.max(range) - logScale(d3.min(abs(domain))) ) / d3.max(range);
                     var shift = linScale(0)/ratio;
-                    //console.log(ratio, shift)
+                    //if(abs(domain[0])>abs(domain[1])) shift2 = logScale(d3.min(abs(domain)))/ratio;
+                    if(abs(domain[0])>abs(domain[1]) && domain[0]<0 && domain[1]>0) shift2 = logScale(d3.min(abs(domain)))/ratio;
+                    console.log(ratio, shift)
                 }
-                if (x > eps) return logScale(x)/ratio;
-                if (x < -eps) return -logScale(-x)/ratio+d3.max(logScale.range())/ratio + shift;
-                if (0 <= x && x <= eps) return linScale(x)/ratio;
-                if (-eps <= x && x < 0) return -linScale(-x)/ratio+d3.max(logScale.range())/ratio + shift;
+                //console.log(domain, range)
+                if (x > eps) return logScale(x)/ratio - shift2;
+                if (x < -eps) return -logScale(-x)/ratio+d3.max(range)/ratio + shift - shift2;
+                if (0 <= x && x <= eps) return linScale(x)/ratio - shift2 ;
+                if (-eps <= x && x < 0) return -linScale(-x)/ratio+d3.max(range)/ratio + shift - shift2;
             }
             scale.eps = function (arg) {
                 if (!arguments.length) return eps;
                 eps = arg;
+                scale.domain(domain);
                 return scale;
             }
             scale.delta = function (arg) {
                 if (!arguments.length) return delta;
                 delta = arg;
+                scale.range(range);
                 return scale;
             }
 
