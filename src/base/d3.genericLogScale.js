@@ -27,10 +27,19 @@ define(['d3'], function (d3) {
 
 
             function scale(x) {
-                if (x > eps) return logScale(x);
-                if (x < -eps) return -logScale(-x)+d3.max(logScale.range());
-                if (0 <= x && x <= eps) return linScale(x);
-                if (-eps <= x && x < 0) return -linScale(-x)+d3.max(logScale.range());
+                var ratio = 1;
+                var shift = 0;
+                console.log(domain, range)
+                if(d3.min(domain)<0 && d3.max(domain)>0){
+                    //ratio shows how the + and - scale should fit as compared to a simple + or - scale
+                    var ratio = ( Math.log10(d3.max(abs(domain))) + Math.log10(d3.min(abs(domain))) ) / Math.log10(d3.max(abs(domain)));
+                    var shift = linScale(0)/ratio;
+                    //console.log(ratio, shift)
+                }
+                if (x > eps) return logScale(x)/ratio;
+                if (x < -eps) return -logScale(-x)/ratio+d3.max(logScale.range())/ratio + shift;
+                if (0 <= x && x <= eps) return linScale(x)/ratio;
+                if (-eps <= x && x < 0) return -linScale(-x)/ratio+d3.max(logScale.range())/ratio + shift;
             }
             scale.eps = function (arg) {
                 if (!arguments.length) return eps;
@@ -168,10 +177,14 @@ if(useLinear)console.log("LIN scale domain:", linScale.domain());
                         linScale.range([0, delta]);
                     }else{
                         //range is pointing left
+
+                        //check where domain is pointing
                         if(domain[0]>=domain[1]){
+                            //domain is pointing right
                             logScale.range([arg[0], delta]);
                             linScale.range([delta, 0]);
                         }else{
+                            //domain is pointing left
                             logScale.range([arg[0]-delta, 0]);
                             linScale.range([arg[0], arg[0]-delta]);
                         }
@@ -190,7 +203,7 @@ if(useLinear)console.log("LIN scale range:", linScale.range());
 
 
             scale.copy = function () {
-                return d3_scale_genericLog(logScale.copy());
+                return d3_scale_genericLog(d3.scale.log().domain([1, 10])).domain(domain).range(range).eps(eps).delta(delta);
             };
 
             return d3.rebind(scale, logScale, "invert", "base", "rangeRound", "interpolate", "clamp", "nice", "tickFormat", "ticks");

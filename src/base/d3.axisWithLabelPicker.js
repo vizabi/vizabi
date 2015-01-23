@@ -20,7 +20,7 @@ define(['d3'], function(d3){
             if(options.baseValues==null) options.stops = [1,5,2,7,3,4,6,8,9];
             if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
             if(options.isPivotAuto==null) options.isPivotAuto = true;
-            if(options.formatter==null) options.formatter = d3.format(",.1s");
+            if(options.formatter==null) options.formatter = d3.format(",.2s");
             if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
             if(options.cssFontSize==null) options.cssFontSize = "13px";
             if(options.cssMarginLeft==null||options.cssMarginLeft=="0px") options.cssMarginLeft = "10px";
@@ -37,9 +37,6 @@ define(['d3'], function(d3){
             var max = d3.max(axis.scale().domain());
 
 
-
-            var zero;
-            if(min==0){}
 
 
             //measure the longest formatted label
@@ -73,21 +70,30 @@ define(['d3'], function(d3){
 
 
             if(options.scaleType=="genericLog"){
-                var zeroEpsilonDomain = axis.scale().eps();
+                var eps = axis.scale().eps();
+                var delta = axis.scale().delta();
+                var bothSidesUsed = (min<0 && max >0);
 
-                var minLog = Math.max(min, zeroEpsilonDomain)
-                var maxLog = max;
-
+                var maxSpawn = Math.max(Math.abs(min), Math.abs(max));
+                var maxSpawn2 = Math.min(Math.abs(min), Math.abs(max));
+                var minSpawn = eps;
 
                 if(options.method == METHOD_REPEATING){
                     var spawn = d3.range(
-                            Math.ceil(getBaseLog(minLog)),
-                            Math.ceil(getBaseLog(maxLog)),
+                            Math.ceil(getBaseLog(minSpawn)),
+                            Math.ceil(getBaseLog(maxSpawn)),
                             min>max? -1 : 1)
                         .map(function(d){return Math.pow(options.logBase, d)});
 
+                    var spawn2 = d3.range(
+                            Math.ceil(getBaseLog(minSpawn)),
+                            Math.ceil(getBaseLog(maxSpawn2)),
+                            min>max? -1 : 1)
+                        .map(function(d){return -Math.pow(options.logBase, d)});
+
 
                     if(options.showOuter)tickValues.push(max);
+                    if(options.showOuter&&bothSidesUsed)tickValues.push(min);
 
                     options.stops.forEach(function(stop){
                         //skip populating when there is no space on the screen
@@ -95,6 +101,7 @@ define(['d3'], function(d3){
                         if(tickValues.length > options.limitMaxTickNumber) return;
                         //populate the stops in the order of importance
                         tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
+                        tickValues = tickValues.concat(spawn2.map(function(d){return d*stop}));
                     })
 
                     if(!options.showOuter)tickValues.splice(tickValues.indexOf(min),1);
@@ -110,7 +117,10 @@ define(['d3'], function(d3){
                 }
 
 
-            tickValues = tickValues.filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); });
+            tickValues = tickValues
+                .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
+                .sort(d3.descending);
+
             } //logarithmic
 
             if(options.scaleType=="linear"){

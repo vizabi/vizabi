@@ -188,8 +188,19 @@ define([
                 .attr("class", "line")
                 .style("stroke", "black")
                 .style("fill", "none");
-
             path.datum(this.mockData).attr("d", this.line);
+
+            var dots = this.graph.selectAll(".dots").data(this.mockData);
+            dots.enter().append("circle")
+                .attr("class","dots")
+                .style("stroke", "#3fb500")
+                .style("fill", "none")
+                .style("opacity", 0.5)
+                .attr("r",5);
+            dots.exit().remove();
+            dots.attr("cx",function(d){return _this.xScale(d)})
+                .attr("cy",function(d){return _this.yScale(d)});
+
 
 
 
