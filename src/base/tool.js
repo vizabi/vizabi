@@ -78,10 +78,7 @@ define([
                 'load_error': function() {
                     _this.errorLoading();
                 },
-                'load_end': function(evt, vals) {
-                    _this.afterLoading();
-                },
-                'ready': function(evt) {
+                'load_end': function(evt) {
                     _this.afterLoading();
                     if (_this._ready) {
                         _this.modelReady(evt);

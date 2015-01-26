@@ -102,9 +102,7 @@ define([
                     }
 
                     // add css loading class to hide elements
-                    if (_this.element.node()) {
-                        _this.element.classed(class_loading, true);
-                    }
+                    _this.placeholder.classed(class_loading, true);
 
                     _this._rendered = true; //template is in place
                 })
@@ -126,12 +124,10 @@ define([
                     console.timeStamp("Vizabi Component: DOM ready - " + _this.name);
 
                     //ready when model is also ready
-                    _this.model.on("ready", function() {
+                    _this.model.on("load_end", function() {
                         //TODO: delay is a hotfix to visually avoid flickering
                         _.delay(function() {
-                            if (_this.element) {
-                                _this.element.classed(class_loading, false);
-                            }
+                            _this.placeholder.classed(class_loading, false);
                         });
                     });
 

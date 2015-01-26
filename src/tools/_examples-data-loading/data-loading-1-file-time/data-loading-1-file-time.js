@@ -39,40 +39,41 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var defer = $.Deferred();
             var year = model.state.time.value.getFullYear().toString();
             var all_profits = this.all_profits;
             var profits = model.data.profits;
             var playing = model.state.time.playing;
-            var _this = this;
 
             //load files first
-            if (!this.all_profits && !model.data.isLoading("profits")) {
+            if (!model.data.all_profits && !model.data.isLoading("profits")) {
 
+                //set loading of model
                 model.data.setLoading("profits");
+
                 //loading local file
                 d3.json("../../local_data/myfile.json", function(err, data) {
                     //make only first year available to model
-                    _this.all_profits = data;
-                    model.data.profits = [];
-                    model.data.profits.push(_.find(data, {
-                        year: year
-                    }));
-                    model.data.setLoadingDone("profits");
-                    defer.resolve();
+                    //simulate slow data loading
+                    setTimeout(function() {
+                        model.data.all_profits = data;
+                        model.data.profits = [];
+                        model.data.profits.push(_.find(data, {
+                            year: year
+                        }));
+
+                        //set loading of model done
+                        model.data.setLoadingDone("profits");
+                    }, 3000);
                 });
             }
 
             //in case it's been loaded, just grab the current year
-            else if (this.all_profits && year != model.data.profits[0].year) {
+            else if (model.data.all_profits && year != model.data.profits[0].year) {
                 model.data.profits = [];
-                model.data.profits.push(_.find(this.all_profits, {
+                model.data.profits.push(_.find(model.data.all_profits, {
                     year: year
                 }));
-                defer = false;
             }
-
-            return defer;
         }
     });
 

@@ -34,10 +34,9 @@ define([
          */
         toolModelValidation: function(model) {
 
-            var defer = $.Deferred();
-
             //if mydata is not there and if it's not loading mydata
             if (!model.data.profits && !model.data.isLoading("profits")) {
+                
                 //set loading of model
                 model.data.setLoading("profits");
 
@@ -49,13 +48,12 @@ define([
                         console.log(data);
                         model.data.profits = data;
 
+                        //loading of external data is done
                         model.data.setLoadingDone("profits");
-                        defer.resolve();
+
                     }, 2000);
                 });
             }
-
-            return defer;
 
         }
     });

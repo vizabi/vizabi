@@ -494,9 +494,8 @@ define([
                 //confirm that the model has been validated
                 val_promise.always(function() {
 
-                    console.timeStamp("Vizabi Model: Model ready: " +_this._id);
+                    console.timeStamp("Vizabi Model: Model loaded: " +_this._id);
                     _this._ready = true;
-                    _this.trigger("ready");
                     defer.resolve();
                 });
             });
