@@ -161,7 +161,7 @@ define([
          * At this point, this.element is available as a d3 object
          */
         modelReady: function(evt) {
-
+            console.log('ready', evt);
         },
 
         changeTime: function() {

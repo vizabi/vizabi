@@ -75,16 +75,8 @@ define([
                 "load_start": function(evt) {
                     console.log("Started to load!", evt);
                 },
-                "load_end":  function() {
+                "ready":  function() {
                     console.log("Finished loading!");
-                },
-                "ready": function() {
-                    console.log("Model ready!");
-//TODO: put here the following and remove it from "load_end" and from redrawDataPoints()
-//                    _this.preprocessData();
-//                    _this.updateShow();
-//                    _this.updateTime();
-//                    _this.redrawDataPoints();
                 }
             });
             

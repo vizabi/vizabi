@@ -124,7 +124,7 @@ define([
                     console.timeStamp("Vizabi Component: DOM ready - " + _this.name);
 
                     //ready when model is also ready
-                    _this.model.on("load_end", function() {
+                    _this.model.on("ready", function() {
                         //TODO: delay is a hotfix to visually avoid flickering
                         _.delay(function() {
                             _this.placeholder.classed(class_loading, false);

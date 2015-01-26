@@ -240,19 +240,6 @@ define([
                     _this.triggerAll(evt, vals);
                 },
                 //loading has ended in this submodel (multiple times)
-                'load_end': function(evt, vals) {
-                    //trigger only for submodel
-                    evt = evt.replace('load_end', 'load_end:' + name);
-                    _this.trigger(evt, vals);
-
-                    //if all are ready, trigger for this model
-                    if (_.every(submodels, function(sm) {
-                            return !sm.isLoading();
-                        })) {
-                        _this.triggerOnce('load_end', vals);
-                    }
-                },
-                //the submodel is ready
                 'ready': function(evt, vals) {
                     //trigger only for submodel
                     evt = evt.replace('ready', 'ready:' + name);
@@ -260,7 +247,7 @@ define([
 
                     //if all are ready, trigger for this model
                     if (_.every(submodels, function(sm) {
-                            return sm._ready;
+                            return !sm.isLoading();
                         })) {
                         _this.triggerOnce('ready', vals);
                     }
@@ -402,7 +389,7 @@ define([
             this._loading = _.without(this._loading, p_id);
             //if this is the first time we're loading anything
             if (!this.isLoading()) {
-                this.trigger("load_end");
+                this.trigger("ready");
             }
         },
 
