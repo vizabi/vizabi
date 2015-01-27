@@ -126,6 +126,7 @@ define([
             if (!this.placeholder.classed(class_loading_data)) {
                 this.placeholder.classed(class_loading_data, true);
                 this.blockUpdate(true);
+                this.blockResize(true);
             };
         },
 
@@ -135,11 +136,12 @@ define([
         afterLoading: function() {
             //it's ok to update if not loading
             this.blockUpdate(false);
+            this.blockResize(false);
             //defer to make sure it's updated
             var _this = this;
             if (_this.placeholder.classed(class_loading_data)) {
-                    _this.placeholder.classed(class_loading_data, false);
-                };
+                _this.placeholder.classed(class_loading_data, false);
+            };
         },
 
         /**
