@@ -55,15 +55,14 @@ define([
                     //make only first year available to model
                     //simulate slow data loading
                     setTimeout(function() {
-                        model.data.all_profits = data;
-                        model.data.profits = [];
-                        model.data.profits.push(_.find(data, {
+                        model.data.set('all_profits', data);
+                        model.data.set('profits', [_.find(data, {
                             year: year
-                        }));
+                        })]);
 
                         //set loading of model done
                         model.data.setLoadingDone("profits");
-                    }, 3000);
+                    }, 1000);
                 });
             }
 

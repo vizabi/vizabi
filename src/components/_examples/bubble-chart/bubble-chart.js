@@ -33,6 +33,25 @@ define([
                 type: "data"
             }];
 
+            this.model_binds = {
+                "change": function(evt) {
+                    console.log("Changed!", evt);
+                    _this.modelReady();
+                },
+                "load_start": function(evt) {
+                    console.log("Started to load!", evt);
+                },
+                "ready":  function(evt) {
+                    console.log("Finished loading!");
+                    _this.modelReady();
+                },
+                'change:time:value': function() {
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                }
+
+            }
+
             this._super(context, options);
 
             this.xScale = null;
@@ -66,26 +85,6 @@ define([
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.bubbles = null;
             this.tooltip = this.element.select('.vzb-tooltip');
-
-            //model events
-            this.model.on({
-                "change": function(evt) {
-                    console.log("Changed!", evt);
-                },
-                "load_start": function(evt) {
-                    console.log("Started to load!", evt);
-                },
-                "ready":  function() {
-                    console.log("Finished loading!");
-                }
-            });
-            
-            this.model.time.on({
-                'change:value': function() {
-                    _this.updateTime();
-                    _this.redrawDataPoints();
-                }
-            });
 
             //component events
             this.on("resize", function() {

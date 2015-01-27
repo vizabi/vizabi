@@ -22,11 +22,25 @@ define([
                 type: "data"
             }];
 
+            var _this = this;
+            
+            this.model_binds = {
+                'change': function() {
+                    console.log("model display-json is changed");
+                    _this.modelReady();
+                },
+                'ready': function() {
+                    console.log("model display-json is ready");
+                    _this.modelReady();
+                }
+            }
+
             //specifying subcomponents
             this.components = [];
 
             //contructor is the same as any component
             this._super(config, context);
+
         },
 
         /**
@@ -35,20 +49,6 @@ define([
          * At this point, this.element and this.placeholder are available as d3 objects
          */
         domReady: function() {
-            //E.g: var graph = this.element.select('.vzb-graph');
-
-            /* You may also listen to changes in model:
-
-            this.model.time.on({
-                "change": function(evt) {
-                    console.log("Time model changed:", evt);
-                },
-                "change:start": function() {
-                    console.log("The start of time has changed");
-                }
-            });
-
-             */
         },
 
         /**

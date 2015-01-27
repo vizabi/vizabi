@@ -79,9 +79,11 @@ define([
             //binds methods to this model
             this.model_binds = {
                 'ready': function() {
+                    console.log("model timeslider is ready");
                     _this.changeTime();
                 },
-                'change:time': function(evt, original) {
+                'change': function(evt, original) {
+                    console.log("model timeslider is changed");
                     _this.changeTime();
                 }
             };
@@ -161,7 +163,8 @@ define([
          * At this point, this.element is available as a d3 object
          */
         modelReady: function(evt) {
-            console.log('ready', evt);
+            console.log("modelReady called by", evt);
+            this.changeTime();
         },
 
         changeTime: function() {

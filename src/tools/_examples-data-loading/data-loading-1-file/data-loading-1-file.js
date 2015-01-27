@@ -36,6 +36,8 @@ define([
 
             //if mydata is not there and if it's not loading mydata
             if (!model.data.profits && !model.data.isLoading("profits")) {
+
+                console.timeStamp("Vizabi Event: ready ASKING FOR DATA");
                 
                 //set loading of model
                 model.data.setLoading("profits");
@@ -48,10 +50,14 @@ define([
                         console.log(data);
                         model.data.profits = data;
 
+                        console.timeStamp("Vizabi Event: ready DATA DONE");
+
                         //loading of external data is done
                         model.data.setLoadingDone("profits");
 
-                    }, 2000);
+                        console.timeStamp("Vizabi Event: ready DATA DONE END");
+
+                    }, 1000);
                 });
             }
 
