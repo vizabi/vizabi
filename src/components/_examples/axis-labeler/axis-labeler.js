@@ -104,7 +104,7 @@ define([
                     tick_spacing = 80;
                     break;
                 case "large":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    margin = {top: 30, right: 60, left: 80, bottom: 40};
                     tick_spacing = 100;
                     break;
             }
@@ -135,9 +135,10 @@ define([
 
             // measure the width of one digit
             var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('M');
+            widthSampleT = widthSampleG.append('text').text('0');
             this.axisTextFontSize = widthSampleT.style("font-size");
-            this.widthOfOneDigit = widthSampleT[0][0].getComputedTextLength();
+            this.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
+            this.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
 
             this.xAxis.scale(this.xScale)
@@ -149,6 +150,7 @@ define([
                     cssFontSize: this.axisTextFontSize,
                     lengthWhenPivoting: margin.bottom,
                     isPivotAuto: false,
+                   // formatterRemovePrefix: true,
                     tickSpacing: tick_spacing
                 });
 
@@ -158,9 +160,11 @@ define([
                 .smartLabeler({
                     scaleType: this.model.scales.yScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
+                    heightOfOneDigit: this.heightOfOneDigit,
                     cssFontSize: this.axisTextFontSize,
-                    lengthWhenPivoting: margin.left+20,
-                    limitMaxTickNumber: 50,
+                    lengthWhenPivoting: margin.left,
+                    //limitMaxTickNumber: 0,
+                   // formatterRemovePrefix: true,
                     tickSpacing: tick_spacing
                 });
 

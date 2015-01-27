@@ -37,7 +37,7 @@ define(['d3'], function (d3) {
                     var shift = linScale(0)/ratio;
                     //if(abs(domain[0])>abs(domain[1])) shift2 = logScale(d3.min(abs(domain)))/ratio;
                     if(abs(domain[0])>abs(domain[1]) && domain[0]<0 && domain[1]>0) shift2 = logScale(d3.min(abs(domain)))/ratio;
-                    console.log(ratio, shift)
+                    //console.log(ratio, shift)
                 }
                 //console.log(domain, range)
                 if (x > eps) return logScale(x)/ratio - shift2;
@@ -144,9 +144,9 @@ define(['d3'], function (d3) {
                     useLinear = true;
                 }
 
-
-console.log("LOG scale domain:", logScale.domain());
-if(useLinear)console.log("LIN scale domain:", linScale.domain());
+//
+//console.log("LOG scale domain:", logScale.domain());
+//if(useLinear)console.log("LIN scale domain:", linScale.domain());
                 domain = arg;
                 return scale;
             };
@@ -197,9 +197,9 @@ if(useLinear)console.log("LIN scale domain:", linScale.domain());
                     }
                 }
 
-
-console.log("LOG scale range:", logScale.range());
-if(useLinear)console.log("LIN scale range:", linScale.range());
+//
+//console.log("LOG scale range:", logScale.range());
+//if(useLinear)console.log("LIN scale range:", linScale.range());
                 range = arg;
                 return scale;
             };
