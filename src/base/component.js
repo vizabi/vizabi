@@ -63,7 +63,8 @@ define([
                     //TODO: hotfix for non-data viz
                     _.defer(function() {
                         if (_this.model._ready) {
-                            _this.modelReady('dom_ready');
+                            _this.trigger('ready');
+                            // _this.modelReady('dom_ready');
                         }
                     });
                 },
@@ -625,7 +626,6 @@ define([
         /**
          * Translate all strings in the template
          */
-        //TODO: improve translation of strings
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.selectAll('[data-vzb-translate]');

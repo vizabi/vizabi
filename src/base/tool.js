@@ -57,7 +57,7 @@ define([
                         if (_this._ready) {
                             _this.model.validate().done(function() {
                                 _this.triggerAll(evt, val);
-                                _this.modelReady(evt);
+                                //_this.modelReady(evt);
                             });
                         }
                     });
@@ -79,16 +79,15 @@ define([
                     _this.errorLoading();
                 },
                 'ready': function(evt) {
-                    _this.afterLoading();
                     if (_this._ready) {
-                        _this.modelReady(evt);
+                        _this.afterLoading();
                     }
                 }
             }, validate, query);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
-            
+
             //placeholder should have the placeholder class
             if (!this.placeholder.classed(class_placeholder)) {
                 this.placeholder.classed(class_placeholder, true);

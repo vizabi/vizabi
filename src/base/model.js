@@ -208,10 +208,7 @@ define([
          */
         _instantiateSubmodel: function(name, values, model, defer) {
 
-            var _this = this,
-                submodels = _.filter(this._data, function(attr) {
-                    return !_.isUndefined(attr._id);
-                });
+            var _this = this;
 
             this._data[name] = new model(values, this, {
                 //the submodel has been set (only once)
@@ -245,10 +242,8 @@ define([
                     evt = evt.replace('ready', 'ready:' + name);
                     _this.trigger(evt, vals);
 
-                    //if all are ready, trigger for this model
-                    if (_.every(submodels, function(sm) {
-                            return !sm.isLoading();
-                        })) {
+                    //if this model is not loading trigger for this model
+                    if (!_this.isLoading()) {
                         _this.triggerOnce('ready', vals);
                     }
                 }
@@ -289,6 +284,15 @@ define([
             }
         },
 
+        /**
+         * Gets all submodels of the current model
+         */
+        getSubmodels: function() {
+            return _.filter(this._data, function(s) {
+                return !_.isUndefined(s._id);
+            });
+        },
+
 
         /**
          * Resets this model
@@ -305,12 +309,9 @@ define([
          * Clears this model, submodels, data and events
          */
         clear: function() {
-            var submodels = this.get();
+            var submodels = this.getSubmodels();
             for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.clear) {
-                    submodel.clear();
-                }
+                submodels[i].clear();
             }
             this._ready = false;
             this._events.unbindAll();
@@ -364,7 +365,16 @@ define([
             if (p_id) {
                 return (this._loading.indexOf(p_id) !== -1);
             }
-            return (this._loading.length > 0);
+            //if loading something
+            else if (this._loading.length > 0) {
+                return true;
+            }
+            //if not loading anything, check submodels
+            else {
+                return !_.every(this.getSubmodels(), function(sm) {
+                    return !sm.isLoading();
+                });
+            }
         },
 
         /**
@@ -387,8 +397,15 @@ define([
         setLoadingDone: function(p_id) {
             //remove he process from the list of things that are loading
             this._loading = _.without(this._loading, p_id);
-            //if this is the first time we're loading anything
-            if (!this.isLoading()) {
+            //set ready if it is ready
+            this.setReady();
+        },
+
+        /**
+         * Sets the model as ready or not depending on its loading status
+         */
+        setReady: function() {
+            if (this._ready = !this.isLoading()) {
                 this.trigger("ready");
             }
         },
@@ -396,19 +413,25 @@ define([
         /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
+         * Basically, this method:
+         * loads is theres something to be loaded:
+         * does not load if there's nothing to be loaded
          * @returns defer
          */
         load: function() {
             //we dont need to load if it's a hook
             var _this = this,
                 promises = [],
-                submodels = this.get(),
+                submodels = this.getSubmodels(),
                 data_hook = this.getHook("data"),
                 language_hook = this.getHook("language"),
                 defer = $.Deferred(),
                 query = this.getQuery();
 
+            this.setLoading("_load_model");
+
             //load hook
+            //if its not a hook, the promise will not be created
             if (this.isHook() && data_hook && query.length) {
 
                 //get reader omfp
@@ -430,7 +453,7 @@ define([
                     }
                 };
 
-                console.timeStamp("Vizabi Model: Loading Data: " +_this._id);
+                console.timeStamp("Vizabi Model: Loading Data: " + _this._id);
 
                 this._dataManager.load(query, lang, reader, evts)
                     .done(function(data) {
@@ -439,16 +462,22 @@ define([
                             promise.resolve();
                         } else {
                             _this._items = _.flatten(data);
-                            
+
                             //TODO this is a temporary solution that does preprocessing of data
                             // data should have time as Dates and be sorted by time
                             // put me in the proper place please!
                             _this._items = _this._items
-                                .map(function(d){d.time = new Date(d.time); d.time.setHours(0); return d;})
-                                .sort(function(a,b){return a.time - b.time});
+                                .map(function(d) {
+                                    d.time = new Date(d.time);
+                                    d.time.setHours(0);
+                                    return d;
+                                })
+                                .sort(function(a, b) {
+                                    return a.time - b.time
+                                });
 
-                                console.timeStamp("Vizabi Model: Data loaded: " +_this._id);
-                            
+                            console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
+
                             promise.resolve();
                         }
                     });
@@ -459,21 +488,20 @@ define([
 
             //load submodels as well
             for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.load) {
-                    promises.push(submodel.load());
-                }
+                promises.push(submodels[i].load());
             }
 
-            //after all elements are set, we consider the object ready
-            //if validation exists, this happens only after validation
+            //when all promises/loading have been done successfully
+            //we will consider this done
             $.when.apply(null, promises).then(function() {
+
+                //but first, we need to validate
                 var val_promise = false;
                 if (_this.validate) {
                     val_promise = _this.validate();
                 }
 
-                //if validation is not a promise, make it a confirmed one
+                //if validation is not a promise, confirm it
                 if (!val_promise || !val_promise.always) {
                     val_promise = $.when.apply(null, [this]);
                 }
@@ -481,9 +509,10 @@ define([
                 //confirm that the model has been validated
                 val_promise.always(function() {
 
-                    console.timeStamp("Vizabi Model: Model loaded: " +_this._id);
-                    _this._ready = true;
+                    console.timeStamp("Vizabi Model: Model loaded: " + _this._id);
+
                     defer.resolve();
+                    _this.setLoadingDone("_load_model");
                 });
             });
 
@@ -615,11 +644,9 @@ define([
             }
 
             //hook submodels
-            for (var i in this._data) {
-                var child = this._data[i];
-                if (child && child.setHooks) {
-                    child.setHooks();
-                }
+            var submodels = this.getSubmodels();
+            for (var i in submodels) {
+                submodels[i].setHooks();
             }
         },
 
@@ -696,11 +723,8 @@ define([
                 }
             }
             //repeat for each submodel
-            var submodels = this.get();
+            var submodels = this.getSubmodels();
             for (var i in submodels) {
-                if (!submodels[i] || !submodels[i].getHookValues) {
-                    continue;
-                }
                 values = _.union(values, submodels[i].getHookValues(type));
             }
             //now we have an array with all values in a type of hook for hooks.
@@ -743,7 +767,7 @@ define([
             }
             //extract id from original filter
             var id = _.pick(filter, id_keys);
-            
+
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -768,13 +792,13 @@ define([
                 //get all items from data hook
 
                 var dimension = this.getHook("entities").getDimension();
-                return _.map(this.getUnique(dimension), function(dim){
+                return _.map(this.getUnique(dimension), function(dim) {
                     // item is an object similar to the following:
                     //     { geo: 'usa', time: DateObj }
                     // or  { geo: 'usa' } if filter.time is not available
                     var item = {};
                     item[dimension] = dim;
-                    if(filter && filter.time) {
+                    if (filter && filter.time) {
                         item.time = filter.time;
                     }
                     return item;
@@ -785,7 +809,7 @@ define([
                 return [];
             }
         },
-        
+
 
         /**
          * gets query that this model/hook needs to get data
@@ -948,10 +972,10 @@ define([
                         // search the data point among existing points
                         existingValue = _.findWhere(this._items, filter);
 
-                        if(existingValue==null){
+                        if (existingValue == null) {
                             // if not found then interpolate
                             value = this._interpolateValue(this._items, filter, this.use);
-                        }else{
+                        } else {
                             // otherwise supply the existing value
                             value = existingValue[this.value];
                         }
@@ -969,38 +993,40 @@ define([
          * @returns interpolated value
          */
         _interpolateValue: function(items, filter, use) {
-            if(items==null || items.length == 0) {console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem"); return null;}
+            if (items == null || items.length == 0) {
+                console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
+                return null;
+            }
 
             // fetch time from filter object and remove it from there
             var time = new Date(filter.time);
             delete filter.time;
-            
+
             // filter items so that we only have a dataset for certain keys, like "geo"
             var items = _.filter(items, filter);
-            
+
             // return constant for the use of "values"
-            if(use == "value") return items[0][this.value];
+            if (use == "value") return items[0][this.value];
 
             // search where the desired value should fall between the known points
-            var indexNext = d3.bisectLeft(items.map(function(d){return d.time}), time);
+            var indexNext = d3.bisectLeft(items.map(function(d) {
+                return d.time
+            }), time);
 
             // zero-order interpolation for the use of properties
-            if(use == "property" && indexNext==0) return items[0][this.value];
-            if(use == "property") return items[indexNext-1][this.value];
+            if (use == "property" && indexNext == 0) return items[0][this.value];
+            if (use == "property") return items[indexNext - 1][this.value];
 
             // the rest is for the use of "indicators"
 
             // check if the desired value is out of range. 0-order extrapolation
-            if(indexNext==0) return items[0][this.value];
-            if(indexNext==items.length) return items[items.length-1][this.value];
-            
+            if (indexNext == 0) return items[0][this.value];
+            if (indexNext == items.length) return items[items.length - 1][this.value];
+
             // perform a simple linear interpolation
-            var fraction = 
-                (time - items[indexNext-1].time)
-                /(items[indexNext].time - items[indexNext-1].time);
-            var value = 
-                + items[indexNext-1][this.value] 
-                + (items[indexNext][this.value] - items[indexNext-1][this.value])*fraction;
+            var fraction =
+                (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
+            var value = +items[indexNext - 1][this.value] + (items[indexNext][this.value] - items[indexNext - 1][this.value]) * fraction;
 
             return value;
         },
