@@ -117,6 +117,10 @@ define(['d3'], function(d3){
                 return Math.log(x) / Math.log(base);
             };
 
+            var onlyUnique = function(value, index, self) {
+                return self.indexOf(value) === index;
+            }
+
             var labelsFitIntoScale = function(tickValues, lengthRange){
                 if(orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot){
                     //labels stack on top of each other. digit height matters
@@ -148,38 +152,43 @@ define(['d3'], function(d3){
                 var delta = axis.scale().delta();
                 var bothSidesUsed = (min<0 && max >0);
 
-                var maxSpawn = Math.max(Math.abs(min), Math.abs(max));
-                var maxSpawn2 = Math.min(Math.abs(min), Math.abs(max));
-                var minSpawn = eps;
 
                 if(options.method == METHOD_REPEATING){
-                    var spawn = d3.range(
-                            Math.ceil(getBaseLog(minSpawn)),
-                            Math.ceil(getBaseLog(maxSpawn)),
-                            min>max? -1 : 1)
+
+                    //check if spawn positive is needed
+                    var spawnPos = max<eps? [] : d3.range(
+                            Math.ceil(getBaseLog(Math.max(eps,min))),
+                            Math.ceil(getBaseLog(max)),
+                            1)
                         .map(function(d){return Math.pow(options.logBase, d)});
 
-                    var spawn2 = d3.range(
-                            Math.ceil(getBaseLog(minSpawn)),
-                            Math.ceil(getBaseLog(maxSpawn2)),
-                            min>max? -1 : 1)
+
+                    var spawnNeg = min>-eps? [] : d3.range(
+                            Math.ceil(getBaseLog(Math.max(eps,-max))),
+                            Math.ceil(getBaseLog(-min)),
+                            1)
                         .map(function(d){return -Math.pow(options.logBase, d)});
 
 
-                    if(bothSidesUsed)tickValues.push(0);
+                    if(min<=0 && max>=0)tickValues.push(0);
                     if(options.showOuter)tickValues.push(max);
                     if(options.showOuter)tickValues.push(min);
 
                     options.stops.forEach(function(stop){
                         //skip populating when there is no space on the screen
-                        if(!labelsFitIntoScale(tickValues, lengthRange)) return;
+
+                        var trytofit = tickValues.concat(spawnPos.map(function(d){return d*stop}))
+                                                .concat(spawnNeg.map(function(d){return d*stop}))
+                                                .filter(onlyUnique);
+
+                        if(!labelsFitIntoScale(trytofit, lengthRange)) return;
                         if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
                         //populate the stops in the order of importance
-                        tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
-                        tickValues = tickValues.concat(spawn2.map(function(d){return d*stop}));
+                        tickValues = tickValues.concat(spawnPos.map(function(d){return d*stop}));
+                        tickValues = tickValues.concat(spawnNeg.map(function(d){return d*stop}));
+                        tickValues = tickValues.filter(onlyUnique);
                     })
 
-                    if(!options.showOuter)tickValues.splice(tickValues.indexOf(min),1);
 
                 }else if(options.method == METHOD_DOUBLING) {
                     var spawn = d3.range(
