@@ -398,9 +398,10 @@ define([
                         new_name;
 
                     if (model_expects[i]) {
+
                         new_name = model_expects[i].name;
 
-                        if (model_info.type !== model_expects[i].type) {
+                        if (model_expects[i].type && model_info.type !== model_expects[i].type) {
 
                             //TODO: add link to the documentation about model_expects
                             console.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + model_expects[i].type + "'");
