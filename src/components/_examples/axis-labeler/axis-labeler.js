@@ -11,7 +11,8 @@ define([
             var _this = this;
             this.name = 'axis-labeler';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this.model_expects = ["scales"];
+            this.model_expects = [{name: "scales"}];
+            //this._debugEvents = "trigger";
             this._super(context, options);
         },
 
@@ -27,15 +28,6 @@ define([
             this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
-
-//            //model events
-//            this.model.scales.on({
-//                'change': function() {
-//                console.log("Model.scales updated!");
-//                _this.initScales();
-//                _this.update();
-//                }
-//            });
 
             //component events
             this.on("resize", function() {
