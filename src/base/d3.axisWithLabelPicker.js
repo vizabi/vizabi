@@ -3,31 +3,36 @@ define(['d3'], function(d3){
     d3.svg.axisSmart = function(){
         var VERTICAL = 'vertical axis';
         var HORIZONTAL = 'horizontal axis';
-        var METHOD_REPEATING = 'repeating specified powers';
-        var METHOD_DOUBLING = 'doubling the value';
         var DEFAULT_LOGBASE = 10;
 
         var _super = d3.svg.axis();
         _super.smartLabeler = function(options){
             var axis = this;
+            this.METHOD_REPEATING = 'repeating specified powers';
+            this.METHOD_DOUBLING = 'doubling the value';
 
             if(options==null) options = {}
             if(options.scaleType==null) {console.warn('please set scaleType to "lin", "log", "ordinal"'); return axis;};
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
-            if(options.method==null) options.method = METHOD_REPEATING;
+            if(options.method==null) options.method = this.METHOD_REPEATING;
             if(options.baseValues==null) options.stops = [1,2,5,7,3,4,6,8,9];
+            if(options.doublingOriginAtFraction==null) options.doublingOriginAtFraction = 0.5;
             if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
             if(options.isPivotAuto==null) options.isPivotAuto = true;
 
             if(options.formatterRemovePrefix==null) options.formatterRemovePrefix = false;
 
             if(options.formatter==null) options.formatter = function(d){
-                if(options.formatterRemovePrefix) return d3.format(".1r")(d);
+                var format = "f";
+                var prec = 0;
+                if(Math.abs(d)<1) {prec = 1; format = "r"};
 
                 var prefix = "";
-                switch (Math.round(Math.log10(Math.abs(d)))){
+                if(options.formatterRemovePrefix) return d3.format("."+prec+format)(d);
+
+                switch (Math.floor(Math.log10(Math.abs(d)))){
                     case -13: d = d*1000000000000; prefix = "p"; break; //0.1p
                     case -10: d = d*1000000000; prefix = "n"; break; //0.1n
                     case  -7: d = d*1000000; prefix = "µ"; break; //0.1µ
@@ -42,15 +47,20 @@ define(['d3'], function(d3){
                     case   2: break; //100
                     case   3: break; //1000
                     case   4: break; //10000
-                    case   5: d = d/1000000; prefix = "M"; break; //0.1M
+                    case   5: d = d/1000000; prefix = "M"; prec = 1; break; //0.1M
+                    case   6: d = d/1000000; prefix = "M"; break; //1M
+                    case   7: d = d/1000000; prefix = "M"; break; //10M
                     case   8: d = d/1000000; prefix = "M"; break; //100M
+                    case   9: d = d/1000000000; prefix = "B"; break; //1B
+                    case  10: d = d/1000000000; prefix = "B"; break; //10B
                     case  11: d = d/1000000000; prefix = "B"; break; //100B
                     //use the D3 SI formatting for the extreme cases
-                    default: return (d3.format(".1s")(d)).replace("G","B");
+                    default: return (d3.format("."+prec+"s")(d)).replace("G","B");
                 }
 
+
                 // use manual formatting for the cases above
-                return (d3.format(".1r")(d)+prefix).replace("G","B");
+                return (d3.format("."+prec+format)(d)+prefix).replace("G","B");
             }
             if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
             if(options.heightToFontsizeRatio==null) options.heightToFontsizeRatio = 1.20;
@@ -152,17 +162,21 @@ define(['d3'], function(d3){
                 var delta = axis.scale().delta();
                 var bothSidesUsed = (min<0 && max >0);
 
+                if(min<=0 && max>=0)tickValues.push(0);
+                if(options.showOuter)tickValues.push(max);
+                if(options.showOuter)tickValues.push(min);
 
-                if(options.method == METHOD_REPEATING){
 
-                    //check if spawn positive is needed
+                if(options.method == this.METHOD_REPEATING){
+
+                    // check if spawn positive is needed. if yes then spawn!
                     var spawnPos = max<eps? [] : d3.range(
                             Math.ceil(getBaseLog(Math.max(eps,min))),
                             Math.ceil(getBaseLog(max)),
                             1)
                         .map(function(d){return Math.pow(options.logBase, d)});
 
-
+                    // check if spawn negative is needed. if yes then spawn!
                     var spawnNeg = min>-eps? [] : d3.range(
                             Math.ceil(getBaseLog(Math.max(eps,-max))),
                             Math.ceil(getBaseLog(-min)),
@@ -170,13 +184,8 @@ define(['d3'], function(d3){
                         .map(function(d){return -Math.pow(options.logBase, d)});
 
 
-                    if(min<=0 && max>=0)tickValues.push(0);
-                    if(options.showOuter)tickValues.push(max);
-                    if(options.showOuter)tickValues.push(min);
-
                     options.stops.forEach(function(stop){
                         //skip populating when there is no space on the screen
-
                         var trytofit = tickValues.concat(spawnPos.map(function(d){return d*stop}))
                                                 .concat(spawnNeg.map(function(d){return d*stop}))
                                                 .filter(onlyUnique);
@@ -190,14 +199,22 @@ define(['d3'], function(d3){
                     })
 
 
-                }else if(options.method == METHOD_DOUBLING) {
-                    var spawn = d3.range(
-                            Math.ceil(getBaseLog(this.scale().domain()[0],2)),
-                            Math.ceil(getBaseLog(this.scale().domain()[1],2)),
-                            min>max? -1 : 1)
-                        .map(function(d){return Math.pow(2, d)});
+                }else if(options.method == this.METHOD_DOUBLING) {
 
-                    tickValues = spawn;
+                    // check if spawn positive is needed. if yes then spawn!
+                    var startPos = max<eps? null :
+                    Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))))*options.doublingOriginAtFraction) )
+
+                    // check if spawn negative is needed. if yes then spawn!
+                    var startNeg = min>-eps? null :
+                    - Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))))*options.doublingOriginAtFraction) )
+
+
+                    if(startPos){ for(var l=startPos; l<max; l*=2) tickValues.push(l);}
+                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) tickValues.push(l);}
+                    if(startNeg){ for(var l=startNeg; l>min; l*=2) tickValues.push(l);}
+                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) tickValues.push(l);}
+
                 }
 
 

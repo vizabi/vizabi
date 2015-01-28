@@ -165,7 +165,8 @@ define([
                     lengthWhenPivoting: margin.left,
                     //limitMaxTickNumber: 0,
                    // formatterRemovePrefix: true,
-                    tickSpacing: tick_spacing
+                    tickSpacing: tick_spacing,
+                    method: this.yAxis.METHOD_DOUBLING
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
