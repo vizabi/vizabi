@@ -92,14 +92,14 @@ $(function() {
             //how we show it
             row: {
                 column: [{
-                    use: "property",
+                    hook: "property",
                     value: "geo.name"
-                }, {
-                    use: "indicator",
+                },{
+                    hook: "indicator",
                     value: "gdp",
                     scale: 'linear'
-                }, {
-                    use: "indicator",
+                },{
+                    hook: "indicator",
                     value: "lex",
                     scale: 'linear'
                 }]
@@ -109,7 +109,7 @@ $(function() {
         //data properties
         data: {
             reader: "local-json",
-            path: "../../data-waffles/examples/{{LANGUAGE}}/basic-indicators.json"
+            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
         },
 
         //language properties

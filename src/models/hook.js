@@ -16,6 +16,8 @@ define([
          * @param {Object} bind Initial events to bind
          */
         init: function(values, parent, bind) {
+
+            this._type = this._type || "hook"; //type of this model
             values = _.extend({
                 use: "value",
                 value: undefined

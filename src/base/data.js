@@ -34,6 +34,8 @@ define([
                 promise = true;
             } else {
 
+                console.timeStamp("Vizabi Data: Loading Data");
+
                 if(evts && _.isFunction(evts["load_start"])) {
                     evts["load_start"]();
                 }

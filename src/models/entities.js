@@ -13,6 +13,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "entities";
             values = _.extend({
                 show: {},
                 select: [],
@@ -50,11 +51,11 @@ define([
             var value = d[this.getDimension()],
                 select_array = this.select;
             if(this.isSelected(d)) {
-                select_array = _.without(select_array, value);
+                this.select = _.without(select_array, value);
             } else {
-                select_array.push(value);
+                select_array.push(value)
+                this.select = _.clone(select_array);
             }
-            this.set("select", select_array);
         },
 
         isSelected: function(d) {

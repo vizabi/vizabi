@@ -44,7 +44,13 @@ define([
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
 
-            this.model_expects = ["state", "data"];
+            this.model_expects = [{
+                name: "state",
+                type: "model"
+            }, {
+                name: "data",
+                type: "data"
+            }];
 
             this.components = [];
             //basic template data for buttons

@@ -6,7 +6,8 @@ define([
     'models/tool'
 ], function(d3, _, Component, Layout, ToolModel) {
 
-    var class_loading_data = "vzb-loading-data",
+    var class_placeholder = "vzb-placeholder",
+        class_loading_data = "vzb-loading-data",
         class_loading_error = "vzb-loading-error";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
@@ -56,7 +57,7 @@ define([
                         if (_this._ready) {
                             _this.model.validate().done(function() {
                                 _this.triggerAll(evt, val);
-                                _this.modelReady(evt);
+                                //_this.modelReady(evt);
                             });
                         }
                     });
@@ -77,19 +78,20 @@ define([
                 'load_error': function() {
                     _this.errorLoading();
                 },
-                'load_end': function(evt, vals) {},
                 'ready': function(evt) {
-                    _this.afterLoading();
                     if (_this._ready) {
-                        _this.model.validate().done(function() {
-                            _this.modelReady(evt);
-                        });
+                        _this.afterLoading();
                     }
                 }
             }, validate, query);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
+
+            //placeholder should have the placeholder class
+            if (!this.placeholder.classed(class_placeholder)) {
+                this.placeholder.classed(class_placeholder, true);
+            }
         },
 
         /**
@@ -120,8 +122,11 @@ define([
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.element.classed(class_loading_data, true);
-            this.blockUpdate(true);
+            if (!this.placeholder.classed(class_loading_data)) {
+                this.placeholder.classed(class_loading_data, true);
+                this.blockUpdate(true);
+                this.blockResize(true);
+            };
         },
 
         /**
@@ -130,18 +135,19 @@ define([
         afterLoading: function() {
             //it's ok to update if not loading
             this.blockUpdate(false);
+            this.blockResize(false);
             //defer to make sure it's updated
             var _this = this;
-            _.defer(function() {
-                _this.element.classed(class_loading_data, false);
-            });
+            if (_this.placeholder.classed(class_loading_data)) {
+                _this.placeholder.classed(class_loading_data, false);
+            };
         },
 
         /**
          * Adds loading error class
          */
         errorLoading: function() {
-            this.element.classed(class_loading_error, false);
+            this.placeholder.classed(class_loading_error, false);
         },
 
         /* ==========================

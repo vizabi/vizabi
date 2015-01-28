@@ -192,29 +192,31 @@ $(function() {
 
             //how we show it
             marker: {
+                hook_to: ["entities", "time", "data", "language"],
+                
                 type: "geometry",
                 shape: "circle",
                 label: {
-                    use: "property",
+                    hook: "property",
                     value: "name"
                 },
                 axis_y: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "profit",
                     scale: 'linear'
                 },
                 axis_x: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "market_share",
                     scale: 'linear'
                 },
                 size: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "market_share",
                     scale: 'log'
                 },
                 color: {
-                    use: "property",
+                    hook: "property",
                     value: "category",
                     domain: ['#F77481', '#B4DE79']
                 }
@@ -224,7 +226,7 @@ $(function() {
         //where do we get data from?
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/examples/{{LANGUAGE}}/companies.json'
+            path: '../../local_data/waffles/{{LANGUAGE}}/companies.json'
         },
 
         //language properties
@@ -321,7 +323,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.marker[hook] = {
-        use: use,
+        hook: use,
         value: value
     };
 

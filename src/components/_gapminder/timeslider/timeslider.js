@@ -69,11 +69,26 @@ define([
             this.template = "components/_gapminder/timeslider/timeslider";
 
             //define expected models/hooks for this component
-            this.model_expects = ["time"];
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }];
+
+            var _this = this;
+
+            //binds methods to this model
+            this.model_binds = {
+                'ready': function(evt) {
+                    _this.changeTime();
+                },
+                'change': function(evt, original) {
+                    _this.changeTime();
+                }
+            };
 
             // Same constructor as the superclass
             this._super(config, context);
-            
+
             //default ui
             this.ui = _.extend({
                 show_limits: false,
@@ -135,17 +150,12 @@ define([
             this.slide.selectAll(".extent,.resize")
                 .remove();
 
+
+            var _this = this;
+
         },
 
-        /**
-         * Executes everytime there's a data event.
-         * Ideally, only operations related to changes in the model
-         * At this point, this.element is available as a d3 object
-         */
-        modelReady: function() {
-
-            if (this._blockUpdate) return;
-
+        changeTime: function() {
             this.ui.format = this.model.time.unit;
 
             //time slider should always receive a time model
