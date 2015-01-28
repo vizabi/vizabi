@@ -35,21 +35,19 @@ define([
 
             this.model_binds = {
                 "change": function(evt) {
-                    console.log("Changed!", evt);
-                    _this.modelReady();
-                },
-                "load_start": function(evt) {
-                    console.log("Started to load!", evt);
+                    //if it's not about time
+                    if(evt.indexOf('change:time') === -1) {
+                        console.log("Changed!", evt);
+                        _this.modelReady();
+                    }
                 },
                 "ready":  function(evt) {
-                    console.log("Finished loading!");
                     _this.modelReady();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
-
             }
 
             this._super(context, options);

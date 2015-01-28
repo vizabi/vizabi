@@ -78,12 +78,10 @@ define([
 
             //binds methods to this model
             this.model_binds = {
-                'ready': function() {
-                    console.log("model timeslider is ready");
+                'ready': function(evt) {
                     _this.changeTime();
                 },
                 'change': function(evt, original) {
-                    console.log("model timeslider is changed");
                     _this.changeTime();
                 }
             };

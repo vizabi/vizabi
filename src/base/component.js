@@ -456,6 +456,8 @@ define([
 
             for (var submodel in model.get()) {
 
+                if(_.isUndefined(model[submodel]._id)) continue;
+
                 //closure to set up the submodel
                 (function(model, submodel) {
 
@@ -493,29 +495,14 @@ define([
                             evt = evt.replace('load_error', 'load_error:' + submodel);
                             model.triggerAll(evt, vals);
                         },
-                        //loading has ended in this submodel (multiple times)
-                        'load_end': function(evt, vals) {
-                            //trigger only for submodel
-                            evt = evt.replace('load_end', 'load_end:' + submodel);
-                            model.trigger(evt, vals);
-
-                            //if all are ready, trigger for this model
-                            if (_.every(submodels, function(sm) {
-                                    return !sm.isLoading();
-                                })) {
-                                model.triggerOnce('load_end', vals);
-                            }
-                        },
-                        //the submodel is ready
+                        //the submodel is ready/loading has ended
                         'ready': function(evt, vals) {
                             //trigger only for submodel
                             evt = evt.replace('ready', 'ready:' + submodel);
                             model.trigger(evt, vals);
 
                             //if all are ready, trigger for this model
-                            if (_.every(submodels, function(sm) {
-                                    return sm._ready;
-                                })) {
+                            if (!model.isLoading()) {
                                 model.triggerOnce('ready', vals);
                             }
                         }

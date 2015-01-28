@@ -229,7 +229,7 @@ define([
                 //loading has started in this submodel (multiple times)
                 'load_start': function(evt, vals) {
                     evt = evt.replace('load_start', 'load_start:' + name);
-                    _this.triggerAll(evt, vals);
+                    _this.triggerAll(evt, _this.getObject());
                 },
                 //loading has failed in this submodel (multiple times)
                 'load_error': function(evt, vals) {
