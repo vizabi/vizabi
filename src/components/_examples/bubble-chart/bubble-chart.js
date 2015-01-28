@@ -42,7 +42,10 @@ define([
                     }
                 },
                 "ready":  function(evt) {
-                    _this.modelReady();
+                    _this.preprocessData();
+                    _this.updateShow();
+                    _this.updateTime();
+                    _this.redrawDataPoints();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
