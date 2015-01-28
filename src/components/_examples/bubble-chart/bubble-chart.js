@@ -37,7 +37,6 @@ define([
                 "change": function(evt) {
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
-                        console.log("Changed!", evt);
                         _this.modelReady();
                     }
                 },

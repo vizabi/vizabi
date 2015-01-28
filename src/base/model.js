@@ -428,7 +428,6 @@ define([
                 defer = $.Deferred(),
                 query = this.getQuery();
 
-            this.setLoading("_load_model");
 
             //load hook
             //if its not a hook, the promise will not be created
@@ -512,7 +511,7 @@ define([
                     console.timeStamp("Vizabi Model: Model loaded: " + _this._id);
 
                     defer.resolve();
-                    _this.setLoadingDone("_load_model");
+                    _this.setReady();
                 });
             });
 
@@ -974,7 +973,7 @@ define([
 
                         if (existingValue == null) {
                             // if not found then interpolate
-                            value = this._interpolateValue(this._items, filter, this.use);
+                            value = this._interpolateValue(this._items, filter, this.hook);
                         } else {
                             // otherwise supply the existing value
                             value = existingValue[this.value];
@@ -992,7 +991,7 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(items, filter, use) {
+        _interpolateValue: function(items, filter, hook) {
             if (items == null || items.length == 0) {
                 console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
                 return null;
@@ -1005,19 +1004,19 @@ define([
             // filter items so that we only have a dataset for certain keys, like "geo"
             var items = _.filter(items, filter);
 
-            // return constant for the use of "values"
-            if (use == "value") return items[0][this.value];
+            // return constant for the hook of "values"
+            if (hook == "value") return items[0][this.value];
 
             // search where the desired value should fall between the known points
             var indexNext = d3.bisectLeft(items.map(function(d) {
                 return d.time
             }), time);
 
-            // zero-order interpolation for the use of properties
-            if (use == "property" && indexNext == 0) return items[0][this.value];
-            if (use == "property") return items[indexNext - 1][this.value];
+            // zero-order interpolation for the hook of properties
+            if (hook == "property" && indexNext == 0) return items[0][this.value];
+            if (hook == "property") return items[indexNext - 1][this.value];
 
-            // the rest is for the use of "indicators"
+            // the rest is for the hook of "indicators"
 
             // check if the desired value is out of range. 0-order extrapolation
             if (indexNext == 0) return items[0][this.value];
