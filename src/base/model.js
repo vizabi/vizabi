@@ -19,6 +19,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = this._type || "model"; //type of this model
             this._id = _.uniqueId("m"); //model unique id
             this._data = {}; //holds attributes of this model
             this._parent = parent; //parent model
@@ -33,7 +34,7 @@ define([
 
             //will the model be hooked to data?
             this._hooks = {};
-            this._loading = false; //is this loading any data?
+            this._loading = []; //array of processes that are loading
             this._items = []; //holds hook items for this hook
 
             //bind initial events
@@ -131,22 +132,44 @@ define([
                 _this._bindSettersGetters();
                 //if we don't block validation, validate
                 if (!block_validation) {
-                    _this.validate(silent);
-                }
-                //trigger change if not silent
-                if (!_this._set) {
-                    _this._set = true;
-                    events.push("set");
-                }
-                if (!silent) {
-                    _.defer(function() {
-                        _this.triggerAll(events, _this.getObject());
+
+                    //attempt to validate
+                    var val_promise = false;
+                    if (_this.validate) {
+                        val_promise = _this.validate();
+                    }
+
+                    //if validation is not a promise, make it a confirmed one
+                    if (!val_promise || !val_promise.always) {
+                        val_promise = $.when.apply(null, [this]);
+                    }
+
+                    //confirm that the model has been validated
+                    val_promise.always(function() {
+                        //trigger change if not silent
+                        if (!_this._set) {
+                            _this._set = true;
+                            events.push("set");
+                        }
+                        if (!silent) {
+                            _.defer(function() {
+                                _this.triggerAll(events, _this.getObject());
+                            });
+                        }
+                        defer.resolve();
                     });
                 }
-                defer.resolve();
             });
 
             return defer;
+        },
+
+        /**
+         * Gets the type of this model
+         * @returns {String} type of the model
+         */
+        getType: function() {
+            return this._type;
         },
 
         /**
@@ -185,10 +208,7 @@ define([
          */
         _instantiateSubmodel: function(name, values, model, defer) {
 
-            var _this = this,
-                submodels = _.filter(this._data, function(attr) {
-                    return !_.isUndefined(attr._id);
-                });
+            var _this = this;
 
             this._data[name] = new model(values, this, {
                 //the submodel has been set (only once)
@@ -209,7 +229,7 @@ define([
                 //loading has started in this submodel (multiple times)
                 'load_start': function(evt, vals) {
                     evt = evt.replace('load_start', 'load_start:' + name);
-                    _this.triggerAll(evt, vals);
+                    _this.triggerAll(evt, _this.getObject());
                 },
                 //loading has failed in this submodel (multiple times)
                 'load_error': function(evt, vals) {
@@ -217,28 +237,13 @@ define([
                     _this.triggerAll(evt, vals);
                 },
                 //loading has ended in this submodel (multiple times)
-                'load_end': function(evt, vals) {
-                    //trigger only for submodel
-                    evt = evt.replace('load_end', 'load_end:' + name);
-                    _this.trigger(evt, vals);
-
-                    //if all are ready, trigger for this model
-                    if (_.every(submodels, function(sm) {
-                            return !sm._loading;
-                        })) {
-                        _this.triggerOnce('load_end', vals);
-                    }
-                },
-                //the submodel is ready
                 'ready': function(evt, vals) {
                     //trigger only for submodel
                     evt = evt.replace('ready', 'ready:' + name);
                     _this.trigger(evt, vals);
 
-                    //if all are ready, trigger for this model
-                    if (_.every(submodels, function(sm) {
-                            return sm._ready;
-                        })) {
+                    //if this model is not loading trigger for this model
+                    if (!_this.isLoading()) {
                         _this.triggerOnce('ready', vals);
                     }
                 }
@@ -279,6 +284,15 @@ define([
             }
         },
 
+        /**
+         * Gets all submodels of the current model
+         */
+        getSubmodels: function() {
+            return _.filter(this._data, function(s) {
+                return !_.isUndefined(s._id);
+            });
+        },
+
 
         /**
          * Resets this model
@@ -295,12 +309,9 @@ define([
          * Clears this model, submodels, data and events
          */
         clear: function() {
-            var submodels = this.get();
+            var submodels = this.getSubmodels();
             for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.clear) {
-                    submodel.clear();
-                }
+                submodels[i].clear();
             }
             this._ready = false;
             this._events.unbindAll();
@@ -346,21 +357,80 @@ define([
          */
 
         /**
+         * checks whether this model is loading anything
+         * @param {String} optional process id (to check only one)
+         * @returns {Boolean} is it loading?
+         */
+        isLoading: function(p_id) {
+            if (p_id) {
+                return (this._loading.indexOf(p_id) !== -1);
+            }
+            //if loading something
+            else if (this._loading.length > 0) {
+                return true;
+            }
+            //if not loading anything, check submodels
+            else {
+                return !_.every(this.getSubmodels(), function(sm) {
+                    return !sm.isLoading();
+                });
+            }
+        },
+
+        /**
+         * specifies that the model is loading data
+         * @param {String} id of the loading process
+         */
+        setLoading: function(p_id) {
+            //if this is the first time we're loading anything
+            if (!this.isLoading()) {
+                this.trigger("load_start");
+            }
+            //add id to the list of processes that are loading
+            this._loading.push(p_id);
+        },
+
+        /**
+         * specifies that the model is done with loading data
+         * @param {String} id of the loading process
+         */
+        setLoadingDone: function(p_id) {
+            //remove he process from the list of things that are loading
+            this._loading = _.without(this._loading, p_id);
+            //set ready if it is ready
+            this.setReady();
+        },
+
+        /**
+         * Sets the model as ready or not depending on its loading status
+         */
+        setReady: function() {
+            if (this._ready = !this.isLoading()) {
+                this.trigger("ready");
+            }
+        },
+
+        /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
+         * Basically, this method:
+         * loads is theres something to be loaded:
+         * does not load if there's nothing to be loaded
          * @returns defer
          */
         load: function() {
             //we dont need to load if it's a hook
             var _this = this,
                 promises = [],
-                submodels = this.get(),
+                submodels = this.getSubmodels(),
                 data_hook = this.getHook("data"),
                 language_hook = this.getHook("language"),
                 defer = $.Deferred(),
                 query = this.getQuery();
 
+
             //load hook
+            //if its not a hook, the promise will not be created
             if (this.isHook() && data_hook && query.length) {
 
                 //get reader omfp
@@ -375,14 +445,14 @@ define([
 
                 var evts = {
                     'load_start': function() {
-                        _this._loading = true;
-                        _this.trigger("load_start");
+                        _this.setLoading("_hook_data");
                     },
                     'load_end': function() {
-                        _this._loading = false;
-                        _this.trigger("load_end");
+                        _this.setLoadingDone("_hook_data");
                     }
                 };
+
+                console.timeStamp("Vizabi Model: Loading Data: " + _this._id);
 
                 this._dataManager.load(query, lang, reader, evts)
                     .done(function(data) {
@@ -391,14 +461,22 @@ define([
                             promise.resolve();
                         } else {
                             _this._items = _.flatten(data);
-                            
+
                             //TODO this is a temporary solution that does preprocessing of data
                             // data should have time as Dates and be sorted by time
                             // put me in the proper place please!
                             _this._items = _this._items
-                                .map(function(d){d.time = new Date(d.time); d.time.setHours(0); return d;})
-                                .sort(function(a,b){return a.time - b.time});
-                            
+                                .map(function(d) {
+                                    d.time = new Date(d.time);
+                                    d.time.setHours(0);
+                                    return d;
+                                })
+                                .sort(function(a, b) {
+                                    return a.time - b.time
+                                });
+
+                            console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
+
                             promise.resolve();
                         }
                     });
@@ -409,20 +487,32 @@ define([
 
             //load submodels as well
             for (var i in submodels) {
-                var submodel = submodels[i];
-                if (submodel.load) {
-                    promises.push(submodel.load());
-                }
+                promises.push(submodels[i].load());
             }
 
+            //when all promises/loading have been done successfully
+            //we will consider this done
             $.when.apply(null, promises).then(function() {
+
+                //but first, we need to validate
+                var val_promise = false;
                 if (_this.validate) {
-                    _this.validate();
+                    val_promise = _this.validate();
                 }
-                _this._ready = true;
-                _this._loading = false;
-                _this.trigger("ready");
-                defer.resolve();
+
+                //if validation is not a promise, confirm it
+                if (!val_promise || !val_promise.always) {
+                    val_promise = $.when.apply(null, [this]);
+                }
+
+                //confirm that the model has been validated
+                val_promise.always(function() {
+
+                    console.timeStamp("Vizabi Model: Model loaded: " + _this._id);
+
+                    defer.resolve();
+                    _this.setReady();
+                });
             });
 
             return defer;
@@ -436,9 +526,10 @@ define([
         /**
          * Validates data.
          * Interface for the validation function implemented by a model
+         * @returns Promise or nothing
          */
         validate: function() {
-            // placeholder for validate function
+            //placeholder for validate function
         },
 
         /* ==========================
@@ -455,14 +546,14 @@ define([
             if (this._debugEvents && this._debugEvents !== "trigger") {
                 if (_.isPlainObject(name)) {
                     for (var i in name) {
-                        console.log("Model > bind:", i, this);
+                        console.log("Model", this._id, "> bind:", i);
                     }
                 } else if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > bind:", name[i], this);
+                        console.log("Model", this._id, "> bind:", name[i]);
                     }
                 } else {
-                    console.log("Model > bind:", name, this);
+                    console.log("Model", this._id, "> bind:", name);
                 }
             }
             this._events.on(name, func);
@@ -475,15 +566,19 @@ define([
          */
         trigger: function(name, val) {
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > triggered:", name[i], this);
+                        console.log("Model", this._id, "> triggered:", name[i]);
                     }
                 } else {
-                    console.log("Model > triggered:", name, this);
+                    console.log("Model", this._id, "> triggered:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
-            this._events.trigger(name, val);
+            this._events.trigger(this, name, val);
         },
 
         /**
@@ -493,15 +588,19 @@ define([
          */
         triggerOnce: function(name, val) {
             if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
                 if (_.isArray(name)) {
                     for (var i in name) {
-                        console.log("Model > triggered once:", name[i], this);
+                        console.log("Model", this._id, "> triggered once:", name[i]);
                     }
                 } else {
-                    console.log("Model > triggered once:", name, this);
+                    console.log("Model", this._id, "> triggered once:", name);
                 }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
             }
-            this._events.triggerOnce(name, val);
+            this._events.triggerOnce(this, name, val);
         },
 
         /**
@@ -510,7 +609,20 @@ define([
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
-            this._events.triggerAll(name, val);
+            if (this._debugEvents && this._debugEvents !== "bind") {
+                console.log("============================================")
+                if (_.isArray(name)) {
+                    for (var i in name) {
+                        console.log("Model", this._id, "> triggered all:", name[i]);
+                    }
+                } else {
+                    console.log("Model", this._id, "> triggered all:", name);
+                }
+                console.log('\n')
+                console.info(utils.formatStacktrace(utils.stacktrace()));
+                console.log("____________________________________________")
+            }
+            this._events.triggerAll(this, name, val);
         },
 
         /* ===============================
@@ -531,11 +643,9 @@ define([
             }
 
             //hook submodels
-            for (var i in this._data) {
-                var child = this._data[i];
-                if (child && child.setHooks) {
-                    child.setHooks();
-                }
+            var submodels = this.getSubmodels();
+            for (var i in submodels) {
+                submodels[i].setHooks();
             }
         },
 
@@ -567,7 +677,7 @@ define([
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this.use) ? true : false;
+            return (this.hook) ? true : false;
         },
 
         /**
@@ -588,51 +698,52 @@ define([
             } else if (this._parent) {
                 return this._parent._getHookTo();
             } else {
-                return ["entities", "time", "data", "language"]; //default
+
+                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time", "data", "language"]');
+
+                //DEPRECATED: returning default hooks
+                //return ["entities", "time", "data", "language"]; //default
             }
         },
 
         /**
-         * gets all sub values for a certain use
-         * only hooks have a use.
-         * @param {String} use specific use to lookup
-         * @returns {Array} all unique values with specific use
+         * gets all sub values for a certain hook
+         * only hooks have the "hook" attribute.
+         * @param {String} type specific type to lookup
+         * @returns {Array} all unique values with specific hook use
          */
-        getUseValues: function(use) {
+        getHookValues: function(type) {
             var values = [];
-            if (this.use && this.use === use) {
-                //add if it has use and it's a string
+            if (this.hook && this.hook === type) {
+                //add if it has "hook" and it's a string
                 var val = this.value; //e.g. this.value = "lex"
                 if (val && _.isString(val)) {
                     values.push(val);
                 }
             }
             //repeat for each submodel
-            var submodels = this.get();
+            var submodels = this.getSubmodels();
             for (var i in submodels) {
-                if (!submodels[i] || !submodels[i].getUseValues) {
-                    continue;
-                }
-                values = _.union(values, submodels[i].getUseValues(use));
+                values = _.union(values, submodels[i].getHookValues(type));
             }
-            //now we have an array with all values in a use for hooks.
+            //now we have an array with all values in a type of hook for hooks.
             return values;
         },
 
         /**
          * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
+         * @returns {Array} all unique values of indicator hooks
          */
         getIndicators: function() {
-            return this.getUseValues("indicator");
+            return this.getHookValues("indicator");
         },
 
         /**
          * gets all sub values for indicators in this model
-         * @returns {Array} all unique values with specific use
+         * @returns {Array} all unique values of property hooks
          */
         getProperties: function() {
-            return this.getUseValues("property");
+            return this.getHookValues("property");
         },
 
         /**
@@ -655,7 +766,7 @@ define([
             }
             //extract id from original filter
             var id = _.pick(filter, id_keys);
-            
+
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -680,13 +791,13 @@ define([
                 //get all items from data hook
 
                 var dimension = this.getHook("entities").getDimension();
-                return _.map(this.getUnique(dimension), function(dim){
+                return _.map(this.getUnique(dimension), function(dim) {
                     // item is an object similar to the following:
                     //     { geo: 'usa', time: DateObj }
                     // or  { geo: 'usa' } if filter.time is not available
                     var item = {};
                     item[dimension] = dim;
-                    if(filter && filter.time) {
+                    if (filter && filter.time) {
                         item.time = filter.time;
                     }
                     return item;
@@ -697,7 +808,7 @@ define([
                 return [];
             }
         },
-        
+
 
         /**
          * gets query that this model/hook needs to get data
@@ -707,7 +818,7 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
+            if (!this.isHook() || needs_query.indexOf(this.hook) === -1) {
                 return [];
             }
             //error if there's no entities
@@ -759,7 +870,7 @@ define([
 
             var domain,
                 scale = this.scale || "linear";
-            switch (this.use) {
+            switch (this.hook) {
                 case "indicator":
                     var limits = this.getLimits(this.value);
                     domain = [limits.min, limits.max];
@@ -841,7 +952,7 @@ define([
             }
 
             var value;
-            switch (this.use) {
+            switch (this.hook) {
                 case "value":
                     value = this.value;
                     break;
@@ -860,10 +971,10 @@ define([
                         // search the data point among existing points
                         existingValue = _.findWhere(this._items, filter);
 
-                        if(existingValue==null){
+                        if (existingValue == null) {
                             // if not found then interpolate
-                            value = this._interpolateValue(this._items, filter, this.use);
-                        }else{
+                            value = this._interpolateValue(this._items, filter, this.hook);
+                        } else {
                             // otherwise supply the existing value
                             value = existingValue[this.value];
                         }
@@ -880,39 +991,41 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(items, filter, use) {
-            if(items==null || items.length == 0) {console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem"); return null;}
+        _interpolateValue: function(items, filter, hook) {
+            if (items == null || items.length == 0) {
+                console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
+                return null;
+            }
 
             // fetch time from filter object and remove it from there
             var time = new Date(filter.time);
             delete filter.time;
-            
+
             // filter items so that we only have a dataset for certain keys, like "geo"
             var items = _.filter(items, filter);
-            
-            // return constant for the use of "values"
-            if(use == "value") return items[0][this.value];
+
+            // return constant for the hook of "values"
+            if (hook == "value") return items[0][this.value];
 
             // search where the desired value should fall between the known points
-            var indexNext = d3.bisectLeft(items.map(function(d){return d.time}), time);
+            var indexNext = d3.bisectLeft(items.map(function(d) {
+                return d.time
+            }), time);
 
-            // zero-order interpolation for the use of properties
-            if(use == "property" && indexNext==0) return items[0][this.value];
-            if(use == "property") return items[indexNext-1][this.value];
+            // zero-order interpolation for the hook of properties
+            if (hook == "property" && indexNext == 0) return items[0][this.value];
+            if (hook == "property") return items[indexNext - 1][this.value];
 
-            // the rest is for the use of "indicators"
+            // the rest is for the hook of "indicators"
 
             // check if the desired value is out of range. 0-order extrapolation
-            if(indexNext==0) return items[0][this.value];
-            if(indexNext==items.length) return items[items.length-1][this.value];
-            
+            if (indexNext == 0) return items[0][this.value];
+            if (indexNext == items.length) return items[items.length - 1][this.value];
+
             // perform a simple linear interpolation
-            var fraction = 
-                (time - items[indexNext-1].time)
-                /(items[indexNext].time - items[indexNext-1].time);
-            var value = 
-                + items[indexNext-1][this.value] 
-                + (items[indexNext][this.value] - items[indexNext-1][this.value])*fraction;
+            var fraction =
+                (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
+            var value = +items[indexNext - 1][this.value] + (items[indexNext][this.value] - items[indexNext - 1][this.value]) * fraction;
 
             return value;
         },

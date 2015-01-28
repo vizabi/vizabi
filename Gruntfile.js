@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         'copy:scripts',
         'copy:templates',
         'copy:preview_pages', //copies preview_page assets
-        'copy:waffles', //copies waffles
+        'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
         'connect', //run locally
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
         'includereplace:preview_pages_build', //preview_pages folder
         'preview_pages_index', //build preview_pages
         'copy:preview_pages', //copies preview_page assets
-        'copy:waffles', //copies waffles
+        'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
 
@@ -115,10 +115,10 @@ module.exports = function(grunt) {
                 dest: 'dist/preview_pages/',
                 expand: true
             },
-            waffles: {
-                cwd: 'data-waffles',
+            local_data: {
+                cwd: 'local_data',
                 src: ['**/*'],
-                dest: 'dist/data-waffles/',
+                dest: 'dist/local_data/',
                 expand: true
             },
             assets: {

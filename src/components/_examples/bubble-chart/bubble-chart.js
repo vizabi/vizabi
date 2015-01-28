@@ -19,7 +19,39 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["time", "entities", "marker", "data"];
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }, {
+                name: "entities",
+                type: "entities"
+            }, {
+                name: "marker",
+                type: "model"
+            }, {
+                name: "data",
+                type: "data"
+            }];
+
+            this.model_binds = {
+                "change": function(evt) {
+                    //if it's not about time
+                    if(evt.indexOf('change:time') === -1) {
+                         _this.updateShow();
+                         _this.redrawDataPoints();
+                    }
+                },
+                "ready":  function(evt) {
+                    _this.preprocessData();
+                    _this.updateShow();
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                },
+                'change:time:value': function() {
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                }
+            }
 
             this._super(context, options);
 
@@ -55,34 +87,6 @@ define([
             this.bubbles = null;
             this.tooltip = this.element.select('.vzb-tooltip');
 
-            //model events
-            this.model.on({
-                "change": function(evt) {
-                    console.log("Changed!", evt);
-                },
-                "load_start": function(evt) {
-                    console.log("Started to load!", evt);
-                },
-                "load_end":  function() {
-                    console.log("Finished loading!");
-                },
-                "ready": function() {
-                    console.log("Model ready!");
-//TODO: put here the following and remove it from "load_end" and from redrawDataPoints()
-//                    _this.preprocessData();
-//                    _this.updateShow();
-//                    _this.updateTime();
-//                    _this.redrawDataPoints();
-                }
-            });
-            
-            this.model.time.on({
-                'change:value': function() {
-                    _this.updateTime();
-                    _this.redrawDataPoints();
-                }
-            });
-
             //component events
             this.on("resize", function() {
                 console.log("Ops! Gotta resize...");
@@ -98,16 +102,6 @@ define([
                 d["geo.region"] = d["geo.region"] || "world";
             });
             this.isDataPreprocessed = true;
-        },
-
-
-        /*
-         * Updates the component as soon as the model/models change
-         */
-        modelReady: function(evt) {
-            if (!this.isDataPreprocessed) this.preprocessData();
-            this.updateShow();
-            this.redrawDataPoints();
         },
 
 

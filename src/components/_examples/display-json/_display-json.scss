@@ -1,0 +1,27 @@
+//general styles
+.vzb-display-json {
+    padding: 10px 20px;
+    font-family: $vzb-font-family;
+    color: $vzb-color-primary;
+}
+
+//large specific styles
+&.vzb-large {
+    .vzb-display-json {
+     	//...
+    }
+}
+
+//medium specific styles
+&.vzb-medium {
+    .vzb-display-json {
+        //...
+    }
+}
+
+//small specific styles
+&.vzb-small {
+    .vzb-display-json {
+        //...
+    }
+}

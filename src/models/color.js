@@ -14,6 +14,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "color";
             values = _.extend({
                 use: "value",
                 value: undefined
@@ -27,9 +28,9 @@ define([
         validate: function(silent) {
 
             //this domain must exist
-            if (this.use !== "value" && !this.domain) {
+            if (this.hook !== "value" && !this.domain) {
                  this.set("domain", ["#CCCCCC", "#000000"], silent, true);
-            } else if (this.use === "value") {
+            } else if (this.hook === "value") {
                 this.set("value", d3.rgb(this.value).toString(), silent, true);
             }
         },
@@ -42,7 +43,7 @@ define([
         mapValue: function(value) {
 
             var color;
-            switch (this.use) {
+            switch (this.hook) {
                 case "indicator":
                     color = this._getColorLinear(value);
                     break;

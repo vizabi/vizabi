@@ -15,6 +15,8 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "button";
+
             values = _.extend({
                 buttons: [],
             }, values);

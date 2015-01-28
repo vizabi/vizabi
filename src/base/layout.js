@@ -157,7 +157,7 @@ define([
          * @param val Optional values to be sent to callback function
          */
         trigger: function(name, val) {
-            this._events.trigger(name, val);
+            this._events.trigger(this, name, val);
         },
 
         /**
@@ -166,7 +166,7 @@ define([
          * @param val Optional values to be sent to callback function
          */
         triggerAll: function(name, val) {
-            this._events.triggerAll(name, val);
+            this._events.triggerAll(this, name, val);
         }
 
     });

@@ -1,19 +1,16 @@
 .vzb-tool {
-
     $heightTitle: 40px;
     $sizeButtonList: 60px;
     $sizeButtonListSmall: 50px;
     $sizeTimeSlider: 70px;
     $sizeTimeSliderSmall: 50px;
-
     @include absoluteAll;
     @include user-select-none;
     text-align: left;
     overflow: hidden;
-    
-    .vzb-tool-title{
+    .vzb-tool-title {
         @include box-sizing(border-box);
-        @include absolute(0px,0px,auto,0px);
+        @include absolute(0px, 0px, auto, 0px);
         @include font-size(18px);
         height: $heightTitle;
         background-color: $vzb-color-primary-lightest;
@@ -21,31 +18,27 @@
         padding: 10px;
         color: #666666;
     }
-
     .vzb-tool-content {
-        @include absolute($heightTitle,0px,0px,0px);
-
-        .vzb-tool-stage{
-            @include absolute(0px,$sizeButtonList,0px,0px);
-            
+        @include absolute($heightTitle, 0px, 0px, 0px);
+        .vzb-tool-stage {
+            @include absolute(0px, $sizeButtonList, 0px, 0px);
             .vzb-tool-viz {
-                @include absolute(0px,0px,$sizeTimeSlider,0px);
+                @include absolute(0px, 0px, $sizeTimeSlider, 0px);
             }
             .vzb-tool-timeslider {
-                @include absolute(auto,0px,0px,0px);
+                @include absolute(auto, 0px, 0px, 0px);
                 height: $sizeTimeSlider;
             }
         }
         .vzb-tool-buttonlist {
-            @include absolute(0px,0px,0px);
+            @include absolute(0px, 0px, 0px);
             width: $sizeButtonList;
             background-color: $vzb-color-primary-lightest;
         }
     }
-
     // hide sections
     &.vzb-title-off {
-        .vzb-tool-title{
+        .vzb-tool-title {
             display: none;
         }
         .vzb-tool-content {
@@ -68,23 +61,18 @@
             @include absoluteAll;
         }
     }
-
     //Responsiveness
-
     &.vzb-small {
-        .vzb-tool-title{
+        .vzb-tool-title {
             height: $heightTitle - 8px;
             @include font-size(14px);
         }
         .vzb-tool-content {
-            @include absolute($heightTitle - 8px,0px,0px,0px);
-
+            @include absolute($heightTitle - 8px, 0px, 0px, 0px);
             .vzb-tool-stage {
-            
-                @include absolute(0px,$sizeButtonListSmall,0px,0px);
-                
+                @include absolute(0px, $sizeButtonListSmall, 0px, 0px);
                 .vzb-tool-viz {
-                    @include absolute(0px,0px,$sizeTimeSliderSmall,0px);
+                    @include absolute(0px, 0px, $sizeTimeSliderSmall, 0px);
                 }
                 .vzb-tool-timeslider {
                     height: $sizeTimeSliderSmall;
@@ -98,50 +86,26 @@
     &.vzb-small.vzb-portrait {
         .vzb-tool-content {
             .vzb-tool-stage {
-                @include absolute(0px,0px,$sizeButtonListSmall,0px);
+                @include absolute(0px, 0px, $sizeButtonListSmall, 0px);
             }
             .vzb-tool-buttonlist {
-                @include absolute(auto, 0px,0px,0px);
+                @include absolute(auto, 0px, 0px, 0px);
                 width: auto;
                 height: $sizeButtonListSmall;
             }
         }
     }
-
-    &.vzb-loading, &.vzb-loading-data {
-
-        //todo: Make background transparent, but not preloader circles
-        &:after {
-            content: ' ';
-            background-color: $vzb-color-white;
-            background-image: $vzb-image-preloader;
-            background-repeat: no-repeat;
-            background-position: center center;
-            display: block;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            bottom: 0px;
-            right: 0px;
-            z-index: 2;
-        }
-    }
-
-    &.vzb-loading-data {
-        &:after {
-            @include opacity(0.9); 
-        }
-    }
     
-    &.vzb-loading {
-        * {
-            visibility: hidden;
-        }
-
-        &:after {
-            @include opacity(1); 
-        }
+    //tooltip
+    .vzb-tooltip {
+        @include border-radius(3px);
+        @include opacity(0.9);
+        position: absolute;
+        background: #666;
+        padding: 7px 10px;
+        color: white;
+        font-size: 12px;
+        z-index: 11;
+        font-weight: 300;
     }
-
-
 }

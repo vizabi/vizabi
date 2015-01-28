@@ -17,7 +17,10 @@ define([
         init: function(config, context) {
             this.template = "components/_gapminder/bubble-size/bubble-size";
 
-            this.model_expects = ["size"];
+            this.model_expects = [{
+                name: "size",
+                type: "size"
+            }];
 
             //contructor is the same as any component
             this._super(config, context);

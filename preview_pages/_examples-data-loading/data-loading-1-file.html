@@ -1,0 +1,65 @@
+<!-- @@include('../assets/_header.tpl', {"title": "Model View Example - No timeslider, one model"}) -->
+
+<div class="container">
+    <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('placeholder')">RANDOM</button>
+    </div>
+
+    <div id="placeholder" class="placeholder"></div>
+
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState()">SET STATE</button>
+    <p>Current Query:</p>
+    <pre id="query" class="json_box"></pre>
+</div>
+
+<script>
+var myVizabi,
+    playButton;
+
+$(function() {
+
+    var options = {
+
+        bind: {
+            'change:state': function(evt, vals) {
+                showState(vals.state);
+            },
+            ready: function() {
+                parseURL();
+            }
+        }
+
+    };
+    
+    myVizabi = new Vizabi("_examples-data-loading/data-loading-1-file", "#placeholder", options);
+
+});
+</script>
+
+<!-- @@include('../assets/_footer.tpl') -->

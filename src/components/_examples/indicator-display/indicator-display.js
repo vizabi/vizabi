@@ -17,7 +17,14 @@ define([
             this.template = "components/_examples/indicator-display/indicator-display";
 
             //define expected models for this component
-            this.model_expects = ["rows", "time"];
+            this.model_expects = [{
+                name: "rows",
+                type: "model"
+            }, {
+                name: "time",
+                type: "time"
+            }];
+            
             this.model_binds = {
                 'init': function() {
                     console.log("The model started");

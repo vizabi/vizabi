@@ -1,5 +1,5 @@
-@import "_common";
 @import "_mixins";
+@import "_common";
 
 //default font path on dist folder
 $fa-font-path:"assets/fonts";
@@ -8,16 +8,3 @@ $fa-font-path:"assets/fonts";
 
 // Import default styles for smart picker
 @import "../../../lib/smart-picker/dist/styles/_smart-picker";
-
-//TODO: remove tool tip styles from here (this is too specific)
-.vzb-tooltip {
-    @include border-radius(3px);
-    @include opacity(0.9);
-    position: absolute;
-    background: #666;
-    padding: 7px 10px;
-    color: white;
-    font-size: 12px;
-    z-index: 11;
-    font-weight: 300;
-}
