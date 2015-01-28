@@ -1,6 +1,3 @@
-//TODO: refactor hardcoded dates //former FIXME
-//TODO: remove date formatting from here //former FIXME
-
 define([
     'lodash',
     'd3',
