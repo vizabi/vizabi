@@ -30,20 +30,20 @@ define(['d3'], function(d3){
                 switch (Math.round(Math.log10(Math.abs(d)))){
                     case -13: d = d*1000000000000; prefix = "p"; break; //0.1p
                     case -10: d = d*1000000000; prefix = "n"; break; //0.1n
-                    case -07: d = d*1000000; prefix = "µ"; break; //0.1µ
-                    case -06: d = d*1000000; prefix = "µ"; break; //1µ
-                    case -05: d = d*1000000; prefix = "µ"; break; //10µ
-                    case -04: break; //0.0001
-                    case -03: break; //0.001
-                    case -02: break; //0.01
-                    case -01: break; //0.1
-                    case  00: break; //1
-                    case  01: break; //10
-                    case  02: break; //100
-                    case  03: break; //1000
-                    case  04: break; //10000
-                    case  05: d = d/1000000; prefix = "M"; break; //0.1M
-                    case  08: d = d/1000000; prefix = "M"; break; //100M
+                    case  -7: d = d*1000000; prefix = "µ"; break; //0.1µ
+                    case  -6: d = d*1000000; prefix = "µ"; break; //1µ
+                    case  -5: d = d*1000000; prefix = "µ"; break; //10µ
+                    case  -4: break; //0.0001
+                    case  -3: break; //0.001
+                    case  -2: break; //0.01
+                    case  -1: break; //0.1
+                    case   0: break; //1
+                    case   1: break; //10
+                    case   2: break; //100
+                    case   3: break; //1000
+                    case   4: break; //10000
+                    case   5: d = d/1000000; prefix = "M"; break; //0.1M
+                    case   8: d = d/1000000; prefix = "M"; break; //100M
                     case  11: d = d/1000000000; prefix = "B"; break; //100B
                     //use the D3 SI formatting for the extreme cases
                     default: return (d3.format(".1s")(d)).replace("G","B");
