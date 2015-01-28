@@ -23,17 +23,6 @@ define([
             }];
 
             var _this = this;
-            
-            this.model_binds = {
-                'change': function() {
-                    console.log("model display-json is changed");
-                    _this.modelReady();
-                },
-                'ready': function() {
-                    console.log("model display-json is ready");
-                    _this.modelReady();
-                }
-            }
 
             //specifying subcomponents
             this.components = [];

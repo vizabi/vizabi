@@ -444,16 +444,27 @@ define([
                 }
             });
 
-            //binds init bindings to this model
-            if (_.isPlainObject(model_binds)) {
-                model.on(model_binds);
-            };
-
             var _this = this,
                 submodels = _.filter(model.get(), function(attr) {
                     return !_.isUndefined(attr._id);
                 });
 
+            //binds init bindings to this model
+            if (_.isPlainObject(model_binds)) {
+                model.on(model_binds);
+            };
+
+            //additional binding for modelReady
+            model.on({
+                'ready': function(evt) {
+                    _this.modelReady(evt);
+                },
+                'change': function(evt) {
+                    _this.modelReady(evt);
+                }
+            });
+
+            //binding submodels
             for (var submodel in model.get()) {
 
                 if(_.isUndefined(model[submodel]._id)) continue;

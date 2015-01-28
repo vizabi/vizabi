@@ -37,7 +37,8 @@ define([
                 "change": function(evt) {
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
-                        _this.modelReady();
+                         _this.updateShow();
+                         _this.redrawDataPoints();
                     }
                 },
                 "ready":  function(evt) {
@@ -101,16 +102,6 @@ define([
                 d["geo.region"] = d["geo.region"] || "world";
             });
             this.isDataPreprocessed = true;
-        },
-
-
-        /*
-         * Updates the component as soon as the model/models change
-         */
-        modelReady: function(evt) {
-            if (!this.isDataPreprocessed) this.preprocessData();
-            this.updateShow();
-            this.redrawDataPoints();
         },
 
 

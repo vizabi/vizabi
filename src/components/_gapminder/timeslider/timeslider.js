@@ -155,16 +155,6 @@ define([
 
         },
 
-        /**
-         * Executes everytime there's a data event.
-         * Ideally, only operations related to changes in the model
-         * At this point, this.element is available as a d3 object
-         */
-        modelReady: function(evt) {
-            console.log("modelReady called by", evt);
-            this.changeTime();
-        },
-
         changeTime: function() {
             this.ui.format = this.model.time.unit;
 
