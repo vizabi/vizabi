@@ -24,19 +24,14 @@ define([
                 name: "time",
                 type: "time"
             }];
-            
+
+            var _this = this;
             this.model_binds = {
-                'init': function() {
-                    console.log("The model started");
+                'ready': function() {
+                    _this.update();
                 },
-                'set': function() {
-                    console.log("The model is now set");
-                },
-                'change': function(evt) {
-                    console.log("The model changed:", evt);
-                },
-                'load_start': function() {
-                    console.log("Start loading!");
+                'change': function() {
+                    _this.update();
                 }
             };
 
@@ -66,15 +61,10 @@ define([
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        modelReady: function() {
+        update: function() {
 
-            var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
-                rows = this.model.rows.label.getItems(),
-                countriesCurr = [];
-
-            countriesCurr = _.filter(rows, function(d) {
-                return (d.time == time);
-            });
+            var time = this.model.time.value,
+                countriesCurr = this.model.rows.label.getItems({ time: time });
 
 
             this.element.selectAll("p").remove();
