@@ -58,24 +58,30 @@ define(['d3'], function (d3) {
                 return scale;
             }
 
-            scale.domain = function (arg) {
+            scale.domain = function (_arg) {
                 if (!arguments.length) return domain;
 
-                if(arg.length!=2)console.warn("generic log scale is best for 2 values in domain, but it tries to support other cases too");
-                switch (arg.length){
+                if(_arg.length!=2)console.warn("generic log scale is best for 2 values in domain, but it tries to support other cases too");
+                switch (_arg.length){
                     // reset input to the default domain
-                    case 0: arg = domain; break;
+                    case 0: _arg = domain; break;
                     // use the only value as a center, get the domain /2 and *2 around it
-                    case 1: arg = [arg[0]/2, arg[0]*2]; break;
+                    case 1: _arg = [_arg[0]/2, _arg[0]*2]; break;
                     // two is the standard case. do nothing
-                    case 2: arg = arg; break;
+                    case 2: break;
                     // use the edge values as domain, center as epsilon
-                    case 3: eps = arg[1]; arg = [arg[0], arg[2]]; break;
+                    case 3: eps = _arg[1]; _arg = [_arg[0], _arg[2]]; break;
                     // use the edge values as domain, the minimum of the rest be the epsilon
-                    default: eps = d3.min(arg.filter(function(d, i){return i!=0 && i!=arg.length-1}));
-                            arg = [arg[0], arg[arg.length-1]];
+                    default: eps = d3.min(abs(_arg.filter(function(d, i){return i!=0 && i!=_arg.length-1})));
+                            _arg = [_arg[0], _arg[_arg.length-1]];
                             break;
                 }
+
+                var arg = [_arg[0], _arg[1]];
+
+
+                //if the scale is just a single value
+                if (arg[0]==arg[1]){arg[0] = arg[0]/2; arg[1] = arg[1]*2};
 
 
                 //if the desired domain is one-seded and lies away from 0±epsilon
@@ -147,7 +153,7 @@ define(['d3'], function (d3) {
 //
 //console.log("LOG scale domain:", logScale.domain());
 //if(useLinear)console.log("LIN scale domain:", linScale.domain());
-                domain = arg;
+                domain = _arg;
                 return scale;
             };
 

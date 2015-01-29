@@ -117,6 +117,7 @@ define(['d3'], function(d3){
 
 
             console.log("********** "+orient+" **********");
+            console.log("min max ", min, max);
             console.log("w h of one digit " + options.widthOfOneDigit + " " + options.heightOfOneDigit);
             console.log("expected digits " + maximumDigitsCount);
             console.log("space for one label " + Math.round(spaceOneLabel));
@@ -165,7 +166,6 @@ define(['d3'], function(d3){
                 if(min<=0 && max>=0)tickValues.push(0);
                 if(options.showOuter)tickValues.push(max);
                 if(options.showOuter)tickValues.push(min);
-
 
                 if(options.method == this.METHOD_REPEATING){
 
@@ -225,6 +225,8 @@ console.log(tickValues);
                 .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
                 .sort(d3.descending);
 
+
+            if (min==max)tickValues = [min];
             } //logarithmic
 
             if(options.scaleType=="linear"){
@@ -234,10 +236,8 @@ console.log(tickValues);
 
 
 
-            //if(min==max)tickValues = [min];
 
 
-//            console.log("===========");
             return axis
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
