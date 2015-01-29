@@ -295,6 +295,10 @@ define([
          * modelReady calls modelReady for all sub-components
          */
         modelReady: function(evt) {
+
+            //TODO: this entire function needs to be removed
+            //our approach is focused more on descentralized rendering
+            //blocking update should be from the events level
             if (this._blockUpdate) return;
             var _this = this;
             this._modelReady = this._update || _.throttle(function() {
