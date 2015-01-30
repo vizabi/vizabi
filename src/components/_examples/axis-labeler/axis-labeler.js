@@ -11,7 +11,7 @@ define([
             var _this = this;
             this.name = 'axis-labeler';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
-            this.model_expects = [{name: "scales"}];
+            this.model_expects = [{name: "scales"}, {name: "show"}];
             //this._debugEvents = "trigger";
             this._super(context, options);
         },
@@ -49,22 +49,31 @@ define([
 
         initScales: function(){
             var _this = this;
+            
+            var domain = this.model.scales.domain;
 
-            this.xScale = d3.scale[this.model.scales.xScaleType]()
-                .domain([this.model.scales.from, this.model.scales.to]);
-            this.yScale = d3.scale[this.model.scales.yScaleType]()
-                .domain([this.model.scales.from, this.model.scales.to]);
-
-
-            if(this.model.scales.xScaleType == "genericLog")this.xScale.eps(this.model.scales.xEps);
-            if(this.model.scales.yScaleType == "genericLog")this.yScale.eps(this.model.scales.yEps);
-
-            this.mockData = d3.range(
-                this.model.scales.from,
-                this.model.scales.to,
-                (this.model.scales.to-this.model.scales.from)/100
-                );
-            this.mockData.push(this.model.scales.to);
+            this.xScale = d3.scale[this.model.scales.xScaleType]();
+            this.yScale = d3.scale[this.model.scales.yScaleType]();
+            
+            if(this.model.scales.xScaleType == "genericLog"){
+                //this.xScale.eps(this.model.scales.xEps);
+                this.xScale.domain(domain);
+            }else{
+                this.xScale.domain([domain[0], domain[domain.length-1]]);
+            }
+            
+            if(this.model.scales.yScaleType == "genericLog"){
+                //this.yScale.eps(this.model.scales.yEps);
+                this.yScale.domain(domain);
+            }else{
+                this.yScale.domain([domain[0], domain[domain.length-1]]);
+            }
+            
+            this.mockData = d3.range(domain[0],
+                                     domain[domain.length-1],
+                                     (domain[domain.length-1]-domain[0])/100
+                                    );
+            this.mockData.push(domain[domain.length-1]);
 
 
             this.line = d3.svg.line()
@@ -127,8 +136,8 @@ define([
 
             // measure the width of one digit
             var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('0');
-            this.axisTextFontSize = widthSampleT.style("font-size");
+            widthSampleT = widthSampleG.append('text').text('0')
+                .style("font-size",this.model.show.fontSize);
             this.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
             this.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
@@ -139,7 +148,12 @@ define([
                 .smartLabeler({
                     scaleType: this.model.scales.xScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
-                    cssFontSize: this.axisTextFontSize,
+                    cssFontSize: this.model.show.fontSize,
+                    cssMarginLeft:   this.model.show.fontMargin.LR,
+                    cssMarginRight:  this.model.show.fontMargin.LR,
+                    cssMarginTop:    this.model.show.fontMargin.TB,
+                    cssMarginBottom: this.model.show.fontMargin.TB,
+                
                     lengthWhenPivoting: margin.bottom,
                     isPivotAuto: false,
                    // formatterRemovePrefix: true,
@@ -153,7 +167,12 @@ define([
                     scaleType: this.model.scales.yScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
                     heightOfOneDigit: this.heightOfOneDigit,
-                    cssFontSize: this.axisTextFontSize,
+                    cssFontSize: this.model.show.fontSize,
+                    cssMarginLeft:   this.model.show.fontMargin.LR,
+                    cssMarginRight:  this.model.show.fontMargin.LR,
+                    cssMarginTop:    this.model.show.fontMargin.TB,
+                    cssMarginBottom: this.model.show.fontMargin.TB,
+                
                     lengthWhenPivoting: margin.left,
                     //limitMaxTickNumber: 0,
                    // formatterRemovePrefix: true,
@@ -202,7 +221,9 @@ define([
                 .attr("cy",function(d){return _this.yScale(d)});
 
 
-
+$(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
+    $(this).css('font-size',(_this.model.show.fontSize));
+})
 
 a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(_this.yScale(d))] })).replace(/"/g , "");
 

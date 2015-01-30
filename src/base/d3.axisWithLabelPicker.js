@@ -119,6 +119,7 @@ define(['d3'], function(d3){
             console.log("********** "+orient+" **********");
             console.log("min max ", min, max);
             console.log("w h of one digit " + options.widthOfOneDigit + " " + options.heightOfOneDigit);
+            console.log("margins LRTB: " + options.cssMarginLeft + " " + options.cssMarginRight + " " + options.cssMarginTop + " " + options.cssMarginBottom);
             console.log("expected digits " + maximumDigitsCount);
             console.log("space for one label " + Math.round(spaceOneLabel));
 

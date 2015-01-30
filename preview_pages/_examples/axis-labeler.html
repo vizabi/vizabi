@@ -19,6 +19,7 @@
 
         <button onclick="randomSize('axis-labeler')">RANDOM</button>
 
+
         <label>|</label>
 
         <div id="dropdown-number" title="axis domain" class="wrapper-dropdown" tabindex="1">
@@ -57,10 +58,59 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
+    
+    <p>Margins (use [W][A][S][D] keys):</p>
+    <p>⇅ <span id="axisMarginLabelTB"></span>  ⇄ www<span id="axisMarginLabelLR"></span></p>
+    <button style="width: 30%; padding:0px; left: 32%" onclick="setFontMargin('+1','TB')">⇅ +</button>
+    <button style="width: 30%; padding:0px; display: inline; " onclick="setFontMargin('-1','LR')">⇄ --</button>
+    <button style="width: 30%;  padding:0px; display: inline;" onclick="setFontMargin('-1','TB')">⇅ --</button>
+    <button style="width: 30%;  padding:0px; display: inline; " onclick="setFontMargin('+1','LR')">⇄ +</button>
+               
+    <p>Axis font size (use [Z][X] keys):</p>
+    <button style="width: 30%; display: inline" onclick="setFontSize('+1')">A +</button>
+    <button style="width: 30%; display: inline" onclick="setFontSize('-1')">A --</button>
+    <p><span id="axisFontLabel"></span></p>
+
 </div>
 </body>
 <script>
 var myVizabi;
+var fontSize = "15px";
+var margin = {LR: "5px", TB: "5px"};
+var fontMarginTB = 5;
+var fontMarginLR = 5;
+var listPointer = 0;
+var listData = [
+    [1, 0.001, 0.001, 10000],
+    [1.00000, 10000.0],
+    [4.00000, 123.000],
+    [0.00060, 123.000],
+    [123.000, 4.00000],
+    [123.000, 0.00060],
+    [-123.00, -4.0000],
+    [-123.00, -0.0006],
+    [-4.0000, -123.00],
+    [-0.0006, -123.00],
+    [-123.00, 1800.00],
+    [1800.00, -123.00],
+    [123.000, -18000.],
+    [-18000., 123.000],
+    [-0.0006, 1800.00],
+    [1800.00, -0.0006],
+    [0.00060, -1800.0],
+    [-1800.0, 0.00060],
+    [-12.000, -2.0000],
+    [-80.000, 40.0000],
+    [5.00000, 8.00000],
+    [42.0000, 42.0000],
+    [0.00000000005, 4554545484715],
+    [-2611968678575, 4554545484715],
+    [-0.0020, 0.00200],
+    [-123, -0.1, 0.002, 1540],
+    [-123, -0.001, 0.5, 1540],
+    [123, 0.1, -0.002, -1540],
+    [123, 0.001, -0.5, -1540]
+];
 
 $(function() {
 
@@ -71,12 +121,13 @@ $(function() {
         //state
         state: url.state || {
             scales:{
-                from: 1,
-                to: 10000,
-                xEps: 0.001,
-                yEps: 0.001,
+                domain: listData[listPointer],
                 xScaleType: 'linear',
                 yScaleType: 'genericLog'
+            },
+            show:{
+                fontSize: fontSize,
+                fontMargin: margin
             }
         },
 
@@ -95,56 +146,49 @@ $(function() {
     showState(options.state);
 });
 
+    
+function setFontSize(arg){
+    fontSize = (parseFloat(fontSize) + parseFloat(arg)) + "px";
+    $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
+        $(this).css('font-size',(fontSize));
+    })
+    
+    $("#axisFontLabel").text(fontSize).css('font-size',(fontSize));
+    var options = { state: { show: {} }};
+    options.state.show.fontSize = fontSize;
+    myVizabi.setOptions(options);
+}
+    
+function setFontMargin(arg, direction){    
+    margin[direction] = (parseFloat(margin[direction]) + parseFloat(arg)) + "px";
+    
+    $("#axisMarginLabel"+direction+"").text(margin[direction]);
+    var options = { state: { show: {} }};
+    options.state.show.fontMargin = margin;
+    myVizabi.setOptions(options);
+}
 
-function setDomain(from, to) {
+function setDomain(domain) {
     var options = { state: { scales: {} }};
-    options.state.scales.from = +from;
-    options.state.scales.to = +to;
+    options.state.scales.domain = domain;
     myVizabi.setOptions(options);
 };
-
+    
 function setType(type, axis) {
     var options = { state: { scales: {} }};
     options.state.scales[axis+"ScaleType"] = type;
     myVizabi.setOptions(options);
 }
 
-var listPointer = 0;
-var listData = [
-    {from: 1.00000, to: 10000.0},
-    {from: 4.00000, to: 123.000},
-    {from: 0.00060, to: 123.000},
-    {from: 123.000, to: 4.00000},
-    {from: 123.000, to: 0.00060},
-    {from: -123.00, to: -4.0000},
-    {from: -123.00, to: -0.0006},
-    {from: -4.0000, to: -123.00},
-    {from: -0.0006, to: -123.00},
-    {from: -123.00, to: 1800.00},
-    {from: 1800.00, to: -123.00},
-    {from: 123.000, to: -18000.},
-    {from: -18000., to: 123.000},
-    {from: -0.0006, to: 1800.00},
-    {from: 1800.00, to: -0.0006},
-    {from: 0.00060, to: -1800.0},
-    {from: -1800.0, to: 0.00060},
-    {from: -12.000, to: -2.0000},
-    {from: -80.000, to: 40.0000},
-    {from: 5.00000, to: 8.00000},
-    {from: 42.0000, to: 42.0000},
-    {from: 0.00000000005, to: 4554545484715},
-    {from: -2611968678575, to: 4554545484715},
-    {from: -0.0020, to: 0.00200}
 
-];
 
 var list = $(".automaticListOfOptions");
 listData.forEach(function(d,i){
-    var el = $("<li><a>"+d.from + " -- " + d.to+"</a></li>")
+    var el = $("<li><a>"+JSON.stringify(d)+"</a></li>")
         .on("click", function(){
-            setDomain(d.from, d.to);
+            setDomain(d);
             listPointer = i;
-            $("#listLabel").text(d.from + " -- " + d.to);
+            $("#listLabel").text(JSON.stringify(d));
         })
         .appendTo(list);
 })
@@ -155,15 +199,23 @@ listData.forEach(function(d,i){
 window.onkeypress = function(e) {
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
-    if (String.fromCharCode(charCode) == "w" || String.fromCharCode(charCode) == "q") {
-    if (String.fromCharCode(charCode) == "w") listPointer++;
-    if (String.fromCharCode(charCode) == "q") listPointer--;
+    if (String.fromCharCode(charCode) == "w") setFontMargin("+1","TB");
+    if (String.fromCharCode(charCode) == "s") setFontMargin("-1","TB");
+    if (String.fromCharCode(charCode) == "d") setFontMargin("+1","LR");
+    if (String.fromCharCode(charCode) == "a") setFontMargin("-1","LR");
+    
+    if (String.fromCharCode(charCode) == "x") setFontSize("+1");
+    if (String.fromCharCode(charCode) == "z") setFontSize("-1");
+    
+    if (String.fromCharCode(charCode) == "q" || String.fromCharCode(charCode) == "e") {
+    if (String.fromCharCode(charCode) == "q") listPointer++;
+    if (String.fromCharCode(charCode) == "e") listPointer--;
         if(listPointer==listData.length)listPointer=0;
         if(listPointer==-1)listPointer=listData.length-1;
 
         var d = listData[listPointer];
-        setDomain(d.from, d.to);
-        $("#listLabel").text(d.from + " -- " + d.to);
+        setDomain(d);
+        $("#listLabel").text(JSON.stringify(d));
     }
 };
 

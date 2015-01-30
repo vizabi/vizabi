@@ -7,6 +7,8 @@ define(['d3'], function (d3) {
 
             var _this = this;
             var eps = 0.001;
+            var ePos = 0.001;
+            var eNeg = 0.001;
             var delta = 5;
             var domain = logScale.domain();
             var range = logScale.range();

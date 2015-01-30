@@ -22,7 +22,7 @@ define([
             this.components = [ {
                 component: '_examples/axis-labeler',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.scales"]
+                model: ["state.scales", "state.show"]
             }];
 
             this._super(config, options);
