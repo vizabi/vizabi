@@ -146,8 +146,8 @@ define(['d3'], function(d3){
                     //labels stack side by side. label width matters
                     return lengthRange >
                         tickValues.length * (
-                            parseInt(options.cssMarginTop) +
-                            parseInt(options.cssMarginBottom)
+                            parseInt(options.cssMarginLeft) +
+                            parseInt(options.cssMarginRight)
                         )
                         + options.widthOfOneDigit * (
                             tickValues.map(function(d){return options.formatter(d)}).join("").length

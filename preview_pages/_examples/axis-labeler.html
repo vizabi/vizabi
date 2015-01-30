@@ -150,7 +150,10 @@ $(function() {
     
 $("#axisFontLabel").text(fontSize).css('font-size',(fontSize));
 function setFontSize(arg){
-    fontSize = (parseFloat(fontSize) + parseFloat(arg)) + "px";
+    fontSize = parseFloat(fontSize) + parseFloat(arg);
+    if(fontSize<1)fontSize=1;
+    fontSize = fontSize + "px";
+    
     $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
         $(this).css('font-size',(fontSize));
     })
@@ -164,7 +167,9 @@ function setFontSize(arg){
 $("#axisMarginLabelLR").text(margin.LR);
 $("#axisMarginLabelTB").text(margin.TB);
 function setFontMargin(arg, direction){    
-    margin[direction] = (parseFloat(margin[direction]) + parseFloat(arg)) + "px";
+    margin[direction] = parseFloat(margin[direction]) + parseFloat(arg);
+    if(margin[direction]<0)margin[direction]=0;
+    margin[direction] = margin[direction] + "px";
     
     $("#axisMarginLabel"+direction+"").text(margin[direction]);
     var options = { state: { show: {} }};
