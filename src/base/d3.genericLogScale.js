@@ -28,22 +28,34 @@ define(['d3'], function (d3) {
 
             function scale(x) {
                 var ratio = 1;
-                var shift = 0;
-                var shift2 = 0;
-                //console.log(domain, range)
+                var shiftNeg = 0;
+                var shiftAll = 0;
+                
                 if(d3.min(domain)<0 && d3.max(domain)>0){
                     //ratio shows how the + and - scale should fit as compared to a simple + or - scale
-                    var ratio = ( d3.max(range) + d3.max(range) - logScale(d3.min(abs(domain))) ) / d3.max(range);
-                    var shift = linScale(0)/ratio;
-                    //if(abs(domain[0])>abs(domain[1])) shift2 = logScale(d3.min(abs(domain)))/ratio;
-                    if(abs(domain[0])>abs(domain[1]) && domain[0]<0 && domain[1]>0) shift2 = logScale(d3.min(abs(domain)))/ratio;
-                    //console.log(ratio, shift)
+                    if(domain[0]<domain[1]){
+                        //scale pointing up
+                        ratio = ( d3.max(range) + d3.max(range) - logScale( Math.max(eps,d3.min(abs(domain))) ) ) / d3.max(range) 
+                        shiftNeg = (d3.max(range) + linScale(0))/ratio;
+                        // if the bottom is heavier we need to shift the entire chart
+                        if(abs(domain[0])>abs(domain[1])) shiftAll = -logScale( Math.max(eps,d3.min(abs(domain))) )/ratio;
+                    }else{
+                        //scale pointing down
+                        ratio = ( d3.max(range) + logScale( Math.max(eps,d3.min(abs(domain)))) ) / d3.max(range)
+                        shiftNeg = 0;
+                        shiftAll = logScale( Math.max(eps,d3.min(abs(domain))) ) / ratio;
+                        //if the bottom is heavier we need to shift the entire chart
+                        if(abs(domain[1])>abs(domain[0])) shiftAll = shiftAll +( d3.max(range)-logScale( Math.max(eps,d3.min(abs(domain))) ) )/ratio;
+                    }
+                }else if(d3.min(domain)<0 && d3.max(domain)<0){
+                    shiftNeg = d3.max(range);
                 }
-                //console.log(domain, range)
-                if (x > eps) return logScale(x)/ratio - shift2;
-                if (x < -eps) return -logScale(-x)/ratio+d3.max(range)/ratio + shift - shift2;
-                if (0 <= x && x <= eps) return linScale(x)/ratio - shift2 ;
-                if (-eps <= x && x < 0) return -linScale(-x)/ratio+d3.max(range)/ratio + shift - shift2;
+
+                
+                if (x > eps) return logScale(x)/ratio + shiftAll;
+                if (x < -eps) return -logScale(-x)/ratio + shiftAll + shiftNeg ;
+                if (0 <= x && x <= eps) return linScale(x)/ratio + shiftAll ;
+                if (-eps <= x && x < 0) return -linScale(-x)/ratio + shiftAll + shiftNeg ;
             }
             scale.eps = function (arg) {
                 if (!arguments.length) return eps;
