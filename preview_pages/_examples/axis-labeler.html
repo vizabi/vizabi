@@ -60,15 +60,16 @@
     <button onclick="setCurrentState()">SET STATE</button>
     
     <p>Margins (use [W][A][S][D] keys):</p>
-    <p>⇅ <span id="axisMarginLabelTB"></span>  ⇄ www<span id="axisMarginLabelLR"></span></p>
     <button style="width: 30%; padding:0px; left: 32%" onclick="setFontMargin('+1','TB')">⇅ +</button>
     <button style="width: 30%; padding:0px; display: inline; " onclick="setFontMargin('-1','LR')">⇄ --</button>
     <button style="width: 30%;  padding:0px; display: inline;" onclick="setFontMargin('-1','TB')">⇅ --</button>
     <button style="width: 30%;  padding:0px; display: inline; " onclick="setFontMargin('+1','LR')">⇄ +</button>
-               
-    <p>Axis font size (use [Z][X] keys):</p>
-    <button style="width: 30%; display: inline" onclick="setFontSize('+1')">A +</button>
+    <p>⇄ <span id="axisMarginLabelLR"></span> <span style="width: 20%; display: inline-block"> </span> ⇅ <span id="axisMarginLabelTB"></span>  </p>
+        
+    <p>_________________________________</p>
+    <p>Labels font size (use [Z][X] keys):</p>
     <button style="width: 30%; display: inline" onclick="setFontSize('-1')">A --</button>
+    <button style="width: 30%; display: inline" onclick="setFontSize('+1')">A +</button>
     <p><span id="axisFontLabel"></span></p>
 
 </div>
@@ -147,6 +148,7 @@ $(function() {
 });
 
     
+$("#axisFontLabel").text(fontSize).css('font-size',(fontSize));
 function setFontSize(arg){
     fontSize = (parseFloat(fontSize) + parseFloat(arg)) + "px";
     $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
@@ -158,7 +160,9 @@ function setFontSize(arg){
     options.state.show.fontSize = fontSize;
     myVizabi.setOptions(options);
 }
-    
+
+$("#axisMarginLabelLR").text(margin.LR);
+$("#axisMarginLabelTB").text(margin.TB);
 function setFontMargin(arg, direction){    
     margin[direction] = (parseFloat(margin[direction]) + parseFloat(arg)) + "px";
     
