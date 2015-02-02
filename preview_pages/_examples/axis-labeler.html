@@ -59,27 +59,26 @@
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
     
-    <p>Margins (use [W][A][S][D] keys):</p>
-    <button style="width: 30%; padding:0px; left: 32%" onclick="setFontMargin('+1','TB')">TB +</button>
-    <button style="width: 30%; padding:0px; display: inline; " onclick="setFontMargin('-1','LR')">LR --</button>
-    <button style="width: 30%;  padding:0px; display: inline;" onclick="setFontMargin('-1','TB')">TB --</button>
-    <button style="width: 30%;  padding:0px; display: inline; " onclick="setFontMargin('+1','LR')">LR +</button>
-    <p>left/right <span id="axisMarginLabelLR"></span> <span style="width: 10%; display: inline-block"> </span> top/bottom <span id="axisMarginLabelTB"></span>  </p>
+    <p>Margins (use [W][A][S][D] keys to change label margins, or with [Shift]+ or [Shift]+[Alt]+ to change the tool margins):</p>
+    <button style="width: 30%; padding:0px; left: 32%" onclick="setLabelMargin('+1','TB')">V/\ +</button>
+    <button style="width: 30%; padding:0px; display: inline; " onclick="setLabelMargin('-1','LR')">>< --</button>
+    <button style="width: 30%;  padding:0px; display: inline;" onclick="setLabelMargin('-1','TB')">V/\ --</button>
+    <button style="width: 30%;  padding:0px; display: inline; " onclick="setLabelMargin('+1','LR')">>WWWWWW< +</button>
+    <p>left/right <span id="axisLabelMarginLR"></span> <span style="width: 5%; display: inline-block"> </span> top/bottom <span id="axisLabelMarginTB"></span>  </p>
         
     <p>_________________________________</p>
     <p>Labels font size (use [Z][X] keys):</p>
-    <button style="width: 30%; display: inline" onclick="setFontSize('-1')">A --</button>
-    <button style="width: 30%; display: inline" onclick="setFontSize('+1')">A +</button>
-    <p><span id="axisFontLabel"></span></p>
+    <button style="width: 30%; display: inline" onclick="setLabelSize('-1')">A --</button>
+    <button style="width: 30%; display: inline" onclick="setLabelSize('+1')">A +</button>
+    <p><span id="axisLabelSize"></span></p>
 
 </div>
 </body>
 <script>
 var myVizabi;
-var fontSize = "15px";
-var margin = {LR: "5px", TB: "5px"};
-var fontMarginTB = 5;
-var fontMarginLR = 5;
+var labelSize = "";
+var labelMargin = {};
+var toolMargin = {};
 var listPointer = 0;
 var listData = [
     [1, 0.001, 0.001, 10000],
@@ -127,8 +126,9 @@ $(function() {
                 yScaleType: 'genericLog'
             },
             show:{
-                fontSize: fontSize,
-                fontMargin: margin
+                labelSize: "15px",
+                labelMargin: {LR: "5px", TB: "5px"},
+                toolMargin: {top: 30, right: 20, left: 40, bottom: 40}
             }
         },
 
@@ -143,40 +143,55 @@ $(function() {
         }
     };
 
+    labelSize = options.state.show.labelSize;
+    labelMargin = options.state.show.labelMargin;
+    toolMargin = options.state.show.toolMargin;
+    $("#axisLabelSize").text(labelSize).css('font-size',(labelSize));
+    $("#axisLabelMarginLR").text(labelMargin.LR);
+    $("#axisLabelMarginTB").text(labelMargin.TB);
+    
     myVizabi = new Vizabi("_examples/axis-labeler", "#axis-labeler", options);
     showState(options.state);
 });
 
     
-$("#axisFontLabel").text(fontSize).css('font-size',(fontSize));
-function setFontSize(arg){
-    fontSize = parseFloat(fontSize) + parseFloat(arg);
-    if(fontSize<1)fontSize=1;
-    fontSize = fontSize + "px";
+
+function setLabelSize(arg){
+    labelSize = parseFloat(labelSize) + parseFloat(arg);
+    if(labelSize<1)labelSize=1;
+    labelSize = labelSize + "px";
     
     $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
-        $(this).css('font-size',(fontSize));
+        $(this).css('font-size',(labelSize));
     })
     
-    $("#axisFontLabel").text(fontSize).css('font-size',(fontSize));
+    $("#axisLabelSize").text(labelSize).css('font-size',(labelSize)).css("color","red");
     var options = { state: { show: {} }};
-    options.state.show.fontSize = fontSize;
+    options.state.show.labelSize = labelSize;
     myVizabi.setOptions(options);
 }
 
-$("#axisMarginLabelLR").text(margin.LR);
-$("#axisMarginLabelTB").text(margin.TB);
-function setFontMargin(arg, direction){    
-    margin[direction] = parseFloat(margin[direction]) + parseFloat(arg);
-    if(margin[direction]<0)margin[direction]=0;
-    margin[direction] = margin[direction] + "px";
+function setLabelMargin(arg, direction){    
+    labelMargin[direction] = parseFloat(labelMargin[direction]) + parseFloat(arg);
+    if(labelMargin[direction]<0)labelMargin[direction]=0;
+    labelMargin[direction] = labelMargin[direction] + "px";
     
-    $("#axisMarginLabel"+direction+"").text(margin[direction]);
+    $("#axisLabelMargin"+direction+"").text(labelMargin[direction]).css("color","red");
     var options = { state: { show: {} }};
-    options.state.show.fontMargin = margin;
+    options.state.show.labelMargin = labelMargin;
     myVizabi.setOptions(options);
 }
 
+function setToolMargin(arg, direction){    
+    toolMargin[direction] = parseFloat(toolMargin[direction]) + parseFloat(arg);
+    if(toolMargin[direction]<0)toolMargin[direction]=0;
+    
+    $("#toolMargin"+direction+"").text(toolMargin[direction]).css("color","red");
+    var options = { state: { show: {} }};
+    options.state.show.toolMargin = toolMargin;
+    myVizabi.setOptions(options);
+}
+    
 function setDomain(domain) {
     var options = { state: { scales: {} }};
     options.state.scales.domain = domain;
@@ -189,6 +204,21 @@ function setType(type, axis) {
     myVizabi.setOptions(options);
 }
 
+    
+    
+
+
+function setDomain(domain) {
+    var options = { state: { scales: {} }};
+    options.state.scales.domain = domain;
+    myVizabi.setOptions(options);
+};
+    
+function setType(type, axis) {
+    var options = { state: { scales: {} }};
+    options.state.scales[axis+"ScaleType"] = type;
+    myVizabi.setOptions(options);
+}
 
 
 var list = $(".automaticListOfOptions");
@@ -208,17 +238,34 @@ listData.forEach(function(d,i){
 window.onkeypress = function(e) {
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
-    if (String.fromCharCode(charCode) == "w") setFontMargin("+1","TB");
-    if (String.fromCharCode(charCode) == "s") setFontMargin("-1","TB");
-    if (String.fromCharCode(charCode) == "d") setFontMargin("+1","LR");
-    if (String.fromCharCode(charCode) == "a") setFontMargin("-1","LR");
     
-    if (String.fromCharCode(charCode) == "x") setFontSize("+1");
-    if (String.fromCharCode(charCode) == "z") setFontSize("-1");
+    if(e.shiftKey && !e.ctrlKey ){
+        if (String.fromCharCode(charCode) == "W") {setToolMargin("+1","bottom"); console.log("+1 B")}
+        if (String.fromCharCode(charCode) == "S") setToolMargin("-1","bottom");
+        if (String.fromCharCode(charCode) == "D") setToolMargin("+1","left");
+        if (String.fromCharCode(charCode) == "A") setToolMargin("-1","left");
+    }
+    
+    if(e.shiftKey && e.altKey ){
+        if (String.fromCharCode(charCode) == "„") setToolMargin("+1","top");
+        if (String.fromCharCode(charCode) == "Í") setToolMargin("-1","top");
+        if (String.fromCharCode(charCode) == "Î") setToolMargin("+1","right");
+        if (String.fromCharCode(charCode) == "Å") setToolMargin("-1","right");
+    }
+    
+    if(!e.shiftKey && !e.ctrlKey ){
+        if (String.fromCharCode(charCode) == "w") setLabelMargin("+1","TB");
+        if (String.fromCharCode(charCode) == "s") setLabelMargin("-1","TB");
+        if (String.fromCharCode(charCode) == "d") setLabelMargin("+1","LR");
+        if (String.fromCharCode(charCode) == "a") setLabelMargin("-1","LR");
+    }
+    
+    if (String.fromCharCode(charCode) == "x") setLabelSize("+1");
+    if (String.fromCharCode(charCode) == "z") setLabelSize("-1");
     
     if (String.fromCharCode(charCode) == "q" || String.fromCharCode(charCode) == "e") {
-    if (String.fromCharCode(charCode) == "q") listPointer++;
-    if (String.fromCharCode(charCode) == "e") listPointer--;
+    if (String.fromCharCode(charCode) == "e") listPointer++;
+    if (String.fromCharCode(charCode) == "q") listPointer--;
         if(listPointer==listData.length)listPointer=0;
         if(listPointer==-1)listPointer=listData.length-1;
 

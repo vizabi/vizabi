@@ -91,24 +91,17 @@ define([
 
         update: function() {
             var _this = this,
-                margin,
                 tick_spacing,
                 padding = 2;
 
             switch (this.getLayoutProfile()) {
-                case "small":
-                    margin = {top: 30, right: 20, left: 40, bottom: 40};
-                    tick_spacing = 60;
-                    break;
-                case "medium":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
-                    tick_spacing = 80;
-                    break;
-                case "large":
-                    margin = {top: 30, right: 60, left: 80, bottom: 40};
-                    tick_spacing = 100;
-                    break;
+                case "small": tick_spacing = 60; break;
+                case "medium": ick_spacing = 80; break;
+                case "large": tick_spacing = 100; break;
             }
+            
+            
+            var margin = this.model.show.toolMargin;
 
 
             //stage
@@ -149,10 +142,10 @@ define([
                     scaleType: this.model.scales.xScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
                     cssFontSize: this.model.show.fontSize,
-                    cssMarginLeft:   this.model.show.fontMargin.LR,
-                    cssMarginRight:  this.model.show.fontMargin.LR,
-                    cssMarginTop:    this.model.show.fontMargin.TB,
-                    cssMarginBottom: this.model.show.fontMargin.TB,
+                    cssMarginLeft:   this.model.show.labelMargin.LR,
+                    cssMarginRight:  this.model.show.labelMargin.LR,
+                    cssMarginTop:    this.model.show.labelMargin.TB,
+                    cssMarginBottom: this.model.show.labelMargin.TB,
                 
                     lengthWhenPivoting: margin.bottom,
                     isPivotAuto: false,
@@ -168,10 +161,10 @@ define([
                     widthOfOneDigit: this.widthOfOneDigit,
                     heightOfOneDigit: this.heightOfOneDigit,
                     cssFontSize: this.model.show.fontSize,
-                    cssMarginLeft:   this.model.show.fontMargin.LR,
-                    cssMarginRight:  this.model.show.fontMargin.LR,
-                    cssMarginTop:    this.model.show.fontMargin.TB,
-                    cssMarginBottom: this.model.show.fontMargin.TB,
+                    cssMarginLeft:   this.model.show.labelMargin.LR,
+                    cssMarginRight:  this.model.show.labelMargin.LR,
+                    cssMarginTop:    this.model.show.labelMargin.TB,
+                    cssMarginBottom: this.model.show.labelMargin.TB,
                 
                     lengthWhenPivoting: margin.left,
                     //limitMaxTickNumber: 0,

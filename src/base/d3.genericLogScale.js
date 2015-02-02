@@ -8,7 +8,7 @@ define(['d3'], function (d3) {
             var _this = this;
             var eps = 0.001;
             var ePos = 0.001;
-            var eNeg = 0.001;
+            var eNeg = -0.001;
             var delta = 5;
             var domain = logScale.domain();
             var range = logScale.range();
@@ -34,20 +34,21 @@ define(['d3'], function (d3) {
                 var shiftAll = 0;
                 
                 if(d3.min(domain)<0 && d3.max(domain)>0){
-                    //ratio shows how the + and - scale should fit as compared to a simple + or - scale
-                    if(domain[0]<domain[1]){
+                    var minAbsDomain = d3.min(abs([ domain[0], domain[domain.length-1] ]));
+                    if(domain[0]<domain[domain.length-1]){
                         //scale pointing up
-                        ratio = ( d3.max(range) + d3.max(range) - logScale( Math.max(eps,d3.min(abs(domain))) ) ) / d3.max(range) 
+                        //ratio shows how the + and - scale should fit as compared to a simple + or - scale
+                        ratio = ( d3.max(range) + d3.max(range) - logScale( Math.max(eps,minAbsDomain) ) ) / d3.max(range) 
                         shiftNeg = (d3.max(range) + linScale(0))/ratio;
                         // if the bottom is heavier we need to shift the entire chart
-                        if(abs(domain[0])>abs(domain[1])) shiftAll = -logScale( Math.max(eps,d3.min(abs(domain))) )/ratio;
+                        if(abs(domain[0])>abs(domain[domain.length-1])) shiftAll = -logScale( Math.max(eps,minAbsDomain) )/ratio;
                     }else{
                         //scale pointing down
-                        ratio = ( d3.max(range) + logScale( Math.max(eps,d3.min(abs(domain)))) ) / d3.max(range)
+                        ratio = ( d3.max(range) + logScale( Math.max(eps,minAbsDomain)) ) / d3.max(range)
                         shiftNeg = 0;
-                        shiftAll = logScale( Math.max(eps,d3.min(abs(domain))) ) / ratio;
+                        shiftAll = logScale( Math.max(eps,minAbsDomain) ) / ratio;
                         //if the bottom is heavier we need to shift the entire chart
-                        if(abs(domain[1])>abs(domain[0])) shiftAll = shiftAll +( d3.max(range)-logScale( Math.max(eps,d3.min(abs(domain))) ) )/ratio;
+                        if(abs(domain[domain.length-1])>abs(domain[0])) shiftAll = shiftAll +( d3.max(range)-logScale( Math.max(eps,minAbsDomain) ) )/ratio;
                     }
                 }else if(d3.min(domain)<0 && d3.max(domain)<0){
                     shiftNeg = d3.max(range);
@@ -74,34 +75,42 @@ define(['d3'], function (d3) {
 
             scale.domain = function (_arg) {
                 if (!arguments.length) return domain;
+                
+                // this is an internal array, it will be modified. the input _arg should stay intact
+                var arg = [];
 
                 if(_arg.length!=2)console.warn("generic log scale is best for 2 values in domain, but it tries to support other cases too");
+                
                 switch (_arg.length){
-                    // reset input to the default domain
-                    case 0: _arg = domain; break;
-                    // use the only value as a center, get the domain /2 and *2 around it
-                    case 1: _arg = [_arg[0]/2, _arg[0]*2]; break;
-                    // two is the standard case. do nothing
-                    case 2: break;
-                    // use the edge values as domain, center as epsilon
-                    case 3: eps = _arg[1]; _arg = [_arg[0], _arg[2]]; break;
+                    // if no values are given, reset input to the default domain (do nothing)
+                    case 0: arg = domain; break;
+                    // use the given value as a center, get the domain /2 and *2 around it
+                    case 1: arg = [_arg[0]/2, _arg[0]*2]; break;
+                    // two is the standard case. just use these
+                    case 2: arg = [_arg[0], _arg[1]]; break;
+                    // use the edge values as domain, center as ±epsilon
+                    case 3: arg = [_arg[0], _arg[2]]; eps = abs(_arg[1]); break;
+                    // use the edge values as domain, center two values as ±epsilon
+//                    case 4: arg = [_arg[0], _arg[3]]; 
+//                        // if the domain is pointing up
+//                        if(_arg[0]<=_arg[3]){eNeg = -abs(_arg[1]); ePos = abs(_arg[2]);}
+//                        // if the domain is pointing down
+//                        if(_arg[0]>=_arg[3]){eNeg = -abs(_arg[2]); ePos = abs(_arg[1]);}
+//                         break;
                     // use the edge values as domain, the minimum of the rest be the epsilon
-                    default: eps = d3.min(abs(_arg.filter(function(d, i){return i!=0 && i!=_arg.length-1})));
-                            _arg = [_arg[0], _arg[_arg.length-1]];
-                            break;
+                    default: arg = [_arg[0], _arg[_arg.length-1]];
+                        eps = d3.min(abs(_arg.filter(function(d, i){return i!=0 && i!=_arg.length-1})));
+                        break;
                 }
-
-                var arg = [_arg[0], _arg[1]];
-
 
                 //if the scale is just a single value
                 if (arg[0]==arg[1]){arg[0] = arg[0]/2; arg[1] = arg[1]*2};
 
 
-                //if the desired domain is one-seded and lies away from 0±epsilon
+                //if the desired domain is one-seded
                 if(oneside(arg) && d3.min(abs(arg)) >= eps) {
 
-                    //if the desired domain is all positive
+                    //if the desired domain is above +epsilon
                     if(arg[0]>0 && arg[1]>0){
                         //then fallback to a regular log scale. nothing special
                         logScale.domain(arg);
@@ -112,7 +121,7 @@ define(['d3'], function (d3) {
 
                     useLinear = false;
 
-                //if the desired domain is one-sided and takes part of or lies within 0±epsilon
+                //if the desired domain is one-sided and takes part of or falls within 0±epsilon
                 } else if (oneside(arg) && d3.min(abs(arg)) < eps) {
 
 
