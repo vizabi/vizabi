@@ -59,18 +59,28 @@
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
     
-    <p>Margins (use [W][A][S][D] keys to change label margins, or with [Shift]+ or [Shift]+[Alt]+ to change the tool margins):</p>
+    <p>Label margins: <br/>
+        left/right <span class="shortcutLabel" id="axisLabelMarginLR"></span>, <span style="width: 5%; display: inline-block"> </span> 
+        top/bottom <span class="shortcutLabel" id="axisLabelMarginTB"></span>  
+    </p>
+    <p>Tool margins: <br/>
+        b: <span class="shortcutLabel" id="toolMarginbottom"></span>, <span style="width: 2%; display: inline-block"> </span>
+        l: <span class="shortcutLabel" id="toolMarginleft"></span>, <span style="width: 2%; display: inline-block"> </span> 
+        t: <span class="shortcutLabel" id="toolMargintop"></span>, <span style="width: 2%; display: inline-block"> </span> 
+        r <span class="shortcutLabel" id="toolMarginright"></span>  
+    </p>
+    
     <button style="width: 30%; padding:0px; left: 32%" onclick="setLabelMargin('+1','TB')">V/\ +</button>
     <button style="width: 30%; padding:0px; display: inline; " onclick="setLabelMargin('-1','LR')"><> --</button>
     <button style="width: 30%;  padding:0px; display: inline;" onclick="setLabelMargin('-1','TB')">V/\ --</button>
     <button style="width: 30%;  padding:0px; display: inline; " onclick="setLabelMargin('+1','LR')"><> +</button>
-    <p>left/right <span id="axisLabelMarginLR"></span> <span style="width: 5%; display: inline-block"> </span> top/bottom <span id="axisLabelMarginTB"></span>  </p>
         
+    <p style="text-transform: none">Use [W][A][S][D] to change label margins, <br/> or with [Shift]+ or [Shift]+[Alt]+ <br/> to change the tool margins</p>
     <p>_________________________________</p>
     <p>Labels font size (use [Z][X] keys):</p>
     <button style="width: 30%; display: inline" onclick="setLabelSize('-1')">A --</button>
     <button style="width: 30%; display: inline" onclick="setLabelSize('+1')">A +</button>
-    <p><span id="axisLabelSize"></span></p>
+    <p><span class="shortcutLabel"  id="axisLabelSize"></span></p>
 
 </div>
 </body>
@@ -149,6 +159,10 @@ $(function() {
     $("#axisLabelSize").text(labelSize).css('font-size',(labelSize));
     $("#axisLabelMarginLR").text(labelMargin.LR);
     $("#axisLabelMarginTB").text(labelMargin.TB);
+    $("#toolMarginleft").text(toolMargin.left);
+    $("#toolMarginbottom").text(toolMargin.bottom);
+    $("#toolMarginright").text(toolMargin.right);
+    $("#toolMargintop").text(toolMargin.top);
     
     myVizabi = new Vizabi("_examples/axis-labeler", "#axis-labeler", options);
     showState(options.state);
@@ -165,6 +179,7 @@ function setLabelSize(arg){
         $(this).css('font-size',(labelSize));
     })
     
+    $(".shortcutLabel").css("color","#999");
     $("#axisLabelSize").text(labelSize).css('font-size',(labelSize)).css("color","red");
     var options = { state: { show: {} }};
     options.state.show.labelSize = labelSize;
@@ -176,6 +191,7 @@ function setLabelMargin(arg, direction){
     if(labelMargin[direction]<0)labelMargin[direction]=0;
     labelMargin[direction] = labelMargin[direction] + "px";
     
+    $(".shortcutLabel").css("color","#999");
     $("#axisLabelMargin"+direction+"").text(labelMargin[direction]).css("color","red");
     var options = { state: { show: {} }};
     options.state.show.labelMargin = labelMargin;
@@ -186,6 +202,7 @@ function setToolMargin(arg, direction){
     toolMargin[direction] = parseFloat(toolMargin[direction]) + parseFloat(arg);
     if(toolMargin[direction]<0)toolMargin[direction]=0;
     
+    $(".shortcutLabel").css("color","#999");
     $("#toolMargin"+direction+"").text(toolMargin[direction]).css("color","red");
     var options = { state: { show: {} }};
     options.state.show.toolMargin = toolMargin;
