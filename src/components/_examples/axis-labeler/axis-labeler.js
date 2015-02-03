@@ -146,7 +146,8 @@ define([
                     cssMarginRight:  this.model.show.labelMargin.LR,
                     cssMarginTop:    this.model.show.labelMargin.TB,
                     cssMarginBottom: this.model.show.labelMargin.TB,
-                
+                    toolMargin: margin,
+                   // showOuter: false,
                     lengthWhenPivoting: margin.bottom,
                     isPivotAuto: false,
                    // formatterRemovePrefix: true,
@@ -165,7 +166,8 @@ define([
                     cssMarginRight:  this.model.show.labelMargin.LR,
                     cssMarginTop:    this.model.show.labelMargin.TB,
                     cssMarginBottom: this.model.show.labelMargin.TB,
-                
+                    toolMargin: margin,
+                    //showOuter: false,
                     lengthWhenPivoting: margin.left,
                     //limitMaxTickNumber: 0,
                    // formatterRemovePrefix: true,
@@ -182,6 +184,12 @@ define([
                     .style("text-anchor", this.xAxis.pivot?"end":"middle")
                     .attr("dx", this.xAxis.pivot?"-0.71em":"0.00em")
                     .attr("dy", this.xAxis.pivot?"-0.32em":"0.71em")
+                    .each(function(d,i){
+                        if(_this.xAxis.repositionLabels == null) return;
+                        var view = d3.select(this);
+                        var shift = _this.xAxis.repositionLabels[i]; 
+                        view.attr("x",+view.attr("x") - shift.head + shift.tail);
+                    })
 
             this.yAxisEl
                 .call(this.yAxis)
@@ -190,7 +198,12 @@ define([
                     .style("text-anchor", this.yAxis.pivot?"middle":"end")
                     .attr("dx", this.yAxis.pivot?"+0.71em":"0.00em")
                     .attr("dy", this.yAxis.pivot?"-0.71em":"0.32em")
-
+                    .each(function(d,i){
+                        if(_this.xAxis.repositionLabels == null) return;
+                        var view = d3.select(this);
+                        var shift = _this.yAxis.repositionLabels[i]; 
+                        view.attr("x",+view.attr("x") + shift.head - shift.tail);
+                    })
 
 
 

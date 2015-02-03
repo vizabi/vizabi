@@ -69,6 +69,7 @@ define(['d3'], function(d3){
             if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<0) options.cssMarginRight = "5px";
             if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<0) options.cssMarginTop = "5px";
             if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<0) options.cssMarginBottom = "5px";
+            if(options.toolMargin==null) options.toolMargin = {left: 5, bottom: 5, right: 5, top: 5};
 
             if(options.tickSpacing==null)options.tickSpacing = 50;
             if(options.showOuter==null)options.showOuter = true;
@@ -84,8 +85,10 @@ define(['d3'], function(d3){
             if(options.heightOfOneDigit==null) options.heightOfOneDigit =
                 parseInt(options.cssFontSize)*options.heightToFontsizeRatio;
 
-            var min = d3.min(axis.scale().domain());
-            var max = d3.max(axis.scale().domain());
+            var domain = axis.scale().domain();
+            var range = axis.scale().range()
+            var min = d3.min([domain[0],domain[domain.length-1]]);
+            var max = d3.max([domain[0],domain[domain.length-1]]);
 
 
             //take 17 sample values and measure the longest formatted label
@@ -112,8 +115,8 @@ define(['d3'], function(d3){
 
             var ticksNumber = 5;
             var tickValues = [];
-            var lengthDomain = Math.abs(axis.scale().domain()[1] - axis.scale().domain()[0]);
-            var lengthRange = Math.abs(axis.scale().range()[1] - axis.scale().range()[0]);
+            var lengthDomain = Math.abs(domain[domain.length-1] - domain[0]);
+            var lengthRange = Math.abs(range[range.length-1] - range[0]);
 
 
             console.log("********** "+orient+" **********");
@@ -226,7 +229,34 @@ console.log(tickValues);
                 .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
                 .sort(d3.descending);
 
-
+            axis.numOfLabels = tickValues.length;
+            axis.repositionLabels = {};
+                
+            var margin = 
+                orient==VERTICAL?
+                {head: options.toolMargin.top, tail: options.toolMargin.bottom}
+                :
+                {head: options.toolMargin.left, tail: options.toolMargin.right};
+                
+            tickValues.forEach(function(d,i){
+                axis.repositionLabels[i] = {head: 0, tail: 0};
+                
+                axis.repositionLabels[i].head = 
+                    margin.head
+                    + axis.scale()(d)
+                    - options.formatter(d).length * options.widthOfOneDigit / 2;
+                
+                axis.repositionLabels[i].tail = 
+                    margin.tail 
+                    + d3.max(range) - axis.scale()(d)
+                    - options.formatter(d).length * options.widthOfOneDigit / 2;
+                
+                if(axis.repositionLabels[i].head>0)axis.repositionLabels[i].head=0;
+                if(axis.repositionLabels[i].tail>0)axis.repositionLabels[i].tail=0;
+            })
+            
+            console.log(axis.repositionLabels )
+                
             if (min==max)tickValues = [min];
             } //logarithmic
 
