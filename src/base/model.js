@@ -974,18 +974,18 @@ define([
                     }
                     break;
                 default:
-                    if (this.getHook("data")) {
                         // search the data point among existing points
-                        existingValue = _.findWhere(this._items, filter);
+                        // TODO: existingValue = this._items_hash[filter];
 
-                        if (existingValue == null) {
-                            // if not found then interpolate
-                            value = this._interpolateValue(this._items, filter, this.hook);
-                        } else {
-                            // otherwise supply the existing value
-                            value = existingValue[this.value];
-                        }
-                    }
+                        // if (existingValue == null) {
+                        //     // if not found then interpolate
+                        //     value = this._interpolateValue(this._items, filter, this.hook);
+                        // } else {
+                        //     // otherwise supply the existing value
+                        //     value = existingValue[this.value];
+                        // }
+
+                        value = this._interpolateValue(this._items, filter, this.hook);
                     break;
             }
             return value;
