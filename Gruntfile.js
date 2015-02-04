@@ -6,7 +6,9 @@ module.exports = function(grunt) {
      * This reads the file package.json
      * More info here: https://github.com/sindresorhus/load-grunt-tasks
      */
-    require('load-grunt-tasks')(grunt);
+    require('load-grunt-tasks')(grunt, {
+        pattern: ['grunt-*', '@*/grunt-*', '!grunt-template-jasmine-requirejs']
+    });
 
     /*
      * -----------------------------
@@ -56,7 +58,7 @@ module.exports = function(grunt) {
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
-        'connect', //run locally
+        'connect:livereload', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -82,7 +84,7 @@ module.exports = function(grunt) {
     //default task with connect
     grunt.registerTask('serve', [
         'default', //default build
-        'connect', //run locally
+        'connect:livereload', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -223,6 +225,9 @@ module.exports = function(grunt) {
                 options: {
                     open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/'
                 }
+            },
+            test: {
+                port: 8000
             }
         },
 
@@ -271,6 +276,36 @@ module.exports = function(grunt) {
                 },
                 src: 'preview_pages/**/*.html',
                 dest: 'dist/'
+            }
+        },
+
+        //run tests
+        // jasmine: {
+        //     test: {
+        //         src: 'src/**/*.js',
+        //         options: {
+        //             specs: 'spec/*Spec.js',
+        //             host: 'http://127.0.0.0:<%= connect.test.port %>/',
+        //             template: require('grunt-template-jasmine-requirejs'),
+        //             // templateOptions: {
+        //             //     requireConfigFile: 'dist/config.js'
+        //             // }
+        //         }
+        //     }
+        // },
+
+        jasmine: {
+            src: 'dist/vizabi.js',
+            options: {
+                specs: 'spec/**/*.js',
+                template: require('grunt-template-jasmine-requirejs'),
+                host: 'http://localhost:<%= connect.test.port %>/',
+                templateOptions: {
+                    requireConfigFile: 'dist/config.js'
+                },
+                vendor: [
+
+                ]
             }
         },
 
