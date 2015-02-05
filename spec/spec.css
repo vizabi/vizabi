@@ -1,0 +1,7 @@
+.jasmine_html-reporter {
+	position: absolute;
+	bottom: 0;
+}
+.jasmine_html-reporter .banner {
+	display:none;
+}
