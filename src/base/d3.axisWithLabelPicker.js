@@ -104,7 +104,8 @@ define(['d3'], function(d3){
                 +parseInt(options.cssMarginRight)
             ;
 
-            axis.pivot = options.isPivotAuto && (longestLabelLength > options.lengthWhenPivoting);
+            axis.pivot = options.isPivotAuto && (longestLabelLength + axis.tickPadding() + axis.tickSize() 
+                                                 > options.lengthWhenPivoting);
 
             var spaceOneLabel = (axis.pivot || orient == HORIZONTAL)? longestLabelLength : (
                 //calculate the number of symbols needed for the values
@@ -145,6 +146,7 @@ define(['d3'], function(d3){
                             parseInt(options.cssMarginTop) +
                             parseInt(options.cssMarginBottom)
                         )
+                        + axis.tickPadding() + axis.tickSize();
                 }else{
                     //labels stack side by side. label width matters
                     return lengthRange >
@@ -155,10 +157,19 @@ define(['d3'], function(d3){
                         + options.widthOfOneDigit * (
                             tickValues.map(function(d){return options.formatter(d)}).join("").length
                         )
+                        + axis.tickPadding() + axis.tickSize();
                 }
             }
 
-
+            var sortLikeMiddleFirst = function(array){
+                if(array.length == 0) {return [];}
+                if(array.length == 1) {return array;};
+                var mid = Math.floor(array.length/2);
+                if(array.length%2==0) mid--;
+                var left = sortLikeMiddleFirst(array.slice(0,mid));
+                var right = sortLikeMiddleFirst(array.slice(mid+1,array.length));
+                return [array[mid]].concat(left.splice(0,1)).concat(right.splice(0,1)).concat(left).concat(right);
+            }
 
 
 
@@ -244,12 +255,14 @@ console.log(tickValues);
                 axis.repositionLabels[i].head = 
                     margin.head
                     + axis.scale()(d)
-                    - options.formatter(d).length * options.widthOfOneDigit / 2;
+                    - options.formatter(d).length * options.widthOfOneDigit / 2
+                    //- parseInt(options.cssMarginRight);
                 
                 axis.repositionLabels[i].tail = 
                     margin.tail 
                     + d3.max(range) - axis.scale()(d)
-                    - options.formatter(d).length * options.widthOfOneDigit / 2;
+                    - options.formatter(d).length * options.widthOfOneDigit / 2
+                    //- parseInt(options.cssMarginLeft);
                 
                 if(axis.repositionLabels[i].head>0)axis.repositionLabels[i].head=0;
                 if(axis.repositionLabels[i].tail>0)axis.repositionLabels[i].tail=0;
