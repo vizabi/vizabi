@@ -189,7 +189,8 @@ define(['d3'], function(d3){
                             Math.ceil(getBaseLog(Math.max(eps,min))),
                             Math.ceil(getBaseLog(max)),
                             1)
-                        .map(function(d){return Math.pow(options.logBase, d)});
+                        .map(function(d){return Math.pow(options.logBase, d)})
+                        spawnPos = sortLikeMiddleFirst(spawnPos);
 
                     // check if spawn negative is needed. if yes then spawn!
                     var spawnNeg = min>-eps? [] : d3.range(
@@ -197,20 +198,34 @@ define(['d3'], function(d3){
                             Math.ceil(getBaseLog(-min)),
                             1)
                         .map(function(d){return -Math.pow(options.logBase, d)});
+                        spawnNeg = sortLikeMiddleFirst(spawnNeg);
 
 
-                    options.stops.forEach(function(stop){
-                        //skip populating when there is no space on the screen
-                        var trytofit = tickValues.concat(spawnPos.map(function(d){return d*stop}))
-                                                .concat(spawnNeg.map(function(d){return d*stop}))
-                                                .filter(onlyUnique);
+                    options.stops.forEach(function(stop, i){
+                        if(i==0){
+                            []
+                                .concat(spawnPos.map(function(d){return d*stop}) )
+                                .concat(spawnNeg.map(function(d){return d*stop}) )
+                                .forEach(function(s, k){
+                                    var trytofit = tickValues.concat(s);
+                                    if(!labelsFitIntoScale(trytofit, lengthRange)) return;
+                                    tickValues = tickValues.concat(s);
+                                    tickValues = tickValues.filter(onlyUnique);
+                            })
+                        }else{
 
-                        if(!labelsFitIntoScale(trytofit, lengthRange)) return;
-                        if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
-                        //populate the stops in the order of importance
-                        tickValues = tickValues.concat(spawnPos.map(function(d){return d*stop}));
-                        tickValues = tickValues.concat(spawnNeg.map(function(d){return d*stop}));
-                        tickValues = tickValues.filter(onlyUnique);
+                            //skip populating when there is no space on the screen
+                            var trytofit = tickValues.concat(spawnPos.map(function(d){return d*stop}))
+                                                    .concat(spawnNeg.map(function(d){return d*stop}))
+                                                    .filter(onlyUnique);
+
+                            if(!labelsFitIntoScale(trytofit, lengthRange)) return;
+                            if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
+                            //populate the stops in the order of importance
+                            tickValues = tickValues.concat(spawnPos.map(function(d){return d*stop}));
+                            tickValues = tickValues.concat(spawnNeg.map(function(d){return d*stop}));
+                            tickValues = tickValues.filter(onlyUnique);
+                        }
                     })
 
 
