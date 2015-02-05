@@ -199,7 +199,7 @@ define([
                     .attr("dx", this.yAxis.pivot?"+0.71em":"0.00em")
                     .attr("dy", this.yAxis.pivot?"-0.71em":"0.32em")
                     .each(function(d,i){
-                        if(_this.xAxis.repositionLabels == null) return;
+                        if(_this.yAxis.repositionLabels == null) return;
                         var view = d3.select(this);
                         var shift = _this.yAxis.repositionLabels[i]; 
                         view.attr("x",+view.attr("x") + shift.head - shift.tail);

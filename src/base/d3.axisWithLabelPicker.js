@@ -3,6 +3,8 @@ define(['d3'], function(d3){
     d3.svg.axisSmart = function(){
         var VERTICAL = 'vertical axis';
         var HORIZONTAL = 'horizontal axis';
+        var OPTIMISTIC = 'optimistic approximation: labels have different lengths';
+        var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
         var DEFAULT_LOGBASE = 10;
 
         var _super = d3.svg.axis();
@@ -17,7 +19,7 @@ define(['d3'], function(d3){
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
             if(options.method==null) options.method = this.METHOD_REPEATING;
-            if(options.baseValues==null) options.stops = [1,2,5,7,3,4,6,8,9];
+            if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
             if(options.doublingOriginAtFraction==null) options.doublingOriginAtFraction = 0.5;
             if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
             if(options.isPivotAuto==null) options.isPivotAuto = true;
@@ -137,7 +139,10 @@ define(['d3'], function(d3){
                 return self.indexOf(value) === index;
             }
 
-            var labelsFitIntoScale = function(tickValues, lengthRange){
+            
+            var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle){
+                if (approximationStyle==null) approximationStyle = PESSIMISTIC;
+                
                 if(orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot){
                     //labels stack on top of each other. digit height matters
                     return lengthRange >
@@ -145,32 +150,55 @@ define(['d3'], function(d3){
                             options.heightOfOneDigit +
                             parseInt(options.cssMarginTop) +
                             parseInt(options.cssMarginBottom)
-                        )
-                        + axis.tickPadding() + axis.tickSize();
+                        );
                 }else{
                     //labels stack side by side. label width matters
                     return lengthRange >
                         tickValues.length * (
                             parseInt(options.cssMarginLeft) +
-                            parseInt(options.cssMarginRight)
+                            parseInt(options.cssMarginRight) 
                         )
-                        + options.widthOfOneDigit * (
+                        + (approximationStyle == PESSIMISTIC ?
+                            options.widthOfOneDigit *
+                            tickValues.length * d3.max(tickValues.map(function(d){return options.formatter(d).length}))
+                            : 0)
+                        + (approximationStyle == OPTIMISTIC ?
+                            options.widthOfOneDigit * (
                             tickValues.map(function(d){return options.formatter(d)}).join("").length
-                        )
-                        + axis.tickPadding() + axis.tickSize();
+                            )
+                            : 0);
                 }
             }
 
-            var sortLikeMiddleFirst = function(array){
-                if(array.length == 0) {return [];}
-                if(array.length == 1) {return array;};
-                var mid = Math.floor(array.length/2);
-                if(array.length%2==0) mid--;
-                var left = sortLikeMiddleFirst(array.slice(0,mid));
-                var right = sortLikeMiddleFirst(array.slice(mid+1,array.length));
-                return [array[mid]].concat(left.splice(0,1)).concat(right.splice(0,1)).concat(left).concat(right);
-            }
+//            var sortLikeMiddleFirst = function(array){
+//                if(array.length == 0) {return [];}
+//                if(array.length == 1) {return array;};
+//                var mid = Math.floor(array.length/2);
+//                if(array.length%2==0) mid--;
+//                var left = sortLikeMiddleFirst(array.slice(0,mid));
+//                var right = sortLikeMiddleFirst(array.slice(mid+1,array.length));
+//                return [array[mid]].concat(left.splice(0,1)).concat(right.splice(0,1)).concat(left).concat(right);
+//            }
 
+            var sortLikeMiddleFirst = function(array){
+                var result = [];
+                var taken = [];
+                if(array.indexOf(0)!=-1){
+                    result.push([0]);
+                    taken.push(array.indexOf(0));
+                }
+                for(var k = array.length; k>=1; k/=2){
+                    result.push(array.filter(function(d,i){
+                        if(i % Math.floor(k) == 0 && taken.indexOf(i)==-1){
+                            taken.push(i);
+                            return true;
+                        }
+                        return false;
+                    }));
+                }
+                return result;
+            }
+            
 
 
             if(options.scaleType=="genericLog"){
@@ -178,52 +206,56 @@ define(['d3'], function(d3){
                 var delta = axis.scale().delta();
                 var bothSidesUsed = (min<0 && max >0);
 
-                if(min<=0 && max>=0)tickValues.push(0);
-                if(options.showOuter)tickValues.push(max);
-                if(options.showOuter)tickValues.push(min);
+//                if(min<=0 && max>=0)tickValues.push(0);
+//                if(options.showOuter)tickValues.push(max);
+//                if(options.showOuter)tickValues.push(min);
 
                 if(options.method == this.METHOD_REPEATING){
+                    
+                    var spawnZero = bothSidesUsed? [0]:[];
 
                     // check if spawn positive is needed. if yes then spawn!
                     var spawnPos = max<eps? [] : d3.range(
                             Math.ceil(getBaseLog(Math.max(eps,min))),
                             Math.ceil(getBaseLog(max)),
                             1)
-                        .map(function(d){return Math.pow(options.logBase, d)})
-                        spawnPos = sortLikeMiddleFirst(spawnPos);
+                        .concat(Math.ceil(getBaseLog(max)))
+                        .map(function(d){return Math.pow(options.logBase, d)});
 
                     // check if spawn negative is needed. if yes then spawn!
                     var spawnNeg = min>-eps? [] : d3.range(
                             Math.ceil(getBaseLog(Math.max(eps,-max))),
                             Math.ceil(getBaseLog(-min)),
                             1)
+                        .concat(Math.ceil(getBaseLog(-min)))
                         .map(function(d){return -Math.pow(options.logBase, d)});
-                        spawnNeg = sortLikeMiddleFirst(spawnNeg);
-
+                    
+                    
+                    console.log("before sorting",spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending))
+                    var spawn = sortLikeMiddleFirst(spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
+                    console.log("aftere sorting",spawn)
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
-                            []
-                                .concat(spawnPos.map(function(d){return d*stop}) )
-                                .concat(spawnNeg.map(function(d){return d*stop}) )
-                                .forEach(function(s, k){
-                                    var trytofit = tickValues.concat(s);
-                                    if(!labelsFitIntoScale(trytofit, lengthRange)) return;
-                                    tickValues = tickValues.concat(s);
+                            spawn.forEach(function(sGroup, k){
+                                    var trytofit = tickValues.concat(sGroup);
+                                    if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC)) return;
+                                    tickValues = tickValues.concat(sGroup);
                                     tickValues = tickValues.filter(onlyUnique);
-                            })
+                                })
+                            spawn = [].concat.apply([], spawn);
                         }else{
+                            
+                            
 
                             //skip populating when there is no space on the screen
-                            var trytofit = tickValues.concat(spawnPos.map(function(d){return d*stop}))
-                                                    .concat(spawnNeg.map(function(d){return d*stop}))
+                            var trytofit = tickValues.concat(spawn.map(function(d){return d*stop}))
                                                     .filter(onlyUnique);
 
                             if(!labelsFitIntoScale(trytofit, lengthRange)) return;
                             if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
                             //populate the stops in the order of importance
-                            tickValues = tickValues.concat(spawnPos.map(function(d){return d*stop}));
-                            tickValues = tickValues.concat(spawnNeg.map(function(d){return d*stop}));
+                            tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
                             tickValues = tickValues.filter(onlyUnique);
                         }
                     })
@@ -248,7 +280,7 @@ define(['d3'], function(d3){
                 }
 
 
-console.log(tickValues);
+
 
 
             tickValues = tickValues
@@ -283,7 +315,7 @@ console.log(tickValues);
                 if(axis.repositionLabels[i].tail>0)axis.repositionLabels[i].tail=0;
             })
             
-            console.log(axis.repositionLabels )
+            
                 
             if (min==max)tickValues = [min];
             } //logarithmic
@@ -295,7 +327,7 @@ console.log(tickValues);
 
 
 
-
+console.log("final result",tickValues);
 
             return axis
                 .ticks(ticksNumber)

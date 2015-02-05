@@ -6,6 +6,7 @@ $vzb-bc-color-axis:#999999;
 $vzb-bc-year-size:300px;
 
 .vzb-axis-labeler {
+    border-bottom: 1px solid #ccc;
     @include absoluteAll;
     overflow: hidden;
 }
