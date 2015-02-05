@@ -7,3 +7,4 @@ dist/
 /preview_pages/assets/_preview.tpl
 /src/assets/style/vizabi.scss
 /src/plugins.js
+.grunt/
