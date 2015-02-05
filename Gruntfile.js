@@ -43,8 +43,18 @@ module.exports = function(grunt) {
         'deploy'
     ]);
 
+    //build and deploy
+    grunt.registerTask('test', [
+        'dev-dist',
+        'jasmine:test:build',
+        'connect:test', //run locally
+        'jasmine:test',
+        'jasmine:test:build',
+        'watch:test'
+    ]);
+
     //developer task: grunt dev
-    grunt.registerTask('dev', [
+    grunt.registerTask('dev-dist', [
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
@@ -57,9 +67,13 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts', //copies fonts (font awesome)
+    ]);
+
+    //developer task: grunt dev
+    grunt.registerTask('dev', [
+        'dev-dist', //copies source to dist
         'connect:livereload', //run locally
-        'watch' //watch for code changes
+        'watch:dev' //watch for code changes
     ]);
 
     //developer task: grunt dev
@@ -85,7 +99,7 @@ module.exports = function(grunt) {
     grunt.registerTask('serve', [
         'default', //default build
         'connect:livereload', //run locally
-        'watch' //watch for code changes
+        'watch:dev' //watch for code changes
     ]);
 
     //deploy dist folder to s3
@@ -117,8 +131,7 @@ module.exports = function(grunt) {
                     src: ['assets/scripts.js', 'assets/style.css'],
                     dest: 'dist/preview_pages/',
                     expand: true
-                },
-                {
+                }, {
                     cwd: 'lib/jquery/dist/',
                     src: ['jquery.min.js'],
                     dest: 'dist/preview_pages/assets/',
@@ -191,26 +204,32 @@ module.exports = function(grunt) {
 
         // Make sure necessary files are built when changes are made
         watch: {
-            styles: {
-                files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
-                tasks: ['sass:dev']
-            },
-            preview_pages: {
-                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
-                tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
-            },
-            scripts: {
-                files: ['src/**/*.js'],
-                tasks: ['copy:scripts', 'copy:templates']
-            },
-            templates: {
-                files: ['src/**/*.html'],
-                tasks: ['copy:templates']
-            },
-            options: {
-                livereload: {
-                    port: '<%= connect.options.livereload %>'
+            dev: {
+                styles: {
+                    files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
+                    tasks: ['sass:dev']
+                },
+                preview_pages: {
+                    files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
+                    tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
+                },
+                scripts: {
+                    files: ['src/**/*.js'],
+                    tasks: ['copy:scripts', 'copy:templates']
+                },
+                templates: {
+                    files: ['src/**/*.html'],
+                    tasks: ['copy:templates']
+                },
+                options: {
+                    livereload: {
+                        port: '<%= connect.options.livereload %>'
+                    }
                 }
+            },
+            test: {
+                files: ['specs/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
+                tasks: 'jasmine:test:build'
             }
         },
 
@@ -227,7 +246,10 @@ module.exports = function(grunt) {
                 }
             },
             test: {
-                port: 8000
+                options: {
+                    port: 8000,
+                    open: 'http://<%= connect.options.hostname %>:<%= connect.test.options.port %>/_SpecRunner.html'
+                }
             }
         },
 
@@ -280,35 +302,25 @@ module.exports = function(grunt) {
         },
 
         //run tests
-        // jasmine: {
-        //     test: {
-        //         src: 'src/**/*.js',
-        //         options: {
-        //             specs: 'spec/*Spec.js',
-        //             host: 'http://127.0.0.0:<%= connect.test.port %>/',
-        //             template: require('grunt-template-jasmine-requirejs'),
-        //             // templateOptions: {
-        //             //     requireConfigFile: 'dist/config.js'
-        //             // }
-        //         }
-        //     }
-        // },
-
         jasmine: {
-            src: 'dist/vizabi.js',
-            options: {
-                specs: 'spec/**/*.js',
-                template: require('grunt-template-jasmine-requirejs'),
-                host: 'http://localhost:<%= connect.test.port %>/',
-                templateOptions: {
-                    requireConfigFile: 'dist/config.js'
-                },
-                vendor: [
-
-                ]
+            test: {
+                src: 'dist/vizabi.js',
+                options: {
+                    specs: 'spec/preview_pages/**/*-spec.js',
+                    helpers: 'spec/preview_pages/**/*-helper.js',
+                    host: 'http://<%= connect.options.hostname %>:<%= connect.test.options.port %>/',
+                    template: require('grunt-template-jasmine-requirejs'),
+                    templateOptions: {
+                        requireConfigFile: 'dist/config.js',
+                        requireConfig: {
+                            baseUrl: 'dist/'
+                        }
+                    },
+                    styles: 'dist/vizabi.css',
+                    vendor: ['dist/preview_pages/assets/jquery.min.js']
+                }
             }
         },
-
         //upload to s3 task
         aws_s3: {
             options: {
