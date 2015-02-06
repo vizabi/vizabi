@@ -1,7 +1,7 @@
 function initializeDom() {
     var div = document.createElement('div');
     div.id = 'placeholder';
-    div.style.width = '800px';
+    div.style.width = '50%';
     div.style.height = '600px';
     document.body.appendChild(div);
     document.body.style.margin = '0px';
@@ -11,6 +11,9 @@ function initializeDom() {
 }
 
 function initializeVizabi(viz, options, done) {
+
+    var interval = 800;
+
     if (typeof vizabi === 'undefined') {
         window.initializeDom();
     }
@@ -18,7 +21,7 @@ function initializeVizabi(viz, options, done) {
 
     window.setTimeout(function() {
         done();
-    }, 300);
+    }, interval);
 
     return vizabi;
 }

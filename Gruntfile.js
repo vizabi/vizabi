@@ -44,14 +44,17 @@ module.exports = function(grunt) {
     ]);
 
     //build and deploy
-    grunt.registerTask('test', [
-        'dev-dist',
-        'jasmine:test:build',
-        'connect:test', //run locally
-        'jasmine:test',
-        'jasmine:test:build',
-        'watch:test'
-    ]);
+    grunt.registerTask('test', function() {
+        grunt.option('force', true);
+        grunt.task.run([
+            'dev-dist',
+            'jasmine:test:build',
+            'connect:test', //run locally
+            'jasmine:test',
+            'jasmine:test:build',
+            'watch:test'
+        ]);
+    });
 
     //developer task: grunt dev
     grunt.registerTask('dev-dist', [
@@ -73,7 +76,7 @@ module.exports = function(grunt) {
     grunt.registerTask('dev', [
         'dev-dist', //copies source to dist
         'connect:livereload', //run locally
-        'watch:dev' //watch for code changes
+        'watch' //watch for code changes
     ]);
 
     //developer task: grunt dev
@@ -99,7 +102,7 @@ module.exports = function(grunt) {
     grunt.registerTask('serve', [
         'default', //default build
         'connect:livereload', //run locally
-        'watch:dev' //watch for code changes
+        'watch' //watch for code changes
     ]);
 
     //deploy dist folder to s3
@@ -204,32 +207,30 @@ module.exports = function(grunt) {
 
         // Make sure necessary files are built when changes are made
         watch: {
-            dev: {
-                styles: {
-                    files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
-                    tasks: ['sass:dev']
-                },
-                preview_pages: {
-                    files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
-                    tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
-                },
-                scripts: {
-                    files: ['src/**/*.js'],
-                    tasks: ['copy:scripts', 'copy:templates']
-                },
-                templates: {
-                    files: ['src/**/*.html'],
-                    tasks: ['copy:templates']
-                },
-                options: {
-                    livereload: {
-                        port: '<%= connect.options.livereload %>'
-                    }
+            styles: {
+                files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
+                tasks: ['sass:dev']
+            },
+            preview_pages: {
+                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
+                tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
+            },
+            scripts: {
+                files: ['src/**/*.js'],
+                tasks: ['copy:scripts', 'copy:templates']
+            },
+            templates: {
+                files: ['src/**/*.html'],
+                tasks: ['copy:templates']
+            },
+            options: {
+                livereload: {
+                    port: '<%= connect.options.livereload %>'
                 }
             },
             test: {
-                files: ['specs/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
-                tasks: 'jasmine:test:build'
+                files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
+                tasks: ['jasmine:test:build', 'jasmine:test', 'jasmine:test:build']
             }
         },
 
@@ -237,18 +238,19 @@ module.exports = function(grunt) {
             options: {
                 port: 9000,
                 livereload: 35729,
-                // change this to '0.0.0.0' to access the server from outside
                 hostname: 'localhost'
             },
             livereload: {
                 options: {
-                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/'
+                    open: ['http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/']
                 }
             },
             test: {
                 options: {
                     port: 8000,
-                    open: 'http://<%= connect.options.hostname %>:<%= connect.test.options.port %>/_SpecRunner.html'
+                    hostname: 'localhost',
+                    livereload: 35728,
+                    open: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/_SpecRunner.html'
                 }
             }
         },
@@ -308,7 +310,7 @@ module.exports = function(grunt) {
                 options: {
                     specs: 'spec/preview_pages/**/*-spec.js',
                     helpers: 'spec/preview_pages/**/*-helper.js',
-                    host: 'http://<%= connect.options.hostname %>:<%= connect.test.options.port %>/',
+                    host: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/',
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
                         requireConfigFile: 'dist/config.js',
@@ -316,7 +318,7 @@ module.exports = function(grunt) {
                             baseUrl: 'dist/'
                         }
                     },
-                    styles: 'dist/vizabi.css',
+                    styles: ['dist/vizabi.css', 'spec/spec.css'],
                     vendor: ['dist/preview_pages/assets/jquery.min.js']
                 }
             }

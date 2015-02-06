@@ -8,10 +8,10 @@ describe("_examples/bubble-chart", function() {
             //timespan of the visualization
             time: {
                 start: 1990,
-                end: 2012,
-                value: 1995,
+                end: 1995,
+                value: 1990,
                 step: 1,
-                speed: 300,
+                speed: 50,
                 formatInput: "%Y"
             },
 
@@ -97,14 +97,45 @@ describe("_examples/bubble-chart", function() {
     });
 
     it("should not be empty", function() {
-    	var contents = $(viz._placeholder).children();
+        var contents = $(viz._placeholder).children();
         expect(contents.length).toBeGreaterThan(0);
     });
 
     it("should be ready", function() {
-    	console.log(JSON.stringify(viz._tool.model.getObject()));
-    	console.log(viz._tool.model._ready);
-        expect(viz._tool.model._ready).toBeTruthy();
+        var ready = viz._tool.model._ready;
+        if (!ready) {
+            console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
+        }
+        expect(ready).toBeTruthy();
+    });
+
+    describe("play events", function() {
+        var text_year;
+        var start = parseInt(options.state.time.start, 10),
+            end = parseInt(options.state.time.end, 10),
+            total = end - start,
+            time = parseInt(options.state.time.speed, 10) / parseInt(options.state.time.step, 10) * total;
+
+        beforeEach(function(done) {
+
+            viz.setOptions({
+                state: {
+                    time: {
+                        playing: true
+                    }
+                }
+            });
+
+            setTimeout(function() {
+                text_year = $(".vzb-bubble-chart .vzb-bc-year").text();
+                text_year = parseInt(text_year, 10);
+                done();
+            }, time * 2);
+        });
+
+        it("should end in the last year", function() {
+            expect(text_year).toEqual(end);
+        });
     });
 
 });

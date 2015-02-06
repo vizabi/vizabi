@@ -243,7 +243,7 @@ define([
                     _this.trigger(evt, vals);
 
                     //if this model is not loading trigger for this model
-                    if (!_this.isLoading()) {
+                    if (_this._ready = !_this.isLoading()) {
                         _this.triggerOnce('ready', vals);
                     }
                 }

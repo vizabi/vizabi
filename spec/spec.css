@@ -1,7 +1,33 @@
 .jasmine_html-reporter {
-	position: absolute;
-	bottom: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    background-color: #474545;
+    color: #dddddd;
+}
+.jasmine_html-reporter .suite a, .jasmine_html-reporter .result-message {
+    color: #f2f2f2;
 }
 .jasmine_html-reporter .banner {
-	display:none;
+    display: none;
+}
+.jasmine_html-reporter .symbol-summary li.passed:before {
+    color: #7ADEA0;
+}
+.jasmine_html-reporter .summary li.passed a {
+    color: #7ADEA0;
+}
+.jasmine_html-reporter .bar.passed {
+    background-color: #7ADEA0;
+    color: #444444;
+}
+.jasmine_html-reporter .bar.failed, .jasmine_html-reporter .failures .spec-detail .description {
+    background-color: #D89582;
+}
+.jasmine_html-reporter .symbol-summary li.failed:before {
+    color: #D89582;
 }
