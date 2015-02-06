@@ -110,10 +110,18 @@ module.exports = function(grunt) {
         // Copy all js and template files to dist folder
         copy: {
             preview_pages: {
-                cwd: 'preview_pages',
-                src: ['assets/scripts.js', 'assets/style.css'],
-                dest: 'dist/preview_pages/',
-                expand: true
+                files: [{
+                    cwd: 'preview_pages',
+                    src: ['assets/scripts.js', 'assets/style.css'],
+                    dest: 'dist/preview_pages/',
+                    expand: true
+                },
+                {
+                    cwd: 'lib/jquery/dist/',
+                    src: ['jquery.min.js'],
+                    dest: 'dist/preview_pages/assets/',
+                    expand: true
+                }]
             },
             local_data: {
                 cwd: 'local_data',
