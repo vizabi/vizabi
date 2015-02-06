@@ -188,7 +188,8 @@ define([
                         if(_this.xAxis.repositionLabels == null) return;
                         var view = d3.select(this);
                         var shift = _this.xAxis.repositionLabels[i]; 
-                        view.attr("x",+view.attr("x") - shift.head + shift.tail);
+                        view.attr("x",+view.attr("x") + shift.x);
+                        view.attr("y",+view.attr("y") + shift.y);
                     })
 
             this.yAxisEl
@@ -202,7 +203,8 @@ define([
                         if(_this.yAxis.repositionLabels == null) return;
                         var view = d3.select(this);
                         var shift = _this.yAxis.repositionLabels[i]; 
-                        view.attr("x",+view.attr("x") + shift.head - shift.tail);
+                        view.attr("x",+view.attr("x") + shift.x);
+                        view.attr("y",+view.attr("y") + shift.y);
                     })
 
 

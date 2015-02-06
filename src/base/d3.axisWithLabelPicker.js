@@ -170,16 +170,6 @@ define(['d3'], function(d3){
                 }
             }
 
-//            var sortLikeMiddleFirst = function(array){
-//                if(array.length == 0) {return [];}
-//                if(array.length == 1) {return array;};
-//                var mid = Math.floor(array.length/2);
-//                if(array.length%2==0) mid--;
-//                var left = sortLikeMiddleFirst(array.slice(0,mid));
-//                var right = sortLikeMiddleFirst(array.slice(mid+1,array.length));
-//                return [array[mid]].concat(left.splice(0,1)).concat(right.splice(0,1)).concat(left).concat(right);
-//            }
-
             var sortLikeMiddleFirst = function(array){
                 var result = [];
                 var taken = [];
@@ -216,7 +206,7 @@ define(['d3'], function(d3){
 
                     // check if spawn positive is needed. if yes then spawn!
                     var spawnPos = max<eps? [] : d3.range(
-                            Math.ceil(getBaseLog(Math.max(eps,min))),
+                            Math.floor(getBaseLog(Math.max(eps,min))),
                             Math.ceil(getBaseLog(max)),
                             1)
                         .concat(Math.ceil(getBaseLog(max)))
@@ -224,7 +214,7 @@ define(['d3'], function(d3){
 
                     // check if spawn negative is needed. if yes then spawn!
                     var spawnNeg = min>-eps? [] : d3.range(
-                            Math.ceil(getBaseLog(Math.max(eps,-max))),
+                            Math.floor(getBaseLog(Math.max(eps,-max))),
                             Math.ceil(getBaseLog(-min)),
                             1)
                         .concat(Math.ceil(getBaseLog(-min)))
@@ -250,13 +240,13 @@ define(['d3'], function(d3){
 
                             //skip populating when there is no space on the screen
                             var trytofit = tickValues.concat(spawn.map(function(d){return d*stop}))
-                                                    .filter(onlyUnique);
+                                                    .filter(onlyUnique).filter(function(d){return min<=d&&d<=max});
 
                             if(!labelsFitIntoScale(trytofit, lengthRange)) return;
                             if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
                             //populate the stops in the order of importance
                             tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
-                            tickValues = tickValues.filter(onlyUnique);
+                            tickValues = tickValues.filter(onlyUnique).filter(function(d){return min<=d&&d<=max});
                         }
                     })
 
@@ -287,39 +277,17 @@ define(['d3'], function(d3){
                 .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
                 .sort(d3.descending);
 
-            axis.numOfLabels = tickValues.length;
-            axis.repositionLabels = {};
-                
-            var margin = 
-                orient==VERTICAL?
-                {head: options.toolMargin.top, tail: options.toolMargin.bottom}
-                :
-                {head: options.toolMargin.left, tail: options.toolMargin.right};
-                
-            tickValues.forEach(function(d,i){
-                axis.repositionLabels[i] = {head: 0, tail: 0};
-                
-                axis.repositionLabels[i].head = 
-                    margin.head
-                    + axis.scale()(d)
-                    - options.formatter(d).length * options.widthOfOneDigit / 2
-                    //- parseInt(options.cssMarginRight);
-                
-                axis.repositionLabels[i].tail = 
-                    margin.tail 
-                    + d3.max(range) - axis.scale()(d)
-                    - options.formatter(d).length * options.widthOfOneDigit / 2
-                    //- parseInt(options.cssMarginLeft);
-                
-                if(axis.repositionLabels[i].head>0)axis.repositionLabels[i].head=0;
-                if(axis.repositionLabels[i].tail>0)axis.repositionLabels[i].tail=0;
-            })
             
+            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis);
             
                 
             if (min==max)tickValues = [min];
             } //logarithmic
 
+            
+            
+            
+            
             if(options.scaleType=="linear"){
                 tickValues = null;
                 ticksNumber = Math.max(lengthRange / options.tickSpacing, 2);
@@ -335,6 +303,61 @@ console.log("final result",tickValues);
                 .tickValues(tickValues);
         };
 
+        
+        
+        function repositionLabelsThatStickOut(tickValues, options, orient, axis){
+                
+            // make an abstraction layer for margin sizes
+            var margin = 
+                orient==VERTICAL?
+                {head: options.toolMargin.top, tail: options.toolMargin.bottom}
+                :
+                {head: options.toolMargin.left, tail: options.toolMargin.right};
+            
+            // check which dimension requires shifting
+            var dimension = (axis.pivot&&orient==VERTICAL || !axis.pivot&&orient==HORIZONTAL)? "x":"y";
+            
+            var result = {};
+            
+            // for each label
+            tickValues.forEach(function(d,i){
+                
+                // compute the influence of the axis head
+                var repositionHead = margin.head
+                    + axis.scale()(d)
+                    - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
+                    - (dimension=="y") * options.heightOfOneDigit / 2
+                    // we may consider or not the label margins to give them a bit of spacing from the edges
+                    //- (dimension=="x") * parseInt(options.cssMarginRight);
+                    //- (dimension=="y") * parseInt(options.cssMarginTop);
+                
+                // compute the influence of the axis tail
+                var repositionTail = margin.tail 
+                    + d3.max(axis.scale().range()) - axis.scale()(d)
+                    - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
+                    - (dimension=="y") * options.heightOfOneDigit / 2
+                    // we may consider or not the label margins to give them a bit of spacing from the edges
+                    //- (dimension=="x") * parseInt(options.cssMarginLeft);
+                    //- (dimension=="y") * parseInt(options.cssMarginBottom);
+                
+                // apply limits to cancel repositioning of labels that are far from the edge
+                if(repositionHead>0)repositionHead=0;
+                if(repositionTail>0)repositionTail=0;
+                
+                // add them up with appropriate signs
+                var repositionBoth =
+                    (orient==HORIZONTAL?-1:1) * repositionHead + 
+                    (orient==VERTICAL?-1:1) * repositionTail;
+
+                // save to the axis
+                result[i] = {x:0, y:0};
+                result[i][dimension] = (dimension=="y"?-1:1) * repositionBoth;
+            });
+            
+            return result;
+        }
+        
+        
 
         return _super;
     };
