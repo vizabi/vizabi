@@ -2,7 +2,14 @@ define([], function() {
 
 	var Vizabi = function(tool_path, container, options) {
     var loaded = false,
-        tool;
+        viz = {
+            _tool: null,
+            name: null,
+            placeholder: null,
+            setOptions: function(opts, overwrite) {
+                if (tool) tool.setOptions(opts, overwrite);
+            }
+        };
 
     //require to import all tools, components, etc to AMD version
     require(["plugins"], function() {
@@ -11,27 +18,20 @@ define([], function() {
             path = 'tools/' + tool_path + '/' + tool_name;
 
         // extending options with name and tool's placeholder
-        var config = {
-            name: tool_name,
-            placeholder: container
-        };
+        viz.name = tool_name;
+        viz.placeholder = container;
 
         //require and render tool
         require([path], function(Tool) {
-            tool = new Tool(config, options);
+            viz._tool = new Tool(viz, options);
         });
 
     });
 
     /* Vizabi API Methods*/
-    return {
-        setOptions: function(opts, overwrite) {
-            if (tool) tool.setOptions(opts, overwrite);
-        }
-    };
+    return viz;
 
 };
-
 
 	return Vizabi;
 
