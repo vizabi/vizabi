@@ -170,7 +170,9 @@ define(['d3'], function(d3){
                 }
             }
 
-            var sortLikeMiddleFirst = function(array){
+            var groupByDoublingPace = function(array){
+                console.log("before sorting",array)
+                
                 var result = [];
                 var taken = [];
                 if(array.indexOf(0)!=-1){
@@ -186,6 +188,9 @@ define(['d3'], function(d3){
                         return false;
                     }));
                 }
+                
+                
+                console.log("aftere sorting",result)
                 return result;
             }
             
@@ -205,48 +210,62 @@ define(['d3'], function(d3){
                     var spawnZero = bothSidesUsed? [0]:[];
 
                     // check if spawn positive is needed. if yes then spawn!
-                    var spawnPos = max<eps? [] : d3.range(
+                    var spawnPos = max<eps? [] : (
+                        d3.range(
                             Math.floor(getBaseLog(Math.max(eps,min))),
                             Math.ceil(getBaseLog(max)),
                             1)
                         .concat(Math.ceil(getBaseLog(max)))
-                        .map(function(d){return Math.pow(options.logBase, d)});
+                        .map(function(d){return Math.pow(options.logBase, d)})
+                        );
 
                     // check if spawn negative is needed. if yes then spawn!
-                    var spawnNeg = min>-eps? [] : d3.range(
+                    var spawnNeg = min>-eps? [] : (
+                        d3.range(
                             Math.floor(getBaseLog(Math.max(eps,-max))),
                             Math.ceil(getBaseLog(-min)),
-                            1)
+                        1)
                         .concat(Math.ceil(getBaseLog(-min)))
-                        .map(function(d){return -Math.pow(options.logBase, d)});
+                        .map(function(d){return -Math.pow(options.logBase, d)})
+                        );
                     
                     
-                    console.log("before sorting",spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending))
-                    var spawn = sortLikeMiddleFirst(spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
-                    console.log("aftere sorting",spawn)
+                    var spawn = groupByDoublingPace( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
+                    
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
                             spawn.forEach(function(sGroup, k){
-                                    var trytofit = tickValues.concat(sGroup);
-                                    if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC)) return;
-                                    tickValues = tickValues.concat(sGroup);
-                                    tickValues = tickValues.filter(onlyUnique);
+                                    var trytofit = tickValues.concat( sGroup.map(function(d){return d*stop})
+                                                    .filter(function(d){
+                                                        return d==0 || !bothSidesUsed ||
+                                                            
+                                                            
+                                                            Math.abs(axis.scale()(d) - axis.scale()(0))
+                                                            >  (axis.pivot && orient==VERTICAL || !axis.pivot && orient == HORIZONTAL? 
+                                                                    (options.formatter(d).length+1)*options.widthOfOneDigit/2
+                                                                    :
+                                                                    (options.heightOfOneDigit)
+                                                                )
+                                                            
+                                                        
+                                                    })                
+                                                    )
+                                                    .filter(onlyUnique);
+                                    if(!labelsFitIntoScale(trytofit, lengthRange)) return;
+                                    tickValues = trytofit;
                                 })
+                            
+                            //flatten the spawn array
                             spawn = [].concat.apply([], spawn);
                         }else{
-                            
-                            
-
-                            //skip populating when there is no space on the screen
                             var trytofit = tickValues.concat(spawn.map(function(d){return d*stop}))
                                                     .filter(onlyUnique).filter(function(d){return min<=d&&d<=max});
-
+                            
                             if(!labelsFitIntoScale(trytofit, lengthRange)) return;
                             if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
-                            //populate the stops in the order of importance
-                            tickValues = tickValues.concat(spawn.map(function(d){return d*stop}));
-                            tickValues = tickValues.filter(onlyUnique).filter(function(d){return min<=d&&d<=max});
+                            
+                            tickValues = trytofit;
                         }
                     })
 
@@ -278,10 +297,11 @@ define(['d3'], function(d3){
                 .sort(d3.descending);
 
             
+            if (min==max)tickValues = [min];
+                
             axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis);
             
                 
-            if (min==max)tickValues = [min];
             } //logarithmic
 
             
