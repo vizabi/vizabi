@@ -336,7 +336,7 @@ console.log("final result",tickValues);
                 orient==VERTICAL?
                 {head: options.toolMargin.top, tail: options.toolMargin.bottom}
                 :
-                {head: options.toolMargin.left, tail: options.toolMargin.right};
+                {head: options.toolMargin.right, tail: options.toolMargin.left};
             
             // check which dimension requires shifting
             var dimension = (axis.pivot&&orient==VERTICAL || !axis.pivot&&orient==HORIZONTAL)? "x":"y";
@@ -348,7 +348,8 @@ console.log("final result",tickValues);
                 
                 // compute the influence of the axis head
                 var repositionHead = margin.head
-                    + axis.scale()(d)
+                    + (orient==HORIZONTAL?1:0) * d3.max(axis.scale().range()) 
+                    + (orient==HORIZONTAL?-1:1) * axis.scale()(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges
@@ -356,8 +357,9 @@ console.log("final result",tickValues);
                     //- (dimension=="y") * parseInt(options.cssMarginTop);
                 
                 // compute the influence of the axis tail
-                var repositionTail = margin.tail 
-                    + d3.max(axis.scale().range()) - axis.scale()(d)
+                var repositionTail = Math.min(margin.tail, options.widthOfOneDigit)
+                    + (orient==VERTICAL?1:0) * d3.max(axis.scale().range()) 
+                    + (orient==VERTICAL?-1:1) * axis.scale()(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges
@@ -368,14 +370,9 @@ console.log("final result",tickValues);
                 if(repositionHead>0)repositionHead=0;
                 if(repositionTail>0)repositionTail=0;
                 
-                // add them up with appropriate signs
-                var repositionBoth =
-                    (orient==HORIZONTAL?-1:1) * repositionHead + 
-                    (orient==VERTICAL?-1:1) * repositionTail;
-
-                // save to the axis
+                // add them up with appropriate signs, save to the axis
                 result[i] = {x:0, y:0};
-                result[i][dimension] = (dimension=="y"?-1:1) * repositionBoth;
+                result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
             });
             
             return result;
