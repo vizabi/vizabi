@@ -106,8 +106,10 @@ define(['d3'], function(d3){
                 +parseInt(options.cssMarginRight)
             ;
 
-            axis.pivot = options.isPivotAuto && (longestLabelLength + axis.tickPadding() + axis.tickSize() 
-                                                 > options.lengthWhenPivoting);
+            axis.pivot = options.isPivotAuto 
+                && (longestLabelLength + axis.tickPadding() + axis.tickSize() 
+                > options.lengthWhenPivoting);
+            
 
             var spaceOneLabel = (axis.pivot || orient == HORIZONTAL)? longestLabelLength : (
                 //calculate the number of symbols needed for the values
@@ -166,7 +168,9 @@ define(['d3'], function(d3){
                             options.widthOfOneDigit * (
                             tickValues.map(function(d){return options.formatter(d)}).join("").length
                             )
-                            : 0);
+                            : 0)
+                        
+                        && options.heightOfOneDigit < options.lengthWhenPivoting;
                 }
             }
 
