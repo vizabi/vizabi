@@ -11,7 +11,7 @@ Vizabi is a framework for building Maintainable Visual Exploration Tools, with c
 You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
 ####Can I see it in action?
-Yes. See our example pages here: [Vizabi Examples](http://static.gapminder.org/vizabi/develop/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
+Yes. See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
 
 #### Where can I find full documentation?
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 

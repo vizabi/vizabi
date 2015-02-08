@@ -51,7 +51,7 @@ $vzb-image-preloader: url('assets/imgs/preloader.gif');
 }
 .vzb-placeholder {
 
-    position: relative !important;
+    position: relative;
 
     &.vzb-loading, &.vzb-loading-data {
         //todo: Make background transparent, but not preloader circles
