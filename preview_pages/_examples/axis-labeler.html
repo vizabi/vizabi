@@ -17,7 +17,7 @@
             </ul>
         </div>
 
-        <button onclick="randomSize('axis-labeler')">RANDOM</button>
+        <button onclick="randomSize('axis-labeler')">[R]ANDOM</button>
 
 
         <label>|</label>
@@ -256,21 +256,23 @@ window.onkeypress = function(e) {
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
     
-    if(e.shiftKey && !e.ctrlKey ){
-        if (String.fromCharCode(charCode) == "W") {setToolMargin("+1","bottom"); console.log("+1 B")}
+    if (String.fromCharCode(charCode) == "r") randomSize('axis-labeler');
+    
+    if(e.shiftKey && !e.altKey ){
+        if (String.fromCharCode(charCode) == "W") setToolMargin("+1","bottom");
         if (String.fromCharCode(charCode) == "S") setToolMargin("-1","bottom");
         if (String.fromCharCode(charCode) == "D") setToolMargin("+1","left");
         if (String.fromCharCode(charCode) == "A") setToolMargin("-1","left");
     }
     
     if(e.shiftKey && e.altKey ){
-        if (String.fromCharCode(charCode) == "„") setToolMargin("+1","top");
-        if (String.fromCharCode(charCode) == "Í") setToolMargin("-1","top");
-        if (String.fromCharCode(charCode) == "Î") setToolMargin("+1","right");
-        if (String.fromCharCode(charCode) == "Å") setToolMargin("-1","right");
+        if (charCode == 8222) setToolMargin("+1","top"); // alt + shift + W
+        if (charCode == 205 ) setToolMargin("-1","top"); // alt + shift + S
+        if (charCode == 206 ) setToolMargin("+1","right"); // alt + shift + D
+        if (charCode == 197 ) setToolMargin("-1","right"); // alt + shift + A
     }
     
-    if(!e.shiftKey && !e.ctrlKey ){
+    if(!e.shiftKey && !e.altKey ){
         if (String.fromCharCode(charCode) == "w") setLabelMargin("+1","TB");
         if (String.fromCharCode(charCode) == "s") setLabelMargin("-1","TB");
         if (String.fromCharCode(charCode) == "d") setLabelMargin("+1","LR");
@@ -281,8 +283,8 @@ window.onkeypress = function(e) {
     if (String.fromCharCode(charCode) == "z") setLabelSize("-1");
     
     if (String.fromCharCode(charCode) == "q" || String.fromCharCode(charCode) == "e") {
-    if (String.fromCharCode(charCode) == "e") listPointer++;
-    if (String.fromCharCode(charCode) == "q") listPointer--;
+        if (String.fromCharCode(charCode) == "e") listPointer++;
+        if (String.fromCharCode(charCode) == "q") listPointer--;
         if(listPointer==listData.length)listPointer=0;
         if(listPointer==-1)listPointer=listData.length-1;
 
