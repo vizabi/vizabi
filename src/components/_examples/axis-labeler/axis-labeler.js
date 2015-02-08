@@ -130,7 +130,7 @@ define([
             // measure the width of one digit
             var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
             widthSampleT = widthSampleG.append('text').text('0')
-                .style("font-size",this.model.show.fontSize);
+                .style("font-size",this.model.show.labelSize);
             this.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
             this.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
@@ -141,7 +141,7 @@ define([
                 .smartLabeler({
                     scaleType: this.model.scales.xScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
-                    cssFontSize: this.model.show.fontSize,
+                    cssFontSize: this.model.show.labelSize,
                     cssMarginLeft:   this.model.show.labelMargin.LR,
                     cssMarginRight:  this.model.show.labelMargin.LR,
                     cssMarginTop:    this.model.show.labelMargin.TB,
@@ -161,7 +161,7 @@ define([
                     scaleType: this.model.scales.yScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
                     heightOfOneDigit: this.heightOfOneDigit,
-                    cssFontSize: this.model.show.fontSize,
+                    cssFontSize: this.model.show.labelSize,
                     cssMarginLeft:   this.model.show.labelMargin.LR,
                     cssMarginRight:  this.model.show.labelMargin.LR,
                     cssMarginTop:    this.model.show.labelMargin.TB,
@@ -197,8 +197,9 @@ define([
                 .selectAll("text")
                     .attr("transform","rotate("+(this.yAxis.pivot?-90:0)+")")
                     .style("text-anchor", this.yAxis.pivot?"middle":"end")
-                    .attr("dx", this.yAxis.pivot?"+0.71em":"0.00em")
-                    .attr("dy", this.yAxis.pivot?"-0.71em":"0.32em")
+                    .attr("dy",this.yAxis.pivot?0:".32em")
+                    .attr("x", this.yAxis.pivot?0:(-this.yAxis.tickPadding() - this.yAxis.tickSize()))
+                    .attr("y", this.yAxis.pivot?(-this.yAxis.tickPadding() - this.yAxis.tickSize()):0)
                     .each(function(d,i){
                         if(_this.yAxis.repositionLabels == null) return;
                         var view = d3.select(this);
@@ -229,9 +230,8 @@ define([
                 .attr("cy",function(d){return _this.yScale(d)});
 
 
-$(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
-    $(this).css('font-size',(_this.model.show.fontSize));
-})
+this.xAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
+this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
 
 a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(_this.yScale(d))] })).replace(/"/g , "");
 
