@@ -130,7 +130,23 @@ function goToExample(example) {
     return;
 }
 
+
+// this should prevent updating a URL continuously when draggind the time slider
+globalMousedown = 0;
+function keepTrackOfMouseDown(){
+    $(".placeholder").on("mousedown", function(){
+        globalMousedown++;
+    })
+    $(".placeholder").on("mouseup", function(){
+        globalMousedown--;
+        updateURL();
+    })
+}
+
+
 function updateURL() {
+    if(globalMousedown) return; 
+
     var url = {
         state: $("#state").text().replace(/(\s|\r\n|\n|\r)/gm, ""),
         width: $(".placeholder").width(),
@@ -233,6 +249,7 @@ function viewOnGithub() {
 
 $(function() {
     parseURL();
+    keepTrackOfMouseDown();
 
     $('.wrapper-dropdown').each(function() {
         new DropDown($(this));
