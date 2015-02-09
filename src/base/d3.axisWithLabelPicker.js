@@ -21,8 +21,9 @@ define(['d3'], function(d3){
             if(options.method==null) options.method = this.METHOD_REPEATING;
             if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
             if(options.doublingOriginAtFraction==null) options.doublingOriginAtFraction = 0.5;
-            if(options.lengthWhenPivoting==null) options.lengthWhenPivoting = 44;
+            if(options.pivotingLimit==null) options.pivotingLimit = 44;
             if(options.isPivotAuto==null) options.isPivotAuto = true;
+            if(options.removeAllLabels==null) options.removeAllLabels = false;
 
             if(options.formatterRemovePrefix==null) options.formatterRemovePrefix = false;
 
@@ -64,9 +65,6 @@ define(['d3'], function(d3){
                 // use manual formatting for the cases above
                 return (d3.format("."+prec+format)(d)+prefix).replace("G","B");
             }
-            if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
-            if(options.heightToFontsizeRatio==null) options.heightToFontsizeRatio = 1.20;
-            if(options.cssFontSize==null) options.cssFontSize = "13px";
             if(options.cssMarginLeft==null||parseInt(options.cssMarginLeft)<0) options.cssMarginLeft = "5px";
             if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<0) options.cssMarginRight = "5px";
             if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<0) options.cssMarginTop = "5px";
@@ -79,51 +77,49 @@ define(['d3'], function(d3){
 
             var orient = this.orient()=="top"||this.orient()=="bottom"?HORIZONTAL:VERTICAL;
 
-
-
-
+            if(options.cssFontSize==null) options.cssFontSize = "13px";
+            if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
+            if(options.heightToFontsizeRatio==null) options.heightToFontsizeRatio = 1.20;
             if(options.widthOfOneDigit==null) options.widthOfOneDigit =
                 parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
             if(options.heightOfOneDigit==null) options.heightOfOneDigit =
                 parseInt(options.cssFontSize)*options.heightToFontsizeRatio;
 
+            
+            
             var domain = axis.scale().domain();
             var range = axis.scale().range()
             var min = d3.min([domain[0],domain[domain.length-1]]);
             var max = d3.max([domain[0],domain[domain.length-1]]);
-
-
-            //take 17 sample values and measure the longest formatted label
-            var maximumDigitsCount = d3.max(
-                d3.range(min, max, (max-min)/17).map(function(d){return options.formatter(d).length})
-                );
-
-            var longestLabelLength =
-                //calculate the number of symbols needed for the values
-                maximumDigitsCount*options.widthOfOneDigit
-                //add left and right margins
-                +parseInt(options.cssMarginLeft)
-                +parseInt(options.cssMarginRight)
-            ;
+            
+            
+            
+            // estimate the longest formatted label in pixels
+            var estLongestLabelLength =
+                //take 17 sample values and measure the longest formatted label
+                d3.max( d3.range(min, max, (max-min)/17).map(function(d){return options.formatter(d).length}) ) 
+                * options.widthOfOneDigit
+                + parseInt(options.cssMarginLeft);
 
             axis.pivot = options.isPivotAuto 
-                && 
-                (
-                    orient == VERTICAL &&
-                    (longestLabelLength + axis.tickPadding() + axis.tickSize() 
-                    > options.lengthWhenPivoting)
+                && (
+                    (estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit)
+                    && (orient == VERTICAL)
                     ||
-                    orient == HORIZONTAL &&
-                    (longestLabelLength + axis.tickPadding() + axis.tickSize() 
-                    < options.lengthWhenPivoting)
-                )
+                    !(estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit)
+                    && !(orient == VERTICAL)
+                );
+            
+            var labelsStackOnTop = (orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot);
+            
+            
+            // conditions to remove labels altogether
+            if(!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit) return axis.tickValues([]);
+            if(options.removeAllLabels) return axis.tickValues([]);
+            
+            // return a single tick if have only one point in the domain
+            if (min==max) return axis.tickValues([min]).ticks(1).tickFormat(options.formatter);
 
-            var spaceOneLabel = (axis.pivot || orient == HORIZONTAL)? longestLabelLength : (
-                //calculate the number of symbols needed for the values
-                options.heightOfOneDigit
-                //add left and right margins
-                +parseInt(options.cssMarginTop)
-                +parseInt(options.cssMarginBottom) )
 
             var ticksNumber = 5;
             var tickValues = [];
@@ -135,8 +131,7 @@ define(['d3'], function(d3){
             console.log("min max ", min, max);
             console.log("w h of one digit " + options.widthOfOneDigit + " " + options.heightOfOneDigit);
             console.log("margins LRTB: " + options.cssMarginLeft + " " + options.cssMarginRight + " " + options.cssMarginTop + " " + options.cssMarginBottom);
-            console.log("expected digits " + maximumDigitsCount);
-            console.log("space for one label " + Math.round(spaceOneLabel));
+
 
 
             var getBaseLog = function(x, base) {
@@ -152,7 +147,7 @@ define(['d3'], function(d3){
             var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle){
                 if (approximationStyle==null) approximationStyle = PESSIMISTIC;
                 
-                if(orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot){
+                if(labelsStackOnTop){
                     //labels stack on top of each other. digit height matters
                     return lengthRange >
                         tickValues.length * (
@@ -175,9 +170,7 @@ define(['d3'], function(d3){
                             options.widthOfOneDigit * (
                             tickValues.map(function(d){return options.formatter(d)}).join("").length
                             )
-                            : 0)
-                        
-                        && options.heightOfOneDigit < options.lengthWhenPivoting;
+                            : 0);
                 }
             }
             
@@ -203,29 +196,8 @@ define(['d3'], function(d3){
                 return false;
             }
 
-            var groupByDoublingPace = function(array){
-                console.log("before sorting",array)
-                
-                var result = [];
-                var taken = [];
-                if(array.indexOf(0)!=-1){
-                    result.push([0]);
-                    taken.push(array.indexOf(0));
-                }
-                for(var k = array.length; k>=1; k/=2){
-                    result.push(array.filter(function(d,i){
-                        if(i % Math.floor(k) == 0 && taken.indexOf(i)==-1){
-                            taken.push(i);
-                            return true;
-                        }
-                        return false;
-                    }));
-                }
-                
-                
-                console.log("aftere sorting",result)
-                return result;
-            }
+            
+
             
 
 
@@ -320,7 +292,7 @@ define(['d3'], function(d3){
                 .sort(d3.descending);
 
             
-            if (min==max)tickValues = [min];
+            
                 
             axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
             
@@ -348,6 +320,40 @@ console.log("final result",tickValues);
 
         
         
+        
+        // NEST ELEMENTS BY DOUBLING THEIR POSITIONS
+        // example1: [1 2 3 4 5 6 7] --> [[1][4 7][2 3 5 6]]
+        // example2: [1 2 3 4 5 6 7 8 9] --> [[1][5 9][3 7][2 4 6 8]]
+        // example3: [-4 -3 -2 -1 0 1 2 3 4 5 6 7] --> [[0][-4][2][-1 5][-3 -2 1 3 4 6 7]]
+        // returns the nested array
+        function groupByDoublingPace(array){
+
+            var result = [];
+            var taken = [];
+
+            //zero is an exception, if it's present we manually take it to the front
+            if(array.indexOf(0)!=-1){
+                result.push([0]);
+                taken.push(array.indexOf(0));
+            }
+
+            for(var k = array.length; k>=1; k/=2){
+                // push the next group of elements to the result
+                result.push(array.filter(function(d,i){
+                    if(i % Math.floor(k) == 0 && taken.indexOf(i)==-1){
+                        taken.push(i);
+                        return true;
+                    }
+                    return false;
+                }));
+            }
+
+            return result;
+        }        
+        
+        
+        
+        // returns the array of recommended {x,y} shifts
         function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
                 
             // make an abstraction layer for margin sizes
@@ -398,14 +404,9 @@ console.log("final result",tickValues);
         }
         
         
+        
 
         return _super;
-    };
+    }; //d3.svg.axisSmart = function(){
 
-
-
-
-
-
-
-});
+}); //define(['d3'], function(d3){

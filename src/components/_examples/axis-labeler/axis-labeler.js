@@ -148,7 +148,7 @@ define([
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                    // showOuter: false,
-                    lengthWhenPivoting: margin.bottom,
+                    pivotingLimit: margin.bottom,
                     isPivotAuto: true,
                    // formatterRemovePrefix: true,
                     tickSpacing: tick_spacing
@@ -168,7 +168,7 @@ define([
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                     //showOuter: false,
-                    lengthWhenPivoting: margin.left,
+                    pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
                    // formatterRemovePrefix: true,
                     tickSpacing: tick_spacing,
