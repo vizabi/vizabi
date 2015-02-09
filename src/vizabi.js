@@ -6,10 +6,7 @@ var Vizabi = function(tool_path, container, options) {
         viz = {
             _name: tool_name,
             _placeholder: container,
-            _tool: null,
-            setOptions: function(opts, overwrite) {
-                if (tool) tool.setOptions(opts, overwrite);
-            }
+            _tool: null
         },
         tool;
 
@@ -28,6 +25,13 @@ var Vizabi = function(tool_path, container, options) {
     });
 
     /* Vizabi API Methods*/
+    viz.setOptions = function(opts, overwrite) {
+        if (tool) tool.setOptions(opts, overwrite);
+    };
+    viz.getOptions = function(opts, overwrite) {
+        return (tool) ? tool.model.getObject() : {};
+    };
+
     return viz;
 
 };
