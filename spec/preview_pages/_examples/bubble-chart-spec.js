@@ -110,7 +110,6 @@ describe("_examples/bubble-chart", function() {
     });
 
     describe("play events", function() {
-        var text_year;
         var start = parseInt(options.state.time.start, 10),
             end = parseInt(options.state.time.end, 10),
             total = end - start,
@@ -127,14 +126,36 @@ describe("_examples/bubble-chart", function() {
             });
 
             setTimeout(function() {
-                text_year = $(".vzb-bubble-chart .vzb-bc-year").text();
-                text_year = parseInt(text_year, 10);
                 done();
             }, time * 2);
         });
 
         it("should end in the last year", function() {
+            var text_year = $(".vzb-bubble-chart .vzb-bc-year").text();
+            text_year = parseInt(text_year, 10);
             expect(text_year).toEqual(end);
+        });
+    });
+
+    describe("select events", function() {
+
+        beforeEach(function(done) {
+
+            viz.setOptions({
+                state: {
+                    entities: {
+                        selected: ['swe', 'nor', 'fin']
+                    }
+                }
+            });
+
+            setTimeout(function() {
+                done();
+            }, 200);
+        });
+
+        it("should select 3 countries", function() {
+            expect($(".vzb-bc-bubble .vzb-bc-selected").length).toEqual(3);
         });
     });
 

@@ -7,11 +7,11 @@ describe("_examples/pop-slider", function() {
             //time properties
             time: {
                 unit: "year",
-                start: "1800",
+                start: "1990",
                 end: "2014",
                 step: 1,
-                speed: 50,
-                value: "2002"
+                speed: 20,
+                value: "1995"
             },
             //entities we want to show
             entities: {
@@ -86,10 +86,9 @@ describe("_examples/pop-slider", function() {
     });
 
     describe("play events", function() {
-        var text_year;
-        var start = parseInt(options.state.time.start, 10),
+        var value = parseInt(options.state.time.value, 10),
             end = parseInt(options.state.time.end, 10),
-            total = end - start,
+            total = end - value,
             time = parseInt(options.state.time.speed, 10) / parseInt(options.state.time.step, 10) * total;
 
         beforeEach(function(done) {
@@ -103,13 +102,14 @@ describe("_examples/pop-slider", function() {
             });
 
             setTimeout(function() {
-                text_year = $(".vzb-tool-pop-slider .vzb-year-display").text();
-                text_year = parseInt(text_year, 10);
                 done();
-            }, time * 2);
+            }, time * 3);
         });
 
         it("should end in the last year", function() {
+            var new_options = viz.getOptions();
+            var text_year = new Date(new_options.state.time.value).getFullYear();
+            text_year = parseInt(text_year, 10);
             expect(text_year).toEqual(end);
         });
     });

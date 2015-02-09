@@ -1,3 +1,6 @@
+body {
+	font-family: Arial, sans-serif;
+}
 .jasmine_html-reporter {
     position: absolute;
     top: 0;
