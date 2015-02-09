@@ -97,7 +97,7 @@ define(['d3'], function(d3){
             // estimate the longest formatted label in pixels
             var estLongestLabelLength =
                 //take 17 sample values and measure the longest formatted label
-                d3.max( d3.range(min, max, (max-min)/17).map(function(d){return options.formatter(d).length}) ) 
+                d3.max( d3.range(min, max, (max-min)/17).concat(max).map(function(d){return options.formatter(d).length}) ) 
                 * options.widthOfOneDigit
                 + parseInt(options.cssMarginLeft);
 
@@ -294,17 +294,10 @@ define(['d3'], function(d3){
 
             tickValues = tickValues
                 .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
-                .sort(d3.descending);
-
-            
-            
-                
-            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
-            
+                .sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
                 
             } //logarithmic
 
-            
             
             
             
@@ -316,6 +309,8 @@ define(['d3'], function(d3){
 
 
 console.log("final result",tickValues);
+            
+            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
 
             return axis
                 .ticks(ticksNumber)
@@ -360,6 +355,7 @@ console.log("final result",tickValues);
         
         // returns the array of recommended {x,y} shifts
         function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
+            if(tickValues==null)return null;
                 
             // make an abstraction layer for margin sizes
             var margin = 
@@ -373,8 +369,11 @@ console.log("final result",tickValues);
             
             var result = {};
             
-            // for each label
+            
+                        
+            // for boundary labels: avoid sticking out from the tool margin
             tickValues.forEach(function(d,i){
+                if(i!=0 && i!=tickValues.length-1) return;
                 
                 // compute the influence of the axis head
                 var repositionHead = margin.head
@@ -395,6 +394,7 @@ console.log("final result",tickValues);
                     // we may consider or not the label margins to give them a bit of spacing from the edges
                     //- (dimension=="x") * parseInt(options.cssMarginLeft);
                     //- (dimension=="y") * parseInt(options.cssMarginBottom);
+                    
                 
                 // apply limits to cancel repositioning of labels that are far from the edge
                 if(repositionHead>0)repositionHead=0;
@@ -404,6 +404,35 @@ console.log("final result",tickValues);
                 result[i] = {x:0, y:0};
                 result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
             });
+            
+            
+            
+
+            // for labels in between: avoid collision with bound labels
+            tickValues.forEach(function(d,i){
+                if(i==0 || i==tickValues.length-1) return;
+                
+                var repositionHead = 
+                    Math.abs(scale(d) - scale(tickValues[tickValues.length-1]) + result[tickValues.length-1][dimension])
+                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length-1]).length
+                    - (dimension=="y") * options.heightOfOneDigit * 0.7;
+
+                var repositionTail = 
+                    Math.abs(scale(d) - scale(tickValues[0]) + result[0][dimension])
+                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
+                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length
+                    - (dimension=="y") * options.heightOfOneDigit * 0.7;
+                
+                // apply limits to cancel repositioning of labels that are far from the edge
+                if(repositionHead>0)repositionHead=0;
+                if(repositionTail>0)repositionTail=0;
+                
+                result[i] = {x:0, y:0};
+                result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
+            });
+            
+            
             
             return result;
         }
