@@ -107,9 +107,16 @@ define(['d3'], function(d3){
             ;
 
             axis.pivot = options.isPivotAuto 
-                && (longestLabelLength + axis.tickPadding() + axis.tickSize() 
-                > options.lengthWhenPivoting);
-            
+                && 
+                (
+                    orient == VERTICAL &&
+                    (longestLabelLength + axis.tickPadding() + axis.tickSize() 
+                    > options.lengthWhenPivoting)
+                    ||
+                    orient == HORIZONTAL &&
+                    (longestLabelLength + axis.tickPadding() + axis.tickSize() 
+                    < options.lengthWhenPivoting)
+                )
 
             var spaceOneLabel = (axis.pivot || orient == HORIZONTAL)? longestLabelLength : (
                 //calculate the number of symbols needed for the values
@@ -173,6 +180,28 @@ define(['d3'], function(d3){
                         && options.heightOfOneDigit < options.lengthWhenPivoting;
                 }
             }
+            
+            
+            var collisionBetween = function(one, two){
+                if(two==null || two.length == 0) return false;
+                if(!(two instanceof Array))two = [two];
+                
+                for(var i = 0; i<two.length; i++){
+                    if( 
+                        one != two[i]
+                        &&
+                        Math.abs(axis.scale()(one) - axis.scale()(two[i]))
+                        <
+                        (axis.pivot && orient==VERTICAL || !axis.pivot && orient == HORIZONTAL? 
+                            (options.formatter(one).length+options.formatter(two[i]).length)*options.widthOfOneDigit/2
+                            :
+                            (options.heightOfOneDigit)
+                        )
+                    ) return true; 
+                
+                }
+                return false;
+            }
 
             var groupByDoublingPace = function(array){
                 console.log("before sorting",array)
@@ -206,8 +235,8 @@ define(['d3'], function(d3){
                 var bothSidesUsed = (min<0 && max >0);
 
 //                if(min<=0 && max>=0)tickValues.push(0);
-//                if(options.showOuter)tickValues.push(max);
-//                if(options.showOuter)tickValues.push(min);
+                if(options.showOuter)tickValues.push(max);
+                if(options.showOuter)tickValues.push(min);
 
                 if(options.method == this.METHOD_REPEATING){
                     
@@ -235,24 +264,14 @@ define(['d3'], function(d3){
                     
                     
                     var spawn = groupByDoublingPace( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
-                    
+                    var avoidCollidingWith = spawnZero.concat(tickValues);
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
                             spawn.forEach(function(sGroup, k){
                                     var trytofit = tickValues.concat( sGroup.map(function(d){return d*stop})
                                                     .filter(function(d){
-                                                        return d==0 || !bothSidesUsed ||
-                                                            
-                                                            
-                                                            Math.abs(axis.scale()(d) - axis.scale()(0))
-                                                            >  (axis.pivot && orient==VERTICAL || !axis.pivot && orient == HORIZONTAL? 
-                                                                    (options.formatter(d).length+1)*options.widthOfOneDigit/2
-                                                                    :
-                                                                    (options.heightOfOneDigit)
-                                                                )
-                                                            
-                                                        
+                                                        return !collisionBetween(d,avoidCollidingWith)
                                                     })                
                                                     )
                                                     .filter(onlyUnique);
@@ -303,7 +322,7 @@ define(['d3'], function(d3){
             
             if (min==max)tickValues = [min];
                 
-            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis);
+            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
             
                 
             } //logarithmic
@@ -329,7 +348,7 @@ console.log("final result",tickValues);
 
         
         
-        function repositionLabelsThatStickOut(tickValues, options, orient, axis){
+        function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
                 
             // make an abstraction layer for margin sizes
             var margin = 
@@ -339,7 +358,7 @@ console.log("final result",tickValues);
                 {head: options.toolMargin.right, tail: options.toolMargin.left};
             
             // check which dimension requires shifting
-            var dimension = (axis.pivot&&orient==VERTICAL || !axis.pivot&&orient==HORIZONTAL)? "x":"y";
+            var dimension = (pivot&&orient==VERTICAL || !pivot&&orient==HORIZONTAL)? "x":"y";
             
             var result = {};
             
@@ -348,8 +367,8 @@ console.log("final result",tickValues);
                 
                 // compute the influence of the axis head
                 var repositionHead = margin.head
-                    + (orient==HORIZONTAL?1:0) * d3.max(axis.scale().range()) 
-                    + (orient==HORIZONTAL?-1:1) * axis.scale()(d)
+                    + (orient==HORIZONTAL?1:0) * d3.max(scale.range()) 
+                    + (orient==HORIZONTAL?-1:1) * scale(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges
@@ -358,8 +377,8 @@ console.log("final result",tickValues);
                 
                 // compute the influence of the axis tail
                 var repositionTail = Math.min(margin.tail, options.widthOfOneDigit)
-                    + (orient==VERTICAL?1:0) * d3.max(axis.scale().range()) 
-                    + (orient==VERTICAL?-1:1) * axis.scale()(d)
+                    + (orient==VERTICAL?1:0) * d3.max(scale.range()) 
+                    + (orient==VERTICAL?-1:1) * scale(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges

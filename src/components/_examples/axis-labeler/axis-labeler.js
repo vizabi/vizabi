@@ -149,7 +149,7 @@ define([
                     toolMargin: margin,
                    // showOuter: false,
                     lengthWhenPivoting: margin.bottom,
-                    isPivotAuto: false,
+                    isPivotAuto: true,
                    // formatterRemovePrefix: true,
                     tickSpacing: tick_spacing
                 });
@@ -180,13 +180,16 @@ define([
             this.xAxisEl
                 .call(this.xAxis)
                 .selectAll("text")
-                    .attr("transform","rotate("+(this.xAxis.pivot?-90:0)+")")
-                    .style("text-anchor", this.xAxis.pivot?"end":"middle")
-                    .attr("dx", this.xAxis.pivot?"-0.71em":"0.00em")
-                    .attr("dy", this.xAxis.pivot?"-0.32em":"0.71em")
                     .each(function(d,i){
-                        if(_this.xAxis.repositionLabels == null) return;
                         var view = d3.select(this);
+                
+                        view.attr("transform","rotate("+(_this.xAxis.pivot?-90:0)+")")
+                        view.style("text-anchor", !_this.xAxis.pivot?"middle":"end")
+                        view.attr("dy", _this.xAxis.pivot?".32em":".71em")
+                        view.attr("x", !_this.xAxis.pivot?0:(-_this.xAxis.tickPadding() - _this.xAxis.tickSize()))
+                        view.attr("y", !_this.xAxis.pivot?(_this.xAxis.tickPadding() + _this.xAxis.tickSize()):0)
+                
+                        if(_this.xAxis.repositionLabels == null) return;
                         var shift = _this.xAxis.repositionLabels[i]; 
                         view.attr("x",+view.attr("x") + shift.x);
                         view.attr("y",+view.attr("y") + shift.y);
@@ -195,14 +198,16 @@ define([
             this.yAxisEl
                 .call(this.yAxis)
                 .selectAll("text")
-                    .attr("transform","rotate("+(this.yAxis.pivot?-90:0)+")")
-                    .style("text-anchor", this.yAxis.pivot?"middle":"end")
-                    .attr("dy",this.yAxis.pivot?0:".32em")
-                    .attr("x", this.yAxis.pivot?0:(-this.yAxis.tickPadding() - this.yAxis.tickSize()))
-                    .attr("y", this.yAxis.pivot?(-this.yAxis.tickPadding() - this.yAxis.tickSize()):0)
                     .each(function(d,i){
-                        if(_this.yAxis.repositionLabels == null) return;
                         var view = d3.select(this);
+                
+                        view.attr("transform","rotate("+(_this.yAxis.pivot?-90:0)+")")
+                        view.style("text-anchor", _this.yAxis.pivot?"middle":"end")
+                        view.attr("dy",_this.yAxis.pivot?0:".32em")
+                        view.attr("x", _this.yAxis.pivot?0:(-_this.yAxis.tickPadding() - _this.yAxis.tickSize()))
+                        view.attr("y", _this.yAxis.pivot?(-_this.yAxis.tickPadding() - _this.yAxis.tickSize()):0)
+                        
+                        if(_this.yAxis.repositionLabels == null) return;
                         var shift = _this.yAxis.repositionLabels[i]; 
                         view.attr("x",+view.attr("x") + shift.x);
                         view.attr("y",+view.attr("y") + shift.y);
