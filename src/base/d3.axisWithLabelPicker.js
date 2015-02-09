@@ -113,6 +113,8 @@ define(['d3'], function(d3){
             var labelsStackOnTop = (orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot);
             
             
+            
+            
             // conditions to remove labels altogether
             if(!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit) return axis.tickValues([]);
             if(options.removeAllLabels) return axis.tickValues([]);
@@ -175,6 +177,9 @@ define(['d3'], function(d3){
             }
             
             
+            
+            
+            
             var collisionBetween = function(one, two){
                 if(two==null || two.length == 0) return false;
                 if(!(two instanceof Array))two = [two];
@@ -185,10 +190,10 @@ define(['d3'], function(d3){
                         &&
                         Math.abs(axis.scale()(one) - axis.scale()(two[i]))
                         <
-                        (axis.pivot && orient==VERTICAL || !axis.pivot && orient == HORIZONTAL? 
-                            (options.formatter(one).length+options.formatter(two[i]).length)*options.widthOfOneDigit/2
-                            :
+                        (labelsStackOnTop? 
                             (options.heightOfOneDigit)
+                            :
+                            (options.formatter(one).length+options.formatter(two[i]).length)*options.widthOfOneDigit/2
                         )
                     ) return true; 
                 
@@ -240,16 +245,16 @@ define(['d3'], function(d3){
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
-                            spawn.forEach(function(sGroup, k){
-                                    var trytofit = tickValues.concat( sGroup.map(function(d){return d*stop})
-                                                    .filter(function(d){
-                                                        return !collisionBetween(d,avoidCollidingWith)
-                                                    })                
-                                                    )
-                                                    .filter(onlyUnique);
-                                    if(!labelsFitIntoScale(trytofit, lengthRange)) return;
-                                    tickValues = trytofit;
-                                })
+                            for(var j = 0; j<spawn.length; j++){
+                                
+                                var trytofit = tickValues.concat( spawn[j].map(function(d){return d*stop})
+                                                .filter(function(d){
+                                                    return !collisionBetween(d,avoidCollidingWith);
+                                                })                
+                                                ).filter(onlyUnique);
+                                if(!labelsFitIntoScale(trytofit, lengthRange)) break;
+                                tickValues = trytofit;
+                            }
                             
                             //flatten the spawn array
                             spawn = [].concat.apply([], spawn);
