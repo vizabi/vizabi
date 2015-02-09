@@ -103,7 +103,7 @@ function showState(state, id) {
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 
-    // updateURL();
+    updateURL();
 }
 
 function formatDate(date, unit) {
@@ -150,7 +150,7 @@ function parseURL() {
         options = JSON.parse(hash.replace("#", ""));
 
         var placeholder = $(".placeholder").attr("id");
-        var state = ""; //should be JSON.parse(options.state);
+        var state = JSON.parse(options.state);
 
         url.state = state;
         url.lang = options.lang;
@@ -172,7 +172,7 @@ function shareLink() {
             prompt("Copy the following link: ", response.data.url);
         } else {
             console.log(response);
-            alert("Copy the link from the browser");
+            prompt("Copy the following link: ", window.location);
         }
     });
 
@@ -230,9 +230,9 @@ function viewOnGithub() {
     window.open(github_base + branch + github_tools_prepend + tool_path, '_blank');
 }
 
-parseURL();
 
 $(function() {
+    parseURL();
 
     $('.wrapper-dropdown').each(function() {
         new DropDown($(this));
