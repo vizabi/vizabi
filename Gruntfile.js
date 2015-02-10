@@ -87,7 +87,7 @@ module.exports = function(grunt) {
     //developer task: grunt dev
     grunt.registerTask('dev', [
         'dev-dist', //copies source to dist
-        'connect:livereload', //run locally
+        'connect:dev', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -113,7 +113,7 @@ module.exports = function(grunt) {
     //default task with connect
     grunt.registerTask('serve', [
         'default', //default build
-        'connect:livereload', //run locally
+        'connect:dev', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -256,7 +256,7 @@ module.exports = function(grunt) {
             },
             options: {
                 livereload: {
-                    port: '<%= connect.options.livereload %>'
+                    port: '<%= connect.dev.options.livereload %>'
                 }
             },
             test: {
@@ -266,16 +266,6 @@ module.exports = function(grunt) {
         },
 
         connect: {
-            options: {
-                port: 9000,
-                livereload: 35729,
-                hostname: 'localhost'
-            },
-            livereload: {
-                options: {
-                    open: ['http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/']
-                }
-            },
             test: {
                 options: {
                     port: 8000,
@@ -284,7 +274,15 @@ module.exports = function(grunt) {
                     livereload: 35728,
                     open: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/test.html'
                 }
-            }
+            },
+            dev: {
+                options: {
+                    port: 9000,
+                    livereload: 35729,
+                    hostname: 'localhost',
+                    open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/dist/preview_pages/'
+                }
+            },
         },
 
         requirejs: {
