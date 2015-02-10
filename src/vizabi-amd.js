@@ -1,34 +1,39 @@
 define([], function() {
 
 	var Vizabi = function(tool_path, container, options) {
-    var loaded = false,
+
+    var tool_name = tool_path.split("/").pop(),
+        path = 'tools/' + tool_path + '/' + tool_name,
+        loaded = false,
         viz = {
-            _tool: null,
-            name: null,
-            placeholder: null,
-            setOptions: function(opts, overwrite) {
-                if (tool) tool.setOptions(opts, overwrite);
-            }
-        };
+            _name: tool_name,
+            _placeholder: container,
+            _tool: null
+        },
+        tool;
 
     //require to import all tools, components, etc to AMD version
     require(["plugins"], function() {
 
-        var tool_name = tool_path.split("/").pop(),
-            path = 'tools/' + tool_path + '/' + tool_name;
-
-        // extending options with name and tool's placeholder
-        viz.name = tool_name;
-        viz.placeholder = container;
-
         //require and render tool
         require([path], function(Tool) {
-            viz._tool = new Tool(viz, options);
+            viz._tool = tool = new Tool({
+                name: viz._name,
+                placeholder: viz._placeholder
+            }, options);
+
         });
 
     });
 
     /* Vizabi API Methods*/
+    viz.setOptions = function(opts, overwrite) {
+        if (tool) tool.setOptions(opts, overwrite);
+    };
+    viz.getOptions = function(opts, overwrite) {
+        return (tool) ? tool.model.getObject() : {};
+    };
+
     return viz;
 
 };

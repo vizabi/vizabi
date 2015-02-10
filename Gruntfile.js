@@ -34,25 +34,31 @@ module.exports = function(grunt) {
 
     //default task: grunt
     grunt.registerTask('default', [
-        'build' //by default, just build
+        'build', //by default, just build and test
+        'jasmine:prod',
     ]);
 
     //build and deploy
     grunt.registerTask('build-deploy', [
         'build',
+        'jasmine:prod',
         'deploy'
     ]);
 
-    //build and deploy
+    //testing
     grunt.registerTask('test', function() {
+        grunt.task.run([
+            'build',
+            'jasmine:prod'
+        ]);
+    });
+
+    grunt.registerTask('test:dev', function() {
         grunt.option('force', true);
         grunt.task.run([
             'dev-dist',
-            'jasmine:test:build',
+            'jasmine:dev:build',
             'connect:test', //run locally
-            'jasmine:test',
-            'jasmine:test:build',
-            'watch:test'
         ]);
     });
 
@@ -230,7 +236,7 @@ module.exports = function(grunt) {
             },
             test: {
                 files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
-                tasks: ['jasmine:test:build', 'jasmine:test', 'jasmine:test:build']
+                tasks: ['jasmine:dev']
             }
         },
 
@@ -248,9 +254,10 @@ module.exports = function(grunt) {
             test: {
                 options: {
                     port: 8000,
+                    keepalive: true,
                     hostname: 'localhost',
                     livereload: 35728,
-                    open: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/_SpecRunner.html'
+                    open: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/test.html'
                 }
             }
         },
@@ -305,9 +312,11 @@ module.exports = function(grunt) {
 
         //run tests
         jasmine: {
-            test: {
+            dev: {
                 src: 'dist/vizabi.js',
                 options: {
+                    outfile: 'test.html',
+                    keepRunner: true,
                     specs: 'spec/preview_pages/**/*-spec.js',
                     helpers: 'spec/preview_pages/**/*-helper.js',
                     host: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/',
@@ -318,6 +327,16 @@ module.exports = function(grunt) {
                             baseUrl: 'dist/'
                         }
                     },
+                    styles: ['dist/vizabi.css', 'spec/spec.css'],
+                    vendor: ['dist/preview_pages/assets/jquery.min.js']
+                }
+            },
+            prod: {
+                src: 'dist/vizabi.js',
+                options: {
+                    outfile: 'test.html',
+                    specs: 'spec/preview_pages/**/*-spec.js',
+                    helpers: 'spec/preview_pages/**/*-helper.js',
                     styles: ['dist/vizabi.css', 'spec/spec.css'],
                     vendor: ['dist/preview_pages/assets/jquery.min.js']
                 }

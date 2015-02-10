@@ -137,26 +137,26 @@ describe("_examples/bubble-chart", function() {
         });
     });
 
-    describe("select events", function() {
+    // describe("select events", function() {
 
-        beforeEach(function(done) {
+    //     beforeEach(function(done) {
 
-            viz.setOptions({
-                state: {
-                    entities: {
-                        selected: ['swe', 'nor', 'fin']
-                    }
-                }
-            });
+    //         viz.setOptions({
+    //             state: {
+    //                 entities: {
+    //                     selected: ['swe', 'nor', 'fin']
+    //                 }
+    //             }
+    //         });
 
-            setTimeout(function() {
-                done();
-            }, 200);
-        });
+    //         setTimeout(function() {
+    //             done();
+    //         }, 200);
+    //     });
 
-        it("should select 3 countries", function() {
-            expect($(".vzb-bc-bubble .vzb-bc-selected").length).toEqual(3);
-        });
-    });
+    //     it("should select 3 countries", function() {
+    //         expect($(".vzb-bc-bubble .vzb-bc-selected").length).toEqual(3);
+    //     });
+    // });
 
 });
