@@ -8,3 +8,4 @@ dist/
 /src/assets/style/vizabi.scss
 /src/plugins.js
 .grunt/
+test.html
