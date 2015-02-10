@@ -247,22 +247,31 @@ define(['d3'], function(d3){
                         if(i==0){
                             for(var j = 0; j<spawn.length; j++){
                                 
-                                var trytofit = tickValues.concat( spawn[j].map(function(d){return d*stop})
-                                                .filter(function(d){
-                                                    return !collisionBetween(d,avoidCollidingWith);
-                                                })                
-                                                ).filter(onlyUnique);
-                                if(!labelsFitIntoScale(trytofit, lengthRange)) break;
+                                var trytofit = tickValues
+                                    .concat( 
+                                        spawn[j].map(function(d){return d*stop})
+                                            .filter(function(d){
+                                                return !collisionBetween(d,avoidCollidingWith);
+                                            })
+                                    ).filter(function(d){return min<=d&&d<=max})
+                                    .filter(onlyUnique);
+                                
+                                // stop populating if the labels don't fit 
+                                if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC)) break;
                                 tickValues = trytofit;
                             }
                             
                             //flatten the spawn array
                             spawn = [].concat.apply([], spawn);
                         }else{
-                            var trytofit = tickValues.concat(spawn.map(function(d){return d*stop}))
-                                                    .filter(onlyUnique).filter(function(d){return min<=d&&d<=max});
+                            var trytofit = tickValues
+                                .concat(spawn.map(function(d){return d*stop}))
+                                .filter(function(d){return min<=d&&d<=max})
+                                .filter(onlyUnique);
                             
+                            // stop populating if the labels don't fit
                             if(!labelsFitIntoScale(trytofit, lengthRange)) return;
+                            // stop populating if the number of labels is limited in options
                             if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
                             
                             tickValues = trytofit;
@@ -292,9 +301,7 @@ define(['d3'], function(d3){
 
 
 
-            tickValues = tickValues
-                .filter(function(d, i){ return Math.min(min,max)<=d && d<=Math.max(min,max); })
-                .sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
+            tickValues = tickValues.sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
                 
             } //logarithmic
 
@@ -353,6 +360,8 @@ console.log("final result",tickValues);
         
         
         
+        
+        
         // returns the array of recommended {x,y} shifts
         function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
             if(tickValues==null)return null;
@@ -394,7 +403,6 @@ console.log("final result",tickValues);
                     // we may consider or not the label margins to give them a bit of spacing from the edges
                     //- (dimension=="x") * parseInt(options.cssMarginLeft);
                     //- (dimension=="y") * parseInt(options.cssMarginBottom);
-                    
                 
                 // apply limits to cancel repositioning of labels that are far from the edge
                 if(repositionHead>0)repositionHead=0;
@@ -404,8 +412,6 @@ console.log("final result",tickValues);
                 result[i] = {x:0, y:0};
                 result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
             });
-            
-            
             
 
             // for labels in between: avoid collision with bound labels
@@ -433,9 +439,10 @@ console.log("final result",tickValues);
             });
             
             
-            
             return result;
         }
+        
+        
         
         
         
