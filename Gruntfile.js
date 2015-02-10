@@ -35,13 +35,13 @@ module.exports = function(grunt) {
     //default task: grunt
     grunt.registerTask('default', [
         'build', //by default, just build and test
+        'test:copy',
         'jasmine:prod',
     ]);
 
     //build and deploy
     grunt.registerTask('build-deploy', [
-        'build',
-        'jasmine:prod',
+        'default',
         'deploy'
     ]);
 
@@ -61,6 +61,12 @@ module.exports = function(grunt) {
             'connect:test', //run locally
         ]);
     });
+
+    grunt.registerTask('test:copy', [
+        'jasmine:prod:build',
+        'copy:test',
+        'replace:test',
+    ]);
 
     //developer task: grunt dev
     grunt.registerTask('dev-dist', [
@@ -176,7 +182,26 @@ module.exports = function(grunt) {
                 src: ['**/*.html'],
                 dest: 'dist/',
                 expand: true
+            },
+            /*
+             * copy test files to dist to be able to rerun on stage
+             * this is a very specific task aimed on replaying
+             * a dist version of spec tests only
+             */
+            test: {
+                files: [{
+                    cwd: '.grunt/grunt-contrib-jasmine/',
+                    src: ['**/*'],
+                    dest: 'dist/test/jasmine/',
+                    expand: true
+                }, {
+                    cwd: 'spec/',
+                    src: ['**/*'],
+                    dest: 'dist/test/spec/',
+                    expand: true
+                }]
             }
+
         },
 
         // Uglifying JS files
@@ -272,6 +297,29 @@ module.exports = function(grunt) {
                     optimize: "uglify",
                     generateSourceMaps: false,
                 }
+            }
+        },
+
+        replace: {
+            test: {
+                options: {
+                    patterns: [{
+                        match: /.grunt\/grunt-contrib-jasmine\//g,
+                        replacement: 'test/jasmine/'
+                    },{
+                        match: /spec\//g,
+                        replacement: 'test/spec/'
+                    }, {
+                        match: /dist\//g,
+                        replacement: ''
+                    }]
+                },
+                files: [{
+                    expand: true,
+                    flatten: true,
+                    src: ['test.html'],
+                    dest: 'dist/'
+                }]
             }
         },
 

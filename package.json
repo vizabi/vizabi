@@ -37,6 +37,7 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-gitinfo": "~0.1.6",
     "grunt-include-replace": "~2.0.0",
+    "grunt-replace": "^0.8.0",
     "grunt-template-jasmine-requirejs": "^0.2.0",
     "load-grunt-tasks": "^0.4.0",
     "phantomjs": "^1.9.15"

@@ -11,20 +11,20 @@ body {
     left: 0;
 }
 
-/*#test-placeholder {
-	position: absolute !important;
-    width: 320px;
-    height: 460px;
-    bottom: 0;
-    right: 30%;
-    left: 0;
-}*/
-
 #test-placeholder {
 	position: absolute !important;
     top: 0;
     bottom: 0;
     right: 0;
+    left: 0;
+}
+
+#test-placeholder.mobile {
+    position: absolute !important;
+    width: 320px;
+    height: 460px;
+    bottom: 0;
+    right: 30%;
     left: 0;
 }
 
