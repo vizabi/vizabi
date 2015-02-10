@@ -65,6 +65,7 @@ describe("_examples/pop-slider", function() {
 
     beforeEach(function(done) {
         viz = initializeVizabi("_examples/pop-slider", options, done);
+        mobile(true); //test with mobile resolution;
     });
 
     it("should exist", function() {

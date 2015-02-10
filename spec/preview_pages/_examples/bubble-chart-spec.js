@@ -89,6 +89,7 @@ describe("_examples/bubble-chart", function() {
 
     beforeEach(function(done) {
         viz = initializeVizabi("_examples/bubble-chart", options, done);
+        mobile(true); //test with mobile resolution;
     });
 
     it("should exist", function() {

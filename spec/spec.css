@@ -1,33 +1,29 @@
 body {
-	font-family: Arial, sans-serif;
-	overflow: hidden;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
 }
-
 #test-wrapper {
-	position: absolute !important;
+    position: absolute !important;
     top: 0;
     bottom: 0;
     right: 30%;
     left: 0;
 }
-
 #test-placeholder {
-	position: absolute !important;
+    position: absolute !important;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
 }
-
 #test-placeholder.mobile {
-    position: absolute !important;
+    position: relative !important;
     width: 320px;
-    height: 460px;
-    bottom: 0;
-    right: 30%;
-    left: 0;
+    height: 568px;
+    margin: 30px auto;
+    border: 30px solid #eeeeee;
+    border-radius: 30px;
 }
-
 .jasmine_html-reporter {
     position: absolute;
     top: 0;

@@ -30,6 +30,25 @@ function initializeVizabi(viz, options, done) {
     return vizabi;
 }
 
+function mobile(bool, orientation) {
+
+    var placeholder = $("#test-placeholder");
+    if(bool) {
+        placeholder.addClass('mobile');
+        if(!orientation) orientation = "portrait";
+        if(orientation === 'landscape') {
+            placeholder.addClass('landscape');
+        }
+        else {
+            placeholder.removeClass('landscape');
+        }
+    }
+    else {
+        placeholder.addClass('mobile');
+        placeholder.removeClass('landscape');
+    }
+}
+
 function mapReady(model) {
     var map = {};
     for (var i in model._data) {
