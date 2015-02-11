@@ -256,11 +256,12 @@ $(window).keydown(function (e){
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
     
-    if (String.fromCharCode(charCode) == "r"||
-        String.fromCharCode(charCode) == "R") randomSize('axis-labeler');
+    if(!e.shiftKey && !e.altKey && !e.ctrlKey){
+        if (String.fromCharCode(charCode) == "r"||
+            String.fromCharCode(charCode) == "R") randomSize('axis-labeler');
+    }
     
     if(e.shiftKey && !e.altKey ){
-        
         if (String.fromCharCode(charCode) == "W") setToolMargin("+1","bottom");
         if (String.fromCharCode(charCode) == "S") setToolMargin("-1","bottom");
         if (String.fromCharCode(charCode) == "D") setToolMargin("+1","left");
@@ -279,10 +280,14 @@ $(window).keydown(function (e){
     }
     
     if(!e.shiftKey && !e.altKey ){
-        if (String.fromCharCode(charCode) == "w") setLabelMargin("+1","TB");
-        if (String.fromCharCode(charCode) == "s") setLabelMargin("-1","TB");
-        if (String.fromCharCode(charCode) == "d") setLabelMargin("+1","LR");
-        if (String.fromCharCode(charCode) == "a") setLabelMargin("-1","LR");
+        if (String.fromCharCode(charCode) == "w" ||
+            String.fromCharCode(charCode) == "W") setLabelMargin("+1","TB");
+        if (String.fromCharCode(charCode) == "s" ||
+            String.fromCharCode(charCode) == "S") setLabelMargin("-1","TB");
+        if (String.fromCharCode(charCode) == "d" ||
+            String.fromCharCode(charCode) == "D") setLabelMargin("+1","LR");
+        if (String.fromCharCode(charCode) == "a" ||
+            String.fromCharCode(charCode) == "A") setLabelMargin("-1","LR");
     }
     
     if (String.fromCharCode(charCode) == "x"||

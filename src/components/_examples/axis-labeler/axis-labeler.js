@@ -147,7 +147,7 @@ define([
                     cssMarginTop:    this.model.show.labelMargin.TB,
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
-                   // showOuter: false,
+                    
                     pivotingLimit: margin.bottom,
                     isPivotAuto: true,
                    // formatterRemovePrefix: true,
@@ -167,7 +167,7 @@ define([
                     cssMarginTop:    this.model.show.labelMargin.TB,
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
-                    //showOuter: false,
+                    showOuter: true,
                     pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
                    // formatterRemovePrefix: true,

@@ -132,8 +132,7 @@ define(['d3'], function(d3){
             console.log("********** "+orient+" **********");
             console.log("min max ", min, max);
             console.log("w h of one digit " + options.widthOfOneDigit + " " + options.heightOfOneDigit);
-            console.log("margins LRTB: " + options.cssMarginLeft + " " + options.cssMarginRight + " " + options.cssMarginTop + " " + options.cssMarginBottom);
-
+            
 
 
             var getBaseLog = function(x, base) {
@@ -286,19 +285,19 @@ define(['d3'], function(d3){
                     tickValues = tickValues.concat(bothSidesUsed? [0]:[]);
                     var avoidCollidingWith = tickValues;
 
-                    // check if spawn positive is needed. if yes then spawn!
 //                    var startPos = max<eps? null :
 //                    Math.pow(options.logBase,  Math.floor(
 //                        (Math.ceil(getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))))
 //                        *options.doublingOriginAtFraction
 //                    ) )
 
-                    // check if spawn negative is needed. if yes then spawn!
 //                    var startNeg = min>-eps? null :
 //                    - Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))))*options.doublingOriginAtFraction) )
 
-                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
-                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
+//                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
+//                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
+                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
+                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -309,11 +308,11 @@ define(['d3'], function(d3){
                         .sort(d3.ascending)
                         .filter(function(d){return min<=d&&d<=max}) 
                     
-                    console.log("nonprioritized",JSON.stringify(doublingLabels))
+                    //console.log("nonprioritized",JSON.stringify(doublingLabels))
                 
                     doublingLabels = groupByPriorities(doublingLabels,0);
                     
-                    console.log("prioritized",JSON.stringify(doublingLabels))
+                    //console.log("prioritized",JSON.stringify(doublingLabels))
                     
                     var save = [];
                     for(var j = 0; j<doublingLabels.length; j++){
@@ -321,6 +320,7 @@ define(['d3'], function(d3){
                         // compose an attempt to add more axis labels    
                         var trytofit = tickValues.concat(doublingLabels[j])
                             .filter(function(d){return !collisionBetween(d,avoidCollidingWith);})
+                            .filter(onlyUnique)
                         
 
                         // stop populating if labels don't fit 
