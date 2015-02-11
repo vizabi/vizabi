@@ -285,27 +285,31 @@ define(['d3'], function(d3){
                     tickValues = tickValues.concat(bothSidesUsed? [0]:[]);
                     var avoidCollidingWith = tickValues;
 
-                    var startPos = max<eps? null :
-                    Math.pow(options.logBase,  Math.floor(
-                        (Math.ceil(
-                            getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))*options.doublingOriginAtFraction
-                        ))
-                        
-                    ) )
+//                    var startPos = max<eps? null :
+//                    Math.pow(options.logBase,  Math.floor(
+//                        (Math.ceil(
+//                            getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))*options.doublingOriginAtFraction
+//                        ))
+//                        
+//                    ) )
+//                    max;
 
-                    var startNeg = min>-eps? null :
-                    - Math.pow(options.logBase,  Math.floor(
-                        (Math.ceil(
-                            getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))*options.doublingOriginAtFraction
-                        ))
-                    ) )
+//                    var startNeg = min>-eps? null :
+//                    - Math.pow(options.logBase,  Math.floor(
+//                        (Math.ceil(
+//                            getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))*options.doublingOriginAtFraction
+//                        ))
+//                    ) )
+//                    min;
 
+                                
 //                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
 //                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
-//                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
-//                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
+                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
+                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
   
                     
+ //                   console.log(options.doublingOriginAtFraction, startPos, startNeg);
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -376,7 +380,11 @@ console.log("final result",tickValues);
         // example1: [1 2 3 4 5 6 7] --> [[1][4 7][2 3 5 6]]
         // example2: [1 2 3 4 5 6 7 8 9] --> [[1][5 9][3 7][2 4 6 8]]
         // example3: [-4 -3 -2 -1 0 1 2 3 4 5 6 7] --> [[0][-4][2][-1 5][-3 -2 1 3 4 6 7]]
-        // returns the nested array
+        // inputs:
+        // array - the source array to be processed. Only makes sense if sorted
+        // removeDuplicates - return incremental groups (true, default), or return concatinated result (false)
+        // returns:
+        // the nested array
         function groupByPriorities(array, removeDuplicates){
             if(removeDuplicates==null) removeDuplicates = true;
 
