@@ -72,7 +72,7 @@ define(['d3'], function(d3){
             if(options.toolMargin==null) options.toolMargin = {left: 5, bottom: 5, right: 5, top: 5};
 
             if(options.tickSpacing==null)options.tickSpacing = 50;
-            if(options.showOuter==null)options.showOuter = true;
+            if(options.showOuter==null)options.showOuter = false;
             if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
 
             var orient = this.orient()=="top"||this.orient()=="bottom"?HORIZONTAL:VERTICAL;
@@ -211,7 +211,6 @@ define(['d3'], function(d3){
                 var delta = axis.scale().delta();
                 var bothSidesUsed = (min<0 && max >0);
 
-//                if(min<=0 && max>=0)tickValues.push(0);
                 if(options.showOuter)tickValues.push(max);
                 if(options.showOuter)tickValues.push(min);
 
@@ -240,69 +239,105 @@ define(['d3'], function(d3){
                         );
                     
                     
-                    var spawn = groupByDoublingPace( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
+                    var spawn = groupByPriorities( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
                     var avoidCollidingWith = spawnZero.concat(tickValues);
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
                             for(var j = 0; j<spawn.length; j++){
                                 
+                                // compose an attempt to add more axis labels    
                                 var trytofit = tickValues
-                                    .concat( 
-                                        spawn[j].map(function(d){return d*stop})
-                                            .filter(function(d){
-                                                return !collisionBetween(d,avoidCollidingWith);
-                                            })
-                                    ).filter(function(d){return min<=d&&d<=max})
+                                    .concat(spawn[j].map(function(d){return d*stop}))
+                                    // throw away labels that collide with "special" labels 0, min, max
+                                    .filter(function(d){return !collisionBetween(d,avoidCollidingWith);})
+                                    .filter(function(d){return min<=d&&d<=max})
                                     .filter(onlyUnique);
                                 
-                                // stop populating if the labels don't fit 
+                                // stop populating if labels don't fit 
                                 if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC)) break;
+                                
+                                // apply changes if no blocking instructions
                                 tickValues = trytofit;
                             }
                             
                             //flatten the spawn array
                             spawn = [].concat.apply([], spawn);
                         }else{
+                            // compose an attempt to add more axis labels
                             var trytofit = tickValues
                                 .concat(spawn.map(function(d){return d*stop}))
                                 .filter(function(d){return min<=d&&d<=max})
                                 .filter(onlyUnique);
                             
-                            // stop populating if the labels don't fit
+                            // stop populating if the new composition doesn't fit
                             if(!labelsFitIntoScale(trytofit, lengthRange)) return;
                             // stop populating if the number of labels is limited in options
                             if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
                             
+                            // apply changes if no blocking instructions
                             tickValues = trytofit;
                         }
                     })
 
 
                 }else if(options.method == this.METHOD_DOUBLING) {
+                    var doublingLabels = [];
+                    tickValues = tickValues.concat(bothSidesUsed? [0]:[]);
+                    var avoidCollidingWith = tickValues;
 
                     // check if spawn positive is needed. if yes then spawn!
-                    var startPos = max<eps? null :
-                    Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))))*options.doublingOriginAtFraction) )
+//                    var startPos = max<eps? null :
+//                    Math.pow(options.logBase,  Math.floor(
+//                        (Math.ceil(getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))))
+//                        *options.doublingOriginAtFraction
+//                    ) )
 
                     // check if spawn negative is needed. if yes then spawn!
-                    var startNeg = min>-eps? null :
-                    - Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))))*options.doublingOriginAtFraction) )
+//                    var startNeg = min>-eps? null :
+//                    - Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))))*options.doublingOriginAtFraction) )
 
+                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
+                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
 
-                    if(startPos){ for(var l=startPos; l<max; l*=2) tickValues.push(l);}
-                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) tickValues.push(l);}
-                    if(startNeg){ for(var l=startNeg; l>min; l*=2) tickValues.push(l);}
-                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) tickValues.push(l);}
+                    if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
+                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
+                    if(startNeg){ for(var l=startNeg; l>=min; l*=2) doublingLabels.push(l);}
+                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) doublingLabels.push(l);}
+                                        
+                    doublingLabels = doublingLabels
+                        .sort(d3.ascending)
+                        .filter(function(d){return min<=d&&d<=max}) 
+                    
+                    console.log("nonprioritized",JSON.stringify(doublingLabels))
+                
+                    doublingLabels = groupByPriorities(doublingLabels,0);
+                    
+                    console.log("prioritized",JSON.stringify(doublingLabels))
+                    
+                    var save = [];
+                    for(var j = 0; j<doublingLabels.length; j++){
+
+                        // compose an attempt to add more axis labels    
+                        var trytofit = tickValues.concat(doublingLabels[j])
+                            .filter(function(d){return !collisionBetween(d,avoidCollidingWith);})
+                        
+
+                        // stop populating if labels don't fit 
+                        if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+                        
+                        
+                        save = trytofit
+                    }
+
+                        // apply changes if no blocking instructions
+                        tickValues = save;
+                    
 
                 }
-
-
-
-
-
-            tickValues = tickValues.sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
                 
+                
+                if(tickValues.length==0)tickValues = [min, max];
             } //logarithmic
 
             
@@ -317,6 +352,7 @@ define(['d3'], function(d3){
 
 console.log("final result",tickValues);
             
+            if(tickValues!=null) tickValues.sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
             axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
 
             return axis
@@ -328,12 +364,20 @@ console.log("final result",tickValues);
         
         
         
-        // NEST ELEMENTS BY DOUBLING THEIR POSITIONS
+        // GROUP ELEMENTS OF AN ARRAY, SO THAT...
+        // less-prio elements are between the high-prio elements
+        // Purpose: enable adding axis labels incrementally, like this for 9 labels:
+        // PRIO 1: +--------, concat result: +-------- first we show only 1 label
+        // PRIO 2: ----+---+, concat result: +---+---+ then we add 2 more, that are maximally spaced
+        // PRIO 3: --+---+--, concat result: +-+-+-+-+ then we fill spaces with 2 more labels
+        // PRIO 4: -+-+-+-+-, concat result: +++++++++ then we fill the remaing spaces and show all labels
+        // exception: zero jumps to the front, if it's on the list
         // example1: [1 2 3 4 5 6 7] --> [[1][4 7][2 3 5 6]]
         // example2: [1 2 3 4 5 6 7 8 9] --> [[1][5 9][3 7][2 4 6 8]]
         // example3: [-4 -3 -2 -1 0 1 2 3 4 5 6 7] --> [[0][-4][2][-1 5][-3 -2 1 3 4 6 7]]
         // returns the nested array
-        function groupByDoublingPace(array){
+        function groupByPriorities(array, removeDuplicates){
+            if(removeDuplicates==null) removeDuplicates = true;
 
             var result = [];
             var taken = [];
@@ -347,7 +391,7 @@ console.log("final result",tickValues);
             for(var k = array.length; k>=1; k/=2){
                 // push the next group of elements to the result
                 result.push(array.filter(function(d,i){
-                    if(i % Math.floor(k) == 0 && taken.indexOf(i)==-1){
+                    if(i % Math.floor(k) == 0 && (taken.indexOf(i)==-1 || !removeDuplicates)){
                         taken.push(i);
                         return true;
                     }
@@ -362,11 +406,29 @@ console.log("final result",tickValues);
         
         
         
+        
+        
+        
+        // REPOSITION LABELS THAT STICK OUT
+        // Purpose: the outer labels can easily be so large, they stick out of the allotted area
+        // Example:
+        // Label is fine:    Label sticks out:    Label sticks out more:    Solution - label is shifted:
+        //      12345 |           1234|                123|5                   12345|          
+        // _______.   |      _______. |           _______.|                 _______.|          
+        // 
+        // this is what the function does on the first step (only outer labels)
+        // on the second step it shifts the inner labels that start to overlap with the shifted outer labels
+        // 
+        // requires tickValues array to be sorted from tail-first
+        // tail means left or bottom, head means top or right
+        //
         // returns the array of recommended {x,y} shifts
+        
         function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
             if(tickValues==null)return null;
                 
             // make an abstraction layer for margin sizes
+            // tail means left or bottom, head means top or right
             var margin = 
                 orient==VERTICAL?
                 {head: options.toolMargin.top, tail: options.toolMargin.bottom}
@@ -374,13 +436,14 @@ console.log("final result",tickValues);
                 {head: options.toolMargin.right, tail: options.toolMargin.left};
             
             // check which dimension requires shifting
+            // X if labels stack side by side, Y if labels stack on top of one another
             var dimension = (pivot&&orient==VERTICAL || !pivot&&orient==HORIZONTAL)? "x":"y";
             
             var result = {};
-            
-            
                         
-            // for boundary labels: avoid sticking out from the tool margin
+               
+            // STEP 1:
+            // for outer labels: avoid sticking out from the tool margin
             tickValues.forEach(function(d,i){
                 if(i!=0 && i!=tickValues.length-1) return;
                 
@@ -404,7 +467,7 @@ console.log("final result",tickValues);
                     //- (dimension=="x") * parseInt(options.cssMarginLeft);
                     //- (dimension=="y") * parseInt(options.cssMarginBottom);
                 
-                // apply limits to cancel repositioning of labels that are far from the edge
+                // apply limits in order to cancel repositioning of labels that are good
                 if(repositionHead>0)repositionHead=0;
                 if(repositionTail>0)repositionTail=0;
                 
@@ -414,33 +477,37 @@ console.log("final result",tickValues);
             });
             
 
-            // for labels in between: avoid collision with bound labels
+            // STEP 2:
+            // for inner labels: avoid collision with outer labels
             tickValues.forEach(function(d,i){
                 if(i==0 || i==tickValues.length-1) return;
                 
+                // compute the influence of the head-side outer label
                 var repositionHead = 
                     Math.abs(scale(d) - scale(tickValues[tickValues.length-1]) + result[tickValues.length-1][dimension])
                     - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length-1]).length
                     - (dimension=="y") * options.heightOfOneDigit * 0.7;
 
+                // compute the influence of the tail-side outer label
                 var repositionTail = 
                     Math.abs(scale(d) - scale(tickValues[0]) + result[0][dimension])
                     - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length
                     - (dimension=="y") * options.heightOfOneDigit * 0.7;
                 
-                // apply limits to cancel repositioning of labels that are far from the edge
+                // apply limits in order to cancel repositioning of labels that are good
                 if(repositionHead>0)repositionHead=0;
                 if(repositionTail>0)repositionTail=0;
                 
+                // add them up with appropriate signs, save to the axis
                 result[i] = {x:0, y:0};
                 result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
             });
             
             
             return result;
-        }
+        } // function repositionLabelsThatStickOut()
         
         
         
