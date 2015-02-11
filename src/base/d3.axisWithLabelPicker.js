@@ -182,10 +182,10 @@ define(['d3'], function(d3){
             var collisionBetween = function(one, two){
                 if(two==null || two.length == 0) return false;
                 if(!(two instanceof Array))two = [two];
-                
+            
                 for(var i = 0; i<two.length; i++){
                     if( 
-                        one != two[i]
+                        one != two[i] && one != 0
                         &&
                         Math.abs(axis.scale()(one) - axis.scale()(two[i]))
                         <
@@ -285,19 +285,27 @@ define(['d3'], function(d3){
                     tickValues = tickValues.concat(bothSidesUsed? [0]:[]);
                     var avoidCollidingWith = tickValues;
 
-//                    var startPos = max<eps? null :
-//                    Math.pow(options.logBase,  Math.floor(
-//                        (Math.ceil(getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))))
-//                        *options.doublingOriginAtFraction
-//                    ) )
+                    var startPos = max<eps? null :
+                    Math.pow(options.logBase,  Math.floor(
+                        (Math.ceil(
+                            getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))*options.doublingOriginAtFraction
+                        ))
+                        
+                    ) )
 
-//                    var startNeg = min>-eps? null :
-//                    - Math.pow(options.logBase,  Math.floor((Math.ceil(getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))))*options.doublingOriginAtFraction) )
+                    var startNeg = min>-eps? null :
+                    - Math.pow(options.logBase,  Math.floor(
+                        (Math.ceil(
+                            getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))*options.doublingOriginAtFraction
+                        ))
+                    ) )
 
 //                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
 //                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
-                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
-                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
+//                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
+//                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
+  
+                    
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -308,31 +316,23 @@ define(['d3'], function(d3){
                         .sort(d3.ascending)
                         .filter(function(d){return min<=d&&d<=max}) 
                     
-                    //console.log("nonprioritized",JSON.stringify(doublingLabels))
-                
-                    doublingLabels = groupByPriorities(doublingLabels,0);
+                    doublingLabels = groupByPriorities(doublingLabels,false); // don't skip taken values
                     
-                    //console.log("prioritized",JSON.stringify(doublingLabels))
-                    
-                    var save = [];
+                    var tickValues_1 = tickValues;
                     for(var j = 0; j<doublingLabels.length; j++){
 
                         // compose an attempt to add more axis labels    
-                        var trytofit = tickValues.concat(doublingLabels[j])
-                            .filter(function(d){return !collisionBetween(d,avoidCollidingWith);})
+                        var trytofit = tickValues_1.concat(doublingLabels[j])
+                            .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
                             .filter(onlyUnique)
                         
-
                         // stop populating if labels don't fit 
                         if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
                         
-                        
-                        save = trytofit
+                        // apply changes if no blocking instructions
+                        tickValues = trytofit
                     }
 
-                        // apply changes if no blocking instructions
-                        tickValues = save;
-                    
 
                 }
                 
@@ -350,11 +350,12 @@ define(['d3'], function(d3){
 
 
 
-console.log("final result",tickValues);
             
             if(tickValues!=null) tickValues.sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
             axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
 
+console.log("final result",tickValues);
+            
             return axis
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
