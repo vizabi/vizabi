@@ -1,0 +1,19 @@
+.vzb-tool-data-loading-2 {
+	@extend .vzb-tool;
+
+	@include absoluteAll;
+    padding: 30px;
+    text-align: center;
+    
+    h2 {
+        font-family: $vzb-font-family;
+        color: $vzb-color-primary;
+        margin: 0px;
+    }
+    p {
+        font-size: 14px;
+        line-height: 1.5em;
+    }
+	
+    @import '../../../components/_examples/display-graph/display-graph';
+}
