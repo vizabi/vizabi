@@ -252,13 +252,15 @@ listData.forEach(function(d,i){
 
 
 
-window.onkeypress = function(e) {
+$(window).keydown(function (e){
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
     
-    if (String.fromCharCode(charCode) == "r") randomSize('axis-labeler');
+    if (String.fromCharCode(charCode) == "r"||
+        String.fromCharCode(charCode) == "R") randomSize('axis-labeler');
     
     if(e.shiftKey && !e.altKey ){
+        
         if (String.fromCharCode(charCode) == "W") setToolMargin("+1","bottom");
         if (String.fromCharCode(charCode) == "S") setToolMargin("-1","bottom");
         if (String.fromCharCode(charCode) == "D") setToolMargin("+1","left");
@@ -266,10 +268,14 @@ window.onkeypress = function(e) {
     }
     
     if(e.shiftKey && e.altKey ){
-        if (charCode == 8222) setToolMargin("+1","top"); // alt + shift + W
-        if (charCode == 205 ) setToolMargin("-1","top"); // alt + shift + S
-        if (charCode == 206 ) setToolMargin("+1","right"); // alt + shift + D
-        if (charCode == 197 ) setToolMargin("-1","right"); // alt + shift + A
+        if (String.fromCharCode(charCode) == "W" ||
+            charCode == 8222) setToolMargin("+1","top"); // alt + shift + W
+        if (String.fromCharCode(charCode) == "S" ||
+            charCode == 205 ) setToolMargin("-1","top"); // alt + shift + S
+        if (String.fromCharCode(charCode) == "D" ||
+            charCode == 206 ) setToolMargin("+1","right"); // alt + shift + D
+        if (String.fromCharCode(charCode) == "A" ||
+            charCode == 197 ) setToolMargin("-1","right"); // alt + shift + A
     }
     
     if(!e.shiftKey && !e.altKey ){
@@ -279,12 +285,19 @@ window.onkeypress = function(e) {
         if (String.fromCharCode(charCode) == "a") setLabelMargin("-1","LR");
     }
     
-    if (String.fromCharCode(charCode) == "x") setLabelSize("+1");
-    if (String.fromCharCode(charCode) == "z") setLabelSize("-1");
+    if (String.fromCharCode(charCode) == "x"||
+        String.fromCharCode(charCode) == "X") setLabelSize("+1");
+    if (String.fromCharCode(charCode) == "z"||
+        String.fromCharCode(charCode) == "Z") setLabelSize("-1");
     
-    if (String.fromCharCode(charCode) == "q" || String.fromCharCode(charCode) == "e") {
-        if (String.fromCharCode(charCode) == "e") listPointer++;
-        if (String.fromCharCode(charCode) == "q") listPointer--;
+    if (String.fromCharCode(charCode) == "q" || 
+        String.fromCharCode(charCode) == "e" ||
+        String.fromCharCode(charCode) == "Q" ||
+        String.fromCharCode(charCode) == "E") {
+        if (String.fromCharCode(charCode) == "e" ||
+            String.fromCharCode(charCode) == "E") listPointer++;
+        if (String.fromCharCode(charCode) == "q" ||
+            String.fromCharCode(charCode) == "Q") listPointer--;
         if(listPointer==listData.length)listPointer=0;
         if(listPointer==-1)listPointer=listData.length-1;
 
@@ -292,7 +305,7 @@ window.onkeypress = function(e) {
         setDomain(d);
         $("#listLabel").text(JSON.stringify(d));
     }
-};
+})
 
 </script>
 

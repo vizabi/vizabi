@@ -484,17 +484,29 @@ console.log("final result",tickValues);
                 
                 // compute the influence of the head-side outer label
                 var repositionHead = 
-                    Math.abs(scale(d) - scale(tickValues[tickValues.length-1]) + result[tickValues.length-1][dimension])
-                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
-                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length-1]).length
-                    - (dimension=="y") * options.heightOfOneDigit * 0.7;
+                    Math.abs(scale(d) 
+                        - scale(tickValues[tickValues.length-1]) 
+                        + result[tickValues.length-1][dimension]
+                    )
+                    - (dimension=="x") * options.widthOfOneDigit / 2 
+                        * options.formatter(d).length
+                    - (dimension=="x") * options.widthOfOneDigit / 2 
+                        * options.formatter(tickValues[tickValues.length-1]).length
+                    - (dimension=="y") * options.heightOfOneDigit 
+                        * 0.7;
 
                 // compute the influence of the tail-side outer label
                 var repositionTail = 
-                    Math.abs(scale(d) - scale(tickValues[0]) + result[0][dimension])
-                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(d).length
-                    - (dimension=="x") * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length
-                    - (dimension=="y") * options.heightOfOneDigit * 0.7;
+                    Math.abs(scale(d) 
+                        - scale(tickValues[0]) 
+                        + result[0][dimension]
+                    )
+                    - (dimension=="x") * options.widthOfOneDigit / 2 
+                        * options.formatter(d).length
+                    - (dimension=="x") * options.widthOfOneDigit / 2 
+                        * options.formatter(tickValues[0]).length
+                    - (dimension=="y") * options.heightOfOneDigit 
+                        0.7;
                 
                 // apply limits in order to cancel repositioning of labels that are good
                 if(repositionHead>0)repositionHead=0;
