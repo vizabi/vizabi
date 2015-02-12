@@ -348,14 +348,16 @@ define(['d3'], function(d3){
             
             
             if(options.scaleType=="linear"){
-                tickValues = null;
                 ticksNumber = Math.max(lengthRange / options.tickSpacing, 2);
+                tickValues = axis.scale().ticks.apply(axis.scale(), [ticksNumber]);
             }
 
 
 
             
-            if(tickValues!=null) tickValues.sort(function(a,b){return axis.scale()(b) - axis.scale()(a)});
+            if(tickValues!=null) tickValues.sort(function(a,b){
+                return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
+            });
             axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
 
 console.log("final result",tickValues);
@@ -482,7 +484,7 @@ console.log("final result",tickValues);
                 
                 // add them up with appropriate signs, save to the axis
                 result[i] = {x:0, y:0};
-                result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
+                result[i][dimension] = (dimension=="y" && orient==VERTICAL?-1:1) * (repositionHead - repositionTail);
             });
             
 
@@ -495,27 +497,27 @@ console.log("final result",tickValues);
                 var repositionHead = 
                     Math.abs(scale(d) 
                         - scale(tickValues[tickValues.length-1]) 
-                        + result[tickValues.length-1][dimension]
+                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[tickValues.length-1][dimension]
                     )
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(tickValues[tickValues.length-1]).length
                     - (dimension=="y") * options.heightOfOneDigit 
-                        * 0.7;
+                        * 0.7; //TODO remove magic constant - relation of actual font height to BBox-measured height
 
                 // compute the influence of the tail-side outer label
                 var repositionTail = 
                     Math.abs(scale(d) 
                         - scale(tickValues[0]) 
-                        + result[0][dimension]
+                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[0][dimension]
                     )
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(tickValues[0]).length
                     - (dimension=="y") * options.heightOfOneDigit 
-                        0.7;
+                        * 0.7; //TODO remove magic constant - relation of actual font height to BBox-measured height
                 
                 // apply limits in order to cancel repositioning of labels that are good
                 if(repositionHead>0)repositionHead=0;
@@ -523,7 +525,7 @@ console.log("final result",tickValues);
                 
                 // add them up with appropriate signs, save to the axis
                 result[i] = {x:0, y:0};
-                result[i][dimension] = (dimension=="y"?-1:1) * (repositionHead - repositionTail);
+                result[i][dimension] = (dimension=="y" && orient==VERTICAL?-1:1) * (repositionHead - repositionTail);
             });
             
             
@@ -539,3 +541,12 @@ console.log("final result",tickValues);
     }; //d3.svg.axisSmart = function(){
 
 }); //define(['d3'], function(d3){
+
+
+log = function(l1,l2,l3,l4,l5){
+    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
+    if(l4!=null){console.log(l1,l2,l3,l4); return;}
+    if(l3!=null){console.log(l1,l2,l3); return;}
+    if(l2!=null){console.log(l1,l2); return;}
+    if(l1!=null){console.log(l1); return;}
+}
