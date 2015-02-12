@@ -270,13 +270,13 @@ $(window).keydown(function (e){
     
     if(e.shiftKey && e.altKey ){
         if (String.fromCharCode(charCode) == "W" ||
-            charCode == 8222) setToolMargin("+1","top"); // alt + shift + W
+            charCode == 8222) setToolMargin("-1","top"); // alt + shift + W
         if (String.fromCharCode(charCode) == "S" ||
-            charCode == 205 ) setToolMargin("-1","top"); // alt + shift + S
+            charCode == 205 ) setToolMargin("+1","top"); // alt + shift + S
         if (String.fromCharCode(charCode) == "D" ||
-            charCode == 206 ) setToolMargin("+1","right"); // alt + shift + D
+            charCode == 206 ) setToolMargin("-1","right"); // alt + shift + D
         if (String.fromCharCode(charCode) == "A" ||
-            charCode == 197 ) setToolMargin("-1","right"); // alt + shift + A
+            charCode == 197 ) setToolMargin("+1","right"); // alt + shift + A
     }
     
     if(!e.shiftKey && !e.altKey ){
