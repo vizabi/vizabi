@@ -20,8 +20,10 @@ define(['d3'], function(d3){
             this.METHOD_DOUBLING = 'doubling the value';
 
             if(options==null) options = {}
-            if(options.scaleType!="linear"&&options.scaleType!="genericLog") {
-                console.warn('please set scaleType. the only supported values are "linear" or "genericLog"'); 
+            if(options.scaleType!="linear"&&
+               options.scaleType!="genericLog"&&
+               options.scaleType!="log") {
+                console.warn('please set scaleType. the only supported values are "linear", "log" or "genericLog"'); 
                 return axis;
             };
             if(options.scaleType=='ordinal') return axis.tickValues(null);
@@ -104,6 +106,8 @@ console.log("********** "+orient+" **********");
             var min = d3.min([domain[0],domain[domain.length-1]]);
             var max = d3.max([domain[0],domain[domain.length-1]]);
             var bothSidesUsed = (min<0 && max >0);
+            
+            if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
             var tickValues = options.showOuter?[min, max]:[];
             var ticksNumber = 5;
@@ -151,6 +155,7 @@ console.log("********** "+orient+" **********");
             // approximationStyle can be OPTIMISTIC or PESSIMISTIC
             // in optimistic style the length of every label is added up and then we check if the total pack of symbols fit
             // in pessimistic style we assume all labels have the length of the longest label from tickValues
+            // returns TRUE if labels fit and FALSE otherwise
             var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle){
                 if (approximationStyle==null) approximationStyle = PESSIMISTIC;
                 
@@ -185,6 +190,10 @@ console.log("********** "+orient+" **********");
             
             
             
+            // COLLISION BETWEEN
+            // Check is there is a collision between labels ONE and TWO
+            // ONE is a value, TWO can be a value or an array
+            // returns TRUE if collision takes place and FALSE otherwise
             var collisionBetween = function(one, two){
                 if(two==null || two.length == 0) return false;
                 if(!(two instanceof Array))two = [two];
@@ -211,8 +220,8 @@ console.log("********** "+orient+" **********");
             
 
 
-            if(options.scaleType=="genericLog"){
-                var eps = axis.scale().eps();
+            if(options.scaleType=="genericLog" || options.scaleType=="log"){
+                var eps = axis.scale().eps ? axis.scale().eps() : 0;
 
 
                 if(options.method == this.METHOD_REPEATING){
