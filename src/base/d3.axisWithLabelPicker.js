@@ -6,6 +6,12 @@ define(['d3'], function(d3){
         var OPTIMISTIC = 'optimistic approximation: labels have different lengths';
         var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
         var DEFAULT_LOGBASE = 10;
+        
+        
+
+        function onlyUnique(value, index, self) {
+            return self.indexOf(value) === index;
+        }
 
         var _super = d3.svg.axis();
         _super.smartLabeler = function(options){
@@ -14,7 +20,10 @@ define(['d3'], function(d3){
             this.METHOD_DOUBLING = 'doubling the value';
 
             if(options==null) options = {}
-            if(options.scaleType==null) {console.warn('please set scaleType to "lin", "log", "ordinal"'); return axis;};
+            if(options.scaleType!="linear"&&options.scaleType!="genericLog") {
+                console.warn('please set scaleType. the only supported values are "linear" or "genericLog"'); 
+                return axis;
+            };
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
@@ -71,7 +80,7 @@ define(['d3'], function(d3){
             if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<0) options.cssMarginBottom = "5px";
             if(options.toolMargin==null) options.toolMargin = {left: 5, bottom: 5, right: 5, top: 5};
 
-            if(options.tickSpacing==null)options.tickSpacing = 50;
+
             if(options.showOuter==null)options.showOuter = false;
             if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
 
@@ -85,14 +94,24 @@ define(['d3'], function(d3){
             if(options.heightOfOneDigit==null) options.heightOfOneDigit =
                 parseInt(options.cssFontSize)*options.heightToFontsizeRatio;
 
-            
+console.log("********** "+orient+" **********");
             
             var domain = axis.scale().domain();
-            var range = axis.scale().range()
+            var range = axis.scale().range();
+            var lengthDomain = Math.abs(domain[domain.length-1] - domain[0]);
+            var lengthRange = Math.abs(range[range.length-1] - range[0]);
+            
             var min = d3.min([domain[0],domain[domain.length-1]]);
             var max = d3.max([domain[0],domain[domain.length-1]]);
+            var bothSidesUsed = (min<0 && max >0);
+                
+            var tickValues = options.showOuter?[min, max]:[];
+            var ticksNumber = 5;
             
-            
+            function getBaseLog(x, base) {
+                if(base == null) base = options.logBase;
+                return Math.log(x) / Math.log(base);
+            };
             
             // estimate the longest formatted label in pixels
             var estLongestLabelLength =
@@ -123,28 +142,15 @@ define(['d3'], function(d3){
             if (min==max) return axis.tickValues([min]).ticks(1).tickFormat(options.formatter);
 
 
-            var ticksNumber = 5;
-            var tickValues = [];
-            var lengthDomain = Math.abs(domain[domain.length-1] - domain[0]);
-            var lengthRange = Math.abs(range[range.length-1] - range[0]);
 
 
-            console.log("********** "+orient+" **********");
-            console.log("min max ", min, max);
-            console.log("w h of one digit " + options.widthOfOneDigit + " " + options.heightOfOneDigit);
-            
 
 
-            var getBaseLog = function(x, base) {
-                if(base == null) base = options.logBase;
-                return Math.log(x) / Math.log(base);
-            };
-
-            var onlyUnique = function(value, index, self) {
-                return self.indexOf(value) === index;
-            }
-
-            
+            // LABELS FIT INTO SCALE
+            // measure if all labels in array tickValues can fit into the allotted lengthRange
+            // approximationStyle can be OPTIMISTIC or PESSIMISTIC
+            // in optimistic style the length of every label is added up and then we check if the total pack of symbols fit
+            // in pessimistic style we assume all labels have the length of the longest label from tickValues
             var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle){
                 if (approximationStyle==null) approximationStyle = PESSIMISTIC;
                 
@@ -207,11 +213,7 @@ define(['d3'], function(d3){
 
             if(options.scaleType=="genericLog"){
                 var eps = axis.scale().eps();
-                var delta = axis.scale().delta();
-                var bothSidesUsed = (min<0 && max >0);
 
-                if(options.showOuter)tickValues.push(max);
-                if(options.showOuter)tickValues.push(min);
 
                 if(options.method == this.METHOD_REPEATING){
                     
@@ -282,34 +284,12 @@ define(['d3'], function(d3){
 
                 }else if(options.method == this.METHOD_DOUBLING) {
                     var doublingLabels = [];
-                    tickValues = tickValues.concat(bothSidesUsed? [0]:[]);
-                    var avoidCollidingWith = tickValues;
+                    if(bothSidesUsed)tickValues.push(0);
+                    var avoidCollidingWith = [].concat(tickValues);
 
-//                    var startPos = max<eps? null :
-//                    Math.pow(options.logBase,  Math.floor(
-//                        (Math.ceil(
-//                            getBaseLog(max) + Math.ceil(getBaseLog(Math.max(eps,min)))*options.doublingOriginAtFraction
-//                        ))
-//                        
-//                    ) )
-//                    max;
-
-//                    var startNeg = min>-eps? null :
-//                    - Math.pow(options.logBase,  Math.floor(
-//                        (Math.ceil(
-//                            getBaseLog(-min) + Math.ceil(getBaseLog(Math.max(eps,-max)))*options.doublingOriginAtFraction
-//                        ))
-//                    ) )
-//                    min;
-
-                                
-//                    var startPos = max<eps? null : Math.pow(options.logBase, Math.ceil(getBaseLog(max)));
-//                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.ceil(getBaseLog(-min)));
                     var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
                     var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
-  
                     
- //                   console.log(options.doublingOriginAtFraction, startPos, startNeg);
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -348,8 +328,36 @@ define(['d3'], function(d3){
             
             
             if(options.scaleType=="linear"){
-                ticksNumber = Math.max(lengthRange / options.tickSpacing, 2);
-                tickValues = axis.scale().ticks.apply(axis.scale(), [ticksNumber]);
+                if(bothSidesUsed)tickValues.push(0);
+                var avoidCollidingWith = [].concat(tickValues);
+                
+                ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
+                addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
+//                    .sort(d3.ascending)
+//                    .filter(function(d){return min<=d&&d<=max}); 
+                
+//                addLabels = groupByPriorities(addLabels,false);
+//                
+//                var tickValues_1 = tickValues;
+//                for(var j = 0; j<addLabels.length; j++){
+//
+//                    // compose an attempt to add more axis labels    
+//                    var trytofit = tickValues_1.concat(addLabels[j])
+//                        .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
+//                        .filter(onlyUnique);
+//
+//                    // stop populating if labels don't fit 
+//                    if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+//
+//                    // apply changes if no blocking instructions
+//                    tickValues = trytofit
+//                }
+                
+                tickValues = tickValues.concat(addLabels)
+                    .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
+                    .filter(onlyUnique);
+
+                
             }
 
 
@@ -358,7 +366,8 @@ define(['d3'], function(d3){
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
             });
-            axis.repositionLabels = repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), axis.pivot);
+            axis.repositionLabels = 
+                repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), labelsStackOnTop?"y":"x");
 
 console.log("final result",tickValues);
             
@@ -433,9 +442,12 @@ console.log("final result",tickValues);
         // requires tickValues array to be sorted from tail-first
         // tail means left or bottom, head means top or right
         //
+        // dimension - which dimension requires shifting
+        // X if labels stack side by side, Y if labels stack on top of one another
+        //
         // returns the array of recommended {x,y} shifts
         
-        function repositionLabelsThatStickOut(tickValues, options, orient, scale, pivot){
+        function repositionLabelsThatStickOut(tickValues, options, orient, scale, dimension){
             if(tickValues==null)return null;
                 
             // make an abstraction layer for margin sizes
@@ -446,9 +458,6 @@ console.log("final result",tickValues);
                 :
                 {head: options.toolMargin.right, tail: options.toolMargin.left};
             
-            // check which dimension requires shifting
-            // X if labels stack side by side, Y if labels stack on top of one another
-            var dimension = (pivot&&orient==VERTICAL || !pivot&&orient==HORIZONTAL)? "x":"y";
             
             var result = {};
                         

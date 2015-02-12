@@ -141,17 +141,18 @@ define([
                 .smartLabeler({
                     scaleType: this.model.scales.xScaleType,
                     widthOfOneDigit: this.widthOfOneDigit,
+                    heightOfOneDigit: this.heightOfOneDigit,
                     cssFontSize: this.model.show.labelSize,
                     cssMarginLeft:   this.model.show.labelMargin.LR,
                     cssMarginRight:  this.model.show.labelMargin.LR,
                     cssMarginTop:    this.model.show.labelMargin.TB,
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
-                    
+                    showOuter: true,
                     pivotingLimit: margin.bottom,
                     isPivotAuto: true,
-                   // formatterRemovePrefix: true,
-                    tickSpacing: tick_spacing
+                   
+                   
                 });
 
             this.yAxis.scale(this.yScale)
@@ -170,8 +171,7 @@ define([
                     showOuter: true,
                     pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
-                   // formatterRemovePrefix: true,
-                    tickSpacing: tick_spacing,
+                   
                     method: this.yAxis.METHOD_DOUBLING
                 });
 
