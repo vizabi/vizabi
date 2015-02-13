@@ -128,7 +128,7 @@ describe("_examples/bubble-chart", function() {
 
             setTimeout(function() {
                 done();
-            }, time * 2);
+            }, time * 4);
         });
 
         it("should end in the last year", function() {

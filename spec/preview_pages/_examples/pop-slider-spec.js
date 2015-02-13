@@ -63,7 +63,7 @@ describe("_examples/pop-slider", function() {
         }
     };
 
-    beforeEach(function(done) {
+    beforeAll(function(done) {
         viz = initializeVizabi("_examples/pop-slider", options, done);
         mobile(true); //test with mobile resolution;
     });
@@ -92,7 +92,7 @@ describe("_examples/pop-slider", function() {
             total = end - value,
             time = parseInt(options.state.time.speed, 10) / parseInt(options.state.time.step, 10) * total;
 
-        beforeEach(function(done) {
+        beforeAll(function(done) {
 
             viz.setOptions({
                 state: {

@@ -78,7 +78,7 @@ describe("_examples-data-loading/dependencies", function() {
     for (var i = 0; i < cases.length; i++) {
         var dep_case = cases[i];
 
-        describe("Dependency case " + (i + 1), function() {
+        describe(dep_case.title, function() {
 
             var options = {
                 //state
@@ -107,7 +107,7 @@ describe("_examples-data-loading/dependencies", function() {
                     },
 
                     //define dependencies
-                    deps: dep_case
+                    deps: dep_case.deps
 
                 },
 

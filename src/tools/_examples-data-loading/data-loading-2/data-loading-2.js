@@ -57,7 +57,6 @@ define([
                     (function(mod) {
                         //take a few ms to load data
                         setTimeout(function() {
-                            console.log(mod);
                             mod.loaded_data = [1, 2, 3, 4, 5]; //simulate loading this data
                             mod.setLoadingDone("data_simulation");
                         }, Math.round(Math.random() * 100));
