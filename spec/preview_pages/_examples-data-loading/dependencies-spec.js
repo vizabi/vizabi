@@ -1,4 +1,4 @@
-describe("_examples-data-loading/dependencies", function() {
+describe("* _examples-data-loading/dependencies", function() {
     var viz;
 
     var cases = [{
@@ -124,17 +124,17 @@ describe("_examples-data-loading/dependencies", function() {
                 mobile(true); //test with mobile resolution;
             });
 
-            it("should exist", function() {
+            it("should be instantiated", function() {
                 expect(viz).not.toBeNull();
                 expect(typeof viz).toBe('object');
             });
 
-            it("should not be empty", function() {
+            it("should not have an empty div", function() {
                 var contents = $(viz._placeholder).children();
                 expect(contents.length).toBeGreaterThan(0);
             });
 
-            it("should be ready", function() {
+            it("should be ready (and all models ready accordingly)", function() {
                 var ready = viz._tool.model._ready;
                 if (!ready) {
                     console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));

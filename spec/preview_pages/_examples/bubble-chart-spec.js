@@ -1,4 +1,4 @@
-describe("_examples/bubble-chart", function() {
+describe("* _examples/bubble-chart", function() {
     var viz;
 
     var options = {
@@ -92,17 +92,17 @@ describe("_examples/bubble-chart", function() {
         mobile(true); //test with mobile resolution;
     });
 
-    it("should exist", function() {
+    it("should be instantiated", function() {
         expect(viz).not.toBeNull();
         expect(typeof viz).toBe('object');
     });
 
-    it("should not be empty", function() {
+    it("should not have an empty div", function() {
         var contents = $(viz._placeholder).children();
         expect(contents.length).toBeGreaterThan(0);
     });
 
-    it("should be ready", function() {
+    it("should be ready (and all models ready accordingly)", function() {
         var ready = viz._tool.model._ready;
         if (!ready) {
             console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
@@ -135,6 +135,21 @@ describe("_examples/bubble-chart", function() {
             var text_year = $(".vzb-bubble-chart .vzb-bc-year").text();
             text_year = parseInt(text_year, 10);
             expect(text_year).toEqual(end);
+        });
+    });
+
+    describe("resize events", function() {
+        var size;
+        beforeEach(function(done) {
+            size = $('.vzb-bubble-chart-svg').width();
+            mobile(false);
+            setTimeout(function() {
+                done();
+            }, 50);
+        });
+
+        it("should scale when screen is resized", function() {
+            expect($('.vzb-bubble-chart-svg').width()).toBeGreaterThan(size);
         });
     });
 
