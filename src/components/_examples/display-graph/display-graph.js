@@ -118,7 +118,6 @@ define([
                         return color;
                     })
                     .style("stroke", function(d) {
-                        console.log(d);
                         var color = "#FFFFFF";
                         if (d.root) {
                             color = "rgb(132, 132, 132)";

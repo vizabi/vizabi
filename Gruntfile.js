@@ -304,7 +304,7 @@ module.exports = function(grunt) {
                     patterns: [{
                         match: /.grunt\/grunt-contrib-jasmine\//g,
                         replacement: 'test/jasmine/'
-                    },{
+                    }, {
                         match: /spec\//g,
                         replacement: 'test/spec/'
                     }, {
@@ -384,7 +384,14 @@ module.exports = function(grunt) {
                     specs: 'spec/preview_pages/**/*-spec.js',
                     helpers: 'spec/preview_pages/**/*-helper.js',
                     styles: ['dist/vizabi.css', 'spec/spec.css'],
-                    vendor: ['dist/preview_pages/assets/jquery.min.js']
+                    vendor: ['dist/preview_pages/assets/jquery.min.js'],
+                    page: {
+                        //laptopsize
+                        viewportSize: {
+                            width: 1280,
+                            height: 768
+                        }
+                    }
                 }
             }
         },

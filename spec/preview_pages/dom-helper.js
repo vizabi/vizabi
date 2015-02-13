@@ -44,9 +44,10 @@ function mobile(bool, orientation) {
         }
     }
     else {
-        placeholder.addClass('mobile');
+        placeholder.removeClass('mobile');
         placeholder.removeClass('landscape');
     }
+    forceResizeEvt();
 }
 
 function mapReady(model) {
@@ -59,4 +60,12 @@ function mapReady(model) {
         map[i]._ready = submodel._ready;
     }
     return map;
+}
+
+function forceResizeEvt() {
+    //force resize
+    event = document.createEvent("HTMLEvents");
+    event.initEvent("resize", true, true);
+    event.eventName = "resize";
+    window.dispatchEvent(event);
 }
