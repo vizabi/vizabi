@@ -1,8 +1,59 @@
+//define(['d3'], function (d3) {
+//
+//    d3.scale.genericLog = function () {
+
+
+
+//        return function d3_scale_genericLog(logScale) {
+//
+//            var _this = this;
+//            var eps = 0.001;
+//            var ePos = 0.001;
+//
+//
+//            var linScale = d3.scale.linear().domain([0, eps]).range([0, delta]);
+//
+//
+//
+//            function scale(x) {
+//               
+//            }
+//            scale.eps = function (arg) {
+//                if (!arguments.length) return eps;
+//                return scale;
+//            }
+//
+//            scale.domain = function (_arg) {
+//                if (!arguments.length) return domain;
+//                return scale;
+//            };
+//
+//
+//            scale.copy = function () {
+//                return d3_scale_genericLog(d3.scale.log().domain([1, 10])).domain(domain).range(range).eps(eps).delta(delta);
+//            };
+//
+//            return d3.rebind(scale, logScale, "invert", "base", "rangeRound", "interpolate", "clamp", "nice", "tickFormat", "ticks");
+//        }(d3.scale.log().domain([1, 10]));
+//}
+//})
+
+
+
+
+
+
 define(['d3'], function(d3){
 
     d3.svg.axisSmart = function(){
+        
+    return function d3_axis_smart(_super) {
+        
         var VERTICAL = 'vertical axis';
         var HORIZONTAL = 'horizontal axis';
+        var X = 'labels stack side by side';
+        var Y = 'labels stack top to bottom';
+        
         var OPTIMISTIC = 'optimistic approximation: labels have different lengths';
         var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
         var DEFAULT_LOGBASE = 10;
@@ -13,9 +64,75 @@ define(['d3'], function(d3){
             return self.indexOf(value) === index;
         }
 
-        var _super = d3.svg.axis();
-        _super.smartLabeler = function(options){
-            var axis = this;
+        function axis(g) {
+            // measure the width of one digit
+            var widthSampleG = g.append("g").attr("class","tick widthSampling");
+            widthSampleT = widthSampleG.append('text').text('0')
+                .style("font-size",options.cssFontSize);
+            options.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
+            options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
+            widthSampleG.remove();
+            
+            
+            
+            axis.smartLabeler(options);
+            
+            _super(g);
+            
+            g.selectAll("text")
+                .each(function(d,i){
+                    var view = d3.select(this);
+                
+                    var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
+                    var dimension = (orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot)?Y:X;
+                        
+                    view.attr("transform","rotate("+(axis.pivot()?-90:0)+")")
+                    //view.style("text-anchor", dimension==X?"middle":"end")
+                    
+                    if(orient==HORIZONTAL){
+                        view.style("text-anchor", !axis.pivot()?"middle":"end")
+                        view.attr("dy", axis.pivot()?".32em":".71em")
+                        view.attr("x", !axis.pivot()?0:(-axis.tickPadding() - axis.tickSize()))
+                        view.attr("y", !axis.pivot()?(axis.tickPadding() + axis.tickSize()):0)
+                    }else{
+                        view.style("text-anchor", axis.pivot()?"middle":"end")
+                        view.attr("dy", axis.pivot()?0:".32em")
+                        view.attr("x",  axis.pivot()?0:(-axis.tickPadding() - axis.tickSize()))
+                        view.attr("y",  axis.pivot()?(-axis.tickPadding() - axis.tickSize()):0)
+
+                       
+                    }
+                
+                    if(axis.repositionLabels() == null) return;
+                    var shift = axis.repositionLabels()[i]; 
+                    view.attr("x",+view.attr("x") + shift.x);
+                    view.attr("y",+view.attr("y") + shift.y);
+                })
+        };
+        
+        
+        var repositionLabels = null;
+        axis.repositionLabels = function(arg){
+            if (!arguments.length) return repositionLabels;
+            repositionLabels = arg;
+            return axis;
+        };
+        
+        var pivot = false;
+        axis.pivot = function(arg) {
+            if (!arguments.length) return pivot;
+            pivot = !!arg;
+            return axis;
+        };
+        
+        var options = {};
+        axis.options = function(arg) {
+            if (!arguments.length) return options;
+            options = arg;
+            return axis;
+        };
+        
+        axis.smartLabeler = function(options){
             this.METHOD_REPEATING = 'repeating specified powers';
             this.METHOD_DOUBLING = 'doubling the value';
 
@@ -124,7 +241,7 @@ console.log("********** "+orient+" **********");
                 * options.widthOfOneDigit
                 + parseInt(options.cssMarginLeft);
 
-            axis.pivot = options.isPivotAuto 
+            var pivot = options.isPivotAuto 
                 && (
                     (estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit)
                     && (orient == VERTICAL)
@@ -133,7 +250,7 @@ console.log("********** "+orient+" **********");
                     && !(orient == VERTICAL)
                 );
             
-            var labelsStackOnTop = (orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot);
+            var labelsStackOnTop = (orient==HORIZONTAL && pivot || orient==VERTICAL && !pivot);
             
             
             
@@ -375,17 +492,28 @@ console.log("********** "+orient+" **********");
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
             });
-            axis.repositionLabels = 
-                repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), labelsStackOnTop?"y":"x");
+             
+            
 
 console.log("final result",tickValues);
             
             return axis
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
-                .tickValues(tickValues);
+                .tickValues(tickValues)
+                .pivot(pivot)
+                .repositionLabels(
+                    repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), labelsStackOnTop?"y":"x")
+                );
         };
 
+        
+        
+        
+        
+        
+        
+        
         
         
         
@@ -553,18 +681,31 @@ console.log("final result",tickValues);
         
         
         
+        axis.copy = function () {
+            return d3_axis_smart(d3.svg.axis());
+        };
         
-
-        return _super;
+        return d3.rebind(axis, _super, 
+            "scale", "orient", "ticks", "tickValues", "tickFormat", 
+            "tickSize", "innerTickSize", "outerTickSize", "tickPadding", 
+            "tickSubdivide"
+            );
+        
+        }(d3.svg.axis());
+        
+        
     }; //d3.svg.axisSmart = function(){
 
 }); //define(['d3'], function(d3){
 
 
-log = function(l1,l2,l3,l4,l5){
-    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
-    if(l4!=null){console.log(l1,l2,l3,l4); return;}
-    if(l3!=null){console.log(l1,l2,l3); return;}
-    if(l2!=null){console.log(l1,l2); return;}
-    if(l1!=null){console.log(l1); return;}
-}
+
+
+//
+//log = function(l1,l2,l3,l4,l5){
+//    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
+//    if(l4!=null){console.log(l1,l2,l3,l4); return;}
+//    if(l3!=null){console.log(l1,l2,l3); return;}
+//    if(l2!=null){console.log(l1,l2); return;}
+//    if(l1!=null){console.log(l1); return;}
+//}

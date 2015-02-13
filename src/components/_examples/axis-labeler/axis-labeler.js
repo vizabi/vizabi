@@ -127,21 +127,17 @@ define([
                 this.yScale.rangePoints([height, 0], padding).range();
             }
 
-            // measure the width of one digit
-            var widthSampleG = this.xAxisEl.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('0')
-                .style("font-size",this.model.show.labelSize);
-            this.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
-            this.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
-            widthSampleG.remove();
+            
+            
+            
+
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 .tickSize(6, 0)
-                .smartLabeler({
+                .options({
                     scaleType: this.model.scales.xScaleType,
-                    widthOfOneDigit: this.widthOfOneDigit,
-                    heightOfOneDigit: this.heightOfOneDigit,
+                    //TODO: remove. make font sizing and margins through plain CSS
                     cssFontSize: this.model.show.labelSize,
                     cssMarginLeft:   this.model.show.labelMargin.LR,
                     cssMarginRight:  this.model.show.labelMargin.LR,
@@ -150,18 +146,15 @@ define([
                     toolMargin: margin,
                     showOuter: true,
                     pivotingLimit: margin.bottom,
-                    isPivotAuto: true,
-                   
-                   
+                    isPivotAuto: true
                 });
 
             this.yAxis.scale(this.yScale)
                 .orient("left")
                 .tickSize(6, 0)
-                .smartLabeler({
+                .options({
                     scaleType: this.model.scales.yScaleType,
-                    widthOfOneDigit: this.widthOfOneDigit,
-                    heightOfOneDigit: this.heightOfOneDigit,
+                    //TODO: remove. make font sizing and margins through plain CSS
                     cssFontSize: this.model.show.labelSize,
                     cssMarginLeft:   this.model.show.labelMargin.LR,
                     cssMarginRight:  this.model.show.labelMargin.LR,
@@ -171,49 +164,22 @@ define([
                     showOuter: true,
                     pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
-                   
                     method: this.yAxis.METHOD_DOUBLING
                 });
 
+            
+            
+            
+            
+            
+            
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
+            this.xAxisEl.call(this.xAxis);
+            this.yAxisEl.call(this.yAxis);
 
-            this.xAxisEl
-                .call(this.xAxis)
-                .selectAll("text")
-                    .each(function(d,i){
-                        var view = d3.select(this);
-                
-                        view.attr("transform","rotate("+(_this.xAxis.pivot?-90:0)+")")
-                        view.style("text-anchor", !_this.xAxis.pivot?"middle":"end")
-                        view.attr("dy", _this.xAxis.pivot?".32em":".71em")
-                        view.attr("x", !_this.xAxis.pivot?0:(-_this.xAxis.tickPadding() - _this.xAxis.tickSize()))
-                        view.attr("y", !_this.xAxis.pivot?(_this.xAxis.tickPadding() + _this.xAxis.tickSize()):0)
-                
-                        if(_this.xAxis.repositionLabels == null) return;
-                        var shift = _this.xAxis.repositionLabels[i]; 
-                        view.attr("x",+view.attr("x") + shift.x);
-                        view.attr("y",+view.attr("y") + shift.y);
-                    })
-
-            this.yAxisEl
-                .call(this.yAxis)
-                .selectAll("text")
-                    .each(function(d,i){
-                        var view = d3.select(this);
-                
-                        view.attr("transform","rotate("+(_this.yAxis.pivot?-90:0)+")")
-                        view.style("text-anchor", _this.yAxis.pivot?"middle":"end")
-                        view.attr("dy",_this.yAxis.pivot?0:".32em")
-                        view.attr("x", _this.yAxis.pivot?0:(-_this.yAxis.tickPadding() - _this.yAxis.tickSize()))
-                        view.attr("y", _this.yAxis.pivot?(-_this.yAxis.tickPadding() - _this.yAxis.tickSize()):0)
-                        
-                        if(_this.yAxis.repositionLabels == null) return;
-                        var shift = _this.yAxis.repositionLabels[i]; 
-                        view.attr("x",+view.attr("x") + shift.x);
-                        view.attr("y",+view.attr("y") + shift.y);
-                    })
-
-
+            //TODO: remove. make font sizing through plain CSS
+            this.xAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
+            this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
 
 
             var path = this.graph.selectAll(".line").data([0]);
@@ -234,14 +200,6 @@ define([
             dots.attr("cx",function(d){return _this.xScale(d)})
                 .attr("cy",function(d){return _this.yScale(d)});
 
-
-this.xAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
-this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
-
-a = JSON.stringify(this.mockData.map(function(d){return [d3.format(",.3s")(d),d3.format(",.3s")(_this.yScale(d))] })).replace(/"/g , "");
-
-//
-y = this.yScale;
 
 
 
