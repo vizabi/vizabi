@@ -1,48 +1,3 @@
-//define(['d3'], function (d3) {
-//
-//    d3.scale.genericLog = function () {
-
-
-
-//        return function d3_scale_genericLog(logScale) {
-//
-//            var _this = this;
-//            var eps = 0.001;
-//            var ePos = 0.001;
-//
-//
-//            var linScale = d3.scale.linear().domain([0, eps]).range([0, delta]);
-//
-//
-//
-//            function scale(x) {
-//               
-//            }
-//            scale.eps = function (arg) {
-//                if (!arguments.length) return eps;
-//                return scale;
-//            }
-//
-//            scale.domain = function (_arg) {
-//                if (!arguments.length) return domain;
-//                return scale;
-//            };
-//
-//
-//            scale.copy = function () {
-//                return d3_scale_genericLog(d3.scale.log().domain([1, 10])).domain(domain).range(range).eps(eps).delta(delta);
-//            };
-//
-//            return d3.rebind(scale, logScale, "invert", "base", "rangeRound", "interpolate", "clamp", "nice", "tickFormat", "ticks");
-//        }(d3.scale.log().domain([1, 10]));
-//}
-//})
-
-
-
-
-
-
 define(['d3'], function(d3){
 
     d3.svg.axisSmart = function(){
@@ -68,12 +23,16 @@ define(['d3'], function(d3){
             // measure the width of one digit
             var widthSampleG = g.append("g").attr("class","tick widthSampling");
             widthSampleT = widthSampleG.append('text').text('0')
-                .style("font-size",options.cssFontSize);
+                .style("font-size",options.cssFontSize)
+                .style("margin-top",options.cssMarginTop)
+                .style("margin-bottom",options.cssMarginBottom)
+                .style("margin-left",options.cssMarginLeft)
+                .style("margin-right",options.cssMarginRight)
             options.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
             options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
             
-            
+
             
             axis.smartLabeler(options);
             
@@ -701,11 +660,11 @@ console.log("final result",tickValues);
 
 
 
-//
-//log = function(l1,l2,l3,l4,l5){
-//    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
-//    if(l4!=null){console.log(l1,l2,l3,l4); return;}
-//    if(l3!=null){console.log(l1,l2,l3); return;}
-//    if(l2!=null){console.log(l1,l2); return;}
-//    if(l1!=null){console.log(l1); return;}
-//}
+
+log = function(l1,l2,l3,l4,l5){
+    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
+    if(l4!=null){console.log(l1,l2,l3,l4); return;}
+    if(l3!=null){console.log(l1,l2,l3); return;}
+    if(l2!=null){console.log(l1,l2); return;}
+    if(l1!=null){console.log(l1); return;}
+}
