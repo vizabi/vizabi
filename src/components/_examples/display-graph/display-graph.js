@@ -16,7 +16,7 @@ define([
             this.template = "components/_examples/display-graph/display-graph";
 
             this.model_expects = [{
-                name: "deps"
+                name: "state"
             }];
 
             var _this = this;
@@ -41,27 +41,9 @@ define([
         },
 
         update: function() {
-            //E.g: var year = this.model.get('value');
-            var data = [{
-                    name: "A",
-                    type: "hook",
-                    dep: "B",
-                }, {
-                    name: "B",
-                    type: "hook"
-                }, {
-                    name: "C",
-                    type: "hook",
-                    dep: "B",
-                }];
 
+            var data = this.model.state.deps;
             this.element.datum(data).call(this.chart);
-
-            setTimeout(function() {
-                _this.chart.size(250,250);
-                data.push({ name: "D", type: "other", dep: "B"});
-                _this.element.datum(data).call(_this.chart);
-            }, 5000);
         },
 
         /**
@@ -71,7 +53,6 @@ define([
         resize: function() {
             //E.g: var height = this.placeholder.style('height');
         },
-
 
     });
 
@@ -95,6 +76,20 @@ define([
                 svg.attr("width", size.width)
                     .attr("height", size.height);
 
+                var defs = svg.append('defs')
+                defs.append("svg:marker")
+                    .attr("id", "arrow")
+                    .attr("viewBox", "0 0 10 10")
+                    .attr("refX", "31")
+                    .attr("refY", "5")
+                    .attr("markerUnits", "strokeWidth")
+                    .attr("markerWidth", "9")
+                    .attr("markerHeight", "5")
+                    .attr("orient", "auto")
+                    .append("svg:path")
+                    .attr("d", "M 0 0 L 10 5 L 0 10 z")
+                    .attr("fill", "#999999");
+
                 var graph_data = linksNodes(data);
 
                 force.nodes(graph_data.nodes)
@@ -105,7 +100,8 @@ define([
                 var link = svg.selectAll(".vzb-display-graph-link")
                     .data(graph_data.links)
                     .enter().append("line")
-                    .attr("class", "vzb-display-graph-link");
+                    .attr("class", "vzb-display-graph-link")
+                    .attr("marker-end", "url(#arrow)");
 
                 var node = svg.selectAll(".vzb-display-graph-node")
                     .data(graph_data.nodes)
@@ -113,7 +109,13 @@ define([
                     .attr("class", "vzb-display-graph-node")
                     .attr("r", 20)
                     .style("fill", function(d) {
-                        return "#cccccc";
+                        var color = "#cccccc";
+                        if (d.type == "hook") {
+                            color = "#6eb0ce";
+                        } else if (d.type == "external") {
+                            color = "#91c592";
+                        }
+                        return color;
                     });
 
                 var text = svg.selectAll(".vzb-display-graph-text")
@@ -130,16 +132,32 @@ define([
                     });
 
                 force.on("tick", function() {
-                    link.attr("x1", function(d) { return d.source.x; })
-                        .attr("y1", function(d) { return d.source.y; })
-                        .attr("x2", function(d) { return d.target.x; })
-                        .attr("y2", function(d) { return d.target.y; });
+                    link.attr("x1", function(d) {
+                            return d.source.x;
+                        })
+                        .attr("y1", function(d) {
+                            return d.source.y;
+                        })
+                        .attr("x2", function(d) {
+                            return d.target.x;
+                        })
+                        .attr("y2", function(d) {
+                            return d.target.y;
+                        });
 
-                    node.attr("cx", function(d) { return d.x; })
-                        .attr("cy", function(d) { return d.y; });
+                    node.attr("cx", function(d) {
+                            return d.x;
+                        })
+                        .attr("cy", function(d) {
+                            return d.y;
+                        });
 
-                    text.attr("x", function(d) { return d.x; })
-                        .attr("y", function(d) { return d.y+5; });
+                    text.attr("x", function(d) {
+                            return d.x;
+                        })
+                        .attr("y", function(d) {
+                            return d.y + 5;
+                        });
                 });
             });
         }
