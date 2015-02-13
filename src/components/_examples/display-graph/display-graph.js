@@ -116,7 +116,15 @@ define([
                             color = "#91c592";
                         }
                         return color;
-                    });
+                    })
+                    .style("stroke", function(d) {
+                        console.log(d);
+                        var color = "#FFFFFF";
+                        if (d.root) {
+                            color = "rgb(132, 132, 132)";
+                        }
+                        return color;
+                    }).call(force.drag);
 
                 var text = svg.selectAll(".vzb-display-graph-text")
                     .data(graph_data.nodes)
@@ -175,7 +183,8 @@ define([
                 var node = data[i];
                 var n = {
                     name: node.name,
-                    type: node.type
+                    type: node.type,
+                    root: !node.dep
                 };
                 formatted.nodes.push(n);
                 nodeMap[node.name] = n;
