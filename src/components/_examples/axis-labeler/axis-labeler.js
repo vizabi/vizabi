@@ -135,7 +135,7 @@ define([
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 .tickSize(6, 0)
-                .options({
+                .labelerOptions({
                     scaleType: this.model.scales.xScaleType,
                     //TODO: remove. make font sizing and margins through plain CSS
                     cssFontSize: this.model.show.labelSize,
@@ -152,7 +152,7 @@ define([
             this.yAxis.scale(this.yScale)
                 .orient("left")
                 .tickSize(6, 0)
-                .options({
+                .labelerOptions({
                     scaleType: this.model.scales.yScaleType,
                     //TODO: remove. make font sizing and margins through plain CSS
                     cssFontSize: this.model.show.labelSize,

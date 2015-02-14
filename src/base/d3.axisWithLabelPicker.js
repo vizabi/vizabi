@@ -20,7 +20,7 @@ define(['d3'], function(d3){
         }
 
         function axis(g) {
-            // measure the width of one digit
+            // measure the width and height of one digit
             var widthSampleG = g.append("g").attr("class","tick widthSampling");
             widthSampleT = widthSampleG.append('text').text('0')
                 .style("font-size",options.cssFontSize)
@@ -32,35 +32,28 @@ define(['d3'], function(d3){
             options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
             
-
             
-            axis.smartLabeler(options);
+            // run label factory - it will store labels in tickValues property of axis
+            axis.labelFactory(options);
             
+            // construct the view (d3 constructor is used)
             _super(g);
             
+            // patch the label positioning after the view is generated
             g.selectAll("text")
                 .each(function(d,i){
                     var view = d3.select(this);
                 
                     var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
-                    var dimension = (orient==HORIZONTAL && axis.pivot || orient==VERTICAL && !axis.pivot)?Y:X;
-                        
-                    view.attr("transform","rotate("+(axis.pivot()?-90:0)+")")
-                    //view.style("text-anchor", dimension==X?"middle":"end")
+                    var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
+                
+                
+                    view.attr("transform","rotate("+(axis.pivot()?-90:0)+")");
+                    view.style("text-anchor", dimension==X?"middle":"end");
+                    view.attr("x",  dimension==X?0:(-axis.tickPadding() - axis.tickSize()));
+                    view.attr("y", dimension==X? (orient==VERTICAL?-1:1)*(axis.tickPadding() + axis.tickSize()):0);
+                    view.attr("dy", dimension==X?(orient==VERTICAL?0:".72em"):".32em");
                     
-                    if(orient==HORIZONTAL){
-                        view.style("text-anchor", !axis.pivot()?"middle":"end")
-                        view.attr("dy", axis.pivot()?".32em":".71em")
-                        view.attr("x", !axis.pivot()?0:(-axis.tickPadding() - axis.tickSize()))
-                        view.attr("y", !axis.pivot()?(axis.tickPadding() + axis.tickSize()):0)
-                    }else{
-                        view.style("text-anchor", axis.pivot()?"middle":"end")
-                        view.attr("dy", axis.pivot()?0:".32em")
-                        view.attr("x",  axis.pivot()?0:(-axis.tickPadding() - axis.tickSize()))
-                        view.attr("y",  axis.pivot()?(-axis.tickPadding() - axis.tickSize()):0)
-
-                       
-                    }
                 
                     if(axis.repositionLabels() == null) return;
                     var shift = axis.repositionLabels()[i]; 
@@ -85,13 +78,13 @@ define(['d3'], function(d3){
         };
         
         var options = {};
-        axis.options = function(arg) {
+        axis.labelerOptions = function(arg) {
             if (!arguments.length) return options;
             options = arg;
             return axis;
         };
         
-        axis.smartLabeler = function(options){
+        axis.labelFactory = function(options){
             this.METHOD_REPEATING = 'repeating specified powers';
             this.METHOD_DOUBLING = 'doubling the value';
 
