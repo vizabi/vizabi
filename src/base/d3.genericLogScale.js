@@ -34,12 +34,16 @@ define(['d3'], function (d3) {
                 var shiftPos = 0;
                 var shiftAll = 0;
                 
+                //console.log("DOMAIN log lin", logScale.domain(), linScale.domain());
+                //console.log("RANGE log lin", logScale.range(), linScale.range());
+                
                 var domainPointingForward = domain[0]<domain[domain.length-1];
                 var rangePointingForward = range[0]<range[range.length-1];
                 
                 if(d3.min(domain)<0 && d3.max(domain)>0){
                     var minAbsDomain = d3.min(abs([ domain[0], domain[domain.length-1] ]));
                     //var maxAbsDomain = d3.max(abs([ domain[0], domain[domain.length-1] ]));
+                    
                     
                     //ratio shows how the + and - scale should fit as compared to a simple + or - scale
                     ratio = domainPointingForward != rangePointingForward ?
@@ -56,7 +60,7 @@ define(['d3'], function (d3) {
                         
                     }else if(!domainPointingForward && !rangePointingForward){                        
                         shiftAll = logScale( Math.max(eps,minAbsDomain) ) / ratio;
-                        //if the bottom is heavier we need to shift the entire chart
+                        //if the top is heavier we need to shift the entire chart
                         if(abs(domain[0])<abs(domain[domain.length-1])) shiftAll += ( d3.max(range)-logScale( Math.max(eps,minAbsDomain) ) )/ratio;
                         
                     } else if(domainPointingForward && rangePointingForward){
@@ -65,15 +69,12 @@ define(['d3'], function (d3) {
                         if(abs(domain[0])<abs(domain[domain.length-1])) shiftAll -= ( d3.max(range)-logScale( Math.max(eps,minAbsDomain) ) )/ratio;
                         
                     }else if(!domainPointingForward && rangePointingForward){
-                        //shiftNeg = d3.max(range);
-                        shiftAll = (d3.max(range) + linScale(0))/ratio;
-                        //shiftPos = -d3.max(range)/ratio;
-                        //shiftNeg = d3.max(range)/ratio;
+                        shiftNeg = (d3.max(range) + linScale(0))/ratio;
                         //if the top is heavier we need to shift the entire chart
-                        //if(abs(domain[0])<abs(domain[domain.length-1])) shiftAll -= logScale( Math.max(eps,minAbsDomain) )/ratio;
+                        if(abs(domain[0])<abs(domain[domain.length-1])) shiftAll -= logScale( Math.max(eps,minAbsDomain) )/ratio;
                     }
                     
-                    log(ratio,shiftNeg,shiftPos,shiftAll)
+                    
                 }else if(d3.min(domain)<0 && d3.max(domain)<0){
                     shiftNeg = d3.max(range);
                 }
@@ -230,29 +231,37 @@ define(['d3'], function (d3) {
                 if(!useLinear){
                     logScale.range(arg);
                 }else{
-                    if(arg[0]<=arg[1]){
+                    if(arg[0] < arg[1]){
                         //range is pointing forward
-                        logScale.range([delta, arg[1]]);
-                        linScale.range([0, delta]);
+                        
+                        //check where domain is pointing
+                        if(domain[0] < domain[domain.length-1]){
+                            //domain is pointing forward
+                            logScale.range([delta, arg[1]]);
+                            linScale.range([0, delta]);
+                        }else{
+                            //domain is pointing backward
+                            logScale.range([0, arg[1]-delta]);
+                            linScale.range([arg[1]-delta, arg[1]]);
+                        }
                     }else{
                         //range is pointing backward
 
                         //check where domain is pointing
-                        if(domain[0]>=domain[1]){
+                        if(domain[0] < domain[domain.length-1]){
                             //domain is pointing forward
-                            logScale.range([arg[0], delta]);
-                            linScale.range([delta, 0]);
-                        }else{
-                            //domain is pointing backward
                             logScale.range([arg[0]-delta, 0]);
                             linScale.range([arg[0], arg[0]-delta]);
+                        }else{
+                            //domain is pointing backward
+                            logScale.range([arg[0], delta]);
+                            linScale.range([delta, 0]);
                         }
                     }
                 }
 
 //
-//console.log("LOG scale range:", logScale.range());
-//if(useLinear)console.log("LIN scale range:", linScale.range());
+//console.log("LOG and LIN range:", logScale.range(), linScale.range());
                 range = arg;
                 return scale;
             };
