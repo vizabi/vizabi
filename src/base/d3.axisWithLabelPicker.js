@@ -98,7 +98,6 @@ define(['d3'], function(d3){
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
-            if(options.method==null) options.method = this.METHOD_REPEATING;
             if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
             if(options.doublingOriginAtFraction==null) options.doublingOriginAtFraction = 0.5;
             if(options.pivotingLimit==null) options.pivotingLimit = 44;
@@ -164,6 +163,8 @@ define(['d3'], function(d3){
                 parseInt(options.cssFontSize)*options.widthToFontsizeRatio;
             if(options.heightOfOneDigit==null) options.heightOfOneDigit =
                 parseInt(options.cssFontSize)*options.heightToFontsizeRatio;
+            
+            
 
 console.log("********** "+orient+" **********");
             
@@ -291,6 +292,15 @@ console.log("********** "+orient+" **********");
 
             if(options.scaleType=="genericLog" || options.scaleType=="log"){
                 var eps = axis.scale().eps ? axis.scale().eps() : 0;
+                
+                
+                if(options.method==null) {
+                    var coverage = bothSidesUsed ? 
+                        Math.max(Math.abs(max), Math.abs(min))/eps 
+                        :
+                        Math.max(Math.abs(max), Math.abs(min))/Math.min(Math.abs(max), Math.abs(min));
+                    options.method = 2 <= coverage&&coverage <= 10000 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
+                };
 
 
                 if(options.method == this.METHOD_REPEATING){

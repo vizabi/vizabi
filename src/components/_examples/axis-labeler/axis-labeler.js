@@ -164,7 +164,6 @@ define([
                     showOuter: true,
                     pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
-                    method: this.yAxis.METHOD_DOUBLING
                 });
 
             
