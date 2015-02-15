@@ -99,8 +99,8 @@ define(['d3'], function(d3){
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
             if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
-            if(options.doublingOriginAtFraction==null) options.doublingOriginAtFraction = 0.5;
-            if(options.pivotingLimit==null) options.pivotingLimit = 44;
+            
+            
             if(options.isPivotAuto==null) options.isPivotAuto = true;
             if(options.removeAllLabels==null) options.removeAllLabels = false;
 
@@ -150,7 +150,8 @@ define(['d3'], function(d3){
             if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<0) options.cssMarginBottom = "5px";
             if(options.toolMargin==null) options.toolMargin = {left: 5, bottom: 5, right: 5, top: 5};
 
-
+            if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
+            
             if(options.showOuter==null)options.showOuter = false;
             if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
 

@@ -145,7 +145,6 @@ define([
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                     showOuter: true,
-                    pivotingLimit: margin.bottom,
                     isPivotAuto: true
                 });
 
@@ -162,7 +161,6 @@ define([
                     cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                     showOuter: true,
-                    pivotingLimit: margin.left,
                     //limitMaxTickNumber: 0,
                 });
 
