@@ -34,6 +34,8 @@ define([
 
             //will the model be hooked to data?
             this._hooks = {};
+            this._dataModel = null;
+            this._languageModel = null;
             this._loading = []; //array of processes that are loading
             this._items = []; //holds hook items for this hook
 
@@ -423,8 +425,8 @@ define([
             var _this = this,
                 promises = [],
                 submodels = this.getSubmodels(),
-                data_hook = this.getHook("data"),
-                language_hook = this.getHook("language"),
+                data_hook = this._dataModel,
+                language_hook = this._languageModel,
                 defer = $.Deferred(),
                 query = this.getQuery();
 
@@ -645,7 +647,6 @@ define([
 
                 //what should this hook to?
                 this.hook_to = this._getHookTo();
-
                 this.hookModel();
             }
 
@@ -664,7 +665,12 @@ define([
 
             this._dataManager = new DataManager();
 
-            //check what we want to hook
+            // get data and language model references
+            // assuming all models will need data and language support
+            this._dataModel = this._getClosestModelPrefix("data");
+            this._languageModel = this._getClosestModelPrefix("language");
+
+            //check what we want to hook this model to
             for (var i = 0; i < this.hook_to.length; i++) {
                 var prefix = this.hook_to[i];
                 //naming convention for hooks is similar from models
@@ -706,10 +712,10 @@ define([
                 return this._parent._getHookTo();
             } else {
 
-                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time", "data", "language"]');
+                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time"]');
 
                 //DEPRECATED: returning default hooks
-                //return ["entities", "time", "data", "language"]; //default
+                //return ["entities", "time"]; //default
             }
         },
 
@@ -792,7 +798,7 @@ define([
          * @returns hooked value
          */
         getItems: function(filter) {
-            if (this.isHook() && this.getHook("data")) {
+            if (this.isHook() && this._dataModel) {
 
                 //TODO: dirty hack, which angie and arthur did when trying to get the right keys
                 //get all items from data hook
