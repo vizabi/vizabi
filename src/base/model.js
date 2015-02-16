@@ -823,18 +823,14 @@ define([
         getItems: function(filter) {
             if (this.isHook() && this._dataModel) {
 
-                //TODO: dirty hack, which angie and arthur did when trying to get the right keys
-                //get all items from data hook
+                //all dimensions except time
+                var dimensions = _.without(this._getAllDimensions(), "time");
 
-                var dimension = this.getHook("entities").getDimension();
-                return _.map(this.getUnique(dimension), function(dim) {
-                    // item is an object similar to the following:
-                    //     { geo: 'usa', time: DateObj }
-                    // or  { geo: 'usa' } if filter.time is not available
-                    var item = {};
-                    item[dimension] = dim;
-                    if (filter && filter.time) {
-                        item.time = filter.time;
+                return _.map(this.getUnique(dimensions), function(item) {
+                    // Forcefully write the time to item
+                    // TODO: Clean this hack
+                    if (filter && filter['time']) {
+                        item['time'] = filter['time'];
                     }
                     return item;
                 })
@@ -873,7 +869,7 @@ define([
             if (!this.isHook() || needs_query.indexOf(this.hook) === -1) {
                 return [];
             }
-            //error if there's no entities
+            //error if there's nothing to hook to
             else if (this._numberHooks() < 0) {
                 console.error("Error:", this._id, "can't find any dimension");
                 return [];
@@ -963,16 +959,28 @@ define([
             if (!this.isHook()) return;
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
-            var limits = {
-                    min: 0,
-                    max: 0
-                },
-                filtered = _.map(this._items, function(d) {
-                    //TODO: Move this up to readers ?
-                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
-                });
 
-            return _.unique(filtered);
+            //if it's an array, it will return a list of unique combinations.
+            if(_.isArray(attr)) {
+                var values = _.map(this._items, function(d) {
+                        return _.pick(d, attr);
+                    });
+                //TODO: Move this up to readers ?
+                if(_.indexOf(attr, "time") !== -1) {
+                    for (var i = 0; i < values.length; i++) {
+                        values[i]['time'] = new Date(values[i]['time']);
+                    };
+                }
+                return _.unique(values, function(n) { return JSON.stringify(n); });
+            }
+            //if it's a string, it will return a list of values
+            else {
+                var values = _.map(this._items, function(d) {
+                        //TODO: Move this up to readers ?
+                        return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                    });
+                return _.unique(values);
+            }
         },
 
         /**
@@ -988,35 +996,17 @@ define([
             }
 
             var value;
-            switch (this.hook) {
-                case "value":
-                    value = this.value;
-                    break;
-                case "time":
-                    if (this.getHook("time")) {
-                        value = this.getHook("time")[this.value];
-                    }
-                    break;
-                case "entities":
-                    if (this.getHook("entities")) {
-                        value = this.getHook("entities")[this.value];
-                    }
-                    break;
-                default:
-                        // search the data point among existing points
-                        // TODO: existingValue = this._items_hash[filter];
 
-                        // if (existingValue == null) {
-                        //     // if not found then interpolate
-                        //     value = this._interpolateValue(this._items, filter, this.hook);
-                        // } else {
-                        //     // otherwise supply the existing value
-                        //     value = existingValue[this.value];
-                        // }
-
-                        value = this._interpolateValue(this._items, filter, this.hook);
-                    break;
+            if(this.hook === "value") {
+                value = this.value;
             }
+            else if(_.has(this._hooks, this.hook)) {
+                value = this.getHook(this.hook)[this.value];
+            }
+            else {
+                value = this._interpolateValue(this._items, filter, this.hook);
+            }
+
             return value;
         },
 
