@@ -86,7 +86,7 @@ describe("* _examples-data-loading/dependencies", function() {
             dep: ["B", "A"]
         }]
     }, {
-        title: "Dependencies with multi dependency models",
+        title: "Dependencies with multi dependency models 2",
         deps: [{
             name: "A",
         }, {
@@ -164,30 +164,35 @@ describe("* _examples-data-loading/dependencies", function() {
 
             };
 
-            beforeAll(function(done) {
-                viz = initializeVizabi("_examples-data-loading/data-loading-2", options, done);
-                mobile(true); //test with mobile resolution;
-            });
-
-            it("should be instantiated", function() {
-                expect(viz).not.toBeNull();
-                expect(typeof viz).toBe('object');
-            });
-
-            it("should not have an empty div", function() {
-                var contents = $(viz._placeholder).children();
-                expect(contents.length).toBeGreaterThan(0);
-            });
-
             if (dep_case.fail) {
-                it("should not be ready", function() {
-                    var ready = viz._tool.model._ready;
-                    if (ready) {
-                        console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
-                    }
-                    expect(ready).not.toBeTruthy();
+
+                beforeEach(function(done) {
+                    spyOn(console, 'error');
+                    viz = initializeVizabi("_examples-data-loading/data-loading-2", options, done);
+                    mobile(true); //test with mobile resolution;
                 });
+
+                it('should print error to console', function() {
+                    expect(console.error).toHaveBeenCalled();
+                });
+
             } else {
+
+                beforeAll(function(done) {
+                    viz = initializeVizabi("_examples-data-loading/data-loading-2", options, done);
+                    mobile(true); //test with mobile resolution;
+                });
+
+                it("should be instantiated", function() {
+                    expect(viz).not.toBeNull();
+                    expect(typeof viz).toBe('object');
+                });
+
+                it("should not have an empty div", function() {
+                    var contents = $(viz._placeholder).children();
+                    expect(contents.length).toBeGreaterThan(0);
+                });
+
                 it("should be ready (and all models ready accordingly)", function() {
                     var ready = viz._tool.model._ready;
                     if (!ready) {
