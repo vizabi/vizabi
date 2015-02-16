@@ -192,10 +192,16 @@ define([
             for (var i = 0; i < data.length; i++) {
                 var node = data[i];
                 if (node.dep) {
-                    formatted.links.push({
-                        source: nodeMap[node.name],
-                        target: nodeMap[node.dep]
-                    });
+                    if (!_.isArray(node.dep)) {
+                        node.dep = [node.dep];
+                    }
+                    for (var j = 0; j < node.dep.length; j++) {
+                        var d = node.dep[j];
+                        formatted.links.push({
+                            source: nodeMap[node.name],
+                            target: nodeMap[d]
+                        });
+                    };
                 }
             };
             return formatted;

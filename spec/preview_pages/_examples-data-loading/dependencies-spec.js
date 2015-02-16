@@ -53,7 +53,7 @@ describe("* _examples-data-loading/dependencies", function() {
             name: "D",
             dep: "C"
         }]
-    },{
+    }, {
         title: "Dependencies with independent data only",
         deps: [{
             name: "A",
@@ -70,6 +70,51 @@ describe("* _examples-data-loading/dependencies", function() {
             name: "D",
             type: "external",
             dep: "C"
+        }]
+    }, {
+        title: "Dependencies with multi dependency models",
+        deps: [{
+            name: "A",
+            type: "external",
+        }, {
+            name: "B",
+            type: "external",
+            dep: "A"
+        }, {
+            name: "C",
+            type: "hook",
+            dep: ["B", "A"]
+        }]
+    }, {
+        title: "Dependencies with multi dependency models",
+        deps: [{
+            name: "A",
+        }, {
+            name: "B",
+            dep: "A"
+        }, {
+            name: "C",
+            type: "hook",
+            dep: ["B", "A"]
+        }, {
+            name: "D",
+            type: "external",
+            dep: ["B", "C"]
+        }]
+    }, {
+        title: "Circular dependency",
+        fail: true,
+        deps: [{
+            name: "A",
+            dep: "C"
+        }, {
+            name: "B",
+            type: "external",
+            dep: "A"
+        }, {
+            name: "C",
+            type: "hook",
+            dep: ["B"]
         }]
     }];
 
@@ -134,13 +179,24 @@ describe("* _examples-data-loading/dependencies", function() {
                 expect(contents.length).toBeGreaterThan(0);
             });
 
-            it("should be ready (and all models ready accordingly)", function() {
-                var ready = viz._tool.model._ready;
-                if (!ready) {
-                    console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
-                }
-                expect(ready).toBeTruthy();
-            });
+            if (dep_case.fail) {
+                it("should not be ready", function() {
+                    var ready = viz._tool.model._ready;
+                    if (ready) {
+                        console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
+                    }
+                    expect(ready).not.toBeTruthy();
+                });
+            } else {
+                it("should be ready (and all models ready accordingly)", function() {
+                    var ready = viz._tool.model._ready;
+                    if (!ready) {
+                        console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
+                    }
+                    expect(ready).toBeTruthy();
+                });
+            }
+
 
         });
 

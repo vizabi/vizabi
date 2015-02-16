@@ -96,9 +96,15 @@ define([
         for (var i = 0; i < array.length; i++) {
             var node = array[i];
             if (node.dep) {
-                var name = node.name,
+                var name = node.name;
                     dep = node.dep;
-                trees[dep][name] = trees[name];
+
+                if(!_.isArray(dep)) dep = [dep];
+                for (var j = 0; j < dep.length; j++) {
+                    var d = dep[j];
+                    trees[d][name] = trees[name];
+                };
+
                 roots = _.without(roots, name);
             }
         }

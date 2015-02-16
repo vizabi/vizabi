@@ -18,7 +18,7 @@ function initializeDom() {
 var vizabi;
 function initializeVizabi(viz, options, done) {
 
-    var interval = 800;
+    var interval = 1000;
     if (typeof vizabi === 'undefined') {
         window.initializeDom();
     }
