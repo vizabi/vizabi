@@ -760,26 +760,49 @@ define([
         },
 
         /**
+         * gets all hook dimensions
+         * @returns {Array} all unique dimensions
+         */
+        _getAllDimensions: function() {
+            var dimensions = [];
+            for (var i in this._hooks) {
+                var dim = this._hooks[i].getDimension();
+                if(dim) dimensions.push(dim);
+            };
+            return dimensions;
+        },
+
+        /**
+         * gets all hook filters
+         * @returns {Object} filters
+         */
+        _getAllFilters: function() {
+            var filters = {};
+            for (var i in this._hooks) {
+                filters = _.extend(filters, this._hooks[i].getFilter());
+            };
+            return filters;
+        },
+
+        /**
+         * gets number of hooks
+         * @returns {Number} number of hooks
+         */
+        _numberHooks: function() {
+            var n = 0;
+            for (var i in this._hooks) n++;
+            return n;
+        },
+
+        /**
          * gets the value specified by this hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
          * @returns hooked value
          */
 
         getValue: function(filter) {
-
-            //get id from filter
-            //TODO: improve the way a row is identified
-            //(maybe like the commented code above)
-            var id_keys = [];
-            if (this.getHook("entities")) {
-                id_keys.push(this.getHook("entities").getDimension());
-            }
-            if (this.getHook("time")) {
-                id_keys.push("time");
-            }
             //extract id from original filter
-            var id = _.pick(filter, id_keys);
-
+            var id = _.pick(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -822,6 +845,22 @@ define([
             }
         },
 
+        /**
+         * Gets the dimension of this model if it has one
+         * @returns {String|Boolean} dimension
+         */
+        getDimension: function() {
+            return false; //defaults to no dimension
+        },
+
+        /**
+         * Gets the filter for this model if it has one
+         * @returns {Object} filters
+         */
+        getFilter: function() {
+            return {}; //defaults to no filter
+        },
+
 
         /**
          * gets query that this model/hook needs to get data
@@ -835,38 +874,22 @@ define([
                 return [];
             }
             //error if there's no entities
-            else if (!this.getHook("entities")) {
-                console.error("Error:", this._id, "can't find the entities");
+            else if (this._numberHooks() < 0) {
+                console.error("Error:", this._id, "can't find any dimension");
                 return [];
             }
             //else, its a hook (indicator or property) and it needs to query
             else {
 
-                var entities = this.getHook("entities"),
-                    time = this.getHook("time"),
-                    dimension = entities.getDimension(),
-                    filters = entities.getFilters().getObject(),
-                    //include time or not
-                    select = (time) ? [this.value, "time"] : [this.value],
-                    time_filter = {};
-
-                //if there's hooked time, include time in query filter
-                if (time) {
-
-                    var time_start = d3.time.format(time.format || "%Y")(time.start),
-                        time_end = d3.time.format(time.format || "%Y")(time.end),
-                        time_filter = {
-                            "time": [
-                                [time_start, time_end]
-                            ]
-                        };
-                }
+                var dimensions = this._getAllDimensions(),
+                    select =  _.union(dimensions, [this.value]),
+                    filters = this._getAllFilters();
 
                 //return query
                 return [{
                     "from": "data",
-                    "select": _.union([dimension], select),
-                    "where": _.extend(time_filter, filters)
+                    "select": select,
+                    "where": filters
                 }];
             }
         },
