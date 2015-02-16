@@ -667,16 +667,14 @@ define([
 
             // get data and language model references
             // assuming all models will need data and language support
-            this._dataModel = this._getClosestModelPrefix("data");
-            this._languageModel = this._getClosestModelPrefix("language");
+            this._dataModel = this._getClosestModel("data");
+            this._languageModel = this._getClosestModel("language");
 
             //check what we want to hook this model to
             for (var i = 0; i < this.hook_to.length; i++) {
-                var prefix = this.hook_to[i];
-                //naming convention for hooks is similar from models
-                var name = prefix.split("_")[0];
+                var name = this.hook_to[i];
                 //hook with the closest prefix to this model
-                this._hooks[name] = this._getClosestModelPrefix(prefix);
+                this._hooks[name] = this._getClosestModel(name);
             }
 
             //this is a hook, therefore it needs to reload when date changes
@@ -1061,26 +1059,24 @@ define([
          * @param {String} prefix
          * @returns {Object} submodel
          */
-        _getClosestModelPrefix: function(prefix) {
-            var model = this._findSubmodelPrefix(prefix);
+        _getClosestModel: function(name) {
+            var model = this._findSubmodel(name);
             if (model) {
                 return model;
             } else if (this._parent) {
-                return this._parent._getClosestModelPrefix(prefix);
+                return this._parent._getClosestModel(name);
             }
         },
 
-        //TODO: hacked way to find the type of submodel from naming convention.
-        //Is there a better way to figure out the type while keeping it simple?
         /**
          * find submodel with name that starts with prefix
          * @param {String} prefix
          * @returns {Object} submodel or false if nothing is found
          */
-        _findSubmodelPrefix: function(prefix) {
+        _findSubmodel: function(name) {
             for (var i in this._data) {
                 //found submodel
-                if (i.indexOf(prefix) === 0 && _.isObject(this._data[i])) {
+                if (i == name && _.isObject(this._data[i])) {
                     return this._data[i];
                 }
             }
