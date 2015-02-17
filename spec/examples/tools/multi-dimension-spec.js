@@ -1,4 +1,4 @@
-describe("* Multi dimensions", function() {
+describe("* Example Pop slider with multiple dimensions", function() {
     var viz;
 
     var options = {

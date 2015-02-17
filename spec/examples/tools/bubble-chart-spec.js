@@ -1,4 +1,4 @@
-describe("* _examples/bubble-chart", function() {
+describe("* Example Bubble Chart", function() {
     var viz;
 
     var options = {

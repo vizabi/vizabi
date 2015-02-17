@@ -363,8 +363,8 @@ module.exports = function(grunt) {
                 options: {
                     outfile: 'test.html',
                     keepRunner: true,
-                    specs: 'spec/preview_pages/**/*-spec.js',
-                    helpers: 'spec/preview_pages/**/*-helper.js',
+                    specs: 'spec/**/*-spec.js',
+                    helpers: 'spec/**/*-helper.js',
                     host: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/',
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {

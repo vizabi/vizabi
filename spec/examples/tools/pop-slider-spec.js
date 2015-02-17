@@ -1,4 +1,4 @@
-describe("* _examples/pop-slider", function() {
+describe("* Example Pop Slider", function() {
     var viz;
 
     var options = {

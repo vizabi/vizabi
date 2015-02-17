@@ -1,4 +1,4 @@
-describe("* _examples-data-loading/dependencies", function() {
+describe("* Model Dependencies", function() {
     var viz;
 
     var cases = [{
