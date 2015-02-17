@@ -89,7 +89,6 @@ define([
 
             //component events
             this.on("resize", function() {
-                console.log("Ops! Gotta resize...");
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();

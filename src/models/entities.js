@@ -33,18 +33,18 @@ define([
 
         /**
          * Gets the dimensions in this entities
-         * @returns {Array} Array of unique values
+         * @returns {String} String with dimension
          */
         getDimension: function() {
             return this.show.dim;
         },
 
         /**
-         * Gets the filters in this entities
+         * Gets the filter in this entities
          * @returns {Array} Array of unique values
          */
-        getFilters: function() {
-            return this.show.filter;
+        getFilter: function() {
+            return this.show.filter.getObject();
         },
 
         selectEntity: function(d) {

@@ -1,0 +1,61 @@
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+#test-wrapper {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    right: 30%;
+    left: 0;
+}
+#test-placeholder {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+#test-placeholder.mobile {
+    position: relative !important;
+    width: 320px;
+    height: 568px;
+    margin: 30px auto;
+    border: 30px solid #eeeeee;
+    border-radius: 30px;
+}
+.jasmine_html-reporter {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 70%;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    background-color: #474545;
+    color: #dddddd;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.jasmine_html-reporter .suite a, .jasmine_html-reporter .result-message {
+    color: #f2f2f2;
+}
+.jasmine_html-reporter .banner {
+    display: none;
+}
+.jasmine_html-reporter .symbol-summary li.passed:before {
+    color: #7ADEA0;
+}
+.jasmine_html-reporter .summary li.passed a {
+    color: #7ADEA0;
+}
+.jasmine_html-reporter .bar.passed {
+    background-color: #7ADEA0;
+    color: #444444;
+}
+.jasmine_html-reporter .bar.failed, .jasmine_html-reporter .failures .spec-detail .description {
+    background-color: #D89582;
+}
+.jasmine_html-reporter .symbol-summary li.failed:before {
+    color: #D89582;
+}

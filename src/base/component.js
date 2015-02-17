@@ -518,7 +518,7 @@ define([
                             model.trigger(evt, vals);
 
                             //if all are ready, trigger for this model
-                            if (!model.isLoading()) {
+                            if (model._ready = !model.isLoading()) {
                                 model.triggerOnce('ready', vals);
                             }
                         }

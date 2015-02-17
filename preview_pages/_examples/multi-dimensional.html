@@ -23,39 +23,15 @@
 
         <button onclick="randomSize('placeholder')">RANDOM</button>
 
-        <label>|</label>
 
-        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
-            <span>OPTIONS</span>
-            <ul class="dropdown">
-                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
-                </li>
-                <li><a onclick="setState()">USA - 2000</a>
-                </li>
-                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
-                </li>
-            </ul>
-        </div>
-
-        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
-            <span>Language</span>
-            <ul class="dropdown">
-                <li><a onclick="setLanguage('en')">English</a>
-                </li>
-                <li><a onclick="setLanguage('pt')">Portuguese</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="buttons">
-
-
-        <div id="dropdown-color" class="wrapper-dropdown" tabindex="1">
+        <div id="dropdown-color" class="wrapper-dropdown small" tabindex="1">
             <span>COLOR HOOK</span>
             <ul class="dropdown">
                 <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
                 </li>
                 <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'age', ['#F77481', '#62CCE3', '#E1CE00', '#B4DE79'])">Prop: age</a>
                 </li>
                 <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
                 </li>
@@ -70,12 +46,14 @@
             </ul>
         </div>
 
-        <div id="dropdown-number" class="wrapper-dropdown" tabindex="1">
+        <div id="dropdown-number" class="wrapper-dropdown small" tabindex="1">
             <span>NUMBER HOOK</span>
             <ul class="dropdown">
                 <li><a onclick="hook('number', 'property', 'geo.region')">Prop: geo.region</a>
                 </li>
                 <li><a onclick="hook('number', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'age')">Prop: age</a>
                 </li>
                 <li><a onclick="hook('number', 'property', 'geo.category')">Prop: geo.category</a>
                 </li>
@@ -90,12 +68,14 @@
             </ul>
         </div>
 
-        <div id="dropdown-label" class="wrapper-dropdown" tabindex="1">
+        <div id="dropdown-label" class="wrapper-dropdown small" tabindex="1">
             <span>LABEL HOOK</span>
             <ul class="dropdown">
                 <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
                 </li>
                 <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'age')">Prop: age</a>
                 </li>
                 <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
                 </li>
@@ -106,6 +86,28 @@
                 <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
                 </li>
                 <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" class="wrapper-dropdown small" tabindex="1">
+            <span>LABEL 2 HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label2', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'age')">Prop: age</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label2', 'value', 'Cool')">Value: "Cool"</a>
                 </li>
             </ul>
         </div>
@@ -122,11 +124,6 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
-    <p>External buttons:</p>
-    <button id="play_button" onclick="play()">PLAY</button>
-    <button id="language_button" onclick="language('pt')">SET LANGUAGE: PT</button>
-    <p>Current Query:</p>
-    <pre id="query" class="json_box"></pre>
 </div>
 
 <script>
@@ -141,31 +138,45 @@ $(function() {
     var options = {
         //state (how vizabi should work)
         state: {
+
             //time properties
             time: {
                 unit: "year",
-                start: "1800",
+                start: "1990",
                 end: "2014",
                 step: 1,
-                speed: 300,
-                value: "1995"
+                speed: 20,
+                value: "1995",
+                playable: false
             },
             //entities we want to show
             entities: {
                 show: {
                     dim: "geo",
                     filter: {
-                        "geo": ['swe', 'nor', 'usa', 'aus'],
+                        "geo": ['swe', 'nor'],
                         "geo.category": ["country"]
+                    }
+                }
+            },
+            entities_age: {
+                show: {
+                    dim: "age",
+                    filter: {
+                        "age": ['5', '10']
                     }
                 }
             },
 
             row: {
-                hook_to: ["entities", "time"],
+                hook_to: ["entities", "entities_age", "time"],
                 label: {
                     hook: "property",
                     value: "geo.name"
+                },
+                label2: {
+                    hook: "property",
+                    value: "age"
                 },
                 number: {
                     hook: "indicator",
@@ -173,9 +184,9 @@ $(function() {
                 },
                 color: {
                     hook: "property",
-                    value: "geo.region",
+                    value: "age",
                     //red, yellow, green, blue
-                    domain: ["#F77481", "#E1CE00", "#B4DE79", "#62CCE3"]
+                    domain: ["#F77481", "#62CCE3", "#B4DE79"]
                 }
             }
         },
@@ -183,7 +194,7 @@ $(function() {
         //data properties
         data: {
             reader: "local-json",
-            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+            path: "../../local_data/waffles/en/multi-dimensional.json"
         },
 
         //language properties
@@ -191,16 +202,20 @@ $(function() {
             id: "en",
             strings: {
                 "en": {
-                    "intro_text": "This example shows the tool Pop Slider with model adaptations and data support"
+                    "intro_text": "This example shows the tool Pop Slider with multi dimensional support. The dimensions are ['geo', 'age', 'time'] and it shows populations of two age groups from Sweden and Norway across time"
                 },
                 "pt": {
-                    "intro_text": "Esse exemplo mostra a Pop Slider com adaptações em model and suporte a dados"
+                    "intro_text": "Esse exemplo mostra a Pop Slider com suporte a multi dimensões"
                 }
             }
         },
 
-        //ui (how should vizabi look)
-        ui: {},
+        ui: {
+            'vzb-tool-timeslider': {
+                show_limits: true,
+                show_value: true
+            }
+        },
 
         //bind (what vizabi should tell to the world outside)
         bind: {
@@ -281,76 +296,6 @@ function hook(hook, use, value, domain) {
     if (domain) options.state.row[hook].domain = domain;
 
     myVizabi.setOptions(options);
-}
-
-function initialState() {
-    var newOption = {
-        state: {
-            entities: {
-                show: {
-                    dim: "geo",
-                    filter: {
-                        "geo": ['swe', 'nor'],
-                        "geo.category": ["country"]
-                    }
-                }
-            }
-        }
-    };
-
-    myVizabi.setOptions(newOption);
-    showState(newOption.state);
-}
-
-function changeIndicator() {
-    var newOption = {
-        state: {
-            marker: {
-                axis_y: {
-                    use: "indicator",
-                    value: "gdp_per_cap",
-                    scale: 'linear',
-                    unit: 100
-                }
-            }
-        }
-    };
-
-    myVizabi.setOptions(newOption);
-}
-
-function setState() {
-    var newOption = {
-        state: {
-            entities: {
-                show: {
-                    dim: "geo",
-                    filter: {
-                        "geo": ['usa'],
-                        "geo.category": ["country"]
-                    }
-                }
-            },
-            marker: {
-                axis_x: {
-                    use: "indicator",
-                    value: "gdp_per_cap",
-                    scale: 'linear',
-                    unit: 100
-                }
-            },
-            time: {
-                start: 1990,
-                end: 2012,
-                value: 2005,
-                step: 1,
-                speed: 300,
-                formatInput: "%Y"
-            }
-        }
-    };
-
-    myVizabi.setOptions(newOption);
 }
 </script>
 
