@@ -28,7 +28,7 @@ describe("* _examples/bubble-chart", function() {
 
             //how we show it
             marker: {
-                hook_to: ["entities", "time", "data", "language"],
+                hook_to: ["entities", "time"],
                 type: "geometry",
                 shape: "circle",
                 label: {

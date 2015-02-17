@@ -34,6 +34,8 @@ define([
 
             //will the model be hooked to data?
             this._hooks = {};
+            this._dataModel = null;
+            this._languageModel = null;
             this._loading = []; //array of processes that are loading
             this._items = []; //holds hook items for this hook
 
@@ -423,8 +425,8 @@ define([
             var _this = this,
                 promises = [],
                 submodels = this.getSubmodels(),
-                data_hook = this.getHook("data"),
-                language_hook = this.getHook("language"),
+                data_hook = this._dataModel,
+                language_hook = this._languageModel,
                 defer = $.Deferred(),
                 query = this.getQuery();
 
@@ -645,7 +647,6 @@ define([
 
                 //what should this hook to?
                 this.hook_to = this._getHookTo();
-
                 this.hookModel();
             }
 
@@ -664,13 +665,16 @@ define([
 
             this._dataManager = new DataManager();
 
-            //check what we want to hook
+            // get data and language model references
+            // assuming all models will need data and language support
+            this._dataModel = this._getClosestModel("data");
+            this._languageModel = this._getClosestModel("language");
+
+            //check what we want to hook this model to
             for (var i = 0; i < this.hook_to.length; i++) {
-                var prefix = this.hook_to[i];
-                //naming convention for hooks is similar from models
-                var name = prefix.split("_")[0];
+                var name = this.hook_to[i];
                 //hook with the closest prefix to this model
-                this._hooks[name] = this._getClosestModelPrefix(prefix);
+                this._hooks[name] = this._getClosestModel(name);
             }
 
             //this is a hook, therefore it needs to reload when date changes
@@ -706,10 +710,10 @@ define([
                 return this._parent._getHookTo();
             } else {
 
-                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time", "data", "language"]');
+                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time"]');
 
                 //DEPRECATED: returning default hooks
-                //return ["entities", "time", "data", "language"]; //default
+                //return ["entities", "time"]; //default
             }
         },
 
@@ -754,26 +758,49 @@ define([
         },
 
         /**
+         * gets all hook dimensions
+         * @returns {Array} all unique dimensions
+         */
+        _getAllDimensions: function() {
+            var dimensions = [];
+            for (var i in this._hooks) {
+                var dim = this._hooks[i].getDimension();
+                if(dim) dimensions.push(dim);
+            };
+            return dimensions;
+        },
+
+        /**
+         * gets all hook filters
+         * @returns {Object} filters
+         */
+        _getAllFilters: function() {
+            var filters = {};
+            for (var i in this._hooks) {
+                filters = _.extend(filters, this._hooks[i].getFilter());
+            };
+            return filters;
+        },
+
+        /**
+         * gets number of hooks
+         * @returns {Number} number of hooks
+         */
+        _numberHooks: function() {
+            var n = 0;
+            for (var i in this._hooks) n++;
+            return n;
+        },
+
+        /**
          * gets the value specified by this hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
          * @returns hooked value
          */
 
         getValue: function(filter) {
-
-            //get id from filter
-            //TODO: improve the way a row is identified
-            //(maybe like the commented code above)
-            var id_keys = [];
-            if (this.getHook("entities")) {
-                id_keys.push(this.getHook("entities").getDimension());
-            }
-            if (this.getHook("time")) {
-                id_keys.push("time");
-            }
             //extract id from original filter
-            var id = _.pick(filter, id_keys);
-
+            var id = _.pick(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -792,20 +819,16 @@ define([
          * @returns hooked value
          */
         getItems: function(filter) {
-            if (this.isHook() && this.getHook("data")) {
+            if (this.isHook() && this._dataModel) {
 
-                //TODO: dirty hack, which angie and arthur did when trying to get the right keys
-                //get all items from data hook
+                //all dimensions except time
+                var dimensions = _.without(this._getAllDimensions(), "time");
 
-                var dimension = this.getHook("entities").getDimension();
-                return _.map(this.getUnique(dimension), function(dim) {
-                    // item is an object similar to the following:
-                    //     { geo: 'usa', time: DateObj }
-                    // or  { geo: 'usa' } if filter.time is not available
-                    var item = {};
-                    item[dimension] = dim;
-                    if (filter && filter.time) {
-                        item.time = filter.time;
+                return _.map(this.getUnique(dimensions), function(item) {
+                    // Forcefully write the time to item
+                    // TODO: Clean this hack
+                    if (filter && filter['time']) {
+                        item['time'] = filter['time'];
                     }
                     return item;
                 })
@@ -814,6 +837,22 @@ define([
             } else {
                 return [];
             }
+        },
+
+        /**
+         * Gets the dimension of this model if it has one
+         * @returns {String|Boolean} dimension
+         */
+        getDimension: function() {
+            return false; //defaults to no dimension
+        },
+
+        /**
+         * Gets the filter for this model if it has one
+         * @returns {Object} filters
+         */
+        getFilter: function() {
+            return {}; //defaults to no filter
         },
 
 
@@ -828,39 +867,23 @@ define([
             if (!this.isHook() || needs_query.indexOf(this.hook) === -1) {
                 return [];
             }
-            //error if there's no entities
-            else if (!this.getHook("entities")) {
-                console.error("Error:", this._id, "can't find the entities");
+            //error if there's nothing to hook to
+            else if (this._numberHooks() < 0) {
+                console.error("Error:", this._id, "can't find any dimension");
                 return [];
             }
             //else, its a hook (indicator or property) and it needs to query
             else {
 
-                var entities = this.getHook("entities"),
-                    time = this.getHook("time"),
-                    dimension = entities.getDimension(),
-                    filters = entities.getFilters().getObject(),
-                    //include time or not
-                    select = (time) ? [this.value, "time"] : [this.value],
-                    time_filter = {};
-
-                //if there's hooked time, include time in query filter
-                if (time) {
-
-                    var time_start = d3.time.format(time.format || "%Y")(time.start),
-                        time_end = d3.time.format(time.format || "%Y")(time.end),
-                        time_filter = {
-                            "time": [
-                                [time_start, time_end]
-                            ]
-                        };
-                }
+                var dimensions = this._getAllDimensions(),
+                    select =  _.union(dimensions, [this.value]),
+                    filters = this._getAllFilters();
 
                 //return query
                 return [{
                     "from": "data",
-                    "select": _.union([dimension], select),
-                    "where": _.extend(time_filter, filters)
+                    "select": select,
+                    "where": filters
                 }];
             }
         },
@@ -934,16 +957,28 @@ define([
             if (!this.isHook()) return;
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
-            var limits = {
-                    min: 0,
-                    max: 0
-                },
-                filtered = _.map(this._items, function(d) {
-                    //TODO: Move this up to readers ?
-                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
-                });
 
-            return _.unique(filtered);
+            //if it's an array, it will return a list of unique combinations.
+            if(_.isArray(attr)) {
+                var values = _.map(this._items, function(d) {
+                        return _.pick(d, attr);
+                    });
+                //TODO: Move this up to readers ?
+                if(_.indexOf(attr, "time") !== -1) {
+                    for (var i = 0; i < values.length; i++) {
+                        values[i]['time'] = new Date(values[i]['time']);
+                    };
+                }
+                return _.unique(values, function(n) { return JSON.stringify(n); });
+            }
+            //if it's a string, it will return a list of values
+            else {
+                var values = _.map(this._items, function(d) {
+                        //TODO: Move this up to readers ?
+                        return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                    });
+                return _.unique(values);
+            }
         },
 
         /**
@@ -959,35 +994,17 @@ define([
             }
 
             var value;
-            switch (this.hook) {
-                case "value":
-                    value = this.value;
-                    break;
-                case "time":
-                    if (this.getHook("time")) {
-                        value = this.getHook("time")[this.value];
-                    }
-                    break;
-                case "entities":
-                    if (this.getHook("entities")) {
-                        value = this.getHook("entities")[this.value];
-                    }
-                    break;
-                default:
-                        // search the data point among existing points
-                        // TODO: existingValue = this._items_hash[filter];
 
-                        // if (existingValue == null) {
-                        //     // if not found then interpolate
-                        //     value = this._interpolateValue(this._items, filter, this.hook);
-                        // } else {
-                        //     // otherwise supply the existing value
-                        //     value = existingValue[this.value];
-                        // }
-
-                        value = this._interpolateValue(this._items, filter, this.hook);
-                    break;
+            if(this.hook === "value") {
+                value = this.value;
             }
+            else if(_.has(this._hooks, this.hook)) {
+                value = this.getHook(this.hook)[this.value];
+            }
+            else {
+                value = this._interpolateValue(this._items, filter, this.hook);
+            }
+
             return value;
         },
 
@@ -1042,26 +1059,24 @@ define([
          * @param {String} prefix
          * @returns {Object} submodel
          */
-        _getClosestModelPrefix: function(prefix) {
-            var model = this._findSubmodelPrefix(prefix);
+        _getClosestModel: function(name) {
+            var model = this._findSubmodel(name);
             if (model) {
                 return model;
             } else if (this._parent) {
-                return this._parent._getClosestModelPrefix(prefix);
+                return this._parent._getClosestModel(name);
             }
         },
 
-        //TODO: hacked way to find the type of submodel from naming convention.
-        //Is there a better way to figure out the type while keeping it simple?
         /**
          * find submodel with name that starts with prefix
          * @param {String} prefix
          * @returns {Object} submodel or false if nothing is found
          */
-        _findSubmodelPrefix: function(prefix) {
+        _findSubmodel: function(name) {
             for (var i in this._data) {
                 //found submodel
-                if (i.indexOf(prefix) === 0 && _.isObject(this._data[i])) {
+                if (i == name && _.isObject(this._data[i])) {
                     return this._data[i];
                 }
             }

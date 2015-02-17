@@ -116,7 +116,7 @@ define([
             console.error("No root, circular dependency");
         }
 
-        trees[roots[0]].hook_to = ["entities", "time", "data", "language"];
+        trees[roots[0]].hook_to = ["entities", "time"];
 
         return trees[roots[0]];
     }

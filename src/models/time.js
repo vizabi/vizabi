@@ -160,6 +160,29 @@ define([
         },
 
         /**
+         * Gets the dimensions in time
+         * @returns {String} time dimension
+         */
+        getDimension: function() {
+            return "time";
+        },
+
+        /**
+         * Gets filter for time
+         * @returns {Object} time filter
+         */
+        getFilter: function() {
+            var start = d3.time.format(this.format || "%Y")(this.start),
+                end = d3.time.format(this.format || "%Y")(this.end),
+                filter = {
+                    "time": [
+                        [start, end]
+                    ]
+                };
+            return filter;
+        },
+
+        /**
          * gets formatted value
          * @param {String} f Optional format. Defaults to YYYY
          * @param {String} attr Optional attribute. Defaults to "value"

@@ -91,10 +91,15 @@ define([
             this.element.selectAll("p")
                 .text(function(d) {
 
-                    var id = _.pick(d, ["geo", "time"]),
-                        label = _this.model.rows.label.getValue(id),
-                        number = _this.model.rows.number.getValue(id),
-                        string = label + ": ";
+                    var label = _this.model.rows.label.getValue(d),
+                        number = _this.model.rows.number.getValue(d);
+
+                    //adding a second label
+                    if(_this.model.rows.label2) {
+                        label += " (" + _this.model.rows.label2.getValue(d) + ")";
+                    }
+
+                    var string = label + ": ";
 
                     if (_this.getLayoutProfile() === 'small' && indicator === 'pop') {
                         string += Math.round(number / 100000) / 10 + " M";
