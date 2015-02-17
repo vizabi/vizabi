@@ -381,8 +381,8 @@ module.exports = function(grunt) {
                 src: 'dist/vizabi.js',
                 options: {
                     outfile: 'test.html',
-                    specs: 'spec/preview_pages/**/*-spec.js',
-                    helpers: 'spec/preview_pages/**/*-helper.js',
+                    specs: 'spec/**/*-spec.js',
+                    helpers: 'spec/**/*-helper.js',
                     styles: ['dist/vizabi.css', 'spec/spec.css'],
                     vendor: ['dist/preview_pages/assets/jquery.min.js'],
                     page: {
