@@ -138,9 +138,9 @@ define([
             this.blockResize(false);
             //defer to make sure it's updated
             var _this = this;
-            if (_this.placeholder.classed(class_loading_data)) {
+            _.defer(function() {
                 _this.placeholder.classed(class_loading_data, false);
-            };
+            });
         },
 
         /**
