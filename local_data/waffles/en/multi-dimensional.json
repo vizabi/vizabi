@@ -1,0 +1,1954 @@
+[
+  [
+    {
+      "time": "1990",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "8558829",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "8616729",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "8678657",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "8738894",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "8789976",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "8826949",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "8853934",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "8847421",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "8852650",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "8852487",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "8860153",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "8877022",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "8901831",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "8935392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "9029345",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "9090707",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "9161374",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "8977965",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "9236872",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "9311110",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "9379687",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "9440747",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "9495392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "9545823",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "swe",
+      "age": "5",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "9595619",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1990",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "18558829",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "18616729",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "18678657",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "18738894",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "18789976",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "18826949",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "18853934",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "18847421",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "18852650",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "18852487",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "18860153",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "18877022",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "18901831",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "18935392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "19029345",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "19090707",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "19161374",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "18977965",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "19236872",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "19311110",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "19379687",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "19440747",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "19495392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "19545823",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "swe",
+      "age": "10",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "19595619",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1990",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "58558829",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "58616729",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "58678657",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "58738894",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "58789976",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "58826949",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "58853934",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "58847421",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "58852650",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "58852487",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "58860153",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "58877022",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "58901831",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "58935392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "59029345",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "59090707",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "59161374",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "58977965",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "59236872",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "59311110",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "59379687",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "59440747",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "59495392",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "59545823",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "swe",
+      "age": "15",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "59595619",
+      "geo.name": "Sweden",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1990",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "4558829",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "4616729",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "4678657",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "4738894",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "4789976",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "4826949",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "4853934",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "4847421",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "4852650",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "4852487",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "4860153",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "4877022",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "4901831",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "4935392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "4029345",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "4090707",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "4161374",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "4977965",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "4236872",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "4311110",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "4379687",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "4440747",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "4495392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "4545823",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "nor",
+      "age": "5",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "4595619",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1990",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "48558829",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "48616729",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "48678657",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "48738894",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "48789976",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "48826949",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "48853934",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "48847421",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "48852650",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "48852487",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "48860153",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "48877022",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "48901831",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "48935392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "49029345",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "49090707",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "49161374",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "48977965",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "49236872",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "49311110",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "49379687",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "49440747",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "49495392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "49545823",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "nor",
+      "age": "10",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "49595619",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1990",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "24253.271298986827",
+      "lex": "77.67",
+      "pop": "48558829",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1991",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "23258.4017742018",
+      "lex": "77.81",
+      "pop": "48616729",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1992",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "23245.656979905838",
+      "lex": "78.16",
+      "pop": "48678657",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1993",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "22699.21372785275",
+      "lex": "78.24",
+      "pop": "48738894",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1994",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "23495.89872974575",
+      "lex": "78.86",
+      "pop": "48789976",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1995",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "24565.99155410072",
+      "lex": "78.94",
+      "pop": "48826949",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1997",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "25523.940110970227",
+      "lex": "79.39",
+      "pop": "48853934",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1996",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "24898.704525215322",
+      "lex": "79.15",
+      "pop": "48847421",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1998",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "26314.498670791192",
+      "lex": "79.53",
+      "pop": "48852650",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "1999",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "27299.743712304713",
+      "lex": "79.61",
+      "pop": "48852487",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2000",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "28640.08843950404",
+      "lex": "79.84",
+      "pop": "48860153",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2001",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "28906.76907798838",
+      "lex": "79.93",
+      "pop": "48877022",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2002",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "29449.457443365423",
+      "lex": "80.04",
+      "pop": "48901831",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2003",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "29969.71239647639",
+      "lex": "80.33",
+      "pop": "48935392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2005",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "31995",
+      "lex": "80.75",
+      "pop": "49029345",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2006",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "33211.45497678261",
+      "lex": "80.95",
+      "pop": "49090707",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2007",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "34091.93363630435",
+      "lex": "81.08",
+      "pop": "49161374",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2004",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "31141.106073518407",
+      "lex": "80.67",
+      "pop": "48977965",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2008",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "33563.338388887205",
+      "lex": "80.973",
+      "pop": "49236872",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2009",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "31604.8424954845",
+      "lex": "81.282",
+      "pop": "49311110",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2010",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "33316.77213223002",
+      "lex": "81.426",
+      "pop": "49379687",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2011",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "34326.67590815512",
+      "lex": "81.56",
+      "pop": "49440747",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2012",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "34530.262823839665",
+      "lex": "81.69",
+      "pop": "49495392",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2013",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "34669.336396038656",
+      "lex": "81.818",
+      "pop": "49545823",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    },
+    {
+      "time": "2014",
+      "geo": "nor",
+      "age": "15",
+      "gdp_per_cap": "35224.88477054688",
+      "lex": "81.948",
+      "pop": "49595619",
+      "geo.name": "Norway",
+      "geo.region": "eur",
+      "geo.category": [
+        "country"
+      ]
+    }
+  ]
+]
