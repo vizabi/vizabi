@@ -40,12 +40,11 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
+        validate: function() {
 
-            var time = model.state.time,
-                markers = model.state.marker.label;
+            var time = this.model.state.time,
+                markers = this.model.state.marker.label;
 
             //don't validate anything if data hasn't been loaded
             if (!markers.getItems() || markers.getItems().length < 1) {
@@ -61,6 +60,7 @@ define([
             if (time.end > dateMax) {
                 time.end = dateMax;
             }
+
         }
     });
 
