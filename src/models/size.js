@@ -25,32 +25,29 @@ define([
         /**
          * Validates a color hook
          */
-        validate: function(silent) {
-
+        validate: function() {
             //there must be a min and a max
             if (_.isUndefined(this.min) || this.min < 0) {
-                this.set("min", 0 , silent, true);
+                this.min = 0;
             }
             if (_.isUndefined(this.max) || this.max > 1) {
-                this.set("max", 1, silent, true);
+                this.max = 1;
             }
-
             if (this.min > this.max) {
-                this.set("min", this.max, silent, true);
+                this.min = this.max;
             }
-
             //value must always be between 0 and 1
             if (this.hook === "value" && this.value > this.max) {
-                this.set("value", this.max , silent, true);
+                this.value = this.max;
             }
             else if (this.hook === "value" && this.value < this.min) {
-                this.set("value", this.min , silent, true);
+                this.value = this.min;
             }
             if (!this.scale) {
-                this.set("scale", "linear", silent, true);
+                this.scale = 'linear';
             }
             if (this.hook === "property") {
-                this.set("scale", "ordinal", silent, true);
+                this.scale = 'ordinal';
             }
         },
 

@@ -36,17 +36,19 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
-            if (model.state.time_end.start != model.state.time_start.value) {
-                model.state.time_end.start = model.state.time_start.value;
+        validate: function() {
+
+            var state = this.state;
+
+            if (state.time_end.start != state.time_start.value) {
+                state.time_end.start = state.time_start.value;
             }
-            if (model.state.time.start != model.state.time_start.value) {
-                model.state.time.start = model.state.time_start.value;
+            if (state.time.start != state.time_start.value) {
+                state.time.start = state.time_start.value;
             }
-            if (model.state.time.end != model.state.time_end.value) {
-                model.state.time.end = model.state.time_end.value;
+            if (state.time.end != state.time_end.value) {
+                state.time.end = state.time_end.value;
             }
         },
 

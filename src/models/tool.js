@@ -62,11 +62,11 @@ define([
                 var model = JSON.stringify(_this.getObject()),
                     c = i || 0,
                     //maximum number of times a tool model can be validated
-                    max = 20,
+                    max = 10,
                     defer = $.Deferred();
 
                 //validate model
-                var val_promise = validate(_this);
+                var val_promise = validate();
 
                 //if validation is not a promise, make it a confirmed one
                 if (!val_promise || !val_promise.always) {
