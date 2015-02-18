@@ -73,7 +73,7 @@ define([
          * @param val property value (object or value)
          * @returns defer defer that will be resolved when set is done
          */
-        set: function(attr, val) {
+        set: function(attr, val, force) {
 
             var defer = $.Deferred(),
                 promises = [],
@@ -83,8 +83,10 @@ define([
             if (!_.isPlainObject(attr)) {
                 var obj = {};
                 obj[attr] = val;
-                return this.set(obj);
+                return this.set(obj, force);
             }
+
+            var force = val; //second argument;
 
             for (var a in attr) {
 
@@ -93,7 +95,7 @@ define([
                 //if it's an object, set or create submodel
                 if (_.isPlainObject(vals)) {
                     if (this._data[a] && utils.isModel(this._data[a])) {
-                        promise = this._data[a].set(vals);
+                        promise = this._data[a].set(vals, force);
                     }
                     //submodel doesnt exist, create it
                     else {
@@ -104,7 +106,7 @@ define([
                 else {
 
                     //if it's the same value, do not change anything
-                    if (this._data[a] === vals) {
+                    if (this._data[a] === vals && !force) {
                         continue;
                     } else {
                         this._data[a] = vals;

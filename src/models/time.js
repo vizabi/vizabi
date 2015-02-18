@@ -61,7 +61,7 @@ define([
 
             //auto play if playing is true by reseting variable
             if (this.playing === true) {
-                this.playing = true;
+                this.set('playing', true, true); //3rd argumennt forces update
             }
 
             //snap values
