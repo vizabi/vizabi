@@ -82,6 +82,7 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
+        'copy:fonts' //copies fonts (font awesome)
     ]);
 
     //developer task: grunt dev
