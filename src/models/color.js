@@ -25,13 +25,12 @@ define([
         /**
          * Validates a color hook
          */
-        validate: function(silent) {
-
+        validate: function() {
             //this domain must exist
             if (this.hook !== "value" && !this.domain) {
-                 this.set("domain", ["#CCCCCC", "#000000"], silent, true);
+                 this.domain = ["#CCCCCC", "#000000"];
             } else if (this.hook === "value") {
-                this.set("value", d3.rgb(this.value).toString(), silent, true);
+                this.value = d3.rgb(this.value).toString();
             }
         },
 
