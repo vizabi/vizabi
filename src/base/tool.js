@@ -157,7 +157,7 @@ define([
         /**
          * Placeholder for model validation
          */
-        toolModelValidation: function() {
+        validate: function() {
             //placeholder for tool validation methods
         },
 

@@ -30,15 +30,16 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
+        validate: function() {
+
+            var dataModel = this.model.data;
 
             //if mydata is not there and if it's not loading mydata
-            if (!model.data.profits && !model.data.isLoading("profits")) {
+            if (!dataModel.profits && !dataModel.isLoading("profits")) {
                 
                 //set loading of model
-                model.data.setLoading("profits");
+                dataModel.setLoading("profits");
 
                 d3.json("../../local_data/myfile.json", function(err, data) {
 
@@ -46,10 +47,10 @@ define([
                     setTimeout(function() {
                         console.log("LOADED JSON");
                         console.log(data);
-                        model.data.profits = data;
+                        dataModel.profits = data;
 
                         //loading of external data is done
-                        model.data.setLoadingDone("profits");
+                        dataModel.setLoadingDone("profits");
 
                     }, 1000);
                 });
