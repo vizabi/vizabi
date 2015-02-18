@@ -300,7 +300,7 @@ console.log("********** "+orient+" **********");
                         Math.max(Math.abs(max), Math.abs(min))/eps 
                         :
                         Math.max(Math.abs(max), Math.abs(min))/Math.min(Math.abs(max), Math.abs(min));
-                    options.method = 2 <= coverage&&coverage <= 10000 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
+                    options.method = 10 <= coverage&&coverage <= 1000 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
                 };
 
 
