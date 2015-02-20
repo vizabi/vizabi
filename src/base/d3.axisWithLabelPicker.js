@@ -347,9 +347,9 @@ console.log("********** "+orient+" **********");
                     console.log('starter pos/neg: ', startPos, startNeg);
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
-                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
+                    if(startPos){ for(var l=startPos/2; l>=Math.max(min,eps); l/=2) doublingLabels.push(l);}
                     if(startNeg){ for(var l=startNeg; l>=min; l*=2) doublingLabels.push(l);}
-                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) doublingLabels.push(l);}
+                    if(startNeg){ for(var l=startNeg/2; l<=Math.min(max,-eps); l/=2) doublingLabels.push(l);}
                                         
                     doublingLabels = doublingLabels
                         .sort(d3.ascending)
