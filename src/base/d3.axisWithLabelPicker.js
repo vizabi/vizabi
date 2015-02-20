@@ -341,8 +341,8 @@ console.log("********** "+orient+" **********");
                     //var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
                     //var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
                     
-                    var startPos = max<eps? null  : 4*spawnPos[spawnPos.length==2 ? 2 : Math.floor(spawnPos.length/2) - 1];
-                    var startNeg = min>-eps? null : 4*spawnNeg[spawnNeg.length==2 ? 2 : Math.floor(spawnNeg.length/2) - 1];
+                    var startPos = max<eps? null  : 4*spawnPos[Math.floor(spawnPos.length/2)-1];
+                    var startNeg = min>-eps? null : 4*spawnNeg[Math.floor(spawnNeg.length/2)-1];
                     
                     console.log('starter pos/neg: ', startPos, startNeg);
 
