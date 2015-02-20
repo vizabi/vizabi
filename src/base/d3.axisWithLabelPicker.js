@@ -432,27 +432,27 @@ console.log("********** "+orient+" **********");
                 
                 ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
                 var addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
-//                    .sort(d3.ascending)
-//                    .filter(function(d){return min<=d&&d<=max}); 
+                    .sort(d3.ascending)
+                    .filter(function(d){return min<=d&&d<=max}); 
                 
-//                addLabels = groupByPriorities(addLabels,false);
-//                
-//                var tickValues_1 = tickValues;
-//                for(var j = 0; j<addLabels.length; j++){
-//
-//                    // compose an attempt to add more axis labels    
-//                    var trytofit = tickValues_1.concat(addLabels[j])
-//                        .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
-//                        .filter(onlyUnique);
-//
-//                    // stop populating if labels don't fit 
-//                    if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
-//
-//                    // apply changes if no blocking instructions
-//                    tickValues = trytofit
-//                }
+                addLabels = groupByPriorities(addLabels,false);
                 
-                tickValues = tickValues.concat(addLabels)
+                var tickValues_1 = tickValues;
+                for(var j = 0; j<addLabels.length; j++){
+
+                    // compose an attempt to add more axis labels    
+                    var trytofit = tickValues_1.concat(addLabels[j])
+                        .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
+                        .filter(onlyUnique);
+
+                    // stop populating if labels don't fit 
+                    if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+
+                    // apply changes if no blocking instructions
+                    tickValues = trytofit
+                }
+                
+                tickValues = tickValues//.concat(addLabels)
                     .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
                     .filter(onlyUnique);
 
