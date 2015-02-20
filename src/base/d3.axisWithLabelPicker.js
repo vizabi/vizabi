@@ -296,7 +296,30 @@ console.log("********** "+orient+" **********");
             if(options.scaleType=="genericLog" || options.scaleType=="log"){
                 var eps = axis.scale().eps ? axis.scale().eps() : 0;
                 
+                var spawnZero = bothSidesUsed? [0]:[];
+
+                // check if spawn positive is needed. if yes then spawn!
+                var spawnPos = max<eps? [] : (
+                    d3.range(
+                        Math.floor(getBaseLog(Math.max(eps,min))),
+                        Math.ceil(getBaseLog(max)),
+                        1)
+                    .concat(Math.ceil(getBaseLog(max)))
+                    .map(function(d){return Math.pow(options.logBase, d)})
+                    );
+
+                // check if spawn negative is needed. if yes then spawn!
+                var spawnNeg = min>-eps? [] : (
+                    d3.range(
+                        Math.floor(getBaseLog(Math.max(eps,-max))),
+                        Math.ceil(getBaseLog(-min)),
+                    1)
+                    .concat(Math.ceil(getBaseLog(-min)))
+                    .map(function(d){return -Math.pow(options.logBase, d)})
+                    );
                 
+                
+                // automatic chosing of method if it's not explicitly defined
                 if(options.method==null) {
                     var coverage = bothSidesUsed ? 
                         Math.max(Math.abs(max), Math.abs(min))/eps 
@@ -305,31 +328,53 @@ console.log("********** "+orient+" **********");
                     options.method = 10 <= coverage&&coverage <= 1024 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
                 };
 
+                
+                console.log('spawn pos/neg: ', spawnPos, spawnNeg);
+            
+                    
+                if(options.method == this.METHOD_DOUBLING) {
+                    var doublingLabels = [];
+                    if(bothSidesUsed)tickValues.push(0);
+                    var avoidCollidingWith = [].concat(tickValues);
 
+                    // start with the smallest abs number on the scale, rounded to nearest nice power
+                    //var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
+                    //var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
+                    
+                    var startPos = max<eps? null  : 4*spawnPos[Math.ceil(spawnPos.length/2) - (spawnPos.length>2?1:0)];
+                    var startNeg = min>-eps? null : 4*spawnNeg[Math.ceil(spawnNeg.length/2) - (spawnNeg.length>2?1:0)];
+                    
+                    console.log('starter pos/neg: ', startPos, startNeg);
+
+                    if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
+                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
+                    if(startNeg){ for(var l=startNeg; l>=min; l*=2) doublingLabels.push(l);}
+                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) doublingLabels.push(l);}
+                                        
+                    doublingLabels = doublingLabels
+                        .sort(d3.ascending)
+                        .filter(function(d){return min<=d&&d<=max}) 
+                    
+                    doublingLabels = groupByPriorities(doublingLabels,false); // don't skip taken values
+                    
+                    var tickValues_1 = tickValues;
+                    for(var j = 0; j<doublingLabels.length; j++){
+
+                        // compose an attempt to add more axis labels    
+                        var trytofit = tickValues_1.concat(doublingLabels[j])
+                            .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
+                            .filter(onlyUnique)
+                        
+                        // stop populating if labels don't fit 
+                        if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+                        
+                        // apply changes if no blocking instructions
+                        tickValues = trytofit
+                    }
+                }
+                
+                
                 if(options.method == this.METHOD_REPEATING){
-                    
-                    var spawnZero = bothSidesUsed? [0]:[];
-
-                    // check if spawn positive is needed. if yes then spawn!
-                    var spawnPos = max<eps? [] : (
-                        d3.range(
-                            Math.floor(getBaseLog(Math.max(eps,min))),
-                            Math.ceil(getBaseLog(max)),
-                            1)
-                        .concat(Math.ceil(getBaseLog(max)))
-                        .map(function(d){return Math.pow(options.logBase, d)})
-                        );
-
-                    // check if spawn negative is needed. if yes then spawn!
-                    var spawnNeg = min>-eps? [] : (
-                        d3.range(
-                            Math.floor(getBaseLog(Math.max(eps,-max))),
-                            Math.ceil(getBaseLog(-min)),
-                        1)
-                        .concat(Math.ceil(getBaseLog(-min)))
-                        .map(function(d){return -Math.pow(options.logBase, d)})
-                        );
-                    
                     
                     var spawn = groupByPriorities( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
                     var avoidCollidingWith = spawnZero.concat(tickValues);
@@ -373,45 +418,8 @@ console.log("********** "+orient+" **********");
                     })
 
 
-                }else if(options.method == this.METHOD_DOUBLING) {
-                    var doublingLabels = [];
-                    if(bothSidesUsed)tickValues.push(0);
-                    var avoidCollidingWith = [].concat(tickValues);
+                }//method
 
-                    var startPos = max<eps? null : Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,min))));
-                    var startNeg = min>-eps? null : -Math.pow(options.logBase, Math.floor(getBaseLog(Math.max(eps,-max))));
-                    
-
-                    if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
-                    if(startPos){ for(var l=startPos/2; l>Math.max(min,eps); l/=2) doublingLabels.push(l);}
-                    if(startNeg){ for(var l=startNeg; l>=min; l*=2) doublingLabels.push(l);}
-                    if(startNeg){ for(var l=startNeg/2; l<Math.min(max,-eps); l/=2) doublingLabels.push(l);}
-                                        
-                    doublingLabels = doublingLabels
-                        .sort(d3.ascending)
-                        .filter(function(d){return min<=d&&d<=max}) 
-                    
-                    doublingLabels = groupByPriorities(doublingLabels,false); // don't skip taken values
-                    
-                    var tickValues_1 = tickValues;
-                    for(var j = 0; j<doublingLabels.length; j++){
-
-                        // compose an attempt to add more axis labels    
-                        var trytofit = tickValues_1.concat(doublingLabels[j])
-                            .filter(function(d){ return !collisionBetween(d,avoidCollidingWith); })
-                            .filter(onlyUnique)
-                        
-                        // stop populating if labels don't fit 
-                        if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
-                        
-                        // apply changes if no blocking instructions
-                        tickValues = trytofit
-                    }
-
-
-                }
-                
-                
                 
             } //logarithmic
 
