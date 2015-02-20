@@ -35,11 +35,10 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
+        validate: function() {
 
-            var deps = model.state.dependencies;
+            var deps = this.model.state.dependencies;
 
             //simulate data loading with data loading models
             var c = 0; // avoid while(true) loop

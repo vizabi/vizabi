@@ -36,13 +36,11 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
+        validate: function() {
 
-            var time = model.state.time,
-                rows = model.state.row.label;
-
+            var time = this.model.state.time,
+                rows = this.model.state.row.label;
 
             //don't validate anything if data hasn't been loaded
             if (!rows.getItems() || rows.getItems().length < 1) {

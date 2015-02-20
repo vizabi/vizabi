@@ -71,11 +71,9 @@ define([
          * Sets an attribute or multiple for this model
          * @param attr property name
          * @param val property value (object or value)
-         * @param {Boolean} silent Prevents events from being fired
-         * @param {Boolean} block_validation prevents model validation
          * @returns defer defer that will be resolved when set is done
          */
-        set: function(attr, val, silent, block_validation) {
+        set: function(attr, val) {
 
             var defer = $.Deferred(),
                 promises = [],
@@ -85,12 +83,9 @@ define([
             if (!_.isPlainObject(attr)) {
                 var obj = {};
                 obj[attr] = val;
-                return this.set(obj, silent, block_validation);
+                return this.set(obj);
             }
 
-            //correct format
-            block_validation = silent;
-            silent = val;
             for (var a in attr) {
 
                 var vals = attr[a],
@@ -98,7 +93,7 @@ define([
                 //if it's an object, set or create submodel
                 if (_.isPlainObject(vals)) {
                     if (this._data[a] && utils.isModel(this._data[a])) {
-                        promise = this._data[a].set(vals, silent, block_validation);
+                        promise = this._data[a].set(vals);
                     }
                     //submodel doesnt exist, create it
                     else {
@@ -132,35 +127,33 @@ define([
 
                 //bind magic getters and setters
                 _this._bindSettersGetters();
-                //if we don't block validation, validate
-                if (!block_validation) {
 
-                    //attempt to validate
-                    var val_promise = false;
-                    if (_this.validate) {
-                        val_promise = _this.validate();
-                    }
-
-                    //if validation is not a promise, make it a confirmed one
-                    if (!val_promise || !val_promise.always) {
-                        val_promise = $.when.apply(null, [this]);
-                    }
-
-                    //confirm that the model has been validated
-                    val_promise.always(function() {
-                        //trigger change if not silent
-                        if (!_this._set) {
-                            _this._set = true;
-                            events.push("set");
-                        }
-                        if (!silent) {
-                            _.defer(function() {
-                                _this.triggerAll(events, _this.getObject());
-                            });
-                        }
-                        defer.resolve();
-                    });
+                //attempt to validate
+                var val_promise = false;
+                if (_this.validate) {
+                    val_promise = _this.validate();
                 }
+
+                //if validation is not a promise, make it a confirmed one
+                if (!val_promise || !val_promise.always) {
+                    val_promise = $.when.apply(null, [this]);
+                }
+
+                //confirm that the model has been validated
+                val_promise.always(function() {
+
+                    //trigger set if not set
+                    if (!_this._set) {
+                        _this._set = true;
+                        events.push("set");
+                    }
+
+                    _.defer(function() {
+                        _this.triggerAll(events, _this.getObject());
+                    });
+
+                    defer.resolve();
+                });
             });
 
             return defer;
@@ -299,12 +292,11 @@ define([
         /**
          * Resets this model
          * @param values new values
-         * @param {Boolean} prevent events from being fired
          * @returns defer defer that will be resolved when reset is done
          */
-        reset: function(values, silent) {
+        reset: function(values) {
             this.clear();
-            return this.set(values, silent);
+            return this.set(values);
         },
 
         /**
@@ -469,8 +461,8 @@ define([
                             // put me in the proper place please!
                             _this._items = _this._items
                                 // try to restore "geo" from "geo.name" if it's missing (ebola data has that problem)
-                                .map(function(d){
-                                    if(d["geo"] == null) d["geo"] = d["geo.name"];
+                                .map(function(d) {
+                                    if (d["geo"] == null) d["geo"] = d["geo.name"];
                                     return d
                                 })
                                 // convert time to Date()
@@ -765,7 +757,7 @@ define([
             var dimensions = [];
             for (var i in this._hooks) {
                 var dim = this._hooks[i].getDimension();
-                if(dim) dimensions.push(dim);
+                if (dim) dimensions.push(dim);
             };
             return dimensions;
         },
@@ -821,7 +813,7 @@ define([
         getItems: function(filter) {
             if (this.isHook() && this._dataModel) {
 
-                //all dimensions except time
+                //all dimensions except time (continuous)
                 var dimensions = _.without(this._getAllDimensions(), "time");
 
                 return _.map(this.getUnique(dimensions), function(item) {
@@ -876,7 +868,7 @@ define([
             else {
 
                 var dimensions = this._getAllDimensions(),
-                    select =  _.union(dimensions, [this.value]),
+                    select = _.union(dimensions, [this.value]),
                     filters = this._getAllFilters();
 
                 //return query
@@ -959,24 +951,26 @@ define([
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
             //if it's an array, it will return a list of unique combinations.
-            if(_.isArray(attr)) {
+            if (_.isArray(attr)) {
                 var values = _.map(this._items, function(d) {
-                        return _.pick(d, attr);
-                    });
+                    return _.pick(d, attr);
+                });
                 //TODO: Move this up to readers ?
-                if(_.indexOf(attr, "time") !== -1) {
+                if (_.indexOf(attr, "time") !== -1) {
                     for (var i = 0; i < values.length; i++) {
                         values[i]['time'] = new Date(values[i]['time']);
                     };
                 }
-                return _.unique(values, function(n) { return JSON.stringify(n); });
+                return _.unique(values, function(n) {
+                    return JSON.stringify(n);
+                });
             }
             //if it's a string, it will return a list of values
             else {
                 var values = _.map(this._items, function(d) {
-                        //TODO: Move this up to readers ?
-                        return (attr !== "time") ? d[attr] : new Date(d[attr]);
-                    });
+                    //TODO: Move this up to readers ?
+                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                });
                 return _.unique(values);
             }
         },
@@ -995,13 +989,11 @@ define([
 
             var value;
 
-            if(this.hook === "value") {
+            if (this.hook === "value") {
                 value = this.value;
-            }
-            else if(_.has(this._hooks, this.hook)) {
+            } else if (_.has(this._hooks, this.hook)) {
                 value = this.getHook(this.hook)[this.value];
-            }
-            else {
+            } else {
                 value = this._interpolateValue(this._items, filter, this.hook);
             }
 

@@ -35,10 +35,10 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
+        validate: function() {
 
+            var model = this.model;
             var year = model.state.time.value.getFullYear().toString();
             var all_profits = this.all_profits;
             var profits = model.data.profits;

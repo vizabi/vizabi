@@ -25,19 +25,19 @@ define([
         /**
          * Validates a color hook
          */
-        validate: function(silent) {
+        validate: function() {
 
             var possibleScales = ["log", "linear", "pow"];
             if (!this.scale || (this.hook === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
-                this.set("scale", "linear" , silent, true);
+                this.scale = 'linear'; 
             }
 
             if (!this.unit && this.hook === "indicator") {
-                this.set("unit", 1 , silent, true);
+                this.unit = 1;
             }
 
             if (this.hook !== "indicator") {
-                this.set("scale", "ordinal" , silent, true);
+                this.scale = "ordinal";
             }
 
             //TODO: add min and max to validation

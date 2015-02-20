@@ -25,9 +25,8 @@ define([
             this.layout = new Layout();
             this.ui = options.ui || {};
 
-            var validate = config.validate || this.toolModelValidation,
-                //TODO: remove query from here
-                query = config.query || this.getQuery;
+            //bind the validation function with the tool
+            var validate = this.validate.bind(this);
 
             //build tool model
             var _this = this;
@@ -83,7 +82,7 @@ define([
                         _this.afterLoading();
                     }
                 }
-            }, validate, query);
+            }, validate);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
@@ -158,7 +157,7 @@ define([
         /**
          * Placeholder for model validation
          */
-        toolModelValidation: function() {
+        validate: function() {
             //placeholder for tool validation methods
         },
 
