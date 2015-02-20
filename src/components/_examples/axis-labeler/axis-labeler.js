@@ -137,12 +137,6 @@ define([
                 .tickSize(6, 0)
                 .labelerOptions({
                     scaleType: this.model.scales.xScaleType,
-                    //TODO: remove. make font sizing and margins through plain CSS
-                    cssFontSize: this.model.show.labelSize,
-                    cssMarginLeft:   this.model.show.labelMargin.LR,
-                    cssMarginRight:  this.model.show.labelMargin.LR,
-                    cssMarginTop:    this.model.show.labelMargin.TB,
-                    cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                     showOuter: true,
                     isPivotAuto: true
@@ -153,14 +147,9 @@ define([
                 .tickSize(6, 0)
                 .labelerOptions({
                     scaleType: this.model.scales.yScaleType,
-                    //TODO: remove. make font sizing and margins through plain CSS
-                    cssFontSize: this.model.show.labelSize,
-                    cssMarginLeft:   this.model.show.labelMargin.LR,
-                    cssMarginRight:  this.model.show.labelMargin.LR,
-                    cssMarginTop:    this.model.show.labelMargin.TB,
-                    cssMarginBottom: this.model.show.labelMargin.TB,
                     toolMargin: margin,
                     showOuter: true,
+                    //method: this.yAxis.METHOD_REPEATING
                     //limitMaxTickNumber: 0,
                 });
 
@@ -175,8 +164,8 @@ define([
             this.yAxisEl.call(this.yAxis);
 
             //TODO: remove. make font sizing through plain CSS
-            this.xAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
-            this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
+            //this.xAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
+            //this.yAxisEl.selectAll("text").style('font-size',this.model.show.labelSize);
 
 
             var path = this.graph.selectAll(".line").data([0]);

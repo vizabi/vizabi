@@ -27,7 +27,7 @@ $vzb-bc-year-size:300px;
         }
         text {
             fill: $vzb-bc-color-axis;
-            @include font-size(15px);
+            /*@include font-size(15px);*/
         }
     }
     .vzb-bc-axis-x, .vzb-bc-axis-y {
@@ -50,7 +50,7 @@ $vzb-bc-year-size:300px;
 &.vzb-small {
     .vzb-axis-labeler {
         .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-            @include font-size(14px);
+            /*@include font-size(14px);*/
         }
         .vzb-bc-year {
             @include font-size($vzb-bc-year-size / 3);

@@ -22,12 +22,12 @@ define(['d3'], function(d3){
         function axis(g) {
             // measure the width and height of one digit
             var widthSampleG = g.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('0')
-                .style("font-size",options.cssFontSize)
-                .style("margin-top",options.cssMarginTop)
-                .style("margin-bottom",options.cssMarginBottom)
-                .style("margin-left",options.cssMarginLeft)
-                .style("margin-right",options.cssMarginRight)
+            widthSampleT = widthSampleG.append('text').text('0');
+            
+            options.cssMarginTop = widthSampleT.style("margin-top");
+            options.cssMarginBottom = widthSampleT.style("margin-bottom");
+            options.cssMarginLeft = widthSampleT.style("margin-left");
+            options.cssMarginRight = widthSampleT.style("margin-right");
             options.widthOfOneDigit = widthSampleT[0][0].getBBox().width;
             options.heightOfOneDigit = widthSampleT[0][0].getBBox().height;
             widthSampleG.remove();
@@ -101,7 +101,7 @@ define(['d3'], function(d3){
             if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
             
             
-            if(options.isPivotAuto==null) options.isPivotAuto = true;
+            
             if(options.removeAllLabels==null) options.removeAllLabels = false;
 
             if(options.formatterRemovePrefix==null) options.formatterRemovePrefix = false;
@@ -148,7 +148,7 @@ define(['d3'], function(d3){
             if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<0) options.cssMarginRight = "5px";
             if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<0) options.cssMarginTop = "5px";
             if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<0) options.cssMarginBottom = "5px";
-            if(options.toolMargin==null) options.toolMargin = {left: 5, bottom: 5, right: 5, top: 5};
+            if(options.toolMargin==null) options.toolMargin = {left: 30, bottom: 30, right: 30, top: 30};
 
             if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
             
@@ -157,6 +157,8 @@ define(['d3'], function(d3){
 
             var orient = this.orient()=="top"||this.orient()=="bottom"?HORIZONTAL:VERTICAL;
 
+            if(options.isPivotAuto==null) options.isPivotAuto = orient==VERTICAL;
+            
             if(options.cssFontSize==null) options.cssFontSize = "13px";
             if(options.widthToFontsizeRatio==null) options.widthToFontsizeRatio = 0.75;
             if(options.heightToFontsizeRatio==null) options.heightToFontsizeRatio = 1.20;
@@ -300,7 +302,7 @@ console.log("********** "+orient+" **********");
                         Math.max(Math.abs(max), Math.abs(min))/eps 
                         :
                         Math.max(Math.abs(max), Math.abs(min))/Math.min(Math.abs(max), Math.abs(min));
-                    options.method = 10 <= coverage&&coverage <= 1000 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
+                    options.method = 10 <= coverage&&coverage <= 1024 ? this.METHOD_DOUBLING : this.METHOD_REPEATING;
                 };
 
 
@@ -410,7 +412,7 @@ console.log("********** "+orient+" **********");
                 }
                 
                 
-                if(tickValues.length==0)tickValues = [min, max];
+                
             } //logarithmic
 
             
@@ -422,7 +424,7 @@ console.log("********** "+orient+" **********");
                 
                 ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
                 addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
-//                    .sort(d3.ascending)
+//                    .sort(d3.asceznding)
 //                    .filter(function(d){return min<=d&&d<=max}); 
                 
 //                addLabels = groupByPriorities(addLabels,false);
@@ -452,10 +454,10 @@ console.log("********** "+orient+" **********");
 
 
             
+            if(tickValues!=null && tickValues.length<3)tickValues = [min, max];
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
             });
-             
             
 
 console.log("final result",tickValues);

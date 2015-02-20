@@ -3,6 +3,8 @@
 <div class="container">
        <div class="buttons">
 
+        <button onclick="goToExample('_examples/axis-labeler')">RESE[T]</button>
+           
         <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
             <span>Size</span>
             <ul class="dropdown">
@@ -136,7 +138,7 @@ $(function() {
                 yScaleType: 'genericLog'
             },
             show:{
-                labelSize: "15px",
+                labelSize: "16px",
                 labelMargin: {LR: "5px", TB: "5px"},
                 toolMargin: {top: 30, right: 20, left: 40, bottom: 40}
             }
@@ -166,8 +168,36 @@ $(function() {
     
     myVizabi = new Vizabi("_examples/axis-labeler", "#axis-labeler", options);
     showState(options.state);
+    
+    $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',(labelSize));
 });
 
+    
+    
+var style;
+function changeStyleTag(selector, styleProps) {
+    if(typeof style == 'undefined') {
+        var append = true;
+        style = document.createElement('style');
+    } else {
+        while (style.hasChildNodes()) {
+            style.removeChild(style.firstChild);
+        }
+    }
+    var head = document.getElementsByTagName('head')[0];
+    var rules = document.createTextNode(
+        selector + ' { '+ styleProps +' }'
+    );
+
+    style.type = 'text/css';
+    if(style.styleSheet) {
+        style.styleSheet.cssText = rules.nodeValue;
+    } else {
+        style.appendChild(rules);
+    }
+    if(append === true) head.appendChild(style);
+}    
+    
     
 
 function setLabelSize(arg){
@@ -175,9 +205,10 @@ function setLabelSize(arg){
     if(labelSize<1)labelSize=1;
     labelSize = labelSize + "px";
     
-    $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
-        $(this).css('font-size',(labelSize));
-    })
+//    $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
+//        $(this).css('font-size',(labelSize));
+//    })
+    $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',(labelSize));
     
     $(".shortcutLabel").css("color","#999");
     $("#axisLabelSize").text(labelSize).css('font-size',(labelSize)).css("color","red");
@@ -193,6 +224,10 @@ function setLabelMargin(arg, direction){
     
     $(".shortcutLabel").css("color","#999");
     $("#axisLabelMargin"+direction+"").text(labelMargin[direction]).css("color","red");
+    
+    changeStyleTag('.vzb-bc-axis-x text','margin: '+labelMargin.TB+' '+labelMargin.LR+' ;');
+    changeStyleTag('.vzb-bc-axis-y text','margin: '+labelMargin.TB+' '+labelMargin.LR+' ;');
+    
     var options = { state: { show: {} }};
     options.state.show.labelMargin = labelMargin;
     myVizabi.setOptions(options);
@@ -256,9 +291,13 @@ $(window).keydown(function (e){
     e = e || window.event;
     var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
     
-    if(!e.shiftKey && !e.altKey && !e.ctrlKey){
+    if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey){
         if (String.fromCharCode(charCode) == "r"||
             String.fromCharCode(charCode) == "R") randomSize('axis-labeler');
+    }    
+    if(!e.shiftKey && !e.altKey && !e.ctrlKey){
+        if (String.fromCharCode(charCode) == "t"||
+            String.fromCharCode(charCode) == "T") goToExample('_examples/axis-labeler');
     }
     
     if(e.shiftKey && !e.altKey ){
