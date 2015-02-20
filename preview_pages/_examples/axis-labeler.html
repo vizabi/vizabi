@@ -176,6 +176,9 @@ $(function() {
     
 var style;
 function changeStyleTag(selector, styleProps) {
+    if(!(selector instanceof Array)) selector = [selector];
+    if(!(styleProps instanceof Array)) styleProps = [styleProps];
+    
     if(typeof style == 'undefined') {
         var append = true;
         style = document.createElement('style');
@@ -186,7 +189,7 @@ function changeStyleTag(selector, styleProps) {
     }
     var head = document.getElementsByTagName('head')[0];
     var rules = document.createTextNode(
-        selector + ' { '+ styleProps +' }'
+        selector.map(function(s,ind){return s + ' { '+ styleProps[ind] +' }';}).join(" ")
     );
 
     style.type = 'text/css';
@@ -225,8 +228,11 @@ function setLabelMargin(arg, direction){
     $(".shortcutLabel").css("color","#999");
     $("#axisLabelMargin"+direction+"").text(labelMargin[direction]).css("color","red");
     
-    changeStyleTag('.vzb-bc-axis-x text','margin: '+labelMargin.TB+' '+labelMargin.LR+' ;');
-    changeStyleTag('.vzb-bc-axis-y text','margin: '+labelMargin.TB+' '+labelMargin.LR+' ;');
+    changeStyleTag(
+        ['.vzb-bc-axis-x text', '.vzb-bc-axis-y text'],
+        ['margin: '+labelMargin.TB+' '+labelMargin.LR+' ;',
+         'margin: '+labelMargin.TB+' '+labelMargin.LR+' ;']
+    );
     
     var options = { state: { show: {} }};
     options.state.show.labelMargin = labelMargin;

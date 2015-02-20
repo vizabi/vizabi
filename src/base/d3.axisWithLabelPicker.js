@@ -431,8 +431,8 @@ console.log("********** "+orient+" **********");
                 var avoidCollidingWith = [].concat(tickValues);
                 
                 ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
-                addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
-//                    .sort(d3.asceznding)
+                var addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
+//                    .sort(d3.ascending)
 //                    .filter(function(d){return min<=d&&d<=max}); 
                 
 //                addLabels = groupByPriorities(addLabels,false);
