@@ -2,7 +2,9 @@ define([
     'jquery',
     'd3',
     'lodash',
-    'base/component'
+    'base/component',
+    'd3genericLogScale',
+    'd3axisWithLabelPicker'
 ], function($, d3, _, Component) {
 
 
@@ -55,8 +57,8 @@ define([
             this.xScale = null;
             this.yScale = null;
 
-            this.xAxis = d3.svg.axis().orient("bottom");
-            this.yAxis = d3.svg.axis().orient("left");
+            this.xAxis = d3.svg.axisSmart().orient("bottom");
+            this.yAxis = d3.svg.axisSmart().orient("left");
 
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -100,7 +102,7 @@ define([
             
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
-            this.xScale = this.model.marker.axis_x.getDomain();
+            this.xScale = d3.scale.linear().domain([1990,2012]);//this.model.marker.axis_x.getDomain();
             
             
             this.yAxis
@@ -217,7 +219,7 @@ define([
             } else {
                 this.yScale.rangePoints([this.height, 0], padding).range();
             }
-            if (this.model.marker.axis_x.scale !== "ordinal") {
+            if (this.model.marker.axis_x.scale !== "ordinal" || 1) {
                 this.xScale.range([0, this.width]);
             } else {
                 this.xScale.rangePoints([0, this.width], padding).range();
@@ -225,8 +227,19 @@ define([
             
 
 
-            this.yAxis.scale(this.yScale);
-            this.xAxis.scale(this.xScale);
+            this.yAxis.scale(this.yScale)
+                .labelerOptions({
+                    scaleType: "linear",
+                    toolMargin: this.margin,
+                    //showOuter: true,
+                    isPivotAuto: true
+                });
+            this.xAxis.scale(this.xScale)
+                .labelerOptions({
+                    scaleType: "linear",
+                    toolMargin: this.margin,
+                    //showOuter: true
+                });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
 
@@ -277,7 +290,7 @@ define([
             this.entities
                 .each(function(d,i){
                     var group = d3.select(this);
-                    var x = _this.model.marker.axis_x.getValue(d);
+                    var x = _this.model.marker.axis_x.getValue(d).getFullYear();
                     var y = _this.model.marker.axis_y.getValue(d);
                 
                     if(_this.dataBuffer[d.geo]==null)_this.dataBuffer[d.geo] = [];
