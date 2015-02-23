@@ -39,12 +39,8 @@ define([
                     }
                 },
                 "ready":  function(evt) {
-                    _this.preprocessData();
                     _this.updateShow();
                     _this.updateSize();
-                    _this.updateTime();
-                    _this.redrawDataPoints();
-                    //TODO: dirty hack to avoid duplicate bubbles in the beginning (drawing twice)
                     _this.updateTime();
                     _this.redrawDataPoints();
                 },
@@ -92,23 +88,7 @@ define([
         },
 
 
-        preprocessData: function(){
-//            this.geos = _.uniq(_.map(this.model.marker.label.getItems(), function(d) {
-//                return {
-//                    geo: d.geo,
-//                    name: d.value,
-//                    region: d['geo.region'] || "world",
-//                    category: d['geo.category']
-//                };
-//            }), false, function(d) {
-//                return d.geo;
-//            });
-//            
-//            this.model.marker.label.getItems().forEach(function(d) {
-//                d["geo.region"] = d["geo.region"] || "world";
-//            });
-            this.isDataPreprocessed = true;
-        },
+
         
         
         /*
@@ -117,25 +97,16 @@ define([
          */
         updateShow: function() {
             var _this = this;
-//            var indicator = this.model.marker.axis_y.value;
-//            var year = parseInt(d3.time.format("%Y")(this.model.time.value), 10);
-//            var colors = ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"];
             
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
             
-//            this.colorScale = d3.scale.ordinal().range(colors)
-//                .domain(_.map(_this.geos, function(geo) {
-//                    return geo.region;
-//                }));
-                        
             //line template
             this.line = d3.svg.line()
                 .interpolate("cardinal")
                 .x(function(d) {return _this.xScale(d[0]); })
                 .y(function(d) {return _this.yScale(d[1]); });
-            
         },
         
         
@@ -165,7 +136,6 @@ define([
          * Ideally, it contains only operations related to size
          */
         updateSize: function() {
-            if (!this.isDataPreprocessed) return;
             
             var _this = this;
             
@@ -259,6 +229,7 @@ define([
         },
         
         
+        
 
         /*
          * REDRAW DATA POINTS:
@@ -293,7 +264,6 @@ define([
                         .attr("dy", ".35em")
                         .style("fill", d3.rgb(color).darker(0.3))
                         .text(label.length<13? label : label.substring(0, 10)+'...');
-                
                 })
             
             this.entities
@@ -317,29 +287,8 @@ define([
                         .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
                 })
             
-
-            //            //this.data up to year
-//            this.data = _.filter(this.data, function(d) {
-//                return d.time <= year;
-//            });
-//
-//            //modify the this.data format
-//            this.data = _.map(_this.geos, function(g) {
-//                //ordered values of current geo
-//                var geo_values = _.sortBy(_.filter(_this.data, function(d) {
-//                    return d.geo === g.geo;
-//                }), function(d) {
-//                    return d.time;
-//                });
-//
-//                g.values = _.map(geo_values, function(d) {
-//                    return _.omit(d, ['geo', 'geo.name', 'geo.region', 'geo.category']);
-//                })
-//                return g;
-//            });
-
+            
         }
-
 
     });
 
