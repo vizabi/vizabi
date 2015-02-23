@@ -77,20 +77,22 @@ define([
 
             var defer = $.Deferred(),
                 promises = [],
-                events = [];
+                events = [],
+                attrs;
 
             //expect object as default
             if (!_.isPlainObject(attr)) {
-                var obj = {};
-                obj[attr] = val;
-                return this.set(obj, force);
+                (attrs = {})[attr] = val;
+            } else {
+                attrs = attr;
+                force = val;
             }
 
             var force = val; //second argument;
 
-            for (var a in attr) {
+            for (var a in attrs) {
 
-                var vals = attr[a],
+                var vals = attrs[a],
                     promise;
                 //if it's an object, set or create submodel
                 if (_.isPlainObject(vals)) {
