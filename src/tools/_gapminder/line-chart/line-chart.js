@@ -13,22 +13,22 @@ define([
             this.name = 'line-chart';
             this.template = "tools/_gapminder/line-chart/line-chart";
 
-            this.state = options.state;
-
             this.components = [{
                 component: '_gapminder/header',
                 placeholder: '.vzb-tool-title'
             }, {
                 component: '_gapminder/line-chart',
                 placeholder: '.vzb-tool-viz',
-                model: ["state.show", "data", "state.time"]
+                model: ["state.time", "state.entities", "state.marker", "data"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
                 model: ["state.time"]
             },{
                 component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist'
+                placeholder: '.vzb-tool-buttonlist',
+                model: ["state", "data"],
+                buttons: ['colors', 'size', 'more-options']
             }];
 
             this._super(config, options);

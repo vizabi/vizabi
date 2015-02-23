@@ -81,17 +81,20 @@ $(function() {
 
             //entities we want to show
             entities: {
-                show: [{
+                show: {
                     dim: "geo",
                     filter: {
                         "geo": ["ago", "arg", "aus", "swe"],
                         "geo.category": ["country"]
                     }
-                }]
+                }
             },
 
             //how we show it
-            lines: {
+            marker: {
+                hook_to: ["entities", "time"],
+                type: "geometry",
+                shape: "line",
                 label: {
                     hook: "property",
                     value: "geo.name"
