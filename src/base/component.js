@@ -544,7 +544,6 @@ define([
                     current_name = parts.shift();
                     current = current[current_name];
                 }
-                console.log(name, current)
                 return {
                     name: name,
                     model: current,
