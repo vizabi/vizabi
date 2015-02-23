@@ -4,7 +4,18 @@ define([
     'models/hook'
 ], function(d3, _, Hook) {
 
-    var AxisModel = Hook.extend({
+    //constant time formats
+    var time_formats = {
+        "year": d3.time.format("%Y"),
+        "month": d3.time.format("%Y-%m"),
+        "week": d3.time.format("%Y-W%W"),
+        "day": d3.time.format("%Y-%m-%d"),
+        "hour": d3.time.format("%Y-%m-%d %H"),
+        "minute": d3.time.format("%Y-%m-%d %H:%M"),
+        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+    };
+
+    var Axis = Hook.extend(   {
 
         /**
          * Initializes the color hook
@@ -14,6 +25,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "axis";
             values = _.extend({
                 use: "value",
                 value: undefined
@@ -24,39 +36,37 @@ define([
         /**
          * Validates a color hook
          */
-        validate: function(silent) {
+        validate: function() {
 
             var possibleScales = ["log", "linear", "pow"];
-            if (!this.scale || (this.use === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
-                this.set("scale", "linear" , silent, true);
+            if (!this.scale || (this.hook === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
+                this.scale = 'linear'; 
             }
 
-            if (!this.unit && this.use === "indicator") {
-                this.set("unit", 1 , silent, true);
+            if (!this.unit && this.hook === "indicator") {
+                this.unit = 1;
             }
 
-            if (this.use !== "indicator") {
-                this.set("scale", "ordinal" , silent, true);
+            if (this.hook !== "indicator" && this.scale !== "ordinal") {
+                this.scale = "ordinal";
             }
 
             //TODO: add min and max to validation
 
         },
-
         /**
          * Gets tick values for this hook
          * @returns {Number|String} value The value for this tick
          */
         getTick: function(tick_value) {
             var value = tick_value;
-            if (this.use == "indicator") {
+            if (this.hook == "indicator") {
                 value = parseFloat(value) / this.unit;
             }
-            if (value instanceof Date) {
-                //TODO: support multiple date formats
-                value = value.getFullYear();
+            else if(this.hook == "property" && _.isDate(tick_value)) {
+                //TODO: generalize for any time unit
+                value = time_formats["year"](tick_value);
             }
-            return "a";
             return value;
         },
 
@@ -68,7 +78,7 @@ define([
             var domain,
                 scale = this.scale || "linear";
 
-            switch (this.use) {
+            switch (this.hook) {
                 case "indicator":
                     var limits = this.getLimits(this.value),
                         margin = (limits.max - limits.min) / 10;
@@ -88,17 +98,9 @@ define([
             }
 
             return d3.scale[scale]().domain(domain);
-        },
-
-        mapValue: function(value) {
-            if (this.use === 'property' && value instanceof Date) {
-                return value.getFullYear()
-            }
-
-
         }
 
     });
 
-    return AxisModel;
+    return Axis;
 });

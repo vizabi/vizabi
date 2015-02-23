@@ -13,22 +13,22 @@ define([
             this.name = 'line-chart';
             this.template = "tools/_gapminder/line-chart/line-chart";
 
+            this.state = options.state;
+
             this.components = [{
                 component: '_gapminder/header',
                 placeholder: '.vzb-tool-title'
             }, {
                 component: '_gapminder/line-chart',
                 placeholder: '.vzb-tool-viz',
-                model: ["state.time", "state.entities", "state.marker", "data"]
+                model: ["state.show", "data", "state.time"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
                 model: ["state.time"]
             },{
                 component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist',
-                model: ['state', 'data', 'language'],
-                buttons: ['colors', 'size', 'more-options']
+                placeholder: '.vzb-tool-buttonlist'
             }];
 
             this._super(config, options);
@@ -36,27 +36,28 @@ define([
 
         /**
          * Validating the tool model
-         * @param model the current tool model to be validated
          */
-        toolModelValidation: function(model) {
-            var time = model.state.time,
-                markers = model.state.marker.label;
+        validate: function() {
+
+            var state = this.model.state;
+            var data = this.model.data;
 
             //don't validate anything if data hasn't been loaded
-            if (!markers.getItems() || markers.getItems().length < 1) {
+            if(!data.getItems() || data.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = markers.getLimits('time').min,
-                dateMax = markers.getLimits('time').max;
+            var dateMin = data.getLimits('time').min,
+                dateMax = data.getLimits('time').max;
 
-            if (time.start < dateMin) {
-                time.start = dateMin;
+            if (state.time.start < dateMin) {
+                state.time.start = dateMin;
             }
-            if (time.end > dateMax) {
-                time.end = dateMax;
+            if (state.time.end > dateMax) {
+                state.time.end = dateMax;
             }
         }
+        
     });
 
     return lineChart;

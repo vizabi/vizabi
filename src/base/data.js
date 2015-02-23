@@ -34,6 +34,8 @@ define([
                 promise = true;
             } else {
 
+                console.timeStamp("Vizabi Data: Loading Data");
+
                 if(evts && _.isFunction(evts["load_start"])) {
                     evts["load_start"]();
                 }
@@ -47,16 +49,22 @@ define([
             $.when.apply(null, promises).then(
                 // Great success! :D
                 function() {
+                    //pass the data forward
+                    defer.resolve(_this.get(cached));
+
                     //not loading anymore
                     if(loaded && evts && _.isFunction(evts["load_end"])) {
                         evts["load_end"]();
                     }
-                    //pass the data forward
-                    defer.resolve(_this.get(cached));
                 },
                 // Unfortunate error
                 function() {
                     defer.resolve('error');
+
+                    //not loading anymore
+                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                        evts["load_end"]();
+                    }
                 });
 
             return defer;

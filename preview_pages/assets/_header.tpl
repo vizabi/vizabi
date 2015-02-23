@@ -2,13 +2,14 @@
 
 <head>
     <title>Vizabi - <!-- @@title --></title>
-    <!-- Includes vizabi main file -->
-    <!-- TODO: remove this for grunt build -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    
-    <!-- @@include_require -->
 
+    <!-- Includes preview pages dependencies -->
+    <!-- @@include_require -->
+    <script src="../assets/jquery.min.js"></script>
+
+    <!-- Includes vizabi main file -->
     <script src="../../vizabi.js"></script>
+    
     <!-- Includes scripts -->
     <script src="../assets/scripts.js"></script>
     <!-- Includes vizabi css -->

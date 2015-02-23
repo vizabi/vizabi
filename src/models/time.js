@@ -29,6 +29,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "time";
             //default values for time model
             values = _.extend({
                 value: "1800",
@@ -156,6 +157,29 @@ define([
          */
         getRange: function() {
             return d3.time[this.unit].range(this.start, this.end, this.step);
+        },
+
+        /**
+         * Gets the dimensions in time
+         * @returns {String} time dimension
+         */
+        getDimension: function() {
+            return "time";
+        },
+
+        /**
+         * Gets filter for time
+         * @returns {Object} time filter
+         */
+        getFilter: function() {
+            var start = d3.time.format(this.format || "%Y")(this.start),
+                end = d3.time.format(this.format || "%Y")(this.end),
+                filter = {
+                    "time": [
+                        [start, end]
+                    ]
+                };
+            return filter;
         },
 
         /**

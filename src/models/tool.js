@@ -16,6 +16,7 @@ define([
          */
         init: function(values, binds, validate) {
             this._id = _.uniqueId("tm");
+            this._type = "tool";
             //all intervals are managed at tool level
             this._intervals = new Intervals();
 
@@ -35,13 +36,13 @@ define([
             this._super(values, null, binds);
 
             // change language
-            if(values.language) {
+            if (values.language) {
                 var _this = this;
                 this.on("change:language", function() {
                     _this.trigger("translate");
                 });
             }
-            
+
         },
 
         /* ==========================
@@ -57,30 +58,36 @@ define([
         _generateValidate: function(validate) {
 
             var _this = this;
-            return function() {
+            return function(i) {
                 var model = JSON.stringify(_this.getObject()),
-                    c = 0,
-                    max = 20,
+                    c = i || 0,
+                    //maximum number of times a tool model can be validated
+                    max = 10,
                     defer = $.Deferred();
-                while (c < max) {
-                    validate(_this);
-                    model2 = JSON.stringify(_this.getObject());
-                    if (model === model2) {
-                        break;
-                    } else {
-                        c++;
-                        model = model2;
+
+                //validate model
+                var val_promise = validate();
+
+                //if validation is not a promise, make it a confirmed one
+                if (!val_promise || !val_promise.always) {
+                    val_promise = $.when.apply(null, [this]);
+                }
+
+                //when validation is done, compare two models
+                val_promise.always(function() {
+                    var model2 = JSON.stringify(_this.getObject());
+                    if (model === model2 || c >= max) {
                         if (c >= max) {
                             console.log("Validation error: " + _this._id);
                             console.log(model);
-                            break;
                         }
+                        defer.resolve();
+                    } else {
+                        //recursively call if not the stable
+                        _this.validate(i++);
                     }
-                }
-                //postpone resolution to last callstack
-                _.defer(function() {
-                    defer.resolve();
                 });
+
                 return defer;
             }
         }

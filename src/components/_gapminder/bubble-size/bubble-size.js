@@ -17,7 +17,10 @@ define([
         init: function(config, context) {
             this.template = "components/_gapminder/bubble-size/bubble-size";
 
-            this.model_expects = ["size"];
+            this.model_expects = [{
+                name: "size",
+                type: "size"
+            }];
 
             //contructor is the same as any component
             this._super(config, context);
@@ -29,7 +32,7 @@ define([
          * At this point, this.element and this.placeholder are available as a d3 object
          */
         domReady: function() {
-            var value = this.model.size.max;
+            var value = this.model.size.max, _this = this;
             indicator = this.element.select('#vzb-bs-indicator');
             slider = this.element.selectAll('#vzb-bs-slider');
 
@@ -38,7 +41,9 @@ define([
                 .attr('max', 1)
                 .attr('step', 0.01)
                 .attr('value', value)
-                .on('input', this.slideHandler.bind(this));
+                .on('input', function() {
+                    _this.slideHandler();
+                });
         },
 
         /**

@@ -1,6 +1,6 @@
-define(['jquery', 'd3', 'lodash'], function($, d3, _) {
+define(['jquery', 'd3', 'lodash', 'stacktrace'], function($, d3, _, stacktrace) {
 
-    var util = {
+    var utils = {
         /**
          * Converts a d3 selection to jQuery
          * @param selector selection in d3
@@ -64,11 +64,20 @@ define(['jquery', 'd3', 'lodash'], function($, d3, _) {
          */
         interpolateRange: function(val1, val2, step) {
             return d3.range(val1, val2, step);
+        },
+
+        /**
+         * Returns the stack trace for the call
+         */
+        stacktrace: stacktrace,
+
+        formatStacktrace: function(stack) {
+            return stack.join('\n\n');
         }
     }
 
 
-    return util;
+    return utils;
 
 
 });

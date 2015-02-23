@@ -6,7 +6,9 @@ module.exports = function(grunt) {
      * This reads the file package.json
      * More info here: https://github.com/sindresorhus/load-grunt-tasks
      */
-    require('load-grunt-tasks')(grunt);
+    require('load-grunt-tasks')(grunt, {
+        pattern: ['grunt-*', '@*/grunt-*', '!grunt-template-jasmine-requirejs']
+    });
 
     /*
      * -----------------------------
@@ -32,17 +34,42 @@ module.exports = function(grunt) {
 
     //default task: grunt
     grunt.registerTask('default', [
-        'build' //by default, just build
+        'build', //by default, just build and test
+        'test:copy',
+        'jasmine:prod',
     ]);
 
     //build and deploy
     grunt.registerTask('build-deploy', [
-        'build',
+        'default',
         'deploy'
     ]);
 
+    //testing
+    grunt.registerTask('test', function() {
+        grunt.task.run([
+            'build',
+            'jasmine:prod'
+        ]);
+    });
+
+    grunt.registerTask('test:dev', function() {
+        grunt.option('force', true);
+        grunt.task.run([
+            'dev-dist',
+            'jasmine:dev:build',
+            'connect:test', //run locally
+        ]);
+    });
+
+    grunt.registerTask('test:copy', [
+        'jasmine:prod:build',
+        'copy:test',
+        'replace:test',
+    ]);
+
     //developer task: grunt dev
-    grunt.registerTask('dev', [
+    grunt.registerTask('dev-dist', [
         'clean:dist', //clean dist folder
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
@@ -53,10 +80,15 @@ module.exports = function(grunt) {
         'copy:scripts',
         'copy:templates',
         'copy:preview_pages', //copies preview_page assets
-        'copy:waffles', //copies waffles
+        'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts', //copies fonts (font awesome)
-        'connect', //run locally
+        'copy:fonts' //copies fonts (font awesome)
+    ]);
+
+    //developer task: grunt dev
+    grunt.registerTask('dev', [
+        'dev-dist', //copies source to dist
+        'connect:dev', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -73,7 +105,7 @@ module.exports = function(grunt) {
         'includereplace:preview_pages_build', //preview_pages folder
         'preview_pages_index', //build preview_pages
         'copy:preview_pages', //copies preview_page assets
-        'copy:waffles', //copies waffles
+        'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
 
@@ -82,7 +114,7 @@ module.exports = function(grunt) {
     //default task with connect
     grunt.registerTask('serve', [
         'default', //default build
-        'connect', //run locally
+        'connect:dev', //run locally
         'watch' //watch for code changes
     ]);
 
@@ -110,15 +142,22 @@ module.exports = function(grunt) {
         // Copy all js and template files to dist folder
         copy: {
             preview_pages: {
-                cwd: 'preview_pages',
-                src: ['assets/scripts.js', 'assets/style.css'],
-                dest: 'dist/preview_pages/',
-                expand: true
+                files: [{
+                    cwd: 'preview_pages',
+                    src: ['assets/scripts.js', 'assets/style.css'],
+                    dest: 'dist/preview_pages/',
+                    expand: true
+                }, {
+                    cwd: 'lib/jquery/dist/',
+                    src: ['jquery.min.js'],
+                    dest: 'dist/preview_pages/assets/',
+                    expand: true
+                }]
             },
-            waffles: {
-                cwd: 'data-waffles',
+            local_data: {
+                cwd: 'local_data',
                 src: ['**/*'],
-                dest: 'dist/data-waffles/',
+                dest: 'dist/local_data/',
                 expand: true
             },
             assets: {
@@ -144,7 +183,26 @@ module.exports = function(grunt) {
                 src: ['**/*.html'],
                 dest: 'dist/',
                 expand: true
+            },
+            /*
+             * copy test files to dist to be able to rerun on stage
+             * this is a very specific task aimed on replaying
+             * a dist version of spec tests only
+             */
+            test: {
+                files: [{
+                    cwd: '.grunt/grunt-contrib-jasmine/',
+                    src: ['**/*'],
+                    dest: 'dist/test/jasmine/',
+                    expand: true
+                }, {
+                    cwd: 'spec/',
+                    src: ['**/*'],
+                    dest: 'dist/test/spec/',
+                    expand: true
+                }]
             }
+
         },
 
         // Uglifying JS files
@@ -182,11 +240,11 @@ module.exports = function(grunt) {
         // Make sure necessary files are built when changes are made
         watch: {
             styles: {
-                files: ['src/**/*.scss'],
+                files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
                 tasks: ['sass:dev']
             },
             preview_pages: {
-                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js'],
+                files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
                 tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
             },
             scripts: {
@@ -199,23 +257,33 @@ module.exports = function(grunt) {
             },
             options: {
                 livereload: {
-                    port: '<%= connect.options.livereload %>'
+                    port: '<%= connect.dev.options.livereload %>'
                 }
+            },
+            test: {
+                files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
+                tasks: ['jasmine:dev']
             }
         },
 
         connect: {
-            options: {
-                port: 9000,
-                livereload: 35729,
-                // change this to '0.0.0.0' to access the server from outside
-                hostname: 'localhost'
-            },
-            livereload: {
+            test: {
                 options: {
-                    open: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>/dist/preview_pages/'
+                    port: 8000,
+                    keepalive: true,
+                    hostname: 'localhost',
+                    livereload: 35728,
+                    open: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/test.html'
                 }
-            }
+            },
+            dev: {
+                options: {
+                    port: 9000,
+                    livereload: 35729,
+                    hostname: 'localhost',
+                    open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/dist/preview_pages/'
+                }
+            },
         },
 
         requirejs: {
@@ -228,6 +296,29 @@ module.exports = function(grunt) {
                     optimize: "uglify",
                     generateSourceMaps: false,
                 }
+            }
+        },
+
+        replace: {
+            test: {
+                options: {
+                    patterns: [{
+                        match: /.grunt\/grunt-contrib-jasmine\//g,
+                        replacement: 'test/jasmine/'
+                    }, {
+                        match: /spec\//g,
+                        replacement: 'test/spec/'
+                    }, {
+                        match: /dist\//g,
+                        replacement: ''
+                    }]
+                },
+                files: [{
+                    expand: true,
+                    flatten: true,
+                    src: ['test.html'],
+                    dest: 'dist/'
+                }]
             }
         },
 
@@ -266,6 +357,45 @@ module.exports = function(grunt) {
             }
         },
 
+        //run tests
+        jasmine: {
+            dev: {
+                src: 'dist/vizabi.js',
+                options: {
+                    outfile: 'test.html',
+                    keepRunner: true,
+                    specs: 'spec/**/*-spec.js',
+                    helpers: 'spec/**/*-helper.js',
+                    host: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/',
+                    template: require('grunt-template-jasmine-requirejs'),
+                    templateOptions: {
+                        requireConfigFile: 'dist/config.js',
+                        requireConfig: {
+                            baseUrl: 'dist/'
+                        }
+                    },
+                    styles: ['dist/vizabi.css', 'spec/spec.css'],
+                    vendor: ['dist/preview_pages/assets/jquery.min.js']
+                }
+            },
+            prod: {
+                src: 'dist/vizabi.js',
+                options: {
+                    outfile: 'test.html',
+                    specs: 'spec/**/*-spec.js',
+                    helpers: 'spec/**/*-helper.js',
+                    styles: ['dist/vizabi.css', 'spec/spec.css'],
+                    vendor: ['dist/preview_pages/assets/jquery.min.js'],
+                    page: {
+                        //laptopsize
+                        viewportSize: {
+                            width: 1280,
+                            height: 768
+                        }
+                    }
+                }
+            }
+        },
         //upload to s3 task
         aws_s3: {
             options: {
@@ -408,7 +538,7 @@ module.exports = function(grunt) {
 
         var tools_folder = 'src/tools/',
             scss_file = 'src/assets/style/vizabi.scss',
-            includes = ['_vizabi.scss'],
+            includes = ['_vizabi.scss', '../../tools/_tool.scss'],
             contents = '',
             current_dir;
 

@@ -8,27 +8,22 @@
 //      E.g: $vzb-border-color-blue;
 //
 // ****************************************************************************
-
 // ----------------------------------------------------------------------------
 //   Sizes
 // ----------------------------------------------------------------------------
 $vzb-resolution-medium: 750px;
 $vzb-resolution-large: 970px;
-
 $vzb-font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
 $vzb-font-family-alt: Arial, sans-serif;
-
 // ----------------------------------------------------------------------------
 //   Colors
 //   -> Naming convention:
 //   darkest, darker, dark, color, light, lighter, lightest
 // ----------------------------------------------------------------------------
-
 // Primary = Low saturated Blue
 $vzb-color-primary: #607889;
 $vzb-color-primary-dark: #4B98AA;
 $vzb-color-primary-lightest: #F2FAFC;
-
 // Grayscale
 $vzb-color-white: #FFFFFF;
 $vzb-color-grey-darkest: #333333;
@@ -36,26 +31,58 @@ $vzb-color-grey-dark: #666666;
 $vzb-color-grey: #999999;
 $vzb-color-grey-light: #F2FAFC;
 $vzb-color-grey-lightest: #FDFDFD;
-
 // Vizabi main colors
-$vzb-color-red: #F77481; 
+$vzb-color-red: #F77481;
 $vzb-color-yellow: #E1CE00;
 $vzb-color-green: #B4DE79;
-$vzb-color-blue: #62CCE3; 
-
+$vzb-color-blue: #62CCE3;
 // ----------------------------------------------------------------------------
 //   Images
 // ----------------------------------------------------------------------------
-
 $vzb-image-preloader: url('assets/imgs/preloader.gif');
-
 // ----------------------------------------------------------------------------
 //   Common styles
 // ----------------------------------------------------------------------------
-
 .vzb-hidden {
-	display: none !important;
+    display: none !important;
 }
 .vzb-invisible {
-	visibility: hidden !important;
+    visibility: hidden !important;
+}
+.vzb-placeholder {
+
+    position: relative;
+
+    &.vzb-loading, &.vzb-loading-data {
+        //todo: Make background transparent, but not preloader circles
+        &:after {
+            content: ' ';
+            background-color: $vzb-color-white;
+            background-image: $vzb-image-preloader;
+            background-repeat: no-repeat;
+            background-position: center center;
+            display: block;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            bottom: 0px;
+            right: 0px;
+            z-index: 2;
+        }
+    }
+    //loading data specifically
+    &.vzb-loading-data {
+        &:after {
+            @include opacity(0.9);
+        }
+    }
+    //loading anything
+    &.vzb-loading {
+        * {
+            visibility: hidden;
+        }
+        &:after {
+            @include opacity(1);
+        }
+    }
 }

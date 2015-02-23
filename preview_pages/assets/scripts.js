@@ -103,7 +103,7 @@ function showState(state, id) {
     var str = JSON.stringify(state, null, 2);
     container.innerHTML = str;
 
-    // updateURL();
+    updateURL();
 }
 
 function formatDate(date, unit) {
@@ -130,7 +130,23 @@ function goToExample(example) {
     return;
 }
 
+
+// this should prevent updating a URL continuously when draggind the time slider
+globalMousedown = 0;
+function keepTrackOfMouseDown(){
+    $(".placeholder").on("mousedown", function(){
+        globalMousedown++;
+    })
+    $(".placeholder").on("mouseup", function(){
+        globalMousedown--;
+        updateURL();
+    })
+}
+
+
 function updateURL() {
+    if(globalMousedown) return; 
+
     var url = {
         state: $("#state").text().replace(/(\s|\r\n|\n|\r)/gm, ""),
         width: $(".placeholder").width(),
@@ -150,11 +166,7 @@ function parseURL() {
         options = JSON.parse(hash.replace("#", ""));
 
         var placeholder = $(".placeholder").attr("id");
-
-
-        console.error('FIXME: parse attempt throws error when options.state is empty')
-        console.error('see related issues #20 and #24')
-        var state = ""; //should be JSON.parse(options.state);
+        var state = JSON.parse(options.state);
 
         url.state = state;
         url.lang = options.lang;
@@ -176,7 +188,7 @@ function shareLink() {
             prompt("Copy the following link: ", response.data.url);
         } else {
             console.log(response);
-            alert("Copy the link from the browser");
+            prompt("Copy the following link: ", window.location);
         }
     });
 
@@ -234,9 +246,10 @@ function viewOnGithub() {
     window.open(github_base + branch + github_tools_prepend + tool_path, '_blank');
 }
 
-parseURL();
 
 $(function() {
+    parseURL();
+    keepTrackOfMouseDown();
 
     $('.wrapper-dropdown').each(function() {
         new DropDown($(this));

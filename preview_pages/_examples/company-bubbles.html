@@ -97,6 +97,52 @@
             </ul>
         </div>
     </div>
+        <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('bar-chart')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('bar-chart', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('bar-chart')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('bar-chart')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('bar-chart')">RANDOM</button>
+
+        <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
+                </li>
+                <li><a onclick="setState()">USA - 2000</a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 
     <div id="bubble-chart" class="placeholder"></div>
 
@@ -136,39 +182,41 @@ $(function() {
 
             //entities we want to show
             entities: {
-                show: [{
+                show: {
                     dim: "company",
                     filter: {
                         "company": ['*']
                     }
-                }]
+                }
             },
 
             //how we show it
             marker: {
+                hook_to: ["entities", "time"],
+                
                 type: "geometry",
                 shape: "circle",
                 label: {
-                    use: "property",
+                    hook: "property",
                     value: "name"
                 },
                 axis_y: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "profit",
                     scale: 'linear'
                 },
                 axis_x: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "market_share",
                     scale: 'linear'
                 },
                 size: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "market_share",
                     scale: 'log'
                 },
                 color: {
-                    use: "property",
+                    hook: "property",
                     value: "category",
                     domain: ['#F77481', '#B4DE79']
                 }
@@ -178,7 +226,7 @@ $(function() {
         //where do we get data from?
         data: {
             reader: 'local-json',
-            path: '../../data-waffles/examples/{{LANGUAGE}}/companies.json'
+            path: '../../local_data/waffles/{{LANGUAGE}}/companies.json'
         },
 
         //language properties
@@ -275,7 +323,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.marker[hook] = {
-        use: use,
+        hook: use,
         value: value
     };
 
@@ -285,5 +333,6 @@ function hook(hook, use, value, domain) {
     myVizabi.setOptions(options);
 }
 </script>
+<script src="../assets/scripts.js"></script>
 
 <!-- @@include('../assets/_footer.tpl') -->

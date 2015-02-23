@@ -19,7 +19,42 @@ define([
             this.template = 'components/_examples/' + this.name + '/' + this.name;
 
             //define expected models for this component
-            this.model_expects = ["time", "entities", "marker", "data"];
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }, {
+                name: "entities",
+                type: "entities"
+            }, {
+                name: "marker",
+                type: "model"
+            }, {
+                name: "data",
+                type: "data"
+            }];
+
+            this.model_binds = {
+                "change": function(evt) {
+                    //if it's not about time
+                    if(evt.indexOf('change:time') === -1) {
+                         _this.updateShow();
+                         _this.redrawDataPoints();
+                    }
+                },
+                "ready":  function(evt) {
+                    _this.preprocessData();
+                    _this.updateShow();
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                    //TODO: dirty hack to avoid duplicate bubbles in the beginning (drawing twice)
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                },
+                'change:time:value': function() {
+                    _this.updateTime();
+                    _this.redrawDataPoints();
+                }
+            }
 
             this._super(context, options);
 
@@ -32,6 +67,8 @@ define([
             this.yAxis = d3.svg.axis();
 
             this.isDataPreprocessed = false;
+            this.timeUpdatedOnce = false;
+            this.sizeUpdatedOnce = false;
 
         },
 
@@ -40,6 +77,7 @@ define([
          * Executes right after the template is in place
          */
         domReady: function() {
+            var _this = this;
 
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
@@ -52,53 +90,20 @@ define([
             this.bubbles = null;
             this.tooltip = this.element.select('.vzb-tooltip');
 
-            //model events
-            this.model.on({
-                "change": function(evt) {
-                    console.log("Changed!");
-                },
-                "load_start": function(evt) {
-                    console.log("Started to load!");
-                },
-                "load_end": function() {
-                    console.log("Finished Loading!");
-                }
-            });
-
             //component events
             this.on("resize", function() {
-                console.log("Ops! Gotta resize...");
+                _this.updateSize();
+                _this.updateTime();
+                _this.redrawDataPoints();
             })
 
         },
-
-
-        /*
-         * Updates the component as soon as the model/models change
-         */
-        modelReady: function(evt) {
-
-            var _this = this;
-
-            //TODO: preprocessing should go somewhere else, when the data is loaded
-            if (!this.isDataPreprocessed) {
-                _this.model.marker.label.getItems().forEach(function(d) {
-                    d["geo.region"] = d["geo.region"] || "world";
-                });
-                this.isDataPreprocessed = true;
-            }
-
-            this.time = parseInt(d3.time.format("%Y")(this.model.time.value), 10);
-            this.data = this.model.marker.label.getItems({ time: this.time.toString() });
-
-            if (this.isDataPreprocessed) {
-                //TODO: #32 run only if data or show models changed
-                this.updateShow();
-                //TODO: #32 run only if data or time models changed
-                this.updateTime();
-                //TODO: #32 run only on resize or on init
-                this.resize();
-            }
+        
+        preprocessData: function(){
+            this.model.marker.label.getItems().forEach(function(d) {
+                d["geo.region"] = d["geo.region"] || "world";
+            });
+            this.isDataPreprocessed = true;
         },
 
 
@@ -130,17 +135,25 @@ define([
          */
         updateTime: function() {
             var _this = this;
-
-            this.yearEl.text(this.time);
+            //TLDR
+            //this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
+            this.time = this.model.time.value;
+            
+            this.data = this.model.marker.label.getItems({ time: this.time });
+            
+            
+            this.yearEl.text(this.time.getFullYear().toString());
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
                 .data(this.data);
+            
+            this.timeUpdatedOnce = true;
         },
 
         /*
          * RESIZE:
          * Executed whenever the container is resized
          */
-        resize: function() {
+        updateSize: function() {
 
             if (!this.isDataPreprocessed) return;
 
@@ -155,32 +168,17 @@ define([
 
             switch (this.getLayoutProfile()) {
                 case "small":
-                    margin = {
-                        top: 30,
-                        right: 20,
-                        left: 40,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
                     maxRadius = 20;
                     break;
                 case "medium":
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
                     maxRadius = 40;
                     break;
                 case "large":
-                    margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
+                    margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
                     maxRadius = 60;
                     break;
@@ -239,15 +237,17 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
 
-            this.redrawDataPoints();
+            this.sizeUpdatedOnce = false;
         },
 
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
          */
-        redrawDataPoints: function() {
+        redrawDataPoints: function() {            
             var _this = this;
+            if(!this.timeUpdatedOnce) this.updateTime();
+            if(!this.sizeUpdatedOnce) this.updateSize();
 
             //exit selection
             this.bubbles.exit().remove();
@@ -257,24 +257,25 @@ define([
                 .attr("class", "vzb-bc-bubble");
 
             //update selection
-            var speed = this.model.time.speed;
+            var speed = (this.model.time.playing) ? this.model.time.speed : 0;
+
             var some_selected = (_this.model.entities.select.length > 0);
 
             this.bubbles
                 .style("fill", function(d) {
-                    return _this.model.marker.color.getValue(d);
+                    return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
                 })
                 .transition().duration(speed).ease("linear")
                 .attr("cy", function(d) {
-                    var value = _this.model.marker.axis_y.getValue(d);
+                    var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
                     return _this.yScale(value);
                 })
                 .attr("cx", function(d) {
-                    var value = _this.model.marker.axis_x.getValue(d);
+                    var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
                     return _this.xScale(value);
                 })
                 .attr("r", function(d) {
-                    var value = _this.model.marker.size.getValue(d);
+                    var value = _this.model.marker.size.getValue(d)||_this.rScale.domain()[0];
                     return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
                 });
 

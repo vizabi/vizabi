@@ -6,7 +6,8 @@ define([
     'models/tool'
 ], function(d3, _, Component, Layout, ToolModel) {
 
-    var class_loading_data = "vzb-loading-data",
+    var class_placeholder = "vzb-placeholder",
+        class_loading_data = "vzb-loading-data",
         class_loading_error = "vzb-loading-error";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
@@ -24,8 +25,8 @@ define([
             this.layout = new Layout();
             this.ui = options.ui || {};
 
-            var validate = config.validate || this.toolModelValidation,
-                query = config.query || this.getQuery;
+            //bind the validation function with the tool
+            var validate = this.validate.bind(this);
 
             //build tool model
             var _this = this;
@@ -55,7 +56,7 @@ define([
                         if (_this._ready) {
                             _this.model.validate().done(function() {
                                 _this.triggerAll(evt, val);
-                                _this.modelReady(evt);
+                                //_this.modelReady(evt);
                             });
                         }
                     });
@@ -76,19 +77,20 @@ define([
                 'load_error': function() {
                     _this.errorLoading();
                 },
-                'load_end': function(evt, vals) {},
                 'ready': function(evt) {
-                    _this.afterLoading();
                     if (_this._ready) {
-                        _this.model.validate().done(function() {
-                            _this.modelReady(evt);
-                        });
+                        _this.afterLoading();
                     }
                 }
-            }, validate, query);
+            }, validate);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);
+
+            //placeholder should have the placeholder class
+            if (!this.placeholder.classed(class_placeholder)) {
+                this.placeholder.classed(class_placeholder, true);
+            }
         },
 
         /**
@@ -119,8 +121,11 @@ define([
          */
         beforeLoading: function() {
             //do not update if it's loading
-            this.element.classed(class_loading_data, true);
-            this.blockUpdate(true);
+            if (!this.placeholder.classed(class_loading_data)) {
+                this.placeholder.classed(class_loading_data, true);
+                this.blockUpdate(true);
+                this.blockResize(true);
+            };
         },
 
         /**
@@ -129,10 +134,11 @@ define([
         afterLoading: function() {
             //it's ok to update if not loading
             this.blockUpdate(false);
+            this.blockResize(false);
             //defer to make sure it's updated
             var _this = this;
             _.defer(function() {
-                _this.element.classed(class_loading_data, false);
+                _this.placeholder.classed(class_loading_data, false);
             });
         },
 
@@ -140,7 +146,7 @@ define([
          * Adds loading error class
          */
         errorLoading: function() {
-            this.element.classed(class_loading_error, false);
+            this.placeholder.classed(class_loading_error, false);
         },
 
         /* ==========================
@@ -151,10 +157,11 @@ define([
         /**
          * Placeholder for model validation
          */
-        toolModelValidation: function() {
+        validate: function() {
             //placeholder for tool validation methods
         },
 
+        //TODO: remove query from here
         /**
          * Placeholder for query
          */

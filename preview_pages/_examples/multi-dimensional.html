@@ -1,0 +1,302 @@
+<!-- @@include('../assets/_header.tpl', {"title": "Model View Example - One timeslider, one model"}) -->
+
+<div class="container">
+        <div class="buttons">
+
+        <!-- @@include('../assets/_menu.tpl') -->
+
+        <label>|</label>
+
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('placeholder')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('placeholder', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('placeholder')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('placeholder')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('placeholder')">RANDOM</button>
+
+
+        <div id="dropdown-color" class="wrapper-dropdown small" tabindex="1">
+            <span>COLOR HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'age', ['#F77481', '#62CCE3', '#E1CE00', '#B4DE79'])">Prop: age</a>
+                </li>
+                <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'lex', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'gdp_per_cap', ['#CCCCCC', '#62CCE3'])">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('color', 'indicator', 'pop', ['#CCCCCC', '#B4DE79'])">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('color', 'value', '#FFCC00', [])">Value: #FFCC00</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-number" class="wrapper-dropdown small" tabindex="1">
+            <span>NUMBER HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('number', 'property', 'geo.region')">Prop: geo.region</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'age')">Prop: age</a>
+                </li>
+                <li><a onclick="hook('number', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('number', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('number', 'value', '42')">Value: 42</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" class="wrapper-dropdown small" tabindex="1">
+            <span>LABEL HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'age')">Prop: age</a>
+                </li>
+                <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="dropdown-label" class="wrapper-dropdown small" tabindex="1">
+            <span>LABEL 2 HOOK</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('label2', 'property', 'geo.name')">Prop: geo.name</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'geo')">Prop: geo</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'age')">Prop: age</a>
+                </li>
+                <li><a onclick="hook('label2', 'property', 'geo.category')">Prop: geo.category</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'lex')">Ind: lex</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                </li>
+                <li><a onclick="hook('label2', 'indicator', 'pop')">Ind: pop</a>
+                </li>
+                <li><a onclick="hook('label2', 'value', 'Cool')">Value: "Cool"</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div id="placeholder" class="placeholder"></div>
+
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState()">SET STATE</button>
+</div>
+
+<script>
+var myVizabi,
+    playButton;
+
+$(function() {
+
+    playButton = $("#play_button");
+    languageButton = $("#language_button");
+    indicatorButton = $("#indicator_button");
+    var options = {
+        //state (how vizabi should work)
+        state: {
+
+            //time properties
+            time: {
+                unit: "year",
+                start: "1990",
+                end: "2014",
+                step: 1,
+                speed: 20,
+                value: "1995",
+                playable: false
+            },
+            //entities we want to show
+            entities: {
+                show: {
+                    dim: "geo",
+                    filter: {
+                        "geo": ['swe', 'nor'],
+                        "geo.category": ["country"]
+                    }
+                }
+            },
+            entities_age: {
+                show: {
+                    dim: "age",
+                    filter: {
+                        "age": ['5', '10']
+                    }
+                }
+            },
+
+            row: {
+                hook_to: ["entities", "entities_age", "time"],
+                label: {
+                    hook: "property",
+                    value: "geo.name"
+                },
+                label2: {
+                    hook: "property",
+                    value: "age"
+                },
+                number: {
+                    hook: "indicator",
+                    value: "pop"
+                },
+                color: {
+                    hook: "property",
+                    value: "age",
+                    //red, yellow, green, blue
+                    domain: ["#F77481", "#62CCE3", "#B4DE79"]
+                }
+            }
+        },
+
+        //data properties
+        data: {
+            reader: "local-json",
+            path: "../../local_data/waffles/en/multi-dimensional.json"
+        },
+
+        //language properties
+        language: {
+            id: "en",
+            strings: {
+                "en": {
+                    "intro_text": "This example shows the tool Pop Slider with multi dimensional support. The dimensions are ['geo', 'age', 'time'] and it shows populations of two age groups from Sweden and Norway across time"
+                },
+                "pt": {
+                    "intro_text": "Esse exemplo mostra a Pop Slider com suporte a multi dimensões"
+                }
+            }
+        },
+
+        ui: {
+            'vzb-tool-timeslider': {
+                show_limits: true,
+                show_value: true
+            }
+        },
+
+        //bind (what vizabi should tell to the world outside)
+        bind: {
+            'ready': function() {
+                parseURL();
+            },
+            'change:state': function(evt, vals) {
+                showState(vals.state);
+            },
+            'change:state:time': function(evt, vals) {
+                if (vals.state.time.playing) {
+                    playButton.attr('onclick', 'pause()');
+                    playButton.text("PAUSE");
+                } else {
+                    playButton.attr('onclick', 'play()');
+                    playButton.text("PLAY");
+                }
+            },
+            'change:language': function(evt, vals) {
+                if (vals.language.id === "en") {
+                    languageButton.attr('onclick', "language('pt')");
+                    languageButton.text("SET LANGUAGE: PT");
+                } else {
+                    languageButton.attr('onclick', "language('en')");
+                    languageButton.text("SET LANGUAGE: EN");
+                }
+            }
+        }
+    };
+
+    showState(options.state);
+    myVizabi = new Vizabi("_examples/pop-slider", "#placeholder", options);
+
+});
+
+function play() {
+    var options = {
+        state: {
+            time: {
+                playing: true
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function pause() {
+    var options = {
+        state: {
+            time: {
+                playing: false
+            }
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function language(lang) {
+    var options = {
+        language: {
+            id: lang
+        }
+    };
+    myVizabi.setOptions(options);
+}
+
+function hook(hook, use, value, domain) {
+    var options = {
+        state: {
+            row: {}
+        }
+    };
+    options.state.row[hook] = {
+        hook: use,
+        value: value
+    };
+
+    if (domain) options.state.row[hook].domain = domain;
+
+    myVizabi.setOptions(options);
+}
+</script>
+
+<!-- @@include('../assets/_footer.tpl') -->

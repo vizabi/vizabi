@@ -18,7 +18,10 @@ define([
             this.template = "components/_examples/year-display/year-display";
 
             //define expected models for this component
-            this.model_expects = ["time"];
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }];
 
             this._super(options, context);
         },

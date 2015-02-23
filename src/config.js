@@ -20,6 +20,9 @@ require.config({
         text: '../lib/requirejs-text/text',
         smartpicker: '../lib/smart-picker/dist/smart-picker',
 
+        //stacktrace
+        stacktrace: '../lib/stacktrace-js/dist/stacktrace',
+
         //TODO: Move this to timeslider2 (component-specific)
         //https://github.com/jrburke/r.js/blob/master/build/example.build.js#L35
         jqueryui_slider: '../lib/jqueryui/ui/minified/jquery.ui.slider.min',

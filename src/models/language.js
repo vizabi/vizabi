@@ -12,6 +12,8 @@ define([
          * @param {Object} bind Initial events to bind
          */
         init: function(values, parent, bind) {
+
+            this._type = "language";
             //default values for state model
             values = _.extend({
                 id: "en",

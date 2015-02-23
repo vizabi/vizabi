@@ -14,6 +14,7 @@ define([
          */
         init: function(values, parent, bind) {
 
+            this._type = "size";
             values = _.extend({
                 use: "value",
                 value: undefined
@@ -24,32 +25,29 @@ define([
         /**
          * Validates a color hook
          */
-        validate: function(silent) {
-
+        validate: function() {
             //there must be a min and a max
             if (_.isUndefined(this.min) || this.min < 0) {
-                this.set("min", 0 , silent, true);
+                this.min = 0;
             }
             if (_.isUndefined(this.max) || this.max > 1) {
-                this.set("max", 1, silent, true);
+                this.max = 1;
             }
-
             if (this.min > this.max) {
-                this.set("min", this.max, silent, true);
+                this.min = this.max;
             }
-
             //value must always be between 0 and 1
-            if (this.use === "value" && this.value > this.max) {
-                this.set("value", this.max , silent, true);
+            if (this.hook === "value" && this.value > this.max) {
+                this.value = this.max;
             }
-            else if (this.use === "value" && this.value < this.min) {
-                this.set("value", this.min , silent, true);
+            else if (this.hook === "value" && this.value < this.min) {
+                this.value = this.min;
             }
             if (!this.scale) {
-                this.set("scale", "linear", silent, true);
+                this.scale = 'linear';
             }
-            if (this.use === "property") {
-                this.set("scale", "ordinal", silent, true);
+            if (this.hook === "property") {
+                this.scale = 'ordinal';
             }
         },
 
@@ -58,7 +56,7 @@ define([
          * @returns {Array} domain
          */
         getDomain: function() {
-            if(this.use === "value") {
+            if(this.hook === "value") {
                 return d3.scale.linear().domain([0,1]);
             }
             return this._super();

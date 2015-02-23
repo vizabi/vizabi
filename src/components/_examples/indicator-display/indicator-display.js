@@ -17,7 +17,23 @@ define([
             this.template = "components/_examples/indicator-display/indicator-display";
 
             //define expected models for this component
-            this.model_expects = ["rows", "time"];
+            this.model_expects = [{
+                name: "rows",
+                type: "model"
+            }, {
+                name: "time",
+                type: "time"
+            }];
+
+            var _this = this;
+            this.model_binds = {
+                'ready': function() {
+                    _this.update();
+                },
+                'change': function() {
+                    _this.update();
+                }
+            };
 
             this._super(options, context);
         },
@@ -45,15 +61,10 @@ define([
          * Executed whenever data is changed
          * Ideally, it contains only operations related to data events
          */
-        modelReady: function() {
+        update: function() {
 
-            var time = parseInt(d3.time.format("%Y")(this.model.time.value), 10),
-                rows = this.model.rows.label.getItems(),
-                countriesCurr = [];
-
-            countriesCurr = _.filter(rows, function(d) {
-                return (d.time == time);
-            });
+            var time = this.model.time.value,
+                countriesCurr = this.model.rows.label.getItems({ time: time });
 
 
             this.element.selectAll("p").remove();
@@ -80,10 +91,15 @@ define([
             this.element.selectAll("p")
                 .text(function(d) {
 
-                    var id = _.pick(d, ["geo", "time"]),
-                        label = _this.model.rows.label.getValue(id),
-                        number = _this.model.rows.number.getValue(id),
-                        string = label + ": ";
+                    var label = _this.model.rows.label.getValue(d),
+                        number = _this.model.rows.number.getValue(d);
+
+                    //adding a second label
+                    if(_this.model.rows.label2) {
+                        label += " (" + _this.model.rows.label2.getValue(d) + ")";
+                    }
+
+                    var string = label + ": ";
 
                     if (_this.getLayoutProfile() === 'small' && indicator === 'pop') {
                         string += Math.round(number / 100000) / 10 + " M";

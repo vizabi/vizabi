@@ -1,4 +1,4 @@
-<!-- @@include('../assets/_header.tpl', {"title": "Line Chart"}) -->
+<!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
 
 <div class="container">
     <div class="buttons">
@@ -10,20 +10,32 @@
         <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
             <span>Size</span>
             <ul class="dropdown">
-                <li><a onclick="phoneSize('line-chart')">Mobile Portrait</a>
+                <li><a onclick="phoneSize('bar-chart')">Mobile Portrait</a>
                 </li>
-                <li><a onclick="phoneSize('line-chart', 'landscape')">Mobile Landscape</a>
+                <li><a onclick="phoneSize('bar-chart', 'landscape')">Mobile Landscape</a>
                 </li>
-                <li><a onclick="randomSize('line-chart')">Random Size</a>
+                <li><a onclick="randomSize('bar-chart')">Random Size</a>
                 </li>
-                <li><a onclick="fullSize('line-chart')">Full Screen</a>
+                <li><a onclick="fullSize('bar-chart')">Full Screen</a>
                 </li>
             </ul>
         </div>
 
-        <button onclick="randomSize('line-chart')">RANDOM</button>
+        <button onclick="randomSize('bar-chart')">RANDOM</button>
 
         <label>|</label>
+
+        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
+            <span>OPTIONS</span>
+            <ul class="dropdown">
+                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
+                </li>
+                <li><a onclick="setState()">USA - 2000</a>
+                </li>
+                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
+                </li>
+            </ul>
+        </div>
 
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
@@ -41,7 +53,7 @@
 </div>
 <div class="aux">
     <button onclick="shareLink()">SHARE LINK</button>
-    
+
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
@@ -57,14 +69,14 @@ $(function() {
     var options = {
         //state
         state: url.state || {
-            
+
             //time properties
             time: {
-                start: 1990,
-                end: 2012,
+                start: "1990",
+                end: "2012",
                 step: 1,
                 speed: 300,
-                value: 2007
+                value: "2007"
             },
 
             //entities we want to show
@@ -72,46 +84,46 @@ $(function() {
                 show: [{
                     dim: "geo",
                     filter: {
-                        "geo": ["ago","arg","aus","swe"],
+                        "geo": ["ago", "arg", "aus", "swe"],
                         "geo.category": ["country"]
                     }
                 }]
             },
 
             //how we show it
-            marker: {
-                type: "geometry",
-                shape: "line",
+            lines: {
                 label: {
-                    use: "property",
+                    hook: "property",
                     value: "geo.name"
                 },
                 axis_y: {
-                    use: "indicator",
+                    hook: "indicator",
                     value: "gdp_per_cap",
                     scale: "linear",
                     unit: 1000000000
                 },
                 axis_x: {
-                    use: "property",
+                    hook: "property",
                     value: "time"
                 },
-                color: {
-                        use: "property",
+                stroke: {
+                    size: {
+                        value: 0.5
+                    },
+                    color: {
+                        hook: "property",
                         value: "geo.region",
                         domain: ["#FFFFFF", "#000000"],
                         domain_type: "continuous" //or discrete
-                },
-                size: {
-                        value: 0.5
-                },
+                    }
+                }
             }
 
         },
         //data properties
         data: {
             reader: "local-json",
-            path: "../../data-waffles/examples/{{LANGUAGE}}/basic-indicators.json"
+            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
         },
 
         //language properties
@@ -141,7 +153,6 @@ $(function() {
     myVizabi = new Vizabi("_gapminder/line-chart", "#line-chart", options);
 
 });
-
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->
