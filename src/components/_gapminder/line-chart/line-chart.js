@@ -55,8 +55,8 @@ define([
             this.xScale = null;
             this.yScale = null;
 
-            this.xAxis = d3.svg.axis();
-            this.yAxis = d3.svg.axis();
+            this.xAxis = d3.svg.axis().orient("bottom");
+            this.yAxis = d3.svg.axis().orient("left");
 
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -101,6 +101,20 @@ define([
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
+            
+            
+            this.yAxis
+                .tickSize(6, 0)
+                .tickFormat(function(d) {
+                    return _this.model.marker.axis_y.getTick(d);
+                });
+
+
+            this.xAxis
+                .tickSize(6, 0)
+                .tickFormat(function(d) {
+                    return _this.model.marker.axis_x.getTick(d);
+                });
             
             //line template
             this.line = d3.svg.line()
@@ -163,18 +177,26 @@ define([
             this.tick_spacing = this.profiles[this.getLayoutProfile()].tick_spacing;
 
 
-            //this.size year
-            this.widthAxisY = this.yAxisEl[0][0].getBBox().width;
-            this.heightAxisX = this.xAxisEl[0][0].getBBox().height;
-
 
             //adjust right this.margin according to biggest label
-            var lineLabels = this.linesContainer.selectAll(".vzb-lc-label")[0],
-                biggest = _.max(_.map(lineLabels, function(label) {
-                    return label.getBBox().width;
-                }));
+            var lineLabelsText = this.model.marker.label.getItems().map(function(d,i){
+                return _this.model.marker.label.getValue(d)
+            });
+            
+            var longestLabelWidth = 0;
+            var lineLabelsView = this.linesContainer.selectAll(".samplingView").data(lineLabelsText);
+            lineLabelsView
+                .enter().append("text")
+                .attr("class","samplingView vzb-lc-label")
+                .style("opacity",0)
+                .text(function(d){return d})
+                .each(function(d){
+                    if(longestLabelWidth > this.getBBox().width) return;
+                    longestLabelWidth = this.getBBox().width
+                })
+                .remove();
 
-            this.margin.right = Math.max(this.margin.right, biggest + 20);
+            this.margin.right = Math.max(this.margin.right, longestLabelWidth + 20);
 
 
             //stage
@@ -191,34 +213,20 @@ define([
             this.heightAxisX = this.xAxisEl[0][0].getBBox().height;
             
             if (this.model.marker.axis_y.scale !== "ordinal") {
-                this.yScale.range([this.height, 0]).nice();
+                this.yScale.range([this.height, 0]);
             } else {
                 this.yScale.rangePoints([this.height, 0], padding).range();
             }
             if (this.model.marker.axis_x.scale !== "ordinal") {
-                this.xScale.range([0, this.width]).nice();
+                this.xScale.range([0, this.width]);
             } else {
                 this.xScale.rangePoints([0, this.width], padding).range();
             }
             
 
 
-            this.yAxis.scale(this.yScale)
-                .orient("left")
-                .ticks(Math.max(this.height / this.tick_spacing, 2))
-                .tickSize(6, 0)
-                .tickFormat(function(d) {
-                    return _this.model.marker.axis_y.getTick(d);
-                });
-
-
-            this.xAxis.scale(this.xScale)
-                .orient("bottom")
-                .ticks(Math.max(this.width / this.tick_spacing, 2))
-                .tickSize(6, 0)
-                .tickFormat(function(d) {
-                    return _this.model.marker.axis_x.getTick(d);
-                });
+            this.yAxis.scale(this.yScale);
+            this.xAxis.scale(this.xScale);
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
 
