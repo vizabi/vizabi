@@ -73,6 +73,8 @@ define([
          * Ideally, it contains instantiations related to template
          */
         domReady: function() {
+            var _this = this;
+            
             this.graph = this.element.select('.vzb-lc-graph');
             this.yAxisEl = this.graph.select('.vzb-lc-axis-y');
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
@@ -274,6 +276,7 @@ define([
                 .each(function(d, i){
                     var group = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
+                    var label = _this.model.marker.label.getValue(d);
                 
                     group.append("path")
                         .attr("class", "vzb-lc-line-shadow")
@@ -283,26 +286,37 @@ define([
                     group.append("path")
                         .attr("class", "vzb-lc-line")
                         .style("stroke", color)
-                        .attr("data-tooltip", _this.model.marker.label.getValue(d));
+                        .attr("data-tooltip", label);
+                
+                    group.append("text")
+                        .attr("class", "vzb-lc-label")
+                        .attr("dy", ".35em")
+                        .style("fill", d3.rgb(color).darker(0.3))
+                        .text(label.length<13? label : label.substring(0, 10)+'...');
+                
                 })
             
             this.entities
                 .each(function(d,i){
                     var group = d3.select(this);
+                    var x = _this.model.marker.axis_x.getValue(d);
+                    var y = _this.model.marker.axis_y.getValue(d);
                 
                     if(_this.dataBuffer[d.geo]==null)_this.dataBuffer[d.geo] = [];
-                    _this.dataBuffer[d.geo].push([
-                        _this.model.marker.axis_x.getValue(d),
-                        _this.model.marker.axis_y.getValue(d)
-                    ]);
+                    _this.dataBuffer[d.geo].push([x,y]);
                     
                     group.select(".vzb-lc-line-shadow")
                         .attr("d", _this.line(_this.dataBuffer[d.geo]));
                     group.select(".vzb-lc-line")
                         .attr("d", _this.line(_this.dataBuffer[d.geo]));
+                
+                    group.select(".vzb-lc-label")
+                        .attr("transform", function(d) {
+                            return "translate(" + _this.xScale(x) + "," + _this.yScale(y) + ")";
+                        })
+                        .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
                 })
             
-            console.log(_this.dataBuffer)
 
             //            //this.data up to year
 //            this.data = _.filter(this.data, function(d) {
@@ -323,35 +337,7 @@ define([
 //                })
 //                return g;
 //            });
-            
-            
-            
 
-//            entities.append("text")
-//                .attr("class", "vzb-lc-label")
-//                .datum(function(d) {
-//                    return {
-//                        name: d.name,
-//                        region: d.region,
-//                        value: d.values[d.values.length - 1]
-//                    };
-//                })
-//                .attr("dy", ".35em")
-//                .text(function(d) {
-//                    return "abracadabra"
-//                    //var size = d.name.length;
-//                    //return (size < 13) ? d.name : d.name.substring(0, 10) + '...'; //only few first letters
-//                })
-//                .style("fill", function(d) {
-//                    return d3.rgb(_this.colorScale(color(d))).darker(0.3);
-//                });
-            
-            
-//            this.linesContainer.selectAll(".vzb-lc-label")
-//                .attr("transform", function(d) {
-//                    return "translate(" + _this.xScale(d.value.time) + "," + _this.yScale(d.value.value) + ")";
-//                })
-//                .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
         }
 
 
