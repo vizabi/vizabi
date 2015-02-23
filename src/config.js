@@ -11,6 +11,8 @@ require.config({
         readers: 'readers',
 
         d3: '../lib/d3/d3',
+        d3genericLogScale: '../src/base/d3.genericLogScale',
+        d3axisWithLabelPicker: '../src/base/d3.axisWithLabelPicker',
         jquery: '../lib/jquery/dist/jquery',
         underscore: '../lib/underscore/underscore',
         //todo: replace underscore with lodash
