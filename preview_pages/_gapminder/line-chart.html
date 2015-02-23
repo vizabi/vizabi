@@ -109,17 +109,16 @@ $(function() {
                     hook: "property",
                     value: "time"
                 },
-                stroke: {
-                    size: {
-                        value: 0.5
-                    },
-                    color: {
-                        hook: "property",
-                        value: "geo.region",
-                        domain: ["#FFFFFF", "#000000"],
-                        domain_type: "continuous" //or discrete
-                    }
+                size: {
+                    value: 0.5
+                },
+                color: {
+                    hook: "property",
+                    value: "geo.region",
+                    domain: ["#FFFFFF", "#000000"],
+                    domain_type: "continuous" //or discrete
                 }
+                
             }
 
         },
@@ -152,8 +151,8 @@ $(function() {
         }
     };
 
-    showState(options.state);
     myVizabi = new Vizabi("_gapminder/line-chart", "#line-chart", options);
+    showState(options.state);
 
 });
 </script>
