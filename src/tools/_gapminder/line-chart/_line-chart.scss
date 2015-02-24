@@ -1,9 +1,0 @@
-.vzb-tool-line-chart {
-
-	@extend .vzb-tool;
-
-	@import '../../../components/_gapminder/header/header';
-	@import '../../../components/_gapminder/line-chart/line-chart';
-	@import '../../../components/_gapminder/timeslider/timeslider';
-	@import '../../../components/_gapminder/buttonlist/buttonlist';
-}
