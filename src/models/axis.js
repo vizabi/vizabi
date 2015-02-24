@@ -38,7 +38,7 @@ define([
          */
         validate: function() {
 
-            var possibleScales = ["log", "linear", "pow"];
+            var possibleScales = ["log", "linear", "time", "pow"];
             if (!this.scale || (this.hook === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
                 this.scale = 'linear'; 
             }
