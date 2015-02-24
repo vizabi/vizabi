@@ -102,7 +102,7 @@ define([
             
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
-            this.xScale = d3.scale.linear().domain([1990,2012]);//this.model.marker.axis_x.getDomain();
+            this.xScale = this.model.marker.axis_x.getDomain();
             
             
             this.yAxis
@@ -289,21 +289,19 @@ define([
             
             this.entities
                 .each(function(d,i){
-                    var group = d3.select(this);
-                    var x = _this.model.marker.axis_x.getValue(d).getFullYear();
-                    var y = _this.model.marker.axis_y.getValue(d);
-                
-                    if(_this.dataBuffer[d.geo]==null)_this.dataBuffer[d.geo] = [];
-                    _this.dataBuffer[d.geo].push([x,y]);
+                    var group = d3.select(this);                
+                    var x = _this.model.marker.axis_x.getValues(d);
+                    var y = _this.model.marker.axis_y.getValues(d);
+                    var xy = x.map(function(dx,i){return [dx,y[i]]});
                     
                     group.select(".vzb-lc-line-shadow")
-                        .attr("d", _this.line(_this.dataBuffer[d.geo]));
+                        .attr("d", _this.line(xy));
                     group.select(".vzb-lc-line")
-                        .attr("d", _this.line(_this.dataBuffer[d.geo]));
+                        .attr("d", _this.line(xy));
                 
                     group.select(".vzb-lc-label")
                         .attr("transform", function(d) {
-                            return "translate(" + _this.xScale(x) + "," + _this.yScale(y) + ")";
+                            return "translate(" + _this.xScale(x[x.length-1]) + "," + _this.yScale(y[y.length-1]) + ")";
                         })
                         .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
                 })
