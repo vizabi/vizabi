@@ -35,7 +35,7 @@ describe("* Example Pop slider with multiple dimensions", function() {
             },
 
             row: {
-                hook_to: ["entities", "entities_age", "time"],
+                dimensions: ["entities", "entities_age", "time"],
                 label: {
                     hook: "property",
                     value: "geo.name"

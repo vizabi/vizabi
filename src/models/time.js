@@ -51,31 +51,34 @@ define([
             this._playing_now = false;
 
             //bing play method to model change
-            this.on("change:playing", function() {
-                if (_this.playing === true) {
-                    _this._startPlaying();
-                } else {
-                    _this._stopPlaying();
+            this.on({
+                "change:playing": function() {
+                    if (_this.playing === true) {
+                        _this._startPlaying();
+                    } else {
+                        _this._stopPlaying();
+                    }
+                },
+                "set": function() {
+                    //auto play if playing is true by reseting variable
+                    if (_this.playing === true) {
+                        _this.set('playing', true, true); //3rd argumennt forces update
+                    }
+
+                    //snap values
+                    if (_this.roundOnPause) {
+                        var op = 'round';
+                        if (_this.roundOnPause === 'ceil') op = 'ceil';
+                        if (_this.roundOnPause === 'floor') op = 'floor';
+                        var start = d3.time[_this.unit][op](new Date(_this.start)),
+                            end = d3.time[_this.unit][op](new Date(_this.end)),
+                            time = d3.time[_this.unit][op](new Date(_this.value));
+                        _this.start = start;
+                        _this.end = end;
+                        _this.value = time;
+                    }
                 }
             });
-
-            //auto play if playing is true by reseting variable
-            if (this.playing === true) {
-                this.playing = true;
-            }
-
-            //snap values
-            if (this.roundOnPause) {
-                var op = 'round';
-                if (this.roundOnPause === 'ceil') op = 'ceil';
-                if (this.roundOnPause === 'floor') op = 'floor';
-                var start = d3.time[this.unit][op](this.start),
-                    end = d3.time[this.unit][op](this.end),
-                    time = d3.time[this.unit][op](this.value);
-                this.set('start', start);
-                this.set('end', end);
-                this.set('value', time);
-            }
         },
 
         /**
@@ -91,7 +94,7 @@ define([
                         var formatter = formatters[j];
                         var date = formatter.parse(this[attr].toString());
                         if (_.isDate(date)) {
-                            this.set(attr, date, silent, true);
+                            this.set(attr, date);
                             break;
                         }
                     };
@@ -103,37 +106,35 @@ define([
          * Validates the model
          * @param {boolean} silent Block triggering of events
          */
-        validate: function(silent) {
-            //don't cross validate everything
-            var atomic = true;
+        validate: function() {
 
             //unit has to be one of the available_time_units
             if (time_units.indexOf(this.unit) === -1) {
-                this.set("unit", "year", silent, atomic);
+                this.unit = "year";
             }
 
             if (this.step < 1) {
-                this.set("step", "year", silent, atomic);
+                this.step = "year";
             }
 
             //make sure dates are transformed into dates at all times
             if (!_.isDate(this.start) || !_.isDate(this.end) || !_.isDate(this.value)) {
-                this._formatToDates(silent);
+                this._formatToDates();
             }
 
             //end has to be >= than start
             if (this.end < this.start) {
-                this.set('end', this.start, silent, atomic);
+                this.end = this.start;
             }
             //value has to be between start and end
             if (this.value < this.start) {
-                this.set('value', this.start, silent, atomic);
+                this.value = this.start;
             } else if (this.value > this.end) {
-                this.set('value', this.end, silent, atomic);
+                this.value = this.end;
             }
 
             if (this.playable === false && this.playing === true) {
-                this.set('playing', false, silent, atomic);
+                this.playing = false;
             }
         },
 

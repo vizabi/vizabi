@@ -207,31 +207,31 @@ $(function() {
 
             //how we show it
             marker: {
-                hook_to: ["entities", "time"],
+                dimensions: ["entities", "time"],
                 type: "geometry",
                 shape: "circle",
                 label: {
-                    hook: "property",
+                    use: "property",
                     value: "geo.name"
                 },
                 axis_y: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "lex",
                     scale: 'linear'
                 },
                 axis_x: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "gdp_per_cap",
                     scale: 'linear',
                     unit: 100
                 },
                 size: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "pop",
                     scale: 'log'
                 },
                 color: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "lex",
                     domain: ['#F77481', '#E1CE00', '#B4DE79']
                 }
@@ -338,7 +338,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.marker[hook] = {
-        hook: use,
+        use: use,
         value: value
     };
     
