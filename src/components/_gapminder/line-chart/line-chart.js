@@ -225,9 +225,8 @@ define([
             
             this.xAxis.scale(this.xScale)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_x.scale,
-                    toolMargin: this.margin,
-                    formatter: function(d){return _this.model.marker.axis_x.getTick(d)}
+                    scaleType: "time",//this.model.marker.axis_x.scale,
+                    toolMargin: this.margin
                     //showOuter: true
                 });
 
