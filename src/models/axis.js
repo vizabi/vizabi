@@ -60,12 +60,11 @@ define([
          */
         getTick: function(tick_value) {
             var value = tick_value;
-            if (this.hook == "indicator") {
-                value = parseFloat(value) / this.unit;
-            }
-            else if(this.hook == "property" && _.isDate(tick_value)) {
+            if(_.isDate(tick_value)) {
                 //TODO: generalize for any time unit
                 value = time_formats["year"](tick_value);
+            }else if (this.hook == "indicator") {
+                value = parseFloat(value) / this.unit;
             }
             return value;
         },
@@ -78,6 +77,11 @@ define([
             var domain,
                 scale = this.scale || "linear";
 
+            if(this.value=="time"){
+                var limits = this.getLimits(this.value);
+                return d3.time.scale().domain([limits.min, limits.max]);
+            }
+            
             switch (this.hook) {
                 case "indicator":
                     var limits = this.getLimits(this.value),

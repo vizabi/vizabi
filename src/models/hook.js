@@ -22,6 +22,7 @@ define([
                 use: "value",
                 value: undefined
             }, values);
+            
             this._super(values, parent, bind);
         }
 
