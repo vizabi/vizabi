@@ -795,6 +795,18 @@ define([
             var id = _.pick(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
+        
+        /**
+         * gets multiple values from the hook
+         * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
+         * @returns an array of values
+         */
+
+        getValues: function(filter) {
+            //extract id from original filter
+            var id = _.pick(filter, this._getAllDimensions());
+            return this._getHookedValues(id);
+        },
 
         /**
          * maps the value to this hook's specifications
@@ -998,6 +1010,49 @@ define([
             }
 
             return value;
+        },
+        
+        /**
+         * gets the values of the hook point
+         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * @returns an array of hooked values
+         */
+        _getHookedValues: function(filter) {
+            var _this = this;
+
+            if (!this.isHook()) {
+                console.warn("_getHookedValue method needs the model to be hooked to data.");
+                return;
+            }
+
+            var values;
+
+            if (this.hook === "value") {
+                values = [this.value];
+            } else if (_.has(this._hooks, this.hook)) {
+                //TODO: this might be wrong. i didn't fully understand what it does :)          
+                values = [this.getHook(this.hook)[this.value]];
+            } else {
+                // if a specific time is requested -- return values up to this time
+                if(filter.time!=null){
+                    // save time into variable
+                    var time = new Date(filter.time);
+                    // filter.time will be removed during interpolation
+                    var lastValue = this._interpolateValue(this._items, filter, this.hook, this.continuous);
+                    // return values up to the requested time point, append an interpolated value as the last one
+                    values = _.filter(this._items, filter)
+                        .filter(function(d){return d.time <= time})
+                        .map(function(d){return d[_this.value]})
+                        .concat(lastValue);
+                } else {
+                    // if time not requested -- return just all values
+                    values = _.filter(this._items, filter)
+                        .map(function(d){return d[_this.value]});
+                }
+            }
+            
+            
+            return values;
         },
 
 
