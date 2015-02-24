@@ -25,7 +25,7 @@ describe("* Example Pop Slider", function() {
             },
 
             row: {
-                hook_to: ["entities", "time"],
+                dimensions: ["entities", "time"],
                 label: {
                     hook: "property",
                     value: "geo.name"

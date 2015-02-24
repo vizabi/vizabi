@@ -662,7 +662,7 @@ define([
             if (this.isHook()) {
 
                 //what should this hook to?
-                this.hook_to = this._getHookTo();
+                this.dimensions = this._getHookTo();
                 this.hookModel();
             }
 
@@ -687,8 +687,8 @@ define([
             this._languageModel = this._getClosestModel("language");
 
             //check what we want to hook this model to
-            for (var i = 0; i < this.hook_to.length; i++) {
-                var name = this.hook_to[i];
+            for (var i = 0; i < this.dimensions.length; i++) {
+                var name = this.dimensions[i];
                 //hook with the closest prefix to this model
                 this._hooks[name] = this._getClosestModel(name);
             }
@@ -717,16 +717,16 @@ define([
 
         /**
          * Learn what this model should hook to
-         * @returns {Array} hook_to array
+         * @returns {Array} dimensions array
          */
         _getHookTo: function() {
-            if (_.isArray(this.hook_to) && !_.rest(this.hook_to, _.isString).length) {
-                return this.hook_to;
+            if (_.isArray(this.dimensions) && !_.rest(this.dimensions, _.isString).length) {
+                return this.dimensions;
             } else if (this._parent) {
                 return this._parent._getHookTo();
             } else {
 
-                console.error('ERROR: hook_to not found.\n You must specify the objects this hook will use under the hook_to attribute in the state.\n Example:\n hook_to: ["entities", "time"]');
+                console.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
 
                 //DEPRECATED: returning default hooks
                 //return ["entities", "time"]; //default
