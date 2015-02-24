@@ -104,19 +104,8 @@ define([
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
             
-            
-            this.yAxis
-                .tickSize(6, 0)
-                .tickFormat(function(d) {
-                    return _this.model.marker.axis_y.getTick(d);
-                });
-
-
-            this.xAxis
-                .tickSize(6, 0)
-                .tickFormat(function(d) {
-                    return _this.model.marker.axis_x.getTick(d);
-                });
+            this.yAxis.tickSize(6, 0);
+            this.xAxis.tickSize(6, 0);
             
             //line template
             this.line = d3.svg.line()
@@ -229,15 +218,16 @@ define([
 
             this.yAxis.scale(this.yScale)
                 .labelerOptions({
-                    scaleType: "linear",
-                    toolMargin: this.margin,
-                    //showOuter: true,
-                    isPivotAuto: true
+                    scaleType: this.model.marker.axis_y.scale,
+                    toolMargin: this.margin
+                    //showOuter: true
                 });
+            
             this.xAxis.scale(this.xScale)
                 .labelerOptions({
-                    scaleType: "linear",
+                    scaleType: this.model.marker.axis_x.scale,
                     toolMargin: this.margin,
+                    formatter: function(d){return _this.model.marker.axis_x.getTick(d)}
                     //showOuter: true
                 });
 
