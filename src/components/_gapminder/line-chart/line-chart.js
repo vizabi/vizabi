@@ -79,7 +79,7 @@ define([
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
             this.linesContainer = this.graph.select('.vzb-lc-lines');
             this.entities = null;
-            this.dataBuffer = {};
+            this.totalLength_1 = {};
 
             //component events
             this.on("resize", function() {
@@ -99,6 +99,8 @@ define([
          */
         updateShow: function() {
             var _this = this;
+            
+            this.duration = this.model.time.speed;
             
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
@@ -276,23 +278,59 @@ define([
                         .text(label.length<13? label : label.substring(0, 10)+'...');
                 })
             
+            
             this.entities
                 .each(function(d,i){
-                    var group = d3.select(this);                
+                    var group = d3.select(this);       
+                    
+                    //TODO: optimization is possible if getValues would return both x and time
                     var x = _this.model.marker.axis_x.getValues(d);
                     var y = _this.model.marker.axis_y.getValues(d);
-                    var xy = x.map(function(dx,i){return [dx,y[i]]});
+                    var xy = x.map(function(d,i){return [+x[i],+y[i]]}); 
                     
-                    group.select(".vzb-lc-line-shadow")
+                    var path1 = group.select(".vzb-lc-line-shadow")
                         .attr("d", _this.line(xy));
-                    group.select(".vzb-lc-line")
+                    var path2 = group.select(".vzb-lc-line")
                         .attr("d", _this.line(xy));
+                    
+                    // this section ensures the smooth transition while playing and not needed otherwise
+                    if(_this.model.time.playing){
+                        
+                        var totalLength = path1.node().getTotalLength();
+                        
+                        if(_this.totalLength_1[d.geo]==null)_this.totalLength_1[d.geo]=totalLength;
+
+                        path1
+                          .attr("stroke-dasharray", totalLength)
+                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
+                          .transition()
+                            .duration(_this.duration*0.9)
+                            .ease("linear")
+                            .attr("stroke-dashoffset", 0); 
+
+                        path2
+                          .attr("stroke-dasharray", totalLength)
+                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
+                          .transition()
+                            .duration(_this.duration*0.9)
+                            .ease("linear")
+                            .attr("stroke-dashoffset", 0);
+
+                        _this.totalLength_1[d.geo] = totalLength;
+                    }
                 
                     group.select(".vzb-lc-label")
+                        .transition()
+                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .ease("linear")
                         .attr("transform", function(d) {
                             return "translate(" + _this.xScale(x[x.length-1]) + "," + _this.yScale(y[y.length-1]) + ")";
                         })
                         .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
+                
+                    // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+                    // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+                    d3.timer.flush();
                 })
             
             
