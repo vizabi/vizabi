@@ -341,6 +341,9 @@ function hook(hook, use, value, domain) {
         hook: use,
         value: value
     };
+    
+    // for time only
+    if(value=="time") options.state.marker[hook].scale = "time";
 
     //for color only
     if (domain) options.state.marker[hook].domain = domain;
