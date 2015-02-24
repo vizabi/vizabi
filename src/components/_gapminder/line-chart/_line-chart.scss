@@ -29,10 +29,12 @@
     .vzb-lc-line {
         fill: none;
         stroke-width: 11px;
+        stroke-linecap: round;
     }
     .vzb-lc-line-shadow {
         fill: none;
         stroke-width: 19px;
+        stroke-linecap: round;
     }
     .vzb-lc-label {
         font-size: 1.8em;

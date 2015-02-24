@@ -317,6 +317,17 @@ define([
                             .attr("stroke-dashoffset", 0);
 
                         _this.totalLength_1[d.geo] = totalLength;
+                    }else{
+                        //reset saved line lengths
+                        _this.totalLength_1[d.geo] = null;
+                        
+                        path1
+                          .attr("stroke-dasharray", "none")
+                          .attr("stroke-dashoffset", "none"); 
+
+                        path2
+                          .attr("stroke-dasharray", "none")
+                          .attr("stroke-dashoffset", "none"); 
                     }
                 
                     group.select(".vzb-lc-label")

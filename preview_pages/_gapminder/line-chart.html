@@ -92,21 +92,21 @@ $(function() {
 
             //how we show it
             marker: {
-                hook_to: ["entities", "time"],
+                dimensions: ["entities", "time"],
                 type: "geometry",
                 shape: "line",
                 label: {
-                    hook: "property",
+                    use: "property",
                     value: "geo.name"
                 },
                 axis_y: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "gdp_per_cap",
                     scale: "linear",
                     unit: 1000000000
                 },
                 axis_x: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "time",
                     scale: "time"
                 },
@@ -114,7 +114,7 @@ $(function() {
                     value: 0.5
                 },
                 color: {
-                    hook: "property",
+                    use: "property",
                     value: "geo.region",
                     domain: ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"],
                     domain_type: "continuous" //or discrete
