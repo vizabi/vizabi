@@ -1006,7 +1006,7 @@ define([
             } else if (_.has(this._hooks, this.hook)) {
                 value = this.getHook(this.hook)[this.value];
             } else {
-                value = this._interpolateValue(this._items, filter, this.hook);
+                value = this._interpolateValue(this._items, filter, this.hook, this.continuous);
             }
 
             return value;
@@ -1062,7 +1062,7 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(items, filter, hook) {
+        _interpolateValue: function(items, filter, hook, isContinuous) {
             if (items == null || items.length == 0) {
                 console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
                 return null;
@@ -1084,10 +1084,10 @@ define([
             }), time);
 
             // zero-order interpolation for the hook of properties
-            if (hook == "property" && indexNext == 0) return items[0][this.value];
-            if (hook == "property") return items[indexNext - 1][this.value];
+            if (!isContinuous && indexNext == 0) return items[0][this.value];
+            if (!isContinuous) return items[indexNext - 1][this.value];
 
-            // the rest is for the hook of "indicators"
+            // the rest is for the continuous measurements
 
             // check if the desired value is out of range. 0-order extrapolation
             if (indexNext == 0) return items[0][this.value];
@@ -1098,6 +1098,9 @@ define([
                 (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
             var value = +items[indexNext - 1][this.value] + (items[indexNext][this.value] - items[indexNext - 1][this.value]) * fraction;
 
+            // cast to time object if we are interpolating time
+            if(_.isDate(items[0][this.value])) value = new Date(value);
+            
             return value;
         },
 
