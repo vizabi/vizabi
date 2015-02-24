@@ -27,9 +27,9 @@ define([
          */
         validate: function() {
             //this domain must exist
-            if (this.hook !== "value" && !this.domain) {
+            if (this.use !== "value" && !this.domain) {
                  this.domain = ["#CCCCCC", "#000000"];
-            } else if (this.hook === "value") {
+            } else if (this.use === "value") {
                 this.value = d3.rgb(this.value).toString();
             }
         },
@@ -42,7 +42,7 @@ define([
         mapValue: function(value) {
 
             var color;
-            switch (this.hook) {
+            switch (this.use) {
                 case "indicator":
                     color = this._getColorLinear(value);
                     break;

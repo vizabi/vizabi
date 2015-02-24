@@ -39,15 +39,15 @@ define([
         validate: function() {
 
             var possibleScales = ["log", "linear", "time", "pow"];
-            if (!this.scale || (this.hook === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
+            if (!this.scale || (this.use === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
                 this.scale = 'linear'; 
             }
 
-            if (!this.unit && this.hook === "indicator") {
+            if (!this.unit && this.use === "indicator") {
                 this.unit = 1;
             }
 
-            if (this.hook !== "indicator" && this.scale !== "ordinal") {
+            if (this.use !== "indicator" && this.scale !== "ordinal") {
                 this.scale = "ordinal";
             }
 
@@ -63,7 +63,7 @@ define([
             if(_.isDate(tick_value)) {
                 //TODO: generalize for any time unit
                 value = time_formats["year"](tick_value);
-            }else if (this.hook == "indicator") {
+            }else if (this.use == "indicator") {
                 value = parseFloat(value) / this.unit;
             }
             return value;
@@ -82,7 +82,7 @@ define([
                 return d3.time.scale().domain([limits.min, limits.max]);
             }
             
-            switch (this.hook) {
+            switch (this.use) {
                 case "indicator":
                     var limits = this.getLimits(this.value),
                         margin = (limits.max - limits.min) / 10;

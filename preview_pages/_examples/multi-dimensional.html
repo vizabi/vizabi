@@ -171,19 +171,19 @@ $(function() {
             row: {
                 dimensions: ["entities", "entities_age", "time"],
                 label: {
-                    hook: "property",
+                    use: "property",
                     value: "geo.name"
                 },
                 label2: {
-                    hook: "property",
+                    use: "property",
                     value: "age"
                 },
                 number: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "pop"
                 },
                 color: {
-                    hook: "property",
+                    use: "property",
                     value: "age",
                     //red, yellow, green, blue
                     domain: ["#F77481", "#62CCE3", "#B4DE79"]
@@ -289,7 +289,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.row[hook] = {
-        hook: use,
+        use: use,
         value: value
     };
 

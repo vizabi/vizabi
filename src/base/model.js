@@ -704,7 +704,7 @@ define([
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this.hook) ? true : false;
+            return (this.use) ? true : false;
         },
 
         /**
@@ -741,7 +741,7 @@ define([
          */
         getHookValues: function(type) {
             var values = [];
-            if (this.hook && this.hook === type) {
+            if (this.use && this.use === type) {
                 //add if it has "hook" and it's a string
                 var val = this.value; //e.g. this.value = "lex"
                 if (val && _.isString(val)) {
@@ -892,7 +892,7 @@ define([
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this.hook) === -1) {
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
                 return [];
             }
             //error if there's nothing to hook to
@@ -928,7 +928,7 @@ define([
 
             var domain,
                 scale = this.scale || "linear";
-            switch (this.hook) {
+            switch (this.use) {
                 case "indicator":
                     var limits = this.getLimits(this.value);
                     domain = [limits.min, limits.max];
@@ -1025,12 +1025,12 @@ define([
 
             var value;
 
-            if (this.hook === "value") {
+            if (this.use === "value") {
                 value = this.value;
-            } else if (_.has(this._hooks, this.hook)) {
-                value = this.getHook(this.hook)[this.value];
+            } else if (_.has(this._hooks, this.use)) {
+                value = this.getHook(this.use)[this.value];
             } else {
-                value = this._interpolateValue(this._items, filter, this.hook);
+                value = this._interpolateValue(this._items, filter, this.use);
             }
 
             return value;
@@ -1051,18 +1051,18 @@ define([
 
             var values;
 
-            if (this.hook === "value") {
+            if (this.use === "value") {
                 values = [this.value];
-            } else if (_.has(this._hooks, this.hook)) {
+            } else if (_.has(this._hooks, this.use)) {
                 //TODO: this might be wrong. i didn't fully understand what it does :)          
-                values = [this.getHook(this.hook)[this.value]];
+                values = [this.getHook(this.use)[this.value]];
             } else {
                 // if a specific time is requested -- return values up to this time
                 if(filter.time!=null){
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = this._interpolateValue(this._items, filter, this.hook);
+                    var lastValue = this._interpolateValue(this._items, filter, this.use);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = _.filter(this._items, filter)
                         .filter(function(d){return d.time <= time})

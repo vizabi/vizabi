@@ -197,26 +197,26 @@ $(function() {
                 type: "geometry",
                 shape: "circle",
                 label: {
-                    hook: "property",
+                    use: "property",
                     value: "name"
                 },
                 axis_y: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "profit",
                     scale: 'linear'
                 },
                 axis_x: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "market_share",
                     scale: 'linear'
                 },
                 size: {
-                    hook: "indicator",
+                    use: "indicator",
                     value: "market_share",
                     scale: 'log'
                 },
                 color: {
-                    hook: "property",
+                    use: "property",
                     value: "category",
                     domain: ['#F77481', '#B4DE79']
                 }
@@ -323,7 +323,7 @@ function hook(hook, use, value, domain) {
         }
     };
     options.state.marker[hook] = {
-        hook: use,
+        use: use,
         value: value
     };
 
