@@ -1006,7 +1006,7 @@ define([
             } else if (_.has(this._hooks, this.hook)) {
                 value = this.getHook(this.hook)[this.value];
             } else {
-                value = this._interpolateValue(this._items, filter, this.hook, this.continuous);
+                value = this._interpolateValue(this._items, filter, this.hook);
             }
 
             return value;
@@ -1038,7 +1038,7 @@ define([
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = this._interpolateValue(this._items, filter, this.hook, this.continuous);
+                    var lastValue = this._interpolateValue(this._items, filter, this.hook);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = _.filter(this._items, filter)
                         .filter(function(d){return d.time <= time})
@@ -1062,7 +1062,7 @@ define([
          * filter SHOULD contain time property
          * @returns interpolated value
          */
-        _interpolateValue: function(items, filter, hook, isContinuous) {
+        _interpolateValue: function(items, filter, hook) {
             if (items == null || items.length == 0) {
                 console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
                 return null;
@@ -1084,8 +1084,8 @@ define([
             }), time);
 
             // zero-order interpolation for the hook of properties
-            if (!isContinuous && indexNext == 0) return items[0][this.value];
-            if (!isContinuous) return items[indexNext - 1][this.value];
+            if (hook == "property" && indexNext == 0) return items[0][this.value];
+            if (hook == "property") return items[indexNext - 1][this.value];
 
             // the rest is for the continuous measurements
 
@@ -1100,6 +1100,7 @@ define([
 
             // cast to time object if we are interpolating time
             if(_.isDate(items[0][this.value])) value = new Date(value);
+            
             
             return value;
         },

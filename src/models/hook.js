@@ -23,11 +23,6 @@ define([
                 value: undefined
             }, values);
             
-            if(_.isUndefined(values.continuous)){
-                values.continuous = 
-                    values.use=="indicator" || values.value=="time";
-            }
-            
             this._super(values, parent, bind);
         }
 
