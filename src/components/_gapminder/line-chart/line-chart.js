@@ -225,7 +225,7 @@ define([
             
             this.xAxis.scale(this.xScale)
                 .labelerOptions({
-                    scaleType: "time",//this.model.marker.axis_x.scale,
+                    scaleType: this.model.marker.axis_x.scale,
                     toolMargin: this.margin
                     //showOuter: true
                 });
