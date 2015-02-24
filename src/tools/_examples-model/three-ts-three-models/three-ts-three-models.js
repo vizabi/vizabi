@@ -39,7 +39,7 @@ define([
          */
         validate: function() {
 
-            var state = this.state;
+            var state = this.model.state;
 
             if (state.time_end.start != state.time_start.value) {
                 state.time_end.start = state.time_start.value;
