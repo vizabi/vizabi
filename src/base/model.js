@@ -154,27 +154,28 @@ define([
                 if (!val_promise || !val_promise.always) {
                     val_promise = $.when.apply(null, [this]);
                 }
-
                 //confirm that the model has been validated
                 val_promise.always(function() {
 
-                    //only trigger this the first time
+                    //setting is true when validation takes place
                     if (!setting) {
                         //trigger set if not set
                         if (!_this._set) {
                             _this._set = true;
                             events.push("set");
-                        } else {
+                        } else if (events.length) {
                             events.push("change");
                         }
+
+
+                        //trigger after defer is resolved
+                        _.defer(function() {
+                            _this.triggerAll(events, _this.getObject());
+                        });
+
+                        _this._setting = false;
                     }
 
-                    //trigger after defer is resolved
-                    _.defer(function() {
-                        _this.trigger(events, _this.getObject());
-                    });
-
-                    _this._setting = false;
                     defer.resolve();
                 });
             });
@@ -258,7 +259,7 @@ define([
                 'ready': function(evt, vals) {
                     //trigger only for submodel
                     evt = evt.replace('ready', 'ready:' + name);
-                    _this.trigger(evt, vals);
+                    _this.triggerAll(evt, vals);
 
                     //if this model is not loading trigger for this model
                     if (_this._ready = !_this.isLoading()) {

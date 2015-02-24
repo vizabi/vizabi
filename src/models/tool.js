@@ -81,10 +81,13 @@ define([
                             console.log("Validation error: " + _this._id);
                             console.log(model);
                         }
-                        defer.resolve();
+                        //defer in case it finishes too soon
+                        _.defer(function() {
+                            defer.resolve();
+                        })
                     } else {
                         //recursively call if not the stable
-                        _this.validate(i++);
+                        defer = _this.validate(i++);
                     }
                 });
 
