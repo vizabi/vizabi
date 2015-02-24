@@ -50,14 +50,22 @@ function mobile(bool, orientation) {
     forceResizeEvt();
 }
 
+function mapSet(model) {
+    return mapParameter(model, '_set');
+}
+
 function mapReady(model) {
+    return mapParameter(model, '_ready');
+}
+
+function mapParameter(model, par) {
     var map = {};
     for (var i in model._data) {
         var submodel = model._data[i];
         if (typeof submodel._id === "undefined") continue;
         map[i] = {};
-        map[i] = mapReady(submodel);
-        map[i]._ready = submodel._ready;
+        map[i] = mapParameter(submodel, par);
+        map[i][par] = submodel[par];
     }
     return map;
 }

@@ -68,60 +68,75 @@ define([
         },
 
         /**
-         * Sets an attribute or multiple for this model
+         * Sets an attribute or multiple for this model (inspired by Backbone)
          * @param attr property name
          * @param val property value (object or value)
          * @returns defer defer that will be resolved when set is done
          */
-        set: function(attr, val) {
+        set: function(attr, val, force) {
 
             var defer = $.Deferred(),
                 promises = [],
-                events = [];
+                events = [],
+                changes = [],
+                setting = this._setting,
+                _this = this,
+                attrs;
 
             //expect object as default
             if (!_.isPlainObject(attr)) {
-                var obj = {};
-                obj[attr] = val;
-                return this.set(obj);
+                (attrs = {})[attr] = val;
+            } else {
+                attrs = attr;
+                force = val;
             }
 
-            for (var a in attr) {
+            //if it's the first time we are setting this, check previous
+            if (!setting) {
+                this._prevData = _.clone(this._data);
+                this._changedData = {};
+            }
 
-                var vals = attr[a],
+            this._setting = true; //we are currently setting the model
+            this._ready = !this._setting;
+
+            //compute each change
+            for (var a in attrs) {
+                var val = attrs[a],
                     promise;
-                //if it's an object, set or create submodel
-                if (_.isPlainObject(vals)) {
+
+                //if its a regular value
+                if (!_.isPlainObject(val)) {
+                    //change if it's not the same value
+                    if (!_.isEqual(this._data[a], val) || force) {
+                        var p;
+                        p = (_.isUndefined(this._data[a])) ? 'init' : 'change';
+                        events.push(p + ":" + a);
+                    }
+                    if (!_.isEqual(this._prevData[a], val) || force) {
+                        this._changedData[a] = val;
+                    } else {
+                        delete this._changedData[a];
+                    }
+                    this._data[a] = val;
+                    promise = true;
+                }
+                //if it's an object, it's a submodel
+                else {
                     if (this._data[a] && utils.isModel(this._data[a])) {
-                        promise = this._data[a].set(vals);
+                        events.push('change:' + a);
+                        promise = this._data[a].set(val, force);
                     }
                     //submodel doesnt exist, create it
                     else {
-                        promise = this._initSubmodel(a, vals);
-                    }
-                }
-                //otherwise, just set value :)
-                else {
-
-                    //if it's the same value, do not change anything
-                    if (this._data[a] === vals) {
-                        continue;
-                    } else {
-                        this._data[a] = vals;
-                        //different events whether it's first time or not
-                        var evt_name = (this._set) ? "change" : "init";
-                        events.push(evt_name + ":" + a);
-                        promise = true;
+                        events.push('init:' + a);
+                        promise = this._initSubmodel(a, val);
                     }
                 }
                 promises.push(promise);
             }
 
-            //not ready at this point
-            this._ready = false;
-
             //after all is done
-            var _this = this;
             var size = promises.length;
             $.when.apply(null, promises).then(function() {
 
@@ -130,7 +145,8 @@ define([
 
                 //attempt to validate
                 var val_promise = false;
-                if (_this.validate) {
+                //only validate is it's the first time setting (no loop)
+                if (_this.validate && !setting) {
                     val_promise = _this.validate();
                 }
 
@@ -138,19 +154,27 @@ define([
                 if (!val_promise || !val_promise.always) {
                     val_promise = $.when.apply(null, [this]);
                 }
-
                 //confirm that the model has been validated
                 val_promise.always(function() {
 
-                    //trigger set if not set
-                    if (!_this._set) {
-                        _this._set = true;
-                        events.push("set");
-                    }
+                    //setting is true when validation takes place
+                    if (!setting) {
+                        //trigger set if not set
+                        if (!_this._set) {
+                            _this._set = true;
+                            events.push("set");
+                        } else if (events.length) {
+                            events.push("change");
+                        }
 
-                    _.defer(function() {
-                        _this.triggerAll(events, _this.getObject());
-                    });
+
+                        //trigger after defer is resolved
+                        _.defer(function() {
+                            _this.triggerAll(events, _this.getObject());
+                        });
+
+                        _this._setting = false;
+                    }
 
                     defer.resolve();
                 });
@@ -235,7 +259,7 @@ define([
                 'ready': function(evt, vals) {
                     //trigger only for submodel
                     evt = evt.replace('ready', 'ready:' + name);
-                    _this.trigger(evt, vals);
+                    _this.triggerAll(evt, vals);
 
                     //if this model is not loading trigger for this model
                     if (_this._ready = !_this.isLoading()) {
