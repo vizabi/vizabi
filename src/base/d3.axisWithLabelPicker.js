@@ -90,9 +90,10 @@ define(['d3'], function(d3){
 
             if(options==null) options = {}
             if(options.scaleType!="linear"&&
+               options.scaleType!="time"&&
                options.scaleType!="genericLog"&&
                options.scaleType!="log") {
-                console.warn('please set scaleType. the only supported values are "linear", "log" or "genericLog"'); 
+                console.warn('please set scaleType. the only supported values are "linear", "time", "log" or "genericLog"'); 
                 return axis;
             };
             if(options.scaleType=='ordinal') return axis.tickValues(null);
@@ -107,6 +108,12 @@ define(['d3'], function(d3){
             if(options.formatterRemovePrefix==null) options.formatterRemovePrefix = false;
 
             if(options.formatter==null) options.formatter = function(d){
+                               
+                if(options.scaleType == "time") {
+                    if(!(d instanceof Date)) d = new Date(d);
+                    return d3.time.format("%Y")(d);
+                }
+                
                 var format = "f";
                 var prec = 0;
                 if(Math.abs(d)<1) {prec = 1; format = "r"};
@@ -426,7 +433,7 @@ console.log("********** "+orient+" **********");
             
             
             
-            if(options.scaleType=="linear"){
+            if(options.scaleType=="linear" || options.scaleType=="time"){
                 if(bothSidesUsed)tickValues.push(0);
                 var avoidCollidingWith = [].concat(tickValues);
                 
