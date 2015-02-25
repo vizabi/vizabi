@@ -39,6 +39,7 @@ define([
             this._loading = []; //array of processes that are loading
             this._items = [];   //holds hook items for this hook
             this._unique = {};  //stores unique values per column
+            this._filtered = {};  //stores filtered values
 
             //bind initial events
             if (bind) {
@@ -508,6 +509,7 @@ define([
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
 
                             _this._unique = {};
+                            _this._filtered = {};
                             _this.afterLoad();
 
                             promise.resolve();
@@ -1105,6 +1107,19 @@ define([
             return values;
         },
 
+        /**
+         * gets filtered dataset with fewer keys
+         */
+        _getFilteredItems: function(filter) {
+            var filterId = JSON.stringify(filter);
+            //cache optimization
+            var filter_id = JSON.stringify(filter);
+            if(this._filtered[filter_id]) {
+                return this._filtered[filter_id];
+            }
+            return this._filtered[filter_id] = _.filter(this._items, filter);
+        },
+
 
         /**
          * interpolates the specific value if missing
@@ -1113,8 +1128,8 @@ define([
          * @returns interpolated value
          */
         _interpolateValue: function(items, filter, hook) {
-            if (items == null || items.length == 0) {
-                console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
+            if (items == null || this._items.length == 0) {
+                console.warn("_interpolateValue returning NULL because items array is empty");
                 return null;
             }
 
@@ -1123,7 +1138,7 @@ define([
             delete filter.time;
 
             // filter items so that we only have a dataset for certain keys, like "geo"
-            var items = _.filter(items, filter);
+            var items = this._getFilteredItems(filter);
 
             // return constant for the hook of "values"
             if (hook == "value") return items[0][this.value];
