@@ -17,8 +17,7 @@ define([
 
             this._type = "data";
             values = _.extend({
-                reader: "local-json",
-                path: "data.json"
+                reader: "local-json"
             }, values);
 
             //same constructor as parent, with same arguments

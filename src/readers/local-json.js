@@ -89,7 +89,7 @@ define([
                             _this._data[order] = data;
                         })
                         .error(function() {
-                            console.log("Error Happened While Loading File: " + fakeResponsePath);
+                            console.log("Error Happened While Loading File: " + path);
                         });
                     promises.push(promise);
                 })(i);
