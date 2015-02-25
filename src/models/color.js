@@ -22,6 +22,29 @@ define([
             this._super(values, parent, bind);
         },
 
+        afterLoad: function() {
+            var possible = this.getUnique(this.value);
+
+            this._ordinalScale = d3.scale.ordinal()
+                                .domain(possible)
+                                .range(this.domain);
+
+            var limits = this.getLimits(this.value),
+                min = parseFloat(limits.min),
+                max = parseFloat(limits.max),
+                step = ((max-min) / (this.domain.length - 1));
+
+            //todo: clean this perturbation up (hotfix)
+            max = max + max / 10000;
+
+            var domain = d3.range(min, max, step);
+
+            this._linearScale = d3.scale.linear()
+                                  .domain(domain)
+                                  .range(this.domain)
+                                  .interpolate(d3.interpolateRgb);
+        },
+
         /**
          * Validates a color hook
          */
@@ -62,24 +85,8 @@ define([
          * @returns {String} color
          */
         _getColorLinear: function(value) {
-
-            var limits = this.getLimits(this.value),
-                min = parseFloat(limits.min),
-                max = parseFloat(limits.max),
-                step = ((max-min) / (this.domain.length - 1));
-
-            //todo: clean this perturbation up (hotfix)
-            max = max + max / 10000;
-
-            var domain = d3.range(min, max, step);
-
-            var s = d3.scale.linear()
-                .domain(domain)
-                .range(this.domain)
-                .interpolate(d3.interpolateRgb);
-
-            return s(value);
-
+            if(!this._linearScale) return "#000000";
+            return this._linearScale(value);
         },
 
         /**
@@ -87,14 +94,8 @@ define([
          * @returns {String} color
          */
         _getColorOrdinal: function(value) {
-
-            var possible = this.getUnique(this.value);
-
-            var s = d3.scale.ordinal()
-                .domain(possible)
-                .range(this.domain);
-
-            return s(value);
+            if(!this._ordinalScale) return "#000000";
+            return this._ordinalScale(value);
         }
 
     });
