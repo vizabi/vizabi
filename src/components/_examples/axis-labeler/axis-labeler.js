@@ -129,12 +129,12 @@ define([
 
             
             
-            
 
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.scales.xScaleType,
                     toolMargin: margin,
@@ -145,6 +145,7 @@ define([
             this.yAxis.scale(this.yScale)
                 .orient("left")
                 .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.scales.yScaleType,
                     toolMargin: margin,
