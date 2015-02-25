@@ -36,7 +36,7 @@ define([
 
                 console.timeStamp("Vizabi Data: Loading Data");
 
-                if(evts && _.isFunction(evts["load_start"])) {
+                if (evts && _.isFunction(evts["load_start"])) {
                     evts["load_start"]();
                 }
 
@@ -51,10 +51,11 @@ define([
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
+
                     defer.resolve(data);
 
                     //not loading anymore
-                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                    if (loaded && evts && _.isFunction(evts["load_end"])) {
                         evts["load_end"]();
                     }
                 },
@@ -63,7 +64,7 @@ define([
                     defer.resolve('error');
 
                     //not loading anymore
-                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                    if (loaded && evts && _.isFunction(evts["load_end"])) {
                         evts["load_end"]();
                     }
                 });
@@ -114,7 +115,7 @@ define([
             //encode in one string
             var query = this._idQuery(query, language, reader);
             //simply check if we have this in internal data
-            if(_.keys(this._data).indexOf(query) !== -1) {
+            if (_.keys(this._data).indexOf(query) !== -1) {
                 return query;
             }
             return false;

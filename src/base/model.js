@@ -37,7 +37,8 @@ define([
             this._dataModel = null;
             this._languageModel = null;
             this._loading = []; //array of processes that are loading
-            this._items = []; //holds hook items for this hook
+            this._items = [];   //holds hook items for this hook
+            this._unique = {};  //stores unique values per column
 
             //bind initial events
             if (bind) {
@@ -424,7 +425,10 @@ define([
          */
         setReady: function() {
             if (this._ready = !this.isLoading()) {
-                this.trigger("ready");
+                var _this = this;
+                _.defer(function() {
+                    _this.trigger("ready");
+                });
             }
         },
 
@@ -478,6 +482,7 @@ define([
                             _this.trigger("load_error", query);
                             promise.resolve();
                         } else {
+    
                             _this._items = _.flatten(data);
 
                             //TODO this is a temporary solution that does preprocessing of data
@@ -501,6 +506,9 @@ define([
                                 });
 
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
+
+                            _this._unique = {};
+                            _this.afterLoad();
 
                             promise.resolve();
                         }
@@ -541,6 +549,13 @@ define([
             });
 
             return defer;
+        },
+
+        /**
+         * executes after data has actually been loaded
+         */
+        afterLoad: function() {
+            //placeholder method
         },
 
         /* ==========================
@@ -986,6 +1001,14 @@ define([
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
+            //cache optimization
+            var uniq_id = JSON.stringify(attr),
+                uniq;
+            if(this._unique[uniq_id]) {
+                return this._unique[uniq_id];
+            }
+
+            //if not in cache, compute
             //if it's an array, it will return a list of unique combinations.
             if (_.isArray(attr)) {
                 var values = _.map(this._items, function(d) {
@@ -997,7 +1020,7 @@ define([
                         values[i]['time'] = new Date(values[i]['time']);
                     };
                 }
-                return _.unique(values, function(n) {
+                uniq = _.unique(values, function(n) {
                     return JSON.stringify(n);
                 });
             }
@@ -1007,8 +1030,11 @@ define([
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? d[attr] : new Date(d[attr]);
                 });
-                return _.unique(values);
+                uniq = _.unique(values);
             }
+
+            this._unique[uniq_id] = uniq;
+            return uniq;
         },
 
         /**
