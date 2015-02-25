@@ -37,7 +37,9 @@ define([
             this._dataModel = null;
             this._languageModel = null;
             this._loading = []; //array of processes that are loading
-            this._items = []; //holds hook items for this hook
+            this._items = [];   //holds hook items for this hook
+            this._unique = {};  //stores unique values per column
+            this._filtered = {};  //stores filtered values
 
             //bind initial events
             if (bind) {
@@ -424,7 +426,10 @@ define([
          */
         setReady: function() {
             if (this._ready = !this.isLoading()) {
-                this.trigger("ready");
+                var _this = this;
+                _.defer(function() {
+                    _this.trigger("ready");
+                });
             }
         },
 
@@ -478,6 +483,7 @@ define([
                             _this.trigger("load_error", query);
                             promise.resolve();
                         } else {
+    
                             _this._items = _.flatten(data);
 
                             //TODO this is a temporary solution that does preprocessing of data
@@ -501,6 +507,10 @@ define([
                                 });
 
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
+
+                            _this._unique = {};
+                            _this._filtered = {};
+                            _this.afterLoad();
 
                             promise.resolve();
                         }
@@ -541,6 +551,13 @@ define([
             });
 
             return defer;
+        },
+
+        /**
+         * executes after data has actually been loaded
+         */
+        afterLoad: function() {
+            //placeholder method
         },
 
         /* ==========================
@@ -986,6 +1003,14 @@ define([
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
+            //cache optimization
+            var uniq_id = JSON.stringify(attr),
+                uniq;
+            if(this._unique[uniq_id]) {
+                return this._unique[uniq_id];
+            }
+
+            //if not in cache, compute
             //if it's an array, it will return a list of unique combinations.
             if (_.isArray(attr)) {
                 var values = _.map(this._items, function(d) {
@@ -997,7 +1022,7 @@ define([
                         values[i]['time'] = new Date(values[i]['time']);
                     };
                 }
-                return _.unique(values, function(n) {
+                uniq = _.unique(values, function(n) {
                     return JSON.stringify(n);
                 });
             }
@@ -1007,8 +1032,11 @@ define([
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? d[attr] : new Date(d[attr]);
                 });
-                return _.unique(values);
+                uniq = _.unique(values);
             }
+
+            this._unique[uniq_id] = uniq;
+            return uniq;
         },
 
         /**
@@ -1079,6 +1107,19 @@ define([
             return values;
         },
 
+        /**
+         * gets filtered dataset with fewer keys
+         */
+        _getFilteredItems: function(filter) {
+            var filterId = JSON.stringify(filter);
+            //cache optimization
+            var filter_id = JSON.stringify(filter);
+            if(this._filtered[filter_id]) {
+                return this._filtered[filter_id];
+            }
+            return this._filtered[filter_id] = _.filter(this._items, filter);
+        },
+
 
         /**
          * interpolates the specific value if missing
@@ -1087,8 +1128,8 @@ define([
          * @returns interpolated value
          */
         _interpolateValue: function(items, filter, hook) {
-            if (items == null || items.length == 0) {
-                console.warn("_interpolateValue returning NULL because items array is empty. Might be init problem");
+            if (items == null || this._items.length == 0) {
+                console.warn("_interpolateValue returning NULL because items array is empty");
                 return null;
             }
 
@@ -1097,7 +1138,7 @@ define([
             delete filter.time;
 
             // filter items so that we only have a dataset for certain keys, like "geo"
-            var items = _.filter(items, filter);
+            var items = this._getFilteredItems(filter);
 
             // return constant for the hook of "values"
             if (hook == "value") return items[0][this.value];
