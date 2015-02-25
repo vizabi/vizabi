@@ -29,20 +29,43 @@ define([
 
             this._data = [];
 
-            queries = JSON.stringify(queries);
+            //TODO: eliminate formatting if possible
+            //format queries
+            var formatted = [];
+            for (var i = queries.length - 1; i >= 0; i--) {
+                var where = queries[i].where;
+
+                //format time query if existing
+                if(where['time']) {
+                    //[['1990', '2012']] -> '1990-2012'
+                    where['time'] = where['time'][0].join('-');
+                }
+                //rename geo.category to geo.cat
+                if(where['geo.category']) {
+                    where['geo.cat'] = _.clone(where['geo.category']);
+                    delete where['geo.category'];
+                }
+
+
+                formatted[i] = {
+                    "SELECT": queries[i].select,
+                    "WHERE": where,
+                    "FROM": "humnum"
+                };
+            };
 
             var pars = {
-                query: queries,
+                query: formatted,
                 lang: language
             };
 
             //load from waffle server
-            var promise = $.getJSON(this._basepath, pars, function(res) {
+            var promise = $.post(this._basepath, pars, function(res) {
                 _this._data = res;
                 defer.resolve();
-            }).error(function() {
+            }).error(function(e) {
                 console.log("Error loading from Waffle Server:", _this._basepath);
-                defer.resolve();
+                defer.resolve('error');
             });
 
             return defer;
