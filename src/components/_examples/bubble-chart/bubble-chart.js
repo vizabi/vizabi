@@ -119,12 +119,8 @@ define([
             this.translator = this.model.language.getTFunction();
             
             
-            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
-                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + "\u2013"
-                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
-            
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
             var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
-            
             var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
             var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
                 
