@@ -10,6 +10,7 @@ $vzb-bc-year-size:300px;
     overflow: hidden;
 }
 
+    
 .vzb-bubble-chart-svg {
     @include absoluteAll;
     width: 100%;
@@ -35,6 +36,10 @@ $vzb-bc-year-size:300px;
             @include opacity(0.9);
         }
     }
+    .vzb-bc-title {
+        color: $vzb-color-primary;
+        fill: currentColor;
+    }
     .vzb-bc-axis {
         path, line {
             fill: none;
@@ -49,6 +54,13 @@ $vzb-bc-year-size:300px;
     .vzb-bc-axis-x, .vzb-bc-axis-y {
         @extend .vzb-bc-axis;
     }
+    .vzb-bc-axis-y-title, .vzb-bc-axis-x-title {
+        @extend .vzb-bc-title;
+    }
+    .vzb-bc-axis-s-title, .vzb-bc-axis-c-title {
+        @extend .vzb-bc-title;
+        opacity: 0.3;
+    }    
     .vzb-bc-line {
         fill: none;
         stroke: $vzb-bc-color-axis;

@@ -29,8 +29,8 @@ define([
                 name: "marker",
                 type: "model"
             }, {
-                name: "data",
-                type: "data"
+                name: "language",
+                type: "language"
             }];
 
             this.model_binds = {
@@ -63,8 +63,8 @@ define([
             this.rScale = null;
             this.cScale = d3.scale.category10();
 
-            this.xAxis = d3.svg.axis();
-            this.yAxis = d3.svg.axis();
+            this.xAxis = d3.svg.axisSmart();
+            this.yAxis = d3.svg.axisSmart();
 
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -85,6 +85,8 @@ define([
             this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
+            this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
+            this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
             this.yearEl = this.graph.select('.vzb-bc-year');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.bubbles = null;
@@ -112,6 +114,44 @@ define([
          * Ideally should only update when show parameters change or data changes
          */
         updateShow: function() {
+            
+            
+            this.translator = this.model.language.getTFunction();
+            
+            
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
+                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + "\u2013"
+                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
+            
+            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
+            
+            var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
+            var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
+                
+            var yTitle = this.yTitleEl.selectAll("text").data([0]);
+            yTitle.enter().append("text");
+            yTitle
+                .attr("y", "-6px")
+                .attr("x", "-9px")
+                .attr("dx", "-0.72em")
+                .text(titleStringY);
+            
+            var xTitle = this.xTitleEl.selectAll("text").data([0]);
+            xTitle.enter().append("text");
+            xTitle
+                .attr("text-anchor", "end")
+                .attr("y", "-0.32em")
+                .text(titleStringX);
+            
+            var sTitle = this.sTitleEl.selectAll("text").data([0]);
+            sTitle.enter().append("text");
+            sTitle
+                .attr("text-anchor", "end")
+                .text(this.translator("buttons/size") + ": " + titleStringS + ", " + 
+                      this.translator("buttons/colors") + ": " + titleStringC );
+            
+            
+
 
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
@@ -206,12 +246,12 @@ define([
 
             //update scales to the new range
             if (this.model.marker.axis_y.scale !== "ordinal") {
-                this.yScale.range([height, 0]).nice();
+                this.yScale.range([height, 0]);
             } else {
                 this.yScale.rangePoints([height, 0], padding).range();
             }
             if (this.model.marker.axis_x.scale !== "ordinal") {
-                this.xScale.range([0, width]).nice();
+                this.xScale.range([0, width]);
             } else {
                 this.xScale.rangePoints([0, width], padding).range();
             }
@@ -225,15 +265,25 @@ define([
             this.yAxis.scale(this.yScale)
                 .orient("left")
                 .tickSize(6, 0)
-                .ticks(Math.max(height / tick_spacing, 2));
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_y.scale,
+                    toolMargin: margin
+                });
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
                 .tickSize(6, 0)
-                .ticks(Math.max(width / tick_spacing, 2));
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_x.scale,
+                    toolMargin: margin
+                });
 
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
-
+            this.xTitleEl.attr("transform", "translate("+ width +"," + height + ")");
+            this.sTitleEl.attr("transform", "translate("+ width +"," + 0 + ") rotate(-90)");
+            
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
 
