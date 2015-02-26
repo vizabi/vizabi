@@ -476,8 +476,10 @@ define([
                 var evts = {
                     'load_start': function() {
                         _this.setLoading("_hook_data");
+                        _this.freezeEvents(true, true, ['load_start']);
                     },
                     'load_end': function() {
+                        _this.freezeEvents(false, true);
                         _this.setLoadingDone("_hook_data");
                     }
                 };
@@ -675,6 +677,22 @@ define([
                 console.log("____________________________________________")
             }
             this._events.triggerAll(this, name, val);
+        },
+
+        /**
+         * Prevents all events from being triggered or unlock them
+         * @param {Boolean} value Freeze events
+         * @param {Boolean} all Freeze events globally
+         * @param {Array} exception array with event exceptions
+         */
+        freezeEvents: function(value, all, exceptions) {
+            if (all) {
+                if (value) this._events.freezeAll(exceptions);
+                else this._events.unfreezeAll();
+            } else {
+                if (value) this._events.freeze(exceptions);
+                else this._events.unfreeze();
+            }
         },
 
         /* ===============================
