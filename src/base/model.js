@@ -37,9 +37,9 @@ define([
             this._dataModel = null;
             this._languageModel = null;
             this._loading = []; //array of processes that are loading
-            this._items = [];   //holds hook items for this hook
-            this._unique = {};  //stores unique values per column
-            this._filtered = {};  //stores filtered values
+            this._items = []; //holds hook items for this hook
+            this._unique = {}; //stores unique values per column
+            this._filtered = {}; //stores filtered values
 
             //bind initial events
             if (bind) {
@@ -100,7 +100,7 @@ define([
             }
 
             this._setting = true; //we are currently setting the model
-            this._ready = !this._setting;
+            this.setReady(false);
 
             //compute each change
             for (var a in attrs) {
@@ -263,10 +263,7 @@ define([
                     evt = evt.replace('ready', 'ready:' + name);
                     _this.triggerAll(evt, vals);
 
-                    //if this model is not loading trigger for this model
-                    if (_this._ready = !_this.isLoading()) {
-                        _this.triggerOnce('ready', vals);
-                    }
+                    _this.setReady();
                 }
             });
         },
@@ -333,7 +330,7 @@ define([
             for (var i in submodels) {
                 submodels[i].clear();
             }
-            this._ready = false;
+            this.setReady(false);
             this._events.unbindAll();
             this._intervals.clearAllIntervals();
             this._data = {};
@@ -424,11 +421,19 @@ define([
         /**
          * Sets the model as ready or not depending on its loading status
          */
-        setReady: function() {
-            if (this._ready = !this.isLoading()) {
+        setReady: function(value) {
+
+
+            if (!_.isUndefined(value) && value === false) {
+                this._ready = false;
+                if (this._parent && this._parent.setReady) {
+                    this._parent.setReady(false);
+                }
+            } else if (this._ready = (!this.isLoading() && !this._setting && !this._loadCall)) {
+
                 var _this = this;
                 _.defer(function() {
-                    _this.trigger("ready");
+                    _this.triggerOnce("ready");
                 });
             }
         },
@@ -451,6 +456,8 @@ define([
                 defer = $.Deferred(),
                 query = this.getQuery();
 
+            //useful to check if in the middle of a load call
+            this._loadCall = true;
 
             //load hook
             //if its not a hook, the promise will not be created
@@ -483,7 +490,7 @@ define([
                             _this.trigger("load_error", query);
                             promise.resolve();
                         } else {
-    
+
                             _this._items = _.flatten(data);
 
                             //TODO this is a temporary solution that does preprocessing of data
@@ -545,8 +552,11 @@ define([
 
                     console.timeStamp("Vizabi Model: Model loaded: " + _this._id);
 
-                    defer.resolve();
+                    //end this load call
+                    _this._loadCall = false;
                     _this.setReady();
+
+                    defer.resolve();
                 });
             });
 
@@ -836,7 +846,7 @@ define([
             var id = _.pick(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
-        
+
         /**
          * gets multiple values from the hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
@@ -1006,7 +1016,7 @@ define([
             //cache optimization
             var uniq_id = JSON.stringify(attr),
                 uniq;
-            if(this._unique[uniq_id]) {
+            if (this._unique[uniq_id]) {
                 return this._unique[uniq_id];
             }
 
@@ -1063,7 +1073,7 @@ define([
 
             return value;
         },
-        
+
         /**
          * gets the values of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -1086,24 +1096,30 @@ define([
                 values = [this.getHook(this.use)[this.value]];
             } else {
                 // if a specific time is requested -- return values up to this time
-                if(filter.time!=null){
+                if (filter.time != null) {
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
                     var lastValue = this._interpolateValue(this._items, filter, this.use);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = _.filter(this._items, filter)
-                        .filter(function(d){return d.time <= time})
-                        .map(function(d){return d[_this.value]})
+                        .filter(function(d) {
+                            return d.time <= time
+                        })
+                        .map(function(d) {
+                            return d[_this.value]
+                        })
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
                     values = _.filter(this._items, filter)
-                        .map(function(d){return d[_this.value]});
+                        .map(function(d) {
+                            return d[_this.value]
+                        });
                 }
             }
-            
-            
+
+
             return values;
         },
 
@@ -1114,7 +1130,7 @@ define([
             var filterId = JSON.stringify(filter);
             //cache optimization
             var filter_id = JSON.stringify(filter);
-            if(this._filtered[filter_id]) {
+            if (this._filtered[filter_id]) {
                 return this._filtered[filter_id];
             }
             return this._filtered[filter_id] = _.filter(this._items, filter);
@@ -1164,9 +1180,9 @@ define([
             var value = +items[indexNext - 1][this.value] + (items[indexNext][this.value] - items[indexNext - 1][this.value]) * fraction;
 
             // cast to time object if we are interpolating time
-            if(_.isDate(items[0][this.value])) value = new Date(value);
-            
-            
+            if (_.isDate(items[0][this.value])) value = new Date(value);
+
+
             return value;
         },
 
