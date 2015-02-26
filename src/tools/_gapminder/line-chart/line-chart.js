@@ -19,7 +19,7 @@ define([
             }, {
                 component: '_gapminder/line-chart',
                 placeholder: '.vzb-tool-viz',
-                model: ["state.time", "state.entities", "state.marker", "data"]
+                model: ["state.time", "state.entities", "state.marker", "language"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',

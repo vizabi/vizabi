@@ -27,8 +27,8 @@ define([
                 name: "marker",
                 type: "model"
             }, {
-                name: "data",
-                type: "data"
+                name: "language",
+                type: "language"
             }];
 
             
@@ -101,6 +101,21 @@ define([
             var _this = this;
             
             this.duration = this.model.time.speed;
+            this.translator = this.model.language.getTFunction();
+            
+            
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
+                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + "\u2013"
+                + d3.time.format(this.model.time.formatInput)(this.model.time.start)
+                
+            var yTitle = this.yTitleEl.selectAll("text").data([0]);
+            yTitle.enter().append("text");
+            yTitle
+                .attr("y", "-6px")
+                .attr("x", "-9px")
+                .attr("dx", "-0.72em")
+                .text(titleString);
+            
             
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
@@ -221,7 +236,7 @@ define([
             this.yAxis.scale(this.yScale)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: this.margin
+                    toolMargin: {top: 5, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom}
                     //showOuter: true
                 });
             
