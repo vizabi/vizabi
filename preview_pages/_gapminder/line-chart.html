@@ -10,32 +10,20 @@
         <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
             <span>Size</span>
             <ul class="dropdown">
-                <li><a onclick="phoneSize('bar-chart')">Mobile Portrait</a>
+                <li><a onclick="phoneSize('line-chart')">Mobile Portrait</a>
                 </li>
-                <li><a onclick="phoneSize('bar-chart', 'landscape')">Mobile Landscape</a>
+                <li><a onclick="phoneSize('line-chart', 'landscape')">Mobile Landscape</a>
                 </li>
-                <li><a onclick="randomSize('bar-chart')">Random Size</a>
+                <li><a onclick="randomSize('line-chart')">Random Size</a>
                 </li>
-                <li><a onclick="fullSize('bar-chart')">Full Screen</a>
+                <li><a onclick="fullSize('line-chart')">Full Screen</a>
                 </li>
             </ul>
         </div>
 
-        <button onclick="randomSize('bar-chart')">RANDOM</button>
+        <button onclick="randomSize('line-chart')">RANDOM</button>
 
         <label>|</label>
-
-        <div id="dropdown-options" class="wrapper-dropdown" tabindex="1">
-            <span>OPTIONS</span>
-            <ul class="dropdown">
-                <li><a onclick="initialState()">SWE, NOR, WORLD</a>
-                </li>
-                <li><a onclick="setState()">USA - 2000</a>
-                </li>
-                <li><a onclick="changeIndicator()">LEX (SWE, NOR - 2007)</a>
-                </li>
-            </ul>
-        </div>
 
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
@@ -47,7 +35,35 @@
             </ul>
         </div>
     </div>
+    <div class="buttons">
 
+        <button disabled>HOOKS:</button>
+
+        <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
+            <span>Y</span>
+            <ul class="dropdown">
+                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Population</a></li>
+                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">GDP</a></li>
+                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Lex</a></li>
+            </ul>
+        </div>
+
+
+        <div id="dropdown-label" title="Color of Bubbles" class="wrapper-dropdown" tabindex="1">
+            <span>Entities</span>
+            <ul class="dropdown">
+                <li><a onclick="filterEntities(['*'], ['world'])">World</a></li>
+                <li><a onclick="filterEntities(['*'], ['region'])">4 regions</a></li>
+                <li><a onclick="filterEntities(['swe'], ['country'])">A single country</a></li>
+                <li><a onclick="filterEntities(['swe','usa'], ['country'])">Two countries</a></li>
+            </ul>
+        </div>
+
+
+    </div>
+    
+    
+    
     <div id="line-chart" class="placeholder"></div>
 
 </div>
@@ -57,8 +73,6 @@
     <p>Current State:</p>
     <pre id="state" class="json_box" contentEditable="true"></pre>
     <button onclick="setCurrentState()">SET STATE</button>
-    <p>Current Query:</p>
-    <pre id="query" class="json_box"></pre>
 </div>
 </body>
 <script>
@@ -72,11 +86,12 @@ $(function() {
 
             //time properties
             time: {
-                start: "1990",
-                end: "2012",
+                start: 1990,
+                end: 2012,
                 step: 1,
                 speed: 300,
-                value: "1990"
+                value: 1990,
+                formatInput: "%Y"
             },
 
             //entities we want to show
@@ -156,6 +171,38 @@ $(function() {
     showState(options.state);
 
 });
+    
+    
+function hook(hook, use, value, domain) {
+    var options = {
+        state: {
+            marker: {}
+        }
+    };
+    options.state.marker[hook] = {
+        use: use,
+        value: value
+    };
+
+    // for time only
+    if (value == "time") options.state.marker[hook].scale = "time";
+
+    //for color only
+    if (domain) options.state.marker[hook].domain = domain;
+
+    myVizabi.setOptions(options);
+}    
+
+    
+function filterEntities(filterGeo, filterGeoCategory) {
+    var options = {state: {entities: {show: {filter: {}}}}};
+    options.state.entities.show.filter = {
+        "geo": filterGeo,
+        "geo.category": filterGeoCategory
+    }
+    myVizabi.setOptions(options);
+}
+    
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->
