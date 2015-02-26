@@ -3,12 +3,17 @@ define([
     "base/class"
 ], function(_, Class) {
 
+    var _freezeAllEvents = false,
+        _frozenEventInstances = [],
+        _freezeAllExceptions = {};
+
     var Events = Class.extend({
 
         /**
          * Initializes the event class
          */
         init: function() {
+            this._id = _.uniqueId("e");
             this._events = {};
             //events should not be triggered twice simultaneously,
             //therefore, we keep them in a buffer for 1 execution loop
@@ -17,6 +22,11 @@ define([
             //keep track of events to be triggered once
             this._frameWindow = 10;
             this._once = [];
+
+            //freezing events
+            this._freeze = false;
+            this._freezer = [];
+            this._freezeExceptions = {};
         },
 
         /**
@@ -45,7 +55,7 @@ define([
 
             //multiple at a time with plain object format
             if (_.isPlainObject(name)) {
-                for(var i in name) {
+                for (var i in name) {
                     this.bind(i, name[i]);
                 }
                 return;
@@ -107,7 +117,31 @@ define([
                 for (var i = 0; i < this._events[name].length; i++) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
-                    this._executeFunction(context, f, name, original, args);
+                    var _this = this;
+                    var execute = function() {
+                        _this._executeFunction(context, f, name, original, args);
+                    };
+
+                    //TODO: improve readability of freezer code
+                    //only execute if not frozen and exception doesnt exist
+                    if (this._freeze || _freezeAllEvents) {
+
+                        //if exception exists for freezing, execute
+                        if ((_freezeAllEvents && !_.isUndefined(_freezeAllExceptions[name])) 
+                            || (!_freezeAllEvents && this._freeze && !_.isUndefined(this._freezeExceptions[name]))) {
+                            execute();
+                        }
+                        //otherwise, freeze it
+                        else {
+                            this._freezer.push(execute);
+                            if (_freezeAllEvents && !_frozenEventInstances[this._id]) {
+                                this.freeze();
+                                _frozenEventInstances[this._id] = this;
+                            }
+                        }
+                    } else {
+                        execute();
+                    }
                 }
             }
         },
@@ -145,7 +179,7 @@ define([
                 for (var i = 0, size = name.length; i < size; i++) {
                     this.triggerOnce(context, name[i], args);
                 }
-            } else if(this._once.indexOf(name) === -1) {
+            } else if (this._once.indexOf(name) === -1) {
                 //now we can trigger
                 this._once.push(name);
                 this.trigger(context, name, args);
@@ -155,6 +189,55 @@ define([
                     _this._once = _.without(_this._once, name); //allow
                 }, this._frameWindow);
 
+            }
+        },
+
+        /**
+         * Prevents all events from being triggered, buffering them
+         */
+        freeze: function(exceptions) {
+            this._freeze = true;
+            if (!exceptions) return;
+            for (var i = 0; i < exceptions.length; i++) {
+                this._freezeExceptions[exceptions[i]] = true;
+            }
+        },
+
+        /**
+         * Prevents all events from all instances from being triggered
+         */
+        freezeAll: function(exceptions) {
+            _freezeAllEvents = true;
+            if (!exceptions) return;
+            for (var i = 0; i < exceptions.length; i++) {
+                _freezeAllExceptions[exceptions[i]] = true;
+            }
+        },
+
+        /**
+         * triggers all frozen events
+         */
+        unfreeze: function() {
+            this._freeze = false;
+            this._freezeExceptions = {};
+            //execute old frozen events
+            for (var i = 0; i < this._freezer.length; i++) {
+                var execute = this._freezer.shift();
+                execute();
+            }
+        },
+
+        /**
+         * triggers all frozen events form all instances
+         */
+        unfreezeAll: function() {
+            _freezeAllEvents = false;
+            _freezeAllExceptions = {};
+            //unfreeze all instances
+            for (var i in _frozenEventInstances) {
+                var instance = _frozenEventInstances[i];
+                instance.unfreeze();
+                delete _frozenEventInstances[i];
             }
         },
 
