@@ -1,7 +1,7 @@
 <!-- @@include('../assets/_header.tpl', {"title": "Bubble Chart"}) -->
 
 <div class="container">
-       <div class="buttons">
+    <div class="buttons">
 
         <!-- @@include('../assets/_menu.tpl') -->
 
@@ -155,7 +155,7 @@
             </ul>
         </div>
     </div>
- 
+
 
     <div id="bubble-chart" class="placeholder"></div>
 
@@ -186,9 +186,9 @@ $(function() {
 
             //timespan of the visualization
             time: {
-                start: 1990,
+                start: 1952,
                 end: 2012,
-                value: 1995,
+                value: 2012,
                 step: 1,
                 speed: 300,
                 formatInput: "%Y"
@@ -199,7 +199,14 @@ $(function() {
                 show: {
                     dim: "geo",
                     filter: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        //32 countries
+                        "geo": ["afg","alb","dza","ago","atg","arg","arm","abw","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can"],
+
+                        //80 countries
+                        //"geo": ["afg","alb","dza","ago","atg","arg","arm","abw","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can","cpv","caf","tcd","_cis","chl","col","com","cod","cog","cri","civ","hrv","cub","cyp","cze","dnk","dji","dom","ecu","egy","slv","gnq","eri","est","eth","fji","fin","fra","guf","pyf","gab","gmb","geo","deu","gha","grc","grd","glp","gum","gtm","gin","gnb","guy","hti","hnd","hkg","hun","isl"],
+
+                        //all countries that contain data
+                        //"geo": ["afg","alb","dza","ago","atg","arg","arm","abw","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can","cpv","caf","tcd","_cis","chl","col","com","cod","cog","cri","civ","hrv","cub","cyp","cze","dnk","dji","dom","ecu","egy","slv","gnq","eri","est","eth","fji","fin","fra","guf","pyf","gab","gmb","geo","deu","gha","grc","grd","glp","gum","gtm","gin","gnb","guy","hti","hnd","hkg","hun","isl","ind","idn","irn","irq","irl","isr","ita","jam","jpn","jor","kaz","ken","kir","prk","kor","kwt","kgz","lao","lva","lbn","lso","lbr","lby","ltu","lux","mac","mkd","mdg","mwi","mys","mdv","mli","mlt","mtq","mrt","mus","myt","mex","fsm","mda","mng","mne","mar","moz","mmr","nam","npl","nld","ant","ncl","nzl","nic","ner","nga","nor","omn","pak","pan","png","pry","per","phl","pol","prt","pri","qat","reu","rou","rus","rwa","lca","vct","wsm","stp","sau","sen","srb","syc","sle","sgp","svk","svn","slb","som","zaf","sds","esp","lka","sdn","sur","swz","swe","che","syr","twn","tjk","tza","tha","tls","tgo","ton","tto","tun","tur","tkm","uga","ukr","are","gbr","usa","ury","uzb","vut","ven","pse","esh","vnm","vir","yem","zmb","zwe"],
                         "geo.category": ["country"]
                     }
                 }
@@ -223,25 +230,30 @@ $(function() {
                     use: "indicator",
                     value: "gdp_per_cap",
                     scale: 'linear',
-                    unit: 100
+                    unit: 1000
                 },
                 size: {
                     use: "indicator",
                     value: "pop",
-                    scale: 'log'
+                    scale: 'log',
+                    max: 0.25
                 },
                 color: {
-                    use: "indicator",
-                    value: "lex",
-                    domain: ['#F77481', '#E1CE00', '#B4DE79']
+                    use: "property",
+                    value: "geo.region",
+                    domain: [
+                        "#F77481",
+                        "#E1CE00",
+                        "#B4DE79",
+                        "#62CCE3"
+                    ]
                 }
             }
         },
 
         //where do we get data from?
         data: {
-            reader: 'local-json',
-            path: '../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json'
+            reader: 'waffle-server'
         },
 
         //language properties
@@ -341,9 +353,9 @@ function hook(hook, use, value, domain) {
         use: use,
         value: value
     };
-    
+
     // for time only
-    if(value=="time") options.state.marker[hook].scale = "time";
+    if (value == "time") options.state.marker[hook].scale = "time";
 
     //for color only
     if (domain) options.state.marker[hook].domain = domain;
@@ -383,7 +395,7 @@ function changeIndicator() {
             }
         }
     };
-    
+
     myVizabi.setOptions(newOption);
 }
 

@@ -36,7 +36,7 @@ define([
 
                 console.timeStamp("Vizabi Data: Loading Data");
 
-                if(evts && _.isFunction(evts["load_start"])) {
+                if (evts && _.isFunction(evts["load_start"])) {
                     evts["load_start"]();
                 }
 
@@ -50,10 +50,12 @@ define([
                 // Great success! :D
                 function() {
                     //pass the data forward
-                    defer.resolve(_this.get(cached));
+                    var data = _this.get(cached);
+
+                    defer.resolve(data);
 
                     //not loading anymore
-                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                    if (loaded && evts && _.isFunction(evts["load_end"])) {
                         evts["load_end"]();
                     }
                 },
@@ -62,7 +64,7 @@ define([
                     defer.resolve('error');
 
                     //not loading anymore
-                    if(loaded && evts && _.isFunction(evts["load_end"])) {
+                    if (loaded && evts && _.isFunction(evts["load_end"])) {
                         evts["load_end"]();
                     }
                 });
@@ -80,11 +82,12 @@ define([
         loadFromReader: function(query, lang, reader) {
             var _this = this,
                 defer = $.Deferred(),
-                reader_name = reader.reader;
+                reader_name = reader.reader,
+                queryId = this._idQuery(query, lang, reader);
+
             require(["readers/" + reader_name], function(Reader) {
                 var r = new Reader(reader);
                 r.read(query, lang).then(function() {
-                    var queryId = _this._idQuery(query, lang, reader);
                     _this._data[queryId] = r.getData();
                     defer.resolve(queryId);
                 });
@@ -112,7 +115,7 @@ define([
             //encode in one string
             var query = this._idQuery(query, language, reader);
             //simply check if we have this in internal data
-            if(_.keys(this._data).indexOf(query) !== -1) {
+            if (_.keys(this._data).indexOf(query) !== -1) {
                 return query;
             }
             return false;
