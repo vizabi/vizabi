@@ -39,14 +39,13 @@ define(['d3'], function(d3){
             // construct the view (d3 constructor is used)
             _super(g);
             
+            var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
+            var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
+
             // patch the label positioning after the view is generated
             g.selectAll("text")
                 .each(function(d,i){
                     var view = d3.select(this);
-                
-                    var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
-                    var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
-                
                 
                     view.attr("transform","rotate("+(axis.pivot()?-90:0)+")");
                     view.style("text-anchor", dimension==X?"middle":"end");
@@ -54,12 +53,28 @@ define(['d3'], function(d3){
                     view.attr("y", dimension==X? (orient==VERTICAL?-1:1)*(axis.tickPadding() + axis.tickSize()):0);
                     view.attr("dy", dimension==X?(orient==VERTICAL?0:".72em"):".32em");
                     
-                
                     if(axis.repositionLabels() == null) return;
                     var shift = axis.repositionLabels()[i]; 
                     view.attr("x",+view.attr("x") + shift.x);
                     view.attr("y",+view.attr("y") + shift.y);
                 })
+            
+            
+            // add minor ticks
+            var minorTicks = g.selectAll(".tick.minor").data(tickValuesMinor);
+            minorTicks.exit().remove();
+            minorTicks.enter().append("line")
+                .attr("class", "tick minor");
+
+            var tickLengthOut = axis.tickSizeMinor().outbound;
+            var tickLengthIn = axis.tickSizeMinor().inbound;
+            var scale = axis.scale();
+            minorTicks
+                .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
+                .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
+                .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
+                .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
+            
         };
         
         
@@ -74,6 +89,21 @@ define(['d3'], function(d3){
         axis.pivot = function(arg) {
             if (!arguments.length) return pivot;
             pivot = !!arg;
+            return axis;
+        };
+                
+        var tickValuesMinor = [];
+        axis.tickValuesMinor = function(arg) {
+            if (!arguments.length) return tickValuesMinor;
+            tickValuesMinor = arg;
+            return axis;
+        };     
+        
+        var tickSizeMinor = {outbound:0, inbound:0};
+        axis.tickSizeMinor = function(arg1, arg2) {
+            if (!arguments.length) return tickSizeMinor;
+            tickSizeMinor = {outbound:arg1, inbound:arg2||0};
+            console.log("setting", tickSizeMinor)
             return axis;
         };
         
@@ -190,6 +220,7 @@ console.log("********** "+orient+" **********");
             if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
             var tickValues = options.showOuter?[min, max]:[];
+            var tickValuesMinor = [min, max];
             var ticksNumber = 5;
             
             function getBaseLog(x, base) {
@@ -219,7 +250,7 @@ console.log("********** "+orient+" **********");
             
             
             // conditions to remove labels altogether
-            if(!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit) return axis.tickValues([]);
+            var labelsJustDontFit = (!labelsStackOnTop && options.heightOfOneDigit > options.pivotingLimit);
             if(options.removeAllLabels) return axis.tickValues([]);
             
             // return a single tick if have only one point in the domain
@@ -336,7 +367,7 @@ console.log("********** "+orient+" **********");
                 };
 
                 
-                console.log('spawn pos/neg: ', spawnPos, spawnNeg);
+                //console.log('spawn pos/neg: ', spawnPos, spawnNeg);
             
                     
                 if(options.method == this.METHOD_DOUBLING) {
@@ -351,7 +382,7 @@ console.log("********** "+orient+" **********");
                     var startPos = max<eps? null  : 4*spawnPos[Math.floor(spawnPos.length/2)-1];
                     var startNeg = min>-eps? null : 4*spawnNeg[Math.floor(spawnNeg.length/2)-1];
                     
-                    console.log('starter pos/neg: ', startPos, startNeg);
+                    //console.log('starter pos/neg: ', startPos, startNeg);
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>=Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -360,7 +391,9 @@ console.log("********** "+orient+" **********");
                                         
                     doublingLabels = doublingLabels
                         .sort(d3.ascending)
-                        .filter(function(d){return min<=d&&d<=max}) 
+                        .filter(function(d){return min<=d&&d<=max});
+                    
+                    tickValuesMinor = tickValuesMinor.concat(doublingLabels);
                     
                     doublingLabels = groupByPriorities(doublingLabels,false); // don't skip taken values
                     
@@ -383,7 +416,13 @@ console.log("********** "+orient+" **********");
                 
                 if(options.method == this.METHOD_REPEATING){
                     
-                    var spawn = groupByPriorities( spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending) );
+                    var spawn = spawnZero.concat(spawnPos).concat(spawnNeg).sort(d3.ascending);
+                    
+                    options.stops.forEach(function(stop, i){
+                        tickValuesMinor = tickValuesMinor.concat(spawn.map(function(d){return d*stop}));
+                    });
+                    
+                    spawn = groupByPriorities(spawn);
                     var avoidCollidingWith = spawnZero.concat(tickValues);
 
                     options.stops.forEach(function(stop, i){
@@ -442,6 +481,8 @@ console.log("********** "+orient+" **********");
                     .sort(d3.ascending)
                     .filter(function(d){return min<=d&&d<=max}); 
                 
+                tickValuesMinor = tickValuesMinor.concat(addLabels);
+                
                 addLabels = groupByPriorities(addLabels,false);
                 
                 var tickValues_1 = tickValues;
@@ -469,9 +510,15 @@ console.log("********** "+orient+" **********");
 
 
             
-            if(tickValues!=null && tickValues.length<3)tickValues = [min, max];
+            if(tickValues!=null && tickValues.length<=2 && !bothSidesUsed)tickValues = [min, max];
+            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed)tickValues = [min, 0, max];
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
+            });
+            
+            if(labelsJustDontFit) tickValues = [];
+            tickValuesMinor = tickValuesMinor.filter(function(d){
+                return tickValues.indexOf(d)==-1 && min<=d&&d<=max
             });
             
 
@@ -481,6 +528,7 @@ console.log("final result",tickValues);
                 .ticks(ticksNumber)
                 .tickFormat(options.formatter)
                 .tickValues(tickValues)
+                .tickValuesMinor(tickValuesMinor)
                 .pivot(pivot)
                 .repositionLabels(
                     repositionLabelsThatStickOut(tickValues, options, orient, axis.scale(), labelsStackOnTop?"y":"x")
