@@ -69,7 +69,7 @@ define([
                     });
                 },
                 'resize': function() {
-                    if(_this._ready && _this.model._ready) {
+                    if (_this._ready && _this.model._ready) {
                         _this.resize();
                     }
                 }
@@ -129,9 +129,12 @@ define([
                     //ready when model is also ready
                     _this.model.on("ready", function() {
                         //TODO: delay is a hotfix to visually avoid flickering
-                        _.delay(function() {
-                            _this.placeholder.classed(class_loading, false);
-                        });
+                        //TODO: Guarantee the model is ready (hotfix - remove)
+                        if (_this.model._ready) {
+                            _.defer(function() {
+                                _this.placeholder.classed(class_loading, false);
+                            });
+                        }
                     });
 
                 });
@@ -442,7 +445,7 @@ define([
                 }
             }
 
-             var _this = this;
+            var _this = this;
             //return a new model with the defined submodels
             var model = new Model(values, this.intervals, {
                 //bind callback after model is all set
@@ -459,7 +462,7 @@ define([
                     _this.modelReady(evt);
                 }
             });
-            
+
             //binds init bindings to this model
             if (_.isPlainObject(model_binds)) {
                 model.on(model_binds);
@@ -472,7 +475,7 @@ define([
                 //binding submodels
                 for (var submodel in model.get()) {
 
-                    if(_.isUndefined(model[submodel]._id)) continue;
+                    if (_.isUndefined(model[submodel]._id)) continue;
 
                     //closure to set up the submodel
                     (function(model, submodel) {
@@ -517,10 +520,7 @@ define([
                                 evt = evt.replace('ready', 'ready:' + submodel);
                                 model.trigger(evt, vals);
 
-                                //if all are ready, trigger for this model
-                                if (model._ready = !model.isLoading()) {
-                                    model.triggerOnce('ready', vals);
-                                }
+                                model.setReady();
                             }
                         });
 
