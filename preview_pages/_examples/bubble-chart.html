@@ -54,21 +54,21 @@
         <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
             <span>Y</span>
             <ul class="dropdown">
-                <li><a onclick="hook('axis_y', 'property', 'geo.region')">Prop: geo.region</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'property', scale: 'ordinal', value: 'geo.region'})">Prop: geo.region</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'property', 'geo')">Prop: geo</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'property', scale: 'ordinal', value: 'geo'})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'time')">Ind: time</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'indicator', scale: 'time', value: 'time'})">Ind: time</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'property', 'geo.category')">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'property', scale: 'ordinal', value: 'geo.category'})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Ind: lex</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'indicator', scale: 'linear', value: 'lex'})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'indicator', scale: 'log', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Ind: pop</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'indicator', scale: 'linear', value: 'pop'})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook('axis_y', 'value', '42')">Value: 42</a>
+                <li><a onclick="hook({hook: 'axis_y', use: 'value', scale: 'linear', value: '42'})">Value: 42</a>
                 </li>
             </ul>
         </div>
@@ -76,21 +76,21 @@
         <div id="dropdown-color" title="X Axis" class="wrapper-dropdown" tabindex="1">
             <span>X</span>
             <ul class="dropdown">
-                <li><a onclick="hook('axis_x', 'property', 'geo.region')">Prop: geo.region</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'property', scale: 'ordinal', value: 'geo.region'})">Prop: geo.region</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'property', 'geo')">Prop: geo</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'property', scale: 'ordinal', value: 'geo'})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'time')">Ind: time</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'indicator', scale: 'time', value: 'time'})">Ind: time</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'property', 'geo.category')">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'property', scale: 'ordinal', value: 'geo.category'})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'lex')">Ind: lex</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'indicator', scale: 'linear', value: 'lex'})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'indicator', scale: 'log', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'indicator', 'pop')">Ind: pop</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'indicator', scale: 'linear', value: 'pop'})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook('axis_x', 'value', '42')">Value: 42</a>
+                <li><a onclick="hook({hook: 'axis_x', use: 'value', scale: 'linear', value: '42'})">Value: 42</a>
                 </li>
             </ul>
         </div>
@@ -98,19 +98,19 @@
         <div id="dropdown-label" title="Color of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>COLOR</span>
             <ul class="dropdown">
-                <li><a onclick="hook('color', 'property', 'geo.region', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.region</a>
+                <li><a onclick="hook({hook: 'color', use: 'property', value: 'geo.region', domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3']})">Prop: geo.region</a>
                 </li>
-                <li><a onclick="hook('color', 'property', 'geo', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo</a>
+                <li><a onclick="hook({hook: 'color', use: 'property', value: 'geo', domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3']})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook('color', 'property', 'geo.category', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'color', use: 'property', value: 'geo.category', domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3']})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook('color', 'indicator', 'lex', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: lex</a>
+                <li><a onclick="hook({hook: 'color', use: 'indicator', value: 'lex', domain: ['#F77481', '#E1CE00', '#B4DE79']})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook('color', 'indicator', 'gdp_per_cap', ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'])">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'color', use: 'indicator', value: 'gdp_per_cap', domain: ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3']})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook('color', 'indicator', 'pop', ['#F77481', '#E1CE00', '#B4DE79'])">Ind: pop</a>
+                <li><a onclick="hook({hook: 'color', use: 'indicator', value: 'pop', domain: ['#F77481', '#E1CE00', '#B4DE79']})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook('color', 'value', '#F77481', [])">Value: #F77481</a>
+                <li><a onclick="hook({hook: 'color', use: 'value', value: '#F77481', domain: []})">Value: #F77481</a>
                 </li>
             </ul>
         </div>
@@ -118,19 +118,19 @@
         <div id="dropdown-label" title="Size of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>SIZE</span>
             <ul class="dropdown">
-                <li><a onclick="hook('size', 'property', 'geo.region')">Prop: geo.region</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo.region'})">Prop: geo.region</a>
                 </li>
-                <li><a onclick="hook('size', 'property', 'geo')">Prop: geo</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo'})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook('size', 'property', 'geo.category')">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo.category'})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook('size', 'indicator', 'lex')">Ind: lex</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'lex'})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook('size', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook('size', 'indicator', 'pop')">Ind: pop</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'pop'})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook('size', 'value', '0.5')">Value: 0.5</a>
+                <li><a onclick="hook({hook: 'size', use: 'value', value: '0.5'})">Value: 0.5</a>
                 </li>
             </ul>
         </div>
@@ -138,19 +138,19 @@
         <div id="dropdown-label" title="Label when hovering" class="wrapper-dropdown" tabindex="1">
             <span>LABEL</span>
             <ul class="dropdown">
-                <li><a onclick="hook('label', 'property', 'geo.name')">Prop: geo.name</a>
+                <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo.name'})">Prop: geo.name</a>
                 </li>
-                <li><a onclick="hook('label', 'property', 'geo')">Prop: geo</a>
+                <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo'})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook('label', 'property', 'geo.category')">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo.category'})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook('label', 'indicator', 'lex')">Ind: lex</a>
+                <li><a onclick="hook({hook: 'label', use: 'indicator', value: 'lex'})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook('label', 'indicator', 'gdp_per_cap')">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'label', use: 'indicator', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook('label', 'indicator', 'pop')">Ind: pop</a>
+                <li><a onclick="hook({hook: 'label', use: 'indicator', value: 'pop'})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook('label', 'value', 'Cool')">Value: "Cool"</a>
+                <li><a onclick="hook({hook: 'label', use: 'value', value: 'Cool'})">Value: "Cool"</a>
                 </li>
             </ul>
         </div>
@@ -358,22 +358,22 @@ function language(lang) {
     myVizabi.setOptions(options);
 }
 
-function hook(hook, use, value, domain) {
+function hook(params/*hook, use, value, scale, domain*/) {
     var options = {
         state: {
             marker: {}
         }
     };
-    options.state.marker[hook] = {
-        use: use,
-        value: value
+    options.state.marker[params.hook] = {
+        use: params.use,
+        value: params.value
     };
 
     // for time only
-    if (value == "time") options.state.marker[hook].scale = "time";
+    if (params.scale != null) options.state.marker[params.hook].scale = params.scale;
 
     //for color only
-    if (domain) options.state.marker[hook].domain = domain;
+    if (params.domain) options.state.marker[params.hook].domain = params.domain;
 
     myVizabi.setOptions(options);
 }
