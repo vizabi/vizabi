@@ -330,6 +330,10 @@ define([
                     var value = _this.model.marker.size.getValue(d)||_this.sScale.domain()[0];
                     return areaToRadius(_this.sScale(value));
                 });
+            
+            // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+            // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+            d3.timer.flush();
 
             this.bubbles.classed("vzb-bc-selected", function(d) {
                     return some_selected && _this.model.entities.isSelected(d)
