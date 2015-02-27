@@ -115,6 +115,7 @@ define([
          */
         updateShow: function() {
             
+            if (!this.isDataPreprocessed) this.preprocessData();
             
             this.translator = this.model.language.getTFunction();
             
@@ -191,7 +192,6 @@ define([
          */
         updateSize: function() {
 
-            if (!this.isDataPreprocessed) return;
 
             var _this = this,
                 margin,
@@ -283,7 +283,7 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
 
-            this.sizeUpdatedOnce = false;
+            this.sizeUpdatedOnce = true;
         },
 
         /*
