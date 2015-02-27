@@ -11,6 +11,9 @@ define([
     function radius(d, indicator) {
         return d.pop;
     }
+    
+    function radiusToArea(r){return r*r*Math.PI}
+    function areaToRadius(a){return Math.sqrt(a/Math.PI)}
 
     var BubbleChart = Component.extend({
         init: function(context, options) {
@@ -61,7 +64,7 @@ define([
 
             this.xScale = null;
             this.yScale = null;
-            this.rScale = null;
+            this.sScale = null;
             this.cScale = d3.scale.category10();
 
             this.xAxis = d3.svg.axisSmart();
@@ -155,7 +158,7 @@ define([
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
-            this.rScale = this.model.marker.size.getDomain();
+            this.sScale = this.model.marker.size.getDomain();
 
             var _this = this;
             this.yAxis.tickFormat(function(d) {
@@ -200,30 +203,28 @@ define([
                 tick_spacing,
                 maxRadius,
                 minRadius,
-                maxRadiusNormalized = this.model.marker.size.max,
-                minRadiusNormalized = this.model.marker.size.min,
                 padding = 2;
 
             switch (this.getLayoutProfile()) {
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
-                    maxRadius = 20;
+                    maxRadius = 40;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
-                    maxRadius = 40;
+                    maxRadius = 60;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
-                    maxRadius = 60;
+                    maxRadius = 80;
                     break;
             }
 
-            minRadius = maxRadius * minRadiusNormalized;
-            maxRadius = maxRadius * maxRadiusNormalized;
+            minRadius = maxRadius * this.model.marker.size.min;
+            maxRadius = maxRadius * this.model.marker.size.max;
 
             //stage
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -254,9 +255,9 @@ define([
                 this.xScale.rangePoints([0, width], padding).range();
             }
             if (this.model.marker.size.scale !== "ordinal") {
-                this.rScale.range([minRadius, maxRadius]);
+                this.sScale.range([radiusToArea(minRadius), radiusToArea(maxRadius)]);
             } else {
-                this.rScale.rangePoints([minRadius, maxRadius], 0).range();
+                this.sScale.rangePoints([radiusToArea(minRadius), radiusToArea(maxRadius)], 0).range();
             }
 
             //apply scales to axes and redraw
@@ -323,8 +324,8 @@ define([
                     return _this.xScale(value);
                 })
                 .attr("r", function(d) {
-                    var value = _this.model.marker.size.getValue(d)||_this.rScale.domain()[0];
-                    return Math.sqrt(_this.rScale(value) / Math.PI) * 10;
+                    var value = _this.model.marker.size.getValue(d)||_this.sScale.domain()[0];
+                    return areaToRadius(_this.sScale(value));
                 });
 
             this.bubbles.classed("vzb-bc-selected", function(d) {

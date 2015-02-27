@@ -118,19 +118,19 @@
         <div id="dropdown-label" title="Size of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>SIZE</span>
             <ul class="dropdown">
-                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo.region'})">Prop: geo.region</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', scale: 'ordinal', value: 'geo.region'})">Prop: geo.region</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo'})">Prop: geo</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', scale: 'ordinal', value: 'geo'})">Prop: geo</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'property', value: 'geo.category'})">Prop: geo.category</a>
+                <li><a onclick="hook({hook: 'size', use: 'property', scale: 'ordinal', value: 'geo.category'})">Prop: geo.category</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'lex'})">Ind: lex</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', scale: 'linear', value: 'lex'})">Ind: lex</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', scale: 'log', value: 'gdp_per_cap'})">Ind: gdp_per_cap</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'indicator', value: 'pop'})">Ind: pop</a>
+                <li><a onclick="hook({hook: 'size', use: 'indicator', scale: 'linear', value: 'pop'})">Ind: pop</a>
                 </li>
-                <li><a onclick="hook({hook: 'size', use: 'value', value: '0.5'})">Value: 0.5</a>
+                <li><a onclick="hook({hook: 'size', use: 'value', scale: 'linear', value: '0.5'})">Value: 0.5</a>
                 </li>
             </ul>
         </div>
@@ -229,14 +229,13 @@ $(function() {
                 axis_x: {
                     use: "indicator",
                     value: "gdp_per_cap",
-                    scale: 'linear',
-                    unit: 1000
+                    scale: 'log'
                 },
                 size: {
                     use: "indicator",
                     value: "pop",
-                    scale: 'log',
-                    max: 0.25
+                    scale: 'linear',
+                    max: 0.75
                 },
                 color: {
                     use: "property",
