@@ -37,20 +37,21 @@ define([
                 "change": function(evt) {
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
-                         _this.updateShow();
-                         _this.redrawDataPoints();
+                        console.log("bubble chart: CHANGE " + evt)
                     }
                 },
                 "ready":  function(evt) {
+                    console.log("bubble chart: READY")
+                    
                     _this.preprocessData();
                     _this.updateShow();
+                    
                     _this.updateTime();
-                    _this.redrawDataPoints();
-                    //TODO: dirty hack to avoid duplicate bubbles in the beginning (drawing twice)
-                    _this.updateTime();
+                    _this.updateSize();
                     _this.redrawDataPoints();
                 },
                 'change:time:value': function() {
+                    console.log("bubble chart: NEW TIME");
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -94,6 +95,7 @@ define([
 
             //component events
             this.on("resize", function() {
+                console.log("bubble chart: RESIZE");
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
