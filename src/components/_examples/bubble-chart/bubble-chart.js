@@ -301,11 +301,13 @@ define([
             if(!this.timeUpdatedOnce) this.updateTime();
             if(!this.sizeUpdatedOnce) this.updateSize();
 
+            var shape = this.model.marker.shape;
+            
             //exit selection
             this.bubbles.exit().remove();
 
             //enter selection -- init circles
-            this.bubbles.enter().append("circle")
+            this.bubbles.enter().append(shape)
                 .attr("class", "vzb-bc-bubble");
 
             //update selection
@@ -313,23 +315,49 @@ define([
 
             var some_selected = (_this.model.entities.select.length > 0);
 
-            this.bubbles
-                .style("fill", function(d) {
-                    return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
-                })
-                .transition().duration(speed).ease("linear")
-                .attr("cy", function(d) {
-                    var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
-                    return _this.yScale(value);
-                })
-                .attr("cx", function(d) {
-                    var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
-                    return _this.xScale(value);
-                })
-                .attr("r", function(d) {
-                    var value = _this.model.marker.size.getValue(d)||_this.sScale.domain()[0];
-                    return areaToRadius(_this.sScale(value));
-                });
+            switch (shape){
+                case "circle":
+                this.bubbles
+                    .style("fill", function(d) {
+                        return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
+                    })
+                    .transition().duration(speed).ease("linear")
+                    .attr("cy", function(d) {
+                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
+                        return _this.yScale(value);
+                    })
+                    .attr("cx", function(d) {
+                        var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
+                        return _this.xScale(value);
+                    })
+                    .attr("r", function(d) {
+                        var value = _this.model.marker.size.getValue(d)||_this.sScale.domain()[0];
+                        return areaToRadius(_this.sScale(value));
+                    });
+                break;
+                    
+                case "rect":
+                var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
+                this.bubbles
+                    .style("fill", function(d) {
+                        return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
+                    })
+                    .transition().duration(speed).ease("linear")
+                    .attr("height", function(d) {
+                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
+                        return d3.max(_this.yScale.range()) - _this.yScale(value);
+                    })
+                    .attr("y", function(d) {
+                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
+                        return _this.yScale(value);
+                    })
+                    .attr("x", function(d) {
+                        var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
+                        return _this.xScale(value) - barWidth/2;
+                    })
+                    .attr("width", barWidth);
+                break;
+            }
             
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
@@ -365,5 +393,7 @@ define([
 
     });
 
+    
+    
     return BubbleChart;
 });

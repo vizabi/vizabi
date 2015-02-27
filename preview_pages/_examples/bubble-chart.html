@@ -38,7 +38,7 @@
             </ul>
         </div>
 
-        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+        <div class="wrapper-dropdown" tabindex="1">
             <span>Language</span>
             <ul class="dropdown">
                 <li><a onclick="setLanguage('en')">English</a>
@@ -47,6 +47,17 @@
                 </li>
             </ul>
         </div>
+        
+        <div class="wrapper-dropdown" tabindex="1">
+            <span>Shape</span>
+            <ul class="dropdown">
+                <li><a onclick="setShape('circle')">Circle</a>
+                </li>
+                <li><a onclick="setShape('rect')">Rect</a>
+                </li>
+            </ul>
+        </div>
+        
     </div>
     <div class="buttons">
 
@@ -329,6 +340,7 @@ function play() {
         }
     };
     myVizabi.setOptions(options);
+    showState(options.state);
 }
 
 function pause() {
@@ -340,6 +352,7 @@ function pause() {
         }
     };
     myVizabi.setOptions(options);
+    showState(options.state);
 }
 
 function language(lang) {
@@ -369,6 +382,7 @@ function hook(params/*hook, use, value, scale, domain*/) {
     if (params.domain) options.state.marker[params.hook].domain = params.domain;
 
     myVizabi.setOptions(options);
+    showState(options.state);
 }
 
 function filterEntities(filterGeo, filterGeoCategory) {
@@ -378,8 +392,14 @@ function filterEntities(filterGeo, filterGeoCategory) {
         "geo.category": filterGeoCategory
     }
     myVizabi.setOptions(options);
+    showState(options.state);
 }    
 
+function setShape(shape) {
+    var options = {state: {marker: {shape: shape}}};
+    myVizabi.setOptions(options);
+    showState(options.state);
+}   
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->
