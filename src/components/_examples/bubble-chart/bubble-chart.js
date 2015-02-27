@@ -43,12 +43,18 @@ define([
                         console.log("bubble chart: CHANGE " + evt)
                     }
                 },
+                "change:entities:show": function() {
+                    console.log("bubble chart: ENTITIES changed")
+                    _this.updateShow();
+                    _this.updateTime();
+                    _this.updateSize();
+                    _this.redrawDataPoints();
+                },
                 "ready":  function(evt) {
                     console.log("bubble chart: READY")
                     
                     _this.preprocessData();
                     _this.updateShow();
-                    
                     _this.updateTime();
                     _this.updateSize();
                     _this.redrawDataPoints();
@@ -177,12 +183,9 @@ define([
          */
         updateTime: function() {
             var _this = this;
-            //TLDR
-            //this.time = parseInt(d3.time.format(this.model.time.formatInput)(this.model.time.value), 10);
+            
             this.time = this.model.time.value;
-            
             this.data = this.model.marker.label.getItems({ time: this.time });
-            
             
             this.yearEl.text(this.time.getFullYear().toString());
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
