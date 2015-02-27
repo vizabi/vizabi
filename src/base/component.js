@@ -69,7 +69,7 @@ define([
                     });
                 },
                 'resize': function() {
-                    if (_this._ready && _this.model._ready) {
+                    if (_this._ready) {
                         _this.resize();
                     }
                 }
