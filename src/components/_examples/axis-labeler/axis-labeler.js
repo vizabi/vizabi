@@ -139,7 +139,8 @@ define([
                     scaleType: this.model.scales.xScaleType,
                     toolMargin: margin,
                     //showOuter: true,
-                    isPivotAuto: true
+                    isPivotAuto: true,
+                    isDevMode: true
                 });
 
             this.yAxis.scale(this.yScale)
@@ -152,6 +153,7 @@ define([
                     //showOuter: true,
                     //method: this.yAxis.METHOD_REPEATING
                     //limitMaxTickNumber: 0,
+                    isDevMode: true
                 });
 
             

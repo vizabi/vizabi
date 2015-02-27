@@ -1,5 +1,6 @@
 define(['d3'], function(d3){
 
+
     d3.svg.axisSmart = function(){
         
     return function d3_axis_smart(_super) {
@@ -13,7 +14,8 @@ define(['d3'], function(d3){
         var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
         var DEFAULT_LOGBASE = 10;
         
-        
+                    
+
 
         function onlyUnique(value, index, self) {
             return self.indexOf(value) === index;
@@ -103,7 +105,7 @@ define(['d3'], function(d3){
         axis.tickSizeMinor = function(arg1, arg2) {
             if (!arguments.length) return tickSizeMinor;
             tickSizeMinor = {outbound:arg1, inbound:arg2||0};
-            console.log("setting", tickSizeMinor)
+            meow("setting", tickSizeMinor)
             return axis;
         };
         
@@ -206,7 +208,7 @@ define(['d3'], function(d3){
             
             
 
-console.log("********** "+orient+" **********");
+meow("********** "+orient+" **********");
             
             var domain = axis.scale().domain();
             var range = axis.scale().range();
@@ -367,7 +369,7 @@ console.log("********** "+orient+" **********");
                 };
 
                 
-                //console.log('spawn pos/neg: ', spawnPos, spawnNeg);
+                //meow('spawn pos/neg: ', spawnPos, spawnNeg);
             
                     
                 if(options.method == this.METHOD_DOUBLING) {
@@ -382,7 +384,7 @@ console.log("********** "+orient+" **********");
                     var startPos = max<eps? null  : 4*spawnPos[Math.floor(spawnPos.length/2)-1];
                     var startNeg = min>-eps? null : 4*spawnNeg[Math.floor(spawnNeg.length/2)-1];
                     
-                    //console.log('starter pos/neg: ', startPos, startNeg);
+                    //meow('starter pos/neg: ', startPos, startNeg);
 
                     if(startPos){ for(var l=startPos; l<=max; l*=2) doublingLabels.push(l);}
                     if(startPos){ for(var l=startPos/2; l>=Math.max(min,eps); l/=2) doublingLabels.push(l);}
@@ -522,7 +524,7 @@ console.log("********** "+orient+" **********");
             });
             
 
-console.log("final result",tickValues);
+meow("final result",tickValues);
             
             return axis
                 .ticks(ticksNumber)
@@ -719,21 +721,19 @@ console.log("final result",tickValues);
             "tickSubdivide"
             );
         
-        }(d3.svg.axis());
         
+        function meow(l1,l2,l3,l4,l5){
+            if(!axis.labelerOptions().isDevMode)return;
+            if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
+            if(l4!=null){console.log(l1,l2,l3,l4); return;}
+            if(l3!=null){console.log(l1,l2,l3); return;}
+            if(l2!=null){console.log(l1,l2); return;}
+            if(l1!=null){console.log(l1); return;}
+        }
+        
+        }(d3.svg.axis());
         
     }; //d3.svg.axisSmart = function(){
 
 }); //define(['d3'], function(d3){
 
-
-
-
-
-log = function(l1,l2,l3,l4,l5){
-    if(l5!=null){console.log(l1,l2,l3,l4,l5); return;}
-    if(l4!=null){console.log(l1,l2,l3,l4); return;}
-    if(l3!=null){console.log(l1,l2,l3); return;}
-    if(l2!=null){console.log(l1,l2); return;}
-    if(l1!=null){console.log(l1); return;}
-}
