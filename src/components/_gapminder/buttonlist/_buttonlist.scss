@@ -39,7 +39,7 @@ $vzb-button-color-border: #DBE8EB;
             padding: 5px;
             // border: 1px solid $vzb-button-color-border;
         }
-        &>.vzb-buttonlist-btn-title {
+        &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span{
             @include font-size(9px);
             padding-top: 2px;
             text-align: center;
