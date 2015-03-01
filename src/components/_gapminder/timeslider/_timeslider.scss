@@ -13,7 +13,8 @@ $vzb-ts-value-width: 40px;
         .vzb-ts-btn {
             @include box-sizing(border-box);
             @include border-radius($vzb-ts-btn-width);
-            @include font-size(18px);
+            font-size: 1em;
+            // @include font-size(18px);
             width: $vzb-ts-btn-width;
             height: $vzb-ts-btn-width;
             background: $vzb-ts-btn-bg;

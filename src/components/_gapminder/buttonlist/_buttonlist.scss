@@ -28,7 +28,8 @@ $vzb-button-color-border: #DBE8EB;
             @include transition(all, 100ms, ease-in);
             @include box-sizing(border-box);
             @include border-radius($vzb-button-radius);
-            @include font-size(16px);
+            // @include font-size(21px);
+            font-size: 1em;
             text-align: center;
             display: inline-block;
             border: none;
@@ -40,7 +41,8 @@ $vzb-button-color-border: #DBE8EB;
             // border: 1px solid $vzb-button-color-border;
         }
         &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span{
-            @include font-size(9px);
+            // @include font-size(15px);
+            font-size: 0.75em;
             padding-top: 2px;
             text-align: center;
             display: block;
@@ -137,7 +139,8 @@ $vzb-button-color-border: #DBE8EB;
         .vzb-buttonlist-btn {
             width: $vzb-button-width + 10;
             &>.vzb-btn-icon {
-                @include font-size(18px);
+                // @include font-size(23px);
+                font-size: 1.2em;
                 padding: 9px;
                 width: $vzb-button-size + 10;
                 height: $vzb-button-size + 10;
