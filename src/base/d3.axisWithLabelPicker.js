@@ -174,7 +174,7 @@ define(['d3'], function(d3){
                     case   2: break; //100
                     case   3: break; //1000
                     case   4: break; //10000
-                    case   5: d = d/1000000; prefix = "M"; prec = 1; break; //0.1M
+                    case   5: d = d/1000; prefix = "k"; break; //0.1M
                     case   6: d = d/1000000; prefix = "M"; break; //1M
                     case   7: d = d/1000000; prefix = "M"; break; //10M
                     case   8: d = d/1000000; prefix = "M"; break; //100M
