@@ -22,7 +22,7 @@ define([
             }, {
                 component: '_examples/bubble-chart',
                 placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.time", "state.entities", "state.marker", "data"]
+                model: ["state.time", "state.entities", "state.marker", "language"]
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider', //div to render

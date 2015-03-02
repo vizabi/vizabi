@@ -476,7 +476,7 @@ define([
                 var evts = {
                     'load_start': function() {
                         _this.setLoading("_hook_data");
-                        _this.freezeEvents(true, true, ['load_start']);
+                        _this.freezeEvents(true, true, ['load_start', 'resize', 'dom_ready']);
                     },
                     'load_end': function() {
                         _this.freezeEvents(false, true);

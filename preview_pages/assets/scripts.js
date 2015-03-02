@@ -126,6 +126,10 @@ function showQuery(query) {
 }
 
 function goToExample(example) {
+    if(example==null||example==""){
+        example = location.pathname.substr(location.pathname.search("preview_pages/")+14);
+        example = example.substr(0, example.search(".htm"))
+    }
     location.href = '../' + example + '.html';
     return;
 }

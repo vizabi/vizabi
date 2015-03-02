@@ -119,13 +119,13 @@
 //converts pixels to em
 @mixin font-size($sizeValue: 12px ){
   font-size: $sizeValue; //fallback for old browsers
-  font-size: (0.06 * $sizeValue / 1px) + rem;
+  font-size: (0.06 * $sizeValue / 1px) + em;
 }
 
 //same with line height
 @mixin line-height($heightValue: 12px ){
     line-height: $heightValue + px; //fallback for old browsers
-    line-height: (0.125 * $heightValue / 1px) + rem;
+    line-height: (0.125 * $heightValue / 1px) + em;
 }
 
 @mixin user-select-none() {
