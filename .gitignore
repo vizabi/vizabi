@@ -2,7 +2,7 @@
 .sass-cache/
 lib/
 node_modules/
-dist/
+preview/
 *.swp
 /preview_pages/assets/_preview.tpl
 /src/assets/style/vizabi.scss
