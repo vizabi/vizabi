@@ -49,6 +49,7 @@ define(['d3'], function(d3){
                 .each(function(d,i){
                     var view = d3.select(this);
                 
+                    if(axis.pivot() == null) return;
                     view.attr("transform","rotate("+(axis.pivot()?-90:0)+")");
                     view.style("text-anchor", dimension==X?"middle":"end");
                     view.attr("x",  dimension==X?0:(-axis.tickPadding() - axis.tickSize()));
@@ -61,22 +62,22 @@ define(['d3'], function(d3){
                     view.attr("y",+view.attr("y") + shift.y);
                 })
             
-            
-            // add minor ticks
-            var minorTicks = g.selectAll(".tick.minor").data(tickValuesMinor);
-            minorTicks.exit().remove();
-            minorTicks.enter().append("line")
-                .attr("class", "tick minor");
+            if (axis.tickValuesMinor()!=null && axis.tickValuesMinor().length!=0){
+                // add minor ticks
+                var minorTicks = g.selectAll(".tick.minor").data(tickValuesMinor);
+                minorTicks.exit().remove();
+                minorTicks.enter().append("line")
+                    .attr("class", "tick minor");
 
-            var tickLengthOut = axis.tickSizeMinor().outbound;
-            var tickLengthIn = axis.tickSizeMinor().inbound;
-            var scale = axis.scale();
-            minorTicks
-                .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
-                .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
-                .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
-                .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
-            
+                var tickLengthOut = axis.tickSizeMinor().outbound;
+                var tickLengthIn = axis.tickSizeMinor().inbound;
+                var scale = axis.scale();
+                minorTicks
+                    .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
+                    .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
+                    .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
+                    .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
+            }
         };
         
         
@@ -126,7 +127,12 @@ define(['d3'], function(d3){
                options.scaleType!="genericLog"&&
                options.scaleType!="log") {
                 console.warn('please set scaleType. the only supported values are "linear", "time", "log" or "genericLog"'); 
-                return axis;
+                return axis.ticks(ticksNumber)
+                            .tickFormat(null)
+                            .tickValues(null)
+                            .tickValuesMinor(null)
+                            .pivot(null)
+                            .repositionLabels(null);
             };
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
