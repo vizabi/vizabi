@@ -37,7 +37,7 @@ module.exports = function(grunt) {
         'build', //by default, just build and test
         'test:copy',
         'jasmine:prod',
-        'removelogging', //removes console.log
+        // 'removelogging', //removes console.log
         'copy:dist', //copies dist files
     ]);
 
