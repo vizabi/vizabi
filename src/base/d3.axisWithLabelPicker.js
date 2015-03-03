@@ -520,10 +520,12 @@ meow("********** "+orient+" **********");
             
             if(tickValues!=null && tickValues.length<=2 && !bothSidesUsed)tickValues = [min, max];
             
-            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed && !collisionBetween(0,[min,max])){
-                tickValues = [min, 0, max];
-            }else{
-                tickValues = [min, max];
+            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed){
+                if (!collisionBetween(0,[min,max])){ 
+                    tickValues = [min, 0, max];
+                }else{
+                    tickValues = [min, max];
+                }
             }
             
             if(tickValues!=null) tickValues.sort(function(a,b){
