@@ -1,0 +1,19 @@
+<%
+//buttonlist_template
+%>
+
+<div class="vzb-buttonlist">
+<% for(var i in buttons) {
+	var btn = buttons[i];
+	%>
+	<button data-btn="<%- btn.id %>" class='vzb-buttonlist-btn'>
+		<i class='vzb-buttonlist-btn-icon fa fa-<%- btn.icon %>'></i>
+		<span class='vzb-buttonlist-btn-title'><%= t(btn.title) %></span>
+	</button>
+<% } %>
+<% for(var i in buttons) {
+	var btn = buttons[i];
+	%>
+	<div data-btn="<%- btn.id %>" class="vzb-buttonlist-dialog"></div>
+<% } %>
+</div>
