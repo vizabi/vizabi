@@ -28,6 +28,10 @@ define([
             this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
+            
+            
+            $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
+            
 
             //component events
             this.on("resize", function() {
@@ -99,7 +103,6 @@ define([
                 case "medium": ick_spacing = 80; break;
                 case "large": tick_spacing = 100; break;
             }
-            
             
             var margin = this.model.show.toolMargin;
 
