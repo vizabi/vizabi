@@ -94,8 +94,7 @@ module.exports = function(grunt) {
 
     //developer task: grunt dev
     grunt.registerTask('build', [
-
-        'clean:preview', //clean preview folder
+        'clean', //clean preview and dist folder
         'includereplace:build', //build AMD wrapper
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:preview', //use requirejs for amd module
@@ -108,13 +107,12 @@ module.exports = function(grunt) {
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
-
+        'copy:dist', //copies dist files
     ]);
 
     //developer task: grunt dev
     grunt.registerTask('build-pretty', [
-
-        'clean:preview', //clean preview folder
+        'clean', //clean preview folder
         'includereplace:build', //build AMD wrapper
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:pretty', //use requirejs for amd module
@@ -127,7 +125,7 @@ module.exports = function(grunt) {
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
-
+        'copy:dist', //copies dist files
     ]);
 
     //default task with connect
@@ -150,9 +148,10 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        // Clean preview folder to have a clean start
+        // Clean preview and dist folders to have a clean start
         clean: {
-            preview: ["preview/*"]
+            preview: ["preview/*"],
+            dist: ["dist/*"]
         },
 
         //gitinfo task
@@ -220,8 +219,16 @@ module.exports = function(grunt) {
                     dest: 'preview/test/spec/',
                     expand: true
                 }]
+            },
+            /*
+             * copy files from build to dist
+             */
+            dist: {
+                cwd: 'preview',
+                src: ['vizabi.js', 'vizabi.css'],
+                dest: 'dist/',
+                expand: true
             }
-
         },
 
         // Uglifying JS files
