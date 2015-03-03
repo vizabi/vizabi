@@ -38,8 +38,10 @@ define(['d3'], function(d3){
             // run label factory - it will store labels in tickValues property of axis
             axis.labelFactory(options);
             
+            if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
             // construct the view (d3 constructor is used)
             _super(g);
+            if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
             
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
             var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
@@ -62,12 +64,12 @@ define(['d3'], function(d3){
                     view.attr("y",+view.attr("y") + shift.y);
                 })
             
-            if (axis.tickValuesMinor()!=null && axis.tickValuesMinor().length!=0){
+            if (axis.tickValuesMinor()==null) axis.tickValuesMinor([]);
                 // add minor ticks
-                var minorTicks = g.selectAll(".tick.minor").data(tickValuesMinor);
+                var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
                 minorTicks.exit().remove();
                 minorTicks.enter().append("line")
-                    .attr("class", "tick minor");
+                    .attr("class", "tickMinor");
 
                 var tickLengthOut = axis.tickSizeMinor().outbound;
                 var tickLengthIn = axis.tickSizeMinor().inbound;
@@ -77,7 +79,7 @@ define(['d3'], function(d3){
                     .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
                     .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
                     .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
-            }
+            
         };
         
         
@@ -685,10 +687,11 @@ meow("final result",tickValues);
                 
                 // compute the influence of the head-side outer label
                 var repositionHead = 
-                    Math.abs(scale(d) 
-                        - scale(tickValues[tickValues.length-1]) 
-                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[tickValues.length-1][dimension]
-                    )
+                    // take the distance between head and the tick at hand
+                    Math.abs(scale(d) - scale(tickValues[tickValues.length-1]) )
+                    // substract the shift of the tail
+                    - (dimension=="y" && orient==HORIZONTAL?-1:1) * result[tickValues.length-1][dimension]
+                    
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 
@@ -698,10 +701,11 @@ meow("final result",tickValues);
 
                 // compute the influence of the tail-side outer label
                 var repositionTail = 
-                    Math.abs(scale(d) 
-                        - scale(tickValues[0]) 
-                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[0][dimension]
-                    )
+                    // take the distance between tail and the tick at hand
+                    Math.abs(scale(d) - scale(tickValues[0]) )
+                    // substract the shift of the tail
+                    - (dimension=="y" && orient==VERTICAL?-1:1) * result[0][dimension]
+                
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 

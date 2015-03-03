@@ -138,7 +138,7 @@ define([
                 .labelerOptions({
                     scaleType: this.model.scales.xScaleType,
                     toolMargin: margin,
-                    //showOuter: true,
+                    showOuter: true,
                     isPivotAuto: true,
                     isDevMode: true
                 });
@@ -150,7 +150,7 @@ define([
                 .labelerOptions({
                     scaleType: this.model.scales.yScaleType,
                     toolMargin: margin,
-                    //showOuter: true,
+                    showOuter: true,
                     //method: this.yAxis.METHOD_REPEATING
                     //limitMaxTickNumber: 0,
                     isDevMode: true
