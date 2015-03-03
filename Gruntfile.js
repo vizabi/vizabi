@@ -92,7 +92,9 @@ module.exports = function(grunt) {
         'watch' //watch for code changes
     ]);
 
-    //developer task: grunt dev
+
+    //TODO: merge build and build-pretty
+    //build task: grunt build
     grunt.registerTask('build', [
         'clean', //clean preview and dist folder
         'includereplace:build', //build AMD wrapper
@@ -107,10 +109,11 @@ module.exports = function(grunt) {
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
+        'removelogging', //removes console.log
         'copy:dist', //copies dist files
     ]);
 
-    //developer task: grunt dev
+    //build task without uglifying: grunt build-pretty
     grunt.registerTask('build-pretty', [
         'clean', //clean preview folder
         'includereplace:build', //build AMD wrapper
@@ -125,6 +128,7 @@ module.exports = function(grunt) {
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
         'copy:fonts', //copies fonts (font awesome)
+        'removelogging', //removes console.log
         'copy:dist', //copies dist files
     ]);
 
@@ -431,6 +435,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+
+        //removes console.log from output file
+        removelogging: {
+            preview: {
+                src: "preview/vizabi.js",
+                options: {
+                    methods: ['log'] //only log
+                }
+            }
+        },
+
         //upload to s3 task
         aws_s3: {
             options: {
