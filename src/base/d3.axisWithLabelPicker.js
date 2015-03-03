@@ -125,8 +125,8 @@ define(['d3'], function(d3){
             if(options.scaleType!="linear"&&
                options.scaleType!="time"&&
                options.scaleType!="genericLog"&&
-               options.scaleType!="log") {
-                console.warn('please set scaleType. the only supported values are "linear", "time", "log" or "genericLog"'); 
+               options.scaleType!="log" && 
+               options.scaleType!="ordinal") {
                 return axis.ticks(ticksNumber)
                             .tickFormat(null)
                             .tickValues(null)
@@ -225,7 +225,7 @@ meow("********** "+orient+" **********");
             var max = d3.max([domain[0],domain[domain.length-1]]);
             var bothSidesUsed = (min<0 && max >0);
             
-            if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
+            if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale domain is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
             var tickValues = options.showOuter?[min, max]:[];
             var tickValuesMinor = [min, max];
@@ -519,7 +519,13 @@ meow("********** "+orient+" **********");
 
             
             if(tickValues!=null && tickValues.length<=2 && !bothSidesUsed)tickValues = [min, max];
-            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed)tickValues = [min, 0, max];
+            
+            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed && !collisionBetween(0,[min,max])){
+                tickValues = [min, 0, max];
+            }else{
+                tickValues = [min, max];
+            }
+            
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
             });
