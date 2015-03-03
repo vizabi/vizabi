@@ -37,8 +37,6 @@ module.exports = function(grunt) {
         'build', //by default, just build and test
         'test:copy',
         'jasmine:prod',
-        'removelogging', //removes console.log
-        'copy:dist', //copies dist files
     ]);
 
     //build and deploy
@@ -110,7 +108,9 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts' //copies fonts (font awesome)
+        'copy:fonts', //copies fonts (font awesome)
+        'removelogging', //removes console.log
+        'copy:dist', //copies dist files
     ]);
 
     //build task without uglifying: grunt build-pretty
@@ -127,7 +127,9 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts' //copies fonts (font awesome)
+        'copy:fonts', //copies fonts (font awesome)
+        'removelogging', //removes console.log
+        'copy:dist', //copies dist files
     ]);
 
     //default task with connect
