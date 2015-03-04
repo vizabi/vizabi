@@ -38,10 +38,10 @@ define(['d3'], function(d3){
             // run label factory - it will store labels in tickValues property of axis
             axis.labelFactory(options);
             
-            if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
+            //if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
             // construct the view (d3 constructor is used)
             _super(g);
-            if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
+            //if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
             
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
             var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
