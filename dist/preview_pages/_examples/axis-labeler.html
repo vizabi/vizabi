@@ -1,0 +1,387 @@
+<html>
+
+<head>
+    <title>Vizabi - Axis labeler</title>
+
+    <!-- Includes preview pages dependencies -->
+    <script data-main="../../config.js" src="../../../lib/requirejs/require.js"></script>
+    <script src="../assets/jquery.min.js"></script>
+
+    <!-- Includes vizabi main file -->
+    <script src="../../vizabi.js"></script>
+    
+    <!-- Includes scripts -->
+    <script src="../assets/scripts.js"></script>
+    <!-- Includes vizabi css -->
+    <link rel="stylesheet" href="../../vizabi.css">
+    <!-- Includes examples css -->
+    <link rel="stylesheet" href="../assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+</head>
+
+<body>
+
+
+<div class="container">
+       <div class="buttons">
+
+        <button onclick="goToExample('_examples/axis-labeler')">RESE[T]</button>
+           
+        <div id="dropdown-size" class="wrapper-dropdown" tabindex="1">
+            <span>Size</span>
+            <ul class="dropdown">
+                <li><a onclick="phoneSize('axis-labeler')">Mobile Portrait</a>
+                </li>
+                <li><a onclick="phoneSize('axis-labeler', 'landscape')">Mobile Landscape</a>
+                </li>
+                <li><a onclick="randomSize('axis-labeler')">Random Size</a>
+                </li>
+                <li><a onclick="fullSize('axis-labeler')">Full Screen</a>
+                </li>
+            </ul>
+        </div>
+
+        <button onclick="randomSize('axis-labeler')">[R]ANDOM</button>
+
+
+        <label>|</label>
+
+        <div id="dropdown-number" title="axis domain" class="wrapper-dropdown" tabindex="1">
+            <span id="listLabel">Set axis domain</span>
+            <ul class="dropdown automaticListOfOptions">
+
+            </ul>
+        </div>
+        <div id="dropdown-number" title="X axis type" class="wrapper-dropdown" tabindex="1">
+            <span>X type</span>
+            <ul class="dropdown">
+                <li><a onclick="setType('linear', 'x')">X linear</a></li>
+                <li><a onclick="setType('log', 'x')">X log</a></li>
+                <li><a onclick="setType('genericLog', 'x')">X generic log</a></li>
+            </ul>
+        </div>
+        <div id="dropdown-number" title="Y xis type" class="wrapper-dropdown" tabindex="1">
+            <span>Y type</span>
+            <ul class="dropdown">
+                <li><a onclick="setType('linear', 'y')">Y linear</a></li>
+                <li><a onclick="setType('log', 'y')">Y log</a></li>
+                <li><a onclick="setType('genericLog', 'y')">Y generic log</a></li>
+            </ul>
+        </div>
+
+
+    </div>
+
+
+    <div id="axis-labeler" class="placeholder"></div>
+
+</div>
+<div class="aux">
+    <button onclick="shareLink()">SHARE LINK</button>
+
+    <p>Current State:</p>
+    <pre id="state" class="json_box" contentEditable="true"></pre>
+    <button onclick="setCurrentState()">SET STATE</button>
+    
+    <p>Label margins: <br/>
+        left/right <span class="shortcutLabel" id="axisLabelMarginLR"></span>, <span style="width: 5%; display: inline-block"> </span> 
+        top/bottom <span class="shortcutLabel" id="axisLabelMarginTB"></span>  
+    </p>
+    <p>Tool margins: <br/>
+        b: <span class="shortcutLabel" id="toolMarginbottom"></span>, <span style="width: 2%; display: inline-block"> </span>
+        l: <span class="shortcutLabel" id="toolMarginleft"></span>, <span style="width: 2%; display: inline-block"> </span> 
+        t: <span class="shortcutLabel" id="toolMargintop"></span>, <span style="width: 2%; display: inline-block"> </span> 
+        r <span class="shortcutLabel" id="toolMarginright"></span>  
+    </p>
+    
+    <button style="width: 30%; padding:0px; left: 32%" onclick="setLabelMargin('+1','TB')">V/\ +</button>
+    <button style="width: 30%; padding:0px; display: inline; " onclick="setLabelMargin('-1','LR')"><> --</button>
+    <button style="width: 30%;  padding:0px; display: inline;" onclick="setLabelMargin('-1','TB')">V/\ --</button>
+    <button style="width: 30%;  padding:0px; display: inline; " onclick="setLabelMargin('+1','LR')"><> +</button>
+        
+    <p style="text-transform: none">Use [W][A][S][D] to change label margins, <br/> or with [Shift]+ or [Shift]+[Alt]+ <br/> to change the tool margins</p>
+    <p>_________________________________</p>
+    <p>Labels font size (use [Z][X] keys):</p>
+    <button style="width: 30%; display: inline" onclick="setLabelSize('-1')">A --</button>
+    <button style="width: 30%; display: inline" onclick="setLabelSize('+1')">A +</button>
+    <p><span class="shortcutLabel"  id="axisLabelSize"></span></p>
+
+</div>
+</body>
+<script>
+var myVizabi;
+var labelSize = "";
+var labelMargin = {};
+var toolMargin = {};
+var listPointer = 0;
+var listData = [
+    [1, 0.001, 0.001, 10000],
+    [1.00000, 10000.0],
+    [4.00000, 123.000],
+    [0.00060, 123.000],
+    [123.000, 4.00000],
+    [123.000, 0.00060],
+    [-123.00, -4.0000],
+    [-123.00, -0.0006],
+    [-4.0000, -123.00],
+    [-0.0006, -123.00],
+    [-123.00, 1800.00],
+    [1800.00, -123.00],
+    [123.000, -18000.],
+    [-18000., 123.000],
+    [-0.0006, 1800.00],
+    [1800.00, -0.0006],
+    [0.00060, -1800.0],
+    [-1800.0, 0.00060],
+    [-12.000, -2.0000],
+    [-80.000, 40.0000],
+    [5.00000, 8.00000],
+    [42.0000, 42.0000],
+    [0.00000000005, 4554545484715],
+    [-2611968678575, 4554545484715],
+    [-0.0020, 0.00200],
+    [-123, -0.1, 0.002, 1540],
+    [-123, -0.001, 0.5, 1540],
+    [123, 0.1, -0.002, -1540],
+    [123, 0.001, -0.5, -1540]
+];
+
+$(function() {
+
+    var playButton = $("#play_button");
+    var languageButton = $("#language_button");
+
+    var options = {
+        //state
+        state: url.state || {
+            scales:{
+                domain: listData[listPointer],
+                xScaleType: 'linear',
+                yScaleType: 'genericLog'
+            },
+            show:{
+                labelSize: "16px",
+                labelMargin: {LR: "5px", TB: "5px"},
+                toolMargin: {top: 30, right: 20, left: 40, bottom: 40}
+            }
+        },
+
+        //bind these events to external page
+        bind: {
+            'ready': function() {
+                parseURL();
+            },
+            'change:state': function(evt, vals) {
+                showState(vals.state);
+            }
+        }
+    };
+
+    labelSize = options.state.show.labelSize;
+    labelMargin = options.state.show.labelMargin;
+    toolMargin = options.state.show.toolMargin;
+    $("#axisLabelSize").text(labelSize).css('font-size',(labelSize));
+    $("#axisLabelMarginLR").text(labelMargin.LR);
+    $("#axisLabelMarginTB").text(labelMargin.TB);
+    $("#toolMarginleft").text(toolMargin.left);
+    $("#toolMarginbottom").text(toolMargin.bottom);
+    $("#toolMarginright").text(toolMargin.right);
+    $("#toolMargintop").text(toolMargin.top);
+    
+    myVizabi = new Vizabi("_examples/axis-labeler", "#axis-labeler", options);
+    showState(options.state);
+    
+    $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',(labelSize));
+});
+
+    
+    
+var style;
+function changeStyleTag(selector, styleProps) {
+    if(!(selector instanceof Array)) selector = [selector];
+    if(!(styleProps instanceof Array)) styleProps = [styleProps];
+    
+    if(typeof style == 'undefined') {
+        var append = true;
+        style = document.createElement('style');
+    } else {
+        while (style.hasChildNodes()) {
+            style.removeChild(style.firstChild);
+        }
+    }
+    var head = document.getElementsByTagName('head')[0];
+    var rules = document.createTextNode(
+        selector.map(function(s,ind){return s + ' { '+ styleProps[ind] +' }';}).join(" ")
+    );
+
+    style.type = 'text/css';
+    if(style.styleSheet) {
+        style.styleSheet.cssText = rules.nodeValue;
+    } else {
+        style.appendChild(rules);
+    }
+    if(append === true) head.appendChild(style);
+}    
+    
+    
+
+function setLabelSize(arg){
+    labelSize = parseFloat(labelSize) + parseFloat(arg);
+    if(labelSize<1)labelSize=1;
+    labelSize = labelSize + "px";
+    
+//    $(".vzb-bc-axis-x text, .vzb-bc-axis-y text").each(function(){
+//        $(this).css('font-size',(labelSize));
+//    })
+    $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',(labelSize));
+    
+    $(".shortcutLabel").css("color","#999");
+    $("#axisLabelSize").text(labelSize).css('font-size',(labelSize)).css("color","red");
+    var options = { state: { show: {} }};
+    options.state.show.labelSize = labelSize;
+    myVizabi.setOptions(options);
+}
+
+function setLabelMargin(arg, direction){    
+    labelMargin[direction] = parseFloat(labelMargin[direction]) + parseFloat(arg);
+    if(labelMargin[direction]<0)labelMargin[direction]=0;
+    labelMargin[direction] = labelMargin[direction] + "px";
+    
+    $(".shortcutLabel").css("color","#999");
+    $("#axisLabelMargin"+direction+"").text(labelMargin[direction]).css("color","red");
+    
+    changeStyleTag(
+        ['.vzb-bc-axis-x text', '.vzb-bc-axis-y text'],
+        ['margin: '+labelMargin.TB+' '+labelMargin.LR+' ;',
+         'margin: '+labelMargin.TB+' '+labelMargin.LR+' ;']
+    );
+    
+    var options = { state: { show: {} }};
+    options.state.show.labelMargin = labelMargin;
+    myVizabi.setOptions(options);
+}
+
+function setToolMargin(arg, direction){    
+    toolMargin[direction] = parseFloat(toolMargin[direction]) + parseFloat(arg);
+    if(toolMargin[direction]<0)toolMargin[direction]=0;
+    
+    $(".shortcutLabel").css("color","#999");
+    $("#toolMargin"+direction+"").text(toolMargin[direction]).css("color","red");
+    var options = { state: { show: {} }};
+    options.state.show.toolMargin = toolMargin;
+    myVizabi.setOptions(options);
+}
+    
+function setDomain(domain) {
+    var options = { state: { scales: {} }};
+    options.state.scales.domain = domain;
+    myVizabi.setOptions(options);
+};
+    
+function setType(type, axis) {
+    var options = { state: { scales: {} }};
+    options.state.scales[axis+"ScaleType"] = type;
+    myVizabi.setOptions(options);
+}
+
+    
+    
+
+
+function setDomain(domain) {
+    var options = { state: { scales: {} }};
+    options.state.scales.domain = domain;
+    myVizabi.setOptions(options);
+};
+    
+function setType(type, axis) {
+    var options = { state: { scales: {} }};
+    options.state.scales[axis+"ScaleType"] = type;
+    myVizabi.setOptions(options);
+}
+
+
+var list = $(".automaticListOfOptions");
+listData.forEach(function(d,i){
+    var el = $("<li><a>"+JSON.stringify(d)+"</a></li>")
+        .on("click", function(){
+            setDomain(d);
+            listPointer = i;
+            $("#listLabel").text(JSON.stringify(d));
+        })
+        .appendTo(list);
+})
+
+
+
+
+$(window).keydown(function (e){
+    e = e || window.event;
+    var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+    
+    if(!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey){
+        if (String.fromCharCode(charCode) == "r"||
+            String.fromCharCode(charCode) == "R") randomSize('axis-labeler');
+    }    
+    if(!e.shiftKey && !e.altKey && !e.ctrlKey){
+        if (String.fromCharCode(charCode) == "t"||
+            String.fromCharCode(charCode) == "T") goToExample('_examples/axis-labeler');
+    }
+    
+    if(e.shiftKey && !e.altKey ){
+        if (String.fromCharCode(charCode) == "W") setToolMargin("+1","bottom");
+        if (String.fromCharCode(charCode) == "S") setToolMargin("-1","bottom");
+        if (String.fromCharCode(charCode) == "D") setToolMargin("+1","left");
+        if (String.fromCharCode(charCode) == "A") setToolMargin("-1","left");
+    }
+    
+    if(e.shiftKey && e.altKey ){
+        if (String.fromCharCode(charCode) == "W" ||
+            charCode == 8222) setToolMargin("-1","top"); // alt + shift + W
+        if (String.fromCharCode(charCode) == "S" ||
+            charCode == 205 ) setToolMargin("+1","top"); // alt + shift + S
+        if (String.fromCharCode(charCode) == "D" ||
+            charCode == 206 ) setToolMargin("-1","right"); // alt + shift + D
+        if (String.fromCharCode(charCode) == "A" ||
+            charCode == 197 ) setToolMargin("+1","right"); // alt + shift + A
+    }
+    
+    if(!e.shiftKey && !e.altKey ){
+        if (String.fromCharCode(charCode) == "w" ||
+            String.fromCharCode(charCode) == "W") setLabelMargin("+1","TB");
+        if (String.fromCharCode(charCode) == "s" ||
+            String.fromCharCode(charCode) == "S") setLabelMargin("-1","TB");
+        if (String.fromCharCode(charCode) == "d" ||
+            String.fromCharCode(charCode) == "D") setLabelMargin("+1","LR");
+        if (String.fromCharCode(charCode) == "a" ||
+            String.fromCharCode(charCode) == "A") setLabelMargin("-1","LR");
+    }
+    
+    if (String.fromCharCode(charCode) == "x"||
+        String.fromCharCode(charCode) == "X") setLabelSize("+1");
+    if (String.fromCharCode(charCode) == "z"||
+        String.fromCharCode(charCode) == "Z") setLabelSize("-1");
+    
+    if (String.fromCharCode(charCode) == "q" || 
+        String.fromCharCode(charCode) == "e" ||
+        String.fromCharCode(charCode) == "Q" ||
+        String.fromCharCode(charCode) == "E") {
+        if (String.fromCharCode(charCode) == "e" ||
+            String.fromCharCode(charCode) == "E") listPointer++;
+        if (String.fromCharCode(charCode) == "q" ||
+            String.fromCharCode(charCode) == "Q") listPointer--;
+        if(listPointer==listData.length)listPointer=0;
+        if(listPointer==-1)listPointer=listData.length-1;
+
+        var d = listData[listPointer];
+        setDomain(d);
+        $("#listLabel").text(JSON.stringify(d));
+    }
+})
+
+</script>
+
+</body>
+</html>
