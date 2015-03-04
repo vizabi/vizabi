@@ -38,8 +38,10 @@ define(['d3'], function(d3){
             // run label factory - it will store labels in tickValues property of axis
             axis.labelFactory(options);
             
+            if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
             // construct the view (d3 constructor is used)
             _super(g);
+            if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
             
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
             var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
@@ -49,6 +51,7 @@ define(['d3'], function(d3){
                 .each(function(d,i){
                     var view = d3.select(this);
                 
+                    if(axis.pivot() == null) return;
                     view.attr("transform","rotate("+(axis.pivot()?-90:0)+")");
                     view.style("text-anchor", dimension==X?"middle":"end");
                     view.attr("x",  dimension==X?0:(-axis.tickPadding() - axis.tickSize()));
@@ -61,21 +64,21 @@ define(['d3'], function(d3){
                     view.attr("y",+view.attr("y") + shift.y);
                 })
             
-            
-            // add minor ticks
-            var minorTicks = g.selectAll(".tick.minor").data(tickValuesMinor);
-            minorTicks.exit().remove();
-            minorTicks.enter().append("line")
-                .attr("class", "tick minor");
+            if (axis.tickValuesMinor()==null) axis.tickValuesMinor([]);
+                // add minor ticks
+                var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
+                minorTicks.exit().remove();
+                minorTicks.enter().append("line")
+                    .attr("class", "tickMinor");
 
-            var tickLengthOut = axis.tickSizeMinor().outbound;
-            var tickLengthIn = axis.tickSizeMinor().inbound;
-            var scale = axis.scale();
-            minorTicks
-                .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
-                .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
-                .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
-                .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
+                var tickLengthOut = axis.tickSizeMinor().outbound;
+                var tickLengthIn = axis.tickSizeMinor().inbound;
+                var scale = axis.scale();
+                minorTicks
+                    .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
+                    .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
+                    .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
+                    .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
             
         };
         
@@ -124,9 +127,14 @@ define(['d3'], function(d3){
             if(options.scaleType!="linear"&&
                options.scaleType!="time"&&
                options.scaleType!="genericLog"&&
-               options.scaleType!="log") {
-                console.warn('please set scaleType. the only supported values are "linear", "time", "log" or "genericLog"'); 
-                return axis;
+               options.scaleType!="log" && 
+               options.scaleType!="ordinal") {
+                return axis.ticks(ticksNumber)
+                            .tickFormat(null)
+                            .tickValues(null)
+                            .tickValuesMinor(null)
+                            .pivot(null)
+                            .repositionLabels(null);
             };
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
@@ -168,7 +176,7 @@ define(['d3'], function(d3){
                     case   2: break; //100
                     case   3: break; //1000
                     case   4: break; //10000
-                    case   5: d = d/1000000; prefix = "M"; prec = 1; break; //0.1M
+                    case   5: d = d/1000; prefix = "k"; break; //0.1M
                     case   6: d = d/1000000; prefix = "M"; break; //1M
                     case   7: d = d/1000000; prefix = "M"; break; //10M
                     case   8: d = d/1000000; prefix = "M"; break; //100M
@@ -219,7 +227,7 @@ meow("********** "+orient+" **********");
             var max = d3.max([domain[0],domain[domain.length-1]]);
             var bothSidesUsed = (min<0 && max >0);
             
-            if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
+            if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale domain is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
             var tickValues = options.showOuter?[min, max]:[];
             var tickValuesMinor = [min, max];
@@ -513,7 +521,15 @@ meow("********** "+orient+" **********");
 
             
             if(tickValues!=null && tickValues.length<=2 && !bothSidesUsed)tickValues = [min, max];
-            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed)tickValues = [min, 0, max];
+            
+            if(tickValues!=null && tickValues.length<=3 && bothSidesUsed){
+                if (!collisionBetween(0,[min,max])){ 
+                    tickValues = [min, 0, max];
+                }else{
+                    tickValues = [min, max];
+                }
+            }
+            
             if(tickValues!=null) tickValues.sort(function(a,b){
                 return (orient==HORIZONTAL?-1:1)*(axis.scale()(b) - axis.scale()(a))
             });
@@ -671,10 +687,11 @@ meow("final result",tickValues);
                 
                 // compute the influence of the head-side outer label
                 var repositionHead = 
-                    Math.abs(scale(d) 
-                        - scale(tickValues[tickValues.length-1]) 
-                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[tickValues.length-1][dimension]
-                    )
+                    // take the distance between head and the tick at hand
+                    Math.abs(scale(d) - scale(tickValues[tickValues.length-1]) )
+                    // substract the shift of the tail
+                    - (dimension=="y" && orient==HORIZONTAL?-1:1) * result[tickValues.length-1][dimension]
+                    
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 
@@ -684,10 +701,11 @@ meow("final result",tickValues);
 
                 // compute the influence of the tail-side outer label
                 var repositionTail = 
-                    Math.abs(scale(d) 
-                        - scale(tickValues[0]) 
-                        - (dimension=="x" && orient==VERTICAL?-1:1) * result[0][dimension]
-                    )
+                    // take the distance between tail and the tick at hand
+                    Math.abs(scale(d) - scale(tickValues[0]) )
+                    // substract the shift of the tail
+                    - (dimension=="y" && orient==VERTICAL?-1:1) * result[0][dimension]
+                
                     - (dimension=="x") * options.widthOfOneDigit / 2 
                         * options.formatter(d).length
                     - (dimension=="x") * options.widthOfOneDigit / 2 

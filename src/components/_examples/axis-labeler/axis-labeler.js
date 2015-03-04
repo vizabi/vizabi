@@ -28,6 +28,10 @@ define([
             this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
+            
+            
+            $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
+            
 
             //component events
             this.on("resize", function() {
@@ -100,7 +104,6 @@ define([
                 case "large": tick_spacing = 100; break;
             }
             
-            
             var margin = this.model.show.toolMargin;
 
 
@@ -138,7 +141,7 @@ define([
                 .labelerOptions({
                     scaleType: this.model.scales.xScaleType,
                     toolMargin: margin,
-                    //showOuter: true,
+                    showOuter: true,
                     isPivotAuto: true,
                     isDevMode: true
                 });
@@ -150,7 +153,7 @@ define([
                 .labelerOptions({
                     scaleType: this.model.scales.yScaleType,
                     toolMargin: margin,
-                    //showOuter: true,
+                    showOuter: true,
                     //method: this.yAxis.METHOD_REPEATING
                     //limitMaxTickNumber: 0,
                     isDevMode: true

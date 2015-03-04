@@ -37,6 +37,8 @@ module.exports = function(grunt) {
         'build', //by default, just build and test
         'test:copy',
         'jasmine:prod',
+        // 'removelogging', //removes console.log
+        'copy:dist' //copies dist files
     ]);
 
     //build and deploy
@@ -56,7 +58,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test:dev', function() {
         grunt.option('force', true);
         grunt.task.run([
-            'dev-dist',
+            'dev-preview',
             'jasmine:dev:build',
             'connect:test', //run locally
         ]);
@@ -69,8 +71,8 @@ module.exports = function(grunt) {
     ]);
 
     //developer task: grunt dev
-    grunt.registerTask('dev-dist', [
-        'clean:dist', //clean dist folder
+    grunt.registerTask('dev-preview', [
+        'clean:preview', //clean preview folder
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
         'sass:dev', //compile scss
@@ -87,47 +89,45 @@ module.exports = function(grunt) {
 
     //developer task: grunt dev
     grunt.registerTask('dev', [
-        'dev-dist', //copies source to dist
+        'dev-preview', //copies source to preview
         'connect:dev', //run locally
         'watch' //watch for code changes
     ]);
 
-    //developer task: grunt dev
-    grunt.registerTask('build', [
 
-        'clean:dist', //clean dist folder
+    //TODO: merge build and build-pretty
+    //build task: grunt build
+    grunt.registerTask('build', [
+        'clean', //clean preview and dist folder
         'includereplace:build', //build AMD wrapper
         'write_plugins', //includes all tools and components in plugins.js
-        'requirejs:dist', //use requirejs for amd module
+        'requirejs:preview', //use requirejs for amd module
         'generate_styles', //generate scss
-        'sass:dist', //compile scss
+        'sass:preview', //compile scss
         'preview_pages_menu', //build preview_pages menu template
         'includereplace:preview_pages_build', //preview_pages folder
         'preview_pages_index', //build preview_pages
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts', //copies fonts (font awesome)
-
+        'copy:fonts' //copies fonts (font awesome)
     ]);
 
-    //developer task: grunt dev
+    //build task without uglifying: grunt build-pretty
     grunt.registerTask('build-pretty', [
-
-        'clean:dist', //clean dist folder
+        'clean', //clean preview folder
         'includereplace:build', //build AMD wrapper
         'write_plugins', //includes all tools and components in plugins.js
         'requirejs:pretty', //use requirejs for amd module
         'generate_styles', //generate scss
-        'sass:dist', //compile scss
+        'sass:preview', //compile scss
         'preview_pages_menu', //build preview_pages menu template
         'includereplace:preview_pages_build', //preview_pages folder
         'preview_pages_index', //build preview_pages
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts', //copies fonts (font awesome)
-
+        'copy:fonts' //copies fonts (font awesome)
     ]);
 
     //default task with connect
@@ -137,7 +137,7 @@ module.exports = function(grunt) {
         'watch' //watch for code changes
     ]);
 
-    //deploy dist folder to s3
+    //deploy preview folder to s3
     grunt.registerTask('deploy', [
         'gitinfo',
         'aws_s3'
@@ -150,78 +150,87 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        // Clean dist folder to have a clean start
+        // Clean preview and dist folders to have a clean start
         clean: {
+            preview: ["preview/*"],
             dist: ["dist/*"]
         },
 
         //gitinfo task
         gitinfo: {},
 
-        // Copy all js and template files to dist folder
+        // Copy all js and template files to preview folder
         copy: {
             preview_pages: {
                 files: [{
                     cwd: 'preview_pages',
                     src: ['assets/scripts.js', 'assets/style.css'],
-                    dest: 'dist/preview_pages/',
+                    dest: 'preview/preview_pages/',
                     expand: true
                 }, {
                     cwd: 'lib/jquery/dist/',
                     src: ['jquery.min.js'],
-                    dest: 'dist/preview_pages/assets/',
+                    dest: 'preview/preview_pages/assets/',
                     expand: true
                 }]
             },
             local_data: {
                 cwd: 'local_data',
                 src: ['**/*'],
-                dest: 'dist/local_data/',
+                dest: 'preview/local_data/',
                 expand: true
             },
             assets: {
                 cwd: 'src',
                 src: ['assets/imgs/**/*'],
-                dest: 'dist/',
+                dest: 'preview/',
                 expand: true
             },
             fonts: {
                 cwd: 'lib/font-awesome',
                 src: ['fonts/*'],
-                dest: 'dist/assets/',
+                dest: 'preview/assets/',
                 expand: true
             },
             scripts: {
                 cwd: 'src',
                 src: ['**/*.js'],
-                dest: 'dist/',
+                dest: 'preview/',
                 expand: true
             },
             templates: {
                 cwd: 'src',
                 src: ['**/*.html'],
-                dest: 'dist/',
+                dest: 'preview/',
                 expand: true
             },
             /*
-             * copy test files to dist to be able to rerun on stage
+             * copy test files to preview to be able to rerun on stage
              * this is a very specific task aimed on replaying
-             * a dist version of spec tests only
+             * a preview version of spec tests only
              */
             test: {
                 files: [{
                     cwd: '.grunt/grunt-contrib-jasmine/',
                     src: ['**/*'],
-                    dest: 'dist/test/jasmine/',
+                    dest: 'preview/test/jasmine/',
                     expand: true
                 }, {
                     cwd: 'spec/',
                     src: ['**/*'],
-                    dest: 'dist/test/spec/',
+                    dest: 'preview/test/spec/',
                     expand: true
                 }]
+            },
+            /*
+             * copy files from build to dist
+             */
+            dist: {
+                cwd: 'preview',
+                src: ['vizabi.js', 'vizabi.css'],
+                dest: 'dist/',
+                expand: true
             }
-
         },
 
         // Uglifying JS files
@@ -229,7 +238,7 @@ module.exports = function(grunt) {
             files: {
                 cwd: 'src/', // base path
                 src: '**/*.js', // source files mask
-                dest: 'dist', // destination folder
+                dest: 'preview', // destination folder
                 expand: true, // allow dynamic building
                 mangle: false, // disallow change in names
                 flatten: false // remove all unnecessary nesting
@@ -238,12 +247,12 @@ module.exports = function(grunt) {
 
         // Compile SCSS files into CSS (dev mode is not compressed)
         sass: {
-            dist: {
+            preview: {
                 options: {
                     style: 'compressed'
                 },
                 files: {
-                    'dist/vizabi.css': 'src/assets/style/vizabi.scss',
+                    'preview/vizabi.css': 'src/assets/style/vizabi.scss',
                 }
             },
             dev: {
@@ -251,7 +260,7 @@ module.exports = function(grunt) {
                     style: 'expanded'
                 },
                 files: {
-                    'dist/vizabi.css': 'src/assets/style/vizabi.scss',
+                    'preview/vizabi.css': 'src/assets/style/vizabi.scss',
                 }
             }
         },
@@ -300,18 +309,18 @@ module.exports = function(grunt) {
                     port: 9000,
                     livereload: 35729,
                     hostname: 'localhost',
-                    open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/dist/preview_pages/'
+                    open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/preview/preview_pages/'
                 }
             },
         },
 
         requirejs: {
             // Options: https://github.com/jrburke/r.js/blob/master/build/preview_page.build.js
-            dist: {
+            preview: {
                 options: {
                     baseUrl: "src/",
                     mainConfigFile: "src/config.js",
-                    out: "dist/vizabi.js",
+                    out: "preview/vizabi.js",
                     optimize: "uglify",
                     generateSourceMaps: false,
                 }
@@ -321,7 +330,7 @@ module.exports = function(grunt) {
                 options: {
                     baseUrl: "src/",
                     mainConfigFile: "src/config.js",
-                    out: "dist/vizabi.js",
+                    out: "preview/vizabi.js",
                     generateSourceMaps: false,
                 }
             }
@@ -337,7 +346,7 @@ module.exports = function(grunt) {
                         match: /spec\//g,
                         replacement: 'test/spec/'
                     }, {
-                        match: /dist\//g,
+                        match: /preview\//g,
                         replacement: ''
                     }]
                 },
@@ -345,7 +354,7 @@ module.exports = function(grunt) {
                     expand: true,
                     flatten: true,
                     src: ['test.html'],
-                    dest: 'dist/'
+                    dest: 'preview/'
                 }]
             }
         },
@@ -369,7 +378,7 @@ module.exports = function(grunt) {
                     }
                 },
                 src: 'preview_pages/**/*.html',
-                dest: 'dist/'
+                dest: 'preview/'
             },
             //build preview_pages with require
             preview_pages_dev: {
@@ -381,14 +390,14 @@ module.exports = function(grunt) {
                     }
                 },
                 src: 'preview_pages/**/*.html',
-                dest: 'dist/'
+                dest: 'preview/'
             }
         },
 
         //run tests
         jasmine: {
             dev: {
-                src: 'dist/vizabi.js',
+                src: 'preview/vizabi.js',
                 options: {
                     outfile: 'test.html',
                     keepRunner: true,
@@ -397,23 +406,23 @@ module.exports = function(grunt) {
                     host: 'http://<%= connect.test.options.hostname %>:<%= connect.test.options.port %>/',
                     template: require('grunt-template-jasmine-requirejs'),
                     templateOptions: {
-                        requireConfigFile: 'dist/config.js',
+                        requireConfigFile: 'preview/config.js',
                         requireConfig: {
-                            baseUrl: 'dist/'
+                            baseUrl: 'preview/'
                         }
                     },
-                    styles: ['dist/vizabi.css', 'spec/spec.css'],
-                    vendor: ['dist/preview_pages/assets/jquery.min.js']
+                    styles: ['preview/vizabi.css', 'spec/spec.css'],
+                    vendor: ['preview/preview_pages/assets/jquery.min.js']
                 }
             },
             prod: {
-                src: 'dist/vizabi.js',
+                src: 'preview/vizabi.js',
                 options: {
                     outfile: 'test.html',
                     specs: 'spec/**/*-spec.js',
                     helpers: 'spec/**/*-helper.js',
-                    styles: ['dist/vizabi.css', 'spec/spec.css'],
-                    vendor: ['dist/preview_pages/assets/jquery.min.js'],
+                    styles: ['preview/vizabi.css', 'spec/spec.css'],
+                    vendor: ['preview/preview_pages/assets/jquery.min.js'],
                     page: {
                         //laptopsize
                         viewportSize: {
@@ -424,6 +433,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+
+        //removes console.log from output file
+        removelogging: {
+            preview: {
+                src: "preview/vizabi.js",
+                options: {
+                    methods: ['log'] //only log
+                }
+            }
+        },
+
         //upload to s3 task
         aws_s3: {
             options: {
@@ -437,7 +457,7 @@ module.exports = function(grunt) {
                 },
                 files: [{
                     expand: true,
-                    cwd: 'dist/',
+                    cwd: 'preview/',
                     src: ['**'],
                     dest: aws.AWS_SUBFOLDER + '/<%= (process.env.TRAVIS_BRANCH || gitinfo.local.branch.current.name) %>/'
                 }]
@@ -452,7 +472,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('preview_pages_index', 'Writes preview_pages index', function() {
 
-        var preview_pages_folder = 'dist/preview_pages/',
+        var preview_pages_folder = 'preview/preview_pages/',
             preview_pages_index = preview_pages_folder + 'index.html',
             contents = '<link rel="stylesheet" href="assets/style.css">' +
             '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />' +

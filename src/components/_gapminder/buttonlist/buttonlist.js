@@ -102,7 +102,7 @@ define([
          */
         domReady: function() {
             var _this = this,
-                buttons = d3.selectAll(".vzb-buttonlist-btn");
+                buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
             //activate each dialog when clicking the button
             buttons.on('click', function() {
@@ -118,7 +118,7 @@ define([
                 }
             });
 
-            close_buttons = d3.selectAll("[data-click='closeDialog']");
+            close_buttons = this.element.selectAll("[data-click='closeDialog']");
             close_buttons.on('click', function() {
                 _this.closeAllDialogs();
             });
@@ -141,8 +141,8 @@ define([
         openDialog: function(id) {
 
             this.closeAllDialogs();
-            var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-                dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+                dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
             //remove classes
             btn.classed(class_active, true);
@@ -155,8 +155,8 @@ define([
          */
         closeDialog: function(id) {
 
-            var btn = d3.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-                dialog = d3.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+                dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
             //remove classes
             btn.classed(class_active, false);
@@ -168,8 +168,8 @@ define([
          */
         closeAllDialogs: function() {
             //remove classes
-            var all_btns = d3.selectAll(".vzb-buttonlist-btn"),
-                all_dialogs = d3.selectAll(".vzb-buttonlist-dialog");
+            var all_btns = this.element.selectAll(".vzb-buttonlist-btn"),
+                all_dialogs = this.element.selectAll(".vzb-buttonlist-dialog");
             all_btns.classed(class_active, false);
             all_dialogs.classed(class_active, false);
         }
