@@ -18,12 +18,8 @@ define([
                 placeholder: '.vzb-tool-title'
             }, {
                 component: '_gapminder/line-chart',
-                placeholder: '.vzb-tool-viz',
+                placeholder: '.vzb-tool-stage',
                 model: ["state.time", "state.entities", "state.marker", "language"]
-            }, {
-                component: '_gapminder/timeslider',
-                placeholder: '.vzb-tool-timeslider',
-                model: ["state.time"]
             },{
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',

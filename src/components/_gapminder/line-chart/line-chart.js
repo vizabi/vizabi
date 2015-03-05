@@ -30,6 +30,13 @@ define([
                 name: "language",
                 type: "language"
             }];
+            
+            
+            this.components = [{
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-lc-timeslider',
+                model: ["time"]
+            }];
 
             
             this.model_binds = {
@@ -78,6 +85,9 @@ define([
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
             this.linesContainer = this.graph.select('.vzb-lc-lines');
+            
+            this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
+            this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
             this.entities = null;
             this.totalLength_1 = {};
 
@@ -165,17 +175,17 @@ define([
 
             this.profiles = {
                 "small": {
-                    margin: { top: 30, right: 20, left: 40, bottom: 40},
+                    margin: { top: 30, right: 20, left: 40, bottom: 60},
                     tick_spacing: 60,
                     text_padding: 5
                 },
                 "medium": {
-                    margin: {top: 30,right: 60,left: 60,bottom: 40},
+                    margin: {top: 30,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
                     text_padding: 10
                 },
                 "large": {
-                    margin: { top: 30, right: 60, left: 60, bottom: 40},
+                    margin: { top: 30, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
                     text_padding: 15
                 }
@@ -214,6 +224,7 @@ define([
             this.graph
                 .attr("width", this.width + this.margin.right + this.margin.left)
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
+                .select("g")
                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
             //year
@@ -248,9 +259,24 @@ define([
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
+            
 
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
+            
+            this.timeSlider.classed("vzb-ts-axis-aligned", true);
+            
+            this.timeSlider.select(".vzb-ts-slider-wrapper")
+                .style("right", this.margin.right)
+            
+            var tsProfiles = this.components[0].getSetProfile();
+            
+            tsProfiles[this.components[0].getLayoutProfile()].margin = 
+                {bottom: 0, left: 5, right: 5, top: 0};
+            
+            this.components[0].getSetProfile(tsProfiles);
+            this.components[0].resize();
+            
             
             this.sizeUpdatedOnce = true;
         },

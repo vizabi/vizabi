@@ -66,7 +66,7 @@ define([
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = "components/_gapminder/timeslider/timeslider";
+            this.template = this.template||"components/_gapminder/timeslider/timeslider";
 
             //define expected models/hooks for this component
             this.model_expects = [{
@@ -95,6 +95,11 @@ define([
                 show_value: false,
                 show_button: true
             }, this.ui);
+            
+            
+            //defaults
+            this.width = 0;
+            this.height = 0;
         },
 
         /**
@@ -133,7 +138,7 @@ define([
                 .tickSize(0);
 
             //Value
-            this.valueText.attr("text-anchor", "middle");
+            this.valueText.attr("text-anchor", "middle").attr("dy","-1em");
 
             var brushed = _this._getBrushed(),
                 brushedEnd = _this._getBrushedEnd();
@@ -187,35 +192,47 @@ define([
 
             this.profile = profiles[this.getLayoutProfile()];
 
-            var slider_w = parseInt(this.slider_outer.style("width"), 10),
-                slider_h = parseInt(this.slider_outer.style("height"), 10),
-                width = slider_w - this.profile.margin.left - this.profile.margin.right,
-                height = slider_h - this.profile.margin.bottom - this.profile.margin.top,
-                _this = this;
+            var slider_w = parseInt(this.slider_outer.style("width"), 10);
+            var slider_h = parseInt(this.slider_outer.style("height"), 10);
+            this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
+            this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
+            var _this = this;
 
             //translate according to margins
             this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
             //adjust scale with width
-            this.xScale.range([0, width]);
+            this.xScale.range([0, this.width]);
 
             //adjust axis with scale
             this.xAxis = this.xAxis.scale(this.xScale)
                 .tickPadding(this.profile.label_spacing);
 
-            this.axis.attr("transform", "translate(0," + height / 2 + ")")
+            this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
                 .call(this.xAxis);
 
             this.slide.select(".background")
-                .attr("height", height);
+                .attr("height", this.height);
 
             //size of handle
-            this.handle.attr("transform", "translate(0," + height / 2 + ")")
+            this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
                 .attr("r", this.profile.radius);
 
             //set handle at current position
             this._setHandle(this.model.time.playing);
 
+        },
+        
+        
+        /**
+         * Getter and setter for styling profile
+         * @returns {Structure} current profile if not set
+         * @returns {class} this if set
+         */
+        getSetProfile: function(arg){
+            if (!arguments.length) return profiles;
+            profiles = arg;
+            return this;
         },
 
         /**
@@ -285,16 +302,16 @@ define([
                     .ease("linear")
                     .attr("cx", new_pos);
 
-                this.valueText.attr("transform", "translate(" + old_pos + ",0)")
+                this.valueText.attr("transform", "translate(" + old_pos + ","+(this.height/2)+")")
                     .transition()
                     .duration(speed)
                     .ease("linear")
-                    .attr("transform", "translate(" + new_pos + ",0)");
+                    .attr("transform", "translate(" + new_pos + ","+(this.height/2)+")");
 
             } else {
                 var pos = this.xScale(value);
                 this.handle.attr("cx", pos);
-                this.valueText.attr("transform", "translate(" + pos + ",0)");
+                this.valueText.attr("transform", "translate(" + pos + ","+(this.height/2)+")");
             }
         },
 
