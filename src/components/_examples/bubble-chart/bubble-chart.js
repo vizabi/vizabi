@@ -3,14 +3,6 @@ define([
     'd3',
     'base/component'
 ], function($, d3, Component) {
-
-    function order(a, b) {
-        return radius(b) - radius(a);
-    }
-
-    function radius(d, indicator) {
-        return d.pop;
-    }
     
     function radiusToArea(r){return r*r*Math.PI}
     function areaToRadius(a){return Math.sqrt(a/Math.PI)}
@@ -318,6 +310,11 @@ define([
             switch (shape){
                 case "circle":
                 this.bubbles
+                    .sort(function(a, b){
+                        var valueA = _this.model.marker.size.getValue(a)||_this.sScale.domain()[0];
+                        var valueB = _this.model.marker.size.getValue(b)||_this.sScale.domain()[0];
+                        return _this.sScale(valueB) - _this.sScale(valueA);                
+                    })
                     .style("fill", function(d) {
                         return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
                     })
