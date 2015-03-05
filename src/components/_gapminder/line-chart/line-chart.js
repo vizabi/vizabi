@@ -264,17 +264,24 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
             
+            
+            // make the timeslider aligned with X-axis
+            // set CSS option for time slider
             this.timeSlider.classed("vzb-ts-axis-aligned", true);
             
+            // set the right margin that depends on longest label width
             this.timeSlider.select(".vzb-ts-slider-wrapper")
                 .style("right", this.margin.right)
             
+            // override the sizing profile of time slider
             var tsProfiles = this.components[0].getSetProfile();
             
             tsProfiles[this.components[0].getLayoutProfile()].margin = 
                 {bottom: 0, left: 5, right: 5, top: 0};
             
             this.components[0].getSetProfile(tsProfiles);
+            
+            // call resize of a child component to apply the changes
             this.components[0].resize();
             
             
