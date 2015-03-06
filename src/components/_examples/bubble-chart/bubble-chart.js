@@ -4,14 +4,6 @@ define([
     'base/component'
 ], function($, d3, Component) {
 
-    function order(a, b) {
-        return radius(b) - radius(a);
-    }
-
-    function radius(d, indicator) {
-        return d.pop;
-    }
-    
     function radiusToArea(r){return r*r*Math.PI}
     function areaToRadius(a){return Math.sqrt(a/Math.PI)}
 
@@ -173,6 +165,16 @@ define([
             this.xAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_x.getTick(d);
             });
+            
+            
+            // get array of GEOs, sorted by the size hook
+            // that makes larger bubbles go behind the smaller ones
+            this.data = this.model.marker.label.getItems({ time: _this.model.time.end })
+                .sort(function(a,b){
+                    var valueA = _this.model.marker.size.getValue(a)||_this.sScale.domain()[0];
+                    var valueB = _this.model.marker.size.getValue(b)||_this.sScale.domain()[0];
+                    return _this.sScale(valueB) - _this.sScale(valueA);                
+                });
 
         },
 
@@ -185,11 +187,11 @@ define([
             var _this = this;
             
             this.time = this.model.time.value;
-            this.data = this.model.marker.label.getItems({ time: this.time });
+            //this.data = this.model.marker.label.getItems({ time: this.time });
             
             this.yearEl.text(this.time.getFullYear().toString());
             this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data);
+                .data(this.data.map(function(d){d.time = _this.time; return d}));
             
             this.timeUpdatedOnce = true;
         },
