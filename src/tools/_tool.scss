@@ -22,6 +22,10 @@
         @include absolute($heightTitle, 0px, 0px, 0px);
         .vzb-tool-stage {
             @include absolute(0px, $sizeButtonList, 0px, 0px);
+            
+            /*this supposed to improve performance by giving browser a hint that tool shoul be a separate layer*/
+            /*tests: macbook 45->55 fps, mobile: 10->15 fps*/
+            transform: translate3d(0,0,0);
             .vzb-tool-viz {
                 @include absolute(0px, 0px, $sizeTimeSlider, 0px);
             }
