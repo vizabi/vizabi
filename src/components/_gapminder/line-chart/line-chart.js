@@ -85,6 +85,7 @@ define([
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
             this.linesContainer = this.graph.select('.vzb-lc-lines');
+            this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
             
             this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
             this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
@@ -154,7 +155,7 @@ define([
 
             this.entities = this.linesContainer.selectAll('.vzb-lc-entity')
                 .data(this.data);
-            
+               
             this.timeUpdatedOnce = true;
 
         },
@@ -267,6 +268,8 @@ define([
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
             
+            // adjust the vertical dashed line
+            this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1]);
             
             // make the timeslider aligned with X-axis
             // set CSS option for time slider
@@ -411,6 +414,14 @@ define([
                     d3.timer.flush();
                 })
             
+            
+                this.verticalNow
+                    .transition()
+                    .duration(_this.model.time.playing?_this.duration*0.9:0)
+                    .ease("linear")
+                    .attr("x1",this.xScale(this.time))
+                    .attr("x2",this.xScale(this.time));
+                
             
         }
 

@@ -29,7 +29,10 @@
     .vzb-lc-axis-y-title, .vzb-lc-axis-x-title {
         @extend .vzb-lc-title;
     }
-
+    .vzb-lc-vertical-now {
+        stroke-dasharray: 2 4;
+        stroke: #999999;
+    }
     .vzb-lc-line {
         fill: none;
         stroke-width: 11px;
