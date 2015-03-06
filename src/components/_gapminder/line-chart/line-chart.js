@@ -177,17 +177,20 @@ define([
                 "small": {
                     margin: { top: 30, right: 20, left: 40, bottom: 60},
                     tick_spacing: 60,
-                    text_padding: 5
+                    text_padding: 8,
+                    lollipopRadius: 6 
                 },
                 "medium": {
                     margin: {top: 30,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
-                    text_padding: 10
+                    text_padding: 10,
+                    lollipopRadius: 8
                 },
                 "large": {
                     margin: { top: 30, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
-                    text_padding: 15
+                    text_padding: 15,
+                    lollipopRadius: 10
                 }
             };
 
@@ -312,11 +315,17 @@ define([
                     group.append("path")
                         .attr("class", "vzb-lc-line-shadow")
                         .style("stroke", d3.rgb(color).darker(0.3))
-                        .attr("transform", "translate(0,2)");     
+                        .attr("transform", "translate(0,1)");     
                     
                     group.append("path")
                         .attr("class", "vzb-lc-line")
                         .style("stroke", color)
+                        .attr("data-tooltip", label);
+                
+                    group.append("circle")
+                        .attr("class", "vzb-lc-circle")
+                        .style("fill", color)
+                        .style("stroke", d3.rgb(color).darker(0.3))
                         .attr("data-tooltip", label);
                 
                     group.append("text")
@@ -340,6 +349,7 @@ define([
                         .attr("d", _this.line(xy));
                     var path2 = group.select(".vzb-lc-line")
                         .attr("d", _this.line(xy));
+
                     
                     // this section ensures the smooth transition while playing and not needed otherwise
                     if(_this.model.time.playing){
@@ -375,9 +385,18 @@ define([
 
                         path2
                           .attr("stroke-dasharray", "none")
-                          .attr("stroke-dashoffset", "none"); 
+                          .attr("stroke-dashoffset", "none");                       
                     }
                 
+                
+                    group.select(".vzb-lc-circle")
+                        .transition()
+                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .ease("linear")
+                        .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
+                        .attr("cx", _this.xScale(_this.model.marker.axis_x.getValue(d)) )
+                        .attr("cy", _this.yScale(_this.model.marker.axis_y.getValue(d)) + 1);     
+
                     group.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.model.time.playing?_this.duration*0.9:0)
