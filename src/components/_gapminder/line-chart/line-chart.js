@@ -137,7 +137,7 @@ define([
             
             //line template
             this.line = d3.svg.line()
-                .interpolate("cardinal")
+                .interpolate("basis")
                 .x(function(d) {return _this.xScale(d[0]); })
                 .y(function(d) {return _this.yScale(d[1]); });
         },
@@ -346,8 +346,11 @@ define([
                     //TODO: optimization is possible if getValues would return both x and time
                     var x = _this.model.marker.axis_x.getValues(d);
                     var y = _this.model.marker.axis_y.getValues(d);
-                    var xy = x.map(function(d,i){return [+x[i],+y[i]]}); 
+                    var xy = x.map(function(d,i){return [+x[i],+y[i]]});
                     
+                    // the following fixes the ugly line butts sticking out of the axis line
+                    if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
+                
                     var path1 = group.select(".vzb-lc-line-shadow")
                         .attr("d", _this.line(xy));
                     var path2 = group.select(".vzb-lc-line")
