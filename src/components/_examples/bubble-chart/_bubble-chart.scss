@@ -20,7 +20,7 @@ $vzb-bc-year-size:300px;
     font-family: $vzb-font-family;
     .vzb-bc-bubble {
         @include opacity(0.8);
-        stroke: white; 
+        stroke: white;
         cursor: pointer;
         &:hover {
             @include opacity(1);
@@ -79,10 +79,22 @@ $vzb-bc-year-size:300px;
         user-select: none;
     }
 }
+&.vzb-large {
+    .vzb-bubble-chart-svg {
+        .vzb-bc-bubble {
+            stroke-opacity: 1.0;
+        }
+    }
+}
 &.vzb-medium {
     .vzb-bubble-chart {
         .vzb-bc-year {
             @include font-size($vzb-bc-year-size / 3 * 2);
+        }
+    }
+    .vzb-bubble-chart-svg {
+        .vzb-bc-bubble {
+            stroke-opacity: 0.8;
         }
     }
 }
@@ -93,6 +105,11 @@ $vzb-bc-year-size:300px;
         }
         .vzb-bc-year {
             @include font-size($vzb-bc-year-size / 3);
+        }
+    }
+    .vzb-bubble-chart-svg {
+        .vzb-bc-bubble {
+            stroke-opacity: 0.6;
         }
     }
 }
