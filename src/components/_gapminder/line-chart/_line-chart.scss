@@ -46,8 +46,11 @@
     .vzb-lc-circle {
         stroke-width: 3px
     }
-    .vzb-lc-label {
+    .vzb-lc-labelName {
         font-size: 1.8em;
+    } 
+    .vzb-lc-labelValue {
+        font-size: 1.3em;
     }
 }
 &.vzb-medium {
@@ -62,8 +65,11 @@
         .vzb-lc-circle {
             stroke-width: 2px
         }
-        .vzb-lc-label {
+        .vzb-lc-labelName {
             font-size: 1.5em;
+        }
+        .vzb-lc-labelValue {
+            font-size: 1.2em;
         }
     }
 }
@@ -79,8 +85,11 @@
         .vzb-lc-circle {
             stroke-width: 1px
         }        
-        .vzb-lc-label {
+        .vzb-lc-labelName {
             font-size: 1.2em;
+        }
+        .vzb-lc-labelValue {
+            font-size: 1.0em;
         }
     }
 }
