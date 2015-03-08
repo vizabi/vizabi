@@ -221,7 +221,6 @@ define([
 
             this.margin.right = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
 
-            console.log(this.margin.right)
 
             //stage
             this.height = parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom;
@@ -418,7 +417,7 @@ define([
                         .ease("linear")
                         .attr("transform","translate(" + _this.xScale(_this.time) + "," + _this.yScale(y[y.length-1]) + ")" );
                 
-                    var value = _this.yAxis.tickFormat()(y[y.length-1]);
+                    var value = _this.data.length<6? _this.yAxis.tickFormat()(y[y.length-1]) : "";
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                 
                     var t = group.select(".vzb-lc-labelName")
