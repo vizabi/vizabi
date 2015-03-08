@@ -184,19 +184,20 @@ define([
                 "medium": {
                     margin: {top: 30,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
-                    text_padding: 10,
+                    text_padding: 12,
                     lollipopRadius: 8
                 },
                 "large": {
                     margin: { top: 30, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
-                    text_padding: 15,
+                    text_padding: 20,
                     lollipopRadius: 10
                 }
             };
 
-            this.margin = this.profiles[this.getLayoutProfile()].margin;
-            this.tick_spacing = this.profiles[this.getLayoutProfile()].tick_spacing;
+            this.activeProfile = this.profiles[this.getLayoutProfile()];
+            this.margin = this.activeProfile.margin;
+            this.tick_spacing = this.activeProfile.tick_spacing;
 
 
 
@@ -209,17 +210,18 @@ define([
             var lineLabelsView = this.linesContainer.selectAll(".samplingView").data(lineLabelsText);
             lineLabelsView
                 .enter().append("text")
-                .attr("class","samplingView vzb-lc-label")
+                .attr("class","samplingView vzb-lc-labelName")
                 .style("opacity",0)
-                .text(function(d){return d})
+                .text(function(d){ return (d.length<13? d : d.substring(0, 10)+'...') })
                 .each(function(d){
-                    if(longestLabelWidth > this.getBBox().width) return;
-                    longestLabelWidth = this.getBBox().width
+                    if(longestLabelWidth > this.getComputedTextLength()) return;
+                    longestLabelWidth = this.getComputedTextLength();
                 })
                 .remove();
 
-            this.margin.right = Math.max(this.margin.right, longestLabelWidth + 20);
+            this.margin.right = Math.max(this.margin.right, longestLabelWidth + this.activeProfile.text_padding + 20);
 
+            console.log(this.margin.right)
 
             //stage
             this.height = parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom;
@@ -331,17 +333,24 @@ define([
                         .style("stroke", d3.rgb(color).darker(0.3))
                         .attr("data-tooltip", label);
                 
-                    group.append("text")
-                        .attr("class", "vzb-lc-label")
-                        .attr("dy", ".35em")
+                    var labelGroup = group.append("g").attr("class", "vzb-lc-label");
+                
+                    labelGroup.append("text")
+                        .attr("class", "vzb-lc-labelName")
                         .style("fill", d3.rgb(color).darker(0.3))
-                        .text(label.length<13? label : label.substring(0, 10)+'...');
+                        .attr("dy", ".35em");
+                
+                    labelGroup.append("text")
+                        .attr("class", "vzb-lc-labelValue")
+                        .style("fill", d3.rgb(color).darker(0.3))
+                        .attr("dy", "1.6em");
                 })
             
             
             this.entities
                 .each(function(d,i){
                     var group = d3.select(this);       
+                    var label = _this.model.marker.label.getValue(d);
                     
                     //TODO: optimization is possible if getValues would return both x and time
                     var x = _this.model.marker.axis_x.getValues(d);
@@ -407,10 +416,25 @@ define([
                         .transition()
                         .duration(_this.model.time.playing?_this.duration*0.9:0)
                         .ease("linear")
-                        .attr("transform", function(d) {
-                            return "translate(" + _this.xScale(x[x.length-1]) + "," + _this.yScale(y[y.length-1]) + ")";
-                        })
-                        .attr("x", _this.profiles[_this.getLayoutProfile()].text_padding);
+                        .attr("transform","translate(" + _this.xScale(_this.time) + "," + _this.yScale(y[y.length-1]) + ")" );
+                
+                    var value = _this.yAxis.tickFormat()(y[y.length-1]);
+                    var name = label.length<13? label : label.substring(0, 10)+'...';
+                
+                    var t = group.select(".vzb-lc-labelName")
+                        .attr("dx", _this.activeProfile.text_padding)
+                        .text(name + " " + value);
+                
+                    group.select(".vzb-lc-labelValue")
+                        .attr("dx", _this.activeProfile.text_padding)
+                        .text("");
+                
+                    // if too little space on the right, break up the text in two lines
+                    if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
+                        + _this.activeProfile.text_padding > _this.width + _this.margin.right){
+                        group.select(".vzb-lc-labelName").text(name);
+                        group.select(".vzb-lc-labelValue").text(value);
+                    }
                 
                     // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                     // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
