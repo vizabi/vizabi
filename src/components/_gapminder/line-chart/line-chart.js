@@ -116,7 +116,7 @@ define([
             
             
             var titleString = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
-                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + "\u2013"
+                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
                 + d3.time.format(this.model.time.formatInput)(this.model.time.start)
                 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
@@ -423,7 +423,8 @@ define([
                     .duration(_this.model.time.playing?_this.duration*0.9:0)
                     .ease("linear")
                     .attr("x1",this.xScale(this.time))
-                    .attr("x2",this.xScale(this.time));
+                    .attr("x2",this.xScale(this.time))
+                    .style("opacity",this.time-this.model.time.start==0?0:1);
                 
             
         }
