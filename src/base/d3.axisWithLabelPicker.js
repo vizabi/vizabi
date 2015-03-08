@@ -230,7 +230,7 @@ meow("********** "+orient+" **********");
             if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale domain is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
             var tickValues = options.showOuter?[min, max]:[];
-            var tickValuesMinor = [min, max];
+            var tickValuesMinor = []; //[min, max];
             var ticksNumber = 5;
             
             function getBaseLog(x, base) {
