@@ -11,7 +11,9 @@ define([
     var class_playing = "vzb-playing",
         class_hide_play = "vzb-ts-hide-play-button",
         class_dragging = "vzb-ts-dragging",
-        class_show_value = "vzb-ts-show-value";
+        class_axis_aligned = "vzb-ts-axis-aligned",
+        class_show_value = "vzb-ts-show-value",
+        class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
     var time_formats = {
         "year": d3.time.format("%Y"),
@@ -93,7 +95,9 @@ define([
             this.ui = _.extend({
                 show_limits: false,
                 show_value: false,
-                show_button: true
+                show_value_when_drag_play: true,
+                show_button: true,
+                class_axis_aligned: false
             }, this.ui);
             
             
@@ -332,6 +336,8 @@ define([
 
             var show_limits = this.ui.show_limits,
                 show_value = this.ui.show_value,
+                show_value_when_drag_play = this.ui.show_value_when_drag_play,
+                axis_aligned = this.ui.axis_aligned,
                 show_play = (this.ui.show_button) && (this.model.time.playable);
 
             if (!show_limits) this.xAxis.tickValues([]).ticks(0);
@@ -339,6 +345,8 @@ define([
             this.element.classed(class_hide_play, !show_play);
             this.element.classed(class_playing, this.model.time.playing);
             this.element.classed(class_show_value, show_value);
+            this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
+            this.element.classed(class_axis_aligned, axis_aligned);
         },
     });
 

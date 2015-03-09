@@ -96,9 +96,6 @@ $vzb-ts-value-width: 40px;
                 opacity: 0;
             }
         }
-        .vzb-ts-slider-value {
-            display: block !important;
-        }
     }
     &.vzb-ts-hide-play-button {
         .vzb-ts-btns {
@@ -108,10 +105,14 @@ $vzb-ts-value-width: 40px;
             @include absolute(5px, 9px, 5px, 5px);
         }
     }
-    &.vzb-ts-show-value, &.vzb-ts-dragging {
-        .vzb-ts-slider-value {
-            display: block !important;
-        }
+    &.vzb-ts-show-value {
+        .vzb-ts-slider-value {display: block !important;}
+    }    
+    &.vzb-playing.vzb-ts-show-value-when-drag-play {
+        .vzb-ts-slider-value {display: block !important;}
+    }
+    &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
+        .vzb-ts-slider-value {display: block !important;}
     }
 }
 &.vzb-small {
