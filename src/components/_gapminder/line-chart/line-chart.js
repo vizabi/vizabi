@@ -448,27 +448,29 @@ define([
                         .ease("linear")
                         .attr("transform","translate(" + _this.xScale(_this.time) + "," + _this.yScale(y[y.length-1]) + ")" );
                 
-                    var value = _this.data.length<6? _this.yAxis.tickFormat()(y[y.length-1]) : "";
+                    var value = _this.yAxis.tickFormat()(y[y.length-1]);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                 
                     var t = group.select(".vzb-lc-labelName")
                         .attr("dx", _this.activeProfile.text_padding)
-                        .text(name + " " + value);
+                        .text(name + " " + (_this.data.length<6?value:""));
                 
                     group.select(".vzb-lc-labelValue")
                         .attr("dx", _this.activeProfile.text_padding)
                         .text("");
-                
-                    // if too little space on the right, break up the text in two lines
-                    if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
-                        + _this.activeProfile.text_padding > _this.width + _this.margin.right){
-                        group.select(".vzb-lc-labelName").text(name);
-                        group.select(".vzb-lc-labelValue").text(value);
+                    
+                    if(_this.data.length<6){
+                        // if too little space on the right, break up the text in two lines
+                        if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
+                            + _this.activeProfile.text_padding > _this.width + _this.margin.right){
+                            group.select(".vzb-lc-labelName").text(name);
+                            group.select(".vzb-lc-labelValue").text(value);
+                        }
                     }
                 
                     // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                     // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-                    d3.timer.flush();
+                    if(!_this.model.time.playing)d3.timer.flush();
                 })
             
             
