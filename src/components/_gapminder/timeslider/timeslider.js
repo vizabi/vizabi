@@ -325,7 +325,12 @@ define([
          */
         _setTime: function(time) {
             //update state
-            this.model.time.value = time;
+            var _this = this,
+                frameRate = 50; //avoid updating more than once in 50ms
+            this._updTime = this._updTime || _.throttle(function(time) {
+                _this.model.time.value = time;
+            }, frameRate);
+            this._updTime(time);
         },
 
         /**

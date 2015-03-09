@@ -306,7 +306,7 @@ define([
             //blocking update should be from the events level
             if (this._blockUpdate) return;
             var _this = this;
-            this._modelReady = this._update || _.throttle(function() {
+            this._modelReady = this._modelReady || _.throttle(function() {
                 _.each(_this.components, function(component) {
                     component.modelReady(evt);
                 });
