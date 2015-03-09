@@ -272,7 +272,8 @@ define([
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: margin
+                    toolMargin: margin,
+                    limitMaxTickNumber: 6 
                 });
 
             this.xAxis.scale(this.xScale)

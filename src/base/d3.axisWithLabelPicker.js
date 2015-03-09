@@ -200,7 +200,7 @@ define(['d3'], function(d3){
             if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
             
             if(options.showOuter==null)options.showOuter = false;
-            if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 10;
+            if(options.limitMaxTickNumber==null)options.limitMaxTickNumber = 0; //0 is unlimited
 
             var orient = this.orient()=="top"||this.orient()=="bottom"?HORIZONTAL:VERTICAL;
 
@@ -487,6 +487,10 @@ meow("********** "+orient+" **********");
                 var avoidCollidingWith = [].concat(tickValues);
                 
                 ticksNumber = Math.max(Math.floor(lengthRange / estLongestLabelLength), 2);
+                
+                // limit maximum ticks number
+                if(options.limitMaxTickNumber!=0 && ticksNumber>options.limitMaxTickNumber)ticksNumber = options.limitMaxTickNumber;
+                
                 var addLabels = axis.scale().ticks.apply(axis.scale(), [ticksNumber])
                     .sort(d3.ascending)
                     .filter(function(d){return min<=d&&d<=max}); 

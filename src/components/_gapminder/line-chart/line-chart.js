@@ -260,7 +260,8 @@ define([
             this.yAxis.scale(this.yScale)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: {top: 5, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom}
+                    toolMargin: {top: 5, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom},
+                    limitMaxTickNumber: 6
                     //showOuter: true
                 });
             
