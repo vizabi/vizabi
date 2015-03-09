@@ -191,10 +191,10 @@ define(['d3'], function(d3){
                 // use manual formatting for the cases above
                 return (d3.format("."+prec+format)(d)+prefix).replace("G","B");
             }
-            if(options.cssMarginLeft==null||parseInt(options.cssMarginLeft)<0) options.cssMarginLeft = "5px";
-            if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<0) options.cssMarginRight = "5px";
-            if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<0) options.cssMarginTop = "5px";
-            if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<0) options.cssMarginBottom = "5px";
+            if(options.cssMarginLeft==null||parseInt(options.cssMarginLeft)<3) options.cssMarginLeft = "3px";
+            if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<3) options.cssMarginRight = "3px";
+            if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<3) options.cssMarginTop = "3px";
+            if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<3) options.cssMarginBottom = "3px";
             if(options.toolMargin==null) options.toolMargin = {left: 30, bottom: 30, right: 30, top: 30};
 
             if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
