@@ -45,6 +45,7 @@ define([
                     if(evt.indexOf('change:time') === -1) {
                          _this.updateShow();
                          _this.redrawDataPoints();
+                        _this.redrawTimeLabel();
                     }
                 },
                 "ready":  function(evt) {
@@ -52,10 +53,12 @@ define([
                     _this.updateSize();
                     _this.updateTime();
                     _this.redrawDataPoints();
+                    _this.redrawTimeLabel();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
                     _this.redrawDataPoints();
+                    _this.redrawTimeLabel();
                 }
             }
                         
@@ -84,11 +87,15 @@ define([
             this.yAxisEl = this.graph.select('.vzb-lc-axis-y');
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
+            this.yearEl = this.graph.select('.vzb-lc-year');
             this.linesContainer = this.graph.select('.vzb-lc-lines');
             this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
             
             this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
             this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
+            this.components[0].ui.show_value_when_drag_play = false;
+            this.components[0].ui.axis_aligned = true;
+            
             this.entities = null;
             this.totalLength_1 = {};
 
@@ -97,6 +104,7 @@ define([
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
+                _this.redrawTimeLabel();
             })
         },
 
@@ -264,6 +272,8 @@ define([
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
+            this.yearEl.attr("transform", "translate(0," + this.height + ")")
+                .attr("y",this.xAxis.tickPadding() + this.xAxis.tickSize());
             
 
             this.yAxisEl.call(this.yAxis);
@@ -272,9 +282,7 @@ define([
             // adjust the vertical dashed line
             this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1]);
             
-            // make the timeslider aligned with X-axis
-            // set CSS option for time slider
-            this.timeSlider.classed("vzb-ts-axis-aligned", true);
+
             
             // set the right margin that depends on longest label width
             this.timeSlider.select(".vzb-ts-slider-wrapper")
@@ -295,6 +303,29 @@ define([
             this.sizeUpdatedOnce = true;
         },
         
+        
+        
+        
+        redrawTimeLabel: function(){
+            var _this = this;
+            
+            this.yearEl
+                .text(this.time.getFullYear().toString())
+                .transition()
+                .duration(_this.model.time.playing?_this.duration*0.9:0)
+                .ease("linear")
+                .attr("x",this.xScale(this.time));
+                
+            this.xAxisEl.selectAll("g")
+                .each(function(d,t){
+                    d3.select(this).select("text")
+                        .transition()
+                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .ease("linear")
+                        .style("opacity",Math.min(1, Math.pow(Math.abs(d-_this.time)/(_this.model.time.end - _this.model.time.start)*5, 2)) )
+                })
+            
+        },
         
         
 

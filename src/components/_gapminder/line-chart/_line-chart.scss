@@ -52,6 +52,12 @@
     .vzb-lc-labelValue {
         font-size: 1.3em;
     }
+    .vzb-lc-year {
+        text-anchor: middle;
+        dominant-baseline: hanging;
+        fill: currentColor;
+        font-size: 1.8em;
+    }    
 }
 &.vzb-medium {
     .vzb-line-chart {
@@ -70,6 +76,9 @@
         }
         .vzb-lc-labelValue {
             font-size: 1.2em;
+        }
+        .vzb-lc-year {
+            font-size: 1.5em;
         }
     }
 }
@@ -90,6 +99,9 @@
         }
         .vzb-lc-labelValue {
             font-size: 1.0em;
+        }
+        .vzb-lc-year {
+            font-size: 1.2em;
         }
     }
 }
