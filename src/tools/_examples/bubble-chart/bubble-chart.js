@@ -51,14 +51,14 @@ define([
                 return;
             }
 
-            var dateMin = markers.getLimits('time').min,
-                dateMax = markers.getLimits('time').max;
+            if(this.dateMin==null) this.dateMin = markers.getLimits('time').min;
+            if(this.dateMin==null) this.dateMax = markers.getLimits('time').max;
 
-            if (time.start < dateMin) {
-                time.start = dateMin;
+            if (time.start < this.dateMin) {
+                time.start = this.dateMin;
             }
-            if (time.end > dateMax) {
-                time.end = dateMax;
+            if (time.end > this.dateMax) {
+                time.end = this.dateMax;
             }
 
         }
