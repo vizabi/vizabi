@@ -88,7 +88,7 @@ define([
                         margin = (limits.max - limits.min) / 10;
                     domain = [(limits.min - margin), (limits.max + margin)];
                     if(scale == "log") {
-                        domain = [limits.min/2, (limits.max + limits.max/2)];
+                        domain = [(limits.min-limits.min/3), (limits.max + limits.max/3)];
                     }
 
                     break;
