@@ -40,6 +40,8 @@ define([
             this._items = []; //holds hook items for this hook
             this._unique = {}; //stores unique values per column
             this._filtered = {}; //stores filtered values
+            this._limits = {}; //stores limit values
+
 
             //bind initial events
             if (bind) {
@@ -499,6 +501,7 @@ define([
 
                             _this._unique = {};
                             _this._filtered = {};
+                            _this._limits = {};
                             _this.afterLoad();
 
                             promise.resolve();
@@ -975,7 +978,6 @@ define([
          * @param {String} attr parameter
          * @returns {Object} limits (min and max)
          */
-        //TODO: improve way limits are checked
         getLimits: function(attr) {
 
             if (!this.isHook()) {
@@ -985,6 +987,12 @@ define([
             if (!attr) {
                 attr = 'time'; //fallback in case no attr is provided
             }
+
+            //store limits so that we stop rechecking.
+            if(this._limits[attr]) {
+                return this._limits[attr];
+            }
+
             var limits = {
                     min: 0,
                     max: 0
@@ -997,6 +1005,7 @@ define([
                 limits.min = _.min(filtered);
                 limits.max = _.max(filtered);
             }
+            this._limits[attr] = limits;
             return limits;
         },
 
