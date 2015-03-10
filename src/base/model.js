@@ -40,6 +40,8 @@ define([
             this._items = []; //holds hook items for this hook
             this._unique = {}; //stores unique values per column
             this._filtered = {}; //stores filtered values
+            this._limits = {}; //stores limit values
+
 
             //bind initial events
             if (bind) {
@@ -493,32 +495,13 @@ define([
                             promise.resolve();
                         } else {
 
-                            _this._items = _.flatten(data);
-
-                            //TODO this is a temporary solution that does preprocessing of data
-                            // data should have time as Dates and be sorted by time
-                            // put me in the proper place please!
-                            _this._items = _this._items
-                                // try to restore "geo" from "geo.name" if it's missing (ebola data has that problem)
-                                .map(function(d) {
-                                    if (d["geo"] == null) d["geo"] = d["geo.name"];
-                                    return d
-                                })
-                                // convert time to Date()
-                                .map(function(d) {
-                                    d.time = new Date(d.time);
-                                    d.time.setHours(0);
-                                    return d;
-                                })
-                                // sort records by time
-                                .sort(function(a, b) {
-                                    return a.time - b.time
-                                });
+                            _this._items = data;
 
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
 
                             _this._unique = {};
                             _this._filtered = {};
+                            _this._limits = {};
                             _this.afterLoad();
 
                             promise.resolve();
@@ -995,7 +978,6 @@ define([
          * @param {String} attr parameter
          * @returns {Object} limits (min and max)
          */
-        //TODO: improve way limits are checked
         getLimits: function(attr) {
 
             if (!this.isHook()) {
@@ -1005,6 +987,12 @@ define([
             if (!attr) {
                 attr = 'time'; //fallback in case no attr is provided
             }
+
+            //store limits so that we stop rechecking.
+            if(this._limits[attr]) {
+                return this._limits[attr];
+            }
+
             var limits = {
                     min: 0,
                     max: 0
@@ -1017,6 +1005,7 @@ define([
                 limits.min = _.min(filtered);
                 limits.max = _.max(filtered);
             }
+            this._limits[attr] = limits;
             return limits;
         },
 

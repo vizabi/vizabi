@@ -88,7 +88,25 @@ define([
             require(["readers/" + reader_name], function(Reader) {
                 var r = new Reader(reader);
                 r.read(query, lang).then(function() {
-                    _this._data[queryId] = r.getData();
+                    var values = _.flatten(r.getData());
+
+                    //TODO this is a temporary solution that does preprocessing of data
+                    values = _.map(values, function(d) {
+                        if (d["geo"] == null) d["geo"] = d["geo.name"];
+                        return d;
+                    });
+                    // convert time to Date()
+                    values = _.map(values, function(d) {
+                        d.time = new Date(d.time);
+                        d.time.setHours(0);
+                        return d;
+                    })
+                    // sort records by time
+                    values.sort(function(a, b) {
+                        return a.time - b.time
+                    });
+
+                    _this._data[queryId] = values;
                     defer.resolve(queryId);
                 });
             });
