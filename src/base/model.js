@@ -493,27 +493,7 @@ define([
                             promise.resolve();
                         } else {
 
-                            _this._items = _.flatten(data);
-
-                            //TODO this is a temporary solution that does preprocessing of data
-                            // data should have time as Dates and be sorted by time
-                            // put me in the proper place please!
-                            _this._items = _this._items
-                                // try to restore "geo" from "geo.name" if it's missing (ebola data has that problem)
-                                .map(function(d) {
-                                    if (d["geo"] == null) d["geo"] = d["geo.name"];
-                                    return d
-                                })
-                                // convert time to Date()
-                                .map(function(d) {
-                                    d.time = new Date(d.time);
-                                    d.time.setHours(0);
-                                    return d;
-                                })
-                                // sort records by time
-                                .sort(function(a, b) {
-                                    return a.time - b.time
-                                });
+                            _this._items = data;
 
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
 
