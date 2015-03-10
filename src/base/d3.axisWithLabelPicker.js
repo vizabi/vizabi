@@ -177,7 +177,7 @@ define(['d3'], function(d3){
                     case   3: break; //1000
                     case   4: break; //10000
                     case   5: d = d/1000; prefix = "k"; break; //0.1M
-                    case   6: d = d/1000000; prefix = "M"; break; //1M
+                    case   6: d = d/1000000; prefix = "M"; prec = 1; break; //1M
                     case   7: d = d/1000000; prefix = "M"; break; //10M
                     case   8: d = d/1000000; prefix = "M"; break; //100M
                     case   9: d = d/1000000000; prefix = "B"; break; //1B
@@ -226,7 +226,7 @@ meow("********** "+orient+" **********");
             
             var min = d3.min([domain[0],domain[domain.length-1]]);
             var max = d3.max([domain[0],domain[domain.length-1]]);
-            var bothSidesUsed = (min<0 && max >0);
+            var bothSidesUsed = (min<0 && max >0) && options.scaleType != "time";
             
             if(bothSidesUsed && options.scaleType == "log")console.error("It looks like your " + orient + " log scale domain is crossing ZERO. Classic log scale can only be one-sided. If need crossing zero try using genericLog scale instead")
                 
@@ -623,7 +623,7 @@ meow("final result",tickValues);
                 taken.push(array.indexOf(0));
             }
 
-            for(var k = array.length; k>=1; k/=2){
+            for(var k = array.length; k>=1; k = k<4? k-1 : k/2){
                 // push the next group of elements to the result
                 result.push(array.filter(function(d,i){
                     if(i % Math.floor(k) == 0 && (taken.indexOf(i)==-1 || !removeDuplicates)){

@@ -187,19 +187,22 @@ define([
                     margin: { top: 30, right: 20, left: 40, bottom: 60},
                     tick_spacing: 60,
                     text_padding: 8,
-                    lollipopRadius: 6 
+                    lollipopRadius: 6,
+                    limitMaxTickNumberX: 5
                 },
                 "medium": {
                     margin: {top: 30,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
                     text_padding: 12,
-                    lollipopRadius: 8
+                    lollipopRadius: 8,
+                    limitMaxTickNumberX: 10
                 },
                 "large": {
                     margin: { top: 30, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
                     text_padding: 20,
-                    lollipopRadius: 10
+                    lollipopRadius: 10,
+                    limitMaxTickNumberX: 0 // unlimited
                 }
             };
 
@@ -268,7 +271,8 @@ define([
             this.xAxis.scale(this.xScale)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_x.scale,
-                    toolMargin: this.margin
+                    toolMargin: this.margin,
+                    limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
                     //showOuter: true
                 });
 
