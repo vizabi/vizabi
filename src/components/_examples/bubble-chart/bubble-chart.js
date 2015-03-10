@@ -32,19 +32,22 @@ define([
                 "change": function(evt) {
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
-                        console.log("bubble chart: CHANGE " + evt)
+                        //console.log("bubble chart: CHANGE " + evt)
                     }
                 },
                 "change:entities:show": function() {
-                    console.log("bubble chart: ENTITIES changed")
+                    //console.log("bubble chart: entities SHOW changed")
                     _this.updateShow();
                     _this.updateTime();
                     _this.updateSize();
                     _this.redrawDataPoints();
                 },
+                "change:entities:select": function() {
+                    //console.log("bubble chart: entities SELECT changed")
+                    _this.selectDataPoints();
+                },
                 "ready":  function(evt) {
-                    console.log("bubble chart: READY")
-                    
+                    //console.log("bubble chart: READY")
                     _this.preprocessData();
                     _this.updateShow();
                     _this.updateTime();
@@ -52,7 +55,7 @@ define([
                     _this.redrawDataPoints();
                 },
                 'change:time:value': function() {
-                    console.log("bubble chart: NEW TIME");
+                    //console.log("bubble chart: NEW TIME");
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -96,7 +99,7 @@ define([
 
             //component events
             this.on("resize", function() {
-                console.log("bubble chart: RESIZE");
+                //console.log("bubble chart: RESIZE");
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
@@ -319,8 +322,6 @@ define([
             //update selection
             var speed = (this.model.time.playing) ? this.model.time.speed : 0;
 
-            var some_selected = (_this.model.entities.select.length > 0);
-
             switch (shape){
                 case "circle":
                 this.bubbles
@@ -369,12 +370,6 @@ define([
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if(!_this.model.time.playing)d3.timer.flush();
 
-            this.bubbles.classed("vzb-bc-selected", function(d) {
-                    return some_selected && _this.model.entities.isSelected(d)
-                })
-            this.bubbles.classed("vzb-bc-unselected", function(d) {
-                    return some_selected && !_this.model.entities.isSelected(d)
-                });
 
             /* TOOLTIP */
             //TODO: improve tooltip
@@ -395,8 +390,22 @@ define([
                 .on("click", function(d, i) {
                     _this.model.entities.selectEntity(d);
                 });
-        }
+        }, //redraw
 
+        
+        selectDataPoints: function(){
+            var _this = this;
+            
+            var some_selected = (_this.model.entities.select.length > 0);
+            
+            this.bubbles.classed("vzb-bc-selected", function(d) {
+                    return some_selected && _this.model.entities.isSelected(d)
+                })
+            this.bubbles.classed("vzb-bc-unselected", function(d) {
+                    return some_selected && !_this.model.entities.isSelected(d)
+                });
+        }
+        
     });
 
     

@@ -48,13 +48,11 @@ define([
         },
 
         selectEntity: function(d) {
-            var value = d[this.getDimension()],
-                select_array = this.select;
+            var value = d[this.getDimension()];
             if(this.isSelected(d)) {
-                this.select = _.without(select_array, value);
+                this.select = _.without(this.select, value);
             } else {
-                select_array.push(value)
-                this.select = _.clone(select_array);
+                this.select = this.select.concat(value);
             }
         },
 
