@@ -191,10 +191,11 @@ define(['d3'], function(d3){
                 // use manual formatting for the cases above
                 return (d3.format("."+prec+format)(d)+prefix).replace("G","B");
             }
-            if(options.cssMarginLeft==null||parseInt(options.cssMarginLeft)<3) options.cssMarginLeft = "3px";
-            if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<3) options.cssMarginRight = "3px";
-            if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<3) options.cssMarginTop = "3px";
-            if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<3) options.cssMarginBottom = "3px";
+            options.cssLabelMarginLimit = 5; //px
+            if(options.cssMarginLeft==null||parseInt(options.cssMarginLeft)<options.cssLabelMarginLimit) options.cssMarginLeft = options.cssLabelMarginLimit + "px";
+            if(options.cssMarginRight==null||parseInt(options.cssMarginRight)<options.cssLabelMarginLimit) options.cssMarginRight = options.cssLabelMarginLimit + "px";
+            if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<options.cssLabelMarginLimit) options.cssMarginTop = options.cssLabelMarginLimit + "px";
+            if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<options.cssLabelMarginLimit) options.cssMarginBottom = options.cssLabelMarginLimit + "px";
             if(options.toolMargin==null) options.toolMargin = {left: 30, bottom: 30, right: 30, top: 30};
 
             if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
@@ -277,8 +278,12 @@ meow("********** "+orient+" **********");
             // in optimistic style the length of every label is added up and then we check if the total pack of symbols fit
             // in pessimistic style we assume all labels have the length of the longest label from tickValues
             // returns TRUE if labels fit and FALSE otherwise
-            var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle){
+            var labelsFitIntoScale = function(tickValues, lengthRange, approximationStyle, rescalingLabels){
+                if(tickValues == null || tickValues.length <= 1) return true;
                 if (approximationStyle==null) approximationStyle = PESSIMISTIC;
+                if (rescalingLabels==null) scaleType = "none";
+                
+                
                 
                 if(labelsStackOnTop){
                     //labels stack on top of each other. digit height matters
@@ -290,20 +295,39 @@ meow("********** "+orient+" **********");
                         );
                 }else{
                     //labels stack side by side. label width matters
-                    return lengthRange >
-                        tickValues.length * (
-                            parseInt(options.cssMarginLeft) +
-                            parseInt(options.cssMarginRight) 
-                        )
-                        + (approximationStyle == PESSIMISTIC ?
-                            options.widthOfOneDigit *
-                            tickValues.length * d3.max(tickValues.map(function(d){return options.formatter(d).length}))
-                            : 0)
-                        + (approximationStyle == OPTIMISTIC ?
-                            options.widthOfOneDigit * (
-                            tickValues.map(function(d){return options.formatter(d)}).join("").length
-                            )
-                            : 0);
+                    var marginsLR = parseInt(options.cssMarginLeft) + parseInt(options.cssMarginRight);
+                    var maxLength = d3.max(tickValues.map(function(d){return options.formatter(d).length}));
+                    
+                    // log scales need to rescale labels, so that 9 takes more space than 2
+                    if(rescalingLabels=="log"){
+                        // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
+                        // yes, this is hacky and experimental 
+                        lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
+                    
+                        return lengthRange > 
+                            d3.sum(tickValues.map(function(d){
+                                    return (
+                                        options.widthOfOneDigit 
+                                            * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(d).length) 
+                                        + marginsLR
+                                    ) 
+                                    // this is a logarithmic rescaling of labels
+                                    * (1 + Math.log10((d+"").substr(0,1)))
+                            }))
+
+                    }else{
+                        return lengthRange >
+                            tickValues.length * marginsLR
+                            + (approximationStyle == PESSIMISTIC ?
+                                options.widthOfOneDigit 
+                                    * tickValues.length * maxLength
+                                : 0)
+                            + (approximationStyle == OPTIMISTIC ?
+                                options.widthOfOneDigit * (
+                                    tickValues.map(function(d){return options.formatter(d)}).join("").length
+                                )
+                                : 0);
+                    }
                 }
             }
             
@@ -416,7 +440,7 @@ meow("********** "+orient+" **********");
                             .filter(onlyUnique)
                         
                         // stop populating if labels don't fit 
-                        if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+                        if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
                         
                         // apply changes if no blocking instructions
                         tickValues = trytofit
@@ -434,6 +458,8 @@ meow("********** "+orient+" **********");
                     
                     spawn = groupByPriorities(spawn);
                     var avoidCollidingWith = spawnZero.concat(tickValues);
+                    
+                    var stopTrying = false;
 
                     options.stops.forEach(function(stop, i){
                         if(i==0){
@@ -448,7 +474,7 @@ meow("********** "+orient+" **********");
                                     .filter(onlyUnique);
                                 
                                 // stop populating if labels don't fit 
-                                if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC)) break;
+                                if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC, "none")) break;
                                 
                                 // apply changes if no blocking instructions
                                 tickValues = trytofit;
@@ -457,6 +483,8 @@ meow("********** "+orient+" **********");
                             //flatten the spawn array
                             spawn = [].concat.apply([], spawn);
                         }else{
+                            if(stopTrying)return; 
+                            
                             // compose an attempt to add more axis labels
                             var trytofit = tickValues
                                 .concat(spawn.map(function(d){return d*stop}))
@@ -464,9 +492,9 @@ meow("********** "+orient+" **********");
                                 .filter(onlyUnique);
                             
                             // stop populating if the new composition doesn't fit
-                            if(!labelsFitIntoScale(trytofit, lengthRange)) return;
+                            if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "log")) {stopTrying = true; return;}
                             // stop populating if the number of labels is limited in options
-                            if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) return;
+                            if(tickValues.length > options.limitMaxTickNumber && options.limitMaxTickNumber!=0) {stopTrying = true; return;}
                             
                             // apply changes if no blocking instructions
                             tickValues = trytofit;
@@ -508,7 +536,7 @@ meow("********** "+orient+" **********");
                         .filter(onlyUnique);
 
                     // stop populating if labels don't fit 
-                    if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC)) break;
+                    if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
                     // apply changes if no blocking instructions
                     tickValues = trytofit
