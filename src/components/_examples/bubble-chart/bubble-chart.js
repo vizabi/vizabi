@@ -214,21 +214,24 @@ define([
                 case "small":
                     margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
+                    minRadius = 2;
                     maxRadius = 40;
                     break;
                 case "medium":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
+                    minRadius = 3;
                     maxRadius = 60;
                     break;
                 case "large":
                     margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
+                    minRadius = 4;
                     maxRadius = 80;
                     break;
             }
 
-            minRadius = maxRadius * this.model.marker.size.min;
+            minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
             maxRadius = maxRadius * this.model.marker.size.max;
 
             //stage
