@@ -33,6 +33,7 @@ define([
             };
             this.container = null; //d3 container
             this.current_profile = null;
+            this._prev_size = null;
 
             //capture layout events
             this._events = new Events();
@@ -53,7 +54,10 @@ define([
          */
         resize: function() {
             var _this = this,
-                width = this.width();
+                width = this.width(),
+                height = this.height();
+
+            if(this._prev_size && this._prev_size.width === width && this._prev_size.height === height) return;
 
             //remove size classes and find correct one
             _.each(this.screen_sizes, function(range, size) {
@@ -74,6 +78,8 @@ define([
             this.container.classed(class_lansdcape, !portrait);
 
             this.trigger('resize');
+
+            this._prev_size = _.clone(this.size());
         },
 
         /**
