@@ -21,26 +21,14 @@
             </ul>
         </div>
 
-        <button onclick="randomSize('line-chart')">RANDOM</button>
+        <button onclick="randomSize('line-chart')"><i class="fa fa-random"></i></button>
 
         <label>|</label>
 
-        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
-            <span>Language</span>
-            <ul class="dropdown">
-                <li><a onclick="setLanguage('en')">English</a>
-                </li>
-                <li><a onclick="setLanguage('pt')">Portuguese</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="buttons">
 
-        <button disabled>HOOKS:</button>
 
         <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
-            <span>Y</span>
+            <span>Y axis</span>
             <ul class="dropdown">
                 <li><a onclick="hook('axis_y', 'indicator', 'pop')">Population</a></li>
                 <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">GDP</a></li>
@@ -60,7 +48,18 @@
                 <li><a onclick='filterEntities(["afg","alb","dza","ago","atg","arg","arm","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can"], ["country"])'>31 countries</a></li>
             </ul>
         </div>
+        
+        <label>|</label>
 
+        <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
+            <span>Language</span>
+            <ul class="dropdown">
+                <li><a onclick="setLanguage('en')">English</a>
+                </li>
+                <li><a onclick="setLanguage('pt')">Portuguese</a>
+                </li>
+            </ul>
+        </div>
 
     </div>
     
