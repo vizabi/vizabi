@@ -10,6 +10,12 @@
 // ****************************************************************************
 
 // ----------------------------------------------------------------------------
+//   Bourbon mixins: http://bourbon.io/docs/
+// ----------------------------------------------------------------------------
+
+@import "../../../lib/bourbon/app/assets/stylesheets/bourbon";
+
+// ----------------------------------------------------------------------------
 //   Positioning
 // ----------------------------------------------------------------------------
 
@@ -133,6 +139,18 @@
     -moz-user-select: none; // Firefox
     -ms-user-select: none; // IE10+
 }
+
+// ----------------------------------------------------------------------------
+//   Animation
+// ----------------------------------------------------------------------------
+
+@mixin rotate-forever {
+  0%    { @include transform(rotate(0deg)); }
+  100%  { @include transform(rotate(360deg)); }
+}
+@-webkit-keyframes rotate-forever { @include rotate-forever; }
+   @-moz-keyframes rotate-forever { @include rotate-forever; }
+        @keyframes rotate-forever { @include rotate-forever; }
 
 // ----------------------------------------------------------------------------
 //   Responsiveness
