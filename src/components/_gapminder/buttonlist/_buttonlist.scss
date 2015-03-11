@@ -28,8 +28,7 @@ $vzb-button-color-border: #DBE8EB;
             @include transition(all, 100ms, ease-in);
             @include box-sizing(border-box);
             @include border-radius($vzb-button-radius);
-            // @include font-size(21px);
-            font-size: 1em;
+            font-size: 1.15em;
             text-align: center;
             display: inline-block;
             border: none;
@@ -41,9 +40,8 @@ $vzb-button-color-border: #DBE8EB;
             // border: 1px solid $vzb-button-color-border;
         }
         &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span{
-            // @include font-size(15px);
-            font-size: 0.75em;
-            padding-top: 2px;
+            font-size: 0.85em;
+            padding-top: 1px;
             text-align: center;
             display: block;
             color: $vzb-button-color-title;
@@ -140,10 +138,14 @@ $vzb-button-color-border: #DBE8EB;
             width: $vzb-button-width + 10;
             &>.vzb-btn-icon {
                 // @include font-size(23px);
-                font-size: 1.2em;
+                font-size: 1.15em;
                 padding: 9px;
                 width: $vzb-button-size + 10;
                 height: $vzb-button-size + 10;
+            }
+            &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span{
+                font-size: 0.95em;
+                padding-top: 2px;
             }
         }
     }

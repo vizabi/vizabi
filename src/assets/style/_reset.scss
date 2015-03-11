@@ -5,7 +5,6 @@ Author: Richard Clark - http://richclarkdesign.com
 */
 
 /*
-Integrated into vizabi and modified by Angie@gapminder.org
 MOST OF THE ORIGINAL CODE IS REMOVED FROM THIS FILE (we don't use these properties and tags)
 */
 
@@ -15,11 +14,12 @@ MOST OF THE ORIGINAL CODE IS REMOVED FROM THIS FILE (we don't use these properti
     text-align: left;
     
     div, span, h1, h2, h3, h4, h5, h6, p, a, i, svg, text, g {
+        font-size: $vzb-font-size-default;        
         margin:0;
         padding:0;
         border:0;
         outline:0;
         vertical-align:baseline;
-        background:transparent;        
+        background:transparent;
     }
 }
