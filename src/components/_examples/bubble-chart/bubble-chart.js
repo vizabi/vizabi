@@ -321,8 +321,26 @@ define([
 
             //enter selection -- init circles
             this.bubbles.enter().append(shape)
-                .attr("class", "vzb-bc-bubble");
+                .attr("class", "vzb-bc-bubble")
+                .on("mousemove", function(d, i) {
+                    //TODO: improve tooltip
+                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                        return parseInt(d);
+                    });
 
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                        .html(_this.model.marker.label.getValue(d));
+                })
+                .on("mouseout", function(d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function(d, i) {
+                    _this.model.entities.selectEntity(d);
+                });
+                        
+            
             //update selection
 
             switch (shape){
@@ -374,25 +392,7 @@ define([
             if(_this.duration==0)d3.timer.flush();
 
 
-            /* TOOLTIP */
-            //TODO: improve tooltip
-            this.bubbles.on("mousemove", function(d, i) {
-                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                        return parseInt(d);
-                    });
 
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                        .html(_this.model.marker.label.getValue(d));
-
-                })
-                .on("mouseout", function(d, i) {
-                    _this.tooltip.classed("vzb-hidden", true);
-                })
-                .on("click", function(d, i) {
-                    _this.model.entities.selectEntity(d);
-                });
         }, //redraw
 
         

@@ -476,9 +476,6 @@ define([
                         }
                     }
                 
-                    // Call flush() after any zero-duration transitions to synchronously flush the timer queue
-                    // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-                    if(_this.duration==0)d3.timer.flush();
                 })
             
             
@@ -490,6 +487,9 @@ define([
                     .attr("x2",this.xScale(this.time))
                     .style("opacity",this.time-this.model.time.start==0?0:1);
                 
+                // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+                // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+                if(_this.duration==0)d3.timer.flush();
             
         }
 
