@@ -389,9 +389,13 @@ define([
                         return parseInt(d);
                     });
                 
+                    if( (mouse[0]-_this.margin.left) > d3.max(_this.xScale.range()) ) return;
+                
                     var resolvedValue = _this.model.marker.axis_y.getValue(
                         {geo: d.geo, time: _this.xScale.invert(mouse[0]-_this.margin.left)}
-                        )||0;
+                        );
+                
+                    if(_.isNaN(resolvedValue)) return;
                 
                     //position tooltip
                     _this.tooltip.classed("vzb-hidden", false)
