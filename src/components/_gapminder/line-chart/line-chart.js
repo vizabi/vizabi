@@ -391,7 +391,7 @@ define([
                 
                     var resolvedValue = _this.model.marker.axis_y.getValue(
                         {geo: d.geo, time: _this.xScale.invert(mouse[0]-_this.margin.left)}
-                        );
+                        )||0;
                 
                     //position tooltip
                     _this.tooltip.classed("vzb-hidden", false)
@@ -429,7 +429,9 @@ define([
                     //TODO: optimization is possible if getValues would return both x and time
                     var x = _this.model.marker.axis_x.getValues(d);
                     var y = _this.model.marker.axis_y.getValues(d);
-                    var xy = x.map(function(d,i){return [+x[i],+y[i]]});
+                    var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
+                    xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
+                    var lastXY = xy[xy.length-1];
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -482,17 +484,18 @@ define([
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
-                        .attr("cx", _this.xScale(_this.model.marker.axis_x.getValue(d)) )
-                        .attr("cy", _this.yScale(_this.model.marker.axis_y.getValue(d)) + 1);     
+                        .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius) 
+                        .attr("cx", _this.xScale(lastXY[0]) )
+                        .attr("cy", _this.yScale(lastXY[1]) + 1);  
+                                        
 
                     group.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(" + _this.xScale(_this.time) + "," + _this.yScale(y[y.length-1]) + ")" );
+                        .attr("transform","translate(" + _this.xScale(lastXY[0]) + "," + _this.yScale(lastXY[1]) + ")" );
                 
-                    var value = _this.yAxis.tickFormat()(y[y.length-1]);
+                    var value = _this.yAxis.tickFormat()(lastXY[1]);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                 
                     var t = group.select(".vzb-lc-labelName")
@@ -505,7 +508,7 @@ define([
                     
                     if(_this.data.length<6){
                         // if too little space on the right, break up the text in two lines
-                        if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
+                        if(_this.xScale(lastXY[0]) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
                             group.select(".vzb-lc-labelName").text(name);
                             group.select(".vzb-lc-labelValue").text(value);
