@@ -123,6 +123,7 @@ define([
             
             if (!this.isDataPreprocessed) this.preprocessData();
             
+            this.duration = this.model.time.speed;
             this.translator = this.model.language.getTFunction();
             
             
@@ -189,7 +190,10 @@ define([
         updateTime: function() {
             var _this = this;
             
+            this.time_1 = this.time==null? this.model.time.value : this.time;
             this.time = this.model.time.value;
+            this.duration = this.model.time.playing && (this.time-this.time_1>0) ? this.model.time.speed : 0;
+            
             //this.data = this.model.marker.label.getItems({ time: this.time });
             
             this.yearEl.text(this.time.getFullYear().toString());
@@ -320,7 +324,6 @@ define([
                 .attr("class", "vzb-bc-bubble");
 
             //update selection
-            var speed = (this.model.time.playing) ? this.model.time.speed : 0;
 
             switch (shape){
                 case "circle":
@@ -328,7 +331,7 @@ define([
                     .style("fill", function(d) {
                         return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
                     })
-                    .transition().duration(speed).ease("linear")
+                    .transition().duration(_this.duration).ease("linear")
                     .attr("cy", function(d) {
                         var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
                         return _this.yScale(value);
@@ -349,7 +352,7 @@ define([
                     .style("fill", function(d) {
                         return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
                     })
-                    .transition().duration(speed).ease("linear")
+                    .transition().duration(_this.duration).ease("linear")
                     .attr("height", function(d) {
                         var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
                         return d3.max(_this.yScale.range()) - _this.yScale(value);
@@ -368,7 +371,7 @@ define([
             
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-            if(!_this.model.time.playing)d3.timer.flush();
+            if(_this.duration==0)d3.timer.flush();
 
 
             /* TOOLTIP */

@@ -157,7 +157,10 @@ define([
          */
         updateTime: function() {
             var _this = this;
+            
+            this.time_1 = this.time==null? this.model.time.value : this.time;
             this.time = this.model.time.value;
+            this.duration = this.model.time.playing && (this.time-this.time_1>0) ? this.model.time.speed*0.9 : 0;
             
             this.data = this.model.marker.label.getItems({ time: this.time });
 
@@ -317,7 +320,7 @@ define([
             this.yearEl
                 .text(this.time.getFullYear().toString())
                 .transition()
-                .duration(_this.model.time.playing?_this.duration*0.9:0)
+                .duration(_this.duration)
                 .ease("linear")
                 .attr("x",this.xScale(this.time));
                 
@@ -325,7 +328,7 @@ define([
                 .each(function(d,t){
                     d3.select(this).select("text")
                         .transition()
-                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .duration(_this.duration)
                         .ease("linear")
                         .style("opacity",Math.min(1, Math.pow(Math.abs(d-_this.time)/(_this.model.time.end - _this.model.time.start)*5, 2)) )
                 })
@@ -412,7 +415,7 @@ define([
                           .attr("stroke-dasharray", totalLength)
                           .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
                           .transition()
-                            .duration(_this.duration*0.9)
+                            .duration(_this.duration)
                             .ease("linear")
                             .attr("stroke-dashoffset", 0); 
 
@@ -420,7 +423,7 @@ define([
                           .attr("stroke-dasharray", totalLength)
                           .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
                           .transition()
-                            .duration(_this.duration*0.9)
+                            .duration(_this.duration)
                             .ease("linear")
                             .attr("stroke-dashoffset", 0);
 
@@ -441,7 +444,7 @@ define([
                 
                     group.select(".vzb-lc-circle")
                         .transition()
-                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
                         .attr("cx", _this.xScale(_this.model.marker.axis_x.getValue(d)) )
@@ -449,7 +452,7 @@ define([
 
                     group.select(".vzb-lc-label")
                         .transition()
-                        .duration(_this.model.time.playing?_this.duration*0.9:0)
+                        .duration(_this.duration)
                         .ease("linear")
                         .attr("transform","translate(" + _this.xScale(_this.time) + "," + _this.yScale(y[y.length-1]) + ")" );
                 
@@ -475,13 +478,13 @@ define([
                 
                     // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                     // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-                    if(!_this.model.time.playing)d3.timer.flush();
+                    if(_this.duration==0)d3.timer.flush();
                 })
             
             
                 this.verticalNow
                     .transition()
-                    .duration(_this.model.time.playing?_this.duration*0.9:0)
+                    .duration(_this.duration)
                     .ease("linear")
                     .attr("x1",this.xScale(this.time))
                     .attr("x2",this.xScale(this.time))
