@@ -90,6 +90,7 @@ define([
             this.yearEl = this.graph.select('.vzb-lc-year');
             this.linesContainer = this.graph.select('.vzb-lc-lines');
             this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
+            this.tooltip = this.element.select('.vzb-tooltip');
             
             this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
             this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
@@ -383,6 +384,41 @@ define([
                         .style("fill", d3.rgb(color).darker(0.3))
                         .attr("dy", "1.6em");
                 })
+                .on("mousemove", function(d, i) {
+                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                        return parseInt(d);
+                    });
+                
+                    var resolvedValue = _this.model.marker.axis_y.getValue(
+                        {geo: d.geo, time: _this.xScale.invert(mouse[0]-_this.margin.left)}
+                        );
+                
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 50 - _this.margin.left) + "px;top:" + (mouse[1] + 50 - _this.margin.top) + "px")
+                        .html( _this.model.marker.label.getValue(d) + " " + _this.yAxis.tickFormat()(resolvedValue) );
+                    
+                    // bring the vertical NOW bar to the hovering point
+                    _this.verticalNow
+                        .attr("x1",mouse[0]-_this.margin.left)
+                        .attr("x2",mouse[0]-_this.margin.left);
+                
+                    clearTimeout(_this.unhoverTimeout);
+                    
+                })
+                .on("mouseout", function(d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                
+                    // return back the vertical NOW bar
+                    _this.unhoverTimeout = setTimeout(function(){
+                        _this.verticalNow
+                            .transition().duration(300)
+                            .attr("x1",_this.xScale(_this.time))
+                            .attr("x2",_this.xScale(_this.time));
+                    }, 500)
+                    
+                });
+            
             
             
             this.entities
