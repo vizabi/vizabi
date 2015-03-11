@@ -180,9 +180,10 @@ define(['d3'], function(d3){
                     case   6: d = d/1000000; prefix = "M"; prec = 1; break; //1M
                     case   7: d = d/1000000; prefix = "M"; break; //10M
                     case   8: d = d/1000000; prefix = "M"; break; //100M
-                    case   9: d = d/1000000000; prefix = "B"; break; //1B
+                    case   9: d = d/1000000000; prefix = "B"; prec = 1; break; //1B
                     case  10: d = d/1000000000; prefix = "B"; break; //10B
                     case  11: d = d/1000000000; prefix = "B"; break; //100B
+                    case  12: d = d/1000000000000; prefix = "T"; prec = 1; break; //1T
                     //use the D3 SI formatting for the extreme cases
                     default: return (d3.format("."+prec+"s")(d)).replace("G","B");
                 }
