@@ -29,25 +29,16 @@ define([
             }];
 
             this.model_binds = {
-                "change": function(evt) {
-                    //if it's not about time
-                    if(evt.indexOf('change:time') === -1) {
-                        //console.log("bubble chart: CHANGE " + evt)
-                    }
-                },
-                "change:entities:show": function() {
-                    //console.log("bubble chart: entities SHOW changed")
+                "change:entities:show": function(evt) {
                     _this.updateShow();
                     _this.updateTime();
                     _this.updateSize();
                     _this.redrawDataPoints();
                 },
                 "change:entities:select": function() {
-                    //console.log("bubble chart: entities SELECT changed")
                     _this.selectDataPoints();
                 },
                 "ready":  function(evt) {
-                    //console.log("bubble chart: READY")
                     _this.preprocessData();
                     _this.updateShow();
                     _this.updateTime();
@@ -55,7 +46,6 @@ define([
                     _this.redrawDataPoints();
                 },
                 'change:time:value': function() {
-                    //console.log("bubble chart: NEW TIME");
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -208,7 +198,6 @@ define([
          * Executed whenever the container is resized
          */
         updateSize: function() {
-
 
             var _this = this,
                 margin,

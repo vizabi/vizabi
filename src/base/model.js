@@ -707,6 +707,7 @@ define([
          */
         hookModel: function() {
 
+            var _this = this;
             this._dataManager = new DataManager();
 
             // get data and language model references
@@ -719,10 +720,17 @@ define([
                 var name = this.dimensions[i];
                 //hook with the closest prefix to this model
                 this._hooks[name] = this._getClosestModel(name);
+
+                //if hooks change, this should load again
+                //TODO: remove hardcoded 'show"
+                if (this._hooks[name].show) {
+                    this._hooks[name].on("change:show", function(evt) {
+                        _this.load();
+                    });
+                }
             }
 
             //this is a hook, therefore it needs to reload when date changes
-            var _this = this;
             this.on("change", function() {
                 _this.load();
             });
@@ -989,7 +997,7 @@ define([
             }
 
             //store limits so that we stop rechecking.
-            if(this._limits[attr]) {
+            if (this._limits[attr]) {
                 return this._limits[attr];
             }
 
