@@ -9,28 +9,7 @@ define([
 
     //default existing buttons
     var class_active = "vzb-active",
-        available_buttons = {
-            'find': {
-                title: "buttons/find",
-                icon: "search"
-            },
-            'more-options': {
-                title: "buttons/more_options",
-                icon: "gear"
-            },
-            'colors': {
-                title: "buttons/colors",
-                icon: "paint-brush"
-            },
-            'size': {
-                title: "buttons/size",
-                icon: "circle"
-            },
-            '_default': {
-                title: "Button",
-                icon: "asterisk"
-            }
-        };
+        class_vzb_fullscreen = "vzb-force-fullscreen";
 
     var ButtonList = Component.extend({
 
@@ -58,7 +37,41 @@ define([
                 buttons: []
             };
 
-            if(config.buttons && config.buttons.length > 0) {
+            this._available_buttons = {
+                'find': {
+                    title: "buttons/find",
+                    icon: "search",
+                    dialog: true
+                },
+                'more-options': {
+                    title: "buttons/more_options",
+                    icon: "gear",
+                    dialog: true
+                },
+                'colors': {
+                    title: "buttons/colors",
+                    icon: "paint-brush",
+                    dialog: true
+                },
+                'size': {
+                    title: "buttons/size",
+                    icon: "circle",
+                    dialog: true
+                },
+                'fullscreen': {
+                    title: "buttons/expand",
+                    icon: "expand",
+                    dialog: false,
+                    func: this.toggleFullScreen.bind(this)
+                },
+                '_default': {
+                    title: "Button",
+                    icon: "asterisk",
+                    dialog: false
+                }
+            };
+
+            if (config.buttons && config.buttons.length > 0) {
                 //TODO: Buttons should be a model, not config //former FIXME
                 this._addButtons(config.buttons);
             }
@@ -76,18 +89,22 @@ define([
             //add a component for each button
             for (var i = 0; i < button_list.length; i++) {
 
-                var btn = button_list[i];
+                var btn = button_list[i],
+                    btn_config = this._available_buttons[btn];
 
-                //add corresponding component
-                this.components.push({
-                    component: '_gapminder/buttonlist/dialogs/' + btn,
-                    placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-                    model: ["state", "data"]
-                });
+                //if it's a dialog, add component
+                if (btn_config && btn_config.dialog) {
+                    //add corresponding component
+                    this.components.push({
+                        component: '_gapminder/buttonlist/dialogs/' + btn,
+                        placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
+                        model: ["state", "data"]
+                    });
+                }
 
                 //add template data
-                var d = (available_buttons[btn]) ? btn : "_default",
-                    details_btn = available_buttons[d];
+                var d = (btn_config) ? btn : "_default",
+                    details_btn = this._available_buttons[d];
 
                 details_btn.id = btn;
                 this.template_data.buttons.push(details_btn);
@@ -108,14 +125,23 @@ define([
             buttons.on('click', function() {
                 var btn = d3.select(this),
                     id = btn.attr("data-btn"),
-                    classes = btn.attr("class");
+                    classes = btn.attr("class"),
+                    btn_config = _this._available_buttons[id];
 
-                //close if it's open
-                if (classes.indexOf(class_active) !== -1) {
-                    _this.closeDialog(id);
-                } else {
-                    _this.openDialog(id);
+                //if it's a dialog, open
+                if (btn_config && btn_config.dialog) {
+                    //close if it's open
+                    if (classes.indexOf(class_active) !== -1) {
+                        _this.closeDialog(id);
+                    } else {
+                        _this.openDialog(id);
+                    }
                 }
+                //otherwise, execute function
+                else if (btn_config.func && _.isFunction(btn_config.func)) {
+                    btn_config.func(id);
+                }
+
             });
 
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
@@ -172,6 +198,33 @@ define([
                 all_dialogs = this.element.selectAll(".vzb-buttonlist-dialog");
             all_btns.classed(class_active, false);
             all_dialogs.classed(class_active, false);
+        },
+
+        toggleFullScreen: function(id) {
+
+            var component = this,
+                root = component.placeholder,
+                root_found = false,
+                btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
+                fs = !this.model.state.fullscreen;
+
+            while (!(root_found = root.classed('vzb-placeholder'))) {
+                component = this.parent;
+                root = component.placeholder;
+            };
+
+            root.classed(class_vzb_fullscreen, fs);
+            this.model.state.fullscreen = fs;
+            btn.classed(class_active, fs);
+
+            //force window resize event
+            (function() {
+                event = document.createEvent("HTMLEvents");
+                event.initEvent("resize", true, true);
+                event.eventName = "resize";
+                window.dispatchEvent(event);
+            })();
+
         }
 
     });
