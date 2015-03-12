@@ -54,11 +54,13 @@ define([
                     _this.updateTime();
                     _this.redrawDataPoints();
                     _this.redrawTimeLabel();
+                    _this.resolveLabelCollisions();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
                     _this.redrawDataPoints();
                     _this.redrawTimeLabel();
+                    _this.resolveLabelCollisions();
                 }
             }
                         
@@ -70,6 +72,8 @@ define([
             this.xAxis = d3.svg.axisSmart().orient("bottom");
             this.yAxis = d3.svg.axisSmart().orient("left");
 
+            this.lastXY = {};
+            
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
@@ -106,6 +110,7 @@ define([
                 _this.updateTime();
                 _this.redrawDataPoints();
                 _this.redrawTimeLabel();
+                _this.resolveLabelCollisions();
             })
         },
 
@@ -149,6 +154,46 @@ define([
                 .interpolate("basis")
                 .x(function(d) {return _this.xScale(d[0]); })
                 .y(function(d) {return _this.yScale(d[1]); });
+            
+            this.dataForceLayout = {nodes: [], links: []};
+            
+            this.data = this.model.marker.label.getItems({ time: this.time });
+            this.data.forEach(function(d,i){
+                _this.dataForceLayout.nodes.push({geo: d.geo, fixed: true});
+                _this.dataForceLayout.nodes.push({geo: d.geo, fixed: false});
+                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
+            })
+    
+            this.forceLayout = d3.layout.force()
+                .linkDistance(1)
+                .linkStrength(1)
+                .gravity(0)
+                .chargeDistance(5)
+                .friction(0.2)
+                //.theta(0.8)
+                .charge(-300)
+                .nodes(this.dataForceLayout.nodes)
+                .links(this.dataForceLayout.links)
+                .on("tick", function(){
+                    _this.dataForceLayout.nodes.forEach(function (d) {
+                        d.x = _this.xScale(_this.lastXY[d.geo][0])
+                    })
+
+                } )
+                .on("end", function () {
+                    
+                    _this.graph.selectAll(".vzb-lc-label")
+                        .each(function (d, i) {
+                            var point = _this.dataForceLayout.nodes[i * 2 + 1];
+                            d3.select(this)
+                                .transition()
+                                .duration(300)
+                                .attr("transform", "translate(" + (point.x || 0) + "," + (point.y || 0) + ")")
+                        });
+
+
+                });
+            
         },
         
         
@@ -309,6 +354,9 @@ define([
             this.components[0].resize();
             
             
+            
+            this.forceLayout.size([this.width, this.height]);
+            
             this.sizeUpdatedOnce = true;
         },
         
@@ -435,7 +483,7 @@ define([
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
                     xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
-                    var lastXY = xy[xy.length-1];
+                    _this.lastXY[d.geo] = xy[xy.length-1];
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -489,17 +537,28 @@ define([
                         .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius) 
-                        .attr("cx", _this.xScale(lastXY[0]) )
-                        .attr("cy", _this.yScale(lastXY[1]) + 1);  
+                        .attr("cx", _this.xScale(_this.lastXY[d.geo][0]) )
+                        .attr("cy", _this.yScale(_this.lastXY[d.geo][1]) + 1);  
                                         
 
                     group.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(" + _this.xScale(lastXY[0]) + "," + _this.yScale(lastXY[1]) + ")" );
+                        .attr("transform","translate(" + _this.xScale(_this.lastXY[d.geo][0]) + "," + _this.yScale(_this.lastXY[d.geo][1]) + ")" );
                 
-                    var value = _this.yAxis.tickFormat()(lastXY[1]);
+                    _this.dataForceLayout.links[i].source.px = _this.xScale(_this.lastXY[d.geo][0]);
+                    _this.dataForceLayout.links[i].source.py = _this.yScale(_this.lastXY[d.geo][1]);
+                    _this.dataForceLayout.links[i].target.x = _this.xScale(_this.lastXY[d.geo][0]);
+                    _this.dataForceLayout.links[i].target.y = _this.yScale(_this.lastXY[d.geo][1]);
+                
+
+
+
+                
+
+                
+                    var value = _this.yAxis.tickFormat()(_this.lastXY[d.geo][1]);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                 
                     var t = group.select(".vzb-lc-labelName")
@@ -512,7 +571,7 @@ define([
                     
                     if(_this.data.length<6){
                         // if too little space on the right, break up the text in two lines
-                        if(_this.xScale(lastXY[0]) + t[0][0].getComputedTextLength() 
+                        if(_this.xScale(_this.lastXY[d.geo][0]) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
                             group.select(".vzb-lc-labelName").text(name);
                             group.select(".vzb-lc-labelValue").text(value);
@@ -534,7 +593,21 @@ define([
                 // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
                 if(_this.duration==0)d3.timer.flush();
             
+        },
+        
+        
+        resolveLabelCollisions: function(){
+            var _this = this;
+
+            clearTimeout(_this.collisionTimeout);
+
+            _this.collisionTimeout = setTimeout(function(){
+                _this.forceLayout.start();
+                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+                _this.forceLayout.stop();
+            },  500)
         }
+    
 
     });
 
