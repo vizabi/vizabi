@@ -37,10 +37,15 @@ $vzb-color-red: #F77481;
 $vzb-color-yellow: #E1CE00;
 $vzb-color-green: #B4DE79;
 $vzb-color-blue: #62CCE3;
+$vzb-gapminder-main: #FFCA34;
 // ----------------------------------------------------------------------------
-//   Images
+//   Loader (spinner)
 // ----------------------------------------------------------------------------
-$vzb-image-preloader: url('assets/imgs/preloader.gif');
+$vzb-loader-speed: 0.75s;
+$vzb-loader-thickness: 8px;
+$vzb-loader-size: 30px;
+$vzb-loader-color: #E1E1E1;
+$vzb-loader-bgcolor: $vzb-color-white;
 // ----------------------------------------------------------------------------
 //   Common styles
 // ----------------------------------------------------------------------------
@@ -51,17 +56,12 @@ $vzb-image-preloader: url('assets/imgs/preloader.gif');
     visibility: hidden !important;
 }
 .vzb-placeholder {
-
     position: relative;
-
     &.vzb-loading, &.vzb-loading-data {
         //todo: Make background transparent, but not preloader circles
-        &:after {
+        &:before {
             content: ' ';
-            background-color: $vzb-color-white;
-            background-image: $vzb-image-preloader;
-            background-repeat: no-repeat;
-            background-position: center center;
+            background-color: $vzb-loader-bgcolor;
             display: block;
             position: absolute;
             top: 0px;
@@ -70,10 +70,26 @@ $vzb-image-preloader: url('assets/imgs/preloader.gif');
             right: 0px;
             z-index: 2;
         }
+
+        &:after {
+            @include animation-duration($vzb-loader-speed);
+            @include animation-iteration-count(infinite);
+            @include animation-name(rotate-forever);
+            @include animation-timing-function(linear);
+            @include size($vzb-loader-size);
+            @include position(absolute, 50% 0 0 50%);
+            content: ' ';
+            display: inline-block;
+            border: $vzb-loader-thickness solid $vzb-loader-color;
+            border-right-color: transparent;
+            border-radius: 50%;
+            margin: -1 * $vzb-loader-size/2;
+            z-index: 3;
+        }
     }
     //loading data specifically
     &.vzb-loading-data {
-        &:after {
+        &:before {
             @include opacity(0.9);
         }
     }
@@ -82,7 +98,7 @@ $vzb-image-preloader: url('assets/imgs/preloader.gif');
         * {
             visibility: hidden;
         }
-        &:after {
+        &:before {
             @include opacity(1);
         }
     }
