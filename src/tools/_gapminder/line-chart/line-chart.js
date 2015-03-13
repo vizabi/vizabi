@@ -23,7 +23,7 @@ define([
             },{
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
-                model: ["state", "data"],
+                model: ["state", "ui"],
                 buttons: ['fullscreen', 'colors', 'size', 'more-options']
             }];
 

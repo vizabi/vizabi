@@ -12,8 +12,8 @@ define([
                 name: "state",
                 type: "model"
             }, {
-                name: "data",
-                type: "data"
+                name: "ui",
+                type: "model"
             }];
             
             this.template = 'components/_gapminder/buttonlist/'+

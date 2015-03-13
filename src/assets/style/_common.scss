@@ -107,7 +107,8 @@ $vzb-loader-bgcolor: $vzb-color-white;
 
     //loading anything
     &.vzb-force-fullscreen {
-        @include position(absolute, 0px 0px 0px 0px);
+        @include position(fixed, 0px 0px 0px 0px);
+        display: inline-table;
         width: 100% !important;
         height: 100% !important;
         z-index: 9999;

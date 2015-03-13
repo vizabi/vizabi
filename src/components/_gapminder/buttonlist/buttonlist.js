@@ -27,8 +27,8 @@ define([
                 name: "state",
                 type: "model"
             }, {
-                name: "data",
-                type: "data"
+                name: "ui",
+                type: "model"
             }];
 
             this.components = [];
@@ -98,7 +98,7 @@ define([
                     this.components.push({
                         component: '_gapminder/buttonlist/dialogs/' + btn,
                         placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-                        model: ["state", "data"]
+                        model: ["state", "ui"]
                     });
                 }
 
@@ -148,6 +148,9 @@ define([
             close_buttons.on('click', function() {
                 _this.closeAllDialogs();
             });
+
+            //store body overflow
+            this._prev_body_overflow = document.body.style.overflow;
         },
 
         /*
@@ -206,16 +209,27 @@ define([
                 root = component.placeholder,
                 root_found = false,
                 btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-                fs = !this.model.state.fullscreen;
+                fs = !this.model.ui.fullscreen,
+                body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
             while (!(root_found = root.classed('vzb-placeholder'))) {
                 component = this.parent;
                 root = component.placeholder;
             };
 
+            //TODO: figure out a way to avoid fullscreen resize delay in firefox
+            if (fs) {
+                launchIntoFullscreen(root.node());
+            } else {
+                exitFullscreen();
+            }
+
             root.classed(class_vzb_fullscreen, fs);
-            this.model.state.fullscreen = fs;
+            this.model.ui.fullscreen = fs;
             btn.classed(class_active, fs);
+
+            //restore body overflow
+            document.body.style.overflow = body_overflow;
 
             //force window resize event
             (function() {
@@ -228,6 +242,30 @@ define([
         }
 
     });
+
+    function launchIntoFullscreen(elem) {
+        console.log('test');
+        console.log(elem);
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+        }
+    }
+
+    function exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
 
 
     return ButtonList;
