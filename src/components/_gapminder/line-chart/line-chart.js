@@ -163,36 +163,47 @@ define([
                 _this.dataForceLayout.nodes.push({geo: d.geo, fixed: false});
                 _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
             })
+            _this.dataForceLayout.nodes.push({geo: "upper_boundary", fixed: true});
+            _this.dataForceLayout.nodes.push({geo: "lower_boundary", fixed: true});
     
             this.forceLayout = d3.layout.force()
-                .linkDistance(1)
-                .linkStrength(1)
-                .gravity(0)
-                .chargeDistance(5)
-                .friction(0.2)
-                //.theta(0.8)
+                .size([1, 400])
+                .gravity(0.05)
                 .charge(-300)
+                .linkDistance(5)
+                //.linkStrength(1)
+                //.chargeDistance(40)
+                //.friction(0.2)
+                //.theta(0.8)
                 .nodes(this.dataForceLayout.nodes)
                 .links(this.dataForceLayout.links)
                 .on("tick", function(){
-                    _this.dataForceLayout.nodes.forEach(function (d) {
-                        d.x = _this.xScale(_this.lastXY[d.geo][0])
+                    _this.dataForceLayout.nodes.forEach(function (d, i) {
+                        if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time); d.y = 0; return};
+                        if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time); d.y = _this.height; return};
+                        if(d.fixed)return;
+                        
+                        if(d.x<_this.xScale(_this.lastXY[d.geo][0])) d.x = _this.xScale(_this.lastXY[d.geo][0])
+                        if(d.x>_this.xScale(_this.lastXY[d.geo][0])+20) d.x -=1; //_this.xScale(_this.lastXY[d.geo][0])+20
+                        //if(d.y<0) d.y += 1;
+                        //if(d.y>_this.height ) d.y = _this.height-20 ;
                     })
 
-                } )
-                .on("end", function () {
+                //} )
+                //.on("end", function () {
                     
                     _this.graph.selectAll(".vzb-lc-label")
                         .each(function (d, i) {
                             var point = _this.dataForceLayout.nodes[i * 2 + 1];
                             d3.select(this)
-                                .transition()
-                                .duration(300)
+                                //.transition()
+                                //.duration(300)
                                 .attr("transform", "translate(" + (point.x || 0) + "," + (point.y || 0) + ")")
                         });
 
 
-                });
+                })
+                .start();
             
         },
         
@@ -549,8 +560,9 @@ define([
                 
                     _this.dataForceLayout.links[i].source.px = _this.xScale(_this.lastXY[d.geo][0]);
                     _this.dataForceLayout.links[i].source.py = _this.yScale(_this.lastXY[d.geo][1]);
-                    _this.dataForceLayout.links[i].target.x = _this.xScale(_this.lastXY[d.geo][0]);
-                    _this.dataForceLayout.links[i].target.y = _this.yScale(_this.lastXY[d.geo][1]);
+                    //setting x y or px py makes the graph overcharged/unstable
+                    //_this.dataForceLayout.links[i].target.x = _this.xScale(_this.lastXY[d.geo][0]);
+                    //_this.dataForceLayout.links[i].target.y = _this.yScale(_this.lastXY[d.geo][1]);
                 
 
 
@@ -602,9 +614,9 @@ define([
             clearTimeout(_this.collisionTimeout);
 
             _this.collisionTimeout = setTimeout(function(){
-                _this.forceLayout.start();
-                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-                _this.forceLayout.stop();
+                _this.forceLayout.resume();
+//                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+//                _this.forceLayout.stop();
             },  500)
         }
     
