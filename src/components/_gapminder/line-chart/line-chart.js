@@ -167,13 +167,13 @@ define([
             _this.dataForceLayout.nodes.push({geo: "lower_boundary", fixed: true});
     
             this.forceLayout = d3.layout.force()
-                .size([1, 400])
+                .size([1000, 400])
                 .gravity(0.05)
-                .charge(-300)
-                .linkDistance(5)
+                .charge(function(d){return d.fixed?0:-1000})
+                .linkDistance(10)
                 //.linkStrength(1)
-                //.chargeDistance(40)
-                //.friction(0.2)
+                //.chargeDistance(30)
+                .friction(0.2)
                 //.theta(0.8)
                 .nodes(this.dataForceLayout.nodes)
                 .links(this.dataForceLayout.links)
@@ -183,22 +183,22 @@ define([
                         if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time); d.y = _this.height; return};
                         if(d.fixed)return;
                         
-                        if(d.x<_this.xScale(_this.lastXY[d.geo][0])) d.x = _this.xScale(_this.lastXY[d.geo][0])
-                        if(d.x>_this.xScale(_this.lastXY[d.geo][0])+20) d.x -=1; //_this.xScale(_this.lastXY[d.geo][0])+20
+                        if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
+                        if(d.x>_this.xScale(_this.time)+10) d.x--;// = _this.xScale(_this.lastXY[d.geo][0])+10
                         //if(d.y<0) d.y += 1;
                         //if(d.y>_this.height ) d.y = _this.height-20 ;
                     })
 
-                //} )
-                //.on("end", function () {
+                } )
+                .on("end", function () {
                     
                     _this.graph.selectAll(".vzb-lc-label")
                         .each(function (d, i) {
                             var point = _this.dataForceLayout.nodes[i * 2 + 1];
                             d3.select(this)
-                                //.transition()
-                                //.duration(300)
-                                .attr("transform", "translate(" + (point.x || 0) + "," + (point.y || 0) + ")")
+                                .transition()
+                                .duration(300)
+                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + (point.y || 0) + ")")
                         });
 
 
@@ -366,7 +366,7 @@ define([
             
             
             
-            this.forceLayout.size([this.width, this.height]);
+            this.forceLayout.size([this.width*2, this.height]);
             
             this.sizeUpdatedOnce = true;
         },
@@ -561,8 +561,8 @@ define([
                     _this.dataForceLayout.links[i].source.px = _this.xScale(_this.lastXY[d.geo][0]);
                     _this.dataForceLayout.links[i].source.py = _this.yScale(_this.lastXY[d.geo][1]);
                     //setting x y or px py makes the graph overcharged/unstable
-                    //_this.dataForceLayout.links[i].target.x = _this.xScale(_this.lastXY[d.geo][0]);
-                    //_this.dataForceLayout.links[i].target.y = _this.yScale(_this.lastXY[d.geo][1]);
+                    _this.dataForceLayout.links[i].target.px = _this.xScale(_this.lastXY[d.geo][0]);
+                    _this.dataForceLayout.links[i].target.py = _this.yScale(_this.lastXY[d.geo][1]);
                 
 
 
@@ -615,8 +615,8 @@ define([
 
             _this.collisionTimeout = setTimeout(function(){
                 _this.forceLayout.resume();
-//                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-//                _this.forceLayout.stop();
+                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+                _this.forceLayout.stop();
             },  500)
         }
     
