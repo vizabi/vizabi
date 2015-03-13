@@ -17,6 +17,7 @@
     "test",
     "tests"
   ],
+  "main": "dist/vizabi.js",
   "dependencies": {
     "bourbon": "~4.2.1"
   },
