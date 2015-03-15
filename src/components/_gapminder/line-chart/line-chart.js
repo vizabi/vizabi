@@ -44,12 +44,14 @@ define([
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
                          _this.updateShow();
+                        _this.initLabelCollisionResolver();
                          _this.redrawDataPoints();
                         _this.redrawTimeLabel();
                     }
                 },
                 "ready":  function(evt) {
                     _this.updateShow();
+                    _this.initLabelCollisionResolver();
                     _this.updateSize();
                     _this.updateTime();
                     _this.redrawDataPoints();
@@ -155,57 +157,7 @@ define([
                 .x(function(d) {return _this.xScale(d[0]); })
                 .y(function(d) {return _this.yScale(d[1]); });
             
-            this.dataForceLayout = {nodes: [], links: []};
-            
-            this.data = this.model.marker.label.getItems({ time: this.time });
-            this.data.forEach(function(d,i){
-                _this.dataForceLayout.nodes.push({geo: d.geo, fixed: true});
-                _this.dataForceLayout.nodes.push({geo: d.geo, fixed: false});
-                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
-            })
-            _this.dataForceLayout.nodes.push({geo: "upper_boundary", boundary:true, fixed: true});
-            _this.dataForceLayout.nodes.push({geo: "lower_boundary", boundary:true, fixed: true});
-    
-            this.forceLayout = d3.layout.force()
-                .size([1000, 400])
-                .gravity(0.05)
-                .charge(function(d){return d.fixed?(d.boundary?-1000:0):-1000})
-                .linkDistance(10)
-                //.linkStrength(1)
-                //.chargeDistance(30)
-                .friction(0.2)
-                //.theta(0.8)
-                .nodes(this.dataForceLayout.nodes)
-                .links(this.dataForceLayout.links)
-                .on("tick", function(){
-                    _this.dataForceLayout.nodes.forEach(function (d, i) {
-                        if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
-                        if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
-                        if(d.fixed)return;
-                        
-                        if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
-                        if(d.x>_this.xScale(_this.time)+10) d.x--;// = _this.xScale(_this.lastXY[d.geo][0])+10
-                        
-//                        if(d.y<0) d.y++;
-//                        if(d.y>_this.height-20 ) d.y--;
-                    })
 
-                } )
-                .on("end", function () {
-                    
-                    _this.graph.selectAll(".vzb-lc-label")
-                        .each(function (d, i) {
-                            var point = _this.dataForceLayout.nodes[i * 2 + 1];
-                            d3.select(this)
-                                .transition()
-                                .duration(300)
-                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + (point.y || 0) + ")")
-                        });
-
-
-                })
-                .start();
-            
         },
         
         
@@ -366,8 +318,6 @@ define([
             this.components[0].resize();
             
             
-            
-            this.forceLayout.size([this.width*2, this.height]);
             
             this.sizeUpdatedOnce = true;
         },
@@ -559,14 +509,7 @@ define([
                         .ease("linear")
                         .attr("transform","translate(" + _this.xScale(_this.lastXY[d.geo][0]) + "," + _this.yScale(_this.lastXY[d.geo][1]) + ")" );
                 
-                    _this.dataForceLayout.links[i].source.px = _this.xScale(_this.lastXY[d.geo][0]);
-                    _this.dataForceLayout.links[i].source.py = _this.yScale(_this.lastXY[d.geo][1]);
-                    _this.dataForceLayout.links[i].target.py = _this.yScale(_this.lastXY[d.geo][1]);
-                
 
-
-
-                
 
                 
                     var value = _this.yAxis.tickFormat()(_this.lastXY[d.geo][1]);
@@ -604,21 +547,112 @@ define([
                 // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
                 if(_this.duration==0)d3.timer.flush();
             
-                this.forceLayout.size([this.xScale(this.time)*2, this.height]);
-            
         },
         
         
         resolveLabelCollisions: function(){
             var _this = this;
-
+            
+            // update inputs of force layout -- fixed nodes
+            _this.dataForceLayout.links.forEach(function(d,i){
+                d.source.px = _this.xScale(_this.lastXY[d.source.geo][0]);
+                d.source.py = _this.yScale(_this.lastXY[d.source.geo][1]);
+                d.target.py = _this.yScale(_this.lastXY[d.target.geo][1]);
+            });
+            
+            // shift the boundary nodes
+            _this.dataForceLayout.nodes.forEach(function(d){
+                if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
+                if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
+            });
+            
+            // update force layout size for better gravity
+            this.forceLayout.size([this.xScale(this.time)*2, this.height]);
+            
+            // cancel previously queued simulation if we just ordered a new one
             clearTimeout(_this.collisionTimeout);
-
+            
+            // place force layout simulation into a queue
             _this.collisionTimeout = setTimeout(function(){
+                // resume the simulation, fast-forward it, stop when done
                 _this.forceLayout.resume();
                 while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
                 _this.forceLayout.stop();
             },  500)
+        },
+        
+        
+        
+        initLabelCollisionResolver: function(){
+            var _this = this;
+            
+            this.dataForceLayout = {nodes: [], links: []};
+            this.ROLE_BOUNDARY = 'boundary node';
+            this.ROLE_MARKER = 'node fixed to marker';
+            this.ROLE_LABEL = 'node for floating label';
+            
+            this.data = this.model.marker.label.getItems({ time: this.time });
+            this.data.forEach(function(d,i){
+                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_MARKER, fixed: true});
+                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_LABEL, fixed: false});
+                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
+            })
+            _this.dataForceLayout.nodes.push({geo: "upper_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
+            _this.dataForceLayout.nodes.push({geo: "lower_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
+    
+            this.forceLayout = d3.layout.force()
+                .size([1000, 400])
+                .gravity(0.05)
+                .charge(function(d){
+                        switch (d.role){
+                            case _this.ROLE_BOUNDARY: return -1000;
+                            case _this.ROLE_MARKER: return -0;
+                            case _this.ROLE_LABEL: return -1000;
+                        }
+                    })
+                .linkDistance(10)
+                //.linkStrength(1)
+                .chargeDistance(30)
+                .friction(0.2)
+                //.theta(0.8)
+                .nodes(this.dataForceLayout.nodes)
+                .links(this.dataForceLayout.links)
+                .on("tick", function(){
+                    _this.dataForceLayout.nodes.forEach(function (d, i) {
+                        if(d.fixed)return;
+                        
+                        if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
+                        if(d.x>_this.xScale(_this.time)+10) d.x--;
+                    })
+                })
+                .on("end", function () {
+                
+                    var entitiesOrderedByY = [];
+                
+                    for(var i in _this.lastXY) entitiesOrderedByY.push({geo: i, y: _this.lastXY[i][1]})
+                    
+                    entitiesOrderedByY = entitiesOrderedByY
+                        .sort(function(a,b){return b.y - a.y})
+                        .map(function(d){return d.geo});
+                    
+                    var suggestedY = _this.dataForceLayout.nodes
+                        .filter(function(d){return d.role==_this.ROLE_LABEL})
+                        .sort(function(b,a){return b.y-a.y});
+                
+                    _this.graph.selectAll(".vzb-lc-label")
+                        .each(function (d, i) {
+                            //var point = _this.dataForceLayout.nodes[i * 2 + 1];
+                            var point = suggestedY[entitiesOrderedByY.indexOf(d.geo)];
+                            d3.select(this)
+                                .transition()
+                                .duration(300)
+                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + (point.y || 0) + ")")
+                        });
+
+
+                })
+                .start();
+            
         }
     
 
