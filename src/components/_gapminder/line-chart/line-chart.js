@@ -163,13 +163,13 @@ define([
                 _this.dataForceLayout.nodes.push({geo: d.geo, fixed: false});
                 _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
             })
-            _this.dataForceLayout.nodes.push({geo: "upper_boundary", fixed: true});
-            _this.dataForceLayout.nodes.push({geo: "lower_boundary", fixed: true});
+            _this.dataForceLayout.nodes.push({geo: "upper_boundary", boundary:true, fixed: true});
+            _this.dataForceLayout.nodes.push({geo: "lower_boundary", boundary:true, fixed: true});
     
             this.forceLayout = d3.layout.force()
                 .size([1000, 400])
                 .gravity(0.05)
-                .charge(function(d){return d.fixed?0:-1000})
+                .charge(function(d){return d.fixed?(d.boundary?-1000:0):-1000})
                 .linkDistance(10)
                 //.linkStrength(1)
                 //.chargeDistance(30)
@@ -179,14 +179,15 @@ define([
                 .links(this.dataForceLayout.links)
                 .on("tick", function(){
                     _this.dataForceLayout.nodes.forEach(function (d, i) {
-                        if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time); d.y = 0; return};
-                        if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time); d.y = _this.height; return};
+                        if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
+                        if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
                         if(d.fixed)return;
                         
                         if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
                         if(d.x>_this.xScale(_this.time)+10) d.x--;// = _this.xScale(_this.lastXY[d.geo][0])+10
-                        //if(d.y<0) d.y += 1;
-                        //if(d.y>_this.height ) d.y = _this.height-20 ;
+                        
+//                        if(d.y<0) d.y++;
+//                        if(d.y>_this.height-20 ) d.y--;
                     })
 
                 } )
@@ -560,8 +561,6 @@ define([
                 
                     _this.dataForceLayout.links[i].source.px = _this.xScale(_this.lastXY[d.geo][0]);
                     _this.dataForceLayout.links[i].source.py = _this.yScale(_this.lastXY[d.geo][1]);
-                    //setting x y or px py makes the graph overcharged/unstable
-                    _this.dataForceLayout.links[i].target.px = _this.xScale(_this.lastXY[d.geo][0]);
                     _this.dataForceLayout.links[i].target.py = _this.yScale(_this.lastXY[d.geo][1]);
                 
 
@@ -604,6 +603,8 @@ define([
                 // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                 // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
                 if(_this.duration==0)d3.timer.flush();
+            
+                this.forceLayout.size([this.xScale(this.time)*2, this.height]);
             
         },
         
