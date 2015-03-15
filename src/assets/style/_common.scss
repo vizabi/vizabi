@@ -57,6 +57,8 @@ $vzb-loader-bgcolor: $vzb-color-white;
 }
 .vzb-placeholder {
     position: relative;
+    background-color: $vzb-color-white;
+
     &.vzb-loading, &.vzb-loading-data {
         //todo: Make background transparent, but not preloader circles
         &:before {
@@ -101,5 +103,15 @@ $vzb-loader-bgcolor: $vzb-color-white;
         &:before {
             @include opacity(1);
         }
+    }
+
+    //loading anything
+    &.vzb-force-fullscreen {
+        @include position(fixed, 0px 0px 0px 0px);
+        display: inline-table;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 9999;
+        margin: 0px;
     }
 }
