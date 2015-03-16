@@ -553,37 +553,38 @@ define([
         resolveLabelCollisions: function(){
             var _this = this;
             
-            _this.lastXY.sort(function(a,b){return a.value - b.value});
-            
-            // update inputs of force layout -- fixed nodes
-            _this.dataForceLayout.links.forEach(function(d,i){
-                var source = _.find(_this.lastXY, {geo:d.source.geo});
-                var target = _.find(_this.lastXY, {geo:d.target.geo});
-                
-                d.source.px = _this.xScale(source.time);
-                d.source.py = _this.yScale(source.value);
-                d.target.px = _this.xScale(target.time) + 10;
-                d.target.py = _this.yScale(target.value) + 10;
-            });
-            
-            // shift the boundary nodes
-            _this.dataForceLayout.nodes.forEach(function(d){
-                if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
-                if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
-            });
-            
-            // update force layout size for better gravity
-            this.forceLayout.size([this.xScale(this.time)*2, this.height]);
-            
             // cancel previously queued simulation if we just ordered a new one
             clearTimeout(_this.collisionTimeout);
             
             // place force layout simulation into a queue
             _this.collisionTimeout = setTimeout(function(){
-                // resume the simulation, fast-forward it, stop when done
-                _this.forceLayout.resume();
-                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-                _this.forceLayout.stop();
+                
+                _this.lastXY.sort(function(a,b){return a.value - b.value});
+
+                // update inputs of force layout -- fixed nodes
+                _this.dataForceLayout.links.forEach(function(d,i){
+                    var source = _.find(_this.lastXY, {geo:d.source.geo});
+                    var target = _.find(_this.lastXY, {geo:d.target.geo});
+
+                    d.source.px = _this.xScale(source.time);
+                    d.source.py = _this.yScale(source.value);
+                    d.target.px = _this.xScale(target.time) + 10;
+                    d.target.py = _this.yScale(target.value) + 10;
+                });
+
+                // shift the boundary nodes
+                _this.dataForceLayout.nodes.forEach(function(d){
+                    if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
+                    if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
+                });
+
+                // update force layout size for better gravity
+                _this.forceLayout.size([_this.xScale(_this.time)*2, _this.height]);
+
+                    // resume the simulation, fast-forward it, stop when done
+                    _this.forceLayout.resume();
+                    while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+                    _this.forceLayout.stop();
             },  500)
         },
         
