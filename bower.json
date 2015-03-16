@@ -15,23 +15,20 @@
     "node_modules",
     "lib",
     "test",
-    "tests"
+    "tests",
+    "spec"
   ],
   "main": "dist/vizabi.js",
   "dependencies": {
-    "bourbon": "~4.2.1"
-  },
-  "devDependencies": {
     "d3": "~3.4.6",
-    "jed": "~0.5.4",
-    "smart-picker": "https://github.com/Gapminder/smart-picker.git",
-    "requirejs-text": "~2.0.12",
-    "font-awesome": "~4.2.0",
-    "jqueryui": "~1.10.4",
-    "requirejs": "~2.1.11",
-    "underscore": "~1.6.0",
-    "almond": "~0.2.9",
     "lodash": "~2.4.1",
-    "stacktrace-js": "~0.6.4"
-  }
+    "requirejs-text": "~2.0.12",
+    "almond": "~0.2.9",
+    "requirejs": "~2.1.11",
+    "bourbon": "~4.2.1",
+    "stacktrace-js": "~0.6.4",
+    "q": "~1.0.1",
+    "font-awesome": "~4.2.0"
+  },
+  "devDependencies": {}
 }

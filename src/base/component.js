@@ -258,7 +258,7 @@ define([
             if (this.template) {
                 //require the template file
                 require(["text!" + this.template + ".html"], function(html) {
-                    //render template using underscore
+                    //render template using lodash
                     var rendered = _.template(html, _this.template_data);
 
                     var root = _this.parent.element || d3;
