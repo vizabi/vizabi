@@ -133,7 +133,7 @@ define([
             
             var titleString = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
                 + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
-                + d3.time.format(this.model.time.formatInput)(this.model.time.start)
+                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
                 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
