@@ -74,7 +74,7 @@ define([
             this.xAxis = d3.svg.axisSmart().orient("bottom");
             this.yAxis = d3.svg.axisSmart().orient("left");
 
-            this.lastXY = {};
+            this.lastXY = [];
             
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -361,7 +361,7 @@ define([
             this.entities.exit().remove();
             this.entities.enter().append("g")
                 .attr("class", "vzb-lc-entity")
-                .each(function(d, i){
+                .each(function(d, index){
                     var group = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
                     var label = _this.model.marker.label.getValue(d);
@@ -394,7 +394,7 @@ define([
                         .style("fill", d3.rgb(color).darker(0.3))
                         .attr("dy", "1.6em");
                 })
-                .on("mousemove", function(d, i) {
+                .on("mousemove", function(d, index) {
                     var mouse = d3.mouse(_this.graph.node()).map(function(d) {
                         return parseInt(d);
                     });
@@ -420,7 +420,7 @@ define([
                     clearTimeout(_this.unhoverTimeout);
                     
                 })
-                .on("mouseout", function(d, i) {
+                .on("mouseout", function(d, index) {
                     _this.tooltip.classed("vzb-hidden", true);
                 
                     // return back the vertical NOW bar
@@ -436,7 +436,7 @@ define([
             
             
             this.entities
-                .each(function(d,i){
+                .each(function(d,index){
                     var group = d3.select(this);       
                     var label = _this.model.marker.label.getValue(d);
                     
@@ -445,7 +445,7 @@ define([
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
                     xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
-                    _this.lastXY[d.geo] = xy[xy.length-1];
+                    _this.lastXY[index] = {geo:d.geo, time: xy[xy.length-1][0], value:xy[xy.length-1][1]};
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -499,20 +499,20 @@ define([
                         .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius) 
-                        .attr("cx", _this.xScale(_this.lastXY[d.geo][0]) )
-                        .attr("cy", _this.yScale(_this.lastXY[d.geo][1]) + 1);  
+                        .attr("cx", _this.xScale(_this.lastXY[index].time) )
+                        .attr("cy", _this.yScale(_this.lastXY[index].value) + 1);  
                                         
 
                     group.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(" + _this.xScale(_this.lastXY[d.geo][0]) + "," + _this.yScale(_this.lastXY[d.geo][1]) + ")" );
+                        .attr("transform","translate(" + _this.xScale(_this.lastXY[index].time) + "," + _this.yScale(_this.lastXY[index].value) + ")" );
                 
 
 
                 
-                    var value = _this.yAxis.tickFormat()(_this.lastXY[d.geo][1]);
+                    var value = _this.yAxis.tickFormat()(_this.lastXY[index].value);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                 
                     var t = group.select(".vzb-lc-labelName")
@@ -525,7 +525,7 @@ define([
                     
                     if(_this.data.length<6){
                         // if too little space on the right, break up the text in two lines
-                        if(_this.xScale(_this.lastXY[d.geo][0]) + t[0][0].getComputedTextLength() 
+                        if(_this.xScale(_this.lastXY[index].time) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
                             group.select(".vzb-lc-labelName").text(name);
                             group.select(".vzb-lc-labelValue").text(value);
@@ -553,11 +553,17 @@ define([
         resolveLabelCollisions: function(){
             var _this = this;
             
+            _this.lastXY.sort(function(a,b){return a.value - b.value});
+            
             // update inputs of force layout -- fixed nodes
             _this.dataForceLayout.links.forEach(function(d,i){
-                d.source.px = _this.xScale(_this.lastXY[d.source.geo][0]);
-                d.source.py = _this.yScale(_this.lastXY[d.source.geo][1]);
-                d.target.py = _this.yScale(_this.lastXY[d.target.geo][1]);
+                var source = _.find(_this.lastXY, {geo:d.source.geo});
+                var target = _.find(_this.lastXY, {geo:d.target.geo});
+                
+                d.source.px = _this.xScale(source.time);
+                d.source.py = _this.yScale(source.value);
+                d.target.px = _this.xScale(target.time) + 10;
+                d.target.py = _this.yScale(target.value) + 10;
             });
             
             // shift the boundary nodes
@@ -626,27 +632,22 @@ define([
                     })
                 })
                 .on("end", function () {
-                
-                    var entitiesOrderedByY = [];
-                
-                    for(var i in _this.lastXY) entitiesOrderedByY.push({geo: i, y: _this.lastXY[i][1]})
-                    
-                    entitiesOrderedByY = entitiesOrderedByY
-                        .sort(function(a,b){return b.y - a.y})
+                                    
+                    var entitiesOrderedByY = _this.lastXY
                         .map(function(d){return d.geo});
                     
                     var suggestedY = _this.dataForceLayout.nodes
                         .filter(function(d){return d.role==_this.ROLE_LABEL})
-                        .sort(function(b,a){return b.y-a.y});
+                        .sort(function(a,b){return b.y-a.y});
                 
                     _this.graph.selectAll(".vzb-lc-label")
                         .each(function (d, i) {
-                            //var point = _this.dataForceLayout.nodes[i * 2 + 1];
-                            var point = suggestedY[entitiesOrderedByY.indexOf(d.geo)];
+                            var geoIndex = _this.lastXY.map(function(d){return d.geo}).indexOf(d.geo);
+                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.lastXY[geoIndex][geoIndex]) || 0;
                             d3.select(this)
                                 .transition()
                                 .duration(300)
-                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + (point.y || 0) + ")")
+                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + resolvedY + ")")
                         });
 
 
