@@ -44,14 +44,14 @@ define([
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
                          _this.updateShow();
-                        _this.initLabelCollisionResolver();
+                         //_this.initLabelCollisionResolver();
                          _this.redrawDataPoints();
                         _this.redrawTimeLabel();
                     }
                 },
                 "ready":  function(evt) {
                     _this.updateShow();
-                    _this.initLabelCollisionResolver();
+                    //_this.initLabelCollisionResolver();
                     _this.updateSize();
                     _this.updateTime();
                     _this.redrawDataPoints();
@@ -517,13 +517,13 @@ define([
                 
                     var t = group.select(".vzb-lc-labelName")
                         .attr("dx", _this.activeProfile.text_padding)
-                        .text(name + " " + (_this.data.length<6?value:""));
+                        .text(name + " " + (_this.data.length<10?value:""));
                 
                     group.select(".vzb-lc-labelValue")
                         .attr("dx", _this.activeProfile.text_padding)
                         .text("");
                     
-                    if(_this.data.length<6){
+                    if(_this.data.length<10){
                         // if too little space on the right, break up the text in two lines
                         if(_this.xScale(_this.lastXY[index].time) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
@@ -531,6 +531,8 @@ define([
                             group.select(".vzb-lc-labelValue").text(value);
                         }
                     }
+                
+                    _this.lastXY[index].labelHeight = group.select(".vzb-lc-label")[0][0].getBBox().height;
                 
                 })
             
@@ -559,103 +561,167 @@ define([
             // place force layout simulation into a queue
             _this.collisionTimeout = setTimeout(function(){
                 
+                // order the labels by the latest data value
                 _this.lastXY.sort(function(a,b){return a.value - b.value});
-
-                // update inputs of force layout -- fixed nodes
-                _this.dataForceLayout.links.forEach(function(d,i){
-                    var source = _.find(_this.lastXY, {geo:d.source.geo});
-                    var target = _.find(_this.lastXY, {geo:d.target.geo});
-
-                    d.source.px = _this.xScale(source.time);
-                    d.source.py = _this.yScale(source.value);
-                    d.target.px = _this.xScale(target.time) + 10;
-                    d.target.py = _this.yScale(target.value) + 10;
-                });
-
-                // shift the boundary nodes
-                _this.dataForceLayout.nodes.forEach(function(d){
-                    if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
-                    if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
-                });
-
-                // update force layout size for better gravity
-                _this.forceLayout.size([_this.xScale(_this.time)*2, _this.height]);
-
-                    // resume the simulation, fast-forward it, stop when done
-                    _this.forceLayout.resume();
-                    while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-                    _this.forceLayout.stop();
-            },  500)
-        },
-        
-        
-        
-        initLabelCollisionResolver: function(){
-            var _this = this;
-            
-            this.dataForceLayout = {nodes: [], links: []};
-            this.ROLE_BOUNDARY = 'boundary node';
-            this.ROLE_MARKER = 'node fixed to marker';
-            this.ROLE_LABEL = 'node for floating label';
-            
-            this.data = this.model.marker.label.getItems({ time: this.time });
-            this.data.forEach(function(d,i){
-                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_MARKER, fixed: true});
-                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_LABEL, fixed: false});
-                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
-            })
-            _this.dataForceLayout.nodes.push({geo: "upper_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
-            _this.dataForceLayout.nodes.push({geo: "lower_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
-    
-            this.forceLayout = d3.layout.force()
-                .size([1000, 400])
-                .gravity(0.05)
-                .charge(function(d){
-                        switch (d.role){
-                            case _this.ROLE_BOUNDARY: return -1000;
-                            case _this.ROLE_MARKER: return -0;
-                            case _this.ROLE_LABEL: return -1000;
-                        }
-                    })
-                .linkDistance(10)
-                //.linkStrength(1)
-                .chargeDistance(30)
-                .friction(0.2)
-                //.theta(0.8)
-                .nodes(this.dataForceLayout.nodes)
-                .links(this.dataForceLayout.links)
-                .on("tick", function(){
-                    _this.dataForceLayout.nodes.forEach(function (d, i) {
-                        if(d.fixed)return;
                         
-                        if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
-                        if(d.x>_this.xScale(_this.time)+10) d.x--;
-                    })
-                })
-                .on("end", function () {
-                                    
-                    var entitiesOrderedByY = _this.lastXY
-                        .map(function(d){return d.geo});
-                    
-                    var suggestedY = _this.dataForceLayout.nodes
-                        .filter(function(d){return d.role==_this.ROLE_LABEL})
-                        .sort(function(a,b){return b.y-a.y});
+                _this.lastXY.forEach(function(d, index){
                 
-                    _this.graph.selectAll(".vzb-lc-label")
-                        .each(function (d, i) {
-                            var geoIndex = _this.lastXY.map(function(d){return d.geo}).indexOf(d.geo);
-                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.lastXY[geoIndex][geoIndex]) || 0;
-                            d3.select(this)
-                                .transition()
-                                .duration(300)
-                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + resolvedY + ")")
-                        });
-
-
+                    //initial positioning
+                    d.y = _this.yScale(d.value);
+                    
+                    // check the overlapping chain reaction all the way down 
+                    for(var j = index; j>0; j--){
+                        // if overlap found shift the overlapped label downwards
+                        var delta = _this.lastXY[j-1].y - _this.lastXY[j].y - _this.lastXY[j].labelHeight;
+                        if(delta<0) _this.lastXY[j-1].y -= delta;
+                        
+                        // if the chain reaction stopped because found some gap in the middle, then quit
+                        if(delta>0) break;
+                    }
+                        
                 })
-                .start();
-            
+                
+                
+                // check if the lowest label is breaking the boundary...
+                var delta = _this.height - _this.lastXY[0].y - _this.lastXY[0].labelHeight;;
+                
+                // if it does, then                
+                if(delta<0){
+                    // shift the lowest up
+                    _this.lastXY[0].y += delta;
+                    
+                    // check the overlapping chain reaction all the way up 
+                    for(var j = 0; j<_this.lastXY.length-1; j++){
+                        // if overlap found shift the overlapped label upwards
+                        var delta = _this.lastXY[j].y - _this.lastXY[j+1].y - _this.lastXY[j+1].labelHeight;
+                        if(delta<0) _this.lastXY[j+1].y += delta;
+                        
+                        // if the chain reaction stopped because found some gap in the middle, then quit
+                        if(delta>0) break;
+                    }
+                }
+                
+                //actually reposition the labels
+                _this.graph.selectAll(".vzb-lc-label")
+                    .each(function (d, i) {
+                        var labelData = _.find(_this.lastXY, {geo:d.geo});
+                        var resolvedY = labelData.y || _this.yScale(labelData.value) || 0;
+                        d3.select(this)
+                            .transition()
+                            .duration(300)
+                            .attr("transform", "translate(" + _this.xScale(labelData.time) + "," + resolvedY + ")")
+                    });
+            },  300)
         }
+        
+        
+        
+//        resolveLabelCollisions: function(){
+//            var _this = this;
+//            
+//            // cancel previously queued simulation if we just ordered a new one
+//            clearTimeout(_this.collisionTimeout);
+//            
+//            // place force layout simulation into a queue
+//            _this.collisionTimeout = setTimeout(function(){
+//                
+//                _this.lastXY.sort(function(a,b){return a.value - b.value});
+//
+//                // update inputs of force layout -- fixed nodes
+//                _this.dataForceLayout.links.forEach(function(d,i){
+//                    var source = _.find(_this.lastXY, {geo:d.source.geo});
+//                    var target = _.find(_this.lastXY, {geo:d.target.geo});
+//
+//                    d.source.px = _this.xScale(source.time);
+//                    d.source.py = _this.yScale(source.value);
+//                    d.target.px = _this.xScale(target.time) + 10;
+//                    d.target.py = _this.yScale(target.value) + 10;
+//                });
+//
+//                // shift the boundary nodes
+//                _this.dataForceLayout.nodes.forEach(function(d){
+//                    if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
+//                    if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
+//                });
+//
+//                // update force layout size for better gravity
+//                _this.forceLayout.size([_this.xScale(_this.time)*2, _this.height]);
+//
+//                    // resume the simulation, fast-forward it, stop when done
+//                    _this.forceLayout.resume();
+//                    while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+//                    _this.forceLayout.stop();
+//            },  500)
+//        },
+//        
+//        
+//        
+//        initLabelCollisionResolver: function(){
+//            var _this = this;
+//            
+//            this.dataForceLayout = {nodes: [], links: []};
+//            this.ROLE_BOUNDARY = 'boundary node';
+//            this.ROLE_MARKER = 'node fixed to marker';
+//            this.ROLE_LABEL = 'node for floating label';
+//            
+//            this.data = this.model.marker.label.getItems({ time: this.time });
+//            this.data.forEach(function(d,i){
+//                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_MARKER, fixed: true});
+//                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_LABEL, fixed: false});
+//                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
+//            })
+//            _this.dataForceLayout.nodes.push({geo: "upper_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
+//            _this.dataForceLayout.nodes.push({geo: "lower_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
+//    
+//            this.forceLayout = d3.layout.force()
+//                .size([1000, 400])
+//                .gravity(0.05)
+//                .charge(function(d){
+//                        switch (d.role){
+//                            case _this.ROLE_BOUNDARY: return -1000;
+//                            case _this.ROLE_MARKER: return -0;
+//                            case _this.ROLE_LABEL: return -1000;
+//                        }
+//                    })
+//                .linkDistance(10)
+//                //.linkStrength(1)
+//                .chargeDistance(30)
+//                .friction(0.2)
+//                //.theta(0.8)
+//                .nodes(this.dataForceLayout.nodes)
+//                .links(this.dataForceLayout.links)
+//                .on("tick", function(){
+//                    _this.dataForceLayout.nodes.forEach(function (d, i) {
+//                        if(d.fixed)return;
+//                        
+//                        if(d.x<_this.xScale(_this.time)) d.x = _this.xScale(_this.time);
+//                        if(d.x>_this.xScale(_this.time)+10) d.x--;
+//                    })
+//                })
+//                .on("end", function () {
+//                                    
+//                    var entitiesOrderedByY = _this.lastXY
+//                        .map(function(d){return d.geo});
+//                    
+//                    var suggestedY = _this.dataForceLayout.nodes
+//                        .filter(function(d){return d.role==_this.ROLE_LABEL})
+//                        .sort(function(a,b){return b.y-a.y});
+//                
+//                    _this.graph.selectAll(".vzb-lc-label")
+//                        .each(function (d, i) {
+//                            var geoIndex = _this.lastXY.map(function(d){return d.geo}).indexOf(d.geo);
+//                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.lastXY[geoIndex][geoIndex]) || 0;
+//                            d3.select(this)
+//                                .transition()
+//                                .duration(300)
+//                                .attr("transform", "translate(" + _this.xScale(_this.time) + "," + resolvedY + ")")
+//                        });
+//
+//
+//                })
+//                .start();
+//            
+//        }
     
 
     });
