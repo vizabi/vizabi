@@ -1,10 +1,10 @@
 define([
-    'jquery',
+    'q',
     'lodash',
     'base/utils',
     'base/intervals',
     'base/model'
-], function($, _, utils, Intervals, Model) {
+], function(Q, _, utils, Intervals, Model) {
 
     var ToolModel = Model.extend({
 
@@ -63,35 +63,27 @@ define([
                     c = i || 0,
                     //maximum number of times a tool model can be validated
                     max = 10,
-                    defer = $.Deferred();
+                    defer = Q.defer();
 
                 //validate model
-                var val_promise = validate();
-
-                //if validation is not a promise, make it a confirmed one
-                if (!val_promise || !val_promise.always) {
-                    val_promise = $.when.apply(null, [this]);
-                }
+                var val_promise = Q(validate());
 
                 //when validation is done, compare two models
-                val_promise.always(function() {
+                val_promise.finally(function() {
                     var model2 = JSON.stringify(_this.getObject());
                     if (model === model2 || c >= max) {
                         if (c >= max) {
                             console.log("Validation error: " + _this._id);
                             console.log(model);
                         }
-                        //defer in case it finishes too soon
-                        _.defer(function() {
-                            defer.resolve();
-                        })
+                        defer.resolve();
                     } else {
                         //recursively call if not the stable
                         defer = _this.validate(i++);
                     }
                 });
 
-                return defer;
+                return defer.promise;
             }
         }
 

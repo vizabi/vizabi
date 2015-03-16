@@ -1,10 +1,9 @@
 define([
-    'jquery',
     'd3',
     'base/component',
     'd3genericLogScale',
     'd3axisWithLabelPicker'
-], function($, d3, Component) {
+], function(d3, Component) {
 
     var AxisLabelerDemo = Component.extend({
         init: function(context, options) {
@@ -29,9 +28,8 @@ define([
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
             
-            
-            $(".vzb-bc-axis-x, .vzb-bc-axis-y").css('font-size',this.model.show.labelSize);
-            
+            this.xAxisEl.style('font-size',this.model.show.labelSize);
+            this.yAxisEl.style('font-size',this.model.show.labelSize);
 
             //component events
             this.on("resize", function() {

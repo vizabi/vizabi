@@ -16,7 +16,9 @@ require.config({
         d3axisWithLabelPicker: '../src/base/d3.axisWithLabelPicker',
         lodash: '../lib/lodash/dist/lodash',
         text: '../lib/requirejs-text/text',
-        stacktrace: '../lib/stacktrace-js/dist/stacktrace'
+        stacktrace: '../lib/stacktrace-js/dist/stacktrace',
+        q: '../lib/q/q',
+        req: '../lib/reqwest/reqwest.min'
     },
     shim: {
         d3: {
@@ -38,11 +40,6 @@ require.config({
 
     //allow text! require
     inlineText: true,
-
-    // exclude: [
-    //             "jquery",
-    //             "d3"
-    //         ],
 
     include: "vizabi-amd"
 });

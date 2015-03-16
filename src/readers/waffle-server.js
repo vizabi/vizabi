@@ -1,10 +1,11 @@
 define([
-    'jquery',
+    'q',
+    'req',
     'lodash',
     'base/class',
-], function($, _, Class) {
+], function(Q, req, _, Class) {
 
-    var LocalJSONReader = Class.extend({
+    var WaffleServerReader = Class.extend({
 
         /**
          * Initializes the reader.
@@ -24,7 +25,7 @@ define([
          */
         read: function(queries, language) {
             var _this = this,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 promises = [];
 
             this._data = [];
@@ -36,12 +37,12 @@ define([
                 var where = queries[i].where;
 
                 //format time query if existing
-                if(where['time']) {
+                if (where['time']) {
                     //[['1990', '2012']] -> '1990-2012'
                     where['time'] = where['time'][0].join('-');
                 }
                 //rename geo.category to geo.cat
-                if(where['geo.category']) {
+                if (where['geo.category']) {
                     where['geo.cat'] = _.clone(where['geo.category']);
                     delete where['geo.category'];
                 }
@@ -59,16 +60,21 @@ define([
                 lang: language
             };
 
-            //load from waffle server
-            var promise = $.post(this._basepath, pars, function(res) {
-                _this._data = res;
-                defer.resolve();
-            }).error(function(e) {
-                console.log("Error loading from Waffle Server:", _this._basepath);
-                defer.resolve('error');
+            req({
+                url: this._basepath,
+                method: 'post',
+                data: pars,
+                success: function(res) {
+                    _this._data = res;
+                    defer.resolve();
+                },
+                error: function(err) {
+                    console.log("Error loading from Waffle Server:", _this._basepath);
+                    defer.reject('Could not read from waffle server');
+                }
             });
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -80,5 +86,5 @@ define([
         }
     });
 
-    return LocalJSONReader;
+    return WaffleServerReader;
 });

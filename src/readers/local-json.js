@@ -1,8 +1,10 @@
+//FIX ME: Use req instead of jquery
+
 define([
-    'jquery',
+    //'jquery',
     'lodash',
     'base/class',
-], function($, _, Class) {
+], function(/* $, */ _, Class) {
 
     var LocalJSONReader = Class.extend({
 
