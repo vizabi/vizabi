@@ -221,14 +221,14 @@ define([
                     margin: {top: 40,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
                     text_padding: 12,
-                    lollipopRadius: 8,
+                    lollipopRadius: 7,
                     limitMaxTickNumberX: 10
                 },
                 "large": {
                     margin: { top: 50, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
                     text_padding: 20,
-                    lollipopRadius: 10,
+                    lollipopRadius: 9,
                     limitMaxTickNumberX: 0 // unlimited
                 }
             };

@@ -36,17 +36,20 @@
     }
     .vzb-lc-line {
         fill: none;
-        stroke-width: 11px;
+        stroke-width: 8px;
         stroke-linecap: butt;
+        opacity: 0.9;
     }
     .vzb-lc-line-shadow {
         fill: none;
-        stroke-width: 14px;
+        stroke-width: 11px;
         stroke-linecap: butt;
+        opacity: 0.0;
     }
     .vzb-lc-circle {
         stroke-width: 4px;
         stroke: #4F4F4F;
+        opacity: 0.9;
     }
     .vzb-lc-labelName {font-size: 1.8em;} 
     .vzb-lc-labelValue {font-size: 1.3em;}
@@ -60,8 +63,8 @@
 &.vzb-medium {
     .vzb-line-chart {
         @include font-size(15px);
-        .vzb-lc-line {stroke-width: 8px;}
-        .vzb-lc-line-shadow {stroke-width: 11px;}
+        .vzb-lc-line {stroke-width: 6px;}
+        .vzb-lc-line-shadow {stroke-width: 8px;}
         .vzb-lc-circle {stroke-width: 3px}
         .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {font-size: 1.5em;}
         .vzb-lc-labelName {font-size: 1.5em;}
