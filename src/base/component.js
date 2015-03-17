@@ -1,12 +1,12 @@
 define([
-    'jquery',
+    'q',
     'd3',
     'lodash',
     'base/utils',
     'base/class',
     'base/model',
     'base/events'
-], function($, d3, _, utils, Class, Model, Events) {
+], function(Q, d3, _, utils, Class, Model, Events) {
 
     var class_loading = "vzb-loading";
 
@@ -80,11 +80,11 @@ define([
          * Renders the component, step by step - Assumes data is ready
          * @returns defer a promise to be resolved when component is rendered
          */
-        render: function(posTemplate) {
+        render: function() {
 
             if (this._ready) return; //a component only renders once
 
-            var defer = $.Deferred();
+            var defer = Q.defer();
             var _this = this;
 
             // First, we load the template
@@ -118,12 +118,23 @@ define([
                     return _this.renderComponents();
                 })
                 // After rendering the components, resolve the defer
-                .done(function() {
-                    //this template is ready
-                    _this._ready = true;
-                    _this.trigger('dom_ready');
-                    defer.resolve();
+                .then(function() {
 
+                    _this._ready = true;
+
+                    if(_this.isRoot()) {
+                        _this.model.setHooks();
+                        return _this.model.load();
+                    }
+
+
+                }).then(function() {
+                    if(_this.isRoot()) {
+                        return _this.model.validate();
+                    }
+                }).then(function() {
+
+                    _this.trigger('dom_ready');
                     console.timeStamp("Vizabi Component: DOM ready - " + _this.name);
 
                     //ready when model is also ready
@@ -136,10 +147,11 @@ define([
                             });
                         }
                     });
-
+                }).then(function() {
+                    defer.resolve();
                 });
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -147,8 +159,7 @@ define([
          * @returns defer a promise to be resolved when components are loaded
          */
         loadComponents: function() {
-            var defer = $.Deferred(),
-                _this = this,
+            var _this = this,
                 promises = [],
                 components = this.components;
 
@@ -167,11 +178,7 @@ define([
             });
 
             // When all components have been loaded, resolve the defer
-            $.when.apply(null, promises).done(function() {
-                defer.resolve();
-            });
-
-            return defer;
+           return Q.all(promises);
         },
 
         /**
@@ -188,7 +195,7 @@ define([
 
             //name and path
             var _this = this,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 path = component.component,
                 name_token = path.split("/"),
                 name = name_token[name_token.length - 1],
@@ -217,7 +224,7 @@ define([
                     });
             });
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -225,20 +232,14 @@ define([
          * @returns defer a promise to be resolved when components are rendered
          */
         renderComponents: function() {
-            var defer = $.Deferred(),
-                promises = [];
+            var promises = [];
 
             // Loops through components, rendering them.
             _.each(this.components, function(component) {
                 promises.push(component.render());
             });
 
-            // After all components are rendered, resolve the defer
-            $.when.apply(null, promises).done(function() {
-                defer.resolve();
-            });
-
-            return defer;
+            return Q.all(promises);
         },
 
         /**
@@ -247,7 +248,7 @@ define([
          */
         loadTemplate: function() {
             var _this = this;
-            var defer = $.Deferred();
+            var defer = Q.defer();
 
             //todo: improve t function getter + generalize this
             this.template_data = _.extend(this.template_data, {
@@ -258,7 +259,7 @@ define([
             if (this.template) {
                 //require the template file
                 require(["text!" + this.template + ".html"], function(html) {
-                    //render template using underscore
+                    //render template using lodash
                     var rendered = _.template(html, _this.template_data);
 
                     var root = _this.parent.element || d3;
@@ -287,7 +288,7 @@ define([
                 defer.resolve();
             }
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -299,20 +300,20 @@ define([
         /**
          * modelReady calls modelReady for all sub-components
          */
-        modelReady: function(evt) {
+        // modelReady: function(evt) {
 
-            //TODO: this entire function needs to be removed
-            //our approach is focused more on descentralized rendering
-            //blocking update should be from the events level
-            if (this._blockUpdate) return;
-            var _this = this;
-            this._modelReady = this._modelReady || _.throttle(function() {
-                _.each(_this.components, function(component) {
-                    component.modelReady(evt);
-                });
-            }, this._frameRate);
-            this._modelReady();
-        },
+        //     //TODO: this entire function needs to be removed
+        //     //our approach is focused more on descentralized rendering
+        //     //blocking update should be from the events level
+        //     if (this._blockUpdate) return;
+        //     var _this = this;
+        //     this._modelReady = this._modelReady || _.throttle(function() {
+        //         _.each(_this.components, function(component) {
+        //             component.modelReady(evt);
+        //         });
+        //     }, this._frameRate);
+        //     this._modelReady();
+        // },
 
         /**
          * Resize calls resize for all sub-components
@@ -454,12 +455,6 @@ define([
                     if (_.isFunction(ready)) {
                         ready();
                     }
-                },
-                'ready': function(evt) {
-                    _this.modelReady(evt);
-                },
-                'change': function(evt) {
-                    _this.modelReady(evt);
                 }
             });
 
@@ -643,6 +638,23 @@ define([
          */
         loadData: function() {
             return true;
+        },
+
+        /**
+         * Checks whether this component is a tool or not
+         * @returns {Boolean}
+         */
+        isTool: function() {
+            return this._id[0] === 't';
+        },
+
+        /**
+         * Checks whether this component is a root element
+         * (not included by another)
+         * @returns {Boolean}
+         */
+        isRoot: function() {
+            return this.parent === this;
         },
 
         /*

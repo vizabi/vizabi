@@ -1,5 +1,5 @@
 define([
-    'jquery',
+    'q',
     'd3',
     'lodash',
     'base/utils',
@@ -7,7 +7,7 @@ define([
     'base/intervals',
     'base/events',
     'base/data',
-], function($, d3, _, utils, Class, Intervals, Events, DataManager) {
+], function(Q, d3, _, utils, Class, Intervals, Events, DataManager) {
 
     var model = Class.extend({
 
@@ -79,7 +79,7 @@ define([
          */
         set: function(attr, val, force) {
 
-            var defer = $.Deferred(),
+            var defer = Q.defer(),
                 promises = [],
                 events = [],
                 changes = [],
@@ -123,7 +123,7 @@ define([
                         delete this._changedData[a];
                     }
                     this._data[a] = val;
-                    promise = true;
+                    promise = Q(true);
                 }
                 //if it's an object, it's a submodel
                 else {
@@ -142,7 +142,7 @@ define([
 
             //after all is done
             var size = promises.length;
-            $.when.apply(null, promises).then(function() {
+            Q.all(promises).then(function() {
 
                 //bind magic getters and setters
                 _this._bindSettersGetters();
@@ -155,11 +155,9 @@ define([
                 }
 
                 //if validation is not a promise, make it a confirmed one
-                if (!val_promise || !val_promise.always) {
-                    val_promise = $.when.apply(null, [this]);
-                }
+                val_promise = Q(val_promise);
                 //confirm that the model has been validated
-                val_promise.always(function() {
+                val_promise.finally(function() {
 
                     //setting is true when validation takes place
                     if (!setting) {
@@ -170,21 +168,18 @@ define([
                         } else if (events.length) {
                             events.push("change");
                         }
-
-
-                        //trigger after defer is resolved
-                        _.defer(function() {
-                            _this.triggerAll(events, _this.getObject());
-                        });
-
-                        _this._setting = false;
                     }
 
                     defer.resolve();
+
+                    if (!setting) {
+                        _this.triggerAll(events, _this.getObject());
+                        _this._setting = false;
+                    }
                 });
             });
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -205,7 +200,7 @@ define([
             //naming convention: underscore -> time, time_2, time_overlay
             var name = attr.split("_")[0],
                 modl = 'models/' + name,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 _this = this;
 
             //special model
@@ -219,7 +214,7 @@ define([
                 var model = _getBaseModelClass();
                 this._instantiateSubmodel(attr, val, model, defer);
             }
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -432,11 +427,11 @@ define([
                     this._parent.setReady(false);
                 }
             } else if (this._ready = (!this.isLoading() && !this._setting && !this._loadCall)) {
-
-                var _this = this;
-                _.defer(function() {
-                    _this.triggerOnce("ready");
-                });
+                this.triggerOnce("ready");
+                // var _this = this;
+                // _.defer(function() {
+                //     _this.triggerOnce("ready");
+                // });
             }
         },
 
@@ -455,7 +450,7 @@ define([
                 submodels = this.getSubmodels(),
                 data_hook = this._dataModel,
                 language_hook = this._languageModel,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 query = this.getQuery();
 
             //useful to check if in the middle of a load call
@@ -466,7 +461,7 @@ define([
             if (this.isHook() && data_hook && query.length) {
 
                 //get reader omfp
-                var promise = $.Deferred(),
+                var promise = Q.defer(),
                     reader = data_hook.getObject(),
                     lang = "en";
 
@@ -489,12 +484,7 @@ define([
                 console.timeStamp("Vizabi Model: Loading Data: " + _this._id);
 
                 this._dataManager.load(query, lang, reader, evts)
-                    .done(function(data) {
-                        if (data === 'error') {
-                            _this.trigger("load_error", query);
-                            promise.resolve();
-                        } else {
-
+                    .then(function(data) {
                             _this._items = data;
 
                             console.timeStamp("Vizabi Model: Data loaded: " + _this._id);
@@ -505,8 +495,11 @@ define([
                             _this.afterLoad();
 
                             promise.resolve();
-                        }
-                    });
+                        },
+                        function(err) {
+                            _this.trigger("load_error", query);
+                            promise.reject(err);
+                        });
 
                 promises.push(promise);
 
@@ -519,21 +512,17 @@ define([
 
             //when all promises/loading have been done successfully
             //we will consider this done
-            $.when.apply(null, promises).then(function() {
+            Q.all(promises).then(function() {
 
                 //but first, we need to validate
                 var val_promise = false;
                 if (_this.validate) {
                     val_promise = _this.validate();
                 }
-
-                //if validation is not a promise, confirm it
-                if (!val_promise || !val_promise.always) {
-                    val_promise = $.when.apply(null, [this]);
-                }
+                val_promise = Q(val_promise);
 
                 //confirm that the model has been validated
-                val_promise.always(function() {
+                val_promise.finally(function() {
 
                     console.timeStamp("Vizabi Model: Model loaded: " + _this._id);
 
@@ -545,7 +534,7 @@ define([
                 });
             });
 
-            return defer;
+            return defer.promise;
         },
 
         /**

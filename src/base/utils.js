@@ -1,23 +1,6 @@
-define(['jquery', 'd3', 'lodash', 'stacktrace'], function($, d3, _, stacktrace) {
+define(['d3', 'lodash', 'stacktrace'], function(d3, _, stacktrace) {
 
     var utils = {
-        /**
-         * Converts a d3 selection to jQuery
-         * @param selector selection in d3
-         * @returns selection in jQuery
-         */
-        d3ToJquery: function(selector) {
-            return $(selector[0]);
-        },
-
-        /**
-         * Converts a jQuery selection to d3
-         * @param selector selection in jQuery
-         * @returns selection in d3
-         */
-        jQueryToD3: function(selector) {
-            return d3.selectAll(selector.toArray());
-        },
 
         /**
          * Counts number of decimals in a number

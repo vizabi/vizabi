@@ -1,8 +1,7 @@
 define([
-    'jquery',
     'd3',
     'base/component'
-], function($, d3, Component) {
+], function(d3, Component) {
 
     function radiusToArea(r){return r*r*Math.PI}
     function areaToRadius(a){return Math.sqrt(a/Math.PI)}
