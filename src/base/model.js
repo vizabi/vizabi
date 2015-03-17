@@ -427,11 +427,11 @@ define([
                     this._parent.setReady(false);
                 }
             } else if (this._ready = (!this.isLoading() && !this._setting && !this._loadCall)) {
-
-                var _this = this;
-                _.defer(function() {
-                    _this.triggerOnce("ready");
-                });
+                this.triggerOnce("ready");
+                // var _this = this;
+                // _.defer(function() {
+                //     _this.triggerOnce("ready");
+                // });
             }
         },
 
@@ -517,8 +517,9 @@ define([
                 //but first, we need to validate
                 var val_promise = false;
                 if (_this.validate) {
-                    val_promise = Q(_this.validate());
+                    val_promise = _this.validate();
                 }
+                val_promise = Q(val_promise);
 
                 //confirm that the model has been validated
                 val_promise.finally(function() {

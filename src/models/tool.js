@@ -52,13 +52,15 @@ define([
 
         /**
          * Generates a validation function based on specific model validation
-         * @returns {Function} validate function
+         * @returns {Function} val function
          */
         //todo: improve loops and maybe generalize to all components
-        _generateValidate: function(validate) {
+        _generateValidate: function(val) {
 
             var _this = this;
-            return function(i) {
+            var v = val;
+            
+            function validate_func(i) {
                 var model = JSON.stringify(_this.getObject()),
                     c = i || 0,
                     //maximum number of times a tool model can be validated
@@ -66,25 +68,26 @@ define([
                     defer = Q.defer();
 
                 //validate model
-                var val_promise = Q(validate());
+                Q((v() || true)).finally(function() {
 
-                //when validation is done, compare two models
-                val_promise.finally(function() {
                     var model2 = JSON.stringify(_this.getObject());
                     if (model === model2 || c >= max) {
                         if (c >= max) {
-                            console.log("Validation error: " + _this._id);
                             console.log(model);
                         }
                         defer.resolve();
                     } else {
                         //recursively call if not the stable
-                        defer = _this.validate(i++);
+                        validate_func(++i).then(function() {
+                            defer.resolve();
+                        });
                     }
                 });
 
                 return defer.promise;
             }
+
+            return validate_func;
         }
 
     });
