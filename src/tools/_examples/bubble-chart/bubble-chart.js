@@ -31,7 +31,7 @@ define([
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui'],
-                buttons: ['fullscreen', 'colors', 'size', 'more-options']
+                buttons: ['fullscreen', 'colors', 'size']
             }];
 
             this._super(config, options);
