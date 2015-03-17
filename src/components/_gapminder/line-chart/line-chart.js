@@ -79,6 +79,18 @@ define([
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
+            
+            
+
+            // default UI settings
+            this.ui = _.extend({
+                entity_labels: {}
+            }, this.ui["vzb-tool-"+this.name]);
+            
+            this.ui.entity_labels = _.extend({
+                min_number_of_entities_when_values_hide: 10,
+            }, this.ui.entity_labels);
+            
         },
 
         /*
@@ -131,15 +143,17 @@ define([
             this.translator = this.model.language.getTFunction();
             
             
-            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value) + ", "
-                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
-                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value); 
+//                + ", "
+//                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
+//                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
                 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
             yTitle
-                .attr("y", "-6px")
+                .attr("y", "-0px")
                 .attr("x", "-9px")
+                .attr("dy", "-0.36em")
                 .attr("dx", "-0.72em")
                 .text(titleString);
             
@@ -204,14 +218,14 @@ define([
                     limitMaxTickNumberX: 5
                 },
                 "medium": {
-                    margin: {top: 30,right: 60,left: 60,bottom: 80},
+                    margin: {top: 40,right: 60,left: 60,bottom: 80},
                     tick_spacing: 80,
                     text_padding: 12,
                     lollipopRadius: 8,
                     limitMaxTickNumberX: 10
                 },
                 "large": {
-                    margin: { top: 30, right: 60, left: 60, bottom: 100},
+                    margin: { top: 50, right: 60, left: 60, bottom: 100},
                     tick_spacing: 100,
                     text_padding: 20,
                     lollipopRadius: 10,
@@ -276,7 +290,7 @@ define([
             this.yAxis.scale(this.yScale)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: {top: 5, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom},
+                    toolMargin: {top: 0, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom},
                     limitMaxTickNumber: 6
                     //showOuter: true
                 });
@@ -379,7 +393,7 @@ define([
                     group.append("circle")
                         .attr("class", "vzb-lc-circle")
                         .style("fill", color)
-                        .style("stroke", d3.rgb(color).darker(0.3))
+                        //.style("stroke", d3.rgb(color).darker(0.3))
                         .attr("data-tooltip", label);
                 
                     var labelGroup = group.append("g").attr("class", "vzb-lc-label");
@@ -514,16 +528,17 @@ define([
                 
                     var value = _this.yAxis.tickFormat()(_this.lastXY[index].value);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
-                
+                    var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
+                    
                     var t = group.select(".vzb-lc-labelName")
                         .attr("dx", _this.activeProfile.text_padding)
-                        .text(name + " " + (_this.data.length<10?value:""));
+                        .text(name + " " + (_this.data.length<valueHideLimit ? value : ""));
                 
                     group.select(".vzb-lc-labelValue")
                         .attr("dx", _this.activeProfile.text_padding)
                         .text("");
                     
-                    if(_this.data.length<10){
+                    if(_this.data.length < valueHideLimit){
                         // if too little space on the right, break up the text in two lines
                         if(_this.xScale(_this.lastXY[index].time) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){

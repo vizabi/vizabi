@@ -88,7 +88,7 @@ $(function() {
             time: {
                 start: 1800,
                 end: 2100,
-                step: 1,
+                step: 4,
                 speed: 300,
                 value: 1990,
                 formatInput: "%Y"
@@ -143,6 +143,14 @@ $(function() {
             reader: 'waffle-server'            
 //            reader: "local-json",
 //            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+        },
+        
+        ui:{
+            'vzb-tool-line-chart': {
+                entity_labels:{
+                    min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+                } 
+            }
         },
 
         //language properties

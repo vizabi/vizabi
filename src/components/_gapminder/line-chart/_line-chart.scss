@@ -26,8 +26,9 @@
     .vzb-lc-axis-x, .vzb-lc-axis-y {
         @extend .vzb-lc-axis;
     }
-    .vzb-lc-axis-y-title, .vzb-lc-axis-x-title {
+    .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {
         @extend .vzb-lc-title;
+        font-size: 1.8em;
     }
     .vzb-lc-vertical-now {
         stroke-dasharray: 2 4;
@@ -44,14 +45,11 @@
         stroke-linecap: butt;
     }
     .vzb-lc-circle {
-        stroke-width: 3px
+        stroke-width: 4px;
+        stroke: #4F4F4F;
     }
-    .vzb-lc-labelName {
-        font-size: 1.8em;
-    } 
-    .vzb-lc-labelValue {
-        font-size: 1.3em;
-    }
+    .vzb-lc-labelName {font-size: 1.8em;} 
+    .vzb-lc-labelValue {font-size: 1.3em;}
     .vzb-lc-year {
         text-anchor: middle;
         dominant-baseline: hanging;
@@ -62,46 +60,24 @@
 &.vzb-medium {
     .vzb-line-chart {
         @include font-size(15px);
-        .vzb-lc-line {
-            stroke-width: 8px;
-        }
-        .vzb-lc-line-shadow {
-            stroke-width: 11px;
-        }
-        .vzb-lc-circle {
-            stroke-width: 2px
-        }
-        .vzb-lc-labelName {
-            font-size: 1.5em;
-        }
-        .vzb-lc-labelValue {
-            font-size: 1.2em;
-        }
-        .vzb-lc-year {
-            font-size: 1.5em;
-        }
+        .vzb-lc-line {stroke-width: 8px;}
+        .vzb-lc-line-shadow {stroke-width: 11px;}
+        .vzb-lc-circle {stroke-width: 3px}
+        .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {font-size: 1.5em;}
+        .vzb-lc-labelName {font-size: 1.5em;}
+        .vzb-lc-labelValue {font-size: 1.2em;}
+        .vzb-lc-year {font-size: 1.5em;}
     }
 }
 &.vzb-small {
     .vzb-line-chart {
         @include font-size(12px);
-        .vzb-lc-line {
-            stroke-width: 5px;
-        }
-        .vzb-lc-line-shadow {
-            stroke-width: 7px;
-        }
-        .vzb-lc-circle {
-            stroke-width: 1px
-        }        
-        .vzb-lc-labelName {
-            font-size: 1.2em;
-        }
-        .vzb-lc-labelValue {
-            font-size: 1.0em;
-        }
-        .vzb-lc-year {
-            font-size: 1.2em;
-        }
+        .vzb-lc-line {stroke-width: 5px;}
+        .vzb-lc-line-shadow {stroke-width: 7px;}
+        .vzb-lc-circle {stroke-width: 2px}     
+        .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {font-size: 1.2em;}
+        .vzb-lc-labelName {font-size: 1.2em;}
+        .vzb-lc-labelValue {font-size: 1.0em;}
+        .vzb-lc-year {font-size: 1.2em;}
     }
 }
