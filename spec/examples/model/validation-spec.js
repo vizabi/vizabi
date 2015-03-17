@@ -60,14 +60,13 @@ describe("* Example Multi Validation", function() {
         expect(contents.length).toBeGreaterThan(0);
     });
 
-    //FIX ME: this test is not passing
-    // it("should be ready (and all models ready accordingly)", function() {
-    //     var ready = viz._tool.model._ready;
-    //     if (!ready) {
-    //         console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
-    //         console.log(JSON.stringify(mapSet(viz._tool.model), null, 4));
-    //     }
-    //     expect(ready).toBeTruthy();
-    // });
+    it("should be ready (and all models ready accordingly)", function() {
+        var ready = viz._tool.model._ready;
+        if (!ready) {
+            console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
+            console.log(JSON.stringify(mapSet(viz._tool.model), null, 4));
+        }
+        expect(ready).toBeTruthy();
+    });
 
 });
