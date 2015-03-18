@@ -21,7 +21,8 @@
             </ul>
         </div>
 
-        <button onclick="randomSize('line-chart')"><i class="fa fa-random"></i></button>
+        <button onclick="randomSize('line-chart')"><i class="fa fa-random"></i>
+        </button>
 
         <label>|</label>
 
@@ -30,9 +31,12 @@
         <div id="dropdown-number" title="Y Axis" class="wrapper-dropdown" tabindex="1">
             <span>Y axis</span>
             <ul class="dropdown">
-                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Population</a></li>
-                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">GDP</a></li>
-                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Lex</a></li>
+                <li><a onclick="hook('axis_y', 'indicator', 'pop')">Population</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'indicator', 'gdp_per_cap')">GDP</a>
+                </li>
+                <li><a onclick="hook('axis_y', 'indicator', 'lex')">Lex</a>
+                </li>
             </ul>
         </div>
 
@@ -40,15 +44,21 @@
         <div id="dropdown-label" title="Color of Bubbles" class="wrapper-dropdown" tabindex="1">
             <span>Entities</span>
             <ul class="dropdown">
-                <li><a onclick="filterEntities(['*'], ['world'])">World</a></li>
-                <li><a onclick="filterEntities(['*'], ['region'])">4 regions</a></li>
-                <li><a onclick="filterEntities(['swe'], ['country'])">A single country</a></li>
-                <li><a onclick="filterEntities(['swe','usa'], ['country'])">Two countries</a></li>
-                <li><a onclick='filterEntities(["afg","alb","dza","ago","atg","arg","arm","aus"], ["country"])'>8 countries</a></li>
-                <li><a onclick='filterEntities(["afg","alb","dza","ago","atg","arg","arm","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can"], ["country"])'>31 countries</a></li>
+                <li><a onclick="filterEntities(['*'], ['world'])">World</a>
+                </li>
+                <li><a onclick="filterEntities(['*'], ['region'])">4 regions</a>
+                </li>
+                <li><a onclick="filterEntities(['swe'], ['country'])">A single country</a>
+                </li>
+                <li><a onclick="filterEntities(['swe','usa'], ['country'])">Two countries</a>
+                </li>
+                <li><a onclick='filterEntities(["afg","alb","dza","ago","atg","arg","arm","aus"], ["country"])'>8 countries</a>
+                </li>
+                <li><a onclick='filterEntities(["afg","alb","dza","ago","atg","arg","arm","aus","aut","aze","bhs","bhr","bgd","brb","blr","bel","blz","ben","btn","bol","bih","bwa","bra","chn","brn","bgr","bfa","bdi","khm","cmr","can"], ["country"])'>31 countries</a>
+                </li>
             </ul>
         </div>
-        
+
         <label>|</label>
 
         <div id="dropdown-language" class="wrapper-dropdown" tabindex="1">
@@ -62,9 +72,9 @@
         </div>
 
     </div>
-    
-    
-    
+
+
+
     <div id="line-chart" class="placeholder"></div>
 
 </div>
@@ -87,10 +97,10 @@ $(function() {
             //time properties
             time: {
                 start: 1800,
-                end: 2100,
+                end: 2015,
                 step: 4,
                 speed: 300,
-                value: 1990,
+                value: 2015,
                 formatInput: "%Y"
             },
 
@@ -99,8 +109,8 @@ $(function() {
                 show: {
                     dim: "geo",
                     filter: {
-                        "geo": ["ago", "arg", "aus", "swe"],
-                        "geo.category": ["country"]
+                        "geo": ["*"],
+                        "geo.category": ["region"]
                     }
                 }
             },
@@ -117,7 +127,7 @@ $(function() {
                 axis_y: {
                     use: "indicator",
                     value: "gdp_per_cap",
-                    scale: "linear",
+                    scale: "log",
                     unit: 1000000000
                 },
                 axis_x: {
@@ -131,25 +141,30 @@ $(function() {
                 color: {
                     use: "property",
                     value: "geo.region",
-                    domain: ["#00D8ED", "#FC576B", "#FBE600", "#82EB05"],
+                    "domain": {
+                        "eur": "#FFE700",
+                        "afr": "#00D5E9",
+                        "asi": "#FF5872",
+                        "ame": "#7FEB00"
+                    },
                     domain_type: "continuous" //or discrete
                 }
-                
+
             }
 
         },
         //data properties
         data: {
-            reader: 'waffle-server'            
-//            reader: "local-json",
-//            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+            reader: 'waffle-server'
+                //            reader: "local-json",
+                //            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
         },
-        
-        ui:{
+
+        ui: {
             'vzb-tool-line-chart': {
-                entity_labels:{
+                entity_labels: {
                     min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
-                } 
+                }
             }
         },
 
@@ -196,8 +211,8 @@ $(function() {
     showState(options.state);
 
 });
-    
-    
+
+
 function hook(hook, use, value, domain) {
     var options = {
         state: {
@@ -216,18 +231,25 @@ function hook(hook, use, value, domain) {
     if (domain) options.state.marker[hook].domain = domain;
 
     myVizabi.setOptions(options);
-}    
+}
 
-    
+
 function filterEntities(filterGeo, filterGeoCategory) {
-    var options = {state: {entities: {show: {filter: {}}}}};
+    var options = {
+        state: {
+            entities: {
+                show: {
+                    filter: {}
+                }
+            }
+        }
+    };
     options.state.entities.show.filter = {
         "geo": filterGeo,
         "geo.category": filterGeoCategory
     }
     myVizabi.setOptions(options);
 }
-    
 </script>
 
 <!-- @@include('../assets/_footer.tpl') -->

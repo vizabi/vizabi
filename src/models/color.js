@@ -15,6 +15,7 @@ define([
         init: function(values, parent, bind) {
 
             this._type = "color";
+
             values = _.extend({
                 use: "value",
                 value: undefined
@@ -23,16 +24,19 @@ define([
         },
 
         afterLoad: function() {
+
+            var domain = _.values(this.domain);
+
             var possible = this.getUnique(this.value);
 
             this._ordinalScale = d3.scale.ordinal()
                                 .domain(possible)
-                                .range(this.domain);
+                                .range(domain);
 
             var limits = this.getLimits(this.value),
                 min = parseFloat(limits.min),
                 max = parseFloat(limits.max),
-                step = ((max-min) / (this.domain.length - 1));
+                step = ((max-min) / (domain.length - 1));
 
             //todo: clean this perturbation up (hotfix)
             max = max + max / 10000;
@@ -41,7 +45,7 @@ define([
 
             this._linearScale = d3.scale.linear()
                                   .domain(domain)
-                                  .range(this.domain)
+                                  .range(domain)
                                   .interpolate(d3.interpolateRgb);
         },
 
@@ -63,6 +67,10 @@ define([
          * @returns {String} color
          */
         mapValue: function(value) {
+
+            if(!_.isArray(this.domain) && this.domain[value]) {
+                return this.domain[value];
+            }
 
             var color;
             switch (this.use) {
