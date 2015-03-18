@@ -110,7 +110,7 @@ define([
             this.linesContainer = this.graph.select('.vzb-lc-lines');
             this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
             this.tooltip = this.element.select('.vzb-tooltip');
-            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
+//            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
             this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
             this.projectionY = this.graph.select("g").select(".vzb-lc-projection-y");
             
@@ -268,8 +268,8 @@ define([
             this.height = parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom;
             this.width = parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right;
             
-            this.filterDropshadowEl.attr("width", this.width).attr("height", this.height)
-                .attr("y", -2*this.activeProfile.lollipopRadius);
+//            this.filterDropshadowEl.attr("width", this.width).attr("height", this.height)
+//                .attr("y", -2*this.activeProfile.lollipopRadius);
 
             this.graph
                 .attr("width", this.width + this.margin.right + this.margin.left)
@@ -404,10 +404,12 @@ define([
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
                     var label = _this.model.marker.label.getValue(d);
                 
-//                    group.append("path")
-//                        .attr("class", "vzb-lc-line-shadow")
-//                        .style("stroke", d3.rgb(color).darker(0.3))
-//                        .attr("transform", "translate(0,1)");     
+                    
+                
+                    group.append("path")
+                        .attr("class", "vzb-lc-line-shadow")
+                        .style("stroke", d3.rgb(color).darker(0.3))
+                        .attr("transform", "translate(0,2)");     
                     
                     group.append("path")
                         .attr("class", "vzb-lc-line")
@@ -508,10 +510,10 @@ define([
                     // the following fixes the ugly line butts sticking out of the axis line
                     if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
                 
-//                    var path1 = group.select(".vzb-lc-line-shadow")
-//                        .attr("d", _this.line(xy));
+                    var path1 = group.select(".vzb-lc-line-shadow")
+                        .attr("d", _this.line(xy));
                     var path2 = group.select(".vzb-lc-line")
-                        .style("filter", "none")
+                        //.style("filter", "none")
                         .attr("d", _this.line(xy));
 
                     
@@ -522,13 +524,13 @@ define([
                         
                         if(_this.totalLength_1[d.geo]==null)_this.totalLength_1[d.geo]=totalLength;
 
-//                        path1
-//                          .attr("stroke-dasharray", totalLength)
-//                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
-//                          .transition()
-//                            .duration(_this.duration)
-//                            .ease("linear")
-//                            .attr("stroke-dashoffset", 0); 
+                        path1
+                          .attr("stroke-dasharray", totalLength)
+                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
+                          .transition()
+                            .duration(_this.duration)
+                            .ease("linear")
+                            .attr("stroke-dashoffset", 0); 
 
                         path2
                           .attr("stroke-dasharray", totalLength)
@@ -543,9 +545,9 @@ define([
                         //reset saved line lengths
                         _this.totalLength_1[d.geo] = null;
                         
-//                        path1
-//                          .attr("stroke-dasharray", "none")
-//                          .attr("stroke-dashoffset", "none"); 
+                        path1
+                          .attr("stroke-dasharray", "none")
+                          .attr("stroke-dashoffset", "none"); 
 
                         path2
                           .attr("stroke-dasharray", "none")
@@ -626,8 +628,8 @@ define([
                     _this.lastXY[index].labelHeight 
                         = group.select(".vzb-lc-label")[0][0].getBBox().height;
                     
-                    group.select(".vzb-lc-line")
-                        .style("filter", "url(#vzb-lc-filter-dropshadow)");
+//                    group.select(".vzb-lc-line")
+//                        .style("filter", "url(#vzb-lc-filter-dropshadow)");
                 })
                 
                 // order the labels by the latest data value
