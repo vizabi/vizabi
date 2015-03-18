@@ -90,11 +90,31 @@ define([
                 var r = new Reader(reader);
                 r.read(query, lang).then(function() {
                     //success reading
-                    var values = _.flatten(r.getData());
-
+                    
                     //TODO this is a temporary solution that does preprocessing of data
+                    var values = _.flatten(r.getData()),
+                        q = query[0];
+
+                    var query_region = (q.select.indexOf("geo.region") !== -1);
+
+                    //make sure all queried is returned
+                    values = _.map(values, function(d) {
+                        for(var i=0; i<q.select.length; i++) {
+                            var col = q.select[i];
+                            if(_.isUndefined(d[col])) {
+                                d[col] = null;
+                            }
+                        }
+                        return d;
+                    });
+
                     values = _.map(values, function(d) {
                         if (d["geo"] == null) d["geo"] = d["geo.name"];
+
+                        if (query_region && d["geo.region"] == null) {
+                            d["geo.region"] = d["geo"];
+                        }
+
                         return d;
                     });
                     // convert time to Date()
