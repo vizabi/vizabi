@@ -1,8 +1,7 @@
 define([
-    'jquery',
     'base/utils',
     'base/component',
-], function($, utils, Component) {
+], function(utils, Component) {
 
     var container;
 

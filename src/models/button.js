@@ -1,9 +1,8 @@
 define([
-    'jquery',
     'lodash',
     'base/model',
     'base/data'
-], function($, _, Model, DataManager) {
+], function(_, Model, DataManager) {
 
     var ButtonModel = Model.extend({
 

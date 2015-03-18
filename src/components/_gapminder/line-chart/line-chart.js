@@ -1,11 +1,10 @@
 define([
-    'jquery',
     'd3',
     'lodash',
     'base/component',
     'd3genericLogScale',
     'd3axisWithLabelPicker'
-], function($, d3, _, Component) {
+], function(d3, _, Component) {
 
 
 

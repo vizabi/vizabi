@@ -1,11 +1,8 @@
-//TODO: refactor this whole thing!
-
 define([
-    'jquery',
     'lodash',
     'base/utils',
     'base/component',
-], function($, _, utils, Component) {
+], function(_, utils, Component) {
 
     var Header = Component.extend({
         init: function(options, context) {

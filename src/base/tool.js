@@ -8,7 +8,8 @@ define([
 
     var class_placeholder = "vzb-placeholder",
         class_loading_data = "vzb-loading-data",
-        class_loading_error = "vzb-loading-error";
+        class_loading_error = "vzb-loading-error",
+        class_loading = "vzb-loading";
     //Tool does everything a component does, but has different defaults
     //And possibly some extra methods
     var Tool = Component.extend({
@@ -37,36 +38,24 @@ define([
                     //this ui is the model
                     _this.ui = _this.model.ui;
                     //rendering
-                    var promise = _this.render();
-                    //after rendering, we can set up hooks and load
-                    $.when.apply(null, [promise]).then(function() {
-                        //set hooks after all submodels are set
-                        _this.model.setHooks();
-                        //load after we have all hooks in place
-                        _this.model.load().done(function() {
-                            _this.model.validate().done(function() {
-                                _this.triggerAll(evt, val);
-                            });
-                        });
+                    _this.render().then(function() {
+                        _this.triggerAll(evt, val);
                     });
                 },
                 'change': function(evt, val) {
                     //defer to give time for loading
                     _.defer(function() {
                         if (_this._ready) {
-                            _this.model.validate().done(function() {
+                            _this.model.validate().then(function() {
                                 _this.triggerAll(evt, val);
-                                //_this.modelReady(evt);
                             });
                         }
                     });
                 },
                 'translate': function(evt, val) {
                     if (_this._ready) {
-                        _this.model.load().done(function() {
-                            _this.model.validate().done(function() {
-                                _this.modelReady(evt);
-                            });
+                        _this.model.load().then(function() {
+                            _this.model.validate();
                             _this.translateStrings();
                         });
                     }
@@ -91,6 +80,8 @@ define([
             if (!this.placeholder.classed(class_placeholder)) {
                 this.placeholder.classed(class_placeholder, true);
             }
+            //placeholder always starts with loading class
+            this.placeholder.classed(class_loading, true);
         },
 
         /**

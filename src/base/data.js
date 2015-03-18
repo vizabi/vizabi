@@ -1,8 +1,8 @@
 define([
     'base/class',
-    'jquery',
+    'q',
     'lodash'
-], function(Class, $, _) {
+], function(Class, Q, _) {
 
     var dataManager = Class.extend({
 
@@ -23,7 +23,7 @@ define([
         load: function(query, language, reader, evts) {
 
             var _this = this,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 promises = [],
                 cached = this.isCached(query, language, reader),
                 loaded = false,
@@ -46,7 +46,8 @@ define([
                 });
             }
             promises.push(promise);
-            $.when.apply(null, promises).then(
+
+            Q.all(promises).then(
                 // Great success! :D
                 function() {
                     //pass the data forward
@@ -61,7 +62,7 @@ define([
                 },
                 // Unfortunate error
                 function() {
-                    defer.resolve('error');
+                    defer.reject('Error loading file...');
 
                     //not loading anymore
                     if (loaded && evts && _.isFunction(evts["load_end"])) {
@@ -69,7 +70,7 @@ define([
                     }
                 });
 
-            return defer;
+            return defer.promise;
         },
 
         /**
@@ -81,13 +82,14 @@ define([
          */
         loadFromReader: function(query, lang, reader) {
             var _this = this,
-                defer = $.Deferred(),
+                defer = Q.defer(),
                 reader_name = reader.reader,
                 queryId = this._idQuery(query, lang, reader);
 
             require(["readers/" + reader_name], function(Reader) {
                 var r = new Reader(reader);
                 r.read(query, lang).then(function() {
+                    //success reading
                     var values = _.flatten(r.getData());
 
                     //TODO this is a temporary solution that does preprocessing of data
@@ -108,9 +110,13 @@ define([
 
                     _this._data[queryId] = values;
                     defer.resolve(queryId);
+                },
+                //error reading
+                function(err) {
+                    defer.reject(err);
                 });
             });
-            return defer;
+            return defer.promise;
         },
 
         /**
