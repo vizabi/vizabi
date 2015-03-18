@@ -30,9 +30,10 @@
         @extend .vzb-lc-title;
         font-size: 1.8em;
     }
-    .vzb-lc-vertical-now {
+    .vzb-lc-vertical-now, .vzb-lc-projection-x, .vzb-lc-projection-y {
         stroke-dasharray: 2 4;
         stroke: #999999;
+        opacity: 0;
     }
     .vzb-lc-line {
         fill: none;
@@ -53,6 +54,7 @@
         stroke: #4F4F4F;
         opacity: 0.9;
     }
+    .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.3em}
     .vzb-lc-labelName {font-size: 1.8em;} 
     .vzb-lc-labelValue {font-size: 1.3em;}
     .vzb-lc-year {
@@ -72,6 +74,7 @@
         .vzb-lc-labelName {font-size: 1.5em;}
         .vzb-lc-labelValue {font-size: 1.2em;}
         .vzb-lc-year {font-size: 1.5em;}
+        .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.2em}
     }
 }
 &.vzb-small {
@@ -84,5 +87,6 @@
         .vzb-lc-labelName {font-size: 1.2em;}
         .vzb-lc-labelValue {font-size: 1.0em;}
         .vzb-lc-year {font-size: 1.2em;}
+        .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.0em}
     }
 }

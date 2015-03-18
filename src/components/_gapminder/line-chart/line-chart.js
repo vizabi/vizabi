@@ -109,6 +109,8 @@ define([
             this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
             this.tooltip = this.element.select('.vzb-tooltip');
             this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
+            this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
+            this.projectionY = this.graph.select("g").select(".vzb-lc-projection-y");
             
             this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
             this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
@@ -316,7 +318,8 @@ define([
             
             // adjust the vertical dashed line
             this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1]);
-            
+            this.projectionX.attr("y1",_this.yScale.range()[0]);
+            this.projectionY.attr("x2",_this.xScale.range()[0]);
 
             
             // set the right margin that depends on longest label width
@@ -342,23 +345,26 @@ define([
         
         
         
-        redrawTimeLabel: function(){
+        redrawTimeLabel: function(time, lockOptions){
             var _this = this;
             
+            if(this.hoveringNow!=null && time==null) return;
+            if(time==null)time = this.time;
+            
             this.yearEl
-                .text(this.time.getFullYear().toString())
+                .text(time.getFullYear().toString())
                 .transition()
-                .duration(_this.duration)
+                .duration(_this.hoveringNow!=null?0:_this.duration)
                 .ease("linear")
-                .attr("x",this.xScale(this.time));
+                .attr("x",this.xScale(time));
                 
             this.xAxisEl.selectAll("g")
                 .each(function(d,t){
                     d3.select(this).select("text")
                         .transition()
-                        .duration(_this.duration)
+                        .duration(_this.hoveringNow!=null?0:_this.duration)
                         .ease("linear")
-                        .style("opacity",Math.min(1, Math.pow(Math.abs(d-_this.time)/(_this.model.time.end - _this.model.time.start)*5, 2)) )
+                        .style("opacity",Math.min(1, Math.pow(Math.abs(d-time)/(_this.model.time.end - _this.model.time.start)*5, 2)) )
                 })
             
         },
@@ -416,14 +422,14 @@ define([
                         return parseInt(d);
                     });
                 
-                    if( (mouse[0]-_this.margin.left) > d3.max(_this.xScale.range()) ) return;
+                    var resolvedTime = _this.xScale.invert(mouse[0]-_this.margin.left);  
+                    if(_this.time - resolvedTime < 0 || resolvedTime - _this.model.time.start < 0) return;
                 
-                    var resolvedValue = _this.model.marker.axis_y.getValue(
-                        {geo: d.geo, time: _this.xScale.invert(mouse[0]-_this.margin.left)}
-                        );
+                    var resolvedValue = _this.model.marker.axis_y.getValue({geo: d.geo, time: resolvedTime});
                 
                     if(_.isNaN(resolvedValue)) return;
                 
+                    var scaledValue = _this.yScale(resolvedValue);
                 
                     //position tooltip
                     _this.tooltip
@@ -432,30 +438,42 @@ define([
                         //.style("top:", (mouse[1] + 50 - _this.margin.top) + "px")
                         // above-left positioning
                         .style("right", (_this.width - mouse[0] + _this.margin.left + _this.margin.right ) + "px")
-                        .style("bottom", (_this.height - mouse[1] + _this.margin.bottom + _this.margin.top) + "px")
+                        .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
                         .text( /*_this.model.marker.label.getValue(d) + " " +*/ _this.yAxis.tickFormat()(resolvedValue) )
                         .classed("vzb-hidden", false);
                     
-                    // bring the vertical NOW bar to the hovering point
-                    _this.verticalNow
+                    // bring the projection lines to the hovering point
+                    _this.verticalNow.style("opacity",0);    
+                    _this.projectionX
+                        .style("opacity",1)
+                        .attr("y2",mouse[1]-_this.margin.top)
                         .attr("x1",mouse[0]-_this.margin.left)
                         .attr("x2",mouse[0]-_this.margin.left);
+                    _this.projectionY
+                        .style("opacity",1)
+                        .attr("y1",scaledValue)
+                        .attr("y2",scaledValue)
+                        .attr("x1",mouse[0]-_this.margin.left);
+                    _this.redrawTimeLabel(resolvedTime);
+                    _this.hoveringNow = d;
                 
                     clearTimeout(_this.unhoverTimeout);
                     
                 })
                 .on("mouseout", function(d, index) {
-                    _this.tooltip.classed("vzb-hidden", true);
-                
-                    // return back the vertical NOW bar
+                    
+                    // hide and show things like it was before hovering
                     _this.unhoverTimeout = setTimeout(function(){
-                        _this.verticalNow
-                            .transition().duration(300)
-                            .attr("x1",_this.xScale(_this.time))
-                            .attr("x2",_this.xScale(_this.time));
-                    }, 500)
+                        _this.tooltip.classed("vzb-hidden", true);
+                        _this.verticalNow.style("opacity",1);
+                        _this.projectionX.style("opacity",0);
+                        _this.projectionY.style("opacity",0);
+                        _this.hoveringNow = null;
+                        _this.redrawTimeLabel(null);
+                    }, 300)
                     
                 });
+            
             
             
             
@@ -465,6 +483,7 @@ define([
                     var label = _this.model.marker.label.getValue(d);
                     
                     //TODO: optimization is possible if getValues would return both x and time
+                    //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
                     var x = _this.model.marker.axis_x.getValues(d);
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
@@ -477,6 +496,7 @@ define([
 //                    var path1 = group.select(".vzb-lc-line-shadow")
 //                        .attr("d", _this.line(xy));
                     var path2 = group.select(".vzb-lc-line")
+                        .style("filter", "none")
                         .attr("d", _this.line(xy));
 
                     
@@ -557,7 +577,7 @@ define([
                         }
                     }
                 
-                    _this.lastXY[index].labelHeight = group.select(".vzb-lc-label")[0][0].getBBox().height;
+                    
                 
                 })
             
@@ -585,6 +605,15 @@ define([
             
             // place force layout simulation into a queue
             _this.collisionTimeout = setTimeout(function(){
+                
+                _this.entities.each(function(d,index){
+                    var group = d3.select(this);
+                    _this.lastXY[index].labelHeight 
+                        = group.select(".vzb-lc-label")[0][0].getBBox().height;
+                    
+                    group.select(".vzb-lc-line")
+                        .style("filter", "url(#vzb-lc-filter-dropshadow)");
+                })
                 
                 // order the labels by the latest data value
                 _this.lastXY.sort(function(a,b){return a.value - b.value});
@@ -636,7 +665,7 @@ define([
                             .duration(300)
                             .attr("transform", "translate(" + _this.xScale(labelData.time) + "," + resolvedY + ")")
                     });
-            },  300)
+            },  _this.model.time.speed*1.5)
         }
         
         
