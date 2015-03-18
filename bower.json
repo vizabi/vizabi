@@ -29,7 +29,8 @@
     "stacktrace-js": "~0.6.4",
     "q": "~1.0.1",
     "font-awesome": "~4.2.0",
-    "reqwest": "~1.1.5"
+    "reqwest": "~1.1.5",
+    "jquery": "~2.1.3"
   },
   "devDependencies": {}
 }
