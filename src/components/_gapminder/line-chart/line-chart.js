@@ -104,7 +104,9 @@ define([
             this.yAxisEl = this.graph.select('.vzb-lc-axis-y');
             this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
-            this.yearEl = this.graph.select('.vzb-lc-year');
+            this.xValueEl = this.graph.select('.vzb-lc-axis-x-value');
+            this.yValueEl = this.graph.select('.vzb-lc-axis-y-value');
+            
             this.linesContainer = this.graph.select('.vzb-lc-lines');
             this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
             this.tooltip = this.element.select('.vzb-tooltip');
@@ -275,9 +277,6 @@ define([
                 .select("g")
                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-            //year
-            this.widthAxisY = this.yAxisEl[0][0].getBBox().width;
-            this.heightAxisX = this.xAxisEl[0][0].getBBox().height;
             
             if (this.model.marker.axis_y.scale !== "ordinal") {
                 this.yScale.range([this.height, 0]);
@@ -309,8 +308,10 @@ define([
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
-            this.yearEl.attr("transform", "translate(0," + this.height + ")")
+            this.xValueEl.attr("transform", "translate(0," + this.height + ")")
                 .attr("y",this.xAxis.tickPadding() + this.xAxis.tickSize());
+            this.yValueEl.attr("transform", "translate(" + 0 + "," + 0 + ")")
+                .attr("x",this.yAxis.tickPadding() + this.yAxis.tickSize());
             
 
             this.yAxisEl.call(this.yAxis);
@@ -345,18 +346,18 @@ define([
         
         
         
-        redrawTimeLabel: function(time, lockOptions){
+        redrawTimeLabel: function(valueX, valueY){
             var _this = this;
             
-            if(this.hoveringNow!=null && time==null) return;
-            if(time==null)time = this.time;
+            if(this.hoveringNow!=null && valueX==null) return;
+            if(valueX==null)valueX = this.time;
             
-            this.yearEl
-                .text(time.getFullYear().toString())
+            this.xValueEl
+                .text(this.xAxis.tickFormat()(valueX))
                 .transition()
                 .duration(_this.hoveringNow!=null?0:_this.duration)
                 .ease("linear")
-                .attr("x",this.xScale(time));
+                .attr("x",this.xScale(valueX));
                 
             this.xAxisEl.selectAll("g")
                 .each(function(d,t){
@@ -364,8 +365,22 @@ define([
                         .transition()
                         .duration(_this.hoveringNow!=null?0:_this.duration)
                         .ease("linear")
-                        .style("opacity",Math.min(1, Math.pow(Math.abs(d-time)/(_this.model.time.end - _this.model.time.start)*5, 2)) )
+                        .style("opacity",Math.min(1, Math.pow(Math.abs(_this.xScale(d)-_this.xScale(valueX))/(_this.xScale.range()[1] - _this.xScale.range()[0])*5, 2)) )
                 })
+            
+            //if(valueX!=null && valueY==null) return;
+            if(valueY==null) return;
+            
+            this.yValueEl
+                .text(this.yAxis.tickFormat()(valueY))
+                .attr("y",this.yScale(valueY));
+            
+            this.yAxisEl.selectAll("g")
+                .each(function(d,t){
+                    d3.select(this).select("text")
+                        .style("opacity",Math.min(1, Math.pow(Math.abs(_this.yScale(d)-_this.yScale(valueY))/(_this.yScale.range()[1] - _this.yScale.range()[0])*5, 2)) )
+                })
+            
             
         },
         
@@ -454,7 +469,7 @@ define([
                         .attr("y1",scaledValue)
                         .attr("y2",scaledValue)
                         .attr("x1",mouse[0]-_this.margin.left);
-                    _this.redrawTimeLabel(resolvedTime);
+                    _this.redrawTimeLabel(resolvedTime, resolvedValue);
                     _this.hoveringNow = d;
                 
                     clearTimeout(_this.unhoverTimeout);
@@ -469,7 +484,7 @@ define([
                         _this.projectionX.style("opacity",0);
                         _this.projectionY.style("opacity",0);
                         _this.hoveringNow = null;
-                        _this.redrawTimeLabel(null);
+                        _this.redrawTimeLabel(null, null);
                     }, 300)
                     
                 });
@@ -588,7 +603,7 @@ define([
                     .ease("linear")
                     .attr("x1",this.xScale(this.time))
                     .attr("x2",this.xScale(this.time))
-                    .style("opacity",this.time-this.model.time.start==0?0:1);
+                    .style("opacity",this.time-this.model.time.start==0 || _this.hoveringNow?0:1);
                 
                 // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                 // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951

@@ -57,7 +57,7 @@
     .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.3em}
     .vzb-lc-labelName {font-size: 1.8em;} 
     .vzb-lc-labelValue {font-size: 1.3em;}
-    .vzb-lc-year {
+    .vzb-lc-axis-x-value, .vzb-lc-axis-y-value {
         text-anchor: middle;
         dominant-baseline: hanging;
         fill: currentColor;
@@ -73,7 +73,7 @@
         .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {font-size: 1.5em;}
         .vzb-lc-labelName {font-size: 1.5em;}
         .vzb-lc-labelValue {font-size: 1.2em;}
-        .vzb-lc-year {font-size: 1.5em;}
+        .vzb-lc-axis-x-value, .vzb-lc-axis-y-value {font-size: 1.5em;}
         .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.2em}
     }
 }
@@ -86,7 +86,7 @@
         .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {font-size: 1.2em;}
         .vzb-lc-labelName {font-size: 1.2em;}
         .vzb-lc-labelValue {font-size: 1.0em;}
-        .vzb-lc-year {font-size: 1.2em;}
+        .vzb-lc-axis-x-value, .vzb-lc-axis-y-value {font-size: 1.2em;}
         .vzb-lc-axis-x text, .vzb-lc-axis-y text {font-size: 1.0em}
     }
 }
