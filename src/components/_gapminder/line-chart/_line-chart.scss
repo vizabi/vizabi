@@ -38,13 +38,13 @@
     .vzb-lc-line {
         fill: none;
         stroke-width: 8px;
-        stroke-linecap: butt;
+        stroke-linecap: round;
         /*filter:url(#vzb-lc-filter-dropshadow);*/
     }
     .vzb-lc-line-shadow {
         fill: none;
         stroke-width: 11px;
-        stroke-linecap: butt;
+        stroke-linecap: round;
     }
 
     .vzb-lc-circle {

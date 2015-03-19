@@ -115,7 +115,9 @@ define([
             this.yValueEl = this.graph.select('.vzb-lc-axis-y-value');
             
             this.linesContainer = this.graph.select('.vzb-lc-lines');
-            this.verticalNow = this.graph.select("g").select(".vzb-lc-vertical-now");
+            this.labelsContainer = this.graph.select('.vzb-lc-labels');
+            
+            this.verticalNow = this.labelsContainer.select(".vzb-lc-vertical-now");
             this.tooltip = this.element.select('.vzb-tooltip');
 //            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
             this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
@@ -126,7 +128,8 @@ define([
             this.components[0].ui.show_value_when_drag_play = false;
             this.components[0].ui.axis_aligned = true;
             
-            this.entities = null;
+            this.entityLines = null;
+            this.entityLabels = null;
             this.totalLength_1 = {};
 
             //component events
@@ -198,8 +201,8 @@ define([
             
             this.data = this.model.marker.label.getItems({ time: this.time });
 
-            this.entities = this.linesContainer.selectAll('.vzb-lc-entity')
-                .data(this.data);
+            this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
+            this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
                
             this.timeUpdatedOnce = true;
 
@@ -283,6 +286,7 @@ define([
                 .select("g")
                 .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
+
             
             if (this.model.marker.axis_y.scale !== "ordinal") {
                 this.yScale.range([this.height, 0]);
@@ -324,7 +328,8 @@ define([
             
             
             // adjust the vertical dashed line
-            this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1]);
+            this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1])
+                .attr("x1",0).attr("x2",0);
             this.projectionX.attr("y1",_this.yScale.range()[0]);
             this.projectionY.attr("x2",_this.xScale.range()[0]);
 
@@ -365,34 +370,48 @@ define([
             if(!this.sizeUpdatedOnce) this.updateSize();
             
 
-            this.entities.exit().remove();
-            this.entities.enter().append("g")
+            this.entityLabels.exit().remove();
+            this.entityLines.exit().remove();
+            
+            
+            this.entityLines.enter().append("g")
                 .attr("class", "vzb-lc-entity")
+                .on("mousemove", function(d,i){_this.entityMousemove(d,i,_this)})
+                .on("mouseout", function(d,i){_this.entityMouseout(d,i,_this)})
                 .each(function(d, index){
-                    var group = d3.select(this);    
+                    var entity = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
                     var colorShadow = _this.model.marker.color_shadow.getValue(d)||_this.model.marker.color_shadow.domain[0];
-                    var label = _this.model.marker.label.getValue(d);
-                
                     
-                
-                    group.append("path")
+                    entity.append("path")
                         .attr("class", "vzb-lc-line-shadow")
                         .style("stroke", colorShadow)
                         .attr("transform", "translate(0,2)");     
                     
-                    group.append("path")
+                    entity.append("path")
                         .attr("class", "vzb-lc-line")
-                        .style("stroke", color)
-                        .attr("data-tooltip", label);
+                        .style("stroke", color);
                 
-                    group.append("circle")
+                })
+            
+            
+            
+            this.entityLabels.enter().append("g")
+                .attr("class", "vzb-lc-entity")
+                .on("mousemove", function(d,i){_this.entityMousemove(d,i,_this)})
+                .on("mouseout", function(d,i){_this.entityMouseout(d,i,_this)})
+                .each(function(d, index){
+                    var entity = d3.select(this);    
+                    var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
+                    var colorShadow = _this.model.marker.color_shadow.getValue(d)||_this.model.marker.color_shadow.domain[0];
+                    var label = _this.model.marker.label.getValue(d);
+                
+                    entity.append("circle")
                         .attr("class", "vzb-lc-circle")
                         .style("fill", color)
-                        //.style("stroke", d3.rgb(color).darker(0.3))
-                        .attr("data-tooltip", label);
+                        .attr("cx", 0 );
                 
-                    var labelGroup = group.append("g").attr("class", "vzb-lc-label");
+                    var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
                 
                     labelGroup.append("text")
                         .attr("class", "vzb-lc-labelName")
@@ -403,98 +422,17 @@ define([
                         .attr("class", "vzb-lc-labelValue")
                         .style("fill", colorShadow)
                         .attr("dy", "1.6em");
-                })
-                .on("mousemove", function(d, index) {
-                
-                    _this.hoveringNow = d;
-                
-                    _this.entities.each(function(){
-                        d3.select(this)
-                            .classed("vzb-dimmed", function(d){return d.geo != _this.hoveringNow.geo})
-                            .classed("vzb-hovered", function(d){return d.geo == _this.hoveringNow.geo});
-                    })
-                
-                
-                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                        return parseInt(d);
-                    });
-                
-                    var resolvedTime = _this.xScale.invert(mouse[0]-_this.margin.left);  
-                    if(_this.time - resolvedTime < 0 || resolvedTime - _this.model.time.start < 0) return;
-                
-                    var resolvedValue = _this.model.marker.axis_y.getValue({geo: d.geo, time: resolvedTime});
-                
-                    if(_.isNaN(resolvedValue)) return;
-                
-                    var scaledValue = _this.yScale(resolvedValue);
-                
-                    if(_this.ui.whenHovering.showTooltip){
-                        //position tooltip
-                        _this.tooltip
-                            // below-right positioning
-                            //.style("left:", (mouse[0] + 50 - _this.margin.left) + "px")
-                            //.style("top:", (mouse[1] + 50 - _this.margin.top) + "px")
-                            // above-left positioning
-                            .style("right", (_this.width - mouse[0] + _this.margin.left + _this.margin.right ) + "px")
-                            .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-                            .text( /*_this.model.marker.label.getValue(d) + " " +*/ _this.yAxis.tickFormat()(resolvedValue) )
-                            .classed("vzb-hidden", false);
-                    }
-                    
-                    // bring the projection lines to the hovering point
-                    if(_this.ui.whenHovering.hideVerticalNow) _this.verticalNow.style("opacity",0);  
-                
-                    if(_this.ui.whenHovering.showProjectionLineX){
-                        _this.projectionX
-                            .style("opacity",1)
-                            .attr("y2",mouse[1]-_this.margin.top)
-                            .attr("x1",mouse[0]-_this.margin.left)
-                            .attr("x2",mouse[0]-_this.margin.left);
-                    }
-                    if(_this.ui.whenHovering.showProjectionLineY){
-                        _this.projectionY
-                            .style("opacity",1)
-                            .attr("y1",scaledValue)
-                            .attr("y2",scaledValue)
-                            .attr("x1",mouse[0]-_this.margin.left);
-                    }
+            })
+            
+            
 
-                    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
-                        _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
-                    );
-
-                    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
-                        _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
-                    );
-                
-                    clearTimeout(_this.unhoverTimeout);
+  
+            
+            
                     
-                })
-                .on("mouseout", function(d, index) {
-                    
-                    // hide and show things like it was before hovering
-                    _this.unhoverTimeout = setTimeout(function(){
-                        _this.tooltip.classed("vzb-hidden", true);
-                        _this.verticalNow.style("opacity",1);
-                        _this.projectionX.style("opacity",0);
-                        _this.projectionY.style("opacity",0);
-                        _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
-                        _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
-                        
-                        _this.entities.each(function(){
-                            d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
-                        })
-                        _this.hoveringNow = null;                       
-                    }, 300)
-                    
-                });
-            
-            
-            
-            
-            this.entities
+            this.entityLines
                 .each(function(d,index){
-                    var group = d3.select(this);       
+                    var entity = d3.select(this);       
                     var label = _this.model.marker.label.getValue(d);
                     
                     //TODO: optimization is possible if getValues would return both x and time
@@ -506,11 +444,11 @@ define([
                     _this.lastXY[index] = {geo:d.geo, time: xy[xy.length-1][0], value:xy[xy.length-1][1]};
                     
                     // the following fixes the ugly line butts sticking out of the axis line
-                    if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
+                    //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
                 
-                    var path1 = group.select(".vzb-lc-line-shadow")
+                    var path1 = entity.select(".vzb-lc-line-shadow")
                         .attr("d", _this.line(xy));
-                    var path2 = group.select(".vzb-lc-line")
+                    var path2 = entity.select(".vzb-lc-line")
                         //.style("filter", "none")
                         .attr("d", _this.line(xy));
 
@@ -553,33 +491,42 @@ define([
                     }
                 
                 
-                    group.select(".vzb-lc-circle")
+                })
+            
+            
+            
+            
+            
+            
+            this.entityLabels
+                .each(function(d,index){
+                    var entity = d3.select(this);       
+                    var label = _this.model.marker.label.getValue(d);
+                                
+                    entity.select(".vzb-lc-circle")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius) 
-                        .attr("cx", _this.xScale(_this.lastXY[index].time) )
+                        .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
                         .attr("cy", _this.yScale(_this.lastXY[index].value) + 1);  
                                         
 
-                    group.select(".vzb-lc-label")
+                    entity.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(" + _this.xScale(_this.lastXY[index].time) + "," + _this.yScale(_this.lastXY[index].value) + ")" );
+                        .attr("transform","translate(0," + _this.yScale(_this.lastXY[index].value) + ")" );
                 
 
-
-                
                     var value = _this.yAxis.tickFormat()(_this.lastXY[index].value);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                     var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
                     
-                    var t = group.select(".vzb-lc-labelName")
+                    var t = entity.select(".vzb-lc-labelName")
                         .attr("dx", _this.activeProfile.text_padding)
                         .text(name + " " + (_this.data.length<valueHideLimit ? value : ""));
                 
-                    group.select(".vzb-lc-labelValue")
+                    entity.select(".vzb-lc-labelValue")
                         .attr("dx", _this.activeProfile.text_padding)
                         .text("");
                     
@@ -587,36 +534,124 @@ define([
                         // if too little space on the right, break up the text in two lines
                         if(_this.xScale(_this.lastXY[index].time) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
-                            group.select(".vzb-lc-labelName").text(name);
-                            group.select(".vzb-lc-labelValue").text(value);
+                            entity.select(".vzb-lc-labelName").text(name);
+                            entity.select(".vzb-lc-labelValue").text(value);
                         }
-                    }
-                
-                    
-                
-                })
+                    } 
+            });
             
+            this.labelsContainer
+                .transition()
+                .duration(_this.duration)
+                .ease("linear")
+                .attr("transform", "translate(" + _this.xScale(_this.time) + ",0)");
             
-                this.verticalNow
-                    .transition()
-                    .duration(_this.duration)
-                    .ease("linear")
-                    .attr("x1",this.xScale(this.time))
-                    .attr("x2",this.xScale(this.time))
-                    .style("opacity",this.time-this.model.time.start==0 || _this.hoveringNow?0:1);
+            this.verticalNow
+                .style("opacity",this.time-this.model.time.start==0 || _this.hoveringNow?0:1);
                 
 
-                if(!this.hoveringNow) this.xAxisEl.call(
-                    this.xAxis.highlightValue(this.time).highlightTransDuration(_this.duration)
-                );
+            if(!this.hoveringNow) this.xAxisEl.call(
+                this.xAxis.highlightValue(this.time).highlightTransDuration(_this.duration)
+            );
 
-            
-            
-                // Call flush() after any zero-duration transitions to synchronously flush the timer queue
-                // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-                if(_this.duration==0)d3.timer.flush();
+
+
+            // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+            // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+            if(_this.duration==0)d3.timer.flush();
             
         },
+        
+        
+        
+        
+        entityMousemove: function(me, index, context){
+            var _this = context;
+            
+            _this.hoveringNow = me;
+
+            _this.graph.selectAll(".vzb-lc-entity").each(function(){
+                d3.select(this)
+                    .classed("vzb-dimmed", function(d){return d.geo != _this.hoveringNow.geo})
+                    .classed("vzb-hovered", function(d){return d.geo == _this.hoveringNow.geo});
+            })
+
+
+            var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                return parseInt(d);
+            });
+
+            var resolvedTime = _this.xScale.invert(mouse[0]-_this.margin.left);  
+            if(_this.time - resolvedTime < 0) resolvedTime = _this.time;
+
+            var resolvedValue = _this.model.marker.axis_y.getValue({geo: me.geo, time: resolvedTime});
+
+            if(_.isNaN(resolvedValue)) return;
+
+            var scaledTime = _this.xScale(resolvedTime);
+            var scaledValue = _this.yScale(resolvedValue);
+
+            if(_this.ui.whenHovering.showTooltip){
+                //position tooltip
+                _this.tooltip
+                    .style("right", (_this.width - scaledTime + _this.margin.left + _this.margin.right ) + "px")
+                    .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
+                    .text(_this.yAxis.tickFormat()(resolvedValue) )
+                    .classed("vzb-hidden", false);
+            }
+
+            // bring the projection lines to the hovering point
+            if(_this.ui.whenHovering.hideVerticalNow) _this.verticalNow.style("opacity",0);  
+
+            if(_this.ui.whenHovering.showProjectionLineX){
+                _this.projectionX
+                    .style("opacity",1)
+                    .attr("y2",scaledValue)
+                    .attr("x1",scaledTime)
+                    .attr("x2",scaledTime);
+            }
+            if(_this.ui.whenHovering.showProjectionLineY){
+                _this.projectionY
+                    .style("opacity",1)
+                    .attr("y1",scaledValue)
+                    .attr("y2",scaledValue)
+                    .attr("x1",scaledTime);
+            }
+
+            if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+                _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
+            );
+
+            if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+                _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
+            );
+
+            clearTimeout(_this.unhoverTimeout);
+                    
+        },
+        
+        
+        
+                
+        entityMouseout: function(me, index, context){
+            var _this = context;
+            
+            // hide and show things like it was before hovering
+            _this.unhoverTimeout = setTimeout(function(){
+                _this.tooltip.classed("vzb-hidden", true);
+                _this.verticalNow.style("opacity",1);
+                _this.projectionX.style("opacity",0);
+                _this.projectionY.style("opacity",0);
+                _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
+                _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
+
+                _this.graph.selectAll(".vzb-lc-entity").each(function(){
+                    d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
+                })
+                _this.hoveringNow = null;                       
+            }, 300)
+
+        },        
         
         
         resolveLabelCollisions: function(){
@@ -628,12 +663,11 @@ define([
             // place force layout simulation into a queue
             _this.collisionTimeout = setTimeout(function(){
                 
-                _this.entities.each(function(d,index){
-                    var group = d3.select(this);
+                _this.entityLabels.each(function(d,index){
                     _this.lastXY[index].labelHeight 
-                        = group.select(".vzb-lc-label")[0][0].getBBox().height;
+                        = d3.select(this).select(".vzb-lc-label")[0][0].getBBox().height;
                     
-//                    group.select(".vzb-lc-line")
+//                    d3.select(this).select(".vzb-lc-line")
 //                        .style("filter", "url(#vzb-lc-filter-dropshadow)");
                 })
                 
@@ -685,7 +719,7 @@ define([
                         d3.select(this)
                             .transition()
                             .duration(300)
-                            .attr("transform", "translate(" + _this.xScale(labelData.time) + "," + resolvedY + ")")
+                            .attr("transform", "translate(0," + resolvedY + ")")
                     });
             },  _this.model.time.speed*1.5)
         }
