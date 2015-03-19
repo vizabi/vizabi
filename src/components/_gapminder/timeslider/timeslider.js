@@ -340,10 +340,24 @@ define([
             //update state
             var _this = this,
                 frameRate = 50; //avoid updating more than once in 50ms
-            this._updTime = this._updTime || _.throttle(function(time) {
+//            this._updTime = this._updTime || _.throttle(function(time) {
+//                _this.model.time.value = time;
+//            }, frameRate);
+//            this._updTime(time);
+              
+            //TODO: this is a monkey fix. need to come up with a better one
+            
+            //implement throttle manually
+            var now = new Date();
+            if(this._updTime!=null && now - this._updTime < frameRate) return;
+            
+            //without timeout the event is not being dispatched. try!
+            setTimeout(function(){
                 _this.model.time.value = time;
-            }, frameRate);
-            this._updTime(time);
+            },20)
+            
+            //update timestamp for throttle
+            this._updTime = now;
         },
 
         /**
