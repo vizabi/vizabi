@@ -114,4 +114,12 @@ $vzb-loader-bgcolor: $vzb-color-white;
         z-index: 9999;
         margin: 0px;
     }
+
+    .vzb-icon {
+        width: 15px;
+        height: 15px;
+        path {
+            fill: $vzb-color-primary;
+        }
+    }
 }

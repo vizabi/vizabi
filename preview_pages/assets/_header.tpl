@@ -6,6 +6,8 @@
     <!-- Includes preview pages dependencies -->
     <!-- @@include_require -->
     <script src="../assets/jquery.min.js"></script>
+    <!-- Includes font awesome css -->
+    <link rel="stylesheet" href="../assets/font-awesome/css/font-awesome.min.css">
 
     <!-- Includes vizabi main file -->
     <script src="../../vizabi.js"></script>

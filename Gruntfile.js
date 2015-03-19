@@ -84,7 +84,6 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts' //copies fonts (font awesome)
     ]);
 
     //developer task: grunt dev
@@ -110,7 +109,6 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts' //copies fonts (font awesome)
     ]);
 
     //build task without uglifying: grunt build-pretty
@@ -127,7 +125,6 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
-        'copy:fonts' //copies fonts (font awesome)
     ]);
 
     //default task with connect
@@ -174,6 +171,13 @@ module.exports = function(grunt) {
                     src: ['jquery.min.js'],
                     dest: 'preview/preview_pages/assets/',
                     expand: true
+                },
+                //font awesome used only for preview page
+                {
+                    cwd: 'lib/font-awesome/',
+                    src: ['css/font-awesome.min.css', 'fonts/*'],
+                    dest: 'preview/preview_pages/assets/font-awesome/',
+                    expand: true
                 }]
             },
             local_data: {
@@ -186,12 +190,6 @@ module.exports = function(grunt) {
                 cwd: 'src',
                 src: ['assets/imgs/**/*'],
                 dest: 'preview/',
-                expand: true
-            },
-            fonts: {
-                cwd: 'lib/font-awesome',
-                src: ['fonts/*'],
-                dest: 'preview/assets/',
                 expand: true
             },
             scripts: {

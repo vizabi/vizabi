@@ -20,8 +20,14 @@ $vzb-ts-value-width: 40px;
             background: $vzb-ts-btn-bg;
             display: block;
             border: none;
-            color: white;
-            padding: 10px 15px;
+            
+            .vzb-icon {
+                path {
+                    fill: white;
+                }
+            }
+
+            padding: 10px 14px;
             margin: 5px;
             cursor: pointer;
             &.vzb-ts-btn-pause {
