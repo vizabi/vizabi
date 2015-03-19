@@ -45,7 +45,6 @@ define([
                          _this.updateShow();
                          //_this.initLabelCollisionResolver();
                          _this.redrawDataPoints();
-                        _this.redrawTimeLabel();
                     }
                 },
                 "ready":  function(evt) {
@@ -54,13 +53,11 @@ define([
                     _this.updateSize();
                     _this.updateTime();
                     _this.redrawDataPoints();
-                    _this.redrawTimeLabel();
                     _this.resolveLabelCollisions();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
                     _this.redrawDataPoints();
-                    _this.redrawTimeLabel();
                     _this.resolveLabelCollisions();
                 }
             }
@@ -83,12 +80,22 @@ define([
 
             // default UI settings
             this.ui = _.extend({
-                entity_labels: {}
+                entity_labels: {},
+                whenHovering: {}
             }, this.ui["vzb-tool-"+this.name]);
             
             this.ui.entity_labels = _.extend({
                 min_number_of_entities_when_values_hide: 10,
             }, this.ui.entity_labels);
+            
+            this.ui.whenHovering = _.extend({
+                hideVerticalNow: true,
+                showProjectionLineX: true,
+                showProjectionLineY: true,
+                higlightValueX: true,
+                higlightValueY: true,
+                showTooltip: true
+            }, this.ui.whenHovering);
             
         },
 
@@ -127,7 +134,6 @@ define([
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-                _this.redrawTimeLabel();
                 _this.resolveLabelCollisions();
             })
         },
@@ -306,16 +312,16 @@ define([
                     limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
                     //showOuter: true
                 });
-
-            this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
-            this.xValueEl.attr("transform", "translate(0," + this.height + ")")
-                .attr("y",this.xAxis.tickPadding() + this.xAxis.tickSize());
-            this.yValueEl.attr("transform", "translate(" + 0 + "," + 0 + ")")
-                .attr("x",this.yAxis.tickPadding() + this.yAxis.tickSize());
             
 
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
+
+            this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
+            this.xValueEl.attr("transform", "translate(0," + this.height + ")")
+                .attr("y",this.xAxis.tickPadding() + this.xAxis.tickSize());
+
+            
             
             // adjust the vertical dashed line
             this.verticalNow.attr("y1",this.yScale.range()[0]).attr("y2",this.yScale.range()[1]);
@@ -345,44 +351,7 @@ define([
         
         
         
-        
-        redrawTimeLabel: function(valueX, valueY){
-            var _this = this;
-            
-            if(this.hoveringNow!=null && valueX==null) return;
-            if(valueX==null)valueX = this.time;
-            
-            this.xValueEl
-                .text(this.xAxis.tickFormat()(valueX))
-                .transition()
-                .duration(_this.hoveringNow!=null?0:_this.duration)
-                .ease("linear")
-                .attr("x",this.xScale(valueX));
-                
-            this.xAxisEl.selectAll("g")
-                .each(function(d,t){
-                    d3.select(this).select("text")
-                        .transition()
-                        .duration(_this.hoveringNow!=null?0:_this.duration)
-                        .ease("linear")
-                        .style("opacity",Math.min(1, Math.pow(Math.abs(_this.xScale(d)-_this.xScale(valueX))/(_this.xScale.range()[1] - _this.xScale.range()[0])*5, 2)) )
-                })
-            
-            //if(valueX!=null && valueY==null) return;
-            if(valueY==null) return;
-            
-            this.yValueEl
-                .text(this.yAxis.tickFormat()(valueY))
-                .attr("y",this.yScale(valueY));
-            
-            this.yAxisEl.selectAll("g")
-                .each(function(d,t){
-                    d3.select(this).select("text")
-                        .style("opacity",Math.min(1, Math.pow(Math.abs(_this.yScale(d)-_this.yScale(valueY))/(_this.yScale.range()[1] - _this.yScale.range()[0])*5, 2)) )
-                })
-            
-            
-        },
+
         
         
 
@@ -402,13 +371,14 @@ define([
                 .each(function(d, index){
                     var group = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
+                    var colorShadow = _this.model.marker.color_shadow.getValue(d)||_this.model.marker.color_shadow.domain[0];
                     var label = _this.model.marker.label.getValue(d);
                 
                     
                 
                     group.append("path")
                         .attr("class", "vzb-lc-line-shadow")
-                        .style("stroke", d3.rgb(color).darker(0.3))
+                        .style("stroke", colorShadow)
                         .attr("transform", "translate(0,2)");     
                     
                     group.append("path")
@@ -426,12 +396,12 @@ define([
                 
                     labelGroup.append("text")
                         .attr("class", "vzb-lc-labelName")
-                        .style("fill", d3.rgb(color).darker(0.3))
+                        .style("fill", colorShadow)
                         .attr("dy", ".35em");
                 
                     labelGroup.append("text")
                         .attr("class", "vzb-lc-labelValue")
-                        .style("fill", d3.rgb(color).darker(0.3))
+                        .style("fill", colorShadow)
                         .attr("dy", "1.6em");
                 })
                 .on("mousemove", function(d, index) {
@@ -448,30 +418,45 @@ define([
                 
                     var scaledValue = _this.yScale(resolvedValue);
                 
-                    //position tooltip
-                    _this.tooltip
-                        // below-right positioning
-                        //.style("left:", (mouse[0] + 50 - _this.margin.left) + "px")
-                        //.style("top:", (mouse[1] + 50 - _this.margin.top) + "px")
-                        // above-left positioning
-                        .style("right", (_this.width - mouse[0] + _this.margin.left + _this.margin.right ) + "px")
-                        .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-                        .text( /*_this.model.marker.label.getValue(d) + " " +*/ _this.yAxis.tickFormat()(resolvedValue) )
-                        .classed("vzb-hidden", false);
+                    if(_this.ui.whenHovering.showTooltip){
+                        //position tooltip
+                        _this.tooltip
+                            // below-right positioning
+                            //.style("left:", (mouse[0] + 50 - _this.margin.left) + "px")
+                            //.style("top:", (mouse[1] + 50 - _this.margin.top) + "px")
+                            // above-left positioning
+                            .style("right", (_this.width - mouse[0] + _this.margin.left + _this.margin.right ) + "px")
+                            .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
+                            .text( /*_this.model.marker.label.getValue(d) + " " +*/ _this.yAxis.tickFormat()(resolvedValue) )
+                            .classed("vzb-hidden", false);
+                    }
                     
                     // bring the projection lines to the hovering point
-                    _this.verticalNow.style("opacity",0);    
-                    _this.projectionX
-                        .style("opacity",1)
-                        .attr("y2",mouse[1]-_this.margin.top)
-                        .attr("x1",mouse[0]-_this.margin.left)
-                        .attr("x2",mouse[0]-_this.margin.left);
-                    _this.projectionY
-                        .style("opacity",1)
-                        .attr("y1",scaledValue)
-                        .attr("y2",scaledValue)
-                        .attr("x1",mouse[0]-_this.margin.left);
-                    _this.redrawTimeLabel(resolvedTime, resolvedValue);
+                    if(_this.ui.whenHovering.hideVerticalNow) _this.verticalNow.style("opacity",0);  
+                
+                    if(_this.ui.whenHovering.showProjectionLineX){
+                        _this.projectionX
+                            .style("opacity",1)
+                            .attr("y2",mouse[1]-_this.margin.top)
+                            .attr("x1",mouse[0]-_this.margin.left)
+                            .attr("x2",mouse[0]-_this.margin.left);
+                    }
+                    if(_this.ui.whenHovering.showProjectionLineY){
+                        _this.projectionY
+                            .style("opacity",1)
+                            .attr("y1",scaledValue)
+                            .attr("y2",scaledValue)
+                            .attr("x1",mouse[0]-_this.margin.left);
+                    }
+
+                    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+                        _this.xAxis.highlightValue(resolvedTime).highlightTransDuration(0)
+                    );
+
+                    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+                        _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
+                    );
+
                     _this.hoveringNow = d;
                 
                     clearTimeout(_this.unhoverTimeout);
@@ -485,8 +470,10 @@ define([
                         _this.verticalNow.style("opacity",1);
                         _this.projectionX.style("opacity",0);
                         _this.projectionY.style("opacity",0);
-                        _this.hoveringNow = null;
-                        _this.redrawTimeLabel(null, null);
+                        _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
+                        _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
+                        _this.hoveringNow = null;                       
+                        
                     }, 300)
                     
                 });
@@ -607,6 +594,13 @@ define([
                     .attr("x2",this.xScale(this.time))
                     .style("opacity",this.time-this.model.time.start==0 || _this.hoveringNow?0:1);
                 
+
+                if(!this.hoveringNow) this.xAxisEl.call(
+                    this.xAxis.highlightValue(this.time).highlightTransDuration(_this.duration)
+                );
+
+            
+            
                 // Call flush() after any zero-duration transitions to synchronously flush the timer queue
                 // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
                 if(_this.duration==0)d3.timer.flush();

@@ -22,6 +22,8 @@ define(['d3'], function(d3){
         }
 
         function axis(g) {
+            if(highlightValue!=null){axis.highlightValueRun(g); return;}
+            
             // measure the width and height of one digit
             var widthSampleG = g.append("g").attr("class","tick widthSampling");
             widthSampleT = widthSampleG.append('text').text('0');
@@ -46,6 +48,13 @@ define(['d3'], function(d3){
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
             var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
 
+            g.selectAll('.vzb-lc-axis-value')
+                .data([null])
+                .enter().append('g')
+                .attr("class",'vzb-lc-axis-value')
+                .append("text")
+                .style("opacity",0);
+            
             // patch the label positioning after the view is generated
             g.selectAll("text")
                 .each(function(d,i){
@@ -59,7 +68,7 @@ define(['d3'], function(d3){
                     view.attr("dy", dimension==X?(orient==VERTICAL?0:".72em"):".32em");
                     
                     if(axis.repositionLabels() == null) return;
-                    var shift = axis.repositionLabels()[i]; 
+                    var shift = axis.repositionLabels()[i] || {x:0, y:0}; 
                     view.attr("x",+view.attr("x") + shift.x);
                     view.attr("y",+view.attr("y") + shift.y);
                 })
@@ -82,6 +91,53 @@ define(['d3'], function(d3){
             
         };
         
+        
+        axis.highlightValueRun = function(g){
+            var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
+            
+            g.selectAll(".tick")
+                .each(function(d,t){
+                    d3.select(this).select("text")
+                        .transition()
+                        .duration(highlightTransDuration)
+                        .ease("linear")
+                        .style("opacity", highlightValue=="none"? 1 : Math.min(1, Math.pow(
+                                    Math.abs(axis.scale()(d)-axis.scale()(highlightValue))/
+                                    (axis.scale().range()[1] - axis.scale().range()[0])*5, 2) 
+                              ))
+                })
+            
+            
+            g.select('.vzb-lc-axis-value')    
+                .transition()
+                .duration(highlightTransDuration)
+                .ease("linear")
+                .attr("transform", highlightValue=="none"? "translate(0,0)" : "translate("
+                    + (orient==HORIZONTAL?axis.scale()(highlightValue):0) +","
+                    + (orient==VERTICAL?axis.scale()(highlightValue):0) + ")"
+                )
+                
+            g.select('.vzb-lc-axis-value').select("text")
+                .text(axis.tickFormat()(highlightValue=="none"?0:highlightValue))
+                .style("opacity",(highlightValue=="none"?0:1));
+
+            highlightValue = null;
+        }
+        
+        
+        var highlightValue = null;
+        axis.highlightValue = function(arg){
+            if (!arguments.length) return highlightValue;
+            highlightValue = arg;
+            return axis;
+        }
+        
+        var highlightTransDuration = 0;
+        axis.highlightTransDuration = function(arg){
+            if (!arguments.length) return highlightTransDuration;
+            highlightTransDuration = arg;
+            return axis;
+        }        
         
         var repositionLabels = null;
         axis.repositionLabels = function(arg){
