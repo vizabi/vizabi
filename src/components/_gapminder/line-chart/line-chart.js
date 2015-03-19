@@ -345,6 +345,7 @@ define([
                 {bottom: 0, left: 0, right: 0, top: 0};
             
             this.components[0].getSetProfile(tsProfiles);
+            this.components[0].getSetScaleRange(this.xScale.range());
             
             // call resize of a child component to apply the changes
             this.components[0].resize();

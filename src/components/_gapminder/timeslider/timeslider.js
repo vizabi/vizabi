@@ -205,8 +205,8 @@ define([
             //translate according to margins
             this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-            //adjust scale with width
-            this.xScale.range([0, this.width]);
+            //adjust scale width if it was not set manually before
+            if(this.xScale.range()[1] = 1)this.xScale.range([0, this.width]);
 
             //adjust axis with scale
             this.xAxis = this.xAxis.scale(this.xScale)
@@ -239,6 +239,19 @@ define([
             return this;
         },
 
+                
+        /**
+         * Getter and setter for scale range
+         * @returns {Structure} current profile if not set
+         * @returns {class} this if set
+         */
+        getSetScaleRange: function(arg){
+            if (!arguments.length) return this.xScale.range();
+            this.xScale.range(arg);
+            return this;
+        },
+        
+        
         /**
          * Gets brushed function to be executed when dragging
          * @returns {Function} brushed function
