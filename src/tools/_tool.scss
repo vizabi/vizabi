@@ -1,5 +1,5 @@
 .vzb-tool {
-    $heightTitle: 40px;
+    $heightTitle: 8px;
     $sizeButtonList: 60px;
     $sizeButtonListSmall: 50px;
     $sizeTimeSlider: 70px;
@@ -111,5 +111,13 @@
         font-size: 12px;
         z-index: 11;
         font-weight: 300;
+    }
+    
+    //remove tool title
+    .vzb-tool-title {
+        display: none !important;
+    }
+    .vzb-tool-content {
+        @include absoluteAll;
     }
 }

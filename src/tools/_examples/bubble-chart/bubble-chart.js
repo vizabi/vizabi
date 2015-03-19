@@ -17,9 +17,6 @@ define([
 
             //instantiating components
             this.components = [{
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
-            }, {
                 component: '_examples/bubble-chart',
                 placeholder: '.vzb-tool-viz', //div to render
                 model: ["state.time", "state.entities", "state.marker", "language"]
