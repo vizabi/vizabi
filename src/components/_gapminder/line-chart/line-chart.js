@@ -405,6 +405,16 @@ define([
                         .attr("dy", "1.6em");
                 })
                 .on("mousemove", function(d, index) {
+                
+                    _this.hoveringNow = d;
+                
+                    _this.entities.each(function(){
+                        d3.select(this)
+                            .classed("vzb-dimmed", function(d){return d.geo != _this.hoveringNow.geo})
+                            .classed("vzb-hovered", function(d){return d.geo == _this.hoveringNow.geo});
+                    })
+                
+                
                     var mouse = d3.mouse(_this.graph.node()).map(function(d) {
                         return parseInt(d);
                     });
@@ -456,8 +466,6 @@ define([
                     if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
                         _this.yAxis.highlightValue(resolvedValue).highlightTransDuration(0)
                     );
-
-                    _this.hoveringNow = d;
                 
                     clearTimeout(_this.unhoverTimeout);
                     
@@ -472,8 +480,11 @@ define([
                         _this.projectionY.style("opacity",0);
                         _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
                         _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
-                        _this.hoveringNow = null;                       
                         
+                        _this.entities.each(function(){
+                            d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
+                        })
+                        _this.hoveringNow = null;                       
                     }, 300)
                     
                 });

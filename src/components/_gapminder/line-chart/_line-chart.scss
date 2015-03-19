@@ -59,9 +59,9 @@
         font-size: 1.8em;
     }    
     .vzb-lc-entity{opacity: 0.9;}
-    .vzb-lc-entity.vzb-hover{opacity: 0.9;}
+    .vzb-lc-entity.vzb-hovered{opacity: 0.9;}
     .vzb-lc-entity.vzb-dimmed{opacity: 0.3;}
-    .vzb-lc-entity.vzb-select{opacity: 1.0;}
+    .vzb-lc-entity.vzb-selected{opacity: 1.0;}
 }
 &.vzb-medium {
     .vzb-line-chart {
