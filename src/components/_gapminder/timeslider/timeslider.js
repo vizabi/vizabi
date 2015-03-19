@@ -245,9 +245,9 @@ define([
          * @returns {Structure} current profile if not set
          * @returns {class} this if set
          */
-        getSetScaleRange: function(arg){
-            if (!arguments.length) return this.xScale.range();
-            this.xScale.range(arg);
+        getSetScaleRangeMax: function(arg){
+            if (!arguments.length) return this.xScale.range()[1];
+            this.xScale.range([0, arg]);
             return this;
         },
         
