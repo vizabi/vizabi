@@ -14,9 +14,6 @@ define([
             this.template = "tools/_gapminder/line-chart/line-chart";
 
             this.components = [{
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
-            }, {
                 component: '_gapminder/line-chart',
                 placeholder: '.vzb-tool-stage',
                 model: ["state.time", "state.entities", "state.marker", "language"]

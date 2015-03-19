@@ -20,13 +20,11 @@ $vzb-ts-value-width: 40px;
             background: $vzb-ts-btn-bg;
             display: block;
             border: none;
-            
             .vzb-icon {
                 path {
                     fill: white;
                 }
             }
-
             padding: 10px 14px;
             margin: 5px;
             cursor: pointer;
@@ -112,13 +110,19 @@ $vzb-ts-value-width: 40px;
         }
     }
     &.vzb-ts-show-value {
-        .vzb-ts-slider-value {display: block !important;}
-    }    
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
+    }
     &.vzb-playing.vzb-ts-show-value-when-drag-play {
-        .vzb-ts-slider-value {display: block !important;}
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
     }
     &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
-        .vzb-ts-slider-value {display: block !important;}
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
     }
 }
 &.vzb-small {
@@ -127,11 +131,19 @@ $vzb-ts-value-width: 40px;
             width: $vzb-ts-btn-area - 20;
             @include absolute(0px, 0px, 5px, 5px);
             .vzb-ts-btn {
-                width: $vzb-ts-btn-width - 14; 
-                height: $vzb-ts-btn-width - 14; 
+
+                width: $vzb-ts-btn-width - 14;
+                height: $vzb-ts-btn-width - 14;
                 margin: 0px;
                 padding: 7px 10px;
                 
+                .vzb-icon {
+                    width: 12px;
+                    height: 12px;
+                }
+                &.vzb-ts-btn-play {
+                    padding: 7px 8px;
+                }
                 &.vzb-ts-btn-pause {
                     padding: 7px 6px;
                 }
@@ -143,7 +155,6 @@ $vzb-ts-value-width: 40px;
         min-height: $vzb-ts-btn-area - 20;
     }
 }
-
 &.vzb-medium {
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
@@ -153,7 +164,6 @@ $vzb-ts-value-width: 40px;
             @include absolute(0px, 0px, 5px, $vzb-ts-btn-area + 10);
         }
     }
-    
     .vzb-timeslider {
         min-height: $vzb-ts-btn-area + 5;
         .vzb-ts-slider-wrapper {
@@ -181,7 +191,6 @@ $vzb-ts-value-width: 40px;
             @include absolute(0px, 0px, 5px, $vzb-ts-btn-area + 10);
         }
     }
-    
     .vzb-timeslider {
         min-height: $vzb-ts-btn-area + 10;
         .vzb-ts-slider-wrapper {
