@@ -1179,7 +1179,7 @@ define([
             if (indexNext == items.length) return items[items.length - 1][this.value];
 
             //return null if data is missing
-            if (items[indexNext][this.value] == null) return null;
+            if (items[indexNext][this.value] == null || items[indexNext-1][this.value] == null) return null;
             
             // perform a simple linear interpolation
             var fraction =

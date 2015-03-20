@@ -322,16 +322,15 @@ define([
             switch (shape){
                 case "circle":
                 this.bubbles.each(function(d){
-                    var bubble = d3.select(this);
+                    var view = d3.select(this);
                     var valueY = _this.model.marker.axis_y.getValue(d);
                     var valueX = _this.model.marker.axis_x.getValue(d);
                     var valueR = _this.model.marker.size.getValue(d);
                     
                     if(valueY==null || valueX==null || valueR==null) {
-                        bubble.classed("vzb-hidden", true)
+                        view.classed("vzb-transparent", true)
                     }else{
-                        bubble
-                            .classed("vzb-hidden", false)
+                        view.classed("vzb-transparent", false)
                             .style("fill", _this.model.marker.color.getValue(d))
                             .transition().duration(_this.duration).ease("linear")
                             .attr("cy", _this.yScale(valueY))
@@ -343,24 +342,23 @@ define([
                     
                 case "rect":
                 var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
-                this.bubbles
-                    .style("fill", function(d) {
-                        return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
-                    })
-                    .transition().duration(_this.duration).ease("linear")
-                    .attr("height", function(d) {
-                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
-                        return d3.max(_this.yScale.range()) - _this.yScale(value);
-                    })
-                    .attr("y", function(d) {
-                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
-                        return _this.yScale(value);
-                    })
-                    .attr("x", function(d) {
-                        var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
-                        return _this.xScale(value) - barWidth/2;
-                    })
-                    .attr("width", barWidth);
+                this.bubbles.each(function(d){
+                    var view = d3.select(this);
+                    var valueY = _this.model.marker.axis_y.getValue(d);
+                    var valueX = _this.model.marker.axis_x.getValue(d);
+                    
+                    if(valueY==null || valueX==null) {
+                        view.transition().duration(_this.duration).ease("linear")
+                            .style("visibility", "hidden")
+                    }else{
+                        view.style("fill", _this.model.marker.color.getValue(d))
+                            .transition().duration(_this.duration).ease("linear")
+                            .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
+                            .attr("y", _this.yScale(valueY))
+                            .attr("x", _this.xScale(valueX) - barWidth/2)
+                            .attr("width", barWidth);
+                    }
+                });
                 break;
             }
             

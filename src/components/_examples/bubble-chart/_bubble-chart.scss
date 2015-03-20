@@ -22,6 +22,7 @@ $vzb-bc-year-size:300px;
         @include opacity(0.8);
         stroke: white;
         cursor: pointer;
+        @include transition(opacity, 300ms, linear);
         &:hover {
             @include opacity(1);
         }

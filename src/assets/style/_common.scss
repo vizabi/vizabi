@@ -55,6 +55,9 @@ $vzb-loader-bgcolor: $vzb-color-white;
 .vzb-invisible {
     visibility: hidden !important;
 }
+.vzb-transparent {
+    opacity: 0 !important;
+}
 .vzb-placeholder {
     position: relative;
     background-color: $vzb-color-white;
