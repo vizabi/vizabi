@@ -321,23 +321,24 @@ define([
 
             switch (shape){
                 case "circle":
-                this.bubbles
-                    .style("fill", function(d) {
-                        return _this.model.marker.color.getValue(d)||this.model.marker.color.domain[0];
-                    })
-                    .transition().duration(_this.duration).ease("linear")
-                    .attr("cy", function(d) {
-                        var value = _this.model.marker.axis_y.getValue(d)||_this.yScale.domain()[0];
-                        return _this.yScale(value);
-                    })
-                    .attr("cx", function(d) {
-                        var value = _this.model.marker.axis_x.getValue(d)||_this.xScale.domain()[0];
-                        return _this.xScale(value);
-                    })
-                    .attr("r", function(d) {
-                        var value = _this.model.marker.size.getValue(d)||_this.sScale.domain()[0];
-                        return areaToRadius(_this.sScale(value));
-                    });
+                this.bubbles.each(function(d){
+                    var bubble = d3.select(this);
+                    var valueY = _this.model.marker.axis_y.getValue(d);
+                    var valueX = _this.model.marker.axis_x.getValue(d);
+                    var valueR = _this.model.marker.size.getValue(d);
+                    
+                    if(!valueY || !valueX || !valueR) {
+                        bubble.classed("vzb-hidden", true)
+                    }else{
+                        bubble
+                            .classed("vzb-hidden", false)
+                            .style("fill", _this.model.marker.color.getValue(d))
+                            .transition().duration(_this.duration).ease("linear")
+                            .attr("cy", _this.yScale(valueY))
+                            .attr("cx", _this.xScale(valueX))
+                            .attr("r", areaToRadius(_this.sScale(valueR)))
+                    }
+                });
                 break;
                     
                 case "rect":
