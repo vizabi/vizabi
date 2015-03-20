@@ -150,6 +150,8 @@
         <div title="Label when hovering" class="wrapper-dropdown" tabindex="1">
             <span>LABEL</span>
             <ul class="dropdown">
+                <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo.region'})">Prop: geo.region</a>
+                </li>
                 <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo.name'})">Prop: geo.name</a>
                 </li>
                 <li><a onclick="hook({hook: 'label', use: 'property', value: 'geo'})">Prop: geo</a>
@@ -245,12 +247,14 @@ $(function() {
                 color: {
                     use: "property",
                     value: "geo.region",
-                    domain: [
-                        "#F77481",
-                        "#E1CE00",
-                        "#B4DE79",
-                        "#62CCE3"
-                    ]
+                    "domain": {
+                        "world": "#ffb600",
+                        "eur": "#FFE700", //"#E1CE00"
+                        "afr": "#00D5E9", //"#62CCE3"
+                        "asi": "#FF5872", //"#F77481"
+                        "ame": "#7FEB00"  //"#B4DE79"
+                    },
+                    domain_type: "continuous" //or discrete
                 }
             }
         },
