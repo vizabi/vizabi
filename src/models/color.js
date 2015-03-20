@@ -70,6 +70,8 @@ define([
 
             if(!_.isArray(this.domain) && this.domain[value]) {
                 return this.domain[value];
+            } else if(!_.isArray(this.domain) && this.domain["_default"]) {
+                return this.domain["_default"];
             }
 
             var color;
