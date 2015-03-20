@@ -38,7 +38,6 @@ define([
                     _this.selectDataPoints();
                 },
                 "ready":  function(evt) {
-                    _this.preprocessData();
                     _this.updateShow();
                     _this.updateTime();
                     _this.updateSize();
@@ -60,7 +59,6 @@ define([
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
 
-            this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
 
@@ -95,13 +93,6 @@ define([
             })
 
         },
-        
-        preprocessData: function(){
-            this.model.marker.label.getItems().forEach(function(d) {
-                d["geo.region"] = d["geo.region"] || "world";
-            });
-            this.isDataPreprocessed = true;
-        },
 
 
         /*
@@ -110,11 +101,8 @@ define([
          */
         updateShow: function() {
             
-            if (!this.isDataPreprocessed) this.preprocessData();
-            
             this.duration = this.model.time.speed;
             this.translator = this.model.language.getTFunction();
-            
             
             var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
             var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
