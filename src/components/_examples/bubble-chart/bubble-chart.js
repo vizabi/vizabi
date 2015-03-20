@@ -348,10 +348,10 @@ define([
                     var valueX = _this.model.marker.axis_x.getValue(d);
                     
                     if(valueY==null || valueX==null) {
-                        view.transition().duration(_this.duration).ease("linear")
-                            .style("visibility", "hidden")
+                        view.classed("vzb-transparent", true)
                     }else{
-                        view.style("fill", _this.model.marker.color.getValue(d))
+                        view.classed("vzb-transparent", false)
+                            .style("fill", _this.model.marker.color.getValue(d))
                             .transition().duration(_this.duration).ease("linear")
                             .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
                             .attr("y", _this.yScale(valueY))
