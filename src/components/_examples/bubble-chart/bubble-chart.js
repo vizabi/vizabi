@@ -249,9 +249,9 @@ define([
             var heightAxisX = this.xAxisEl[0][0].getBBox().height;
 
             this.yearEl
-                .attr("x", "50%")
-                .attr("y", "50%")
-                .attr("transform", "translate(" + (-1 * widthAxisY) + ", " + (heightAxisX) + ")");
+                .attr("x", width/2)
+                .attr("y", height/3*2)
+                .style("font-size", Math.max(height/4, width/4) + "px");
 
             //update scales to the new range
             if (this.model.marker.axis_y.scale !== "ordinal") {
