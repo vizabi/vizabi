@@ -327,7 +327,7 @@ define([
                     var valueX = _this.model.marker.axis_x.getValue(d);
                     var valueR = _this.model.marker.size.getValue(d);
                     
-                    if(!valueY || !valueX || !valueR) {
+                    if(valueY==null || valueX==null || valueR==null) {
                         bubble.classed("vzb-hidden", true)
                     }else{
                         bubble

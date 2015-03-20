@@ -1178,6 +1178,9 @@ define([
             if (indexNext == 0) return items[0][this.value];
             if (indexNext == items.length) return items[items.length - 1][this.value];
 
+            //return null if data is missing
+            if (items[indexNext][this.value] == null) return null;
+            
             // perform a simple linear interpolation
             var fraction =
                 (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
@@ -1185,7 +1188,6 @@ define([
 
             // cast to time object if we are interpolating time
             if (_.isDate(items[0][this.value])) value = new Date(value);
-
 
             return value;
         },
