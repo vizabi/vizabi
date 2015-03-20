@@ -62,6 +62,11 @@ $vzb-bc-year-size:300px;
         @extend .vzb-bc-title;
         opacity: 0.3;
     }    
+    .vzb-bc-projection-x, .vzb-bc-projection-y {
+        stroke-dasharray: 2 4;
+        stroke: #999999;
+        opacity: 0;
+    }
     .vzb-bc-line {
         fill: none;
         stroke: $vzb-bc-color-axis;
@@ -79,12 +84,16 @@ $vzb-bc-year-size:300px;
         -ms-user-select: none;
         user-select: none;
     }
+    
+    
+    .vzb-axis-value text {fill: $vzb-color-primary;}
 }
 &.vzb-large {
     .vzb-bubble-chart-svg {
         .vzb-bc-bubble {
             stroke-opacity: 1.0;
         }
+        .vzb-axis-value text {font-size: 1.8em;}
     }
 }
 &.vzb-medium {
@@ -97,6 +106,7 @@ $vzb-bc-year-size:300px;
         .vzb-bc-bubble {
             stroke-opacity: 0.8;
         }
+        .vzb-axis-value text {font-size: 1.6em;}
     }
 }
 &.vzb-small {
@@ -112,5 +122,6 @@ $vzb-bc-year-size:300px;
         .vzb-bc-bubble {
             stroke-opacity: 0.7;
         }
+        .vzb-axis-value text {font-size: 1.3em;}
     }
 }

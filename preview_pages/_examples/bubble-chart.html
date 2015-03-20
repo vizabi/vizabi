@@ -264,6 +264,17 @@ $(function() {
         data: {
             reader: 'waffle-server'
         },
+        
+        ui: {
+            'vzb-tool-bubble-chart': {
+                whenHovering: {
+                    showProjectionLineX: true,
+                    showProjectionLineY: true,
+                    higlightValueX: true,
+                    higlightValueY: true
+                }
+            }
+        },
 
         //language properties
         language: url.lang || {

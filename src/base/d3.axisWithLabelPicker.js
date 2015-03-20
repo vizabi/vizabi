@@ -48,10 +48,10 @@ define(['d3'], function(d3){
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;
             var dimension = (orient==HORIZONTAL && axis.pivot() || orient==VERTICAL && !axis.pivot())?Y:X;
 
-            g.selectAll('.vzb-lc-axis-value')
+            g.selectAll('.vzb-axis-value')
                 .data([null])
                 .enter().append('g')
-                .attr("class",'vzb-lc-axis-value')
+                .attr("class",'vzb-axis-value')
                 .append("text")
                 .style("opacity",0);
             
@@ -108,7 +108,7 @@ define(['d3'], function(d3){
                 })
             
             
-            g.select('.vzb-lc-axis-value')    
+            g.select('.vzb-axis-value')    
                 .transition()
                 .duration(highlightTransDuration)
                 .ease("linear")
@@ -117,7 +117,7 @@ define(['d3'], function(d3){
                     + (orient==VERTICAL?axis.scale()(highlightValue):0) + ")"
                 )
                 
-            g.select('.vzb-lc-axis-value').select("text")
+            g.select('.vzb-axis-value').select("text")
                 .text(axis.tickFormat()(highlightValue=="none"?0:highlightValue))
                 .style("opacity",(highlightValue=="none"?0:1));
 

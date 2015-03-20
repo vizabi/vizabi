@@ -61,6 +61,21 @@ define([
 
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
+            
+            
+            
+            
+            // default UI settings
+            this.ui = _.extend({
+                whenHovering: {}
+            }, this.ui["vzb-tool-"+this.name]);
+            
+            this.ui.whenHovering = _.extend({
+                showProjectionLineX: true,
+                showProjectionLineY: true,
+                higlightValueX: true,
+                higlightValueY: true
+            }, this.ui.whenHovering);
 
         },
 
@@ -80,6 +95,10 @@ define([
             this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
             this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
             this.yearEl = this.graph.select('.vzb-bc-year');
+            
+            this.projectionX = this.graph.select(".vzb-bc-projection-x");
+            this.projectionY = this.graph.select(".vzb-bc-projection-y");
+                  
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.bubbles = null;
             this.tooltip = this.element.select('.vzb-tooltip');
@@ -277,6 +296,9 @@ define([
             
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
+            
+            this.projectionX.attr("y1",_this.yScale.range()[0]);
+            this.projectionY.attr("x2",_this.xScale.range()[0]);
 
             this.sizeUpdatedOnce = true;
         },
@@ -308,26 +330,62 @@ define([
                     _this.tooltip.classed("vzb-hidden", false)
                         .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
                         .html(_this.model.marker.label.getValue(d));
+                
+                
+                
+                    var valueY = _this.model.marker.axis_y.getValue(d);
+                    var valueX = _this.model.marker.axis_x.getValue(d);
+                    var valueS = _this.model.marker.size.getValue(d);
+                    var radius = areaToRadius(_this.sScale(valueS))
+                
+                    if(_this.ui.whenHovering.showProjectionLineX){
+                        _this.projectionX
+                            .style("opacity",1)
+                            .attr("y2",_this.yScale(valueY) + radius)
+                            .attr("x1",_this.xScale(valueX))
+                            .attr("x2",_this.xScale(valueX));
+                    }
+                    if(_this.ui.whenHovering.showProjectionLineY){
+                        _this.projectionY
+                            .style("opacity",1)
+                            .attr("y1",_this.yScale(valueY))
+                            .attr("y2",_this.yScale(valueY))
+                            .attr("x1",_this.xScale(valueX) - radius);
+                    }
+
+                    if(_this.ui.whenHovering.higlightValueX) _this.xAxisEl.call(
+                        _this.xAxis.highlightValue(valueX)
+                    );
+
+                    if(_this.ui.whenHovering.higlightValueY) _this.yAxisEl.call(
+                        _this.yAxis.highlightValue(valueY)
+                    );
+                
                 })
                 .on("mouseout", function(d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
+                    _this.projectionX.style("opacity",0);
+                    _this.projectionY.style("opacity",0);
+                    _this.xAxisEl.call(_this.xAxis.highlightValue("none"));
+                    _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
                 })
                 .on("click", function(d, i) {
                     _this.model.entities.selectEntity(d);
                 });
                         
             
+            
+            
             //update selection
-
             switch (shape){
                 case "circle":
                 this.bubbles.each(function(d){
                     var view = d3.select(this);
                     var valueY = _this.model.marker.axis_y.getValue(d);
                     var valueX = _this.model.marker.axis_x.getValue(d);
-                    var valueR = _this.model.marker.size.getValue(d);
+                    var valueS = _this.model.marker.size.getValue(d);
                     
-                    if(valueY==null || valueX==null || valueR==null) {
+                    if(valueY==null || valueX==null || valueS==null) {
                         view.classed("vzb-transparent", true)
                     }else{
                         view.classed("vzb-transparent", false)
@@ -335,7 +393,7 @@ define([
                             .transition().duration(_this.duration).ease("linear")
                             .attr("cy", _this.yScale(valueY))
                             .attr("cx", _this.xScale(valueX))
-                            .attr("r", areaToRadius(_this.sScale(valueR)))
+                            .attr("r", areaToRadius(_this.sScale(valueS)))
                     }
                 });
                 break;
