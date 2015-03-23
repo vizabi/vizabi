@@ -25,18 +25,21 @@ define([
 
         afterLoad: function() {
 
-            var domain = _.values(this.domain);
+            var range = this.domain;
+            if (this.domain.getObject) {
+              range = _.values(this.domain.getObject());
+            }
 
             var possible = this.getUnique(this.value);
 
             this._ordinalScale = d3.scale.ordinal()
                                 .domain(possible)
-                                .range(domain);
+                                .range(range);
 
             var limits = this.getLimits(this.value),
                 min = parseFloat(limits.min),
                 max = parseFloat(limits.max),
-                step = ((max-min) / (domain.length - 1));
+                step = ((max-min) / (range.length - 1));
 
             //todo: clean this perturbation up (hotfix)
             max = max + max / 10000;
@@ -45,7 +48,7 @@ define([
 
             this._linearScale = d3.scale.linear()
                                   .domain(domain)
-                                  .range(domain)
+                                  .range(range)
                                   .interpolate(d3.interpolateRgb);
         },
 
