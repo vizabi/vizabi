@@ -42,6 +42,7 @@ define([
                     _this.updateTime();
                     _this.updateSize();
                     _this.redrawDataPoints();
+                    _this.selectDataPoints();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
@@ -100,7 +101,9 @@ define([
             this.projectionY = this.graph.select(".vzb-bc-projection-y");
                   
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
-            this.bubbles = null;
+            this.labelsContainer = this.graph.select('.vzb-bc-labels');
+            this.entityBubbles = null;
+            this.entityLabels = null;
             this.tooltip = this.element.select('.vzb-tooltip');
 
             //component events
@@ -191,10 +194,11 @@ define([
             this.duration = this.model.time.playing && (this.time-this.time_1>0) ? this.model.time.speed : 0;
             
             //this.data = this.model.marker.label.getItems({ time: this.time });
+            this.data.forEach(function(d){d.time = _this.time});
             
             this.yearEl.text(this.time.getFullYear().toString());
-            this.bubbles = this.bubbleContainer.selectAll('.vzb-bc-bubble')
-                .data(this.data.map(function(d){d.time = _this.time; return d}));
+            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity').data(this.data);
+            
             
             this.timeUpdatedOnce = true;
         },
@@ -315,11 +319,11 @@ define([
             var shape = this.model.marker.shape;
             
             //exit selection
-            this.bubbles.exit().remove();
+            this.entityBubbles.exit().remove();
 
             //enter selection -- init circles
-            this.bubbles.enter().append(shape)
-                .attr("class", "vzb-bc-bubble")
+            this.entityBubbles.enter().append(shape)
+                .attr("class", "vzb-bc-entity")
                 .on("mousemove", function(d, i) {
                     //TODO: improve tooltip
                     var mouse = d3.mouse(_this.graph.node()).map(function(d) {
@@ -375,11 +379,13 @@ define([
                         
             
             
+  
             
-            //update selection
+            
+            
             switch (shape){
                 case "circle":
-                this.bubbles.each(function(d){
+                this.entityBubbles.each(function(d, index){
                     var view = d3.select(this);
                     var valueY = _this.model.marker.axis_y.getValue(d);
                     var valueX = _this.model.marker.axis_x.getValue(d);
@@ -394,13 +400,24 @@ define([
                             .attr("cy", _this.yScale(valueY))
                             .attr("cx", _this.xScale(valueX))
                             .attr("r", areaToRadius(_this.sScale(valueS)))
+                        
+                        
+                        if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
+                            _this.entityLabels
+                                .filter(function(dd){return dd == d.geo})
+                                .transition().duration(_this.duration).ease("linear")
+                                .attr("transform","translate("+ _this.xScale(valueX) +","+ _this.yScale(valueY) +")");
+                        }
                     }
+                    
+                    
+                    
                 });
                 break;
                     
                 case "rect":
                 var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
-                this.bubbles.each(function(d){
+                this.entityBubbles.each(function(d){
                     var view = d3.select(this);
                     var valueY = _this.model.marker.axis_y.getValue(d);
                     var valueX = _this.model.marker.axis_x.getValue(d);
@@ -434,12 +451,36 @@ define([
             
             var some_selected = (_this.model.entities.select.length > 0);
             
-            this.bubbles.classed("vzb-bc-selected", function(d) {
+            this.entityBubbles.classed("vzb-bc-selected", function(d) {
                     return some_selected && _this.model.entities.isSelected(d)
                 })
-            this.bubbles.classed("vzb-bc-unselected", function(d) {
+            this.entityBubbles.classed("vzb-bc-unselected", function(d) {
                     return some_selected && !_this.model.entities.isSelected(d)
+                }); 
+            
+            this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
+                .data(_this.model.entities.select, function(d) { return(d); });
+
+            
+            this.entityLabels.exit().remove();
+            
+            this.entityLabels
+                .enter().append("g")
+                .attr("class", "vzb-bc-entity")
+                .each(function(d, index){
+                    var view = d3.select(this);
+                    var valueL = _this.model.marker.label.getValue({geo: d, time: _this.time});
+                    var valueY = _this.model.marker.axis_y.getValue({geo: d, time: _this.time});
+                    var valueX = _this.model.marker.axis_x.getValue({geo: d, time: _this.time});
+
+                    if(valueL==null || valueX==null || valueY==null) return;
+
+                    view.attr("transform","translate("+ _this.xScale(valueX) +","+ _this.yScale(valueY) +")");                    
+                    view.append("text").attr("class","vzb-bc-label-shadow").text(valueL);                
+                    view.append("text").attr("class","vzb-bc-label-primary").text(valueL);
                 });
+
+            
         }
         
     });

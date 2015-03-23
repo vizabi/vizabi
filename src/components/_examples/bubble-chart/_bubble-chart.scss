@@ -18,7 +18,7 @@ $vzb-bc-year-size:300px;
     margin: 0;
     overflow: hidden;
     font-family: $vzb-font-family;
-    .vzb-bc-bubble {
+    .vzb-bc-bubbles .vzb-bc-entity {
         @include opacity(0.8);
         stroke: white;
         cursor: pointer;
@@ -36,6 +36,13 @@ $vzb-bc-year-size:300px;
         &.vzb-bc-selected {
             @include opacity(0.9);
         }
+    }
+    .vzb-bc-labels .vzb-bc-entity text{
+        pointer-events: none;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        fill: $vzb-color-primary;
+        &.vzb-bc-label-shadow{fill: white; @include opacity(0.6); stroke: white;}
     }
     .vzb-bc-title {
         color: $vzb-color-primary;
@@ -90,8 +97,12 @@ $vzb-bc-year-size:300px;
 }
 &.vzb-large {
     .vzb-bubble-chart-svg {
-        .vzb-bc-bubble {
+        .vzb-bc-bubbles .vzb-bc-entity {
             stroke-opacity: 1.0;
+        }
+        .vzb-bc-labels text{
+            font-size: 1.8em;
+            &.vzb-bc-label-shadow{stroke-width: 4px}
         }
         .vzb-axis-value text {font-size: 1.8em;}
     }
@@ -103,8 +114,12 @@ $vzb-bc-year-size:300px;
         }
     }
     .vzb-bubble-chart-svg {
-        .vzb-bc-bubble {
+        .vzb-bc-bubbles .vzb-bc-entity {
             stroke-opacity: 0.8;
+        }
+        .vzb-bc-labels text{
+            font-size: 1.6em;
+            &.vzb-bc-label-shadow{stroke-width: 3px}
         }
         .vzb-axis-value text {font-size: 1.6em;}
     }
@@ -119,8 +134,12 @@ $vzb-bc-year-size:300px;
         }
     }
     .vzb-bubble-chart-svg {
-        .vzb-bc-bubble {
+        .vzb-bc-bubbles .vzb-bc-entity {
             stroke-opacity: 0.7;
+        }
+        .vzb-bc-labels text{
+            font-size: 1.3em;
+            &.vzb-bc-label-shadow{stroke-width: 2px}
         }
         .vzb-axis-value text {font-size: 1.3em;}
     }
