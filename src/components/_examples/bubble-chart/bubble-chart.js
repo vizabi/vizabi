@@ -403,10 +403,19 @@ define([
                         
                         
                         if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
-                            _this.entityLabels
-                                .filter(function(dd){return dd == d.geo})
+                            var labelGroup = _this.entityLabels.filter(function(dd){return dd == d.geo});
+                                
+                            labelGroup.selectAll("text")
                                 .transition().duration(_this.duration).ease("linear")
-                                .attr("transform","translate("+ _this.xScale(valueX) +","+ _this.yScale(valueY) +")");
+                                .attr("x",_this.xScale(valueX) + areaToRadius(_this.sScale(valueS)) )
+                                .attr("y",_this.yScale(valueY) + areaToRadius(_this.sScale(valueS)) );
+                            
+                            labelGroup.selectAll("line")
+                                .transition().duration(_this.duration).ease("linear")
+                                .attr("x1",_this.xScale(valueX))
+                                .attr("y1",_this.yScale(valueY))
+                                .attr("x2",_this.xScale(valueX) + areaToRadius(_this.sScale(valueS)) )
+                                .attr("y2",_this.yScale(valueY) + areaToRadius(_this.sScale(valueS)) );
                         }
                     }
                     
@@ -472,12 +481,28 @@ define([
                     var valueL = _this.model.marker.label.getValue({geo: d, time: _this.time});
                     var valueY = _this.model.marker.axis_y.getValue({geo: d, time: _this.time});
                     var valueX = _this.model.marker.axis_x.getValue({geo: d, time: _this.time});
+                    var valueS = _this.model.marker.size.getValue({geo: d, time: _this.time});
+                    
+                    if(valueL==null || valueX==null || valueY==null || valueS==null) return;
+                
+                    var scaledS = areaToRadius(_this.sScale(valueS));
+                    
+                    view.append("text").attr("class","vzb-bc-label-shadow")
+                        .text(valueL)
+                        .attr("x",_this.xScale(valueX) + scaledS)
+                        .attr("y",_this.yScale(valueY) + scaledS);
+                
+                    view.append("text").attr("class","vzb-bc-label-primary")
+                        .text(valueL)
+                        .attr("x",_this.xScale(valueX) + scaledS)
+                        .attr("y",_this.yScale(valueY) + scaledS);
 
-                    if(valueL==null || valueX==null || valueY==null) return;
-
-                    view.attr("transform","translate("+ _this.xScale(valueX) +","+ _this.yScale(valueY) +")");                    
-                    view.append("text").attr("class","vzb-bc-label-shadow").text(valueL);                
-                    view.append("text").attr("class","vzb-bc-label-primary").text(valueL);
+                    view.append("line").attr("class","vzb-bc-label-line")
+                        .style("stroke", _this.model.marker.color.getValue({geo: d, time: _this.time}))
+                        .attr("x1",_this.xScale(valueX))
+                        .attr("y1",_this.yScale(valueY))
+                        .attr("x2",_this.xScale(valueX) + scaledS)
+                        .attr("y2",_this.yScale(valueY) + scaledS);
                 });
 
             

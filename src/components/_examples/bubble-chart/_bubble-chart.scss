@@ -34,13 +34,13 @@ $vzb-bc-year-size:300px;
             }
         }
         &.vzb-bc-selected {
-            @include opacity(0.9);
+            @include opacity(1);
         }
     }
     .vzb-bc-labels .vzb-bc-entity text{
         pointer-events: none;
-        text-anchor: middle;
-        dominant-baseline: middle;
+        /*text-anchor: middle;*/
+        dominant-baseline: hanging;
         fill: $vzb-color-primary;
         &.vzb-bc-label-shadow{fill: white; @include opacity(0.6); stroke: white;}
     }
