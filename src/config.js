@@ -14,6 +14,7 @@ require.config({
         d3: '../lib/d3/d3',
         d3genericLogScale: '../src/base/d3.genericLogScale',
         d3axisWithLabelPicker: '../src/base/d3.axisWithLabelPicker',
+        d3collisionResolver: '../src/base/d3.collisionResolver',
         lodash: '../lib/lodash/dist/lodash',
         text: '../lib/requirejs-text/text',
         stacktrace: '../lib/stacktrace-js/dist/stacktrace',

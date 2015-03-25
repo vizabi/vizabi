@@ -3,7 +3,8 @@ define([
     'lodash',
     'base/component',
     'd3genericLogScale',
-    'd3axisWithLabelPicker'
+    'd3axisWithLabelPicker',
+    'd3collisionResolver'
 ], function(d3, _, Component) {
 
 
@@ -43,22 +44,18 @@ define([
                     //if it's not about time
                     if(evt.indexOf('change:time') === -1) {
                          _this.updateShow();
-                         //_this.initLabelCollisionResolver();
                          _this.redrawDataPoints();
                     }
                 },
                 "ready":  function(evt) {
                     _this.updateShow();
-                    //_this.initLabelCollisionResolver();
                     _this.updateSize();
                     _this.updateTime();
                     _this.redrawDataPoints();
-                    _this.resolveLabelCollisions();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
                     _this.redrawDataPoints();
-                    _this.resolveLabelCollisions();
                 }
             }
                         
@@ -70,7 +67,8 @@ define([
             this.xAxis = d3.svg.axisSmart().orient("bottom");
             this.yAxis = d3.svg.axisSmart().orient("left");
 
-            this.lastXY = [];
+            this.collisionResolver = d3.svg.collisionResolver()
+                .selector(".vzb-lc-label");
             
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -137,7 +135,6 @@ define([
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-                _this.resolveLabelCollisions();
             })
         },
 
@@ -171,6 +168,8 @@ define([
                 .text(titleString);
             
             
+            this.cached = {};
+            
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
@@ -178,6 +177,7 @@ define([
             this.yAxis.tickSize(6, 0);
             this.xAxis.tickSize(6, 0);
             
+                        
             //line template
             this.line = d3.svg.line()
                 .interpolate("basis")
@@ -277,9 +277,8 @@ define([
             this.height = parseInt(this.element.style("height"), 10) - this.margin.top - this.margin.bottom;
             this.width = parseInt(this.element.style("width"), 10) - this.margin.left - this.margin.right;
             
-//            this.filterDropshadowEl.attr("width", this.width).attr("height", this.height)
-//                .attr("y", -2*this.activeProfile.lollipopRadius);
-
+            this.collisionResolver.height(this.height);
+                
             this.graph
                 .attr("width", this.width + this.margin.right + this.margin.left)
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
@@ -442,7 +441,7 @@ define([
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
                     xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
-                    _this.lastXY[index] = {geo:d.geo, time: xy[xy.length-1][0], value:xy[xy.length-1][1]};
+                    _this.cached[d.geo] = {valueY:xy[xy.length-1][1], scaledY: _this.yScale(xy[xy.length-1][1]) };
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -509,17 +508,17 @@ define([
                         .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
-                        .attr("cy", _this.yScale(_this.lastXY[index].value) + 1);  
+                        .attr("cy", _this.cached[d.geo].scaledY + 1);  
                                         
 
                     entity.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(0," + _this.yScale(_this.lastXY[index].value) + ")" );
+                        .attr("transform","translate(0," + _this.cached[d.geo].scaledY + ")" );
                 
 
-                    var value = _this.yAxis.tickFormat()(_this.lastXY[index].value);
+                    var value = _this.yAxis.tickFormat()(_this.cached[d.geo].valueY);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                     var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
                     
@@ -533,7 +532,7 @@ define([
                     
                     if(_this.data.length < valueHideLimit){
                         // if too little space on the right, break up the text in two lines
-                        if(_this.xScale(_this.lastXY[index].time) + t[0][0].getComputedTextLength() 
+                        if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
                             + _this.activeProfile.text_padding > _this.width + _this.margin.right){
                             entity.select(".vzb-lc-labelName").text(name);
                             entity.select(".vzb-lc-labelValue").text(value);
@@ -560,6 +559,16 @@ define([
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if(_this.duration==0)d3.timer.flush();
+            
+            
+            // cancel previously queued simulation if we just ordered a new one
+            // then order a new collision resolving
+            clearTimeout(_this.collisionTimeout);
+            _this.collisionTimeout = setTimeout(function(){
+                
+                _this.entityLabels.call(_this.collisionResolver.data(_this.cached).value("scaledY"));
+                
+            },  _this.model.time.speed*1.5);
             
         },
         
@@ -655,77 +664,7 @@ define([
         },        
         
         
-        resolveLabelCollisions: function(){
-            var _this = this;
-            
-            // cancel previously queued simulation if we just ordered a new one
-            clearTimeout(_this.collisionTimeout);
-            
-            // place force layout simulation into a queue
-            _this.collisionTimeout = setTimeout(function(){
-                
-                _this.entityLabels.each(function(d,index){
-                    _this.lastXY[index].labelHeight 
-                        = d3.select(this).select(".vzb-lc-label")[0][0].getBBox().height;
-                    
-//                    d3.select(this).select(".vzb-lc-line")
-//                        .style("filter", "url(#vzb-lc-filter-dropshadow)");
-                })
-                
-                // order the labels by the latest data value
-                _this.lastXY.sort(function(a,b){return a.value - b.value});
-                        
-                _this.lastXY.forEach(function(d, index){
-                
-                    //initial positioning
-                    d.y = _this.yScale(d.value);
-                    
-                    // check the overlapping chain reaction all the way down 
-                    for(var j = index; j>0; j--){
-                        // if overlap found shift the overlapped label downwards
-                        var delta = _this.lastXY[j-1].y - _this.lastXY[j].y - _this.lastXY[j].labelHeight;
-                        if(delta<0) _this.lastXY[j-1].y -= delta;
-                        
-                        // if the chain reaction stopped because found some gap in the middle, then quit
-                        if(delta>0) break;
-                    }
-                        
-                })
-                
-                
-                // check if the lowest label is breaking the boundary...
-                var delta = _this.height - _this.lastXY[0].y - _this.lastXY[0].labelHeight;;
-                
-                // if it does, then                
-                if(delta<0){
-                    // shift the lowest up
-                    _this.lastXY[0].y += delta;
-                    
-                    // check the overlapping chain reaction all the way up 
-                    for(var j = 0; j<_this.lastXY.length-1; j++){
-                        // if overlap found shift the overlapped label upwards
-                        var delta = _this.lastXY[j].y - _this.lastXY[j+1].y - _this.lastXY[j+1].labelHeight;
-                        if(delta<0) _this.lastXY[j+1].y += delta;
-                        
-                        // if the chain reaction stopped because found some gap in the middle, then quit
-                        if(delta>0) break;
-                    }
-                }
-                
-                //actually reposition the labels
-                _this.graph.selectAll(".vzb-lc-label")
-                    .each(function (d, i) {
-                        var labelData = _.find(_this.lastXY, {geo:d.geo});
-                        var resolvedY = labelData.y || _this.yScale(labelData.value) || 0;
-                        d3.select(this)
-                            .transition()
-                            .duration(300)
-                            .attr("transform", "translate(0," + resolvedY + ")")
-                    });
-            },  _this.model.time.speed*1.5)
-        }
-        
-        
+
         
 //        resolveLabelCollisions: function(){
 //            var _this = this;
@@ -736,12 +675,12 @@ define([
 //            // place force layout simulation into a queue
 //            _this.collisionTimeout = setTimeout(function(){
 //                
-//                _this.lastXY.sort(function(a,b){return a.value - b.value});
+//                _this.cached.sort(function(a,b){return a.value - b.value});
 //
 //                // update inputs of force layout -- fixed nodes
 //                _this.dataForceLayout.links.forEach(function(d,i){
-//                    var source = _.find(_this.lastXY, {geo:d.source.geo});
-//                    var target = _.find(_this.lastXY, {geo:d.target.geo});
+//                    var source = _.find(_this.cached, {geo:d.source.geo});
+//                    var target = _.find(_this.cached, {geo:d.target.geo});
 //
 //                    d.source.px = _this.xScale(source.time);
 //                    d.source.py = _this.yScale(source.value);
@@ -811,7 +750,7 @@ define([
 //                })
 //                .on("end", function () {
 //                                    
-//                    var entitiesOrderedByY = _this.lastXY
+//                    var entitiesOrderedByY = _this.cached
 //                        .map(function(d){return d.geo});
 //                    
 //                    var suggestedY = _this.dataForceLayout.nodes
@@ -820,8 +759,8 @@ define([
 //                
 //                    _this.graph.selectAll(".vzb-lc-label")
 //                        .each(function (d, i) {
-//                            var geoIndex = _this.lastXY.map(function(d){return d.geo}).indexOf(d.geo);
-//                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.lastXY[geoIndex][geoIndex]) || 0;
+//                            var geoIndex = _this.cached.map(function(d){return d.geo}).indexOf(d.geo);
+//                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.cached[geoIndex][geoIndex]) || 0;
 //                            d3.select(this)
 //                                .transition()
 //                                .duration(300)
