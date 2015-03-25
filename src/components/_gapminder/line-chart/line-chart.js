@@ -67,8 +67,7 @@ define([
             this.xAxis = d3.svg.axisSmart().orient("bottom");
             this.yAxis = d3.svg.axisSmart().orient("left");
 
-            this.collisionResolver = d3.svg.collisionResolver()
-                .selector(".vzb-lc-label");
+            
             
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
@@ -177,7 +176,11 @@ define([
             this.yAxis.tickSize(6, 0);
             this.xAxis.tickSize(6, 0);
             
-                        
+            this.collisionResolver = d3.svg.collisionResolver()
+                .selector(".vzb-lc-label")
+                .value("valueY")
+                .scale(this.yScale);
+            
             //line template
             this.line = d3.svg.line()
                 .interpolate("basis")
@@ -441,7 +444,7 @@ define([
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
                     xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
-                    _this.cached[d.geo] = {valueY:xy[xy.length-1][1], scaledY: _this.yScale(xy[xy.length-1][1]) };
+                    _this.cached[d.geo] = {valueY:xy[xy.length-1][1]};
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -508,14 +511,14 @@ define([
                         .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
-                        .attr("cy", _this.cached[d.geo].scaledY + 1);  
+                        .attr("cy", _this.yScale(_this.cached[d.geo].valueY) + 1);  
                                         
 
                     entity.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(0," + _this.cached[d.geo].scaledY + ")" );
+                        .attr("transform","translate(0," + _this.yScale(_this.cached[d.geo].valueY) + ")" );
                 
 
                     var value = _this.yAxis.tickFormat()(_this.cached[d.geo].valueY);
@@ -566,7 +569,7 @@ define([
             clearTimeout(_this.collisionTimeout);
             _this.collisionTimeout = setTimeout(function(){
                 
-                _this.entityLabels.call(_this.collisionResolver.data(_this.cached).value("scaledY"));
+                _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
                 
             },  _this.model.time.speed*1.5);
             

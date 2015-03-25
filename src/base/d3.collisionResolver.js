@@ -20,19 +20,23 @@ define(['d3'], function(d3){
                 "D3 collision resolver stopped: missing height of the canvas"); return;}
             if(value == null){console.warn(
                 "D3 collision resolver stopped: missing pointer within data objects. Example: value = 'valueY' "); return;}
+            if(scale == null){console.warn(
+                "D3 collision resolver stopped: missing scaling function. Example: scale = function(x){return ax+b} "); return;}
                         
             g.each(function(d, index) {
                 labelHeight[d.geo] = d3.select(this).select(selector)[0][0].getBBox().height;
             });
 
-            labelPosition = resolver.calculatePositions(data, value, height);
+            labelPosition = resolver.calculatePositions(data, value, height, scale);
  
             //actually reposition the labels
             g.each(function (d, i) {
                 
-                var resolvedY = labelPosition[d.geo] || yScale(data[d.geo][value]) || 0;
+                var resolvedY = labelPosition[d.geo] || scale(data[d.geo][value]) || 0;
                 
-                d3.select(this).select(selector)
+                if(handleResult!=null) {handleResult(d, i, this, resolvedY); return;}
+                
+                d3.select(this).selectAll(selector)
                     .transition()
                     .duration(DURATION)
                     .attr("transform", "translate(0," + resolvedY + ")")
@@ -46,16 +50,16 @@ define(['d3'], function(d3){
                 
         // CALCULATE OPTIMIZED POSITIONS BASED ON LABELS' HEIGHT AND THEIR PROXIMITY (DELTA)
             
-        resolver.calculatePositions = function(data, value, height){
+        resolver.calculatePositions = function(data, value, height, scale){
             
             var result = {};
                         
-            var keys = Object.keys(data).sort(function(b,a){return data[a][value] - data[b][value]});
+            var keys = Object.keys(data).sort(function(a,b){return data[a][value] - data[b][value]});
                             
             keys.forEach(function(d, index){
 
                 //initial positioning
-                result[d] = data[d][value];
+                result[d] = scale(data[d][value]);
 
                 // check the overlapping chain reaction all the way down 
                 for(var j = index; j>0; j--){
@@ -117,10 +121,22 @@ define(['d3'], function(d3){
             height = arg;
             return resolver;
         };
+        var scale = null;
+        resolver.scale = function(arg) {
+            if (!arguments.length) return scale;
+            scale = arg;
+            return resolver;
+        };
         var value = null;
         resolver.value = function(arg) {
             if (!arguments.length) return value;
             value = arg;
+            return resolver;
+        };
+        var handleResult = null;
+        resolver.handleResult = function(arg) {
+            if (!arguments.length) return handleResult;
+            handleResult = arg;
             return resolver;
         };
         
