@@ -38,11 +38,20 @@ $vzb-bc-year-size:300px;
         }
     }
     .vzb-bc-labels .vzb-bc-entity text{
-        pointer-events: none;
+        /*pointer-events: none;*/
         /*text-anchor: middle;*/
+        cursor: pointer;
+        opacity: 0.9;
         dominant-baseline: hanging;
         fill: $vzb-color-primary;
-        &.vzb-bc-label-shadow{fill: white; @include opacity(0.6); stroke: white;}
+        &.vzb-bc-label-shadow{fill: white; @include opacity(0.5); stroke: white;}
+    }
+    .vzb-bc-labels .vzb-bc-entity text:hover{
+        opacity: 1.0;
+    }
+    .vzb-bc-labels .vzb-bc-entity line{
+        stroke: $vzb-color-primary;
+        opacity: 0.8;
     }
     .vzb-bc-title {
         color: $vzb-color-primary;

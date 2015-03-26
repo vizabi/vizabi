@@ -1,6 +1,9 @@
 define([
     'd3',
-    'base/component'
+    'base/component',
+    'd3genericLogScale',
+    'd3axisWithLabelPicker',
+    'd3collisionResolver'
 ], function(d3, Component) {
 
     function radiusToArea(r){return r*r*Math.PI}
@@ -36,13 +39,13 @@ define([
                 },
                 "change:entities:select": function() {
                     _this.selectDataPoints();
+                    _this.redrawDataPoints();
                 },
                 "ready":  function(evt) {
                     _this.updateShow();
                     _this.updateTime();
                     _this.updateSize();
                     _this.redrawDataPoints();
-                    _this.selectDataPoints();
                 },
                 'change:time:value': function() {
                     _this.updateTime();
@@ -60,9 +63,10 @@ define([
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
 
+        
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
-            
+            this.selectDataPointsOnce = false;
             
             
             
@@ -161,6 +165,12 @@ define([
             this.xScale = this.model.marker.axis_x.getDomain();
             this.sScale = this.model.marker.size.getDomain();
 
+            this.collisionResolver = d3.svg.collisionResolver()
+                .value("valueY")
+                .selector("text")
+                .scale(this.yScale)
+                .handleResult(this.repositionLabels);
+            
             var _this = this;
             this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
@@ -169,6 +179,7 @@ define([
                 return _this.model.marker.axis_x.getTick(d);
             });
             
+            _this.cached = {};
             
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
@@ -197,7 +208,7 @@ define([
             this.data.forEach(function(d){d.time = _this.time});
             
             this.yearEl.text(this.time.getFullYear().toString());
-            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity').data(this.data);
+            
             
             
             this.timeUpdatedOnce = true;
@@ -241,9 +252,11 @@ define([
             maxRadius = maxRadius * this.model.marker.size.max;
 
             //stage
-            var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
+            this.collisionResolver.height(this.height);
+            
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -253,20 +266,20 @@ define([
             var heightAxisX = this.xAxisEl[0][0].getBBox().height;
 
             this.yearEl
-                .attr("x", width/2)
-                .attr("y", height/3*2)
-                .style("font-size", Math.max(height/4, width/4) + "px");
+                .attr("x", this.width/2)
+                .attr("y", this.height/3*2)
+                .style("font-size", Math.max(this.height/4, this.width/4) + "px");
 
             //update scales to the new range
             if (this.model.marker.axis_y.scale !== "ordinal") {
-                this.yScale.range([height, 0]);
+                this.yScale.range([this.height, 0]);
             } else {
-                this.yScale.rangePoints([height, 0], padding).range();
+                this.yScale.rangePoints([this.height, 0], padding).range();
             }
             if (this.model.marker.axis_x.scale !== "ordinal") {
-                this.xScale.range([0, width]);
+                this.xScale.range([0, this.width]);
             } else {
-                this.xScale.rangePoints([0, width], padding).range();
+                this.xScale.rangePoints([0, this.width], padding).range();
             }
             if (this.model.marker.size.scale !== "ordinal") {
                 this.sScale.range([radiusToArea(minRadius), radiusToArea(maxRadius)]);
@@ -294,9 +307,9 @@ define([
                     toolMargin: margin
                 });
 
-            this.xAxisEl.attr("transform", "translate(0," + height + ")");
-            this.xTitleEl.attr("transform", "translate("+ width +"," + height + ")");
-            this.sTitleEl.attr("transform", "translate("+ width +"," + 0 + ") rotate(-90)");
+            this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
+            this.xTitleEl.attr("transform", "translate("+ this.width +"," + this.height + ")");
+            this.sTitleEl.attr("transform", "translate("+ this.width +"," + 0 + ") rotate(-90)");
             
             this.yAxisEl.call(this.yAxis);
             this.xAxisEl.call(this.xAxis);
@@ -317,6 +330,9 @@ define([
             if(!this.sizeUpdatedOnce) this.updateSize();
 
             var shape = this.model.marker.shape;
+            
+            
+            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity').data(this.data);
             
             //exit selection
             this.entityBubbles.exit().remove();
@@ -380,8 +396,8 @@ define([
             
             
   
-            
-            
+            if(!_this.selectDataPointsOnce) _this.selectDataPoints();
+            this.cached = {};
             
             switch (shape){
                 case "circle":
@@ -390,32 +406,38 @@ define([
                     var valueY = _this.model.marker.axis_y.getValue(d);
                     var valueX = _this.model.marker.axis_x.getValue(d);
                     var valueS = _this.model.marker.size.getValue(d);
+                    var valueL = _this.model.marker.label.getValue(d);
                     
-                    if(valueY==null || valueX==null || valueS==null) {
+                    if(valueL == null || valueY==null || valueX==null || valueS==null) {
                         view.classed("vzb-transparent", true)
                     }else{
+                        var scaledS = areaToRadius(_this.sScale(valueS));
+                        
                         view.classed("vzb-transparent", false)
                             .style("fill", _this.model.marker.color.getValue(d))
                             .transition().duration(_this.duration).ease("linear")
                             .attr("cy", _this.yScale(valueY))
                             .attr("cx", _this.xScale(valueX))
-                            .attr("r", areaToRadius(_this.sScale(valueS)))
-                        
+                            .attr("r", scaledS)
                         
                         if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
-                            var labelGroup = _this.entityLabels.filter(function(dd){return dd == d.geo});
-                                
+                            var labelGroup = _this.entityLabels.filter(function(dd){return dd.geo == d.geo});
+                            
                             labelGroup.selectAll("text")
+                                .text(valueL)
                                 .transition().duration(_this.duration).ease("linear")
-                                .attr("x",_this.xScale(valueX) + areaToRadius(_this.sScale(valueS)) )
-                                .attr("y",_this.yScale(valueY) + areaToRadius(_this.sScale(valueS)) );
+                                .attr("x",_this.xScale(valueX) + scaledS)
+                                .attr("y",_this.yScale(valueY));
                             
                             labelGroup.selectAll("line")
                                 .transition().duration(_this.duration).ease("linear")
                                 .attr("x1",_this.xScale(valueX))
                                 .attr("y1",_this.yScale(valueY))
-                                .attr("x2",_this.xScale(valueX) + areaToRadius(_this.sScale(valueS)) )
-                                .attr("y2",_this.yScale(valueY) + areaToRadius(_this.sScale(valueS)) );
+                                .attr("x2",_this.xScale(valueX) + scaledS)
+                                .attr("y2",_this.yScale(valueY) )
+                                .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
+                            
+                            _this.cached[d.geo]={valueY: valueY};
                         }
                     }
                     
@@ -451,12 +473,48 @@ define([
             if(_this.duration==0)d3.timer.flush();
 
 
+            
+            
+            // cancel previously queued simulation if we just ordered a new one
+            clearTimeout(_this.collisionTimeout);
+            
+            // place force layout simulation into a queue
+            _this.collisionTimeout = setTimeout(function(){
+//                if(_this.forceLayout == null) return;
+//                
+//                // resume the simulation, fast-forward it, stop when done
+//                _this.forceLayout.resume();
+//                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+//                _this.forceLayout.stop();
+                
+                
+                _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+                
+            },  _this.model.time.speed*1.5) 
 
         }, //redraw
 
         
+        
+        repositionLabels: function(d, i, context, resolvedY){
+            
+            d3.select(context).selectAll("text")
+                .transition()
+                .duration(300)
+                .attr("y", resolvedY);
+            
+            d3.select(context).selectAll("line")
+                .transition()
+                .duration(300)
+                .attr("y2", resolvedY);
+            
+        },
+        
+        
+        
         selectDataPoints: function(){
             var _this = this;
+            this.selectDataPointsOnce = true;
             
             var some_selected = (_this.model.entities.select.length > 0);
             
@@ -468,7 +526,8 @@ define([
                 }); 
             
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
-                .data(_this.model.entities.select, function(d) { return(d); });
+                .data(_this.model.entities.select.map(function(d){return {geo: d}}), 
+                      function(d) { return(d.geo); });
 
             
             this.entityLabels.exit().remove();
@@ -476,37 +535,173 @@ define([
             this.entityLabels
                 .enter().append("g")
                 .attr("class", "vzb-bc-entity")
+                .on("click", function(d, i) {
+                    _this.model.entities.selectEntity(d);
+                })
                 .each(function(d, index){
                     var view = d3.select(this);
-                    var valueL = _this.model.marker.label.getValue({geo: d, time: _this.time});
-                    var valueY = _this.model.marker.axis_y.getValue({geo: d, time: _this.time});
-                    var valueX = _this.model.marker.axis_x.getValue({geo: d, time: _this.time});
-                    var valueS = _this.model.marker.size.getValue({geo: d, time: _this.time});
-                    
-                    if(valueL==null || valueX==null || valueY==null || valueS==null) return;
-                
-                    var scaledS = areaToRadius(_this.sScale(valueS));
-                    
-                    view.append("text").attr("class","vzb-bc-label-shadow")
-                        .text(valueL)
-                        .attr("x",_this.xScale(valueX) + scaledS)
-                        .attr("y",_this.yScale(valueY) + scaledS);
-                
-                    view.append("text").attr("class","vzb-bc-label-primary")
-                        .text(valueL)
-                        .attr("x",_this.xScale(valueX) + scaledS)
-                        .attr("y",_this.yScale(valueY) + scaledS);
-
-                    view.append("line").attr("class","vzb-bc-label-line")
-                        .style("stroke", _this.model.marker.color.getValue({geo: d, time: _this.time}))
-                        .attr("x1",_this.xScale(valueX))
-                        .attr("y1",_this.yScale(valueY))
-                        .attr("x2",_this.xScale(valueX) + scaledS)
-                        .attr("y2",_this.yScale(valueY) + scaledS);
+                    view.append("text").attr("class","vzb-bc-label-shadow");
+                    view.append("text").attr("class","vzb-bc-label-primary");
+                    view.append("line").attr("class","vzb-bc-label-line");
                 });
-
+        
+            
+            //this.collisionResolverRebuild(_this.model.entities.select);
             
         }
+        
+        
+        
+//        
+//
+//        
+//        
+//        collisionResolverStart: function(context){
+//            var _this = context;
+//            if(_this.dataForceLayout.links.length==0)return;
+//        
+//            _this.entityLabels.each(function(d, index){
+//                var line = d3.select(this).select("line");
+//                var text = d3.select(this).select("text");
+//                var link = _this.dataForceLayout.links[index];
+//
+//                link.source.px = +line.attr("x1");
+//                link.source.py = +line.attr("y1");
+//                link.target.px = +line.attr("x2");
+//                link.target.py = +line.attr("y2");
+//
+//                link.extension.length = text[0][0].getBBox().width;
+//                link.extension.px = +line.attr("x2") + link.extension.length;
+//                link.extension.py = +line.attr("y2");
+//
+//            });
+//        },
+//        
+//    
+//    
+//    
+//        collisionResolverTick: function(context){
+//            var _this = context;
+//            
+//            _this.dataForceLayout.links.forEach(function (d, i) {
+//                d.extension.x = d.target.x + d.extension.length;
+//                d.extension.y = d.target.y;
+//            })
+//
+//            _this.dataForceLayout.nodes.forEach(function (d, i) {
+//                if(d.fixed)return;                        
+//
+//                if(d.x<0) d.x++; if(d.x>_this.width) d.x--;
+//                if(d.y<0) d.y++; if(d.y>_this.height) d.y--;
+//            })
+//            
+//        },
+//        
+//        collisionResolverEnd: function(context){
+//            var _this = context;
+//            if(_this.dataForceLayout.links.length==0)return;
+//                                                
+//            _this.entityLabels.each(function(d, index){
+//                var view = d3.select(this);
+//                var source = _this.dataForceLayout.links[index].source;
+//                var target = _this.dataForceLayout.links[index].target;
+//
+//                var alpha = 0
+//                    + (target.x > source.x && target.y < source.y?1:0) * ( Math.atan((target.y - source.y)/(source.x - target.x)) )
+//                    + (target.x == source.x && target.y < source.y?1:0) * ( Math.PI/2 )
+//                    + (target.x < source.x && target.y < source.y?1:0) * ( Math.PI - Math.atan((target.y - source.y)/(target.x - source.x)) )
+//                    + (target.x < source.x && target.y == source.y?1:0) * ( Math.PI )
+//                    + (target.x < source.x && target.y > source.y?1:0) * ( Math.PI + Math.atan((source.y - target.y)/(target.x - source.x)) )
+//                    + (target.x == source.x && target.y > source.y?1:0) * ( Math.PI/2*3 )
+//                    + (target.x > source.x && target.y > source.y?1:0) * ( Math.PI*2 - Math.atan((source.y - target.y)/(source.x - target.x)) )
+//
+//
+//
+//                view.selectAll("text")
+//                    .style("text-anchor", Math.cos(alpha)>Math.cos(Math.PI/4)?"start" : (Math.cos(alpha)<-Math.cos(Math.PI/4)? "end": "middle"))
+//                    .style("dominant-baseline", Math.sin(alpha)>Math.sin(Math.PI/4)?"alphabetical" : (Math.sin(alpha)<-Math.sin(Math.PI/4)? "hanging": "middle"))
+//                    .transition().duration(300)
+//                    .attr("x", target.x)
+//                    .attr("y", target.y)
+//
+//                view.select("line")
+//                    .transition().duration(300)
+//                    .attr("x1", source.x)
+//                    .attr("y1", source.y)
+//                    .attr("x2", target.x)
+//                    .attr("y2", target.y);
+//
+//
+//            });
+//                
+//        },
+//        
+//        collisionResolverRebuild: function(selection){
+//            var _this = this;
+//            
+//            //if(_this.forceLayout==null) _this.collisionResolverInit();
+//            
+//            this.dataForceLayout = {nodes: [], links: []};
+//            
+//            selection.forEach(function(d,i){
+//                var source = {geo: d, role:_this.ROLE_MARKER, fixed: true};
+//                var target = {geo: d, role:_this.ROLE_LABEL, fixed: false};
+//                var extension = {geo: d, role:_this.ROLE_LABEL_EXT, fixed: true};
+//                _this.dataForceLayout.nodes.push(source);
+//                _this.dataForceLayout.nodes.push(target);
+//                _this.dataForceLayout.nodes.push(extension);
+//                _this.dataForceLayout.links.push({source: source, target: target, extension: extension});
+//            })
+//            
+//            
+//            this.forceLayout = d3.layout.force()
+//                .nodes(this.dataForceLayout.nodes)
+//                .links(this.dataForceLayout.links);
+//            
+//            _this.forceLayout.resume();
+//            while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+//            _this.forceLayout.stop();
+//        },
+//        
+//        
+//        
+//        
+//        
+//        collisionResolverInit: function(){
+//            var _this = this;
+//            
+//            this.dataForceLayout = {nodes: [], links: []};
+//            this.ROLE_MARKER = 'node fixed to marker';
+//            this.ROLE_LABEL = 'node for floating label';
+//            this.ROLE_LABEL_EXT = 'node for floating label';
+//            
+//            
+//            this.forceLayout = d3.layout.force()
+//                .size([_this.width, _this.height])
+//                .gravity(-0.05)
+//                .charge(function(d){
+//                        switch (d.role){
+//                            case _this.ROLE_MARKER: return -0;
+//                            case _this.ROLE_LABEL: return -1000;
+//                            case _this.ROLE_LABEL_EXT: return -1000;
+//                        }
+//                    })
+//                .linkDistance(10)
+//                //.linkStrength(1)
+//                //.chargeDistance(30)
+//                .friction(0.2)
+//                //.theta(0.8)
+//                .nodes(this.dataForceLayout.nodes)
+//                .links(this.dataForceLayout.links)
+//                .on("start", function(){_this.collisionResolverStart(_this)})
+//                .on("tick", function(){_this.collisionResolverTick(_this)})
+//                .on("end", function(){_this.collisionResolverEnd(_this)})
+//                .start();
+//
+//            
+//        }
+        
+        
         
     });
 
