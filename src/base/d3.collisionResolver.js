@@ -33,8 +33,9 @@ define(['d3'], function(d3){
             g.each(function (d, i) {
                 
                 var resolvedY = labelPosition[d.geo] || scale(data[d.geo][value]) || 0;
+                var resolvedX = null;
                 
-                if(handleResult!=null) {handleResult(d, i, this, resolvedY); return;}
+                if(handleResult!=null) {handleResult(d, i, this, resolvedX, resolvedY); return;}
                 
                 d3.select(this).selectAll(selector)
                     .transition()

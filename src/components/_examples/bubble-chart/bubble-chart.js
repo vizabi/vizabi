@@ -171,6 +171,17 @@ define([
                 .scale(this.yScale)
                 .handleResult(this.repositionLabels);
             
+            
+           this.dragger = d3.behavior.drag()
+                .on("drag", function(d,i) {
+                    d.x += d3.event.dx;
+                    d.y += d3.event.dy;
+                    d3.select(this).selectAll("text")
+                        .attr("transform", function(d,i){
+                        return "translate(" + [ d.x,d.y ] + ")"
+                    })
+                });
+            
             var _this = this;
             this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
@@ -496,16 +507,18 @@ define([
 
         
         
-        repositionLabels: function(d, i, context, resolvedY){
+        repositionLabels: function(d, i, context, resolvedX, resolvedY){
             
             d3.select(context).selectAll("text")
                 .transition()
                 .duration(300)
+                .attr("x", function(d){if(resolvedX!=null){return resolvedX}else{return}})
                 .attr("y", resolvedY);
             
             d3.select(context).selectAll("line")
                 .transition()
                 .duration(300)
+                .attr("x2", resolvedX)
                 .attr("y2", resolvedY);
             
         },
@@ -538,6 +551,7 @@ define([
                 .on("click", function(d, i) {
                     _this.model.entities.selectEntity(d);
                 })
+                .call(_this.dragger)
                 .each(function(d, index){
                     var view = d3.select(this);
                     view.append("text").attr("class","vzb-bc-label-shadow");
