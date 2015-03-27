@@ -18,6 +18,11 @@ $vzb-bc-year-size:300px;
     margin: 0;
     overflow: hidden;
     font-family: $vzb-font-family;
+    .vzb-bc-trails .vzb-bc-entity {
+        @include opacity(0.8);
+        stroke: white;
+        pointer-events: none;
+    }
     .vzb-bc-bubbles .vzb-bc-entity {
         @include opacity(0.8);
         stroke: white;

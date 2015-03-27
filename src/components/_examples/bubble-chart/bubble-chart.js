@@ -72,7 +72,9 @@ define([
             
             // default UI settings
             this.ui = _.extend({
-                whenHovering: {}
+                whenHovering: {},
+                trails: {},
+                labels: {}
             }, this.ui["vzb-tool-"+this.name]);
             
             this.ui.whenHovering = _.extend({
@@ -81,6 +83,15 @@ define([
                 higlightValueX: true,
                 higlightValueY: true
             }, this.ui.whenHovering);
+            
+            this.ui.trails = _.extend({
+                on: true
+            }, this.ui.trails);
+            
+            this.ui.labels = _.extend({
+                autoResolveCollisions: false,
+                dragging: true
+            }, this.ui.labels);
 
         },
 
@@ -104,6 +115,7 @@ define([
             this.projectionX = this.graph.select(".vzb-bc-projection-x");
             this.projectionY = this.graph.select(".vzb-bc-projection-y");
                   
+            this.trailsContainer = this.graph.select('.vzb-bc-trails');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.labelsContainer = this.graph.select('.vzb-bc-labels');
             this.entityBubbles = null;
@@ -397,7 +409,7 @@ define([
             
   
             if(!_this.selectDataPointsOnce) _this.selectDataPoints();
-            this.cached = {};
+            
             
             switch (shape){
                 case "circle":
@@ -407,6 +419,7 @@ define([
                     var valueX = _this.model.marker.axis_x.getValue(d);
                     var valueS = _this.model.marker.size.getValue(d);
                     var valueL = _this.model.marker.label.getValue(d);
+                    var valueC = _this.model.marker.color.getValue(d);
                     
                     if(valueL == null || valueY==null || valueX==null || valueS==null) {
                         view.classed("vzb-transparent", true)
@@ -414,7 +427,7 @@ define([
                         var scaledS = areaToRadius(_this.sScale(valueS));
                         
                         view.classed("vzb-transparent", false)
-                            .style("fill", _this.model.marker.color.getValue(d))
+                            .style("fill", valueC)
                             .transition().duration(_this.duration).ease("linear")
                             .attr("cy", _this.yScale(valueY))
                             .attr("cx", _this.xScale(valueX))
@@ -437,13 +450,87 @@ define([
                                 .attr("y2",_this.yScale(valueY) )
                                 .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
                             
-                            _this.cached[d.geo]={valueY: valueY};
+                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null, trail: []};
+                            _this.cached[d.geo].valueY = valueY;
+                            _this.cached[d.geo].valueX = valueX;
+                            
+                            if(_this.ui.trails.on){
+                                if(_this.time-_this.time_1>0) {
+                                    _this.cached[d.geo].trail.push({x: valueX, y: valueY, s: valueS, l: valueL, c: valueC, t: _this.time});
+                                }else{
+                                    _this.cached[d.geo].trail = 
+                                        _this.cached[d.geo].trail.filter(function(dd){return _this.time-dd.t>0})
+                                }
+                            }else{
+                                _this.cached[d.geo].trail = [];
+                            }
+                            
+                            
+                        
+                        }else{
+                        //for non-selected bubbles
+                        //make sure there is no cached data
+                            if(_this.cached[d.geo] != null){delete _this.cached[d.geo]};
                         }
-                    }
+                        
+                    }// data exists
                     
                     
                     
-                });
+                }); // bubbles
+                    
+                    
+                                
+            
+            
+                this.entityTrails = this.trailsContainer.selectAll('.vzb-bc-entity')
+                    .data(_this.model.entities.select.map(function(d){return {geo: d}}), 
+                          function(d) { return(d.geo); });
+                    
+                this.entityTrails.exit().remove();
+                this.entityTrails.enter().append("g").attr("class", "vzb-bc-entity");
+                  
+                this.entityTrails.each(function(trail){
+
+                    var trailSegments = d3.select(this).selectAll(".trailSegment")
+                        .data(_this.cached[trail.geo].trail)//.filter(function(dd,i){return i<_this.cached[trail.geo].trail.length-1}))
+                    
+                    var nOfSegments = _this.cached[trail.geo].trail.length;
+                    
+                    trailSegments.exit().remove();
+                    var enterSegment = trailSegments.enter().append("g")
+                        .attr("class","trailSegment");
+                    
+                    enterSegment.append("circle");
+                    enterSegment.append("line");
+                    
+                    trailSegments.each(function(d, index){
+                        
+                        d3.select(this).select("circle")
+                            .style("fill", d.c)
+                            .attr("cy", _this.yScale(d.y) )
+                            .attr("cx", _this.xScale(d.x) )
+                            .attr("r", areaToRadius(_this.sScale(d.s)));
+                    
+                        d3.select(this).select("line")
+                            .style("stroke",  d.c)
+                            .attr("x1", _this.xScale(d.x) )
+                            .attr("y1", _this.yScale(d.y) )
+                            .attr("x2", index<nOfSegments-1? 
+                                  _this.xScale(_this.cached[trail.geo].trail[index+1].x)
+                                : _this.xScale(_this.cached[trail.geo].valueX)
+                                )
+                            .attr("y2", index<nOfSegments-1? 
+                                  _this.yScale(_this.cached[trail.geo].trail[index+1].y)
+                                : _this.yScale(_this.cached[trail.geo].valueY)
+                                );
+
+                    });
+                    
+                    
+
+
+                })
                 break;
                     
                 case "rect":
@@ -475,22 +562,27 @@ define([
 
             
             
+            
+            
             // cancel previously queued simulation if we just ordered a new one
             clearTimeout(_this.collisionTimeout);
             
-            // place force layout simulation into a queue
-            _this.collisionTimeout = setTimeout(function(){
-//                if(_this.forceLayout == null) return;
-//                
-//                // resume the simulation, fast-forward it, stop when done
-//                _this.forceLayout.resume();
-//                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-//                _this.forceLayout.stop();
-                
-                
-                _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-                
-            },  _this.model.time.speed*1.5) 
+            
+            if(_this.ui.labels.autoResolveCollisions){
+                // place label layout simulation into a queue
+                _this.collisionTimeout = setTimeout(function(){
+    //                if(_this.forceLayout == null) return;
+    //                
+    //                // resume the simulation, fast-forward it, stop when done
+    //                _this.forceLayout.resume();
+    //                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+    //                _this.forceLayout.stop();
+
+
+                    _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+
+                },  _this.model.time.speed*1.5) 
+            }
 
         }, //redraw
 
