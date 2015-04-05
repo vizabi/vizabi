@@ -453,23 +453,8 @@ define([
                         
                         // only for selected entities
                         if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
-                            var labelGroup = _this.entityLabels.filter(function(dd){return dd.geo == d.geo});
                             
-                            labelGroup.selectAll("text")
-                                .text(valueL)
-                                .transition().duration(_this.duration).ease("linear")
-                                .attr("x",_this.xScale(valueX) + scaledS)
-                                .attr("y",_this.yScale(valueY));
-                            
-                            labelGroup.selectAll("line")
-                                .transition().duration(_this.duration).ease("linear")
-                                .attr("x1",_this.xScale(valueX))
-                                .attr("y1",_this.yScale(valueY))
-                                .attr("x2",_this.xScale(valueX) + scaledS)
-                                .attr("y2",_this.yScale(valueY) )
-                                .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
-                            
-                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null};
+                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null, valueY0: null, valueX0: null};
                             _this.cached[d.geo].valueY = valueY;
                             _this.cached[d.geo].valueX = valueX;
                             
@@ -477,9 +462,30 @@ define([
                                 var select = _.find(_this.model.entities.select, function(f){return f.geo == d.geo} );
                                 if(_this.timeFormatter.parse(""+select.trailStartTime) - _this.time>0 || select.trailStartTime == null){
                                     select.trailStartTime = _this.timeFormatter(_this.time);
+                                    _this.cached[d.geo].valueY0 = valueY;
+                                    _this.cached[d.geo].valueX0 = valueX;
+                                }else{
+                                    var time0 = _this.timeFormatter.parse(""+select.trailStartTime);
+                                    _this.cached[d.geo].valueY0 = _this.model.marker.axis_y.getValue({geo:d.geo, time: time0});
+                                    _this.cached[d.geo].valueX0 = _this.model.marker.axis_x.getValue({geo:d.geo, time: time0});
                                 }
                             }
-
+                            
+                            var labelGroup = _this.entityLabels.filter(function(dd){return dd.geo == d.geo});
+                            labelGroup.selectAll("text")
+                                .text(valueL)
+                                .transition().duration(_this.duration).ease("linear")
+                                .attr("x",_this.xScale(_this.cached[d.geo].valueX0 || valueX) + scaledS)
+                                .attr("y",_this.yScale(_this.cached[d.geo].valueY0 || valueY));
+                            
+                            labelGroup.selectAll("line")
+                                .transition().duration(_this.duration).ease("linear")
+                                .attr("x1",_this.xScale(_this.cached[d.geo].valueX0 || valueX))
+                                .attr("y1",_this.yScale(_this.cached[d.geo].valueY0 || valueY))
+                                .attr("x2",_this.xScale(_this.cached[d.geo].valueX0 || valueX) + scaledS)
+                                .attr("y2",_this.yScale(_this.cached[d.geo].valueY0 || valueY) )
+                                .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
+                            
                         }else{
                             //for non-selected bubbles
                             //make sure there is no cached data
@@ -493,7 +499,7 @@ define([
                 }); // bubbles
                     
                 
-                _this.redrawTrails();
+                if(_this.ui.trails.on) _this.redrawTrails();
                     
                                 
                 break;                        
@@ -604,7 +610,7 @@ define([
                     view.append("text").attr("class","vzb-bc-label-primary");
                     view.append("line").attr("class","vzb-bc-label-line");
                 
-                    _this.createTrails(d)
+                    if(_this.ui.trails.on)_this.createTrails(d)
                 });
         
             
