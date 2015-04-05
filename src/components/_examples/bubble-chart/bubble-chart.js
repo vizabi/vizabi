@@ -203,15 +203,21 @@ define([
             });
             
             _this.cached = {};
+            this.timeFormatter = d3.time.format(_this.model.time.formatInput);
             
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
             this.data = this.model.marker.label.getItems({ time: _this.model.time.end })
-                .sort(function(a,b){
-                    var valueA = _this.model.marker.size.getValue(a)||_this.sScale.domain()[0];
-                    var valueB = _this.model.marker.size.getValue(b)||_this.sScale.domain()[0];
-                    return _this.sScale(valueB) - _this.sScale(valueA);                
-                });
+                .map(function(d){d.sortValue = _this.model.marker.size.getValue(d); return d})
+                .sort(function(a,b){return b.sortValue - a.sortValue;});
+            
+            this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
+                .data(this.data, function(d){return d.geo});
+            
+            this.entityTrails.exit().remove();
+            
+            this.entityTrails.enter().append("g")
+                .attr("class", function(d){return  "vzb-bc-entity" + " " + d.geo});
 
         },
 
@@ -355,7 +361,8 @@ define([
             var shape = this.model.marker.shape;
             
             
-            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity').data(this.data);
+            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
+                .data(this.data, function(d){return d.geo} );
             
             //exit selection
             this.entityBubbles.exit().remove();
@@ -413,7 +420,7 @@ define([
                     _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
                 })
                 .on("click", function(d, i) {
-                    _this.model.entities.selectEntity(d);
+                    _this.model.entities.selectEntity(d, _this.timeFormatter);
                 });
                         
             
@@ -444,6 +451,7 @@ define([
                             .attr("cx", _this.xScale(valueX))
                             .attr("r", scaledS)
                         
+                        // only for selected entities
                         if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
                             var labelGroup = _this.entityLabels.filter(function(dd){return dd.geo == d.geo});
                             
@@ -461,26 +469,20 @@ define([
                                 .attr("y2",_this.yScale(valueY) )
                                 .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
                             
-                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null, trail: []};
+                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null};
                             _this.cached[d.geo].valueY = valueY;
                             _this.cached[d.geo].valueX = valueX;
                             
                             if(_this.ui.trails.on){
-                                if(_this.time-_this.time_1>0) {
-                                    _this.cached[d.geo].trail.push({x: valueX, y: valueY, s: valueS, l: valueL, c: valueC, t: _this.time});
-                                }else{
-                                    _this.cached[d.geo].trail = 
-                                        _this.cached[d.geo].trail.filter(function(dd){return _this.time-dd.t>0})
+                                var select = _.find(_this.model.entities.select, function(f){return f.geo == d.geo} );
+                                if(_this.timeFormatter.parse(""+select.trailStartTime) - _this.time>0 || select.trailStartTime == null){
+                                    select.trailStartTime = _this.timeFormatter(_this.time);
                                 }
-                            }else{
-                                _this.cached[d.geo].trail = [];
                             }
-                            
-                            
-                        
+
                         }else{
-                        //for non-selected bubbles
-                        //make sure there is no cached data
+                            //for non-selected bubbles
+                            //make sure there is no cached data
                             if(_this.cached[d.geo] != null){delete _this.cached[d.geo]};
                         }
                         
@@ -490,80 +492,31 @@ define([
                     
                 }); // bubbles
                     
+                
+                _this.redrawTrails();
                     
                                 
-            
-            
-                this.entityTrails = this.trailsContainer.selectAll('.vzb-bc-entity')
-                    .data(_this.model.entities.select.map(function(d){return {geo: d}}), 
-                          function(d) { return(d.geo); });
-                    
-                this.entityTrails.exit().remove();
-                this.entityTrails.enter().append("g").attr("class", "vzb-bc-entity");
-                  
-                this.entityTrails.each(function(trail){
-
-                    var trailSegments = d3.select(this).selectAll(".trailSegment")
-                        .data(_this.cached[trail.geo].trail)//.filter(function(dd,i){return i<_this.cached[trail.geo].trail.length-1}))
-                    
-                    var nOfSegments = _this.cached[trail.geo].trail.length;
-                    
-                    trailSegments.exit().remove();
-                    var enterSegment = trailSegments.enter().append("g")
-                        .attr("class","trailSegment");
-                    
-                    enterSegment.append("circle");
-                    enterSegment.append("line");
-                    
-                    trailSegments.each(function(d, index){
-                        
-                        d3.select(this).select("circle")
-                            .style("fill", d.c)
-                            .attr("cy", _this.yScale(d.y) )
-                            .attr("cx", _this.xScale(d.x) )
-                            .attr("r", areaToRadius(_this.sScale(d.s)));
-                    
-                        d3.select(this).select("line")
-                            .style("stroke",  d.c)
-                            .attr("x1", _this.xScale(d.x) )
-                            .attr("y1", _this.yScale(d.y) )
-                            .attr("x2", index<nOfSegments-1? 
-                                  _this.xScale(_this.cached[trail.geo].trail[index+1].x)
-                                : _this.xScale(_this.cached[trail.geo].valueX)
-                                )
-                            .attr("y2", index<nOfSegments-1? 
-                                  _this.yScale(_this.cached[trail.geo].trail[index+1].y)
-                                : _this.yScale(_this.cached[trail.geo].valueY)
-                                );
-
-                    });
-                    
-                    
-
-
-                })
-                break;
-                    
-                case "rect":
-                var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
-                this.entityBubbles.each(function(d){
-                    var view = d3.select(this);
-                    var valueY = _this.model.marker.axis_y.getValue(d);
-                    var valueX = _this.model.marker.axis_x.getValue(d);
-                    
-                    if(valueY==null || valueX==null) {
-                        view.classed("vzb-transparent", true)
-                    }else{
-                        view.classed("vzb-transparent", false)
-                            .style("fill", _this.model.marker.color.getValue(d))
-                            .transition().duration(_this.duration).ease("linear")
-                            .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
-                            .attr("y", _this.yScale(valueY))
-                            .attr("x", _this.xScale(valueX) - barWidth/2)
-                            .attr("width", barWidth);
-                    }
-                });
-                break;
+                break;                        
+//                case "rect":
+//                var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
+//                this.entityBubbles.each(function(d){
+//                    var view = d3.select(this);
+//                    var valueY = _this.model.marker.axis_y.getValue(d);
+//                    var valueX = _this.model.marker.axis_x.getValue(d);
+//                    
+//                    if(valueY==null || valueX==null) {
+//                        view.classed("vzb-transparent", true)
+//                    }else{
+//                        view.classed("vzb-transparent", false)
+//                            .style("fill", _this.model.marker.color.getValue(d))
+//                            .transition().duration(_this.duration).ease("linear")
+//                            .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
+//                            .attr("y", _this.yScale(valueY))
+//                            .attr("x", _this.xScale(valueX) - barWidth/2)
+//                            .attr("width", barWidth);
+//                    }
+//                });
+//                break;
             }
             
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
@@ -631,11 +584,12 @@ define([
                 }); 
             
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
-                .data(_this.model.entities.select.map(function(d){return {geo: d}}), 
-                      function(d) { return(d.geo); });
+                .data(_this.model.entities.select, function(d) { return(d.geo); });
 
             
-            this.entityLabels.exit().remove();
+            this.entityLabels.exit()
+                .each(function(d){ _this.removeTrails(d) })
+                .remove();
             
             this.entityLabels
                 .enter().append("g")
@@ -649,12 +603,93 @@ define([
                     view.append("text").attr("class","vzb-bc-label-shadow");
                     view.append("text").attr("class","vzb-bc-label-primary");
                     view.append("line").attr("class","vzb-bc-label-line");
+                
+                    _this.createTrails(d)
                 });
         
             
             //this.collisionResolverRebuild(_this.model.entities.select);
             
+        },
+        
+        
+        createTrails: function(d){
+            var _this = this;
+            
+            var start = +_this.timeFormatter(this.model.time.start);
+            var end = +_this.timeFormatter(this.model.time.end);
+            var step = this.model.time.step;
+            var trailSegmentData = [];
+            for(var time = start; time<=end; time+=step) trailSegmentData.push({t: _this.timeFormatter.parse(""+time)});
+            
+            this.entityTrails
+                .filter(function(f){return f.geo==d.geo})
+                .selectAll("g")
+                .data(trailSegmentData)
+                .enter().append("g")
+                .attr("class","trailSegment")
+                .each(function(segment,index){
+                    segment.valueY = _this.model.marker.axis_y.getValue({geo:d.geo, time: segment.t});
+                    segment.valueX = _this.model.marker.axis_x.getValue({geo:d.geo, time: segment.t});
+                    segment.valueS = _this.model.marker.size.getValue({geo:d.geo, time: segment.t});
+                    segment.valueC = _this.model.marker.color.getValue({geo:d.geo, time: segment.t});
+
+                    var view = d3.select(this);
+                    view.append("circle").style("fill", segment.valueC);
+                    view.append("line").style("stroke", segment.valueC);
+                });
+            
+        },
+        
+        removeTrails: function(d){
+            this.entityTrails
+                .filter(function(f){return f.geo==d.geo})
+                .selectAll("g").remove();
+        },
+                
+        
+        redrawTrails: function(selection){
+            var _this = this;
+            
+            selection = selection==null? _this.model.entities.select : [selection];
+            selection.forEach(function(d){
+
+                _this.entityTrails
+                    .filter(function(f){return f.geo==d.geo})
+                    .selectAll("g")
+                    .each(function(segment,index){
+
+                        var view = d3.select(this);
+                        
+                        var invisible = (segment.t - _this.time >= 0) || (_this.timeFormatter.parse(""+d.trailStartTime) - segment.t >= 0);
+                        view.classed("vzb-transparent",invisible);
+                    
+                        if(invisible)return;
+
+                        view.select("circle")
+                            .attr("cy", _this.yScale(segment.valueY) )
+                            .attr("cx", _this.xScale(segment.valueX) )
+                            .attr("r", areaToRadius(_this.sScale(segment.valueS)));
+
+                    
+                        var next = this.parentNode.children[index+1];
+                        
+                        if(next!=null){
+                            next = next.__data__;
+                            if(segment.t - _this.time < 0 && _this.time - next.t < 0) next = _this.cached[d.geo];
+                        
+                            view.select("line")
+                                .attr("x1", _this.xScale(next.valueX) )
+                                .attr("y1", _this.yScale(next.valueY) )
+                                .attr("x2", _this.xScale(segment.valueX) )
+                                .attr("y2", _this.yScale(segment.valueY) );
+                        }
+                    
+                    })
+            });
         }
+        
+        
         
         
         

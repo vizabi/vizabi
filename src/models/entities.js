@@ -47,18 +47,24 @@ define([
             return this.show.filter.getObject();
         },
 
-        selectEntity: function(d) {
-            var value = d[this.getDimension()];
+        selectEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
             if(this.isSelected(d)) {
-                this.select = _.without(this.select, value);
+                this.select = this.select.filter(function(d){return d[dimension] != value});
             } else {
-                this.select = this.select.concat(value);
+                var added = {};
+                added[dimension] = value;
+                if(timeFormatter!=null) added["trailStartTime"] = timeFormatter(d.time);
+                this.select = this.select.concat(added);
+                
             }
         },
 
         isSelected: function(d) {
+            var dimension = this.getDimension();
             var value = d[this.getDimension()];
-            var select_array = this.select;
+            var select_array = this.select.map(function(d){return d[dimension] });
             if(_.indexOf(select_array, value) !== -1) {
                 return true;
             } else {
