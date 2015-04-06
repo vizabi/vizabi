@@ -58,6 +58,8 @@
             </ul>
         </div>
         
+        <button onclick="toggleTrails('bubble-chart')"><i class="fa fa-share-alt"></i></button>
+        
     </div>
     <div class="buttons">
 
@@ -204,7 +206,8 @@ $(function() {
                 value: 2012,
                 step: 1,
                 speed: 300,
-                formatInput: "%Y"
+                formatInput: "%Y",
+                trails: true
             },
 
             //entities we want to show
@@ -389,6 +392,13 @@ function language(lang) {
     myVizabi.setOptions(options);
 }
 
+function toggleTrails(chart){
+    var options = {state: {time: {}}};
+    options.state.time.trails = !myVizabi.getOptions().state.time.trails;
+    myVizabi.setOptions(options);
+    showState(options.state);
+}
+    
 function hook(params/*hook, use, value, scale, domain*/) {
     var options = {
         state: {

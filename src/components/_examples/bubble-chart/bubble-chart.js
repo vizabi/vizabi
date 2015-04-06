@@ -31,6 +31,10 @@ define([
             }];
 
             this.model_binds = {
+                "change:time:trails": function(evt) {
+                    _this.toggleTrails(_this.model.time.trails);
+                    _this.redrawDataPoints();
+                },
                 "change:entities:show": function(evt) {
                     _this.updateShow();
                     _this.updateTime();
@@ -213,6 +217,7 @@ define([
             
             _this.cached = {};
             this.timeFormatter = d3.time.format(_this.model.time.formatInput);
+            this.ui.trails.on = _this.model.time.trails;           
             
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
@@ -479,6 +484,9 @@ define([
                                     _this.cached[d.geo].labelY1 = _this.model.marker.axis_y.getValue({geo:d.geo, time: trailStartTime});
                                     _this.cached[d.geo].labelX1 = _this.model.marker.axis_x.getValue({geo:d.geo, time: trailStartTime});
                                 }
+                            }else{
+                                _this.cached[d.geo].labelY1 = valueY;
+                                _this.cached[d.geo].labelX1 = valueX;
                             }
                             
                             
@@ -641,39 +649,60 @@ define([
             
         },
         
+        toggleTrails: function(toggle){
+            var _this = this;
+            _this.ui.trails.on = toggle;
+            if(toggle){
+                _this.createTrails();
+            }else{
+                _this.removeTrails();
+                _this.model.entities.select.forEach(function(d){d.trailStartTime = null});
+            }
+        },
         
-        createTrails: function(d){
+        createTrails: function(selection){
             var _this = this;
             
-            var start = +_this.timeFormatter(this.model.time.start);
-            var end = +_this.timeFormatter(this.model.time.end);
-            var step = this.model.time.step;
-            var trailSegmentData = [];
-            for(var time = start; time<=end; time+=step) trailSegmentData.push({t: _this.timeFormatter.parse(""+time)});
+            selection = selection==null? _this.model.entities.select : [selection];
             
-            this.entityTrails
-                .filter(function(f){return f.geo==d.geo})
-                .selectAll("g")
-                .data(trailSegmentData)
-                .enter().append("g")
-                .attr("class","trailSegment")
-                .each(function(segment,index){
-                    segment.valueY = _this.model.marker.axis_y.getValue({geo:d.geo, time: segment.t});
-                    segment.valueX = _this.model.marker.axis_x.getValue({geo:d.geo, time: segment.t});
-                    segment.valueS = _this.model.marker.size.getValue({geo:d.geo, time: segment.t});
-                    segment.valueC = _this.model.marker.color.getValue({geo:d.geo, time: segment.t});
+            selection.forEach(function(d){
+                var start = +_this.timeFormatter(_this.model.time.start);
+                var end = +_this.timeFormatter(_this.model.time.end);
+                var step = _this.model.time.step;
+                var trailSegmentData = [];
+                for(var time = start; time<=end; time+=step) trailSegmentData.push({t: _this.timeFormatter.parse(""+time)});
 
-                    var view = d3.select(this);
-                    view.append("circle").style("fill", segment.valueC);
-                    view.append("line").style("stroke", segment.valueC);
-                });
+                _this.entityTrails
+                    .filter(function(f){return f.geo==d.geo})
+                    .selectAll("g")
+                    .data(trailSegmentData)
+                    .enter().append("g")
+                    .attr("class","trailSegment")
+                    .each(function(segment,index){
+                        segment.valueY = _this.model.marker.axis_y.getValue({geo:d.geo, time: segment.t});
+                        segment.valueX = _this.model.marker.axis_x.getValue({geo:d.geo, time: segment.t});
+                        segment.valueS = _this.model.marker.size.getValue({geo:d.geo, time: segment.t});
+                        segment.valueC = _this.model.marker.color.getValue({geo:d.geo, time: segment.t});
+
+                        var view = d3.select(this);
+                        view.append("circle").style("fill", segment.valueC);
+                        view.append("line").style("stroke", segment.valueC);
+                    });
+            });
             
         },
         
-        removeTrails: function(d){
-            this.entityTrails
-                .filter(function(f){return f.geo==d.geo})
-                .selectAll("g").remove();
+        
+        removeTrails: function(selection){
+            var _this = this;
+            selection = selection==null? _this.model.entities.select : [selection];
+            
+            selection.forEach(function(d){
+                
+                _this.entityTrails
+                    .filter(function(f){return f.geo==d.geo})
+                    .selectAll("g").remove(); 
+            });
         },
                 
         
