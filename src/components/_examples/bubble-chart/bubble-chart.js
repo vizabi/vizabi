@@ -178,7 +178,8 @@ define([
             this.sScale = this.model.marker.size.getDomain();
 
             this.collisionResolver = d3.svg.collisionResolver()
-                .value("valueY")
+                .value("labelY2")
+                .fixed("labelFixed")
                 .selector("text")
                 .scale(this.yScale)
                 .handleResult(this.repositionLabels);
@@ -186,15 +187,17 @@ define([
             
            this.dragger = d3.behavior.drag()
                 .on("drag", function(d,i) {
-                    _this.cached[d.geo].dragged = true;
-                    _this.cached[d.geo].labelX2 += d3.event.dx;
-                    _this.cached[d.geo].labelY2 += d3.event.dy;
+                    if(!_this.ui.labels.dragging) return;
+                    var cache = _this.cached[d.geo];
+                    cache.labelFixed = true;
+                    cache.labelX_ += d3.event.dx;
+                    cache.labelY_ += d3.event.dy;
                     d3.select(this).selectAll("text")
-                        .attr("x", _this.cached[d.geo].labelX2)
-                        .attr("y", _this.cached[d.geo].labelY2);
+                        .attr("x", _this.xScale(cache.labelX2)+cache.labelX_)
+                        .attr("y", _this.yScale(cache.labelY2)+cache.labelY_);
                     d3.select(this).select("line")
-                        .attr("x2", _this.cached[d.geo].labelX2)
-                        .attr("y2", _this.cached[d.geo].labelY2);
+                        .attr("x2", _this.xScale(cache.labelX2)+cache.labelX_)
+                        .attr("y2", _this.yScale(cache.labelY2)+cache.labelY_);
                 });
             
             
@@ -460,7 +463,7 @@ define([
                         // only for selected entities
                         if(_this.model.entities.isSelected(d) && _this.entityLabels!=null){
                             
-                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {valueY: null, valueX: null, labelY1: null, labelX1: null};
+                            if(_this.cached[d.geo] == null) _this.cached[d.geo] = {};
                             _this.cached[d.geo].valueY = valueY;
                             _this.cached[d.geo].valueX = valueX;
                             
@@ -492,18 +495,20 @@ define([
                                     var text = labelGroup.selectAll("text")
                                         .text(valueL);                                        
                                 
-                                    if(_this.cached[d.geo].dragged == true) return;
+                                    if(_this.cached[d.geo].labelFixed == true) return;
                                 
-                                    _this.cached[d.geo].labelX2 = _this.xScale(_this.cached[d.geo].labelX1 || valueX) + scaledS;
-                                    _this.cached[d.geo].labelY2 = _this.yScale(_this.cached[d.geo].labelY1 || valueY);
+                                    _this.cached[d.geo].labelX2 = _this.cached[d.geo].labelX1 || valueX;
+                                    _this.cached[d.geo].labelY2 = _this.cached[d.geo].labelY1 || valueY;
+                                    _this.cached[d.geo].labelX_ = scaledS;
+                                    _this.cached[d.geo].labelY_ = 0;
                                 
                                     text.transition().duration(_this.duration).ease("linear")
-                                        .attr("x",_this.cached[d.geo].labelX2)
-                                        .attr("y",_this.cached[d.geo].labelY2)
+                                        .attr("x",_this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_)
+                                        .attr("y",_this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_)
 
                                     line.transition().duration(_this.duration).ease("linear")
-                                        .attr("x2",_this.cached[d.geo].labelX2)
-                                        .attr("y2",_this.cached[d.geo].labelY2);
+                                        .attr("x2",_this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_)
+                                        .attr("y2",_this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_);
                                 })
                         }else{
                             //for non-selected bubbles
@@ -552,12 +557,11 @@ define([
             
             
             
-            
-            // cancel previously queued simulation if we just ordered a new one
-            clearTimeout(_this.collisionTimeout);
-            
-            
             if(_this.ui.labels.autoResolveCollisions){
+        
+                // cancel previously queued simulation if we just ordered a new one
+                clearTimeout(_this.collisionTimeout);
+            
                 // place label layout simulation into a queue
                 _this.collisionTimeout = setTimeout(function(){
     //                if(_this.forceLayout == null) return;
@@ -579,17 +583,17 @@ define([
         
         repositionLabels: function(d, i, context, resolvedX, resolvedY){
             
-            d3.select(context).selectAll("text")
-                .transition()
-                .duration(300)
-                .attr("x", function(d){if(resolvedX!=null){return resolvedX}else{return}})
-                .attr("y", resolvedY);
+            var text = d3.select(context).selectAll("text")//.transition().duration();
+            var line = d3.select(context).selectAll("line")//.transition().duration();
             
-            d3.select(context).selectAll("line")
-                .transition()
-                .duration(300)
-                .attr("x2", resolvedX)
-                .attr("y2", resolvedY);
+            if(resolvedX!=null){
+                text.attr("x", resolvedX);
+                line.attr("x2", resolvedX);
+            }
+            if(resolvedY!=null){
+                text.attr("y", resolvedY);
+                line.attr("y2", resolvedY);
+            }
             
         },
         

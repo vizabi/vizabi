@@ -20,9 +20,7 @@ define(['d3'], function(d3){
                 "D3 collision resolver stopped: missing height of the canvas"); return;}
             if(value == null){console.warn(
                 "D3 collision resolver stopped: missing pointer within data objects. Example: value = 'valueY' "); return;}
-            if(scale == null){console.warn(
-                "D3 collision resolver stopped: missing scaling function. Example: scale = function(x){return ax+b} "); return;}
-                        
+  
             g.each(function(d, index) {
                 labelHeight[d.geo] = d3.select(this).select(selector)[0][0].getBBox().height;
             });
@@ -31,6 +29,8 @@ define(['d3'], function(d3){
  
             //actually reposition the labels
             g.each(function (d, i) {
+                
+                if(data[d.geo][fixed]) return;
                 
                 var resolvedY = labelPosition[d.geo] || scale(data[d.geo][value]) || 0;
                 var resolvedX = null;
@@ -122,7 +122,7 @@ define(['d3'], function(d3){
             height = arg;
             return resolver;
         };
-        var scale = null;
+        var scale = d3.scale.linear().domain([0,1]).range([0,1]);
         resolver.scale = function(arg) {
             if (!arguments.length) return scale;
             scale = arg;
@@ -132,6 +132,12 @@ define(['d3'], function(d3){
         resolver.value = function(arg) {
             if (!arguments.length) return value;
             value = arg;
+            return resolver;
+        };
+        var fixed = null;
+        resolver.fixed = function(arg) {
+            if (!arguments.length) return fixed;
+            fixed = arg;
             return resolver;
         };
         var handleResult = null;
