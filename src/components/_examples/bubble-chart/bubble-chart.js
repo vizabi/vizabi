@@ -690,10 +690,13 @@ define([
 
                         var view = d3.select(this);
                         
-                        var invisible = (segment.t - _this.time >= 0) || (_this.timeFormatter.parse(""+d.trailStartTime) - segment.t >= 0);
-                        view.classed("vzb-transparent",invisible);
+                        var trailStartTime = _this.timeFormatter.parse(""+d.trailStartTime);
+                        var transparent = ((segment.t - _this.time >= 0) || (trailStartTime - segment.t >= 0))
+                            // one exception: the starting bubble
+                            && !((trailStartTime - _this.model.time.start == 0) && (segment.t - _this.model.time.start == 0));
+                        view.classed("vzb-transparent",transparent);
                     
-                        if(invisible)return;
+                        if(transparent)return;
 
                         view.select("circle")
                             .attr("cy", _this.yScale(segment.valueY) )
