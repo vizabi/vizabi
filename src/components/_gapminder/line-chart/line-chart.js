@@ -338,7 +338,7 @@ define([
             
             // set the right margin that depends on longest label width
             timeSlider.select(".vzb-ts-slider-wrapper")
-                .style("right", this.margin.right)
+                .style("right", this.margin.right+"px");
             
             // override the sizing profile of time slider
             var tsProfiles = this.components[0].getSetProfile();
