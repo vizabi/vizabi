@@ -120,8 +120,6 @@ define([
             this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
             this.projectionY = this.graph.select("g").select(".vzb-lc-projection-y");
             
-            this.timeSliderContainer = this.element.select('.vzb-lc-timeslider');
-            this.timeSlider = this.timeSliderContainer.select('.vzb-timeslider');
             this.components[0].ui.show_value_when_drag_play = false;
             this.components[0].ui.axis_aligned = true;
             
@@ -335,9 +333,11 @@ define([
             this.projectionX.attr("y1",_this.yScale.range()[0]);
             this.projectionY.attr("x2",_this.xScale.range()[0]);
 
+
+            var timeSlider = this.element.select('.vzb-lc-timeslider .vzb-timeslider');
             
             // set the right margin that depends on longest label width
-            this.timeSlider.select(".vzb-ts-slider-wrapper")
+            timeSlider.select(".vzb-ts-slider-wrapper")
                 .style("right", this.margin.right)
             
             // override the sizing profile of time slider
