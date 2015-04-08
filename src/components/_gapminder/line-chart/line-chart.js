@@ -7,8 +7,6 @@ define([
     'd3collisionResolver'
 ], function(d3, _, Component) {
 
-
-
     var LineChart = Component.extend({
 
         init: function(context, options) {
@@ -37,7 +35,6 @@ define([
                 placeholder: '.vzb-lc-timeslider',
                 model: ["time"]
             }];
-
             
             this.model_binds = {
                 "change": function(evt) {
@@ -57,7 +54,7 @@ define([
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
-            }
+            };
                         
             this._super(context, options);
 
@@ -132,13 +129,9 @@ define([
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-            })
+            });
         },
 
-
-
-        
-        
         /*
          * UPDATE SHOW:
          * Ideally should only update when show parameters change or data changes
@@ -196,9 +189,9 @@ define([
         updateTime: function() {
             var _this = this;
             
-            this.time_1 = this.time==null? this.model.time.value : this.time;
+            var time_1 = (this.time === null) ? this.model.time.value : this.time;
             this.time = this.model.time.value;
-            this.duration = this.model.time.playing && (this.time-this.time_1>0) ? this.model.time.speed*0.9 : 0;
+            this.duration = this.model.time.playing && (this.time - time_1>0) ? this.model.time.speed*0.9 : 0;
             
             this.data = this.model.marker.label.getItems({ time: this.time });
 
@@ -255,18 +248,23 @@ define([
 
             //adjust right this.margin according to biggest label
             var lineLabelsText = this.model.marker.label.getItems().map(function(d,i){
-                return _this.model.marker.label.getValue(d)
+                return _this.model.marker.label.getValue(d);
             });
             
             var longestLabelWidth = 0;
             var lineLabelsView = this.linesContainer.selectAll(".samplingView").data(lineLabelsText);
+
             lineLabelsView
                 .enter().append("text")
                 .attr("class","samplingView vzb-lc-labelName")
                 .style("opacity",0)
-                .text(function(d){ return (d.length<13? d : d.substring(0, 10)+'...') })
+                .text(function(d){
+                    return (d.length<13) ? d : d.substring(0, 10)+'...';
+                })
                 .each(function(d){
-                    if(longestLabelWidth > this.getComputedTextLength()) return;
+                    if(longestLabelWidth > this.getComputedTextLength()) {
+                        return;
+                    }
                     longestLabelWidth = this.getComputedTextLength();
                 })
                 .remove();
@@ -356,12 +354,6 @@ define([
             
             this.sizeUpdatedOnce = true;
         },
-        
-        
-        
-
-        
-        
 
         /*
          * REDRAW DATA POINTS:
@@ -369,18 +361,26 @@ define([
          */
         redrawDataPoints: function() {
             var _this = this;
-            if(!this.timeUpdatedOnce) this.updateTime();
-            if(!this.sizeUpdatedOnce) this.updateSize();
             
+            if(!this.timeUpdatedOnce) {
+                this.updateTime();
+            }
+
+            if(!this.sizeUpdatedOnce) {
+                this.updateSize();
+            }
 
             this.entityLabels.exit().remove();
             this.entityLines.exit().remove();
             
-            
             this.entityLines.enter().append("g")
                 .attr("class", "vzb-lc-entity")
-                .on("mousemove", function(d,i){_this.entityMousemove(d,i,_this)})
-                .on("mouseout", function(d,i){_this.entityMouseout(d,i,_this)})
+                .on("mousemove", function(d,i){
+                    _this.entityMousemove(d,i,_this);
+                })
+                .on("mouseout", function(d,i){
+                    _this.entityMouseout(d,i,_this);
+                })
                 .each(function(d, index){
                     var entity = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
@@ -395,14 +395,16 @@ define([
                         .attr("class", "vzb-lc-line")
                         .style("stroke", color);
                 
-                })
-            
-            
+                });            
             
             this.entityLabels.enter().append("g")
                 .attr("class", "vzb-lc-entity")
-                .on("mousemove", function(d,i){_this.entityMousemove(d,i,_this)})
-                .on("mouseout", function(d,i){_this.entityMouseout(d,i,_this)})
+                .on("mousemove", function(d,i){
+                    _this.entityMousemove(d,i,_this);
+                })
+                .on("mouseout", function(d,i){
+                    _this.entityMouseout(d,i,_this);
+                })
                 .each(function(d, index){
                     var entity = d3.select(this);    
                     var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
@@ -425,13 +427,7 @@ define([
                         .attr("class", "vzb-lc-labelValue")
                         .style("fill", colorShadow)
                         .attr("dy", "1.6em");
-            })
-            
-            
-
-  
-            
-            
+            });
                     
             this.entityLines
                 .each(function(d,index){
@@ -442,8 +438,8 @@ define([
                     //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
                     var x = _this.model.marker.axis_x.getValues(d);
                     var y = _this.model.marker.axis_y.getValues(d);
-                    var xy = x.map(function(d,i){ return [+x[i],+y[i]] });
-                    xy = xy.filter(function(d){ return !_.isNaN(d[1]) });
+                    var xy = x.map(function(d,i){ return [+x[i],+y[i]]; });
+                    xy = xy.filter(function(d){ return !_.isNaN(d[1]); });
                     _this.cached[d.geo] = {valueY:xy[xy.length-1][1]};
                     
                     // the following fixes the ugly line butts sticking out of the axis line
@@ -461,11 +457,13 @@ define([
                         
                         var totalLength = path2.node().getTotalLength();
                         
-                        if(_this.totalLength_1[d.geo]==null)_this.totalLength_1[d.geo]=totalLength;
+                        if(_this.totalLength_1[d.geo]===null) {
+                            _this.totalLength_1[d.geo]=totalLength;
+                        }
 
                         path1
                           .attr("stroke-dasharray", totalLength)
-                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
+                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d.geo])
                           .transition()
                             .duration(_this.duration)
                             .ease("linear")
@@ -473,7 +471,7 @@ define([
 
                         path2
                           .attr("stroke-dasharray", totalLength)
-                          .attr("stroke-dashoffset", totalLength-_this.totalLength_1[d.geo])
+                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d.geo])
                           .transition()
                             .duration(_this.duration)
                             .ease("linear")
@@ -493,14 +491,8 @@ define([
                           .attr("stroke-dashoffset", "none");                       
                     }
                 
-                
-                })
-            
-            
-            
-            
-            
-            
+                });
+
             this.entityLabels
                 .each(function(d,index){
                     var entity = d3.select(this);       
@@ -534,9 +526,13 @@ define([
                         .text("");
                     
                     if(_this.data.length < valueHideLimit){
-                        // if too little space on the right, break up the text in two lines
-                        if(_this.xScale(_this.time) + t[0][0].getComputedTextLength() 
-                            + _this.activeProfile.text_padding > _this.width + _this.margin.right){
+                        
+                        var size = _this.xScale(_this.time)
+                                         + t[0][0].getComputedTextLength()
+                                         + _this.activeProfile.text_padding;
+                        var width = _this.width + _this.margin.right;
+
+                        if(size > width){
                             entity.select(".vzb-lc-labelName").text(name);
                             entity.select(".vzb-lc-labelValue").text(value);
                         }
@@ -550,34 +546,30 @@ define([
                 .attr("transform", "translate(" + _this.xScale(_this.time) + ",0)");
             
             this.verticalNow
-                .style("opacity",this.time-this.model.time.start==0 || _this.hoveringNow?0:1);
+                .style("opacity",this.time-this.model.time.start===0 || _this.hoveringNow?0:1);
                 
 
-            if(!this.hoveringNow) this.xAxisEl.call(
-                this.xAxis.highlightValue(_this.time).highlightTransDuration(_this.duration)
-            );
-
-
+            if(!this.hoveringNow) {
+                this.xAxisEl.call(
+                    this.xAxis.highlightValue(_this.time).highlightTransDuration(_this.duration)
+                );
+            }
 
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-            if(_this.duration==0)d3.timer.flush();
-            
+            if(_this.duration==0) {
+                d3.timer.flush();
+            }
             
             // cancel previously queued simulation if we just ordered a new one
             // then order a new collision resolving
             clearTimeout(_this.collisionTimeout);
             _this.collisionTimeout = setTimeout(function(){
-                
                 _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-                
             },  _this.model.time.speed*1.5);
             
-        },
-        
-        
-        
-        
+        }, 
+
         entityMousemove: function(me, index, context){
             var _this = context;
             
@@ -585,9 +577,13 @@ define([
 
             _this.graph.selectAll(".vzb-lc-entity").each(function(){
                 d3.select(this)
-                    .classed("vzb-dimmed", function(d){return d.geo != _this.hoveringNow.geo})
-                    .classed("vzb-hovered", function(d){return d.geo == _this.hoveringNow.geo});
-            })
+                    .classed("vzb-dimmed", function(d){
+                        return d.geo !== _this.hoveringNow.geo;
+                    })
+                    .classed("vzb-hovered", function(d){
+                        return d.geo === _this.hoveringNow.geo;
+                    });
+            });
 
 
             var mouse = d3.mouse(_this.graph.node()).map(function(d) {
@@ -595,11 +591,15 @@ define([
             });
 
             var resolvedTime = _this.xScale.invert(mouse[0]-_this.margin.left);  
-            if(_this.time - resolvedTime < 0) resolvedTime = _this.time;
+            if(_this.time - resolvedTime < 0) {
+                resolvedTime = _this.time;
+            }
 
             var resolvedValue = _this.model.marker.axis_y.getValue({geo: me.geo, time: resolvedTime});
 
-            if(_.isNaN(resolvedValue)) return;
+            if(_.isNaN(resolvedValue)) {
+                return;
+            }
 
             var scaledTime = _this.xScale(resolvedTime);
             var scaledValue = _this.yScale(resolvedValue);
@@ -609,12 +609,14 @@ define([
                 _this.tooltip
                     .style("right", (_this.width - scaledTime + _this.margin.left + _this.margin.right ) + "px")
                     .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
-                    .text(_this.yAxis.tickFormat()(resolvedValue) )
+                    .text(_this.yAxis.tickFormat()(resolvedValue))
                     .classed("vzb-hidden", false);
             }
 
             // bring the projection lines to the hovering point
-            if(_this.ui.whenHovering.hideVerticalNow) _this.verticalNow.style("opacity",0);  
+            if(_this.ui.whenHovering.hideVerticalNow) {
+                _this.verticalNow.style("opacity",0);  
+            }
 
             if(_this.ui.whenHovering.showProjectionLineX){
                 _this.projectionX
@@ -641,10 +643,7 @@ define([
 
             clearTimeout(_this.unhoverTimeout);
                     
-        },
-        
-        
-        
+        },        
                 
         entityMouseout: function(me, index, context){
             var _this = context;
@@ -660,9 +659,10 @@ define([
 
                 _this.graph.selectAll(".vzb-lc-entity").each(function(){
                     d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
-                })
+                });
+
                 _this.hoveringNow = null;                       
-            }, 300)
+            }, 300);
 
         },        
         
