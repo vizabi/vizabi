@@ -77,7 +77,6 @@ define([
             // default UI settings
             this.ui = _.extend({
                 whenHovering: {},
-                trails: {},
                 labels: {}
             }, this.ui["vzb-tool-"+this.name]);
             
@@ -87,10 +86,6 @@ define([
                 higlightValueX: true,
                 higlightValueY: true
             }, this.ui.whenHovering);
-            
-            this.ui.trails = _.extend({
-                on: true
-            }, this.ui.trails);
             
             this.ui.labels = _.extend({
                 autoResolveCollisions: false,
@@ -300,7 +295,6 @@ define([
             
             _this.cached = {};
             this.timeFormatter = d3.time.format(_this.model.time.formatInput);
-            this.ui.trails.on = _this.model.time.trails;           
             
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
@@ -557,7 +551,7 @@ define([
                             _this.cached[d.geo].valueY = valueY;
                             _this.cached[d.geo].valueX = valueX;
                             
-                            if(_this.ui.trails.on){
+                            if(_this.model.time.trails){
                                 var select = _.find(_this.model.entities.select, function(f){return f.geo == d.geo} );
                                 var trailStartTime = _this.timeFormatter.parse(""+select.trailStartTime);
                                 
@@ -616,7 +610,7 @@ define([
                 }); // bubbles
                     
                 
-                if(_this.ui.trails.on) _this.redrawTrails();
+                if(_this.model.time.trails) _this.redrawTrails();
                     
                                 
                 break;                        
@@ -726,7 +720,7 @@ define([
                     view.append("text").attr("class","vzb-bc-label-primary");
                     view.append("line").attr("class","vzb-bc-label-line");
                 
-                    if(_this.ui.trails.on)_this.createTrails(d)
+                    if(_this.model.time.trails)_this.createTrails(d)
                 });
         
             
@@ -736,7 +730,6 @@ define([
         
         toggleTrails: function(toggle){
             var _this = this;
-            _this.ui.trails.on = toggle;
             if(toggle){
                 _this.createTrails();
             }else{
