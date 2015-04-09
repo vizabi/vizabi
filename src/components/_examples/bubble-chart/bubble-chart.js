@@ -176,6 +176,10 @@ define([
                 .text(this.translator("buttons/size") + ": " + titleStringS + ", " + 
                       this.translator("buttons/colors") + ": " + titleStringC );
             
+            d3.select("body")
+                .on("keydown", function(){ if(d3.event.metaKey || d3.event.ctrlKey)_this.eventArea.classed("vzb-zoomin", true); })
+                .on("keyup", function(){if(!d3.event.metaKey && !d3.event.ctrlKey)_this.eventArea.classed("vzb-zoomin", false); })
+            
             this.zoomerWithRect = d3.behavior.drag()
                 .on("dragstart", function(d,i) {
                     if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
