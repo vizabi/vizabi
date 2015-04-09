@@ -122,6 +122,9 @@ define([
             this.trailsContainer = this.graph.select('.vzb-bc-trails');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.labelsContainer = this.graph.select('.vzb-bc-labels');
+            this.eventArea = this.graph.select('.vzb-bc-eventArea');
+            this.zoomRect = this.graph.select('.vzb-bc-zoomRect');
+            
             this.entityBubbles = null;
             this.entityLabels = null;
             this.tooltip = this.element.select('.vzb-tooltip');
@@ -173,7 +176,83 @@ define([
                 .text(this.translator("buttons/size") + ": " + titleStringS + ", " + 
                       this.translator("buttons/colors") + ": " + titleStringC );
             
+            this.zoomerWithRect = d3.behavior.drag()
+                .on("dragstart", function(d,i) {
+                    if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
+                
+                    this.origin = {x: d3.mouse(this)[0], y: d3.mouse(this)[1]};
+                    _this.zoomRect.classed("vzb-transparent", false);
+                })
+                .on("drag", function(d,i) {
+                    if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
+                    var origin = this.origin;
+                    _this.zoomRect
+                        .attr("x", Math.min(d3.event.x, origin.x))
+                        .attr("y", Math.min(d3.event.y, origin.y))
+                        .attr("width", Math.abs(d3.event.x - origin.x))
+                        .attr("height", Math.abs(d3.event.y - origin.y));
+                })
+                
+                .on("dragend", function(e) {
+                    if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
+                
+                    _this.zoomRect
+                        .attr("width", 0)
+                        .attr("height", 0)
+                        .classed("vzb-transparent", true);
+                
+                    this.target = {x: d3.mouse(this)[0], y: d3.mouse(this)[1]};
+                      
+                    var zoom = _this.width / Math.abs(this.origin.x - this.target.x) * _this.zoomer.scale();
+                
+                    var ratio = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y);
+                    
+                
+                    _this.zoomer.translate([
+                        _this.zoomer.translate()[0] + this.origin.x - this.target.x,
+                        _this.zoomer.translate()[1] + this.origin.y - this.target.y,
+                    ])
+
+                    var pan = [
+                        (_this.zoomer.translate()[0] - Math.min(this.origin.x, this.target.x)) 
+                            / _this.zoomer.scale() * zoom,
+                        (_this.zoomer.translate()[1] - Math.min(this.origin.y, this.target.y)) 
+                            / _this.zoomer.scale() / _this.zoomer.ratio * zoom * ratio
+                        ]
+
+
+                    _this.zoomer.scale(zoom);
+                    _this.zoomer.ratio = ratio;
+                    _this.zoomer.translate(pan);
+
+                    _this.zoomer.event(d3.select(this));
+                });
             
+            
+            this.zoomer = d3.behavior.zoom()
+                .scaleExtent([1, 10])
+                .on("zoom", function(){
+                    if(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)return;
+                                
+                    var zoom = d3.event.scale;
+                    var pan = d3.event.translate;
+                    var ratio = _this.zoomer.ratio;
+                
+                    _this.xScale.range([0* zoom + pan[0], _this.width * zoom + pan[0] ]);
+                    _this.yScale.range([_this.height * zoom * ratio + pan[1], 0 * zoom * ratio + pan[1] ]);
+                    _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom, radiusToArea(_this.maxRadius)*zoom*zoom]);
+                                    
+                    _this.yAxisEl.call(_this.yAxis);
+                    _this.xAxisEl.call(_this.xAxis);
+                    _this.redrawDataPoints();
+                });
+            
+            this.zoomer.ratio = 1;
+            
+            
+            this.eventArea
+                .call(this.zoomer)
+                .call(this.zoomerWithRect);
 
 
             //scales
@@ -266,8 +345,6 @@ define([
             var _this = this,
                 margin,
                 tick_spacing,
-                maxRadius,
-                minRadius,
                 padding = 2;
 
             switch (this.getLayoutProfile()) {
@@ -291,14 +368,18 @@ define([
                     break;
             }
 
-            minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-            maxRadius = maxRadius * this.model.marker.size.max;
+            this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
+            this.maxRadius = maxRadius * this.model.marker.size.max;
 
             //stage
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             this.collisionResolver.height(this.height);
+            
+            this.eventArea
+                .attr("width", this.width)
+                .attr("height", this.height);
             
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
@@ -325,9 +406,9 @@ define([
                 this.xScale.rangePoints([0, this.width], padding).range();
             }
             if (this.model.marker.size.scale !== "ordinal") {
-                this.sScale.range([radiusToArea(minRadius), radiusToArea(maxRadius)]);
+                this.sScale.range([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)]);
             } else {
-                this.sScale.rangePoints([radiusToArea(minRadius), radiusToArea(maxRadius)], 0).range();
+                this.sScale.rangePoints([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)], 0).range();
             }
 
             //apply scales to axes and redraw
