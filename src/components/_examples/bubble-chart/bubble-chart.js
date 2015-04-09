@@ -202,10 +202,15 @@ define([
                 
                     this.target = {x: d3.mouse(this)[0], y: d3.mouse(this)[1]};
                       
-                    var zoom = _this.width / Math.abs(this.origin.x - this.target.x) * _this.zoomer.scale();
-                
-                    var ratio = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y);
-                    
+                    if(Math.abs(this.origin.x - this.target.x) > Math.abs(this.origin.y - this.target.y)){
+                        var zoom = _this.height / Math.abs(this.origin.y - this.target.y) * _this.zoomer.scale();
+                        var ratioY = 1
+                        var ratioX = Math.abs(this.origin.y - this.target.y) / Math.abs(this.origin.x - this.target.x);
+                    }else{
+                        var zoom = _this.width / Math.abs(this.origin.x - this.target.x) * _this.zoomer.scale();
+                        var ratioY = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y);
+                        var ratioX = 1;
+                    }
                 
                     _this.zoomer.translate([
                         _this.zoomer.translate()[0] + this.origin.x - this.target.x,
@@ -214,14 +219,15 @@ define([
 
                     var pan = [
                         (_this.zoomer.translate()[0] - Math.min(this.origin.x, this.target.x)) 
-                            / _this.zoomer.scale() * zoom,
+                            / _this.zoomer.scale() / _this.zoomer.ratioX * zoom * ratioX,
                         (_this.zoomer.translate()[1] - Math.min(this.origin.y, this.target.y)) 
-                            / _this.zoomer.scale() / _this.zoomer.ratio * zoom * ratio
+                            / _this.zoomer.scale() / _this.zoomer.ratioY * zoom * ratioY
                         ]
 
 
                     _this.zoomer.scale(zoom);
-                    _this.zoomer.ratio = ratio;
+                    _this.zoomer.ratioY = ratioY;
+                    _this.zoomer.ratioX = ratioX;
                     _this.zoomer.translate(pan);
 
                     _this.zoomer.event(d3.select(this));
@@ -235,29 +241,35 @@ define([
                                 
                     var zoom = d3.event.scale;
                     var pan = d3.event.translate;
-                    var ratio = _this.zoomer.ratio;
+                    var ratioY = _this.zoomer.ratioY;
+                    var ratioX = _this.zoomer.ratioX;
+                
+                    if(zoom*ratioY<1){ratioY = 1/zoom; _this.zoomer.ratioY = ratioY};
+                    if(zoom*ratioX<1){ratioX = 1/zoom; _this.zoomer.ratioX = ratioX};
                 
                     //limit the panning, so that we are never outside the possible range
                     if(pan[0]>0) pan[0]=0;
                     if(pan[1]>0) pan[1]=0;
-                    if(pan[0]<(1-zoom)*_this.width) pan[0]=(1-zoom)*_this.width;
-                    if(pan[1]<(1-zoom*ratio)*_this.height) pan[1]=(1-zoom*ratio)*_this.height;
+                    if(pan[0]<(1-zoom*ratioX)*_this.width) pan[0]=(1-zoom*ratioX)*_this.width;
+                    if(pan[1]<(1-zoom*ratioY)*_this.height) pan[1]=(1-zoom*ratioY)*_this.height;
                     _this.zoomer.translate(pan);
                 
-                    _this.xScale.range([0* zoom + pan[0], _this.width * zoom + pan[0] ]);
-                    _this.yScale.range([_this.height * zoom * ratio + pan[1], 0 * zoom * ratio + pan[1] ]);
+                
+                    _this.xScale.range([0* zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0] ]);
+                    _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1] ]);
                     _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom, radiusToArea(_this.maxRadius)*zoom*zoom]);
                                     
                     
                     var options = _this.yAxis.labelerOptions();
-                    options.limitMaxTickNumber = zoom*ratio < 2? 7:14;
+                    options.limitMaxTickNumber = zoom*ratioY < 2? 7:14;
                 
                     _this.xAxisEl.call(_this.xAxis);
                     _this.yAxisEl.call(_this.yAxis.labelerOptions(options));
                     _this.redrawDataPoints();
                 });
             
-            this.zoomer.ratio = 1;
+            this.zoomer.ratioX = 1;
+            this.zoomer.ratioY = 1;
             
             
             this.eventArea
