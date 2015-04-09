@@ -13,6 +13,16 @@ define([
         init: function(config, parent) {
             this.name = 'find';
 
+            var _this = this;
+            this.model_binds = {
+                "change": function(evt) {
+                    _this.update();
+                },
+                "ready": function(evt) {
+                    _this.update();
+                }
+            }
+
             this._super(config, parent);
         },
 
@@ -21,21 +31,45 @@ define([
          */
         domReady: function() {
             this.list = this.element.select(".vzb-find-list");
+            this.input_search = this.element.select("#vzb-find-search");
+            this.deselect_all = this.element.select("#vzb-find-deselect");
+
+            var _this = this;
+            this.input_search.on("input", function() {
+                _this.showHideSearch();
+            });
+
+            this.deselect_all.on("click", function() {
+                _this.deselectEntities();
+            });
+
             this._super();
+        },
+
+        open: function() {
+            this.input_search.node().value = "";
+            this.showHideSearch();
         },
 
         /**
          * Build the list everytime it updates
          */
-        modelReady: function() {
+        //TODO: split update in render and update methods
+        update: function() {
             var _this = this;
-            listed = this.model.state.show.geo,
-                data = this.model.data.getItems()[1].map(function(d) {
-                    return {
-                        geo: d["geo"],
-                        name: d["geo.name"]
-                    }
-                });
+            var selected = this.model.state.entities.getSelected();
+            var labelModel = this.model.state.marker.label;
+            var data = labelModel.getItems().map(function(d) {
+                return {
+                    geo: d["geo"],
+                    name: labelModel.getValue(d)
+                };
+            });
+
+            //sort data alphabetically
+            data.sort(function(a, b) {
+                return (a.name < b.name) ? -1 : 1;
+            });
 
             this.list.html("");
 
@@ -43,38 +77,52 @@ define([
                 .data(data)
                 .enter()
                 .append("div")
-                .attr("class", "vzb-find-item");
+                .attr("class", "vzb-find-item vzb-dialog-checkbox")
 
             items.append("input")
                 .attr("type", "checkbox")
                 .attr("class", "vzb-find-item")
+                .attr("id", function(d) {
+                    return "-find-" + d.geo;
+                })
                 .property("checked", function(d) {
-                    return (listed.indexOf(d.geo) !== -1);
+                    return (selected.indexOf(d.geo) !== -1);
                 })
                 .on("change", function(d) {
-                    var checked = d3.select(this).property("checked");
-                    _this.updateGeos(d.geo, checked);
+                    _this.model.state.entities.selectEntity(d);
                 });
 
-            items.append("span")
+            items.append("label")
+                .attr("for", function(d) {
+                    return "-find-" + d.geo;
+                })
                 .text(function(d) {
-                    return d.name
+                    return d.name;
                 });
+
+            this.showHideSearch();
+            this.showHideDeselect();
         },
 
-        /**
-         * Changes the geos in the state
-         * @param {String} geo Identifier of geo
-         * @param {Boolean} include Whether to include the geo or remove
-         */
-        updateGeos: function(geo, include) {
-            var geos = this.model.state.show.geo;
-            if (include) {
-                geos.push(geo);
-            } else {
-                geos = _.without(geos, geo);
-            }
-            this.model.state.show.geo = geos;
+        showHideSearch: function() {
+
+            var search = this.input_search.node().value || "";
+            search = search.toLowerCase();
+
+            this.list.selectAll(".vzb-find-item")
+                     .classed("vzb-hidden", function(d) {
+                        var lower = d.name.toLowerCase();
+                        return (lower.indexOf(search) === -1);
+                     });
+        },
+
+        showHideDeselect: function() {
+            var selected = this.model.state.entities.getSelected();
+            this.deselect_all.classed('vzb-hidden', (selected.length < 1));
+        },
+
+        deselectEntities: function() {
+            this.model.state.entities.clearSelected();
         }
 
     });

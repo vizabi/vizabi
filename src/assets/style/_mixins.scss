@@ -77,6 +77,14 @@
             transform: translate($x,$y);
 }
 
+@mixin rotate($r) {
+    -webkit-transform: rotate($r);
+       -moz-transform: rotate($r);
+        -ms-transform: rotate($r);
+         -o-transform: rotate($r);
+            transform: rotate($r);
+}
+
 @mixin box-shadow($x, $y, $blur, $color, $inset: false) {
   @if $inset {
     -webkit-box-shadow:inset $x $y $blur $color;
@@ -94,6 +102,8 @@
 // ----------------------------------------------------------------------------
 
 @mixin opacity($v) {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + ($v * 100) + ")";
+    filter: alpha(opacity=($v * 100));
     opacity: $v;
 }
 

@@ -47,29 +47,61 @@ define([
             return this.show.filter.getObject();
         },
 
+        /**
+         * Gets the selected items
+         * @returns {Array} Array of unique selected values
+         */
+        getSelected: function() {
+            var dim = this.getDimension();
+            return _.map(this.select, function(d) {
+                return d[dim];
+            });
+        },
+
+        /**
+         * Selects or unselects an entity from the set
+         */
         selectEntity: function(d, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if(this.isSelected(d)) {
-                this.select = this.select.filter(function(d){return d[dimension] != value});
+                this.select = this.select.filter(function(d){
+                    return d[dimension] !== value;
+                });
             } else {
                 var added = {};
                 added[dimension] = value;
-                if(timeFormatter!=null) added["trailStartTime"] = timeFormatter(d.time);
+                if(timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d.time);
+                }
                 this.select = this.select.concat(added);
-                
             }
         },
 
+        /**
+         * Selects an entity from the set
+         * @returns {Boolean} whether the item is selected or not
+         */
         isSelected: function(d) {
             var dimension = this.getDimension();
             var value = d[this.getDimension()];
-            var select_array = this.select.map(function(d){return d[dimension] });
+
+            var select_array = this.select.map(function(d){
+                return d[dimension];
+            });
+            
             if(_.indexOf(select_array, value) !== -1) {
                 return true;
             } else {
                 return false;
             }
+        },
+
+        /**
+         * Clears selection of items
+         */
+        clearSelected: function() {
+            this.select = [];
         }
 
     });
