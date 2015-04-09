@@ -13,6 +13,16 @@ define([
         init: function(config, parent) {
             this.name = 'find';
 
+            var _this = this;
+            this.model_binds = {
+                "change": function(evt) {
+                    _this.update();
+                },
+                "ready": function(evt) {
+                    _this.update();
+                }
+            }
+
             this._super(config, parent);
         },
 
@@ -24,18 +34,24 @@ define([
             this._super();
         },
 
+        open: function() {
+            //this.list.html("Loading..." + _.uniqueId());
+        },
+
         /**
          * Build the list everytime it updates
          */
-        modelReady: function() {
+        //TODO: split update in render and update methods
+        update: function() {
             var _this = this;
-            listed = this.model.state.show.geo,
-                data = this.model.data.getItems()[1].map(function(d) {
-                    return {
-                        geo: d["geo"],
-                        name: d["geo.name"]
-                    }
-                });
+            var selected = this.model.state.entities.getSelected();
+            var labelModel = this.model.state.marker.label;
+            var data = labelModel.getItems().map(function(d) {
+                return {
+                    geo: d["geo"],
+                    name: labelModel.getValue(d)
+                };
+            });
 
             this.list.html("");
 
@@ -43,38 +59,23 @@ define([
                 .data(data)
                 .enter()
                 .append("div")
-                .attr("class", "vzb-find-item");
+                .attr("class", "vzb-find-item")
+                .append("label");
 
             items.append("input")
                 .attr("type", "checkbox")
                 .attr("class", "vzb-find-item")
                 .property("checked", function(d) {
-                    return (listed.indexOf(d.geo) !== -1);
+                    return (selected.indexOf(d.geo) !== -1);
                 })
                 .on("change", function(d) {
-                    var checked = d3.select(this).property("checked");
-                    _this.updateGeos(d.geo, checked);
+                    _this.model.state.entities.selectEntity(d);
                 });
 
             items.append("span")
                 .text(function(d) {
                     return d.name
                 });
-        },
-
-        /**
-         * Changes the geos in the state
-         * @param {String} geo Identifier of geo
-         * @param {Boolean} include Whether to include the geo or remove
-         */
-        updateGeos: function(geo, include) {
-            var geos = this.model.state.show.geo;
-            if (include) {
-                geos.push(geo);
-            } else {
-                geos = _.without(geos, geo);
-            }
-            this.model.state.show.geo = geos;
         }
 
     });

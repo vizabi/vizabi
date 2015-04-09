@@ -129,7 +129,7 @@ $vzb-button-color-border: #DBE8EB;
         .vzb-buttonlist-dialog {
             @include absolute(-500px, 40px);
             &.vzb-active {
-                @include absolute(-20px, 40px);
+                @include absolute(20px, 40px);
             }
         }
     }

@@ -71,6 +71,8 @@ define([
                 }
             };
 
+            this._active_comp = false;
+
             if (config.buttons && config.buttons.length > 0) {
                 //TODO: Buttons should be a model, not config //former FIXME
                 this._addButtons(config.buttons);
@@ -94,12 +96,16 @@ define([
 
                 //if it's a dialog, add component
                 if (btn_config && btn_config.dialog) {
+                    var comps = this.components;
+
                     //add corresponding component
-                    this.components.push({
+                    comps.push({
                         component: '_gapminder/buttonlist/dialogs/' + btn,
                         placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
                         model: ["state", "ui"]
                     });
+
+                    btn_config.component = comps.length - 1;
                 }
 
                 //add template data
@@ -176,9 +182,13 @@ define([
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
                 dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
-            //remove classes
+            //add classes
             btn.classed(class_active, true);
             dialog.classed(class_active, true);
+
+            this._active_comp = this.components[this._available_buttons[id].component];
+            //call component function
+            this._active_comp.open();
         },
 
         /*
@@ -193,6 +203,12 @@ define([
             //remove classes
             btn.classed(class_active, false);
             dialog.classed(class_active, false);
+
+            //call component close function
+            if(this._active_comp) {
+                this._active_comp.close();
+            }
+            this._active_comp = false;
         },
 
         /*
@@ -204,6 +220,12 @@ define([
                 all_dialogs = this.element.selectAll(".vzb-buttonlist-dialog");
             all_btns.classed(class_active, false);
             all_dialogs.classed(class_active, false);
+
+            //call component close function
+            if(this._active_comp) {
+                this._active_comp.close();
+            }
+            this._active_comp = false;
         },
 
         toggleFullScreen: function(id) {
