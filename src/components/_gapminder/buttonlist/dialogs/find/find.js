@@ -31,11 +31,19 @@ define([
          */
         domReady: function() {
             this.list = this.element.select(".vzb-find-list");
+            this.input_search = this.element.select("#vzb-find-search");
+
+            var _this = this;
+            this.input_search.on("input", function() {
+                _this.showHideSearch();
+            });
+
             this._super();
         },
 
         open: function() {
-            //this.list.html("Loading..." + _.uniqueId());
+            this.input_search.node().value = "";
+            this.showHideSearch();
         },
 
         /**
@@ -53,18 +61,25 @@ define([
                 };
             });
 
+            //sort data alphabetically
+            data.sort(function(a, b) {
+                return (a.name < b.name) ? -1 : 1;
+            });
+
             this.list.html("");
 
             var items = this.list.selectAll(".vzb-find-item")
                 .data(data)
                 .enter()
                 .append("div")
-                .attr("class", "vzb-find-item")
-                .append("label");
+                .attr("class", "vzb-find-item vzb-dialog-checkbox")
 
             items.append("input")
                 .attr("type", "checkbox")
                 .attr("class", "vzb-find-item")
+                .attr("id", function(d) {
+                    return "-find-" + d.geo;
+                })
                 .property("checked", function(d) {
                     return (selected.indexOf(d.geo) !== -1);
                 })
@@ -72,10 +87,27 @@ define([
                     _this.model.state.entities.selectEntity(d);
                 });
 
-            items.append("span")
+            items.append("label")
+                .attr("for", function(d) {
+                    return "-find-" + d.geo;
+                })
                 .text(function(d) {
-                    return d.name
+                    return d.name;
                 });
+
+            this.showHideSearch();
+        },
+
+        showHideSearch: function() {
+
+            var search = this.input_search.node().value || "";
+            search = search.toLowerCase();
+
+            this.list.selectAll(".vzb-find-item")
+                     .classed("vzb-hidden", function(d) {
+                        var lower = d.name.toLowerCase();
+                        return (lower.indexOf(search) === -1);
+                     });
         }
 
     });
