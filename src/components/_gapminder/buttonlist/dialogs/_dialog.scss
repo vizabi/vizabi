@@ -24,6 +24,7 @@
         padding: 25px 25px 10px 25px;
     }
     .vzb-dialog-content {
+        font-family: $vzb-font-family-alt;
         color: $vzb-color-grey-dark;
         padding: 0px 25px 10px 25px;
         max-height: $vzb-dialog-content-height;
@@ -45,6 +46,8 @@
         font-family: $vzb-font-family;
         font-size: 0.8em;
         text-align: center;
+        text-transform: uppercase;
+
         &.vzb-label-primary {
             color: $vzb-color-primary;
             font-weight: bold;
@@ -61,6 +64,7 @@
         display: block;
         width: 100%;
         outline: none;
+        font-family: $vzb-font-family-alt;
         &:focus {
             border: 1px solid rgba($vzb-color-grey, .6);
         }

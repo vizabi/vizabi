@@ -95,6 +95,13 @@ define([
             } else {
                 return false;
             }
+        },
+
+        /**
+         * Clears selection of items
+         */
+        clearSelected: function() {
+            this.select = [];
         }
 
     });

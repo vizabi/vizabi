@@ -32,10 +32,15 @@ define([
         domReady: function() {
             this.list = this.element.select(".vzb-find-list");
             this.input_search = this.element.select("#vzb-find-search");
+            this.deselect_all = this.element.select("#vzb-find-deselect");
 
             var _this = this;
             this.input_search.on("input", function() {
                 _this.showHideSearch();
+            });
+
+            this.deselect_all.on("click", function() {
+                _this.deselectEntities();
             });
 
             this._super();
@@ -96,6 +101,7 @@ define([
                 });
 
             this.showHideSearch();
+            this.showHideDeselect();
         },
 
         showHideSearch: function() {
@@ -108,6 +114,15 @@ define([
                         var lower = d.name.toLowerCase();
                         return (lower.indexOf(search) === -1);
                      });
+        },
+
+        showHideDeselect: function() {
+            var selected = this.model.state.entities.getSelected();
+            this.deselect_all.classed('vzb-hidden', (selected.length < 1));
+        },
+
+        deselectEntities: function() {
+            this.model.state.entities.clearSelected();
         }
 
     });
