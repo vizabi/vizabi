@@ -248,8 +248,12 @@ define([
                     _this.yScale.range([_this.height * zoom * ratio + pan[1], 0 * zoom * ratio + pan[1] ]);
                     _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom, radiusToArea(_this.maxRadius)*zoom*zoom]);
                                     
-                    _this.yAxisEl.call(_this.yAxis);
+                    
+                    var options = _this.yAxis.labelerOptions();
+                    options.limitMaxTickNumber = zoom*ratio < 2? 7:14;
+                
                     _this.xAxisEl.call(_this.xAxis);
+                    _this.yAxisEl.call(_this.yAxis.labelerOptions(options));
                     _this.redrawDataPoints();
                 });
             

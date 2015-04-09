@@ -742,6 +742,7 @@ meow("final result",tickValues);
                 // compute the influence of the axis head
                 var repositionHead = margin.head
                     + (orient==HORIZONTAL?1:0) * d3.max(scale.range()) 
+                    - (orient==HORIZONTAL?0:1) * d3.min(scale.range()) 
                     + (orient==HORIZONTAL?-1:1) * scale(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
@@ -752,6 +753,7 @@ meow("final result",tickValues);
                 // compute the influence of the axis tail
                 var repositionTail = Math.min(margin.tail, options.widthOfOneDigit)
                     + (orient==VERTICAL?1:0) * d3.max(scale.range()) 
+                    - (orient==VERTICAL?0:1) * d3.min(scale.range()) 
                     + (orient==VERTICAL?-1:1) * scale(d)
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
