@@ -237,6 +237,13 @@ define([
                     var pan = d3.event.translate;
                     var ratio = _this.zoomer.ratio;
                 
+                    //limit the panning, so that we are never outside the possible range
+                    if(pan[0]>0) pan[0]=0;
+                    if(pan[1]>0) pan[1]=0;
+                    if(pan[0]<(1-zoom)*_this.width) pan[0]=(1-zoom)*_this.width;
+                    if(pan[1]<(1-zoom*ratio)*_this.height) pan[1]=(1-zoom*ratio)*_this.height;
+                    _this.zoomer.translate(pan);
+                
                     _this.xScale.range([0* zoom + pan[0], _this.width * zoom + pan[0] ]);
                     _this.yScale.range([_this.height * zoom * ratio + pan[1], 0 * zoom * ratio + pan[1] ]);
                     _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom, radiusToArea(_this.maxRadius)*zoom*zoom]);
@@ -661,7 +668,7 @@ define([
 
                     _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
 
-                },  _this.model.time.speed*1.5) 
+                },  _this.model.time.speed*1.2) 
             }
 
         }, //redraw
