@@ -117,8 +117,7 @@ define([
             this.trailsContainer = this.graph.select('.vzb-bc-trails');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.labelsContainer = this.graph.select('.vzb-bc-labels');
-            this.eventArea = this.graph.select('.vzb-bc-eventArea');
-            this.zoomRect = this.graph.select('.vzb-bc-zoomRect');
+            this.zoomRect = this.element.select('.vzb-bc-zoomRect');
             
             this.entityBubbles = null;
             this.entityLabels = null;
@@ -172,8 +171,8 @@ define([
                       this.translator("buttons/colors") + ": " + titleStringC );
             
             d3.select("body")
-                .on("keydown", function(){ if(d3.event.metaKey || d3.event.ctrlKey)_this.eventArea.classed("vzb-zoomin", true); })
-                .on("keyup", function(){if(!d3.event.metaKey && !d3.event.ctrlKey)_this.eventArea.classed("vzb-zoomin", false); })
+                .on("keydown", function(){ if(d3.event.metaKey || d3.event.ctrlKey)_this.element.classed("vzb-zoomin", true); })
+                .on("keyup", function(){if(!d3.event.metaKey && !d3.event.ctrlKey)_this.element.classed("vzb-zoomin", false); })
             
             this.zoomerWithRect = d3.behavior.drag()
                 .on("dragstart", function(d,i) {
@@ -272,7 +271,7 @@ define([
             this.zoomer.ratioY = 1;
             
             
-            this.eventArea
+            this.element
                 .call(this.zoomer)
                 .call(this.zoomerWithRect);
 
@@ -291,6 +290,9 @@ define([
             
             
            this.dragger = d3.behavior.drag()
+                .on("dragstart", function(d,i) {
+                    d3.event.sourceEvent.stopPropagation();
+                })
                 .on("drag", function(d,i) {
                     if(!_this.ui.labels.dragging) return;
                     var cache = _this.cached[d.geo];
@@ -397,11 +399,7 @@ define([
             this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             this.collisionResolver.height(this.height);
-            
-            this.eventArea
-                .attr("width", this.width)
-                .attr("height", this.height);
-            
+                        
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
