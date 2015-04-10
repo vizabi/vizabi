@@ -204,7 +204,9 @@ define([
                         .classed("vzb-transparent", true);
                 
                     this.target = {x: d3.mouse(this)[0] - _this.margin.left, y: d3.mouse(this)[1] - _this.margin.top};
-                                      
+                    
+                    if(Math.abs(this.origin.x - this.target.x) < 10 || Math.abs(this.origin.y - this.target.y) < 10) return;
+                
                     if(Math.abs(this.origin.x - this.target.x) > Math.abs(this.origin.y - this.target.y)){
                         var zoom = _this.height / Math.abs(this.origin.y - this.target.y) * _this.zoomer.scale();
                         var ratioX = Math.abs(this.origin.y - this.target.y) / Math.abs(this.origin.x - this.target.x) * _this.zoomer.ratioX;
@@ -260,7 +262,8 @@ define([
                 
                     _this.xScale.range([0* zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0] ]);
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1] ]);
-                    _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom, radiusToArea(_this.maxRadius)*zoom*zoom]);
+                    _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom * _this.zoomer.ratioY * _this.zoomer.ratioX,
+                                        radiusToArea(_this.maxRadius)*zoom*zoom * _this.zoomer.ratioY * _this.zoomer.ratioX ]);
                                     
                     
                     var options = _this.yAxis.labelerOptions();
