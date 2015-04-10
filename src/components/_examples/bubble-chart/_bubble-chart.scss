@@ -10,7 +10,7 @@ $vzb-bc-year-size:300px;
     overflow: hidden;
 }
 
-    
+.vzb-zoomin{cursor: zoom-in}
 .vzb-bubble-chart-svg {
     @include absoluteAll;
     width: 100%;
@@ -18,8 +18,8 @@ $vzb-bc-year-size:300px;
     margin: 0;
     overflow: hidden;
     font-family: $vzb-font-family;
-    .vzb-bc-eventArea{fill: none; stroke: none; pointer-events: visible;}
-    .vzb-bc-eventArea.vzb-zoomin{cursor: zoom-in}
+    
+    
     .vzb-bc-zoomRect{fill: none; stroke: $vzb-bc-color-axis; }
     .vzb-bc-trails .vzb-bc-entity {
         @include opacity(0.8);

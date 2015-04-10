@@ -171,44 +171,48 @@ define([
                       this.translator("buttons/colors") + ": " + titleStringC );
             
             d3.select("body")
-                .on("keydown", function(){ if(d3.event.metaKey || d3.event.ctrlKey)_this.element.classed("vzb-zoomin", true); })
-                .on("keyup", function(){if(!d3.event.metaKey && !d3.event.ctrlKey)_this.element.classed("vzb-zoomin", false); })
+                .on("keydown", function(){ if(d3.event.metaKey || d3.event.ctrlKey)_this.element.select("svg").classed("vzb-zoomin", true); })
+                .on("keyup", function(){if(!d3.event.metaKey && !d3.event.ctrlKey)_this.element.select("svg").classed("vzb-zoomin", false); })
             
             this.zoomerWithRect = d3.behavior.drag()
                 .on("dragstart", function(d,i) {
                     if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
                 
-                    this.origin = {x: d3.mouse(this)[0], y: d3.mouse(this)[1]};
+                    this.ctrlKeyLock = true;
+                    this.origin = {x: d3.mouse(this)[0] - _this.margin.left, y: d3.mouse(this)[1] - _this.margin.top};
                     _this.zoomRect.classed("vzb-transparent", false);
                 })
                 .on("drag", function(d,i) {
-                    if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
+                    if(!this.ctrlKeyLock)return;
                     var origin = this.origin;
+                    var mouse = {x: d3.event.x - _this.margin.left, y: d3.event.y - _this.margin.top};
+                
                     _this.zoomRect
-                        .attr("x", Math.min(d3.event.x, origin.x))
-                        .attr("y", Math.min(d3.event.y, origin.y))
-                        .attr("width", Math.abs(d3.event.x - origin.x))
-                        .attr("height", Math.abs(d3.event.y - origin.y));
+                        .attr("x", Math.min(mouse.x, origin.x))
+                        .attr("y", Math.min(mouse.y, origin.y))
+                        .attr("width", Math.abs(mouse.x - origin.x))
+                        .attr("height", Math.abs(mouse.y - origin.y));
                 })
                 
                 .on("dragend", function(e) {
-                    if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
+                    if(!this.ctrlKeyLock)return;
+                    this.ctrlKeyLock = false;
                 
                     _this.zoomRect
                         .attr("width", 0)
                         .attr("height", 0)
                         .classed("vzb-transparent", true);
                 
-                    this.target = {x: d3.mouse(this)[0], y: d3.mouse(this)[1]};
-                      
+                    this.target = {x: d3.mouse(this)[0] - _this.margin.left, y: d3.mouse(this)[1] - _this.margin.top};
+                                      
                     if(Math.abs(this.origin.x - this.target.x) > Math.abs(this.origin.y - this.target.y)){
                         var zoom = _this.height / Math.abs(this.origin.y - this.target.y) * _this.zoomer.scale();
-                        var ratioY = 1
-                        var ratioX = Math.abs(this.origin.y - this.target.y) / Math.abs(this.origin.x - this.target.x);
+                        var ratioX = Math.abs(this.origin.y - this.target.y) / Math.abs(this.origin.x - this.target.x) * _this.zoomer.ratioX;
+                        var ratioY = _this.zoomer.ratioY;
                     }else{
                         var zoom = _this.width / Math.abs(this.origin.x - this.target.x) * _this.zoomer.scale();
-                        var ratioY = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y);
-                        var ratioX = 1;
+                        var ratioY = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y) * _this.zoomer.ratioY;
+                        var ratioX = _this.zoomer.ratioX;
                     }
                 
                     _this.zoomer.translate([
@@ -234,7 +238,7 @@ define([
             
             
             this.zoomer = d3.behavior.zoom()
-                .scaleExtent([1, 10])
+                .scaleExtent([1, 100])
                 .on("zoom", function(){
                     if(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)return;
                                 
@@ -366,25 +370,25 @@ define([
         updateSize: function() {
 
             var _this = this,
-                margin,
                 tick_spacing,
                 padding = 2;
+            this.margin = {};
 
             switch (this.getLayoutProfile()) {
                 case "small":
-                    margin = {top: 30, right: 20, left: 40, bottom: 40};
+                    _this.margin = {top: 30, right: 20, left: 40, bottom: 40};
                     tick_spacing = 60;
                     minRadius = 2;
                     maxRadius = 40;
                     break;
                 case "medium":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    _this.margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 80;
                     minRadius = 3;
                     maxRadius = 60;
                     break;
                 case "large":
-                    margin = {top: 30, right: 60, left: 60, bottom: 40};
+                    _this.margin = {top: 30, right: 60, left: 60, bottom: 40};
                     tick_spacing = 100;
                     minRadius = 4;
                     maxRadius = 80;
@@ -395,14 +399,14 @@ define([
             this.maxRadius = maxRadius * this.model.marker.size.max;
 
             //stage
-            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            this.height = parseInt(this.element.style("height"), 10) - _this.margin.top - _this.margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - _this.margin.left - _this.margin.right;
 
             this.collisionResolver.height(this.height);
                         
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr("transform", "translate(" + _this.margin.left + "," + _this.margin.top + ")");
 
             //center year 
             var widthAxisY = this.yAxisEl[0][0].getBBox().width;
@@ -437,7 +441,7 @@ define([
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: margin,
+                    toolMargin: _this.margin,
                     limitMaxTickNumber: 6 
                 });
 
@@ -447,7 +451,7 @@ define([
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_x.scale,
-                    toolMargin: margin
+                    toolMargin: _this.margin
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
@@ -603,12 +607,13 @@ define([
                                     var text = labelGroup.selectAll("text")
                                         .text(valueL);                                        
                                 
-                                    if(_this.cached[d.geo].labelFixed == true) return;
+                                    if(!_this.cached[d.geo].labelFixed){
                                 
-                                    _this.cached[d.geo].labelX2 = _this.cached[d.geo].labelX1 || valueX;
-                                    _this.cached[d.geo].labelY2 = _this.cached[d.geo].labelY1 || valueY;
-                                    _this.cached[d.geo].labelX_ = scaledS;
-                                    _this.cached[d.geo].labelY_ = 0;
+                                        _this.cached[d.geo].labelX2 = _this.cached[d.geo].labelX1 || valueX;
+                                        _this.cached[d.geo].labelY2 = _this.cached[d.geo].labelY1 || valueY;
+                                        _this.cached[d.geo].labelX_ = scaledS;
+                                        _this.cached[d.geo].labelY_ = 0;
+                                    }
                                 
                                     text.transition().duration(_this.duration).ease("linear")
                                         .attr("x",_this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_)
@@ -731,7 +736,10 @@ define([
             this.entityLabels
                 .enter().append("g")
                 .attr("class", "vzb-bc-entity")
-                .on("click", function(d, i) {
+                .on("dblclick", function(d, i) {
+                    d3.event.stopPropagation();
+                
+                    //default prevented is needed to distinguish click from drag
                     if (d3.event.defaultPrevented === false) _this.model.entities.selectEntity(d);
                 })
                 .call(_this.dragger)
