@@ -204,51 +204,32 @@ define([
                         .classed("vzb-transparent", true);
                 
                     this.target = {x: d3.mouse(this)[0] - _this.margin.left, y: d3.mouse(this)[1] - _this.margin.top};
-                    
-                    if(Math.abs(this.origin.x - this.target.x) < 10 || Math.abs(this.origin.y - this.target.y) < 10) return;
                 
-                    if(Math.abs(this.origin.x - this.target.x) > Math.abs(this.origin.y - this.target.y)){
-                        var zoom = _this.height / Math.abs(this.origin.y - this.target.y) * _this.zoomer.scale();
-                        var ratioX = Math.abs(this.origin.y - this.target.y) / Math.abs(this.origin.x - this.target.x) * _this.zoomer.ratioX;
-                        var ratioY = _this.zoomer.ratioY;
-                    }else{
-                        var zoom = _this.width / Math.abs(this.origin.x - this.target.x) * _this.zoomer.scale();
-                        var ratioY = Math.abs(this.origin.x - this.target.x) / Math.abs(this.origin.y - this.target.y) * _this.zoomer.ratioY;
-                        var ratioX = _this.zoomer.ratioX;
-                    }
-                
-                    _this.zoomer.translate([
-                        _this.zoomer.translate()[0] + this.origin.x - this.target.x,
-                        _this.zoomer.translate()[1] + this.origin.y - this.target.y,
-                    ])
-
-                    var pan = [
-                        (_this.zoomer.translate()[0] - Math.min(this.origin.x, this.target.x)) 
-                            / _this.zoomer.scale() / _this.zoomer.ratioX * zoom * ratioX,
-                        (_this.zoomer.translate()[1] - Math.min(this.origin.y, this.target.y)) 
-                            / _this.zoomer.scale() / _this.zoomer.ratioY * zoom * ratioY
-                        ]
-
-
-                    _this.zoomer.scale(zoom);
-                    _this.zoomer.ratioY = ratioY;
-                    _this.zoomer.ratioX = ratioX;
-                    _this.zoomer.translate(pan);
-
-                    _this.zoomer.event(d3.select(this));
+                    _this.zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true);
                 });
+            
+            
             
             
             this.zoomer = d3.behavior.zoom()
                 .scaleExtent([1, 100])
                 .on("zoom", function(){
-                    if(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)return;
+                    if(d3.event.sourceEvent!=null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))return;
                                 
                     var zoom = d3.event.scale;
                     var pan = d3.event.translate;
                     var ratioY = _this.zoomer.ratioY;
                     var ratioX = _this.zoomer.ratioX;
                 
+                
+                    //value protections and fallbacks
+                    if(_.isNaN(zoom)||zoom==null) zoom = _this.zoomer.scale();
+                    if(_.isNaN(zoom)||zoom==null) zoom = 1;
+                    if(_.isNaN(pan[0])||_.isNaN(pan[1])||pan[0]==null||pan[1]==null)pan = _this.zoomer.translate();
+                    if(_.isNaN(pan[0])||_.isNaN(pan[1])||pan[0]==null||pan[1]==null)pan = [0,0];
+                    
+                
+                    // limit the zooming, so that it never goes below 1 for any of the axes
                     if(zoom*ratioY<1){ratioY = 1/zoom; _this.zoomer.ratioY = ratioY};
                     if(zoom*ratioX<1){ratioX = 1/zoom; _this.zoomer.ratioX = ratioX};
                 
@@ -344,6 +325,54 @@ define([
 
         },
 
+        
+        
+        
+        
+        zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging){
+            var _this = this;
+            var zoomer = _this.zoomer;
+            
+            console.log(x1,y1,x2,y2)
+
+            if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
+
+            if(Math.abs(x1 - x2) > Math.abs(y1 - y2)){
+                var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
+                var ratioX = Math.abs(y1 - y2) / Math.abs(x1 - x2) * zoomer.ratioX;
+                var ratioY = zoomer.ratioY;
+            }else{
+                var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
+                var ratioY = Math.abs(x1 - x2) / Math.abs(y1 - y2) * zoomer.ratioY;
+                var ratioX = zoomer.ratioX;
+            }
+
+            if(compensateDragging) {
+                zoomer.translate([
+                    zoomer.translate()[0] + x1 - x2,
+                    zoomer.translate()[1] + y1 - y2,
+                ])
+            }
+
+            var pan = [
+                (zoomer.translate()[0] - Math.min(x1, x2)) 
+                    / zoomer.scale() / zoomer.ratioX * zoom * ratioX,
+                (zoomer.translate()[1] - Math.min(y1, y2)) 
+                    / zoomer.scale() / zoomer.ratioY * zoom * ratioY
+                ]
+
+            zoomer.scale(zoom);
+            zoomer.ratioY = ratioY;
+            zoomer.ratioX = ratioX;
+            zoomer.translate(pan);
+
+            zoomer.event(element);
+            },
+        
+        
+        
+        
+        
 
         /*
          * UPDATE TIME:
@@ -618,13 +647,16 @@ define([
                                         _this.cached[d.geo].labelY_ = 0;
                                     }
                                 
+                                    var resolvedX2 = _this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_;
+                                    var resolvedY2 = _this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_;
+                                
                                     text.transition().duration(_this.duration).ease("linear")
-                                        .attr("x",_this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_)
-                                        .attr("y",_this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_)
+                                        .attr("x",resolvedX2>0?(resolvedX2<_this.width?resolvedX2:_this.width):0)
+                                        .attr("y",resolvedY2>0?(resolvedY2<_this.height?resolvedY2:_this.height):0);
 
                                     line.transition().duration(_this.duration).ease("linear")
-                                        .attr("x2",_this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_)
-                                        .attr("y2",_this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_);
+                                        .attr("x2",resolvedX2>0?(resolvedX2<_this.width?resolvedX2:_this.width):0)
+                                        .attr("y2",resolvedY2>0?(resolvedY2<_this.height?resolvedY2:_this.height):0);
                                 })
                         }else{
                             //for non-selected bubbles
@@ -739,11 +771,33 @@ define([
             this.entityLabels
                 .enter().append("g")
                 .attr("class", "vzb-bc-entity")
+                .on("click", function(d, i) {
+                    //default prevented is needed to distinguish click from drag
+                    if (d3.event.defaultPrevented) return
+                    
+
+                    _this.dblClickTimeout = {click1: new Date(), click2: null};
+                
+                    setTimeout(function(){
+                        var maxmin = _this.cached[d.geo].maxMinValues;
+
+                        _this.zoomOnRectangle(_this.element, 
+                            _this.xScale(maxmin.valueXmin), 
+                            _this.yScale(maxmin.valueYmin), 
+                            _this.xScale(maxmin.valueXmax), 
+                            _this.yScale(maxmin.valueYmax),
+                            false );
+                    }, 100)
+                    
+                })
                 .on("dblclick", function(d, i) {
+                    // stop propagation is needed to cancel zooming on dblclick
                     d3.event.stopPropagation();
                 
                     //default prevented is needed to distinguish click from drag
-                    if (d3.event.defaultPrevented === false) _this.model.entities.selectEntity(d);
+                    if (d3.event.defaultPrevented) return
+                    
+                    _this.model.entities.selectEntity(d);
                 })
                 .call(_this.dragger)
                 .each(function(d, index){
@@ -781,6 +835,10 @@ define([
                 var step = _this.model.time.step;
                 var trailSegmentData = [];
                 for(var time = start; time<=end; time+=step) trailSegmentData.push({t: _this.timeFormatter.parse(""+time)});
+                
+                if(_this.cached[d.geo]==null) _this.cached[d.geo] = {};
+                _this.cached[d.geo].maxMinValues = {valueXmax: null, valueXmin: null, valueYmax: null, valueYmin: null};
+                var maxmin = _this.cached[d.geo].maxMinValues;
 
                 _this.entityTrails
                     .filter(function(f){return f.geo==d.geo})
@@ -793,11 +851,17 @@ define([
                         segment.valueX = _this.model.marker.axis_x.getValue({geo:d.geo, time: segment.t});
                         segment.valueS = _this.model.marker.size.getValue({geo:d.geo, time: segment.t});
                         segment.valueC = _this.model.marker.color.getValue({geo:d.geo, time: segment.t});
+                    
+                        if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
+                        if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
+                        if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
+                        if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
 
                         var view = d3.select(this);
                         view.append("circle").style("fill", segment.valueC);
                         view.append("line").style("stroke", segment.valueC);
                     });
+
             });
             
         },
