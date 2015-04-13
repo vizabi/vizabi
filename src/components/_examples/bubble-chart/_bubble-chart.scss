@@ -36,7 +36,7 @@ $vzb-bc-year-size:300px;
         }
 
         &.vzb-bc-unselected {
-            @include opacity(0.4);
+            @include opacity(0.2);
             &:hover {
                 @include opacity(0.6);
             }

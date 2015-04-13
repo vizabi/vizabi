@@ -243,8 +243,8 @@ define([
                 
                     _this.xScale.range([0* zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0] ]);
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1] ]);
-                    _this.sScale.range([radiusToArea(_this.minRadius)*zoom*zoom * _this.zoomer.ratioY * _this.zoomer.ratioX,
-                                        radiusToArea(_this.maxRadius)*zoom*zoom * _this.zoomer.ratioY * _this.zoomer.ratioX ]);
+                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
                                     
                     
                     var options = _this.yAxis.labelerOptions();
@@ -333,17 +333,15 @@ define([
             var _this = this;
             var zoomer = _this.zoomer;
             
-            console.log(x1,y1,x2,y2)
-
             if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
 
             if(Math.abs(x1 - x2) > Math.abs(y1 - y2)){
                 var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
-                var ratioX = Math.abs(y1 - y2) / Math.abs(x1 - x2) * zoomer.ratioX;
+                var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
                 var ratioY = zoomer.ratioY;
             }else{
                 var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
-                var ratioY = Math.abs(x1 - x2) / Math.abs(y1 - y2) * zoomer.ratioY;
+                var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
             }
 
@@ -780,12 +778,13 @@ define([
                 
                     setTimeout(function(){
                         var maxmin = _this.cached[d.geo].maxMinValues;
+                        var radius = areaToRadius(_this.sScale(maxmin.valueSmax));
 
                         _this.zoomOnRectangle(_this.element, 
-                            _this.xScale(maxmin.valueXmin), 
-                            _this.yScale(maxmin.valueYmin), 
-                            _this.xScale(maxmin.valueXmax), 
-                            _this.yScale(maxmin.valueYmax),
+                            _this.xScale(maxmin.valueXmin) - radius, 
+                            _this.yScale(maxmin.valueYmin) + radius, 
+                            _this.xScale(maxmin.valueXmax) + radius, 
+                            _this.yScale(maxmin.valueYmax) - radius,
                             false );
                     }, 100)
                     
@@ -837,7 +836,7 @@ define([
                 for(var time = start; time<=end; time+=step) trailSegmentData.push({t: _this.timeFormatter.parse(""+time)});
                 
                 if(_this.cached[d.geo]==null) _this.cached[d.geo] = {};
-                _this.cached[d.geo].maxMinValues = {valueXmax: null, valueXmin: null, valueYmax: null, valueYmin: null};
+                _this.cached[d.geo].maxMinValues = {valueXmax: null, valueXmin: null, valueYmax: null, valueYmin: null, valueSmax: null};
                 var maxmin = _this.cached[d.geo].maxMinValues;
 
                 _this.entityTrails
@@ -856,6 +855,7 @@ define([
                         if(segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
                         if(segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
                         if(segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
+                        if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
 
                         var view = d3.select(this);
                         view.append("circle").style("fill", segment.valueC);
