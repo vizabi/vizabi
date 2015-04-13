@@ -15,7 +15,7 @@ define([
 
             var _this = this;
             this.model_binds = {
-                "change": function(evt) {
+                "change:state:entities:select": function(evt) {
                     _this.update();
                 },
                 "ready": function(evt) {
@@ -98,6 +98,12 @@ define([
                 })
                 .text(function(d) {
                     return d.name;
+                })
+                .on("mouseover", function(d) {
+                    _this.model.state.entities.highlightEntity(d);
+                })
+                .on("mouseout", function(d) {
+                    _this.model.state.entities.clearHighlighted();
                 });
 
             this.showHideSearch();

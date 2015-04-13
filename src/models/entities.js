@@ -64,14 +64,14 @@ define([
         selectEntity: function(d, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
-            if(this.isSelected(d)) {
-                this.select = this.select.filter(function(d){
+            if (this.isSelected(d)) {
+                this.select = this.select.filter(function(d) {
                     return d[dimension] !== value;
                 });
             } else {
                 var added = {};
                 added[dimension] = value;
-                if(timeFormatter) {
+                if (timeFormatter) {
                     added["trailStartTime"] = timeFormatter(d.time);
                 }
                 this.select = this.select.concat(added);
@@ -86,11 +86,11 @@ define([
             var dimension = this.getDimension();
             var value = d[this.getDimension()];
 
-            var select_array = this.select.map(function(d){
+            var select_array = this.select.map(function(d) {
                 return d[dimension];
             });
-            
-            if(_.indexOf(select_array, value) !== -1) {
+
+            if (_.indexOf(select_array, value) !== -1) {
                 return true;
             } else {
                 return false;
@@ -102,6 +102,63 @@ define([
          */
         clearSelected: function() {
             this.select = [];
+        },
+
+        //TODO: join the following 3 methods with the previous 3
+
+        /**
+         * Highlights an entity from the set
+         */
+        highlightEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            if (!this.isHighlighted(d)) {
+                var added = {};
+                added[dimension] = value;
+                if (timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d.time);
+                }
+                this.brush = this.brush.concat(added);
+            }
+        },
+
+        /**
+         * Unhighlights an entity from the set
+         */
+        unhighlightEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            if (this.isHighlighted(d)) {
+                this.brush = this.brush.filter(function(d) {
+                    return d[dimension] !== value;
+                });
+            }
+        },
+
+        /**
+         * Checks whether an entity is highlighted from the set
+         * @returns {Boolean} whether the item is highlighted or not
+         */
+        isHighlighted: function(d) {
+            var dimension = this.getDimension();
+            var value = d[this.getDimension()];
+
+            var brush_array = this.brush.map(function(d) {
+                return d[dimension];
+            });
+
+            if (_.indexOf(brush_array, value) !== -1) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        /**
+         * Clears selection of items
+         */
+        clearHighlighted: function() {
+            this.brush = [];
         }
 
     });
