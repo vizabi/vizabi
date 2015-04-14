@@ -21,6 +21,8 @@ define([
             }, values);
 
             this._super(values, parent, bind);
+            
+            this.visible = [];
         },
 
         /**
@@ -28,7 +30,16 @@ define([
          * @param {boolean} silent Block triggering of events
          */
         validate: function(silent) {
-            //TODO: validate if select and brush are a subset of show
+            var _this = this;
+            var dimension = this.getDimension();
+            var visible_array = _this.visible.map(function(d){return d[dimension]});
+                        
+            this.select = _.filter(this.select, function(f){    
+                return _.indexOf(visible_array, f[dimension]) !== -1
+            })
+            this.brush = _.filter(this.brush, function(f){    
+                return _.indexOf(visible_array, f[dimension]) !== -1
+            })
         },
 
         /**

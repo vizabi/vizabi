@@ -37,30 +37,56 @@ define([
 
             this.model_binds = {
                 "change:time:trails": function(evt) {
+                    console.log("EVENT change:time:trails");
                     _this.toggleTrails(_this.model.time.trails);
                     _this.redrawDataPoints();
                 },
                 "change:entities:show": function(evt) {
-                    _this.updateShow();
-                    _this.updateTime();
+                    console.log("EVENT change:entities:show");
+                    _this.updateEntities();
                     _this.updateSize();
+                    _this.updateMarkerSizeLimits();
+                    _this.redrawDataPoints();
+                },
+                "change:marker": function(evt) {
+                    console.log("EVENT change:marker");
+                    _this.updateIndicators();
+                    _this.updateSize();
+                    _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                 },
                 "change:entities:select": function() {
+                    console.log("EVENT change:entities:select");
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
                 },
                 "change:entities:brush": function() {
+                    console.log("EVENT change:entities:brush");
                     _this.highlightBrushed();
                 },
                 "ready": function(evt) {
-                    _this.updateShow();
-                    _this.updateTime();
-                    _this.updateSize();
-                    _this.redrawDataPoints();
+                    
+                    //TODO: instead of "ready "create a proper event that would occure once and never again
+                    if(!_this.readyOnce){
+                        console.log("EVENT ready (should only come once)");
+                        _this.updateIndicators();
+                        _this.updateEntities();
+                        _this.updateTime();
+                        _this.updateSize();
+                        _this.updateMarkerSizeLimits();
+                        _this.selectDataPoints();
+                        _this.redrawDataPoints();
+                    }
+                    _this.readyOnce = true;
                 },
                 'change:time:value': function() {
+                    console.log("EVENT change:time:value");
                     _this.updateTime();
+                    _this.redrawDataPoints();
+                },
+                'change:marker:size:max': function() {
+                    console.log("EVENT change:marker:size:max");
+                    _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                 }
             }
@@ -80,6 +106,7 @@ define([
             this.sizeUpdatedOnce = false;
             this.selectDataPointsOnce = false;
 
+            this.cached = {};
 
 
             // default UI settings
@@ -100,100 +127,45 @@ define([
                 dragging: true
             }, this.ui.labels);
 
-        },
+            
+            
+            
+            this.collisionResolver = d3.svg.collisionResolver()
+                .value("labelY2")
+                .fixed("labelFixed")
+                .selector("text")
+                .scale(this.yScale)
+                .handleResult(this.repositionLabels);
 
 
-        /**
-         * Executes right after the template is in place
-         */
-        domReady: function() {
-            var _this = this;
-
-            // reference elements
-            this.graph = this.element.select('.vzb-bc-graph');
-            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
-            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
-            this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
-            this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
-            this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
-            this.yearEl = this.graph.select('.vzb-bc-year');
-
-            this.projectionX = this.graph.select(".vzb-bc-projection-x");
-            this.projectionY = this.graph.select(".vzb-bc-projection-y");
-
-            this.trailsContainer = this.graph.select('.vzb-bc-trails');
-            this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
-            this.labelsContainer = this.graph.select('.vzb-bc-labels');
-            this.zoomRect = this.element.select('.vzb-bc-zoomRect');
-
-            this.entityBubbles = null;
-            this.entityLabels = null;
-            this.tooltip = this.element.select('.vzb-tooltip');
-
-            //component events
-            this.on("resize", function() {
-                //console.log("bubble chart: RESIZE");
-                _this.updateSize();
-                _this.updateTime();
-                _this.redrawDataPoints();
-            })
-
-        },
-
-
-        /*
-         * UPDATE SHOW:
-         * Ideally should only update when show parameters change or data changes
-         */
-        updateShow: function() {
-
-            this.duration = this.model.time.speed;
-            this.translator = this.model.language.getTFunction();
-
-            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
-            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
-            var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
-            var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
-
-            var yTitle = this.yTitleEl.selectAll("text").data([0]);
-            yTitle.enter().append("text");
-            yTitle
-                .attr("y", "-6px")
-                .attr("x", "-9px")
-                .attr("dx", "-0.72em")
-                .text(titleStringY);
-
-            var xTitle = this.xTitleEl.selectAll("text").data([0]);
-            xTitle.enter().append("text");
-            xTitle
-                .attr("text-anchor", "end")
-                .attr("y", "-0.32em")
-                .text(titleStringX);
-
-            var sTitle = this.sTitleEl.selectAll("text").data([0]);
-            sTitle.enter().append("text");
-            sTitle
-                .attr("text-anchor", "end")
-                .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
-                    this.translator("buttons/colors") + ": " + titleStringC);
-
-            d3.select("body")
-                .on("keydown", function() {
-                    if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
+            this.dragger = d3.behavior.drag()
+                .on("dragstart", function(d, i) {
+                    d3.event.sourceEvent.stopPropagation();
                 })
-                .on("keyup", function() {
-                    if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
-                })
+                .on("drag", function(d, i) {
+                    if (!_this.ui.labels.dragging) return;
+                    var cache = _this.cached[d.geo];
+                    cache.labelFixed = true;
+                    cache.labelX_ += d3.event.dx;
+                    cache.labelY_ += d3.event.dy;
+                    d3.select(this).selectAll("text")
+                        .attr("x", _this.xScale(cache.labelX2) + cache.labelX_)
+                        .attr("y", _this.yScale(cache.labelY2) + cache.labelY_);
+                    d3.select(this).select("line")
+                        .attr("x2", _this.xScale(cache.labelX2) + cache.labelX_)
+                        .attr("y2", _this.yScale(cache.labelY2) + cache.labelY_);
+                });
 
+            
+                        
             this.zoomerWithRect = d3.behavior.drag()
                 .on("dragstart", function(d, i) {
                     if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
                     this.ctrlKeyLock = true;
                     this.origin = {
-                        x: d3.mouse(this)[0] - _this.margin.left,
-                        y: d3.mouse(this)[1] - _this.margin.top
+                        x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
+                        y: d3.mouse(this)[1] - _this.activeProfile.margin.top
                     };
                     _this.zoomRect.classed("vzb-transparent", false);
                 })
@@ -201,8 +173,8 @@ define([
                     if (!this.ctrlKeyLock) return;
                     var origin = this.origin;
                     var mouse = {
-                        x: d3.event.x - _this.margin.left,
-                        y: d3.event.y - _this.margin.top
+                        x: d3.event.x - _this.activeProfile.margin.left,
+                        y: d3.event.y - _this.activeProfile.margin.top
                     };
 
                     _this.zoomRect
@@ -212,22 +184,22 @@ define([
                         .attr("height", Math.abs(mouse.y - origin.y));
                 })
 
-            .on("dragend", function(e) {
-                if (!this.ctrlKeyLock) return;
-                this.ctrlKeyLock = false;
+                .on("dragend", function(e) {
+                    if (!this.ctrlKeyLock) return;
+                    this.ctrlKeyLock = false;
 
-                _this.zoomRect
-                    .attr("width", 0)
-                    .attr("height", 0)
-                    .classed("vzb-transparent", true);
+                    _this.zoomRect
+                        .attr("width", 0)
+                        .attr("height", 0)
+                        .classed("vzb-transparent", true);
 
-                this.target = {
-                    x: d3.mouse(this)[0] - _this.margin.left,
-                    y: d3.mouse(this)[1] - _this.margin.top
-                };
+                    this.target = {
+                        x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
+                        y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    };
 
-                _this.zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true);
-            });
+                    _this.zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true);
+                });
 
             this.zoomer = d3.behavior.zoom()
                 .scaleExtent([1, 100])
@@ -267,7 +239,7 @@ define([
                     _this.xScale.range([0* zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0] ]);
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1] ]);
                 
-// Ola: Please keep the min and max size (pixels ) constant, when zooming.            
+// Keep the min and max size (pixels) constant, when zooming.            
 //                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
 //                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
                                     
@@ -283,73 +255,192 @@ define([
             this.zoomer.ratioY = 1;
 
 
+            
+        },
+
+
+        /**
+         * Executes right after the template is in place, but the model is not yet ready
+         */
+        domReady: function() {
+            var _this = this;
+
+            // reference elements
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
+            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+            this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
+            this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
+            this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
+            this.yearEl = this.graph.select('.vzb-bc-year');
+
+            this.projectionX = this.graph.select(".vzb-bc-projection-x");
+            this.projectionY = this.graph.select(".vzb-bc-projection-y");
+
+            this.trailsContainer = this.graph.select('.vzb-bc-trails');
+            this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
+            this.labelsContainer = this.graph.select('.vzb-bc-labels');
+            this.zoomRect = this.element.select('.vzb-bc-zoomRect');
+
+            this.entityBubbles = null;
+            this.entityLabels = null;
+            this.tooltip = this.element.select('.vzb-tooltip');
+
+            //component events
+            this.on("resize", function() {
+                console.log("EVENT: resize");
+                _this.updateSize();
+                _this.updateMarkerSizeLimits();
+                _this.redrawDataPoints();
+            })
+
+            //keyboard listeners
+            d3.select("body")
+                .on("keydown", function() {
+                    if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
+                })
+                .on("keyup", function() {
+                    if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
+                })
+            
             this.element
                 .call(this.zoomer)
                 .call(this.zoomerWithRect);
+        },
 
 
+        
+        
+        /*
+         * UPDATE INDICATORS
+         */
+        updateIndicators: function() {
+            var _this = this;
+            
+            this.translator = this.model.language.getTFunction();
+            this.duration = this.model.time.speed;
+            this.timeFormatter = d3.time.format(_this.model.time.formatInput);
+                        
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
+            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
+            var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
+            var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
+
+            var yTitle = this.yTitleEl.selectAll("text").data([0]);
+            yTitle.enter().append("text");
+            yTitle
+                .attr("y", "-6px")
+                .attr("x", "-9px")
+                .attr("dx", "-0.72em")
+                .text(titleStringY);
+
+            var xTitle = this.xTitleEl.selectAll("text").data([0]);
+            xTitle.enter().append("text");
+            xTitle
+                .attr("text-anchor", "end")
+                .attr("y", "-0.32em")
+                .text(titleStringX);
+
+            var sTitle = this.sTitleEl.selectAll("text").data([0]);
+            sTitle.enter().append("text");
+            sTitle
+                .attr("text-anchor", "end")
+                .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
+                    this.translator("buttons/colors") + ": " + titleStringC);
+
+            
             //scales
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
             this.sScale = this.model.marker.size.getDomain();
 
-            this.collisionResolver = d3.svg.collisionResolver()
-                .value("labelY2")
-                .fixed("labelFixed")
-                .selector("text")
-                .scale(this.yScale)
-                .handleResult(this.repositionLabels);
-
-
-            this.dragger = d3.behavior.drag()
-                .on("dragstart", function(d, i) {
-                    d3.event.sourceEvent.stopPropagation();
-                })
-                .on("drag", function(d, i) {
-                    if (!_this.ui.labels.dragging) return;
-                    var cache = _this.cached[d.geo];
-                    cache.labelFixed = true;
-                    cache.labelX_ += d3.event.dx;
-                    cache.labelY_ += d3.event.dy;
-                    d3.select(this).selectAll("text")
-                        .attr("x", _this.xScale(cache.labelX2) + cache.labelX_)
-                        .attr("y", _this.yScale(cache.labelY2) + cache.labelY_);
-                    d3.select(this).select("line")
-                        .attr("x2", _this.xScale(cache.labelX2) + cache.labelX_)
-                        .attr("y2", _this.yScale(cache.labelY2) + cache.labelY_);
-                });
-
-
-            if (this.selectDataPointsOnce) this.model.entities.select = [];
-
-            var _this = this;
+            this.collisionResolver.scale(this.yScale);
+            
+            
             this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
             });
             this.xAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_x.getTick(d);
             });
+        },
+        
+        
+        
+        
+        
+        /*
+         * UPDATE SHOW:
+         * Ideally should only update when show parameters change or data changes
+         */
+        updateEntities: function() {
+            var _this = this;
 
-            _this.cached = {};
-            this.timeFormatter = d3.time.format(_this.model.time.formatInput);
+            
+            //TODO: move this to a proper place
+            // update the array of visible entities in entities model
+            this.model.entities.visible = this.model.marker.label.getItems()
+                .map(function(d){return {geo: d.geo}; });
 
+            console.log("TODO: why model no change?");
+            console.log(this.model.marker.label.getItems());
+            
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
-            this.data = this.model.marker.label.getItems({
-                    time: _this.model.time.end
-                })
+            this.model.entities.visible
                 .map(function(d) {
+                    d.time = _this.model.time.end;
                     d.sortValue = _this.model.marker.size.getValue(d);
-                    return d
+                    return d;
                 })
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
                 });
 
-            this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
-                .data(this.data, function(d) {
-                    return d.geo
+            
+            
+            
+            
+            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
+                .data(this.model.entities.visible, function(d) { return d.geo });
+
+            //exit selection
+            this.entityBubbles.exit().remove();
+
+            //enter selection -- init circles
+            this.entityBubbles.enter().append("circle")
+                .attr("class", "vzb-bc-entity")
+                .on("mousemove", function(d, i) {
+
+                    //TODO: improve tooltip
+                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                        return parseInt(d);
+                    });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                        .html(_this.model.marker.label.getValue(d));
+
+                     _this.model.entities.highlightEntity(d);
+
+                })
+                .on("mouseout", function(d, i) {
+                    _this.highlightBubble(d, false);
+                    _this.model.entities.clearHighlighted();
+                })
+                .on("click", function(d, i) {
+                    _this.model.entities.selectEntity(d, _this.timeFormatter);
                 });
+            
+            
+            
+            
+            //TODO: no need to create trail group for all entities
+            //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
+            this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
+                .data(this.model.entities.visible, function(d) { return d.geo });
 
             this.entityTrails.exit().remove();
 
@@ -415,16 +506,8 @@ define([
             this.time_1 = this.time == null ? this.model.time.value : this.time;
             this.time = this.model.time.value;
             this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
-
-            //this.data = this.model.marker.label.getItems({ time: this.time });
-            this.data.forEach(function(d) {
-                d.time = _this.time
-            });
-
+            
             this.yearEl.text(this.time.getFullYear().toString());
-
-
-
             this.timeUpdatedOnce = true;
         },
 
@@ -434,59 +517,43 @@ define([
          */
         updateSize: function() {
 
-            var _this = this,
-                tick_spacing,
-                padding = 2;
-            this.margin = {};
+            var _this = this;
+            
+            
+            this.profiles = {
+                "small": {
+                    margin: {top: 30, right: 20, left: 40, bottom: 40},
+                    padding: 2,
+                    minRadius: 2,
+                    maxRadius: 40
+                },
+                "medium": {
+                    margin: {top: 30, right: 60, left: 60, bottom: 40 },
+                    padding: 2,
+                    minRadius: 3,
+                    maxRadius: 60
+                },
+                "large": {
+                    margin: {top: 30, right: 60, left: 60, bottom: 40},
+                    padding: 2,
+                    minRadius: 4,
+                    maxRadius: 80
+                }
+            };
 
-            switch (this.getLayoutProfile()) {
-                case "small":
-                    _this.margin = {
-                        top: 30,
-                        right: 20,
-                        left: 40,
-                        bottom: 40
-                    };
-                    tick_spacing = 60;
-                    minRadius = 2;
-                    maxRadius = 40;
-                    break;
-                case "medium":
-                    _this.margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
-                    tick_spacing = 80;
-                    minRadius = 3;
-                    maxRadius = 60;
-                    break;
-                case "large":
-                    _this.margin = {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    };
-                    tick_spacing = 100;
-                    minRadius = 4;
-                    maxRadius = 80;
-                    break;
-            }
-
-            this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-            this.maxRadius = maxRadius * this.model.marker.size.max;
+            this.activeProfile = this.profiles[this.getLayoutProfile()];
+            var margin = this.activeProfile.margin;
+ 
 
             //stage
-            this.height = parseInt(this.element.style("height"), 10) - _this.margin.top - _this.margin.bottom;
-            this.width = parseInt(this.element.style("width"), 10) - _this.margin.left - _this.margin.right;
+            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             this.collisionResolver.height(this.height);
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
-                .attr("transform", "translate(" + _this.margin.left + "," + _this.margin.top + ")");
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //center year 
             var widthAxisY = this.yAxisEl[0][0].getBBox().width;
@@ -501,17 +568,12 @@ define([
             if (this.model.marker.axis_y.scale !== "ordinal") {
                 this.yScale.range([this.height, 0]);
             } else {
-                this.yScale.rangePoints([this.height, 0], padding).range();
+                this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
             }
             if (this.model.marker.axis_x.scale !== "ordinal") {
                 this.xScale.range([0, this.width]);
             } else {
-                this.xScale.rangePoints([0, this.width], padding).range();
-            }
-            if (this.model.marker.size.scale !== "ordinal") {
-                this.sScale.range([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)]);
-            } else {
-                this.sScale.rangePoints([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)], 0).range();
+                this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
             }
 
             //apply scales to axes and redraw
@@ -521,7 +583,7 @@ define([
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_y.scale,
-                    toolMargin: _this.margin,
+                    toolMargin: margin,
                     limitMaxTickNumber: 6
                 });
 
@@ -531,7 +593,7 @@ define([
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: this.model.marker.axis_x.scale,
-                    toolMargin: _this.margin
+                    toolMargin: margin
                 });
 
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
@@ -546,6 +608,23 @@ define([
 
             this.sizeUpdatedOnce = true;
         },
+        
+        
+        updateMarkerSizeLimits: function(){
+            var _this = this;
+            var minRadius = this.activeProfile.minRadius;
+            var maxRadius = this.activeProfile.maxRadius;
+                        
+            this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
+            this.maxRadius = maxRadius * this.model.marker.size.max;
+                        
+            if (this.model.marker.size.scale !== "ordinal") {
+                this.sScale.range([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)]);
+            } else {
+                this.sScale.rangePoints([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)], 0).range();
+            }
+            
+        },
 
         /*
          * REDRAW DATA POINTS:
@@ -553,56 +632,15 @@ define([
          */
         redrawDataPoints: function() {
             var _this = this;
-            if (!this.timeUpdatedOnce) this.updateTime();
-            if (!this.sizeUpdatedOnce) this.updateSize();
 
             var shape = this.model.marker.shape;
-
-
-            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-                .data(this.data, function(d) {
-                    return d.geo
-                });
-
-            //exit selection
-            this.entityBubbles.exit().remove();
-
-            //enter selection -- init circles
-            this.entityBubbles.enter().append(shape)
-                .attr("class", "vzb-bc-entity")
-                .on("mousemove", function(d, i) {
-
-                    //TODO: improve tooltip
-                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                        return parseInt(d);
-                    });
-
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                        .html(_this.model.marker.label.getValue(d));
-
-                     _this.model.entities.highlightEntity(d);
-
-                })
-                .on("mouseout", function(d, i) {
-                    _this.highlightBubble(d, false);
-                    _this.model.entities.clearHighlighted();
-                })
-                .on("click", function(d, i) {
-                    _this.model.entities.selectEntity(d, _this.timeFormatter);
-                });
-
-
-
-
-            if (!_this.selectDataPointsOnce) _this.selectDataPoints();
-
 
             switch (shape) {
                 case "circle":
                     this.entityBubbles.each(function(d, index) {
                         var view = d3.select(this);
+                        
+                        d.time = _this.time;
                         var valueY = _this.model.marker.axis_y.getValue(d);
                         var valueX = _this.model.marker.axis_x.getValue(d);
                         var valueS = _this.model.marker.size.getValue(d);
