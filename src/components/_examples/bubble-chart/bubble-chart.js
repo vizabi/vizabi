@@ -266,8 +266,10 @@ define([
                 
                     _this.xScale.range([0* zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0] ]);
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1] ]);
-                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
+                
+// Ola: Please keep the min and max size (pixels ) constant, when zooming.            
+//                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+//                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
                                     
                     var options = _this.yAxis.labelerOptions();
                     options.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
