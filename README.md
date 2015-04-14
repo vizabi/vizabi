@@ -16,11 +16,6 @@ Yes. See our example pages here: [Vizabi Examples](http://static.gapminderdev.or
 #### Where can I find full documentation?
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
 
-
-####Javascript Statis Analysis Visualization
-[Plato](https://github.com/es-analysis/plato)'s static code analysis of version 0.4 can be found here: [Vizabi Plato ](http://static.gapminder.org/vizabi-recent/report/). 
-
-
 ### QuickStart
 
 *Note 1*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568).
@@ -70,15 +65,6 @@ cd vizabi
 
 *Note*: If you are using any of Github's GUI clients such as [Github for Windows](https://windows.github.com/) or [Github for Mac](https://mac.github.com/), Go to the right-hand side of the project repository homepage, click on *Clone in Desktop*. 
 
-<img src="http://i.imgur.com/S1Bb7H5.png" width=400 height=700 align="middle">
-
-You will be prompt with a window asking your permission to launch your Github GUI client. Allow the execution:
-
-
-<img src="http://i.imgur.com/fdZQXPV.png" alt="Commercial Photography" width=600 height=400 align="middle">
-
-Click on Clone after selecting the path you want to have Vizabi in and you are good to go.
-
 ####Install
 Go to Vizabi directory and run the following commands in the terminal:
 
@@ -87,9 +73,7 @@ npm install
 bower install
 ```
 
-
 *Note*: You may need to run ```npm install``` with administrative privilages.
-
 
 ####Running and Developing
 We use grunt to build Vizabi. You can run Vizabi for Development or Production: ```grunt [dev|build]```.
