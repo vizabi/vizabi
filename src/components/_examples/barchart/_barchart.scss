@@ -1,0 +1,25 @@
+//general styles
+.vzb-barchart {
+    //...
+}
+
+//large specific styles
+&.vzb-large {
+    .vzb-barchart {
+     	//...
+    }
+}
+
+//medium specific styles
+&.vzb-medium {
+    .vzb-barchart {
+        //...
+    }
+}
+
+//small specific styles
+&.vzb-small {
+    .vzb-barchart {
+        //...
+    }
+}
