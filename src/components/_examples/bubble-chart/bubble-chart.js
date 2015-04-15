@@ -371,28 +371,22 @@ define([
         
         
         /*
-         * UPDATE SHOW:
+         * UPDATE ENTITIES:
          * Ideally should only update when show parameters change or data changes
          */
         updateEntities: function() {
             var _this = this;
-
-            
-            //TODO: move this to a proper place
-            // update the array of visible entities in entities model
-            this.model.entities.visible = this.model.marker.label.getItems()
-                .map(function(d){return {geo: d.geo}; });
-
-            console.log("TODO: why model no change?");
-            console.log(this.model.marker.label.getItems());
-            
+        
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
-            this.model.entities.visible
+            var endTime = _this.model.time.end;
+            this.model.entities.visible = this.model.marker.label.getItems()
                 .map(function(d) {
-                    d.time = _this.model.time.end;
-                    d.sortValue = _this.model.marker.size.getValue(d);
-                    return d;
+                    return {
+                        geo: d.geo,
+                        time: endTime,
+                        sortValue: _this.model.marker.size.getValue({geo: d.geo, time: endTime})
+                    }
                 })
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
@@ -412,23 +406,22 @@ define([
             this.entityBubbles.enter().append("circle")
                 .attr("class", "vzb-bc-entity")
                 .on("mousemove", function(d, i) {
-
-                    //TODO: improve tooltip
-                    var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                        return parseInt(d);
-                    });
-
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                        .html(_this.model.marker.label.getValue(d));
-
-                     _this.model.entities.highlightEntity(d);
-
+                    _this.model.entities.highlightEntity(d);
+                    
+                    if(_this.model.entities.isSelected(d) && _this.model.time.trails){
+                        text = _this.timeFormatter(_this.time);
+                        _this.entityLabels
+                            .filter(function(f){return f.geo == d.geo})
+                            .classed("vzb-highlighted", true);
+                    }else{
+                        text = _this.model.marker.label.getValue(d);
+                    }
+                    _this.setTooltip(text);
                 })
                 .on("mouseout", function(d, i) {
-                    _this.highlightBubble(d, false);
                     _this.model.entities.clearHighlighted();
+                    _this.setTooltip();
+                    _this.entityLabels.classed("vzb-highlighted", false); 
                 })
                 .on("click", function(d, i) {
                     _this.model.entities.selectEntity(d, _this.timeFormatter);
@@ -922,9 +915,7 @@ define([
                 var maxmin = _this.cached[d.geo].maxMinValues;
 
                 _this.entityTrails
-                    .filter(function(f) {
-                        return f.geo == d.geo
-                    })
+                    .filter(function(f) {return f.geo == d.geo})
                     .selectAll("g")
                     .data(trailSegmentData)
                     .enter().append("g")
@@ -942,9 +933,23 @@ define([
                         if(segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
 
                         var view = d3.select(this);
-                        view.append("circle").style("fill", segment.valueC);
+                        view.append("circle").style("fill", segment.valueC)
                         view.append("line").style("stroke", segment.valueC);
-                    });
+                    })
+                    .on("mousemove", function(segment,index) {
+                        var geo = d3.select(this.parentNode).data()[0].geo;
+                        _this.axisProjections({geo: geo, time: segment.t});
+                        _this.setTooltip(_this.timeFormatter(segment.t));
+                        _this.entityLabels
+                            .filter(function(f){return f.geo == geo})
+                            .classed("vzb-highlighted", true);
+                    })
+                    .on("mouseout", function(segment,index) {
+                        _this.axisProjections();
+                        _this.setTooltip();
+                        _this.entityLabels.classed("vzb-highlighted", false);
+                    })
+                    
 
             });
 
@@ -1012,20 +1017,48 @@ define([
             });
         },
 
+        
+        setTooltip: function(tooltipText){
+            if(tooltipText){
+                var mouse = d3.mouse(this.graph.node()).map(function(d) { return parseInt(d)});
+                
+                //position tooltip
+                this.tooltip.classed("vzb-hidden", false)
+                    .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                    .html(tooltipText);
+                
+            }else{
+                
+                this.tooltip.classed("vzb-hidden", true);
+            }
+        },
+    
         /*
          * Highlights a bubble
          */
-
-        highlightBubble: function(d, highlight) {
-
-            if (highlight) {
-
+        highlightBubble: function(d) {
+            if (d!=null) {
+                
                 this.bubbleContainer.classed("vzb-wrapper-highlighted", true);
-                var selected = this.entityBubbles.filter(function(b) {
-                        return b.geo === d.geo;
-                    })
+                var selected = this.entityBubbles
+                    .filter(function(f) { return f.geo === d.geo; })
                     .classed("vzb-highlighted", true);
+                
+            }else{
 
+                this.bubbleContainer.classed("vzb-wrapper-highlighted", false);
+                this.bubbleContainer.selectAll(".vzb-highlighted")
+                    .classed("vzb-highlighted", false);
+
+            }
+        },
+
+        /*
+         * Shows and hides axis projections
+         */
+        axisProjections: function(d) {
+            if (d!=null) {
+                
                 var valueY = this.model.marker.axis_y.getValue(d);
                 var valueX = this.model.marker.axis_x.getValue(d);
                 var valueS = this.model.marker.size.getValue(d);
@@ -1056,11 +1089,6 @@ define([
 
             } else {
 
-                this.bubbleContainer.classed("vzb-wrapper-highlighted", false);
-                this.bubbleContainer.selectAll(".vzb-highlighted")
-                    .classed("vzb-highlighted", false);
-
-                this.tooltip.classed("vzb-hidden", true);
                 this.projectionX.style("opacity", 0);
                 this.projectionY.style("opacity", 0);
                 this.xAxisEl.call(this.xAxis.highlightValue("none"));
@@ -1075,19 +1103,21 @@ define([
          */
          //TODO: is it supposed to be called Brushed???
         highlightBrushed: function() {
+            var _this = this;
 
             //unhighlight existing first
-            var _this = this;
             this.bubbleContainer.selectAll(".vzb-highlighted").each(function(d){
-                _this.highlightBubble(d, false);
+                _this.highlightBubble();
+                _this.axisProjections();
             })
 
-            var brushed = this.model.entities.brush,
-                time =  this.model.time.value;
+            var brushed = this.model.entities.brush
             for (var i = 0; i < brushed.length; i++) {
                 var d = _.clone(brushed[i]);
-                d["time"] = time;
-                this.highlightBubble(d, true);
+                d["time"] = _this.time;
+                this.highlightBubble(d);
+                this.axisProjections(d);
+                
             }
         }
 

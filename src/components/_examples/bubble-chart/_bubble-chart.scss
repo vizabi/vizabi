@@ -27,7 +27,8 @@ $vzb-bc-year-size:300px;
     .vzb-bc-trails .vzb-bc-entity {
         @include opacity(0.8);
         stroke: white;
-        pointer-events: none;
+        cursor: pointer;
+        line{pointer-events: none;}
     }
     .vzb-bc-bubbles {
         .vzb-bc-entity {
@@ -71,10 +72,19 @@ $vzb-bc-year-size:300px;
         opacity: 0.9;
         dominant-baseline: hanging;
         fill: $vzb-color-primary;
+        
         &.vzb-bc-label-shadow {
             fill: white;
             @include opacity(0.5);
             stroke: white;
+        }
+    }
+    .vzb-bc-labels .vzb-bc-entity.vzb-highlighted text{ 
+        fill: $vzb-color-primary;
+        opacity: 1.0;
+        
+        &.vzb-bc-label-shadow {
+            stroke: #fff500;
         }
     }
     .vzb-bc-labels .vzb-bc-entity text:hover {
