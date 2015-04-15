@@ -79,10 +79,24 @@ $vzb-bc-year-size:300px;
             stroke: white;
         }
     }
+    
+    .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {  
+        @include transition(opacity, 300ms, linear);
+        fill: white; 
+        text-anchor: middle; 
+        dominant-baseline: middle;
+    }
+    .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x { 
+        @include transition(opacity, 300ms, linear);
+        fill: #ff94a7;
+        stroke: white;
+        stroke-width: 2px;
+    }
+    
+    
     .vzb-bc-labels .vzb-bc-entity.vzb-highlighted text{ 
         fill: $vzb-color-primary;
         opacity: 1.0;
-        
         &.vzb-bc-label-shadow {
             stroke: #fff500;
         }

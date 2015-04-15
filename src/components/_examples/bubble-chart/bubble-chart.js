@@ -153,12 +153,13 @@ define([
                     cache.labelFixed = true;
                     cache.labelX_ += d3.event.dx;
                     cache.labelY_ += d3.event.dy;
-                    d3.select(this).selectAll("text")
-                        .attr("x", _this.xScale(cache.labelX2) + cache.labelX_)
-                        .attr("y", _this.yScale(cache.labelY2) + cache.labelY_);
-                    d3.select(this).select("line")
-                        .attr("x2", _this.xScale(cache.labelX2) + cache.labelX_)
-                        .attr("y2", _this.yScale(cache.labelY2) + cache.labelY_);
+                    var limitedX2 = _this.xScale(cache.labelX2) + cache.labelX_;
+                    var limitedY2 = _this.yScale(cache.labelY2) + cache.labelY_;
+                
+                    var limitedX1 = -cache.labelX_;
+                    var limitedY1 = -cache.labelY_;
+                                    
+                    _this.repositionLabels(d, i, this, limitedX2, limitedY2, limitedX1, limitedY1, _this.duration);
                 });
 
             
@@ -697,32 +698,44 @@ define([
                                     .each(function(groupData) {
 
                                         var labelGroup = d3.select(this);
-                                        var line = labelGroup.select("line")
-                                            .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%")
-                                            .attr("x1", _this.xScale(_this.cached[d.geo].labelX1 || valueX))
-                                            .attr("y1", _this.yScale(_this.cached[d.geo].labelY1 || valueY));
 
-                                        var text = labelGroup.selectAll("text")
+                                    
+                                        labelGroup.select("line")
+                                            .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
+                                    
+                                        var text = labelGroup.selectAll("text.vzb-bc-label-content")
                                             .text(valueL);
+                                    
+                                        var closeButtonY = text[0][0].getBBox().height * 0.45;
+                                        var closeButtonX = text[0][0].getBBox().width + closeButtonY * 1.0;
+                                    
+                                        labelGroup.select("text.vzb-bc-label-x")
+                                            .attr("x", closeButtonX)
+                                            .attr("y", closeButtonY);
+                                        labelGroup.select("circle")
+                                            .attr("cx", closeButtonX)
+                                            .attr("cy", closeButtonY)
+                                            .attr("r", closeButtonY*0.8);
+                                        
 
                                         if (!_this.cached[d.geo].labelFixed) {
-
                                             _this.cached[d.geo].labelX2 = _this.cached[d.geo].labelX1 || valueX;
                                             _this.cached[d.geo].labelY2 = _this.cached[d.geo].labelY1 || valueY;
                                             _this.cached[d.geo].labelX_ = scaledS;
                                             _this.cached[d.geo].labelY_ = 0;
                                         }
-
+                                    
                                         var resolvedX2 = _this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_;
                                         var resolvedY2 = _this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_;
+                                    
+                                        var limitedX2 = resolvedX2 > 0 ? (resolvedX2 < _this.width ? resolvedX2 : _this.width) : 0;
+                                        var limitedY2 = resolvedY2 > 0 ? (resolvedY2 < _this.height ? resolvedY2 : _this.height) : 0;
 
-                                        text.transition().duration(_this.duration).ease("linear")
-                                            .attr("x", resolvedX2 > 0 ? (resolvedX2 < _this.width ? resolvedX2 : _this.width) : 0)
-                                            .attr("y", resolvedY2 > 0 ? (resolvedY2 < _this.height ? resolvedY2 : _this.height) : 0);
-
-                                        line.transition().duration(_this.duration).ease("linear")
-                                            .attr("x2", resolvedX2 > 0 ? (resolvedX2 < _this.width ? resolvedX2 : _this.width) : 0)
-                                            .attr("y2", resolvedY2 > 0 ? (resolvedY2 < _this.height ? resolvedY2 : _this.height) : 0);
+                                        var limitedX1 = -1 * (_this.cached[d.geo].labelX_||0);
+                                        var limitedY1 = -1 * (_this.cached[d.geo].labelY_||0);
+                                    
+                                        _this.repositionLabels(d, index, this, limitedX2, limitedY2, limitedX1, limitedY1, _this.duration);
+                                    
                                     })
                             } else {
                                 //for non-selected bubbles
@@ -788,7 +801,7 @@ define([
                     //                _this.forceLayout.stop();
 
 
-                    _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+                  //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
 
                 }, _this.model.time.speed * 1.2)
             }
@@ -797,19 +810,30 @@ define([
 
 
 
-        repositionLabels: function(d, i, context, resolvedX, resolvedY) {
+        repositionLabels: function(d, i, context, resolvedX2, resolvedY2, resolvedX1, resolvedY1, duration) {
+            if(!duration) duration = 0;
 
-            var text = d3.select(context).selectAll("text") //.transition().duration();
-            var line = d3.select(context).selectAll("line") //.transition().duration();
-
-            if (resolvedX != null) {
-                text.attr("x", resolvedX);
-                line.attr("x2", resolvedX);
-            }
-            if (resolvedY != null) {
-                text.attr("y", resolvedY);
-                line.attr("y2", resolvedY);
-            }
+//            var text = d3.select(context).selectAll("text") //.transition().duration();
+//            var line = d3.select(context).selectAll("line") //.transition().duration();
+//
+//            if (resolvedX != null) {
+//                text.attr("x", resolvedX);
+//                line.attr("x2", resolvedX);
+//            }
+//            if (resolvedY != null) {
+//                text.attr("y", resolvedY);
+//                line.attr("y2", resolvedY);
+//            }
+            
+            var labelGroup = d3.select(context);
+            
+            labelGroup
+                .transition().duration(duration).ease("linear")
+                .attr("transform","translate("+resolvedX2+","+resolvedY2+")");
+            
+            labelGroup.selectAll("line")
+                .attr("x1",resolvedX1)
+                .attr("y1",resolvedY1);
 
         },
 
@@ -843,45 +867,45 @@ define([
             this.entityLabels
                 .enter().append("g")
                 .attr("class", "vzb-bc-entity")
-                .on("click", function(d, i) {
-                    //default prevented is needed to distinguish click from drag
-                    if (d3.event.defaultPrevented) return
-
-
-                    _this.dblClickTimeout = {
-                        click1: new Date(),
-                        click2: null
-                    };
-
-                    setTimeout(function() {
-                        var maxmin = _this.cached[d.geo].maxMinValues;
-                        var radius = areaToRadius(_this.sScale(maxmin.valueSmax));
-                        _this.zoomOnRectangle(_this.element, 
-                            _this.xScale(maxmin.valueXmin) - radius, 
-                            _this.yScale(maxmin.valueYmin) + radius, 
-                            _this.xScale(maxmin.valueXmax) + radius, 
-                            _this.yScale(maxmin.valueYmax) - radius,
-                            false );
-                    }, 100)
-
-                })
-                .on("dblclick", function(d, i) {
-                    // stop propagation is needed to cancel zooming on dblclick
-                    d3.event.stopPropagation();
-
-                    //default prevented is needed to distinguish click from drag
-                    if (d3.event.defaultPrevented) return
-
-                    _this.model.entities.selectEntity(d);
-                })
                 .call(_this.dragger)
                 .each(function(d, index) {
                     var view = d3.select(this);
-                    view.append("text").attr("class", "vzb-bc-label-shadow");
-                    view.append("text").attr("class", "vzb-bc-label-primary");
                     view.append("line").attr("class", "vzb-bc-label-line");
+                    view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
+                    view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent");
+                
+                    view.append("text").attr("class", "vzb-bc-label-content")
+                        .on("click", function(d, i) {
+                            //default prevented is needed to distinguish click from drag
+                            if (d3.event.defaultPrevented) return
+
+                            var maxmin = _this.cached[d.geo].maxMinValues;
+                            var radius = areaToRadius(_this.sScale(maxmin.valueSmax));
+                            _this.zoomOnRectangle(_this.element, 
+                                _this.xScale(maxmin.valueXmin) - radius, 
+                                _this.yScale(maxmin.valueYmin) + radius, 
+                                _this.xScale(maxmin.valueXmax) + radius, 
+                                _this.yScale(maxmin.valueYmax) - radius,
+                                false );
+                        });
+                        
+                    view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x")
+                        .on("click", function(d, i) {
+                            //default prevented is needed to distinguish click from drag
+                            if (d3.event.defaultPrevented) return
+
+                            _this.model.entities.selectEntity(d);
+                        });
 
                     if (_this.model.time.trails) _this.createTrails(d)
+                })
+                .on("mousemove", function(){
+                    d3.select(this).selectAll(".vzb-bc-label-x")
+                        .classed("vzb-transparent", false)
+                })
+                .on("mouseout", function(){
+                    d3.select(this).selectAll(".vzb-bc-label-x")
+                        .classed("vzb-transparent", true)
                 });
 
 
