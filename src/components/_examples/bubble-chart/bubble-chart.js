@@ -37,38 +37,38 @@ define([
 
             this.model_binds = {
                 "change:time:trails": function(evt) {
-                    console.log("EVENT change:time:trails");
+                    //console.log("EVENT change:time:trails");
                     _this.toggleTrails(_this.model.time.trails);
                     _this.redrawDataPoints();
                 },
-                "change:entities:show": function(evt) {
-                    console.log("EVENT change:entities:show");
-                    _this.updateEntities();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-                    _this.redrawDataPoints();
-                },
+                // "change:entities:show": function(evt) {
+                //     //console.log("EVENT change:entities:show");
+                //     _this.updateEntities();
+                //     _this.updateSize();
+                //     _this.updateMarkerSizeLimits();
+                //     _this.redrawDataPoints();
+                // },
                 "change:marker": function(evt) {
-                    console.log("EVENT change:marker");
+                    //console.log("EVENT change:marker");
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                 },
                 "change:entities:select": function() {
-                    console.log("EVENT change:entities:select");
+                    //console.log("EVENT change:entities:select");
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
                 },
                 "change:entities:brush": function() {
-                    console.log("EVENT change:entities:brush");
+                    //console.log("EVENT change:entities:brush");
                     _this.highlightBrushed();
                 },
                 "ready": function(evt) {
                     
                     //TODO: instead of "ready "create a proper event that would occure once and never again
-                    if(!_this.readyOnce){
-                        console.log("EVENT ready (should only come once)");
+                    // if(!_this.readyOnce){
+                        //console.log("EVENT ready (should only come once)");
                         _this.updateIndicators();
                         _this.updateEntities();
                         _this.updateTime();
@@ -76,16 +76,16 @@ define([
                         _this.updateMarkerSizeLimits();
                         _this.selectDataPoints();
                         _this.redrawDataPoints();
-                    }
-                    _this.readyOnce = true;
+                    // }
+                    // _this.readyOnce = true;
                 },
                 'change:time:value': function() {
-                    console.log("EVENT change:time:value");
+                    //console.log("EVENT change:time:value");
                     _this.updateTime();
                     _this.redrawDataPoints();
                 },
                 'change:marker:size:max': function() {
-                    console.log("EVENT change:marker:size:max");
+                    //console.log("EVENT change:marker:size:max");
                     _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                 }
@@ -289,7 +289,7 @@ define([
 
             //component events
             this.on("resize", function() {
-                console.log("EVENT: resize");
+                //console.log("EVENT: resize");
                 _this.updateSize();
                 _this.updateMarkerSizeLimits();
                 _this.redrawDataPoints();
@@ -383,8 +383,8 @@ define([
             this.model.entities.visible = this.model.marker.label.getItems()
                 .map(function(d){return {geo: d.geo}; });
 
-            console.log("TODO: why model no change?");
-            console.log(this.model.marker.label.getItems());
+            //console.log("TODO: why model no change?");
+            //console.log(this.model.marker.label.getItems());
             
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
