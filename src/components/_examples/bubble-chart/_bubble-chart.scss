@@ -65,10 +65,9 @@ $vzb-bc-year-size:300px;
         }
     }
     .vzb-bc-labels .vzb-bc-entity text {
-        /*pointer-events: none;*/
+        pointer-events: none;
         /*text-anchor: middle;*/
         
-        cursor: pointer;
         opacity: 0.9;
         dominant-baseline: hanging;
         fill: $vzb-color-primary;
@@ -80,16 +79,25 @@ $vzb-bc-year-size:300px;
         }
     }
     
+    .vzb-bc-labels .vzb-bc-entity rect{  
+        @include transition(opacity, 300ms, linear);
+        cursor: pointer;
+        opacity: 0.8;
+        fill: white; 
+        stroke: $vzb-color-primary; 
+    }
     .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {  
         @include transition(opacity, 300ms, linear);
         fill: white; 
         text-anchor: middle; 
         dominant-baseline: middle;
+        pointer-events: none;
     }
     .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x { 
         @include transition(opacity, 300ms, linear);
-        fill: #ff8bff;
-        stroke: #ffe6ff;
+        cursor: pointer;
+        fill: #ff89cd;
+        stroke: white;
         stroke-width: 2px;
     }
     

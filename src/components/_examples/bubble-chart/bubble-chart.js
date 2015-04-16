@@ -728,16 +728,17 @@ define([
                                         var text = labelGroup.selectAll("text.vzb-bc-label-content")
                                             .text(valueL + valueLtime);
 
-                                        var closeButtonY = text[0][0].getBBox().height * 0.45;
-                                        var closeButtonX = text[0][0].getBBox().width + closeButtonY * 1.0;
+                                        var contentBBox = text[0][0].getBBox();
 
                                         labelGroup.select("text.vzb-bc-label-x")
-                                            .attr("x", closeButtonX)
-                                            .attr("y", closeButtonY);
+                                            .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                            .attr("y", contentBBox.height * 0.0 - 4);
                                         labelGroup.select("circle")
-                                            .attr("cx", closeButtonX)
-                                            .attr("cy", closeButtonY)
-                                            .attr("r", closeButtonY * 0.8);
+                                            .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                            .attr("cy", contentBBox.height * 0.0 - 4)
+                                            .attr("r", contentBBox.height * 0.5);
+                                    
+                                        
 
 
                                         if (!_this.cached[d.geo].labelFixed) {
@@ -750,8 +751,20 @@ define([
                                         var resolvedX2 = _this.xScale(_this.cached[d.geo].labelX2) + _this.cached[d.geo].labelX_;
                                         var resolvedY2 = _this.yScale(_this.cached[d.geo].labelY2) + _this.cached[d.geo].labelY_;
 
-                                        var limitedX2 = resolvedX2 > 0 ? (resolvedX2 < _this.width ? resolvedX2 : _this.width) : 0;
-                                        var limitedY2 = resolvedY2 > 0 ? (resolvedY2 < _this.height ? resolvedY2 : _this.height) : 0;
+                                        var limitedX2 = resolvedX2 > 0 ? (resolvedX2 < _this.width -contentBBox.width ? resolvedX2 : _this.width -contentBBox.width) : 0;
+                                        var limitedY2 = resolvedY2 > 0 ? (resolvedY2 < _this.height-contentBBox.height ? resolvedY2 : _this.height-contentBBox.height) : 0;
+                                    
+                                    
+                                        _this.cached[d.geo].stuckOnLimit = limitedX2 != resolvedX2 || limitedY2 != resolvedY2;
+                                        
+                                        labelGroup.select("rect")
+                                            .attr("width",contentBBox.width+4)
+                                            .attr("height",contentBBox.height+4)
+                                            .attr("x",-2)
+                                            .attr("y",-4)
+                                            .attr("rx", contentBBox.height*0.2)
+                                            .attr("ry", contentBBox.height*0.2)
+                                            .classed("vzb-transparent", !_this.cached[d.geo].stuckOnLimit);
 
                                         var limitedX1 = -1 * (_this.cached[d.geo].labelX_ || 0);
                                         var limitedY1 = -1 * (_this.cached[d.geo].labelY_ || 0);
@@ -892,10 +905,8 @@ define([
                 .each(function(d, index) {
                     var view = d3.select(this);
                     view.append("line").attr("class", "vzb-bc-label-line");
-                    view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
-                    view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent");
-
-                    view.append("text").attr("class", "vzb-bc-label-content")
+                
+                    view.append("rect").attr("class", "vzb-transparent")
                         .on("click", function(d, i) {
                             //default prevented is needed to distinguish click from drag
                             if (d3.event.defaultPrevented) return
@@ -909,24 +920,33 @@ define([
                                 _this.yScale(maxmin.valueYmax) - radius,
                                 false);
                         });
-
-                    view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x")
+                
+                    view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
+                
+                    view.append("text").attr("class", "vzb-bc-label-content");
+                
+                    view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
                         .on("click", function(d, i) {
                             //default prevented is needed to distinguish click from drag
                             if (d3.event.defaultPrevented) return
-
                             _this.model.entities.selectEntity(d);
                         });
+                
+                    view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
 
                     if (_this.model.time.trails) _this.createTrails(d)
                 })
                 .on("mousemove", function() {
                     d3.select(this).selectAll(".vzb-bc-label-x")
                         .classed("vzb-transparent", false)
+                    d3.select(this).select("rect")
+                        .classed("vzb-transparent", false)
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function(d) {
                     d3.select(this).selectAll(".vzb-bc-label-x")
                         .classed("vzb-transparent", true)
+                    d3.select(this).select("rect")
+                        .classed("vzb-transparent", !_this.cached[d.geo].stuckOnLimit)
                 });
 
 
