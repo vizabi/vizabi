@@ -25,6 +25,7 @@ define([
             this._parent = parent; //parent model
             this._set = false; //is this model set?
             this._ready = false; //is this model ready?
+            this._readyOnce = false; //has this model ever been ready?
             this._debugEvents = this._debugEvents || false;
 
             //intervals should be the same from tool
@@ -427,11 +428,13 @@ define([
                     this._parent.setReady(false);
                 }
             } else if (this._ready = (!this.isLoading() && !this._setting && !this._loadCall)) {
+
+                if(!this._readyOnce) {
+                    this._readyOnce = true;
+                    this.trigger("readyOnce");
+                }
+                
                 this.triggerOnce("ready");
-                // var _this = this;
-                // _.defer(function() {
-                //     _this.triggerOnce("ready");
-                // });
             }
         },
 
