@@ -1,10 +1,11 @@
 define([
     'd3',
     'lodash',
+    'base/utils',
     'base/component',
     'base/layout',
     'models/tool'
-], function(d3, _, Component, Layout, ToolModel) {
+], function(d3, _, utils, Component, Layout, ToolModel) {
 
     var class_placeholder = "vzb-placeholder",
         class_loading_data = "vzb-loading-data",
@@ -25,13 +26,14 @@ define([
             this.template = this.template || "tools/tool";
             this.layout = new Layout();
             this.ui = options.ui || {};
+            this.model_binds = this.model_binds || {};
 
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
 
             //build tool model
             var _this = this;
-            this.model = new ToolModel(options, {
+            this.model = new ToolModel(options, utils.extendCallbacks({
                 'set': function(evt, val) {
                     //binding external events
                     _this._bindEvents();
@@ -70,8 +72,19 @@ define([
                     if (_this._ready) {
                         _this.afterLoading();
                     }
-                }
-            }, validate);
+                },
+                "arthur": [function() {
+                    console.log("testing model binds");
+                    if (_this._ready) {
+                        _this.afterLoading();
+                    }
+                }, function() {
+                    console.log("testing model binds");
+                    if (_this._ready) {
+                        _this.afterLoading();
+                    }
+                }]
+            }, this.model_binds), validate);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);

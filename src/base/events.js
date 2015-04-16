@@ -45,6 +45,14 @@ define([
          */
         bind: function(name, func) {
 
+            //bind multiple functions at the same time
+            if (_.isArray(func)) {
+                for (var i = 0; i < func.length; i++) {
+                    this.bind(name, func[i]);
+                };
+                return;
+            }
+
             //bind multiple at a time
             if (_.isArray(name)) {
                 for (var i = 0; i < name.length; i++) {
