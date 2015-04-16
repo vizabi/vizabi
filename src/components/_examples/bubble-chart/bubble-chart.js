@@ -104,10 +104,6 @@ define([
             this.yAxis = d3.svg.axisSmart();
 
 
-            this.timeUpdatedOnce = false;
-            this.sizeUpdatedOnce = false;
-            this.selectDataPointsOnce = false;
-
             this.cached = {};
 
 
@@ -260,10 +256,7 @@ define([
                 });
 
             this.zoomer.ratioX = 1;
-            this.zoomer.ratioY = 1;
-
-
-
+            this.zoomer.ratioY = 1;            
         },
 
 
@@ -501,7 +494,14 @@ define([
         },
 
 
-
+        resetZoomer: function(element){
+            this.zoomer.scale(1);
+            this.zoomer.ratioY = 1;
+            this.zoomer.ratioX = 1;
+            this.zoomer.translate([0,0]);
+            this.zoomer.duration = 0;
+            this.zoomer.event(element||this.element);
+        },
 
 
 
@@ -517,7 +517,6 @@ define([
             this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
 
             this.yearEl.text(this.time.getFullYear().toString());
-            this.timeUpdatedOnce = true;
         },
 
         /*
@@ -634,7 +633,7 @@ define([
             this.projectionX.attr("y1", _this.yScale.range()[0]);
             this.projectionY.attr("x2", _this.xScale.range()[0]);
 
-            this.sizeUpdatedOnce = true;
+            this.resetZoomer();
         },
 
 
@@ -875,7 +874,6 @@ define([
 
         selectDataPoints: function() {
             var _this = this;
-            this.selectDataPointsOnce = true;
 
             var some_selected = (_this.model.entities.select.length > 0);
 
