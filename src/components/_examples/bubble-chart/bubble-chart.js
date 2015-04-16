@@ -603,26 +603,20 @@ define([
             
             
             this.bubbleContainerCrop
-                .attr("width", this.width + this.activeProfile.margin.right)
-                .attr("height", this.height + this.activeProfile.margin.top)
-                .attr("y", -this.activeProfile.margin.top);
-            this.bubbleContainer
-                .attr("transform", "translate(0,"+this.activeProfile.margin.top+")");
-            this.trailsContainer
-                .attr("transform", "translate(0,"+this.activeProfile.margin.top+")");
+                .attr("width", this.width)
+                .attr("height", this.height);
             
             this.xAxisElContainer
-                .attr("width", this.width + this.activeProfile.margin.right)
+                .attr("width", this.width)
                 .attr("height", this.activeProfile.margin.bottom)
                 .attr("y", this.height);
             
             this.yAxisElContainer
                 .attr("width", this.activeProfile.margin.left)
-                .attr("height", this.height + this.activeProfile.margin.top)
-                .attr("x", -this.activeProfile.margin.left)
-                .attr("y", -this.activeProfile.margin.top);
+                .attr("height", this.height)
+                .attr("x", -this.activeProfile.margin.left);
             this.yAxisEl
-                .attr("transform", "translate("+(this.activeProfile.margin.left-1)+","+this.activeProfile.margin.top+")");
+                .attr("transform", "translate("+(this.activeProfile.margin.left-1)+","+0+")");
             
             this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
             this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
