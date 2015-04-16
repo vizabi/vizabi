@@ -666,6 +666,7 @@ define([
                         var valueX = _this.model.marker.axis_x.getValue(d);
                         var valueS = _this.model.marker.size.getValue(d);
                         var valueL = _this.model.marker.label.getValue(d);
+                        var valueLtime = "";
                         var valueC = _this.model.marker.color.getValue(d);
 
                         if (valueL == null || valueY == null || valueX == null || valueS == null) {
@@ -707,6 +708,7 @@ define([
                                             time: trailStartTime
                                         });
                                     }
+                                    valueLtime = _this.timeFormatter(trailStartTime) != _this.timeFormatter(_this.time)?(" " + _this.timeFormatter(trailStartTime)):"";
                                 } else {
                                     _this.cached[d.geo].labelY1 = valueY;
                                     _this.cached[d.geo].labelX1 = valueX;
@@ -725,8 +727,9 @@ define([
                                         labelGroup.select("line")
                                             .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
                                     
+                                    
                                         var text = labelGroup.selectAll("text.vzb-bc-label-content")
-                                            .text(valueL);
+                                            .text(valueL + valueLtime);
                                     
                                         var closeButtonY = text[0][0].getBBox().height * 0.45;
                                         var closeButtonX = text[0][0].getBBox().width + closeButtonY * 1.0;
