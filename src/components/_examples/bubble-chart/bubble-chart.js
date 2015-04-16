@@ -273,8 +273,12 @@ define([
 
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
-            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
-            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.yAxisElContainer = this.graph.select('.vzb-bc-axis-y');
+            this.yAxisEl = this.yAxisElContainer.select('g');
+            
+            this.xAxisElContainer = this.graph.select('.vzb-bc-axis-x');
+            this.xAxisEl = this.xAxisElContainer.select('g');
+            
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
             this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
@@ -285,6 +289,7 @@ define([
             this.projectionY = this.graph.select(".vzb-bc-projection-y");
 
             this.trailsContainer = this.graph.select('.vzb-bc-trails');
+            this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
             this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
             this.labelsContainer = this.graph.select('.vzb-bc-labels');
             this.zoomRect = this.element.select('.vzb-bc-zoomRect');
@@ -554,9 +559,6 @@ define([
             this.graph
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-            //center year 
-            var widthAxisY = this.yAxisEl[0][0].getBBox().width;
-            var heightAxisX = this.xAxisEl[0][0].getBBox().height;
 
             this.yearEl
                 .attr("x", this.width / 2)
@@ -594,8 +596,28 @@ define([
                     scaleType: this.model.marker.axis_x.scale,
                     toolMargin: margin
                 });
-
-            this.xAxisEl.attr("transform", "translate(0," + this.height + ")");
+            
+            
+            this.bubbleContainerCrop
+                .attr("width", this.width + this.activeProfile.margin.right)
+                .attr("height", this.height + this.activeProfile.margin.top)
+                .attr("y", -this.activeProfile.margin.top);
+            this.bubbleContainer
+                .attr("transform", "translate(0,"+this.activeProfile.margin.top+")");
+            
+            this.xAxisElContainer
+                .attr("width", this.width + this.activeProfile.margin.right)
+                .attr("height", this.activeProfile.margin.bottom)
+                .attr("y", this.height);
+            
+            this.yAxisElContainer
+                .attr("width", this.activeProfile.margin.left)
+                .attr("height", this.height + this.activeProfile.margin.top)
+                .attr("x", -this.activeProfile.margin.left)
+                .attr("y", -this.activeProfile.margin.top);
+            this.yAxisEl
+                .attr("transform", "translate("+(this.activeProfile.margin.left-1)+","+this.activeProfile.margin.top+")");
+            
             this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
             this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
 

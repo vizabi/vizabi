@@ -88,8 +88,8 @@ $vzb-bc-year-size:300px;
     }
     .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x { 
         @include transition(opacity, 300ms, linear);
-        fill: #ff94a7;
-        stroke: white;
+        fill: #ff8bff;
+        stroke: #ffe6ff;
         stroke-width: 2px;
     }
     
