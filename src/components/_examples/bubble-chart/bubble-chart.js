@@ -161,7 +161,7 @@ define([
 
 
 
-            this.zoomerWithRect = d3.behavior.drag()
+            this.gragRectangle = d3.behavior.drag()
                 .on("dragstart", function(d, i) {
                     if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
@@ -246,12 +246,17 @@ define([
                     //                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                     //                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
 
-                    var options = _this.yAxis.labelerOptions();
-                    options.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
+                    var optionsY = _this.yAxis.labelerOptions();
+                    var optionsX = _this.xAxis.labelerOptions();
+                    optionsY.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
+                    optionsY.transitionDuration = _this.zoomer.duration;
+                    optionsX.transitionDuration = _this.zoomer.duration;
 
-                    _this.xAxisEl.call(_this.xAxis);
-                    _this.yAxisEl.call(_this.yAxis.labelerOptions(options));
-                    _this.redrawDataPoints();
+                    _this.xAxisEl.call(_this.xAxis.labelerOptions(optionsX));
+                    _this.yAxisEl.call(_this.yAxis.labelerOptions(optionsY));
+                    _this.redrawDataPoints(_this.zoomer.duration);
+                    
+                    _this.zoomer.duration = 0;
                 });
 
             this.zoomer.ratioX = 1;
@@ -314,7 +319,7 @@ define([
 
             this.element
                 .call(this.zoomer)
-                .call(this.zoomerWithRect);
+                .call(this.gragRectangle);
         },
 
 
@@ -490,6 +495,7 @@ define([
             zoomer.ratioY = ratioY;
             zoomer.ratioX = ratioX;
             zoomer.translate(pan);
+            zoomer.duration = 500;
 
             zoomer.event(element);
         },
@@ -603,6 +609,8 @@ define([
                 .attr("y", -this.activeProfile.margin.top);
             this.bubbleContainer
                 .attr("transform", "translate(0,"+this.activeProfile.margin.top+")");
+            this.trailsContainer
+                .attr("transform", "translate(0,"+this.activeProfile.margin.top+")");
             
             this.xAxisElContainer
                 .attr("width", this.width + this.activeProfile.margin.right)
@@ -650,9 +658,10 @@ define([
          * REDRAW DATA POINTS:
          * Here plotting happens
          */
-        redrawDataPoints: function() {
+        redrawDataPoints: function(duration) {
             var _this = this;
 
+            if(duration==null) duration = _this.duration; 
             var shape = this.model.marker.shape;
 
             switch (shape) {
@@ -675,7 +684,7 @@ define([
 
                             view.classed("vzb-transparent", false)
                                 .style("fill", valueC)
-                                .transition().duration(_this.duration).ease("linear")
+                                .transition().duration(duration).ease("linear")
                                 .attr("cy", _this.yScale(valueY))
                                 .attr("cx", _this.xScale(valueX))
                                 .attr("r", scaledS)
@@ -696,14 +705,8 @@ define([
                                         _this.cached[d.geo].labelY1 = valueY;
                                         _this.cached[d.geo].labelX1 = valueX;
                                     } else {
-                                        _this.cached[d.geo].labelY1 = _this.model.marker.axis_y.getValue({
-                                            geo: d.geo,
-                                            time: trailStartTime
-                                        });
-                                        _this.cached[d.geo].labelX1 = _this.model.marker.axis_x.getValue({
-                                            geo: d.geo,
-                                            time: trailStartTime
-                                        });
+                                        _this.cached[d.geo].labelY1 = _this.model.marker.axis_y.getValue({ geo: d.geo, time: trailStartTime });
+                                        _this.cached[d.geo].labelX1 = _this.model.marker.axis_x.getValue({ geo: d.geo, time: trailStartTime });
                                     }
                                     valueLtime = " " + _this.timeFormatter(trailStartTime);
                                 } else {
@@ -753,7 +756,7 @@ define([
                                         var limitedX1 = -1 * (_this.cached[d.geo].labelX_ || 0);
                                         var limitedY1 = -1 * (_this.cached[d.geo].labelY_ || 0);
 
-                                        _this.repositionLabels(d, index, this, limitedX2, limitedY2, limitedX1, limitedY1, _this.duration);
+                                        _this.repositionLabels(d, index, this, limitedX2, limitedY2, limitedX1, limitedY1, duration);
 
                                     })
                             } else {
@@ -771,30 +774,30 @@ define([
                     }); // bubbles
 
 
-                    if (_this.model.time.trails) _this.redrawTrails();
+                    if (_this.model.time.trails) _this.redrawTrails(null, duration);
 
 
                     break;
-                    //                case "rect":
-                    //                var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
-                    //                this.entityBubbles.each(function(d){
-                    //                    var view = d3.select(this);
-                    //                    var valueY = _this.model.marker.axis_y.getValue(d);
-                    //                    var valueX = _this.model.marker.axis_x.getValue(d);
-                    //                    
-                    //                    if(valueY==null || valueX==null) {
-                    //                        view.classed("vzb-transparent", true)
-                    //                    }else{
-                    //                        view.classed("vzb-transparent", false)
-                    //                            .style("fill", _this.model.marker.color.getValue(d))
-                    //                            .transition().duration(_this.duration).ease("linear")
-                    //                            .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
-                    //                            .attr("y", _this.yScale(valueY))
-                    //                            .attr("x", _this.xScale(valueX) - barWidth/2)
-                    //                            .attr("width", barWidth);
-                    //                    }
-                    //                });
-                    //                break;
+                    // case "rect":
+                    // var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
+                    // this.entityBubbles.each(function(d){
+                    //     var view = d3.select(this);
+                    //     var valueY = _this.model.marker.axis_y.getValue(d);
+                    //     var valueX = _this.model.marker.axis_x.getValue(d);
+                    //     
+                    //     if(valueY==null || valueX==null) {
+                    //         view.classed("vzb-transparent", true)
+                    //     }else{
+                    //         view.classed("vzb-transparent", false)
+                    //             .style("fill", _this.model.marker.color.getValue(d))
+                    //             .transition().duration(_this.duration).ease("linear")
+                    //             .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
+                    //             .attr("y", _this.yScale(valueY))
+                    //             .attr("x", _this.xScale(valueX) - barWidth/2)
+                    //             .attr("width", barWidth);
+                    //     }
+                    // });
+                    // break;
             }
 
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
@@ -830,7 +833,6 @@ define([
 
 
         repositionLabels: function(d, i, context, resolvedX2, resolvedY2, resolvedX1, resolvedY1, duration) {
-            if (!duration) duration = 0;
 
             //            var text = d3.select(context).selectAll("text") //.transition().duration();
             //            var line = d3.select(context).selectAll("line") //.transition().duration();
@@ -847,7 +849,7 @@ define([
             var labelGroup = d3.select(context);
 
             labelGroup
-                .transition().duration(duration).ease("linear")
+                .transition().duration(duration || 0).ease("linear")
                 .attr("transform", "translate(" + resolvedX2 + "," + resolvedY2 + ")");
 
             labelGroup.selectAll("line")
@@ -1025,8 +1027,9 @@ define([
         },
 
 
-        redrawTrails: function(selection) {
+        redrawTrails: function(selection, duration) {
             var _this = this;
+            if(!duration)duration=0;
 
             selection = selection == null ? _this.model.entities.select : [selection];
             selection.forEach(function(d) {
@@ -1047,6 +1050,7 @@ define([
                         if (transparent) return;
 
                         view.select("circle")
+                            .transition().duration(duration).ease("linear")
                             .attr("cy", _this.yScale(segment.valueY))
                             .attr("cx", _this.xScale(segment.valueX))
                             .attr("r", areaToRadius(_this.sScale(segment.valueS)));
@@ -1059,6 +1063,7 @@ define([
                             if (segment.t - _this.time < 0 && _this.time - next.t < 0) next = _this.cached[d.geo];
 
                             view.select("line")
+                                .transition().duration(duration).ease("linear")
                                 .attr("x1", _this.xScale(next.valueX))
                                 .attr("y1", _this.yScale(next.valueY))
                                 .attr("x2", _this.xScale(segment.valueX))
