@@ -77,6 +77,8 @@ define([
                         _this.updateSize();
                         _this.updateMarkerSizeLimits();
                         _this.redrawDataPoints();
+                        
+                        _this.entitiesUpdatedRecently = false;
                     }
                 },
                 'change:time:value': function() {
@@ -391,10 +393,7 @@ define([
                     return {
                         geo: d.geo,
                         time: endTime,
-                        sortValue: _this.model.marker.size.getValue({
-                            geo: d.geo,
-                            time: endTime
-                        })
+                        sortValue: _this.model.marker.size.getValue({ geo: d.geo, time: endTime})
                     }
                 })
                 .sort(function(a, b) {
@@ -406,9 +405,7 @@ define([
 
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-                .data(this.model.entities.visible, function(d) {
-                    return d.geo
-                });
+                .data(this.model.entities.visible, function(d) {return d.geo});
 
             //exit selection
             this.entityBubbles.exit().remove();
@@ -422,9 +419,7 @@ define([
                     if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
                         text = _this.timeFormatter(_this.time);
                         _this.entityLabels
-                            .filter(function(f) {
-                                return f.geo == d.geo
-                            })
+                            .filter(function(f) {return f.geo == d.geo})
                             .classed("vzb-highlighted", true);
                     } else {
                         text = _this.model.marker.label.getValue(d);
@@ -530,34 +525,19 @@ define([
 
             this.profiles = {
                 "small": {
-                    margin: {
-                        top: 30,
-                        right: 20,
-                        left: 40,
-                        bottom: 40
-                    },
+                    margin: { top: 30, right: 20, left: 40, bottom: 40 },
                     padding: 2,
                     minRadius: 2,
                     maxRadius: 40
                 },
                 "medium": {
-                    margin: {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    },
+                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
                     padding: 2,
                     minRadius: 3,
                     maxRadius: 60
                 },
                 "large": {
-                    margin: {
-                        top: 30,
-                        right: 60,
-                        left: 60,
-                        bottom: 40
-                    },
+                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
                     padding: 2,
                     minRadius: 4,
                     maxRadius: 80
@@ -708,9 +688,7 @@ define([
                                 _this.cached[d.geo].valueX = valueX;
 
                                 if (_this.model.time.trails) {
-                                    var select = _.find(_this.model.entities.select, function(f) {
-                                        return f.geo == d.geo
-                                    });
+                                    var select = _.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
                                     var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
                                     if (trailStartTime - _this.time > 0 || select.trailStartTime == null) {
@@ -735,9 +713,7 @@ define([
 
 
                                 // reposition label
-                                _this.entityLabels.filter(function(f) {
-                                        return f.geo == d.geo
-                                    })
+                                _this.entityLabels.filter(function(f) {return f.geo == d.geo})
                                     .each(function(groupData) {
 
                                         var labelGroup = d3.select(this);
@@ -995,30 +971,16 @@ define([
                 var maxmin = _this.cached[d.geo].maxMinValues;
 
                 _this.entityTrails
-                    .filter(function(f) {
-                        return f.geo == d.geo
-                    })
+                    .filter(function(f) {return f.geo == d.geo})
                     .selectAll("g")
                     .data(trailSegmentData)
                     .enter().append("g")
                     .attr("class", "trailSegment")
                     .each(function(segment, index) {
-                        segment.valueY = _this.model.marker.axis_y.getValue({
-                            geo: d.geo,
-                            time: segment.t
-                        });
-                        segment.valueX = _this.model.marker.axis_x.getValue({
-                            geo: d.geo,
-                            time: segment.t
-                        });
-                        segment.valueS = _this.model.marker.size.getValue({
-                            geo: d.geo,
-                            time: segment.t
-                        });
-                        segment.valueC = _this.model.marker.color.getValue({
-                            geo: d.geo,
-                            time: segment.t
-                        });
+                        segment.valueY = _this.model.marker.axis_y.getValue({geo: d.geo,time: segment.t});
+                        segment.valueX = _this.model.marker.axis_x.getValue({geo: d.geo,time: segment.t});
+                        segment.valueS = _this.model.marker.size.getValue({geo: d.geo,time: segment.t});
+                        segment.valueC = _this.model.marker.color.getValue({geo: d.geo,time: segment.t});
 
                         if (segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
                         if (segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
@@ -1032,15 +994,10 @@ define([
                     })
                     .on("mousemove", function(segment, index) {
                         var geo = d3.select(this.parentNode).data()[0].geo;
-                        _this.axisProjections({
-                            geo: geo,
-                            time: segment.t
-                        });
+                        _this.axisProjections({ geo: geo, time: segment.t });
                         _this.setTooltip(_this.timeFormatter(segment.t));
                         _this.entityLabels
-                            .filter(function(f) {
-                                return f.geo == geo
-                            })
+                            .filter(function(f) {return f.geo == geo})
                             .classed("vzb-highlighted", true);
                     })
                     .on("mouseout", function(segment, index) {
@@ -1062,9 +1019,7 @@ define([
             selection.forEach(function(d) {
 
                 _this.entityTrails
-                    .filter(function(f) {
-                        return f.geo == d.geo
-                    })
+                    .filter(function(f) {return f.geo == d.geo})
                     .selectAll("g").remove();
             });
         },
@@ -1077,9 +1032,7 @@ define([
             selection.forEach(function(d) {
 
                 _this.entityTrails
-                    .filter(function(f) {
-                        return f.geo == d.geo
-                    })
+                    .filter(function(f) { return f.geo == d.geo })
                     .selectAll("g")
                     .each(function(segment, index) {
 
@@ -1119,9 +1072,7 @@ define([
 
         setTooltip: function(tooltipText) {
             if (tooltipText) {
-                var mouse = d3.mouse(this.graph.node()).map(function(d) {
-                    return parseInt(d)
-                });
+                var mouse = d3.mouse(this.graph.node()).map(function(d) {return parseInt(d)});
 
                 //position tooltip
                 this.tooltip.classed("vzb-hidden", false)
@@ -1142,9 +1093,7 @@ define([
 
                 this.bubbleContainer.classed("vzb-wrapper-highlighted", true);
                 var selected = this.entityBubbles
-                    .filter(function(f) {
-                        return f.geo === d.geo;
-                    })
+                    .filter(function(f) {return f.geo === d.geo;})
                     .classed("vzb-highlighted", true);
 
             } else {
