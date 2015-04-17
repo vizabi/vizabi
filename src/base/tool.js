@@ -72,18 +72,7 @@ define([
                     if (_this._ready) {
                         _this.afterLoading();
                     }
-                },
-                "arthur": [function() {
-                    console.log("testing model binds");
-                    if (_this._ready) {
-                        _this.afterLoading();
-                    }
-                }, function() {
-                    console.log("testing model binds");
-                    if (_this._ready) {
-                        _this.afterLoading();
-                    }
-                }]
+                }
             }, this.model_binds), validate);
 
             // Parent Constructor (this = root parent)
