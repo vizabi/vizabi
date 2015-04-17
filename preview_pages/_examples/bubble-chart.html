@@ -59,6 +59,7 @@
         </div>
         
         <button onclick="toggleTrails('bubble-chart')"><i class="fa fa-share-alt"></i></button>
+        <button onclick="toggleLockBubbles('bubble-chart')"><i class="fa fa-lock"></i></button>
         
     </div>
     <div class="buttons">
@@ -207,7 +208,8 @@ $(function() {
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
-                trails: true
+                trails: true,
+                lockNonSelected: 0
             },
 
             //entities we want to show
@@ -266,6 +268,8 @@ $(function() {
         //where do we get data from?
         data: {
             reader: 'waffle-server'
+//            reader: "local-json",
+//            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
         },
         
         ui: {
@@ -392,6 +396,13 @@ function language(lang) {
 function toggleTrails(chart){
     var options = {state: {time: {}}};
     options.state.time.trails = !myVizabi.getOptions().state.time.trails;
+    myVizabi.setOptions(options);
+    showState(options.state);
+}
+    
+function toggleLockBubbles(chart){
+    var options = {state: {time: {}}};
+    options.state.time.lockNonSelected = myVizabi.getOptions().state.time.lockNonSelected?0:myVizabi.getOptions().state.time.value.getFullYear();
     myVizabi.setOptions(options);
     showState(options.state);
 }

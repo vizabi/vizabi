@@ -41,6 +41,10 @@ define([
                     _this.toggleTrails(_this.model.time.trails);
                     _this.redrawDataPoints();
                 },
+                "change:time:lockNonSelected": function(evt) {
+                    //console.log("EVENT change:time:lockNonSelected");
+                    _this.redrawDataPoints(500);
+                },
                 "change:entities:show": function(evt) {
                     //console.log("EVENT change:entities:show");
                     _this.entitiesUpdatedRecently = true;
@@ -610,6 +614,8 @@ define([
                 .attr("width", this.width)
                 .attr("height", this.activeProfile.margin.bottom)
                 .attr("y", this.height);
+            this.xAxisEl
+                .attr("transform", "translate(0,"+1+")");
             
             this.yAxisElContainer
                 .attr("width", this.activeProfile.margin.left)
@@ -661,8 +667,13 @@ define([
                 case "circle":
                     this.entityBubbles.each(function(d, index) {
                         var view = d3.select(this);
+                        
+                        if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
+                            d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+                        }else{
+                            d.time = _this.time;
+                        }
 
-                        d.time = _this.time;
                         var valueY = _this.model.marker.axis_y.getValue(d);
                         var valueX = _this.model.marker.axis_x.getValue(d);
                         var valueS = _this.model.marker.size.getValue(d);
@@ -869,13 +880,13 @@ define([
         selectDataPoints: function() {
             var _this = this;
 
-            var some_selected = (_this.model.entities.select.length > 0);
+            _this.someSelected = (_this.model.entities.select.length > 0);
 
             this.entityBubbles.classed("vzb-bc-selected", function(d) {
-                return some_selected && _this.model.entities.isSelected(d)
+                return _this.someSelected && _this.model.entities.isSelected(d)
             })
             this.entityBubbles.classed("vzb-bc-unselected", function(d) {
-                return some_selected && !_this.model.entities.isSelected(d)
+                return _this.someSelected && !_this.model.entities.isSelected(d)
             });
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
@@ -1185,6 +1196,12 @@ define([
                 var d = _.clone(brushed[i]);
                 d["time"] = _this.time;
                 this.highlightBubble(d);
+                
+                if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
+                    d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+                }else{
+                    d.time = _this.time;
+                }
                 this.axisProjections(d);
 
             }
