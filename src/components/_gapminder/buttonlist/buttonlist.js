@@ -20,6 +20,7 @@ define([
          */
         init: function(config, context) {
             //set properties
+            var _this = this;
             this.name = 'buttonlist';
             this.template = "components/_gapminder/" + this.name + "/" + this.name;
 
@@ -92,9 +93,29 @@ define([
                 //TODO: Buttons should be a model, not config //former FIXME
                 this._addButtons(config.buttons);
             }
+            
+            this.model_binds = {
+                "readyOnce": function(evt) {
+                    _this.startup(config.buttons);
+                }
+            }
 
             this._super(config, context);
 
+        },
+        
+        startup: function(button_list){
+            var _this = this;
+            
+            button_list.forEach(function(d){
+                var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + d + "']");
+                var active = false;
+                switch (d){
+                    case "trails": active = _this.model.state.time.trails; break;
+                    case "lock": active = _this.model.state.time.lockNonSelected; break;
+                }
+                btn.classed(class_active, active);
+            })
         },
 
         /*
@@ -245,13 +266,25 @@ define([
 
         toggleBubbleTrails: function(id) {
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-            btn.classed(class_active, !btn.classed(class_active));
-            
+            this.model.state.time.trails = !this.model.state.time.trails;
+            btn.classed(class_active, this.model.state.time.trails);
         },
         toggleBubbleLock: function(id) {
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
-            btn.classed(class_active, !btn.classed(class_active));
+            var timeFormatter = d3.time.format(this.model.state.time.formatInput);
+            var translator = this.model.language.getTFunction();
             
+            var locked = this.model.state.time.lockNonSelected;
+            locked = locked?0:timeFormatter(this.model.state.time.value);
+            
+            btn.classed(class_active, locked)
+            btn.select(".vzb-buttonlist-btn-title")
+                .text(locked?locked:translator("buttons/lock"));
+            
+            btn.select(".vzb-buttonlist-btn-icon")
+                .html(this._icons[locked?"unlock":"lock"]);
+            
+            this.model.state.time.lockNonSelected = locked;
         },
         toggleFullScreen: function(id) {
 

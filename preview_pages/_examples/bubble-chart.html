@@ -58,9 +58,6 @@
             </ul>
         </div>
         
-        <button onclick="toggleTrails('bubble-chart')"><i class="fa fa-share-alt"></i></button>
-        <button onclick="toggleLockBubbles('bubble-chart')"><i class="fa fa-lock"></i></button>
-        
     </div>
     <div class="buttons">
 
@@ -397,20 +394,6 @@ function language(lang) {
         }
     };
     myVizabi.setOptions(options);
-}
-
-function toggleTrails(chart){
-    var options = {state: {time: {}}};
-    options.state.time.trails = !myVizabi.getOptions().state.time.trails;
-    myVizabi.setOptions(options);
-    showState(options.state);
-}
-    
-function toggleLockBubbles(chart){
-    var options = {state: {time: {}}};
-    options.state.time.lockNonSelected = myVizabi.getOptions().state.time.lockNonSelected?0:myVizabi.getOptions().state.time.value.getFullYear();
-    myVizabi.setOptions(options);
-    showState(options.state);
 }
     
 function hook(params/*hook, use, value, scale, domain*/) {
