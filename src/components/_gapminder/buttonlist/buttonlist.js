@@ -29,6 +29,9 @@ define([
             }, {
                 name: "ui",
                 type: "model"
+            }, {
+                name: "language",
+                type: "language"
             }];
 
             this.components = [];
@@ -63,6 +66,18 @@ define([
                     icon: "expand",
                     dialog: false,
                     func: this.toggleFullScreen.bind(this)
+                },
+                'trails': {
+                    title: "buttons/trails",
+                    icon: "trails",
+                    dialog: false,
+                    func: this.toggleBubbleTrails.bind(this)
+                },
+                'lock': {
+                    title: "buttons/lock",
+                    icon: "lock",
+                    dialog: false,
+                    func: this.toggleBubbleLock.bind(this)
                 },
                 '_default': {
                     title: "Button",
@@ -228,6 +243,16 @@ define([
             this._active_comp = false;
         },
 
+        toggleBubbleTrails: function(id) {
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+            btn.classed(class_active, !btn.classed(class_active));
+            
+        },
+        toggleBubbleLock: function(id) {
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+            btn.classed(class_active, !btn.classed(class_active));
+            
+        },
         toggleFullScreen: function(id) {
 
             var component = this,
@@ -244,14 +269,19 @@ define([
 
             //TODO: figure out a way to avoid fullscreen resize delay in firefox
             if (fs) {
-                launchIntoFullscreen(root.node());
+                launchIntoFullscreen(root.node());    
             } else {
                 exitFullscreen();
             }
 
             root.classed(class_vzb_fullscreen, fs);
             this.model.ui.fullscreen = fs;
+            var translator = this.model.language.getTFunction();
             btn.classed(class_active, fs);
+            btn.select(".vzb-buttonlist-btn-icon").html(this._icons[fs?"unexpand":"expand"]);
+            btn.select(".vzb-buttonlist-btn-title").text(
+                translator("buttons/" + (fs?"unexpand":"expand"))
+            );
 
             //restore body overflow
             document.body.style.overflow = body_overflow;
@@ -274,7 +304,11 @@ define([
             'search': '<svg class="vzb-icon vzb-icon-search" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1216 832q0-185-131.5-316.5t-316.5-131.5-316.5 131.5-131.5 316.5 131.5 316.5 316.5 131.5 316.5-131.5 131.5-316.5zm512 832q0 52-38 90t-90 38q-54 0-90-38l-343-342q-179 124-399 124-143 0-273.5-55.5t-225-150-150-225-55.5-273.5 55.5-273.5 150-225 225-150 273.5-55.5 273.5 55.5 225 150 150 225 55.5 273.5q0 220-124 399l343 343q37 37 37 90z"/></svg>',
             'circle': '<svg class="vzb-icon vzb-icon-circle" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 896q0 209-103 385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5 279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"/></svg>',
             'expand': '<svg class="vzb-icon vzb-icon-expand" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M883 1056q0 13-10 23l-332 332 144 144q19 19 19 45t-19 45-45 19h-448q-26 0-45-19t-19-45v-448q0-26 19-45t45-19 45 19l144 144 332-332q10-10 23-10t23 10l114 114q10 10 10 23zm781-864v448q0 26-19 45t-45 19-45-19l-144-144-332 332q-10 10-23 10t-23-10l-114-114q-10-10-10-23t10-23l332-332-144-144q-19-19-19-45t19-45 45-19h448q26 0 45 19t19 45z"/></svg>',
-            'asterisk': '<svg class="vzb-icon vzb-icon-asterisk" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1546 1050q46 26 59.5 77.5t-12.5 97.5l-64 110q-26 46-77.5 59.5t-97.5-12.5l-266-153v307q0 52-38 90t-90 38h-128q-52 0-90-38t-38-90v-307l-266 153q-46 26-97.5 12.5t-77.5-59.5l-64-110q-26-46-12.5-97.5t59.5-77.5l266-154-266-154q-46-26-59.5-77.5t12.5-97.5l64-110q26-46 77.5-59.5t97.5 12.5l266 153v-307q0-52 38-90t90-38h128q52 0 90 38t38 90v307l266-153q46-26 97.5-12.5t77.5 59.5l64 110q26 46 12.5 97.5t-59.5 77.5l-266 154z"/></svg>'
+            'asterisk': '<svg class="vzb-icon vzb-icon-asterisk" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1546 1050q46 26 59.5 77.5t-12.5 97.5l-64 110q-26 46-77.5 59.5t-97.5-12.5l-266-153v307q0 52-38 90t-90 38h-128q-52 0-90-38t-38-90v-307l-266 153q-46 26-97.5 12.5t-77.5-59.5l-64-110q-26-46-12.5-97.5t59.5-77.5l266-154-266-154q-46-26-59.5-77.5t12.5-97.5l64-110q26-46 77.5-59.5t97.5 12.5l266 153v-307q0-52 38-90t90-38h128q52 0 90 38t38 90v307l266-153q46-26 97.5-12.5t77.5 59.5l64 110q26 46 12.5 97.5t-59.5 77.5l-266 154z"/></svg>',
+            'trails': '<svg class="vzb-icon vzb-icon-trails" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path transform="scale(1,-1) translate(0,-1536)" d="M1216 512q133 0 226.5 -93.5t93.5 -226.5t-93.5 -226.5t-226.5 -93.5t-226.5 93.5t-93.5 226.5q0 12 2 34l-360 180q-92 -86 -218 -86q-133 0 -226.5 93.5t-93.5 226.5t93.5 226.5t226.5 93.5q126 0 218 -86l360 180q-2 22 -2 34q0 133 93.5 226.5t226.5 93.5 t226.5 -93.5t93.5 -226.5t-93.5 -226.5t-226.5 -93.5q-126 0 -218 86l-360 -180q2 -22 2 -34t-2 -34l360 -180q92 86 218 86z"/></svg>',
+            'lock': '<svg class="vzb-icon vzb-icon-expand" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path transform="scale(1,-1) translate(0,-1536)" d="M320 768h512v192q0 106 -75 181t-181 75t-181 -75t-75 -181v-192zM1152 672v-576q0 -40 -28 -68t-68 -28h-960q-40 0 -68 28t-28 68v576q0 40 28 68t68 28h32v192q0 184 132 316t316 132t316 -132t132 -316v-192h32q40 0 68 -28t28 -68z"/></svg>',
+            'unlock': '<svg class="vzb-icon vzb-icon-expand" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path transform="scale(1,-1) translate(0,-1536)" d="M1056 768q40 0 68 -28t28 -68v-576q0 -40 -28 -68t-68 -28h-960q-40 0 -68 28t-28 68v576q0 40 28 68t68 28h32v320q0 185 131.5 316.5t316.5 131.5t316.5 -131.5t131.5 -316.5q0 -26 -19 -45t-45 -19h-64q-26 0 -45 19t-19 45q0 106 -75 181t-181 75t-181 -75t-75 -181 v-320h736z"/></svg>',
+            'unexpand': '<svg class="vzb-icon vzb-icon-expand" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path transform="scale(1,-1) translate(0,-1536)" d="M768 576v-448q0 -26 -19 -45t-45 -19t-45 19l-144 144l-332 -332q-10 -10 -23 -10t-23 10l-114 114q-10 10 -10 23t10 23l332 332l-144 144q-19 19 -19 45t19 45t45 19h448q26 0 45 -19t19 -45zM1523 1248q0 -13 -10 -23l-332 -332l144 -144q19 -19 19 -45t-19 -45 t-45 -19h-448q-26 0 -45 19t-19 45v448q0 26 19 45t45 19t45 -19l144 -144l332 332q10 10 23 10t23 -10l114 -114q10 -10 10 -23z"/></svg>'
         }
 
     });
