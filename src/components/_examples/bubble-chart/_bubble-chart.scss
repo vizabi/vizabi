@@ -27,7 +27,8 @@ $vzb-bc-year-size:300px;
     .vzb-bc-trails .vzb-bc-entity {
         @include opacity(0.8);
         stroke: white;
-        pointer-events: none;
+        cursor: pointer;
+        line{pointer-events: none;}
     }
     .vzb-bc-bubbles {
         .vzb-bc-entity {
@@ -64,17 +65,48 @@ $vzb-bc-year-size:300px;
         }
     }
     .vzb-bc-labels .vzb-bc-entity text {
-        /*pointer-events: none;*/
+        pointer-events: none;
         /*text-anchor: middle;*/
         
-        cursor: pointer;
         opacity: 0.9;
         dominant-baseline: hanging;
         fill: $vzb-color-primary;
+        
         &.vzb-bc-label-shadow {
             fill: white;
             @include opacity(0.5);
             stroke: white;
+        }
+    }
+    
+    .vzb-bc-labels .vzb-bc-entity rect{  
+        @include transition(opacity, 300ms, linear);
+        cursor: pointer;
+        opacity: 0.8;
+        fill: white; 
+        stroke: $vzb-color-primary; 
+    }
+    .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {  
+        @include transition(opacity, 300ms, linear);
+        fill: white; 
+        text-anchor: middle; 
+        dominant-baseline: middle;
+        pointer-events: none;
+    }
+    .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x { 
+        @include transition(opacity, 300ms, linear);
+        cursor: pointer;
+        fill: #ff89cd;
+        stroke: white;
+        stroke-width: 2px;
+    }
+    
+    
+    .vzb-bc-labels .vzb-bc-entity.vzb-highlighted text{ 
+        fill: $vzb-color-primary;
+        opacity: 1.0;
+        &.vzb-bc-label-shadow {
+            stroke: #fff500;
         }
     }
     .vzb-bc-labels .vzb-bc-entity text:hover {
@@ -147,13 +179,13 @@ $vzb-bc-year-size:300px;
             stroke-opacity: 1.0;
         }
         .vzb-bc-labels text {
-            font-size: 1.8em;
+            font-size: 1.6em;
             &.vzb-bc-label-shadow {
                 stroke-width: 4px
             }
         }
         .vzb-axis-value text {
-            font-size: 1.8em;
+            font-size: 1.6em;
         }
     }
 }
@@ -169,13 +201,13 @@ $vzb-bc-year-size:300px;
             stroke-opacity: 0.8;
         }
         .vzb-bc-labels text {
-            font-size: 1.6em;
+            font-size: 1.4em;
             &.vzb-bc-label-shadow {
                 stroke-width: 3px
             }
         }
         .vzb-axis-value text {
-            font-size: 1.6em;
+            font-size: 1.4em;
         }
     }
 }
@@ -194,13 +226,13 @@ $vzb-bc-year-size:300px;
             stroke-opacity: 0.7;
         }
         .vzb-bc-labels text {
-            font-size: 1.3em;
+            font-size: 1.0em;
             &.vzb-bc-label-shadow {
                 stroke-width: 2px
             }
         }
         .vzb-axis-value text {
-            font-size: 1.3em;
+            font-size: 1.0em;
         }
     }
 }

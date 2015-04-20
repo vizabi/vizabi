@@ -56,6 +56,27 @@ define(['d3', 'lodash', 'stacktrace'], function(d3, _, stacktrace) {
 
         formatStacktrace: function(stack) {
             return stack.join('\n\n');
+        },
+
+        /**
+         * Given two objects, it includes the properties of the second in the
+         * first and adds similar properties to an array of values
+         * @param {Object} callbacks1 first object of callbacks
+         * @param {Object} callbacks2 second object of callbacks
+         */
+        extendCallbacks: function(callbacks1, callbacks2) {
+            for(var evt in callbacks2) {
+                if(_.has(callbacks1, evt)) {
+                    if(!_.isArray(callbacks1[evt])) {
+                        callbacks1[evt] = [callbacks1[evt]];
+                    }
+                    callbacks1[evt].push(callbacks2[evt]);
+
+                } else {
+                    callbacks1[evt] = callbacks2[evt];
+                }
+            }
+            return callbacks1;
         }
     }
 

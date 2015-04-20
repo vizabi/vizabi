@@ -42,7 +42,11 @@ define(['d3'], function(d3){
             
             //if(axis.orient()=="bottom") console.log("ordered", axis.tickValues())
             // construct the view (d3 constructor is used)
-            _super(g);
+            if(options.transitionDuration>0){
+                _super(g.transition().duration(options.transitionDuration));
+            }else{
+                _super(g);
+            }
             //if(axis.orient()=="bottom") console.log("received", g.selectAll("text").each(function(d){console.log(d)}))
             
             var orient = axis.orient()=="top"||axis.orient()=="bottom"?HORIZONTAL:VERTICAL;

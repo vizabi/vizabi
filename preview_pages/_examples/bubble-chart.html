@@ -58,8 +58,6 @@
             </ul>
         </div>
         
-        <button onclick="toggleTrails('bubble-chart')"><i class="fa fa-share-alt"></i></button>
-        
     </div>
     <div class="buttons">
 
@@ -207,7 +205,8 @@ $(function() {
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
-                trails: true
+                trails: true,
+                lockNonSelected: 0
             },
 
             //entities we want to show
@@ -266,6 +265,8 @@ $(function() {
         //where do we get data from?
         data: {
             reader: 'waffle-server'
+//            reader: "local-json",
+//            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
         },
         
         ui: {
@@ -289,7 +290,10 @@ $(function() {
             strings: {
                 en: {
                     "title": "Bubble Chart Title",
-                    "buttons/expand": "Expand",
+                    "buttons/expand": "Full screen",
+                    "buttons/unexpand": "Leave full screen",
+                    "buttons/trails": "Trails",
+                    "buttons/lock": "Lock",
                     "buttons/find": "Find",
                     "buttons/colors": "Colors",
                     "buttons/size": "Size",
@@ -306,6 +310,9 @@ $(function() {
                 pt: {
                     "title": "Título do Bubble Chart",
                     "buttons/expand": "Expandir",
+                    "buttons/unexpand": "Nia expandir",
+                    "buttons/trails": "Led",
+                    "buttons/lock": "Lås",
                     "buttons/find": "Encontre",
                     "buttons/colors": "Cores",
                     "buttons/size": "Tamanho",
@@ -387,13 +394,6 @@ function language(lang) {
         }
     };
     myVizabi.setOptions(options);
-}
-
-function toggleTrails(chart){
-    var options = {state: {time: {}}};
-    options.state.time.trails = !myVizabi.getOptions().state.time.trails;
-    myVizabi.setOptions(options);
-    showState(options.state);
 }
     
 function hook(params/*hook, use, value, scale, domain*/) {
