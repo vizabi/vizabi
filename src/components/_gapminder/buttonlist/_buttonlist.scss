@@ -69,6 +69,15 @@ $vzb-button-color-border: #DBE8EB;
                 color: $vzb-button-color-title-active;
             }
         }
+        &.vzb-unavailable {
+            &>.vzb-buttonlist-btn-icon {
+                border: 1px solid $vzb-button-color;
+                opacity: 0.4;
+            }
+            &>.vzb-buttonlist-btn-title {
+                opacity: 0.4;
+            }
+        }
     }
 
     @import 'dialogs/dialog';

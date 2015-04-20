@@ -8,8 +8,9 @@ define([
 ], function(d3, _, utils, Component) {
 
     //default existing buttons
-    var class_active = "vzb-active",
-        class_vzb_fullscreen = "vzb-force-fullscreen";
+    var class_active = "vzb-active";
+    var class_unavailable = "vzb-unavailable";
+    var class_vzb_fullscreen = "vzb-force-fullscreen";
 
     var ButtonList = Component.extend({
 
@@ -97,6 +98,12 @@ define([
             this.model_binds = {
                 "readyOnce": function(evt) {
                     _this.startup(config.buttons);
+                },
+                "change:state:entities:select": function() {
+                    if(_this.model.state.entities.select.length == 0){
+                        _this.model.state.time.lockNonSelected = 0;
+                    }
+                    _this.startup(config.buttons);
                 }
             }
 
@@ -108,13 +115,10 @@ define([
             var _this = this;
             
             button_list.forEach(function(d){
-                var btn = _this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + d + "']");
-                var active = false;
                 switch (d){
-                    case "trails": active = _this.model.state.time.trails; break;
-                    case "lock": active = _this.model.state.time.lockNonSelected; break;
+                    case "trails": _this.setBubbleTrails(d); break;
+                    case "lock": _this.setBubbleLock(d); break;
                 }
-                btn.classed(class_active, active);
             })
         },
 
@@ -265,26 +269,38 @@ define([
         },
 
         toggleBubbleTrails: function(id) {
-            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             this.model.state.time.trails = !this.model.state.time.trails;
+            this.setBubbleTrails(id);
+        },
+        setBubbleTrails: function(id, trails) {
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+            
             btn.classed(class_active, this.model.state.time.trails);
         },
         toggleBubbleLock: function(id) {
-            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+            if(this.model.state.entities.select.length == 0) return;
+            
             var timeFormatter = d3.time.format(this.model.state.time.formatInput);
+            var locked = this.model.state.time.lockNonSelected;
+            locked = locked?0:timeFormatter(this.model.state.time.value);
+            this.model.state.time.lockNonSelected = locked;
+            
+            this.setBubbleLock(id);
+        },
+        setBubbleLock: function(id) {
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             var translator = this.model.language.getTFunction();
             
             var locked = this.model.state.time.lockNonSelected;
-            locked = locked?0:timeFormatter(this.model.state.time.value);
+            
+            btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
             
             btn.classed(class_active, locked)
             btn.select(".vzb-buttonlist-btn-title")
                 .text(locked?locked:translator("buttons/lock"));
             
             btn.select(".vzb-buttonlist-btn-icon")
-                .html(this._icons[locked?"unlock":"lock"]);
-            
-            this.model.state.time.lockNonSelected = locked;
+                .html(this._icons[locked?"lock":"unlock"]);
         },
         toggleFullScreen: function(id) {
 
