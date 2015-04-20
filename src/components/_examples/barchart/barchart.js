@@ -13,20 +13,33 @@ define([
          * @param {Object} context The component's parent
          */
         init: function(config, context) {
-            this.template = "components/_examples/barchart/barchart";
+            this.name = 'barchart';
+            this.template = 'components/_examples/' + this.name + '/' + this.name;
 
-            //determine which models this component expects
-            //Example:
-            //this.model_expects = [{
-            //    name: "rows",
-            //    type: "model"
-            //},{
-            //    name: "time",
-            //    type: "time"
-            //}];
+            //define expected models for this component
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }, {
+                name: "entities",
+                type: "entities"
+            }, {
+                name: "bars",
+                type: "model"
+            }, {
+                name: "language",
+                type: "language"
+            }];
 
-            //specifying subcomponents
-            this.components = [];
+            var _this = this;
+            this.model_binds = {
+                "change:time:value": function(evt) {
+                    _this.updateTime();
+                },
+                "ready": function(evt) {
+                    _this.updateTime();
+                }
+            };
 
             //contructor is the same as any component
             this._super(config, context);
@@ -38,20 +51,12 @@ define([
          * At this point, this.element and this.placeholder are available as d3 objects
          */
         domReady: function() {
-            //E.g: var graph = this.element.select('.vzb-graph');
-
-            /* You may also listen to changes in model:
-
-            this.model.time.on({
-                "change": function(evt) {
-                    console.log("Time model changed:", evt);
-                },
-                "change:start": function() {
-                    console.log("The start of time has changed");
-                }
-            });
-
-             */
+            
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
+            this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
+            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+            this.bars = this.graph.select('.vzb-bc-bars');
         },
 
         /**
@@ -59,8 +64,9 @@ define([
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        modelReady: function() {
-            //E.g: var year = this.model.get('value');
+        updateTime: function() {
+            var time = this.model.time.value;
+            console.log(time);
         },
 
         /**

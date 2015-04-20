@@ -19,23 +19,19 @@ define([
 	        //specifying components
             this.components = [{
                 component: '_examples/barchart',
-                placeholder: '.vzb-your-placeholder'
-                //model: ['time']  //pass this model to this component 
+                placeholder: '.vzb-tool-viz',
+                model: ["state.time", "state.entities", "state.marker", "language"]  //pass models to component
             },
             {
                 component: '_gapminder/buttonlist',
-                placeholder: '.vzb-tool-buttonlist'
-                //model: ['time']  //pass this model to this component 
-            },
-            {
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
-                //model: ['time']  //pass this model to this component 
+                placeholder: '.vzb-tool-buttonlist',
+                model: ['state', 'ui', 'language'],
+                buttons: ['fullscreen', 'find', 'colors']
             },
             {
                 component: '_gapminder/timeslider',
-                placeholder: '.vzb-tool-timeslider'
-                //model: ['time']  //pass this model to this component 
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"]
             },
             ];
 
@@ -49,23 +45,23 @@ define([
          */
         toolModelValidation: function(model) {
 
-            /* Example of model validation for time, show and data 
-
-            var state = model.state,
-                data = model.data;
+            var time = this.model.state.time,
+                marker = this.model.state.marker.label;
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!marker.getItems() || marker.getItems().length < 1) {
                 return;
             }
-            if (state.time.start < data.getLimits('time').min) {
-                state.time.start = data.getLimits('time').min;
-            }
-            if (state.time.end > data.getLimits('time').max) {
-                state.time.end = data.getLimits('time').max;
-            }
 
-            * End of example */
+            var dateMin = marker.getLimits('time').min,
+                dateMax = marker.getLimits('time').max;
+
+            if (time.start < dateMin) {
+                time.start = dateMin;
+            }
+            if (time.end > dateMax) {
+                time.end = dateMax;
+            }
         }
     });
 

@@ -1,25 +1,51 @@
-//general styles
-.vzb-barchart {
-    //...
-}
+.vzb-bar-chart {
+    @include absolute(0px,0px,0px,0px);
+    @include font-size(18px);
+    font-family: $vzb-font-family;
+    color: #666666;
+    width: 100%;
+    height: 100%;
 
-//large specific styles
-&.vzb-large {
-    .vzb-barchart {
-     	//...
+    .vzb-bc-title {
+        color: $vzb-color-primary;
+        fill: currentColor;
+    }
+    .vzb-bc-axis {
+        fill: none;
+        stroke: #999999;
+        color: #999999;
+        text {
+            fill: currentColor;
+            stroke: none;
+        }
+    }
+    .vzb-bc-axis-x, .vzb-bc-axis-y {
+        @extend .vzb-bc-axis;
+    }
+    .vzb-bc-axis-x-title, .vzb-bc-axis-y-title {
+        @extend .vzb-bc-title;
+    }
+
+    .vzb-bc-bar {
+        fill: $vzb-color-green;
+        stroke: none;
+    }
+    .vzb-bc-bar:nth-child(2n) {
+        fill: $vzb-color-red;
+    }
+    .vzb-bc-bar:nth-child(3n) {
+        fill: $vzb-color-blue;
     }
 }
 
-//medium specific styles
 &.vzb-medium {
-    .vzb-barchart {
-        //...
+    .vzb-bar-chart {
+        @include font-size(15px);
     }
 }
 
-//small specific styles
 &.vzb-small {
-    .vzb-barchart {
-        //...
+    .vzb-bar-chart {
+        @include font-size(12px);
     }
 }
