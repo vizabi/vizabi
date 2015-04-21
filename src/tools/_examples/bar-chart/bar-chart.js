@@ -1,73 +1,69 @@
-//TODO: refactor hardcoded dates //former FIXME
-//TODO: remove date formatting from here //former FIXME
-
+//Bar Chart Tool
 define([
-    'd3',
     'base/tool'
-], function(d3, Tool) {
+], function(Tool) {
 
-    var barChart = Tool.extend({
+    var BarChartTool = Tool.extend({
 
         /**
-         * Initialized the tool
-         * @param config tool configurations, such as placeholder div
-         * @param options tool options, such as state, data, etc
+         * Initializes the tool (Bar Chart Tool).
+         * Executed once before any template is rendered.
+         * @param {Object} config Initial config, with name and placeholder
+         * @param {Object} options Options such as state, data, etc
          */
         init: function(config, options) {
+            
+            this.name = "bar-chart";
+            this.template = "tools/_examples/"+this.name+"/"+this.name;
 
-            this.name = 'bar-chart';
-            this.template = "tools/_examples/bar-chart/bar-chart";
-
-            //instantiating components
+	        //specifying components
             this.components = [{
-                component: '_gapminder/header',
-                placeholder: '.vzb-tool-title'
-            }, {
                 component: '_examples/bar-chart',
-                placeholder: '.vzb-tool-viz', //div to render
-                model: ["state.show", "data", "state.time"]
-            }, {
-                component: '_gapminder/timeslider',
-                placeholder: '.vzb-tool-timeslider', //div to render
-                model: ["state.time"]
-            }
-            ,{
+                placeholder: '.vzb-tool-viz',
+                model: ["state.time", "state.entities", "state.marker", "language"]  //pass models to component
+            },
+            {
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
-                model: ['state', 'data', 'language'],
-                buttons: ['colors', 'more-options']
-            }
+                model: ['state', 'ui', 'language'],
+                buttons: ['fullscreen', 'find', 'colors']
+            },
+            {
+                component: '_gapminder/timeslider',
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"]
+            },
             ];
 
+            //constructor is the same as any tool
             this._super(config, options);
         },
 
         /**
          * Validating the tool model
+         * @param model the current tool model to be validated
          */
-        validate: function() {
+        toolModelValidation: function(model) {
 
-            var state = this.model.state;
-            var data = this.model.data;
+            var time = this.model.state.time,
+                marker = this.model.state.marker.label;
 
             //don't validate anything if data hasn't been loaded
-            if(!data.getItems() || data.getItems().length < 1) {
+            if (!marker.getItems() || marker.getItems().length < 1) {
                 return;
             }
 
-            var dateMin = data.getLimits('time').min,
-                dateMax = data.getLimits('time').max;
+            var dateMin = marker.getLimits('time').min,
+                dateMax = marker.getLimits('time').max;
 
-            if (state.time.start < dateMin) {
-                state.time.start = dateMin;
+            if (time.start < dateMin) {
+                time.start = dateMin;
             }
-            if (state.time.end > dateMax) {
-                state.time.end = dateMax;
+            if (time.end > dateMax) {
+                time.end = dateMax;
             }
         }
-        
     });
 
-
-    return barChart;
+    return BarChartTool;
 });
