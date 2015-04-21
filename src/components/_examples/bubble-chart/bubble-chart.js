@@ -148,15 +148,22 @@ define([
                     if (!_this.ui.labels.dragging) return;
                     var cache = _this.cached[d.geo];
                     cache.labelFixed = true;
-                    cache.labelX_ += d3.event.dx/_this.width;
-                    cache.labelY_ += d3.event.dy/_this.height;
-                    var limitedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-                    var limitedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+                
+                   cache.labelX_ += d3.event.dx/_this.width;
+                   cache.labelY_ += d3.event.dy/_this.height;
+                
+                    var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+                    var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+                    var resolvedX0 = _this.xScale(cache.labelX0);
+                    var resolvedY0 = _this.yScale(cache.labelY0);
 
-                    var limitedX0 = _this.xScale(cache.labelX0);
-                    var limitedY0 = _this.yScale(cache.labelY0);
-
-                    _this.repositionLabels(d, i, this, limitedX, limitedY, limitedX0, limitedY0, _this.duration);
+                    _this.repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, _this.duration);
+                })
+                .on("dragend", function(d, i) {
+                    _this.model.entities.setLabelOffset(d, [
+                        Math.round(_this.cached[d.geo].labelX_*100)/100, 
+                        Math.round(_this.cached[d.geo].labelY_*100)/100
+                    ]);
                 });
 
 
@@ -710,6 +717,9 @@ define([
                         
                         if (!_this.model.time.trails || trailStartTime - _this.time > 0 || cached.labelX0==null || cached.labelY0 == null) {
                             select.trailStartTime = _this.timeFormatter(_this.time);
+                            //the events in model are not triggered here. to trigger uncomment the next line
+                            //_this.model.entities.triggerAll("change:select");
+                            
                             cached.labelX0 = valueX;
                             cached.labelY0 = valueY;
                         }
@@ -749,11 +759,9 @@ define([
                                         .attr("rx", contentBBox.height*0.2)
                                         .attr("ry", contentBBox.height*0.2);
                                 }
-
-                                if (!cached.labelFixed) {
-                                    cached.labelX_ = scaledS / _this.width;
-                                    cached.labelY_ = 0;
-                                }
+                                                        
+                                cached.labelX_ = select.labelOffset[0] || scaledS / _this.width;
+                                cached.labelY_ = select.labelOffset[1] || scaledS / _this.width;
 
                                 var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
                                 var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
