@@ -195,69 +195,7 @@ $(function() {
 
     var options = {
         //state
-        state: url.state || {
-
-            //how we show it
-            marker: {
-                dimensions: ["entities", "time"],
-                type: "geometry",
-                shape: "circle",
-                label: {
-                    use: "property",
-                    value: "geo.name"
-                },
-                axis_y: {
-                    use: "indicator",
-                    value: "lex",
-                    scale: 'linear'
-                },
-                axis_x: {
-                    use: "property",
-                    value: "geo"
-                },
-                size: {
-                    use: "indicator",
-                    value: "pop",
-                    scale: 'linear',
-                    max: 0.75
-                },
-                color: {
-                    use: "property",
-                    value: "geo.region",
-                    "domain": {
-                        "_default": "#ffb600",
-                        "world": "#ffb600",
-                        "eur": "#FFE700", //"#E1CE00"
-                        "afr": "#00D5E9", //"#62CCE3"
-                        "asi": "#FF5872", //"#F77481"
-                        "ame": "#7FEB00"  //"#B4DE79"
-                    },
-                    domain_type: "continuous" //or discrete
-                }
-            }
-        },
-
-        //where do we get data from?
-        data: {
-            reader: 'waffle-server'
-//            reader: "local-json",
-//            path: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
-        },
-        
-        ui: {
-            'vzb-tool-bar-chart': {
-                whenHovering: {
-                    showProjectionLineX: true,
-                    showProjectionLineY: true,
-                    higlightValueX: true,
-                    higlightValueY: true
-                },
-                labels: {
-                    autoResolveCollisions: true,
-                    dragging: true
-                }
-            }
-        },
+        state: url.state || undefined,
 
         //language properties
         language: url.lang || {
