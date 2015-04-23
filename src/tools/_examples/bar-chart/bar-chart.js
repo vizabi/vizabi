@@ -25,7 +25,7 @@ define([
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language'],
-                buttons: ['fullscreen', 'find', 'colors']
+                buttons: ['fullscreen']
             }, {
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
@@ -80,8 +80,6 @@ define([
                                     _type_: "array",
                                     _defs_: ["entities", "time"]
                                 },
-                                type: "geometry",
-                                shape: "circle",
                                 label: {
                                     _type_: "hook",
                                     _defs_: {
@@ -176,18 +174,7 @@ define([
                     _defs_: {
                         'vzb-tool-bar-chart': {
                             _type_: "object",
-                            _defs_: {
-                                whenHovering: {
-                                    showProjectionLineX: true,
-                                    showProjectionLineY: true,
-                                    higlightValueX: true,
-                                    higlightValueY: true
-                                },
-                                labels: {
-                                    autoResolveCollisions: true,
-                                    dragging: true
-                                }
-                            }
+                            _defs_: {}
                         }
                     }
                 },
@@ -204,10 +191,9 @@ define([
                             _type_: "object",
                             _defs_: {
                                 en: {
-                                    "title": "Bubble Chart Title",
+                                    "title": "",
                                     "buttons/expand": "Full screen",
                                     "buttons/unexpand": "Leave full screen",
-                                    "buttons/trails": "Trails",
                                     "buttons/lock": "Lock",
                                     "buttons/find": "Find",
                                     "buttons/colors": "Colors",

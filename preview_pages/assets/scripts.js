@@ -87,7 +87,7 @@ function showState(state, id) {
     }
 
     // Format date objects according to the unit
-    if (state.time && state.time.unit) {
+    if (state && state.time && state.time.unit) {
         if (typeof state.time.value === 'object') {
             state.time.value = formatDate(state.time.value, state.time.unit);
         }
