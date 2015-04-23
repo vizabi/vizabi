@@ -76,7 +76,7 @@ With this, Grunt will automatically start a local server and open the example pa
 In order to build the project, type the following:
 ```sh
 grunt build
-```pr
+```
 
 You can find the build output under ```dist/```.
 
