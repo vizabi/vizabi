@@ -6,7 +6,7 @@ $vzb-button-more-bg: $vzb-color-grey-lightest;
 $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-color-title: #9FBBC1;
 $vzb-button-color-title-active: $vzb-button-color;
-$vzb-button-color-border: #DBE8EB;
+$vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
     @import '../bubble-size/bubble-size';
     @include box-sizing(border-box);
@@ -29,7 +29,7 @@ $vzb-button-color-border: #DBE8EB;
             font-size: 1.15em;
             text-align: center;
             display: inline-block;
-            border: none;
+            border: 1px solid $vzb-button-color-border;
             background-color: $vzb-button-bg;
             color: $vzb-button-color;
             width: $vzb-button-size;
@@ -60,6 +60,7 @@ $vzb-button-color-border: #DBE8EB;
             &>.vzb-buttonlist-btn-icon {
                 color: $vzb-button-bg;
                 background-color: $vzb-button-color;
+                border: 1px solid $vzb-button-color;
 
                 .vzb-icon path {
                     fill: $vzb-button-bg;
@@ -67,6 +68,15 @@ $vzb-button-color-border: #DBE8EB;
             }
             &>.vzb-buttonlist-btn-title {
                 color: $vzb-button-color-title-active;
+            }
+        }
+        &.vzb-unavailable {
+            &>.vzb-buttonlist-btn-icon {
+                border: 1px solid $vzb-button-color-border;
+                opacity: 0.4;
+            }
+            &>.vzb-buttonlist-btn-title {
+                opacity: 0.4;
             }
         }
     }

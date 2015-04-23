@@ -82,11 +82,23 @@ define([
             } else {
                 var added = {};
                 added[dimension] = value;
+                added["labelOffset"] = [0,0];
                 if (timeFormatter) {
                     added["trailStartTime"] = timeFormatter(d.time);
                 }
                 this.select = this.select.concat(added);
             }
+        },
+        
+        setLabelOffset: function(d, xy) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            
+            _.find(this.select, function(d) { return d[dimension] === value; })
+                .labelOffset = xy;
+            
+            //force the model to trigger events even if value is the same
+            this.set("select", this.select, true);
         },
 
         /**
