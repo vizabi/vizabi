@@ -197,28 +197,6 @@ $(function() {
         //state
         state: url.state || {
 
-            //timespan of the visualization
-            time: {
-                start: 1952,
-                end: 2012,
-                value: 2012,
-                step: 1,
-                speed: 300,
-                formatInput: "%Y"
-            },
-
-            //entities we want to show
-            entities: {
-                show: {
-                    dim: "geo",
-                    filter: {
-                        //all countries that contain data
-                        "geo": ["*"],
-                        "geo.category": ["region"]
-                    }
-                }
-            },
-
             //how we show it
             marker: {
                 dimensions: ["entities", "time"],
