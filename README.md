@@ -1,29 +1,20 @@
 ![Gapminder Vizabi 0.4](http://static.gapminder.org/vizabi/vizabi.jpg)
 
-Welcome to the vizabi repository! 
-
 (Please note; Vizabi is work in progress! Vizabi 1.0.0 will be the public Alpha release of the framework, and we're not there yet). [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi) [![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)
 
 
-####What is Vizabi?
+##What is Vizabi?
 Vizabi is a framework for building Maintainable Visual Exploration Tools, with consistent support for the following five core features: 1) Embedding with configurations, 2) Responsive layout, 3) Support devices native UI Controls & Interactions, 4) Enable Instant Translation & Localization by end user, 5) Unifying data-schema for multi dimensional statistics.
 
 You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
 ####Can I see it in action?
-Yes. See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview_pages/). If you want to check out even more examples, check our [Vizabi Examples Repo](https://github.com/Gapminder/vizabi-examples).
+See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview_pages/
 
 #### Where can I find full documentation?
 See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapminder/vizabi/wiki/) 
 
-### QuickStart
-
-*Note 1*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568).
-
-*Note 2*: This guide explains how you set up your environment to develop Vizabi. If you just want to use Vizabi, skip this chapter and [move on](https://github.com/Gapminder/vizabi/wiki/How-to-use-Vizabi)
-
-*Note 3*: If you are on Windows platform, we highly recommend using [Cygwin](https://www.cygwin.com/). Cygwin is a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. Cygwin makes your development more efficient with running terminal commands like in UNIX.
-
+## Setup & Quickstart
 
 ####Dependencies
 Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Grunt](https://github.com/gruntjs/grunt). 
@@ -32,12 +23,12 @@ Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm)
 
 **Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
 
-**Bower** is a package manager and you can install it with npm (with administrative privillages):
+**Bower** is a package manager and you can install it with npm (with administrative privileges):
 ```sh
 npm install -g bower
 ```
 
-**Grunt** is the Javascript task runner and can also be installed with npm (with administrative privillages):
+**Grunt** is the Javascript task runner and can also be installed with npm (with administrative privileges):
 ```sh
 npm install -g grunt-cli
 ```
@@ -47,33 +38,31 @@ npm install -g grunt-cli
 * [Install Ruby] (https://www.ruby-lang.org/en/installation/)
 * [Install Rubygems] (https://rubygems.org/pages/download)
 
-**SASS** is grade CSS extension language. To install it, run the following command with administrative privillages: 
+**SASS** is grade CSS extension language. To install it, run the following command with administrative privileges: 
 
 ```sh
 gem install sass
 ```
 
-Now that you have all Vizabi's dependencies in place, you can clone and install Vizabi.
+####Clone and install
 
-####Clone
-In order to run vizabi locally, clone it:
-
-```sh
-git clone https://github.com/Gapminder/vizabi
-cd vizabi
-```
-
-*Note*: If you are using any of Github's GUI clients such as [Github for Windows](https://windows.github.com/) or [Github for Mac](https://mac.github.com/), Go to the right-hand side of the project repository homepage, click on *Clone in Desktop*. 
-
-####Install
-Go to Vizabi directory and run the following commands in the terminal:
+Now that you have all Vizabi's dependencies in place, you can clone this repo. Then, go to Vizabi directory in the terminal and run the following commands:
 
 ```sh
 npm install
 bower install
 ```
 
-*Note*: You may need to run ```npm install``` with administrative privilages.
+You may need to run ```npm install``` with administrative privilages.
+
+*Note 1*: You can watch the screencast on [How to Get Started with Vizabi] (http://vimeo.com/107568568).
+
+*Note 2*: This guide explains how you set up your environment to develop Vizabi. If you just want to use Vizabi, skip this chapter and [move on](https://github.com/Gapminder/vizabi/wiki/How-to-use-Vizabi)
+
+*Note 3*: If you are on Windows platform, we highly recommend using [Cygwin](https://www.cygwin.com/). Cygwin is a large collection of GNU and Open Source tools which provide functionality similar to a Linux distribution on Windows. Cygwin makes your development more efficient with running terminal commands like in UNIX.
+
+*Note 4*: If you are using any of Github's GUI clients such as [Github for Windows](https://windows.github.com/) or [Github for Mac](https://mac.github.com/), Go to the right-hand side of the project repository homepage, click on *Clone in Desktop*. 
+
 
 ####Running and Developing
 We use grunt to build Vizabi. You can run Vizabi for Development or Production: ```grunt [dev|build]```.
@@ -87,18 +76,30 @@ With this, Grunt will automatically start a local server and open the example pa
 In order to build the project, type the following:
 ```sh
 grunt build
-```
+```pr
 
 You can find the build output under ```dist/```.
 
+####Testing
 
-### Contribution
+Current tests are written in the folder `specs/`. In order to run them, type the following:
+```sh
+grunt test
+```
+
+If you want to see them running in a browser, type:
+```sh
+grunt test:dev
+```
+
+
+## Contribution
  The following list provides some parts that Vizabi will benefit from your contribution:
- * Unit Testing: Write Unit Tests for Vizabi. The priority is with base classes, of course.
+ * Unit Testing: Write Unit Tests for Vizabi.
  * Tools & Components: Create More tools for Vizabi. [D3js](www.d3js.org) gallery has inspiring examples: [https://github.com/mbostock/d3/wiki/Gallery](D3 Gallery)
  * Styles: Contribute to Vizabi by enhancing the user experience.
   
-#### License
+## License
 
 The source code is released under the BSD open source license.
 
