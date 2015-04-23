@@ -102,7 +102,8 @@ define([
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "indicator"
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
                                         value: {
                                             _type_: "string",
@@ -119,7 +120,8 @@ define([
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "indicator"
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
                                         value: {
                                             _type_: "string",
@@ -136,7 +138,8 @@ define([
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "indicator"
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
                                         value: {
                                             _type_: "string",
@@ -157,7 +160,8 @@ define([
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "property"
+                                            _defs_: "property",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
                                         value: {
                                             _type_: "string",

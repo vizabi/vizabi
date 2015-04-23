@@ -53,9 +53,19 @@ define([
 
                 var blueprint = defaults[field];
                 var original = values[field];
+                //specified type, default value and possible values
                 var type = _.isObject(blueprint) ? blueprint._type_ : null;
                 var defs = _.isObject(blueprint) ? blueprint._defs_ : null;
+                var opts = _.isObject(blueprint) ? blueprint._opts_ : null;
 
+                if(!type) {
+                    if(_.isUndefined(original)) {
+                        values[field] = blueprint;
+                    }
+                    continue;
+                }
+                
+                //each case has special verification
                 if(type === "number" && !_.isNumber(original)) {
                     values[field] = _.isNumber(defs) ? defs : 0;
                 }
@@ -74,10 +84,11 @@ define([
                     }
                     values[field] = this.defaultOptions(values[field], defs);
                 }
-                else if(!type) {
-                    if(_.isUndefined(original)) {
-                        values[field] = blueprint;
-                    }
+
+                //if possible values are determined, we should respect it
+                if(_.isArray(opts) && defs
+                   && _.indexOf(opts, values[field]) === -1) {
+                    values[field] = defs;
                 }
 
             }
