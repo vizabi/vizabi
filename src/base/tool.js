@@ -27,13 +27,15 @@ define([
             this.layout = new Layout();
             this.ui = options.ui || {};
             this.model_binds = this.model_binds || {};
+            this.default_options = this.default_options || {}
 
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
 
             //build tool model
             var _this = this;
-            this.model = new ToolModel(options, utils.extendCallbacks({
+
+            var callbacks = utils.extendCallbacks({
                 'set': function(evt, val) {
                     //binding external events
                     _this._bindEvents();
@@ -73,7 +75,9 @@ define([
                         _this.afterLoading();
                     }
                 }
-            }, this.model_binds), validate);
+            }, this.model_binds);
+
+            this.model = new ToolModel(options, this.default_options, callbacks, validate);
 
             // Parent Constructor (this = root parent)
             this._super(config, this);

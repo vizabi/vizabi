@@ -102,7 +102,7 @@ describe("* Example Bubble Chart", function() {
         expect(contents.length).toBeGreaterThan(0);
     });
 
-    it("should be ready (and all models ready accordingly)", function() {
+    /*it("should be ready (and all models ready accordingly)", function() {
         var ready = viz._tool.model._ready;
         if (!ready) {
             console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
@@ -151,28 +151,6 @@ describe("* Example Bubble Chart", function() {
         it("should scale when screen is resized", function() {
             expect($('.vzb-bubble-chart-svg').width()).toBeGreaterThan(size);
         });
-    });
-
-    // describe("select events", function() {
-
-    //     beforeEach(function(done) {
-
-    //         viz.setOptions({
-    //             state: {
-    //                 entities: {
-    //                     selected: ['swe', 'nor', 'fin']
-    //                 }
-    //             }
-    //         });
-
-    //         setTimeout(function() {
-    //             done();
-    //         }, 200);
-    //     });
-
-    //     it("should select 3 countries", function() {
-    //         expect($(".vzb-bc-bubble .vzb-bc-selected").length).toEqual(3);
-    //     });
-    // });
+    });*/
 
 });

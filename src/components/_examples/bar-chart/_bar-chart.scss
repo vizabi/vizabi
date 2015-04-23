@@ -27,14 +27,7 @@
     }
 
     .vzb-bc-bar {
-        fill: $vzb-color-green;
         stroke: none;
-    }
-    .vzb-bc-bar:nth-child(2n) {
-        fill: $vzb-color-red;
-    }
-    .vzb-bc-bar:nth-child(3n) {
-        fill: $vzb-color-blue;
     }
 }
 
