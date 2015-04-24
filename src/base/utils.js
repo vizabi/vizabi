@@ -78,7 +78,7 @@ define(['d3', 'lodash', 'stacktrace'], function(d3, _, stacktrace) {
             }
             return callbacks1;
         }
-    }
+    };
 
 
     return utils;

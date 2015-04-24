@@ -72,7 +72,6 @@ module.exports = function(grunt) {
 
     //developer task: grunt dev
     grunt.registerTask('dev-preview', [
-        'jshint:all',
         'clean:preview', //clean preview folder
         'write_plugins', //includes all tools and components in plugins.js
         'generate_styles', //generate scss
@@ -85,6 +84,7 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
+        'jshint:all'
     ]);
 
     //developer task: grunt dev
@@ -279,7 +279,7 @@ module.exports = function(grunt) {
             },
             scripts: {
                 files: ['src/**/*.js'],
-                tasks: ['copy:scripts', 'copy:templates']
+                tasks: ['copy:scripts', 'copy:templates', 'jshint:dev']
             },
             templates: {
                 files: ['src/**/*.html'],
@@ -469,7 +469,8 @@ module.exports = function(grunt) {
         //code quality, js hint
         jshint: {
             options: {
-                reporter: require('jshint-stylish')
+                reporter: require('jshint-stylish'),
+                force: true //todo: remove force
             },
             all: ['Gruntfile.js', 'src/**/*.js', 'spec/**/*.js'],
             dev: ['src/**/*.js'],
