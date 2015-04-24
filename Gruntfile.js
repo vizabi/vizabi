@@ -168,7 +168,7 @@ module.exports = function(grunt) {
                 //jquery used only for testing and preview page
                 {
                     cwd: 'lib/jquery/dist/',
-                    src: ['jquery.min.js'],
+                    src: ['jquery.min.js', 'jquery.min.map'],
                     dest: 'preview/preview_pages/assets/',
                     expand: true
                 },
