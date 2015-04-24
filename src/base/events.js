@@ -45,25 +45,26 @@ define([
          */
         bind: function(name, func) {
 
+            var i;
             //bind multiple functions at the same time
             if (_.isArray(func)) {
-                for (var i = 0; i < func.length; i++) {
+                for (i = 0; i < func.length; i++) {
                     this.bind(name, func[i]);
-                };
+                }
                 return;
             }
 
             //bind multiple at a time
             if (_.isArray(name)) {
-                for (var i = 0; i < name.length; i++) {
+                for (i = 0; i < name.length; i++) {
                     this.bind(name[i], func);
-                };
+                }
                 return;
             }
 
             //multiple at a time with plain object format
             if (_.isPlainObject(name)) {
-                for (var i in name) {
+                for (i in name) {
                     this.bind(i, name[i]);
                 }
                 return;
@@ -91,7 +92,7 @@ define([
             if (_.isArray(name)) {
                 for (var i = 0; i < name.length; i++) {
                     this.unbind(name[i], func);
-                };
+                }
                 return;
             }
 
@@ -116,13 +117,15 @@ define([
          */
         trigger: function(context, name, args, original) {
 
+            var i;
+
             if (_.isArray(name)) {
-                for (var i = 0, size = name.length; i < size; i++) {
+                for (i = 0, size = name.length; i < size; i++) {
                     this.trigger(context, name[i], args);
                 }
             } else {
                 if (_.isUndefined(this._events[name])) return;
-                for (var i = 0; i < this._events[name].length; i++) {
+                for (i = 0; i < this._events[name].length; i++) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
                     var _this = this;
@@ -135,8 +138,7 @@ define([
                     if (this._freeze || _freezeAllEvents) {
 
                         //if exception exists for freezing, execute
-                        if ((_freezeAllEvents && !_.isUndefined(_freezeAllExceptions[name])) 
-                            || (!_freezeAllEvents && this._freeze && !_.isUndefined(this._freezeExceptions[name]))) {
+                        if ((_freezeAllEvents && !_.isUndefined(_freezeAllExceptions[name])) || (!_freezeAllEvents && this._freeze && !_.isUndefined(this._freezeExceptions[name]))) {
                             execute();
                         }
                         //otherwise, freeze it

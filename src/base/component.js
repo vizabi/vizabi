@@ -439,14 +439,13 @@ define([
                     //skip existing
                     model_expects.splice(0, existing);
                     //adds new expected models if needed
-                    for (var i = 0; i < expected; i++) {
+                    for (var k = 0; k < expected; k++) {
                         //force new empty model
-                        values[model_expects[i].name] = {};
+                        values[model_expects[k].name] = {};
                     }
                 }
             }
 
-            var _this = this;
             //return a new model with the defined submodels
             var model = new Model(values, this.intervals, {
                 //bind callback after model is all set
@@ -461,7 +460,7 @@ define([
             //binds init bindings to this model
             if (_.isPlainObject(model_binds)) {
                 model.on(model_binds);
-            };
+            }
 
             return model;
 
@@ -616,7 +615,7 @@ define([
             return function(string) {
                 var translated = translation_function(string);
                 return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
-            }
+            };
         },
 
         /**
@@ -669,12 +668,13 @@ define([
         on: function(name, func) {
 
             if (this._debugEvents && this._debugEvents !== "trigger") {
+                var i;
                 if (_.isPlainObject(name)) {
-                    for (var i in name) {
+                    for (i in name) {
                         console.log("Component", this.name, "> bind:", i);
                     }
                 } else if (_.isArray(name)) {
-                    for (var i in name) {
+                    for (i in name) {
                         console.log("Component", this.name, "> bind:", name[i]);
                     }
                 } else {
@@ -693,7 +693,7 @@ define([
         trigger: function(name, val) {
 
             if (this._debugEvents && this._debugEvents !== "bind") {
-                console.log("============================================")
+                console.log("============================================");
                 if (_.isArray(name)) {
                     for (var i in name) {
                         console.log("Component", this.name, "> triggered:", name[i]);
@@ -701,9 +701,9 @@ define([
                 } else {
                     console.log("Component", this.name, "> triggered:", name);
                 }
-                console.log('\n')
+                console.log('\n');
                 console.info(utils.formatStacktrace(utils.stacktrace()));
-                console.log("____________________________________________")
+                console.log("____________________________________________");
             }
 
             this._events.trigger(this, name, val);
@@ -717,7 +717,7 @@ define([
         triggerAll: function(name, val) {
 
             if (this._debugEvents && this._debugEvents !== "bind") {
-                console.log("============================================")
+                console.log("============================================");
                 if (_.isArray(name)) {
                     for (var i in name) {
                         console.log("Component", this.name, "> triggered all:", name[i]);
@@ -725,9 +725,9 @@ define([
                 } else {
                     console.log("Component", this.name, "> triggered all:", name);
                 }
-                console.log('\n')
+                console.log('\n');
                 console.info(utils.formatStacktrace(utils.stacktrace()));
-                console.log("____________________________________________")
+                console.log("____________________________________________");
             }
 
             this._events.triggerAll(this, name, val);

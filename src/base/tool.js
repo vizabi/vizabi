@@ -27,7 +27,7 @@ define([
             this.layout = new Layout();
             this.ui = options.ui || {};
             this.model_binds = this.model_binds || {};
-            this.default_options = this.default_options || {}
+            this.default_options = this.default_options || {};
 
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
@@ -122,7 +122,7 @@ define([
                 this.placeholder.classed(class_loading_data, true);
                 this.blockUpdate(true);
                 this.blockResize(true);
-            };
+            }
         },
 
         /**

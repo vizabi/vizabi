@@ -36,8 +36,8 @@ define([
 
                 console.timeStamp("Vizabi Data: Loading Data");
 
-                if (evts && _.isFunction(evts["load_start"])) {
-                    evts["load_start"]();
+                if (evts && _.isFunction(evts.load_start)) {
+                    evts.load_start();
                 }
 
                 promise = this.loadFromReader(query, language, reader).then(function(queryId) {
@@ -56,8 +56,8 @@ define([
                     defer.resolve(data);
 
                     //not loading anymore
-                    if (loaded && evts && _.isFunction(evts["load_end"])) {
-                        evts["load_end"]();
+                    if (loaded && evts && _.isFunction(evts.load_end)) {
+                        evts.load_end();
                     }
                 },
                 // Unfortunate error
@@ -65,8 +65,8 @@ define([
                     defer.reject('Error loading file...');
 
                     //not loading anymore
-                    if (loaded && evts && _.isFunction(evts["load_end"])) {
-                        evts["load_end"]();
+                    if (loaded && evts && _.isFunction(evts.load_end)) {
+                        evts.load_end();
                     }
                 });
 
@@ -109,10 +109,10 @@ define([
                     });
 
                     values = _.map(values, function(d) {
-                        if (d["geo"] == null) d["geo"] = d["geo.name"];
+                        if (d.geo === null) d.geo = d["geo.name"];
 
-                        if (query_region && d["geo.region"] == null) {
-                            d["geo.region"] = d["geo"];
+                        if (query_region && d["geo.region"] === null) {
+                            d["geo.region"] = d.geo;
                         }
 
                         return d;
@@ -122,10 +122,10 @@ define([
                         d.time = new Date(d.time);
                         d.time.setHours(0);
                         return d;
-                    })
+                    });
                     // sort records by time
                     values.sort(function(a, b) {
-                        return a.time - b.time
+                        return a.time - b.time;
                     });
 
                     _this._data[queryId] = values;
@@ -157,10 +157,10 @@ define([
          */
         isCached: function(query, language, reader) {
             //encode in one string
-            var query = this._idQuery(query, language, reader);
+            var q = this._idQuery(query, language, reader);
             //simply check if we have this in internal data
-            if (_.keys(this._data).indexOf(query) !== -1) {
-                return query;
+            if (_.keys(this._data).indexOf(q) !== -1) {
+                return q;
             }
             return false;
         },

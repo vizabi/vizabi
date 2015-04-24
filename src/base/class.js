@@ -7,7 +7,8 @@ define([], function() {
 	// Inspired by base2 and Prototype
 
 
-	  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+	  var initializing = false;
+	  var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 	
 	  var Class = function() {};
 	 

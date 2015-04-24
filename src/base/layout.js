@@ -96,7 +96,7 @@ define([
          * @returns {String} name of current profile
          */
         currentProfile: function() {
-            return this.current_profile
+            return this.current_profile;
         },
 
         /**
@@ -107,7 +107,7 @@ define([
             return {
                 width: this.width(),
                 height: this.height()
-            }
+            };
         },
 
         /**
