@@ -19,30 +19,14 @@ See our WIKI for detailed documentation: [Vizabi WIKI](https://github.com/Gapmin
 ####Dependencies
 Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Grunt](https://github.com/gruntjs/grunt). 
 
-**Git** Git is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. Git's official [Installing Git](http://git-scm.com/book/en/v2/Getting-Started-Installing-Git) is the best way to install Git.
-
-**Npm** is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
-
-**Bower** is a package manager and you can install it with npm (with administrative privileges):
-```sh
-npm install -g bower
-```
-
-**Grunt** is the Javascript task runner and can also be installed with npm (with administrative privileges):
-```sh
-npm install -g grunt-cli
-```
-
-**Ruby and Ruby Gems** are needed for building Vizabi. Here you can find tutorial to install *Ruby* and *Rubygems*:
-
-* [Install Ruby] (https://www.ruby-lang.org/en/installation/)
-* [Install Rubygems] (https://rubygems.org/pages/download)
-
-**SASS** is grade CSS extension language. To install it, run the following command with administrative privileges: 
-
-```sh
-gem install sass
-```
+- *Git* is a free and open source distributed version control system designed to handle everything from small to very large projects with speed and efficiency. Git's official [Installing Git](http://git-scm.com/book/en/v2/Getting-Started-Installing-Git) is the best way to install Git.
+- *Npm* is a package manager for [Nodejs](http://nodejs.org/) and therefore requires [Node.js](http://nodejs.org/) to be installed. Here is a tutorial to install Node: [Installing Node.js via Package Managers](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager). 
+- *Bower* is a package manager and you can install it with npm (with administrative privileges): ```npm install -g bower ```
+- *Grunt* is the Javascript task runner and can also be installed with npm (with administrative privileges): ```npm install -g grunt-cli```
+- *Ruby and Ruby Gems* are needed for building Vizabi. Here you can find tutorial to install *Ruby* and *Rubygems*:
+  * [Install Ruby] (https://www.ruby-lang.org/en/installation/)
+  * [Install Rubygems] (https://rubygems.org/pages/download)
+- *SASS* is grade CSS extension language. To install it, run the following command with administrative privileges: ```gem install sass```
 
 ####Clone and install
 
