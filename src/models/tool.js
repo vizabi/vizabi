@@ -58,14 +58,20 @@ define([
                 var defs = _.isObject(blueprint) ? blueprint._defs_ : null;
                 var opts = _.isObject(blueprint) ? blueprint._opts_ : null;
 
+                //in case there's no type, just deep extend as much as possible
                 if(!type) {
                     if(_.isUndefined(original)) {
                         values[field] = blueprint;
                     }
+                    else if(_.isPlainObject(blueprint)
+                         && _.isPlainObject(original)) {
+
+                        values[field] = this.defaultOptions(original, blueprint);
+                    }
                     continue;
                 }
                 
-                //each case has special verification
+                //otherwise, each case has special verification
                 if(type === "number" && !_.isNumber(original)) {
                     values[field] = _.isNumber(defs) ? defs : 0;
                 }
