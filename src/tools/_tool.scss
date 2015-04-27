@@ -5,7 +5,7 @@
     $sizeTimeSlider: 70px;
     $sizeTimeSliderSmall: 50px;
     @include position(absolute, 0px);
-    @include user-select-none;
+    @include user-select(none);
     text-align: left;
     overflow: hidden;
     .vzb-tool-title {

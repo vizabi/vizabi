@@ -54,7 +54,7 @@ $vzb-ts-value-width: 40px;
                 cursor: pointer !important;
             }
             .vzb-ts-slider-axis {
-                @include user-select-none();
+                @include user-select(none);
                 font: 9px $vzb-font-family;
                 fill: $vzb-ts-slider-color;
                 opacity: 0.6;
@@ -77,7 +77,7 @@ $vzb-ts-value-width: 40px;
             }
             .vzb-ts-slider-value {
                 display: none;
-                @include user-select-none();
+                @include user-select(none);
                 font: 11px $vzb-font-family;
                 fill: $vzb-ts-slider-color;
                 font-weight: bold;

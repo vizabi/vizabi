@@ -35,7 +35,7 @@ $vzb-bc-year-size:300px;
             @include opacity(0.8);
             stroke: white;
             cursor: pointer;
-            @include transition(opacity, 300ms, linear);
+            @include transition(opacity 300ms linear);
             &.vzb-bc-unselected {
                 @include opacity(0.2);
                 &:hover {
@@ -80,21 +80,21 @@ $vzb-bc-year-size:300px;
     }
     
     .vzb-bc-labels .vzb-bc-entity rect{  
-        @include transition(opacity, 300ms, linear);
+        @include transition(opacity 300ms linear);
         cursor: pointer;
         opacity: 0.8;
         fill: white; 
         stroke: $vzb-color-primary; 
     }
     .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {  
-        @include transition(opacity, 300ms, linear);
+        @include transition(opacity 300ms linear);
         fill: white; 
         text-anchor: middle; 
         dominant-baseline: middle;
         pointer-events: none;
     }
     .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x { 
-        @include transition(opacity, 300ms, linear);
+        @include transition(opacity 300ms linear);
         cursor: pointer;
         fill: #ff89cd;
         stroke: white;
