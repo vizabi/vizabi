@@ -77,3 +77,13 @@ function forceResizeEvt() {
     event.eventName = "resize";
     window.dispatchEvent(event);
 }
+
+//simulate d3 click
+jQuery.fn.d3Click = function () {
+  this.each(function (i, e) {
+    var evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+
+    e.dispatchEvent(evt);
+  });
+};

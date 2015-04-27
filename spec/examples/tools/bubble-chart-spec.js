@@ -50,11 +50,6 @@ describe("* Example Bubble Chart", function() {
                     hook: "indicator",
                     value: "pop",
                     scale: 'log'
-                },
-                color: {
-                    hook: "indicator",
-                    value: "lex",
-                    domain: ['#F77481', '#E1CE00', '#B4DE79']
                 }
             }
         },
@@ -63,27 +58,6 @@ describe("* Example Bubble Chart", function() {
         data: {
             reader: 'local-json',
             path: 'local_data/waffles/{{LANGUAGE}}/basic-indicators.json'
-        },
-
-        //language properties
-        language: {
-            id: "en",
-            strings: {
-                en: {
-                    "title": "Bubble Chart Title",
-                    "buttons/find": "Find",
-                    "buttons/colors": "Colors",
-                    "buttons/size": "Size",
-                    "buttons/more_options": "Options"
-                },
-                pt: {
-                    "title": "Título do Bubble Chart",
-                    "buttons/find": "Encontre",
-                    "buttons/colors": "Cores",
-                    "buttons/size": "Tamanho",
-                    "buttons/more_options": "Opções"
-                }
-            }
         }
     };
 
@@ -102,7 +76,7 @@ describe("* Example Bubble Chart", function() {
         expect(contents.length).toBeGreaterThan(0);
     });
 
-    /*it("should be ready (and all models ready accordingly)", function() {
+    it("should be ready (and all models ready accordingly)", function() {
         var ready = viz._tool.model._ready;
         if (!ready) {
             console.log(JSON.stringify(mapReady(viz._tool.model), null, 4));
@@ -110,7 +84,8 @@ describe("* Example Bubble Chart", function() {
         expect(ready).toBeTruthy();
     });
 
-    describe("play events", function() {
+
+    describe("play tasks", function() {
         var start = parseInt(options.state.time.start, 10),
             end = parseInt(options.state.time.end, 10),
             total = end - start,
@@ -138,7 +113,41 @@ describe("* Example Bubble Chart", function() {
         });
     });
 
-    describe("resize events", function() {
+    describe("select tasks", function() {
+
+        beforeEach(function(done) {
+            $("circle.vzb-bc-entity").first().d3Click();
+
+            setTimeout(function() {
+                done();
+            }, 200);
+        });
+
+        it("should highlight when selected", function() {
+            expect($('.vzb-bc-selected').length).toEqual(1);
+        });
+        it("should show one label", function() {
+            expect($(".vzb-bc-labels .vzb-bc-entity").length).toEqual(1);
+        });
+
+        it("should draw trails", function() {
+            viz.setOptions({
+                state: {
+                    time: {
+                        value: 1995
+                    }
+                }
+            });
+
+            var trailsGroup = $('.vzb-bc-trails .vzb-bc-entity').first();
+            var trails = trailsGroup.find('.trailSegment');
+            expect(trails.length).toBeGreaterThan(0);
+
+        });
+    });
+
+
+    describe("resize tasks", function() {
         var size;
         beforeEach(function(done) {
             size = $('.vzb-bubble-chart-svg').width();
@@ -151,6 +160,6 @@ describe("* Example Bubble Chart", function() {
         it("should scale when screen is resized", function() {
             expect($('.vzb-bubble-chart-svg').width()).toBeGreaterThan(size);
         });
-    });*/
+    });
 
 });
