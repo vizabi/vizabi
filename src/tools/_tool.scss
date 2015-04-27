@@ -121,4 +121,9 @@
     .vzb-tool-content {
         @include position(absolute, 0px);
     }
+
+    //common tool components
+    @import '../components/_gapminder/buttonlist/buttonlist';
+    @import '../components/_gapminder/header/header';
+    @import '../components/_gapminder/timeslider/timeslider';
 }

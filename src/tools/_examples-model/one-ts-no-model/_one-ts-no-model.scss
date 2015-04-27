@@ -1,5 +1,4 @@
 .vzb-tool-one-ts-no-model {
-    @extend .vzb-tool;
     @include position(absolute, 0px);
     padding: 30px;
 
@@ -20,5 +19,4 @@
         padding: 15px;
         color: $vzb-color-grey-dark;
     }
-    @import'../../../components/_gapminder/timeslider/timeslider';
 }

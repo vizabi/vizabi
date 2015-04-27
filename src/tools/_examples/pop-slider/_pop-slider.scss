@@ -1,8 +1,7 @@
 .vzb-tool-pop-slider {
-    @extend .vzb-tool;
     @import'../../../components/_examples/year-display/year-display';
     @import'../../../components/_examples/indicator-display/indicator-display';
-    @import'../../../components/_gapminder/timeslider/timeslider';
+
     //overwrite content style
     .vzb-tool-content {
         top: 0px !important;
