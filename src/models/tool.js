@@ -94,6 +94,9 @@ define([
                 //if possible values are determined, we should respect it
                 if(_.isArray(opts) && defs
                    && _.indexOf(opts, values[field]) === -1) {
+
+                    console.warn("Vizabi options contain invalid value for '"+field+"'. Permitted values: "+ JSON.stringify(opts) +". Changing to default");
+                    
                     values[field] = defs;
                 }
 
