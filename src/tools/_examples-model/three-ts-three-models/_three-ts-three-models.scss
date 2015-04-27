@@ -1,6 +1,6 @@
 .vzb-tool-three-ts-three-models {
     @extend .vzb-tool;
-    @include absoluteAll;
+    @include position(absolute, 0px);
     padding: 30px;
 
     .vzb-tool-timeslider-1, .vzb-tool-timeslider-2, .vzb-tool-timeslider-3 {

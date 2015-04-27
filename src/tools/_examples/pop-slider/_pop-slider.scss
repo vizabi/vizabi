@@ -22,17 +22,17 @@
         text-align: center;
     }
     .vzb-tool-timeslider {
-        @include absolute(auto, 20px, 20px, 20px);
+        @include position(absolute, null 20px 20px 20px);
         display: block;
         height: 50px;
     }
 
     &.vzb-large, &.vzb-medium {
         .vzb-tool-year {
-            @include absolute(40px, 50%, auto, 0px);
+            @include position(absolute, 40px 50% null 0px);
         }
         .vzb-tool-display {
-        	@include absolute(40px, 0px, 10px, 50%);
+        	@include position(absolute, 40px 0px 10px 50%);
         	text-align: left;
         }
     }

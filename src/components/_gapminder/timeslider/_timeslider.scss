@@ -8,7 +8,7 @@ $vzb-ts-value-width: 40px;
     min-height: $vzb-ts-btn-area;
     position: relative;
     .vzb-ts-btns {
-        @include absolute(0px, auto, 0px, 5px);
+        @include position(absolute, 0px null 0px 5px);
         width: $vzb-ts-btn-area;
         .vzb-ts-btn {
             @include box-sizing(border-box);
@@ -39,11 +39,11 @@ $vzb-ts-value-width: 40px;
         }
     }
     .vzb-ts-slider-wrapper {
-        @include absolute(5px, 9px, 5px, $vzb-ts-btn-area+5);
+        @include position(absolute, 5px 9px 5px $vzb-ts-btn-area+5);
         // margin: 17px 7px;
         // Slider
         .vzb-ts-slider {
-            @include absolute(0px, 0px, 0px, 0px);
+            @include position(absolute, 0px);
             @include font-size(12px);
             overflow: visible;
             font-family: $vzb-font-family;
@@ -106,7 +106,7 @@ $vzb-ts-value-width: 40px;
             @extend .vzb-hidden;
         }
         .vzb-ts-slider-wrapper {
-            @include absolute(5px, 9px, 5px, 5px);
+            @include position(absolute, 5px 9px 5px 5px);
         }
     }
     &.vzb-ts-show-value {
@@ -129,7 +129,7 @@ $vzb-ts-value-width: 40px;
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
             width: $vzb-ts-btn-area - 20;
-            @include absolute(0px, 0px, 5px, 5px);
+            @include position(absolute, 0px 0px 5px 5px);
             .vzb-ts-btn {
 
                 width: $vzb-ts-btn-width - 14;
@@ -150,7 +150,8 @@ $vzb-ts-value-width: 40px;
             }
         }
         .vzb-ts-slider-wrapper {
-            @include absolute(0px, 0px, 5px, $vzb-ts-btn-area - 20 + 10);
+            $posLeft: $vzb-ts-btn-area - 20 + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
         }
         min-height: $vzb-ts-btn-area - 20;
     }
@@ -158,10 +159,11 @@ $vzb-ts-value-width: 40px;
 &.vzb-medium {
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
-            @include absolute(0px, 0px, 5px, 5px);
+            @include position(absolute, 0px 0px 5px 5px);
         }
         .vzb-ts-slider-wrapper {
-            @include absolute(0px, 0px, 5px, $vzb-ts-btn-area + 10);
+            $posLeft: $vzb-ts-btn-area + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
         }
     }
     .vzb-timeslider {
@@ -185,10 +187,11 @@ $vzb-ts-value-width: 40px;
 &.vzb-large {
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
-            @include absolute(0px, 0px, 5px, 5px);
+            @include position(absolute, 0px 0px 5px 5px);
         }
         .vzb-ts-slider-wrapper {
-            @include absolute(0px, 0px, 5px, $vzb-ts-btn-area + 10);
+            $posLeft: $vzb-ts-btn-area + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
         }
     }
     .vzb-timeslider {

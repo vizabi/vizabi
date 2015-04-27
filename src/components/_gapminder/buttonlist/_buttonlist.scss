@@ -10,7 +10,7 @@ $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
     @import '../bubble-size/bubble-size';
     @include box-sizing(border-box);
-    @include absoluteAll;
+    @include position(absolute, 0px);
     text-align: center;
     .vzb-buttonlist-btn {
         outline: none;
@@ -88,9 +88,9 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-landscape, &.vzb-large {
     .vzb-buttonlist {
         .vzb-buttonlist-dialog {
-            @include absolute(-500px, 40px);
+            @include position(absolute, -500px 40px auto auto);
             &.vzb-active {
-                @include absolute(20px, 40px);
+                @include position(absolute, 20px 40px auto auto);
             }
         }
     }
