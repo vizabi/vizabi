@@ -21,6 +21,9 @@ define([
          * @param {Object} options Options such as state, data, etc
          */
         init: function(config, options) {
+
+            options = options || {}; //options may be undefined
+
             //tool-specific values
             this._id = _.uniqueId("t");
             this.template = this.template || "tools/tool";
