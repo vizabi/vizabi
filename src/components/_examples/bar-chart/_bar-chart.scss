@@ -1,5 +1,5 @@
 .vzb-bar-chart {
-    @include absolute(0px,0px,0px,0px);
+    @include position(absolute, 0px);
     @include font-size(18px);
     font-family: $vzb-font-family;
     color: #666666;

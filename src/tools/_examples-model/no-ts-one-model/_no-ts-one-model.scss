@@ -1,6 +1,5 @@
 .vzb-tool-no-ts-one-model {
-    @extend .vzb-tool;
-    @include absoluteAll;
+    @include position(absolute, 0px);
     padding: 30px;
 
     .vzb-year-display-wrapper {

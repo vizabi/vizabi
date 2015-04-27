@@ -4,13 +4,13 @@
     $sizeButtonListSmall: 50px;
     $sizeTimeSlider: 70px;
     $sizeTimeSliderSmall: 50px;
-    @include absoluteAll;
-    @include user-select-none;
+    @include position(absolute, 0px);
+    @include user-select(none);
     text-align: left;
     overflow: hidden;
     .vzb-tool-title {
         @include box-sizing(border-box);
-        @include absolute(0px, 0px, auto, 0px);
+        @include position(absolute, 0px 0px null 0px);
         @include font-size(18px);
         height: $heightTitle;
         background-color: $vzb-color-primary-lightest;
@@ -19,23 +19,23 @@
         color: #666666;
     }
     .vzb-tool-content {
-        @include absolute($heightTitle, 0px, 0px, 0px);
+        @include position(absolute, $heightTitle 0px 0px 0px);
         .vzb-tool-stage {
-            @include absolute(0px, $sizeButtonList, 0px, 0px);
+            @include position(absolute, 0px $sizeButtonList 0px 0px);
             
             /*this supposed to improve performance by giving browser a hint that tool shoul be a separate layer*/
             /*tests: macbook 45->55 fps, mobile: 10->15 fps*/
             transform: translate3d(0,0,0);
             .vzb-tool-viz {
-                @include absolute(0px, 0px, $sizeTimeSlider, 0px);
+                @include position(absolute, 0px 0px $sizeTimeSlider 0px);
             }
             .vzb-tool-timeslider {
-                @include absolute(auto, 0px, 0px, 0px);
+                @include position(absolute, null 0px 0px 0px);
                 height: $sizeTimeSlider;
             }
         }
         .vzb-tool-buttonlist {
-            @include absolute(0px, 0px, 0px);
+            @include position(absolute, 0px 0px 0px null);
             width: $sizeButtonList;
             background-color: $vzb-color-primary-lightest;
         }
@@ -46,7 +46,7 @@
             display: none;
         }
         .vzb-tool-content {
-            @include absoluteAll;
+            @include position(absolute, 0px);
         }
     }
     &.vzb-timeslider-off {
@@ -54,7 +54,7 @@
             display: none;
         }
         .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
-            @include absoluteAll;
+            @include position(absolute, 0px);
         }
     }
     &.vzb-buttonlist-off {
@@ -62,7 +62,7 @@
             display: none;
         }
         .vzb-tool-content .vzb-tool-stage {
-            @include absoluteAll;
+            @include position(absolute, 0px);
         }
     }
     //Responsiveness
@@ -72,11 +72,12 @@
             @include font-size(14px);
         }
         .vzb-tool-content {
-            @include absolute($heightTitle - 8px, 0px, 0px, 0px);
+            $posTop: $heightTitle - 8px;
+            @include position(absolute, $posTop 0px 0px 0px);
             .vzb-tool-stage {
-                @include absolute(0px, $sizeButtonListSmall, 0px, 0px);
+                @include position(absolute, 0px $sizeButtonListSmall 0px 0px);
                 .vzb-tool-viz {
-                    @include absolute(0px, 0px, $sizeTimeSliderSmall, 0px);
+                    @include position(absolute, 0px 0px $sizeTimeSliderSmall 0px);
                 }
                 .vzb-tool-timeslider {
                     height: $sizeTimeSliderSmall;
@@ -90,10 +91,10 @@
     &.vzb-small.vzb-portrait {
         .vzb-tool-content {
             .vzb-tool-stage {
-                @include absolute(0px, 0px, $sizeButtonListSmall, 0px);
+                @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
             }
             .vzb-tool-buttonlist {
-                @include absolute(auto, 0px, 0px, 0px);
+                @include position(absolute, auto 0px 0px 0px);
                 width: auto;
                 height: $sizeButtonListSmall;
             }
@@ -118,6 +119,11 @@
         display: none !important;
     }
     .vzb-tool-content {
-        @include absoluteAll;
+        @include position(absolute, 0px);
     }
+
+    //common tool components
+    @import '../components/_gapminder/buttonlist/buttonlist';
+    @import '../components/_gapminder/header/header';
+    @import '../components/_gapminder/timeslider/timeslider';
 }

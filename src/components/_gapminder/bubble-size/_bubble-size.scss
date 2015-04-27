@@ -40,7 +40,7 @@
             -webkit-appearance: none;
             cursor: pointer;
             @include border-radius(20px);
-            @include transition(left, 0.1s, ease-in-out);
+            @include transition(left 0.1s ease-in-out);
             background-color: $vzb-color-primary;
             top: -12px;
             width: 24px;
@@ -50,7 +50,7 @@
         &::-moz-range-thumb {
             cursor: pointer;
             @include border-radius(20px);
-            @include transition(left, 0.1s, ease-in-out);
+            @include transition(left 0.1s ease-in-out);
             background: $vzb-color-primary;
             top: -12px;
             width: 16px;

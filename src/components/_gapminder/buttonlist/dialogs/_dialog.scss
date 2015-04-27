@@ -2,8 +2,8 @@
     $vzb-dialog-content-height: 250px;
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
     @include box-sizing(border-box);
-    @include transition(all, 300ms, ease-in-out);
-    @include absolute(auto, auto, -450px, 50%);
+    @include transition(all 300ms ease-in-out);
+    @include position(absolute, null null -450px 50%);
     border-top: 1px solid #f7f7f7;
     width: 280px;
     margin-left: -140px;
@@ -14,7 +14,7 @@
     font-size: 0.9em;
     display: block;
     &.vzb-active {
-        @include absolute(auto, auto, 45px, 50%);
+        @include position(absolute, null null 45px 50%);
         z-index: 20;
     }
     .vzb-dialog-title {
@@ -79,7 +79,7 @@
             @extend .vzb-hidden;
         }
         label {
-            @include absolute(0px);
+            @include position(absolute, 0px null null null);
             @include border-radius(4px);
             white-space: nowrap;
             cursor: pointer;
@@ -88,7 +88,7 @@
             background: $vzb-color-primary-lightest;
             border: 1px solid rgba($vzb-color-primary, .2);
             &:after {
-                @include absolute(4px, auto, auto, 4px);
+                @include position(absolute, 4px null null 4px);
                 @include opacity(0);
                 @include rotate(-45deg);
                 content: '';

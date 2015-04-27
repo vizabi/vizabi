@@ -1,8 +1,3 @@
 .vzb-tool-bubble-chart {
-	@extend .vzb-tool;
-
-	@import '../../../components/_gapminder/header/header';
-	@import '../../../components/_gapminder/timeslider/timeslider';
-	@import '../../../components/_gapminder/buttonlist/buttonlist';
 	@import '../../../components/_examples/bubble-chart/bubble-chart';
 }

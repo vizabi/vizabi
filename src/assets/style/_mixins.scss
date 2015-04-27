@@ -15,31 +15,6 @@
 
 @import "../../../lib/bourbon/app/assets/stylesheets/bourbon";
 
-// ----------------------------------------------------------------------------
-//   Positioning
-// ----------------------------------------------------------------------------
-
-//makes an element absolute positioned
-@mixin absolute($top: auto, $right: auto, $bottom: auto, $left: auto) {
-    position: absolute;
-    top: $top;
-    bottom: $bottom;
-    right: $right;
-    left: $left;
-}
-
-@mixin absoluteAll() {
-    @include absolute(0px, 0px, 0px, 0px);
-}
-
-//makes an element fixed
-@mixin fixed($top: auto, $right: auto, $bottom: auto, $left: auto) {
-    position: fixed;
-    top: $top;
-    bottom: $bottom;
-    right: $right;
-    left: $left;
-}
 
 // ----------------------------------------------------------------------------
 //   Sizes, borders and margins
@@ -58,42 +33,26 @@
 }
 
 @mixin box-sizing($box-model) {
-  -webkit-box-sizing: $box-model; // Safari <= 5
-     -moz-box-sizing: $box-model; // Firefox <= 19
-          box-sizing: $box-model;
+  @include prefixer(box-sizing, $box-model, webkit moz ms o spec);
 }
 
 @mixin border-radius($border-radius) {
-  -webkit-border-radius: $border-radius; // Safari <= 5
-     -moz-border-radius: $border-radius; // Firefox <= 19
-          border-radius: $border-radius;
+  @include prefixer(border-radius, $border-radius, webkit moz ms o spec);
 }
 
 @mixin translate($x, $y) {
-    -webkit-transform: translate($x,$y);
-       -moz-transform: translate($x,$y);
-        -ms-transform: translate($x,$y);
-         -o-transform: translate($x,$y);
-            transform: translate($x,$y);
+  @include prefixer(transform, translate( $x , $y ), webkit moz ms o spec);
 }
 
 @mixin rotate($r) {
-    -webkit-transform: rotate($r);
-       -moz-transform: rotate($r);
-        -ms-transform: rotate($r);
-         -o-transform: rotate($r);
-            transform: rotate($r);
+  @include prefixer(transform, rotate( $r ), webkit moz ms o spec);
 }
 
 @mixin box-shadow($x, $y, $blur, $color, $inset: false) {
   @if $inset {
-    -webkit-box-shadow:inset $x $y $blur $color;
-    -moz-box-shadow:inset $x $y $blur $color;
-    box-shadow:inset $x $y $blur $color;
+    @include prefixer(box-shadow, inset $x $y $blur $color, webkit moz ms o spec);
   } @else {
-    -webkit-box-shadow: $x $y $blur $color;
-    -moz-box-shadow: $x $y $blur $color;
-    box-shadow: $x $y $blur $color;
+    @include prefixer(box-shadow, $x $y $blur $color, webkit moz ms o spec);
   }
 }
 
@@ -107,30 +66,9 @@
     opacity: $v;
 }
 
-@mixin transition($transition-property, $transition-time, $method) {
-    -webkit-transition: $transition-property $transition-time $method;
-    -moz-transition: $transition-property $transition-time $method;
-    -ms-transition: $transition-property $transition-time $method;
-    -o-transition: $transition-property $transition-time $method;
-    transition: $transition-property $transition-time $method;
-}
-
 // ----------------------------------------------------------------------------
 //   Text
 // ----------------------------------------------------------------------------
-
-//Text overflow. If text is bigger than box, insert ellipsis: text he... Wrapper needs to be block or inline-block
-@mixin text-truncate() {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-//Text hidden.
-@mixin text-hidden() {
-  overflow: hidden;
-  text-indent: -9999px;
-}
 
 //converts pixels to em
 @mixin font-size($sizeValue: 12px ){
@@ -142,12 +80,6 @@
 @mixin line-height($heightValue: 12px ){
     line-height: $heightValue + px; //fallback for old browsers
     line-height: (0.125 * $heightValue / 1px) + em;
-}
-
-@mixin user-select-none() {
-    -webkit-user-select: none; // Chrome/Safari
-    -moz-user-select: none; // Firefox
-    -ms-user-select: none; // IE10+
 }
 
 // ----------------------------------------------------------------------------
@@ -170,44 +102,6 @@
 @mixin overflow-mobile(){
   overflow:scroll;
   -webkit-overflow-scrolling: touch;
-}
-
-//wraps styles in the correct media query
-//todo: is this used?
-@mixin breakpoint($point) {
-  @if $point == portrait {
-    @media screen and (orientation: portrait) { @content; }
-  }
-  @else if $point == landscape {
-    @media screen and (orientation: landscape) { @content; }
-  }
-  @else if $point == small {
-    @media (max-width: $vzb-resolution-medium - 1px) { @content; }
-  }
-  @else if $point == medium {
-    @media (min-width: $vzb-resolution-medium) { @content; }
-  }
-  @else if $point == large {
-    @media (min-width: $vzb-resolution-large) { @content; }
-  }
-  @else if $point == small-landscape {
-    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: landscape) { @content; }
-  }
-  @else if $point == small-portrait {
-    @media (max-width: $vzb-resolution-medium - 1px) and (orientation: portrait) { @content; }
-  }
-  @else if $point == medium-landscape {
-    @media (min-width: $vzb-resolution-medium) and (orientation: landscape){ @content; }
-  }
-  @else if $point == medium-portrait {
-    @media (min-width: $vzb-resolution-medium) and (orientation: portrait){ @content; }
-  }
-  @else if $point == large-landscape {
-    @media (min-width: $vzb-resolution-large) and (orientation: landscape) { @content; }
-  }
-  @else if $point == large-portrait {
-    @media (min-width: $vzb-resolution-large) and (orientation: portrait) { @content; }
-  }
 }
 
 // ----------------------------------------------------------------------------
