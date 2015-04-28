@@ -45,6 +45,7 @@ define([
                                 value: 2000,
                                 step: 1,
                                 speed: 300,
+                                round: "ceil",
                                 formatInput: "%Y",
                                 trails: true,
                                 lockNonSelected: 0

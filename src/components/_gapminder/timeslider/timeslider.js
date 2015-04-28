@@ -82,9 +82,12 @@ define([
             this.model_binds = {
                 'ready': function(evt) {
                     _this.changeTime();
+                    _this._setHandle(_this.model.time.playing);
                 },
                 'change': function(evt, original) {
+                    //console.log("timeslider change" + _this.model.time.value)
                     _this.changeTime();
+                    _this._setHandle(_this.model.time.playing);
                 }
             };
 
@@ -222,9 +225,6 @@ define([
             this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
                 .attr("r", this.profile.radius);
 
-            //set handle at current position
-            this._setHandle(this.model.time.playing);
-
         },
         
         
@@ -292,6 +292,11 @@ define([
                 _this._blockUpdate = false;
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
+                
+                //TODO without timeout the event is not being dispatched correctly. why?
+                setTimeout(function(){
+                    _this.model.time.snap();
+                }, 50);
             }
         },
 
@@ -351,7 +356,7 @@ define([
             var now = new Date();
             if(this._updTime!=null && now - this._updTime < frameRate) return;
             
-            //without timeout the event is not being dispatched. try!
+            //TODO without timeout the event is not being dispatched. why?
             setTimeout(function(){
                 _this.model.time.value = time;
             },20)

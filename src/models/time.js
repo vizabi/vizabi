@@ -38,7 +38,7 @@ define([
                 playable: true,
                 playing: false,
                 loop: false,
-                roundOnPause: true,
+                round: true,
                 speed: 500,
                 unit: "year", //defaults to year
                 step: 1 //step must be integer
@@ -65,18 +65,9 @@ define([
                         _this.set('playing', true, true); //3rd argumennt forces update
                     }
 
-                    //snap values
-                    if (_this.roundOnPause) {
-                        var op = 'round';
-                        if (_this.roundOnPause === 'ceil') op = 'ceil';
-                        if (_this.roundOnPause === 'floor') op = 'floor';
-                        var start = d3.time[_this.unit][op](new Date(_this.start)),
-                            end = d3.time[_this.unit][op](new Date(_this.end)),
-                            time = d3.time[_this.unit][op](new Date(_this.value));
-                        _this.start = start;
-                        _this.end = end;
-                        _this.value = time;
-                    }
+                    this.snap("start");
+                    this.snap("end");
+                    this.snap("value");
                 }
             });
         },
@@ -196,6 +187,22 @@ define([
             var format = d3.time.format(f);
             return format(this[attr]);
         },
+        
+        /**
+         * Snaps the time to integer
+         * possible inputs are "start", "end", "value". "value" is default
+         */
+        snap: function(what){
+            if (!this.round) return
+            if(what == null) what = "value";
+            var op = 'round';
+            if (this.round === 'ceil') op = 'ceil';
+            if (this.round === 'floor') op = 'floor';
+            var time = d3.time[this.unit][op](this[what]);
+            
+            this.set(what, time, true); //3rd argumennt forces update
+            //console.log("snap 2 " + this[what])
+        },
 
         /**
          * Starts playing the time, initializing the interval
@@ -209,6 +216,8 @@ define([
             var _this = this,
                 time = this.value,
                 interval = this.speed; // * this.step;
+            
+            this.snap();
 
             //go to start if we start from end point
             if (_this.end - time <= 0) {
@@ -241,16 +250,7 @@ define([
         _stopPlaying: function() {
             this._playing_now = false;
             this._intervals.clearInterval('playInterval_' + this._id);
-
-            //snap to integer
-            if (this.roundOnPause) {
-                var op = 'round';
-                if (this.roundOnPause === 'ceil') op = 'ceil';
-                if (this.roundOnPause === 'floor') op = 'floor';
-                var time = d3.time[this.unit][op](this.value);
-                this.value = time;
-            }
-
+            this.snap();
             this.trigger("pause");
         }
 
