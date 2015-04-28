@@ -60,6 +60,8 @@ define([
                     //console.log("EVENT change:entities:select");
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
+                    _this.resizeTrails();
+                    _this.revealTrails();
                 },
                 "change:entities:brush": function() {
                     //console.log("EVENT change:entities:brush");
@@ -73,6 +75,8 @@ define([
                     _this.updateMarkerSizeLimits();
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
+                    _this.resizeTrails();
+                    _this.revealTrails();
                 },
                 "ready": function(evt) {
                     //TODO a workaround to fix the selection of entities
@@ -89,6 +93,7 @@ define([
                     //console.log("EVENT change:time:value");
                     _this.updateTime();
                     _this.redrawDataPoints();
+                    _this.revealTrails(null, _this.duration);
                 },
                 'change:marker:size:max': function() {
                     //console.log("EVENT change:marker:size:max");
@@ -262,6 +267,7 @@ define([
                     _this.xAxisEl.call(_this.xAxis.labelerOptions(optionsX));
                     _this.yAxisEl.call(_this.yAxis.labelerOptions(optionsY));
                     _this.redrawDataPoints(_this.zoomer.duration);
+                    _this.resizeTrails(null, _this.zoomer.duration);
                     
                     _this.zoomer.duration = 0;
                 });
@@ -310,6 +316,7 @@ define([
                 _this.updateSize();
                 _this.updateMarkerSizeLimits();
                 _this.redrawDataPoints();
+                _this.resizeTrails();
             })
 
             //keyboard listeners
@@ -527,7 +534,7 @@ define([
             this.time = this.model.time.value;
             this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
 
-            this.yearEl.text(this.time.getFullYear().toString());
+            this.yearEl.text(this.timeFormatter(this.time));
         },
 
         /*
@@ -796,7 +803,6 @@ define([
             }); // each bubble
 
 
-            if (_this.model.time.trails) _this.redrawTrails(null, duration);
 
 
             // case "rect":
@@ -941,7 +947,7 @@ define([
                 
                     view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
 
-                    if (_this.model.time.trails) _this.createTrails(d)
+                    if (_this.model.time.trails) _this.createTrails(d);
                 })
                 .on("mousemove", function() {
                     d3.select(this).selectAll(".vzb-bc-label-x")
@@ -965,6 +971,8 @@ define([
             var _this = this;
             if (toggle) {
                 _this.createTrails();
+                _this.resizeTrails();
+                _this.revealTrails();
             } else {
                 _this.removeTrails();
                 _this.model.entities.select.forEach(function(d) {
@@ -1017,9 +1025,11 @@ define([
                         if (segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
                         if (segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
 
-                        var view = d3.select(this);
-                        view.append("circle").style("fill", segment.valueC)
-                        view.append("line").style("stroke", segment.valueC);
+                        if(index<trailSegmentData.length-1){
+                            var view = d3.select(this);
+                            view.append("circle").style("fill", segment.valueC);
+                            view.append("line").style("stroke", segment.valueC);
+                        }
                     })
                     .on("mousemove", function(segment, index) {
                         var geo = d3.select(this.parentNode).data()[0].geo;
@@ -1054,12 +1064,16 @@ define([
         },
 
 
-        redrawTrails: function(selection, duration) {
+        revealTrails: function(selection, duration) {
             var _this = this;
+            if(!_this.model.time.trails) return;
             if(!duration)duration=0;
+
 
             selection = selection == null ? _this.model.entities.select : [selection];
             selection.forEach(function(d) {
+                
+                var trailStartTime = _this.timeFormatter.parse("" + d.trailStartTime);
 
                 _this.entityTrails
                     .filter(function(f) { return f.geo == d.geo })
@@ -1068,13 +1082,58 @@ define([
 
                         var view = d3.select(this);
 
-                        var trailStartTime = _this.timeFormatter.parse("" + d.trailStartTime);
-                        var transparent = ((segment.t - _this.time >= 0) || (trailStartTime - segment.t >= 0))
-                            // one exception: the starting bubble
-                            && !((trailStartTime - _this.model.time.start == 0) && (segment.t - _this.model.time.start == 0));
+                        // segment is transparent if it is after current time or before trail StartTime
+                        var transparent = (segment.t - _this.time >= 0) 
+                            || (trailStartTime - segment.t >  0) 
+                            //no trail segment should be visible if leading bubble is shifted backwards
+                            || (d.trailStartTime - _this.timeFormatter(_this.time) >= 0);
+                        
                         view.classed("vzb-transparent", transparent);
 
                         if (transparent) return;
+
+                    
+                        var next = this.parentNode.children[index + 1];
+                        if (next == null) return;
+                        next = next.__data__;
+                    
+                        if (segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
+                            next = _this.cached[d.geo];
+
+                            view.select("line")
+                                .attr("x2", _this.xScale(segment.valueX))
+                                .attr("y2", _this.yScale(segment.valueY))
+                                .attr("x1", _this.xScale(segment.valueX))
+                                .attr("y1", _this.yScale(segment.valueY))
+                                .transition().duration(duration).ease("linear")
+                                .attr("x1", _this.xScale(next.valueX))
+                                .attr("y1", _this.yScale(next.valueY));
+                        }else{
+                            view.select("line")
+                                .attr("x2", _this.xScale(segment.valueX))
+                                .attr("y2", _this.yScale(segment.valueY))
+                                .attr("x1", _this.xScale(next.valueX))
+                                .attr("y1", _this.yScale(next.valueY));
+                        }
+                    })
+            });
+        },
+
+
+        resizeTrails: function(selection, duration) {
+            var _this = this;
+            if(!_this.model.time.trails) return;
+            if(!duration)duration=0;
+
+            selection = selection == null ? _this.model.entities.select : [selection];
+            selection.forEach(function(d) {
+                
+                _this.entityTrails
+                    .filter(function(f) { return f.geo == d.geo })
+                    .selectAll("g")
+                    .each(function(segment, index) {
+
+                        var view = d3.select(this);
 
                         view.select("circle")
                             .transition().duration(duration).ease("linear")
@@ -1082,21 +1141,16 @@ define([
                             .attr("cx", _this.xScale(segment.valueX))
                             .attr("r", areaToRadius(_this.sScale(segment.valueS)));
 
-
                         var next = this.parentNode.children[index + 1];
+                        if (next == null) return;
+                        next = next.__data__;
 
-                        if (next != null) {
-                            next = next.__data__;
-                            if (segment.t - _this.time < 0 && _this.time - next.t < 0) next = _this.cached[d.geo];
-
-                            view.select("line")
-                                .transition().duration(duration).ease("linear")
-                                .attr("x1", _this.xScale(next.valueX))
-                                .attr("y1", _this.yScale(next.valueY))
-                                .attr("x2", _this.xScale(segment.valueX))
-                                .attr("y2", _this.yScale(segment.valueY));
-                        }
-
+                        view.select("line")
+                            .transition().duration(duration).ease("linear")
+                            .attr("x1", _this.xScale(next.valueX))
+                            .attr("y1", _this.yScale(next.valueY))
+                            .attr("x2", _this.xScale(segment.valueX))
+                            .attr("y2", _this.yScale(segment.valueY));
                     })
             });
         },
