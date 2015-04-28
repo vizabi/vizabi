@@ -35,7 +35,7 @@ define([
             this.on("resize", function() {
                 console.log("Gotta resize!");
                 _this.update();
-            })
+            });
 
         },
 
@@ -44,10 +44,6 @@ define([
             this.initScales();
             this.update();
         },
-
-
-
-
 
         initScales: function(){
             var _this = this;
@@ -84,13 +80,6 @@ define([
 
         },
 
-
-
-
-
-
-
-
         update: function() {
             var _this = this,
                 tick_spacing,
@@ -116,21 +105,17 @@ define([
 
             //update scales to the new range
             if (this.model.scales.xScaleType !== "ordinal") {
-                this.xScale.range([0, width])//.nice();
+                this.xScale.range([0, width]); //.nice();
             } else {
                 this.xScale.rangePoints([0, width], padding).range();
             }
 
             //update scales to the new range
             if (this.model.scales.yScaleType !== "ordinal") {
-                this.yScale.range([height, 0])//.nice();
+                this.yScale.range([height, 0]); //.nice();
             } else {
                 this.yScale.rangePoints([height, 0], padding).range();
             }
-
-            
-            
-
 
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
@@ -157,12 +142,6 @@ define([
                     isDevMode: true
                 });
 
-            
-            
-            
-            
-            
-            
             this.xAxisEl.attr("transform", "translate(0," + height + ")");
             this.xAxisEl.call(this.xAxis);
             this.yAxisEl.call(this.yAxis);
@@ -187,8 +166,8 @@ define([
                 .style("opacity", 0.5)
                 .attr("r",5);
             dots.exit().remove();
-            dots.attr("cx",function(d){return _this.xScale(d)})
-                .attr("cy",function(d){return _this.yScale(d)});
+            dots.attr("cx",function(d){return _this.xScale(d);})
+                .attr("cy",function(d){return _this.yScale(d);});
 
 
 

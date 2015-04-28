@@ -1,7 +1,6 @@
 .vzb-tool-data-loading-1-file {
-	@extend .vzb-tool;
 
-	@include absoluteAll;
+	@include position(absolute, 0px);
     padding: 30px;
     text-align: center;
     

@@ -76,7 +76,8 @@ define([
                 svg.attr("width", size.width)
                     .attr("height", size.height);
 
-                var defs = svg.append('defs')
+                var defs = svg.append('defs');
+
                 defs.append("svg:marker")
                     .attr("id", "arrow")
                     .attr("viewBox", "0 0 10 10")
@@ -171,15 +172,15 @@ define([
 
         //divides the data into nodes and links
         function linksNodes(data) {
-            formatted = {
+            var formatted = {
                 nodes: [],
                 links: []
             };
 
-            var nodeMap = {};
+            var i, node, nodeMap = {};
 
-            for (var i = 0; i < data.length; i++) {
-                var node = data[i];
+            for (i = 0; i < data.length; i++) {
+                node = data[i];
                 var n = {
                     name: node.name,
                     type: node.type,
@@ -189,8 +190,8 @@ define([
                 nodeMap[node.name] = n;
             }
 
-            for (var i = 0; i < data.length; i++) {
-                var node = data[i];
+            for (i = 0; i < data.length; i++) {
+                node = data[i];
                 if (node.dep) {
                     if (!_.isArray(node.dep)) {
                         node.dep = [node.dep];
@@ -201,9 +202,9 @@ define([
                             source: nodeMap[node.name],
                             target: nodeMap[d]
                         });
-                    };
+                    }
                 }
-            };
+            }
             return formatted;
         }
 

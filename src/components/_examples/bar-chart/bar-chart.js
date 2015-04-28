@@ -1,25 +1,63 @@
-//TODO: Rename postrender & resize 
+//Bar Chart
 define([
     'd3',
-    'lodash',
     'base/component'
-], function(d3, _, Component) {
+], function(d3, Component) {
 
     var BarChart = Component.extend({
 
         /**
-         * Initializes the barchart
-         * @param config component configuration
-         * @param context component context (parent)
+         * Initializes the component (Bar Chart).
+         * Executed once before any template is rendered.
+         * @param {Object} config The options passed to the component
+         * @param {Object} context The component's parent
          */
         init: function(config, context) {
             this.name = 'bar-chart';
             this.template = 'components/_examples/' + this.name + '/' + this.name;
+
+            //define expected models for this component
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }, {
+                name: "entities",
+                type: "entities"
+            }, {
+                name: "marker",
+                type: "model"
+            }, {
+                name: "language",
+                type: "language"
+            }];
+
+            var _this = this;
+            this.model_binds = {
+                "change:time:value": function(evt) {
+                    _this.updateEntities();
+                },
+                "ready": function(evt) {
+                    _this.updateIndicators();
+                    _this.resize();
+                    _this.updateEntities();
+                }
+            };
+
+            //contructor is the same as any component
             this._super(config, context);
+
+            this.xScale = null;
+            this.yScale = null;
+            this.cScale = d3.scale.category10();
+
+            this.xAxis = d3.svg.axisSmart();
+            this.yAxis = d3.svg.axisSmart();
         },
 
         /**
-         * Executes right after the template is in place
+         * Executes after the template is loaded and rendered.
+         * Ideally, it contains HTML instantiations related to template
+         * At this point, this.element and this.placeholder are available as d3 objects
          */
         domReady: function() {
 
@@ -28,165 +66,219 @@ define([
             this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.bars = this.graph.select('.vzb-bc-bars');
+
+            var _this = this;
+            this.on("resize", function() {
+                _this.updateEntities();
+            });
         },
 
+        /**
+         * Changes labels for indicators
+         */
+        updateIndicators: function() {
+            var _this = this;
+            this.translator = this.model.language.getTFunction();
+            this.duration = this.model.time.speed;
+            this.timeFormatter = d3.time.format(this.model.time.formatInput);
+
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
+
+            var yTitle = this.yTitleEl.selectAll("text").data([0]);
+            yTitle.enter().append("text");
+            yTitle
+                .attr("y", "-6px")
+                .attr("x", "-9px")
+                .attr("dx", "-0.72em")
+                .text(titleStringY);
+
+            this.yScale = this.model.marker.axis_y.getDomain();
+            this.xScale = this.model.marker.axis_x.getDomain();
+
+            this.yAxis.tickFormat(function(d) {
+                return _this.model.marker.axis_y.getTick(d);
+            });
+            this.xAxis.tickFormat(function(d) {
+                return _this.model.marker.axis_x.getTick(d);
+            });
+        },
 
         /**
-         * Updates the component as soon as the model/models change
+         * Updates entities
          */
-        modelReady: function() {
-            var indicator = this.model.show.indicator,
-                data = _.cloneDeep(this.model.data.getItems()),
-                time = parseInt(d3.time.format("%Y")(this.model.time.value),10),
-                categories = this.model.show.geo_categories,
+        updateEntities: function() {
 
-                data_curr_year = data.filter(function(d) {
-                    return (d.time == time);
-                }),
+            var _this = this;
+            var time = this.model.time;
+            var currTime = time.value;
+            var duration = (time.playing) ? time.speed : 0;
+            
+            var items = this.model.marker.label.getItems({
+                time: currTime
+            });
 
-                minValue = d3.min(data, function(d) {
-                    return +d[indicator];
-                }),
-                maxValue = d3.max(data, function(d) {
-                    return +d[indicator];
-                }),
-                scale = this.model.show.scale,
-                minY = this.model.show.min || ((scale == "log") ? minValue : 0),
-                maxY = this.model.show.max || (maxValue + maxValue / 10),
-                unit = this.model.show.unit || 1,
-                indicator_name = indicator;
+            this.entityBars = this.bars.selectAll('.vzb-bc-bar')
+                .data(items);
 
-            // Create X axis scale, X axis function and call it on element
-            this.x = d3.scale.ordinal();
+            //exit selection
+            this.entityBars.exit().remove();
 
-            this.x.domain(_.map(data, function(d, i) {
-                return d["geo.name"];
-            }));
+            //enter selection -- init circles
+            this.entityBars.enter().append("rect")
+                .attr("class", "vzb-bc-bar")
+                .on("mousemove", function(d, i) {
 
-            this.xAxis = d3.svg.axis().scale(this.x).orient("bottom")
-                .tickFormat(function(d) {
-                    return d;
+                    // _this.model.entities.highlightEntity(d);
+
+                    // if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
+                    //     text = _this.timeFormatter(_this.time);
+                    //     _this.entityLabels
+                    //         .filter(function(f) {
+                    //             return f.geo == d.geo
+                    //         })
+                    //         .classed("vzb-highlighted", true);
+                    // } else {
+                    //     text = _this.model.marker.label.getValue(d);
+                    // }
+                    // _this.setTooltip(text);
+                })
+                .on("mouseout", function(d, i) {
+                    // _this.model.entities.clearHighlighted();
+                    // _this.setTooltip();
+                    // _this.entityLabels.classed("vzb-highlighted", false);
+                })
+                .on("click", function(d, i) {
+                    // _this.model.entities.selectEntity(d, _this.timeFormatter);
                 });
 
-            
-            this.y = (scale == "log") ? d3.scale.log() : d3.scale.linear();
-            this.y.domain([minY, maxY])
-                .range([this.height, 0]);
+            //positioning and sizes of the bars
 
-            this.yAxis = d3.svg.axis().scale(this.y).orient("left")
-                .tickFormat(function(d) {
-                    return d / unit;
-                }).tickSize(6, 0);
+            var bars = this.bars.selectAll('.vzb-bc-bar');
 
-            //this.yAxisEl.call(yAxis);
-            this.yTitleEl.text(indicator_name);
+            barWidth = this.xScale.rangeBand();
 
-            // Remove old this.bars if exist
-            this.bars.selectAll(".vzb-bc-bar").remove();
-
-            // Update data this.bars
-            this.bars.selectAll(".vzb-bc-bar")
-                .data(data_curr_year)
-                .enter()
-                .append("path")
-                .attr("class", "vzb-bc-bar");
-
-            this.resize();
-
+            this.bars.selectAll('.vzb-bc-bar')
+                .attr("width", barWidth)
+                .attr("fill", function(d) {
+                    return _this.model.marker.color.getValue(d);
+                })
+                .attr("x", function(d) {
+                    return _this.xScale(_this.model.marker.axis_x.getValue(d));
+                })
+                .transition().duration(duration).ease("linear")
+                .attr("y", function(d) {
+                    return _this.yScale(_this.model.marker.axis_y.getValue(d));
+                })
+                .attr("height", function(d) {
+                    return _this.height - _this.yScale(_this.model.marker.axis_y.getValue(d));
+                });
         },
 
         /**
-         * Resizes the component
+         * Executes everytime the container or vizabi is resized
+         * Ideally,it contains only operations related to size
          */
         resize: function() {
-            var tick_spacing = 60,
-                bar_radius = 5,
-                margin;
 
-            switch (this.getLayoutProfile()) {
-                case "small":
-                    margin = {
-                        top: 20,
-                        right: 20,
-                        bottom: 30,
-                        left: 40
-                    };
-                    break;
-                case "medium":
-                    margin = {
-                        top: 25,
-                        right: 25,
-                        bottom: 35,
-                        left: 50
-                    };
-                    tick_spacing = 80;
-                    break;
-                case "large":
-                default:
-                    margin = {
+            var _this = this;
+
+            this.profiles = {
+                "small": {
+                    margin: {
                         top: 30,
-                        right: 30,
-                        bottom: 40,
-                        left: 60
-                    };
-                    tick_spacing = 100;
-                    break;
-            }
+                        right: 20,
+                        left: 40,
+                        bottom: 40
+                    },
+                    padding: 2,
+                    minRadius: 2,
+                    maxRadius: 40
+                },
+                "medium": {
+                    margin: {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    },
+                    padding: 2,
+                    minRadius: 3,
+                    maxRadius: 60
+                },
+                "large": {
+                    margin: {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    },
+                    padding: 2,
+                    minRadius: 4,
+                    maxRadius: 80
+                }
+            };
 
+            this.activeProfile = this.profiles[this.getLayoutProfile()];
+            var margin = this.activeProfile.margin;
+
+
+            //stage
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-            // Update range of Y and call Y axis function on element
-            this.y.range([this.height, 0]);
-            // Number of ticks
-            if (this.model.show.scale == "log") {
-                this.yAxis.ticks(5, '100');
+            this.graph
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            //update scales to the new range
+            if (this.model.marker.axis_y.scale !== "ordinal") {
+                this.yScale.range([this.height, 0]);
             } else {
-                this.yAxis.ticks(Math.max((Math.round(this.height / tick_spacing)), 2));
+                this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
             }
-            this.yAxisEl.call(this.yAxis);
-
-            this.yTitleEl.attr("transform", "translate(10,10)");
-
-            //Adjusting margin according to length
-            var yLabels = this.yAxisEl.selectAll("text")[0];
-
-            if(yLabels && yLabels.length) {
-                var topLabel = yLabels[(yLabels.length - 1)];
-                margin.left = Math.max(margin.left, (topLabel.getBBox().width + 15));
+            if (this.model.marker.axis_x.scale !== "ordinal") {
+                this.xScale.range([0, this.width]);
+            } else {
+                this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
             }
 
-            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            //apply scales to axes and redraw
+            this.yAxis.scale(this.yScale)
+                .orient("left")
+                .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_y.scale,
+                    toolMargin: margin,
+                    limitMaxTickNumber: 6
+                });
 
-            // Update range of X and call X axis function on element
-            this.x.rangeRoundBands([0, width], .1, .2);
+            this.xAxis.scale(this.xScale)
+                .orient("bottom")
+                .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_x.scale,
+                    toolMargin: margin
+                });
+
             this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
                 .call(this.xAxis);
 
-            //adjust this.graph position
-            this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            this.xScale.rangeRoundBands([0, this.width], 0.1, 0.2);
 
-            var indicator = this.model.show.indicator;
-
-            // Update size of this.bars
-            var _this = this;
-            this.bars.selectAll(".vzb-bc-bar")
-                .attr("d", function(d, i) {
-                    return topRoundedRect(_this.x(d["geo.name"]),
-                        _this.y(d[indicator]),
-                        _this.x.rangeBand(),
-                        _this.height - _this.y(d[indicator]),
-                        bar_radius);
-                });
+            this.yAxisEl.call(this.yAxis);
+            this.xAxisEl.call(this.xAxis);
 
         },
+
+
+        drawBars: function() {
+
+        }
 
 
     });
 
-    //draw top rounded paths
-    function topRoundedRect(x, y, width, height, radius) {
-        return "M" + (x + radius) + "," + y + "h" + (width - (radius * 2)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius + "v" + (height - radius) + "h" + (0 - width) + "v" + (0 - (height - radius)) + "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius + "z";
-    }
-
     return BarChart;
+
 });

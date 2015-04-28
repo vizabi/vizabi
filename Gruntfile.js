@@ -84,6 +84,7 @@ module.exports = function(grunt) {
         'copy:preview_pages', //copies preview_page assets
         'copy:local_data', //copies local_data
         'copy:assets', //copies assets
+        'jshint:all'
     ]);
 
     //developer task: grunt dev
@@ -160,25 +161,26 @@ module.exports = function(grunt) {
         copy: {
             preview_pages: {
                 files: [{
-                    cwd: 'preview_pages',
-                    src: ['assets/scripts.js', 'assets/style.css'],
-                    dest: 'preview/preview_pages/',
-                    expand: true
-                },
-                //jquery used only for testing and preview page
-                {
-                    cwd: 'lib/jquery/dist/',
-                    src: ['jquery.min.js'],
-                    dest: 'preview/preview_pages/assets/',
-                    expand: true
-                },
-                //font awesome used only for preview page
-                {
-                    cwd: 'lib/font-awesome/',
-                    src: ['css/font-awesome.min.css', 'fonts/*'],
-                    dest: 'preview/preview_pages/assets/font-awesome/',
-                    expand: true
-                }]
+                        cwd: 'preview_pages',
+                        src: ['assets/scripts.js', 'assets/style.css'],
+                        dest: 'preview/preview_pages/',
+                        expand: true
+                    },
+                    //jquery used only for testing and preview page
+                    {
+                        cwd: 'lib/jquery/dist/',
+                        src: ['jquery.min.js', 'jquery.min.map'],
+                        dest: 'preview/preview_pages/assets/',
+                        expand: true
+                    },
+                    //font awesome used only for preview page
+                    {
+                        cwd: 'lib/font-awesome/',
+                        src: ['css/font-awesome.min.css', 'fonts/*'],
+                        dest: 'preview/preview_pages/assets/font-awesome/',
+                        expand: true
+                    }
+                ]
             },
             local_data: {
                 cwd: 'local_data',
@@ -277,7 +279,7 @@ module.exports = function(grunt) {
             },
             scripts: {
                 files: ['src/**/*.js'],
-                tasks: ['copy:scripts', 'copy:templates']
+                tasks: ['copy:scripts', 'copy:templates', 'jshint:dev']
             },
             templates: {
                 files: ['src/**/*.html'],
@@ -462,7 +464,19 @@ module.exports = function(grunt) {
                     dest: aws.AWS_SUBFOLDER + '/<%= (process.env.TRAVIS_BRANCH || gitinfo.local.branch.current.name) %>/'
                 }]
             }
+        },
+
+        //code quality, js hint
+        jshint: {
+            options: {
+                reporter: require('jshint-stylish'),
+                force: true //todo: remove force
+            },
+            all: ['Gruntfile.js', 'src/**/*.js', 'spec/**/*.js'],
+            dev: ['src/**/*.js'],
+            spec: ['spec/**/*.js']
         }
+
     });
 
     /*
@@ -599,10 +613,10 @@ module.exports = function(grunt) {
 
         for (var i = 0; i < includes.length; i++) {
             contents += '@import "' + includes[i] + '";\n';
-        };
+        }
 
         grunt.file.write(scss_file, contents);
 
         grunt.log.writeln("All styles included in vizabi.scss");
     });
-}
+};

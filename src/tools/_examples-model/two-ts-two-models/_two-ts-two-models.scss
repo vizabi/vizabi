@@ -1,6 +1,5 @@
 .vzb-tool-two-ts-two-models {
-    @extend .vzb-tool;
-    @include absoluteAll;
+    @include position(absolute, 0px);
     padding: 30px;
 
     .vzb-tool-timeslider-1, .vzb-tool-timeslider-2 {

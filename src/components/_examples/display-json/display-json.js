@@ -56,7 +56,7 @@ define([
                 .attr('class', 'profit-year')
                 .html(function(d) {
                     return "Year: "+d.year+" - Profit: "+d.profit;
-                })
+                });
         },
 
         /**

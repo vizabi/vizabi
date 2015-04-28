@@ -14,7 +14,7 @@ define([
          * @param {Object} binds contains initial bindings for the model
          * @param {Function|Array} validade validate rules
          */
-        init: function(values, binds, validate) {
+        init: function(values, defaults, binds, validate) {
             this._id = _.uniqueId("tm");
             this._type = "tool";
             //all intervals are managed at tool level
@@ -24,13 +24,7 @@ define([
             this.validate = this._generateValidate(validate);
 
             //default submodels
-            values = _.extend({
-                state: {},
-                language: {},
-                data: {},
-                ui: {},
-                bind: {}
-            }, values);
+            values = this.defaultOptions(values, defaults);
 
             //constructor is similar to model
             this._super(values, null, binds);
@@ -44,6 +38,75 @@ define([
             }
 
         },
+
+        /* ==========================
+         * Default options methods
+         * ==========================
+         */
+
+        /**
+         * Generates a valid state based on default options
+         */
+        defaultOptions: function(values, defaults) {
+
+            for(var field in defaults) {
+
+                var blueprint = defaults[field];
+                var original = values[field];
+                //specified type, default value and possible values
+                var type = _.isObject(blueprint) ? blueprint._type_ : null;
+                var defs = _.isObject(blueprint) ? blueprint._defs_ : null;
+                var opts = _.isObject(blueprint) ? blueprint._opts_ : null;
+
+                //in case there's no type, just deep extend as much as possible
+                if(!type) {
+                    if(_.isUndefined(original)) {
+                        values[field] = blueprint;
+                    }
+                    else if(_.isPlainObject(blueprint)
+                         && _.isPlainObject(original)) {
+
+                        values[field] = this.defaultOptions(original, blueprint);
+                    }
+                    continue;
+                }
+                
+                //otherwise, each case has special verification
+                if(type === "number" && !_.isNumber(original)) {
+                    values[field] = _.isNumber(defs) ? defs : 0;
+                }
+                else if(type === "string" && !_.isString(original)) {
+                    values[field] = _.isString(defs) ? defs : "";
+                }
+                else if(type === "array" && !_.isArray(original)) {
+                    values[field] = _.isArray(defs) ? defs : [];
+                }
+                else if(type === "object" && !_.isPlainObject(original)) {
+                    values[field] = _.isPlainObject(defs) ? defs : {};
+                }
+                else if(type === "model" || type === "hook") {
+                    if(!_.isPlainObject(original)) {
+                        values[field] = {};
+                    }
+                    values[field] = this.defaultOptions(values[field], defs);
+                }
+
+                //if possible values are determined, we should respect it
+                if(_.isArray(opts) && defs
+                   && _.indexOf(opts, values[field]) === -1) {
+
+                    console.warn("Vizabi options contain invalid value for '"+field+"'. Permitted values: "+ JSON.stringify(opts) +". Changing to default");
+                    
+                    values[field] = defs;
+                }
+
+            }
+
+            return values;
+
+        },
+        
+        //todo: improve loops and maybe generalize to all components
 
         /* ==========================
          * Validation methods

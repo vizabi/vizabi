@@ -10,7 +10,7 @@ $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
     @import '../bubble-size/bubble-size';
     @include box-sizing(border-box);
-    @include absoluteAll;
+    @include position(absolute, 0px);
     text-align: center;
     .vzb-buttonlist-btn {
         outline: none;
@@ -23,7 +23,7 @@ $vzb-button-color-border: #cce6ed;
         cursor: pointer;
         width: $vzb-button-width;
         &>.vzb-buttonlist-btn-icon {
-            @include transition(all, 100ms, ease-in);
+            @include transition(all 100ms ease-in);
             @include box-sizing(border-box);
             @include border-radius($vzb-button-radius);
             font-size: 1.15em;
@@ -88,9 +88,9 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-landscape, &.vzb-large {
     .vzb-buttonlist {
         .vzb-buttonlist-dialog {
-            @include absolute(-500px, 40px);
+            @include position(absolute, -500px 40px auto auto);
             &.vzb-active {
-                @include absolute(20px, 40px);
+                @include position(absolute, 20px 40px auto auto);
             }
         }
     }
