@@ -1,6 +1,130 @@
 //TODO: Improve the examples scripts -- too hardcoded
 //TODO: Remove hardcoded references to variable myVizabi
 
+//TEMPORARY SOLUTION FOR JSON FORMAT IN URL
+//TODO: Replace with a better solution
+
+var URLON = {
+    stringify: function (input) {
+        function encodeString (str) {
+            return encodeURI(str.replace(/([=:&@_;\/])/g, '/$1'));
+        }
+
+        function stringify (input) {
+            // Number or Boolean or Null
+            if (typeof input === 'number' || input === true || input === false || input === null) {
+                return ':' + input;
+            }
+            // Array
+            if (input instanceof Array) {
+                var res = [];
+                for (var i = 0; i < input.length; ++i) {
+                    res.push(stringify(input[i]));
+                }
+                return '@' + res.join('&') + ';';
+            }
+            // Object
+            if (typeof input === 'object') {
+                var res = [];
+                for (var key in input) {
+                    res.push(encodeString(key) + stringify(input[key]));
+                }
+                return '_' + res.join('&') + ';';
+            }
+            // String or undefined          
+            return '=' + encodeString((input !== null ? (input !== undefined ? input : "undefined") : "null").toString());
+        }
+
+        return stringify(input).replace(/;+$/g, '');
+    },
+
+    parse: function (str) {
+        var pos = 0;
+        str = decodeURI(str);
+
+        function read() {
+            var token = '';
+            for (; pos !== str.length; ++pos) {
+                if (str.charAt(pos) === '/') {
+                    pos += 1;
+                    if (pos === str.length) {
+                        token += ';';
+                        break;
+                    }
+                } else if (str.charAt(pos).match(/[=:&@_;]/)) {
+                    break;
+                }
+                token += str.charAt(pos);
+            }
+            return token;
+        }
+
+        function parse() {
+            var type = str.charAt(pos++);
+
+            // String
+            if (type === '=') {
+                return read();
+            }
+            // Number or Boolean
+            if (type === ':') {
+                var value = read();
+                if (value === 'true') {
+                    return true;
+                }
+                if (value === 'false') {
+                    return false;
+                }
+                value = parseFloat(value);
+                return isNaN(value) ? null : value;
+            }
+            // Array
+            if (type === '@') {
+                var res = [];
+                loop: {
+                    if (pos >= str.length || str.charAt(pos) === ';') {
+                        break loop;
+                    }
+                    while (1) {
+                        res.push(parse());
+                        if (pos >= str.length || str.charAt(pos) === ';') {
+                            break loop;
+                        }
+                        pos += 1;
+                    }
+                }
+                pos += 1;
+                return res;
+            }
+            // Object
+            if (type === '_') {
+                var res = {};
+                loop: {
+                    if (pos >= str.length || str.charAt(pos) === ';') {
+                        break loop;
+                    }
+                    while (1) {
+                        var name = read();
+                        res[name] = parse();
+                        if (pos >= str.length || str.charAt(pos) === ';') {
+                            break loop;
+                        }
+                        pos += 1;
+                    }
+                }
+                pos += 1;
+                return res;
+            }
+            // Error
+            throw 'Unexpected char ' + type;
+        }
+
+        return parse();
+    }
+};
+
+/***/
+
 //url params
 function randomSize(id) {
     var width = Math.floor(Math.random() * 800) + 300;
@@ -81,11 +205,7 @@ function forceState(state) {
     myVizabi.setOptions(newOption);
 }
 
-function showState(state, id) {
-    if (!id) {
-        id = "state";
-    }
-
+function formatDates(state) {
     // Format date objects according to the unit
     if (state && state.time && state.time.unit) {
         if (typeof state.time.value === 'object') {
@@ -98,6 +218,14 @@ function showState(state, id) {
             state.time.end = formatDate(state.time.end, state.time.unit);
         }
     }
+}
+
+function showState(state, id) {
+    if (!id) {
+        id = "state";
+    }
+
+    formatDates(state);
 
     var container = document.getElementById(id);
     var str = JSON.stringify(state, null, 2);
@@ -151,13 +279,18 @@ function keepTrackOfMouseDown(){
 function updateURL() {
     if(globalMousedown) return; 
 
+    var state = (myVizabi) ? myVizabi.getOptions().state : {};
+    formatDates(state);
+
     var url = {
-        state: $("#state").text().replace(/(\s|\r\n|\n|\r)/gm, ""),
         width: $(".placeholder").width(),
         height: $(".placeholder").height(),
         fullscreen: $(".placeholder").hasClass('fullscreen')
     };
-    url_string = JSON.stringify(url);
+    if(state) {
+        url.state = state;
+    }
+    url_string = URLON.stringify(url);
     location.href = "#" + url_string;
 }
 
@@ -167,12 +300,11 @@ function parseURL() {
     var hash = window.location.hash;
 
     if (hash) {
-        options = JSON.parse(hash.replace("#", ""));
+        options = URLON.parse(hash.replace("#", ""));
 
         var placeholder = $(".placeholder").attr("id");
-        var state = JSON.parse(options.state);
 
-        url.state = state;
+        url.state = options.state;
         url.lang = options.lang;
 
         setSize(placeholder, options.width, options.height, options.fullscreen);
