@@ -12,8 +12,17 @@ define([
          */
         init: function(config, parent) {
             this.name = 'find';
-
             var _this = this;
+            
+            this.components = [{
+                component: '_gapminder/bubble-opacity',
+                placeholder: '.vzb-dialog-bubble-opacity',
+                model: ["state.entities"],
+                ui: {
+                    show_button: false
+                }
+            }];
+            
             this.model_binds = {
                 "change:state:entities:select": function(evt) {
                     _this.update();
@@ -22,7 +31,7 @@ define([
                     _this.update();
                 }
             }
-
+            
             this._super(config, parent);
         },
 
@@ -33,6 +42,7 @@ define([
             this.list = this.element.select(".vzb-find-list");
             this.input_search = this.element.select("#vzb-find-search");
             this.deselect_all = this.element.select("#vzb-find-deselect");
+            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
 
             var _this = this;
             this.input_search.on("input", function() {
@@ -125,6 +135,7 @@ define([
         showHideDeselect: function() {
             var selected = this.model.state.entities.getSelected();
             this.deselect_all.classed('vzb-hidden', (selected.length < 1));
+            this.opacity_nonselected.classed('vzb-hidden', (selected.length < 1));
         },
 
         deselectEntities: function() {

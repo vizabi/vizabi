@@ -17,7 +17,8 @@ define([
             values = _.extend({
                 show: {},
                 select: [],
-                brush: []
+                brush: [],
+                opacityNonSelected: 0.3
             }, values);
 
             this._super(values, parent, bind);

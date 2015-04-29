@@ -38,9 +38,13 @@
         text-align: right;
         padding: 15px 25px 20px 25px;
     }
+    .vzb-dialog-control {
+        display: inline-block;
+        vertical-align: middle;
+    }
     .vzb-dialog-button {
         cursor: pointer;
-        padding: 10px;
+        padding: 8px;
         display: inline-block;
         color: $vzb-color-grey;
         font-family: $vzb-font-family;
