@@ -235,8 +235,8 @@ define([
                             _defs_: {
                                 en: {
                                     "title": "Bubble Chart Title",
-                                    "buttons/expand": "Full screen",
-                                    "buttons/unexpand": "Leave full screen",
+                                    "buttons/expand": "Go big",
+                                    "buttons/unexpand": "Go small",
                                     "buttons/trails": "Trails",
                                     "buttons/lock": "Lock",
                                     "buttons/find": "Find",
