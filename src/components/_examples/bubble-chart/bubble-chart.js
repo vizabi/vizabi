@@ -50,7 +50,9 @@ define([
                     _this.entitiesUpdatedRecently = true;
                 },
                 "change:marker": function(evt) {
-                    //console.log("EVENT change:marker");
+                    // bubble size change is processed separately
+                    if(evt == "change:marker:size:max") return; 
+                    console.log("EVENT change:marker");
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
@@ -68,6 +70,7 @@ define([
                     _this.highlightBrushed();
                 },
                 "readyOnce": function(evt) {
+                    //console.log("EVENT ready once");
                     _this.updateIndicators();
                     _this.updateEntities();
                     _this.updateTime();
@@ -81,6 +84,7 @@ define([
                 "ready": function(evt) {
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
+                        console.log("EVENT ready");
                         _this.updateEntities();
                         _this.updateSize();
                         _this.updateMarkerSizeLimits();
@@ -99,6 +103,7 @@ define([
                     //console.log("EVENT change:marker:size:max");
                     _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
+                    _this.resizeTrails();   
                 }
             }
 
@@ -1066,7 +1071,7 @@ define([
 
         revealTrails: function(selection, duration) {
             var _this = this;
-            if(!_this.model.time.trails) return;
+            if(!this.model.time.trails || !this.model.entities.select.length) return;
             if(!duration)duration=0;
 
 
@@ -1122,7 +1127,7 @@ define([
 
         resizeTrails: function(selection, duration) {
             var _this = this;
-            if(!_this.model.time.trails) return;
+            if(!this.model.time.trails || !this.model.entities.select.length) return;
             if(!duration)duration=0;
 
             selection = selection == null ? _this.model.entities.select : [selection];

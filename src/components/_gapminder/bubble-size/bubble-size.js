@@ -64,7 +64,22 @@ define([
         },
 
         slideHandler: function () {
-            this.model.size.max = +d3.event.target.value;
+            this._setValue(+d3.event.target.value);
+        },
+        
+        /**
+         * Sets the current value in model. avoid updating more than once in framerate
+         * @param {number} value 
+         */
+        _setValue: function(value) {
+            var frameRate = 50; 
+
+            //implement throttle
+            var now = new Date();
+            if(this._updTime!=null && now - this._updTime < frameRate) return;
+            this._updTime = now;
+            
+            this.model.size.max = value;
         }
     });
 
