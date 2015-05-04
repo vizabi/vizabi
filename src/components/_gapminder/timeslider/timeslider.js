@@ -68,7 +68,7 @@ define([
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = this.template||"components/_gapminder/timeslider/timeslider";
+            this.template = this.template || "components/_gapminder/timeslider/timeslider";
 
             //define expected models/hooks for this component
             this.model_expects = [{
@@ -85,7 +85,6 @@ define([
                     _this._setHandle(_this.model.time.playing);
                 },
                 'change': function(evt, original) {
-                    //console.log("timeslider change" + _this.model.time.value)
                     _this.changeTime();
                     _this._setHandle(_this.model.time.playing);
                 }
@@ -102,8 +101,8 @@ define([
                 show_button: true,
                 class_axis_aligned: false
             }, this.ui);
-            
-            
+
+
             //defaults
             this.width = 0;
             this.height = 0;
@@ -145,7 +144,7 @@ define([
                 .tickSize(0);
 
             //Value
-            this.valueText.attr("text-anchor", "middle").attr("dy","-1em");
+            this.valueText.attr("text-anchor", "middle").attr("dy", "-1em");
 
             var brushed = _this._getBrushed(),
                 brushedEnd = _this._getBrushedEnd();
@@ -209,7 +208,7 @@ define([
             this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
             //adjust scale width if it was not set manually before
-            if(this.xScale.range()[1] = 1)this.xScale.range([0, this.width]);
+            if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
             //adjust axis with scale
             this.xAxis = this.xAxis.scale(this.xScale)
@@ -226,37 +225,38 @@ define([
                 .attr("r", this.profile.radius);
 
         },
-        
-        
+
+
         /**
          * Getter and setter for styling profile
          * @returns {Structure} current profile if not set
          * @returns {class} this if set
          */
-        getSetProfile: function(arg){
+        getSetProfile: function(arg) {
             if (!arguments.length) return profiles;
             profiles = arg;
             return this;
         },
 
-                
+
         /**
          * Getter and setter for scale range
          * @returns {Structure} current profile if not set
          * @returns {class} this if set
          */
-        getSetScaleRangeMax: function(arg){
+        getSetScaleRangeMax: function(arg) {
             if (!arguments.length) return this.xScale.range()[1];
             this.xScale.range([0, arg]);
             return this;
         },
-        
-        
+
+
         /**
          * Gets brushed function to be executed when dragging
          * @returns {Function} brushed function
          */
         _getBrushed: function() {
+
             var _this = this;
             return function() {
                 if (!_this._blockUpdate) {
@@ -287,16 +287,13 @@ define([
          * @returns {Function} brushedEnd function
          */
         _getBrushedEnd: function() {
+
             var _this = this;
             return function() {
                 _this._blockUpdate = false;
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
-                
-                //TODO without timeout the event is not being dispatched correctly. why?
-                setTimeout(function(){
-                    _this.model.time.snap();
-                }, 50);
+                _this.model.time.snap();
             }
         },
 
@@ -324,16 +321,16 @@ define([
                     .ease("linear")
                     .attr("cx", new_pos);
 
-                this.valueText.attr("transform", "translate(" + old_pos + ","+(this.height/2)+")")
+                this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
                     .transition()
                     .duration(speed)
                     .ease("linear")
-                    .attr("transform", "translate(" + new_pos + ","+(this.height/2)+")");
+                    .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
 
             } else {
                 var pos = this.xScale(value);
                 this.handle.attr("cx", pos);
-                this.valueText.attr("transform", "translate(" + pos + ","+(this.height/2)+")");
+                this.valueText.attr("transform", "translate(" + pos + "," + (this.height / 2) + ")");
             }
         },
 
@@ -345,22 +342,19 @@ define([
             //update state
             var _this = this,
                 frameRate = 50; //avoid updating more than once in 50ms
-//            this._updTime = this._updTime || _.throttle(function(time) {
-//                _this.model.time.value = time;
-//            }, frameRate);
-//            this._updTime(time);
-              
+            //            this._updTime = this._updTime || _.throttle(function(time) {
+            //                _this.model.time.value = time;
+            //            }, frameRate);
+            //            this._updTime(time);
+
             //TODO: this is a monkey fix. need to come up with a better one
-            
+
             //implement throttle manually
             var now = new Date();
-            if(this._updTime!=null && now - this._updTime < frameRate) return;
-            
-            //TODO without timeout the event is not being dispatched. why?
-            setTimeout(function(){
-                _this.model.time.value = time;
-            },20)
-            
+            if (this._updTime != null && now - this._updTime < frameRate) return;
+
+            _this.model.time.value = time;
+
             //update timestamp for throttle
             this._updTime = now;
         },

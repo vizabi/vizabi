@@ -199,9 +199,8 @@ define([
             if (this.round === 'ceil') op = 'ceil';
             if (this.round === 'floor') op = 'floor';
             var time = d3.time[this.unit][op](this[what]);
-            
+
             this.set(what, time, true); //3rd argumennt forces update
-            //console.log("snap 2 " + this[what])
         },
 
         /**

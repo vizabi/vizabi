@@ -114,8 +114,7 @@ define([
                 if (!_.isPlainObject(val)) {
                     //change if it's not the same value
                     if (!_.isEqual(this._data[a], val) || force) {
-                        var p;
-                        p = (_.isUndefined(this._data[a])) ? 'init' : 'change';
+                        var p = (_.isUndefined(this._data[a])) ? 'init' : 'change';
                         events.push(p + ":" + a);
                     }
                     if (!_.isEqual(this._prevData[a], val) || force) {
@@ -161,7 +160,7 @@ define([
                 val_promise.finally(function() {
 
                     //setting is true when validation takes place
-                    if (!setting) {
+                    if (!setting || force) {
                         //trigger set if not set
                         if (!_this._set) {
                             _this._set = true;
@@ -173,7 +172,7 @@ define([
 
                     defer.resolve();
 
-                    if (!setting) {
+                    if (!setting || force) {
                         _this.triggerAll(events, _this.getObject());
                         _this._setting = false;
                     }
