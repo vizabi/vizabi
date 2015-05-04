@@ -30,7 +30,7 @@ define([
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
                 model: ["state.time"]
-            }, ];
+            }];
 
             //default options
             this.default_options = {
@@ -58,7 +58,7 @@ define([
                                     _defs_: {
                                         dim: {
                                             _type_: "string",
-                                            _defs_: "geo",
+                                            _defs_: "geo"
                                         },
                                         filter: {
                                             _type_: "object",
@@ -122,7 +122,7 @@ define([
                                         value: {
                                             _type_: "string",
                                             _defs_: "geo.name"
-                                        },
+                                        }
                                     }
                                 },
                                 color: {

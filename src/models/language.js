@@ -54,7 +54,7 @@ define([
             return function(string) {
                 return _this.getUIString(string, lang, strings);
             }
-        },
+        }
 
     });
 

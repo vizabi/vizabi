@@ -60,7 +60,7 @@ define([
                                     _defs_: {
                                         dim: {
                                             _type_: "string",
-                                            _defs_: "geo",
+                                            _defs_: "geo"
                                         },
                                         filter: {
                                             _type_: "object",

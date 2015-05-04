@@ -27,7 +27,7 @@ define([
                 component: '_gapminder/timeslider',
                 placeholder: '.vzb-tool-timeslider',
                 model: ['state.time']
-            }, ];
+            }];
 
             //constructor is the same as any tool
             this._super(config, options);

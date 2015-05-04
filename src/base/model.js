@@ -6,7 +6,7 @@ define([
     'base/class',
     'base/intervals',
     'base/events',
-    'base/data',
+    'base/data'
 ], function(Q, d3, _, utils, Class, Intervals, Events, DataManager) {
 
     var model = Class.extend({
