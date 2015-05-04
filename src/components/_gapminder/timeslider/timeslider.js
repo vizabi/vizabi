@@ -370,7 +370,7 @@ define([
             this.element.classed(class_show_value, show_value);
             this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
             this.element.classed(class_axis_aligned, axis_aligned);
-        },
+        }
     });
 
     return Timeslider;

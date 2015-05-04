@@ -20,7 +20,7 @@ define([
             //instantiating components
             this.components = [{
                 component: '_gapminder/timeslider',
-                placeholder: '.vzb-tool-timeslider-1', //div to render
+                placeholder: '.vzb-tool-timeslider-1' //div to render
             }];
 
             this._super(config, options);

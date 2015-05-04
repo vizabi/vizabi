@@ -52,7 +52,7 @@ define([
          */
         resize: function() {
             //code here
-        },
+        }
 
 
     });

@@ -50,7 +50,7 @@ define([
             if (state.time.end != state.time_end.value) {
                 state.time.end = state.time_end.value;
             }
-        },
+        }
 
     });
 

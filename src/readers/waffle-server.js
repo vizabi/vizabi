@@ -2,7 +2,7 @@ define([
     'q',
     'req',
     'lodash',
-    'base/class',
+    'base/class'
 ], function(Q, req, _, Class) {
 
     var WaffleServerReader = Class.extend({

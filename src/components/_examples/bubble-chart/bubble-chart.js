@@ -554,7 +554,7 @@ define([
             if (compensateDragging) {
                 zoomer.translate([
                     zoomer.translate()[0] + x1 - x2,
-                    zoomer.translate()[1] + y1 - y2,
+                    zoomer.translate()[1] + y1 - y2
                 ])
             }
 

@@ -17,7 +17,7 @@ define([
             this._type = "button";
 
             values = _.extend({
-                buttons: [],
+                buttons: []
             }, values);
 
             this._super(values, parent, bind);

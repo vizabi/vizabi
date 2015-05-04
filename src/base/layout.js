@@ -20,15 +20,15 @@ define([
             this.screen_sizes = {
                 small: {
                     min_width: 0,
-                    max_width: 749,
+                    max_width: 749
                 },
                 medium: {
                     min_width: 750,
-                    max_width: 969,
+                    max_width: 969
                 },
                 large: {
                     min_width: 970,
-                    max_width: Infinity,
+                    max_width: Infinity
                 }
             };
             this.container = null; //d3 container

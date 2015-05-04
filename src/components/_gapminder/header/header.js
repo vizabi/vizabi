@@ -1,7 +1,7 @@
 define([
     'lodash',
     'base/utils',
-    'base/component',
+    'base/component'
 ], function(_, utils, Component) {
 
     var Header = Component.extend({

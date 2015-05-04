@@ -114,7 +114,7 @@ define([
                 .style("color", function(d) {
                     return _this.model.rows.color.getValue(d);
                 });
-        },
+        }
 
 
     });

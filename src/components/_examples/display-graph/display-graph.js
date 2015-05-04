@@ -52,7 +52,7 @@ define([
          */
         resize: function() {
             //E.g: var height = this.placeholder.style('height');
-        },
+        }
 
     });
 

@@ -3,7 +3,7 @@
 define([
     //'jquery',
     'lodash',
-    'base/class',
+    'base/class'
 ], function(/* $, */ _, Class) {
 
     var LocalJSONReader = Class.extend({

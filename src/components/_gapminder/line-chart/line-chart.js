@@ -79,7 +79,7 @@ define([
             }, this.ui["vzb-tool-"+this.name]);
             
             this.ui.entity_labels = _.extend({
-                min_number_of_entities_when_values_hide: 10,
+                min_number_of_entities_when_values_hide: 10
             }, this.ui.entity_labels);
             
             this.ui.whenHovering = _.extend({
@@ -664,7 +664,7 @@ define([
                 _this.hoveringNow = null;                       
             }, 300);
 
-        },        
+        }
         
         
 
