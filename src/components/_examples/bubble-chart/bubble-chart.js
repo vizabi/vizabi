@@ -781,13 +781,11 @@ define([
                         cached.valueX = valueX;
                         cached.valueY = valueY;
                         
-                        if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
+                        if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null || cached.labelX0==null || cached.labelY0 == null) {
                             select.trailStartTime = _this.timeFormatter(_this.time);
                             //the events in model are not triggered here. to trigger uncomment the next line
                             //_this.model.entities.triggerAll("change:select");
-                        }
-                            
-                        if (cached.labelX0==null || cached.labelY0 == null){
+                        
                             cached.labelX0 = valueX;
                             cached.labelY0 = valueY;
                         }
