@@ -190,7 +190,7 @@ define([
                         x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
                         y: d3.mouse(this)[1] - _this.activeProfile.margin.top
                     };
-                    _this.zoomRect.classed("vzb-transparent", false);
+                    _this.zoomRect.classed("vzb-invisible", false);
                 })
                 .on("drag", function(d, i) {
                     if (!this.ctrlKeyLock) return;
@@ -214,7 +214,7 @@ define([
                 _this.zoomRect
                     .attr("width", 0)
                     .attr("height", 0)
-                    .classed("vzb-transparent", true);
+                    .classed("vzb-invisible", true);
 
                 this.target = {
                     x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
@@ -704,14 +704,14 @@ define([
                 if (valueL == null || valueY == null || valueX == null || valueS == null) {
                     
                     // if entity is missing data it should hide
-                    //view.classed("vzb-transparent", true)
+                    view.classed("vzb-invisible", true)
                     
                 } else {
                     
                     // if entity has all the data we update the visuals
                     var scaledS = areaToRadius(_this.sScale(valueS));
 
-                    view//classed("vzb-transparent", false)
+                    view.classed("vzb-invisible", false)
                         .style("fill", valueC)
                         .transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(valueY))
@@ -821,9 +821,9 @@ define([
             //     var valueX = _this.model.marker.axis_x.getValue(d);
             //     
             //     if(valueY==null || valueX==null) {
-            //         view.classed("vzb-transparent", true)
+            //         view.classed("vzb-invisible", true)
             //     }else{
-            //         view.classed("vzb-transparent", false)
+            //         view.classed("vzb-invisible", false)
             //             .style("fill", _this.model.marker.color.getValue(d))
             //             .transition().duration(_this.duration).ease("linear")
             //             .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
@@ -900,7 +900,7 @@ define([
 
             _this.someSelected = (_this.model.entities.select.length > 0);
 
-            this.updateBubbleOpacity(300);
+            this.updateBubbleOpacity();
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
                 .data(_this.model.entities.select, function(d) {
@@ -1091,7 +1091,7 @@ define([
                             //no trail segment should be visible if leading bubble is shifted backwards
                             || (d.trailStartTime - _this.timeFormatter(_this.time) >= 0);
                         
-                        view.classed("vzb-transparent", transparent);
+                        view.classed("vzb-invisible", transparent);
 
                         if (transparent) return;
 
@@ -1227,7 +1227,7 @@ define([
             
             this.someHighlighted = (this.model.entities.brush.length > 0);
 
-            this.updateBubbleOpacity(100);
+            this.updateBubbleOpacity();
 
             if(this.someHighlighted){
                 var d = _.clone(this.model.entities.brush[0]); 
@@ -1244,20 +1244,19 @@ define([
             }
         },
         
-        updateBubbleOpacity: function(){
+        updateBubbleOpacity: function(duration){
             var _this = this;
+            //if(!duration)duration = 0;
             
             var OPACITY_HIGHLT = 1.0;
             var OPACITY_HIGHLT_DIM = 0.6;
             var OPACITY_SELECT = 0.9;
             var OPACITY_SELECT_DIM = this.model.entities.opacityNonSelected;
             var OPACITY_REGULAR = 0.8;
-            var OPACITY_INVISIBLE = 0.0;
                         
             this.entityBubbles
+                //.transition().duration(duration)
                 .style("opacity", function(d){
-                    //invisible
-                    //if(d.geo invisible) return OPACITY_INVISIBLE;
                 
                     if(_this.someHighlighted){
                         //highlight or non-highlight
