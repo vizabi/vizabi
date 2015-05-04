@@ -198,6 +198,14 @@ define([
                             _type_: "string",
                             _defs_: "waffle-server"
                         }
+//                        reader: {
+//                            _type_: "string",
+//                            _defs_: "local-json"
+//                        },
+//                        path: {
+//                            _type_: "string",
+//                            _defs_: "../../local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+//                        }
                     }
                 },
 

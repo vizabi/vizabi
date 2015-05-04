@@ -22,5 +22,7 @@ MOST OF THE ORIGINAL CODE IS REMOVED FROM THIS FILE (we don't use these properti
         vertical-align:baseline;
         background:transparent;
         cursor: default;
+        white-space: nowrap;
+        @include box-sizing(border-box);
     }
 }

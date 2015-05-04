@@ -67,7 +67,7 @@ define([
                 },
                 "change:entities:brush": function() {
                     //console.log("EVENT change:entities:brush");
-                    _this.highlightBrushed();
+                    _this.highlightDataPoints();
                 },
                 "readyOnce": function(evt) {
                     //console.log("EVENT ready once");
@@ -104,6 +104,9 @@ define([
                     _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                     _this.resizeTrails();   
+                },
+                'change:entities:opacityNonSelected': function() {
+                    _this.updateBubbleOpacity();
                 }
             }
 
@@ -701,14 +704,14 @@ define([
                 if (valueL == null || valueY == null || valueX == null || valueS == null) {
                     
                     // if entity is missing data it should hide
-                    view.classed("vzb-transparent", true)
+                    //view.classed("vzb-transparent", true)
                     
                 } else {
                     
                     // if entity has all the data we update the visuals
                     var scaledS = areaToRadius(_this.sScale(valueS));
 
-                    view.classed("vzb-transparent", false)
+                    view//classed("vzb-transparent", false)
                         .style("fill", valueC)
                         .transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(valueY))
@@ -897,12 +900,7 @@ define([
 
             _this.someSelected = (_this.model.entities.select.length > 0);
 
-            this.entityBubbles.classed("vzb-bc-selected", function(d) {
-                return _this.someSelected && _this.model.entities.isSelected(d)
-            })
-            this.entityBubbles.classed("vzb-bc-unselected", function(d) {
-                return _this.someSelected && !_this.model.entities.isSelected(d)
-            });
+            this.updateBubbleOpacity(300);
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
                 .data(_this.model.entities.select, function(d) {
@@ -1177,26 +1175,6 @@ define([
         },
 
         /*
-         * Highlights a bubble
-         */
-        highlightBubble: function(d) {
-            if (d != null) {
-
-                this.bubbleContainer.classed("vzb-wrapper-highlighted", true);
-                var selected = this.entityBubbles
-                    .filter(function(f) {return f.geo === d.geo;})
-                    .classed("vzb-highlighted", true);
-
-            } else {
-
-                this.bubbleContainer.classed("vzb-wrapper-highlighted", false);
-                this.bubbleContainer.selectAll(".vzb-highlighted")
-                    .classed("vzb-highlighted", false);
-
-            }
-        },
-
-        /*
          * Shows and hides axis projections
          */
         axisProjections: function(d) {
@@ -1244,30 +1222,57 @@ define([
         /*
          * Highlights all hovered bubbles
          */
-        //TODO: is it supposed to be called Brushed???
-        highlightBrushed: function() {
+        highlightDataPoints: function() {
             var _this = this;
+            
+            this.someHighlighted = (this.model.entities.brush.length > 0);
 
-            //unhighlight existing first
-            this.bubbleContainer.selectAll(".vzb-highlighted").each(function(d) {
-                _this.highlightBubble();
-                _this.axisProjections();
-            })
+            this.updateBubbleOpacity(100);
 
-            var brushed = this.model.entities.brush
-            for (var i = 0; i < brushed.length; i++) {
-                var d = _.clone(brushed[i]);
-                d["time"] = _this.time;
-                this.highlightBubble(d);
+            if(this.someHighlighted){
+                var d = _.clone(this.model.entities.brush[0]); 
                 
                 if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
-                    d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+                    d["time"] = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
                 }else{
-                    d.time = _this.time;
+                    d["time"] = _this.time;
                 }
+                
                 this.axisProjections(d);
-
+            }else{
+                this.axisProjections();
             }
+        },
+        
+        updateBubbleOpacity: function(){
+            var _this = this;
+            
+            var OPACITY_HIGHLT = 1.0;
+            var OPACITY_HIGHLT_DIM = 0.6;
+            var OPACITY_SELECT = 0.9;
+            var OPACITY_SELECT_DIM = this.model.entities.opacityNonSelected;
+            var OPACITY_REGULAR = 0.8;
+            var OPACITY_INVISIBLE = 0.0;
+                        
+            this.entityBubbles
+                .style("opacity", function(d){
+                    //invisible
+                    //if(d.geo invisible) return OPACITY_INVISIBLE;
+                
+                    if(_this.someHighlighted){
+                        //highlight or non-highlight
+                        if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+                    }
+                
+                    if(_this.someSelected){
+                        //selected or non-selected
+                        return _this.model.entities.isSelected(d)? OPACITY_SELECT : OPACITY_SELECT_DIM;
+                    }
+                    
+                    if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+                
+                    return OPACITY_REGULAR;
+                });
         }
 
         //        

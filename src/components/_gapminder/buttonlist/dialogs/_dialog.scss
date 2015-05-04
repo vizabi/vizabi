@@ -1,7 +1,6 @@
 .vzb-buttonlist-dialog {
     $vzb-dialog-content-height: 250px;
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
-    @include box-sizing(border-box);
     @include transition(all 300ms ease-in-out);
     @include position(absolute, null null -450px 50%);
     border-top: 1px solid #f7f7f7;
@@ -35,17 +34,25 @@
         }
     }
     .vzb-dialog-buttons {
-        text-align: right;
+        display: table;
+        width: 100%;
         padding: 15px 25px 20px 25px;
     }
     .vzb-dialog-control {
-        display: inline-block;
+        display: table-cell;
+        width: 100%;
         vertical-align: middle;
+        padding: 8px;
+        &:first-child{padding-left: 0px}
+        &:last-child{padding-right: 0px}
     }
     .vzb-dialog-button {
+        display: table-cell;
+        width: auto;
         cursor: pointer;
         padding: 8px;
-        display: inline-block;
+        &:first-child{padding-left: 0px}
+        &:last-child{padding-right: 0px}
         color: $vzb-color-grey;
         font-family: $vzb-font-family;
         font-size: 0.8em;

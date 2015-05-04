@@ -10,7 +10,7 @@ $vzb-bc-year-size:300px;
 }
 
 .vzb-zoomin {
-    cursor: zoom-in
+    cursor: zoom-in;
 }
 
 .vzb-bubble-chart-svg {
@@ -32,36 +32,8 @@ $vzb-bc-year-size:300px;
     }
     .vzb-bc-bubbles {
         .vzb-bc-entity {
-            @include opacity(0.8);
             stroke: white;
             cursor: pointer;
-            @include transition(opacity 300ms linear);
-            &.vzb-bc-unselected {
-                @include opacity(0.2);
-                &:hover {
-                    @include opacity(0.6);
-                }
-            }
-            &.vzb-bc-selected {
-                @include opacity(1);
-            }
-        }
-        &.vzb-wrapper-highlighted {
-            .vzb-bc-entity {
-                @include opacity(0.6);
-                &.vzb-highlighted {
-                    @include opacity(1);
-                }
-                &.vzb-bc-unselected {
-                    @include opacity(0.4);
-                    &:hover {
-                        @include opacity(0.9);
-                    }
-                }
-                &.vzb-bc-selected {
-                    @include opacity(1);
-                }
-            }
         }
     }
     .vzb-bc-labels .vzb-bc-entity text {

@@ -114,11 +114,7 @@ define([
                 return d[dimension];
             });
 
-            if (_.indexOf(select_array, value) !== -1) {
-                return true;
-            } else {
-                return false;
-            }
+            return _.indexOf(select_array, value) !== -1;
         },
 
         /**
@@ -171,11 +167,7 @@ define([
                 return d[dimension];
             });
 
-            if (_.indexOf(brush_array, value) !== -1) {
-                return true;
-            } else {
-                return false;
-            }
+            return _.indexOf(brush_array, value) !== -1;
         },
 
         /**

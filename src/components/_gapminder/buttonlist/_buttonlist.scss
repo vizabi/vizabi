@@ -10,12 +10,12 @@ $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
     @import '../bubble-size/bubble-size';
     @import '../bubble-opacity/bubble-opacity';
-    @include box-sizing(border-box);
     @include position(absolute, 0px);
+    white-space: normal;
+    
     text-align: center;
     .vzb-buttonlist-btn {
         outline: none;
-        @include box-sizing(border-box);
         background: none;
         border: 0px;
         text-align: center;
@@ -25,7 +25,6 @@ $vzb-button-color-border: #cce6ed;
         width: $vzb-button-width;
         &>.vzb-buttonlist-btn-icon {
             @include transition(all 100ms ease-in);
-            @include box-sizing(border-box);
             @include border-radius($vzb-button-radius);
             font-size: 1.15em;
             text-align: center;

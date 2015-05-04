@@ -9,7 +9,6 @@
     text-align: left;
     overflow: hidden;
     .vzb-tool-title {
-        @include box-sizing(border-box);
         @include position(absolute, 0px 0px null 0px);
         @include font-size(18px);
         height: $heightTitle;
