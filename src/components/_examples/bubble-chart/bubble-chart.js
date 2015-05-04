@@ -52,16 +52,24 @@ define([
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
                     if(evt == "change:marker:size:max") return; 
-                    console.log("EVENT change:marker");
+                    //console.log("EVENT change:marker");
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
-                    _this.redrawDataPoints();
+                    if(_this.model.time.trails && _this.someSelected){
+                        _this.cached = {};
+                        _this.createTrails();
+                        _this.resizeTrails();
+                        _this.revealTrails();
+                    }
+                    _this.resetZoomer();
+                    //_this.redrawDataPoints();
                 },
                 "change:entities:select": function() {
                     //console.log("EVENT change:entities:select");
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
+                    _this.updateBubbleOpacity();
                     _this.resizeTrails();
                     _this.revealTrails();
                 },
@@ -77,20 +85,20 @@ define([
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
                     _this.selectDataPoints();
-                    _this.redrawDataPoints();
+                    _this.updateBubbleOpacity();
+                    _this.resetZoomer();
+                    //_this.redrawDataPoints();
                     _this.resizeTrails();
                     _this.revealTrails();
                 },
                 "ready": function(evt) {
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
-                        console.log("EVENT ready");
-                        _this.updateEntities();
-                        _this.updateSize();
-                        _this.updateMarkerSizeLimits();
-                        _this.redrawDataPoints();
-                        
                         _this.entitiesUpdatedRecently = false;
+                        //console.log("EVENT ready");
+                        _this.updateEntities();
+                        _this.redrawDataPoints();
+                        _this.updateBubbleOpacity();
                     }
                 },
                 'change:time:value': function() {
@@ -323,7 +331,8 @@ define([
                 //console.log("EVENT: resize");
                 _this.updateSize();
                 _this.updateMarkerSizeLimits();
-                _this.redrawDataPoints();
+                _this.resetZoomer();
+                //_this.redrawDataPoints();
                 _this.resizeTrails();
             })
 
@@ -655,7 +664,6 @@ define([
             this.projectionX.attr("y1", _this.yScale.range()[0]);
             this.projectionY.attr("x2", _this.xScale.range()[0]);
 
-            this.resetZoomer();
         },
 
 
@@ -730,15 +738,16 @@ define([
                         cached.valueX = valueX;
                         cached.valueY = valueY;
                         
-                        if (!_this.model.time.trails || trailStartTime - _this.time > 0 || cached.labelX0==null || cached.labelY0 == null) {
+                        if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
                             select.trailStartTime = _this.timeFormatter(_this.time);
                             //the events in model are not triggered here. to trigger uncomment the next line
                             //_this.model.entities.triggerAll("change:select");
+                        }
                             
+                        if (cached.labelX0==null || cached.labelY0 == null){
                             cached.labelX0 = valueX;
                             cached.labelY0 = valueY;
                         }
-                        
                         
                         // reposition label
                         _this.entityLabels.filter(function(f) {return f.geo == d.geo})
@@ -791,7 +800,6 @@ define([
 
                                 rect.classed("vzb-transparent", !cached.stuckOnLimit);
                                 line.classed("vzb-transparent", cached.stuckOnLimit);
-
 
                                 _this.repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
 
@@ -869,18 +877,6 @@ define([
 
         repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
 
-            //            var text = d3.select(context).selectAll("text") //.transition().duration();
-            //            var line = d3.select(context).selectAll("line") //.transition().duration();
-            //
-            //            if (resolvedX != null) {
-            //                text.attr("x", resolvedX);
-            //                line.attr("x2", resolvedX);
-            //            }
-            //            if (resolvedY != null) {
-            //                text.attr("y", resolvedY);
-            //                line.attr("y2", resolvedY);
-            //            }
-
             var labelGroup = d3.select(context);
 
             labelGroup
@@ -900,7 +896,6 @@ define([
 
             _this.someSelected = (_this.model.entities.select.length > 0);
 
-            this.updateBubbleOpacity();
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
                 .data(_this.model.entities.select, function(d) {
@@ -979,25 +974,26 @@ define([
             } else {
                 _this.removeTrails();
                 _this.model.entities.select.forEach(function(d) {
-                    d.trailStartTime = null
+                    d.trailStartTime = null;
                 });
             }
         },
 
         createTrails: function(selection) {
             var _this = this;
+            if(!this.model.time.trails || !this.model.entities.select.length) return;
 
+            var start = +_this.timeFormatter(_this.model.time.start);
+            var end = +_this.timeFormatter(_this.model.time.end);
+            var step = _this.model.time.step;
+            var timePoints = [];
+            for (var time = start; time <= end; time += step) timePoints.push(time);
+            
             selection = selection == null ? _this.model.entities.select : [selection];
 
             selection.forEach(function(d) {
-                var start = +_this.timeFormatter(_this.model.time.start);
-                var end = +_this.timeFormatter(_this.model.time.end);
-                var step = _this.model.time.step;
-                var trailSegmentData = [];
-
-                for (var time = start; time <= end; time += step) trailSegmentData.push({
-                    t: _this.timeFormatter.parse("" + time)
-                });
+                
+                var trailSegmentData = timePoints.map(function(m){return {t: _this.timeFormatter.parse("" + m)} });
 
                 if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
                 _this.cached[d.geo].maxMinValues = {
@@ -1010,13 +1006,30 @@ define([
 
                 var maxmin = _this.cached[d.geo].maxMinValues;
 
-                _this.entityTrails
+                var trail = _this.entityTrails
                     .filter(function(f) {return f.geo == d.geo})
                     .selectAll("g")
-                    .data(trailSegmentData)
-                    .enter().append("g")
+                    .data(trailSegmentData);
+                
+                trail.exit().remove();
+                
+                trail.enter().append("g")
                     .attr("class", "trailSegment")
-                    .each(function(segment, index) {
+                    .on("mousemove", function(segment, index) {
+                        var geo = d3.select(this.parentNode).data()[0].geo;
+                        _this.axisProjections({ geo: geo, time: segment.t });
+                        _this.setTooltip(_this.timeFormatter(segment.t));
+                        _this.entityLabels
+                            .filter(function(f) {return f.geo == geo})
+                            .classed("vzb-highlighted", true);
+                    })
+                    .on("mouseout", function(segment, index) {
+                        _this.axisProjections();
+                        _this.setTooltip();
+                        _this.entityLabels.classed("vzb-highlighted", false);
+                    });
+                
+                trail.each(function(segment, index) {
                         segment.valueY = _this.model.marker.axis_y.getValue({geo: d.geo,time: segment.t});
                         segment.valueX = _this.model.marker.axis_x.getValue({geo: d.geo,time: segment.t});
                         segment.valueS = _this.model.marker.size.getValue({geo: d.geo,time: segment.t});
@@ -1033,20 +1046,7 @@ define([
                             view.append("circle").style("fill", segment.valueC);
                             view.append("line").style("stroke", segment.valueC);
                         }
-                    })
-                    .on("mousemove", function(segment, index) {
-                        var geo = d3.select(this.parentNode).data()[0].geo;
-                        _this.axisProjections({ geo: geo, time: segment.t });
-                        _this.setTooltip(_this.timeFormatter(segment.t));
-                        _this.entityLabels
-                            .filter(function(f) {return f.geo == geo})
-                            .classed("vzb-highlighted", true);
-                    })
-                    .on("mouseout", function(segment, index) {
-                        _this.axisProjections();
-                        _this.setTooltip();
-                        _this.entityLabels.classed("vzb-highlighted", false);
-                    })
+                    });
 
 
             });
@@ -1250,9 +1250,9 @@ define([
             
             var OPACITY_HIGHLT = 1.0;
             var OPACITY_HIGHLT_DIM = 0.6;
-            var OPACITY_SELECT = 0.9;
-            var OPACITY_SELECT_DIM = this.model.entities.opacityNonSelected;
+            var OPACITY_SELECT = 0.8;
             var OPACITY_REGULAR = 0.8;
+            var OPACITY_SELECT_DIM = Math.min(OPACITY_REGULAR, this.model.entities.opacityNonSelected);
                         
             this.entityBubbles
                 //.transition().duration(duration)

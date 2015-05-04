@@ -341,22 +341,14 @@ define([
         _setTime: function(time) {
             //update state
             var _this = this,
-                frameRate = 50; //avoid updating more than once in 50ms
-            //            this._updTime = this._updTime || _.throttle(function(time) {
-            //                _this.model.time.value = time;
-            //            }, frameRate);
-            //            this._updTime(time);
-
-            //TODO: this is a monkey fix. need to come up with a better one
-
-            //implement throttle manually
+                frameRate = 50;
+            
+             //avoid updating more than once in "frameRate"
             var now = new Date();
             if (this._updTime != null && now - this._updTime < frameRate) return;
+            this._updTime = now;
 
             _this.model.time.value = time;
-
-            //update timestamp for throttle
-            this._updTime = now;
         },
 
         /**
