@@ -49,10 +49,10 @@ define([
             this.ui = this.ui || config.ui;
 
             //set placeholder as d3 entity already
-            if (_.isString(this.placeholder)) {
+            if (_.isString(this.placeholder) || _.isElement(this.placeholder)) {
                 this.placeholder = d3.select(this.placeholder);
             } else {
-                console.error('ERROR: the placeholder argument should be a string');
+                console.error('ERROR: the placeholder argument should be a selector or DOM element');
             }
 
             var _this = this;
@@ -264,7 +264,7 @@ define([
 
                     var root = _this.parent.element || d3;
                     //place the contents into the correct placeholder
-                    _this.placeholder = (_.isString(_this.selector)) ? root.select(_this.selector) : _this.placeholder;
+                    _this.placeholder = (_.isString(_this.selector) || _.isElement(_this.selector)) ? root.select(_this.selector) : _this.placeholder;
 
                     //add placeholder identifiers
                     _this.placeholder.attr("data-component", "true");

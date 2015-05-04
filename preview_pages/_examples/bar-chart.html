@@ -271,7 +271,8 @@ $(function() {
     };
 
 
-    myVizabi = new Vizabi("_examples/bar-chart", "#bar-chart", options);
+    var bar_chart_container = document.getElementById("bar-chart");
+    myVizabi = new Vizabi("_examples/bar-chart", bar_chart_container, options);
 
     showState(options.state);
 });
