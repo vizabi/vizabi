@@ -6,11 +6,11 @@ define([
     'd3collisionResolver'
 ], function(d3, Component) {
 
-    function radiusToArea(r) {
+    function _radiusToArea(r) {
         return r * r * Math.PI
     }
 
-    function areaToRadius(a) {
+    function _areaToRadius(a) {
         return Math.sqrt(a / Math.PI)
     }
 
@@ -90,6 +90,7 @@ define([
                     //_this.redrawDataPoints();
                     _this.resizeTrails();
                     _this.revealTrails();
+                    if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
                 },
                 "ready": function(evt) {
                     //TODO a workaround to fix the selection of entities
@@ -104,7 +105,12 @@ define([
                 'change:time:value': function() {
                     //console.log("EVENT change:time:value");
                     _this.updateTime();
-                    _this.redrawDataPoints();
+                    
+                    if(_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom(); 
+                    }else{
+                        _this.redrawDataPoints();
+                    }
                     _this.revealTrails(null, _this.duration);
                 },
                 'change:marker:size:max': function() {
@@ -130,7 +136,8 @@ define([
 
 
             this.cached = {};
-
+            this.xyMaxMinMean = {};
+            this.currentZoomFrameXY = null;
 
             // default UI settings
             this.ui = _.extend({
@@ -229,7 +236,7 @@ define([
                     y: d3.mouse(this)[1] - _this.activeProfile.margin.top
                 };
 
-                _this.zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true);
+                _this._zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true, 500);
             });
 
             this.zoomer = d3.behavior.zoom()
@@ -271,8 +278,8 @@ define([
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]]);
 
                     // Keep the min and max size (pixels) constant, when zooming.            
-                    //                    _this.sScale.range([radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-                    //                                        radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
+                    //                    _this.sScale.range([_radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+                    //                                        _radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
 
                     var optionsY = _this.yAxis.labelerOptions();
                     var optionsX = _this.xAxis.labelerOptions();
@@ -405,6 +412,12 @@ define([
             this.xAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_x.getTick(d);
             });
+            
+            this.xyMaxMinMean = {
+                x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter), 
+                y: this.model.marker.axis_y.getMaxMinMean(this.timeFormatter),
+                s: this.model.marker.size.getMaxMinMean(this.timeFormatter)
+            };
         },
 
 
@@ -489,9 +502,39 @@ define([
 
 
 
+        
+        
+        adaptMinMaxZoom: function(){
+            var _this = this;
+            var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
+            var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
+            var radiusMax = _areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
+            var frame = _this.currentZoomFrameXY;
+            
+            var suggestedFrame = {
+                x1: _this.xScale(mmmX.min) - radiusMax,
+                y1: _this.yScale(mmmY.min) + radiusMax,
+                x2: _this.xScale(mmmX.max) + radiusMax,
+                y2: _this.yScale(mmmY.max) - radiusMax,
+            }
+            
+            var TOLERANCE = 0.3;
+            
+            if(!frame || suggestedFrame.x1 < frame.x1 * (1-TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1+TOLERANCE)
+                      || suggestedFrame.y2 < frame.y2 * (1-TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1+TOLERANCE)){
+                _this.currentZoomFrameXY = _.clone(suggestedFrame);
+                var frame = _this.currentZoomFrameXY;
+                _this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
+                //console.log("rezoom")
+            }else{
+                _this.redrawDataPoints(_this.duration);
+                //console.log("no rezoom")
+            }
+        },
+        
 
 
-        zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging) {
+        _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
             var _this = this;
             var zoomer = _this.zoomer;
 
@@ -523,7 +566,7 @@ define([
             zoomer.ratioY = ratioY;
             zoomer.ratioX = ratioX;
             zoomer.translate(pan);
-            zoomer.duration = 500;
+            zoomer.duration = duration?duration:0;
 
             zoomer.event(element);
         },
@@ -676,9 +719,9 @@ define([
             this.maxRadius = maxRadius * this.model.marker.size.max;
 
             if (this.model.marker.size.scale !== "ordinal") {
-                this.sScale.range([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)]);
+                this.sScale.range([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)]);
             } else {
-                this.sScale.rangePoints([radiusToArea(_this.minRadius), radiusToArea(_this.maxRadius)], 0).range();
+                this.sScale.rangePoints([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)], 0).range();
             }
 
         },
@@ -717,7 +760,7 @@ define([
                 } else {
                     
                     // if entity has all the data we update the visuals
-                    var scaledS = areaToRadius(_this.sScale(valueS));
+                    var scaledS = _areaToRadius(_this.sScale(valueS));
 
                     view.classed("vzb-invisible", false)
                         .style("fill", valueC)
@@ -810,8 +853,7 @@ define([
                         if (_this.cached[d.geo] != null) {
                             delete _this.cached[d.geo]
                         };
-                    }
-
+                    }                    
                 } // data exists
 
 
@@ -858,12 +900,12 @@ define([
 
                 // place label layout simulation into a queue
                 _this.collisionTimeout = setTimeout(function() {
-                    //                if(_this.forceLayout == null) return;
-                    //                
-                    //                // resume the simulation, fast-forward it, stop when done
-                    //                _this.forceLayout.resume();
-                    //                while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
-                    //                _this.forceLayout.stop();
+                    // if(_this.forceLayout == null) return;
+                    // 
+                    // // resume the simulation, fast-forward it, stop when done
+                    // _this.forceLayout.resume();
+                    // while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+                    // _this.forceLayout.stop();
 
 
                     //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
@@ -923,13 +965,13 @@ define([
                             if (d3.event.defaultPrevented) return
 
                             var maxmin = _this.cached[d.geo].maxMinValues;
-                            var radius = areaToRadius(_this.sScale(maxmin.valueSmax));
-                            _this.zoomOnRectangle(_this.element,
+                            var radius = _areaToRadius(_this.sScale(maxmin.valueSmax));
+                            _this._zoomOnRectangle(_this.element,
                                 _this.xScale(maxmin.valueXmin) - radius,
                                 _this.yScale(maxmin.valueYmin) + radius,
                                 _this.xScale(maxmin.valueXmax) + radius,
                                 _this.yScale(maxmin.valueYmax) - radius,
-                                false);
+                                false, 500);
                         });
                 
                     view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
@@ -1142,7 +1184,7 @@ define([
                             .transition().duration(duration).ease("linear")
                             .attr("cy", _this.yScale(segment.valueY))
                             .attr("cx", _this.xScale(segment.valueX))
-                            .attr("r", areaToRadius(_this.sScale(segment.valueS)));
+                            .attr("r", _areaToRadius(_this.sScale(segment.valueS)));
 
                         var next = this.parentNode.children[index + 1];
                         if (next == null) return;
@@ -1183,7 +1225,7 @@ define([
                 var valueY = this.model.marker.axis_y.getValue(d);
                 var valueX = this.model.marker.axis_x.getValue(d);
                 var valueS = this.model.marker.size.getValue(d);
-                var radius = areaToRadius(this.sScale(valueS))
+                var radius = _areaToRadius(this.sScale(valueS))
 
                 if (this.ui.whenHovering.showProjectionLineX) {
                     this.projectionX
