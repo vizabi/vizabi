@@ -87,15 +87,6 @@ module.exports = function(grunt) {
         'jshint:all'
     ]);
 
-    //developer task: grunt dev
-    grunt.registerTask('dev', [
-        'dev-preview', //copies source to preview
-        'connect:dev', //run locally
-        'watch' //watch for code changes
-    ]);
-
-
-    //TODO: merge build and build-pretty
     //build task: grunt build
     grunt.registerTask('build', [
         'clean', //clean preview and dist folder
@@ -112,20 +103,11 @@ module.exports = function(grunt) {
         'copy:assets', //copies assets
     ]);
 
-    //build task without uglifying: grunt build-pretty
-    grunt.registerTask('build-pretty', [
-        'clean', //clean preview folder
-        'includereplace:build', //build AMD wrapper
-        'write_plugins', //includes all tools and components in plugins.js
-        'requirejs:pretty', //use requirejs for amd module
-        'generate_styles', //generate scss
-        'sass:preview', //compile scss
-        'preview_pages_menu', //build preview_pages menu template
-        'includereplace:preview_pages_build', //preview_pages folder
-        'preview_pages_index', //build preview_pages
-        'copy:preview_pages', //copies preview_page assets
-        'copy:local_data', //copies local_data
-        'copy:assets', //copies assets
+    //developer task: grunt dev
+    grunt.registerTask('dev', [
+        'dev-preview', //copies source to preview
+        'connect:dev', //run locally
+        'watch' //watch for code changes
     ]);
 
     //default task with connect
