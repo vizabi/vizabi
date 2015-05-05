@@ -1128,6 +1128,28 @@ define([
 
             return values;
         },
+        
+        
+        /**
+         * gets maximum, minimum and mean values from the dataset of this certain hook
+         */
+        getMaxMinMean: function(timeFormatter){
+            var _this = this;
+            var result = {};
+            
+            d3.nest()
+                .key(function(d) { return timeFormatter(d.time); })
+                .entries(_this._items)
+                .forEach(function(d){
+                    var values = d.values
+                        .filter(function(f){return f[_this.value] != null})
+                        .map(function(m){return +m[_this.value]});
+                    result[d.key] = {max: d3.max(values), min: d3.min(values), mean: d3.mean(values)};
+                })
+            
+            return result;
+        },
+        
 
         /**
          * gets filtered dataset with fewer keys

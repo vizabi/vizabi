@@ -48,7 +48,8 @@ define([
                                 round: "ceil",
                                 formatInput: "%Y",
                                 trails: true,
-                                lockNonSelected: 0
+                                lockNonSelected: 0,
+                                adaptMinMaxZoom: true
                             }
                         },
                         //entities we want to show
