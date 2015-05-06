@@ -1,0 +1,41 @@
+$vzbp-width-nav: 200px;
+$vzbp-width-sidebar: 200px;
+body {
+    background-color: $vzbp-color-background;
+    font-family: $vzbp-font-family;
+    font-size: 12px;
+}
+
+#vzbp-nav {
+    @include position(absolute, 0 null 0 0);
+    width: $vzbp-width-nav;
+    background-color: $vzbp-color-nav;
+}
+
+#vzbp-main {
+    @include position(absolute, 0 $vzbp-width-sidebar 0 $vzbp-width-nav);
+}
+
+#vzbp-sidebar {
+    @include position(absolute, 0 0 0 null);
+    width: $vzbp-width-sidebar;
+    background-color: $vzbp-color-sidebar;
+}
+
+.vzbp-nav-closed {
+    #vzbp-nav {
+        left: $vzbp-width-nav * -1;
+    }
+    #vzbp-main {
+        left: 0px;
+    }
+}
+
+.vzbp-sidebar-closed {
+    #vzbp-sidebar {
+        right: $vzbp-width-nav * -1;
+    }
+    #vzbp-main {
+        right: 0px;
+    }
+}

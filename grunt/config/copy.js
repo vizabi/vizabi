@@ -1,24 +1,36 @@
 // Copy all js and template files to preview folder
 module.exports = {
-    preview_pages: {
-        files: [{
-                cwd: 'preview_pages',
-                src: ['assets/scripts.js', 'assets/style.css'],
-                dest: 'preview/preview_pages/',
+    preview: {
+        files: [
+            {
+                cwd: 'dist/',
+                src: ['vizabi.js'],
+                dest: 'preview/assets/js',
+                expand: true
+            },
+            {
+                cwd: 'dist/',
+                src: ['vizabi.css'],
+                dest: 'preview/assets/css',
+                expand: true
+            },{
+                cwd: 'preview_src/',
+                src: ['assets/css/**/*', 'assets/js/**/*'],
+                dest: 'preview/',
                 expand: true
             },
             //jquery used only for testing and preview page
             {
                 cwd: 'lib/jquery/dist/',
                 src: ['jquery.min.js', 'jquery.min.map'],
-                dest: 'preview/preview_pages/assets/',
+                dest: 'preview/assets/js/',
                 expand: true
             },
             //font awesome used only for preview page
             {
                 cwd: 'lib/font-awesome/',
                 src: ['css/font-awesome.min.css', 'fonts/*'],
-                dest: 'preview/preview_pages/assets/font-awesome/',
+                dest: 'preview/assets/',
                 expand: true
             }
         ]
@@ -27,24 +39,6 @@ module.exports = {
         cwd: 'local_data',
         src: ['**/*'],
         dest: 'preview/local_data/',
-        expand: true
-    },
-    assets: {
-        cwd: 'src',
-        src: ['assets/imgs/**/*'],
-        dest: 'preview/',
-        expand: true
-    },
-    scripts: {
-        cwd: 'src',
-        src: ['**/*.js'],
-        dest: 'preview/',
-        expand: true
-    },
-    templates: {
-        cwd: 'src',
-        src: ['**/*.html'],
-        dest: 'preview/',
         expand: true
     },
     /*
@@ -64,14 +58,5 @@ module.exports = {
             dest: 'preview/test/spec/',
             expand: true
         }]
-    },
-    /*
-     * copy files from build to dist
-     */
-    dist: {
-        cwd: 'preview',
-        src: ['vizabi.js', 'vizabi.css'],
-        dest: 'dist/',
-        expand: true
     }
 };

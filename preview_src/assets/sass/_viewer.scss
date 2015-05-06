@@ -1,0 +1,9 @@
+.vzbp-viewer {
+	@include position(absolute, 0 0 0 0);
+	@include prefixer(box-shadow, 0px 0px 7px 0px rgba(0,0,0,0.1), webkit moz spec);
+	margin: auto;
+	background-color: #FFFFFF;
+	width: 320px;
+	height: 568px;
+	border: 1px solid #BBBEC8;
+}
