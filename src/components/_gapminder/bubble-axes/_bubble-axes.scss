@@ -1,0 +1,30 @@
+//general styles
+.vzb-ba-holder {
+
+    margin: 0 auto;
+    position: relative;
+    
+    select{margin: 10px; margin-left: 0px; width: auto; max-width: 50%}
+
+}
+
+//large specific styles
+&.vzb-large {
+    .vzb-ba-holder {
+        //...
+    }
+}
+
+//medium specific styles
+&.vzb-medium {
+    .vzb-ba-holder {
+        //...
+    }
+}
+
+//small specific styles
+&.vzb-small {
+    .vzb-ba-holder {
+        //...
+    }
+}

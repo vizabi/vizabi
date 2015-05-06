@@ -14,12 +14,15 @@ define([
         init: function(config, parent) {
             this.name = this.name || '';
 
-            this.model_expects = [{
+            this.model_expects = this.model_expects || [{
                 name: "state",
                 type: "model"
             }, {
                 name: "ui",
                 type: "model"
+            }, {
+                name: "language",
+                type: "language"
             }];
             
             this.template = 'components/_gapminder/buttonlist/'+
