@@ -2,7 +2,7 @@
   "name": "vizabi",
   "version": "0.0.1",
   "description": "Vizabi Framework",
-  "main": "Gruntfile.js",
+  "main": "src/vizabi.js",
   "directories": {
     "test": "test"
   },
@@ -15,7 +15,7 @@
     "url": "https://github.com/Gapminder/vizabi"
   },
   "author": "",
-  "license": "ISC",
+  "license": "BSD",
   "bugs": {
     "url": "https://github.com/Gapminder/vizabi/issues"
   },
@@ -41,7 +41,9 @@
     "grunt-remove-logging": "^0.2.0",
     "grunt-replace": "^0.8.0",
     "grunt-template-jasmine-requirejs": "^0.2.0",
+    "jit-grunt": "^0.9.1",
     "jshint-stylish": "^1.0.1",
+    "load-grunt-config": "^0.17.1",
     "load-grunt-tasks": "^0.4.0",
     "phantomjs": "^1.9.15"
   }
