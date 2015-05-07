@@ -15,16 +15,14 @@
         }
     }
     .vzbp-collapsible {
-        overflow: hidden;
-        height: 0px;
-        @include transition(height 0.2s linear);
+        display: none;
     }
     &.open {
         .vzbp-collapsible-title:after {
             border-color: #C1C4C8 transparent transparent transparent;
         }
         .vzbp-collapsible {
-            height: auto;
+            display: block;
         }
     }
 }

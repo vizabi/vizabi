@@ -181,7 +181,7 @@ function normalizeDivSize(div, container) {
     var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
 
     if(divWidth != width || divHeight != height) {
-        console.warn("Size outside range. Setting size to:", width, height);
+        // console.warn("Size outside range. Setting size to:", width, height);
         setDivSize(div, width, height);
     }
 }
@@ -200,3 +200,49 @@ function updateSizePanel(div, width, height) {
     document.getElementById("vzbp-input-width").value = width;
     document.getElementById("vzbp-input-height").value = height;
 }
+
+/*
+ * Resize Section
+ */
+
+//update size
+setDivSize(placeholder, 320, 568);
+//resize div
+resizableDiv(placeholder, container, 300, 300, function() {
+    forceResizeEvt();
+    updateSizePanel(placeholder);
+});
+
+document.getElementById('vzbp-btn-portrait').onclick = function() {
+    setDivSize(placeholder, 320, 568);
+    normalizeDivSize(placeholder, container);
+};
+document.getElementById('vzbp-btn-landscape').onclick = function() {
+    setDivSize(placeholder, 568, 320);
+    normalizeDivSize(placeholder, container);
+};
+document.getElementById('vzbp-btn-tablet').onclick = function() {
+    setDivSize(placeholder, 768, 1024);
+    normalizeDivSize(placeholder, container);
+};
+document.getElementById('vzbp-btn-desktop').onclick = function() {
+    setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
+    normalizeDivSize(placeholder, container);
+};
+document.getElementById('vzbp-btn-random').onclick = function() {
+    setDivRandomSize(placeholder, container);
+};
+
+//change sizes manually
+var inputWidth = document.getElementById('vzbp-input-width');
+var inputHeight = document.getElementById('vzbp-input-height');
+
+function changeSizes() {
+    var width = parseInt(inputWidth.value, 10);
+    var height = parseInt(inputHeight.value, 10);
+    setDivSize(placeholder, width, height);
+    normalizeDivSize(placeholder, container);
+}
+
+inputWidth.onchange = changeSizes;
+inputHeight.onchange = changeSizes;

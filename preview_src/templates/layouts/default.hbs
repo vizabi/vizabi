@@ -1,3 +1,11 @@
+---
+control_buttons: { play: true, languages: ["en", "pt"] }
+control_hooks: true
+control_state: true
+control_sizes: true
+control_buttons: {play: true, language: true}
+---
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,7 +16,7 @@
     <link rel="stylesheet" href="{{assets}}css/main.css">
     <link rel="stylesheet" href="{{assets}}css/vizabi.css">
   </head>
-  <body class="vzbp-nav-state-editor">
+  <body>
     {{!-- Navigation --}}
     {{> nav }}
 
@@ -34,14 +42,87 @@
 
     {{!-- Scripts --}}
     <script src="{{assets}}js/_utils.js"></script>
-    <script src="{{assets}}js/_size-div.js"></script>
     <script src="{{assets}}js/_collapsible.js"></script>
-    <script src="{{assets}}js/_state-editor.js"></script>
     <script src="{{assets}}js/main.js"></script>
+
+    {{#if control_state}}
+      <script src="{{assets}}js/_state-editor.js"></script>
+    {{/if}}
+
+    {{#if control_sizes}}
+      <script src="{{assets}}js/_size-div.js"></script>
+    {{/if}}
 
     {{#if tool}}
       <script>
-        viz = new Vizabi("{{tool}}", placeholder);
+
+        VIZABI_OPTIONS = {
+          state: {},
+          bind: {
+            "ready": function() {
+              // parseURL();
+            }
+          },
+          language: {
+            id: "en",
+            strings: {
+              en: {
+                "title": "{{ title }}",
+                "buttons/expand": "Go big",
+                "buttons/unexpand": "Go small",
+                "buttons/trails": "Trails",
+                "buttons/lock": "Lock",
+                "buttons/find": "Find",
+                "buttons/deselect": "Deselect",
+                "buttons/ok": "OK",
+                "buttons/colors": "Colors",
+                "buttons/size": "Size",
+                "buttons/more_options": "Options",
+                "indicator/lex": "Life expectancy",
+                "indicator/gdp_per_cap": "GDP per capita",
+                "indicator/pop": "Population",
+                "indicator/geo.region": "Region",
+                "indicator/geo": "Geo code",
+                "indicator/time": "",
+                "indicator/geo.category": "Geo category"
+                },
+              pt: {
+                "title": "{{ title }}",
+                "buttons/expand": "Expandir",
+                "buttons/unexpand": "Retrair",
+                "buttons/trails": "Pegadas",
+                "buttons/lock": "Travar",
+                "buttons/find": "Encontre",
+                "buttons/deselect": "Desmarcar",
+                "buttons/ok": "OK",
+                "buttons/colors": "Cores",
+                "buttons/size": "Tamanho",
+                "buttons/more_options": "Opções",
+                "indicator/lex": "Expectativa de Vida",
+                "indicator/gdp_per_cap": "PIB per capita",
+                "indicator/pop": "População",                    
+                "indicator/geo.region": "Região",
+                "indicator/geo": "Código Geo",
+                "indicator/time": "",
+                "indicator/geo.category": "Categoria"
+              }
+            }
+          }
+        };
+
+        {{#if control_state}}
+          
+          (function() {
+            function updateState(evt, vals) {
+              updateStateEditor(vals.state);
+            }
+            
+            VIZABI_OPTIONS.bind['change:state'] = updateState;
+
+          })();
+        {{/if}}
+
+        VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
       </script>
     {{/if}}
     
