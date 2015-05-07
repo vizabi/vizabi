@@ -17,10 +17,7 @@ define([
             this.components = [{
                 component: '_gapminder/bubble-opacity',
                 placeholder: '.vzb-dialog-bubble-opacity',
-                model: ["state.entities"],
-                ui: {
-                    show_button: false
-                }
+                model: ["state.entities"]
             }];
             
             this.model_binds = {

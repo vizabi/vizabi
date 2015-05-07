@@ -9,7 +9,7 @@ $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
     @import '../bubble-size/bubble-size';
-    @import '../bubble-axes/bubble-axes';
+    @import '../indicator-picker/indicator-picker';
     @import '../bubble-opacity/bubble-opacity';
     @include position(absolute, 0px);
     white-space: normal;
