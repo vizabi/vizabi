@@ -2,7 +2,7 @@
  *  See post http://www.lab4games.net/zz85/blog/2014/11/15/resizing-moving-snapping-windows-with-js-css/
  */
 
-function resizableDiv(pane, container, minWidth, minHeight) {
+function resizableDiv(pane, container, minWidth, minHeight, cb) {
 
     // Thresholds
     var FULLSCREEN_MARGINS = -10;
@@ -72,7 +72,6 @@ function resizableDiv(pane, container, minWidth, minHeight) {
             w: b.width,
             h: b.height,
             isResizing: isResizing,
-            isMoving: !isResizing && canMove(),
             onTopEdge: onTopEdge,
             onLeftEdge: onLeftEdge,
             onRightEdge: onRightEdge,
@@ -119,25 +118,21 @@ function resizableDiv(pane, container, minWidth, minHeight) {
 
             if (clicked.onBottomEdge) pane.style.height = Math.min(Math.max(y, minHeight), maxHeight) + 'px';
 
+            if(cb) {
+                cb();
+            }
+
             return;
         }
-
-        if (clicked && clicked.isMoving) {
-            // moving
-            pane.style.top = (e.clientY - clicked.y) + 'px';
-            pane.style.left = (e.clientX - clicked.x) + 'px';
-            return;
-        }
-
         // This code executes when mouse moves without clicking
 
         // style cursor
         if (onRightEdge && onBottomEdge) {
-            pane.style.cursor = 'nwse-resize';
+            pane.style.cursor = 'nwse-resize !important';
         } else if (onRightEdge) {
-            pane.style.cursor = 'ew-resize';
+            pane.style.cursor = 'ew-resize !important';
         } else if (onBottomEdge) {
-            pane.style.cursor = 'ns-resize';
+            pane.style.cursor = 'ns-resize !important';
         } else {
             pane.style.cursor = 'default';
         }
@@ -148,15 +143,60 @@ function resizableDiv(pane, container, minWidth, minHeight) {
     function onUp(e) {
         calc(e);
 
-        if (clicked && clicked.isMoving) {
-            // Snap
-            var snapped = {
-                width: b.width,
-                height: b.height
-            };
-
-        }
-
         clicked = null;
     }
+}
+
+function setDivSize(div, width, height) {
+    div.style.width = width + 'px';
+    div.style.height = height + 'px';
+
+    forceResizeEvt();
+    updateSizePanel(div, width, height);
+}
+
+function setDivRandomSize(div, container) {
+    var MARGINS = 20;
+    var maxWidth = container.offsetWidth - MARGINS;
+    var maxHeight = container.offsetHeight - MARGINS;
+    var minWidth = 300;
+    var minHeight = 300;
+
+    var width = Math.round(Math.random() * (maxWidth - minWidth)) + minWidth;
+    var height = Math.round(Math.random() * (maxHeight - minHeight)) + minHeight;
+
+    setDivSize(div, width, height);
+}
+
+function normalizeDivSize(div, container) {
+    var MARGINS = 20;
+    var maxWidth = container.offsetWidth - MARGINS;
+    var maxHeight = container.offsetHeight - MARGINS;
+    var minWidth = 300;
+    var minHeight = 300;
+    var divWidth = parseInt(div.style.width,10);
+    var divHeight = parseInt(div.style.height,10);
+
+    var width = Math.min(Math.max(divWidth, minWidth), maxWidth);
+    var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
+
+    if(divWidth != width || divHeight != height) {
+        console.warn("Size outside range. Setting size to:", width, height);
+        setDivSize(div, width, height);
+    }
+}
+
+function forceResizeEvt() {
+    //force resize
+    event = document.createEvent("HTMLEvents");
+    event.initEvent("resize", true, true);
+    event.eventName = "resize";
+    window.dispatchEvent(event);
+}
+
+function updateSizePanel(div, width, height) {
+    if(!width) width = parseInt(div.style.width,10);
+    if(!height) height = parseInt(div.style.height,10);
+    document.getElementById("vzbp-input-width").value = width;
+    document.getElementById("vzbp-input-height").value = height;
 }

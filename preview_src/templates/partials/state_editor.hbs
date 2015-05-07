@@ -1,0 +1,66 @@
+<div id="vzbp-state-editor">
+<div id="vzbp-state-editor-text"></div>
+<textarea id="vzbp-state-editor-textarea">{
+ "marker": {
+  "dimensions": [
+   "entities",
+   "time"
+  ],
+  "label": {
+   "use": "property",
+   "value": "geo.name"
+  },
+  "axis_y": {
+   "use": "indicator",
+   "value": "lex",
+   "scale": "linear"
+  },
+  "axis_x": {
+   "use": "property",
+   "value": "geo.name"
+  },
+  "color": {
+   "use": "property",
+   "value": "geo.region",
+   "domain": {
+    "_default": "#ffb600",
+    "world": "#ffb600",
+    "eur": "#FFE700",
+    "afr": "#00D5E9",
+    "asi": "#FF5872",
+    "ame": "#7FEB00"
+   },
+   "domain_type": "continuous"
+  }
+ },
+ "time": {
+  "value": "1992",
+  "start": "1952",
+  "end": "2012",
+  "playable": true,
+  "playing": false,
+  "loop": false,
+  "round": true,
+  "speed": 300,
+  "unit": "year",
+  "step": 1,
+  "formatInput": "%Y"
+ },
+ "entities": {
+  "show": {
+   "dim": "geo",
+   "filter": {
+    "geo": [
+     "*"
+    ],
+    "geo.category": [
+     "region"
+    ]
+   }
+  },
+  "select": [],
+  "brush": [],
+  "opacityNonSelected": 0.3
+ }
+}</textarea>
+</div>

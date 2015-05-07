@@ -1,0 +1,68 @@
+#vzbp-state-editor {
+    ::selection {
+        background: #cccccc;
+        /* WebKit/Blink Browsers */
+        
+        color: #ffffff;
+        opacity: 1;
+    }
+    ::-moz-selection {
+        background: #cccccc;
+        /* Gecko Browsers */
+        
+        color: #ffffff;
+        opacity: 1;
+    }
+    // #vzbp-state-editor-text {
+    //     font-family: $vzbp-font-family-editor;
+    //     @include prefixer(box-sizing, border-box, webkit moz spec);
+    //     font-size: 13px;
+    //     position: absolute;
+    //     left: 0px;
+    //     top: 0px;
+    //     width: 100%;
+    //     height: 100%;
+    //     color: #eeeeee;
+    //     resize: none;
+    //     border: none;
+    //     padding: 20px;
+    //     margin: 0px;
+    // }
+    #vzbp-state-editor-textarea {
+        font-family: $vzbp-font-family-editor;
+        @include prefixer(box-sizing, border-box, webkit moz spec);
+        font-size: 13px;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        resize: none;
+        background: transparent;
+        color: white;
+        border: none;
+        overflow: auto;
+        padding: 20px;
+        margin: 0px;
+        opacity: 0.7;
+
+        &:active,&:focus {
+          outline: none;
+        }
+    }
+    .StringColor {
+        color: #ff8800;
+    }
+    .OptionsColor {
+        color: #ffff00;
+    }
+    .BracketsColor {
+        color: #00ffff;
+    }
+    .TagColor {
+        color: #00ff00;
+    }
+    .CommentColor {
+        color: #555555;
+    }
+}

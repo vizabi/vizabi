@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Vizabi - {{ title }}</title>
     {{!-- Styles --}}
+    <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
     <link rel="stylesheet" href="{{assets}}css/main.css">
     <link rel="stylesheet" href="{{assets}}css/vizabi.css">
   </head>
-  <body>
+  <body class="vzbp-nav-state-editor">
     {{!-- Navigation --}}
     {{> nav }}
 
@@ -17,6 +18,8 @@
     </div>
 
     {{> sidebar }}
+
+    {{> state_editor }}
 
 
     {{!-- Vizabi --}}
@@ -30,8 +33,17 @@
     <script src="{{assets}}js/jquery.min.js"></script>
 
     {{!-- Scripts --}}
-    <script src="{{assets}}js/resizable-div.js"></script>
+    <script src="{{assets}}js/_utils.js"></script>
+    <script src="{{assets}}js/_size-div.js"></script>
+    <script src="{{assets}}js/_collapsible.js"></script>
+    <script src="{{assets}}js/_state-editor.js"></script>
     <script src="{{assets}}js/main.js"></script>
+
+    {{#if tool}}
+      <script>
+        viz = new Vizabi("{{tool}}", placeholder);
+      </script>
+    {{/if}}
     
   </body>
 </html>
