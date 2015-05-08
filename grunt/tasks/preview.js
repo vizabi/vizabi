@@ -7,11 +7,16 @@ module.exports = function(grunt) {
 
     //default task: grunt
     grunt.registerTask('preview', [
-        'clean:preview',
-        'sass:prod',
+        'sass:preview',
         'copy:preview',
-        'assemble:prod',
-        'watch:preview'
+        'copy:preview_require',
+        'assemble:dev'
+    ]);
+
+    grunt.registerTask('preview-prod', [
+        'sass:preview',
+        'copy:preview',
+        'assemble:prod'
     ]);
 
 };

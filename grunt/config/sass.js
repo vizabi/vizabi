@@ -5,8 +5,7 @@ module.exports = {
             style: 'expanded'
         },
         files: {
-            'preview_src/assets/css/main.css': 'preview_src/assets/sass/main.scss',
-            'dist/vizabi.css': 'src/assets/style/vizabi.scss'
+            'preview/vizabi.css': 'src/assets/style/vizabi.scss'
         }
     },
     prod: {
@@ -14,8 +13,15 @@ module.exports = {
             style: 'compressed'
         },
         files: {
-            'preview_src/assets/css/main.css': 'preview_src/assets/sass/main.scss',
             'dist/vizabi.css': 'src/assets/style/vizabi.scss'
+        }
+    },
+    preview: {
+        options: {
+            style: 'compressed'
+        },
+        files: {
+            'preview_src/assets/css/main.css': 'preview_src/assets/sass/main.scss'
         }
     }
 };

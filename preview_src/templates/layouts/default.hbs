@@ -14,7 +14,7 @@ control_buttons: {play: true, language: true}
     {{!-- Styles --}}
     <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
     <link rel="stylesheet" href="{{assets}}css/main.css">
-    <link rel="stylesheet" href="{{assets}}css/vizabi.css">
+    <link rel="stylesheet" href="vizabi.css">
   </head>
   <body>
     {{!-- Navigation --}}
@@ -140,9 +140,10 @@ control_buttons: {play: true, language: true}
 
     {{!-- Vizabi Production and Development --}}
     {{#if production}}
-      <script src="{{assets}}js/vizabi.js"></script>
+      <script src="{{assets}}vizabi/vizabi.js"></script>
     {{else}}
-      <script src="{{assets}}js/vizabi.js"></script>
+      <script data-main="config.js" src="{{assets}}js/require.js"></script>
+      <script src="vizabi.js"></script>
     {{/if}}
 
     {{!-- Scripts --}}

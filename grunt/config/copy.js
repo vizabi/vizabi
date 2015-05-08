@@ -1,19 +1,7 @@
 // Copy all js and template files to preview folder
 module.exports = {
     preview: {
-        files: [
-            {
-                cwd: 'dist/',
-                src: ['vizabi.js'],
-                dest: 'preview/assets/js',
-                expand: true
-            },
-            {
-                cwd: 'dist/',
-                src: ['vizabi.css'],
-                dest: 'preview/assets/css',
-                expand: true
-            },{
+        files: [{
                 cwd: 'preview_src/',
                 src: ['assets/css/**/*', 'assets/js/**/*'],
                 dest: 'preview/',
@@ -35,10 +23,32 @@ module.exports = {
             }
         ]
     },
+    preview_require: {
+        //jquery used only for testing and preview page
+        files: [{
+            cwd: 'lib/requirejs/',
+            src: ['require.js'],
+            dest: 'preview/assets/js/',
+            expand: true
+        }]
+    },
     local_data: {
         cwd: 'local_data',
         src: ['**/*'],
         dest: 'preview/local_data/',
+        expand: true
+    },
+    //dev mode copy Javascript and 
+    scripts: {
+        cwd: 'src',
+        src: ['**/*.js'],
+        dest: 'preview/',
+        expand: true
+    },
+    templates: {
+        cwd: 'src',
+        src: ['**/*.html'],
+        dest: 'preview/',
         expand: true
     },
     /*

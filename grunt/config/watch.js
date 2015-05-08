@@ -4,10 +4,6 @@ module.exports = {
         files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
         tasks: ['sass:dev']
     },
-    preview_pages: {
-        files: ['preview_pages/**/*.html', '!preview_pages/index.html', 'preview_pages/assets/scripts.js', 'preview_pages/assets/style.css'],
-        tasks: ['includereplace:preview_pages_dev', 'preview_pages_index', 'copy:preview_pages']
-    },
     scripts: {
         files: ['src/**/*.js'],
         tasks: ['copy:scripts', 'copy:templates', 'jshint:dev']
@@ -27,10 +23,6 @@ module.exports = {
     },
     preview: {
         files: ['preview_src/**/*'], //['src/**/*.js', 'specs/**/*.js'],
-        tasks: ['clean:preview',
-            'sass:prod',
-            'copy:preview',
-            'assemble:prod'
-        ]
+        tasks: ['preview']
     }
 };
