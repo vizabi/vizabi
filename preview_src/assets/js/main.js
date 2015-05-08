@@ -8,8 +8,8 @@ var viz;
  * Share Section
  */
 
-document.getElementById("vzbp-btn-refresh").onclick = updateURL;
-document.getElementById("vzbp-btn-github").onclick = updateURL;
+document.getElementById("vzbp-btn-refresh").onclick = resetURL;
+document.getElementById("vzbp-btn-github").onclick = viewOnGithub;
 document.getElementById("vzbp-btn-codepen").onclick = updateURL;
 document.getElementById("vzbp-btn-share").onclick = shareLink;
 

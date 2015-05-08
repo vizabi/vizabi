@@ -72,3 +72,8 @@ function parseURL() {
         }
     }
 }
+
+function resetURL() {
+    var href = location.href+"#";
+    location.href = href.substring(0, href.indexOf('#'));
+}
