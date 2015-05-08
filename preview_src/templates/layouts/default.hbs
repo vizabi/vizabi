@@ -10,6 +10,11 @@ control_buttons: {play: true, language: true}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
+
+    {{#if redirect}}
+      <meta http-equiv="refresh" content="0; url={{redirect}}.html" />
+    {{/if}}
+    
     <title>Vizabi - {{ title }}</title>
     {{!-- Styles --}}
     <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
