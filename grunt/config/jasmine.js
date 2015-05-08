@@ -1,7 +1,7 @@
 //run tests
 module.exports = {
     dev: {
-        src: 'dist/vizabi.js',
+        src: 'preview/vizabi.js',
         options: {
             outfile: 'test.html',
             keepRunner: true,
@@ -15,7 +15,7 @@ module.exports = {
                     baseUrl: 'preview/'
                 }
             },
-            styles: ['dist/vizabi.css', 'spec/spec.css'],
+            styles: ['preview/vizabi.css', 'spec/spec.css'],
             vendor: ['preview/assets/js/jquery.min.js']
         }
     },

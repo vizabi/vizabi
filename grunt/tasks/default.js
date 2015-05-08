@@ -4,6 +4,6 @@ module.exports = function(grunt) {
         'build', //by default, just build and test
         'test:copy',
         'jasmine:prod',
-        'copy:dist' //copies dist files
+        // 'copy:dist' //copies dist files
     ]);
 };
