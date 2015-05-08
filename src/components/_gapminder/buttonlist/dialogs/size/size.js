@@ -17,11 +17,14 @@ define([
             this.components = [{
                 component: '_gapminder/bubble-size',
                 placeholder: '.vzb-dialog-bubble-size',
-                //TODO: this can't be specific because it's not always marker
                 model: ["state.marker.size"],
                 ui: {
                     show_button: false
                 }
+            },{
+                component: '_gapminder/indicator-picker',
+                placeholder: '.vzb-saxis-container',
+                model: ["state.marker.size", "language"]
             }];
 
             this._super(config, parent);

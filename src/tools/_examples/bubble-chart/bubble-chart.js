@@ -28,7 +28,7 @@ define([
                 component: '_gapminder/buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language'],
-                buttons: ['fullscreen', 'find', 'size', 'trails', 'lock', 'colors']
+                buttons: ['fullscreen', 'find', 'size', 'trails', 'lock', 'colors', 'axes']
             }];
 
             //default options
@@ -251,6 +251,7 @@ define([
                                     "buttons/find": "Find",
                                     "buttons/colors": "Colors",
                                     "buttons/size": "Size",
+                                    "buttons/axes": "Axes",
                                     "buttons/more_options": "Options",
                                     "indicator/lex": "Life expectancy",
                                     "indicator/gdp_per_cap": "GDP per capita",
