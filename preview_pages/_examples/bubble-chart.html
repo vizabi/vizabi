@@ -262,7 +262,7 @@ $(function() {
                     playButton.text("PLAY");
                 }
             },
-            'change:language': function(evt, vals) {
+            'change:state:time': function(evt, vals) {
                 if (vals.language.id === "en") {
                     languageButton.attr('onclick', "language('pt')");
                     languageButton.text("SET LANGUAGE: PT");

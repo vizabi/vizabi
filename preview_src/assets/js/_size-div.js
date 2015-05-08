@@ -221,10 +221,6 @@ document.getElementById('vzbp-btn-landscape').onclick = function() {
     setDivSize(placeholder, 568, 320);
     normalizeDivSize(placeholder, container);
 };
-document.getElementById('vzbp-btn-tablet').onclick = function() {
-    setDivSize(placeholder, 768, 1024);
-    normalizeDivSize(placeholder, container);
-};
 document.getElementById('vzbp-btn-desktop').onclick = function() {
     setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
     normalizeDivSize(placeholder, container);

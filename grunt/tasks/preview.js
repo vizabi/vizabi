@@ -10,7 +10,8 @@ module.exports = function(grunt) {
         'clean:preview',
         'sass:prod',
         'copy:preview',
-        'assemble:prod'
+        'assemble:prod',
+        'watch:preview'
     ]);
 
 };

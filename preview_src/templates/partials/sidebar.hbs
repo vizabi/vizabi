@@ -1,79 +1,72 @@
-<div id="vzbp-sidebar">
+	{{> button id="vzbp-btn-refresh" tooltip="Refresh" icon="refresh"}} 
+	{{> button id="vzbp-btn-github" tooltip="Github" icon="github" iconbig=true}} 
+	{{> button id="vzbp-btn-codepen" tooltip="Codepen" icon="codepen"}} 
+	{{> button id="vzbp-btn-share" icon="paper-plane" tooltip="Share"}}
 
-	{{> button id="vzbp-btn-refresh" tooltip="Refresh" icon="refresh"}}
-	{{> button id="vzbp-btn-github" tooltip="Github" icon="github" iconbig=true}}
-	{{> button id="vzbp-btn-codepen" tooltip="Codepen" icon="codepen"}}
+{{#if control_sizes}}
+<hr class="vzbp-hr"/>
 
-	{{!-- Only include share button in production --}}
-	{{#if production}}
-		{{> button id="vzbp-btn-share" icon="paper-plane" text="Share"}}
-	{{/if}}
+<div class="collapsible-section open">
+	<h2 class="vzbp-subtitle vzbp-collapsible-title">Responsiveness</h2>
 
-	{{#if control_sizes}}
-	<hr class="vzbp-hr"/>
+	<div class="vzbp-collapsible">
 
-	<div class="collapsible-section open">
-		<h2 class="vzbp-subtitle vzbp-collapsible-title">Responsiveness</h2>
+		{{> button id="vzbp-btn-portrait" tooltip="Portrait" icon="mobile" iconbig=true}}
+		{{> button id="vzbp-btn-landscape" tooltip="Landscp" icon="mobile" iconbig=true iconrotate=90}}
+		{{> button id="vzbp-btn-desktop" tooltip="Full" icon="desktop" iconbig=true}}
+		{{> button id="vzbp-btn-random" tooltip="Random" icon="random"}}
 
-		<div class="vzbp-collapsible">
-
-			{{> button id="vzbp-btn-portrait" tooltip="Portrait" icon="mobile" iconbig=true}}
-			{{> button id="vzbp-btn-landscape" tooltip="Landscp" icon="mobile" iconbig=true iconrotate=90}}
-			{{> button id="vzbp-btn-tablet" tooltip="Tablet" icon="tablet" iconbig=true}}
-			{{> button id="vzbp-btn-desktop" tooltip="Full" icon="desktop" iconbig=true}}
-			{{> button id="vzbp-btn-random" tooltip="Random" icon="random"}}
-
-			<p align="center">
-				<input id="vzbp-input-width" type="number" class="vzbp-input"/> x <input id="vzbp-input-height" type="number" class="vzbp-input"/>
-			</p>
-		</div>
+		<p align="center">
+			<input id="vzbp-input-width" type="number" class="vzbp-input"/> x <input id="vzbp-input-height" type="number" class="vzbp-input"/>
+		</p>
 	</div>
-	{{/if}}
-
-	{{#if control_state}}
-	<hr class="vzbp-hr"/>
-
-	<div id="state-section-panel" class="collapsible-panel">
-		<h2 id="state-section" class="vzbp-subtitle vzbp-collapsible-title">State</h2>
-	</div>
-	{{/if}}
-
-	{{#if control_hooks}}
-	<hr class="vzbp-hr"/>
-
-	<div class="collapsible-section">
-		<h2 class="vzbp-subtitle vzbp-collapsible-title">Hooks</h2>
-		<div class="vzbp-collapsible">
-
-		</div>
-	</div>
-	{{/if}}
-
-	<hr class="vzbp-hr"/>
-
-	<div class="collapsible-section open">
-		<h2 class="vzbp-subtitle vzbp-collapsible-title">Info</h2>
-		<div class="vzbp-collapsible">
-			<p>{{description}}</p>
-		</div>
-	</div>
-
-	{{#if control_buttons}}
-	<hr class="vzbp-hr"/>
-
-	<div class="collapsible-section open">
-		<h2 class="vzbp-subtitle vzbp-collapsible-title">Interaction Buttons</h2>
-
-		<div class="vzbp-collapsible">
-			{{#if control_buttons.play}}	
-				{{> button id="vzbp-btn-play" tooltip="Play" icon="play"}}
-			{{/if}}
-			{{#if control_buttons.language}}	
-			{{> button id="vzbp-btn-lang" tooltip="Switch Language PT" iconbig=true icon="globe"}}
-			{{/if}}
-		</div>
-	</div>
-	{{/if}}
-
-
 </div>
+{{/if}}
+
+{{#if control_state}}
+<hr class="vzbp-hr"/>
+
+<div id="state-section-panel" class="collapsible-panel">
+	<h2 id="state-section" class="vzbp-subtitle vzbp-collapsible-title">State</h2>
+</div>
+{{/if}}
+
+{{#if control_hooks}}
+<hr class="vzbp-hr"/>
+
+<div class="collapsible-section">
+	<h2 class="vzbp-subtitle vzbp-collapsible-title">Hooks</h2>
+	<div class="vzbp-collapsible">
+
+	</div>
+</div>
+{{/if}}
+
+<hr class="vzbp-hr"/>
+
+<div class="collapsible-section open">
+	<h2 class="vzbp-subtitle vzbp-collapsible-title">Info</h2>
+	<div class="vzbp-collapsible">
+		<p>{{description}}</p>
+	</div>
+</div>
+
+{{#if control_buttons}}
+<hr class="vzbp-hr"/>
+
+<div class="collapsible-section open">
+	<h2 class="vzbp-subtitle vzbp-collapsible-title">Interaction Buttons</h2>
+
+	<div class="vzbp-collapsible">
+		{{#if control_buttons.play}}	
+			{{> button id="vzbp-btn-play" tooltip="Play" icon="play"}}
+		{{/if}}
+		{{#if control_buttons.language}}	
+		{{> button id="vzbp-btn-lang" tooltip="Set Lang: PT" iconbig=true icon="globe"}}
+		{{/if}}
+	</div>
+</div>
+{{/if}}
+
+<hr class="vzbp-hr"/>
+	

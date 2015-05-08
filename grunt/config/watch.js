@@ -24,5 +24,13 @@ module.exports = {
     test: {
         files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],
         tasks: ['jasmine:dev']
+    },
+    preview: {
+        files: ['preview_src/**/*'], //['src/**/*.js', 'specs/**/*.js'],
+        tasks: ['clean:preview',
+            'sass:prod',
+            'copy:preview',
+            'assemble:prod'
+        ]
     }
 };

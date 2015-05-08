@@ -22,29 +22,132 @@ control_buttons: {play: true, language: true}
 
     <div id="vzbp-main">
       <div id="vzbp-placeholder" class="vzbp-viewer"></div>
-      {{> body }}
     </div>
 
-    {{> sidebar }}
+    <div id="vzbp-sidebar">
+      {{> sidebar }}
+
+      {{#if tool}}
+        <script>
+
+          VIZABI_OPTIONS = {
+            state: {},
+            bind: {
+              "ready": function() {
+                // parseURL();
+              }
+            },
+            language: {
+              id: "en",
+              strings: {
+                en: {
+                  "title": "{{ title }}",
+                  "buttons/expand": "Go big",
+                  "buttons/unexpand": "Go small",
+                  "buttons/trails": "Trails",
+                  "buttons/lock": "Lock",
+                  "buttons/find": "Find",
+                  "buttons/deselect": "Deselect",
+                  "buttons/ok": "OK",
+                  "buttons/colors": "Colors",
+                  "buttons/size": "Size",
+                  "buttons/more_options": "Options",
+                  "indicator/lex": "Life expectancy",
+                  "indicator/gdp_per_cap": "GDP per capita",
+                  "indicator/pop": "Population",
+                  "indicator/geo.region": "Region",
+                  "indicator/geo": "Geo code",
+                  "indicator/time": "",
+                  "indicator/geo.category": "Geo category"
+                  },
+                pt: {
+                  "title": "{{ title }}",
+                  "buttons/expand": "Expandir",
+                  "buttons/unexpand": "Retrair",
+                  "buttons/trails": "Pegadas",
+                  "buttons/lock": "Travar",
+                  "buttons/find": "Encontre",
+                  "buttons/deselect": "Desmarcar",
+                  "buttons/ok": "OK",
+                  "buttons/colors": "Cores",
+                  "buttons/size": "Tamanho",
+                  "buttons/more_options": "Opções",
+                  "indicator/lex": "Expectativa de Vida",
+                  "indicator/gdp_per_cap": "PIB per capita",
+                  "indicator/pop": "População",                    
+                  "indicator/geo.region": "Região",
+                  "indicator/geo": "Código Geo",
+                  "indicator/time": "",
+                  "indicator/geo.category": "Categoria"
+                }
+              }
+            }
+          };
+
+          (function() {
+          {{#if control_state}}
+              function updateState(evt, vals) {
+                updateStateEditor(vals.state);
+              }
+
+              VIZABI_OPTIONS.bind['change:state'] = updateState;
+          {{/if}}
+          {{#if control_buttons.play}}
+              var playButton = document.getElementById("vzbp-btn-play");
+              var playButtonIcon = playButton.querySelectorAll("i")[0];
+
+              VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
+                if (vals.state.time.playing) {
+                    playButton.onclick = pause;
+                    playButton.setAttribute("data-tooltip", "Pause");
+                    removeClass(playButtonIcon, 'fa-play');
+                    addClass(playButtonIcon, 'fa-pause');
+                } else {
+                    playButton.onclick = play;
+                    playButton.setAttribute("data-tooltip", "Play");
+                    removeClass(playButtonIcon, 'fa-pause');
+                    addClass(playButtonIcon, 'fa-play');
+                }
+              };
+          {{/if}}
+          {{#if control_buttons.language}}  
+              var langButton = document.getElementById("vzbp-btn-lang");
+
+              VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
+                if (vals.language.id === "en") {
+                    langButton.onclick = function() { language('pt'); };
+                    langButton.setAttribute("data-tooltip", "Set Lang: PT");
+                } else {
+                    langButton.onclick = function() { language('en'); };
+                    langButton.setAttribute("data-tooltip", "Set Lang: EN");
+                }
+              };
+          {{/if}}
+          })();
+
+        </script>
+      {{/if}}
+      
+      {{!-- Additional scripts and buttons will be added here --}}
+      {{> body }}
+    </div>
 
     {{> state_editor }}
 
 
-    {{!-- Vizabi --}}
+    {{!-- Vizabi Production and Development --}}
     {{#if production}}
       <script src="{{assets}}js/vizabi.js"></script>
     {{else}}
       <script src="{{assets}}js/vizabi.js"></script>
     {{/if}}
 
-    {{!-- jQuery used in preview pages --}}
-    <script src="{{assets}}js/jquery.min.js"></script>
-
     {{!-- Scripts --}}
     <script src="{{assets}}js/_utils.js"></script>
     <script src="{{assets}}js/_collapsible.js"></script>
     <script src="{{assets}}js/main.js"></script>
 
+    {{!-- Add these scripts only if needed --}}
     {{#if control_state}}
       <script src="{{assets}}js/_state-editor.js"></script>
     {{/if}}
@@ -53,75 +156,12 @@ control_buttons: {play: true, language: true}
       <script src="{{assets}}js/_size-div.js"></script>
     {{/if}}
 
+    {{#if control_buttons}}
+      <script src="{{assets}}js/_interaction.js"></script>
+    {{/if}}
+
     {{#if tool}}
       <script>
-
-        VIZABI_OPTIONS = {
-          state: {},
-          bind: {
-            "ready": function() {
-              // parseURL();
-            }
-          },
-          language: {
-            id: "en",
-            strings: {
-              en: {
-                "title": "{{ title }}",
-                "buttons/expand": "Go big",
-                "buttons/unexpand": "Go small",
-                "buttons/trails": "Trails",
-                "buttons/lock": "Lock",
-                "buttons/find": "Find",
-                "buttons/deselect": "Deselect",
-                "buttons/ok": "OK",
-                "buttons/colors": "Colors",
-                "buttons/size": "Size",
-                "buttons/more_options": "Options",
-                "indicator/lex": "Life expectancy",
-                "indicator/gdp_per_cap": "GDP per capita",
-                "indicator/pop": "Population",
-                "indicator/geo.region": "Region",
-                "indicator/geo": "Geo code",
-                "indicator/time": "",
-                "indicator/geo.category": "Geo category"
-                },
-              pt: {
-                "title": "{{ title }}",
-                "buttons/expand": "Expandir",
-                "buttons/unexpand": "Retrair",
-                "buttons/trails": "Pegadas",
-                "buttons/lock": "Travar",
-                "buttons/find": "Encontre",
-                "buttons/deselect": "Desmarcar",
-                "buttons/ok": "OK",
-                "buttons/colors": "Cores",
-                "buttons/size": "Tamanho",
-                "buttons/more_options": "Opções",
-                "indicator/lex": "Expectativa de Vida",
-                "indicator/gdp_per_cap": "PIB per capita",
-                "indicator/pop": "População",                    
-                "indicator/geo.region": "Região",
-                "indicator/geo": "Código Geo",
-                "indicator/time": "",
-                "indicator/geo.category": "Categoria"
-              }
-            }
-          }
-        };
-
-        {{#if control_state}}
-          
-          (function() {
-            function updateState(evt, vals) {
-              updateStateEditor(vals.state);
-            }
-            
-            VIZABI_OPTIONS.bind['change:state'] = updateState;
-
-          })();
-        {{/if}}
-
         VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
       </script>
     {{/if}}
