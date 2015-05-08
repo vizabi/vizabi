@@ -11,6 +11,19 @@ define([
          */
         init: function(config, parent) {
             this.name = 'colors';
+            
+            this.components = [{
+                component: '_gapminder/indicator-picker',
+                placeholder: '.vzb-caxis-container',
+                model: ["state.marker.color", "language"],
+                ui: {selectIndicator: true, selectScaletype: false}
+            },{
+                component: '_gapminder/color-legend',
+                placeholder: '.vzb-clegend-container',
+                model: ["state.marker.color", "language"]
+            }];
+            
+            
             this._super(config, parent);
         }
     });

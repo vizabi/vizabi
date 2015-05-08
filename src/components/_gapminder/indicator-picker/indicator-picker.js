@@ -6,18 +6,18 @@ define([
     
     var INDICATOR = "value";
     var SCALETYPE = "scale";
-    var X = "x";
-    var Y = "y";
+    var MODELTYPE_COLOR = "color";
+    
     var availOpts = {
-        'geo.region':   {use: 'property',   scales: ['ordinal']},
-        'geo':          {use: 'property',   scales: ['ordinal']},
-        'time':         {use: 'indicator',  scales: ['time']},
-        'geo.category': {use: 'property',   scales: ['ordinal']},
-        'lex':          {use: 'indicator',  scales: ['linear', 'log']},
-        'gdp_per_cap':  {use: 'indicator',  scales: ['linear', 'log', 'genericLog']},
-        'pop':          {use: 'indicator',  scales: ['linear', 'log']},
-        '42':           {use: 'value',      scales: ['linear', 'log']},
+        'geo.region':   {use: 'property',   scales: ['ordinal']       },
+        'geo':          {use: 'property',   scales: ['ordinal']       },
+        'time':         {use: 'indicator',  scales: ['time']          },
+        'lex':          {use: 'indicator',  scales: ['linear'] },
+        'gdp_per_cap':  {use: 'indicator',  scales: ['linear', 'log'] },
+        'pop':          {use: 'indicator',  scales: ['linear', 'log'] },
+        '42':           {use: 'value',      scales: ['linear', 'log'] }
     };
+    
     
 
     var BubbleAxes = Component.extend({
@@ -33,8 +33,8 @@ define([
             var _this = this;
 
             this.model_expects = [{
-                name: "axis",
-                type: "axis"
+                name: "axis"
+                //TODO: learn how to expect model "axis" or "size" or "color"
             },{
                 name: "language",
                 type: "language"
@@ -43,13 +43,13 @@ define([
             
             this.model_binds = {
                 "change:axis": function(evt) {
-                    _this.updateOptions();
+                    _this.updateView();
                 },
                 "readyOnce": function(evt) {
-                    _this.updateOptions();
+                    _this.updateView();
                 },
                 "change:language": function(evt) {
-                    _this.updateOptions();
+                    _this.updateView();
                 },
                 "ready": function(evt) {
                 }
@@ -58,6 +58,13 @@ define([
 
             //contructor is the same as any component
             this._super(config, context);
+            
+            
+            this.ui = _.extend({
+                selectIndicator: true, 
+                selectScaletype: true
+            }, this.ui);
+
         },
 
         /**
@@ -68,15 +75,14 @@ define([
         domReady: function() {
             var _this = this;
             
-            this.el_select_indicator = this.element.select('.indicator');
-            this.el_select_scaletype = this.element.select('.scaletype');
+            this.el_select_indicator = this.element.select('.vzb-ip-indicator');
+            this.el_select_scaletype = this.element.select('.vzb-ip-scaletype');
             
             this.el_select_indicator
                 .on("change", function(){ _this._setModel(INDICATOR,this.value) });
             
             this.el_select_scaletype
                 .on("change", function(){ _this._setModel(SCALETYPE,this.value) });
-            
         },
 
 
@@ -85,7 +91,7 @@ define([
          * Ideally, only operations related to changes in the model
          * At this point, this.element is available as a d3 object
          */
-        updateOptions: function() {
+        updateView: function() {
             var _this = this;
             this.translator = this.model.language.getTFunction();
 
@@ -93,56 +99,57 @@ define([
             data[INDICATOR] = Object.keys(availOpts);
             data[SCALETYPE] = availOpts[this.model.axis[INDICATOR]].scales;
             
-            var elOptionsIndicator = this.el_select_indicator
-                .selectAll("option")
-                .data(data[INDICATOR]);
+            //bind the data to the selector lists
+            var elOptionsIndicator = this.el_select_indicator.selectAll("option")
+                .data(data[INDICATOR], function(d){return d});
+            var elOptionsScaletype = this.el_select_scaletype.selectAll("option")
+                .data(data[SCALETYPE], function(d){return d});
             
-            var elOptionsScaletype = this.el_select_scaletype
-                .selectAll("option")
-                .data(data[SCALETYPE]);
-            
+            //remove irrelevant options
             elOptionsIndicator.exit().remove();
             elOptionsScaletype.exit().remove();
             
-            elOptionsIndicator.enter().append("option");
-            elOptionsScaletype.enter().append("option");
-            
-            elOptionsIndicator
+            //populate options into the list
+            elOptionsIndicator.enter().append("option")
                 .text(function(d){ return _this.translator("indicator/" + d) })
                 .attr("value", function(d){return d});
-            elOptionsScaletype
+            elOptionsScaletype.enter().append("option")
                 .text(function(d){ return _this.translator("scaletype/" + d) })
                 .attr("value", function(d){return d});
             
-            elOptionsIndicator[0][0].value = this.model.axis[INDICATOR];
-            elOptionsScaletype[0][0].value = this.model.axis[SCALETYPE];
+            //set the selected option
+            this.el_select_indicator[0][0].value = this.model.axis[INDICATOR];
+            this.el_select_scaletype[0][0].value = this.model.axis[SCALETYPE];
             
-            elOptionsIndicator.attr('disabled', data[INDICATOR].length==1?"true":null);
-            elOptionsScaletype.attr('disabled', data[SCALETYPE].length==1?"true":null);
+            //disable the selector in case if there is only one option, hide if so requested by the UI setings
+            this.el_select_indicator
+                .style('display', this.ui.selectIndicator?"auto":"none")
+                .attr('disabled', data[INDICATOR].length<=1?"true":null)
+            this.el_select_scaletype
+                .style('display', this.ui.selectScaletype?"auto":"none")
+                .attr('disabled', data[SCALETYPE].length<=1?"true":null)
         },
         
 
 
-            
-            
-        
-        
+
         
 
         _setModel: function (what, value) {
-            this.model.axis[what] = value;
+            var mdl = this.model.axis;
+            mdl[what] = value;
             
             if(what==INDICATOR){
-                this.model.axis.use = availOpts[value].use;
+                mdl.use = availOpts[value].use;
                 
-                if(availOpts[value].scales.indexOf(this.model.axis.scale) == -1){
-                    this.model.axis.scale = availOpts[value].scales[0];
-                }    
+                if(availOpts[value].scales.indexOf(mdl.scale) == -1){
+                    mdl.scale = availOpts[value].scales[0];
+                }
             }
         },
         
     });
 
-    return BubbleAxes ;
+    return BubbleAxes;
 
 });

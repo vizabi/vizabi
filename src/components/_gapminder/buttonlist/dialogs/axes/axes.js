@@ -15,8 +15,6 @@ define([
             this.name = 'axes';
             var _this = this;
 
-//          default models:  state, ui, language
-            
             this.components = [{
                 component: '_gapminder/indicator-picker',
                 placeholder: '.vzb-xaxis-container',
