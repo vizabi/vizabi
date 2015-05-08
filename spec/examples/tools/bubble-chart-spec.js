@@ -21,7 +21,7 @@ describe("* Example Bubble Chart", function() {
                     dim: "geo",
                     filter: {
                         "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                        "geo.category": ["country"]
+                        "geo.cat": ["country"]
                     }
                 }
             },
