@@ -8,9 +8,9 @@ var viz;
  * Share Section
  */
 
-document.getElementById("vzbp-btn-refresh").onclick = play;
-document.getElementById("vzbp-btn-github").onclick = play;
-document.getElementById("vzbp-btn-codepen").onclick = play;
+document.getElementById("vzbp-btn-refresh").onclick = updateURL;
+document.getElementById("vzbp-btn-github").onclick = updateURL;
+document.getElementById("vzbp-btn-codepen").onclick = updateURL;
 document.getElementById("vzbp-btn-share").onclick = shareLink;
 
 //share link
@@ -21,11 +21,10 @@ function shareLink() {
             access_token: "8765eb3be5b975830e72af4e0949022cb53d9596",
             longUrl: document.URL
         };
-    $.getJSON(address, params, function(response) {
+    getJSON(address, params, function(response) {
         if (response.status_code == "200") {
             prompt("Copy the following link: ", response.data.url);
         } else {
-            console.log(response);
             prompt("Copy the following link: ", window.location);
         }
     });

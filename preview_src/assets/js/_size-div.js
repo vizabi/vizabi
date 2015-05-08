@@ -2,7 +2,7 @@
  *  See post http://www.lab4games.net/zz85/blog/2014/11/15/resizing-moving-snapping-windows-with-js-css/
  */
 
-function resizableDiv(pane, container, minWidth, minHeight, cb) {
+function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
 
     // Thresholds
     var FULLSCREEN_MARGINS = -10;
@@ -143,6 +143,10 @@ function resizableDiv(pane, container, minWidth, minHeight, cb) {
     function onUp(e) {
         calc(e);
 
+        if(cbMouseUp) {
+            cbMouseUp();
+        }
+
         clicked = null;
     }
 }
@@ -150,7 +154,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb) {
 function setDivSize(div, width, height) {
     div.style.width = width + 'px';
     div.style.height = height + 'px';
-
+    removeClass(div, "fullscreen");
     forceResizeEvt();
     updateSizePanel(div, width, height);
 }
@@ -211,22 +215,32 @@ setDivSize(placeholder, 320, 568);
 resizableDiv(placeholder, container, 300, 300, function() {
     forceResizeEvt();
     updateSizePanel(placeholder);
+}, function() {
+    removeClass(placeholder, "fullscreen");
+    updateURL();
 });
+
+function setFullscreen() {
+    setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
+    normalizeDivSize(placeholder, container);
+    addClass(placeholder, "fullscreen");
+    updateURL();
+}
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
     setDivSize(placeholder, 320, 568);
     normalizeDivSize(placeholder, container);
+    updateURL();
 };
 document.getElementById('vzbp-btn-landscape').onclick = function() {
     setDivSize(placeholder, 568, 320);
     normalizeDivSize(placeholder, container);
+    updateURL();
 };
-document.getElementById('vzbp-btn-desktop').onclick = function() {
-    setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
-    normalizeDivSize(placeholder, container);
-};
+document.getElementById('vzbp-btn-desktop').onclick = setFullscreen;
 document.getElementById('vzbp-btn-random').onclick = function() {
     setDivRandomSize(placeholder, container);
+    updateURL();
 };
 
 //change sizes manually

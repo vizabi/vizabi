@@ -7,4 +7,5 @@ forEachElement(".collapsible-section", function(el, i) {
 
 function toggleCollapsible(el) {
     toggle(el, "open");
+    updateURL();
 }

@@ -85,13 +85,16 @@ control_buttons: {play: true, language: true}
           };
 
           (function() {
-          {{#if control_state}}
-              function updateState(evt, vals) {
-                updateStateEditor(vals.state);
-              }
 
-              VIZABI_OPTIONS.bind['change:state'] = updateState;
-          {{/if}}
+          VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
+            updateURL();
+
+            {{#if control_state}}
+              updateStateEditor(vals.state);
+            {{/if}}
+
+          };
+
           {{#if control_buttons.play}}
               var playButton = document.getElementById("vzbp-btn-play");
               var playButtonIcon = playButton.querySelectorAll("i")[0];
@@ -145,6 +148,7 @@ control_buttons: {play: true, language: true}
     {{!-- Scripts --}}
     <script src="{{assets}}js/_utils.js"></script>
     <script src="{{assets}}js/_collapsible.js"></script>
+    <script src="{{assets}}js/_url.js"></script>
     <script src="{{assets}}js/main.js"></script>
 
     {{!-- Add these scripts only if needed --}}
@@ -162,7 +166,10 @@ control_buttons: {play: true, language: true}
 
     {{#if tool}}
       <script>
+        parseURL();
+        
         VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
+
       </script>
     {{/if}}
     

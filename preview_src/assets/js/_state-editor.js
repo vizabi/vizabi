@@ -16,35 +16,8 @@ function toggleStateEditor() {
         var placeholder = document.getElementById('vzbp-placeholder');
         var container = document.getElementById('vzbp-main');
         normalizeDivSize(placeholder, container);
+        updateURL();
     }, 300);
-}
-
-function formatDate(date, unit) {
-    var timeFormats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%Y-%m"),
-        "week": d3.time.format("%Y-W%W"),
-        "day": d3.time.format("%Y-%m-%d"),
-        "hour": d3.time.format("%Y-%m-%d %H"),
-        "minute": d3.time.format("%Y-%m-%d %H:%M"),
-        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
-    };
-    return timeFormats[unit](date);
-}
-
-function formatDates(state) {
-    // Format date objects according to the unit
-    if (state && state.time && state.time.unit) {
-        if (typeof state.time.value === 'object') {
-            state.time.value = formatDate(state.time.value, state.time.unit);
-        }
-        if (typeof state.time.start === 'object') {
-            state.time.start = formatDate(state.time.start, state.time.unit);
-        }
-        if (typeof state.time.end === 'object') {
-            state.time.end = formatDate(state.time.end, state.time.unit);
-        }
-    }
 }
 
 function updateStateEditor(state) {
