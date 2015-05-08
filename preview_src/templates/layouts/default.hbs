@@ -39,8 +39,9 @@ control_buttons: {play: true, language: true}
           VIZABI_OPTIONS = {
             state: {},
             bind: {
-              "ready": function() {
-                // parseURL();
+              "ready": function(evt, vals) {
+                updateURL();
+                updateStateEditor(vals.state);
               }
             },
             language: {

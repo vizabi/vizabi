@@ -24,6 +24,7 @@ function updateStateEditor(state) {
     var editorTextArea = document.getElementById("vzbp-state-editor-textarea");
     formatDates(state);
     editorTextArea.value = JSON.stringify(state, null, 2);
+    editorTextArea.removeAttribute('disabled');
     removeClass(editorTextArea, "invalid");
 }
 
