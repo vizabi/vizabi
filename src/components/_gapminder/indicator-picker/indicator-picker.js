@@ -111,11 +111,13 @@ define([
             
             //populate options into the list
             elOptionsIndicator.enter().append("option")
-                .text(function(d){ return _this.translator("indicator/" + d) })
                 .attr("value", function(d){return d});
             elOptionsScaletype.enter().append("option")
-                .text(function(d){ return _this.translator("scaletype/" + d) })
                 .attr("value", function(d){return d});
+            
+            //show translated UI string
+            elOptionsIndicator.text(function(d){ return _this.translator("indicator/" + d) })
+            elOptionsScaletype.text(function(d){ return _this.translator("scaletype/" + d) })
             
             //set the selected option
             this.el_select_indicator[0][0].value = this.model.axis[INDICATOR];

@@ -243,23 +243,6 @@ define([
                             _type_: "object",
                             _defs_: {
                                 en: {
-                                    "title": "Bubble Chart Title",
-                                    "buttons/expand": "Go big",
-                                    "buttons/unexpand": "Go small",
-                                    "buttons/trails": "Trails",
-                                    "buttons/lock": "Lock",
-                                    "buttons/find": "Find",
-                                    "buttons/colors": "Colors",
-                                    "buttons/size": "Size",
-                                    "buttons/axes": "Axes",
-                                    "buttons/more_options": "Options",
-                                    "indicator/lex": "Life expectancy",
-                                    "indicator/gdp_per_cap": "GDP per capita",
-                                    "indicator/pop": "Population",
-                                    "indicator/geo.region": "Region",
-                                    "indicator/geo": "Geo code",
-                                    "indicator/time": "",
-                                    "indicator/geo.category": "Geo category"
                                 }
                             }
                         }

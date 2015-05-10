@@ -9,7 +9,7 @@ define([
     
 
     var availOpts = {
-        'geo.region':   {'_default': '#ffb600', 'world': "#ffb600", 'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9'},
+        'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
         'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
         'time':         ['#F77481', '#E1CE00', '#B4DE79'],
         'lex':          ['#F77481', '#E1CE00', '#B4DE79'],
@@ -286,7 +286,7 @@ define([
                     .style("border", "1px solid " + domain[d]);
 
                 d3.select(this).select(".vzb-cl-color-legend")
-                    .text(d);
+                    .text(_this.translator("region/" + d));
             });
         },
         
