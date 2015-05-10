@@ -1,23 +1,35 @@
 //general styles
+
 .vzb-cl-holder {
-    max-height: 250px;
-    overflow: hidden;
-    overflow-y: auto;
     
+    height: 120px;
+
+    svg{width: 100%; height: 100%;   position: absolute; top: 0; left: 0;};
+    .vzb-cl-colorList{
+    }
+    
+    rect{fill:white; opacity: 1;}
+    
+    path{stroke-width: 1}
+
     .vzb-cl-option {
         margin-bottom: 5px;
         margin-top: 5px;
+        cursor: pointer;
     }
     
     .vzb-cl-color-sample {
+        @include transition(border-width 200ms ease-in-out);
         display: inline-block;
         width: 20px;
         height: 20px;
         border-radius: 10px;
         margin-right: 10px;
+        cursor: pointer;
     }
     .vzb-cl-color-legend {
         display: inline-block;
         vertical-align: super;
+        cursor: pointer;
     }
 }
