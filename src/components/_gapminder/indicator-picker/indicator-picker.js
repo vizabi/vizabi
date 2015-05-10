@@ -1,4 +1,4 @@
-//BubbleAxes
+//IndicatorPicker
 define([
     'd3',
     'base/component'
@@ -20,10 +20,10 @@ define([
     
     
 
-    var BubbleAxes = Component.extend({
+    var IndicatorPicker = Component.extend({
 
         /**
-         * Initializes the timeslider.
+         * Initializes the Indicator Picker.
          * Executed once before any template is rendered.
          * @param config The options passed to the component
          * @param context The component's parent
@@ -150,6 +150,6 @@ define([
         
     });
 
-    return BubbleAxes;
+    return IndicatorPicker;
 
 });

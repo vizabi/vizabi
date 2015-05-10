@@ -15,7 +15,7 @@ define([
         'lex':          ['#F77481', '#E1CE00', '#B4DE79'],
         'gdp_per_cap':  ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
         'pop':          ['#F77481', '#E1CE00', '#B4DE79'],
-        '42':           '#fa5ed6'
+        '42':           ['#fa5ed6']
     };
     
     
@@ -93,11 +93,14 @@ define([
             
             this.listColors = this.element.append("div").attr("class", "vzb-cl-colorList");
             
-            var nHues = 20;
-            var nLightness = 6;
+            var nHues = 15;
+            var nLightness = 4;
             var minRadius = 15;
             var minLightness = 0.50;
-            var minHue = 0.05;
+            var lightnessAt0_display = 0.40;
+            var lightnessAt0_actual = 0.30;
+            var saturationAt0 = 0.0;
+            var minHue = 0;
             var saturation = 0.7;
             colorData = [];
             for(var j = 0; j<nLightness; j++) {
@@ -106,7 +109,10 @@ define([
                 colorData.push([]);
                 for(var i = 0; i<=nHues; i++) {
                     var hue = minHue+(1-minHue)/nHues * i;
-                    colorData[j].push(_hslToRgb(hue, saturation, lightness));
+                    colorData[j].push({
+                        display: _hslToRgb(hue, i==0?saturationAt0:saturation, j==0?lightnessAt0_display:lightness),
+                        actual: _hslToRgb(hue, i==0?saturationAt0:saturation, j==0?lightnessAt0_actual:lightness)
+                    });
                 }
             }
 
@@ -121,17 +127,45 @@ define([
             this.pickerCanvas.append("rect")
                 .attr("width", width)
                 .attr("height", height)
-                .on("mouseover", function(){
-                    _this.chosenColor = _this.currentColor;
-                    _this.colorSample.style("fill", _this.chosenColor);
-                    _this._setModel(_this.chosenColor);
-                })
-                .on("mouseout", function(){
-                })
-                .on("click", function(){
-                    _this.pickerCanvas.classed("vzb-invisible", true);
-                    _this.listColors.classed("vzb-invisible", false);
-                });
+                .attr("class", "vzb-cl-colorCell")
+                .on("mouseover", function(d){_this._cellHover(_this.currentColor)});
+            
+            
+            this.pickerCanvas.append("text")
+                .attr("x", width*0.1)
+                .attr("y", 15)
+                .style("text-anchor", "start")
+                .attr("class", "vzb-cl-colorSampleText");
+                
+            this.colorSampleText = this.pickerCanvas.append("text")
+                .attr("x", width*0.9)
+                .attr("y", 15)
+                .style("text-anchor", "end")
+                .attr("class", "vzb-cl-colorSampleText");
+            
+            var defaultColorR = 15;
+            this.pickerCanvas.append("circle")
+                .attr("class", "vzb-cl-defaultColor vzb-cl-colorCell")
+                .attr("r", defaultColorR)
+                .attr("cx", defaultColorR+width*0.1)
+                .attr("cy", height-defaultColorR-width*0.05)
+                .on("mouseover", function(d){_this._cellHover(_this.defaultColor)});
+            
+            this.pickerCanvas.append("text")
+                .attr("x", width*0.1)
+                .attr("y", height-width*0.05)
+                .attr("dy", "0.3em")
+                .text("default");
+            
+            
+            this.circles = this.pickerCanvas.append("g")
+                .attr("transform", "translate("+(radius + width*0.1) +","+(radius + width*0.1) +")");
+            
+            this.circles.append("circle")
+                .attr("r", minRadius-2)
+                .attr("fill", "#FFF")
+                .attr("class", "vzb-cl-colorCell")
+                .on("mouseover", function(d){_this._cellHover("#FFF")})
             
             this.pickerCanvas.append("rect")
                 .attr("class", "vzb-cl-colorSample")
@@ -142,56 +176,72 @@ define([
                 .attr("width", width/2)
                 .attr("x", width/2)
                 .attr("height", 10);
-            
             var arc = d3.svg.arc();
 
             var pie = d3.layout.pie()
                 .sort(null)
                 .value(function(d) { return 1 });
             
-            this.pickerCanvas.selectAll(".circle")
+            this.circles.selectAll(".circle")
                 .data(colorData)
                 .enter().append("g")
                 .attr("class", "circle")
-                .attr("transform", "translate("+(radius + width*0.1) +","+(radius + width*0.1) +")")
                 .each(function(circleData, index){
                     
                     arc.outerRadius(minRadius+(radius-minRadius)/nLightness*(nLightness-index))
                         .innerRadius(minRadius+(radius-minRadius)/nLightness*(nLightness-index-1));
-                    
+
+                
                     var segment = d3.select(this).selectAll(".segment")
                         .data(pie(circleData))
                         .enter().append("g")
                         .attr("class", "segment");
                 
                     segment.append("path")
+                        .attr("class", "vzb-cl-colorCell")
                         .attr("d", arc)
-                        .style("fill", function(d) {return d.data })
-                        .on("mouseover", function(){
-                        
-                            d3.select(this).style("stroke", "white");
-                            _this.chosenColor = d3.select(this).style("fill");
-                            _this.colorSample.style("fill", _this.chosenColor);
-                            _this._setModel(_this.chosenColor);
-                        })
-                        .on("mouseout", function(){
-                            d3.select(this).style("stroke", "none");
-                        })
-                        .on("click", function(){
-                            d3.select(this).style("stroke", "none");
-                            _this.pickerCanvas.classed("vzb-invisible", true);
-                            _this.listColors.classed("vzb-invisible", false);
-                            
-                        });
+                        .style("fill", function(d) {return d.data.display })
+                        .style("stroke", function(d) {return d.data.display })
+                        .on("mouseover", function(d){_this._cellHover(d.data.actual, this, true)})
+                        .on("mouseout", function(d){_this._cellUnHover()});
                 })
-                
             
+            this.colorPointer = this.circles.append("path")
+                .attr("class", "vzb-cl-colorPointer vzb-invisible");
+          
+            
+            
+            this.pickerCanvas.selectAll(".vzb-cl-colorCell")
+                .on("click", function(){_this._toggleColorPicker()});
+            
+        },
+        
+        
+        
+        _cellHover: function(value, view, useColorPointer){
+            var _this = this;
+            if(useColorPointer){
+                this.colorPointer.classed("vzb-invisible", false)
+                    .attr("d", d3.select(view).attr("d"));
+            }
+            _this.chosenColor = value;
+            _this.colorSample.style("fill", _this.chosenColor);
+            _this.colorSampleText.text(_this.chosenColor);
+            _this._setModel(_this.chosenColor);
+        },        
+        _cellUnHover: function(){
+            this.colorPointer.classed("vzb-invisible", true);
+        },
+        _toggleColorPicker: function(){
+            this.colorPickerIsOn = !this.colorPickerIsOn;
+            this.pickerCanvas.classed("vzb-invisible", !this.colorPickerIsOn);
         },
         
         updateView: function(){
             var _this = this;
             this.translator = this.model.language.getTFunction();
             var indicator = this.model.color[INDICATOR];
+            var domain = this.model.color.domain;
             var data = Object.keys(availOpts[indicator]);
 
             var el_colors = this.listColors
@@ -202,14 +252,8 @@ define([
             
             el_colors.enter().append("div").attr("class", "vzb-cl-option")
                 .each(function(d){
-                    d3.select(this).append("div")
-                        .attr("class", "vzb-cl-color-sample")
-                        .style("background-color",availOpts[indicator][d])
-                        .style("border", "1px solid " + availOpts[indicator][d]);
-                
-                    d3.select(this).append("div")
-                        .attr("class", "vzb-cl-color-legend")
-                        .text(d);
+                    d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
+                    d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
                 })
                 .on("mousemove", function(d){
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
@@ -220,25 +264,43 @@ define([
                 .on("mouseout", function(d){
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
                     sample.style("border-width", "0px");
-                    sample.style("background-color", availOpts[indicator][d]);
+                    sample.style("background-color", domain[d]);
                 })
                 .on("click", function(d){
-                    _this.pickerCanvas.classed("vzb-invisible", false);
-                    _this.listColors.classed("vzb-invisible", true);
-                    _this.currentColor = availOpts[indicator][d];
+                    _this._toggleColorPicker();
+                    _this.currentColor = domain[d];
                     _this.pickerCanvas.selectAll(".vzb-cl-colorSample")
                         .style("fill", _this.currentColor);
+                    _this.pickerCanvas.selectAll(".vzb-cl-colorSampleText")
+                        .text(_this.currentColor);
+                    _this.pickerCanvas.selectAll(".vzb-cl-defaultColor")
+                        .style("fill", availOpts[indicator][d]);
+                    _this.defaultColor = availOpts[indicator][d];
                     _this.target = {indicator: indicator, segment: d};
-                });
+                })
+            
+            
+            el_colors.each(function(d){
+                d3.select(this).select(".vzb-cl-color-sample")
+                    .style("background-color",domain[d])
+                    .style("border", "1px solid " + domain[d]);
+
+                d3.select(this).select(".vzb-cl-color-legend")
+                    .text(d);
+            });
         },
         
         
         
         _setModel: function (value) {
             var _this = this;
-            availOpts[_this.target.indicator][_this.target.segment] = value;
+            var domain = _.clone(availOpts[this.target.indicator]);
+            for(segment in domain){
+                domain[segment] = this.model.color.domain[segment];
+            }
+            domain[_this.target.segment] = value;
             
-            this.model.color.domain = availOpts[_this.target.indicator];
+            this.model.color.domain = domain;
         }
         
 

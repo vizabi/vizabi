@@ -53,7 +53,7 @@ define([
                     // bubble size change is processed separately
                     if(evt == "change:marker:size:max") return; 
                     if(evt == "change:marker:color:domain") return; 
-                    //console.log("EVENT change:marker", evt);
+                    console.log("EVENT change:marker", evt);
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
