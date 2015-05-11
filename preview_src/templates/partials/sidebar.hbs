@@ -1,5 +1,5 @@
 	{{> button id="vzbp-btn-refresh" tooltip="Refresh" icon="refresh"}} 
-	{{> button id="vzbp-btn-github" tooltip="Github" icon="github" iconbig=true}} 
+	{{#if source_code}}{{> button id="vzbp-btn-github" tooltip="Github" icon="github" iconbig=true href=source_code}} {{/if}}
 	{{> button id="vzbp-btn-codepen" tooltip="Codepen" icon="codepen"}} 
 	{{> button id="vzbp-btn-share" icon="paper-plane" tooltip="Share"}}
 
@@ -28,17 +28,6 @@
 
 <div id="state-section-panel" class="collapsible-panel">
 	<h2 id="state-section" class="vzbp-subtitle vzbp-collapsible-title">State</h2>
-</div>
-{{/if}}
-
-{{#if control_hooks}}
-<hr class="vzbp-hr"/>
-
-<div id="hook-sect" class="collapsible-section">
-	<h2 class="vzbp-subtitle vzbp-collapsible-title">Hooks</h2>
-	<div class="vzbp-collapsible">
-
-	</div>
 </div>
 {{/if}}
 

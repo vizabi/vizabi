@@ -1,6 +1,5 @@
 ---
 control_buttons: { play: true, languages: ["en", "pt"] }
-control_hooks: true
 control_state: true
 control_sizes: true
 control_buttons: {play: true, language: true}
@@ -142,9 +141,17 @@ control_buttons: {play: true, language: true}
 
         </script>
       {{/if}}
-      
-      {{!-- Additional scripts and buttons will be added here --}}
-      {{> body }}
+
+      <div id="other-sect" class="collapsible-section">
+        <h2 class="vzbp-subtitle vzbp-collapsible-title">Other</h2>
+        <div class="vzbp-collapsible">
+            {{!-- Additional scripts and buttons will be added here --}}
+            {{> body }}
+        </div>
+      </div>
+
+      <hr class="vzbp-hr"/>
+    
     </div>
 
     {{> state_editor }}
@@ -176,6 +183,8 @@ control_buttons: {play: true, language: true}
     {{#if control_buttons}}
       <script src="{{assets}}js/_interaction.js"></script>
     {{/if}}
+
+    <script src="{{assets}}js/_dropdowns.js"></script>
 
     {{#if tool}}
       <script>

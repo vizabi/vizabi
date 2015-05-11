@@ -4,12 +4,12 @@ var container = document.getElementById('vzbp-main');
 var editorTextArea = document.getElementById("vzbp-state-editor-textarea");
 var viz;
 
+
 /*
  * Share Section
  */
 
 document.getElementById("vzbp-btn-refresh").onclick = resetURL;
-document.getElementById("vzbp-btn-github").onclick = viewOnGithub;
 document.getElementById("vzbp-btn-codepen").onclick = updateURL;
 document.getElementById("vzbp-btn-share").onclick = shareLink;
 
@@ -30,20 +30,30 @@ function shareLink() {
     });
 }
 
-function viewOnGithub() {
-    var url = window.location.pathname;
-    var branch;
-    var github_base = 'https://github.com/Gapminder/vizabi/tree/';
-    var github_tools_prepend = '/src/tools/';
-    var prefix = "preview/";
-    var tool_path = url.substring(url.indexOf(prefix) + prefix.length, url.indexOf(".html"));
+function setHook(params) {
+    var options = {
+        state: {
+            marker: {}
+        }
+    };
+    options.state.marker[params.hook] = {
+        use: params.use,
+        value: params.value
+    };
+    // for time only
+    if (params.scale != null) options.state.marker[params.hook].scale = params.scale;
+    //for color only
+    if (params.domain) options.state.marker[params.hook].domain = params.domain;
+    VIZ.setOptions(options);
+    if(setState) setState();
+}
 
-    // TODO: In development, there is no info about the branch in the URL. Can be improved by looking into https://github.com/notatestuser/gift
-    if (url.indexOf('dist') >= 0 || url.indexOf('develop') >= 0) {
-        branch = 'develop';
+function setEntities(filterGeo, filterGeoCategory) {
+    var options = {state: {entities: {show: {filter: {}}}}};
+    options.state.entities.show.filter = {
+        "geo": filterGeo,
+        "geo.category": filterGeoCategory
     }
-    else {
-        branch = url.substring(url.indexOf('feature'), url.indexOf('/preview'));
-    }
-    window.open(github_base + branch + github_tools_prepend + tool_path, '_blank');
+    VIZ.setOptions(options);
+    if(setState) setState();
 }

@@ -84,3 +84,7 @@ function getJSON(url, param, callback, err) {
     };
     request.send();
 }
+
+function openLink(link) {
+    window.open(link, '_blank');
+}

@@ -3,6 +3,7 @@
 
     .vzbp-button {
         @include prefixer(border-radius, 2px, webkit moz spec);
+        display: inline-block;
         position: relative;
         vertical-align: top;
         min-width: 32px;
