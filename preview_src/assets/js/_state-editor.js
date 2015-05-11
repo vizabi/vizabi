@@ -26,6 +26,7 @@ function updateStateEditor(state) {
     editorTextArea.value = JSON.stringify(state, null, 2);
     editorTextArea.removeAttribute('disabled');
     removeClass(editorTextArea, "invalid");
+    updateURL();
 }
 
 function setState() {
@@ -36,6 +37,7 @@ function setState() {
         removeClass(editorTextArea, "invalid");
         VIZABI_OPTIONS.state = state;
         VIZ.setOptions(VIZABI_OPTIONS); 
+        updateURL();
     }
     catch(err) {
         addClass(editorTextArea, "invalid");

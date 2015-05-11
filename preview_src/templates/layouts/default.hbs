@@ -40,6 +40,10 @@ control_buttons: {play: true, language: true}
       {{#if tool}}
         <script>
 
+          var TITLE = "{{title}}";
+          var TOOL = "{{tool}}";
+          var DESCRIPTION = "{{description}}";
+
           VIZABI_OPTIONS = {
             state: {},
             bind: {
@@ -166,9 +170,11 @@ control_buttons: {play: true, language: true}
     {{/if}}
 
     {{!-- Scripts --}}
+
     <script src="{{assets}}js/_utils.js"></script>
     <script src="{{assets}}js/_collapsible.js"></script>
     <script src="{{assets}}js/_url.js"></script>
+    <script src="{{assets}}js/_codepen.js"></script>
     <script src="{{assets}}js/main.js"></script>
 
     {{!-- Add these scripts only if needed --}}
@@ -189,6 +195,12 @@ control_buttons: {play: true, language: true}
     {{#if tool}}
       <script>
         parseURL();
+
+        if(!VIZABI_OPTIONS) {
+          VIZABI_OPTIONS = { state: {}, language: { id: "en" }}; //fallback
+        }
+        if(URL.state) VIZABI_OPTIONS.state = URL.state;
+        if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
         
         VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
 

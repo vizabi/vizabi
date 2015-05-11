@@ -10,7 +10,16 @@ var viz;
  */
 
 document.getElementById("vzbp-btn-refresh").onclick = resetURL;
-document.getElementById("vzbp-btn-codepen").onclick = updateURL;
+document.getElementById("vzbp-btn-codepen").onclick = function() {
+    //get state
+    var STATE = VIZ.getOptions().state;
+    formatDates(STATE);
+    STATE = JSON.stringify(STATE, null, 2);
+
+    var BRANCH = location.href.substring(0, location.href.indexOf("preview/")) + "dist/";
+
+    viewOnCodepen(TITLE, TOOL, BRANCH, STATE);
+};
 document.getElementById("vzbp-btn-share").onclick = shareLink;
 
 //share link
@@ -45,7 +54,6 @@ function setHook(params) {
     //for color only
     if (params.domain) options.state.marker[params.hook].domain = params.domain;
     VIZ.setOptions(options);
-    if(setState) setState();
 }
 
 function setEntities(filterGeo, filterGeoCategory) {
@@ -55,5 +63,4 @@ function setEntities(filterGeo, filterGeoCategory) {
         "geo.category": filterGeoCategory
     }
     VIZ.setOptions(options);
-    if(setState) setState();
 }
