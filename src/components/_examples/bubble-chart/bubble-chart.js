@@ -52,7 +52,8 @@ define([
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
                     if(evt == "change:marker:size:max") return; 
-                    //console.log("EVENT change:marker");
+                    if(evt == "change:marker:color:domain") return; 
+                    console.log("EVENT change:marker", evt);
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
@@ -118,6 +119,10 @@ define([
                     _this.updateMarkerSizeLimits();
                     _this.redrawDataPoints();
                     _this.resizeTrails();   
+                },
+                'change:marker:color:domain': function() {
+                    //console.log("EVENT change:marker:color:domain");
+                    _this.redrawDataPointsOnlyColors();
                 },
                 'change:entities:opacityNonSelected': function() {
                     _this.updateBubbleOpacity();
@@ -726,6 +731,14 @@ define([
 
         },
 
+        
+        redrawDataPointsOnlyColors: function() {
+            var _this = this;
+            this.entityBubbles.style("fill", function(d){
+                return _this.model.marker.color.getValue({geo:d.geo, time:_this.time});
+            });
+        },
+        
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
@@ -742,13 +755,14 @@ define([
                     d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
                 }else{
                     d.time = _this.time;
-                }
+                };
 
                 var valueY = _this.model.marker.axis_y.getValue(d);
                 var valueX = _this.model.marker.axis_x.getValue(d);
                 var valueS = _this.model.marker.size.getValue(d);
                 var valueL = _this.model.marker.label.getValue(d);
                 var valueC = _this.model.marker.color.getValue(d);
+                
 
                 
                 // check if fetching data succeeded
