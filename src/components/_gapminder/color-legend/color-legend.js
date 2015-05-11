@@ -1,7 +1,8 @@
 //ColorLegend
 define([
     'd3',
-    'base/component'
+    'base/component',
+    'd3colorPicker',
 ], function(d3, Component) {
 
     var INDICATOR = "value";
@@ -17,32 +18,6 @@ define([
         'pop':          ['#F77481', '#E1CE00', '#B4DE79'],
         '42':           ['#fa5ed6']
     };
-    
-    
-    function _hslToRgb(h, s, l){
-        var r, g, b;
-
-        if(s == 0){
-            r = g = b = l; // achromatic
-        }else{
-            var hue2rgb = function hue2rgb(p, q, t){
-                if(t < 0) t += 1;
-                if(t > 1) t -= 1;
-                if(t < 1/6) return p + (q - p) * 6 * t;
-                if(t < 1/2) return q;
-                if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-                return p;
-            }
-
-            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-            var p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
-            g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
-        }
-
-        return "#" + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16);
-    }
     
     
 
@@ -91,151 +66,16 @@ define([
             
             var _this = this;
             
-            this.listColors = this.element.append("div").attr("class", "vzb-cl-colorList");
-            
-            var nHues = 15;
-            var nLightness = 4;
-            var minRadius = 15;
-            var minLightness = 0.50;
-            var lightnessAt0_display = 0.40;
-            var lightnessAt0_actual = 0.30;
-            var saturationAt0 = 0.0;
-            var minHue = 0;
-            var saturation = 0.7;
-            colorData = [];
-            for(var j = 0; j<nLightness; j++) {
-                var lightness = (minLightness+(1-minLightness)/nLightness * j);
-
-                colorData.push([]);
-                for(var i = 0; i<=nHues; i++) {
-                    var hue = minHue+(1-minHue)/nHues * i;
-                    colorData[j].push({
-                        display: _hslToRgb(hue, i==0?saturationAt0:saturation, j==0?lightnessAt0_display:lightness),
-                        actual: _hslToRgb(hue, i==0?saturationAt0:saturation, j==0?lightnessAt0_actual:lightness)
-                    });
-                }
-            }
-
-            this.pickerCanvas = this.element.append("svg")
-                .attr("class", "vzb-cl-colorPicker vzb-invisible");
-            
-            var width = parseInt(this.pickerCanvas.style("width"));
-            var height = parseInt(this.pickerCanvas.style("height"));
-            var radius = width/2*0.8;
-
-            
-            this.pickerCanvas.append("rect")
-                .attr("width", width)
-                .attr("height", height)
-                .attr("class", "vzb-cl-colorCell")
-                .on("mouseover", function(d){_this._cellHover(_this.currentColor)});
+            this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
             
             
-            this.pickerCanvas.append("text")
-                .attr("x", width*0.1)
-                .attr("y", 15)
-                .style("text-anchor", "start")
-                .attr("class", "vzb-cl-colorSampleText");
-                
-            this.colorSampleText = this.pickerCanvas.append("text")
-                .attr("x", width*0.9)
-                .attr("y", 15)
-                .style("text-anchor", "end")
-                .attr("class", "vzb-cl-colorSampleText");
+            this.colorPicker = d3.svg.colorPicker();
             
-            var defaultColorR = 15;
-            this.pickerCanvas.append("circle")
-                .attr("class", "vzb-cl-defaultColor vzb-cl-colorCell")
-                .attr("r", defaultColorR)
-                .attr("cx", defaultColorR+width*0.1)
-                .attr("cy", height-defaultColorR-width*0.05)
-                .on("mouseover", function(d){_this._cellHover(_this.defaultColor)});
-            
-            this.pickerCanvas.append("text")
-                .attr("x", width*0.1)
-                .attr("y", height-width*0.05)
-                .attr("dy", "0.3em")
-                .text("default");
-            
-            
-            this.circles = this.pickerCanvas.append("g")
-                .attr("transform", "translate("+(radius + width*0.1) +","+(radius + width*0.1) +")");
-            
-            this.circles.append("circle")
-                .attr("r", minRadius-2)
-                .attr("fill", "#FFF")
-                .attr("class", "vzb-cl-colorCell")
-                .on("mouseover", function(d){_this._cellHover("#FFF")})
-            
-            this.pickerCanvas.append("rect")
-                .attr("class", "vzb-cl-colorSample")
-                .attr("width", width/2)
-                .attr("height", 10);
-            this.colorSample = this.pickerCanvas.append("rect")
-                .attr("class", "vzb-cl-colorSample")
-                .attr("width", width/2)
-                .attr("x", width/2)
-                .attr("height", 10);
-            var arc = d3.svg.arc();
-
-            var pie = d3.layout.pie()
-                .sort(null)
-                .value(function(d) { return 1 });
-            
-            this.circles.selectAll(".circle")
-                .data(colorData)
-                .enter().append("g")
-                .attr("class", "circle")
-                .each(function(circleData, index){
-                    
-                    arc.outerRadius(minRadius+(radius-minRadius)/nLightness*(nLightness-index))
-                        .innerRadius(minRadius+(radius-minRadius)/nLightness*(nLightness-index-1));
-
-                
-                    var segment = d3.select(this).selectAll(".segment")
-                        .data(pie(circleData))
-                        .enter().append("g")
-                        .attr("class", "segment");
-                
-                    segment.append("path")
-                        .attr("class", "vzb-cl-colorCell")
-                        .attr("d", arc)
-                        .style("fill", function(d) {return d.data.display })
-                        .style("stroke", function(d) {return d.data.display })
-                        .on("mouseover", function(d){_this._cellHover(d.data.actual, this, true)})
-                        .on("mouseout", function(d){_this._cellUnHover()});
-                })
-            
-            this.colorPointer = this.circles.append("path")
-                .attr("class", "vzb-cl-colorPointer vzb-invisible");
-          
-            
-            
-            this.pickerCanvas.selectAll(".vzb-cl-colorCell")
-                .on("click", function(){_this._toggleColorPicker()});
-            
+            this.element
+                .call(this.colorPicker);
         },
         
-        
-        
-        _cellHover: function(value, view, useColorPointer){
-            var _this = this;
-            if(useColorPointer){
-                this.colorPointer.classed("vzb-invisible", false)
-                    .attr("d", d3.select(view).attr("d"));
-            }
-            _this.chosenColor = value;
-            _this.colorSample.style("fill", _this.chosenColor);
-            _this.colorSampleText.text(_this.chosenColor);
-            _this._setModel(_this.chosenColor);
-        },        
-        _cellUnHover: function(){
-            this.colorPointer.classed("vzb-invisible", true);
-        },
-        _toggleColorPicker: function(){
-            this.colorPickerIsOn = !this.colorPickerIsOn;
-            this.pickerCanvas.classed("vzb-invisible", !this.colorPickerIsOn);
-        },
+
         
         updateView: function(){
             var _this = this;
@@ -244,13 +84,13 @@ define([
             var domain = this.model.color.domain;
             var data = Object.keys(availOpts[indicator]);
 
-            var el_colors = this.listColors
+            var colors = this.listColorsEl
                 .selectAll(".vzb-cl-option")
                 .data(data, function(d){return d});
 
-            el_colors.exit().remove();
+            colors.exit().remove();
             
-            el_colors.enter().append("div").attr("class", "vzb-cl-option")
+            colors.enter().append("div").attr("class", "vzb-cl-option")
                 .each(function(d){
                     d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
                     d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
@@ -267,20 +107,15 @@ define([
                     sample.style("background-color", domain[d]);
                 })
                 .on("click", function(d){
-                    _this._toggleColorPicker();
-                    _this.currentColor = domain[d];
-                    _this.pickerCanvas.selectAll(".vzb-cl-colorSample")
-                        .style("fill", _this.currentColor);
-                    _this.pickerCanvas.selectAll(".vzb-cl-colorSampleText")
-                        .text(_this.currentColor);
-                    _this.pickerCanvas.selectAll(".vzb-cl-defaultColor")
-                        .style("fill", availOpts[indicator][d]);
-                    _this.defaultColor = availOpts[indicator][d];
-                    _this.target = {indicator: indicator, segment: d};
+                    _this.colorPicker
+                        .colorOld(domain[d])
+                        .colorDef(availOpts[indicator][d])
+                        .callback(function(value){_this._setModel(value, {indicator: indicator, segment: d})})
+                        .show(true);
                 })
             
             
-            el_colors.each(function(d){
+            colors.each(function(d){
                 d3.select(this).select(".vzb-cl-color-sample")
                     .style("background-color",domain[d])
                     .style("border", "1px solid " + domain[d]);
@@ -292,13 +127,13 @@ define([
         
         
         
-        _setModel: function (value) {
+        _setModel: function (value, target) {
             var _this = this;
-            var domain = _.clone(availOpts[this.target.indicator]);
+            var domain = _.clone(availOpts[target.indicator]);
             for(segment in domain){
                 domain[segment] = this.model.color.domain[segment];
             }
-            domain[_this.target.segment] = value;
+            domain[target.segment] = value;
             
             this.model.color.domain = domain;
         }
