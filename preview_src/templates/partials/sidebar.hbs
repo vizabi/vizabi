@@ -1,7 +1,18 @@
-	{{> button id="vzbp-btn-refresh" tooltip="Refresh" icon="refresh"}} 
-	{{#if source_code}}{{> button id="vzbp-btn-github" tooltip="Github" icon="github" iconbig=true href=source_code}} {{/if}}
-	{{> button id="vzbp-btn-codepen" tooltip="Codepen" icon="codepen"}} 
-	{{> button id="vzbp-btn-share" icon="paper-plane" tooltip="Share"}}
+<div id="vzbp-sidebar">
+
+      	<button class="vzbp-button" id="vzbp-btn-refresh" data-tooltip="Refresh">
+      		<i class="fa fa-refresh"></i>
+      	</button> 
+      	{{#if source_code}}
+      	<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-github"onclick="openLink('{{source_code}}')" data-tooltip="Github">
+      		<i class="fa fa-github"></i>
+      	</button> {{/if}}
+      	<button class="vzbp-button" id="vzbp-btn-codepen" data-tooltip="Codepen">
+      		<i class="fa fa-codepen"></i>
+      	</button> 
+      	<button class="vzbp-button" id="vzbp-btn-share" data-tooltip="Share">
+      		<i class="fa fa-paper-plane"></i>
+      	</button>
 
 {{#if control_sizes}}
 <hr class="vzbp-hr"/>
@@ -11,10 +22,18 @@
 
 	<div class="vzbp-collapsible">
 
-		{{> button id="vzbp-btn-portrait" tooltip="Portrait" icon="mobile" iconbig=true}}
-		{{> button id="vzbp-btn-landscape" tooltip="Landscp" icon="mobile" iconbig=true iconrotate=90}}
-		{{> button id="vzbp-btn-desktop" tooltip="Full" icon="desktop" iconbig=true}}
-		{{> button id="vzbp-btn-random" tooltip="Random" icon="random"}}
+		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-portrait" data-tooltip="Portrait">
+  			<i class="fa fa-mobile"></i>
+  		</button> 
+  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-landscape" data-tooltip="Landscp">
+  			<i class="fa fa-mobile fa-rotate-90"></i>
+  		</button> 
+  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-desktop" data-tooltip="Full">
+  			<i class="fa fa-desktop"></i>
+  		</button> 
+  		<button class="vzbp-button" id="vzbp-btn-random" data-tooltip="Random">
+  			<i class="fa fa-random"></i>
+  		</button>
 
 		<p align="center">
 			<input id="vzbp-input-width" type="number" class="vzbp-input"/> x <input id="vzbp-input-height" type="number" class="vzbp-input"/>
@@ -48,10 +67,14 @@
 
 	<div class="vzbp-collapsible">
 		{{#if control_buttons.play}}	
-			{{> button id="vzbp-btn-play" tooltip="Play" icon="play"}}
+			<button class="vzbp-button" id="vzbp-btn-play"data-tooltip="Play">
+      			<i class="fa fa-play"></i>
+      		</button> 
 		{{/if}}
 		{{#if control_buttons.language}}	
-		{{> button id="vzbp-btn-lang" tooltip="Set Lang: PT" iconbig=true icon="globe"}}
+			<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-lang"data-tooltip="Set Lang: PT">
+      			<i class="fa fa-globe"></i>
+      		</button>
 		{{/if}}
 	</div>
 </div>
