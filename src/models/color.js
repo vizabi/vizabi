@@ -3,6 +3,16 @@ define([
     'lodash',
     'models/hook'
 ], function(d3, _, Hook) {
+    
+    var availOpts = {
+        'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
+        'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
+        'time':         ['#F77481', '#E1CE00', '#B4DE79'],
+        'lex':          ['#F77481', '#E1CE00', '#B4DE79'],
+        'gdp_per_cap':  ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
+        'pop':          ['#F77481', '#E1CE00', '#B4DE79'],
+        '_default':     {'_default':'#fa5ed6'}
+    };
 
     var Color = Hook.extend({
 
@@ -18,100 +28,118 @@ define([
 
             values = _.extend({
                 use: "value",
+                palette: null,
                 value: undefined
             }, values);
             this._super(values, parent, bind);
+            
+            this.firstLoad = true;
         },
-
-        afterLoad: function() {
-
-            var range = this.domain;
-            if (this.domain.getObject) {
-              range = _.values(this.domain.getObject());
-            }
-
-            var possible = this.getUnique(this.value);
-
-            this._ordinalScale = d3.scale.ordinal()
-                                .domain(possible)
-                                .range(range);
-
-            var limits = this.getLimits(this.value),
-                min = parseFloat(limits.min),
-                max = parseFloat(limits.max),
-                step = ((max-min) / (range.length - 1));
-
-            //todo: clean this perturbation up (hotfix)
-            max = max + max / 10000;
-
-            var domain = d3.range(min, max, step);
-
-            this._linearScale = d3.scale.linear()
-                                  .domain(domain)
-                                  .range(range)
-                                  .interpolate(d3.interpolateRgb);
+        
+        /**
+         * Get the above constants
+         */
+        getAvailOpts: function(){
+            return availOpts;
         },
 
         /**
          * Validates a color hook
          */
         validate: function() {
-            //this domain must exist
-            if (this.use !== "value" && !this.domain) {
-                 this.domain = ["#CCCCCC", "#000000"];
-            } else if (this.use === "value") {
-                this.value = d3.rgb(this.value).toString();
+            this.scale = this.use=="indicator"?"linear":"ordinal";
+            
+            if(this.firstLoad && this.palette==null || !this.firstLoad && this.value_1 != this.value){
+
+                this.palette = null;
+                if(availOpts[this.value]){
+                    this.palette = _.clone(availOpts[this.value]);
+                }else{
+                    this.palette = _.clone(availOpts["_default"]);
+                }
             }
+
+            this.value_1 = this.value;
+            this.firstLoad = false;
         },
 
         /**
-         * Maps value for this hook
+         * set color
+         */
+        setColor: function(value, pointer) {
+//            if(pointer==null){
+//                if(this.use=="indicator")
+//                pointer = 
+//                    }
+            
+        },
+
+        
+        /**
+         * maps the value to this hook's specifications
          * @param value Original value
-         * @returns {String} color
+         * @returns hooked value
          */
         mapValue: function(value) {
+            if(this.use == "property" && !this.palette[value]) value = "_default";
+            return this._super(value);
+        },
+        
+        
+        /**
+         * Gets the domain for this hook
+         * @returns {Array} domain
+         */
+        getDomain: function() {
+            var _this = this;
+            
 
-            if(!_.isArray(this.domain) && this.domain[value]) {
-                return this.domain[value];
-            } else if(!_.isArray(this.domain) && this.domain["_default"]) {
-                return this.domain["_default"];
+            if(this.value=="time"){
+                var limits = this.getLimits(this.value);
+                return d3.time.scale()
+                    .domain([limits.min, limits.max])
+                    .range(_this.palette);
             }
-
-            var color;
+            
             switch (this.use) {
                 case "indicator":
-                    color = this._getColorLinear(value);
-                    break;
-                case "property":
-                    color = this._getColorOrdinal(value);
-                    break;
-                case "value":
+                    var range = _this.palette;
+                    
+                    var limits = this.getLimits(this.value);
+                    var min = parseFloat(limits.min);
+                    var max = parseFloat(limits.max);
+                    var step = ((max-min) / (range.length - 1));
+                    var domain = d3.range(min, max, step).concat(max);
+                    
+                    return d3.scale["linear"]()
+                        .domain(domain)
+                        .range(range)
+                        .interpolate(d3.interpolateRgb);
+
                 default:
-                    color = value;
-                    break;
+                    var domain = _.keys(_this.palette);
+                    var range = _.values(_this.palette);
+                    return d3.scale["ordinal"]()
+                        .domain(domain)
+                        .range(range);
             }
-            return color;
-        },
-
-        /**
-         * Gets value of color with linear interpolation
-         * @returns {String} color
-         */
-        _getColorLinear: function(value) {
-            if(!this._linearScale) return "#000000";
-            return this._linearScale(value);
-        },
-
-        /**
-         * Gets value of color with discrete values
-         * @returns {String} color
-         */
-        _getColorOrdinal: function(value) {
-            if(!this._ordinalScale) return "#000000";
-            return this._ordinalScale(value);
         }
 
     });
 
     return Color;
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -8,19 +8,6 @@ define([
     var INDICATOR = "value";
     
     
-
-    var availOpts = {
-        'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
-        'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
-        'time':         ['#F77481', '#E1CE00', '#B4DE79'],
-        'lex':          ['#F77481', '#E1CE00', '#B4DE79'],
-        'gdp_per_cap':  ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
-        'pop':          ['#F77481', '#E1CE00', '#B4DE79'],
-        '42':           ['#fa5ed6']
-    };
-    
-    
-
     var ColorLegend = Component.extend({
 
         /**
@@ -80,22 +67,27 @@ define([
         updateView: function(){
             var _this = this;
             this.translator = this.model.language.getTFunction();
-            var indicator = this.model.color[INDICATOR];
             var domain = this.model.color.domain;
-            var data = Object.keys(availOpts[indicator]);
+            
+            var pointer = "_default";
+            if(Object.keys(this.model.color.getAvailOpts()).indexOf(this.model.color[INDICATOR]) > -1) pointer = this.model.color[INDICATOR];
+            
+            
+            var defaultColors = this.model.color.getAvailOpts()[pointer];
+            
 
             var colors = this.listColorsEl
                 .selectAll(".vzb-cl-option")
-                .data(data, function(d){return d});
+                .data(Object.keys(defaultColors), function(d){return d});
 
             colors.exit().remove();
             
             colors.enter().append("div").attr("class", "vzb-cl-option")
-                .each(function(d){
+                .each(function(){
                     d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
                     d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
                 })
-                .on("mousemove", function(d){
+                .on("mouseover", function(){
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
                     sample.style("border-width", "5px");
                     sample.style("background-color", "transparent");
@@ -109,8 +101,8 @@ define([
                 .on("click", function(d){
                     _this.colorPicker
                         .colorOld(domain[d])
-                        .colorDef(availOpts[indicator][d])
-                        .callback(function(value){_this._setModel(value, {indicator: indicator, segment: d})})
+                        .colorDef(defaultColors[d])
+                        .callback(function(value){_this._setModel(value, d)})
                         .show(true);
                 })
             
@@ -128,14 +120,7 @@ define([
         
         
         _setModel: function (value, target) {
-            var _this = this;
-            var domain = _.clone(availOpts[target.indicator]);
-            for(segment in domain){
-                domain[segment] = this.model.color.domain[segment];
-            }
-            domain[target.segment] = value;
-            
-            this.model.color.domain = domain;
+            this.model.color.domain[target] = value;
         }
         
 

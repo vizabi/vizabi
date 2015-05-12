@@ -169,17 +169,6 @@ define([
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        domain: {
-                                            _type_: "object",
-                                            _defs_: {
-                                                "_default": "#ffb600",
-                                                "world": "#ffb600",
-                                                "eur": "#FFE700",
-                                                "afr": "#00D5E9",
-                                                "asi": "#FF5872",
-                                                "ame": "#7FEB00"
-                                            }
-                                        },
                                         domain_type: {
                                             _type_: "string",
                                             _defs_: "continuous"

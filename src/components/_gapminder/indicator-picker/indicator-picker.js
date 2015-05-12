@@ -15,7 +15,7 @@ define([
         'lex':          {use: 'indicator',  scales: ['linear'] },
         'gdp_per_cap':  {use: 'indicator',  scales: ['linear', 'log'] },
         'pop':          {use: 'indicator',  scales: ['linear', 'log'] },
-        '42':           {use: 'value',      scales: ['linear', 'log'] }
+        '_default':     {use: 'value',      scales: ['linear', 'log'] }
     };
     
     
@@ -95,9 +95,14 @@ define([
             var _this = this;
             this.translator = this.model.language.getTFunction();
 
+            var pointer = "_default";
+            
             var data = {};
             data[INDICATOR] = Object.keys(availOpts);
-            data[SCALETYPE] = availOpts[this.model.axis[INDICATOR]].scales;
+            
+            if(data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
+            
+            data[SCALETYPE] = availOpts[pointer].scales;
             
             //bind the data to the selector lists
             var elOptionsIndicator = this.el_select_indicator.selectAll("option")

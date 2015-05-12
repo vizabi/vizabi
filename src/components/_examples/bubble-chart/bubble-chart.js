@@ -52,8 +52,8 @@ define([
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
                     if(evt == "change:marker:size:max") return; 
-                    if(evt == "change:marker:color:domain") return; 
-                    console.log("EVENT change:marker", evt);
+                    if(evt.indexOf("change:marker:color:domain") > -1) return; 
+                    //console.log("EVENT change:marker", evt);
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
@@ -121,8 +121,8 @@ define([
                     _this.resizeTrails();   
                 },
                 'change:marker:color:domain': function() {
-                    //console.log("EVENT change:marker:color:domain");
-                    _this.redrawDataPointsOnlyColors();
+                    console.log("EVENT change:marker:color:domain");
+                    //_this.redrawDataPointsOnlyColors();
                 },
                 'change:entities:opacityNonSelected': function() {
                     _this.updateBubbleOpacity();
@@ -134,7 +134,7 @@ define([
             this.xScale = null;
             this.yScale = null;
             this.sScale = null;
-            this.cScale = d3.scale.category10();
+            this.cScale = null;
 
             this.xAxis = d3.svg.axisSmart();
             this.yAxis = d3.svg.axisSmart();
@@ -407,6 +407,7 @@ define([
             this.yScale = this.model.marker.axis_y.getDomain();
             this.xScale = this.model.marker.axis_x.getDomain();
             this.sScale = this.model.marker.size.getDomain();
+            this.cScale = this.model.marker.color.getDomain();
 
             this.collisionResolver.scale(this.yScale);
 
@@ -734,8 +735,10 @@ define([
         
         redrawDataPointsOnlyColors: function() {
             var _this = this;
+            
             this.entityBubbles.style("fill", function(d){
-                return _this.model.marker.color.getValue({geo:d.geo, time:_this.time});
+                var valueC = _this.model.marker.color.getValue({geo:d.geo, time:_this.time});    
+                return _this.cScale(valueC);
             });
         },
         
@@ -777,7 +780,7 @@ define([
                     var scaledS = _areaToRadius(_this.sScale(valueS));
 
                     view.classed("vzb-invisible", false)
-                        .style("fill", valueC)
+                        .style("fill", _this.cScale(valueC))
                         .transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(valueY))
                         .attr("cx", _this.xScale(valueX))
@@ -1097,8 +1100,8 @@ define([
 
                         if(index<trailSegmentData.length-1){
                             var view = d3.select(this);
-                            view.append("circle").style("fill", segment.valueC);
-                            view.append("line").style("stroke", segment.valueC);
+                            view.append("circle").style("fill", _this.cScale(segment.valueC));
+                            view.append("line").style("stroke", _this.cScale(segment.valueC));
                         }
                     });
 
