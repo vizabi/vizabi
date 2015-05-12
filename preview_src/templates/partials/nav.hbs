@@ -1,0 +1,9 @@
+<div id="vzbp-nav">
+	<div class="vzbp-nav-menu"> 
+	  {{#each pages}} 
+	  	{{#unless data.redirect}} 
+	    	<a href="{{{this.filename}}}" {{#is this.filename ../../page.filename}} class="active" {{/is}}>{{data.title}}</a>
+	    {{/unless}}
+	  {{/each}} 
+	</div> 
+</div>

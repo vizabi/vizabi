@@ -1,0 +1,21 @@
+//use bourbon
+@import "../../../lib/bourbon/app/assets/stylesheets/bourbon";
+
+//general variables
+$vzbp-color-primary: #AFC34E;
+$vzbp-color-nav: #444444;
+$vzbp-color-editor: #444444;
+$vzbp-color-background: #F0F1F5;
+$vzbp-color-sidebar: #E1E4E7;
+$vzbp-font-family: $helvetica;
+$vzbp-font-family-editor: $monospace;
+
+//additional stylesheets
+@import "grid";
+@import "nav";
+@import "viewer";
+@import "sidebar";
+@import "collapsible";
+@import "utils";
+@import "editor";
+@import "dropdown";

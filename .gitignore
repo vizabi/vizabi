@@ -4,7 +4,6 @@ lib/
 node_modules/
 preview/
 *.swp
-/preview_pages/assets/_preview.tpl
 /src/assets/style/vizabi.scss
 /src/plugins.js
 .grunt/

@@ -22,6 +22,7 @@ define([
             this._id = this._id || _.uniqueId("c");
             this._rendered = false;
             this._ready = false;
+            this._readyOnce = false;
             this._debugEvents = this._debugEvents || false;
 
             //default values,
@@ -62,8 +63,9 @@ define([
 
                     //TODO: hotfix for non-data viz
                     _.defer(function() {
-                        if (_this.model._ready) {
-                            _this.trigger('ready');
+                        if (_this.model._ready && !_this._readyOnce) {
+                            _this.trigger('ready', _this.model.getObject());
+                            _this._readyOnce = true;
                             // _this.modelReady('dom_ready');
                         }
                     });
@@ -122,14 +124,14 @@ define([
 
                     _this._ready = true;
 
-                    if(_this.isRoot()) {
+                    if (_this.isRoot()) {
                         _this.model.setHooks();
                         return _this.model.load();
                     }
 
 
                 }).then(function() {
-                    if(_this.isRoot()) {
+                    if (_this.isRoot()) {
                         return _this.model.validate();
                     }
                 }).then(function() {
@@ -144,6 +146,11 @@ define([
                         if (_this.model._ready) {
                             _.defer(function() {
                                 _this.placeholder.classed(class_loading, false);
+
+                                if (!_this._readyOnce) {
+                                    _this.trigger('ready', _this.model.getObject());
+                                    _this._readyOnce = true;
+                                }
                             });
                         }
                     });
@@ -178,7 +185,7 @@ define([
             });
 
             // When all components have been loaded, resolve the defer
-           return Q.all(promises);
+            return Q.all(promises);
         },
 
         /**

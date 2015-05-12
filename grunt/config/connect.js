@@ -13,7 +13,7 @@ module.exports = {
             port: 9000,
             livereload: 35729,
             hostname: 'localhost',
-            open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/preview/preview_pages/'
+            open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/preview/'
         }
     },
 };
