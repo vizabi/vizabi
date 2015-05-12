@@ -1,18 +1,16 @@
-<div id="vzbp-sidebar">
-
-      	<button class="vzbp-button" id="vzbp-btn-refresh" data-tooltip="Refresh">
-      		<i class="fa fa-refresh"></i>
-      	</button> 
-      	{{#if source_code}}
-      	<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-github"onclick="openLink('{{source_code}}')" data-tooltip="Github">
-      		<i class="fa fa-github"></i>
-      	</button> {{/if}}
-      	<button class="vzbp-button" id="vzbp-btn-codepen" data-tooltip="Codepen">
-      		<i class="fa fa-codepen"></i>
-      	</button> 
-      	<button class="vzbp-button" id="vzbp-btn-share" data-tooltip="Share">
-      		<i class="fa fa-paper-plane"></i>
-      	</button>
+<button class="vzbp-button" id="vzbp-btn-refresh" data-tooltip="Refresh">
+	<i class="fa fa-refresh"></i>
+</button> 
+{{#if source_code}}
+<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-github"onclick="openLink('{{source_code}}')" data-tooltip="Github">
+	<i class="fa fa-github"></i>
+</button> {{/if}}
+<button class="vzbp-button" id="vzbp-btn-codepen" data-tooltip="Codepen">
+	<i class="fa fa-codepen"></i>
+</button> 
+<button class="vzbp-button" id="vzbp-btn-share" data-tooltip="Share">
+	<i class="fa fa-paper-plane"></i>
+</button>
 
 {{#if control_sizes}}
 <hr class="vzbp-hr"/>
