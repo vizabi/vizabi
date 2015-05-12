@@ -5,13 +5,13 @@ define([
 ], function(d3, _, Hook) {
     
     var availOpts = {
-        'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
-        'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
-        'time':         ['#F77481', '#E1CE00', '#B4DE79'],
-        'lex':          ['#F77481', '#E1CE00', '#B4DE79'],
-        'gdp_per_cap':  ['#F77481', '#E1CE00', '#B4DE79', '#62CCE3'],
-        'pop':          ['#F77481', '#E1CE00', '#B4DE79'],
-        '_default':     {'_default':'#fa5ed6'}
+        'geo.region':   [{'asi':'#FF5872'}, {'eur':'#FFE700'}, {'ame':'#7FEB00'}, {'afr':'#00D5E9'}, {'_default': '#ffb600'}],
+        'geo':          [{'color1':'#F77481'}, {'color2':'#E1CE00'}, {'color3':'#B4DE79'}, {'color4':'#62CCE3'}],
+        'time':         [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
+        'lex':          [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
+        'gdp_per_cap':  [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}, {"3":'#62CCE3'}],
+        'pop':          [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
+        '_default':     [{'_default':'#fa5ed6'}]
     };
 
     var Color = Hook.extend({
@@ -47,7 +47,7 @@ define([
          * Validates a color hook
          */
         validate: function() {
-            this.scale = this.use=="indicator"?"linear":"ordinal";
+            this.scaleType = this.use=="indicator"?"linear":"ordinal";
             
             if(this.firstLoad && this.palette==null || !this.firstLoad && this.value_1 != this.value){
 
@@ -81,7 +81,9 @@ define([
          * @returns hooked value
          */
         mapValue: function(value) {
-            if(this.use == "property" && !this.palette[value]) value = "_default";
+            //if the property value does not exist, supply the _default 
+            // otherwise the missing value would be added to the domain
+            if(this.use == "property" && this.scale.domain().indexOf(value)==-1) value = "_default";
             return this._super(value);
         },
         
@@ -90,38 +92,37 @@ define([
          * Gets the domain for this hook
          * @returns {Array} domain
          */
-        getDomain: function() {
+        buildScale: function() {
             var _this = this;
             
+            var domain = _this.palette.map(function(d){return _.keys(d)[0]});
+            var range = _this.palette.map(function(d){return _.values(d)[0]});
 
             if(this.value=="time"){
                 var limits = this.getLimits(this.value);
-                return d3.time.scale()
+                this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
-                    .range(_this.palette);
+                    .range(range);
+                return;
             }
             
             switch (this.use) {
                 case "indicator":
-                    var range = _this.palette;
-                    
                     var limits = this.getLimits(this.value);
-                    var min = parseFloat(limits.min);
-                    var max = parseFloat(limits.max);
-                    var step = ((max-min) / (range.length - 1));
-                    var domain = d3.range(min, max, step).concat(max);
+                    var step = ((limits.max-limits.min) / (range.length - 1));
+                    domain = d3.range(limits.min, limits.max, step).concat(max);
                     
-                    return d3.scale["linear"]()
+                    this.scale = d3.scale["linear"]()
                         .domain(domain)
                         .range(range)
                         .interpolate(d3.interpolateRgb);
+                    return;
 
                 default:
-                    var domain = _.keys(_this.palette);
-                    var range = _.values(_this.palette);
-                    return d3.scale["ordinal"]()
+                    this.scale = d3.scale["ordinal"]()
                         .domain(domain)
                         .range(range);
+                    return;
             }
         }
 

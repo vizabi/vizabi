@@ -404,10 +404,10 @@ define([
 
 
             //scales
-            this.yScale = this.model.marker.axis_y.getDomain();
-            this.xScale = this.model.marker.axis_x.getDomain();
-            this.sScale = this.model.marker.size.getDomain();
-            this.cScale = this.model.marker.color.getDomain();
+            this.yScale = this.model.marker.axis_y.getScale();
+            this.xScale = this.model.marker.axis_x.getScale();
+            this.sScale = this.model.marker.size.getScale();
+            this.cScale = this.model.marker.color.getScale();
 
             this.collisionResolver.scale(this.yScale);
 
@@ -654,12 +654,12 @@ define([
                 .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
 
             //update scales to the new range
-            if (this.model.marker.axis_y.scale !== "ordinal") {
+            if (this.model.marker.axis_y.scaleType !== "ordinal") {
                 this.yScale.range([this.height, 0]);
             } else {
                 this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
             }
-            if (this.model.marker.axis_x.scale !== "ordinal") {
+            if (this.model.marker.axis_x.scaleType !== "ordinal") {
                 this.xScale.range([0, this.width]);
             } else {
                 this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
@@ -671,7 +671,7 @@ define([
                 .tickSize(6, 0)
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_y.scale,
+                    scaleType: this.model.marker.axis_y.scaleType,
                     toolMargin: margin,
                     limitMaxTickNumber: 6
                 });
@@ -681,7 +681,7 @@ define([
                 .tickSize(6, 0)
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_x.scale,
+                    scaleType: this.model.marker.axis_x.scaleType,
                     toolMargin: margin
                 });
             
@@ -724,7 +724,7 @@ define([
             this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
             this.maxRadius = maxRadius * this.model.marker.size.max;
 
-            if (this.model.marker.size.scale !== "ordinal") {
+            if (this.model.marker.size.scaleType !== "ordinal") {
                 this.sScale.range([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)]);
             } else {
                 this.sScale.rangePoints([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)], 0).range();

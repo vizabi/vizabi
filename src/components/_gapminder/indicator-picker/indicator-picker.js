@@ -5,7 +5,7 @@ define([
 ], function(d3, Component) {
     
     var INDICATOR = "value";
-    var SCALETYPE = "scale";
+    var SCALETYPE = "scaleType";
     var MODELTYPE_COLOR = "color";
     
     var availOpts = {
@@ -149,8 +149,8 @@ define([
             if(what==INDICATOR){
                 mdl.use = availOpts[value].use;
                 
-                if(availOpts[value].scales.indexOf(mdl.scale) == -1){
-                    mdl.scale = availOpts[value].scales[0];
+                if(availOpts[value].scales.indexOf(mdl.scaleType) == -1){
+                    mdl.scaleType = availOpts[value].scales[0];
                 }
             }
         },

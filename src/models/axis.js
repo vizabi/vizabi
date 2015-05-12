@@ -39,16 +39,16 @@ define([
         validate: function() {
 
             var possibleScales = ["log", "linear", "time", "pow"];
-            if (!this.scale || (this.use === "indicator" && possibleScales.indexOf(this.scale) === -1)) {
-                this.scale = 'linear'; 
+            if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
+                this.scaleType = 'linear'; 
             }
 
             if (!this.unit && this.use === "indicator") {
                 this.unit = 1;
             }
 
-            if (this.use !== "indicator" && this.scale !== "ordinal") {
-                this.scale = "ordinal";
+            if (this.use !== "indicator" && this.scaleType !== "ordinal") {
+                this.scaleType = "ordinal";
             }
 
             //TODO: add min and max to validation
@@ -73,13 +73,14 @@ define([
          * Gets the domain for this hook
          * @returns {Array} domain
          */
-        getDomain: function() {
+        buildScale: function() {
             var domain,
-                scale = this.scale || "linear";
+                scale = this.scaleType || "linear";
 
             if(this.value=="time"){
                 var limits = this.getLimits(this.value);
-                return d3.time.scale().domain([limits.min, limits.max]);
+                this.scale = d3.time.scale().domain([limits.min, limits.max]);
+                return;
             }
             
             switch (this.use) {
@@ -101,7 +102,7 @@ define([
                     break;
             }
 
-            return d3.scale[scale]().domain(domain);
+            this.scale = d3.scale[scale]().domain(domain);
         }
 
     });

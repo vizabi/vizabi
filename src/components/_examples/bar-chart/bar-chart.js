@@ -92,8 +92,8 @@ define([
                 .attr("dx", "-0.72em")
                 .text(titleStringY);
 
-            this.yScale = this.model.marker.axis_y.getDomain();
-            this.xScale = this.model.marker.axis_x.getDomain();
+            this.yScale = this.model.marker.axis_y.getScale();
+            this.xScale = this.model.marker.axis_x.getScale();
 
             this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
@@ -230,12 +230,12 @@ define([
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
             //update scales to the new range
-            if (this.model.marker.axis_y.scale !== "ordinal") {
+            if (this.model.marker.axis_y.scaleType !== "ordinal") {
                 this.yScale.range([this.height, 0]);
             } else {
                 this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
             }
-            if (this.model.marker.axis_x.scale !== "ordinal") {
+            if (this.model.marker.axis_x.scaleType !== "ordinal") {
                 this.xScale.range([0, this.width]);
             } else {
                 this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
@@ -247,7 +247,7 @@ define([
                 .tickSize(6, 0)
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_y.scale,
+                    scaleType: this.model.marker.axis_y.scaleType,
                     toolMargin: margin,
                     limitMaxTickNumber: 6
                 });
@@ -257,7 +257,7 @@ define([
                 .tickSize(6, 0)
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_x.scale,
+                    scaleType: this.model.marker.axis_x.scaleType,
                     toolMargin: margin
                 });
 

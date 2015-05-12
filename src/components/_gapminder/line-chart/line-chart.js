@@ -161,8 +161,8 @@ define([
             this.cached = {};
             
             //scales
-            this.yScale = this.model.marker.axis_y.getDomain();
-            this.xScale = this.model.marker.axis_x.getDomain();
+            this.yScale = this.model.marker.axis_y.getScale();
+            this.xScale = this.model.marker.axis_x.getScale();
             
             this.yAxis.tickSize(6, 0);
             this.xAxis.tickSize(6, 0);
@@ -286,12 +286,12 @@ define([
 
 
             
-            if (this.model.marker.axis_y.scale !== "ordinal") {
+            if (this.model.marker.axis_y.scaleType !== "ordinal") {
                 this.yScale.range([this.height, 0]);
             } else {
                 this.yScale.rangePoints([this.height, 0], padding).range();
             }
-            if (this.model.marker.axis_x.scale !== "ordinal" || 1) {
+            if (this.model.marker.axis_x.scaleType !== "ordinal" || 1) {
                 this.xScale.range([0, this.width]);
             } else {
                 this.xScale.rangePoints([0, this.width], padding).range();
@@ -301,7 +301,7 @@ define([
 
             this.yAxis.scale(this.yScale)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_y.scale,
+                    scaleType: this.model.marker.axis_y.scaleType,
                     toolMargin: {top: 0, right: this.margin.right, left: this.margin.left, bottom: this.margin.bottom},
                     limitMaxTickNumber: 6
                     //showOuter: true
@@ -309,7 +309,7 @@ define([
             
             this.xAxis.scale(this.xScale)
                 .labelerOptions({
-                    scaleType: this.model.marker.axis_x.scale,
+                    scaleType: this.model.marker.axis_x.scaleType,
                     toolMargin: this.margin,
                     limitMaxTickNumber: this.activeProfile.limitMaxTickNumberX
                     //showOuter: true

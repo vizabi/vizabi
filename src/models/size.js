@@ -43,11 +43,11 @@ define([
             else if (this.use === "value" && this.value < this.min) {
                 this.value = this.min;
             }
-            if (!this.scale) {
-                this.scale = 'linear';
+            if (!this.scaleType) {
+                this.scaleType = 'linear';
             }
             if (this.use === "property") {
-                this.scale = 'ordinal';
+                this.scaleType = 'ordinal';
             }
         },
 
@@ -55,11 +55,11 @@ define([
          * Gets the domain for this hook
          * @returns {Array} domain
          */
-        getDomain: function() {
+        buildScale: function() {
             if(this.use === "value") {
-                return d3.scale.linear().domain([0,1]);
+                this.scale = d3.scale.linear().domain([0,1]);
             }
-            return this._super();
+            this._super();
         }
 
     });

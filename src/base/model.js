@@ -944,17 +944,27 @@ define([
         },
 
         /**
+         * Gets the d3 scale for this hook. if no scale then builds it
+         * @returns {Array} domain
+         */
+        getScale: function() {
+            if(this.scale==null)this.buildScale();
+            return this.scale;
+        },
+        
+
+        /**
          * Gets the domain for this hook
          * @returns {Array} domain
          */
-        getDomain: function() {
+        buildScale: function() {
 
             if (!this.isHook()) {
                 return;
             }
 
             var domain,
-                scale = this.scale || "linear";
+                scaleType = this.scaleType || "linear";
             switch (this.use) {
                 case "indicator":
                     var limits = this.getLimits(this.value);
@@ -969,7 +979,7 @@ define([
                     break;
             }
 
-            return d3.scale[scale]().domain(domain);
+            this.scale = d3.scale[scaleType]().domain(domain);
         },
 
         /**

@@ -50,9 +50,9 @@ function setHook(params) {
         value: params.value
     };
     // for time only
-    if (params.scale != null) options.state.marker[params.hook].scale = params.scale;
+    if (params.scaleType != null) options.state.marker[params.hook].scaleType = params.scaleType;
     //for color only
-    if (params.domain) options.state.marker[params.hook].domain = params.domain;
+    if (params.palette) options.state.marker[params.hook].palette = params.palette;
     VIZ.setOptions(options);
 }
 

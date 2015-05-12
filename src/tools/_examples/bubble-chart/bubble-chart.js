@@ -111,7 +111,7 @@ define([
                                             _type_: "string",
                                             _defs_: "lex"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "linear"
                                         }
@@ -129,7 +129,7 @@ define([
                                             _type_: "string",
                                             _defs_: "gdp_per_cap"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "log"
                                         }
@@ -147,7 +147,7 @@ define([
                                             _type_: "string",
                                             _defs_: "pop"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "linear"
                                         },
