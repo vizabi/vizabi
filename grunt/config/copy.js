@@ -1,27 +1,36 @@
 // Copy all js and template files to preview folder
 module.exports = {
-    preview_pages: {
+    preview: {
         files: [{
-                cwd: 'preview_pages',
-                src: ['assets/scripts.js', 'assets/style.css'],
-                dest: 'preview/preview_pages/',
+                cwd: 'preview_src/',
+                src: ['assets/css/**/*', 'assets/js/**/*'],
+                dest: 'preview/',
                 expand: true
             },
             //jquery used only for testing and preview page
             {
                 cwd: 'lib/jquery/dist/',
                 src: ['jquery.min.js', 'jquery.min.map'],
-                dest: 'preview/preview_pages/assets/',
+                dest: 'preview/assets/js/',
                 expand: true
             },
             //font awesome used only for preview page
             {
                 cwd: 'lib/font-awesome/',
                 src: ['css/font-awesome.min.css', 'fonts/*'],
-                dest: 'preview/preview_pages/assets/font-awesome/',
+                dest: 'preview/assets/',
                 expand: true
             }
         ]
+    },
+    preview_require: {
+        //jquery used only for testing and preview page
+        files: [{
+            cwd: 'lib/requirejs/',
+            src: ['require.js'],
+            dest: 'preview/assets/js/',
+            expand: true
+        }]
     },
     local_data: {
         cwd: 'local_data',
@@ -29,12 +38,7 @@ module.exports = {
         dest: 'preview/local_data/',
         expand: true
     },
-    assets: {
-        cwd: 'src',
-        src: ['assets/imgs/**/*'],
-        dest: 'preview/',
-        expand: true
-    },
+    //dev mode copy Javascript and 
     scripts: {
         cwd: 'src',
         src: ['**/*.js'],
@@ -64,14 +68,5 @@ module.exports = {
             dest: 'preview/test/spec/',
             expand: true
         }]
-    },
-    /*
-     * copy files from build to dist
-     */
-    dist: {
-        cwd: 'preview',
-        src: ['vizabi.js', 'vizabi.css'],
-        dest: 'dist/',
-        expand: true
     }
 };

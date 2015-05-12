@@ -1,0 +1,211 @@
+---
+control_buttons: { play: true, languages: ["en", "pt"] }
+control_state: true
+control_sizes: true
+control_buttons: {play: true, language: true}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    {{#if redirect}}
+      <meta http-equiv="refresh" content="0; url={{redirect}}.html" />
+    {{/if}}
+    
+    <title>Vizabi - {{ title }}</title>
+    {{!-- Styles --}}
+    <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{assets}}css/main.css">
+
+    {{!-- Vizabi Production and Development --}}
+    {{#if production}}
+      <link rel="stylesheet" href="../dist/vizabi.css">
+    {{else}}
+      <link rel="stylesheet" href="vizabi.css">
+    {{/if}}
+  </head>
+  <body>
+    {{!-- Navigation --}}
+    {{> nav }}
+
+    <div id="vzbp-main">
+      <div id="vzbp-placeholder" class="vzbp-viewer"></div>
+    </div>
+
+    <div id="vzbp-sidebar">
+      {{> sidebar }}
+
+      {{#if tool}}
+        <script>
+
+          var TITLE = "{{title}}";
+          var TOOL = "{{tool}}";
+          var DESCRIPTION = "{{description}}";
+
+          VIZABI_OPTIONS = {
+            state: {},
+            bind: {
+              "ready": function(evt, vals) {
+                updateURL();
+                updateStateEditor(vals.state);
+              }
+            },
+            language: {
+              id: "en",
+              strings: {
+                en: {
+                  "title": "{{ title }}",
+                  "buttons/expand": "Go big",
+                  "buttons/unexpand": "Go small",
+                  "buttons/trails": "Trails",
+                  "buttons/lock": "Lock",
+                  "buttons/find": "Find",
+                  "buttons/deselect": "Deselect",
+                  "buttons/ok": "OK",
+                  "buttons/colors": "Colors",
+                  "buttons/size": "Size",
+                  "buttons/more_options": "Options",
+                  "indicator/lex": "Life expectancy",
+                  "indicator/gdp_per_cap": "GDP per capita",
+                  "indicator/pop": "Population",
+                  "indicator/geo.region": "Region",
+                  "indicator/geo": "Geo code",
+                  "indicator/time": "",
+                  "indicator/geo.category": "Geo category"
+                  },
+                pt: {
+                  "title": "{{ title }}",
+                  "buttons/expand": "Expandir",
+                  "buttons/unexpand": "Retrair",
+                  "buttons/trails": "Pegadas",
+                  "buttons/lock": "Travar",
+                  "buttons/find": "Encontre",
+                  "buttons/deselect": "Desmarcar",
+                  "buttons/ok": "OK",
+                  "buttons/colors": "Cores",
+                  "buttons/size": "Tamanho",
+                  "buttons/more_options": "Opções",
+                  "indicator/lex": "Expectativa de Vida",
+                  "indicator/gdp_per_cap": "PIB per capita",
+                  "indicator/pop": "População",                    
+                  "indicator/geo.region": "Região",
+                  "indicator/geo": "Código Geo",
+                  "indicator/time": "",
+                  "indicator/geo.category": "Categoria"
+                }
+              }
+            }
+          };
+
+          (function() {
+
+          VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
+            updateURL();
+
+            {{#if control_state}}
+              updateStateEditor(vals.state);
+            {{/if}}
+
+          };
+
+          {{#if control_buttons.play}}
+              var playButton = document.getElementById("vzbp-btn-play");
+              var playButtonIcon = playButton.querySelectorAll("i")[0];
+
+              VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
+                if (vals.state.time.playing) {
+                    playButton.onclick = pause;
+                    playButton.setAttribute("data-tooltip", "Pause");
+                    removeClass(playButtonIcon, 'fa-play');
+                    addClass(playButtonIcon, 'fa-pause');
+                } else {
+                    playButton.onclick = play;
+                    playButton.setAttribute("data-tooltip", "Play");
+                    removeClass(playButtonIcon, 'fa-pause');
+                    addClass(playButtonIcon, 'fa-play');
+                }
+              };
+          {{/if}}
+          {{#if control_buttons.language}}  
+              var langButton = document.getElementById("vzbp-btn-lang");
+
+              VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
+                if (vals.language.id === "en") {
+                    langButton.onclick = function() { language('pt'); };
+                    langButton.setAttribute("data-tooltip", "Set Lang: PT");
+                } else {
+                    langButton.onclick = function() { language('en'); };
+                    langButton.setAttribute("data-tooltip", "Set Lang: EN");
+                }
+              };
+          {{/if}}
+          })();
+
+        </script>
+      {{/if}}
+
+      <div id="other-sect" class="collapsible-section">
+        <h2 class="vzbp-subtitle vzbp-collapsible-title">Other</h2>
+        <div class="vzbp-collapsible">
+            {{!-- Additional scripts and buttons will be added here --}}
+            {{> body }}
+        </div>
+      </div>
+
+      <hr class="vzbp-hr"/>
+    
+    </div>
+
+    {{> state_editor }}
+
+
+    {{!-- Vizabi Production and Development --}}
+    {{#if production}}
+      <script src="../dist/vizabi.js"></script>
+    {{else}}
+      <script data-main="config.js" src="{{assets}}js/require.js"></script>
+      <script src="vizabi.js"></script>
+    {{/if}}
+
+    {{!-- Scripts --}}
+
+    <script src="{{assets}}js/_utils.js"></script>
+    <script src="{{assets}}js/_collapsible.js"></script>
+    <script src="{{assets}}js/_url.js"></script>
+    <script src="{{assets}}js/_codepen.js"></script>
+    <script src="{{assets}}js/main.js"></script>
+
+    {{!-- Add these scripts only if needed --}}
+    {{#if control_state}}
+      <script src="{{assets}}js/_state-editor.js"></script>
+    {{/if}}
+
+    {{#if control_sizes}}
+      <script src="{{assets}}js/_size-div.js"></script>
+    {{/if}}
+
+    {{#if control_buttons}}
+      <script src="{{assets}}js/_interaction.js"></script>
+    {{/if}}
+
+    <script src="{{assets}}js/_dropdowns.js"></script>
+
+    {{#if tool}}
+      <script>
+        parseURL();
+
+        if(!VIZABI_OPTIONS) {
+          VIZABI_OPTIONS = { state: {}, language: { id: "en" }}; //fallback
+        }
+        if(URL.state) VIZABI_OPTIONS.state = URL.state;
+        if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
+        
+        VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
+
+      </script>
+    {{/if}}
+    
+  </body>
+</html>
