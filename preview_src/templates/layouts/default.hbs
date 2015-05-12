@@ -158,8 +158,6 @@ control_buttons: {play: true, language: true}
     
     </div>
 
-    {{> state_editor }}
-
 
     {{!-- Vizabi Production and Development --}}
     {{#if production}}
@@ -170,6 +168,8 @@ control_buttons: {play: true, language: true}
     {{/if}}
 
     {{!-- Scripts --}}
+
+    {{> state_editor }}
 
     <script src="{{assets}}js/_utils.js"></script>
     <script src="{{assets}}js/_collapsible.js"></script>
