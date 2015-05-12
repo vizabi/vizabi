@@ -1,7 +1,7 @@
 // Make sure necessary files are built when changes are made
 module.exports = {
     styles: {
-        files: ['src/**/*.scss', 'preview_pages/assets/*.scss'],
+        files: ['src/**/*.scss', 'preview_src/assets/**/*.scss'],
         tasks: ['sass:dev']
     },
     scripts: {

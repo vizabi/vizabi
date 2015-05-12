@@ -8,10 +8,6 @@ module.exports = function(grunt) {
         'requirejs:dist', //use requirejs for amd module
         'generate_styles', //generate scss
         'sass:prod', //compile scss
-        // 'preview_pages_menu', //build preview_pages menu template
-        // 'includereplace:preview_pages_build', //preview_pages folder
-        // 'preview_pages_index', //build preview_pages
-        //preview pages
         'sass:preview',
         'copy:preview',
         'assemble:prod',
