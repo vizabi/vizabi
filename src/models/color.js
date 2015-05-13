@@ -70,10 +70,12 @@ define([
                 this.set("palette", null, false);
                 //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
                 this.scale = null;
-                if(availOpts[this.value]){
-                    this.palette = _.clone(availOpts[this.value]);
+                if(palettes[this.value]){
+                    this.palette = _.clone(palettes[this.value]);
+                }else if(this.use == "value"){
+                    this.palette = {"_default":this.value};
                 }else{
-                    this.palette = _.clone(availOpts["_default"]);
+                    this.palette = _.clone(palettes["_default"]);
                 }
             }
 
