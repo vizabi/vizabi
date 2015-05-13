@@ -725,6 +725,7 @@ define([
             this.on("change", function() {
                 _this.load();
             });
+            
         },
 
         /**

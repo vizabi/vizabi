@@ -52,7 +52,7 @@ define([
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
                     if(evt == "change:marker:size:max") return; 
-                    if(evt.indexOf("change:marker:color:domain") > -1) return; 
+                    if(evt.indexOf("change:marker:color:palette") > -1) return; 
                     //console.log("EVENT change:marker", evt);
                     _this.updateIndicators();
                     _this.updateSize();
@@ -120,9 +120,9 @@ define([
                     _this.redrawDataPoints();
                     _this.resizeTrails();   
                 },
-                'change:marker:color:domain': function() {
-                    console.log("EVENT change:marker:color:domain");
-                    //_this.redrawDataPointsOnlyColors();
+                'change:marker:color:palette': function() {
+                    //console.log("EVENT change:marker:color:palette");
+                    _this.redrawDataPointsOnlyColors();
                 },
                 'change:entities:opacityNonSelected': function() {
                     _this.updateBubbleOpacity();

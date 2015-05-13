@@ -67,18 +67,21 @@ define([
         updateView: function(){
             var _this = this;
             this.translator = this.model.language.getTFunction();
-            var domain = this.model.color.domain;
-            
-            var pointer = "_default";
-            if(Object.keys(this.model.color.getAvailOpts()).indexOf(this.model.color[INDICATOR]) > -1) pointer = this.model.color[INDICATOR];
+
+            var palette = this.model.color.palette;
             
             
-            var defaultColors = this.model.color.getAvailOpts()[pointer];
+            var whichPalette = "_default";
+            if(Object.keys(this.model.color.getAvailOpts()).indexOf(this.model.color[INDICATOR]) > -1) {
+                whichPalette = this.model.color[INDICATOR];
+            }
+            
+            var paletteDefault = this.model.color.getAvailOpts()[whichPalette];
             
 
             var colors = this.listColorsEl
                 .selectAll(".vzb-cl-option")
-                .data(Object.keys(defaultColors), function(d){return d});
+                .data(_.keys(paletteDefault), function(d){return d});
 
             colors.exit().remove();
             
@@ -96,31 +99,25 @@ define([
                 .on("mouseout", function(d){
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
                     sample.style("border-width", "0px");
-                    sample.style("background-color", domain[d]);
+                    sample.style("background-color", palette[d]);
                 })
                 .on("click", function(d){
                     _this.colorPicker
-                        .colorOld(domain[d])
-                        .colorDef(defaultColors[d])
-                        .callback(function(value){_this._setModel(value, d)})
+                        .colorOld(palette[d])
+                        .colorDef(paletteDefault[d])
+                        .callback(function(value){_this.model.color.setColor(value, d)})
                         .show(true);
                 })
             
             
             colors.each(function(d){
                 d3.select(this).select(".vzb-cl-color-sample")
-                    .style("background-color",domain[d])
-                    .style("border", "1px solid " + domain[d]);
+                    .style("background-color", palette[d])
+                    .style("border", "1px solid " + palette[d]);
 
                 d3.select(this).select(".vzb-cl-color-legend")
-                    .text(_this.translator("region/" + d));
+                    .text(_this.translator("color/" + _this.model.color.value + "/" + d));
             });
-        },
-        
-        
-        
-        _setModel: function (value, target) {
-            this.model.color.domain[target] = value;
         }
         
 

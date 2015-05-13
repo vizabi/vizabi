@@ -5,13 +5,13 @@ define([
 ], function(d3, _, Hook) {
     
     var availOpts = {
-        'geo.region':   [{'asi':'#FF5872'}, {'eur':'#FFE700'}, {'ame':'#7FEB00'}, {'afr':'#00D5E9'}, {'_default': '#ffb600'}],
-        'geo':          [{'color1':'#F77481'}, {'color2':'#E1CE00'}, {'color3':'#B4DE79'}, {'color4':'#62CCE3'}],
-        'time':         [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
-        'lex':          [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
-        'gdp_per_cap':  [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}, {"3":'#62CCE3'}],
-        'pop':          [{'0':'#F77481'}, {"1":'#E1CE00'}, {"2":'#B4DE79'}],
-        '_default':     [{'_default':'#fa5ed6'}]
+        'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
+        'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
+        'time':         {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79'},
+        'lex':          {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79'},
+        'gdp_per_cap':  {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79', "3":'#62CCE3'},
+        'pop':          {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79'},
+        '_default':     {'_default':'#fa5ed6'}
     };
 
     var Color = Hook.extend({
@@ -34,6 +34,8 @@ define([
             this._super(values, parent, bind);
             
             this.firstLoad = true;
+            this.hasDefaultColor = false;
+            
         },
         
         /**
@@ -49,9 +51,14 @@ define([
         validate: function() {
             this.scaleType = this.use=="indicator"?"linear":"ordinal";
             
-            if(this.firstLoad && this.palette==null || !this.firstLoad && this.value_1 != this.value){
-
-                this.palette = null;
+            // first load and no palette supplied in the state
+            // or changing of the indicator
+            if(this.firstLoad || this.palette==null || !this.firstLoad && this.value_1 != this.value){
+                
+                //TODO a hack that prevents adding properties to palette (need replacing)
+                this.set("palette", null, false);
+                //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
+                this.scale = null;
                 if(availOpts[this.value]){
                     this.palette = _.clone(availOpts[this.value]);
                 }else{
@@ -67,11 +74,10 @@ define([
          * set color
          */
         setColor: function(value, pointer) {
-//            if(pointer==null){
-//                if(this.use=="indicator")
-//                pointer = 
-//                    }
-            
+            var temp = this.palette.getObject();
+            temp[pointer] = value;
+            this.scale.range(_.values(temp));
+            this.palette[pointer] = value;
         },
 
         
@@ -83,7 +89,7 @@ define([
         mapValue: function(value) {
             //if the property value does not exist, supply the _default 
             // otherwise the missing value would be added to the domain
-            if(this.use == "property" && this.scale.domain().indexOf(value)==-1) value = "_default";
+            if(this.use == "property" && this.hasDefaultColor && this.scale.domain().indexOf(value)==-1) value = "_default";
             return this._super(value);
         },
         
@@ -95,8 +101,10 @@ define([
         buildScale: function() {
             var _this = this;
             
-            var domain = _this.palette.map(function(d){return _.keys(d)[0]});
-            var range = _this.palette.map(function(d){return _.values(d)[0]});
+            var domain = _.keys(_this.palette.getObject());
+            var range = _.values(_this.palette.getObject());
+            
+            this.hasDefaultColor = domain.indexOf("_default")>-1;
 
             if(this.value=="time"){
                 var limits = this.getLimits(this.value);
@@ -110,7 +118,7 @@ define([
                 case "indicator":
                     var limits = this.getLimits(this.value);
                     var step = ((limits.max-limits.min) / (range.length - 1));
-                    domain = d3.range(limits.min, limits.max, step).concat(max);
+                    domain = d3.range(limits.min, limits.max, step).concat(limits.max);
                     
                     this.scale = d3.scale["linear"]()
                         .domain(domain)
