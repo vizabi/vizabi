@@ -4,7 +4,7 @@ define([
     'models/hook'
 ], function(d3, _, Hook) {
     
-    var availOpts = {
+    var palettes = {
         'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
         'geo':          {'color1':'#F77481', 'color2':'#E1CE00', 'color3':'#B4DE79', 'color4':'#62CCE3'},
         'time':         {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79'},
@@ -12,6 +12,9 @@ define([
         'gdp_per_cap':  {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79', "3":'#62CCE3'},
         'pop':          {'0':'#F77481', "1":'#E1CE00', "2":'#B4DE79'},
         '_default':     {'_default':'#fa5ed6'}
+    };    
+    var userSelectable = {
+        'geo.region': false
     };
 
     var Color = Hook.extend({
@@ -41,8 +44,16 @@ define([
         /**
          * Get the above constants
          */
-        getAvailOpts: function(){
-            return availOpts;
+        getPalettes: function(){
+            return palettes;
+        },       
+        
+        /**
+         * Get the above constants
+         */
+        isUserSelectable: function(whichPalette){
+            if(userSelectable[whichPalette]==null) return true;
+            return userSelectable[whichPalette];
         },
 
         /**
@@ -89,7 +100,10 @@ define([
         mapValue: function(value) {
             //if the property value does not exist, supply the _default 
             // otherwise the missing value would be added to the domain
-            if(this.use == "property" && this.hasDefaultColor && this.scale.domain().indexOf(value)==-1) value = "_default";
+            if(this.scale!=null 
+               && this.use == "property" 
+               && this.hasDefaultColor 
+               && this.scale.domain().indexOf(value)==-1) value = "_default";
             return this._super(value);
         },
         

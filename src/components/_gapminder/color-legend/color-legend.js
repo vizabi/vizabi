@@ -49,17 +49,11 @@ define([
 
 
         domReady: function() {
-
-            
             var _this = this;
-            
             this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
             
-            
             this.colorPicker = d3.svg.colorPicker();
-            
-            this.element
-                .call(this.colorPicker);
+            this.element.call(this.colorPicker);
         },
         
 
@@ -72,11 +66,11 @@ define([
             
             
             var whichPalette = "_default";
-            if(Object.keys(this.model.color.getAvailOpts()).indexOf(this.model.color[INDICATOR]) > -1) {
+            if(Object.keys(this.model.color.getPalettes()).indexOf(this.model.color[INDICATOR]) > -1) {
                 whichPalette = this.model.color[INDICATOR];
             }
             
-            var paletteDefault = this.model.color.getAvailOpts()[whichPalette];
+            var paletteDefault = this.model.color.getPalettes()[whichPalette];
             
 
             var colors = this.listColorsEl
@@ -91,17 +85,26 @@ define([
                     d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
                 })
                 .on("mouseover", function(){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
                     sample.style("border-width", "5px");
                     sample.style("background-color", "transparent");
 
                 })
                 .on("mouseout", function(d){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
                     var sample = d3.select(this).select(".vzb-cl-color-sample");
                     sample.style("border-width", "0px");
-                    sample.style("background-color", palette[d]);
+                    sample.style("background-color", _this.model.color.palette[d]);
                 })
                 .on("click", function(d){
+                    //disable interaction if so stated in metadata
+                    f(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
                     _this.colorPicker
                         .colorOld(palette[d])
                         .colorDef(paletteDefault[d])
