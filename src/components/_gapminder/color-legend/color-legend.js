@@ -103,7 +103,7 @@ define([
                 })
                 .on("click", function(d){
                     //disable interaction if so stated in metadata
-                    f(!_this.model.color.isUserSelectable(whichPalette)) return;
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
                 
                     _this.colorPicker
                         .colorOld(palette[d])
