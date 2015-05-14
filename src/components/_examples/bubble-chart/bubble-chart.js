@@ -115,6 +115,14 @@ define([
                     }
                     _this.revealTrails(null, _this.duration);
                 },
+                'change:time:adaptMinMaxZoom': function() {
+                    //console.log("EVENT change:time:adaptMinMaxZoom");
+                    if(_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom(); 
+                    }else{
+                        _this.resetZoomer();
+                    }
+                },
                 'change:marker:size:max': function() {
                     //console.log("EVENT change:marker:size:max");
                     _this.updateMarkerSizeLimits();

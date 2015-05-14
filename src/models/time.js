@@ -41,7 +41,8 @@ define([
                 round: true,
                 speed: 500,
                 unit: "year", //defaults to year
-                step: 1 //step must be integer
+                step: 1, //step must be integer
+                adaptMinMaxZoom: false
             }, values);
 
             //same constructor
