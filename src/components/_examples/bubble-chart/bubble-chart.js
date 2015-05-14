@@ -65,6 +65,7 @@ define([
                     }
                     _this.resetZoomer();
                     //_this.redrawDataPoints();
+                    _this.recolorTrails();
                 },
                 "change:entities:select": function() {
                     //console.log("EVENT change:entities:select");
@@ -740,6 +741,8 @@ define([
                 var valueC = _this.model.marker.color.getValue({geo:d.geo, time:_this.time});    
                 return _this.cScale(valueC);
             });
+            
+            _this.recolorTrails();
         },
         
         /*
@@ -1213,6 +1216,31 @@ define([
                             .attr("y2", _this.yScale(segment.valueY));
                     })
             });
+        },
+
+
+        recolorTrails: function(selection, duration) {
+            var _this = this;
+            if(!this.model.time.trails || !this.model.entities.select.length) return;
+            if(!duration)duration=0;
+
+            selection = selection == null ? _this.model.entities.select : [selection];
+            selection.forEach(function(d) {
+                
+                _this.entityTrails
+                    .filter(function(f) { return f.geo == d.geo })
+                    .selectAll("g")
+                    .each(function(segment, index) {
+
+                        var view = d3.select(this);
+                        view.select("circle")
+                            .transition().duration(duration).ease("linear")
+                            .style("fill", _this.cScale(segment.valueC));
+                        view.select("line")
+                            .transition().duration(duration).ease("linear")
+                            .style("stroke", _this.cScale(segment.valueC));
+                }); 
+            }); 
         },
 
 
