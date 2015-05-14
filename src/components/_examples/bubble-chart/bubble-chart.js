@@ -166,12 +166,12 @@ define([
 
 
 
-            this.collisionResolver = d3.svg.collisionResolver()
-                .value("labelY2")
-                .fixed("labelFixed")
-                .selector("text")
-                .scale(this.yScale)
-                .handleResult(this.repositionLabels);
+//            this.collisionResolver = d3.svg.collisionResolver()
+//                .value("labelY2")
+//                .fixed("labelFixed")
+//                .selector("text")
+//                .scale(this.yScale)
+//                .handleResult(this._repositionLabels);
 
 
             this.dragger = d3.behavior.drag()
@@ -191,7 +191,7 @@ define([
                     var resolvedX0 = _this.xScale(cache.labelX0);
                     var resolvedY0 = _this.yScale(cache.labelY0);
 
-                    _this.repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, _this.duration);
+                    _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, _this.duration);
                 })
                 .on("dragend", function(d, i) {
                     _this.model.entities.setLabelOffset(d, [
@@ -410,7 +410,7 @@ define([
             this.sScale = this.model.marker.size.getScale();
             this.cScale = this.model.marker.color.getScale();
 
-            this.collisionResolver.scale(this.yScale);
+//            this.collisionResolver.scale(this.yScale);
 
 
             this.yAxis.tickFormat(function(d) {
@@ -477,11 +477,11 @@ define([
                     } else {
                         text = _this.model.marker.label.getValue(d);
                     }
-                    _this.setTooltip(text);
+                    _this._setTooltip(text);
                 })
                 .on("mouseout", function(d, i) {
                     _this.model.entities.clearHighlighted();
-                    _this.setTooltip();
+                    _this._setTooltip();
                     _this.entityLabels.classed("vzb-highlighted", false);
                 })
                 .on("click", function(d, i) {
@@ -642,7 +642,7 @@ define([
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-            this.collisionResolver.height(this.height);
+//            this.collisionResolver.height(this.height);
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
@@ -862,7 +862,7 @@ define([
                                 rect.classed("vzb-transparent", !cached.stuckOnLimit);
                                 line.classed("vzb-transparent", cached.stuckOnLimit);
 
-                                _this.repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
+                                _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
 
                             })
                     } else {
@@ -935,7 +935,7 @@ define([
 
 
 
-        repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
+        _repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
 
             var labelGroup = d3.select(context);
 
@@ -1021,7 +1021,7 @@ define([
                 });
 
 
-            //this.collisionResolverRebuild(_this.model.entities.select);
+            //this._collisionResolverRebuild(_this.model.entities.select);
 
         },
 
@@ -1077,15 +1077,15 @@ define([
                     .attr("class", "trailSegment")
                     .on("mousemove", function(segment, index) {
                         var geo = d3.select(this.parentNode).data()[0].geo;
-                        _this.axisProjections({ geo: geo, time: segment.t });
-                        _this.setTooltip(_this.timeFormatter(segment.t));
+                        _this._axisProjections({ geo: geo, time: segment.t });
+                        _this._setTooltip(_this.timeFormatter(segment.t));
                         _this.entityLabels
                             .filter(function(f) {return f.geo == geo})
                             .classed("vzb-highlighted", true);
                     })
                     .on("mouseout", function(segment, index) {
-                        _this.axisProjections();
-                        _this.setTooltip();
+                        _this._axisProjections();
+                        _this._setTooltip();
                         _this.entityLabels.classed("vzb-highlighted", false);
                     });
                 
@@ -1244,7 +1244,7 @@ define([
         },
 
 
-        setTooltip: function(tooltipText) {
+        _setTooltip: function(tooltipText) {
             if (tooltipText) {
                 var mouse = d3.mouse(this.graph.node()).map(function(d) {return parseInt(d)});
 
@@ -1262,7 +1262,7 @@ define([
         /*
          * Shows and hides axis projections
          */
-        axisProjections: function(d) {
+        _axisProjections: function(d) {
             if (d != null) {
 
                 var valueY = this.model.marker.axis_y.getValue(d);
@@ -1323,9 +1323,9 @@ define([
                     d["time"] = _this.time;
                 }
                 
-                this.axisProjections(d);
+                this._axisProjections(d);
             }else{
-                this.axisProjections();
+                this._axisProjections();
             }
         },
         
@@ -1363,7 +1363,7 @@ define([
         //
         //        
         //        
-        //        collisionResolverStart: function(context){
+        //        _collisionResolverStart: function(context){
         //            var _this = context;
         //            if(_this.dataForceLayout.links.length==0)return;
         //        
@@ -1387,7 +1387,7 @@ define([
         //    
         //    
         //    
-        //        collisionResolverTick: function(context){
+        //        _collisionResolverTick: function(context){
         //            var _this = context;
         //            
         //            _this.dataForceLayout.links.forEach(function (d, i) {
@@ -1404,7 +1404,7 @@ define([
         //            
         //        },
         //        
-        //        collisionResolverEnd: function(context){
+        //        _collisionResolverEnd: function(context){
         //            var _this = context;
         //            if(_this.dataForceLayout.links.length==0)return;
         //                                                
@@ -1443,10 +1443,10 @@ define([
         //                
         //        },
         //        
-        //        collisionResolverRebuild: function(selection){
+        //        _collisionResolverRebuild: function(selection){
         //            var _this = this;
         //            
-        //            //if(_this.forceLayout==null) _this.collisionResolverInit();
+        //            //if(_this.forceLayout==null) _this._collisionResolverInit();
         //            
         //            this.dataForceLayout = {nodes: [], links: []};
         //            
@@ -1474,7 +1474,7 @@ define([
         //        
         //        
         //        
-        //        collisionResolverInit: function(){
+        //        _collisionResolverInit: function(){
         //            var _this = this;
         //            
         //            this.dataForceLayout = {nodes: [], links: []};
