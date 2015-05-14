@@ -806,6 +806,7 @@ define([
                             //the events in model are not triggered here. to trigger uncomment the next line
                             //_this.model.entities.triggerAll("change:select");
                         
+                            cached.scaledS_atTrailOrigin = scaledS;
                             cached.labelX0 = valueX;
                             cached.labelY0 = valueY;
                         }
@@ -820,7 +821,7 @@ define([
                                     .text(valueL + (_this.model.time.trails?" "+select.trailStartTime:""));
 
                                 var line = labelGroup.select("line")
-                                    .style("stroke-dasharray", "0 " + (scaledS + 2) + " 100%");
+                                    .style("stroke-dasharray", "0 " + (cached.scaledS_atTrailOrigin + 2) + " 100%");
                             
                                 var rect = labelGroup.select("rect");
 
@@ -845,8 +846,8 @@ define([
                                         .attr("ry", contentBBox.height*0.2);
                                 }
                                                         
-                                cached.labelX_ = select.labelOffset[0] || scaledS / _this.width;
-                                cached.labelY_ = select.labelOffset[1] || scaledS / _this.width;
+                                cached.labelX_ = select.labelOffset[0] || cached.scaledS_atTrailOrigin / _this.width;
+                                cached.labelY_ = select.labelOffset[1] || cached.scaledS_atTrailOrigin / _this.width;
 
                                 var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
                                 var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
