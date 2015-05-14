@@ -15,6 +15,16 @@
         background-color: rgba($vzb-color-primary, 0.3);
         @include border-radius(5px 5px 5px 5px);
     }
+    
+    &.vzb-disabled {
+        &:before{
+            background-color: rgba($vzb-color-grey, 0.2); 
+        }
+        .vzb-bo-slider {
+            opacity: 0.5;
+        }
+    }
+        
 
     .vzb-bo-slider {
         position: absolute;
@@ -26,6 +36,7 @@
         background: transparent;
         outline: none !important;
         border: 0;
+        
 
         // Slider Handle
         &::-webkit-slider-thumb {
@@ -49,6 +60,7 @@
             height: 20px;
             border: 3px solid white;
         }
+    
     }
 }
 

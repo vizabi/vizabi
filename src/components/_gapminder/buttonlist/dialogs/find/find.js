@@ -130,9 +130,9 @@ define([
         },
 
         showHideDeselect: function() {
-            var selected = this.model.state.entities.getSelected();
-            this.deselect_all.classed('vzb-hidden', (selected.length < 1));
-            this.opacity_nonselected.classed('vzb-hidden', (selected.length < 1));
+            var someSelected = !!this.model.state.entities.select.length;
+            this.deselect_all.classed('vzb-hidden', !someSelected);
+            this.opacity_nonselected.classed('vzb-hidden', !someSelected);
         },
 
         deselectEntities: function() {

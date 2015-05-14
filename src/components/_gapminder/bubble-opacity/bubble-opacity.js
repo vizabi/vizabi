@@ -21,6 +21,17 @@ define([
                 name: "entities",
                 type: "entities"
             }];
+            
+            var _this = this;
+            
+            this.model_binds = {
+                "change:entities:select": function(evt) {
+                    _this.updateView();
+                },
+                "change:entities:opacityNonSelected": function(evt) {
+                    _this.updateView();
+                }
+            }            
 
             //contructor is the same as any component
             this._super(config, context);
@@ -32,38 +43,31 @@ define([
          * At this point, this.element and this.placeholder are available as a d3 object
          */
         domReady: function() {
-            var value = this.model.entities.opacityNonSelected, _this = this;
-            indicator = this.element.select('#vzb-bo-indicator');
-            slider = this.element.selectAll('#vzb-bo-slider');
+            var _this = this;
+            this.slider = this.element.selectAll('#vzb-bo-slider');
 
-            slider
+            this.slider
                 .attr('min', 0)
                 .attr('max', 1)
                 .attr('step', 0.1)
-                .attr('value', value)
                 .on('input', function() {
-                    _this.slideHandler();
+                    _this._setModel();
                 });
+            
+            this.updateView();
         },
 
-        /**
-         * Executes everytime there's a data event.
-         * Ideally, only operations related to changes in the model
-         * At this point, this.element is available as a d3 object
-         */
-        modelReady: function() {
-            indicator.text(this.model.entities.opacityNonSelected);
+        updateView: function () {
+            var someSelected = this.model.entities.select.length;
+            var value = this.model.entities.opacityNonSelected;
+            
+            this.slider
+                .attr('value', value)
+                .attr('disabled', someSelected?null:true);
+            this.element.classed('vzb-disabled', someSelected?false:true);
         },
-
-        /**
-         * Executes everytime the container or vizabi is resized
-         * Ideally,it contains only operations related to size
-         */
-        resize: function() {
-            //E.g: var height = this.placeholder.style('height');
-        },
-
-        slideHandler: function () {
+        
+        _setModel: function () {
             this.model.entities.opacityNonSelected = +d3.event.target.value;
         }
     });

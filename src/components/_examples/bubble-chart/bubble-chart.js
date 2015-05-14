@@ -126,12 +126,13 @@ define([
                 'change:marker:size:max': function() {
                     //console.log("EVENT change:marker:size:max");
                     _this.updateMarkerSizeLimits();
-                    _this.redrawDataPoints();
+                    _this.redrawDataPointsOnlySize();
                     _this.resizeTrails();   
                 },
                 'change:marker:color:palette': function() {
                     //console.log("EVENT change:marker:color:palette");
                     _this.redrawDataPointsOnlyColors();
+                    _this.recolorTrails();
                 },
                 'change:entities:opacityNonSelected': function() {
                     _this.updateBubbleOpacity();
@@ -749,9 +750,26 @@ define([
                 var valueC = _this.model.marker.color.getValue({geo:d.geo, time:_this.time});    
                 return _this.cScale(valueC);
             });
-            
-            _this.recolorTrails();
         },
+        
+        redrawDataPointsOnlySize: function() {
+            var _this = this;
+            
+            if(this.someSelected){
+                _this.entityBubbles.each(function(d, index) {
+                    _this._updateBubble(d, index, d3.select(this), 0, true);
+                });
+            }else{
+                this.entityBubbles.each(function(d, index) {
+                    var valueS = _this.model.marker.size.getValue(d);
+                    if(valueS == null) return;
+                    
+                    d3.select(this).attr("r", _areaToRadius(_this.sScale(valueS)) );
+                });
+            }
+        },
+        
+        
         
         /*
          * REDRAW DATA POINTS:
@@ -764,160 +782,14 @@ define([
   
             this.entityBubbles.each(function(d, index) {
                 var view = d3.select(this);
-
-                if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
-                    d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
-                }else{
-                    d.time = _this.time;
-                };
-
-                var valueY = _this.model.marker.axis_y.getValue(d);
-                var valueX = _this.model.marker.axis_x.getValue(d);
-                var valueS = _this.model.marker.size.getValue(d);
-                var valueL = _this.model.marker.label.getValue(d);
-                var valueC = _this.model.marker.color.getValue(d);
-                
-
-                
-                // check if fetching data succeeded
-                if (valueL == null || valueY == null || valueX == null || valueS == null) {
-                    
-                    // if entity is missing data it should hide
-                    view.classed("vzb-invisible", true)
-                    
-                } else {
-                    
-                    // if entity has all the data we update the visuals
-                    var scaledS = _areaToRadius(_this.sScale(valueS));
-
-                    view.classed("vzb-invisible", false)
-                        .style("fill", _this.cScale(valueC))
-                        .transition().duration(duration).ease("linear")
-                        .attr("cy", _this.yScale(valueY))
-                        .attr("cx", _this.xScale(valueX))
-                        .attr("r", scaledS)
-
-                    // only for selected entities
-                    if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-                        if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
-                        var cached = _this.cached[d.geo];
-                        
-                        var select = _.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
-                        var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
-                        
-                        cached.valueX = valueX;
-                        cached.valueY = valueY;
-                        
-                        if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null || cached.labelX0==null || cached.labelY0 == null) {
-                            select.trailStartTime = _this.timeFormatter(_this.time);
-                            //the events in model are not triggered here. to trigger uncomment the next line
-                            //_this.model.entities.triggerAll("change:select");
-                        
-                            cached.scaledS_atTrailOrigin = scaledS;
-                            cached.labelX0 = valueX;
-                            cached.labelY0 = valueY;
-                        }
-                        
-                        // reposition label
-                        _this.entityLabels.filter(function(f) {return f.geo == d.geo})
-                            .each(function(groupData) {
-
-                                var labelGroup = d3.select(this);
-
-                                var text = labelGroup.selectAll("text.vzb-bc-label-content")
-                                    .text(valueL + (_this.model.time.trails?" "+select.trailStartTime:""));
-
-                                var line = labelGroup.select("line")
-                                    .style("stroke-dasharray", "0 " + (cached.scaledS_atTrailOrigin + 2) + " 100%");
-                            
-                                var rect = labelGroup.select("rect");
-
-                                var contentBBox = text[0][0].getBBox();
-                                if(!cached.contentBBox || cached.contentBBox.width!=contentBBox.width){
-                                    cached.contentBBox = contentBBox;
-
-                                    labelGroup.select("text.vzb-bc-label-x")
-                                        .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
-                                        .attr("y", contentBBox.height * 0.0 - 4);
-
-                                    labelGroup.select("circle")
-                                        .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
-                                        .attr("cy", contentBBox.height * 0.0 - 4)
-                                        .attr("r", contentBBox.height * 0.5);
-
-                                    rect.attr("width",contentBBox.width+4)
-                                        .attr("height",contentBBox.height+4)
-                                        .attr("x",-2)
-                                        .attr("y",-4)
-                                        .attr("rx", contentBBox.height*0.2)
-                                        .attr("ry", contentBBox.height*0.2);
-                                }
-                                                        
-                                cached.labelX_ = select.labelOffset[0] || cached.scaledS_atTrailOrigin / _this.width;
-                                cached.labelY_ = select.labelOffset[1] || cached.scaledS_atTrailOrigin / _this.width;
-
-                                var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-                                var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-
-                                var limitedX = resolvedX > 0 ? (resolvedX < _this.width -cached.contentBBox.width ? resolvedX : _this.width -cached.contentBBox.width) : 0;
-                                var limitedY = resolvedY > 0 ? (resolvedY < _this.height-cached.contentBBox.height ? resolvedY : _this.height-cached.contentBBox.height) : 0;
-
-                                var limitedX0 = _this.xScale(cached.labelX0);
-                                var limitedY0 = _this.yScale(cached.labelY0);
-
-                                cached.stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
-
-                                rect.classed("vzb-transparent", !cached.stuckOnLimit);
-                                line.classed("vzb-transparent", cached.stuckOnLimit);
-
-                                _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
-
-                            })
-                    } else {
-                        //for non-selected bubbles
-                        //make sure there is no cached data
-                        if (_this.cached[d.geo] != null) {
-                            delete _this.cached[d.geo]
-                        };
-                    }                    
-                } // data exists
-
-
+                _this._updateBubble(d, index, view, duration, false);
 
             }); // each bubble
 
 
-
-
-            // case "rect":
-            // var barWidth = Math.max(2,d3.max(_this.xScale.range()) / _this.data.length - 5);
-            // this.entityBubbles.each(function(d){
-            //     var view = d3.select(this);
-            //     var valueY = _this.model.marker.axis_y.getValue(d);
-            //     var valueX = _this.model.marker.axis_x.getValue(d);
-            //     
-            //     if(valueY==null || valueX==null) {
-            //         view.classed("vzb-invisible", true)
-            //     }else{
-            //         view.classed("vzb-invisible", false)
-            //             .style("fill", _this.model.marker.color.getValue(d))
-            //             .transition().duration(_this.duration).ease("linear")
-            //             .attr("height", d3.max(_this.yScale.range()) - _this.yScale(valueY))
-            //             .attr("y", _this.yScale(valueY))
-            //             .attr("x", _this.xScale(valueX) - barWidth/2)
-            //             .attr("width", barWidth);
-            //     }
-            // });
-            // break;
-            
-
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if (_this.duration == 0) d3.timer.flush();
-
-
-
 
 
             if (_this.ui.labels.autoResolveCollisions) {
@@ -940,9 +812,146 @@ define([
                 }, _this.model.time.speed * 1.2)
             }
 
-        }, //redraw
+        }, //redraw Data Points
 
+        
+        _updateBubble: function(d, index, view, duration, forseLabelOriginChange){
+            var _this = this;
+            
+            if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
+                d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+            }else{
+                d.time = _this.time;
+            };
 
+            var valueY = _this.model.marker.axis_y.getValue(d);
+            var valueX = _this.model.marker.axis_x.getValue(d);
+            var valueS = _this.model.marker.size.getValue(d);
+            var valueL = _this.model.marker.label.getValue(d);
+            var valueC = _this.model.marker.color.getValue(d);
+
+            // check if fetching data succeeded
+            if (valueL == null || valueY == null || valueX == null || valueS == null) {
+
+                // if entity is missing data it should hide
+                view.classed("vzb-invisible", true)
+
+            } else {
+
+                // if entity has all the data we update the visuals
+                var scaledS = _areaToRadius(_this.sScale(valueS));
+
+                view.classed("vzb-invisible", false)
+                    .style("fill", _this.cScale(valueC))
+                    .transition().duration(duration).ease("linear")
+                    .attr("cy", _this.yScale(valueY))
+                    .attr("cx", _this.xScale(valueX))
+                    .attr("r", scaledS)
+
+               _this._updateLabels(d, index, valueX, valueY, scaledS, valueL, duration, forseLabelOriginChange);
+
+            } // data exists
+        },
+        
+        
+        
+        
+        _updateLabels: function(d, index, valueX, valueY, scaledS, valueL, duration, forseLabelOriginChange){
+            var _this = this;
+            if(duration==null) duration = _this.duration; 
+            
+            // only for selected entities
+            if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
+
+                if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
+                var cached = _this.cached[d.geo];
+
+                var select = _.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
+                var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+
+                cached.valueX = valueX;
+                cached.valueY = valueY;
+
+                if (!_this.model.time.trails 
+                    || trailStartTime - _this.time > 0 || select.trailStartTime == null 
+                    || cached.labelX0==null || cached.labelY0 == null || cached.scaledS_atTrailOrigin == null) {
+                    
+                    select.trailStartTime = _this.timeFormatter(_this.time);
+                    //the events in model are not triggered here. to trigger uncomment the next line
+                    //_this.model.entities.triggerAll("change:select");
+
+                    cached.scaledS_atTrailOrigin = scaledS;
+                    cached.labelX0 = valueX;
+                    cached.labelY0 = valueY;
+                }
+                
+                if(forseLabelOriginChange){
+                    cached.scaledS_atTrailOrigin = scaledS;
+                }
+
+                // reposition label
+                _this.entityLabels.filter(function(f) {return f.geo == d.geo})
+                    .each(function(groupData) {
+
+                        var labelGroup = d3.select(this);
+
+                        var text = labelGroup.selectAll("text.vzb-bc-label-content")
+                            .text(valueL + (_this.model.time.trails?" "+select.trailStartTime:""));
+
+                        var line = labelGroup.select("line")
+                            .style("stroke-dasharray", "0 " + (cached.scaledS_atTrailOrigin + 2) + " 100%");
+
+                        var rect = labelGroup.select("rect");
+
+                        var contentBBox = text[0][0].getBBox();
+                        if(!cached.contentBBox || cached.contentBBox.width!=contentBBox.width){
+                            cached.contentBBox = contentBBox;
+
+                            labelGroup.select("text.vzb-bc-label-x")
+                                .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                .attr("y", contentBBox.height * 0.0 - 4);
+
+                            labelGroup.select("circle")
+                                .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                .attr("cy", contentBBox.height * 0.0 - 4)
+                                .attr("r", contentBBox.height * 0.5);
+
+                            rect.attr("width",contentBBox.width+4)
+                                .attr("height",contentBBox.height+4)
+                                .attr("x",-2)
+                                .attr("y",-4)
+                                .attr("rx", contentBBox.height*0.2)
+                                .attr("ry", contentBBox.height*0.2);
+                        }
+
+                        cached.labelX_ = select.labelOffset[0] || cached.scaledS_atTrailOrigin / _this.width;
+                        cached.labelY_ = select.labelOffset[1] || cached.scaledS_atTrailOrigin / _this.width;
+
+                        var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+                        var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+
+                        var limitedX = resolvedX > 0 ? (resolvedX < _this.width -cached.contentBBox.width ? resolvedX : _this.width -cached.contentBBox.width) : 0;
+                        var limitedY = resolvedY > 0 ? (resolvedY < _this.height-cached.contentBBox.height ? resolvedY : _this.height-cached.contentBBox.height) : 0;
+
+                        var limitedX0 = _this.xScale(cached.labelX0);
+                        var limitedY0 = _this.yScale(cached.labelY0);
+
+                        cached.stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
+
+                        rect.classed("vzb-transparent", !cached.stuckOnLimit);
+                        line.classed("vzb-transparent", cached.stuckOnLimit);
+
+                        _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
+
+                    })
+            } else {
+                //for non-selected bubbles
+                //make sure there is no cached data
+                if (_this.cached[d.geo] != null) {
+                    delete _this.cached[d.geo]
+                };
+            } 
+        },
 
         _repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
 
