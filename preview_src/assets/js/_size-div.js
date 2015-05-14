@@ -30,15 +30,15 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
         element.style.height = h + 'px';
     }
 
-    // Mouse events
-    pane.addEventListener('mousedown', onMouseDown);
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseup', onUp);
+    // // Mouse events
+    // pane.addEventListener('mousedown', onMouseDown);
+    // document.addEventListener('mousemove', onMove);
+    // document.addEventListener('mouseup', onUp);
 
-    // Touch events 
-    pane.addEventListener('touchstart', onTouchDown);
-    document.addEventListener('touchmove', onTouchMove);
-    document.addEventListener('touchend', onTouchEnd);
+    // // Touch events 
+    // pane.addEventListener('touchstart', onTouchDown);
+    // document.addEventListener('touchmove', onTouchMove);
+    // document.addEventListener('touchend', onTouchEnd);
 
 
     function onTouchDown(e) {
@@ -212,13 +212,13 @@ function updateSizePanel(div, width, height) {
 //update size
 setDivSize(placeholder, 320, 568);
 //resize div
-resizableDiv(placeholder, container, 300, 300, function() {
-    forceResizeEvt();
-    updateSizePanel(placeholder);
-}, function() {
-    removeClass(placeholder, "fullscreen");
-    updateURL();
-});
+// resizableDiv(placeholder, container, 300, 300, function() {
+//     forceResizeEvt();
+//     updateSizePanel(placeholder);
+// }, function() {
+//     removeClass(placeholder, "fullscreen");
+//     updateURL();
+// });
 
 function setFullscreen() {
     setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
