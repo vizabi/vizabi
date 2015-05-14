@@ -103,7 +103,15 @@ control_buttons: {play: true, language: true}
           (function() {
 
           VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
-            updateURL();
+
+            //TODO: improve when to update
+            //only update in these cases
+            if(evt === "change:state:entities:select"
+              || evt === "change:state:time:playing"
+              || (evt === "change:state:time:value" && !vals.state.time.playing)
+              || evt.indexOf("change:state:marker") !== -1) {
+              updateURL();
+            }
 
             {{#if control_state}}
               updateStateEditor(vals.state);

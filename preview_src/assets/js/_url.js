@@ -6,6 +6,7 @@ var URL = {};
 
 //grabs width, height, tabs open, and updates the url
 function updateURL() {
+
     var state;
     if(typeof VIZ !== 'undefined') {
        state = VIZ.getOptions().state

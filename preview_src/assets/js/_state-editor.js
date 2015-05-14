@@ -26,7 +26,6 @@ function updateStateEditor(state) {
     editorTextArea.value = JSON.stringify(state, null, 2);
     editorTextArea.removeAttribute('disabled');
     removeClass(editorTextArea, "invalid");
-    updateURL();
 }
 
 function setState() {

@@ -252,6 +252,7 @@ function changeSizes() {
     var height = parseInt(inputHeight.value, 10);
     setDivSize(placeholder, width, height);
     normalizeDivSize(placeholder, container);
+    updateURL();
 }
 
 inputWidth.onchange = changeSizes;
