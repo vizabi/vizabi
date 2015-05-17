@@ -163,6 +163,8 @@ define([
             //scales
             this.yScale = this.model.marker.axis_y.getScale();
             this.xScale = this.model.marker.axis_x.getScale();
+            this.cScale = this.model.marker.color.getScale();
+            this.cShadeScale = this.model.marker.color_shadow.getScale();
             
             this.yAxis.tickSize(6, 0);
             this.xAxis.tickSize(6, 0);
@@ -383,8 +385,8 @@ define([
                 })
                 .each(function(d, index){
                     var entity = d3.select(this);    
-                    var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
-                    var colorShadow = _this.model.marker.color_shadow.getValue(d)||_this.model.marker.color_shadow.domain[0];
+                    var color = _this.cScale(_this.model.marker.color.getValue(d));
+                    var colorShadow = _this.cShadeScale(_this.model.marker.color_shadow.getValue(d));
                     
                     entity.append("path")
                         .attr("class", "vzb-lc-line-shadow")
@@ -407,8 +409,8 @@ define([
                 })
                 .each(function(d, index){
                     var entity = d3.select(this);    
-                    var color = _this.model.marker.color.getValue(d)||_this.model.marker.color.domain[0];
-                    var colorShadow = _this.model.marker.color_shadow.getValue(d)||_this.model.marker.color_shadow.domain[0];
+                    var color = _this.cScale(_this.model.marker.color.getValue(d));
+                    var colorShadow = _this.cShadeScale(_this.model.marker.color_shadow.getValue(d));
                     var label = _this.model.marker.label.getValue(d);
                 
                     entity.append("circle")

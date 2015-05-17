@@ -97,7 +97,7 @@ define([
                                             _type_: "string",
                                             _defs_: "gdp_per_cap"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "log"
                                         }
@@ -114,7 +114,7 @@ define([
                                             _type_: "string",
                                             _defs_: "time"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "time"
                                         }
@@ -131,7 +131,7 @@ define([
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        domain: {
+                                        palette: {
                                             _type_: "object",
                                             _defs_: {
                                                 "_default": "#ffb600",
@@ -159,7 +159,7 @@ define([
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        domain: {
+                                        palette: {
                                             _type_: "object",
                                             _defs_: {
                                                 "_default": "#fbbd00",
