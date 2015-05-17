@@ -105,7 +105,7 @@ define([
                                             _type_: "string",
                                             _defs_: "lex"
                                         },
-                                        scale: {
+                                        scaleType: {
                                             _type_: "string",
                                             _defs_: "linear"
                                         }
@@ -136,7 +136,7 @@ define([
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        domain: {
+                                        palette: {
                                             _type_: "object",
                                             _defs_: {
                                                 "_default": "#ffb600",

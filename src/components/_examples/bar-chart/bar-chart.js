@@ -94,6 +94,7 @@ define([
 
             this.yScale = this.model.marker.axis_y.getScale();
             this.xScale = this.model.marker.axis_x.getScale();
+            this.cScale = this.model.marker.color.getScale();
 
             this.yAxis.tickFormat(function(d) {
                 return _this.model.marker.axis_y.getTick(d);
@@ -160,7 +161,7 @@ define([
             this.bars.selectAll('.vzb-bc-bar')
                 .attr("width", barWidth)
                 .attr("fill", function(d) {
-                    return _this.model.marker.color.getValue(d);
+                    return _this.cScale(_this.model.marker.color.getValue(d));
                 })
                 .attr("x", function(d) {
                     return _this.xScale(_this.model.marker.axis_x.getValue(d));
