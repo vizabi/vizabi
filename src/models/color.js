@@ -62,9 +62,10 @@ define([
         validate: function() {
             this.scaleType = this.use=="indicator"?"linear":"ordinal";
             
+            // reset palette in the following cases:
             // first load and no palette supplied in the state
             // or changing of the indicator
-            if(this.firstLoad || this.palette==null || !this.firstLoad && this.value_1 != this.value){
+            if(this.palette==null || !this.firstLoad && this.value_1 != this.value){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);
