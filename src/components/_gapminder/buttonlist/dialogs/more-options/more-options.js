@@ -24,6 +24,11 @@ define([
                 placeholder: '.vzb-yaxis-container',
                 model: ["state.marker.axis_y", "language"]
             },{
+                component: '_gapminder/simple-checkbox',
+                placeholder: '.vzb-axes-options',
+                model: ["state.time", "language"],
+                checkbox: 'adaptMinMaxZoom'
+            },{
                 component: '_gapminder/bubble-size',
                 placeholder: '.vzb-dialog-bubble-size',
                 model: ["state.marker.size"]

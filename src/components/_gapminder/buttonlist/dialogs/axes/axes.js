@@ -23,6 +23,11 @@ define([
                 component: '_gapminder/indicator-picker',
                 placeholder: '.vzb-yaxis-container',
                 model: ["state.marker.axis_y", "language"]
+            },{
+                component: '_gapminder/simple-checkbox',
+                placeholder: '.vzb-axes-options',
+                model: ["state.time", "language"],
+                checkbox: 'adaptMinMaxZoom'
             }];
 
             this._super(config, parent);

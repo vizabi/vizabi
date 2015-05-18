@@ -80,6 +80,14 @@
             border: 1px solid rgba($vzb-color-grey, .6);
         }
     }
+    
+    .vzb-dialog-br{
+        border-top: 1px solid #ededed;
+        height: 36px;
+        width: 100%;
+        margin-top: 36px;
+    }
+    
     .vzb-dialog-checkbox {
         display: block;
         height: 18px;
