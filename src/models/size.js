@@ -37,7 +37,7 @@ define([
             if (this.min > this.max) {
                 this.min = this.max;
             }
-            //value must always be between 0 and 1
+            //value must always be between min and max
             if (this.use === "value" && this.value > this.max) {
                 this.value = this.max;
             }
@@ -50,6 +50,11 @@ define([
             if (this.use === "property") {
                 this.scaleType = 'ordinal';
             }
+            
+            //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
+            if(this.value_1 != this.value || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.value_1 = this.value;
+            this.scaleType_1 = this.scaleType;
         },
 
         /**
