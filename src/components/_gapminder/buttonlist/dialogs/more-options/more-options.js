@@ -26,7 +26,8 @@ define([
             },{
                 component: '_gapminder/simple-checkbox',
                 placeholder: '.vzb-axes-options',
-                model: ["state.time", "language"],
+                model: ["state", "language"],
+                submodel: 'time',
                 checkbox: 'adaptMinMaxZoom'
             },{
                 component: '_gapminder/bubble-size',

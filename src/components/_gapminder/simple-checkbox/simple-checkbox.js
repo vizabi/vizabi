@@ -11,6 +11,7 @@ define([
             var _this = this;
             
             this.checkbox = config.checkbox;
+            this.submodel = config.submodel;
 
             this.model_expects = [{
                 name: "mdl"
@@ -32,7 +33,7 @@ define([
                 }
             }
             
-            this.model_binds["change:mdl:"+this.checkbox] = function() {
+            this.model_binds["change:mdl:"+this.submodel+":"+this.checkbox] = function() {
                 _this.updateView();
             };
 
@@ -53,12 +54,12 @@ define([
         updateView: function() {
             this.translator = this.model.language.getTFunction();
             this.labelEl.text(this.translator("check/" + this.checkbox));
-            this.checkEl.property("checked", !!this.model.mdl[this.checkbox]);
+            this.checkEl.property("checked", !!this.model.mdl[this.submodel][this.checkbox]);
         },
         
 
         _setModel: function (value) {
-            this.model.mdl[this.checkbox] = value;
+            this.model.mdl[this.submodel][this.checkbox] = value;
         },
         
     });

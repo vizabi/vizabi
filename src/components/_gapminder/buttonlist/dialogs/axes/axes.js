@@ -26,8 +26,9 @@ define([
             },{
                 component: '_gapminder/simple-checkbox',
                 placeholder: '.vzb-axes-options',
-                model: ["state.time", "language"],
-                checkbox: 'adaptMinMaxZoom'
+                model: ["state", "language"],
+                submodel: 'time',
+                path: 'adaptMinMaxZoom'
             }];
 
             this._super(config, parent);
