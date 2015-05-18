@@ -114,6 +114,10 @@ define([
                                         scaleType: {
                                             _type_: "string",
                                             _defs_: "linear"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: "years"
                                         }
                                     }
                                 },
@@ -132,6 +136,10 @@ define([
                                         scaleType: {
                                             _type_: "string",
                                             _defs_: "log"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: "$/year/person"
                                         }
                                     }
                                 },
@@ -154,6 +162,10 @@ define([
                                         max: {
                                             _type_: "number",
                                             _defs_: 0.75
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: ""
                                         }
                                     }
                                 },
@@ -169,9 +181,13 @@ define([
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        domain_type: {
+                                        scaleType: {
                                             _type_: "string",
-                                            _defs_: "continuous"
+                                            _defs_: "ordinal"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: ""
                                         }
                                     }
                                 }

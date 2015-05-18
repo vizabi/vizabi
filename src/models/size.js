@@ -17,6 +17,7 @@ define([
             this._type = "size";
             values = _.extend({
                 use: "value",
+                unit: "",
                 value: undefined
             }, values);
             this._super(values, parent, bind);

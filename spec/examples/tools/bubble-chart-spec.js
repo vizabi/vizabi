@@ -43,8 +43,7 @@ describe("* Example Bubble Chart", function() {
                 axis_x: {
                     hook: "indicator",
                     value: "gdp_per_cap",
-                    scale: 'linear',
-                    unit: 100
+                    scale: 'linear'
                 },
                 size: {
                     hook: "indicator",

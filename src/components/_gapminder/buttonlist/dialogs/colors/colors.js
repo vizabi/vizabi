@@ -15,8 +15,7 @@ define([
             this.components = [{
                 component: '_gapminder/indicator-picker',
                 placeholder: '.vzb-caxis-container',
-                model: ["state.marker.color", "language"],
-                ui: {selectIndicator: true, selectScaletype: false}
+                model: ["state.marker.color", "language"]
             },{
                 component: '_gapminder/color-legend',
                 placeholder: '.vzb-clegend-container',

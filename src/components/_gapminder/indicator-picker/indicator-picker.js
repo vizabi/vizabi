@@ -9,13 +9,13 @@ define([
     var MODELTYPE_COLOR = "color";
     
     var availOpts = {
-        'geo.region':   {use: 'property',   scales: ['ordinal']       },
-        'geo':          {use: 'property',   scales: ['ordinal']       },
-        'time':         {use: 'indicator',  scales: ['time']          },
-        'lex':          {use: 'indicator',  scales: ['linear'] },
-        'gdp_per_cap':  {use: 'indicator',  scales: ['linear', 'log'] },
-        'pop':          {use: 'indicator',  scales: ['linear', 'log'] },
-        '_default':     {use: 'value',      scales: ['linear', 'log'] }
+        'geo.region':   {use: 'property',   unit: '', scales: ['ordinal']       },
+        'geo':          {use: 'property',   unit: '', scales: ['ordinal']       },
+        'time':         {use: 'indicator',  unit: 'year', scales: ['time']          },
+        'lex':          {use: 'indicator',  unit: 'years', scales: ['linear'] },
+        'gdp_per_cap':  {use: 'indicator',  unit: '$/year/person', scales: ['linear', 'log'] },
+        'pop':          {use: 'indicator',  unit: '', scales: ['linear', 'log'] },
+        '_default':     {use: 'value',      unit: '', scales: ['linear', 'log'] }
     };
     
     
@@ -148,6 +148,7 @@ define([
             
             if(what==INDICATOR){
                 mdl.use = availOpts[value].use;
+                mdl.unit = availOpts[value].unit;
                 
                 if(availOpts[value].scales.indexOf(mdl.scaleType) == -1){
                     mdl.scaleType = availOpts[value].scales[0];

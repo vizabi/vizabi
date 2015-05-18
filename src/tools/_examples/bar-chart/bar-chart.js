@@ -146,10 +146,6 @@ define([
                                                 "asi": "#FF5872",
                                                 "ame": "#7FEB00"
                                             }
-                                        },
-                                        domain_type: {
-                                            _type_: "string",
-                                            _defs_: "continuous"
                                         }
                                     }
                                 }

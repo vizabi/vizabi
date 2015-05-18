@@ -24,7 +24,8 @@ define([
             },{
                 component: '_gapminder/indicator-picker',
                 placeholder: '.vzb-saxis-container',
-                model: ["state.marker.size", "language"]
+                model: ["state.marker.size", "language"],
+                ui: {selectIndicator: true, selectScaletype: false}
             }];
 
             this._super(config, parent);

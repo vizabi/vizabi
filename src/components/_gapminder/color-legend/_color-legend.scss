@@ -12,6 +12,8 @@
         cursor: pointer;
     }
     
+    .vzb-cl-rainbow{width: 20px; position: absolute}
+    
     .vzb-cl-color-sample {
         @include transition(border-width 200ms ease-in-out);
         display: inline-block;

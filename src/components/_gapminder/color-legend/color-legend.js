@@ -51,6 +51,7 @@ define([
         domReady: function() {
             var _this = this;
             this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
+            this.rainbow = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
             
             this.colorPicker = d3.svg.colorPicker();
             this.element.call(this.colorPicker);
@@ -113,13 +114,30 @@ define([
                 })
             
             
-            colors.each(function(d){
+            if(this.model.color.use == "indicator"){
+                
+                this.rainbow.classed("vzb-hidden", false)
+                    .style("height", (_.keys(paletteDefault).length * 25 + 5) + "px")
+                    .style("background", "linear-gradient(" + _.values(palette._data).join(", ") +")");
+            }else{
+                this.rainbow.classed("vzb-hidden", true);
+            }
+            
+            colors.each(function(d, index){
                 d3.select(this).select(".vzb-cl-color-sample")
                     .style("background-color", palette[d])
                     .style("border", "1px solid " + palette[d]);
 
-                d3.select(this).select(".vzb-cl-color-legend")
-                    .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                if(_this.model.color.use == "indicator"){
+                    var domain = _this.model.color.getScale().domain();
+                   
+                    d3.select(this).select(".vzb-cl-color-legend")
+                        .text(domain[index])
+                }else{
+                    
+                    d3.select(this).select(".vzb-cl-color-legend")
+                        .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                }
             });
         }
         

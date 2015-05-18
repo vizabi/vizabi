@@ -28,7 +28,7 @@ define([
                 placeholder: '.vzb-axes-options',
                 model: ["state", "language"],
                 submodel: 'time',
-                path: 'adaptMinMaxZoom'
+                checkbox: 'adaptMinMaxZoom'
             }];
 
             this._super(config, parent);

@@ -96,12 +96,8 @@ define([
             this.xScale = this.model.marker.axis_x.getScale();
             this.cScale = this.model.marker.color.getScale();
 
-            this.yAxis.tickFormat(function(d) {
-                return _this.model.marker.axis_y.getTick(d);
-            });
-            this.xAxis.tickFormat(function(d) {
-                return _this.model.marker.axis_x.getTick(d);
-            });
+            this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
+            this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
         },
 
         /**

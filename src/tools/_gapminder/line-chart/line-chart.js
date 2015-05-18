@@ -141,10 +141,6 @@ define([
                                                 "asi": "#FF5872",
                                                 "ame": "#7FEB00"
                                             }
-                                        },
-                                        domain_type: {
-                                            _type_: "string",
-                                            _defs_: "continuous"
                                         }
                                     }
                                 },
@@ -169,10 +165,6 @@ define([
                                                 "asi": "#da0025",
                                                 "ame": "#00b900"
                                             }
-                                        },
-                                        domain_type: {
-                                            _type_: "string",
-                                            _defs_: "continuous"
                                         }
                                     }
                                 }

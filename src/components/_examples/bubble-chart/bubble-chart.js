@@ -389,6 +389,11 @@ define([
             var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
             var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
             var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
+            
+            if(!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
+            if(!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
+            if(!!this.model.marker.size.unit) titleStringS = titleStringS + ", " + this.model.marker.size.unit;
+            if(!!this.model.marker.color.unit) titleStringC = titleStringC + ", " + this.model.marker.color.unit;
 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
@@ -422,12 +427,8 @@ define([
 //            this.collisionResolver.scale(this.yScale);
 
 
-            this.yAxis.tickFormat(function(d) {
-                return _this.model.marker.axis_y.getTick(d);
-            });
-            this.xAxis.tickFormat(function(d) {
-                return _this.model.marker.axis_x.getTick(d);
-            });
+            this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
+            this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
             
             this.xyMaxMinMean = {
                 x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter), 

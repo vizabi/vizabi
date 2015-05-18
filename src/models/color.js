@@ -31,6 +31,7 @@ define([
 
             values = _.extend({
                 use: "value",
+                unit: "",
                 palette: null,
                 value: undefined
             }, values);
@@ -60,12 +61,20 @@ define([
          * Validates a color hook
          */
         validate: function() {
-            this.scaleType = this.use=="indicator"?"linear":"ordinal";
+            var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
+            if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
+                this.scaleType = 'linear'; 
+            }
+            if (this.use !== "indicator" && this.scaleType !== "ordinal") {
+                this.scaleType = "ordinal";
+            }
             
             // reset palette in the following cases:
             // first load and no palette supplied in the state
             // or changing of the indicator
-            if(this.palette==null || !this.firstLoad && this.value_1 != this.value){
+            if(this.palette==null 
+               || !this.firstLoad && this.value_1 != this.value 
+               || !this.firstLoad && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);
@@ -81,6 +90,7 @@ define([
             }
 
             this.value_1 = this.value;
+            this.scaleType_1 = this.scaleType;
             this.firstLoad = false;
         },
 
@@ -137,7 +147,12 @@ define([
                     var step = ((limits.max-limits.min) / (range.length - 1));
                     domain = d3.range(limits.min, limits.max, step).concat(limits.max);
                     
-                    this.scale = d3.scale["linear"]()
+                    if(this.scaleType=="log"){
+                        var s = d3.scale.log().domain([limits.min, limits.max]).range([limits.min, limits.max]);
+                        domain = domain.map(function(d){return s.invert(d)});
+                    }
+                    
+                    this.scale = d3.scale[this.scaleType]()
                         .domain(domain)
                         .range(range)
                         .interpolate(d3.interpolateRgb);
