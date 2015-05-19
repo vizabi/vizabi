@@ -125,11 +125,15 @@
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
+         * @param {Array} arr filter keys
          * @returns {Object} cloned object
          */
-        clone: function(src) {
+        clone: function(src, arr) {
             var clone = {};
             this.forEach(src, function(value, k) {
+                if(arr && arr.indexOf(k) === -1) {
+                    return;
+                }
                 if (src.hasOwnProperty(k)) {
                     clone[k] = value;
                 }
@@ -159,6 +163,50 @@
 
         /*
          * Prints message to timestamp
+         * @param {Arr} arr
+         * @param {Object} el
+         */
+        without: function(arr, el) {
+            var idx = arr.indexOf(el);
+            if (idx !== -1) arr.splice(idx, 1);
+            return arr;
+        },
+
+        /*
+         * unique items in an array
+         * @param {Array} arr original array
+         * @returns {Array} unique items
+         * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
+         */
+        unique: function(arr) {
+            var u = {},
+                a = [];
+            for (var i = 0, l = arr.length; i < l; ++i) {
+                if (u.hasOwnProperty(arr[i])) {
+                    continue;
+                }
+                a.push(arr[i]);
+                u[arr[i]] = 1;
+            }
+            return a;
+        },
+
+        /*
+         * filters an array based on object properties
+         * @param {Array} arr original array
+         * @returns {Object} filter properties to use as filter
+         */
+        filter: function(arr, filter) {
+            return arr.filter(function(i) {
+                for (var f in filter) {
+                    if (i[f] !== filter[f]) return false;
+                }
+                return true;
+            });
+        },
+
+        /*
+         * Prints message to timestamp
          * @param {String} message
          */
         timeStamp: function(message) {
@@ -174,6 +222,26 @@
         warn: function(message) {
             if (root.console && typeof root.console.warn === "function") {
                 root.console.warn(message);
+            }
+        },
+
+        /*
+         * Prints message for group
+         * @param {String} message
+         */
+        groupCollapsed: function(message) {
+            if (root.console && typeof root.console.groupCollapsed === "function") {
+                root.console.groupCollapsed(message);
+            }
+        },
+
+        /*
+         * Prints end of group
+         * @param {String} message
+         */
+        groupEnd: function() {
+            if (root.console && typeof root.console.groupEnd === "function") {
+                root.console.groupEnd();
             }
         },
 
@@ -223,12 +291,27 @@
         },
 
         /*
+         * Throttles a function
+         * @param {Function} func
+         * @param {Number} ms duration 
+         */
+        throttle: (function() {
+            var isThrottled = {};
+            return function(func, ms) {
+                if(isThrottled[func]) { return };
+                isThrottled[func] = true;
+                setTimeout(function () { isThrottled[func] = false; }, ms);
+                func();
+            }
+        })(),
+
+        /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
          * @param {String} className 
          * @return {Boolean}
          */
-        hasClass: function (el, className) {
+        hasClass: function(el, className) {
             if (el.classList) {
                 return el.classList.contains(className);
             } else { //IE<10
