@@ -1,87 +1,240 @@
-define(['d3', 'lodash', 'stacktrace'], function(d3, _, stacktrace) {
+/*!
+ * VIZABI UTILS
+ * Util functions
+ */
 
-    var utils = {
+(function() {
 
-        /**
-         * Counts number of decimals in a number
-         * @example Example usage of countDecimals:
-         * // returns 2
-         * countDecimals(5.23);
-         * @param {Number} Number to be checked
-         * @returns {Number} Number of decimals.
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+
+    Vizabi.utils = {
+
+        /*
+         * returns unique id with optional prefix
+         * @param {String} prefix
+         * @returns {String} id
+         */
+        uniqueId: (function() {
+            var id = 0;
+            return function(p) {
+                return (p) ? p + id++ : id++;
+            };
+        })(),
+
+        /*
+         * checks whether obj is a DOM element
+         * @param {Object} obj
+         * @returns {Boolean}
+         * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
+         */
+        isElement: function(obj) {
+            return !!(obj && obj.nodeType === 1);
+        },
+
+        /*
+         * checks whether obj is an Array
+         * @param {Object} obj
+         * @returns {Boolean}
+         * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
+         */
+        isArray: Array.isArray || function(obj) {
+            return toString.call(obj) === '[object Array]';
+        },
+
+        /*
+         * checks whether obj is an object
+         * @param {Object} obj
+         * @returns {Boolean}
+         * from underscore: https://github.com/jashkenas/underscore/blob/master/underscore.js
+         */
+        isObject: function(obj) {
+            var type = typeof obj;
+            return type === 'function' || type === 'object' && !!obj;
+        },
+
+        /*
+         * loops through an object or array
+         * @param {Object|Array} obj object or array
+         * @param {Function} callback callback function
+         * @param {Object} ctx context object
+         */
+        forEach: function(obj, callback, ctx) {
+            if (!obj) return;
+            if (this.isArray(obj)) {
+                var i;
+                for (i = 0; i < obj.length; i++) {
+                    callback.apply(ctx, [obj[i], i]);
+                }
+            } else {
+                for (var item in obj) {
+                    callback.apply(ctx, [obj[item], item]);
+                }
+            }
+        },
+
+        /*
+         * extends an object
+         * @param {Object} destination object
+         * @returns {Object} extented object
+         */
+        extend: function(dest) {
+            //objects to overwrite dest are next arguments 
+            var objs = Array.prototype.slice.call(arguments, 1);
+            var _this = this;
+            //loop through each obj and each argument, left to right
+            this.forEach(objs, function(obj, i) {
+                _this.forEach(obj, function(value, k) {
+                    if (obj.hasOwnProperty(k)) {
+                        dest[k] = value;
+                    }
+                });
+            });
+            return dest;
+        },
+
+        /*
+         * merges objects instead of replacing
+         * @param {Object} destination object
+         * @returns {Object} merged object
+         */
+        merge: function(dest) {
+            //objects to overwrite dest are next arguments 
+            var objs = Array.prototype.slice.call(arguments, 1);
+            var _this = this;
+            //loop through each obj and each argument, left to right
+            this.forEach(objs, function(obj, i) {
+                _this.forEach(obj, function(value, k) {
+                    if (obj.hasOwnProperty(k)) {
+                        if (dest.hasOwnProperty(k)) {
+                            if (!_this.isArray(dest[k])) {
+                                dest[k] = [dest[k]];
+                            }
+                            dest[k].push(value);
+                        } else {
+                            dest[k] = value;
+                        }
+                    }
+                });
+            });
+            return dest;
+        },
+
+        /*
+         * clones an object (shallow copy)
+         * @param {Object} src original object
+         * @returns {Object} cloned object
+         */
+        clone: function(src) {
+            var clone = {};
+            this.forEach(src, function(value, k) {
+                if (src.hasOwnProperty(k)) {
+                    clone[k] = value;
+                }
+            });
+            return clone;
+        },
+
+        /*
+         * deep clones an object (deep copy)
+         * @param {Object} src original object
+         * @returns {Object} cloned object
+         */
+        deepClone: function(src) {
+            var clone = {};
+            var _this = this;
+            this.forEach(src, function(value, k) {
+                if (src.hasOwnProperty(k)) {
+                    if (_this.isObject(value) || _this.isArray(value)) {
+                        clone[k] = _this.deepClone(value);
+                    } else {
+                        clone[k] = value;
+                    }
+                }
+            });
+            return clone;
+        },
+
+        /*
+         * Prints message to timestamp
+         * @param {String} message
+         */
+        timeStamp: function(message) {
+            if (root.console && typeof root.console.timeStamp === "function") {
+                root.console.timeStamp(message);
+            }
+        },
+
+        /*
+         * Prints warning
+         * @param {String} message
+         */
+        warn: function(message) {
+            if (root.console && typeof root.console.warn === "function") {
+                root.console.warn(message);
+            }
+        },
+
+        /*
+         * Prints error
+         * @param {String} message
+         */
+        error: function(message) {
+            if (root.console && typeof root.console.error === "function") {
+                root.console.error(message);
+            }
+        },
+
+        /*
+         * Count the number of decimal numbers
+         * @param {Number} number
          */
         countDecimals: function(number) {
             if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
             return number.toString().split(".")[1].length || 0;
         },
 
-        /**
-         * Checks if an object is a Vizabi model
-         * @param {Object} model object to be checked
-         * @returns {Boolean}
+        /*
+         * Adds class to DOM element
+         * @param {Element} el
+         * @param {String} className 
          */
-        isModel: function(obj) {
-            return (obj._id && obj._id.indexOf("m") !== -1);
-        },
-
-        /**
-         * Finds an intermediate value between two numbers
-         * @example Example usage of interpolate:
-         * // returns 120
-         * interpolate(100, 200, 0.20);
-         * @param {Number} value1 first number
-         * @param {Number} value2 second number
-         * @param {Number} fraction fraction to interpolate (0 <= fraction <= 1);
-         * @returns {Number}
-         */
-        interpolate: function(value1, value2, fraction) {
-            return value1 + ((value2 - value1) * fraction);
-        },
-
-        /**
-         * Interpolates all values within a range. Same as d3.range
-         * @param {Number} val1 first number
-         * @param {Number} val2 second number
-         * @param {Number} step
-         * @returns {Array}
-         */
-        interpolateRange: function(val1, val2, step) {
-            return d3.range(val1, val2, step);
-        },
-
-        /**
-         * Returns the stack trace for the call
-         */
-        stacktrace: stacktrace,
-
-        formatStacktrace: function(stack) {
-            return stack.join('\n\n');
-        },
-
-        /**
-         * Given two objects, it includes the properties of the second in the
-         * first and adds similar properties to an array of values
-         * @param {Object} callbacks1 first object of callbacks
-         * @param {Object} callbacks2 second object of callbacks
-         */
-        extendCallbacks: function(callbacks1, callbacks2) {
-            for(var evt in callbacks2) {
-                if(_.has(callbacks1, evt)) {
-                    if(!_.isArray(callbacks1[evt])) {
-                        callbacks1[evt] = [callbacks1[evt]];
-                    }
-                    callbacks1[evt].push(callbacks2[evt]);
-
-                } else {
-                    callbacks1[evt] = callbacks2[evt];
-                }
+        addClass: function(el, className) {
+            if (el.classList) {
+                el.classList.add(className);
+            } else { //IE<10
+                el.className += ' ' + className;
             }
-            return callbacks1;
+        },
+
+        /*
+         * Remove class from DOM element
+         * @param {Element} el
+         * @param {String} className 
+         */
+        removeClass: function(el, className) {
+            if (el.classList) {
+                el.classList.remove(className);
+            } else { //IE<10
+                el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+            }
+        },
+
+        /*
+         * Checks whether a DOM element has a class or not
+         * @param {Element} el
+         * @param {String} className 
+         * @return {Boolean}
+         */
+        hasClass: function (el, className) {
+            if (el.classList) {
+                return el.classList.contains(className);
+            } else { //IE<10
+                return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+            }
         }
     };
 
-
-    return utils;
-
-
-});
+}).call(this);
