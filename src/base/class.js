@@ -17,7 +17,9 @@
         xyz;
     }) ? /\b_super\b/ : /.*/;
 
-    function extend(extensions) {
+    function extend(name, extensions) {
+        //in case there are two args
+        extensions = (arguments.length === 1) ? name : extensions;
         var _super = this.prototype;
 
         initializing = true;
@@ -36,7 +38,7 @@
                     };
                 })(name, extensions[name]);
             } else {
-            	prototype[name] = method;
+                prototype[name] = method;
             }
         });
 
@@ -50,11 +52,26 @@
         Class.prototype = prototype;
         Class.prototype.constructor = Class;
         Class.extend = extend;
+        Class._collection = {};
+        Class.register = function(name, code) {
+            if (typeof this._collection[name] !== 'undefined') {
+                Vizabi.utils.warn(name + ' already registered. Overwriting');
+            }
+            this._collection[name] = code;
+        };
+        Class.unregister = function(name) {
+            delete this._collection[name];
+        };
+
+        //register extension by name
+        if (arguments.length > 1 && this.register) {
+            this.register(name, Class);
+        }
 
         return Class;
     }
 
-	Vizabi.Class = function() {};
-	Vizabi.Class.extend = extend;
+    Vizabi.Class = function() {};
+    Vizabi.Class.extend = extend;
 
 }).call(this);
