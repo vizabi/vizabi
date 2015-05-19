@@ -1,38 +1,43 @@
 describe("* Base: Component", function() {
 
-    initializeDOM();
-    var placeholder = document.getElementById("test-placeholder");
-    var utils = Vizabi.utils;
+    var placeholder, utils, component, YearDisplay, MyComp;
 
-    //create a new component fo ryear display and register
-    var YearDisplay = Vizabi.Component.extend({
-        init: function(config, parent) {
-            this.name = "year-display";
-            this.template = "<h2><%= time %></h2>";
-            this.template_data = {
-                time: "2012"
-            };
-            this._super(config, parent);
-        }
-    });
-    Vizabi.registerComponent('year-display', YearDisplay);
+    beforeAll(function() {
+        initializeDOM();
+        placeholder = document.getElementById("test-placeholder");
+        utils = Vizabi.utils;
 
-    //create a new component class
-    var MyComp = Vizabi.Component.extend({
-        init: function(config, parent) {
-            this.name = 'my_component';
-            this.template = '<div><div class="display"></div></div>';
-            this.components = [{
-                component: 'year-display',
-                placeholder: '.display',
-            }];
-            this._super(config, parent);
-        }
+        //create a new component fo ryear display and register
+        YearDisplay = Vizabi.Component.extend({
+            init: function(config, parent) {
+                this.name = "year-display";
+                this.template = "<h2><%= time %></h2>";
+                this.template_data = {
+                    time: "2012"
+                };
+                this._super(config, parent);
+            }
+        });
+
+        //create a new component class
+        MyComp = Vizabi.Component.extend({
+            init: function(config, parent) {
+                this.name = 'my_component';
+                this.template = '<div><div class="display"></div></div>';
+                this.components = [{
+                    component: 'year-display',
+                    placeholder: '.display',
+                }];
+                this._super(config, parent);
+            }
+        });
+        //clear just in case
+        Vizabi.Component.unregister('year-display');
+        Vizabi.Component.register('year-display', YearDisplay);
     });
-    var component;
 
     it("should have year display registered as a component", function() {
-        expect(Vizabi._components.hasOwnProperty('year-display')).toBe(true);
+        expect(Vizabi.Component._collection.hasOwnProperty('year-display')).toBe(true);
     });
 
     it("should render template in placeholder", function() {
@@ -44,7 +49,7 @@ describe("* Base: Component", function() {
     });
 
 
-    describe("load subcomponents", function() {
+    describe("- Subcomponents", function() {
 
         it("should load and render subcomponents", function() {
             placeholder.innerHTML = '';
@@ -52,7 +57,7 @@ describe("* Base: Component", function() {
                 placeholder: placeholder
             });
             component.render();
-            expect(placeholder.innerHTML).toEqual('<div><div class="display vzb-loading"><h2>2012</h2></div></div>');
+            expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2012</h2></div></div>');
         });
 
     });
