@@ -28,10 +28,14 @@ define([
                 type: "language"
             }];
             
+            this.needsUpdate = false;
+            this.value_1 = false;
+            this.scaleType_1 = false;
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    _this.updateView();
+                    if(_this.model.color.value != _this.value_1 
+                       || _this.model.color.scaleType != _this.scaleType_1 ) _this.needsUpdate = true;
                 },
                 "readyOnce": function(evt) {
                     _this.updateView();
@@ -40,6 +44,10 @@ define([
                     _this.updateView();
                 },
                 "ready": function(evt) {
+                    if(_this.needsUpdate){
+                        _this.updateView();
+                        _this.needsUpdate = false;
+                    }
                 }   
             }
             
@@ -130,7 +138,6 @@ define([
 
                 if(_this.model.color.use == "indicator"){
                     var domain = _this.model.color.getScale().domain();
-                   
                     d3.select(this).select(".vzb-cl-color-legend")
                         .text(domain[index])
                 }else{

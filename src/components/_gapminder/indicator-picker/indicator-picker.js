@@ -13,7 +13,7 @@ define([
         'geo':          {use: 'property',   unit: '', scales: ['ordinal']       },
         'time':         {use: 'indicator',  unit: 'year', scales: ['time']          },
         'lex':          {use: 'indicator',  unit: 'years', scales: ['linear'] },
-        'gdp_per_cap':  {use: 'indicator',  unit: '$/year/person', scales: ['linear', 'log'] },
+        'gdp_per_cap':  {use: 'indicator',  unit: '$/year/person', scales: ['log', 'linear'] },
         'pop':          {use: 'indicator',  unit: '', scales: ['linear', 'log'] },
         '_default':     {use: 'value',      unit: '', scales: ['linear', 'log'] }
     };
