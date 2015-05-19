@@ -1,37 +1,57 @@
-var Vizabi = function(tool_path, container, options) {
+/*!
+ * VIZABI MAIN
+ */
 
-    var tool_name = tool_path.split("/").pop(),
-        path = 'tools/' + tool_path + '/' + tool_name,
-        loaded = false,
-        viz = {
-            _name: tool_name,
-            _placeholder: container,
-            _tool: null
-        },
-        tool;
+(function() {
 
-    //require to import all tools, components, etc to AMD version
-    require(["plugins"], function() {
+    "use strict";
 
-        //require and render tool
-        require([path], function(Tool) {
-            viz._tool = tool = new Tool({
-                name: viz._name,
-                placeholder: viz._placeholder
-            }, options);
+    var root = this;
+    var previous = root.Vizabi;
 
+    var Vizabi = function(tool, placeholder, options) {
+        return startTool(tool, placeholder, options);
+    };
+
+    //stores each registered tool
+    Vizabi._tools = {};
+    //stores reference to each tool on the page
+    Vizabi._instances = {};
+
+    function startTool(tool, placeholder, options) {
+        if (Vizabi._tools.hasOwnProperty(tool)) {
+            return Vizabi._tools[tool](tool, placeholder, options);
+        } else {
+            Vizabi.utils.warn("Tool " + tool + " was not found.");
+        }
+    }
+
+    /*
+     * registers a new tool to Vizabi
+     * @param {String} toolname tool name
+     * @param {Object} code
+     */
+    Vizabi.registerTool = function(toolname, code) {
+        Vizabi._tools[toolname] = code;
+    };
+
+    /*
+     * unregisters a tool in Vizabi
+     * @param {String} toolname tool name
+     */
+    Vizabi.unregisterTool = function(toolname) {
+        delete Vizabi._tools[toolname];
+    };
+
+    //if AMD define
+    if (typeof define === 'function' && define.amd) {
+        define(function() {
+            return Vizabi;
         });
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = Vizabi;
+    }
 
-    });
+    root.Vizabi = Vizabi;
 
-    /* Vizabi API Methods*/
-    viz.setOptions = function(opts, overwrite) {
-        if (tool) tool.setOptions(opts, overwrite);
-    };
-    viz.getOptions = function(opts, overwrite) {
-        return (tool) ? tool.model.getObject() : {};
-    };
-
-    return viz;
-
-};
+}).call(this);
