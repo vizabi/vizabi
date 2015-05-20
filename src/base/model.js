@@ -35,6 +35,7 @@
             this._ready = false;
             this._readyOnce = false; //has this model ever been ready?
             this._loading = []; //array of processes that are loading
+            this._intervals = getIntervals(this);
 
             //will the model be hooked to data?
             this._hooks = {};
@@ -157,7 +158,7 @@
                 _this.triggerAll(events, _this.getObject());
                 _this._setting = false;
 
-                if(!this.isHook()) {
+                if (!this.isHook()) {
                     this.setReady();
                 }
             }
@@ -199,6 +200,20 @@
                 }
             }
             return obj;
+        },
+
+        /**
+         * Clears this model, submodels, data and events
+         */
+        clear: function() {
+            var submodels = this.getSubmodels();
+            for (var i in submodels) {
+                submodels[i].clear();
+            }
+            this.setReady(false);
+            this.unbindAll();
+            this._intervals.clearAllIntervals();
+            this._data = {};
         },
 
         /**
@@ -939,16 +954,29 @@
             }
         };
 
-        if(isModel(val)) {
+        if (isModel(val)) {
             val.on(binds);
             return val;
-        }
-        else {
+        } else {
             //special model
             var model = (modelsList.hasOwnProperty(name)) ? modelsList[name] : Model;
             return new model(val, ctx, binds);
         }
 
+    }
+
+    /**
+     * gets closest interval from this model or parent
+     * @returns {Object} Intervals object
+     */
+    function getIntervals(ctx) {
+        if (ctx._intervals) {
+            return ctx._intervals;
+        } else if (ctx._parent) {
+            return getIntervals(ctx._parent);
+        } else {
+            return new Vizabi.Intervals();
+        }
     }
 
     /**

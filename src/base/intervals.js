@@ -1,20 +1,23 @@
-/*
- * Controls intervals in a scoped manner
+/*!
+ * VIZABI INTERVALS
+ * Manages Vizabi layout profiles and classes
  */
 
-define([
-    "base/class"
-], function(Class) {
+(function() {
 
-    var Intervals = Class.extend({
+    "use strict";
 
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    var Intervals = Vizabi.Class.extend({
         /**
          * Initializes intervals
          */
         init: function() {
             this.intervals = {};
         },
-
         /**
          * Sets an interval
          * @param {String} name name of interval
@@ -25,15 +28,13 @@ define([
             this.clearInterval(name);
             this.intervals[name] = setInterval(func, duration);
         },
-
         /**
          * Clears an interval
          * @param {String} name name of interval to be removed
          */
         clearInterval: function(name) {
-            clearInterval(this.intervals[name]);
+            return (name) ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
         },
-
         /**
          * Clears all intervals
          */
@@ -42,8 +43,8 @@ define([
                 this.clearInterval(i);
             }
         }
-
     });
 
-    return Intervals;
-});
+    Vizabi.Intervals = Intervals;
+
+}).call(this);
