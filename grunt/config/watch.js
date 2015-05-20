@@ -11,7 +11,7 @@ module.exports = {
     },
     scripts: {
         files: ['src/**/*.js'],
-        tasks: ['concat']
+        tasks: ['concat', 'jasmine']
     },
     test: {
         files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],

@@ -1,10 +1,19 @@
-define([
-    'base/class',
-    'q',
-    'lodash'
-], function(Class, Q, _) {
+/*!
+ * VIZABI DATA
+ * Manages data
+ */
 
-    var dataManager = Class.extend({
+(function() {
+
+    "use strict";
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    var Promise = Vizabi.Promise;
+
+    var readersList = {};
+
+    var Data = Vizabi.Class.extend({
 
         /**
          * Initializes the data manager.
@@ -17,60 +26,49 @@ define([
          * Loads resource from reader or cache
          * @param {Array} query Array with queries to be loaded
          * @param {String} language Language
-         * @param {Object} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use - data reader info
          * @param {String} path Where data is located
          */
         load: function(query, language, reader, evts) {
 
-            var _this = this,
-                defer = Q.defer(),
-                promises = [],
-                cached = this.isCached(query, language, reader),
-                loaded = false,
-                promise;
+            var _this = this;
+            var promise = new Promise();
+            var promises = [];
+            var cached = this.isCached(query, language, reader);
+            var loaded = false;
 
             //if result is cached, dont load anything
-            if (cached) {
-                promise = true;
-            } else {
+            if (!cached) {
+                utils.timeStamp("Vizabi Data: Loading Data");
 
-                console.timeStamp("Vizabi Data: Loading Data");
-
-                if (evts && _.isFunction(evts.load_start)) {
+                if (evts && typeof evts.load_start === 'function') {
                     evts.load_start();
                 }
 
-                promise = this.loadFromReader(query, language, reader).then(function(queryId) {
+                promises.push(this.loadFromReader(query, language, reader).then(function(queryId) {
                     loaded = true;
                     cached = queryId;
-                });
+                }));
             }
-            promises.push(promise);
 
-            Q.all(promises).then(
-                // Great success! :D
+            Promise.all(promises).then(
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
-
-                    defer.resolve(data);
-
+                    promise.resolve(data);
                     //not loading anymore
-                    if (loaded && evts && _.isFunction(evts.load_end)) {
+                    if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
                 },
-                // Unfortunate error
                 function() {
                     defer.reject('Error loading file...');
-
                     //not loading anymore
-                    if (loaded && evts && _.isFunction(evts.load_end)) {
+                    if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
                 });
-
-            return defer.promise;
+            return promise;
         },
 
         /**
@@ -80,45 +78,46 @@ define([
          * @param {Object} reader Which reader to use. E.g.: "local-json"
          * @param {String} path Where data is located
          */
-        loadFromReader: function(query, lang, reader) {
-            var _this = this,
-                defer = Q.defer(),
-                reader_name = reader.reader,
-                queryId = this._idQuery(query, lang, reader);
 
-            require(["readers/" + reader_name], function(Reader) {
-                var r = new Reader(reader);
-                r.read(query, lang).then(function() {
+        loadFromReader: function(query, lang, reader) {
+            var _this = this;
+            var promise = new Promise();
+            var reader_name = reader.reader;
+            var queryId = idQuery(query, lang, reader);
+
+            if (!readersList.hasOwnProperty(reader_name)) {
+                utils.error('Vizabi Reader ' + reader_name + ' not found');
+                return;
+            }
+
+            var r = new readersList[reader_name](reader);
+            r.read(query, lang).then(function() {
                     //success reading
-                    
-                    //TODO this is a temporary solution that does preprocessing of data
-                    var values = _.flatten(r.getData()),
-                        q = query[0];
+                    var values = r.getData();
+                    var q = query[0];
 
                     var query_region = (q.select.indexOf("geo.region") !== -1);
 
                     //make sure all queried is returned
-                    values = _.map(values, function(d) {
-                        for(var i=0; i<q.select.length; i++) {
+                    values = values.map(function(d) {
+                        for (var i = 0; i < q.select.length; i++) {
                             var col = q.select[i];
-                            if(_.isUndefined(d[col])) {
+                            if (typeof d[col] === 'undefined') {
                                 d[col] = null;
                             }
                         }
                         return d;
                     });
 
-                    values = _.map(values, function(d) {
+                    values = values.map(function(d) {
                         if (d.geo === null) d.geo = d["geo.name"];
-
                         if (query_region && d["geo.region"] === null) {
                             d["geo.region"] = d.geo;
                         }
-
                         return d;
                     });
                     // convert time to Date()
-                    values = _.map(values, function(d) {
+                    values = values.map(values, function(d) {
                         d.time = new Date(d.time);
                         d.time.setHours(0);
                         return d;
@@ -129,14 +128,14 @@ define([
                     });
 
                     _this._data[queryId] = values;
-                    defer.resolve(queryId);
+                    promise.resolve(queryId);
                 },
                 //error reading
                 function(err) {
-                    defer.reject(err);
+                    promise.reject(err);
                 });
-            });
-            return defer.promise;
+
+            return promise;
         },
 
         /**
@@ -157,19 +156,12 @@ define([
          */
         isCached: function(query, language, reader) {
             //encode in one string
-            var q = this._idQuery(query, language, reader);
+            var q = idQuery(query, language, reader);
             //simply check if we have this in internal data
-            if (_.keys(this._data).indexOf(q) !== -1) {
+            if (Object.keys(this._data).indexOf(q) !== -1) {
                 return q;
             }
             return false;
-        },
-
-        /**
-         * Encodes query into a string
-         */
-        _idQuery: function(query, language, reader) {
-            return JSON.stringify(query) + language + JSON.stringify(reader);
         },
 
         /**
@@ -180,5 +172,46 @@ define([
         }
     });
 
-    return dataManager;
-});
+    /**
+     * Initializes the reader.
+     * @param {Object} reader_info Information about the reader
+     */
+    var Reader = Vizabi.Class.extend({
+        init: function(reader_info) {
+            this._name = this._name || reader_info.reader;
+            this._data = reader_info.data || [];
+            this._basepath = this._basepath || reader_info.path || null;
+        },
+
+        /**
+         * Reads from source
+         * @param {Array} queries Queries to be performed
+         * @param {String} language language
+         * @returns a promise that will be resolved when data is read
+         */
+        read: function(queries, language) {
+            return Promise.all([]);
+        },
+
+        /**
+         * Gets the data
+         * @returns all data
+         */
+        getData: function() {
+            return this._data;
+        }
+
+    });
+
+    /**
+     * Encodes query into a string
+     */
+    function idQuery(query, language, reader) {
+        return JSON.stringify(query) + language + JSON.stringify(reader);
+    }
+
+    readersList = Reader._collection;
+    Vizabi.Reader = Reader;
+    Vizabi.Data = Data;
+
+}).call(this);
