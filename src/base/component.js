@@ -28,7 +28,7 @@
             this._readyOnce = false;
 
             this.name = this.name || config.name;
-            this.template = this.template || config.template;
+            this.template = this.template || "<div></div>";
             this.placeholder = this.placeholder || config.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
@@ -174,25 +174,6 @@
 
         isRoot: function() {
             return this.parent === this;
-        },
-
-        /**
-         * Reassigns all models (on overwrite
-         */
-        //TODO: After changes in _modelMapping, this won't work. Fix it!
-        reassignModel: function() {
-            //only reassign if it's already initialized
-            if (!this._ready) return;
-
-            var _this = this;
-            //for each subcomponent configuration, reassign model
-            utils.forEach(this._components_config, function(c, i) {
-                var model = _this._modelMapping(c.name, c.model);
-                if (model) {
-                    _this.components[i].model = model;
-                    _this.components[i].reassignModel();
-                }
-            });
         },
 
         /**

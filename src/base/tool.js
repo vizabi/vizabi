@@ -1,63 +1,78 @@
-define([
-    'd3',
-    'lodash',
-    'base/utils',
-    'base/component',
-    'base/layout',
-    'models/tool'
-], function(d3, _, utils, Component, Layout, ToolModel) {
+/*!
+ * VIZABI COMPONENT
+ * Base Component
+ */
 
-    var class_placeholder = "vzb-placeholder",
-        class_loading_data = "vzb-loading-data",
-        class_loading_error = "vzb-loading-error",
-        class_loading = "vzb-loading";
-    //Tool does everything a component does, but has different defaults
-    //And possibly some extra methods
-    var Tool = Component.extend({
+(function() {
+
+    "use strict";
+
+    var class_loading = "vzb-loading";
+    var class_placeholder = "vzb-placeholder";
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    var templates = {};
+    var toolsList = {};
+
+    //tool model is quite simple and doesn't need to be registered
+    var ToolModel = Vizabi.Model.extend({
+        /**
+         * Initializes the tool model.
+         * @param {Object} values The initial values of this model
+         * @param {Object} binds contains initial bindings for the model
+         * @param {Function|Array} validade validate rules
+         */
+        init: function(values, defaults, binds, validate) {
+            this._id = utils.uniqueId("tm");
+            this._type = "tool";
+
+            //generate validation function
+            this.validate = generateValidate(this, validate);
+
+            //default submodels
+            values = defaultOptions(values, defaults);
+
+            //constructor is similar to model
+            this._super(values, null, binds);
+
+            // change language
+            if (values.language) {
+                var _this = this;
+                this.on("change:language", function() {
+                    _this.trigger("translate");
+                });
+            }
+        }
+    });
+
+    //tool
+    var Tool = Vizabi.Component.extend({
 
         /**
          * Initializes the tool
-         * @param {Object} config Initial config, with name and placeholder
+         * @param {Object} placeholder object
          * @param {Object} options Options such as state, data, etc
          */
-        init: function(config, options) {
+        init: function(placeholder, options) {
 
-            options = options || {}; //options may be undefined
+            this._id = utils.uniqueId("t");
+            this.layout = new Vizabi.Layout();
+            this.template = this.template || '<div class="vzb-tool vzb-tool-<%- (name || "") %> vzb-tool"><div class="vzb-tool vzb-tool-content"><div class="vzb-tool vzb-tool-stage"><div class="vzb-tool vzb-tool-viz"></div><div class="vzb-tool vzb-tool-timeslider"></div></div><div class="vzb-tool vzb-tool-buttonlist"></div></div></div>';
 
-            //tool-specific values
-            this._id = _.uniqueId("t");
-            this.template = this.template || "tools/tool";
-            this.layout = new Layout();
-            this.ui = options.ui || {};
             this.model_binds = this.model_binds || {};
             this.default_options = this.default_options || {};
 
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
 
-            //build tool model
             var _this = this;
-
-            var callbacks = utils.extendCallbacks({
-                'set': function(evt, val) {
-                    //binding external events
-                    _this._bindEvents();
-                    //this ui is the model
-                    _this.ui = _this.model.ui;
-                    //rendering
-                    _this.render().then(function() {
-                        _this.triggerAll(evt, val);
-                    });
-                },
+            var callbacks = utils.merge({
                 'change': function(evt, val) {
-                    //defer to give time for loading
-                    _.defer(function() {
-                        if (_this._ready) {
-                            _this.model.validate().then(function() {
-                                _this.triggerAll(evt, val);
-                            });
-                        }
-                    });
+                    if (_this._ready) {
+                        _this.model.validate();
+                        _this.triggerAll(evt, val);
+                    }
                 },
                 'translate': function(evt, val) {
                     if (_this._ready) {
@@ -82,15 +97,16 @@ define([
 
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
 
-            // Parent Constructor (this = root parent)
-            this._super(config, this);
+            this.ui = this.model.ui;
 
-            //placeholder should have the placeholder class
-            if (!this.placeholder.classed(class_placeholder)) {
-                this.placeholder.classed(class_placeholder, true);
-            }
-            //placeholder always starts with loading class
-            this.placeholder.classed(class_loading, true);
+            this._super({
+                name: this.name || this._id,
+                placeholder: placeholder
+            }, this);
+
+            this._bindEvents();
+            this.render();
+
         },
 
         /**
@@ -109,10 +125,9 @@ define([
          */
         setOptions: function(options, overwrite, silent) {
             if (overwrite) {
-                this.model.reset(options, silent);
-                this.reassignModel();
+                this.model.reset(options);
             } else {
-                this.model.set(options, silent);
+                this.model.set(options);
             }
         },
 
@@ -120,11 +135,8 @@ define([
          * Displays loading class
          */
         beforeLoading: function() {
-            //do not update if it's loading
-            if (!this.placeholder.classed(class_loading_data)) {
-                this.placeholder.classed(class_loading_data, true);
-                this.blockUpdate(true);
-                this.blockResize(true);
+            if (!utils.hasClass(this.placeholder, class_loading_data)) {
+                utils.addClass(this.placeholder, class_loading_data);
             }
         },
 
@@ -132,21 +144,14 @@ define([
          * Removes loading class
          */
         afterLoading: function() {
-            //it's ok to update if not loading
-            this.blockUpdate(false);
-            this.blockResize(false);
-            //defer to make sure it's updated
-            var _this = this;
-            _.defer(function() {
-                _this.placeholder.classed(class_loading_data, false);
-            });
+            utils.removeClass(this.placeholder, class_loading_data);
         },
 
         /**
          * Adds loading error class
          */
         errorLoading: function() {
-            this.placeholder.classed(class_loading_error, false);
+            utils.addClass(this.placeholder, class_loading_error);
         },
 
         /* ==========================
@@ -159,18 +164,96 @@ define([
          */
         validate: function() {
             //placeholder for tool validation methods
-        },
-
-        //TODO: remove query from here
-        /**
-         * Placeholder for query
-         */
-        getQuery: function() {
-            return []; //return tool queries
         }
 
 
     });
 
-    return Tool;
-});
+    /* ==========================
+     * Validation methods
+     * ==========================
+     */
+
+    /**
+     * Generates a validation function based on specific model validation
+     * @param {Object} m model
+     * @param {Function} validate validation function
+     * @returns {Function} validation
+     */
+    function generateValidate(m, validate) {
+        var max = 10;
+
+        function validate_func() {
+            var model = JSON.stringify(m.getObject());
+            var c = arguments[0] || 0;
+            validate();
+            var model2 = JSON.stringify(m.getObject());
+            if (c >= max) {
+                utils.error("Max validation loop.");
+            } else if (model !== model2) {
+                validate_func(++c);
+            }
+        }
+        return validate_func;
+    }
+
+    /* ==========================
+     * Default options methods
+     * ==========================
+     */
+
+    /**
+     * Generates a valid state based on default options
+     */
+    function defaultOptions(values, defaults) {
+
+        for (var field in defaults) {
+
+            var blueprint = defaults[field];
+            var original = values[field];
+            //specified type, default value and possible values
+            var type = utils.isObject(blueprint) ? blueprint._type_ : null;
+            var defs = utils.isObject(blueprint) ? blueprint._defs_ : null;
+            var opts = utils.isObject(blueprint) ? blueprint._opts_ : null;
+
+            //in case there's no type, just deep extend as much as possible
+            if (!type) {
+                if (typeof original === "undefined") {
+                    values[field] = blueprint;
+                } else if (utils.isObject(blueprint) && utils.isObject(original)) {
+
+                    values[field] = defaultOptions(original, blueprint);
+                }
+                continue;
+            }
+
+            //otherwise, each case has special verification
+            if (type === "number" && isNaN(original)) {
+                values[field] = isNaN(defs) ? 0 : defs;
+            } else if (type === "string" && typeof original !== 'string') {
+                values[field] = (typeof defs === 'string') ? defs : "";
+            } else if (type === "array" && utils.isArray(original)) {
+                values[field] = utils.isArray(defs) ? defs : [];
+            } else if (type === "object" && !utils.isObject(original)) {
+                values[field] = utils.isObject(defs) ? defs : {};
+            } else if (type === "model" || type === "hook") {
+                if (!utils.isObject(original)) {
+                    values[field] = {};
+                }
+                values[field] = defaultOptions(values[field], defs);
+            }
+
+            //if possible values are determined, we should respect it
+            if (utils.isArray(opts) && defs && opts.indexOf(values[field]) === -1) {
+                utils.warn("Vizabi options contain invalid value for '" + field + "'. Permitted values: " + JSON.stringify(opts) + ". Changing to default");
+                values[field] = defs;
+            }
+        }
+        return values;
+    }
+
+
+    Vizabi.Tool = Tool;
+
+
+}).call(this);
