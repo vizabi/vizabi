@@ -324,7 +324,7 @@
 
             //load hook
             //if its not a hook, the promise will not be created
-            if (this.isHook() && data_hook && query.length) {
+            if (this.isHook() && data_hook && query) {
 
                 //get reader omfp
                 var reader = data_hook.getObject();
@@ -373,7 +373,9 @@
 
             //when all promises/loading have been done successfully
             //we will consider this done
-            Promise.all(promises).then(function() {
+            var wait = (promises.length) ? Promise.all(promises) : new Promise.resolve();
+
+            wait.then(function() {
 
                 if (_this.validate) {
                     _this.validate();
@@ -568,9 +570,9 @@
             if (this.isHook() && this._dataModel) {
 
                 //all dimensions except time (continuous)
-                var dimensions = _.without(this.getAllDimensions(), "time");
+                var dimensions = utils.without(this.getAllDimensions(), "time");
 
-                return _.map(this.getUnique(dimensions), function(item) {
+                return this.getUnique(dimensions).map(function(item) {
                     // Forcefully write the time to item
                     // TODO: Clean this hack
                     if (filter && filter['time']) {

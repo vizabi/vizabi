@@ -191,7 +191,7 @@
          * @returns a promise that will be resolved when data is read
          */
         read: function(queries, language) {
-            return Promise.all([]).resolve(this._data);
+            return new Promise.resolve(this._data);
         },
 
         /**

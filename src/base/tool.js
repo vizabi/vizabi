@@ -253,6 +253,10 @@
         return values;
     }
 
+    Tool.isTool = function(c) {
+        return (c._id && c._id[0] === 't');
+    }
+
 
     Vizabi.Tool = Tool;
 

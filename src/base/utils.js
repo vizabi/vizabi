@@ -52,7 +52,7 @@
          */
         isObject: function(obj) {
             var type = typeof obj;
-            return type === 'function' || type === 'object' && !!obj;
+            return type === 'object' && !!obj;
         },
 
         /*
@@ -321,6 +321,14 @@
             } else { //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
+        },
+
+        /*
+         * Defers a function
+         * @param {Function} func
+         */
+        defer: function(func) {
+            setTimeout(func, 1);
         },
 
         /*

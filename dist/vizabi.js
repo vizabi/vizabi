@@ -1,4 +1,4 @@
-/*! VIZABI - http://www.gapminder.org - 2015-05-20 *//*!
+/*! VIZABI - http://www.gapminder.org - 2015-05-21 *//*!
  * VIZABI MAIN
  */
 
@@ -104,7 +104,7 @@
          */
         isObject: function(obj) {
             var type = typeof obj;
-            return type === 'function' || type === 'object' && !!obj;
+            return type === 'object' && !!obj;
         },
 
         /*
@@ -183,7 +183,7 @@
         clone: function(src, arr) {
             var clone = {};
             this.forEach(src, function(value, k) {
-                if(arr && arr.indexOf(k) === -1) {
+                if (arr && arr.indexOf(k) === -1) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {
@@ -350,9 +350,13 @@
         throttle: (function() {
             var isThrottled = {};
             return function(func, ms) {
-                if(isThrottled[func]) { return };
+                if (isThrottled[func]) {
+                    return
+                };
                 isThrottled[func] = true;
-                setTimeout(function () { isThrottled[func] = false; }, ms);
+                setTimeout(function() {
+                    isThrottled[func] = false;
+                }, ms);
                 func();
             }
         })(),
@@ -369,7 +373,76 @@
             } else { //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
+        },
+
+        /*
+         * Defers a function
+         * @param {Function} func
+         */
+        defer: function(func) {
+            setTimeout(func, 1);
+        },
+
+        /*
+         * Performs an ajax request
+         * @param {Object} options
+         * @param {String} className 
+         * @return {Boolean}
+         */
+        ajax: function(options) {
+            var request = new XMLHttpRequest();
+            request.open(options.method, options.url, true);
+            if(options.method === "POST") {
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            }
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    // Success!
+                    var data = (options.json)? JSON.parse(request.responseText) : request.responseText;
+                    if(options.success) options.success(data);
+                } else {
+                    if(options.error) options.error();
+                }
+            };
+            request.onerror = function() {
+                if(options.error) options.error();
+            };
+            request.send(options.data);
+        },
+
+        /*
+         * Performs a GET http request
+         */
+        get: function(url, pars, success, error, json) {
+            var pars = [];
+            this.forEach(pars, function(value, key) {
+                pars.push(key+"="+value);
+            });
+            url = (pars.length) ? url+"?"+pars.join("&") : url;
+            this.ajax({
+                method: "GET",
+                url: url,
+                success: success,
+                error: error,
+                json: json
+            });
+        },
+
+        /*
+         * Performs a POST http request
+         */
+        post: function(url, pars, success, error, json) {
+            this.ajax({
+                method: "POST",
+                url: url,
+                success: success,
+                error: error,
+                json: json,
+                data: pars
+            });
         }
+
+
     };
 
 }).call(this);
@@ -769,7 +842,7 @@
 
             var _this = this;
             var promise = new Promise();
-            var promises = [];
+            var wait = Promise.all([]);
             var cached = this.isCached(query, language, reader);
             var loaded = false;
 
@@ -780,14 +853,15 @@
                 if (evts && typeof evts.load_start === 'function') {
                     evts.load_start();
                 }
-
-                promises.push(this.loadFromReader(query, language, reader).then(function(queryId) {
+                wait = new Promise();
+                this.loadFromReader(query, language, reader).then(function(queryId) {
                     loaded = true;
                     cached = queryId;
-                }));
+                    wait.resolve();
+                });
             }
 
-            Promise.all(promises).then(
+            wait.then(
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
@@ -798,7 +872,7 @@
                     }
                 },
                 function() {
-                    defer.reject('Error loading file...');
+                    promise.reject('Error loading file...');
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
@@ -830,7 +904,7 @@
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
-                    var q = query[0];
+                    var q = query;
 
                     var query_region = (q.select.indexOf("geo.region") !== -1);
 
@@ -853,7 +927,7 @@
                         return d;
                     });
                     // convert time to Date()
-                    values = values.map(values, function(d) {
+                    values = values.map(function(d) {
                         d.time = new Date(d.time);
                         d.time.setHours(0);
                         return d;
@@ -926,7 +1000,7 @@
          * @returns a promise that will be resolved when data is read
          */
         read: function(queries, language) {
-            return Promise.all([]);
+            return new Promise.resolve(this._data);
         },
 
         /**
@@ -1391,7 +1465,19 @@
 
             //initial values
             if (values) {
-                this.set(values);
+                //if it's a hook, it's certainly not ready yet
+                if (values.hasOwnProperty(HOOK_PROPERTY)) {
+                    this.freeze();
+                    this.set(values);
+                    var _this = this;
+                    console.log("HOOK:",_this.use);
+                    utils.defer(function() {
+                        console.log("HOOK READY:",_this.use);
+                        _this.unfreeze();
+                    });
+                } else {
+                    this.set(values);
+                }
             }
 
         },
@@ -1662,7 +1748,7 @@
 
             //load hook
             //if its not a hook, the promise will not be created
-            if (this.isHook() && data_hook && query.length) {
+            if (this.isHook() && data_hook && query) {
 
                 //get reader omfp
                 var reader = data_hook.getObject();
@@ -1711,7 +1797,9 @@
 
             //when all promises/loading have been done successfully
             //we will consider this done
-            Promise.all(promises).then(function() {
+            var wait = (promises.length) ? Promise.all(promises) : new Promise.resolve();
+
+            wait.then(function() {
 
                 if (_this.validate) {
                     _this.validate();
@@ -1906,9 +1994,9 @@
             if (this.isHook() && this._dataModel) {
 
                 //all dimensions except time (continuous)
-                var dimensions = _.without(this.getAllDimensions(), "time");
+                var dimensions = utils.without(this.getAllDimensions(), "time");
 
-                return _.map(this.getUnique(dimensions), function(item) {
+                return this.getUnique(dimensions).map(function(item) {
                     // Forcefully write the time to item
                     // TODO: Clean this hack
                     if (filter && filter['time']) {
@@ -1959,14 +2047,14 @@
             //else, its a hook (indicator or property) and it needs to query
             else {
                 var dimensions = this.getAllDimensions(),
-                    select = _.union(dimensions, [this[HOOK_VALUE]]),
+                    select = utils.unique(dimensions.concat([this[HOOK_VALUE]])),
                     filters = this.getAllFilters();
                 //return query
-                return [{
+                return {
                     "from": "data",
                     "select": select,
                     "where": filters
-                }];
+                };
             }
         },
 
@@ -2496,23 +2584,22 @@
 
             //if it's a root component with model
             if (this.isRoot() && this.model) {
-                this.model.on("ready", done);
                 this.model.setHooks();
                 this.model.load().then(function() {
-                    _this.model.validate();
-                    this.trigger('dom_ready');
+                    done();
                 });
             } else {
-                this.trigger('dom_ready');
                 done();
             }
 
             function done() {
+                _this.trigger('dom_ready');
                 utils.removeClass(_this.placeholder, class_loading);
+                _this._ready = true;
                 if (!_this._readyOnce) {
-                    _this.trigger('ready');
                     _this._readyOnce = true;
                 }
+                _this.trigger('ready');
             };
         },
 
@@ -2869,6 +2956,10 @@
         return data ? fn(data) : fn;
     }
 
+    Component.isComponent = function(c) {
+        return (c._id && (c._id[0] === 't' || c._id[0] === 'c'));
+    }
+
     componentsList = Component._collection;
     Vizabi.Component = Component;
 
@@ -2883,6 +2974,8 @@
     "use strict";
 
     var class_loading = "vzb-loading";
+    var class_loading_data = "vzb-loading";
+    var class_loading_error = "vzb-loading-error";
     var class_placeholder = "vzb-placeholder";
     var root = this;
     var Vizabi = root.Vizabi;
@@ -2981,7 +3074,6 @@
 
             this._bindEvents();
             this.render();
-
         },
 
         /**
@@ -3107,7 +3199,7 @@
                 values[field] = isNaN(defs) ? 0 : defs;
             } else if (type === "string" && typeof original !== 'string') {
                 values[field] = (typeof defs === 'string') ? defs : "";
-            } else if (type === "array" && utils.isArray(original)) {
+            } else if (type === "array" && !utils.isArray(original)) {
                 values[field] = utils.isArray(defs) ? defs : [];
             } else if (type === "object" && !utils.isObject(original)) {
                 values[field] = utils.isObject(defs) ? defs : {};
@@ -3125,6 +3217,10 @@
             }
         }
         return values;
+    }
+
+    Tool.isTool = function(c) {
+        return (c._id && c._id[0] === 't');
     }
 
 

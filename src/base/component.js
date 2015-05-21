@@ -78,23 +78,22 @@
 
             //if it's a root component with model
             if (this.isRoot() && this.model) {
-                this.model.on("ready", done);
                 this.model.setHooks();
                 this.model.load().then(function() {
-                    _this.model.validate();
-                    this.trigger('dom_ready');
+                    done();
                 });
             } else {
-                this.trigger('dom_ready');
                 done();
             }
 
             function done() {
+                _this.trigger('dom_ready');
                 utils.removeClass(_this.placeholder, class_loading);
+                _this._ready = true;
                 if (!_this._readyOnce) {
-                    _this.trigger('ready');
                     _this._readyOnce = true;
                 }
+                _this.trigger('ready');
             };
         },
 
@@ -449,6 +448,10 @@
                 .split("\r").join("\\'") + "');}return p.join('');");
         // Provide some basic currying to the user
         return data ? fn(data) : fn;
+    }
+
+    Component.isComponent = function(c) {
+        return (c._id && (c._id[0] === 't' || c._id[0] === 'c'));
     }
 
     componentsList = Component._collection;
