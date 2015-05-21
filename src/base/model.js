@@ -621,14 +621,14 @@
             //else, its a hook (indicator or property) and it needs to query
             else {
                 var dimensions = this.getAllDimensions(),
-                    select = _.union(dimensions, [this[HOOK_VALUE]]),
+                    select = utils.unique(dimensions.concat([this[HOOK_VALUE]])),
                     filters = this.getAllFilters();
                 //return query
-                return [{
+                return {
                     "from": "data",
                     "select": select,
                     "where": filters
-                }];
+                };
             }
         },
 

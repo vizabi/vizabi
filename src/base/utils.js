@@ -131,7 +131,7 @@
         clone: function(src, arr) {
             var clone = {};
             this.forEach(src, function(value, k) {
-                if(arr && arr.indexOf(k) === -1) {
+                if (arr && arr.indexOf(k) === -1) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {
@@ -298,9 +298,13 @@
         throttle: (function() {
             var isThrottled = {};
             return function(func, ms) {
-                if(isThrottled[func]) { return };
+                if (isThrottled[func]) {
+                    return
+                };
                 isThrottled[func] = true;
-                setTimeout(function () { isThrottled[func] = false; }, ms);
+                setTimeout(function() {
+                    isThrottled[func] = false;
+                }, ms);
                 func();
             }
         })(),
@@ -317,7 +321,68 @@
             } else { //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
+        },
+
+        /*
+         * Performs an ajax request
+         * @param {Object} options
+         * @param {String} className 
+         * @return {Boolean}
+         */
+        ajax: function(options) {
+            var request = new XMLHttpRequest();
+            request.open(options.method, options.url, true);
+            if(options.method === "POST") {
+                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            }
+            request.onload = function() {
+                if (request.status >= 200 && request.status < 400) {
+                    // Success!
+                    var data = (options.json)? JSON.parse(request.responseText) : request.responseText;
+                    if(options.success) options.success(data);
+                } else {
+                    if(options.error) options.error();
+                }
+            };
+            request.onerror = function() {
+                if(options.error) options.error();
+            };
+            request.send(options.data);
+        },
+
+        /*
+         * Performs a GET http request
+         */
+        get: function(url, pars, success, error, json) {
+            var pars = [];
+            this.forEach(pars, function(value, key) {
+                pars.push(key+"="+value);
+            });
+            url = (pars.length) ? url+"?"+pars.join("&") : url;
+            this.ajax({
+                method: "GET",
+                url: url,
+                success: success,
+                error: error,
+                json: json
+            });
+        },
+
+        /*
+         * Performs a POST http request
+         */
+        post: function(url, pars, success, error, json) {
+            this.ajax({
+                method: "POST",
+                url: url,
+                success: success,
+                error: error,
+                json: json,
+                data: pars
+            });
         }
+
+
     };
 
 }).call(this);

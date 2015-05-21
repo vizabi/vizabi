@@ -33,7 +33,7 @@
 
             var _this = this;
             var promise = new Promise();
-            var promises = [];
+            var wait = Promise.all([]);
             var cached = this.isCached(query, language, reader);
             var loaded = false;
 
@@ -44,14 +44,15 @@
                 if (evts && typeof evts.load_start === 'function') {
                     evts.load_start();
                 }
-
-                promises.push(this.loadFromReader(query, language, reader).then(function(queryId) {
+                wait = new Promise();
+                this.loadFromReader(query, language, reader).then(function(queryId) {
                     loaded = true;
                     cached = queryId;
-                }));
+                    wait.resolve();
+                });
             }
 
-            Promise.all(promises).then(
+            wait.then(
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
@@ -62,7 +63,7 @@
                     }
                 },
                 function() {
-                    defer.reject('Error loading file...');
+                    promise.reject('Error loading file...');
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
@@ -94,7 +95,7 @@
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
-                    var q = query[0];
+                    var q = query;
 
                     var query_region = (q.select.indexOf("geo.region") !== -1);
 
@@ -117,7 +118,7 @@
                         return d;
                     });
                     // convert time to Date()
-                    values = values.map(values, function(d) {
+                    values = values.map(function(d) {
                         d.time = new Date(d.time);
                         d.time.setHours(0);
                         return d;
@@ -190,7 +191,7 @@
          * @returns a promise that will be resolved when data is read
          */
         read: function(queries, language) {
-            return Promise.all([]);
+            return Promise.all([]).resolve(this._data);
         },
 
         /**
