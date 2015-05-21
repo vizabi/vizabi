@@ -4,7 +4,7 @@ describe("* Base: Component", function() {
 
     beforeAll(function() {
         initializeDOM();
-        placeholder = document.getElementById("test-placeholder");
+        placeholder = document.getElementById("vzbp-placeholder");
         utils = Vizabi.utils;
 
         //create a new component fo ryear display and register

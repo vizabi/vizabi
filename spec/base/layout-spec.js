@@ -1,7 +1,7 @@
 describe("* Base: Layout", function() {
 
     initializeDOM();
-    var placeholder = document.getElementById("test-placeholder");
+    var placeholder = document.getElementById("vzbp-placeholder");
     var utils = Vizabi.utils;
     var layout;
     

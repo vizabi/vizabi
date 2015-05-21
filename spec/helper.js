@@ -4,7 +4,7 @@ function initializeDOM() {
     div.id = 'test-wrapper';
     //insert placeholder
     var placeholder = document.createElement('div');
-    placeholder.id = 'test-placeholder';
+    placeholder.id = 'vzbp-placeholder';
 
     //add to page
     div.appendChild(placeholder);

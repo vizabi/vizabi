@@ -4,7 +4,8 @@ describe("* Base: Tool", function() {
 
     beforeAll(function() {
         initializeDOM();
-        placeholder = document.getElementById("test-placeholder");
+        placeholder = document.getElementById("vzbp-placeholder");
+        placeholder.innerHTML = '';
         utils = Vizabi.utils;
 
         //create a new component fo ryear display and register
@@ -36,6 +37,7 @@ describe("* Base: Tool", function() {
         });
 
         //create a new component class
+        Vizabi.Tool.unregister('MyTool');
         MyTool = Vizabi.Tool.extend('MyTool', {
             init: function(placeholder, options) {
                 this.name = 'MyTool';
@@ -71,6 +73,15 @@ describe("* Base: Tool", function() {
             }
         });
         expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2011</h2></div></div>');
+    });
+
+    it("should be root component", function() {
+        tool = Vizabi('MyTool', placeholder, {
+            time: {
+                value: 2011
+            }
+        });
+        expect(tool.isRoot()).toBe(true);
     });
 
     it("should be in instances of Vizabi", function() {

@@ -8,6 +8,8 @@
     "use strict";
 
     var class_loading = "vzb-loading";
+    var class_loading_data = "vzb-loading";
+    var class_loading_error = "vzb-loading-error";
     var class_placeholder = "vzb-placeholder";
     var root = this;
     var Vizabi = root.Vizabi;
@@ -106,7 +108,6 @@
 
             this._bindEvents();
             this.render();
-
         },
 
         /**
@@ -232,7 +233,7 @@
                 values[field] = isNaN(defs) ? 0 : defs;
             } else if (type === "string" && typeof original !== 'string') {
                 values[field] = (typeof defs === 'string') ? defs : "";
-            } else if (type === "array" && utils.isArray(original)) {
+            } else if (type === "array" && !utils.isArray(original)) {
                 values[field] = utils.isArray(defs) ? defs : [];
             } else if (type === "object" && !utils.isObject(original)) {
                 values[field] = utils.isObject(defs) ? defs : {};
