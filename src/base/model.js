@@ -34,6 +34,7 @@
             this._set = false;
             this._ready = false;
             this._readyOnce = false; //has this model ever been ready?
+            this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
 
@@ -236,6 +237,10 @@
          * @returns {Boolean} is it loading?
          */
         isLoading: function(p_id) {
+
+            if (this.isHook() && !this._loadedOnce) {
+                return true;
+            }
             if (p_id) {
                 return (this._loading.indexOf(p_id) !== -1);
             }
@@ -384,6 +389,7 @@
                 utils.timeStamp("Vizabi Model: Model loaded: " + _this._id);
 
                 //end this load call
+                _this._loadedOnce = true;
                 _this._loadCall = false;
                 _this.setReady();
 
@@ -536,7 +542,7 @@
 
         getValue: function(filter) {
             //extract id from original filter
-            var id = _.pick(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this.getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -548,7 +554,7 @@
 
         getValues: function(filter) {
             //extract id from original filter
-            var id = _.pick(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this.getAllDimensions());
             return this._getHookedValues(id);
         },
 
@@ -698,7 +704,7 @@
                     min: 0,
                     max: 0
                 },
-                filtered = _.map(this._items, function(d) {
+                filtered = this._items.map(function(d) {
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
                 });
@@ -717,6 +723,11 @@
          */
         getUnique: function(attr) {
 
+            //if it's an array, it will return a list of unique combinations.
+            if (!utils.isArray(attr)) {
+                return this.getUnique([attr]);
+            }
+
             if (!this.isHook()) return;
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
@@ -728,30 +739,19 @@
                 return this._unique[uniq_id];
             }
 
-            //if not in cache, compute
-            //if it's an array, it will return a list of unique combinations.
-            if (utils.isArray(attr)) {
-                var values = this._items.map(function(d) {
-                    return utils.clone(d, attr);
-                });
-                //TODO: Move this up to readers ?
-                if (attr.indexOf("time") !== -1) {
-                    for (var i = 0; i < values.length; i++) {
-                        values[i]['time'] = new Date(values[i]['time']);
-                    };
-                }
-                uniq = utils.unique(values.map(function(n) {
-                    return JSON.stringify(n);
-                }));
+        
+            var v = this._items.map(function(d) {
+                return utils.clone(d, attr);
+            });
+            //TODO: Move this up to readers ?
+            if (attr.indexOf("time") !== -1) {
+                for (var i = 0; i < v.length; i++) {
+                    v[i]['time'] = new Date(v[i]['time']);
+                };
             }
-            //if it's a string, it will return a list of values
-            else {
-                var values = this._items.map(function(d) {
-                    //TODO: Move this up to readers ?
-                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
-                });
-                uniq = utils.unique(values);
-            }
+            uniq = utils.unique(v, function(n) {
+                return JSON.stringify(n);
+            });
 
             this._unique[uniq_id] = uniq;
             return uniq;
@@ -816,7 +816,7 @@
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
-                    values = _.filter(this._items, filter)
+                    values = this._items.filter(filter)
                         .map(function(d) {
                             return d[_this[HOOK_VALUE]]
                         });

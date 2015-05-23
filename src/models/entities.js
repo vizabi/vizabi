@@ -1,10 +1,16 @@
-define([
-    'lodash',
-    'base/model'
-], function(_, Model) {
+/*!
+ * VIZABI Entities Model
+ */
 
-    var Entity = Model.extend({
+(function() {
 
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    var Entities = Vizabi.Model.extend('entities', {
         /**
          * Initializes the entities model.
          * @param {Object} values The initial values of this model
@@ -14,16 +20,16 @@ define([
         init: function(values, parent, bind) {
 
             this._type = "entities";
-            values = _.extend({
+            values = utils.extend({
                 show: {},
                 select: [],
                 brush: [],
                 opacityNonSelected: 0.3
             }, values);
 
+            this._visible = [];
+
             this._super(values, parent, bind);
-            
-            this.visible = [];
         },
 
         /**
@@ -33,14 +39,16 @@ define([
         validate: function(silent) {
             var _this = this;
             var dimension = this.getDimension();
-            var visible_array = _this.visible.map(function(d){return d[dimension]});
-                        
-            this.select = _.filter(this.select, function(f){    
-                return _.indexOf(visible_array, f[dimension]) !== -1
-            })
-            this.brush = _.filter(this.brush, function(f){    
-                return _.indexOf(visible_array, f[dimension]) !== -1
-            })
+            var visible_array = this._visible.map(function(d) {
+                return d[dimension]
+            });
+
+            this.select = this.select.filter(function(f) {
+                return visible_array.indexOf(f[dimension]) !== -1;
+            });
+            this.brush = this.brush.filter(function(f) {
+                return visible_array.indexOf(f[dimension]) !== -1;
+            });
         },
 
         /**
@@ -65,7 +73,7 @@ define([
          */
         getSelected: function() {
             var dim = this.getDimension();
-            return _.map(this.select, function(d) {
+            return this.select.map(function(d) {
                 return d[dim];
             });
         },
@@ -83,21 +91,22 @@ define([
             } else {
                 var added = {};
                 added[dimension] = value;
-                added["labelOffset"] = [0,0];
+                added["labelOffset"] = [0, 0];
                 if (timeFormatter) {
                     added["trailStartTime"] = timeFormatter(d.time);
                 }
                 this.select = this.select.concat(added);
             }
         },
-        
+
         setLabelOffset: function(d, xy) {
             var dimension = this.getDimension();
             var value = d[dimension];
-            
-            _.find(this.select, function(d) { return d[dimension] === value; })
-                .labelOffset = xy;
-            
+
+            utils.find(this.select, function(d) {
+                return d[dimension] === value;
+            }).labelOffset = xy;
+
             //force the model to trigger events even if value is the same
             this.set("select", this.select, true);
         },
@@ -114,7 +123,7 @@ define([
                 return d[dimension];
             });
 
-            return _.indexOf(select_array, value) !== -1;
+            return select_array.indexOf(value) !== -1;
         },
 
         /**
@@ -167,7 +176,7 @@ define([
                 return d[dimension];
             });
 
-            return _.indexOf(brush_array, value) !== -1;
+            return brush_array.indexOf(value) !== -1;
         },
 
         /**
@@ -176,8 +185,6 @@ define([
         clearHighlighted: function() {
             this.brush = [];
         }
-
     });
 
-    return Entity;
-});
+}).call(this);
