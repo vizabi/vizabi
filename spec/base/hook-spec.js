@@ -44,9 +44,11 @@ describe("* Base: Hooks", function() {
                     name: 'time',
                     type: 'time'
                 }, {
-                    name: 'label'
+                    name: 'label',
+                    type: 'model'
                 }, {
-                    name: 'info'
+                    name: 'info',
+                    type: 'model'
                 }];
                 var _this = this;
                 this.model_binds = {
@@ -66,9 +68,10 @@ describe("* Base: Hooks", function() {
                     time: time
                 });
                 var html = "";
-                utils.forEach(items, function(d) {
-                    html += this.model.label.getValue(d) + '-' + this.model.info.getValue(d);
-                })
+                for(var i in items) {
+                    var d = items[i];
+                    html += '<div>'+this.model.label.getValue(d) + '-' + this.model.info.getValue(d)+'</div>';
+                }
                 this.element.innerHTML = html;
             }
         });
@@ -241,6 +244,22 @@ describe("* Base: Hooks", function() {
                 geo: "swe",
                 time: "1994",
                 pop: "4"
+            },{
+                geo: "nor",
+                time: "1991",
+                pop: "10"
+            }, {
+                geo: "nor",
+                time: "1992",
+                pop: "20"
+            }, {
+                geo: "nor",
+                time: "1993",
+                pop: "30"
+            }, {
+                geo: "nor",
+                time: "1994",
+                pop: "40"
             }]
         };
 
@@ -248,10 +267,16 @@ describe("* Base: Hooks", function() {
             data: options_data,
             bind: {
                 'ready': function() {
+                    console.log("IM READY");
+                    test();
                     done();
                 }
             }
         });
+
+        function test() {
+            console.log(t.model.state.marker.label.getItems());
+        }
 
     });
 

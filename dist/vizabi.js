@@ -1,4 +1,4 @@
-/*! VIZABI - http://www.gapminder.org - 2015-05-21 *//*!
+/*! VIZABI - http://www.gapminder.org - 2015-05-22 *//*!
  * VIZABI MAIN
  */
 
@@ -118,11 +118,15 @@
             if (this.isArray(obj)) {
                 var i;
                 for (i = 0; i < obj.length; i++) {
-                    callback.apply(ctx, [obj[i], i]);
+                    if(callback.apply(ctx, [obj[i], i]) === false) {
+                        break;
+                    }
                 }
             } else {
                 for (var item in obj) {
-                    callback.apply(ctx, [obj[item], item]);
+                    if(callback.apply(ctx, [obj[item], item]) === false) {
+                        break;
+                    }
                 }
             }
         },
@@ -227,20 +231,42 @@
         /*
          * unique items in an array
          * @param {Array} arr original array
+         * @param {Function} func optional evaluation function
          * @returns {Array} unique items
+         * Based on:
          * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
          */
-        unique: function(arr) {
-            var u = {},
-                a = [];
+        unique: function(arr, func) {
+            var u = {};
+            var a = [];
+            if(!func) {
+                func = function(d) { return d };
+            }
             for (var i = 0, l = arr.length; i < l; ++i) {
-                if (u.hasOwnProperty(arr[i])) {
+                var key = func(arr[i]);
+                if (u.hasOwnProperty(key)) {
                     continue;
                 }
                 a.push(arr[i]);
-                u[arr[i]] = 1;
+                u[key] = 1;
             }
             return a;
+        },
+
+        /*
+         * returns first value that passes the test
+         * @param {Array} arr original collection
+         * @returns {Function} func test function
+         */
+        find: function(arr, func) {
+            var found;
+            this.forEach(arr, function(i) {
+                if(func(i)) {
+                    found = i
+                    return false; //break
+                }
+            });
+            return found;
         },
 
         /*
@@ -1446,6 +1472,7 @@
             this._set = false;
             this._ready = false;
             this._readyOnce = false; //has this model ever been ready?
+            this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
 
@@ -1465,19 +1492,7 @@
 
             //initial values
             if (values) {
-                //if it's a hook, it's certainly not ready yet
-                if (values.hasOwnProperty(HOOK_PROPERTY)) {
-                    this.freeze();
-                    this.set(values);
-                    var _this = this;
-                    console.log("HOOK:",_this.use);
-                    utils.defer(function() {
-                        console.log("HOOK READY:",_this.use);
-                        _this.unfreeze();
-                    });
-                } else {
-                    this.set(values);
-                }
+                this.set(values);
             }
 
         },
@@ -1660,6 +1675,10 @@
          * @returns {Boolean} is it loading?
          */
         isLoading: function(p_id) {
+
+            if (this.isHook() && !this._loadedOnce) {
+                return true;
+            }
             if (p_id) {
                 return (this._loading.indexOf(p_id) !== -1);
             }
@@ -1808,6 +1827,7 @@
                 utils.timeStamp("Vizabi Model: Model loaded: " + _this._id);
 
                 //end this load call
+                _this._loadedOnce = true;
                 _this._loadCall = false;
                 _this.setReady();
 
@@ -1960,7 +1980,7 @@
 
         getValue: function(filter) {
             //extract id from original filter
-            var id = _.pick(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this.getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
 
@@ -1972,7 +1992,7 @@
 
         getValues: function(filter) {
             //extract id from original filter
-            var id = _.pick(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this.getAllDimensions());
             return this._getHookedValues(id);
         },
 
@@ -2122,7 +2142,7 @@
                     min: 0,
                     max: 0
                 },
-                filtered = _.map(this._items, function(d) {
+                filtered = this._items.map(function(d) {
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
                 });
@@ -2141,6 +2161,11 @@
          */
         getUnique: function(attr) {
 
+            //if it's an array, it will return a list of unique combinations.
+            if (!utils.isArray(attr)) {
+                return this.getUnique([attr]);
+            }
+
             if (!this.isHook()) return;
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
@@ -2152,30 +2177,19 @@
                 return this._unique[uniq_id];
             }
 
-            //if not in cache, compute
-            //if it's an array, it will return a list of unique combinations.
-            if (utils.isArray(attr)) {
-                var values = this._items.map(function(d) {
-                    return utils.clone(d, attr);
-                });
-                //TODO: Move this up to readers ?
-                if (attr.indexOf("time") !== -1) {
-                    for (var i = 0; i < values.length; i++) {
-                        values[i]['time'] = new Date(values[i]['time']);
-                    };
-                }
-                uniq = utils.unique(values.map(function(n) {
-                    return JSON.stringify(n);
-                }));
+        
+            var v = this._items.map(function(d) {
+                return utils.clone(d, attr);
+            });
+            //TODO: Move this up to readers ?
+            if (attr.indexOf("time") !== -1) {
+                for (var i = 0; i < v.length; i++) {
+                    v[i]['time'] = new Date(v[i]['time']);
+                };
             }
-            //if it's a string, it will return a list of values
-            else {
-                var values = this._items.map(function(d) {
-                    //TODO: Move this up to readers ?
-                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
-                });
-                uniq = utils.unique(values);
-            }
+            uniq = utils.unique(v, function(n) {
+                return JSON.stringify(n);
+            });
 
             this._unique[uniq_id] = uniq;
             return uniq;
@@ -2240,7 +2254,7 @@
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
-                    values = _.filter(this._items, filter)
+                    values = this._items.filter(filter)
                         .map(function(d) {
                             return d[_this[HOOK_VALUE]]
                         });
@@ -2584,10 +2598,11 @@
 
             //if it's a root component with model
             if (this.isRoot() && this.model) {
-                this.model.setHooks();
-                this.model.load().then(function() {
+                this.model.on("ready", function() {
                     done();
-                });
+                })
+                this.model.setHooks();
+                this.model.load();
             } else {
                 done();
             }
@@ -3226,5 +3241,195 @@
 
     Vizabi.Tool = Tool;
 
+
+}).call(this);
+/*!
+ * VIZABI Entities Model
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    var Entities = Vizabi.Model.extend('entities', {
+        /**
+         * Initializes the entities model.
+         * @param {Object} values The initial values of this model
+         * @param parent A reference to the parent model
+         * @param {Object} bind Initial events to bind
+         */
+        init: function(values, parent, bind) {
+
+            this._type = "entities";
+            values = utils.extend({
+                show: {},
+                select: [],
+                brush: [],
+                opacityNonSelected: 0.3
+            }, values);
+
+            this._visible = [];
+
+            this._super(values, parent, bind);
+        },
+
+        /**
+         * Validates the model
+         * @param {boolean} silent Block triggering of events
+         */
+        validate: function(silent) {
+            var _this = this;
+            var dimension = this.getDimension();
+            var visible_array = this._visible.map(function(d) {
+                return d[dimension]
+            });
+
+            this.select = this.select.filter(function(f) {
+                return visible_array.indexOf(f[dimension]) !== -1;
+            });
+            this.brush = this.brush.filter(function(f) {
+                return visible_array.indexOf(f[dimension]) !== -1;
+            });
+        },
+
+        /**
+         * Gets the dimensions in this entities
+         * @returns {String} String with dimension
+         */
+        getDimension: function() {
+            return this.show.dim;
+        },
+
+        /**
+         * Gets the filter in this entities
+         * @returns {Array} Array of unique values
+         */
+        getFilter: function() {
+            return this.show.filter.getObject();
+        },
+
+        /**
+         * Gets the selected items
+         * @returns {Array} Array of unique selected values
+         */
+        getSelected: function() {
+            var dim = this.getDimension();
+            return this.select.map(function(d) {
+                return d[dim];
+            });
+        },
+
+        /**
+         * Selects or unselects an entity from the set
+         */
+        selectEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            if (this.isSelected(d)) {
+                this.select = this.select.filter(function(d) {
+                    return d[dimension] !== value;
+                });
+            } else {
+                var added = {};
+                added[dimension] = value;
+                added["labelOffset"] = [0, 0];
+                if (timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d.time);
+                }
+                this.select = this.select.concat(added);
+            }
+        },
+
+        setLabelOffset: function(d, xy) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+
+            utils.find(this.select, function(d) {
+                return d[dimension] === value;
+            }).labelOffset = xy;
+
+            //force the model to trigger events even if value is the same
+            this.set("select", this.select, true);
+        },
+
+        /**
+         * Selects an entity from the set
+         * @returns {Boolean} whether the item is selected or not
+         */
+        isSelected: function(d) {
+            var dimension = this.getDimension();
+            var value = d[this.getDimension()];
+
+            var select_array = this.select.map(function(d) {
+                return d[dimension];
+            });
+
+            return select_array.indexOf(value) !== -1;
+        },
+
+        /**
+         * Clears selection of items
+         */
+        clearSelected: function() {
+            this.select = [];
+        },
+
+        //TODO: join the following 3 methods with the previous 3
+
+        /**
+         * Highlights an entity from the set
+         */
+        highlightEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            if (!this.isHighlighted(d)) {
+                var added = {};
+                added[dimension] = value;
+                if (timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d.time);
+                }
+                this.brush = this.brush.concat(added);
+            }
+        },
+
+        /**
+         * Unhighlights an entity from the set
+         */
+        unhighlightEntity: function(d, timeFormatter) {
+            var dimension = this.getDimension();
+            var value = d[dimension];
+            if (this.isHighlighted(d)) {
+                this.brush = this.brush.filter(function(d) {
+                    return d[dimension] !== value;
+                });
+            }
+        },
+
+        /**
+         * Checks whether an entity is highlighted from the set
+         * @returns {Boolean} whether the item is highlighted or not
+         */
+        isHighlighted: function(d) {
+            var dimension = this.getDimension();
+            var value = d[this.getDimension()];
+
+            var brush_array = this.brush.map(function(d) {
+                return d[dimension];
+            });
+
+            return brush_array.indexOf(value) !== -1;
+        },
+
+        /**
+         * Clears selection of items
+         */
+        clearHighlighted: function() {
+            this.brush = [];
+        }
+    });
 
 }).call(this);

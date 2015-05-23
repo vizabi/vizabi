@@ -24,9 +24,10 @@ module.exports = {
         options: {
             outfile: 'test.html',
             keepRunner: true,
-            specs: 'spec/**/*-spec.js',
+            specs: 'spec/**/hook-spec.js',
             helpers: 'spec/helper.js',
             styles: ['dist/vizabi.css', 'spec/spec.css'],
+            vendor: ['lib/d3/d3.min.js'],
             page: {
                 //laptopsize
                 viewportSize: {

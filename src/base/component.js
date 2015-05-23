@@ -78,10 +78,11 @@
 
             //if it's a root component with model
             if (this.isRoot() && this.model) {
-                this.model.setHooks();
-                this.model.load().then(function() {
+                this.model.on("ready", function() {
                     done();
-                });
+                })
+                this.model.setHooks();
+                this.model.load();
             } else {
                 done();
             }

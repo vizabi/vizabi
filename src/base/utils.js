@@ -66,11 +66,15 @@
             if (this.isArray(obj)) {
                 var i;
                 for (i = 0; i < obj.length; i++) {
-                    callback.apply(ctx, [obj[i], i]);
+                    if(callback.apply(ctx, [obj[i], i]) === false) {
+                        break;
+                    }
                 }
             } else {
                 for (var item in obj) {
-                    callback.apply(ctx, [obj[item], item]);
+                    if(callback.apply(ctx, [obj[item], item]) === false) {
+                        break;
+                    }
                 }
             }
         },
@@ -175,20 +179,42 @@
         /*
          * unique items in an array
          * @param {Array} arr original array
+         * @param {Function} func optional evaluation function
          * @returns {Array} unique items
+         * Based on:
          * http://stackoverflow.com/questions/1960473/unique-values-in-an-array
          */
-        unique: function(arr) {
-            var u = {},
-                a = [];
+        unique: function(arr, func) {
+            var u = {};
+            var a = [];
+            if(!func) {
+                func = function(d) { return d };
+            }
             for (var i = 0, l = arr.length; i < l; ++i) {
-                if (u.hasOwnProperty(arr[i])) {
+                var key = func(arr[i]);
+                if (u.hasOwnProperty(key)) {
                     continue;
                 }
                 a.push(arr[i]);
-                u[arr[i]] = 1;
+                u[key] = 1;
             }
             return a;
+        },
+
+        /*
+         * returns first value that passes the test
+         * @param {Array} arr original collection
+         * @returns {Function} func test function
+         */
+        find: function(arr, func) {
+            var found;
+            this.forEach(arr, function(i) {
+                if(func(i)) {
+                    found = i
+                    return false; //break
+                }
+            });
+            return found;
         },
 
         /*
