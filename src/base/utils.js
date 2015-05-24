@@ -56,6 +56,25 @@
         },
 
         /*
+         * checks whether obj is a date
+         * @param {Object} obj
+         * @returns {Boolean}
+         */
+        isDate: function(obj) {
+            return (obj instanceof Date);
+        },
+
+        /*
+         * checks whether obj is a plain object {}
+         * @param {Object} obj
+         * @returns {Boolean}
+         */
+        isPlainObject: function(obj) {
+            return obj != null &&
+                Object.prototype.toString.call(obj) === "[object Object]";
+        },
+
+        /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
          * @param {Function} callback callback function
@@ -66,13 +85,13 @@
             if (this.isArray(obj)) {
                 var i;
                 for (i = 0; i < obj.length; i++) {
-                    if(callback.apply(ctx, [obj[i], i]) === false) {
+                    if (callback.apply(ctx, [obj[i], i]) === false) {
                         break;
                     }
                 }
             } else {
                 for (var item in obj) {
-                    if(callback.apply(ctx, [obj[item], item]) === false) {
+                    if (callback.apply(ctx, [obj[item], item]) === false) {
                         break;
                     }
                 }
@@ -187,8 +206,10 @@
         unique: function(arr, func) {
             var u = {};
             var a = [];
-            if(!func) {
-                func = function(d) { return d };
+            if (!func) {
+                func = function(d) {
+                    return d
+                };
             }
             for (var i = 0, l = arr.length; i < l; ++i) {
                 var key = func(arr[i]);
@@ -209,7 +230,7 @@
         find: function(arr, func) {
             var found;
             this.forEach(arr, function(i) {
-                if(func(i)) {
+                if (func(i)) {
                     found = i
                     return false; //break
                 }
@@ -350,6 +371,19 @@
         },
 
         /*
+         * returns the values of an object in an array format
+         * @param {Object} obj
+         * @return {Array}
+         */
+        values: function(obj) {
+            var arr;
+            for (var i in obj) {
+                (arr = arr || []).push(obj[i])
+            };
+            return arr;
+        },
+
+        /*
          * Defers a function
          * @param {Function} func
          */
@@ -366,20 +400,20 @@
         ajax: function(options) {
             var request = new XMLHttpRequest();
             request.open(options.method, options.url, true);
-            if(options.method === "POST") {
+            if (options.method === "POST") {
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             }
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     // Success!
-                    var data = (options.json)? JSON.parse(request.responseText) : request.responseText;
-                    if(options.success) options.success(data);
+                    var data = (options.json) ? JSON.parse(request.responseText) : request.responseText;
+                    if (options.success) options.success(data);
                 } else {
-                    if(options.error) options.error();
+                    if (options.error) options.error();
                 }
             };
             request.onerror = function() {
-                if(options.error) options.error();
+                if (options.error) options.error();
             };
             request.send(options.data);
         },
@@ -390,9 +424,9 @@
         get: function(url, pars, success, error, json) {
             var pars = [];
             this.forEach(pars, function(value, key) {
-                pars.push(key+"="+value);
+                pars.push(key + "=" + value);
             });
-            url = (pars.length) ? url+"?"+pars.join("&") : url;
+            url = (pars.length) ? url + "?" + pars.join("&") : url;
             this.ajax({
                 method: "GET",
                 url: url,

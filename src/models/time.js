@@ -1,9 +1,14 @@
-define([
-    'lodash',
-    'd3',
-    'base/utils',
-    'base/model'
-], function(_, d3, utils, Model) {
+/*!
+ * VIZABI Entities Model
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
 
     //constant time formats
     var time_formats = {
@@ -16,10 +21,10 @@ define([
         "second": d3.time.format("%Y-%m-%d %H:%M:%S")
     };
 
-    var time_units = _.keys(time_formats),
-        formatters = _.values(time_formats);
+    var time_units = Object.keys(time_formats);
+    var formatters = utils.values(time_formats);
 
-    var TimeModel = Model.extend({
+    var Time = Vizabi.Model.extend('time', {
 
         /**
          * Initializes the language model.
@@ -31,7 +36,7 @@ define([
 
             this._type = "time";
             //default values for time model
-            values = _.extend({
+            values = utils.extend({
                 value: "1800",
                 start: "1800",
                 end: "2014",
@@ -40,7 +45,8 @@ define([
                 loop: false,
                 round: true,
                 speed: 500,
-                unit: "year", //defaults to year
+                unit: "year",
+                format: "%Y", //defaults to year format
                 step: 1, //step must be integer
                 adaptMinMaxZoom: false
             }, values);
@@ -76,16 +82,16 @@ define([
         /**
          * Formats value, start and end dates to actual Date objects
          */
-        _formatToDates: function(silent) {
+        _formatToDates: function() {
 
             var date_attr = ["value", "start", "end"];
             for (var i = 0; i < date_attr.length; i++) {
                 var attr = date_attr[i];
-                if (!_.isDate(this[attr])) {
+                if (!utils.isDate(this[attr])) {
                     for (var j = 0; j < formatters.length; j++) {
                         var formatter = formatters[j];
                         var date = formatter.parse(this[attr].toString());
-                        if (_.isDate(date)) {
+                        if (utils.isDate(date)) {
                             this.set(attr, date);
                             break;
                         }
@@ -96,7 +102,6 @@ define([
 
         /**
          * Validates the model
-         * @param {boolean} silent Block triggering of events
          */
         validate: function() {
 
@@ -110,7 +115,7 @@ define([
             }
 
             //make sure dates are transformed into dates at all times
-            if (!_.isDate(this.start) || !_.isDate(this.end) || !_.isDate(this.value)) {
+            if (!utils.isDate(this.start) || !utils.isDate(this.end) || !utils.isDate(this.value)) {
                 this._formatToDates();
             }
 
@@ -256,5 +261,5 @@ define([
 
     });
 
-    return TimeModel;
-});
+
+}).call(this);

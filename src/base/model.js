@@ -93,7 +93,7 @@
                 attrs;
 
             //expect object as default
-            if (!utils.isObject(attr)) {
+            if (!utils.isPlainObject(attr)) {
                 (attrs = {})[attr] = val;
             } else {
                 attrs = attr;
@@ -116,7 +116,7 @@
                 var prev = this._prevData[a];
 
                 //if its a regular value
-                if (!utils.isObject(val) || utils.isArray(val)) {
+                if (!utils.isPlainObject(val) || utils.isArray(val)) {
                     //change if it's not the same value
                     if (curr !== val || force || JSON.stringify(curr) !== JSON.stringify(val)) {
                         var p = (typeof curr === 'undefined') ? 'init' : 'change';

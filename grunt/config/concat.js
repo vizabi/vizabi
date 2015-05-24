@@ -18,7 +18,8 @@ module.exports = function(grunt) {
                 'src/base/component.js',
                 'src/base/tool.js',
                 //models
-                'src/models/entities.js'
+                'src/models/entities.js',
+                'src/models/time.js'
             ],
             dest: 'dist/vizabi.js',
         }

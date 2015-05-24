@@ -2,6 +2,8 @@
  * TEST HOOKS, INTEGRATION OF BETWEEN TOOLS, MODELS AND DATA FETCHING
  */
 
+ //This test depends on models entities and time (not entirely self contained)
+
 describe("* Base: Hooks", function() {
 
     var placeholder;
@@ -18,21 +20,6 @@ describe("* Base: Hooks", function() {
         initializeDOM();
         placeholder = document.getElementById("vzbp-placeholder");
         utils = Vizabi.utils;
-
-        Vizabi.Model.unregister('time');
-        TimeModel = Vizabi.Model.extend('time', {
-            init: function(values, parent, bind) {
-                this._type = "time";
-                //default values for time model
-                values = Vizabi.utils.extend({
-                    value: "1994",
-                    start: "1991",
-                    end: "1994"
-                }, values);
-
-                this._super(values, parent, bind);
-            }
-        });
 
         //create a new component fo info display and register
         Vizabi.Component.unregister('info-display');
@@ -56,7 +43,6 @@ describe("* Base: Hooks", function() {
                         _this.update();
                     },
                     'ready': function() {
-                        console.log("IM InfoDisplay READY");
                         _this.update();
                     }
                 };
@@ -64,7 +50,6 @@ describe("* Base: Hooks", function() {
             },
 
             update: function(evt) {
-                console.log("IM InfoDisplay READY");
                 var time = this.model.time.value;
                 var items = this.model.label.getItems({
                     time: time
@@ -269,16 +254,10 @@ describe("* Base: Hooks", function() {
             data: options_data,
             bind: {
                 'ready': function() {
-                    console.log("IM READY");
-                    test();   
                     done();
                 }
             }
         });
-
-        function test() {
-            console.log(t.model.state.marker.label.getItems());
-        }
 
     });
 
@@ -287,7 +266,14 @@ describe("* Base: Hooks", function() {
     });
 
     it("should render tool with correct info", function() {
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-1</div><div>nor-10</div></div></div></div>');
+        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-4</div><div>nor-40</div></div></div></div>');
+    });
+
+    it("should change view instantaneously if nothing needs to be loaded (year changed)", function() {
+        t.model.state.time.value = "1993";
+        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-3</div><div>nor-30</div></div></div></div>');
+        t.model.state.time.value = "1992";
+        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-2</div><div>nor-20</div></div></div></div>');
     });
 
 });
