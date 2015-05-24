@@ -30,12 +30,26 @@
     //TODO: clear all objects and intervals as well
     //garbage collection
     Vizabi.clearInstances = function(id) {
-        if(id) {
+        if (id) {
             delete Vizabi._instances[id];
-        }
-        else {
+        } else {
             Vizabi._instances = {};
         }
+    }
+
+    /*
+     * throws a warning if the required variable is not defined
+     * returns false if the required variable is not defined
+     * returns true if the required variable is defined
+     * @param variable
+     * @returns {Boolean}
+     */
+    Vizabi._require = function(variable) {
+        if (typeof root[variable] === 'undefined') {
+            Vizabi.utils.warn(variable + " is required and could not be found.");
+            return false;
+        }
+        return true;
     }
 
     //if AMD define

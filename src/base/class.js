@@ -62,6 +62,9 @@
         Class.unregister = function(name) {
             delete this._collection[name];
         };
+        Class.getRegistered = function(name) {
+            return this._collection;
+        };
 
         //register extension by name
         if (arguments.length > 1 && this.register) {

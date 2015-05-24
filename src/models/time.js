@@ -10,6 +10,9 @@
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
 
+    //do not create model if d3 is not defined
+    if(!Vizabi._require('d3')) return;
+
     //constant time formats
     var time_formats = {
         "year": d3.time.format("%Y"),

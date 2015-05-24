@@ -17,6 +17,9 @@
     var HOOK_PROPERTY = 'use';
     var HOOK_VALUE = 'value';
 
+    //warn client if d3 is not defined
+    Vizabi._require('d3');
+
     var Model = Vizabi.Events.extend({
 
         /**

@@ -30,12 +30,26 @@
     //TODO: clear all objects and intervals as well
     //garbage collection
     Vizabi.clearInstances = function(id) {
-        if(id) {
+        if (id) {
             delete Vizabi._instances[id];
-        }
-        else {
+        } else {
             Vizabi._instances = {};
         }
+    }
+
+    /*
+     * throws a warning if the required variable is not defined
+     * returns false if the required variable is not defined
+     * returns true if the required variable is defined
+     * @param variable
+     * @returns {Boolean}
+     */
+    Vizabi._require = function(variable) {
+        if (typeof root[variable] === 'undefined') {
+            Vizabi.utils.warn(variable + " is required and could not be found.");
+            return false;
+        }
+        return true;
     }
 
     //if AMD define
@@ -854,6 +868,9 @@
         Class.unregister = function(name) {
             delete this._collection[name];
         };
+        Class.getRegistered = function(name) {
+            return this._collection;
+        };
 
         //register extension by name
         if (arguments.length > 1 && this.register) {
@@ -1488,6 +1505,9 @@
     //names of reserved hook properties
     var HOOK_PROPERTY = 'use';
     var HOOK_VALUE = 'value';
+
+    //warn client if d3 is not defined
+    Vizabi._require('d3');
 
     var Model = Vizabi.Events.extend({
 
@@ -3518,6 +3538,9 @@
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
+
+    //do not create model if d3 is not defined
+    if(!Vizabi._require('d3')) return;
 
     //constant time formats
     var time_formats = {
