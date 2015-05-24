@@ -39,7 +39,7 @@ describe("* Base: Hooks", function() {
         InfoDisplay = Vizabi.Component.extend('info-display', {
             init: function(config, parent) {
                 this.name = "info-display";
-                this.template = "<h2></h2>";
+                this.template = "<div></div>";
                 this.model_expects = [{
                     name: 'time',
                     type: 'time'
@@ -56,6 +56,7 @@ describe("* Base: Hooks", function() {
                         _this.update();
                     },
                     'ready': function() {
+                        console.log("IM InfoDisplay READY");
                         _this.update();
                     }
                 };
@@ -63,6 +64,7 @@ describe("* Base: Hooks", function() {
             },
 
             update: function(evt) {
+                console.log("IM InfoDisplay READY");
                 var time = this.model.time.value;
                 var items = this.model.label.getItems({
                     time: time
@@ -268,7 +270,7 @@ describe("* Base: Hooks", function() {
             bind: {
                 'ready': function() {
                     console.log("IM READY");
-                    test();
+                    test();   
                     done();
                 }
             }
@@ -285,7 +287,7 @@ describe("* Base: Hooks", function() {
     });
 
     it("should render tool with correct info", function() {
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2012</h2></div></div>');
+        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-1</div><div>nor-10</div></div></div></div>');
     });
 
 });

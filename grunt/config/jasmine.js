@@ -24,7 +24,7 @@ module.exports = {
         options: {
             outfile: 'test.html',
             keepRunner: true,
-            specs: 'spec/**/hook-spec.js',
+            specs: 'spec/**/*-spec.js',
             helpers: 'spec/helper.js',
             styles: ['dist/vizabi.css', 'spec/spec.css'],
             vendor: ['lib/d3/d3.min.js'],

@@ -37,6 +37,8 @@
             this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
+            //holds the list of dependencies for virtual models
+            this._deps = { parent: [], children: []};
 
             //will the model be hooked to data?
             this._hooks = {};
@@ -251,8 +253,16 @@
             //if not loading anything, check submodels
             else {
                 var submodels = this.getSubmodels();
-                for (var i = 0; i < submodels.length; i++) {
+                var i;
+                for (i = 0; i < submodels.length; i++) {
                     if (submodels[i].isLoading()) {
+                        return true;
+                        break;
+                    }
+                }
+                for (i = 0; i < this._deps.children.length; i++) {
+                    var d = this._deps.children[i];
+                    if (d.isLoading() || !d._ready) {
                         return true;
                         break;
                     }
@@ -304,6 +314,10 @@
                     this.trigger("readyOnce");
                 }
                 this.trigger("ready");
+                //check if parent dependency is ready (virtual models)
+                for (var i = 0; i < this._deps.parent.length; i++) {
+                    this._deps.parent[i].setReady();
+                }
             }
         },
 
@@ -404,6 +418,21 @@
          */
         afterLoad: function() {
             //placeholder method
+        },
+
+        /**
+         * removes all external dependency references
+         */
+        resetDeps: function() {
+            this._deps.children = [];
+        },
+
+        /**
+         * add external dependency ref to this model
+         */
+        addDep: function(child) {
+            this._deps.children.push(child);
+            child._deps.parent.push(this);
         },
 
         /* ===============================

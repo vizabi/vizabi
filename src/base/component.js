@@ -80,7 +80,7 @@
             if (this.isRoot() && this.model) {
                 this.model.on("ready", function() {
                     done();
-                })
+                });
                 this.model.setHooks();
                 this.model.load();
             } else {
@@ -145,6 +145,11 @@
             var config;
             //use the same name for collection
             this.components = [];
+            //external dependencies let this model know what it
+            //has to wait for
+            if(this.model) {
+                this.model.resetDeps();
+            }
 
             // Loops through components, loading them.
             utils.forEach(this._components_config, function(c) {
@@ -168,6 +173,11 @@
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
 
+                //external dependencies let this model know what it
+                //has to wait for
+                if(_this.model) {
+                    _this.model.addDep(subcomp.model);
+                }
                 _this.components.push(subcomp);
             });
         },
@@ -273,8 +283,7 @@
                         values[m.name] = {};
                     });
                 }
-            }
-            else {
+            } else {
                 return;
             }
 
@@ -335,6 +344,8 @@
                                 //trigger only for submodel
                                 evt = evt.replace('ready', 'ready:' + submodel);
                                 model.trigger(evt, vals);
+
+                                //try to set virtual model ready, then orig one
                                 model.setReady();
                             }
                         });
