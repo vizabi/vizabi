@@ -16,14 +16,14 @@
     //stores reference to each tool on the page
     Vizabi._instances = {};
 
-    function startTool(tool, placeholder, options) {
-        var toolsCollection = Vizabi.Tool._collection;
-        if (toolsCollection.hasOwnProperty(tool)) {
-            var t = new toolsCollection[tool](placeholder, options);
+    function startTool(name, placeholder, options) {
+        var tool = Vizabi.Tool.get(name);
+        if (tool) {
+            var t = new tool(placeholder, options);
             Vizabi._instances[t._id] = t;
             return t;
         } else {
-            Vizabi.utils.warn("Tool " + tool + " was not found.");
+            Vizabi.utils.error('Tool "' + name + '" was not found.');
         }
     }
 

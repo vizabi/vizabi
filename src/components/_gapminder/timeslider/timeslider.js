@@ -1,19 +1,29 @@
-//TODO: different sizes according to resolution
+/*!
+ * VIZABI TIMESLIDER
+ * Reusable timeslider component
+ */
 
-define([
-    'd3',
-    'lodash',
-    'base/component',
-    'models/time'
-], function(d3, _, Component, TimeModel) {
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var Promise = Vizabi.Promise;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     //constants
-    var class_playing = "vzb-playing",
-        class_hide_play = "vzb-ts-hide-play-button",
-        class_dragging = "vzb-ts-dragging",
-        class_axis_aligned = "vzb-ts-axis-aligned",
-        class_show_value = "vzb-ts-show-value",
-        class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
+    var class_playing = "vzb-playing";
+    var class_hide_play = "vzb-ts-hide-play-button";
+    var class_dragging = "vzb-ts-dragging";
+    var class_axis_aligned = "vzb-ts-axis-aligned";
+    var class_show_value = "vzb-ts-show-value";
+    var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
     var time_formats = {
         "year": d3.time.format("%Y"),
@@ -59,8 +69,7 @@ define([
         }
     };
 
-    var Timeslider = Component.extend({
-
+    Vizabi.Component.extend("gapminder-timeslider", {
         /**
          * Initializes the timeslider.
          * Executed once before any template is rendered.
@@ -68,7 +77,7 @@ define([
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = this.template || "components/_gapminder/timeslider/timeslider";
+            this.template = this.template || "src/components/_gapminder/timeslider/timeslider.html";
 
             //define expected models/hooks for this component
             this.model_expects = [{
@@ -80,27 +89,22 @@ define([
 
             //binds methods to this model
             this.model_binds = {
-                'ready': function(evt) {
-                    _this.changeTime();
-                    _this._setHandle(_this.model.time.playing);
-                },
                 'change': function(evt, original) {
                     _this.changeTime();
                     _this._setHandle(_this.model.time.playing);
                 }
             };
 
-            // Same constructor as the superclass
-            this._super(config, context);
-
-            //default ui
-            this.ui = _.extend({
+            this.ui = utils.extend({
                 show_limits: false,
                 show_value: false,
                 show_value_when_drag_play: true,
                 show_button: true,
                 class_axis_aligned: false
-            }, this.ui);
+            }, config.ui, this.ui);
+
+            // Same constructor as the superclass
+            this._super(config, context);
 
 
             //defaults
@@ -108,13 +112,12 @@ define([
             this.height = 0;
         },
 
-        /**
-         * Executes after the template is loaded and rendered.
-         * Ideally, it contains HTML instantiations related to template
-         * At this point, this.element and this.placeholder are available as a d3 objects
-         */
+        //template is ready
         domReady: function() {
             var _this = this;
+
+            //DOM to d3
+            this.element = d3.select(this.element);
 
             //html elements
             this.slider_outer = this.element.select(".vzb-ts-slider");
@@ -123,17 +126,6 @@ define([
             this.slide = this.element.select(".vzb-ts-slider-slide");
             this.handle = this.slide.select(".vzb-ts-slider-handle");
             this.valueText = this.slide.select('.vzb-ts-slider-value');
-
-            var play = this.element.select(".vzb-ts-btn-play"),
-                pause = this.element.select(".vzb-ts-btn-pause");
-
-            play.on('click', function() {
-                _this.model.time.play();
-            });
-
-            pause.on('click', function() {
-                _this.model.time.pause();
-            });
 
             //Scale
             this.xScale = d3.time.scale()
@@ -166,14 +158,33 @@ define([
 
         },
 
+        //template and model are ready
+        ready: function() {
+           
+            var play = this.element.select(".vzb-ts-btn-play");
+            var pause = this.element.select(".vzb-ts-btn-pause");
+            var _this = this;
+
+            play.on('click', function() {
+                _this.model.time.play();
+            });
+
+            pause.on('click', function() {
+                _this.model.time.pause();
+            });
+           
+            this.changeTime();
+            this._setHandle(this.model.time.playing);
+        },
+
         changeTime: function() {
             this.ui.format = this.model.time.unit;
 
             //time slider should always receive a time model
-            var time = this.model.time.value,
-                minValue = this.model.time.start,
-                maxValue = this.model.time.end,
-                _this = this;
+            var time = this.model.time.value;
+            var minValue = this.model.time.start;
+            var maxValue = this.model.time.end;
+            var _this = this;
 
             //format
             this.format = time_formats[this.ui.format];
@@ -304,6 +315,7 @@ define([
         _setHandle: function(transition) {
             var value = this.model.time.value;
             this.slide.call(this.brush.extent([value, value]));
+
             this.valueText.text(this.format(value));
 
             if (this.model.time.start - this.model.time.value === 0) {
@@ -342,8 +354,8 @@ define([
             //update state
             var _this = this,
                 frameRate = 50;
-            
-             //avoid updating more than once in "frameRate"
+
+            //avoid updating more than once in "frameRate"
             var now = new Date();
             if (this._updTime != null && now - this._updTime < frameRate) return;
             this._updTime = now;
@@ -357,13 +369,15 @@ define([
         _optionClasses: function() {
             //show/hide classes
 
-            var show_limits = this.ui.show_limits,
-                show_value = this.ui.show_value,
-                show_value_when_drag_play = this.ui.show_value_when_drag_play,
-                axis_aligned = this.ui.axis_aligned,
-                show_play = (this.ui.show_button) && (this.model.time.playable);
+            var show_limits = this.ui.show_limits;
+            var show_value = this.ui.show_value;
+            var show_value_when_drag_play = this.ui.show_value_when_drag_play;
+            var axis_aligned = this.ui.axis_aligned;
+            var show_play = (this.ui.show_button) && (this.model.time.playable);
 
-            if (!show_limits) this.xAxis.tickValues([]).ticks(0);
+            if (!show_limits) {
+                this.xAxis.tickValues([]).ticks(0);
+            }
 
             this.element.classed(class_hide_play, !show_play);
             this.element.classed(class_playing, this.model.time.playing);
@@ -373,5 +387,4 @@ define([
         }
     });
 
-    return Timeslider;
-});
+}).call(this);
