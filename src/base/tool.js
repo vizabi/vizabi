@@ -136,6 +136,16 @@
         },
 
         /**
+         * gets all options
+         * @param {Object} options new options
+         * @param {Boolean} overwrite overwrite everything instead of extending
+         * @param {Boolean} silent prevent events
+         */
+        getOptions: function() {
+            return this.model.getObject() || {};
+        },
+
+        /**
          * Displays loading class
          */
         beforeLoading: function() {

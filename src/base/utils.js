@@ -152,6 +152,9 @@
          * @returns {Object} cloned object
          */
         clone: function(src, arr) {
+            if(this.isArray(src)) {
+                return src.slice(0);
+            }
             var clone = {};
             this.forEach(src, function(value, k) {
                 if (arr && arr.indexOf(k) === -1) {
