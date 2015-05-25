@@ -58,6 +58,26 @@
 
             this._super();
 
+            //domReady alias
+            var _this = this;
+            this.on({
+                'dom_ready': function() {
+                    if (typeof _this.domReady === 'function') {
+                        _this.domReady();
+                    }
+                },
+                'ready': function() {
+                    if (typeof _this.ready === 'function') {
+                        _this.ready();
+                    }
+                },
+                'resize': function() {
+                    if (typeof _this.resize === 'function') {
+                        _this.resize();
+                    }
+                }
+            });
+
         },
 
         /**
@@ -116,7 +136,7 @@
                 try {
                     rendered = templateFunc(tmpl, data);
                 } catch (e) {
-                    utils.error("Templating error for component: '" + this.name + "'");
+                    utils.error("Templating error for component: '" + this.name + "' - Check if path to template is correct. E.g.: 'src/components/...'");
                 }
             }
             //add loading class and html
@@ -143,11 +163,12 @@
         loadComponents: function() {
             var _this = this;
             var config;
+            var comp;
             //use the same name for collection
             this.components = [];
             //external dependencies let this model know what it
             //has to wait for
-            if(this.model) {
+            if (this.model) {
                 this.model.resetDeps();
             }
 
@@ -231,7 +252,7 @@
          * @param {Object} model_binds Initial model bindings
          * @returns {Object} the model
          */
-        _modelMapping: function(subcomponent, model_config, model_expects, model_binds, ready) {
+        _modelMapping: function(subcomponent, model_config, model_expects, model_binds) {
 
             var _this = this;
             var values = {};
@@ -430,7 +451,26 @@
          */
         isTool: function() {
             return this._id[0] === 't';
-        }
+        },
+
+        /**
+         * Executes after the template is loaded and rendered.
+         * Ideally, it contains HTML instantiations related to template
+         * At this point, this.element and this.placeholder are available
+         * as DOM elements
+         */
+        domReady: function() {},
+
+        /**
+         * Executes after the template and model (if any) are ready
+         */
+        ready: function() {},
+
+        /**
+         * Executes when the resize event is triggered.
+         * Ideally, it only contains operations related to size
+         */
+        resize: function() {},
 
 
     });
@@ -440,7 +480,7 @@
     function templateFunc(str, data) {
         // Figure out if we're getting a template, or if we need to
         // load the template - and be sure to cache the result.
-        var fn = !/\W/.test(str) ?
+        var fn = !/<[a-z][\s\S]*>/i.test(str) ?
             templates[str] = templates[str] ||
             templateFunc(root.document.getElementById(str).innerHTML) :
             // Generate a reusable function that will serve as a template

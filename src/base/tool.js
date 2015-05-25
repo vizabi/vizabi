@@ -60,7 +60,7 @@
 
             this._id = utils.uniqueId("t");
             this.layout = new Vizabi.Layout();
-            this.template = this.template || '<div class="vzb-tool vzb-tool-<%- (name || "") %> vzb-tool"><div class="vzb-tool vzb-tool-content"><div class="vzb-tool vzb-tool-stage"><div class="vzb-tool vzb-tool-viz"></div><div class="vzb-tool vzb-tool-timeslider"></div></div><div class="vzb-tool vzb-tool-buttonlist"></div></div></div>';
+            this.template = this.template || '<div class="vzb-tool vzb-tool-'+this.name+'"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
 
             this.model_binds = this.model_binds || {};
             this.default_options = this.default_options || {};
@@ -105,6 +105,9 @@
                 name: this.name || this._id,
                 placeholder: placeholder
             }, this);
+
+            //add placeholder class
+            utils.addClass(this.placeholder, class_placeholder);
 
             this._bindEvents();
             this.render();
