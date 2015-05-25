@@ -7,4 +7,5 @@ preview/
 /src/assets/style/vizabi.scss
 /src/plugins.js
 .grunt/
+.tmp/
 test.html

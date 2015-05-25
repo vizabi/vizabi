@@ -7,9 +7,9 @@ module.exports = function(grunt) {
         // 'includereplace:build', //build AMD wrapper
         // 'write_plugins', //includes all tools and components in plugins.js
         // 'requirejs:dist', //use requirejs for amd module
-        // 'generate_styles', //generate scss
-        // 'sass:prod', //compile scss
-        // 'sass:preview',
+        'generate_styles', //generate scss
+        'sass:prod', //compile scss
+        'sass:preview',
         'copy:preview',
         'assemble:prod',
         // 'copy:local_data', //copies local_data

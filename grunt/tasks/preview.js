@@ -9,7 +9,6 @@ module.exports = function(grunt) {
     grunt.registerTask('preview', [
         'sass:preview',
         'copy:preview',
-        'copy:preview_require',
         'assemble:dev'
     ]);
 

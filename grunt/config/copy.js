@@ -9,8 +9,8 @@ module.exports = {
             },
             //jquery used only for testing and preview page
             {
-                cwd: 'lib/jquery/dist/',
-                src: ['jquery.min.js', 'jquery.min.map'],
+                cwd: 'lib/d3/',
+                src: ['d3.min.js'],
                 dest: 'preview/assets/js/',
                 expand: true
             },
@@ -22,15 +22,6 @@ module.exports = {
                 expand: true
             }
         ]
-    },
-    preview_require: {
-        //jquery used only for testing and preview page
-        files: [{
-            cwd: 'lib/requirejs/',
-            src: ['require.js'],
-            dest: 'preview/assets/js/',
-            expand: true
-        }]
     },
     local_data: {
         cwd: 'local_data',
