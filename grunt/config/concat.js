@@ -20,6 +20,7 @@ module.exports = function(grunt) {
         models: ['src/models/entities.js',
             'src/models/time.js'
         ],
+        tools: ['src/tools/_examples/bar-chart/bar-chart.js'],
         templates: ['src/components/_gapminder/timeslider/*.html']
     }
 
@@ -73,13 +74,21 @@ module.exports = function(grunt) {
             dest: 'dist/expanded/vizabi.components.js',
         },
 
+        tools: {
+            //TODO: import all components
+            //components
+            src: FILES.tools,
+            dest: 'dist/expanded/vizabi.tools.js',
+        },
+
         full: {
             options: {
                 sourceMap: true
             },
             src: ([]).concat(FILES.base)
                      .concat(FILES.components)
-                     .concat(FILES.models),
+                     .concat(FILES.models)
+                     .concat(FILES.tools),
             dest: 'dist/vizabi.js',
         }
     };

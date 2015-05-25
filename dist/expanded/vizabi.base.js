@@ -3324,7 +3324,7 @@
             if (c >= max) {
                 utils.error("Max validation loop.");
             } else if (model !== model2) {
-                validate_func.call(this, ++c);
+                validate_func.call(this, [++c]);
             }
         }
         return validate_func;

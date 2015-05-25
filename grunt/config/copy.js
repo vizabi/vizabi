@@ -29,19 +29,6 @@ module.exports = {
         dest: 'preview/local_data/',
         expand: true
     },
-    //dev mode copy Javascript and 
-    scripts: {
-        cwd: 'src',
-        src: ['**/*.js'],
-        dest: 'preview/',
-        expand: true
-    },
-    templates: {
-        cwd: 'src',
-        src: ['**/*.html'],
-        dest: 'preview/',
-        expand: true
-    },
     /*
      * copy test files to preview to be able to rerun on stage
      * this is a very specific task aimed on replaying

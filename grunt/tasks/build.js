@@ -4,9 +4,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'clean', //clean preview and dist folder
         'concat', //generate vizabi unified file
-        // 'includereplace:build', //build AMD wrapper
-        // 'write_plugins', //includes all tools and components in plugins.js
-        // 'requirejs:dist', //use requirejs for amd module
+        'uglify', //generate minified version
         'generate_styles', //generate scss
         'sass:prod', //compile scss
         'sass:preview',

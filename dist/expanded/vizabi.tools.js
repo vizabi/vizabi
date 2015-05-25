@@ -1,3 +1,5 @@
+/* VIZABI - http://www.gapminder.org - 2015-05-25 */
+
 /*!
  * VIZABI BARCHART
  */

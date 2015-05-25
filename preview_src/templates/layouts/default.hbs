@@ -169,13 +169,7 @@ control_buttons: {play: true, language: true}
 
 
     <script src="{{assets}}js/d3.min.js"></script>
-    {{!-- Vizabi Production and Development --}}
-    {{#if production}}
-      <script src="../dist/vizabi.js"></script>
-    {{else}}
-      <script data-main="config.js" src="{{assets}}js/require.js"></script>
-      <script src="vizabi.js"></script>
-    {{/if}}
+    <script src="../dist/vizabi.js"></script>
 
     {{!-- Scripts --}}
 
@@ -212,7 +206,7 @@ control_buttons: {play: true, language: true}
         if(URL.state) VIZABI_OPTIONS.state = URL.state;
         if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
         
-        VIZ = new Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
+        VIZ = Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
 
       </script>
     {{/if}}
