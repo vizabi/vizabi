@@ -1,9 +1,16 @@
-define([
-    'lodash',
-    'base/model'
-], function(_, Model) {
+/*!
+ * VIZABI Entities Model
+ */
 
-    var LanguageModel = Model.extend({
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    Vizabi.Model.extend('language', {
 
         /**
          * Initializes the language model.
@@ -15,7 +22,7 @@ define([
 
             this._type = "language";
             //default values for state model
-            values = _.extend({
+            values = utils.extend({
                 id: "en",
                 strings: {}
             }, values);
@@ -58,5 +65,4 @@ define([
 
     });
 
-    return LanguageModel;
-});
+}).call(this);
