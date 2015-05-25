@@ -1,11 +1,18 @@
-define([
-    'q',
-    'req',
-    'lodash',
-    'base/class'
-], function(Q, req, _, Class) {
+/*!
+ * Waffle server Reader
+ * the simplest reader possible
+ */
 
-    var WaffleServerReader = Class.extend({
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    var Promise = Vizabi.Promise;
+
+    Vizabi.Reader.extend('waffle-server', {
 
         /**
          * Initializes the reader.
@@ -19,62 +26,50 @@ define([
 
         /**
          * Reads from source
-         * @param {Array} queries Queries to be performed
+         * @param {Array} query to be performed
          * @param {String} language language
          * @returns a promise that will be resolved when data is read
          */
-        read: function(queries, language) {
-            var _this = this,
-                defer = Q.defer(),
-                promises = [];
+        read: function(query, language) {
+            var _this = this;
+            var p = new Promise();
+            var formatted;
 
             this._data = [];
 
-            //TODO: eliminate formatting if possible
-            //format queries
-            var formatted = [];
-            for (var i = queries.length - 1; i >= 0; i--) {
-                var where = queries[i].where;
-
-                //format time query if existing
-                if (where['time']) {
-                    //[['1990', '2012']] -> '1990-2012'
-                    where['time'] = where['time'][0].join('-');
-                }
-                //rename geo.category to geo.cat
-                if (where['geo.category']) {
-                    where['geo.cat'] = _.clone(where['geo.category']);
-                    delete where['geo.category'];
-                }
+            var where = query.where;
+            //format time query if existing
+            if (where['time']) {
+                //[['1990', '2012']] -> '1990-2012'
+                where['time'] = where['time'][0].join('-');
+            }
+            //rename geo.category to geo.cat
+            if (where['geo.category']) {
+                where['geo.cat'] = utils.clone(where['geo.category']);
+                delete where['geo.category'];
+            }
 
 
-                formatted[i] = {
-                    "SELECT": queries[i].select,
-                    "WHERE": where,
-                    "FROM": "humnum"
-                };
+            formatted = {
+                "SELECT": query.select,
+                "WHERE": where,
+                "FROM": "humnum"
             };
 
             var pars = {
-                query: formatted,
+                query: [formatted],
                 lang: language
             };
 
-            req({
-                url: this._basepath,
-                method: 'post',
-                data: pars,
-                success: function(res) {
-                    _this._data = res;
-                    defer.resolve();
-                },
-                error: function(err) {
-                    console.log("Error loading from Waffle Server:", _this._basepath);
-                    defer.reject('Could not read from waffle server');
-                }
-            });
+            utils.post(this._basepath, pars, function(res) {
+                _this._data = res;
+                p.resolve();
+            }, function() {
+                console.log("Error loading from Waffle Server:", _this._basepath);
+                p.reject('Could not read from waffle server');
+            }, true);
 
-            return defer.promise;
+            return p;
         },
 
         /**
@@ -86,5 +81,4 @@ define([
         }
     });
 
-    return WaffleServerReader;
-});
+}).call(this);
