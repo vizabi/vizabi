@@ -10,6 +10,6 @@ module.exports = function(grunt) {
         'sass:preview',
         'copy:preview',
         'assemble:prod',
-        // 'copy:local_data', //copies local_data
+        'copy:local_data', //copies local_data
     ]);
 };

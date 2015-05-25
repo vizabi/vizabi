@@ -18,10 +18,14 @@ module.exports = function(grunt) {
             'src/components/_gapminder/timeslider/*.js'
         ],
         models: ['src/models/entities.js',
-            'src/models/time.js'
+            'src/models/time.js',
+            'src/models/language.js'
         ],
         tools: ['src/tools/_examples/bar-chart/bar-chart.js'],
-        templates: ['src/components/_gapminder/timeslider/*.html']
+        readers: ['src/readers/**/*.js'],
+        plugins: ['src/plugins/**/*.js'],
+        templates: ['src/components/_gapminder/timeslider/*.html',
+        'src/tools/_examples/bar-chart/**/*.html']
     }
 
     var FILES_COMPONENTS = ['.tmp/templates.js',
@@ -68,17 +72,23 @@ module.exports = function(grunt) {
         },
 
         components: {
-            //TODO: import all components
-            //components
             src: FILES.components,
             dest: 'dist/expanded/vizabi.components.js',
         },
 
+        readers: {
+            src: FILES.readers,
+            dest: 'dist/expanded/vizabi.readers.js',
+        },
+
         tools: {
-            //TODO: import all components
-            //components
             src: FILES.tools,
             dest: 'dist/expanded/vizabi.tools.js',
+        },
+
+        plugins: {
+            src: FILES.plugins,
+            dest: 'dist/expanded/vizabi.plugins.js',
         },
 
         full: {
@@ -88,7 +98,9 @@ module.exports = function(grunt) {
             src: ([]).concat(FILES.base)
                      .concat(FILES.components)
                      .concat(FILES.models)
-                     .concat(FILES.tools),
+                     .concat(FILES.readers)
+                     .concat(FILES.tools)
+                     .concat(FILES.plugins),
             dest: 'dist/vizabi.js',
         }
     };

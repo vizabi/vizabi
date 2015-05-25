@@ -23,6 +23,7 @@ module.exports = {
             }
         ]
     },
+    
     local_data: {
         cwd: 'local_data',
         src: ['**/*'],
