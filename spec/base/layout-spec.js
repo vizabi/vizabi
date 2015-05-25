@@ -1,9 +1,12 @@
 describe("* Base: Layout", function() {
 
-    initializeDOM();
-    var placeholder = document.getElementById("vzbp-placeholder");
-    var utils = Vizabi.utils;
-    var layout;
+    var placeholder, utils, layout;
+
+    beforeAll(function() {
+        initializeDOM();
+        placeholder = document.getElementById("vzbp-placeholder");
+        utils = Vizabi.utils
+    });
     
     beforeEach(function() {
         layout = new Vizabi.Layout();

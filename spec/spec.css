@@ -9,14 +9,14 @@ body {
     right: 30%;
     left: 0;
 }
-#test-placeholder {
+#vzbp-placeholder {
     position: absolute !important;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
 }
-#test-placeholder.mobile {
+#vzbp-placeholder.mobile {
     position: relative !important;
     width: 320px;
     height: 568px;

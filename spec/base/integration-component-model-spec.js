@@ -12,9 +12,9 @@ describe("* Base: Component-Model Integration", function() {
         placeholder = document.getElementById("vzbp-placeholder");
         utils = Vizabi.utils;
 
-        //create a new component fo ryear display and register
-        Vizabi.Model.unregister('time');
-        TimeModel = Vizabi.Model.extend('time', {
+        //create a new model for time
+        Vizabi.Model.unregister('mytime');
+        TimeModel = Vizabi.Model.extend('mytime', {
             init: function(values, parent, bind) {
                 this._type = "time";
                 //default values for time model
@@ -118,21 +118,21 @@ describe("* Base: Component-Model Integration", function() {
                     this.template = '<div><div class="display"></div><div class="display2"></div></div>';
                     //generic model with TimeModel
                     this.model = new Vizabi.Model({
-                        time_1: {
+                        mytime_1: {
                             value: '1999'
                         },
-                        time_2: {
+                        mytime_2: {
                             value: '2000'
                         }
                     });
                     this.components = [{
                         component: 'year-display',
                         placeholder: '.display',
-                        model: ['time_1']
+                        model: ['mytime_1']
                     }, {
                         component: 'year-display',
                         placeholder: '.display2',
-                        model: ['time_2']
+                        model: ['mytime_2']
                     }];
                     this._super(config, parent);
                 }
@@ -150,10 +150,10 @@ describe("* Base: Component-Model Integration", function() {
         });
 
         it("should update view when changing model", function() {
-            component.model.time_1.value = 1840;
+            component.model.mytime_1.value = 1840;
             expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>1840</h2></div><div class="display2"><h2>2000</h2></div></div>');
 
-            component.model.time_2.value = 1880;
+            component.model.mytime_2.value = 1880;
             expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>1840</h2></div><div class="display2"><h2>1880</h2></div></div>');
         });
 

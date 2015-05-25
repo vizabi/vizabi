@@ -3312,13 +3312,7 @@
         function validate_func() {
             var model = JSON.stringify(m.getObject());
             var c = arguments[0] || 0;
-            //make model accessible if it's still being created
-            if(!this._readyOnce) {
-                (validate.bind({ model: this })).call(this);
-            }
-            else {
-                validate();
-            }
+            validate();
             var model2 = JSON.stringify(m.getObject());
             if (c >= max) {
                 utils.error("Max validation loop.");

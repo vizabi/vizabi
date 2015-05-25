@@ -8,6 +8,22 @@ describe("* Base: Tool", function() {
         placeholder.innerHTML = '';
         utils = Vizabi.utils;
 
+        //create a new model for time
+        Vizabi.Model.unregister('mytime');
+        TimeModel = Vizabi.Model.extend('mytime', {
+            init: function(values, parent, bind) {
+                this._type = "time";
+                //default values for time model
+                values = Vizabi.utils.extend({
+                    value: "1800",
+                    start: "1800",
+                    end: "2015"
+                }, values);
+
+                this._super(values, parent, bind);
+            }
+        });
+
         //create a new component fo ryear display and register
         Vizabi.Component.unregister('year-display');
         YearDisplay = Vizabi.Component.extend('year-display', {
@@ -45,7 +61,7 @@ describe("* Base: Tool", function() {
                 this.components = [{
                     component: 'year-display',
                     placeholder: '.display',
-                    model: ['time']
+                    model: ['mytime']
                 }];
                 this._super(placeholder, options);
             }
@@ -59,7 +75,7 @@ describe("* Base: Tool", function() {
 
     it("should initialize and render tool", function() {
         tool = new MyTool(placeholder, {
-            time: {
+            mytime: {
                 value: 2013
             }
         });
@@ -68,7 +84,7 @@ describe("* Base: Tool", function() {
 
     it("should be initialized from name by Vizabi", function() {
         tool = Vizabi('MyTool', placeholder, {
-            time: {
+            mytime: {
                 value: 2011
             }
         });
@@ -77,7 +93,7 @@ describe("* Base: Tool", function() {
 
     it("should be root component", function() {
         tool = Vizabi('MyTool', placeholder, {
-            time: {
+            mytime: {
                 value: 2011
             }
         });
@@ -89,13 +105,13 @@ describe("* Base: Tool", function() {
         Vizabi.clearInstances();
 
         tool = Vizabi('MyTool', placeholder, {
-            time: {
+            mytime: {
                 value: 2011
             }
         });
 
         tool2 = Vizabi('MyTool', placeholder, {
-            time: {
+            mytime: {
                 value: 2013
             }
         });
@@ -104,14 +120,14 @@ describe("* Base: Tool", function() {
 
     it("should update view when changing value", function() {
         tool = Vizabi('MyTool', placeholder, {
-            time: {
+            mytime: {
                 value: 2011
             }
         });
         expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2011</h2></div></div>');
 
         tool.setOptions({
-            time: {
+            mytime: {
                 value: 2010
             }
         });

@@ -1,14 +1,25 @@
 function initializeDOM() {
-    //insert wrapper (for styling purposes only)
-    var div = document.createElement('div');
-    div.id = 'test-wrapper';
-    //insert placeholder
-    var placeholder = document.createElement('div');
-    placeholder.id = 'vzbp-placeholder';
 
-    //add to page
-    div.appendChild(placeholder);
-    document.body.appendChild(div);
+    var div = document.getElementById('test-wrapper');
+    var placeholder;
+
+    if (div) {
+        div.innerHTML = "";
+        placeholder = document.createElement('div');
+        placeholder.id = 'vzbp-placeholder';
+        //add to page
+        div.appendChild(placeholder);
+    } else {
+        div = document.createElement('div');
+        div.id = 'test-wrapper';
+        //insert placeholder
+        placeholder = document.createElement('div');
+        placeholder.id = 'vzbp-placeholder';
+
+        //add to page
+        div.appendChild(placeholder);
+        document.body.appendChild(div);
+    }
 
     //disable timestamp
     window.console.timeStamp = function() {};
@@ -16,13 +27,14 @@ function initializeDOM() {
 
 //global vizabi helps us know if something should be initialized
 var vizabi;
+
 function initializeVizabi(viz, options, done) {
 
     var interval = 1000;
     if (typeof vizabi === 'undefined') {
         window.initializeDom();
     }
-    var placeholder = document.getElementById("test-placeholder");
+    var placeholder = document.getElementById("vzbp-placeholder");
     vizabi = new Vizabi(viz, placeholder, options);
 
     window.setTimeout(function() {
@@ -33,18 +45,16 @@ function initializeVizabi(viz, options, done) {
 
 function mobile(bool, orientation) {
 
-    var placeholder = $("#test-placeholder");
-    if(bool) {
+    var placeholder = $("#vzbp-placeholder");
+    if (bool) {
         placeholder.addClass('mobile');
-        if(!orientation) orientation = "portrait";
-        if(orientation === 'landscape') {
+        if (!orientation) orientation = "portrait";
+        if (orientation === 'landscape') {
             placeholder.addClass('landscape');
-        }
-        else {
+        } else {
             placeholder.removeClass('landscape');
         }
-    }
-    else {
+    } else {
         placeholder.removeClass('mobile');
         placeholder.removeClass('landscape');
     }
