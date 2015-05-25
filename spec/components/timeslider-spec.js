@@ -152,7 +152,10 @@ describe("* Component: Timeslider", function() {
                 },
 
                 validate: function() {
-                    var state = this.model.state;
+                    //TODO: remove validation hotfix
+                    //while setting this.model is not available
+                    var m = this.model || arguments[0];
+                    var state = m.state;
                     if (state.time_end.start != state.time_start.value) {
                         state.time_end.start = state.time_start.value;
                     }
@@ -192,6 +195,20 @@ describe("* Component: Timeslider", function() {
             expect(ts1.textContent).toEqual("2000");
             expect(ts2.textContent).toEqual("2010");
             expect(ts3.textContent).toEqual("2005");
+        });
+
+        it("should change values according to validation rule", function() {
+            tool.setOptions({
+                state: {
+                    time_start: {
+                        value: "2010"
+                    },
+                    time_end: {
+                        value: "2014"
+                    }
+                }
+            });
+            expect(ts3.textContent).toEqual("2010");
         });
 
     });

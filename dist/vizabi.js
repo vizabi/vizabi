@@ -3312,12 +3312,19 @@
         function validate_func() {
             var model = JSON.stringify(m.getObject());
             var c = arguments[0] || 0;
-            validate();
+            //TODO: remove validation hotfix
+            //while setting this.model is not available
+            if(!this._readyOnce) {
+                validate(this);
+            }
+            else {
+                validate();
+            }
             var model2 = JSON.stringify(m.getObject());
             if (c >= max) {
                 utils.error("Max validation loop.");
             } else if (model !== model2) {
-                validate_func(++c);
+                validate_func.call(this, ++c);
             }
         }
         return validate_func;
