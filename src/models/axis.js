@@ -1,8 +1,19 @@
-define([
-    'd3',
-    'lodash',
-    'models/hook'
-], function(d3, _, Hook) {
+/*!
+ * VIZABI Axis Model (hook)
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     //constant time formats
     var time_formats = {
@@ -15,8 +26,7 @@ define([
         "second": d3.time.format("%Y-%m-%d %H:%M:%S")
     };
 
-    var Axis = Hook.extend(   {
-
+    Vizabi.Model.extend('axis', {
         /**
          * Initializes the color hook
          * @param {Object} values The initial values of this model
@@ -26,7 +36,7 @@ define([
         init: function(values, parent, bind) {
 
             this._type = "axis";
-            values = _.extend({
+            values = utils.extend({
                 use: "value",
                 unit: "",
                 value: undefined
@@ -61,7 +71,7 @@ define([
          */
         tickFormatter: function(x) {
             var result = x;
-            if(_.isDate(x)) {
+            if(utils.isDate(x)) {
                 //TODO: generalize for any time unit
                 result = time_formats["year"](x);
             }else if (this.use == "indicator") {
@@ -105,8 +115,5 @@ define([
 
             this.scale = d3.scale[scale]().domain(domain);
         }
-
     });
-
-    return Axis;
-});
+}).call(this);

@@ -1,10 +1,21 @@
-define([
-    'd3',
-    'lodash',
-    'models/hook'
-], function(d3, _, Hook) {
+/*
+ * VIZABI Data Model (options.data)
+ */
 
-    var Size = Hook.extend({
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
+
+    Vizabi.Model.extend('size', {
 
         /**
          * Initializes the color hook
@@ -15,7 +26,7 @@ define([
         init: function(values, parent, bind) {
 
             this._type = "size";
-            values = _.extend({
+            values = utils.extend({
                 use: "value",
                 unit: "",
                 value: undefined
@@ -28,10 +39,10 @@ define([
          */
         validate: function() {
             //there must be a min and a max
-            if (_.isUndefined(this.min) || this.min < 0) {
+            if (typeof this.min === 'undefined' || this.min < 0) {
                 this.min = 0;
             }
-            if (_.isUndefined(this.max) || this.max > 1) {
+            if (typeof this.max === 'undefined' || this.max > 1) {
                 this.max = 1;
             }
             if (this.min > this.max) {
@@ -70,5 +81,4 @@ define([
 
     });
 
-    return Size;
-});
+}).call(this);

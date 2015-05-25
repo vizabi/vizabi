@@ -1,8 +1,19 @@
-define([
-    'd3',
-    'lodash',
-    'models/hook'
-], function(d3, _, Hook) {
+/*!
+ * VIZABI Color Model (hook)
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
     
     var palettes = {
         'geo.region':   {'asi':'#FF5872', 'eur':'#FFE700', 'ame':'#7FEB00', 'afr':'#00D5E9', '_default': '#ffb600'},
@@ -17,7 +28,7 @@ define([
         'geo.region': false
     };
 
-    var Color = Hook.extend({
+    Vizabi.Model.extend('color', {
 
         /**
          * Initializes the color hook
@@ -29,7 +40,7 @@ define([
 
             this._type = "color";
 
-            values = _.extend({
+            values = utils.extend({
                 use: "value",
                 unit: "",
                 palette: null,
@@ -81,11 +92,11 @@ define([
                 //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
                 this.scale = null;
                 if(palettes[this.value]){
-                    this.palette = _.clone(palettes[this.value]);
+                    this.palette = utils.clone(palettes[this.value]);
                 }else if(this.use == "value"){
                     this.palette = {"_default":this.value};
                 }else{
-                    this.palette = _.clone(palettes["_default"]);
+                    this.palette = utils.clone(palettes["_default"]);
                 }
             }
 
@@ -100,7 +111,7 @@ define([
         setColor: function(value, pointer) {
             var temp = this.palette.getObject();
             temp[pointer] = value;
-            this.scale.range(_.values(temp));
+            this.scale.range(utils.values(temp));
             this.palette[pointer] = value;
         },
 
@@ -128,8 +139,8 @@ define([
         buildScale: function() {
             var _this = this;
             
-            var domain = _.keys(_this.palette.getObject());
-            var range = _.values(_this.palette.getObject());
+            var domain = Object.keys(_this.palette.getObject());
+            var range = utils.values(_this.palette.getObject());
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
@@ -168,9 +179,7 @@ define([
 
     });
 
-    return Color;
-});
-
+}).call(this);
 
 
 

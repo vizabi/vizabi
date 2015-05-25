@@ -17,10 +17,7 @@ module.exports = function(grunt) {
         components: ['.tmp/templates.js',
             'src/components/_gapminder/timeslider/*.js'
         ],
-        models: ['src/models/entities.js',
-            'src/models/time.js',
-            'src/models/language.js'
-        ],
+        models: ['src/models/**/*.js'],
         tools: ['src/tools/_examples/bar-chart/bar-chart.js'],
         readers: ['src/readers/**/*.js'],
         plugins: ['src/plugins/**/*.js'],

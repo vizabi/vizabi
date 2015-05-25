@@ -1,10 +1,16 @@
-define([
-    'lodash',
-    'base/model',
-    'base/data'
-], function(_, Model, DataManager) {
+/*
+ * VIZABI Data Model (options.data)
+ */
 
-    var DataModel = Model.extend({
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    Vizabi.Model.extend('data', {
 
         /**
          * Initializes the data model.
@@ -15,7 +21,7 @@ define([
         init: function(values, parent, bind) {
 
             this._type = "data";
-            values = _.extend({
+            values = utils.extend({
                 reader: "local-json"
             }, values);
 
@@ -25,5 +31,4 @@ define([
 
     });
 
-    return DataModel;
-});
+}).call(this);
