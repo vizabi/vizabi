@@ -1812,9 +1812,10 @@
                 return;
             }
             //only ready if nothing is loading at all
+            var prev_ready = this._ready;
             this._ready = (!this.isLoading() && !this._setting && !this._loadCall);
 
-            if (this._ready) {
+            if (this._ready && prev_ready !== this._ready) {
                 if (!this._readyOnce) {
                     this._readyOnce = true;
                     this.trigger("readyOnce");
@@ -2718,7 +2719,13 @@
                 });
                 this.model.setHooks();
                 this.model.load();
-            } else {
+            } 
+            else if(this.model && this.model.isLoading()) {
+                this.model.on("ready", function() {
+                    done();
+                });
+            }
+            else {
                 done();
             }
 

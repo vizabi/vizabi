@@ -65,6 +65,7 @@
 
             //TODO: add min and max to validation
         },
+        
         /**
          * Gets tick values for this hook
          * @returns {Number|String} value The value for this tick
@@ -85,8 +86,8 @@
          * @returns {Array} domain
          */
         buildScale: function() {
-            var domain,
-                scale = this.scaleType || "linear";
+            var domain;
+            var scale = this.scaleType || "linear";
 
             if(this.value=="time"){
                 var limits = this.getLimits(this.value);

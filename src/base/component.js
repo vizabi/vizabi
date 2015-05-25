@@ -102,7 +102,13 @@
                 });
                 this.model.setHooks();
                 this.model.load();
-            } else {
+            } 
+            else if(this.model && this.model.isLoading()) {
+                this.model.on("ready", function() {
+                    done();
+                });
+            }
+            else {
                 done();
             }
 

@@ -152,8 +152,7 @@
             //positioning and sizes of the bars
 
             var bars = this.bars.selectAll('.vzb-bc-bar');
-
-            barWidth = this.xScale.rangeBand();
+            var barWidth = this.xScale.rangeBand();
 
             this.bars.selectAll('.vzb-bc-bar')
                 .attr("width", barWidth)
