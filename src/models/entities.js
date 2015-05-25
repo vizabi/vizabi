@@ -10,7 +10,7 @@
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
 
-    var Entities = Vizabi.Model.extend('entities', {
+    Vizabi.Model.extend('entities', {
         /**
          * Initializes the entities model.
          * @param {Object} values The initial values of this model

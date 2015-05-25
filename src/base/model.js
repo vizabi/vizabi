@@ -11,7 +11,6 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
-    var modelsList = {};
 
     //names of reserved hook properties
     var HOOK_PROPERTY = 'use';
@@ -31,7 +30,7 @@
 
         init: function(values, parent, bind) {
             this._type = this._type || "model";
-            this._id = utils.uniqueId("m");
+            this._id = this._id || utils.uniqueId("m");
             this._data = {}; //holds attributes of this model
             this._parent = parent;
             this._set = false;
@@ -148,6 +147,7 @@
 
             bindSettersGetters(this);
 
+            //for tool model when setting for the first time
             if (this.validate && !setting) {
                 this.validate();
             }
@@ -907,7 +907,6 @@
 
     });
 
-    modelsList = Model._collection;
     Vizabi.Model = Model;
 
 
@@ -993,7 +992,7 @@
             return val;
         } else {
             //special model
-            var model = (modelsList.hasOwnProperty(name)) ? modelsList[name] : Model;
+            var model =  Vizabi.Model.get(name, true) || Model;
             return new model(val, ctx, binds);
         }
 

@@ -55,15 +55,24 @@
         Class._collection = {};
         Class.register = function(name, code) {
             if (typeof this._collection[name] !== 'undefined') {
-                Vizabi.utils.warn(name + ' already registered. Overwriting');
+                Vizabi.utils.warn('"'+ name +'" is already registered. Overwriting...');
             }
             this._collection[name] = code;
         };
         Class.unregister = function(name) {
             delete this._collection[name];
         };
-        Class.getRegistered = function(name) {
+        Class.getCollection = function() {
             return this._collection;
+        };
+        Class.get = function(name, silent) {
+            if (this._collection.hasOwnProperty(name)) {
+                return this._collection[name];
+            }
+            if(!silent) {
+                Vizabi.utils.warn('"'+ name +'" was not found.');
+            }
+            return false;
         };
 
         //register extension by name

@@ -27,7 +27,7 @@
     var time_units = Object.keys(time_formats);
     var formatters = utils.values(time_formats);
 
-    var Time = Vizabi.Model.extend('time', {
+    Vizabi.Model.extend('time', {
 
         /**
          * Initializes the language model.

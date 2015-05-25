@@ -12,7 +12,6 @@
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
-    var componentsList = {};
 
     var Component = Vizabi.Events.extend({
 
@@ -179,8 +178,7 @@
                     utils.error("Error loading component: name not provided");
                     return;
                 }
-                if (!componentsList.hasOwnProperty(c.component)) {
-                    utils.error("Component not registered: " + c.component);
+                if (!(comp = Vizabi.Component.get(c.component))) {
                     return;
                 }
 
@@ -190,13 +188,13 @@
                 });
 
                 //instantiate new subcomponent
-                var subcomp = new componentsList[c.component](config, _this);
+                var subcomp = new comp(config, _this);
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
 
                 //external dependencies let this model know what it
                 //has to wait for
-                if(_this.model) {
+                if (_this.model) {
                     _this.model.addDep(subcomp.model);
                 }
                 _this.components.push(subcomp);
@@ -506,7 +504,6 @@
         return (c._id && (c._id[0] === 't' || c._id[0] === 'c'));
     }
 
-    componentsList = Component._collection;
     Vizabi.Component = Component;
 
 }).call(this);
