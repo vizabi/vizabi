@@ -1,5 +1,14 @@
-define(['d3'], function(d3){
+(function() {
 
+    "use strict";
+
+    var root = this;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
+    
     d3.svg.collisionResolver = function(){
         
     return function collision_resolver() {
@@ -154,5 +163,5 @@ define(['d3'], function(d3){
         
     }; //d3.svg.collisionResolver = function(){
 
-}); //define(['d3'], function(d3){
+}).call(this);
 

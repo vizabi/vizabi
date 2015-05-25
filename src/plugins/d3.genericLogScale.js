@@ -1,4 +1,13 @@
-define(['d3'], function (d3) {
+(function() {
+
+    "use strict";
+
+    var root = this;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     d3.scale.genericLog = function () {
 
@@ -279,13 +288,4 @@ define(['d3'], function (d3) {
 
     }
 
-
-
-
-
-
-
-
-
-
-});
+}).call(this);

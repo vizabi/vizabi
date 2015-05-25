@@ -1,5 +1,13 @@
-define(['d3'], function(d3){
+(function() {
 
+    "use strict";
+
+    var root = this;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     d3.svg.axisSmart = function(){
         
@@ -14,9 +22,6 @@ define(['d3'], function(d3){
         var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
         var DEFAULT_LOGBASE = 10;
         
-                    
-
-
         function onlyUnique(value, index, self) {
             return self.indexOf(value) === index;
         }
@@ -26,7 +31,7 @@ define(['d3'], function(d3){
             
             // measure the width and height of one digit
             var widthSampleG = g.append("g").attr("class","tick widthSampling");
-            widthSampleT = widthSampleG.append('text').text('0');
+            var widthSampleT = widthSampleG.append('text').text('0');
             
             options.cssMarginTop = widthSampleT.style("margin-top");
             options.cssMarginBottom = widthSampleT.style("margin-bottom");
@@ -848,5 +853,5 @@ meow("final result",tickValues);
         
     }; //d3.svg.axisSmart = function(){
 
-}); //define(['d3'], function(d3){
+}).call(this);
 
