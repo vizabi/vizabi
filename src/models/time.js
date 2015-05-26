@@ -1,5 +1,5 @@
 /*!
- * VIZABI Entities Model
+ * VIZABI Time Model
  */
 
 (function() {

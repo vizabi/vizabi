@@ -89,10 +89,14 @@
 
             //binds methods to this model
             this.model_binds = {
-                'change': function(evt, original) {
+                'change:time': function(evt, original) {
+                    if((['change:time:start','change:time:end']).indexOf(evt) !== -1) {
+                        _this.changeLimits();
+                    }
                     _this.changeTime();
-                    _this._setHandle(_this.model.time.playing);
-                }
+                    var transition = _this.model.time.playing;
+                    _this._setHandle(transition);
+                },
             };
 
             this.ui = utils.extend({
@@ -164,7 +168,7 @@
 
         //template and model are ready
         ready: function() {
-           
+
             var play = this.element.select(".vzb-ts-btn-play");
             var pause = this.element.select(".vzb-ts-btn-pause");
             var _this = this;
@@ -175,34 +179,31 @@
 
             pause.on('click', function() {
                 _this.model.time.pause();
-            });
-           
+            });//format
+
+            this.format = time_formats[this.model.time.unit];
+            this.changeLimits();
             this.changeTime();
+            this.resize();
             this._setHandle(this.model.time.playing);
         },
 
-        changeTime: function() {
-            this.ui.format = this.model.time.unit;
-
-            //time slider should always receive a time model
-            var time = this.model.time.value;
+        changeLimits: function() {
             var minValue = this.model.time.start;
             var maxValue = this.model.time.end;
-            var _this = this;
-
-            //format
-            this.format = time_formats[this.ui.format];
-
             //scale
             this.xScale.domain([minValue, maxValue]);
             //axis
             this.xAxis.tickValues([minValue, maxValue])
                 .tickFormat(this.format);
+        },
 
+        changeTime: function() {
+            this.ui.format = this.model.time.unit;
+            //time slider should always receive a time model
+            var time = this.model.time.value;
             //special classes
             this._optionClasses();
-            //resize
-            this.resize();
         },
 
         /**
@@ -210,6 +211,8 @@
          * Ideally,it contains only operations related to size
          */
         resize: function() {
+
+            this.model.time.pause();
 
             this.profile = profiles[this.getLayoutProfile()];
 
@@ -238,6 +241,8 @@
             //size of handle
             this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
                 .attr("r", this.profile.radius);
+
+            this._setHandle();
 
         },
 
@@ -273,15 +278,15 @@
         _getBrushed: function() {
             var _this = this;
             return function() {
+                _this.model.time.pause();
+
                 if (!_this._blockUpdate) {
-                    _this.model.time.pause();
                     _this._optionClasses();
                     _this._blockUpdate = true;
                     _this.element.classed(class_dragging, true);
                 }
 
                 var value = _this.brush.extent()[0];
-
                 //set brushed properties
                 if (d3.event.sourceEvent) {
                     value = _this.xScale.invert(d3.mouse(this)[0]);
@@ -292,7 +297,7 @@
                     _this._setTime(value);
                 }
                 //position handle
-                _this._setHandle();
+                _this._setHandle(_this.model.time.playing);
             };
         },
 
@@ -320,15 +325,11 @@
 
             this.valueText.text(this.format(value));
 
-            if (this.model.time.start - this.model.time.value === 0) {
-                transition = false;
-            }
+            var speed = this.model.time.speed;
+            var old_pos = this.handle.attr("cx");
+            var new_pos = this.xScale(value);
 
             if (transition) {
-                var speed = this.model.time.speed,
-                    old_pos = this.handle.attr("cx"),
-                    new_pos = this.xScale(value);
-
                 this.handle.attr("cx", old_pos)
                     .transition()
                     .duration(speed)
@@ -342,9 +343,8 @@
                     .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
 
             } else {
-                var pos = this.xScale(value);
-                this.handle.attr("cx", pos);
-                this.valueText.attr("transform", "translate(" + pos + "," + (this.height / 2) + ")");
+                this.handle.attr("cx", new_pos);
+                this.valueText.attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
             }
         },
 

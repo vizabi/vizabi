@@ -685,7 +685,7 @@
 
 }).call(this);
 /*!
- * VIZABI Entities Model
+ * VIZABI Time Model
  */
 
 (function() {
