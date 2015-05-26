@@ -46,7 +46,7 @@
             var _this = this;
 
             root.addEventListener('resize', function() {
-                if (_this.container) {
+                if (_this._container) {
                     _this.setSize();
                 }
             });

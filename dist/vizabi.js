@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-25 */
+/* VIZABI - http://www.gapminder.org - 2015-05-26 */
 
 /*!
  * VIZABI MAIN
@@ -1433,7 +1433,7 @@
             var _this = this;
 
             root.addEventListener('resize', function() {
-                if (_this.container) {
+                if (_this._container) {
                     _this.setSize();
                 }
             });
@@ -2236,59 +2236,71 @@
                 return this._limits[attr];
             }
 
-            var limits = {
-                    min: 0,
-                    max: 0
-                },
-                filtered = this._items.map(function(d) {
+            var filtered = this._items.map(function(d) {
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
                 });
-            if (filtered.length > 0) {
-                limits.min = Math.min.apply(null, filtered);
-                limits.max = Math.max.apply(null, filtered);
-            }
+
+            var min, max, limits = {};
+            for (var i = 0; i < filtered.length; i++) {
+                var c = filtered[i];
+                if(typeof min === 'undefined' || c < min) {
+                    min = c;
+                }
+                if(typeof max === 'undefined' || c > max) {
+                    max = c;
+                }
+            };
+            limits.min = min || 0;
+            limits.max = max || 0;
+            
             this._limits[attr] = limits;
             return limits;
         },
 
         /**
          * Gets unique values in a column
-         * @param {String} attr parameter
+         * @param {String|Array} attr parameter
          * @returns {Array} unique values
          */
         getUnique: function(attr) {
 
-            //if it's an array, it will return a list of unique combinations.
-            if (!utils.isArray(attr)) {
-                return this.getUnique([attr]);
+            if (!this.isHook()) {
+                return;
             }
-
-            if (!this.isHook()) return;
 
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
             //cache optimization
-            var uniq_id = JSON.stringify(attr),
-                uniq;
+            var uniq_id = JSON.stringify(attr), uniq;
             if (this._unique[uniq_id]) {
                 return this._unique[uniq_id];
             }
 
-        
-            var v = this._items.map(function(d) {
-                return utils.clone(d, attr);
-            });
-            //TODO: Move this up to readers ?
-            if (attr.indexOf("time") !== -1) {
-                for (var i = 0; i < v.length; i++) {
-                    v[i]['time'] = new Date(v[i]['time']);
-                };
+            //if not in cache, compute
+            //if it's an array, it will return a list of unique combinations.
+            if (utils.isArray(attr)) {
+                var values = this._items.map(function(d) {
+                    return utils.clone(d, attr); //pick attrs
+                });
+                //TODO: Move this up to readers ?
+                if (attr.indexOf("time") !== -1) {
+                    for (var i = 0; i < values.length; i++) {
+                        values[i]['time'] = new Date(values[i]['time']);
+                    };
+                }
+                uniq = utils.unique(values, function(n) {
+                    return JSON.stringify(n);
+                });
             }
-            uniq = utils.unique(v, function(n) {
-                return JSON.stringify(n);
-            });
-
+            //if it's a string, it will return a list of values
+            else {
+                var values = this._items.map(function(d) {
+                    //TODO: Move this up to readers ?
+                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                });
+                uniq = utils.unique(values);
+            }
             this._unique[uniq_id] = uniq;
             return uniq;
         },
@@ -5495,8 +5507,8 @@
                 return;
             }
 
-            var dateMin = marker.getLimits('time').min,
-                dateMax = marker.getLimits('time').max;
+            var dateMin = marker.getLimits('time').min;
+            var dateMax = marker.getLimits('time').max;
 
             if (time.start < dateMin) {
                 time.start = dateMin;

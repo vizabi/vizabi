@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-25 */
+/* VIZABI - http://www.gapminder.org - 2015-05-26 */
 
 /*!
  * VIZABI BARCHART
@@ -509,8 +509,8 @@
                 return;
             }
 
-            var dateMin = marker.getLimits('time').min,
-                dateMax = marker.getLimits('time').max;
+            var dateMin = marker.getLimits('time').min;
+            var dateMax = marker.getLimits('time').max;
 
             if (time.start < dateMin) {
                 time.start = dateMin;

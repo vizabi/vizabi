@@ -507,8 +507,8 @@
                 return;
             }
 
-            var dateMin = marker.getLimits('time').min,
-                dateMax = marker.getLimits('time').max;
+            var dateMin = marker.getLimits('time').min;
+            var dateMax = marker.getLimits('time').max;
 
             if (time.start < dateMin) {
                 time.start = dateMin;
