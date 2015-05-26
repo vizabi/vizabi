@@ -3155,6 +3155,7 @@
     var class_loading_data = "vzb-loading";
     var class_loading_error = "vzb-loading-error";
     var class_placeholder = "vzb-placeholder";
+    var class_buttons_off = "vzb-buttonlist-off";
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
@@ -3253,11 +3254,9 @@
                 placeholder: placeholder
             }, this);
 
-            //add placeholder class
-            utils.addClass(this.placeholder, class_placeholder);
-
             this._bindEvents();
             this.render();
+            this._setUIOptions();
         },
 
         /**
@@ -3280,6 +3279,7 @@
             } else {
                 this.model.set(options);
             }
+            this._setUIOptions();
         },
 
         /**
@@ -3325,6 +3325,18 @@
          */
         validate: function() {
             //placeholder for tool validation methods
+        },
+
+        _setUIOptions: function() {
+            //add placeholder class
+            utils.addClass(this.placeholder, class_placeholder);
+
+            //add-remove buttonlist class
+            if(!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
+                utils.addClass(this.element, class_buttons_off);
+            } else {
+                utils.removeClass(this.element, class_buttons_off);
+            }
         }
 
 
