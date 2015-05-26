@@ -145,8 +145,12 @@
             this.brush = d3.svg.brush()
                 .x(this.xScale)
                 .extent([0, 0])
-                .on("brush", brushed)
-                .on("brushend", brushedEnd);
+                .on("brush", function() {
+                    utils.throttle(brushed.bind(this), 10);
+                })
+                .on("brushend", function() {
+                    utils.throttle(brushedEnd.bind(this), 10);
+                });
 
             //Slide
             this.slide.call(this.brush);
@@ -267,7 +271,6 @@
          * @returns {Function} brushed function
          */
         _getBrushed: function() {
-
             var _this = this;
             return function() {
                 if (!_this._blockUpdate) {
@@ -290,7 +293,7 @@
                 }
                 //position handle
                 _this._setHandle();
-            }
+            };
         },
 
         /**
@@ -298,14 +301,13 @@
          * @returns {Function} brushedEnd function
          */
         _getBrushedEnd: function() {
-
             var _this = this;
             return function() {
                 _this._blockUpdate = false;
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
                 _this.model.time.snap();
-            }
+            };
         },
 
         /**

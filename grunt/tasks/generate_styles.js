@@ -8,7 +8,7 @@ module.exports = function(grunt) {
 
         var tools_folder = 'src/tools/',
             scss_file = 'src/assets/style/vizabi.scss',
-            includes = ['_vizabi.scss', '../../tools/_tool.scss'],
+            includes = ['_vizabi.scss'],
             contents = '',
             current_dir;
 

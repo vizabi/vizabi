@@ -33,6 +33,8 @@
             this.validate = generateValidate(this, validate);
 
             //default submodels
+            values = values || {};
+            defaults = defaults || {};
             values = defaultOptions(values, defaults);
 
             //constructor is similar to model
@@ -97,6 +99,7 @@
                 }
             }, this.model_binds);
 
+            options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
 
             this.ui = this.model.ui;
