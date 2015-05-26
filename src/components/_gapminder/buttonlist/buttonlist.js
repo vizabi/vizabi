@@ -1,18 +1,28 @@
-//TODO: refactor this whole thing!
+/*!
+ * VIZABI BUTTONLIST
+ * Reusable buttonlist component
+ */
 
-define([
-    'd3',
-    'lodash',
-    'base/utils',
-    'base/component'
-], function(d3, _, utils, Component) {
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var Promise = Vizabi.Promise;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     //default existing buttons
     var class_active = "vzb-active";
     var class_unavailable = "vzb-unavailable";
     var class_vzb_fullscreen = "vzb-force-fullscreen";
 
-    var ButtonList = Component.extend({
+    Vizabi.Component.extend('gapminder-buttonlist', {
 
         /**
          * Initializes the buttonlist
@@ -20,10 +30,11 @@ define([
          * @param context component context (parent)
          */
         init: function(config, context) {
+
             //set properties
             var _this = this;
             this.name = 'buttonlist';
-            this.template = "components/_gapminder/" + this.name + "/" + this.name;
+            this.template = '<div class="vzb-buttonlist"></div>';
 
             this.model_expects = [{
                 name: "state",
@@ -35,12 +46,6 @@ define([
                 name: "language",
                 type: "language"
             }];
-
-            this.components = [];
-            //basic template data for buttons
-            this.template_data = {
-                buttons: []
-            };
 
             this._available_buttons = {
                 'find': {
@@ -94,86 +99,31 @@ define([
             };
 
             this._active_comp = false;
-
-            if (config.buttons && config.buttons.length > 0) {
-                //TODO: Buttons should be a model, not config //former FIXME
-                this._addButtons(config.buttons);
-            }
             
             this.model_binds = {
-                "readyOnce": function(evt) {
-                    _this.startup(config.buttons);
-                },
                 "change:state:entities:select": function() {
-                    if(_this.model.state.entities.select.length == 0){
+                    if(_this.model.state.entities.select.length === 0){
                         _this.model.state.time.lockNonSelected = 0;
                     }
-                    _this.startup(config.buttons);
+                    // _this.startup();
                 }
             }
 
             this._super(config, context);
 
         },
-        
-        startup: function(button_list){
+
+        ready: function() {
+
             var _this = this;
-            
-            button_list.forEach(function(d){
-                switch (d){
-                    case "trails": _this.setBubbleTrails(d); break;
-                    case "lock": _this.setBubbleLock(d); break;
-                }
-            })
-        },
+            this.element = d3.select(this.element);
 
-        /*
-         * adds buttons configuration to the components and template_data
-         * @param {Array} button_list list of buttons to be added
-         */
-        _addButtons: function(button_list) {
+            //add buttons and render components
+            if(this.model.ui.buttons) {
+                this._addButtons();
+            }
 
-            //add a component for each button
-            for (var i = 0; i < button_list.length; i++) {
-
-                var btn = button_list[i],
-                    btn_config = this._available_buttons[btn];
-
-                //if it's a dialog, add component
-                if (btn_config && btn_config.dialog) {
-                    var comps = this.components;
-                    
-                    //add corresponding component
-                    comps.push({
-                        component: '_gapminder/buttonlist/dialogs/' + btn,
-                        placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-                        model: ["state", "ui", "language"]
-                    });
-
-                    btn_config.component = comps.length - 1;
-                }
-
-                //add template data
-                var d = (btn_config) ? btn : "_default",
-                    details_btn = this._available_buttons[d];
-
-                details_btn.id = btn;
-                //grab icon svg
-                details_btn.icon = this._icons[details_btn.icon];
-
-                this.template_data.buttons.push(details_btn);
-
-            };
-
-        },
-
-        /*
-         * POSTRENDER:
-         * Executed once after loading
-         */
-        domReady: function() {
-            var _this = this,
-                buttons = this.element.selectAll(".vzb-buttonlist-btn");
+            var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
             //activate each dialog when clicking the button
             buttons.on('click', function() {
@@ -192,19 +142,97 @@ define([
                     }
                 }
                 //otherwise, execute function
-                else if (btn_config.func && _.isFunction(btn_config.func)) {
+                else if (btn_config.func) {
                     btn_config.func(id);
                 }
 
             });
 
-            close_buttons = this.element.selectAll("[data-click='closeDialog']");
+            var close_buttons = this.element.selectAll("[data-click='closeDialog']");
             close_buttons.on('click', function() {
                 _this.closeAllDialogs();
             });
 
             //store body overflow
             this._prev_body_overflow = document.body.style.overflow;
+        },
+        
+        startup: function(){
+            var _this = this;
+            
+            button_list.forEach(function(d){
+                switch (d){
+                    case "trails": _this.setBubbleTrails(d); break;
+                    case "lock": _this.setBubbleLock(d); break;
+                }
+            })
+        },
+
+        /*
+         * adds buttons configuration to the components and template_data
+         * @param {Array} button_list list of buttons to be added
+         */
+        _addButtons: function() {
+
+            this.components = [];
+            var button_list = this.model.ui.buttons;
+            var details_btns = [];
+            //add a component for each button
+            for (var i = 0; i < button_list.length; i++) {
+
+                var btn = button_list[i];
+                var btn_config = this._available_buttons[btn];
+
+                //if it's a dialog, add component
+                if (btn_config && btn_config.dialog) {
+                    var comps = this.components;
+                    
+                    //add corresponding component
+                    comps.push({
+                        component: 'gapminder-buttonlist-' + btn,
+                        placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
+                        model: ["state", "ui", "language"]
+                    });
+
+                    btn_config.component = comps.length - 1;
+                }
+
+                //add template data
+                var d = (btn_config) ? btn : "_default";
+                var details_btn = this._available_buttons[d];
+
+                details_btn.id = btn;
+                details_btn.icon = this._icons[details_btn.icon];
+                details_btns.push(details_btn);
+            };
+
+            var t = this.getTranslationFunction(true);
+
+            var btns = this.element.selectAll('button').data(details_btns)
+                        .enter().append("button")
+                        .attr('class', 'vzb-buttonlist-btn')
+                        .attr('data-btn', function(d) { return d.id; })
+                        .html(function(btn) {
+                            return "<span class='vzb-buttonlist-btn-icon fa'>"+
+                                    btn.icon +"</span><span class='vzb-buttonlist-btn-title'>"+
+                                    t(btn.title) +"</span>";
+                        });
+
+            var dialogs = this.element.selectAll('div').data(details_btns)
+                        .enter().append("div")
+                        .attr('class', 'vzb-buttonlist-dialog')
+                        .attr('data-btn', function(d) { return d.id; });
+
+            this.loadComponents();
+            
+            var _this = this;
+            //render each subcomponent
+            utils.forEach(this.components, function(subcomp) {
+                subcomp.render();
+                _this.on('resize', function() {
+                    subcomp.trigger('resize');
+                });
+            });
         },
 
         /*
@@ -309,29 +337,30 @@ define([
         },
         toggleFullScreen: function(id) {
 
-            var component = this,
-                root = component.placeholder,
-                root_found = false,
-                btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-                fs = !this.model.ui.fullscreen,
-                body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
+            var component = this;
+            var pholder = component.placeholder;
+            var pholder_found = false;
+            var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+            var fs = !this.model.ui.fullscreen;
+            var body_overflow = (fs) ? "hidden" : this._prev_body_overflow;
 
-            while (!(root_found = root.classed('vzb-placeholder'))) {
+            while (!(pholder_found = utils.hasClass(pholder, 'vzb-placeholder'))) {
                 component = this.parent;
-                root = component.placeholder;
+                pholder = component.placeholder;
             };
 
             //TODO: figure out a way to avoid fullscreen resize delay in firefox
             if (fs) {
-                launchIntoFullscreen(root.node());    
+                launchIntoFullscreen(pholder);    
             } else {
                 exitFullscreen();
             }
 
-            root.classed(class_vzb_fullscreen, fs);
+            utils.classed(pholder, class_vzb_fullscreen, fs);
             this.model.ui.fullscreen = fs;
             var translator = this.model.language.getTFunction();
-            btn.classed(class_active, fs);
+            utils.classed(btn, class_active, fs);
+
             btn.select(".vzb-buttonlist-btn-icon").html(this._icons[fs?"unexpand":"expand"]);
             btn.select(".vzb-buttonlist-btn-title").text(
                 translator("buttons/" + (fs?"unexpand":"expand"))
@@ -342,10 +371,10 @@ define([
 
             //force window resize event
             (function() {
-                event = document.createEvent("HTMLEvents");
+                event = root.document.createEvent("HTMLEvents");
                 event.initEvent("resize", true, true);
                 event.eventName = "resize";
-                window.dispatchEvent(event);
+                root.dispatchEvent(event);
             })();
 
         },
@@ -371,8 +400,6 @@ define([
     });
 
     function launchIntoFullscreen(elem) {
-        console.log('test');
-        console.log(elem);
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
         } else if (elem.msRequestFullscreen) {
@@ -394,6 +421,4 @@ define([
         }
     }
 
-
-    return ButtonList;
-});
+}).call(this);

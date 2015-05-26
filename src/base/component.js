@@ -137,6 +137,11 @@
                 return;
             }
 
+            //todo: improve t function getter + generalize this
+            data = utils.extend(data, {
+                t: this.getTranslationFunction(true)
+            });
+
             if (this.template) {
                 try {
                     rendered = templateFunc(tmpl, data);

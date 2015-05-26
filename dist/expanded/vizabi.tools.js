@@ -18,7 +18,7 @@
         return;
     }
 
-    var comp_template = 'src/tools/_examples/bar-chart/bar-chart-comp.html';
+    var comp_template = 'src/tools/bar-chart/bar-chart-comp.html';
 
     //BAR CHART COMPONENT
     Vizabi.Component.extend('gapminder-barchart', {
@@ -295,16 +295,15 @@
                     placeholder: '.vzb-tool-viz',
                     model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
                 },
-                // {
-                //     component: '_gapminder/buttonlist',
-                //     placeholder: '.vzb-tool-buttonlist',
-                //     model: ['state', 'ui', 'language'],
-                //     buttons: ['fullscreen']
-                // },
                 {
                     component: 'gapminder-timeslider',
                     placeholder: '.vzb-tool-timeslider',
                     model: ["state.time"]
+                },
+                {
+                    component: 'gapminder-buttonlist',
+                    placeholder: '.vzb-tool-buttonlist',
+                    model: ['state', 'ui', 'language']
                 }
             ];
 
@@ -448,9 +447,9 @@
                 ui: {
                     _type_: "model",
                     _defs_: {
-                        'vzb-tool-bar-chart': {
-                            _type_: "object",
-                            _defs_: {}
+                        'buttons': {
+                            _type_: "array",
+                            _defs_: ["fullscreen", "more-options"]
                         }
                     }
                 },

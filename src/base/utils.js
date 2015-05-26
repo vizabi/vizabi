@@ -341,6 +341,38 @@
         },
 
         /*
+         * Adds or removes class depending on value
+         * @param {Element} el
+         * @param {String} className 
+         * @param {Boolean} value 
+         */
+        classed: function(el, className, value) {
+            if (value === true) {
+                this.addClass(el, className);
+            }
+            else if (value === false){
+                this.removeClass(el, className);
+            }
+            else {
+                return this.hasClass(el, className);
+            }
+        },
+
+        /*
+         * Checks whether a DOM element has a class or not
+         * @param {Element} el
+         * @param {String} className 
+         * @return {Boolean}
+         */
+        hasClass: function(el, className) {
+            if (el.classList) {
+                return el.classList.contains(className);
+            } else { //IE<10
+                return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
+            }
+        },
+
+        /*
          * Throttles a function
          * @param {Function} func
          * @param {Number} ms duration 
@@ -358,20 +390,6 @@
                 func();
             }
         })(),
-
-        /*
-         * Checks whether a DOM element has a class or not
-         * @param {Element} el
-         * @param {String} className 
-         * @return {Boolean}
-         */
-        hasClass: function(el, className) {
-            if (el.classList) {
-                return el.classList.contains(className);
-            } else { //IE<10
-                return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
-            }
-        },
 
         /*
          * returns the values of an object in an array format
