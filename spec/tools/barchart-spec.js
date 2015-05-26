@@ -13,7 +13,7 @@ describe("* Tool: Bar Chart", function() {
 
     it("should render barchart correctly in placeholder", function() {
         var bc = placeholder.querySelector('.vzb-tool-bar-chart');
-        expect(bc.innerHTML).toEqual("<h3></h3>");
+        expect(bc.innerHTML).toContain('<svg class="vzb-bar-chart">');
     });
 
 });

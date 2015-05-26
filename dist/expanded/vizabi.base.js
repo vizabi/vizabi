@@ -2780,7 +2780,7 @@
 
             //only tools have layout (manage sizes)
             if (this.layout) {
-                this.layout.setContainer(this.placeholder);
+                this.layout.setContainer(this.element);
                 this.layout.on('resize', function() {
                     if (_this._ready) {
                         utils.throttle(function() {
@@ -3177,6 +3177,8 @@
             this.validate = generateValidate(this, validate);
 
             //default submodels
+            values = values || {};
+            defaults = defaults || {};
             values = defaultOptions(values, defaults);
 
             //constructor is similar to model
@@ -3241,6 +3243,7 @@
                 }
             }, this.model_binds);
 
+            options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
 
             this.ui = this.model.ui;

@@ -79,7 +79,7 @@ describe("* Base: Tool", function() {
                 value: 2013
             }
         });
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2013</h2></div></div>');
+        expect(placeholder.innerHTML).toContain('<div class="display"><h2>2013</h2></div>');
     });
 
     it("should be initialized from name by Vizabi", function() {
@@ -88,7 +88,7 @@ describe("* Base: Tool", function() {
                 value: 2011
             }
         });
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2011</h2></div></div>');
+        expect(placeholder.innerHTML).toContain('<div class="display"><h2>2011</h2></div>');
     });
 
     it("should be root component", function() {
@@ -124,14 +124,14 @@ describe("* Base: Tool", function() {
                 value: 2011
             }
         });
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2011</h2></div></div>');
+        expect(placeholder.innerHTML).toContain('<div class="display"><h2>2011</h2></div>');
 
         tool.setOptions({
             mytime: {
                 value: 2010
             }
         });
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><h2>2010</h2></div></div>');
+        expect(placeholder.innerHTML).toContain('<div class="display"><h2>2010</h2></div>');
     });
 
 });

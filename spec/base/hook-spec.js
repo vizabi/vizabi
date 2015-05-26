@@ -266,14 +266,14 @@ describe("* Base: Hooks", function() {
     });
 
     it("should render tool with correct info", function() {
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-4</div><div>nor-40</div></div></div></div>');
+        expect(placeholder.innerHTML).toContain('<div>swe-4</div><div>nor-40</div>');
     });
 
     it("should change view instantaneously if nothing needs to be loaded (year changed)", function() {
         t.model.state.time.value = "1993";
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-3</div><div>nor-30</div></div></div></div>');
+        expect(placeholder.innerHTML).toContain('<div>swe-3</div><div>nor-30</div>');
         t.model.state.time.value = "1992";
-        expect(placeholder.innerHTML).toEqual('<div><div class="display"><div><div>swe-2</div><div>nor-20</div></div></div></div>');
+        expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
     });
 
 });
