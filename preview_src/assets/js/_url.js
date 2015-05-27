@@ -5,41 +5,53 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL() {
+function updateURL(optimize) {
 
-    var state;
-    if(typeof VIZ !== 'undefined') {
-       state = VIZ.getOptions().state
-    }
-    formatDates(state);
+    function update() {
 
-    var url = {
-        width: parseInt(placeholder.style.width,10),
-        height: parseInt(placeholder.style.height,10),
-        fullscreen: hasClass(placeholder, 'fullscreen'),
-        bodyC: document.body.getAttribute("class")
-    };
+        var state;
+        if(typeof VIZ !== 'undefined') {
+           state = VIZ.getOptions().state
+        }
+        formatDates(state);
 
-    forEachElement(".collapsible-section", function(el, i) {
-        var open = hasClass(el, "open");
-        var id = el.getAttribute('id');
-        url[id] = open;
-    });
+        var url = {
+            width: parseInt(placeholder.style.width,10),
+            height: parseInt(placeholder.style.height,10),
+            fullscreen: hasClass(placeholder, 'fullscreen'),
+            bodyC: document.body.getAttribute("class")
+        };
 
-    url_string = URLON.stringify(url);
-    forEachElement("#vzbp-nav a", function(el, i) {
-        var href = el.getAttribute("href")+"#";
-        href = href.substring(0, href.indexOf('#'));
-        href += "#"+url_string;
-        el.setAttribute("href", href);
-    });
+        forEachElement(".collapsible-section", function(el, i) {
+            var open = hasClass(el, "open");
+            var id = el.getAttribute('id');
+            url[id] = open;
+        });
 
-    if(state) {
-        url.state = state;
         url_string = URLON.stringify(url);
+        forEachElement("#vzbp-nav a", function(el, i) {
+            var href = el.getAttribute("href")+"#";
+            href = href.substring(0, href.indexOf('#'));
+            href += "#"+url_string;
+            el.setAttribute("href", href);
+        });
+
+        if(state) {
+            url.state = state;
+            url_string = URLON.stringify(url);
+        }
+
+        window.history.replaceState('Object', 'Title', "#" + url_string);
     }
 
-    window.history.replaceState('Object', 'Title', "#" + url_string);
+    //optimize for timeslider
+    throttle(update, 10);
+    // if(optimize) {
+    // }
+    // else {
+    //     update();
+    // }
+
 }
 
 function parseURL() {

@@ -68,19 +68,19 @@ function getJSON(url, param, callback, err) {
     var request = new XMLHttpRequest();
     var pars = [];
     for (var i in param) {
-        pars.push(i+"="+param[i]);
+        pars.push(i + "=" + param[i]);
     };
     request.open('GET', url + '?' + pars.join("&"), true);
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
             var data = JSON.parse(request.responseText);
-            if(callback) callback(data);
+            if (callback) callback(data);
         } else {
-            if(err) err();
+            if (err) err();
         }
     };
     request.onerror = function() {
-        if(err) err();
+        if (err) err();
     };
     request.send();
 }
@@ -88,3 +88,18 @@ function getJSON(url, param, callback, err) {
 function openLink(link) {
     window.open(link, '_blank');
 }
+
+//throttle function
+var throttle = (function throttle() {
+    var isThrottled = {};
+    return function(func, ms) {
+        if (isThrottled[func]) {
+            return
+        };
+        isThrottled[func] = true;
+        setTimeout(function() {
+            isThrottled[func] = false;
+        }, ms);
+        func();
+    }
+})();
