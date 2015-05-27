@@ -13,21 +13,6 @@
         color: #ffffff;
         opacity: 1;
     }
-    // #vzbp-state-editor-text {
-    //     font-family: $vzbp-font-family-editor;
-    //     @include prefixer(box-sizing, border-box, webkit moz spec);
-    //     font-size: 13px;
-    //     position: absolute;
-    //     left: 0px;
-    //     top: 0px;
-    //     width: 100%;
-    //     height: 100%;
-    //     color: #eeeeee;
-    //     resize: none;
-    //     border: none;
-    //     padding: 20px;
-    //     margin: 0px;
-    // }
     #vzbp-state-editor-textarea {
         font-family: $vzbp-font-family-editor;
         @include prefixer(box-sizing, border-box, webkit moz spec);

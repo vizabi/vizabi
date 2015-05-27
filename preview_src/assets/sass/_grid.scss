@@ -72,3 +72,15 @@ p {
         right: $vzbp-width-sidebar + $vzbp-width-state-editor;
     }
 }
+
+@media screen and (max-width: 700px) {
+    #vzbp-nav {
+        display: none;
+    }
+    #vzbp-sidebar {
+        display: none;
+    }
+    #vzbp-main {
+        @include position(absolute, 0 0 0 0);
+    }
+}
