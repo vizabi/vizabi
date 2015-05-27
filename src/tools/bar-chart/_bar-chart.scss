@@ -1,0 +1,44 @@
+.vzb-tool-bar-chart {
+    .vzb-bar-chart {
+        @include position(absolute, 0px);
+        @include font-size(18px);
+        font-family: $vzb-font-family;
+        color: #666666;
+        width: 100%;
+        height: 100%;
+        .vzb-bc-title {
+            color: $vzb-color-primary;
+            fill: currentColor;
+        }
+        .vzb-bc-axis {
+            fill: none;
+            stroke: #999999;
+            color: #999999;
+            text {
+                fill: currentColor;
+                stroke: none;
+            }
+        }
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend .vzb-bc-axis;
+        }
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend .vzb-bc-title;
+        }
+        .vzb-bc-bar {
+            stroke: none;
+        }
+    }
+    &.vzb-medium {
+        .vzb-bar-chart {
+            @include font-size(15px);
+        }
+    }
+    &.vzb-small {
+        .vzb-bar-chart {
+            @include font-size(12px);
+        }
+    }
+}

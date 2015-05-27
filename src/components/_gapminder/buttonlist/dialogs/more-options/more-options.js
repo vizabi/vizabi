@@ -1,10 +1,18 @@
-define([
-    'd3',
-    'components/_gapminder/buttonlist/dialogs/dialog'
-], function(d3, Dialog) {
+/*
+ * More options dialog
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
 
     
-    var MoreOptionsDialog  = Dialog.extend({
+    Vizabi.Component.register('gapminder-buttonlist-more-options',
+        Dialog.extend({
 
         /**
          * Initializes the dialog component
@@ -16,37 +24,39 @@ define([
             var _this = this;
 
             this.components = [{
-                component: '_gapminder/indicator-picker',
+                component: 'gapminder-indicator-picker',
                 placeholder: '.vzb-xaxis-container',
                 model: ["state.marker.axis_x", "language"]
             },{
-                component: '_gapminder/indicator-picker',
+                component: 'gapminder-indicator-picker',
                 placeholder: '.vzb-yaxis-container',
                 model: ["state.marker.axis_y", "language"]
             },{
-                component: '_gapminder/simple-checkbox',
+                component: 'gapminder-simple-checkbox',
                 placeholder: '.vzb-axes-options',
                 model: ["state", "language"],
                 submodel: 'time',
                 checkbox: 'adaptMinMaxZoom'
-            },{
-                component: '_gapminder/bubble-size',
-                placeholder: '.vzb-dialog-bubble-size',
-                model: ["state.marker.size"]
-            },{
-                component: '_gapminder/indicator-picker',
-                placeholder: '.vzb-saxis-container',
-                model: ["state.marker.size", "language"]
-            },{
-                component: '_gapminder/indicator-picker',
+            },
+            // {
+            //     component: 'gapminder-bubble-size',
+            //     placeholder: '.vzb-dialog-bubble-size',
+            //     model: ["state.marker.size"]
+            // },{
+            //     component: 'gapminder-indicator-picker',
+            //     placeholder: '.vzb-saxis-container',
+            //     model: ["state.marker.size", "language"]
+            // },
+            {
+                component: 'gapminder-indicator-picker',
                 placeholder: '.vzb-caxis-container',
                 model: ["state.marker.color", "language"]
             },{
-                component: '_gapminder/color-legend',
+                component: 'gapminder-color-legend',
                 placeholder: '.vzb-clegend-container',
                 model: ["state.marker.color", "language"]
             },{
-                component: '_gapminder/bubble-opacity',
+                component: 'gapminder-bubble-opacity',
                 placeholder: '.vzb-dialog-bubble-opacity',
                 model: ["state.entities"]
             }];
@@ -55,9 +65,9 @@ define([
         },
         
         domReady: function() {
+            this.element = d3.select(this.element);
             this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
-        },
-    });
+        }
+    }));
 
-    return MoreOptionsDialog;
-});
+}).call(this);

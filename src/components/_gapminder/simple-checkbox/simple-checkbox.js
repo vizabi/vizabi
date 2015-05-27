@@ -1,13 +1,25 @@
-//IndicatorPicker
-define([
-    'd3',
-    'base/component'
-], function(d3, Component) {
+/*!
+ * VIZABI SIMPLE CHECKBOX
+ * Reusable simple checkbox component
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
     
-    var SimpleCheckbox = Component.extend({
+    Vizabi.Component.extend('gapminder-simple-checkbox', {
 
         init: function(config, context) {
-            this.template = "components/_gapminder/simple-checkbox/simple-checkbox";
+            this.template = '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';
             var _this = this;
             
             this.checkbox = config.checkbox;
@@ -23,13 +35,8 @@ define([
             
             
             this.model_binds = {
-                "readyOnce": function(evt) {
-                    _this.updateView();
-                },
                 "change:language": function(evt) {
                     _this.updateView();
-                },
-                "ready": function(evt) {
                 }
             }
             
@@ -41,8 +48,13 @@ define([
             this._super(config, context);
         },
 
+        ready: function() {
+            this.updateView();
+        },
+
         domReady: function() {
             var _this = this;
+            this.element = d3.select(this.element);
             var id = "-check-" + Math.random()*1000;
             this.labelEl = this.element.select('label').attr("for", id);
             this.checkEl = this.element.select('input').attr("id", id)
@@ -57,13 +69,11 @@ define([
             this.checkEl.property("checked", !!this.model.mdl[this.submodel][this.checkbox]);
         },
         
-
         _setModel: function (value) {
             this.model.mdl[this.submodel][this.checkbox] = value;
-        },
+        }
         
     });
 
-    return SimpleCheckbox;
 
-});
+}).call(this);

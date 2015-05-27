@@ -1,11 +1,21 @@
-define([
-    'd3',
-    'base/layout',
-    'base/component'
-], function(d3, Layout, Component) {
+/*!
+ * VIZABI DIALOG
+ * Reusable Dialog component
+ */
 
-    var Dialog = Component.extend({
+(function() {
 
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
+
+    Vizabi.Component.extend('gapminder-buttonlist-dialog', {
         /**
          * Initializes the dialog
          * @param {Object} config Initial config, with name and placeholder
@@ -25,10 +35,8 @@ define([
                 type: "language"
             }];
             
-            this.template = 'components/_gapminder/buttonlist/'+
-                            'dialogs/'+this.name+'/'+this.name;
-
-            this.layout = new Layout();
+            this.template = 'src/components/_gapminder/buttonlist/'+
+                            'dialogs/'+this.name+'/'+this.name+'.html';
 
             this._super(config, parent);
         },
@@ -37,8 +45,8 @@ define([
          * Executed when the dialog has been rendered
          */
         domReady: function() {
+            this.element = d3.select(this.element);
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
-
             var _this = this;
             close_buttons.on('click', function() {
                 _this.parent.closeAllDialogs();
@@ -61,5 +69,4 @@ define([
 
     });
 
-    return Dialog;
-});
+}).call(this);

@@ -174,7 +174,7 @@
          */
         _addButtons: function() {
 
-            this.components = [];
+            this._components_config = [];
             var button_list = this.model.ui.buttons;
             var details_btns = [];
             //add a component for each button
@@ -185,7 +185,7 @@
 
                 //if it's a dialog, add component
                 if (btn_config && btn_config.dialog) {
-                    var comps = this.components;
+                    var comps = this._components_config;
                     
                     //add corresponding component
                     comps.push({
@@ -224,7 +224,7 @@
                         .attr('data-btn', function(d) { return d.id; });
 
             this.loadComponents();
-            
+
             var _this = this;
             //render each subcomponent
             utils.forEach(this.components, function(subcomp) {

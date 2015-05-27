@@ -401,7 +401,7 @@
                 return {
                     name: name,
                     model: current,
-                    type: current.getType()
+                    type: (current) ? current.getType() : null
                 };
             }
 
@@ -479,9 +479,7 @@
          * Executes when the resize event is triggered.
          * Ideally, it only contains operations related to size
          */
-        resize: function() {},
-
-
+        resize: function() {}
     });
 
     // Based on Simple JavaScript Templating by John Resig

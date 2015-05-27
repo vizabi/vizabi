@@ -1,12 +1,24 @@
-//BubbleSize
-define([
-    'd3',
-    'base/component'
-], function(d3, Component) {
+/*!
+ * VIZABI BUBBLE SIZE slider
+ * Reusable bubble size slider
+ */
+
+(function() {
+
+    "use strict";
+
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
 
     var indicator, min = 1, max = 100;
 
-    var BubbleSize = Component.extend({
+    Vizabi.Component.extend('gapminder-bubble-size', {
 
         /**
          * Initializes the timeslider.
@@ -32,7 +44,9 @@ define([
          * At this point, this.element and this.placeholder are available as a d3 object
          */
         domReady: function() {
-            var value = this.model.size.max, _this = this;
+            var value = this.model.size.max,
+                _this = this;
+            this.element = d3.select(this.element);
             indicator = this.element.select('#vzb-bs-indicator');
             slider = this.element.selectAll('#vzb-bs-slider');
 
@@ -63,26 +77,24 @@ define([
             //E.g: var height = this.placeholder.style('height');
         },
 
-        slideHandler: function () {
+        slideHandler: function() {
             this._setValue(+d3.event.target.value);
         },
-        
+
         /**
          * Sets the current value in model. avoid updating more than once in framerate
          * @param {number} value 
          */
         _setValue: function(value) {
-            var frameRate = 50; 
+            var frameRate = 50;
 
             //implement throttle
             var now = new Date();
-            if(this._updTime!=null && now - this._updTime < frameRate) return;
+            if (this._updTime != null && now - this._updTime < frameRate) return;
             this._updTime = now;
-            
+
             this.model.size.max = value;
         }
     });
 
-    return BubbleSize ;
-
-});
+}).call(this);

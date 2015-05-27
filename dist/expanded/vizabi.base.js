@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-26 */
+/* VIZABI - http://www.gapminder.org - 2015-05-27 */
 
 /*!
  * VIZABI MAIN
@@ -3048,7 +3048,7 @@
                 return {
                     name: name,
                     model: current,
-                    type: current.getType()
+                    type: (current) ? current.getType() : null
                 };
             }
 
@@ -3126,9 +3126,7 @@
          * Executes when the resize event is triggered.
          * Ideally, it only contains operations related to size
          */
-        resize: function() {},
-
-
+        resize: function() {}
     });
 
     // Based on Simple JavaScript Templating by John Resig

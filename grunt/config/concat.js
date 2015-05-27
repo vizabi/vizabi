@@ -16,7 +16,10 @@ module.exports = function(grunt) {
         ],
         components: ['.tmp/templates.js',
             'src/components/_gapminder/timeslider/*.js',
-            'src/components/_gapminder/buttonlist/buttonlist.js'
+            'src/components/_gapminder/indicator-picker/**/*.js',
+            'src/components/_gapminder/simple-checkbox/**/*.js',
+            'src/components/_gapminder/bubble-size/**/*.js',
+            'src/components/_gapminder/buttonlist/**/*.js'
         ],
         models: ['src/models/**/*.js'],
         tools: ['src/tools/**/*.js'],

@@ -96,7 +96,7 @@
                     _this.changeTime();
                     var transition = _this.model.time.playing;
                     _this._setHandle(transition);
-                },
+                }
             };
 
             this.ui = utils.extend({
