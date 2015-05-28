@@ -93,20 +93,7 @@
                     _this.highlightDataPoints();
                 },
                 "readyOnce": function(evt) {
-                    //console.log("EVENT ready once");
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateEntities();
-                    _this.updateTime();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-                    _this.selectDataPoints();
-                    _this.updateBubbleOpacity();
-                    _this._trails.create();
-                    
-                    _this.resetZoomer(); // includes redraw data points and trail resize
-                    _this._trails.run(["recolor","findVisible", "reveal"]);
-                    if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+
                 },
                 "ready": function(evt) {
                     //TODO a workaround to fix the selection of entities
@@ -340,7 +327,7 @@
         /**
          * Executes right after the template is in place, but the model is not yet ready
          */
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             
@@ -392,6 +379,23 @@
             this.element
                 .call(this.zoomer)
                 .call(this.gragRectangle);
+            
+            
+            
+            //console.log("EVENT ready once");
+            _this.updateUIStrings();
+            _this.updateIndicators();
+            _this.updateEntities();
+            _this.updateTime();
+            _this.updateSize();
+            _this.updateMarkerSizeLimits();
+            _this.selectDataPoints();
+            _this.updateBubbleOpacity();
+            _this._trails.create();
+
+            _this.resetZoomer(); // includes redraw data points and trail resize
+            _this._trails.run(["recolor","findVisible", "reveal"]);
+            if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
         },
 
 
