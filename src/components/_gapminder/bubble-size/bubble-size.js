@@ -43,7 +43,7 @@
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 object
          */
-        domReady: function() {
+        readyOnce: function() {
             var value = this.model.size.max,
                 _this = this;
             this.element = d3.select(this.element);

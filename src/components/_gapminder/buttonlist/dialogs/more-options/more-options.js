@@ -64,7 +64,7 @@
             this._super(config, parent);
         },
         
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
         }

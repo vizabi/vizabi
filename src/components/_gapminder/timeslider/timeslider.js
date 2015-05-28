@@ -117,7 +117,7 @@
         },
 
         //template is ready
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             //DOM to d3

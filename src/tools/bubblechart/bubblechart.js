@@ -96,6 +96,7 @@
 
                 },
                 "ready": function(evt) {
+                    return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;

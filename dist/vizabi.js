@@ -2733,12 +2733,12 @@
 
             this._super();
 
-            //domReady alias
+            //readyOnce alias
             var _this = this;
             this.on({
-                'dom_ready': function() {
-                    if (typeof _this.domReady === 'function') {
-                        _this.domReady();
+                'readyOnce': function() {
+                    if (typeof _this.readyOnce === 'function') {
+                        _this.readyOnce();
                     }
                 },
                 'ready': function() {
@@ -2794,7 +2794,7 @@
 
         setReady: function() {
             if (!this._readyOnce) {
-                this.trigger('dom_ready');
+                this.trigger('readyOnce');
                 this._readyOnce = true;
             }
             this._ready = true;
@@ -3146,7 +3146,7 @@
          * At this point, this.element and this.placeholder are available
          * as DOM elements
          */
-        domReady: function() {},
+        readyOnce: function() {},
 
         /**
          * Executes after the template and model (if any) are ready
@@ -3546,7 +3546,7 @@
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 object
          */
-        domReady: function() {
+        readyOnce: function() {
             var value = this.model.size.max,
                 _this = this;
             this.element = d3.select(this.element);
@@ -3716,7 +3716,7 @@
 
         },
 
-        domReady: function()  {
+        readyOnce: function()  {
             this.element = d3.select(this.element);
         },
 
@@ -4075,7 +4075,7 @@
         /**
          * Executed when the dialog has been rendered
          */
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
             var _this = this;
@@ -4163,7 +4163,7 @@
             this._super(config, parent);
         },
         
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
         }
@@ -4276,7 +4276,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             this.element = d3.select(this.element);
@@ -4423,7 +4423,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             var id = "-check-" + Math.random()*1000;
@@ -4567,7 +4567,7 @@
         },
 
         //template is ready
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             //DOM to d3
@@ -6092,7 +6092,7 @@
         /**
          * DOM is ready
          */
-        domReady: function() {
+        readyOnce: function() {
 
             this.element = d3.select(this.element);
 
@@ -6885,22 +6885,10 @@
                     _this.highlightDataPoints();
                 },
                 "readyOnce": function(evt) {
-                    //console.log("EVENT ready once");
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateEntities();
-                    _this.updateTime();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-                    _this.selectDataPoints();
-                    _this.updateBubbleOpacity();
-                    _this._trails.create();
-                    
-                    _this.resetZoomer(); // includes redraw data points and trail resize
-                    _this._trails.run(["recolor","findVisible", "reveal"]);
-                    if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+
                 },
                 "ready": function(evt) {
+                    return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;
@@ -7132,7 +7120,7 @@
         /**
          * Executes right after the template is in place, but the model is not yet ready
          */
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             
@@ -7184,6 +7172,23 @@
             this.element
                 .call(this.zoomer)
                 .call(this.gragRectangle);
+            
+            
+            
+            //console.log("EVENT ready once");
+            _this.updateUIStrings();
+            _this.updateIndicators();
+            _this.updateEntities();
+            _this.updateTime();
+            _this.updateSize();
+            _this.updateMarkerSizeLimits();
+            _this.selectDataPoints();
+            _this.updateBubbleOpacity();
+            _this._trails.create();
+
+            _this.resetZoomer(); // includes redraw data points and trail resize
+            _this._trails.run(["recolor","findVisible", "reveal"]);
+            if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
         },
 
 
