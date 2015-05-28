@@ -66,7 +66,7 @@
         /**
          * DOM is ready
          */
-        domReady: function() {
+        readyOnce: function() {
 
             this.element = d3.select(this.element);
 

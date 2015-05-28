@@ -103,7 +103,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             this.element = d3.select(this.element);

@@ -51,7 +51,7 @@
          * Ideally, it contains HTML instantiations related to template
          * At this point, this.element and this.placeholder are available as a d3 object
          */
-        domReady: function() {
+        readyOnce: function() {
             var value = this.model.size.max,
                 _this = this;
             this.element = d3.select(this.element);
@@ -221,7 +221,7 @@
 
         },
 
-        domReady: function()  {
+        readyOnce: function()  {
             this.element = d3.select(this.element);
         },
 
@@ -580,7 +580,7 @@
         /**
          * Executed when the dialog has been rendered
          */
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
             var _this = this;
@@ -668,7 +668,7 @@
             this._super(config, parent);
         },
         
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
         }
@@ -781,7 +781,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             this.element = d3.select(this.element);
@@ -928,7 +928,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             var id = "-check-" + Math.random()*1000;
@@ -1072,7 +1072,7 @@
         },
 
         //template is ready
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
 
             //DOM to d3

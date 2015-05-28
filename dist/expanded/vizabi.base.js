@@ -2733,12 +2733,12 @@
 
             this._super();
 
-            //domReady alias
+            //readyOnce alias
             var _this = this;
             this.on({
-                'dom_ready': function() {
-                    if (typeof _this.domReady === 'function') {
-                        _this.domReady();
+                'readyOnce': function() {
+                    if (typeof _this.readyOnce === 'function') {
+                        _this.readyOnce();
                     }
                 },
                 'ready': function() {
@@ -2794,7 +2794,7 @@
 
         setReady: function() {
             if (!this._readyOnce) {
-                this.trigger('dom_ready');
+                this.trigger('readyOnce');
                 this._readyOnce = true;
             }
             this._ready = true;
@@ -3146,7 +3146,7 @@
          * At this point, this.element and this.placeholder are available
          * as DOM elements
          */
-        domReady: function() {},
+        readyOnce: function() {},
 
         /**
          * Executes after the template and model (if any) are ready

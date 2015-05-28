@@ -52,7 +52,7 @@
             this.updateView();
         },
 
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             var id = "-check-" + Math.random()*1000;

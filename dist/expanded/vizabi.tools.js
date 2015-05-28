@@ -68,7 +68,7 @@
         /**
          * DOM is ready
          */
-        domReady: function() {
+        readyOnce: function() {
 
             this.element = d3.select(this.element);
 
@@ -861,6 +861,7 @@
                     _this.highlightDataPoints();
                 },
                 "readyOnce": function(evt) {
+                    return;
                     //console.log("EVENT ready once");
                     _this.updateUIStrings();
                     _this.updateIndicators();
@@ -877,6 +878,7 @@
                     if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
                 },
                 "ready": function(evt) {
+                    return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;
@@ -1108,7 +1110,7 @@
         /**
          * Executes right after the template is in place, but the model is not yet ready
          */
-        domReady: function() {
+        readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
             

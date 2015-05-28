@@ -44,7 +44,7 @@
         /**
          * Executed when the dialog has been rendered
          */
-        domReady: function() {
+        readyOnce: function() {
             this.element = d3.select(this.element);
             close_buttons = this.element.selectAll("[data-click='closeDialog']");
             var _this = this;
