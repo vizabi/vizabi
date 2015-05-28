@@ -15,8 +15,6 @@
         return;
     }
     
-    var comp_template = 'src/tools/bubble-chart/bubble-chart.html';
-
     
     //BAR CHART COMPONENT
     Vizabi.Component.extend('gapminder-bubblechart', {
@@ -30,7 +28,7 @@
         init: function(context, options) {
             var _this = this;
             this.name = 'bubblechart';
-            this.template = 'components/_examples/' + this.name + '/' + this.name;
+            this.template = 'src/tools/bubblechart/bubblechart.html';
 
             //define expected models for this component
             this.model_expects = [{
@@ -66,6 +64,7 @@
                 },
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
+                    return;
                     if(evt == "change:marker:size:max") return; 
                     if(evt.indexOf("change:marker:color:palette") > -1) return; 
                     //console.log("EVENT change:marker", evt);
@@ -82,12 +81,14 @@
                 },
                 "change:entities:select": function() {
                     //console.log("EVENT change:entities:select");
+                    return;
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
                     _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
                     _this.updateBubbleOpacity();
                 },
                 "change:entities:brush": function() {
+                    return;
                     //console.log("EVENT change:entities:brush");
                     _this.highlightDataPoints();
                 },
@@ -174,24 +175,26 @@
             this.currentZoomFrameXY = null;
 
             // default UI settings
-            this.ui = _.extend({
+            this.ui = utils.extend({
                 whenHovering: {},
                 labels: {}
             }, this.ui["vzb-tool-" + this.name]);
 
-            this.ui.whenHovering = _.extend({
+            this.ui.whenHovering = utils.extend({
                 showProjectionLineX: true,
                 showProjectionLineY: true,
                 higlightValueX: true,
                 higlightValueY: true
             }, this.ui.whenHovering);
 
-            this.ui.labels = _.extend({
+            this.ui.labels = utils.extend({
                 autoResolveCollisions: false,
                 dragging: true
             }, this.ui.labels);
-
-            this._trails = Trail.call(this);
+            
+            
+            var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
+            this._trails = new Trail(this);
 
 
 //            this.collisionResolver = d3.svg.collisionResolver()
@@ -285,10 +288,10 @@
 
 
                     //value protections and fallbacks
-                    if (_.isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
-                    if (_.isNaN(zoom) || zoom == null) zoom = 1;
-                    if (_.isNaN(pan[0]) || _.isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
-                    if (_.isNaN(pan[0]) || _.isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
+                    if (isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
+                    if (isNaN(zoom) || zoom == null) zoom = 1;
+                    if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
+                    if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
 
                     // limit the zooming, so that it never goes below 1 for any of the axes
@@ -339,7 +342,8 @@
          */
         domReady: function() {
             var _this = this;
-
+            this.element = d3.select(this.element);
+            
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
             this.yAxisElContainer = this.graph.select('.vzb-bc-axis-y');
@@ -561,7 +565,7 @@
             
             if(!frame || suggestedFrame.x1 < frame.x1 * (1-TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1+TOLERANCE)
                       || suggestedFrame.y2 < frame.y2 * (1-TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1+TOLERANCE)){
-                _this.currentZoomFrameXY = _.clone(suggestedFrame);
+                _this.currentZoomFrameXY = utils.clone(suggestedFrame);
                 var frame = _this.currentZoomFrameXY;
                 _this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
                 //console.log("rezoom")
@@ -880,7 +884,7 @@
                 var cached = _this.cached[d.geo];
                 
 
-                var select = _.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
+                var select = utils.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
                 var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
                 cached.valueX = valueX;
@@ -1131,7 +1135,7 @@
             this.updateBubbleOpacity();
 
             if(this.model.entities.brush.length === 1){
-                var d = _.clone(this.model.entities.brush[0]); 
+                var d = utils.clone(this.model.entities.brush[0]); 
                 
                 if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
                     d["time"] = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
@@ -1208,7 +1212,7 @@
          */
         init: function(config, options) {
 
-            this.name = "barchart";
+            this.name = "bubblechart";
 
             //specifying components
             this.components = [{
@@ -1221,14 +1225,14 @@
                     placeholder: '.vzb-tool-timeslider',
                     model: ["state.time"]
                 },
-                {
-                    component: 'gapminder-buttonlist',
-                    placeholder: '.vzb-tool-buttonlist',
-                    model: ['state', 'ui', 'language']
-                }
+//                {
+//                    component: 'gapminder-buttonlist',
+//                    placeholder: '.vzb-tool-buttonlist',
+//                    model: ['state', 'ui', 'language']
+//                }
             ];
 
-            //default options
+    //default options
             this.default_options = {
                 state: {
                     _type_: "model",
@@ -1242,7 +1246,11 @@
                                 value: 2000,
                                 step: 1,
                                 speed: 300,
-                                formatInput: "%Y"
+                                round: "ceil",
+                                formatInput: "%Y",
+                                trails: true,
+                                lockNonSelected: 0,
+                                adaptMinMaxZoom: false
                             }
                         },
                         //entities we want to show
@@ -1259,8 +1267,8 @@
                                         filter: {
                                             _type_: "object",
                                             _defs_: {
-                                                "geo": ["*"],
-                                                "geo.category": ["region"]
+                                                "geo": ["afg", "alb", "dza", "ago", "atg", "arg", "arm", "abw", "aus", "aut", "aze", "bhs", "bhr", "bgd", "brb", "blr", "bel", "blz", "ben", "btn", "bol", "bih", "bwa", "bra", "chn", "brn", "bgr", "bfa", "bdi", "khm", "cmr", "can", "cpv", "caf", "tcd", "_cis", "chl", "col", "com", "cod", "cog", "cri", "civ", "hrv", "cub", "cyp", "cze", "dnk", "dji", "dom", "ecu", "egy", "slv", "gnq", "eri", "est", "eth", "fji", "fin", "fra", "guf", "pyf", "gab", "gmb", "geo", "deu", "gha", "grc", "grd", "glp", "gum", "gtm", "gin", "gnb", "guy", "hti", "hnd", "hkg", "hun", "isl", "ind", "idn", "irn", "irq", "irl", "isr", "ita", "jam", "jpn", "jor", "kaz", "ken", "kir", "prk", "kor", "kwt", "kgz", "lao", "lva", "lbn", "lso", "lbr", "lby", "ltu", "lux", "mac", "mkd", "mdg", "mwi", "mys", "mdv", "mli", "mlt", "mtq", "mrt", "mus", "myt", "mex", "fsm", "mda", "mng", "mne", "mar", "moz", "mmr", "nam", "npl", "nld", "ant", "ncl", "nzl", "nic", "ner", "nga", "nor", "omn", "pak", "pan", "png", "pry", "per", "phl", "pol", "prt", "pri", "qat", "reu", "rou", "rus", "rwa", "lca", "vct", "wsm", "stp", "sau", "sen", "srb", "syc", "sle", "sgp", "svk", "svn", "slb", "som", "zaf", "sds", "esp", "lka", "sdn", "sur", "swz", "swe", "che", "syr", "twn", "tjk", "tza", "tha", "tls", "tgo", "ton", "tto", "tun", "tur", "tkm", "uga", "ukr", "are", "gbr", "usa", "ury", "uzb", "vut", "ven", "pse", "esh", "vnm", "vir", "yem", "zmb", "zwe"],
+                                                "geo.cat": ["country"]
                                             }
                                         }
                                     }
@@ -1276,6 +1284,8 @@
                                     _type_: "array",
                                     _defs_: ["entities", "time"]
                                 },
+                                type: "geometry",
+                                shape: "circle",
                                 label: {
                                     _type_: "hook",
                                     _defs_: {
@@ -1284,7 +1294,7 @@
                                             _defs_: "property",
                                             _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.name"
                                         }
@@ -1295,15 +1305,20 @@
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "indicator"
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "lex"
                                         },
                                         scaleType: {
                                             _type_: "string",
                                             _defs_: "linear"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: "years"
                                         }
                                     }
                                 },
@@ -1312,12 +1327,46 @@
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "property",
-                                            _opts_: ["property"]
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
-                                            _defs_: "geo.name"
+                                            _defs_: "gdp_per_cap"
+                                        },
+                                        scaleType: {
+                                            _type_: "string",
+                                            _defs_: "log"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: "$/year/person"
+                                        }
+                                    }
+                                },
+                                size: {
+                                    _type_: "hook",
+                                    _defs_: {
+                                        use: {
+                                            _type_: "string",
+                                            _defs_: "indicator",
+                                            _opts_: ["property", "indicator", "value"]
+                                        },
+                                        which: {
+                                            _type_: "string",
+                                            _defs_: "pop"
+                                        },
+                                        scaleType: {
+                                            _type_: "string",
+                                            _defs_: "linear"
+                                        },
+                                        max: {
+                                            _type_: "number",
+                                            _defs_: 0.75
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: ""
                                         }
                                     }
                                 },
@@ -1326,22 +1375,20 @@
                                     _defs_: {
                                         use: {
                                             _type_: "string",
-                                            _defs_: "property"
+                                            _defs_: "property",
+                                            _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },
-                                        palette: {
-                                            _type_: "object",
-                                            _defs_: {
-                                                "_default": "#ffb600",
-                                                "world": "#ffb600",
-                                                "eur": "#FFE700",
-                                                "afr": "#00D5E9",
-                                                "asi": "#FF5872",
-                                                "ame": "#7FEB00"
-                                            }
+                                        scaleType: {
+                                            _type_: "string",
+                                            _defs_: "ordinal"
+                                        },
+                                        unit: {
+                                            _type_: "string",
+                                            _defs_: ""
                                         }
                                     }
                                 }
@@ -1354,6 +1401,10 @@
                 data: {
                     _type_: "model",
                     _defs_: {
+//                        reader: {
+//                            _type_: "string",
+//                            _defs_: "waffle-server"
+//                        }
                         reader: {
                             _type_: "string",
                             _defs_: "local-json"
@@ -1368,11 +1419,26 @@
                 ui: {
                     _type_: "model",
                     _defs_: {
+                        'vzb-tool-bar-chart': {
+                            _type_: "object",
+                            _defs_: {
+                                whenHovering: {
+                                    showProjectionLineX: true,
+                                    showProjectionLineY: true,
+                                    higlightValueX: true,
+                                    higlightValueY: true
+                                },
+                                labels: {
+                                    autoResolveCollisions: true,
+                                    dragging: true
+                                }
+                            }
+                        },
                         'buttons': {
                             _type_: "array",
                             _defs_: ["fullscreen"]
                         }
-                    }
+                    }                
                 },
 
                 //language properties
@@ -1387,21 +1453,67 @@
                             _type_: "object",
                             _defs_: {
                                 en: {
-                                    "title": "",
-                                    "buttons/expand": "Full screen",
-                                    "buttons/unexpand": "Leave full screen",
+                                    "title": "Bubble Chart Title",
+                                    "buttons/expand": "Go big",
+                                    "buttons/unexpand": "Go small",
+                                    "buttons/trails": "Trails",
                                     "buttons/lock": "Lock",
                                     "buttons/find": "Find",
+                                    "buttons/deselect": "Deselect",
+                                    "buttons/ok": "OK",
                                     "buttons/colors": "Colors",
                                     "buttons/size": "Size",
+                                    "buttons/axes": "Axes",
                                     "buttons/more_options": "Options",
                                     "indicator/lex": "Life expectancy",
                                     "indicator/gdp_per_cap": "GDP per capita",
                                     "indicator/pop": "Population",
                                     "indicator/geo.region": "Region",
                                     "indicator/geo": "Geo code",
-                                    "indicator/time": "",
-                                    "indicator/geo.category": "Geo category"
+                                    "indicator/time": "Time",
+                                    "indicator/geo.category": "Geo category",
+                                    "scaletype/linear": "Linear",
+                                    "scaletype/log": "Logarithmic",
+                                    "scaletype/genericLog": "Generic log",
+                                    "scaletype/time": "Time",
+                                    "scaletype/ordinal": "Ordinal",
+                                    "color/geo.region/asi": "Asia",
+                                    "color/geo.region/eur": "Europe",
+                                    "color/geo.region/ame": "Americas",
+                                    "color/geo.region/afr": "Afrika",
+                                    "color/geo.region/_default": "Other"
+                                },
+                                pt: {
+                                    "title": "Título do Bubble Chart",
+                                    "buttons/expand": "Expandir",
+                                    "buttons/unexpand": "Nia expandir",
+                                    "buttons/trails": "Led",
+                                    "buttons/lock": "Lås",
+                                    "buttons/find": "Encontre",
+                                    "buttons/deselect": "Välj ingen",
+                                    "buttons/ok": "Okej",
+                                    "buttons/colors": "Cores",
+                                    "buttons/size": "Tamanho",
+                                    "buttons/axes": "Axlar",
+                                    "buttons/more_options": "Opções",
+                                    "indicator/lex": "Expectables Livappulo",
+                                    "indicator/gdp_per_cap": "PIB pers capitous",
+                                    "indicator/pop": "Peoples",                    
+                                    "indicator/geo.region": "Regiono",
+                                    "indicator/geo": "Geo codo",
+                                    "indicator/time": "Tid",
+                                    "indicator/geo.category": "Geo catego",
+                                    "scaletype/linear": "Linjär",
+                                    "scaletype/log": "Logaritmisk",
+                                    "scaletype/genericLog": "Allmän log",
+                                    "scaletype/time": "Tid",
+                                    "scaletype/ordinal": "Ordning",
+                                    "geo.region/asi": "Asien",
+                                    "geo.region/eur": "Europa",
+                                    "geo.region/ame": "Amerikor",
+                                    "geo.region/afr": "Afrika",
+                                    "geo.region/_default": "Other"
+
                                 }
                             }
                         }
@@ -1409,10 +1521,11 @@
                 }
             };
 
-            //constructor is the same as any tool
             this._super(config, options);
-        },
 
+        },
+        
+        
         /**
          * Validating the tool model
          * @param model the current tool model to be validated

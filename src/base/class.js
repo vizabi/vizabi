@@ -85,5 +85,7 @@
 
     Vizabi.Class = function() {};
     Vizabi.Class.extend = extend;
+    
+    Vizabi.Helper = Vizabi.Class.extend({});
 
 }).call(this);

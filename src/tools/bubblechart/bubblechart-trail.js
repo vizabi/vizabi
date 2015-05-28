@@ -1,11 +1,14 @@
 (function() {
     
-    function Trail(){
-        var _this = this;
-    
-        return {
+    Vizabi.Helper.extend("gapminder-bublechart-trails", {
+        
+            init: function(context) {
+                this.context = context;
+            },
             
             toggle: function(arg) {
+                var _this = this.context;
+                
                 if (arg) {
                     _this._trails.create();
                     _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
@@ -18,6 +21,7 @@
             },
             
             create: function(selection) {
+                var _this = this.context;
 
                 //quit if the function is called accidentally
                 if(!_this.model.time.trails || !_this.model.entities.select.length) return;
@@ -98,6 +102,7 @@
             
             
             run: function(actions, selection, duration){
+                var _this = this.context;
             
             
                 //quit if function is called accidentally
@@ -131,6 +136,7 @@
             },
 
             _resize: function(trail, duration, d) {
+                var _this = this.context;
 
                 trail.each(function(segment, index){
 
@@ -155,6 +161,7 @@
             },
 
             _recolor: function(trail, duration, d) {
+                var _this = this.context;
 
                 trail.each(function(segment, index){
 
@@ -171,6 +178,7 @@
 
 
             _findVisible: function(trail, duration, d) {
+                var _this = this.context;
 
                 var firstVisible = true;
                 var trailStartTime = _this.timeFormatter.parse("" + d.trailStartTime);
@@ -194,6 +202,7 @@
 
 
             _reveal: function(trail, duration, d) {
+                var _this = this.context;
 
                 trail.each(function(segment, index){
 
@@ -230,7 +239,7 @@
             },
 
             
-        };
-        
-    }
+        });
+                                     
+    
 }).call(this);    

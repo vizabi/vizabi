@@ -660,7 +660,7 @@
         };
 
         Promise.prototype.reject = function(reason) {
-            if ('resolved' === this.status) throw Error('Illegal call.');
+            if ('resolved' === this.status) throw Error('Illegal call. ' + reason);
 
             this.status = 'rejected';
             this.reason = reason;
@@ -932,6 +932,8 @@
 
     Vizabi.Class = function() {};
     Vizabi.Class.extend = extend;
+    
+    Vizabi.Helper = Vizabi.Class.extend({});
 
 }).call(this);
 /*!
