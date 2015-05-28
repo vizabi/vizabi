@@ -1527,8 +1527,6 @@
     var utils = Vizabi.utils;
 
     //names of reserved hook properties
-    var HOOK_PROPERTY = 'use';
-    var HOOK_VALUE = 'value';
 
     //warn client if d3 is not defined
     Vizabi._require('d3');
@@ -1973,7 +1971,7 @@
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this[HOOK_PROPERTY]) ? true : false;
+            return (this.use) ? true : false;
         },
 
         /**
@@ -2040,8 +2038,8 @@
          */
         getHookValues: function(type) {
             var values = [];
-            if (this[HOOK_PROPERTY] && this[HOOK_PROPERTY] === type) {
-                values.push(this[HOOK_VALUE]);
+            if (this.use && this.use === type) {
+                values.push(this.which);
             }
             //repeat for each submodel
             utils.forEach(this.getSubmodels(), function(s) {
@@ -2176,7 +2174,7 @@
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this[HOOK_PROPERTY]) === -1) {
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
                 return true;
             }
             //error if there's nothing to hook to
@@ -2187,7 +2185,7 @@
             //else, its a hook (indicator or property) and it needs to query
             else {
                 var dimensions = this.getAllDimensions(),
-                    select = utils.unique(dimensions.concat([this[HOOK_VALUE]])),
+                    select = utils.unique(dimensions.concat([this.which])),
                     filters = this.getAllFilters();
                 //return query
                 return {
@@ -2222,15 +2220,15 @@
                 scaleType = this.scaleType || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this[HOOK_VALUE]);
+                    var limits = this.getLimits(this.which);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this.getUnique(this[HOOK_VALUE]);
+                    domain = this.getUnique(this.which);
                     break;
                 case "value":
                 default:
-                    domain = [this[HOOK_VALUE]];
+                    domain = [this.which];
                     break;
             }
 
@@ -2340,12 +2338,12 @@
                 return;
             }
             var value;
-            if (this[HOOK_PROPERTY] === "value") {
-                value = this[HOOK_VALUE];
-            } else if (this._hooks.hasOwnProperty(this[HOOK_PROPERTY])) {
-                value = this.getHook(this[HOOK_PROPERTY])[this[HOOK_VALUE]];
+            if (this.use === "value") {
+                value = this.which;
+            } else if (this._hooks.hasOwnProperty(this.use)) {
+                value = this.getHook(this.use)[this.which];
             } else {
-                value = interpolateValue(this, filter, this[HOOK_PROPERTY], this[HOOK_VALUE]);
+                value = interpolateValue(this, filter, this.use, this.which);
             }
             return value;
         },
@@ -2365,31 +2363,31 @@
 
             var values;
 
-            if (this[HOOK_PROPERTY] === "value") {
-                values = [this[HOOK_VALUE]];
-            } else if (this._hooks.hasOwnProperty(this[HOOK_PROPERTY])) {
-                values = [this.getHook(this[HOOK_PROPERTY])[this[HOOK_VALUE]]];
+            if (this.use === "value") {
+                values = [this.which];
+            } else if (this._hooks.hasOwnProperty(this.use)) {
+                values = [this.getHook(this.use)[this.which]];
             } else {
                 // if a specific time is requested -- return values up to this time
                 if (filter && filter.hasOwnProperty('time')) {
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = _interpolateValue(this, filter, this[HOOK_PROPERTY], this[HOOK_VALUE]);
+                    var lastValue = _interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(this._items, filter)
                         .filter(function(d) {
                             return d.time <= time
                         })
                         .map(function(d) {
-                            return d[_this[HOOK_VALUE]]
+                            return d[_this.which]
                         })
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
                     values = this._items.filter(filter)
                         .map(function(d) {
-                            return d[_this[HOOK_VALUE]]
+                            return d[_this.which]
                         });
                 }
             }
@@ -2415,10 +2413,10 @@
                 .forEach(function(d) {
                     var values = d.values
                         .filter(function(f) {
-                            return f[_this[HOOK_VALUE]] != null
+                            return f[_this.which] != null
                         })
                         .map(function(m) {
-                            return +m[_this[HOOK_VALUE]]
+                            return +m[_this.which]
                         });
                     result[d.key] = {
                         max: d3.max(values),

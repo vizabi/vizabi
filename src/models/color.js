@@ -44,7 +44,7 @@
                 use: "value",
                 unit: "",
                 palette: null,
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
             
@@ -84,23 +84,23 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.value_1 != this.value 
+               || !this.firstLoad && this.value_1 != this.which 
                || !this.firstLoad && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);
                 //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
                 this.scale = null;
-                if(palettes[this.value]){
-                    this.palette = utils.clone(palettes[this.value]);
+                if(palettes[this.which]){
+                    this.palette = utils.clone(palettes[this.which]);
                 }else if(this.use == "value"){
-                    this.palette = {"_default":this.value};
+                    this.palette = {"_default":this.which};
                 }else{
                     this.palette = utils.clone(palettes["_default"]);
                 }
             }
 
-            this.value_1 = this.value;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
             this.firstLoad = false;
         },
@@ -144,8 +144,8 @@
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
-            if(this.value=="time"){
-                var limits = this.getLimits(this.value);
+            if(this.which=="time"){
+                var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
                     .range(range);
@@ -154,7 +154,7 @@
             
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this.value);
+                    var limits = this.getLimits(this.which);
                     var step = ((limits.max-limits.min) / (range.length - 1));
                     domain = d3.range(limits.min, limits.max, step).concat(limits.max);
                     

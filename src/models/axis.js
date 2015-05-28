@@ -39,7 +39,7 @@
             values = utils.extend({
                 use: "value",
                 unit: "",
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
         },
@@ -59,8 +59,8 @@
             }
 
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.value || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.value;
+            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
 
             //TODO: add min and max to validation
@@ -89,15 +89,15 @@
             var domain;
             var scale = this.scaleType || "linear";
 
-            if(this.value=="time"){
-                var limits = this.getLimits(this.value);
+            if(this.which=="time"){
+                var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale().domain([limits.min, limits.max]);
                 return;
             }
             
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this.value),
+                    var limits = this.getLimits(this.which),
                         margin = (limits.max - limits.min) / 20;
                     domain = [(limits.min - margin), (limits.max + margin)];
                     if(scale == "log") {
@@ -106,11 +106,11 @@
 
                     break;
                 case "property":
-                    domain = this.getUnique(this.value);
+                    domain = this.getUnique(this.which);
                     break;
                 case "value":
                 default:
-                    domain = [this.value];
+                    domain = [this.which];
                     break;
             }
 

@@ -1527,8 +1527,6 @@
     var utils = Vizabi.utils;
 
     //names of reserved hook properties
-    var HOOK_PROPERTY = 'use';
-    var HOOK_VALUE = 'value';
 
     //warn client if d3 is not defined
     Vizabi._require('d3');
@@ -1973,7 +1971,7 @@
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this[HOOK_PROPERTY]) ? true : false;
+            return (this.use) ? true : false;
         },
 
         /**
@@ -2040,8 +2038,8 @@
          */
         getHookValues: function(type) {
             var values = [];
-            if (this[HOOK_PROPERTY] && this[HOOK_PROPERTY] === type) {
-                values.push(this[HOOK_VALUE]);
+            if (this.use && this.use === type) {
+                values.push(this.which);
             }
             //repeat for each submodel
             utils.forEach(this.getSubmodels(), function(s) {
@@ -2176,7 +2174,7 @@
             //only perform query in these two uses
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
-            if (!this.isHook() || needs_query.indexOf(this[HOOK_PROPERTY]) === -1) {
+            if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
                 return true;
             }
             //error if there's nothing to hook to
@@ -2187,7 +2185,7 @@
             //else, its a hook (indicator or property) and it needs to query
             else {
                 var dimensions = this.getAllDimensions(),
-                    select = utils.unique(dimensions.concat([this[HOOK_VALUE]])),
+                    select = utils.unique(dimensions.concat([this.which])),
                     filters = this.getAllFilters();
                 //return query
                 return {
@@ -2222,15 +2220,15 @@
                 scaleType = this.scaleType || "linear";
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this[HOOK_VALUE]);
+                    var limits = this.getLimits(this.which);
                     domain = [limits.min, limits.max];
                     break;
                 case "property":
-                    domain = this.getUnique(this[HOOK_VALUE]);
+                    domain = this.getUnique(this.which);
                     break;
                 case "value":
                 default:
-                    domain = [this[HOOK_VALUE]];
+                    domain = [this.which];
                     break;
             }
 
@@ -2340,12 +2338,12 @@
                 return;
             }
             var value;
-            if (this[HOOK_PROPERTY] === "value") {
-                value = this[HOOK_VALUE];
-            } else if (this._hooks.hasOwnProperty(this[HOOK_PROPERTY])) {
-                value = this.getHook(this[HOOK_PROPERTY])[this[HOOK_VALUE]];
+            if (this.use === "value") {
+                value = this.which;
+            } else if (this._hooks.hasOwnProperty(this.use)) {
+                value = this.getHook(this.use)[this.which];
             } else {
-                value = interpolateValue(this, filter, this[HOOK_PROPERTY], this[HOOK_VALUE]);
+                value = interpolateValue(this, filter, this.use, this.which);
             }
             return value;
         },
@@ -2365,31 +2363,31 @@
 
             var values;
 
-            if (this[HOOK_PROPERTY] === "value") {
-                values = [this[HOOK_VALUE]];
-            } else if (this._hooks.hasOwnProperty(this[HOOK_PROPERTY])) {
-                values = [this.getHook(this[HOOK_PROPERTY])[this[HOOK_VALUE]]];
+            if (this.use === "value") {
+                values = [this.which];
+            } else if (this._hooks.hasOwnProperty(this.use)) {
+                values = [this.getHook(this.use)[this.which]];
             } else {
                 // if a specific time is requested -- return values up to this time
                 if (filter && filter.hasOwnProperty('time')) {
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = _interpolateValue(this, filter, this[HOOK_PROPERTY], this[HOOK_VALUE]);
+                    var lastValue = _interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(this._items, filter)
                         .filter(function(d) {
                             return d.time <= time
                         })
                         .map(function(d) {
-                            return d[_this[HOOK_VALUE]]
+                            return d[_this.which]
                         })
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
                     values = this._items.filter(filter)
                         .map(function(d) {
-                            return d[_this[HOOK_VALUE]]
+                            return d[_this.which]
                         });
                 }
             }
@@ -2415,10 +2413,10 @@
                 .forEach(function(d) {
                     var values = d.values
                         .filter(function(f) {
-                            return f[_this[HOOK_VALUE]] != null
+                            return f[_this.which] != null
                         })
                         .map(function(m) {
-                            return +m[_this[HOOK_VALUE]]
+                            return +m[_this.which]
                         });
                     result[d.key] = {
                         max: d3.max(values),
@@ -4862,7 +4860,7 @@
             values = utils.extend({
                 use: "value",
                 unit: "",
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
         },
@@ -4882,8 +4880,8 @@
             }
 
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.value || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.value;
+            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
 
             //TODO: add min and max to validation
@@ -4912,15 +4910,15 @@
             var domain;
             var scale = this.scaleType || "linear";
 
-            if(this.value=="time"){
-                var limits = this.getLimits(this.value);
+            if(this.which=="time"){
+                var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale().domain([limits.min, limits.max]);
                 return;
             }
             
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this.value),
+                    var limits = this.getLimits(this.which),
                         margin = (limits.max - limits.min) / 20;
                     domain = [(limits.min - margin), (limits.max + margin)];
                     if(scale == "log") {
@@ -4929,11 +4927,11 @@
 
                     break;
                 case "property":
-                    domain = this.getUnique(this.value);
+                    domain = this.getUnique(this.which);
                     break;
                 case "value":
                 default:
-                    domain = [this.value];
+                    domain = [this.which];
                     break;
             }
 
@@ -4987,7 +4985,7 @@
                 use: "value",
                 unit: "",
                 palette: null,
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
             
@@ -5027,23 +5025,23 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.value_1 != this.value 
+               || !this.firstLoad && this.value_1 != this.which 
                || !this.firstLoad && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);
                 //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
                 this.scale = null;
-                if(palettes[this.value]){
-                    this.palette = utils.clone(palettes[this.value]);
+                if(palettes[this.which]){
+                    this.palette = utils.clone(palettes[this.which]);
                 }else if(this.use == "value"){
-                    this.palette = {"_default":this.value};
+                    this.palette = {"_default":this.which};
                 }else{
                     this.palette = utils.clone(palettes["_default"]);
                 }
             }
 
-            this.value_1 = this.value;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
             this.firstLoad = false;
         },
@@ -5087,8 +5085,8 @@
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
-            if(this.value=="time"){
-                var limits = this.getLimits(this.value);
+            if(this.which=="time"){
+                var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
                     .range(range);
@@ -5097,7 +5095,7 @@
             
             switch (this.use) {
                 case "indicator":
-                    var limits = this.getLimits(this.value);
+                    var limits = this.getLimits(this.which);
                     var step = ((limits.max-limits.min) / (range.length - 1));
                     domain = d3.range(limits.min, limits.max, step).concat(limits.max);
                     
@@ -5452,7 +5450,7 @@
             values = utils.extend({
                 use: "value",
                 unit: "",
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
         },
@@ -5472,11 +5470,11 @@
                 this.min = this.max;
             }
             //value must always be between min and max
-            if (this.use === "value" && this.value > this.max) {
-                this.value = this.max;
+            if (this.use === "value" && this.which > this.max) {
+                this.which = this.max;
             }
-            else if (this.use === "value" && this.value < this.min) {
-                this.value = this.min;
+            else if (this.use === "value" && this.which < this.min) {
+                this.which = this.min;
             }
             if (!this.scaleType) {
                 this.scaleType = 'linear';
@@ -5486,8 +5484,8 @@
             }
             
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.value || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.value;
+            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
         },
 
@@ -6108,7 +6106,7 @@
             this.duration = this.model.time.speed;
             this.timeFormatter = d3.time.format(this.model.time.formatInput);
 
-            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
@@ -6368,7 +6366,7 @@
                                             _defs_: "property",
                                             _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.name"
                                         }
@@ -6381,7 +6379,7 @@
                                             _type_: "string",
                                             _defs_: "indicator"
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "lex"
                                         },
@@ -6399,7 +6397,7 @@
                                             _defs_: "property",
                                             _opts_: ["property"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.name"
                                         }
@@ -6412,7 +6410,7 @@
                                             _type_: "string",
                                             _defs_: "property"
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },

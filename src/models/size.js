@@ -29,7 +29,7 @@
             values = utils.extend({
                 use: "value",
                 unit: "",
-                value: undefined
+                which: undefined
             }, values);
             this._super(values, parent, bind);
         },
@@ -49,11 +49,11 @@
                 this.min = this.max;
             }
             //value must always be between min and max
-            if (this.use === "value" && this.value > this.max) {
-                this.value = this.max;
+            if (this.use === "value" && this.which > this.max) {
+                this.which = this.max;
             }
-            else if (this.use === "value" && this.value < this.min) {
-                this.value = this.min;
+            else if (this.use === "value" && this.which < this.min) {
+                this.which = this.min;
             }
             if (!this.scaleType) {
                 this.scaleType = 'linear';
@@ -63,8 +63,8 @@
             }
             
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.value || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.value;
+            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.value_1 = this.which;
             this.scaleType_1 = this.scaleType;
         },
 

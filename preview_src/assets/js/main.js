@@ -47,7 +47,7 @@ function setHook(params) {
     };
     options.state.marker[params.hook] = {
         use: params.use,
-        value: params.value
+        which: params.which
     };
     // for time only
     if (params.scaleType != null) options.state.marker[params.hook].scaleType = params.scaleType;
