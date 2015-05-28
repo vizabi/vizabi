@@ -2,7 +2,7 @@
  * TEST HOOKS, INTEGRATION OF BETWEEN TOOLS, MODELS AND DATA FETCHING
  */
 
- //This test depends on models entities and time (not entirely self contained)
+//This test depends on models entities and time (not entirely self contained)
 
 describe("* Base: Hooks", function() {
 
@@ -55,9 +55,9 @@ describe("* Base: Hooks", function() {
                     time: time
                 });
                 var html = "";
-                for(var i in items) {
+                for (var i in items) {
                     var d = items[i];
-                    html += '<div>'+this.model.label.getValue(d) + '-' + this.model.info.getValue(d)+'</div>';
+                    html += '<div>' + this.model.label.getValue(d) + '-' + this.model.info.getValue(d) + '</div>';
                 }
                 this.element.innerHTML = html;
             }
@@ -235,7 +235,7 @@ describe("* Base: Hooks", function() {
                 time: "1994",
                 pop: "4",
                 lex: "33"
-            },{
+            }, {
                 geo: "nor",
                 time: "1991",
                 pop: "10",
@@ -284,18 +284,32 @@ describe("* Base: Hooks", function() {
         expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
     });
 
-    it("should change indicator to LEX", function() {
-        t.setOptions({
-            state: {
-                marker: {
-                    info: {
-                        value: 'lex'
+    describe("- Changing Hooks", function() {
+
+        beforeAll(function(done) {
+
+            t.on('ready', function() {
+                //make sure done is called one frame after update
+                setTimeout(function() {
+                    done();
+                }, 1);
+            });
+
+            t.setOptions({
+                state: {
+                    marker: {
+                        info: {
+                            value: 'lex'
+                        }
                     }
                 }
-            }
+            });
         });
 
-        expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
+        it("should have changed indicator values", function() {
+            expect(placeholder.innerHTML).toContain('<div>swe-31</div><div>nor-41</div>');
+        });
+
     });
 
 });

@@ -2,12 +2,21 @@ describe("* Tool: Bar Chart", function() {
 
     var placeholder, utils, tool;
 
-    beforeAll(function() {
+    beforeAll(function(done) {
         initializeDOM();
         placeholder = document.getElementById("vzbp-placeholder");
         utils = Vizabi.utils;
 
-        tool = Vizabi('BarChart', placeholder);
+        tool = Vizabi('BarChart', placeholder, {
+            bind: {
+                'ready': function() {
+                    console.log("READY");
+                    setTimeout(function() {
+                        done();
+                    }, 100);
+                }
+            }
+        });
 
     });
 

@@ -89,6 +89,12 @@ function forceResizeEvt() {
     window.dispatchEvent(event);
 }
 
+//Math log polyfill
+//issue: http://stackoverflow.com/questions/29800911/math-log10-is-undefined-available-in-phantomjs
+Math.log10 = Math.log10 || function(x) {
+    return Math.log(x) / Math.LN10;
+};
+
 // //simulate d3 click
 // jQuery.fn.d3Click = function () {
 //   this.each(function (i, e) {
