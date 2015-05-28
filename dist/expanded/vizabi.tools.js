@@ -668,7 +668,7 @@
                         //.transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(segment.valueY))
                         .attr("cx", _this.xScale(segment.valueX))
-                        .attr("r", _areaToRadius(_this.sScale(segment.valueS)));
+                        .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
                     var next = this.parentNode.children[index + 1];
                     if (next == null) return;
@@ -717,7 +717,7 @@
                     if(firstVisible && !segment.transparent){
                         _this.cached[d.geo].labelX0 = segment.valueX;
                         _this.cached[d.geo].labelY0 = segment.valueY;
-                        _this.cached[d.geo].scaledS0 = _areaToRadius(_this.sScale(segment.valueS));
+                        _this.cached[d.geo].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
                         firstVisible = false;
                     }
                 });
@@ -1071,8 +1071,8 @@
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]]);
 
                     // Keep the min and max size (pixels) constant, when zooming.            
-                    //                    _this.sScale.range([_radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-                    //                                        _radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
+                    //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+                    //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
 
                     var optionsY = _this.yAxis.labelerOptions();
                     var optionsX = _this.xAxis.labelerOptions();
@@ -1276,6 +1276,7 @@
                 
                     _this.model.entities.highlightEntity(d);
 
+                    var text = "";
                     if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
                         text = _this.timeFormatter(_this.time);
                         _this.entityLabels
@@ -1324,7 +1325,7 @@
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
             var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
-            var radiusMax = _areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
+            var radiusMax = utils.areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
             var frame = _this.currentZoomFrameXY;
             
             var suggestedFrame = {
@@ -1535,9 +1536,9 @@
             this.maxRadius = maxRadius * this.model.marker.size.max;
 
             if (this.model.marker.size.scaleType !== "ordinal") {
-                this.sScale.range([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)]);
+                this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
             } else {
-                this.sScale.rangePoints([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)], 0).range();
+                this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
             }
 
         },
@@ -1564,7 +1565,7 @@
                     var valueS = _this.model.marker.size.getValue(d);
                     if(valueS == null) return;
                     
-                    d3.select(this).attr("r", _areaToRadius(_this.sScale(valueS)) );
+                    d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)) );
                 });
             }
         },
@@ -1629,7 +1630,7 @@
             } else {
 
                 // if entity has all the data we update the visuals
-                var scaledS = _areaToRadius(_this.sScale(valueS));
+                var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
                 view.classed("vzb-invisible", false)
                     .style("fill", _this.cScale(valueC))
@@ -1792,7 +1793,7 @@
                             if (d3.event.defaultPrevented) return
 
                             var maxmin = _this.cached[d.geo].maxMinValues;
-                            var radius = _areaToRadius(_this.sScale(maxmin.valueSmax));
+                            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
                             _this._zoomOnRectangle(_this.element,
                                 _this.xScale(maxmin.valueXmin) - radius,
                                 _this.yScale(maxmin.valueYmin) + radius,
@@ -1861,7 +1862,7 @@
                 var valueY = this.model.marker.axis_y.getValue(d);
                 var valueX = this.model.marker.axis_x.getValue(d);
                 var valueS = this.model.marker.size.getValue(d);
-                var radius = _areaToRadius(this.sScale(valueS))
+                var radius = utils.areaToRadius(this.sScale(valueS))
 
                 if (this.ui.whenHovering.showProjectionLineX) {
                     this.projectionX

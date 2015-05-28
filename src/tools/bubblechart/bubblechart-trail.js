@@ -145,7 +145,7 @@
                         //.transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(segment.valueY))
                         .attr("cx", _this.xScale(segment.valueX))
-                        .attr("r", _areaToRadius(_this.sScale(segment.valueS)));
+                        .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
                     var next = this.parentNode.children[index + 1];
                     if (next == null) return;
@@ -194,7 +194,7 @@
                     if(firstVisible && !segment.transparent){
                         _this.cached[d.geo].labelX0 = segment.valueX;
                         _this.cached[d.geo].labelY0 = segment.valueY;
-                        _this.cached[d.geo].scaledS0 = _areaToRadius(_this.sScale(segment.valueS));
+                        _this.cached[d.geo].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
                         firstVisible = false;
                     }
                 });

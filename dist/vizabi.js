@@ -3500,7 +3500,7 @@
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/simple-checkbox/simple-checkbox.html');s.innerHTML = '<span class="vzb-sc-holder vzb-dialog-checkbox"> <input type="checkbox"><label></label> </span> ';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubble-chart"> <svg class="vzb-bubble-chart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubblechart"> <svg class="vzb-bubblechart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
 /*!
  * VIZABI BUBBLE SIZE slider
  * Reusable bubble size slider
@@ -6692,7 +6692,7 @@
                         //.transition().duration(duration).ease("linear")
                         .attr("cy", _this.yScale(segment.valueY))
                         .attr("cx", _this.xScale(segment.valueX))
-                        .attr("r", _areaToRadius(_this.sScale(segment.valueS)));
+                        .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
                     var next = this.parentNode.children[index + 1];
                     if (next == null) return;
@@ -6741,7 +6741,7 @@
                     if(firstVisible && !segment.transparent){
                         _this.cached[d.geo].labelX0 = segment.valueX;
                         _this.cached[d.geo].labelY0 = segment.valueY;
-                        _this.cached[d.geo].scaledS0 = _areaToRadius(_this.sScale(segment.valueS));
+                        _this.cached[d.geo].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
                         firstVisible = false;
                     }
                 });
@@ -7095,8 +7095,8 @@
                     _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]]);
 
                     // Keep the min and max size (pixels) constant, when zooming.            
-                    //                    _this.sScale.range([_radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-                    //                                        _radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
+                    //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+                    //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
 
                     var optionsY = _this.yAxis.labelerOptions();
                     var optionsX = _this.xAxis.labelerOptions();
@@ -7300,6 +7300,7 @@
                 
                     _this.model.entities.highlightEntity(d);
 
+                    var text = "";
                     if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
                         text = _this.timeFormatter(_this.time);
                         _this.entityLabels
@@ -7348,7 +7349,7 @@
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
             var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
-            var radiusMax = _areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
+            var radiusMax = utils.areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
             var frame = _this.currentZoomFrameXY;
             
             var suggestedFrame = {
@@ -7559,9 +7560,9 @@
             this.maxRadius = maxRadius * this.model.marker.size.max;
 
             if (this.model.marker.size.scaleType !== "ordinal") {
-                this.sScale.range([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)]);
+                this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
             } else {
-                this.sScale.rangePoints([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)], 0).range();
+                this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
             }
 
         },
@@ -7588,7 +7589,7 @@
                     var valueS = _this.model.marker.size.getValue(d);
                     if(valueS == null) return;
                     
-                    d3.select(this).attr("r", _areaToRadius(_this.sScale(valueS)) );
+                    d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)) );
                 });
             }
         },
@@ -7653,7 +7654,7 @@
             } else {
 
                 // if entity has all the data we update the visuals
-                var scaledS = _areaToRadius(_this.sScale(valueS));
+                var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
                 view.classed("vzb-invisible", false)
                     .style("fill", _this.cScale(valueC))
@@ -7816,7 +7817,7 @@
                             if (d3.event.defaultPrevented) return
 
                             var maxmin = _this.cached[d.geo].maxMinValues;
-                            var radius = _areaToRadius(_this.sScale(maxmin.valueSmax));
+                            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
                             _this._zoomOnRectangle(_this.element,
                                 _this.xScale(maxmin.valueXmin) - radius,
                                 _this.yScale(maxmin.valueYmin) + radius,
@@ -7885,7 +7886,7 @@
                 var valueY = this.model.marker.axis_y.getValue(d);
                 var valueX = this.model.marker.axis_x.getValue(d);
                 var valueS = this.model.marker.size.getValue(d);
-                var radius = _areaToRadius(this.sScale(valueS))
+                var radius = utils.areaToRadius(this.sScale(valueS))
 
                 if (this.ui.whenHovering.showProjectionLineX) {
                     this.projectionX
