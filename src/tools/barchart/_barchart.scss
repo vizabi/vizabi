@@ -1,5 +1,5 @@
-.vzb-tool-bar-chart {
-    .vzb-bar-chart {
+.vzb-tool-barchart {
+    .vzb-barchart {
         @include position(absolute, 0px);
         @include font-size(18px);
         font-family: $vzb-font-family;
@@ -32,12 +32,12 @@
         }
     }
     &.vzb-medium {
-        .vzb-bar-chart {
+        .vzb-barchart {
             @include font-size(15px);
         }
     }
     &.vzb-small {
-        .vzb-bar-chart {
+        .vzb-barchart {
             @include font-size(12px);
         }
     }

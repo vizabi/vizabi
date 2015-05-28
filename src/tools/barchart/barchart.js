@@ -8,7 +8,6 @@
 
     var root = this;
     var Vizabi = root.Vizabi;
-    var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
@@ -16,7 +15,7 @@
         return;
     }
 
-    var comp_template = 'src/tools/bar-chart/bar-chart-comp.html';
+    var comp_template = 'src/tools/barchart/barchart.html';
 
     //BAR CHART COMPONENT
     Vizabi.Component.extend('gapminder-barchart', {
@@ -28,7 +27,7 @@
          * @param {Object} context The component's parent
          */
         init: function(config, context) {
-            this.name = 'bar-chart';
+            this.name = 'barchart';
             this.template = comp_template;
 
             //define expected models for this component
@@ -285,7 +284,7 @@
          */
         init: function(config, options) {
 
-            this.name = "bar-chart";
+            this.name = "barchart";
 
             //specifying components
             this.components = [{

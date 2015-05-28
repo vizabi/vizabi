@@ -20,8 +20,8 @@ describe("* Tool: Bar Chart", function() {
     });
 
     it("should render barchart correctly in placeholder", function() {
-        var bc = placeholder.querySelector('.vzb-tool-bar-chart');
-        expect(bc.innerHTML).toContain('<svg class="vzb-bar-chart">');
+        var bc = placeholder.querySelector('.vzb-tool-barchart');
+        expect(bc.innerHTML).toContain('<svg class="vzb-barchart">');
     });
 
 });

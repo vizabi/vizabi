@@ -322,6 +322,24 @@
                 return true;
             });
         },
+        
+        /*
+         * Converts radius to area, simple math
+         * @param {Number} radius
+         * @returns {Number} area
+         */
+        radiusToArea: function(r) {
+            return r * r * Math.PI
+        },
+
+        /*
+         * Converts area to radius, simple math
+         * @param {Number} area
+         * @returns {Number} radius
+         */
+        areaToRadius: function(a) {
+            return Math.sqrt(a / Math.PI)
+        },
 
         /*
          * Prints message to timestamp
@@ -3479,7 +3497,8 @@
 }).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/more-options/more-options.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubble-opacity"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubble-size"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bar-chart/bar-chart-comp.html');s.innerHTML = ' <svg class="vzb-bar-chart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubble-chart"> <svg class="vzb-bubble-chart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
 /*!
  * VIZABI TIMESLIDER
  * Reusable timeslider component
@@ -6013,7 +6032,6 @@
 
     var root = this;
     var Vizabi = root.Vizabi;
-    var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
@@ -6021,7 +6039,7 @@
         return;
     }
 
-    var comp_template = 'src/tools/bar-chart/bar-chart-comp.html';
+    var comp_template = 'src/tools/barchart/barchart.html';
 
     //BAR CHART COMPONENT
     Vizabi.Component.extend('gapminder-barchart', {
@@ -6033,7 +6051,7 @@
          * @param {Object} context The component's parent
          */
         init: function(config, context) {
-            this.name = 'bar-chart';
+            this.name = 'barchart';
             this.template = comp_template;
 
             //define expected models for this component
@@ -6290,7 +6308,7 @@
          */
         init: function(config, options) {
 
-            this.name = "bar-chart";
+            this.name = "barchart";
 
             //specifying components
             this.components = [{
@@ -6525,6 +6543,1687 @@
 
 
 }).call(this);
+(function() {
+    
+    function Trail(){
+        var _this = this;
+    
+        return {
+            
+            toggle: function(arg) {
+                if (arg) {
+                    _this._trails.create();
+                    _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
+                } else {
+                    _this._trails.run("remove");
+                    _this.model.entities.select.forEach(function(d) {
+                        d.trailStartTime = null;
+                    });
+                }
+            },
+            
+            create: function(selection) {
+
+                //quit if the function is called accidentally
+                if(!_this.model.time.trails || !_this.model.entities.select.length) return;
+
+                var start = +_this.timeFormatter(_this.model.time.start);
+                var end = +_this.timeFormatter(_this.model.time.end);
+                var step = _this.model.time.step;
+                var timePoints = [];
+                for (var time = start; time <= end; time += step) timePoints.push(time);
+
+                //work with entities.select (all selected entities), if no particular selection is specified
+                selection = selection == null ? _this.model.entities.select : [selection];
+                selection.forEach(function(d) {
+
+                    var trailSegmentData = timePoints.map(function(m){return {t: _this.timeFormatter.parse("" + m)} });
+
+                    if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
+
+                    _this.cached[d.geo].maxMinValues = {
+                        valueXmax: null,
+                        valueXmin: null,
+                        valueYmax: null,
+                        valueYmin: null,
+                        valueSmax: null
+                    };
+
+                    var maxmin = _this.cached[d.geo].maxMinValues;
+
+                    var trail = _this.entityTrails
+                        .filter(function(f) {return f.geo == d.geo})
+                        .selectAll("g")
+                        .data(trailSegmentData);
+
+                    trail.exit().remove();
+
+                    trail.enter().append("g")
+                        .attr("class", "trailSegment")
+                        .on("mousemove", function(segment, index) {
+                            var geo = d3.select(this.parentNode).data()[0].geo;
+                            _this._axisProjections({ geo: geo, time: segment.t });
+                            _this._setTooltip(_this.timeFormatter(segment.t));
+                            _this.entityLabels
+                                .filter(function(f) {return f.geo == geo})
+                                .classed("vzb-highlighted", true);
+                        })
+                        .on("mouseout", function(segment, index) {
+                            _this._axisProjections();
+                            _this._setTooltip();
+                            _this.entityLabels.classed("vzb-highlighted", false);
+                        })
+                        .each(function(segment, index) {
+                            var view = d3.select(this);
+                            view.append("circle");
+                            view.append("line");
+                        });
+
+
+                    trail.each(function(segment, index) {
+                        //update segment data (maybe for new indicators)
+                        segment.valueY = _this.model.marker.axis_y.getValue({geo: d.geo,time: segment.t});
+                        segment.valueX = _this.model.marker.axis_x.getValue({geo: d.geo,time: segment.t});
+                        segment.valueS = _this.model.marker.size.getValue({geo: d.geo,time: segment.t});
+                        segment.valueC = _this.model.marker.color.getValue({geo: d.geo,time: segment.t});
+
+                        //update min max frame: needed to zoom in on the trail
+                        if (segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
+                        if (segment.valueX < maxmin.valueXmin || maxmin.valueXmin == null) maxmin.valueXmin = segment.valueX;
+                        if (segment.valueY > maxmin.valueYmax || maxmin.valueYmax == null) maxmin.valueYmax = segment.valueY;
+                        if (segment.valueY < maxmin.valueYmin || maxmin.valueYmin == null) maxmin.valueYmin = segment.valueY;
+                        if (segment.valueS > maxmin.valueSmax || maxmin.valueSmax == null) maxmin.valueSmax = segment.valueS;
+                    });
+
+                });
+            },
+
+            
+            
+            
+            
+            run: function(actions, selection, duration){
+            
+            
+                //quit if function is called accidentally
+                if((!_this.model.time.trails || !_this.model.entities.select.length) && actions!="remove") return;
+                if(!duration)duration=0;
+
+                actions = [].concat(actions);
+
+                //work with entities.select (all selected entities), if no particular selection is specified
+                selection = selection == null ? _this.model.entities.select : [selection];
+                selection.forEach(function(d) {
+
+                    var trail = _this.entityTrails
+                        .filter(function(f) { return f.geo == d.geo })
+                        .selectAll("g")
+
+                    //do all the actions over "trail"
+                    actions.forEach(function(action){
+                        _this._trails["_"+action](trail, duration, d);
+                    })
+
+                });
+            },
+            
+            
+            
+            
+            
+            _remove: function(trail, duration, d) {
+                trail.remove();
+            },
+
+            _resize: function(trail, duration, d) {
+
+                trail.each(function(segment, index){
+
+                    var view = d3.select(this);
+                    view.select("circle")
+                        //.transition().duration(duration).ease("linear")
+                        .attr("cy", _this.yScale(segment.valueY))
+                        .attr("cx", _this.xScale(segment.valueX))
+                        .attr("r", _areaToRadius(_this.sScale(segment.valueS)));
+
+                    var next = this.parentNode.children[index + 1];
+                    if (next == null) return;
+                    next = next.__data__;
+
+                    view.select("line")
+                        //.transition().duration(duration).ease("linear")
+                        .attr("x1", _this.xScale(next.valueX))
+                        .attr("y1", _this.yScale(next.valueY))
+                        .attr("x2", _this.xScale(segment.valueX))
+                        .attr("y2", _this.yScale(segment.valueY));
+                });
+            },
+
+            _recolor: function(trail, duration, d) {
+
+                trail.each(function(segment, index){
+
+                    var view = d3.select(this);   
+
+                    view.select("circle")
+                        //.transition().duration(duration).ease("linear")
+                        .style("fill", _this.cScale(segment.valueC));
+                    view.select("line")
+                        //.transition().duration(duration).ease("linear")
+                        .style("stroke", _this.cScale(segment.valueC));
+                });
+            },
+
+
+            _findVisible: function(trail, duration, d) {
+
+                var firstVisible = true;
+                var trailStartTime = _this.timeFormatter.parse("" + d.trailStartTime);
+
+                trail.each(function(segment, index){
+
+                    // segment is transparent if it is after current time or before trail StartTime
+                    segment.transparent = (segment.t - _this.time >= 0) 
+                        || (trailStartTime - segment.t >  0) 
+                        //no trail segment should be visible if leading bubble is shifted backwards
+                        || (d.trailStartTime - _this.timeFormatter(_this.time) >= 0);
+
+                    if(firstVisible && !segment.transparent){
+                        _this.cached[d.geo].labelX0 = segment.valueX;
+                        _this.cached[d.geo].labelY0 = segment.valueY;
+                        _this.cached[d.geo].scaledS0 = _areaToRadius(_this.sScale(segment.valueS));
+                        firstVisible = false;
+                    }
+                });
+            },
+
+
+            _reveal: function(trail, duration, d) {
+
+                trail.each(function(segment, index){
+
+                    var view = d3.select(this);    
+
+                    view.classed("vzb-invisible", segment.transparent);
+
+                    if (segment.transparent) return;
+
+                    var next = this.parentNode.children[index + 1];
+                    if (next == null) return;
+                    next = next.__data__;
+
+                    if (segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
+                        next = _this.cached[d.geo];
+
+                        view.select("line")
+                            .attr("x2", _this.xScale(segment.valueX))
+                            .attr("y2", _this.yScale(segment.valueY))
+                            .attr("x1", _this.xScale(segment.valueX))
+                            .attr("y1", _this.yScale(segment.valueY))
+                            //.transition().duration(duration).ease("linear")
+                            .attr("x1", _this.xScale(next.valueX))
+                            .attr("y1", _this.yScale(next.valueY));
+                    }else{  
+                        view.select("line")
+                            .attr("x2", _this.xScale(segment.valueX))
+                            .attr("y2", _this.yScale(segment.valueY))
+                            .attr("x1", _this.xScale(next.valueX))
+                            .attr("y1", _this.yScale(next.valueY));
+                    }
+                });
+
+            },
+
+            
+        };
+        
+    }
+}).call(this);    
+/*!
+ * VIZABI BUBBLECHART
+ */
+
+(function() {
+
+    "use strict";
+    
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) {
+        return;
+    }
+    
+    var comp_template = 'src/tools/bubble-chart/bubble-chart.html';
+
+    
+    //BAR CHART COMPONENT
+    Vizabi.Component.extend('gapminder-bubblechart', {
+        
+        /**
+         * Initializes the component (Bubble Chart).
+         * Executed once before any template is rendered.
+         * @param {Object} config The options passed to the component
+         * @param {Object} context The component's parent
+         */
+        init: function(context, options) {
+            var _this = this;
+            this.name = 'bubblechart';
+            this.template = 'components/_examples/' + this.name + '/' + this.name;
+
+            //define expected models for this component
+            this.model_expects = [{
+                name: "time",
+                type: "time"
+            }, {
+                name: "entities",
+                type: "entities"
+            }, {
+                name: "marker",
+                type: "model"
+            }, {
+                name: "language",
+                type: "language"
+            }];
+            
+
+
+
+            this.model_binds = {
+                "change:time:trails": function(evt) {
+                    //console.log("EVENT change:time:trails");
+                    _this._trails.toggle(_this.model.time.trails);
+                    _this.redrawDataPoints();
+                },
+                "change:time:lockNonSelected": function(evt) {
+                    //console.log("EVENT change:time:lockNonSelected");
+                    _this.redrawDataPoints(500);
+                },
+                "change:entities:show": function(evt) {
+                    //console.log("EVENT change:entities:show");
+                    _this.entitiesUpdatedRecently = true;
+                },
+                "change:marker": function(evt) {
+                    // bubble size change is processed separately
+                    if(evt == "change:marker:size:max") return; 
+                    if(evt.indexOf("change:marker:color:palette") > -1) return; 
+                    //console.log("EVENT change:marker", evt);
+                    _this.updateUIStrings();
+                    _this.updateIndicators();
+                    _this.updateSize();
+                    _this.updateMarkerSizeLimits();
+                    
+                    _this._trails.create();
+                    _this._trails.run("findVisible");
+                    _this.resetZoomer(); //does also redraw data points and trails resize
+                    //_this.redrawDataPoints();
+                    _this._trails.run(["recolor", "reveal"]);
+                },
+                "change:entities:select": function() {
+                    //console.log("EVENT change:entities:select");
+                    _this.selectDataPoints();
+                    _this.redrawDataPoints();
+                    _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
+                    _this.updateBubbleOpacity();
+                },
+                "change:entities:brush": function() {
+                    //console.log("EVENT change:entities:brush");
+                    _this.highlightDataPoints();
+                },
+                "readyOnce": function(evt) {
+                    //console.log("EVENT ready once");
+                    _this.updateUIStrings();
+                    _this.updateIndicators();
+                    _this.updateEntities();
+                    _this.updateTime();
+                    _this.updateSize();
+                    _this.updateMarkerSizeLimits();
+                    _this.selectDataPoints();
+                    _this.updateBubbleOpacity();
+                    _this._trails.create();
+                    
+                    _this.resetZoomer(); // includes redraw data points and trail resize
+                    _this._trails.run(["recolor","findVisible", "reveal"]);
+                    if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+                },
+                "ready": function(evt) {
+                    //TODO a workaround to fix the selection of entities
+                    if (_this.entitiesUpdatedRecently) {
+                        _this.entitiesUpdatedRecently = false;
+                        //console.log("EVENT ready");
+                        _this.updateEntities();
+                        _this.redrawDataPoints();
+                        _this.updateBubbleOpacity();
+                    }
+                },
+                'change:time:value': function() {
+                    //console.log("EVENT change:time:value");
+                    _this.updateTime();
+                    
+                    
+                    _this._trails.run("findVisible");
+                    if(_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom(); 
+                    }else{
+                        _this.redrawDataPoints();
+                    }
+                    _this._trails.run("reveal");
+                },
+                'change:time:adaptMinMaxZoom': function() {
+                    //console.log("EVENT change:time:adaptMinMaxZoom");
+                    if(_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom(); 
+                    }else{
+                        _this.resetZoomer();
+                    }
+                },
+                'change:marker:size:max': function() {
+                    //console.log("EVENT change:marker:size:max");
+                    _this.updateMarkerSizeLimits();
+                    _this._trails.run("findVisible");
+                    _this.redrawDataPointsOnlySize();
+                    _this._trails.run("resize");   
+                },
+                'change:marker:color:palette': function() {
+                    //console.log("EVENT change:marker:color:palette");
+                    _this.redrawDataPointsOnlyColors();
+                    _this._trails.run("recolor");
+                },
+                'change:entities:opacitySelectDim': function() {
+                    _this.updateBubbleOpacity();
+                },
+                'change:entities:opacityRegular': function() {
+                    _this.updateBubbleOpacity();
+                }
+            }
+
+            this._super(context, options);
+
+            this.xScale = null;
+            this.yScale = null;
+            this.sScale = null;
+            this.cScale = null;
+
+            this.xAxis = d3.svg.axisSmart();
+            this.yAxis = d3.svg.axisSmart();
+
+
+            this.cached = {};
+            this.xyMaxMinMean = {};
+            this.currentZoomFrameXY = null;
+
+            // default UI settings
+            this.ui = _.extend({
+                whenHovering: {},
+                labels: {}
+            }, this.ui["vzb-tool-" + this.name]);
+
+            this.ui.whenHovering = _.extend({
+                showProjectionLineX: true,
+                showProjectionLineY: true,
+                higlightValueX: true,
+                higlightValueY: true
+            }, this.ui.whenHovering);
+
+            this.ui.labels = _.extend({
+                autoResolveCollisions: false,
+                dragging: true
+            }, this.ui.labels);
+
+            this._trails = Trail.call(this);
+
+
+//            this.collisionResolver = d3.svg.collisionResolver()
+//                .value("labelY2")
+//                .fixed("labelFixed")
+//                .selector("text")
+//                .scale(this.yScale)
+//                .handleResult(this._repositionLabels);
+
+
+            this.dragger = d3.behavior.drag()
+                .on("dragstart", function(d, i) {
+                    d3.event.sourceEvent.stopPropagation();
+                })
+                .on("drag", function(d, i) {
+                    if (!_this.ui.labels.dragging) return;
+                    var cache = _this.cached[d.geo];
+                    cache.labelFixed = true;
+                
+                   cache.labelX_ += d3.event.dx/_this.width;
+                   cache.labelY_ += d3.event.dy/_this.height;
+                
+                    var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+                    var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+                    var resolvedX0 = _this.xScale(cache.labelX0);
+                    var resolvedY0 = _this.yScale(cache.labelY0);
+
+                    _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0);
+                })
+                .on("dragend", function(d, i) {
+                    _this.model.entities.setLabelOffset(d, [
+                        Math.round(_this.cached[d.geo].labelX_*100)/100, 
+                        Math.round(_this.cached[d.geo].labelY_*100)/100
+                    ]);
+                });
+
+
+
+            this.gragRectangle = d3.behavior.drag()
+                .on("dragstart", function(d, i) {
+                    if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
+
+                    this.ctrlKeyLock = true;
+                    this.origin = {
+                        x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
+                        y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    };
+                    _this.zoomRect.classed("vzb-invisible", false);
+                })
+                .on("drag", function(d, i) {
+                    if (!this.ctrlKeyLock) return;
+                    var origin = this.origin;
+                    var mouse = {
+                        x: d3.event.x - _this.activeProfile.margin.left,
+                        y: d3.event.y - _this.activeProfile.margin.top
+                    };
+
+                    _this.zoomRect
+                        .attr("x", Math.min(mouse.x, origin.x))
+                        .attr("y", Math.min(mouse.y, origin.y))
+                        .attr("width", Math.abs(mouse.x - origin.x))
+                        .attr("height", Math.abs(mouse.y - origin.y));
+                })
+
+            .on("dragend", function(e) {
+                if (!this.ctrlKeyLock) return;
+                this.ctrlKeyLock = false;
+
+                _this.zoomRect
+                    .attr("width", 0)
+                    .attr("height", 0)
+                    .classed("vzb-invisible", true);
+
+                this.target = {
+                    x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
+                    y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                };
+
+                _this._zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y, true, 500);
+            });
+
+            this.zoomer = d3.behavior.zoom()
+                .scaleExtent([1, 100])
+                .on("zoom", function() {
+                    if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
+
+                    var zoom = d3.event.scale;
+                    var pan = d3.event.translate;
+                    var ratioY = _this.zoomer.ratioY;
+                    var ratioX = _this.zoomer.ratioX;
+
+
+                    //value protections and fallbacks
+                    if (_.isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
+                    if (_.isNaN(zoom) || zoom == null) zoom = 1;
+                    if (_.isNaN(pan[0]) || _.isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
+                    if (_.isNaN(pan[0]) || _.isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
+
+
+                    // limit the zooming, so that it never goes below 1 for any of the axes
+                    if (zoom * ratioY < 1) {
+                        ratioY = 1 / zoom;
+                        _this.zoomer.ratioY = ratioY
+                    };
+                    if (zoom * ratioX < 1) {
+                        ratioX = 1 / zoom;
+                        _this.zoomer.ratioX = ratioX
+                    };
+
+                    //limit the panning, so that we are never outside the possible range
+                    if (pan[0] > 0) pan[0] = 0;
+                    if (pan[1] > 0) pan[1] = 0;
+                    if (pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
+                    if (pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
+                    _this.zoomer.translate(pan);
+
+                    _this.xScale.range([0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]]);
+                    _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]]);
+
+                    // Keep the min and max size (pixels) constant, when zooming.            
+                    //                    _this.sScale.range([_radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
+                    //                                        _radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
+
+                    var optionsY = _this.yAxis.labelerOptions();
+                    var optionsX = _this.xAxis.labelerOptions();
+                    optionsY.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
+                    optionsY.transitionDuration = _this.zoomer.duration;
+                    optionsX.transitionDuration = _this.zoomer.duration;
+
+                    _this.xAxisEl.call(_this.xAxis.labelerOptions(optionsX));
+                    _this.yAxisEl.call(_this.yAxis.labelerOptions(optionsY));
+                    _this.redrawDataPoints(_this.zoomer.duration);
+                    _this._trails.run("resize", null, _this.zoomer.duration);
+                    
+                    _this.zoomer.duration = 0;
+                });
+
+            this.zoomer.ratioX = 1;
+            this.zoomer.ratioY = 1;            
+        },
+
+
+        /**
+         * Executes right after the template is in place, but the model is not yet ready
+         */
+        domReady: function() {
+            var _this = this;
+
+            // reference elements
+            this.graph = this.element.select('.vzb-bc-graph');
+            this.yAxisElContainer = this.graph.select('.vzb-bc-axis-y');
+            this.yAxisEl = this.yAxisElContainer.select('g');
+            
+            this.xAxisElContainer = this.graph.select('.vzb-bc-axis-x');
+            this.xAxisEl = this.xAxisElContainer.select('g');
+            
+            this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+            this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
+            this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
+            this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
+            this.yearEl = this.graph.select('.vzb-bc-year');
+
+            this.projectionX = this.graph.select(".vzb-bc-projection-x");
+            this.projectionY = this.graph.select(".vzb-bc-projection-y");
+
+            this.trailsContainer = this.graph.select('.vzb-bc-trails');
+            this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
+            this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
+            this.labelsContainer = this.graph.select('.vzb-bc-labels');
+            this.zoomRect = this.element.select('.vzb-bc-zoomRect');
+
+            this.entityBubbles = null;
+            this.entityLabels = null;
+            this.tooltip = this.element.select('.vzb-tooltip');
+
+            //component events
+            this.on("resize", function() {
+                //console.log("EVENT: resize");
+                _this.updateSize();
+                _this.updateMarkerSizeLimits();
+                _this._trails.run("findVisible");
+                _this.resetZoomer(); // includes redraw data points and trail resize
+            })
+
+            //keyboard listeners
+            d3.select("body")
+                .on("keydown", function() {
+                    if (d3.event.metaKey || d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", true);
+                })
+                .on("keyup", function() {
+                    if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
+                })
+
+            this.element
+                .call(this.zoomer)
+                .call(this.gragRectangle);
+        },
+
+
+
+
+        /*
+         * UPDATE INDICATORS
+         */
+        updateIndicators: function() {
+            var _this = this;
+
+            //scales
+            this.yScale = this.model.marker.axis_y.getScale();
+            this.xScale = this.model.marker.axis_x.getScale();
+            this.sScale = this.model.marker.size.getScale();
+            this.cScale = this.model.marker.color.getScale();
+
+//            this.collisionResolver.scale(this.yScale);
+
+
+            this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
+            this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+            
+            this.xyMaxMinMean = {
+                x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter), 
+                y: this.model.marker.axis_y.getMaxMinMean(this.timeFormatter),
+                s: this.model.marker.size.getMaxMinMean(this.timeFormatter)
+            };
+        },
+
+
+        updateUIStrings: function(){
+            var _this = this;
+
+            this.translator = this.model.language.getTFunction();
+            this.timeFormatter = d3.time.format(_this.model.time.formatInput);
+
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
+            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
+            var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
+            var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
+            
+            if(!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
+            if(!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
+            if(!!this.model.marker.size.unit) titleStringS = titleStringS + ", " + this.model.marker.size.unit;
+            if(!!this.model.marker.color.unit) titleStringC = titleStringC + ", " + this.model.marker.color.unit;
+
+            var yTitle = this.yTitleEl.selectAll("text").data([0]);
+            yTitle.enter().append("text");
+            yTitle
+                .attr("y", "-6px")
+                .attr("x", "-9px")
+                .attr("dx", "-0.72em")
+                .text(titleStringY);
+
+            var xTitle = this.xTitleEl.selectAll("text").data([0]);
+            xTitle.enter().append("text");
+            xTitle
+                .attr("text-anchor", "end")
+                .attr("y", "-0.32em")
+                .text(titleStringX);
+
+            var sTitle = this.sTitleEl.selectAll("text").data([0]);
+            sTitle.enter().append("text");
+            sTitle
+                .attr("text-anchor", "end")
+                .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
+                    this.translator("buttons/colors") + ": " + titleStringC);
+
+        },
+
+
+        /*
+         * UPDATE ENTITIES:
+         * Ideally should only update when show parameters change or data changes
+         */
+        updateEntities: function() {
+            var _this = this;
+
+            // get array of GEOs, sorted by the size hook
+            // that makes larger bubbles go behind the smaller ones
+            var endTime = _this.model.time.end;
+            this.model.entities.visible = this.model.marker.label.getItems()
+                .map(function(d) {
+                    return {
+                        geo: d.geo,
+                        time: endTime,
+                        sortValue: _this.model.marker.size.getValue({ geo: d.geo, time: endTime})
+                    }
+                })
+                .sort(function(a, b) {
+                    return b.sortValue - a.sortValue;
+                });
+
+
+
+
+
+            this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
+                .data(this.model.entities.visible, function(d) {return d.geo});
+
+            //exit selection
+            this.entityBubbles.exit().remove();
+
+            //enter selection -- init circles
+            this.entityBubbles.enter().append("circle")
+                .attr("class", "vzb-bc-entity")
+                .on("mousemove", function(d, i) {
+                
+                    _this.model.entities.highlightEntity(d);
+
+                    if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
+                        text = _this.timeFormatter(_this.time);
+                        _this.entityLabels
+                            .filter(function(f) {return f.geo == d.geo})
+                            .classed("vzb-highlighted", true);
+                    } else {
+                        text = _this.model.marker.label.getValue(d);
+                    }
+                    _this._setTooltip(text);
+                })
+                .on("mouseout", function(d, i) {
+                
+                    _this.model.entities.clearHighlighted();
+                    _this._setTooltip();
+                    _this.entityLabels.classed("vzb-highlighted", false);
+                })
+                .on("click", function(d, i) {
+                
+                    _this.model.entities.selectEntity(d, _this.timeFormatter);
+                });
+
+
+
+
+            //TODO: no need to create trail group for all entities
+            //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
+            this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
+                .data(this.model.entities.visible, function(d) {
+                    return d.geo
+                });
+
+            this.entityTrails.exit().remove();
+
+            this.entityTrails.enter().append("g")
+                .attr("class", function(d) {
+                    return "vzb-bc-entity" + " " + d.geo
+                });
+
+        },
+
+
+
+        
+        
+        adaptMinMaxZoom: function(){
+            var _this = this;
+            var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
+            var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
+            var radiusMax = _areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
+            var frame = _this.currentZoomFrameXY;
+            
+            var suggestedFrame = {
+                x1: _this.xScale(mmmX.min) - radiusMax,
+                y1: _this.yScale(mmmY.min) + radiusMax,
+                x2: _this.xScale(mmmX.max) + radiusMax,
+                y2: _this.yScale(mmmY.max) - radiusMax,
+            }
+            
+            var TOLERANCE = 0.3;
+            
+            if(!frame || suggestedFrame.x1 < frame.x1 * (1-TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1+TOLERANCE)
+                      || suggestedFrame.y2 < frame.y2 * (1-TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1+TOLERANCE)){
+                _this.currentZoomFrameXY = _.clone(suggestedFrame);
+                var frame = _this.currentZoomFrameXY;
+                _this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
+                //console.log("rezoom")
+            }else{
+                _this.redrawDataPoints(_this.duration);
+                //console.log("no rezoom")
+            }
+        },
+        
+
+
+        _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
+            var _this = this;
+            var zoomer = _this.zoomer;
+
+            if (Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
+
+
+            if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
+                var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
+                var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
+                var ratioY = zoomer.ratioY;
+            } else {
+                var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
+                var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
+                var ratioX = zoomer.ratioX;
+            }
+
+            if (compensateDragging) {
+                zoomer.translate([
+                    zoomer.translate()[0] + x1 - x2,
+                    zoomer.translate()[1] + y1 - y2
+                ])
+            }
+
+            var pan = [
+                (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX, (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
+            ]
+
+            zoomer.scale(zoom);
+            zoomer.ratioY = ratioY;
+            zoomer.ratioX = ratioX;
+            zoomer.translate(pan);
+            zoomer.duration = duration?duration:0;
+
+            zoomer.event(element);
+        },
+
+
+        resetZoomer: function(element){
+            this.zoomer.scale(1);
+            this.zoomer.ratioY = 1;
+            this.zoomer.ratioX = 1;
+            this.zoomer.translate([0,0]);
+            this.zoomer.duration = 0;
+            this.zoomer.event(element||this.element);
+        },
+
+
+
+        /*
+         * UPDATE TIME:
+         * Ideally should only update when time or data changes
+         */
+        updateTime: function() {
+            var _this = this;
+
+            this.time_1 = this.time == null ? this.model.time.value : this.time;
+            this.time = this.model.time.value;
+            this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
+
+            this.yearEl.text(this.timeFormatter(this.time));
+        },
+
+        /*
+         * RESIZE:
+         * Executed whenever the container is resized
+         */
+        updateSize: function() {
+
+            var _this = this;
+
+
+            this.profiles = {
+                "small": {
+                    margin: { top: 30, right: 20, left: 40, bottom: 40 },
+                    padding: 2,
+                    minRadius: 2,
+                    maxRadius: 40
+                },
+                "medium": {
+                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
+                    padding: 2,
+                    minRadius: 3,
+                    maxRadius: 60
+                },
+                "large": {
+                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
+                    padding: 2,
+                    minRadius: 4,
+                    maxRadius: 80
+                }
+            };
+
+            this.activeProfile = this.profiles[this.getLayoutProfile()];
+            var margin = this.activeProfile.margin;
+
+
+            //stage
+            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+
+//            this.collisionResolver.height(this.height);
+
+            //graph group is shifted according to margins (while svg element is at 100 by 100%)
+            this.graph
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+            this.yearEl
+                .attr("x", this.width / 2)
+                .attr("y", this.height / 3 * 2)
+                .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
+
+            //update scales to the new range
+            if (this.model.marker.axis_y.scaleType !== "ordinal") {
+                this.yScale.range([this.height, 0]);
+            } else {
+                this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
+            }
+            if (this.model.marker.axis_x.scaleType !== "ordinal") {
+                this.xScale.range([0, this.width]);
+            } else {
+                this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
+            }
+
+            //apply scales to axes and redraw
+            this.yAxis.scale(this.yScale)
+                .orient("left")
+                .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_y.scaleType,
+                    toolMargin: margin,
+                    limitMaxTickNumber: 6
+                });
+
+            this.xAxis.scale(this.xScale)
+                .orient("bottom")
+                .tickSize(6, 0)
+                .tickSizeMinor(3, 0)
+                .labelerOptions({
+                    scaleType: this.model.marker.axis_x.scaleType,
+                    toolMargin: margin
+                });
+            
+            
+            this.bubbleContainerCrop
+                .attr("width", this.width)
+                .attr("height", this.height);
+            
+            this.xAxisElContainer
+                .attr("width", this.width)
+                .attr("height", this.activeProfile.margin.bottom)
+                .attr("y", this.height);
+            this.xAxisEl
+                .attr("transform", "translate(0,"+1+")");
+            
+            this.yAxisElContainer
+                .attr("width", this.activeProfile.margin.left)
+                .attr("height", this.height)
+                .attr("x", -this.activeProfile.margin.left);
+            this.yAxisEl
+                .attr("transform", "translate("+(this.activeProfile.margin.left-1)+","+0+")");
+            
+            this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
+            this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
+
+            this.yAxisEl.call(this.yAxis);
+            this.xAxisEl.call(this.xAxis);
+
+            this.projectionX.attr("y1", _this.yScale.range()[0]);
+            this.projectionY.attr("x2", _this.xScale.range()[0]);
+
+        },
+
+
+        updateMarkerSizeLimits: function() {
+            var _this = this;
+            var minRadius = this.activeProfile.minRadius;
+            var maxRadius = this.activeProfile.maxRadius;
+
+            this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
+            this.maxRadius = maxRadius * this.model.marker.size.max;
+
+            if (this.model.marker.size.scaleType !== "ordinal") {
+                this.sScale.range([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)]);
+            } else {
+                this.sScale.rangePoints([_radiusToArea(_this.minRadius), _radiusToArea(_this.maxRadius)], 0).range();
+            }
+
+        },
+
+        
+        redrawDataPointsOnlyColors: function() {
+            var _this = this;
+            
+            this.entityBubbles.style("fill", function(d){
+                var valueC = _this.model.marker.color.getValue({geo:d.geo, time:_this.time});    
+                return _this.cScale(valueC);
+            });
+        },
+        
+        redrawDataPointsOnlySize: function() {
+            var _this = this;
+            
+            if(this.someSelected){
+                _this.entityBubbles.each(function(d, index) {
+                    _this._updateBubble(d, index, d3.select(this), 0);
+                });
+            }else{
+                this.entityBubbles.each(function(d, index) {
+                    var valueS = _this.model.marker.size.getValue(d);
+                    if(valueS == null) return;
+                    
+                    d3.select(this).attr("r", _areaToRadius(_this.sScale(valueS)) );
+                });
+            }
+        },
+        
+        
+        
+        /*
+         * REDRAW DATA POINTS:
+         * Here plotting happens
+         */
+        redrawDataPoints: function(duration) {
+            var _this = this;
+
+            if(duration==null) duration = _this.duration; 
+  
+            this.entityBubbles.each(function(d, index) {
+                var view = d3.select(this);
+                _this._updateBubble(d, index, view, duration);
+
+            }); // each bubble
+
+
+            // Call flush() after any zero-duration transitions to synchronously flush the timer queue
+            // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
+            if (_this.duration == 0) d3.timer.flush();
+
+
+            if (_this.ui.labels.autoResolveCollisions) {
+                // cancel previously queued simulation if we just ordered a new one
+                clearTimeout(_this.collisionTimeout);
+
+                // place label layout simulation into a queue
+                _this.collisionTimeout = setTimeout(function() {
+                    //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
+                }, _this.model.time.speed * 1.2)
+            }
+
+        }, //redraw Data Points
+
+        
+        _updateBubble: function(d, index, view, duration){
+            var _this = this;
+            
+            if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
+                d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+            }else{
+                d.time = _this.time;
+            };
+
+            var valueY = _this.model.marker.axis_y.getValue(d);
+            var valueX = _this.model.marker.axis_x.getValue(d);
+            var valueS = _this.model.marker.size.getValue(d);
+            var valueL = _this.model.marker.label.getValue(d);
+            var valueC = _this.model.marker.color.getValue(d);
+
+            // check if fetching data succeeded
+            if (valueL == null || valueY == null || valueX == null || valueS == null) {
+
+                // if entity is missing data it should hide
+                view.classed("vzb-invisible", true)
+
+            } else {
+
+                // if entity has all the data we update the visuals
+                var scaledS = _areaToRadius(_this.sScale(valueS));
+
+                view.classed("vzb-invisible", false)
+                    .style("fill", _this.cScale(valueC))
+                    .transition().duration(duration).ease("linear")
+                    .attr("cy", _this.yScale(valueY))
+                    .attr("cx", _this.xScale(valueX))
+                    .attr("r", scaledS)
+
+               _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
+
+            } // data exists
+        },
+        
+
+        
+        
+        _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration){
+            var _this = this;
+            if(duration==null) duration = _this.duration; 
+            
+            // only for selected entities
+            if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
+
+                if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
+                var cached = _this.cached[d.geo];
+                
+
+                var select = _.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
+                var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+
+                cached.valueX = valueX;
+                cached.valueY = valueY;
+
+                if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
+                    
+                    select.trailStartTime = _this.timeFormatter(_this.time);
+                    //the events in model are not triggered here. to trigger uncomment the next line
+                    //_this.model.entities.triggerAll("change:select");
+
+                    cached.scaledS0 = scaledS;
+                    cached.labelX0 = valueX;
+                    cached.labelY0 = valueY;
+                }
+                
+                if(cached.scaledS0==null || cached.labelX0==null || cached.labelX0==null){
+                    cached.scaledS0 = scaledS;
+                    cached.labelX0 = valueX;
+                    cached.labelY0 = valueY;                
+                }
+                
+
+                // reposition label
+                _this.entityLabels.filter(function(f) {return f.geo == d.geo})
+                    .each(function(groupData) {
+
+                        var labelGroup = d3.select(this);
+
+                        var text = labelGroup.selectAll("text.vzb-bc-label-content")
+                            .text(valueL + (_this.model.time.trails?" "+select.trailStartTime:""));
+
+                        var line = labelGroup.select("line")
+                            .style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+
+                        var rect = labelGroup.select("rect");
+
+                        var contentBBox = text[0][0].getBBox();
+                        if(!cached.contentBBox || cached.contentBBox.width!=contentBBox.width){
+                            cached.contentBBox = contentBBox;
+
+                            labelGroup.select("text.vzb-bc-label-x")
+                                .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                .attr("y", contentBBox.height * 0.0 - 4);
+
+                            labelGroup.select("circle")
+                                .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
+                                .attr("cy", contentBBox.height * 0.0 - 4)
+                                .attr("r", contentBBox.height * 0.5);
+
+                            rect.attr("width",contentBBox.width+4)
+                                .attr("height",contentBBox.height+4)
+                                .attr("x",-2)
+                                .attr("y",-4)
+                                .attr("rx", contentBBox.height*0.2)
+                                .attr("ry", contentBBox.height*0.2);
+                        }
+
+                        cached.labelX_ = select.labelOffset[0] || cached.scaledS0 / _this.width;
+                        cached.labelY_ = select.labelOffset[1] || cached.scaledS0 / _this.width;
+
+                        var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+                        var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+
+                        var limitedX = resolvedX > 0 ? (resolvedX < _this.width -cached.contentBBox.width ? resolvedX : _this.width -cached.contentBBox.width) : 0;
+                        var limitedY = resolvedY > 0 ? (resolvedY < _this.height-cached.contentBBox.height ? resolvedY : _this.height-cached.contentBBox.height) : 0;
+
+                        var limitedX0 = _this.xScale(cached.labelX0);
+                        var limitedY0 = _this.yScale(cached.labelY0);
+
+                        cached.stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
+
+                        rect.classed("vzb-transparent", !cached.stuckOnLimit);
+
+                        _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
+
+                    })
+            } else {
+                //for non-selected bubbles
+                //make sure there is no cached data
+                if (_this.cached[d.geo] != null) {
+                    delete _this.cached[d.geo]
+                };
+            } 
+        },
+
+        _repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
+
+            var labelGroup = d3.select(context);
+
+            labelGroup
+                .transition().duration(duration || 0).ease("linear")
+                .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+
+            labelGroup.selectAll("line")
+                .attr("x1", resolvedX0-resolvedX)
+                .attr("y1", resolvedY0-resolvedY);
+
+        },
+
+
+
+        selectDataPoints: function() {
+            var _this = this;
+
+            _this.someSelected = (_this.model.entities.select.length > 0);
+
+
+            this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
+                .data(_this.model.entities.select, function(d) {
+                    return (d.geo);
+                });
+
+
+            this.entityLabels.exit()
+                .each(function(d) {
+                    _this._trails.run("remove", d);
+                })
+                .remove();
+
+            this.entityLabels
+                .enter().append("g")
+                .attr("class", "vzb-bc-entity")
+                .call(_this.dragger)
+                .each(function(d, index) {
+                    var view = d3.select(this);
+                    view.append("line").attr("class", "vzb-bc-label-line");
+                
+                    view.append("rect").attr("class", "vzb-transparent")
+                        .on("click", function(d, i) {
+                            //default prevented is needed to distinguish click from drag
+                            if (d3.event.defaultPrevented) return
+
+                            var maxmin = _this.cached[d.geo].maxMinValues;
+                            var radius = _areaToRadius(_this.sScale(maxmin.valueSmax));
+                            _this._zoomOnRectangle(_this.element,
+                                _this.xScale(maxmin.valueXmin) - radius,
+                                _this.yScale(maxmin.valueYmin) + radius,
+                                _this.xScale(maxmin.valueXmax) + radius,
+                                _this.yScale(maxmin.valueYmax) - radius,
+                                false, 500);
+                        });
+                
+                    view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
+                
+                    view.append("text").attr("class", "vzb-bc-label-content");
+                
+                    view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
+                        .on("click", function(d, i) {
+                            //default prevented is needed to distinguish click from drag
+                            if (d3.event.defaultPrevented) return
+                            _this.model.entities.selectEntity(d);
+                        });
+                
+                    view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
+
+                    _this._trails.create(d);
+                })
+                .on("mousemove", function() {
+                    d3.select(this).selectAll(".vzb-bc-label-x")
+                        .classed("vzb-transparent", false)
+                    d3.select(this).select("rect")
+                        .classed("vzb-transparent", false)
+                })
+                .on("mouseout", function(d) {
+                    d3.select(this).selectAll(".vzb-bc-label-x")
+                        .classed("vzb-transparent", true)
+                    d3.select(this).select("rect")
+                        .classed("vzb-transparent", !_this.cached[d.geo].stuckOnLimit)
+                });
+
+
+
+
+        },
+
+
+        
+
+        _setTooltip: function(tooltipText) {
+            if (tooltipText) {
+                var mouse = d3.mouse(this.graph.node()).map(function(d) {return parseInt(d)});
+
+                //position tooltip
+                this.tooltip.classed("vzb-hidden", false)
+                    .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                    .html(tooltipText);
+
+            } else {
+
+                this.tooltip.classed("vzb-hidden", true);
+            }
+        },
+
+        /*
+         * Shows and hides axis projections
+         */
+        _axisProjections: function(d) {
+            if (d != null) {
+
+                var valueY = this.model.marker.axis_y.getValue(d);
+                var valueX = this.model.marker.axis_x.getValue(d);
+                var valueS = this.model.marker.size.getValue(d);
+                var radius = _areaToRadius(this.sScale(valueS))
+
+                if (this.ui.whenHovering.showProjectionLineX) {
+                    this.projectionX
+                        .style("opacity", 1)
+                        .attr("y2", this.yScale(valueY) + radius)
+                        .attr("x1", this.xScale(valueX))
+                        .attr("x2", this.xScale(valueX));
+                }
+                if (this.ui.whenHovering.showProjectionLineY) {
+                    this.projectionY
+                        .style("opacity", 1)
+                        .attr("y1", this.yScale(valueY))
+                        .attr("y2", this.yScale(valueY))
+                        .attr("x1", this.xScale(valueX) - radius);
+                }
+
+                if (this.ui.whenHovering.higlightValueX) this.xAxisEl.call(
+                    this.xAxis.highlightValue(valueX)
+                );
+
+                if (this.ui.whenHovering.higlightValueY) this.yAxisEl.call(
+                    this.yAxis.highlightValue(valueY)
+                );
+
+            } else {
+
+                this.projectionX.style("opacity", 0);
+                this.projectionY.style("opacity", 0);
+                this.xAxisEl.call(this.xAxis.highlightValue("none"));
+                this.yAxisEl.call(this.yAxis.highlightValue("none"));
+
+            }
+
+        },
+
+        /*
+         * Highlights all hovered bubbles
+         */
+        highlightDataPoints: function() {
+            var _this = this;
+            
+            this.someHighlighted = (this.model.entities.brush.length > 0);
+
+            this.updateBubbleOpacity();
+
+            if(this.model.entities.brush.length === 1){
+                var d = _.clone(this.model.entities.brush[0]); 
+                
+                if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
+                    d["time"] = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
+                }else{
+                    d["time"] = _this.time;
+                }
+                
+                this._axisProjections(d);
+            }else{
+                this._axisProjections();
+            }
+        },
+        
+        updateBubbleOpacity: function(duration){
+            var _this = this;
+            //if(!duration)duration = 0;
+            
+            var OPACITY_HIGHLT = 1.0;
+            var OPACITY_HIGHLT_DIM = 0.3;
+            var OPACITY_SELECT = 0.8;
+            var OPACITY_REGULAR = this.model.entities.opacityRegular;
+            var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+                        
+            this.entityBubbles
+                //.transition().duration(duration)
+                .style("opacity", function(d){
+                
+                    if(_this.someHighlighted){
+                        //highlight or non-highlight
+                        if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+                    }
+                
+                    if(_this.someSelected){
+                        //selected or non-selected
+                        return _this.model.entities.isSelected(d)? OPACITY_SELECT : OPACITY_SELECT_DIM;
+                    }
+                    
+                    if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+                
+                    return OPACITY_REGULAR;
+                });
+            
+            
+            var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim<0.01;
+            
+            // when pointer events need update...
+            if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1){
+                this.entityBubbles.style("pointer-events", function(d){
+                    return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d))?
+                        "visible":"none";
+                });
+            }
+            
+            this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim<0.01;
+        }
+
+
+
+    });
+
+
+    
+    
+    
+
+    //BUBBLE CHART TOOL
+    Vizabi.Tool.extend('BubbleChart', {
+
+        /**
+         * Initializes the tool (Bubble Chart Tool).
+         * Executed once before any template is rendered.
+         * @param {Object} config Initial config, with name and placeholder
+         * @param {Object} options Options such as state, data, etc
+         */
+        init: function(config, options) {
+
+            this.name = "barchart";
+
+            //specifying components
+            this.components = [{
+                    component: 'gapminder-bubblechart',
+                    placeholder: '.vzb-tool-viz',
+                    model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+                },
+                {
+                    component: 'gapminder-timeslider',
+                    placeholder: '.vzb-tool-timeslider',
+                    model: ["state.time"]
+                },
+                {
+                    component: 'gapminder-buttonlist',
+                    placeholder: '.vzb-tool-buttonlist',
+                    model: ['state', 'ui', 'language']
+                }
+            ];
+
+            //default options
+            this.default_options = {
+                state: {
+                    _type_: "model",
+                    _defs_: {
+                        //timespan of the visualization
+                        time: {
+                            _type_: "model",
+                            _defs_: {
+                                start: 1952,
+                                end: 2012,
+                                value: 2000,
+                                step: 1,
+                                speed: 300,
+                                formatInput: "%Y"
+                            }
+                        },
+                        //entities we want to show
+                        entities: {
+                            _type_: "model",
+                            _defs_: {
+                                show: {
+                                    _type_: "model",
+                                    _defs_: {
+                                        dim: {
+                                            _type_: "string",
+                                            _defs_: "geo"
+                                        },
+                                        filter: {
+                                            _type_: "object",
+                                            _defs_: {
+                                                "geo": ["*"],
+                                                "geo.category": ["region"]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+
+                        //how we show it
+                        marker: {
+                            _type_: "model",
+                            _defs_: {
+                                dimensions: {
+                                    _type_: "array",
+                                    _defs_: ["entities", "time"]
+                                },
+                                label: {
+                                    _type_: "hook",
+                                    _defs_: {
+                                        use: {
+                                            _type_: "string",
+                                            _defs_: "property",
+                                            _opts_: ["property", "indicator", "value"]
+                                        },
+                                        value: {
+                                            _type_: "string",
+                                            _defs_: "geo.name"
+                                        }
+                                    }
+                                },
+                                axis_y: {
+                                    _type_: "hook",
+                                    _defs_: {
+                                        use: {
+                                            _type_: "string",
+                                            _defs_: "indicator"
+                                        },
+                                        value: {
+                                            _type_: "string",
+                                            _defs_: "lex"
+                                        },
+                                        scaleType: {
+                                            _type_: "string",
+                                            _defs_: "linear"
+                                        }
+                                    }
+                                },
+                                axis_x: {
+                                    _type_: "hook",
+                                    _defs_: {
+                                        use: {
+                                            _type_: "string",
+                                            _defs_: "property",
+                                            _opts_: ["property"]
+                                        },
+                                        value: {
+                                            _type_: "string",
+                                            _defs_: "geo.name"
+                                        }
+                                    }
+                                },
+                                color: {
+                                    _type_: "hook",
+                                    _defs_: {
+                                        use: {
+                                            _type_: "string",
+                                            _defs_: "property"
+                                        },
+                                        value: {
+                                            _type_: "string",
+                                            _defs_: "geo.region"
+                                        },
+                                        palette: {
+                                            _type_: "object",
+                                            _defs_: {
+                                                "_default": "#ffb600",
+                                                "world": "#ffb600",
+                                                "eur": "#FFE700",
+                                                "afr": "#00D5E9",
+                                                "asi": "#FF5872",
+                                                "ame": "#7FEB00"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                },
+
+                data: {
+                    _type_: "model",
+                    _defs_: {
+                        reader: {
+                            _type_: "string",
+                            _defs_: "local-json"
+                        },
+                        path: {
+                            _type_: "string",
+                            _defs_: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+                        }
+                    }
+                },
+
+                ui: {
+                    _type_: "model",
+                    _defs_: {
+                        'buttons': {
+                            _type_: "array",
+                            _defs_: ["fullscreen"]
+                        }
+                    }
+                },
+
+                //language properties
+                language: {
+                    _type_: "model",
+                    _defs_: {
+                        id: {
+                            _type_: "string",
+                            _defs_: "en"
+                        },
+                        strings: {
+                            _type_: "object",
+                            _defs_: {
+                                en: {
+                                    "title": "",
+                                    "buttons/expand": "Full screen",
+                                    "buttons/unexpand": "Leave full screen",
+                                    "buttons/lock": "Lock",
+                                    "buttons/find": "Find",
+                                    "buttons/colors": "Colors",
+                                    "buttons/size": "Size",
+                                    "buttons/more_options": "Options",
+                                    "indicator/lex": "Life expectancy",
+                                    "indicator/gdp_per_cap": "GDP per capita",
+                                    "indicator/pop": "Population",
+                                    "indicator/geo.region": "Region",
+                                    "indicator/geo": "Geo code",
+                                    "indicator/time": "",
+                                    "indicator/geo.category": "Geo category"
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            //constructor is the same as any tool
+            this._super(config, options);
+        },
+
+        /**
+         * Validating the tool model
+         * @param model the current tool model to be validated
+         */
+        validate: function(model) {
+
+            model = this.model || model;
+
+            var time = model.state.time;
+            var marker = model.state.marker.label;
+
+            //don't validate anything if data hasn't been loaded
+            if (!marker.getItems() || marker.getItems().length < 1) {
+                return;
+            }
+
+            var dateMin = marker.getLimits('time').min;
+            var dateMax = marker.getLimits('time').max;
+
+            if (time.start < dateMin) {
+                time.start = dateMin;
+            }
+            if (time.end > dateMax) {
+                time.end = dateMax;
+            }
+        }
+    });
+
+
+}).call(this);    
 (function() {
 
     "use strict";

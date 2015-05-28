@@ -322,6 +322,24 @@
                 return true;
             });
         },
+        
+        /*
+         * Converts radius to area, simple math
+         * @param {Number} radius
+         * @returns {Number} area
+         */
+        radiusToArea: function(r) {
+            return r * r * Math.PI
+        },
+
+        /*
+         * Converts area to radius, simple math
+         * @param {Number} area
+         * @returns {Number} radius
+         */
+        areaToRadius: function(a) {
+            return Math.sqrt(a / Math.PI)
+        },
 
         /*
          * Prints message to timestamp
