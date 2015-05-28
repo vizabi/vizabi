@@ -218,35 +218,43 @@ describe("* Base: Hooks", function() {
             data: [{
                 geo: "swe",
                 time: "1991",
-                pop: "1"
+                pop: "1",
+                lex: "30"
             }, {
                 geo: "swe",
                 time: "1992",
-                pop: "2"
+                pop: "2",
+                lex: "31"
             }, {
                 geo: "swe",
                 time: "1993",
-                pop: "3"
+                pop: "3",
+                lex: "32"
             }, {
                 geo: "swe",
                 time: "1994",
-                pop: "4"
+                pop: "4",
+                lex: "33"
             },{
                 geo: "nor",
                 time: "1991",
-                pop: "10"
+                pop: "10",
+                lex: "40"
             }, {
                 geo: "nor",
                 time: "1992",
-                pop: "20"
+                pop: "20",
+                lex: "41"
             }, {
                 geo: "nor",
                 time: "1993",
-                pop: "30"
+                pop: "30",
+                lex: "42"
             }, {
                 geo: "nor",
                 time: "1994",
-                pop: "40"
+                pop: "40",
+                lex: "43"
             }]
         };
 
@@ -273,6 +281,20 @@ describe("* Base: Hooks", function() {
         t.model.state.time.value = "1993";
         expect(placeholder.innerHTML).toContain('<div>swe-3</div><div>nor-30</div>');
         t.model.state.time.value = "1992";
+        expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
+    });
+
+    it("should change indicator to LEX", function() {
+        t.setOptions({
+            state: {
+                marker: {
+                    info: {
+                        value: 'lex'
+                    }
+                }
+            }
+        });
+
         expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
     });
 
