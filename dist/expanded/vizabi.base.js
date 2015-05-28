@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-27 */
+/* VIZABI - http://www.gapminder.org - 2015-05-28 */
 
 /*!
  * VIZABI MAIN
@@ -929,8 +929,6 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
-    var readersList = {};
-
     var Data = Vizabi.Class.extend({
 
         /**
@@ -951,8 +949,8 @@
 
             var _this = this;
             var promise = new Promise();
-            var wait = Promise.all([]);
-            var cached = this.isCached(query, language, reader);
+            var wait = (new Promise).resolve();
+            var cached = (query === true) ? true : this.isCached(query, language, reader);
             var loaded = false;
 
             //if result is cached, dont load anything
@@ -974,18 +972,18 @@
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
-                    promise.resolve(data);
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
+                    promise.resolve(data);
                 },
                 function() {
-                    promise.reject('Error loading file...');
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
+                    promise.reject('Error loading file...');
                 });
             return promise;
         },
@@ -1003,13 +1001,10 @@
             var promise = new Promise();
             var reader_name = reader.reader;
             var queryId = idQuery(query, lang, reader);
-
-            if (!readersList.hasOwnProperty(reader_name)) {
-                utils.error('Vizabi Reader ' + reader_name + ' not found');
-                return;
-            }
-
-            var r = new readersList[reader_name](reader);
+            var readerClass = Vizabi.Reader.get(reader_name);
+            
+            var r = new readerClass(reader);
+            
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
@@ -1128,8 +1123,6 @@
     function idQuery(query, language, reader) {
         return JSON.stringify(query) + language + JSON.stringify(reader);
     }
-
-    readersList = Reader._collection;
     Vizabi.Reader = Reader;
     Vizabi.Data = Data;
 
@@ -1824,9 +1817,6 @@
 
             if (value === false) {
                 this._ready = false;
-                if (this._parent && this._parent.setReady) {
-                    this._parent.setReady(false);
-                }
                 return;
             }
             //only ready if nothing is loading at all
@@ -1839,10 +1829,6 @@
                     this.trigger("readyOnce");
                 }
                 this.trigger("ready");
-                //check if parent dependency is ready (virtual models)
-                for (var i = 0; i < this._deps.parent.length; i++) {
-                    this._deps.parent[i].setReady();
-                }
             }
         },
 
@@ -2173,12 +2159,12 @@
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
             if (!this.isHook() || needs_query.indexOf(this[HOOK_PROPERTY]) === -1) {
-                return [];
+                return true;
             }
             //error if there's nothing to hook to
             else if (Object.keys(this._hooks).length < 1) {
                 utils.error("Error:", this._id, "can't find any dimension");
-                return [];
+                return true;
             }
             //else, its a hook (indicator or property) and it needs to query
             else {
@@ -2749,25 +2735,29 @@
                 });
                 this.model.setHooks();
                 this.model.load();
-            } 
-            else if(this.model && this.model.isLoading()) {
+            } else if (this.model && this.model.isLoading()) {
                 this.model.on("ready", function() {
                     done();
                 });
-            }
-            else {
+            } else {
                 done();
             }
 
             function done() {
-                _this.trigger('dom_ready');
                 utils.removeClass(_this.placeholder, class_loading);
-                _this._ready = true;
-                if (!_this._readyOnce) {
-                    _this._readyOnce = true;
-                }
-                _this.trigger('ready');
+                _this.setReady();
             };
+        },
+
+        setReady: function() {
+            if (!this._readyOnce) {
+                this.trigger('dom_ready');
+                this._readyOnce = true;
+            }
+            if (!this._ready || true) {
+                this._ready = true;
+                this.trigger('ready');
+            }
         },
 
         /**
@@ -2823,11 +2813,6 @@
             var comp;
             //use the same name for collection
             this.components = [];
-            //external dependencies let this model know what it
-            //has to wait for
-            if (this.model) {
-                this.model.resetDeps();
-            }
 
             // Loops through components, loading them.
             utils.forEach(this._components_config, function(c) {
@@ -2850,11 +2835,7 @@
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
 
-                //external dependencies let this model know what it
-                //has to wait for
-                if (_this.model) {
-                    _this.model.addDep(subcomp.model);
-                }
+                
                 _this.components.push(subcomp);
             });
         },
@@ -2968,6 +2949,10 @@
             var model = new Vizabi.Model(values, null, model_binds);
             afterSet();
 
+            model.on('ready', function() {
+                _this.setReady();
+            });
+
             return model;
 
             function afterSet() {
@@ -3010,6 +2995,7 @@
                             'load_start': function(evt, vals) {
                                 evt = evt.replace('load_start', 'load_start:' + submodel);
                                 model.triggerAll(evt, vals);
+                                model.setReady(false);
                             },
                             //loading has failed in this submodel (multiple times)
                             'load_error': function(evt, vals) {

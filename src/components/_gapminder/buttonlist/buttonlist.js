@@ -113,10 +113,13 @@
 
         },
 
+        domReady: function()  {
+            this.element = d3.select(this.element);
+        },
+
         ready: function() {
 
             var _this = this;
-            this.element = d3.select(this.element);
 
             //add buttons and render components
             if(this.model.ui.buttons) {
@@ -177,6 +180,7 @@
             this._components_config = [];
             var button_list = this.model.ui.buttons;
             var details_btns = [];
+            if(!button_list.length) return;
             //add a component for each button
             for (var i = 0; i < button_list.length; i++) {
 
@@ -359,7 +363,7 @@
             utils.classed(pholder, class_vzb_fullscreen, fs);
             this.model.ui.fullscreen = fs;
             var translator = this.model.language.getTFunction();
-            utils.classed(btn, class_active, fs);
+            btn.classed(class_active, fs);
 
             btn.select(".vzb-buttonlist-btn-icon").html(this._icons[fs?"unexpand":"expand"]);
             btn.select(".vzb-buttonlist-btn-title").text(

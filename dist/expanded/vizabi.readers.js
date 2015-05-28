@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-27 */
+/* VIZABI - http://www.gapminder.org - 2015-05-28 */
 
 /*!
  * Inline Reader
@@ -65,71 +65,75 @@
             var path = this._basepath.replace("{{LANGUAGE}}", language);
             _this._data = [];
 
-            d3.json(path, function(error, res) {
-                if (error) {
-                    utils.error("Error Happened While Loading File: " + path, error);
-                    return;
-                }
+            (function(query, p) {
 
-                //TODO: Improve local json filtering
-                var data = res[0];
-                //rename geo.category to geo.cat
-                var where = query.where;
-                if (where['geo.category']) {
-                    where['geo.cat'] = utils.clone(where['geo.category']);
-                    delete where['geo.category'];
-                }
-
-                for (var filter in where) {
-                    var wanted = where[filter];
-
-                    if (wanted[0] === "*") {
-                        continue;
+                d3.json(path, function(error, res) {
+                    if (error) {
+                        utils.error("Error Happened While Loading File: " + path, error);
+                        return;
                     }
 
-                    //if not time, normal filtering
-                    if (filter !== "time") {
-                        data = data.filter(function(row) {
-                            var val = row[filter];
-                            var found = -1;
+                    //TODO: Improve local json filtering
+                    var data = res[0];
+                    //rename geo.category to geo.cat
+                    var where = query.where;
+                    if (where['geo.category']) {
+                        where['geo.cat'] = utils.clone(where['geo.category']);
+                        delete where['geo.category'];
+                    }
 
-                            //normalize
-                            if (!utils.isArray(val)) val = [val];
+                    for (var filter in where) {
+                        var wanted = where[filter];
 
-                            //find first occurence
-                            utils.forEach(val, function(j, i) {
-                                if (wanted.indexOf(j) !== -1) {
-                                    found = i;
-                                    return false;
-                                }
+                        if (wanted[0] === "*") {
+                            continue;
+                        }
+
+                        //if not time, normal filtering
+                        if (filter !== "time") {
+                            data = data.filter(function(row) {
+                                var val = row[filter];
+                                var found = -1;
+
+                                //normalize
+                                if (!utils.isArray(val)) val = [val];
+
+                                //find first occurence
+                                utils.forEach(val, function(j, i) {
+                                    if (wanted.indexOf(j) !== -1) {
+                                        found = i;
+                                        return false;
+                                    }
+                                });
+                                //if found, include
+                                return found !== -1;
                             });
-                            //if found, include
-                            return found !== -1;
-                        });
+                        }
+                        //in case it's time, special filtering
+                        else {
+                            var timeRange = wanted[0];
+                            var min = timeRange[0];
+                            var max = timeRange[1] || min;
+
+                            data = data.filter(function(row) {
+                                var val = row[filter]
+                                return val >= min && val <= max;
+                            });
+                        }
+
                     }
-                    //in case it's time, special filtering
-                    else {
-                        var timeRange = wanted[0];
-                        var min = timeRange[0];
-                        var max = timeRange[1] || min;
 
-                        data = data.filter(function(row) {
-                            var val = row[filter]
-                            return val >= min && val <= max;
-                        });
-                    }
+                    //only selected items get returned
+                    data = data.map(function(row) {
+                        return utils.clone(row, query.select);
+                    })
 
-                }
+                    _this._data = data;
 
-                //only selected items get returned
-                data = data.map(function(row) {
-                    return utils.clone(row, query.select);
-                })
+                    p.resolve();
+                });
 
-                _this._data = data;
-
-                p.resolve();
-            });
+            })(query, p);
 
             return p;
         },

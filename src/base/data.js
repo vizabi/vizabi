@@ -11,8 +11,6 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
-    var readersList = {};
-
     var Data = Vizabi.Class.extend({
 
         /**
@@ -33,8 +31,8 @@
 
             var _this = this;
             var promise = new Promise();
-            var wait = Promise.all([]);
-            var cached = this.isCached(query, language, reader);
+            var wait = (new Promise).resolve();
+            var cached = (query === true) ? true : this.isCached(query, language, reader);
             var loaded = false;
 
             //if result is cached, dont load anything
@@ -56,18 +54,18 @@
                 function() {
                     //pass the data forward
                     var data = _this.get(cached);
-                    promise.resolve(data);
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
+                    promise.resolve(data);
                 },
                 function() {
-                    promise.reject('Error loading file...');
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
+                    promise.reject('Error loading file...');
                 });
             return promise;
         },
@@ -85,13 +83,10 @@
             var promise = new Promise();
             var reader_name = reader.reader;
             var queryId = idQuery(query, lang, reader);
-
-            if (!readersList.hasOwnProperty(reader_name)) {
-                utils.error('Vizabi Reader ' + reader_name + ' not found');
-                return;
-            }
-
-            var r = new readersList[reader_name](reader);
+            var readerClass = Vizabi.Reader.get(reader_name);
+            
+            var r = new readerClass(reader);
+            
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
@@ -210,8 +205,6 @@
     function idQuery(query, language, reader) {
         return JSON.stringify(query) + language + JSON.stringify(reader);
     }
-
-    readersList = Reader._collection;
     Vizabi.Reader = Reader;
     Vizabi.Data = Data;
 

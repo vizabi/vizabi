@@ -652,12 +652,12 @@
             var needs_query = ["property", "indicator"];
             //if it's not a hook, property or indicator, no query is necessary
             if (!this.isHook() || needs_query.indexOf(this[HOOK_PROPERTY]) === -1) {
-                return [];
+                return true;
             }
             //error if there's nothing to hook to
             else if (Object.keys(this._hooks).length < 1) {
                 utils.error("Error:", this._id, "can't find any dimension");
-                return [];
+                return true;
             }
             //else, its a hook (indicator or property) and it needs to query
             else {

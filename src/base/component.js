@@ -102,25 +102,29 @@
                 });
                 this.model.setHooks();
                 this.model.load();
-            } 
-            else if(this.model && this.model.isLoading()) {
+            } else if (this.model && this.model.isLoading()) {
                 this.model.on("ready", function() {
                     done();
                 });
-            }
-            else {
+            } else {
                 done();
             }
 
             function done() {
-                _this.trigger('dom_ready');
                 utils.removeClass(_this.placeholder, class_loading);
-                _this._ready = true;
-                if (!_this._readyOnce) {
-                    _this._readyOnce = true;
-                }
-                _this.trigger('ready');
+                _this.setReady();
             };
+        },
+
+        setReady: function() {
+            if (!this._readyOnce) {
+                this.trigger('dom_ready');
+                this._readyOnce = true;
+            }
+            if (!this._ready || true) {
+                this._ready = true;
+                this.trigger('ready');
+            }
         },
 
         /**
@@ -321,6 +325,10 @@
             var model = new Vizabi.Model(values, null, model_binds);
             afterSet();
 
+            model.on('ready', function() {
+                _this.setReady();
+            });
+
             return model;
 
             function afterSet() {
@@ -363,6 +371,7 @@
                             'load_start': function(evt, vals) {
                                 evt = evt.replace('load_start', 'load_start:' + submodel);
                                 model.triggerAll(evt, vals);
+                                model.setReady(false);
                             },
                             //loading has failed in this submodel (multiple times)
                             'load_error': function(evt, vals) {
