@@ -121,10 +121,8 @@
                 this.trigger('dom_ready');
                 this._readyOnce = true;
             }
-            if (!this._ready || true) {
-                this._ready = true;
-                this.trigger('ready');
-            }
+            this._ready = true;
+            this.trigger('ready');
         },
 
         /**
@@ -207,11 +205,10 @@
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
 
-                //external dependencies let this model know what it
-                //has to wait for
-                if (_this.model) {
-                    _this.model.addDep(subcomp.model);
-                }
+                //subcomponent model is initialized in frozen state
+                //unfreeze to dispatch events
+                subcomp.model.unfreeze();
+
                 _this.components.push(subcomp);
             });
         },
@@ -322,12 +319,8 @@
             }
 
             //return a new model with the defined submodels
-            var model = new Vizabi.Model(values, null, model_binds);
+            var model = new Vizabi.Model(values, null, model_binds, true);
             afterSet();
-
-            model.on('ready', function() {
-                _this.setReady();
-            });
 
             return model;
 

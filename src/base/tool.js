@@ -39,7 +39,7 @@
             values = defaultOptions(values, defaults);
 
             //constructor is similar to model
-            this._super(values, null, binds);
+            this._super(values, null, binds, true);
 
             // change language
             if (values.language) {
@@ -102,6 +102,8 @@
 
             options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
+            //ToolModel starts in frozen state. unfreeze;
+            this.model.unfreeze();
 
             this.ui = this.model.ui;
 

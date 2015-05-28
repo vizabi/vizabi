@@ -1540,9 +1540,10 @@
          * @param {Object} values The initial values of this model
          * @param {Object} parent reference to parent
          * @param {Object} bind Initial events to bind
+         * @param {Boolean} freeze block events from being dispatched
          */
 
-        init: function(values, parent, bind) {
+        init: function(values, parent, bind, freeze) {
             this._type = this._type || "model";
             this._id = this._id || utils.uniqueId("m");
             this._data = {}; //holds attributes of this model
@@ -1554,7 +1555,10 @@
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
             //holds the list of dependencies for virtual models
-            this._deps = { parent: [], children: []};
+            this._deps = {
+                parent: [],
+                children: []
+            };
 
             //will the model be hooked to data?
             this._hooks = {};
@@ -1570,11 +1574,15 @@
                 this.on(bind);
             }
 
+            if (freeze) {
+                //do not dispatch events
+                this.freeze();
+            }
+
             //initial values
             if (values) {
                 this.set(values);
             }
-
         },
 
         /* ==========================
@@ -1602,11 +1610,11 @@
          */
         set: function(attr, val, force) {
 
-            var events = [],
-                changes = [],
-                setting = this._setting,
-                _this = this,
-                attrs;
+            var events = [];
+            var changes = [];
+            var setting = this._setting
+            var _this = this;
+            var attrs;
 
             //expect object as default
             if (!utils.isPlainObject(attr)) {
@@ -1623,7 +1631,6 @@
             }
 
             this._setting = true; //we are currently setting the model
-            this.setReady(false);
 
             //compute each change
             for (var a in attrs) {
@@ -1655,6 +1662,7 @@
                     else {
                         events.push('init:' + a);
                         this._data[a] = initSubmodel(a, val, this);
+                        this._data[a].unfreeze();
                     }
                 }
             }
@@ -1817,6 +1825,9 @@
 
             if (value === false) {
                 this._ready = false;
+                if (this._parent && this._parent.setReady) {
+                    this._parent.setReady(false);
+                }
                 return;
             }
             //only ready if nothing is loading at all
@@ -1829,6 +1840,10 @@
                     this.trigger("readyOnce");
                 }
                 this.trigger("ready");
+                //check if parent dependency is ready (virtual models)
+                for (var i = 0; i < this._deps.parent.length; i++) {
+                    this._deps.parent[i].setReady();
+                }
             }
         },
 
@@ -1855,6 +1870,9 @@
             //load hook
             //if its not a hook, the promise will not be created
             if (this.isHook() && data_hook && query) {
+
+                //hook changes, regardless of actual data loading 
+                this.trigger('hook_change');
 
                 //get reader omfp
                 var reader = data_hook.getObject();
@@ -2241,23 +2259,23 @@
             }
 
             var filtered = this._items.map(function(d) {
-                    //TODO: Move this up to readers ?
-                    return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
-                });
+                //TODO: Move this up to readers ?
+                return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
+            });
 
             var min, max, limits = {};
             for (var i = 0; i < filtered.length; i++) {
                 var c = filtered[i];
-                if(typeof min === 'undefined' || c < min) {
+                if (typeof min === 'undefined' || c < min) {
                     min = c;
                 }
-                if(typeof max === 'undefined' || c > max) {
+                if (typeof max === 'undefined' || c > max) {
                     max = c;
                 }
             };
             limits.min = min || 0;
             limits.max = max || 0;
-            
+
             this._limits[attr] = limits;
             return limits;
         },
@@ -2276,7 +2294,8 @@
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
             //cache optimization
-            var uniq_id = JSON.stringify(attr), uniq;
+            var uniq_id = JSON.stringify(attr),
+                uniq;
             if (this._unique[uniq_id]) {
                 return this._unique[uniq_id];
             }
@@ -2489,9 +2508,15 @@
                 ctx.triggerAll(evt, ctx.getObject());
             },
             //loading has started in this submodel (multiple times)
+            'hook_change': function(evt, vals) {
+                ctx.trigger(evt, ctx.getObject());
+                ctx.setReady(false);
+            },
+            //loading has started in this submodel (multiple times)
             'load_start': function(evt, vals) {
                 evt = evt.replace('load_start', 'load_start:' + name);
                 ctx.triggerAll(evt, ctx.getObject());
+                ctx.setReady(false);
             },
             //loading has failed in this submodel (multiple times)
             'load_error': function(evt, vals) {
@@ -2512,8 +2537,8 @@
             return val;
         } else {
             //special model
-            var model =  Vizabi.Model.get(name, true) || Model;
-            return new model(val, ctx, binds);
+            var model = Vizabi.Model.get(name, true) || Model;
+            return new model(val, ctx, binds, true);
         }
 
     }
@@ -2754,10 +2779,8 @@
                 this.trigger('dom_ready');
                 this._readyOnce = true;
             }
-            if (!this._ready || true) {
-                this._ready = true;
-                this.trigger('ready');
-            }
+            this._ready = true;
+            this.trigger('ready');
         },
 
         /**
@@ -2813,6 +2836,11 @@
             var comp;
             //use the same name for collection
             this.components = [];
+            //external dependencies let this model know what it
+            //has to wait for
+            if (this.model) {
+                this.model.resetDeps();
+            }
 
             // Loops through components, loading them.
             utils.forEach(this._components_config, function(c) {
@@ -2835,7 +2863,10 @@
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
 
-                
+                //subcomponent model is initialized in frozen state
+                //unfreeze to dispatch events
+                subcomp.model.unfreeze();
+
                 _this.components.push(subcomp);
             });
         },
@@ -2946,12 +2977,8 @@
             }
 
             //return a new model with the defined submodels
-            var model = new Vizabi.Model(values, null, model_binds);
+            var model = new Vizabi.Model(values, null, model_binds, true);
             afterSet();
-
-            model.on('ready', function() {
-                _this.setReady();
-            });
 
             return model;
 
@@ -3190,7 +3217,7 @@
             values = defaultOptions(values, defaults);
 
             //constructor is similar to model
-            this._super(values, null, binds);
+            this._super(values, null, binds, true);
 
             // change language
             if (values.language) {
@@ -3253,6 +3280,8 @@
 
             options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
+            //ToolModel starts in frozen state. unfreeze;
+            this.model.unfreeze();
 
             this.ui = this.model.ui;
 
