@@ -10,7 +10,6 @@ describe("* Tool: Bar Chart", function() {
         tool = Vizabi('BarChart', placeholder, {
             bind: {
                 'ready': function() {
-                    console.log("READY");
                     setTimeout(function() {
                         done();
                     }, 100);

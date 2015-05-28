@@ -30,6 +30,7 @@ module.exports = {
         dest: 'preview/local_data/',
         expand: true
     },
+    
     /*
      * copy test files to preview to be able to rerun on stage
      * this is a very specific task aimed on replaying
@@ -46,6 +47,13 @@ module.exports = {
             src: ['**/*'],
             dest: 'preview/test/spec/',
             expand: true
+        }]
+    },
+
+    minified: {
+        files: [{
+            src: '.tmp/vizabi.js',
+            dest: 'dist/vizabi.min.js'
         }]
     }
 };

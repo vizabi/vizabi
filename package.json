@@ -38,6 +38,7 @@
     "grunt-contrib-uglify": "^0.4.1",
     "grunt-contrib-watch": "~0.6.1",
     "grunt-gitinfo": "~0.1.6",
+    "grunt-replace": "^0.9.2",
     "grunt-template-jasmine-requirejs": "^0.2.0",
     "jit-grunt": "^0.9.1",
     "jshint-stylish": "^1.0.1",

@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     grunt.registerTask('test', function() {
         grunt.task.run([
             'build',
-            'jasmine:prod'
+            'jasmine'
         ]);
     });
 
@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         grunt.option('force', true);
         grunt.task.run([
             'build',
-            'jasmine:dev:build',
+            'jasmine',
             'connect:test', //run locally
         ]);
     });

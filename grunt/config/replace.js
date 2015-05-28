@@ -11,6 +11,12 @@ module.exports = {
             }, {
                 match: /preview\//g,
                 replacement: ''
+            }, {
+                match: /dist\//g,
+                replacement: '../dist/'
+            }, {
+                match: /lib\/d3\//g,
+                replacement: 'assets/js/'
             }]
         },
         files: [{

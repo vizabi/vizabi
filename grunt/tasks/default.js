@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
     //default task: grunt
     grunt.registerTask('default', [
-        'build', //by default, just build and test
-        'jasmine:prod',
+        'build',
+        'jasmine',
         'jshint:all',
-        // 'copy:dist' //copies dist files
+        'replace:test',
+        'copy:test',
+        'clean:test'
     ]);
 };
