@@ -39,8 +39,7 @@ module.exports = function(grunt) {
         loadGruntTasks: {
             pattern: ['grunt-*',
                 '@*/grunt-*',
-                'jit-grunt',
-                '!grunt-template-jasmine-requirejs'
+                'jit-grunt'
             ],
             config: require('./package.json'),
             scope: 'devDependencies'
@@ -52,12 +51,6 @@ module.exports = function(grunt) {
          */
         jitGrunt: {
             customTasksDir: 'grunt/tasks',
-
-            //include replace needs static mapping
-            //https://www.npmjs.com/package/load-grunt-config
-            staticMappings: {
-                includereplace: 'grunt-include-replace'
-            }
         },
 
         data: aws

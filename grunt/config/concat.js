@@ -15,18 +15,13 @@ module.exports = function(grunt) {
             'src/base/tool.js'
         ],
         components: ['.tmp/templates.js',
-            'src/components/_gapminder/timeslider/*.js',
-            'src/components/_gapminder/indicator-picker/**/*.js',
-            'src/components/_gapminder/simple-checkbox/**/*.js',
-            'src/components/_gapminder/bubble-size/**/*.js',
-            'src/components/_gapminder/buttonlist/**/*.js'
+            'src/components/**/*.js'
         ],
         models: ['src/models/**/*.js'],
         tools: ['src/tools/**/*.js'],
         readers: ['src/readers/**/*.js'],
         plugins: ['src/plugins/**/*.js'],
-        templates: ['src/components/_gapminder/timeslider/*.html', 'src/components/_gapminder/buttonlist/**/*.html',
-        'src/tools/**/*.html']
+        templates: ['src/components/**/*.html','src/tools/**/*.html']
     }
 
     var FILES_COMPONENTS = ['.tmp/templates.js',

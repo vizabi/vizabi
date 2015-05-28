@@ -100,7 +100,7 @@
             this.duration = this.model.time.speed;
             this.timeFormatter = d3.time.format(this.model.time.formatInput);
 
-            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
@@ -360,7 +360,7 @@
                                             _defs_: "property",
                                             _opts_: ["property", "indicator", "value"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.name"
                                         }
@@ -373,7 +373,7 @@
                                             _type_: "string",
                                             _defs_: "indicator"
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "lex"
                                         },
@@ -391,7 +391,7 @@
                                             _defs_: "property",
                                             _opts_: ["property"]
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.name"
                                         }
@@ -404,7 +404,7 @@
                                             _type_: "string",
                                             _defs_: "property"
                                         },
-                                        value: {
+                                        which: {
                                             _type_: "string",
                                             _defs_: "geo.region"
                                         },

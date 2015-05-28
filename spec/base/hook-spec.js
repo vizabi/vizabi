@@ -128,7 +128,7 @@ describe("* Base: Hooks", function() {
                                                 _defs_: "property",
                                                 _opts_: ["property", "indicator", "value"]
                                             },
-                                            value: {
+                                            which: {
                                                 _type_: "string",
                                                 _defs_: "geo"
                                             }
@@ -142,7 +142,7 @@ describe("* Base: Hooks", function() {
                                                 _defs_: "indicator",
                                                 _opts_: ["property", "indicator", "value"]
                                             },
-                                            value: {
+                                            which: {
                                                 _type_: "string",
                                                 _defs_: "pop"
                                             }
@@ -299,7 +299,7 @@ describe("* Base: Hooks", function() {
                 state: {
                     marker: {
                         info: {
-                            value: 'lex'
+                            which: 'lex'
                         }
                     }
                 }
