@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         ]);
     });
 
-    grunt.registerTask('test:dev', function() {
+    grunt.registerTask('test:browser', function() {
         grunt.option('force', true);
         grunt.task.run([
             'build',

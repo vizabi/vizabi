@@ -1,7 +1,14 @@
 //main developer task
 module.exports = function(grunt) {
     grunt.registerTask('dev', [
-        'default', //default build
+        'build',
+        'jshint:all',
+        'connect:dev', //run locally
+        'watch' //watch for code changes
+    ]);
+
+    grunt.registerTask('dev:test', [
+        'default',
         'connect:dev', //run locally
         'watch' //watch for code changes
     ]);

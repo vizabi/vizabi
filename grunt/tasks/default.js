@@ -3,9 +3,9 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         'build',
         'jasmine',
-        'jshint:all',
         'replace:test',
         'copy:test',
-        'clean:test'
+        'clean:test',
+        'jshint:all'
     ]);
 };
