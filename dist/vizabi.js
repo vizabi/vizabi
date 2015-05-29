@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-28 */
+/* VIZABI - http://www.gapminder.org - 2015-05-29 */
 
 /*!
  * VIZABI MAIN
@@ -3497,6 +3497,7 @@
 }).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/bubble-size/bubble-size.html');s.innerHTML = '<div class="vzb-bs-holder"> <input type="range" id="vzb-bs-slider" class="vzb-bs-slider" step="1"> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/more-options/more-options.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubble-opacity"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubble-size"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/size/size.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/size") %> </div> <div class="vzb-dialog-content"> <p>Chose what to display as size</p> <div class="vzb-saxis-container"></div> <p>Choose maximum size of bubbles:</p> <div class="vzb-dialog-bubble-size"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/simple-checkbox/simple-checkbox.html');s.innerHTML = '<span class="vzb-sc-holder vzb-dialog-checkbox"> <input type="checkbox"><label></label> </span> ';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
@@ -3519,9 +3520,9 @@
         return;
     }
 
-    var indicator, min = 1, max = 100;
+    var min = 1, max = 100;
 
-    Vizabi.Component.extend('gapminder-bubble-size', {
+    Vizabi.Component.extend('gapminder-bubblesize', {
 
         /**
          * Initializes the timeslider.
@@ -3530,8 +3531,8 @@
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = "components/_gapminder/bubble-size/bubble-size";
-
+            this.template = this.template || "src/components/_gapminder/bubble-size/bubble-size.html";
+            
             this.model_expects = [{
                 name: "size",
                 type: "size"
@@ -3550,10 +3551,10 @@
             var value = this.model.size.max,
                 _this = this;
             this.element = d3.select(this.element);
-            indicator = this.element.select('#vzb-bs-indicator');
-            slider = this.element.selectAll('#vzb-bs-slider');
+            this.indicatorEl = this.element.select('#vzb-bs-indicator');
+            this.sliderEl = this.element.selectAll('#vzb-bs-slider');
 
-            slider
+            this.sliderEl
                 .attr('min', 0)
                 .attr('max', 1)
                 .attr('step', 0.01)
@@ -3569,7 +3570,7 @@
          * At this point, this.element is available as a d3 object
          */
         modelReady: function() {
-            indicator.text(this.model.size.max);
+            this.indicatorEl.text(this.model.size.max);
         },
 
         /**
@@ -4076,10 +4077,10 @@
          * Executed when the dialog has been rendered
          */
         readyOnce: function() {
-            this.element = d3.select(this.element);
-            close_buttons = this.element.selectAll("[data-click='closeDialog']");
             var _this = this;
-            close_buttons.on('click', function() {
+            this.element = d3.select(this.element);
+            this.closeButtonsEl = this.element.selectAll("[data-click='closeDialog']");
+            this.closeButtonsEl.on('click', function() {
                 _this.parent.closeAllDialogs();
             });
         },
@@ -4105,13 +4106,11 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
 
     
-    Vizabi.Component.register('gapminder-buttonlist-more-options',
-        Dialog.extend({
+    Vizabi.Component.register('gapminder-buttonlist-more-options', Dialog.extend({
 
         /**
          * Initializes the dialog component
@@ -4120,7 +4119,6 @@
          */
         init: function(config, parent) {
             this.name = 'more-options';
-            var _this = this;
 
             this.components = [{
                 component: 'gapminder-indicator-picker',
@@ -4136,17 +4134,15 @@
                 model: ["state", "language"],
                 submodel: 'time',
                 checkbox: 'adaptMinMaxZoom'
-            },
-            // {
-            //     component: 'gapminder-bubble-size',
-            //     placeholder: '.vzb-dialog-bubble-size',
-            //     model: ["state.marker.size"]
-            // },{
-            //     component: 'gapminder-indicator-picker',
-            //     placeholder: '.vzb-saxis-container',
-            //     model: ["state.marker.size", "language"]
-            // },
-            {
+            },{
+                component: 'gapminder-bubblesize',
+                placeholder: '.vzb-dialog-bubble-size',
+                model: ["state.marker.size"]
+            },{
+                component: 'gapminder-indicator-picker',
+                placeholder: '.vzb-saxis-container',
+                model: ["state.marker.size", "language"]
+            },{
                 component: 'gapminder-indicator-picker',
                 placeholder: '.vzb-caxis-container',
                 model: ["state.marker.color", "language"]
@@ -4161,16 +4157,49 @@
             }];
             
             this._super(config, parent);
-        },
-        
-        readyOnce: function() {
-            this.element = d3.select(this.element);
-            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
         }
     }));
 
 }).call(this);
 
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
+
+    Vizabi.Component.register('gapminder-buttonlist-size', Dialog.extend({
+
+        /**
+         * Initializes the dialog component
+         * @param config component configuration
+         * @param context component context (parent)
+         */
+        init: function(config, parent) {
+            this.name = 'size';
+
+            // in dialog, this.model_expects = ["state", "data"];
+
+            this.components = [{
+                component: 'gapminder-bubblesize',
+                placeholder: '.vzb-dialog-bubble-size',
+                model: ["state.marker.size"],
+                ui: {
+                    show_button: false
+                }
+            },{
+                component: 'gapminder-indicatorpicker',
+                placeholder: '.vzb-saxis-container',
+                model: ["state.marker.size", "language"],
+                ui: {selectIndicator: true, selectScaletype: false}
+            }];
+
+            this._super(config, parent);
+        }
+    }));
+
+}).call(this);
 /*!
  * VIZABI INDICATOR PICKER
  * Reusable indicator picker component
@@ -5211,7 +5240,8 @@
                 show: {},
                 select: [],
                 brush: [],
-                opacityNonSelected: 0.3
+                opacitySelectDim: 0.3,
+                opacityRegular: 0.8
             }, values);
 
             this._visible = [];
@@ -6547,6 +6577,10 @@
 }).call(this);
 (function() {
     
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    
     Vizabi.Helper.extend("gapminder-bublechart-trails", {
         
             init: function(context) {
@@ -6856,7 +6890,7 @@
                 },
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
-                    return;
+                    if(!_this._readyOnce) return;
                     if(evt == "change:marker:size:max") return; 
                     if(evt.indexOf("change:marker:color:palette") > -1) return; 
                     //console.log("EVENT change:marker", evt);
@@ -6872,15 +6906,15 @@
                     _this._trails.run(["recolor", "reveal"]);
                 },
                 "change:entities:select": function() {
+                    if(!_this._readyOnce) return;
                     //console.log("EVENT change:entities:select");
-                    return;
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
                     _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
                     _this.updateBubbleOpacity();
                 },
                 "change:entities:brush": function() {
-                    return;
+                    if(!_this._readyOnce) return;
                     //console.log("EVENT change:entities:brush");
                     _this.highlightDataPoints();
                 },
@@ -6888,7 +6922,7 @@
 
                 },
                 "ready": function(evt) {
-                    return;
+                    if(!_this._readyOnce) return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;
@@ -6901,7 +6935,6 @@
                 'change:time:value': function() {
                     //console.log("EVENT change:time:value");
                     _this.updateTime();
-                    
                     
                     _this._trails.run("findVisible");
                     if(_this.model.time.adaptMinMaxZoom) {
@@ -7271,7 +7304,7 @@
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
             var endTime = _this.model.time.end;
-            this.model.entities.visible = this.model.marker.label.getItems()
+            this.model.entities._visible = this.model.marker.label.getItems()
                 .map(function(d) {
                     return {
                         geo: d.geo,
@@ -7288,7 +7321,7 @@
 
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-                .data(this.model.entities.visible, function(d) {return d.geo});
+                .data(this.model.entities._visible, function(d) {return d.geo});
 
             //exit selection
             this.entityBubbles.exit().remove();
@@ -7328,7 +7361,7 @@
             //TODO: no need to create trail group for all entities
             //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
             this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
-                .data(this.model.entities.visible, function(d) {
+                .data(this.model.entities._visible, function(d) {
                     return d.geo
                 });
 
@@ -8023,11 +8056,11 @@
                     placeholder: '.vzb-tool-timeslider',
                     model: ["state.time"]
                 },
-//                {
-//                    component: 'gapminder-buttonlist',
-//                    placeholder: '.vzb-tool-buttonlist',
-//                    model: ['state', 'ui', 'language']
-//                }
+                {
+                    component: 'gapminder-buttonlist',
+                    placeholder: '.vzb-tool-buttonlist',
+                    model: ['state', 'ui', 'language']
+                }
             ];
 
     //default options
@@ -8234,7 +8267,7 @@
                         },
                         'buttons': {
                             _type_: "array",
-                            _defs_: ["fullscreen"]
+                            _defs_: ['more-options', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                         }
                     }                
                 },

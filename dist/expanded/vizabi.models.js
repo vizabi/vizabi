@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-28 */
+/* VIZABI - http://www.gapminder.org - 2015-05-29 */
 
 /*!
  * VIZABI Axis Model (hook)
@@ -371,7 +371,8 @@
                 show: {},
                 select: [],
                 brush: [],
-                opacityNonSelected: 0.3
+                opacitySelectDim: 0.3,
+                opacityRegular: 0.8
             }, values);
 
             this._visible = [];

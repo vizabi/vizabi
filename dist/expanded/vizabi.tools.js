@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-28 */
+/* VIZABI - http://www.gapminder.org - 2015-05-29 */
 
 /*!
  * VIZABI BARCHART
@@ -523,6 +523,10 @@
 }).call(this);
 (function() {
     
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    
     Vizabi.Helper.extend("gapminder-bublechart-trails", {
         
             init: function(context) {
@@ -832,7 +836,7 @@
                 },
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
-                    return;
+                    if(!_this._readyOnce) return;
                     if(evt == "change:marker:size:max") return; 
                     if(evt.indexOf("change:marker:color:palette") > -1) return; 
                     //console.log("EVENT change:marker", evt);
@@ -848,15 +852,15 @@
                     _this._trails.run(["recolor", "reveal"]);
                 },
                 "change:entities:select": function() {
+                    if(!_this._readyOnce) return;
                     //console.log("EVENT change:entities:select");
-                    return;
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
                     _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
                     _this.updateBubbleOpacity();
                 },
                 "change:entities:brush": function() {
-                    return;
+                    if(!_this._readyOnce) return;
                     //console.log("EVENT change:entities:brush");
                     _this.highlightDataPoints();
                 },
@@ -864,7 +868,7 @@
 
                 },
                 "ready": function(evt) {
-                    return;
+                    if(!_this._readyOnce) return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;
@@ -877,7 +881,6 @@
                 'change:time:value': function() {
                     //console.log("EVENT change:time:value");
                     _this.updateTime();
-                    
                     
                     _this._trails.run("findVisible");
                     if(_this.model.time.adaptMinMaxZoom) {
@@ -1247,7 +1250,7 @@
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
             var endTime = _this.model.time.end;
-            this.model.entities.visible = this.model.marker.label.getItems()
+            this.model.entities._visible = this.model.marker.label.getItems()
                 .map(function(d) {
                     return {
                         geo: d.geo,
@@ -1264,7 +1267,7 @@
 
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-                .data(this.model.entities.visible, function(d) {return d.geo});
+                .data(this.model.entities._visible, function(d) {return d.geo});
 
             //exit selection
             this.entityBubbles.exit().remove();
@@ -1304,7 +1307,7 @@
             //TODO: no need to create trail group for all entities
             //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
             this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
-                .data(this.model.entities.visible, function(d) {
+                .data(this.model.entities._visible, function(d) {
                     return d.geo
                 });
 
@@ -1999,11 +2002,11 @@
                     placeholder: '.vzb-tool-timeslider',
                     model: ["state.time"]
                 },
-//                {
-//                    component: 'gapminder-buttonlist',
-//                    placeholder: '.vzb-tool-buttonlist',
-//                    model: ['state', 'ui', 'language']
-//                }
+                {
+                    component: 'gapminder-buttonlist',
+                    placeholder: '.vzb-tool-buttonlist',
+                    model: ['state', 'ui', 'language']
+                }
             ];
 
     //default options
@@ -2210,7 +2213,7 @@
                         },
                         'buttons': {
                             _type_: "array",
-                            _defs_: ["fullscreen"]
+                            _defs_: ['more-options', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                         }
                     }                
                 },
