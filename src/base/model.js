@@ -977,15 +977,6 @@
         //naming convention: underscore -> time, time_2, time_overlay
         var name = attr.split("_")[0];
         var binds = {
-            //the submodel has been set (only once)
-            'set': function(evt, vals) {
-                //its set
-            },
-            //the submodel has initialized (only once)
-            'init': function(evt, vals) {
-                // evt = evt.replace('init', 'init:' + name);
-                // ctx.triggerAll(evt, ctx.getObject());
-            },
             //the submodel has changed (multiple times)
             'change': function(evt, vals) {
                 evt = evt.replace('change', 'change:' + name);

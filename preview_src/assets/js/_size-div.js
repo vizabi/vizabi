@@ -30,20 +30,20 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
         element.style.height = h + 'px';
     }
 
-    // // Mouse events
-    // pane.addEventListener('mousedown', onMouseDown);
-    // document.addEventListener('mousemove', onMove);
-    // document.addEventListener('mouseup', onUp);
+    // Mouse events
+    pane.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
 
-    // // Touch events 
-    // pane.addEventListener('touchstart', onTouchDown);
-    // document.addEventListener('touchmove', onTouchMove);
-    // document.addEventListener('touchend', onTouchEnd);
+    // Touch events 
+    pane.addEventListener('touchstart', onTouchDown);
+    document.addEventListener('touchmove', onTouchMove);
+    document.addEventListener('touchend', onTouchEnd);
 
 
     function onTouchDown(e) {
         onDown(e.touches[0]);
-        e.preventDefault();
+        // e.preventDefault();
     }
 
     function onTouchMove(e) {
@@ -56,7 +56,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
 
     function onMouseDown(e) {
         onDown(e);
-        e.preventDefault();
+        // e.preventDefault();
     }
 
     function onDown(e) {
@@ -118,7 +118,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
 
             if (clicked.onBottomEdge) pane.style.height = Math.min(Math.max(y, minHeight), maxHeight) + 'px';
 
-            if(cb) {
+            if (cb) {
                 cb();
             }
 
@@ -143,7 +143,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
     function onUp(e) {
         calc(e);
 
-        if(cbMouseUp) {
+        if (cbMouseUp) {
             cbMouseUp();
         }
 
@@ -178,13 +178,13 @@ function normalizeDivSize(div, container) {
     var maxHeight = container.offsetHeight - MARGINS;
     var minWidth = 300;
     var minHeight = 300;
-    var divWidth = parseInt(div.style.width,10);
-    var divHeight = parseInt(div.style.height,10);
+    var divWidth = parseInt(div.style.width, 10);
+    var divHeight = parseInt(div.style.height, 10);
 
     var width = Math.min(Math.max(divWidth, minWidth), maxWidth);
     var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
 
-    if(divWidth != width || divHeight != height) {
+    if (divWidth != width || divHeight != height) {
         // console.warn("Size outside range. Setting size to:", width, height);
         setDivSize(div, width, height);
     }
@@ -199,8 +199,8 @@ function forceResizeEvt() {
 }
 
 function updateSizePanel(div, width, height) {
-    if(!width) width = parseInt(div.style.width,10);
-    if(!height) height = parseInt(div.style.height,10);
+    if (!width) width = parseInt(div.style.width, 10);
+    if (!height) height = parseInt(div.style.height, 10);
     document.getElementById("vzbp-input-width").value = width;
     document.getElementById("vzbp-input-height").value = height;
 }
@@ -212,13 +212,13 @@ function updateSizePanel(div, width, height) {
 //update size
 setDivSize(placeholder, 320, 568);
 //resize div
-// resizableDiv(placeholder, container, 300, 300, function() {
-//     forceResizeEvt();
-//     updateSizePanel(placeholder);
-// }, function() {
-//     removeClass(placeholder, "fullscreen");
-//     updateURL();
-// });
+resizableDiv(placeholder, container, 300, 300, function() {
+    forceResizeEvt();
+    updateSizePanel(placeholder);
+}, function() {
+    removeClass(placeholder, "fullscreen");
+    updateURL();
+});
 
 function setFullscreen() {
     setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
@@ -257,3 +257,8 @@ function changeSizes() {
 
 inputWidth.onchange = changeSizes;
 inputHeight.onchange = changeSizes;
+
+window.addEventListener('resize', function() {
+    normalizeDivSize(placeholder, container);
+    throttle(updateURL, 500);
+});

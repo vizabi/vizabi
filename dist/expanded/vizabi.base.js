@@ -294,6 +294,32 @@
         },
 
         /*
+         * unique items in an array keeping the last item
+         * @param {Array} arr original array
+         * @param {Function} func optional evaluation function
+         * @returns {Array} unique items
+         * Based on the previous method
+         */
+        uniqueLast: function(arr, func) {
+            var u = {};
+            var a = [];
+            if (!func) {
+                func = function(d) {
+                    return d
+                };
+            }
+            for (var i = 0, l = arr.length; i < l; ++i) {
+                var key = func(arr[i]);
+                if (u.hasOwnProperty(key)) {
+                    a.splice(u[key], 1); //remove old item from array
+                }
+                a.push(arr[i]);
+                u[key] = (a.length - 1);
+            }
+            return a;
+        },
+
+        /*
          * returns first value that passes the test
          * @param {Array} arr original collection
          * @returns {Function} func test function
@@ -1209,7 +1235,7 @@
             }
 
             this._events[name] = this._events[name] || [];
-            
+
             if (typeof func === 'function') {
                 this._events[name].push(func);
             } else {
@@ -1247,7 +1273,7 @@
          * @param args Optional arguments (values to be passed)
          */
         trigger: function(name, args, original) {
-            var i;
+            var i, size;
             if (utils.isArray(name)) {
                 for (i = 0, size = name.length; i < size; i++) {
                     this.trigger(name[i], args);
@@ -1259,7 +1285,7 @@
                     //if not in buffer, add and execute
                     var _this = this;
                     var execute = function() {
-                        var msg = "Vizabi Event: "+ name +" - "+ original;
+                        var msg = "Vizabi Event: " + name + " - " + original;
                         utils.timeStamp(msg);
                         f.apply(_this, [(original || name), args]);
                     };
@@ -1268,8 +1294,7 @@
                     //only execute if not frozen and exception doesnt exist
                     if (this._freeze || _freezeAllEvents) {
                         //if exception exists for freezing, execute
-                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name))
-                            || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
+                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name)) || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
                             execute();
                         }
                         //otherwise, freeze it
@@ -1292,19 +1317,31 @@
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
-        triggerAll: function(name, args) {
-            if (utils.isArray(name)) {
-                for (var i = 0, size = name.length; i < size; i++) {
-                    this.triggerAll(name[i], args);
-                }
-            } else {
-                var original = name;
-                var parts = name.split(":");
+        triggerAll: function(name, args, original) {
+            var to_trigger = [];
+
+            //default to array
+            if (!utils.isArray(name)) {
+                name = [name];
+            }
+            var i, size, n;
+            for (i = 0, size = name.length; i < size; i++) {
+                n = name[i];
+                var original = n;
+                var parts = n.split(":");
                 while (parts.length) {
-                    this.trigger(name, args, original);
+                    to_trigger.push([n, args, original]);
                     parts.pop();
-                    name = parts.join(":");
+                    n = parts.join(":");
                 }
+            }
+
+            var once = utils.unique(to_trigger, function(d) {
+                return d[0]; //name of the event
+            });
+
+            for (i = 0; i < once.length; i++) {
+                this.trigger.apply(this, once[i]);
             }
         },
         /**
@@ -2511,15 +2548,6 @@
         //naming convention: underscore -> time, time_2, time_overlay
         var name = attr.split("_")[0];
         var binds = {
-            //the submodel has been set (only once)
-            'set': function(evt, vals) {
-                //its set
-            },
-            //the submodel has initialized (only once)
-            'init': function(evt, vals) {
-                // evt = evt.replace('init', 'init:' + name);
-                // ctx.triggerAll(evt, ctx.getObject());
-            },
             //the submodel has changed (multiple times)
             'change': function(evt, vals) {
                 evt = evt.replace('change', 'change:' + name);
@@ -2995,73 +3023,7 @@
             }
 
             //return a new model with the defined submodels
-            var model = new Vizabi.Model(values, null, model_binds, true);
-            afterSet();
-
-            return model;
-
-            function afterSet() {
-                var submodels = model.getSubmodels();
-
-                for (var submodel in model.get()) {
-
-                    if (typeof model[submodel]._id === 'undefined') continue;
-
-                    //closure to set up the submodel
-                    (function(model, submodel) {
-
-                        model[submodel].on({
-                            //the submodel has been set (only once)
-                            'set': function(evt, vals) {
-                                //trigger only for submodel
-                                evt = evt.replace('set', 'set:' + submodel);
-                                model.trigger(evt, vals);
-
-                                //check if all are ready
-                                var rdy = true;
-                                utils.forEach(submodels, function(sm) {
-                                    if (sm._set !== true) rdy = false;
-                                });
-                                if (rdy) {
-                                    model.trigger('set', vals)
-                                }
-                            },
-                            //the submodel has initialized (only once)
-                            'init': function(evt, vals) {
-                                evt = evt.replace('init', 'init:' + submodel);
-                                model.triggerAll(evt, model.getObject());
-                            },
-                            //the submodel has changed (multiple times)
-                            'change': function(evt, vals) {
-                                evt = evt.replace('change', 'change:' + submodel);
-                                model.triggerAll(evt, model.getObject());
-                            },
-                            //loading has started in this submodel (multiple times)
-                            'load_start': function(evt, vals) {
-                                evt = evt.replace('load_start', 'load_start:' + submodel);
-                                model.triggerAll(evt, vals);
-                                model.setReady(false);
-                            },
-                            //loading has failed in this submodel (multiple times)
-                            'load_error': function(evt, vals) {
-                                evt = evt.replace('load_error', 'load_error:' + submodel);
-                                model.triggerAll(evt, vals);
-                            },
-                            //the submodel is ready/loading has ended
-                            'ready': function(evt, vals) {
-                                //trigger only for submodel
-                                evt = evt.replace('ready', 'ready:' + submodel);
-                                model.trigger(evt, vals);
-
-                                //try to set virtual model ready, then orig one
-                                model.setReady();
-                            }
-                        });
-
-                    })(model, submodel); //self executing function
-
-                }
-            }
+            return new Vizabi.Model(values, null, model_binds, true);
 
             /**
              * Maps one model name to current submodel and returns info
