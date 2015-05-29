@@ -3,8 +3,7 @@ module.exports = {
     options: {
         livereload: {
             port: '<%= connect.dev.options.livereload %>'
-        },
-        interrupt: true
+        }
     },
     styles: {
         files: ['src/**/*.scss', 'preview_src/assets/**/*.scss'],
