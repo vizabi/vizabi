@@ -1,0 +1,26 @@
+<div class='vzb-dialog-modal'>
+
+    <div class="vzb-dialog-title">
+        <%=t ( "buttons/find") %>
+    </div>
+    <div class="vzb-dialog-content vzb-find-filter">
+        <input id="vzb-find-search" class="vzb-dialog-input" type="text" placeholder="Search..." />
+    </div>
+    <div class="vzb-dialog-content vzb-dialog-content-fixed">
+        <div class="vzb-find-list">
+            <!-- list will be placed here -->
+        </div>
+    </div>
+
+    <div class="vzb-dialog-buttons">
+        <div class="vzb-dialog-bubbleopacity vzb-dialog-control"></div>
+        <div id="vzb-find-deselect" class="vzb-dialog-button">
+            <%=t ( "buttons/deselect") %>
+        </div>
+
+        <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+            <%=t ( "buttons/ok") %>
+        </div>
+    </div>
+
+</div>

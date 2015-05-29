@@ -436,6 +436,15 @@
         })(),
 
         /*
+         * Returns keys of an object as array
+         * @param {Object} arg
+         * @returns {Array} keys
+         */
+        keys: function(arg) {
+            return Object.keys(arg);
+        },
+        
+        /*
          * returns the values of an object in an array format
          * @param {Object} obj
          * @return {Array}

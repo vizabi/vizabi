@@ -47,10 +47,6 @@
         readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
-            this.closeButtonsEl = this.element.selectAll("[data-click='closeDialog']");
-            this.closeButtonsEl.on('click', function() {
-                _this.parent.closeAllDialogs();
-            });
         },
 
         /**

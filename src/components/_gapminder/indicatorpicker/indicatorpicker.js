@@ -58,7 +58,7 @@
         }
     };
 
-    Vizabi.Component.extend('gapminder-indicator-picker', {
+    Vizabi.Component.extend('gapminder-indicatorpicker', {
 
         /**
          * Initializes the Indicator Picker.

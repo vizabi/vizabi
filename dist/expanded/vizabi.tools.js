@@ -2210,7 +2210,7 @@
                         },
                         'buttons': {
                             _type_: "array",
-                            _defs_: ['more-options', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
+                            _defs_: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                         }
                     }                
                 },
