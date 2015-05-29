@@ -1,5 +1,9 @@
 (function() {
     
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
+    
     Vizabi.Helper.extend("gapminder-bublechart-trails", {
         
             init: function(context) {

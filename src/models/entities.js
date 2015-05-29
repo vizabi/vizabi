@@ -24,7 +24,8 @@
                 show: {},
                 select: [],
                 brush: [],
-                opacityNonSelected: 0.3
+                opacitySelectDim: 0.3,
+                opacityRegular: 0.8
             }, values);
 
             this._visible = [];

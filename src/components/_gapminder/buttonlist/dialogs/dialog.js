@@ -45,10 +45,10 @@
          * Executed when the dialog has been rendered
          */
         readyOnce: function() {
-            this.element = d3.select(this.element);
-            close_buttons = this.element.selectAll("[data-click='closeDialog']");
             var _this = this;
-            close_buttons.on('click', function() {
+            this.element = d3.select(this.element);
+            this.closeButtonsEl = this.element.selectAll("[data-click='closeDialog']");
+            this.closeButtonsEl.on('click', function() {
                 _this.parent.closeAllDialogs();
             });
         },

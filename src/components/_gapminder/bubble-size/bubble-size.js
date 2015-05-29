@@ -16,9 +16,9 @@
         return;
     }
 
-    var indicator, min = 1, max = 100;
+    var min = 1, max = 100;
 
-    Vizabi.Component.extend('gapminder-bubble-size', {
+    Vizabi.Component.extend('gapminder-bubblesize', {
 
         /**
          * Initializes the timeslider.
@@ -27,8 +27,8 @@
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = "components/_gapminder/bubble-size/bubble-size";
-
+            this.template = this.template || "src/components/_gapminder/bubble-size/bubble-size.html";
+            
             this.model_expects = [{
                 name: "size",
                 type: "size"
@@ -47,10 +47,10 @@
             var value = this.model.size.max,
                 _this = this;
             this.element = d3.select(this.element);
-            indicator = this.element.select('#vzb-bs-indicator');
-            slider = this.element.selectAll('#vzb-bs-slider');
+            this.indicatorEl = this.element.select('#vzb-bs-indicator');
+            this.sliderEl = this.element.selectAll('#vzb-bs-slider');
 
-            slider
+            this.sliderEl
                 .attr('min', 0)
                 .attr('max', 1)
                 .attr('step', 0.01)
@@ -66,7 +66,7 @@
          * At this point, this.element is available as a d3 object
          */
         modelReady: function() {
-            indicator.text(this.model.size.max);
+            this.indicatorEl.text(this.model.size.max);
         },
 
         /**

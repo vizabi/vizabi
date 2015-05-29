@@ -6,13 +6,11 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
 
     
-    Vizabi.Component.register('gapminder-buttonlist-more-options',
-        Dialog.extend({
+    Vizabi.Component.register('gapminder-buttonlist-more-options', Dialog.extend({
 
         /**
          * Initializes the dialog component
@@ -21,7 +19,6 @@
          */
         init: function(config, parent) {
             this.name = 'more-options';
-            var _this = this;
 
             this.components = [{
                 component: 'gapminder-indicator-picker',
@@ -37,17 +34,15 @@
                 model: ["state", "language"],
                 submodel: 'time',
                 checkbox: 'adaptMinMaxZoom'
-            },
-            // {
-            //     component: 'gapminder-bubble-size',
-            //     placeholder: '.vzb-dialog-bubble-size',
-            //     model: ["state.marker.size"]
-            // },{
-            //     component: 'gapminder-indicator-picker',
-            //     placeholder: '.vzb-saxis-container',
-            //     model: ["state.marker.size", "language"]
-            // },
-            {
+            },{
+                component: 'gapminder-bubblesize',
+                placeholder: '.vzb-dialog-bubble-size',
+                model: ["state.marker.size"]
+            },{
+                component: 'gapminder-indicator-picker',
+                placeholder: '.vzb-saxis-container',
+                model: ["state.marker.size", "language"]
+            },{
                 component: 'gapminder-indicator-picker',
                 placeholder: '.vzb-caxis-container',
                 model: ["state.marker.color", "language"]
@@ -62,11 +57,6 @@
             }];
             
             this._super(config, parent);
-        },
-        
-        readyOnce: function() {
-            this.element = d3.select(this.element);
-            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
         }
     }));
 
