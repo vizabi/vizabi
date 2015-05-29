@@ -150,16 +150,18 @@
          */
         forEach: function(obj, callback, ctx) {
             if (!obj) return;
+            var i;
             if (this.isArray(obj)) {
-                var i;
                 for (i = 0; i < obj.length; i++) {
                     if (callback.apply(ctx, [obj[i], i]) === false) {
                         break;
                     }
                 }
             } else {
-                for (var item in obj) {
-                    if (callback.apply(ctx, [obj[item], item]) === false) {
+                var keys = Object.keys(obj),
+                    size = keys.length;
+                for (i = 0; i < size; i++) {
+                    if (callback.apply(ctx, [obj[keys[i]], keys[i]]) === false) {
                         break;
                     }
                 }
@@ -524,9 +526,11 @@
          * @return {Array}
          */
         values: function(obj) {
-            var arr;
-            for (var i in obj) {
-                (arr = arr || []).push(obj[i])
+            var arr,
+                keys = Object.keys(obj),
+                size = keys.length;
+            for (var i=0; i<size; i++) {
+                (arr = arr || []).push(obj[keys[i]]);
             };
             return arr;
         },
