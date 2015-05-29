@@ -152,7 +152,7 @@
          * @returns {Object} cloned object
          */
         clone: function(src, arr) {
-            if(this.isArray(src)) {
+            if (this.isArray(src)) {
                 return src.slice(0);
             }
             var clone = {};
@@ -273,14 +273,31 @@
          * @returns {Object} filter properties to use as filter
          */
         filter: function(arr, filter) {
-            return arr.filter(function(i) {
-                for (var f in filter) {
-                    if (i[f] !== filter[f]) return false;
+            var index = -1,
+                length = arr.length,
+                resIndex = -1,
+                result = [],
+                keys = Object.keys(filter),
+                s_keys = keys.length,
+                i, f;
+
+            while (++index < length) {
+                var value = arr[index];
+                var match = true;
+                for (i = 0; i < s_keys; i++) {
+                    f = keys[i];
+                    if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
+                        match = false;
+                        break;
+                    }
                 }
-                return true;
-            });
+                if (match) {
+                    result[++resIndex] = value;
+                }
+            }
+            return result;
         },
-        
+
         /*
          * Converts radius to area, simple math
          * @param {Number} radius
@@ -393,11 +410,9 @@
         classed: function(el, className, value) {
             if (value === true) {
                 this.addClass(el, className);
-            }
-            else if (value === false){
+            } else if (value === false) {
                 this.removeClass(el, className);
-            }
-            else {
+            } else {
                 return this.hasClass(el, className);
             }
         },
