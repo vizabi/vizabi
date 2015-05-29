@@ -56,20 +56,16 @@ describe("* Base: Model", function() {
             events = [];
         });
 
-        it("should trigger init event for each field", function() {
+        it("should trigger a single init event", function() {
             var t = new MyModel({}, null, {
                 init: function(evt) {
                     events.push(evt);
                 }
             });
-            expect(events.length).toEqual(4); // 4 fields
-            expect(events.indexOf("init:value")).not.toEqual(-1);
-            expect(events.indexOf("init:start")).not.toEqual(-1);
-            expect(events.indexOf("init:end")).not.toEqual(-1);
-            expect(events.indexOf("init:submodel")).not.toEqual(-1);
+            expect(events.length).toEqual(1);
         });
 
-        it("should trigger one set event after instantiation", function() {
+        it("should trigger one set event", function() {
             var t = new MyModel({}, null, {
                 set: function(evt) {
                     events.push(evt);

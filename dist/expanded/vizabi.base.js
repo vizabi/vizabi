@@ -1335,11 +1335,13 @@
                     n = parts.join(":");
                 }
             }
-            to_trigger = utils.uniqueLast(to_trigger, function(d) {
+
+            var once = utils.unique(to_trigger, function(d) {
                 return d[0]; //name of the event
             });
-            for (i = 0; i < to_trigger.length; i++) {
-                this.trigger.apply(this, to_trigger[i]);
+
+            for (i = 0; i < once.length; i++) {
+                this.trigger.apply(this, once[i]);
             }
         },
         /**
@@ -2546,15 +2548,6 @@
         //naming convention: underscore -> time, time_2, time_overlay
         var name = attr.split("_")[0];
         var binds = {
-            //the submodel has been set (only once)
-            'set': function(evt, vals) {
-                //its set
-            },
-            //the submodel has initialized (only once)
-            'init': function(evt, vals) {
-                // evt = evt.replace('init', 'init:' + name);
-                // ctx.triggerAll(evt, ctx.getObject());
-            },
             //the submodel has changed (multiple times)
             'change': function(evt, vals) {
                 evt = evt.replace('change', 'change:' + name);
@@ -3030,73 +3023,7 @@
             }
 
             //return a new model with the defined submodels
-            var model = new Vizabi.Model(values, null, model_binds, true);
-            afterSet();
-
-            return model;
-
-            function afterSet() {
-                var submodels = model.getSubmodels();
-
-                for (var submodel in model.get()) {
-
-                    if (typeof model[submodel]._id === 'undefined') continue;
-
-                    //closure to set up the submodel
-                    (function(model, submodel) {
-
-                        model[submodel].on({
-                            //the submodel has been set (only once)
-                            'set': function(evt, vals) {
-                                //trigger only for submodel
-                                evt = evt.replace('set', 'set:' + submodel);
-                                model.trigger(evt, vals);
-
-                                //check if all are ready
-                                var rdy = true;
-                                utils.forEach(submodels, function(sm) {
-                                    if (sm._set !== true) rdy = false;
-                                });
-                                if (rdy) {
-                                    model.trigger('set', vals)
-                                }
-                            },
-                            //the submodel has initialized (only once)
-                            'init': function(evt, vals) {
-                                evt = evt.replace('init', 'init:' + submodel);
-                                model.triggerAll(evt, model.getObject());
-                            },
-                            //the submodel has changed (multiple times)
-                            'change': function(evt, vals) {
-                                evt = evt.replace('change', 'change:' + submodel);
-                                model.triggerAll(evt, model.getObject());
-                            },
-                            //loading has started in this submodel (multiple times)
-                            'load_start': function(evt, vals) {
-                                evt = evt.replace('load_start', 'load_start:' + submodel);
-                                model.triggerAll(evt, vals);
-                                model.setReady(false);
-                            },
-                            //loading has failed in this submodel (multiple times)
-                            'load_error': function(evt, vals) {
-                                evt = evt.replace('load_error', 'load_error:' + submodel);
-                                model.triggerAll(evt, vals);
-                            },
-                            //the submodel is ready/loading has ended
-                            'ready': function(evt, vals) {
-                                //trigger only for submodel
-                                evt = evt.replace('ready', 'ready:' + submodel);
-                                model.trigger(evt, vals);
-
-                                //try to set virtual model ready, then orig one
-                                model.setReady();
-                            }
-                        });
-
-                    })(model, submodel); //self executing function
-
-                }
-            }
+            return new Vizabi.Model(values, null, model_binds, true);
 
             /**
              * Maps one model name to current submodel and returns info

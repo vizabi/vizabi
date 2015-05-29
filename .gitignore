@@ -1,7 +1,6 @@
 .deploy-keys.json
 .sass-cache/
 lib/
-dist/
 node_modules/
 preview/
 *.swp

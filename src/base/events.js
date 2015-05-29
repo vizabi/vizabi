@@ -60,7 +60,7 @@
             }
 
             this._events[name] = this._events[name] || [];
-            
+
             if (typeof func === 'function') {
                 this._events[name].push(func);
             } else {
@@ -98,7 +98,7 @@
          * @param args Optional arguments (values to be passed)
          */
         trigger: function(name, args, original) {
-            var i;
+            var i, size;
             if (utils.isArray(name)) {
                 for (i = 0, size = name.length; i < size; i++) {
                     this.trigger(name[i], args);
@@ -110,7 +110,7 @@
                     //if not in buffer, add and execute
                     var _this = this;
                     var execute = function() {
-                        var msg = "Vizabi Event: "+ name +" - "+ original;
+                        var msg = "Vizabi Event: " + name + " - " + original;
                         utils.timeStamp(msg);
                         f.apply(_this, [(original || name), args]);
                     };
@@ -119,8 +119,7 @@
                     //only execute if not frozen and exception doesnt exist
                     if (this._freeze || _freezeAllEvents) {
                         //if exception exists for freezing, execute
-                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name))
-                            || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
+                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name)) || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
                             execute();
                         }
                         //otherwise, freeze it
@@ -143,19 +142,31 @@
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
-        triggerAll: function(name, args) {
-            if (utils.isArray(name)) {
-                for (var i = 0, size = name.length; i < size; i++) {
-                    this.triggerAll(name[i], args);
-                }
-            } else {
-                var original = name;
-                var parts = name.split(":");
+        triggerAll: function(name, args, original) {
+            var to_trigger = [];
+
+            //default to array
+            if (!utils.isArray(name)) {
+                name = [name];
+            }
+            var i, size, n;
+            for (i = 0, size = name.length; i < size; i++) {
+                n = name[i];
+                var original = n;
+                var parts = n.split(":");
                 while (parts.length) {
-                    this.trigger(name, args, original);
+                    to_trigger.push([n, args, original]);
                     parts.pop();
-                    name = parts.join(":");
+                    n = parts.join(":");
                 }
+            }
+
+            var once = utils.unique(to_trigger, function(d) {
+                return d[0]; //name of the event
+            });
+
+            for (i = 0; i < once.length; i++) {
+                this.trigger.apply(this, once[i]);
             }
         },
         /**

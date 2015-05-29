@@ -3,7 +3,8 @@ module.exports = {
     options: {
         livereload: {
             port: '<%= connect.dev.options.livereload %>'
-        }
+        },
+        interrupt: true
     },
     styles: {
         files: ['src/**/*.scss', 'preview_src/assets/**/*.scss'],
@@ -11,7 +12,7 @@ module.exports = {
     },
     scripts: {
         files: ['src/**/*.js'],
-        tasks: ['concat', 'jasmine']
+        tasks: ['concat']
     },
     test: {
         files: ['spec/**/*.js'], //['src/**/*.js', 'specs/**/*.js'],

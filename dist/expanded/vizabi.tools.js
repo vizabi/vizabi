@@ -813,9 +813,6 @@
                 type: "language"
             }];
             
-
-
-
             this.model_binds = {
                 "change:time:trails": function(evt) {
                     //console.log("EVENT change:time:trails");

@@ -226,6 +226,32 @@
         },
 
         /*
+         * unique items in an array keeping the last item
+         * @param {Array} arr original array
+         * @param {Function} func optional evaluation function
+         * @returns {Array} unique items
+         * Based on the previous method
+         */
+        uniqueLast: function(arr, func) {
+            var u = {};
+            var a = [];
+            if (!func) {
+                func = function(d) {
+                    return d
+                };
+            }
+            for (var i = 0, l = arr.length; i < l; ++i) {
+                var key = func(arr[i]);
+                if (u.hasOwnProperty(key)) {
+                    a.splice(u[key], 1); //remove old item from array
+                }
+                a.push(arr[i]);
+                u[key] = (a.length - 1);
+            }
+            return a;
+        },
+
+        /*
          * returns first value that passes the test
          * @param {Array} arr original collection
          * @returns {Function} func test function
