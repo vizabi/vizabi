@@ -190,12 +190,15 @@ function normalizeDivSize(div, container) {
     }
 }
 
+var forcedResize = false;
 function forceResizeEvt() {
     //force resize
     event = document.createEvent("HTMLEvents");
     event.initEvent("resize", true, true);
     event.eventName = "resize";
+    forcedResize = true;
     window.dispatchEvent(event);
+    forcedResize = false;
 }
 
 function updateSizePanel(div, width, height) {
@@ -259,6 +262,7 @@ inputWidth.onchange = changeSizes;
 inputHeight.onchange = changeSizes;
 
 window.addEventListener('resize', function() {
+    if(forcedResize) return;
     normalizeDivSize(placeholder, container);
     throttle(updateURL, 500);
 });
