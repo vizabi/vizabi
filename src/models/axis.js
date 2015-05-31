@@ -87,9 +87,9 @@
          */
         buildScale: function() {
             var domain;
-            var scale = this.scaleType || "linear";
+            var scaleType = this.scaleType || "linear";
 
-            if(this.which=="time"){
+            if(this.scaleType=="time"){
                 var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale().domain([limits.min, limits.max]);
                 return;
@@ -100,7 +100,7 @@
                     var limits = this.getLimits(this.which),
                         margin = (limits.max - limits.min) / 20;
                     domain = [(limits.min - margin), (limits.max + margin)];
-                    if(scale == "log") {
+                    if(scaleType == "log") {
                         domain = [(limits.min-limits.min/4), (limits.max + limits.max/4)];
                     }
 
@@ -114,7 +114,7 @@
                     break;
             }
 
-            this.scale = d3.scale[scale]().domain(domain);
+            this.scale = d3.scale[scaleType]().domain(domain);
         }
     });
 }).call(this);

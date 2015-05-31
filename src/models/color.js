@@ -144,7 +144,7 @@
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
-            if(this.which=="time"){
+            if(this.scaleType=="time"){
                 var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
