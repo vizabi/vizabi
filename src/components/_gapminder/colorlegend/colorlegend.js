@@ -136,7 +136,7 @@
                 this.rainbowEl.classed("vzb-hidden", true);
             }
             
-            if(this.model.color.value == "geo.region"){
+            if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
                     .select("svg").selectAll("g");
                 regions.each(function(){
@@ -197,7 +197,7 @@
                 }else{
                     
                     d3.select(this).select(".vzb-cl-color-legend")
-                        .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                        .text(_this.translator("color/" + _this.model.color[INDICATOR] + "/" + d));
                 }
             });
         }

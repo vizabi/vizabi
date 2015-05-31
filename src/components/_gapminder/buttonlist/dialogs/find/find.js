@@ -58,6 +58,8 @@
             });
 
             this._super();
+            
+            this.update();
         },
 
         open: function() {
