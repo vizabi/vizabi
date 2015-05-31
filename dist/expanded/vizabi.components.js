@@ -4,11 +4,12 @@
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/axes/axes.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/axes") %> </div> <div class="vzb-dialog-content"> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/colors/colors.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/colors") %> </div> <div class="vzb-dialog-content"> <span class="vzb-caxis-container"></span> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/find/find.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/find") %> </div> <div class="vzb-dialog-content vzb-find-filter"> <input id="vzb-find-search" class="vzb-dialog-input" type="text" placeholder="Search..." /> </div> <div class="vzb-dialog-content vzb-dialog-content-fixed"> <div class="vzb-find-list">  </div> </div> <div class="vzb-dialog-buttons"> <div class="vzb-dialog-bubbleopacity vzb-dialog-control"></div> <div id="vzb-find-deselect" class="vzb-dialog-button"> <%=t ( "buttons/deselect") %> </div> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> <%=t ( "buttons/ok") %> </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/moreoptions/moreoptions.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubbleopacity"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubblesize"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/moreoptions/moreoptions.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Regular opacity</p> <div class="vzb-dialog-bubbleopacity-regular"></div> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubbleopacity-selectdim"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubblesize"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/size/size.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/size") %> </div> <div class="vzb-dialog-content"> <p>Chose what to display as size</p> <div class="vzb-saxis-container"></div> <p>Choose maximum size of bubbles:</p> <div class="vzb-dialog-bubblesize"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubblechart"> <svg class="vzb-bubblechart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/linechart/linechart.html');s.innerHTML = ' <div class="vzb-linechart"> <svg class="vzb-lc-graph"> <g> <g class="vzb-lc-axis-x"></g> <text class="vzb-lc-axis-x-value"></text> <text class="vzb-lc-axis-y-value"></text> <svg class="vzb-lc-lines"></svg> <g class="vzb-lc-axis-y"></g> <line class="vzb-lc-projection-x"></line>; <line class="vzb-lc-projection-y"></line>; <g class="vzb-lc-labels"> <line class="vzb-lc-vertical-now"></line>; </g> <g class="vzb-lc-axis-y-title"></g> </g>  </svg> <div class="vzb-lc-timeslider"></div> <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
 /*!
  * VIZABI BUBBLE OPACITY CONTROL
  * Reusable OPACITY SLIDER
@@ -292,10 +293,20 @@
             
             this.model_binds = {
                 "change:state:entities:select": function() {
+                    if(!_this._readyOnce) return;
+                    
                     if(_this.model.state.entities.select.length === 0){
                         _this.model.state.time.lockNonSelected = 0;
                     }
-                    // _this.startup();
+                    _this.setBubbleTrails();
+                    _this.setBubbleLock();
+                    
+                    
+                    //scroll button list to end if bottons appeared or disappeared
+                    if(_this.entitiesSelected_1 !== (_this.model.state.entities.select.length>0)){
+                        _this.scrollToEnd();
+                    }
+                    _this.entitiesSelected_1 = _this.model.state.entities.select.length>0;
                 }
             }
 
@@ -305,6 +316,14 @@
 
         readyOnce: function()  {
             this.element = d3.select(this.element);
+            this.buttonContainerEl = this.element.append("div")
+                .attr("class", "vzb-buttonlist-container-buttons");
+            this.dialogContainerEl = this.element.append("div")
+                .attr("class", "vzb-buttonlist-container-dialogs");
+            
+            
+            this.setBubbleTrails();
+            this.setBubbleLock();
         },
 
         ready: function() {
@@ -350,16 +369,6 @@
             this._prev_body_overflow = document.body.style.overflow;
         },
         
-        startup: function(){
-            var _this = this;
-            
-            button_list.forEach(function(d){
-                switch (d){
-                    case "trails": _this.setBubbleTrails(d); break;
-                    case "lock": _this.setBubbleLock(d); break;
-                }
-            })
-        },
 
         /*
          * adds buttons configuration to the components and template_data
@@ -402,20 +411,20 @@
 
             var t = this.getTranslationFunction(true);
 
-            var btns = this.element.selectAll('button').data(details_btns)
-                        .enter().append("button")
-                        .attr('class', 'vzb-buttonlist-btn')
-                        .attr('data-btn', function(d) { return d.id; })
-                        .html(function(btn) {
-                            return "<span class='vzb-buttonlist-btn-icon fa'>"+
-                                    btn.icon +"</span><span class='vzb-buttonlist-btn-title'>"+
-                                    t(btn.title) +"</span>";
-                        });
+            this.buttonContainerEl.selectAll('button').data(details_btns)
+                .enter().append("button")
+                .attr('class', 'vzb-buttonlist-btn')
+                .attr('data-btn', function(d) { return d.id; })
+                .html(function(btn) {
+                    return "<span class='vzb-buttonlist-btn-icon fa'>"+
+                            btn.icon +"</span><span class='vzb-buttonlist-btn-title'>"+
+                            t(btn.title) +"</span>";
+                });
 
-            var dialogs = this.element.selectAll('div').data(details_btns)
-                        .enter().append("div")
-                        .attr('class', 'vzb-buttonlist-dialog')
-                        .attr('data-btn', function(d) { return d.id; });
+            this.dialogContainerEl.selectAll('div').data(details_btns)
+                .enter().append("div")
+                .attr('class', 'vzb-buttonlist-dialog')
+                .attr('data-btn', function(d) { return d.id; });
 
             this.loadComponents();
 
@@ -428,6 +437,21 @@
                 });
             });
         },
+        
+        
+        scrollToEnd: function(){
+            var target = 0;
+            var parent = d3.select(".vzb-tool");
+            
+            if(parent.classed("vzb-portrait") && parent.classed("vzb-small") ){
+                if(this.model.state.entities.select.length>0) target = this.buttonContainerEl[0][0].scrollWidth
+                this.buttonContainerEl[0][0].scrollLeft = target;
+            }else{
+                if(this.model.state.entities.select.length>0) target = this.buttonContainerEl[0][0].scrollHeight
+                this.buttonContainerEl[0][0].scrollTop = target;
+            }
+        },
+        
 
         /*
          * RESIZE:
@@ -495,14 +519,16 @@
             this._active_comp = false;
         },
 
-        toggleBubbleTrails: function(id) {
+        toggleBubbleTrails: function() {
             this.model.state.time.trails = !this.model.state.time.trails;
-            this.setBubbleTrails(id);
+            this.setBubbleTrails();
         },
-        setBubbleTrails: function(id, trails) {
+        setBubbleTrails: function() {
+            var id = "trails";
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             
             btn.classed(class_active, this.model.state.time.trails);
+            btn.style("display", this.model.state.entities.select.length == 0? "none": "inline-block")
         },
         toggleBubbleLock: function(id) {
             if(this.model.state.entities.select.length == 0) return;
@@ -512,15 +538,17 @@
             locked = locked?0:timeFormatter(this.model.state.time.value);
             this.model.state.time.lockNonSelected = locked;
             
-            this.setBubbleLock(id);
+            this.setBubbleLock();
         },
-        setBubbleLock: function(id) {
+        setBubbleLock: function() {
+            var id = "lock";
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             var translator = this.model.language.getTFunction();
             
             var locked = this.model.state.time.lockNonSelected;
             
             btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
+            btn.style("display", this.model.state.entities.select.length == 0? "none": "inline-block")
             
             btn.classed(class_active, locked)
             btn.select(".vzb-buttonlist-btn-title")
@@ -792,7 +820,8 @@
             this.components = [{
                 component: 'gapminder-bubbleopacity',
                 placeholder: '.vzb-dialog-bubbleopacity',
-                model: ["state.entities"]
+                model: ["state.entities"],
+                arg: "opacitySelectDim"
             }];
             
             this.model_binds = {
@@ -816,7 +845,7 @@
             this.list = this.element.select(".vzb-find-list");
             this.input_search = this.element.select("#vzb-find-search");
             this.deselect_all = this.element.select("#vzb-find-deselect");
-            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
+            this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
             var _this = this;
             this.input_search.on("input", function() {
@@ -828,6 +857,8 @@
             });
 
             this._super();
+            
+            this.update();
         },
 
         open: function() {
@@ -970,8 +1001,14 @@
                 model: ["state.marker.color", "state.entities", "language"]
             },{
                 component: 'gapminder-bubbleopacity',
-                placeholder: '.vzb-dialog-bubbleopacity',
-                model: ["state.entities"]
+                placeholder: '.vzb-dialog-bubbleopacity-regular',
+                model: ["state.entities"],
+                arg: "opacityRegular"
+            },{
+                component: 'gapminder-bubbleopacity',
+                placeholder: '.vzb-dialog-bubbleopacity-selectdim',
+                model: ["state.entities"],
+                arg: "opacitySelectDim"
             }];
             
             this._super(config, parent);
@@ -1054,13 +1091,17 @@
             }];
             
             this.needsUpdate = false;
-            this.value_1 = false;
+            this.which_1 = false;
             this.scaleType_1 = false;
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    if(_this.model.color.value != _this.value_1 
-                       || _this.model.color.scaleType != _this.scaleType_1 ) _this.needsUpdate = true;
+                    if(_this.model.color.which != _this.which_1 
+                       || _this.model.color.scaleType != _this.scaleType_1 ) {
+                        _this.needsUpdate = true;
+                        _this.which_1 = _this.model.color.which;
+                        _this.scaleType_1 = _this.model.color.scaleType;
+                    }
                 },
                 "change:language": function(evt) {
                     _this.updateView();
@@ -1160,7 +1201,7 @@
                 this.rainbowEl.classed("vzb-hidden", true);
             }
             
-            if(this.model.color.value == "geo.region"){
+            if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
                     .select("svg").selectAll("g");
                 regions.each(function(){
@@ -1221,7 +1262,7 @@
                 }else{
                     
                     d3.select(this).select(".vzb-cl-color-legend")
-                        .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                        .text(_this.translator("color/" + _this.model.color[INDICATOR] + "/" + d));
                 }
             });
         }
@@ -1244,7 +1285,7 @@
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
 
-    var INDICATOR = "value";
+    var INDICATOR = "which";
     var SCALETYPE = "scaleType";
     var MODELTYPE_COLOR = "color";
 
@@ -1254,41 +1295,13 @@
     }
 
     var availOpts = {
-        'geo.region': {
-            use: 'property',
-            unit: '',
-            scales: ['ordinal']
-        },
-        'geo': {
-            use: 'property',
-            unit: '',
-            scales: ['ordinal']
-        },
-        'time': {
-            use: 'indicator',
-            unit: 'year',
-            scales: ['time']
-        },
-        'lex': {
-            use: 'indicator',
-            unit: 'years',
-            scales: ['linear']
-        },
-        'gdp_per_cap': {
-            use: 'indicator',
-            unit: '$/year/person',
-            scales: ['log', 'linear']
-        },
-        'pop': {
-            use: 'indicator',
-            unit: '',
-            scales: ['linear', 'log']
-        },
-        '_default': {
-            use: 'value',
-            unit: '',
-            scales: ['linear', 'log']
-        }
+        'geo.region': {use: 'property',unit: '',scales: ['ordinal']},
+        'geo': {use: 'property',unit: '',scales: ['ordinal']},
+        'time': {use: 'indicator',unit: 'year',scales: ['time']},
+        'lex': {use: 'indicator',unit: 'years',scales: ['linear']},
+        'gdp_per_cap': {use: 'indicator',unit: '$/year/person',scales: ['log', 'linear']},
+        'pop': {use: 'indicator',unit: '',scales: ['linear', 'log']},
+        '_default': {use: 'value',unit: '',scales: ['linear', 'log']}
     };
 
     Vizabi.Component.extend('gapminder-indicatorpicker', {

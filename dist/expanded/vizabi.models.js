@@ -61,8 +61,8 @@
             }
 
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.which;
+            if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.which_1 = this.which;
             this.scaleType_1 = this.scaleType;
 
             //TODO: add min and max to validation
@@ -89,9 +89,9 @@
          */
         buildScale: function() {
             var domain;
-            var scale = this.scaleType || "linear";
+            var scaleType = this.scaleType || "linear";
 
-            if(this.which=="time"){
+            if(this.scaleType=="time"){
                 var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale().domain([limits.min, limits.max]);
                 return;
@@ -102,7 +102,7 @@
                     var limits = this.getLimits(this.which),
                         margin = (limits.max - limits.min) / 20;
                     domain = [(limits.min - margin), (limits.max + margin)];
-                    if(scale == "log") {
+                    if(scaleType == "log") {
                         domain = [(limits.min-limits.min/4), (limits.max + limits.max/4)];
                     }
 
@@ -116,7 +116,7 @@
                     break;
             }
 
-            this.scale = d3.scale[scale]().domain(domain);
+            this.scale = d3.scale[scaleType]().domain(domain);
         }
     });
 }).call(this);
@@ -206,7 +206,7 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.value_1 != this.which 
+               || !this.firstLoad && this.which_1 != this.which 
                || !this.firstLoad && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
@@ -222,7 +222,7 @@
                 }
             }
 
-            this.value_1 = this.which;
+            this.which_1 = this.which;
             this.scaleType_1 = this.scaleType;
             this.firstLoad = false;
         },
@@ -266,7 +266,7 @@
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
-            if(this.which=="time"){
+            if(this.scaleType=="time"){
                 var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
@@ -480,6 +480,11 @@
         clearSelected: function() {
             this.select = [];
         },
+        
+        
+        setHighlighted: function(arg){
+            this.brush = [].concat(arg);
+        },
 
         //TODO: join the following 3 methods with the previous 3
 
@@ -666,8 +671,8 @@
             }
             
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.which;
+            if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.which_1 = this.which;
             this.scaleType_1 = this.scaleType;
         },
 
