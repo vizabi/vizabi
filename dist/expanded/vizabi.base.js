@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-05-29 */
+/* VIZABI - http://www.gapminder.org - 2015-05-31 */
 
 /*!
  * VIZABI MAIN
@@ -3422,48 +3422,56 @@
      */
     function defaultOptions(values, defaults) {
 
-        for (var field in defaults) {
+        var keys = Object.keys(defaults),
+            size = keys.length,
+            field, blueprint, original, type;
 
-            var blueprint = defaults[field];
-            var original = values[field];
-            //specified type, default value and possible values
-            var type = utils.isObject(blueprint) ? blueprint._type_ : null;
-            var defs = utils.isObject(blueprint) ? blueprint._defs_ : null;
-            var opts = utils.isObject(blueprint) ? blueprint._opts_ : null;
+        for(var i=0; i<size; i++) {
 
-            //in case there's no type, just deep extend as much as possible
-            if (!type) {
-                if (typeof original === "undefined") {
+            field = keys[i];
+            if(field === "_defs_") continue;
+
+            blueprint = defaults[field];
+            original = values[field];
+            type = typeof blueprint;
+
+            if(type === "object") {
+                type = (utils.isPlainObject(blueprint) && blueprint._defs_) ? "object" : utils.isArray(blueprint) ? "array" : "model";
+            }
+            
+            if(typeof original === "undefined") {
+                if(type !== "object" && type !== "model") {
                     values[field] = blueprint;
-                } else if (utils.isObject(blueprint) && utils.isObject(original)) {
-
-                    values[field] = defaultOptions(original, blueprint);
                 }
-                continue;
+                else {
+                    values[field] = defaultOptions({}, blueprint);
+                }
             }
 
-            //otherwise, each case has special verification
+            original = values[field];
+
             if (type === "number" && isNaN(original)) {
-                values[field] = isNaN(defs) ? 0 : defs;
+                values[field] = 0;
             } else if (type === "string" && typeof original !== 'string') {
-                values[field] = (typeof defs === 'string') ? defs : "";
+                values[field] = "";
             } else if (type === "array" && !utils.isArray(original)) {
-                values[field] = utils.isArray(defs) ? defs : [];
-            } else if (type === "object" && !utils.isObject(original)) {
-                values[field] = utils.isObject(defs) ? defs : {};
-            } else if (type === "model" || type === "hook") {
+                values[field] = [];
+            } else if (type === "model") {
                 if (!utils.isObject(original)) {
                     values[field] = {};
                 }
-                values[field] = defaultOptions(values[field], defs);
-            }
-
-            //if possible values are determined, we should respect it
-            if (utils.isArray(opts) && defs && opts.indexOf(values[field]) === -1) {
-                utils.warn("Vizabi options contain invalid value for '" + field + "'. Permitted values: " + JSON.stringify(opts) + ". Changing to default");
-                values[field] = defs;
+                values[field] = defaultOptions(values[field], blueprint);
+            } else if (type === "object") {
+                if (!utils.isObject(original)) {
+                    values[field] = {};
+                }
+                if (!utils.isObject(blueprint._defs_)) {
+                    blueprint._defs_ = {};
+                }
+                values[field] = utils.extend(blueprint._defs_, values[field]);
             }
         }
+
         return values;
     }
 
