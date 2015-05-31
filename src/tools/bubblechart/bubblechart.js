@@ -5,7 +5,7 @@
 (function() {
 
     "use strict";
-    
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
@@ -14,11 +14,11 @@
     if (!Vizabi._require('d3')) {
         return;
     }
-    
-    
+
+
     //BAR CHART COMPONENT
     Vizabi.Component.extend('gapminder-bubblechart', {
-        
+
         /**
          * Initializes the component (Bubble Chart).
          * Executed once before any template is rendered.
@@ -44,7 +44,7 @@
                 name: "language",
                 type: "language"
             }];
-            
+
             this.model_binds = {
                 "change:time:trails": function(evt) {
                     //console.log("EVENT change:time:trails");
@@ -61,15 +61,15 @@
                 },
                 "change:marker": function(evt) {
                     // bubble size change is processed separately
-                    if(!_this._readyOnce) return;
-                    if(evt == "change:marker:size:max") return; 
-                    if(evt.indexOf("change:marker:color:palette") > -1) return; 
+                    if (!_this._readyOnce) return;
+                    if (evt == "change:marker:size:max") return;
+                    if (evt.indexOf("change:marker:color:palette") > -1) return;
                     //console.log("EVENT change:marker", evt);
                     _this.updateUIStrings();
                     _this.updateIndicators();
                     _this.updateSize();
                     _this.updateMarkerSizeLimits();
-                    
+
                     _this._trails.create();
                     _this._trails.run("findVisible");
                     _this.resetZoomer(); //does also redraw data points and trails resize
@@ -77,7 +77,7 @@
                     _this._trails.run(["recolor", "reveal"]);
                 },
                 "change:entities:select": function() {
-                    if(!_this._readyOnce) return;
+                    if (!_this._readyOnce) return;
                     //console.log("EVENT change:entities:select");
                     _this.selectDataPoints();
                     _this.redrawDataPoints();
@@ -85,7 +85,7 @@
                     _this.updateBubbleOpacity();
                 },
                 "change:entities:brush": function() {
-                    if(!_this._readyOnce) return;
+                    if (!_this._readyOnce) return;
                     //console.log("EVENT change:entities:brush");
                     _this.highlightDataPoints();
                 },
@@ -93,7 +93,7 @@
 
                 },
                 "ready": function(evt) {
-                    if(!_this._readyOnce) return;
+                    if (!_this._readyOnce) return;
                     //TODO a workaround to fix the selection of entities
                     if (_this.entitiesUpdatedRecently) {
                         _this.entitiesUpdatedRecently = false;
@@ -106,20 +106,20 @@
                 'change:time:value': function() {
                     //console.log("EVENT change:time:value");
                     _this.updateTime();
-                    
+
                     _this._trails.run("findVisible");
-                    if(_this.model.time.adaptMinMaxZoom) {
-                        _this.adaptMinMaxZoom(); 
-                    }else{
+                    if (_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom();
+                    } else {
                         _this.redrawDataPoints();
                     }
                     _this._trails.run("reveal");
                 },
                 'change:time:adaptMinMaxZoom': function() {
                     //console.log("EVENT change:time:adaptMinMaxZoom");
-                    if(_this.model.time.adaptMinMaxZoom) {
-                        _this.adaptMinMaxZoom(); 
-                    }else{
+                    if (_this.model.time.adaptMinMaxZoom) {
+                        _this.adaptMinMaxZoom();
+                    } else {
                         _this.resetZoomer();
                     }
                 },
@@ -128,7 +128,7 @@
                     _this.updateMarkerSizeLimits();
                     _this._trails.run("findVisible");
                     _this.redrawDataPointsOnlySize();
-                    _this._trails.run("resize");   
+                    _this._trails.run("resize");
                 },
                 'change:marker:color:palette': function() {
                     //console.log("EVENT change:marker:color:palette");
@@ -175,18 +175,18 @@
                 autoResolveCollisions: false,
                 dragging: true
             }, this.ui.labels);
-            
-            
+
+
             var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
             this._trails = new Trail(this);
 
 
-//            this.collisionResolver = d3.svg.collisionResolver()
-//                .value("labelY2")
-//                .fixed("labelFixed")
-//                .selector("text")
-//                .scale(this.yScale)
-//                .handleResult(this._repositionLabels);
+            //            this.collisionResolver = d3.svg.collisionResolver()
+            //                .value("labelY2")
+            //                .fixed("labelFixed")
+            //                .selector("text")
+            //                .scale(this.yScale)
+            //                .handleResult(this._repositionLabels);
 
 
             this.dragger = d3.behavior.drag()
@@ -197,10 +197,10 @@
                     if (!_this.ui.labels.dragging) return;
                     var cache = _this.cached[d.geo];
                     cache.labelFixed = true;
-                
-                   cache.labelX_ += d3.event.dx/_this.width;
-                   cache.labelY_ += d3.event.dy/_this.height;
-                
+
+                    cache.labelX_ += d3.event.dx / _this.width;
+                    cache.labelY_ += d3.event.dy / _this.height;
+
                     var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
                     var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
                     var resolvedX0 = _this.xScale(cache.labelX0);
@@ -210,8 +210,8 @@
                 })
                 .on("dragend", function(d, i) {
                     _this.model.entities.setLabelOffset(d, [
-                        Math.round(_this.cached[d.geo].labelX_*100)/100, 
-                        Math.round(_this.cached[d.geo].labelY_*100)/100
+                        Math.round(_this.cached[d.geo].labelX_ * 100) / 100,
+                        Math.round(_this.cached[d.geo].labelY_ * 100) / 100
                     ]);
                 });
 
@@ -312,12 +312,12 @@
                     _this.yAxisEl.call(_this.yAxis.labelerOptions(optionsY));
                     _this.redrawDataPoints(_this.zoomer.duration);
                     _this._trails.run("resize", null, _this.zoomer.duration);
-                    
+
                     _this.zoomer.duration = 0;
                 });
 
             this.zoomer.ratioX = 1;
-            this.zoomer.ratioY = 1;            
+            this.zoomer.ratioY = 1;
         },
 
 
@@ -327,15 +327,15 @@
         readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
-            
+
             // reference elements
             this.graph = this.element.select('.vzb-bc-graph');
             this.yAxisElContainer = this.graph.select('.vzb-bc-axis-y');
             this.yAxisEl = this.yAxisElContainer.select('g');
-            
+
             this.xAxisElContainer = this.graph.select('.vzb-bc-axis-x');
             this.xAxisEl = this.xAxisElContainer.select('g');
-            
+
             this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
             this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
             this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
@@ -376,9 +376,9 @@
             this.element
                 .call(this.zoomer)
                 .call(this.gragRectangle);
-            
-            
-            
+
+
+
             //console.log("EVENT ready once");
             _this.updateUIStrings();
             _this.updateIndicators();
@@ -391,8 +391,8 @@
             _this._trails.create();
 
             _this.resetZoomer(); // includes redraw data points and trail resize
-            _this._trails.run(["recolor","findVisible", "reveal"]);
-            if(_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+            _this._trails.run(["recolor", "findVisible", "reveal"]);
+            if (_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
         },
 
 
@@ -410,21 +410,21 @@
             this.sScale = this.model.marker.size.getScale();
             this.cScale = this.model.marker.color.getScale();
 
-//            this.collisionResolver.scale(this.yScale);
+            //            this.collisionResolver.scale(this.yScale);
 
 
             this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
             this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
-            
+
             this.xyMaxMinMean = {
-                x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter), 
+                x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter),
                 y: this.model.marker.axis_y.getMaxMinMean(this.timeFormatter),
                 s: this.model.marker.size.getMaxMinMean(this.timeFormatter)
             };
         },
 
 
-        updateUIStrings: function(){
+        updateUIStrings: function() {
             var _this = this;
 
             this.translator = this.model.language.getTFunction();
@@ -434,11 +434,11 @@
             var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
             var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
             var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
-            
-            if(!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
-            if(!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
-            if(!!this.model.marker.size.unit) titleStringS = titleStringS + ", " + this.model.marker.size.unit;
-            if(!!this.model.marker.color.unit) titleStringC = titleStringC + ", " + this.model.marker.color.unit;
+
+            if (!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
+            if (!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
+            if (!!this.model.marker.size.unit) titleStringS = titleStringS + ", " + this.model.marker.size.unit;
+            if (!!this.model.marker.color.unit) titleStringC = titleStringC + ", " + this.model.marker.color.unit;
 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
@@ -480,7 +480,10 @@
                     return {
                         geo: d.geo,
                         time: endTime,
-                        sortValue: _this.model.marker.size.getValue({ geo: d.geo, time: endTime})
+                        sortValue: _this.model.marker.size.getValue({
+                            geo: d.geo,
+                            time: endTime
+                        })
                     }
                 })
                 .sort(function(a, b) {
@@ -492,7 +495,9 @@
 
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-                .data(this.model.entities._visible, function(d) {return d.geo});
+                .data(this.model.entities._visible, function(d) {
+                    return d.geo
+                });
 
             //exit selection
             this.entityBubbles.exit().remove();
@@ -501,14 +506,16 @@
             this.entityBubbles.enter().append("circle")
                 .attr("class", "vzb-bc-entity")
                 .on("mousemove", function(d, i) {
-                
+
                     _this.model.entities.highlightEntity(d);
 
                     var text = "";
                     if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
                         text = _this.timeFormatter(_this.time);
                         _this.entityLabels
-                            .filter(function(f) {return f.geo == d.geo})
+                            .filter(function(f) {
+                                return f.geo == d.geo
+                            })
                             .classed("vzb-highlighted", true);
                     } else {
                         text = _this.model.marker.label.getValue(d);
@@ -516,13 +523,13 @@
                     _this._setTooltip(text);
                 })
                 .on("mouseout", function(d, i) {
-                
+
                     _this.model.entities.clearHighlighted();
                     _this._setTooltip();
                     _this.entityLabels.classed("vzb-highlighted", false);
                 })
                 .on("click", function(d, i) {
-                
+
                     _this.model.entities.selectEntity(d, _this.timeFormatter);
                 });
 
@@ -547,36 +554,35 @@
 
 
 
-        
-        
-        adaptMinMaxZoom: function(){
+
+
+        adaptMinMaxZoom: function() {
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
             var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
-            var radiusMax = utils.areaToRadius(_this.sScale( _this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max ));
+            var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max));
             var frame = _this.currentZoomFrameXY;
-            
+
             var suggestedFrame = {
                 x1: _this.xScale(mmmX.min) - radiusMax,
                 y1: _this.yScale(mmmY.min) + radiusMax,
                 x2: _this.xScale(mmmX.max) + radiusMax,
                 y2: _this.yScale(mmmY.max) - radiusMax,
             }
-            
+
             var TOLERANCE = 0.3;
-            
-            if(!frame || suggestedFrame.x1 < frame.x1 * (1-TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1+TOLERANCE)
-                      || suggestedFrame.y2 < frame.y2 * (1-TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1+TOLERANCE)){
+
+            if (!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) || suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
                 _this.currentZoomFrameXY = utils.clone(suggestedFrame);
                 var frame = _this.currentZoomFrameXY;
                 _this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
                 //console.log("rezoom")
-            }else{
+            } else {
                 _this.redrawDataPoints(_this.duration);
                 //console.log("no rezoom")
             }
         },
-        
+
 
 
         _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
@@ -611,19 +617,19 @@
             zoomer.ratioY = ratioY;
             zoomer.ratioX = ratioX;
             zoomer.translate(pan);
-            zoomer.duration = duration?duration:0;
+            zoomer.duration = duration ? duration : 0;
 
             zoomer.event(element);
         },
 
 
-        resetZoomer: function(element){
+        resetZoomer: function(element) {
             this.zoomer.scale(1);
             this.zoomer.ratioY = 1;
             this.zoomer.ratioX = 1;
-            this.zoomer.translate([0,0]);
+            this.zoomer.translate([0, 0]);
             this.zoomer.duration = 0;
-            this.zoomer.event(element||this.element);
+            this.zoomer.event(element || this.element);
         },
 
 
@@ -653,19 +659,34 @@
 
             this.profiles = {
                 "small": {
-                    margin: { top: 30, right: 20, left: 40, bottom: 40 },
+                    margin: {
+                        top: 30,
+                        right: 20,
+                        left: 40,
+                        bottom: 40
+                    },
                     padding: 2,
                     minRadius: 2,
                     maxRadius: 40
                 },
                 "medium": {
-                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
+                    margin: {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    },
                     padding: 2,
                     minRadius: 3,
                     maxRadius: 60
                 },
                 "large": {
-                    margin: { top: 30, right: 60, left: 60, bottom: 40 },
+                    margin: {
+                        top: 30,
+                        right: 60,
+                        left: 60,
+                        bottom: 40
+                    },
                     padding: 2,
                     minRadius: 4,
                     maxRadius: 80
@@ -680,7 +701,7 @@
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-//            this.collisionResolver.height(this.height);
+            //            this.collisionResolver.height(this.height);
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
@@ -723,26 +744,26 @@
                     scaleType: this.model.marker.axis_x.scaleType,
                     toolMargin: margin
                 });
-            
-            
+
+
             this.bubbleContainerCrop
                 .attr("width", this.width)
                 .attr("height", this.height);
-            
+
             this.xAxisElContainer
                 .attr("width", this.width)
                 .attr("height", this.activeProfile.margin.bottom)
                 .attr("y", this.height);
             this.xAxisEl
-                .attr("transform", "translate(0,"+1+")");
-            
+                .attr("transform", "translate(0," + 1 + ")");
+
             this.yAxisElContainer
                 .attr("width", this.activeProfile.margin.left)
                 .attr("height", this.height)
                 .attr("x", -this.activeProfile.margin.left);
             this.yAxisEl
-                .attr("transform", "translate("+(this.activeProfile.margin.left-1)+","+0+")");
-            
+                .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
+
             this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
             this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
 
@@ -771,35 +792,38 @@
 
         },
 
-        
+
         redrawDataPointsOnlyColors: function() {
             var _this = this;
-            
-            this.entityBubbles.style("fill", function(d){
-                var valueC = _this.model.marker.color.getValue({geo:d.geo, time:_this.time});    
+
+            this.entityBubbles.style("fill", function(d) {
+                var valueC = _this.model.marker.color.getValue({
+                    geo: d.geo,
+                    time: _this.time
+                });
                 return _this.cScale(valueC);
             });
         },
-        
+
         redrawDataPointsOnlySize: function() {
             var _this = this;
-            
-            if(this.someSelected){
+
+            if (this.someSelected) {
                 _this.entityBubbles.each(function(d, index) {
                     _this._updateBubble(d, index, d3.select(this), 0);
                 });
-            }else{
+            } else {
                 this.entityBubbles.each(function(d, index) {
                     var valueS = _this.model.marker.size.getValue(d);
-                    if(valueS == null) return;
-                    
-                    d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)) );
+                    if (valueS == null) return;
+
+                    d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
                 });
             }
         },
-        
-        
-        
+
+
+
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
@@ -807,8 +831,8 @@
         redrawDataPoints: function(duration) {
             var _this = this;
 
-            if(duration==null) duration = _this.duration; 
-  
+            if (duration == null) duration = _this.duration;
+
             this.entityBubbles.each(function(d, index) {
                 var view = d3.select(this);
                 _this._updateBubble(d, index, view, duration);
@@ -833,13 +857,13 @@
 
         }, //redraw Data Points
 
-        
-        _updateBubble: function(d, index, view, duration){
+
+        _updateBubble: function(d, index, view, duration) {
             var _this = this;
-            
-            if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
-                d.time = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
-            }else{
+
+            if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
+                d.time = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+            } else {
                 d.time = _this.time;
             };
 
@@ -867,33 +891,35 @@
                     .attr("cx", _this.xScale(valueX))
                     .attr("r", scaledS)
 
-               _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
+                _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
 
             } // data exists
         },
-        
 
-        
-        
-        _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration){
+
+
+
+        _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
             var _this = this;
-            if(duration==null) duration = _this.duration; 
-            
+            if (duration == null) duration = _this.duration;
+
             // only for selected entities
             if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
 
                 if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
                 var cached = _this.cached[d.geo];
-                
 
-                var select = utils.find(_this.model.entities.select, function(f) {return f.geo == d.geo});
+
+                var select = utils.find(_this.model.entities.select, function(f) {
+                    return f.geo == d.geo
+                });
                 var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
                 cached.valueX = valueX;
                 cached.valueY = valueY;
 
                 if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
-                    
+
                     select.trailStartTime = _this.timeFormatter(_this.time);
                     //the events in model are not triggered here. to trigger uncomment the next line
                     //_this.model.entities.triggerAll("change:select");
@@ -902,22 +928,24 @@
                     cached.labelX0 = valueX;
                     cached.labelY0 = valueY;
                 }
-                
-                if(cached.scaledS0==null || cached.labelX0==null || cached.labelX0==null){
+
+                if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) {
                     cached.scaledS0 = scaledS;
                     cached.labelX0 = valueX;
-                    cached.labelY0 = valueY;                
+                    cached.labelY0 = valueY;
                 }
-                
+
 
                 // reposition label
-                _this.entityLabels.filter(function(f) {return f.geo == d.geo})
+                _this.entityLabels.filter(function(f) {
+                        return f.geo == d.geo
+                    })
                     .each(function(groupData) {
 
                         var labelGroup = d3.select(this);
 
                         var text = labelGroup.selectAll("text.vzb-bc-label-content")
-                            .text(valueL + (_this.model.time.trails?" "+select.trailStartTime:""));
+                            .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
                         var line = labelGroup.select("line")
                             .style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
@@ -925,7 +953,7 @@
                         var rect = labelGroup.select("rect");
 
                         var contentBBox = text[0][0].getBBox();
-                        if(!cached.contentBBox || cached.contentBBox.width!=contentBBox.width){
+                        if (!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
                             cached.contentBBox = contentBBox;
 
                             labelGroup.select("text.vzb-bc-label-x")
@@ -937,12 +965,12 @@
                                 .attr("cy", contentBBox.height * 0.0 - 4)
                                 .attr("r", contentBBox.height * 0.5);
 
-                            rect.attr("width",contentBBox.width+4)
-                                .attr("height",contentBBox.height+4)
-                                .attr("x",-2)
-                                .attr("y",-4)
-                                .attr("rx", contentBBox.height*0.2)
-                                .attr("ry", contentBBox.height*0.2);
+                            rect.attr("width", contentBBox.width + 4)
+                                .attr("height", contentBBox.height + 4)
+                                .attr("x", -2)
+                                .attr("y", -4)
+                                .attr("rx", contentBBox.height * 0.2)
+                                .attr("ry", contentBBox.height * 0.2);
                         }
 
                         cached.labelX_ = select.labelOffset[0] || cached.scaledS0 / _this.width;
@@ -951,8 +979,8 @@
                         var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
                         var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
 
-                        var limitedX = resolvedX > 0 ? (resolvedX < _this.width -cached.contentBBox.width ? resolvedX : _this.width -cached.contentBBox.width) : 0;
-                        var limitedY = resolvedY > 0 ? (resolvedY < _this.height-cached.contentBBox.height ? resolvedY : _this.height-cached.contentBBox.height) : 0;
+                        var limitedX = resolvedX > 0 ? (resolvedX < _this.width - cached.contentBBox.width ? resolvedX : _this.width - cached.contentBBox.width) : 0;
+                        var limitedY = resolvedY > 0 ? (resolvedY < _this.height - cached.contentBBox.height ? resolvedY : _this.height - cached.contentBBox.height) : 0;
 
                         var limitedX0 = _this.xScale(cached.labelX0);
                         var limitedY0 = _this.yScale(cached.labelY0);
@@ -970,7 +998,7 @@
                 if (_this.cached[d.geo] != null) {
                     delete _this.cached[d.geo]
                 };
-            } 
+            }
         },
 
         _repositionLabels: function(d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
@@ -982,8 +1010,8 @@
                 .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
 
             labelGroup.selectAll("line")
-                .attr("x1", resolvedX0-resolvedX)
-                .attr("y1", resolvedY0-resolvedY);
+                .attr("x1", resolvedX0 - resolvedX)
+                .attr("y1", resolvedY0 - resolvedY);
 
         },
 
@@ -1014,7 +1042,7 @@
                 .each(function(d, index) {
                     var view = d3.select(this);
                     view.append("line").attr("class", "vzb-bc-label-line");
-                
+
                     view.append("rect").attr("class", "vzb-transparent")
                         .on("click", function(d, i) {
                             //default prevented is needed to distinguish click from drag
@@ -1029,18 +1057,18 @@
                                 _this.yScale(maxmin.valueYmax) - radius,
                                 false, 500);
                         });
-                
+
                     view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
-                
+
                     view.append("text").attr("class", "vzb-bc-label-content");
-                
+
                     view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
                         .on("click", function(d, i) {
                             //default prevented is needed to distinguish click from drag
                             if (d3.event.defaultPrevented) return
                             _this.model.entities.selectEntity(d);
                         });
-                
+
                     view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
 
                     _this._trails.create(d);
@@ -1064,11 +1092,13 @@
         },
 
 
-        
+
 
         _setTooltip: function(tooltipText) {
             if (tooltipText) {
-                var mouse = d3.mouse(this.graph.node()).map(function(d) {return parseInt(d)});
+                var mouse = d3.mouse(this.graph.node()).map(function(d) {
+                    return parseInt(d)
+                });
 
                 //position tooltip
                 this.tooltip.classed("vzb-hidden", false)
@@ -1131,67 +1161,67 @@
          */
         highlightDataPoints: function() {
             var _this = this;
-            
+
             this.someHighlighted = (this.model.entities.brush.length > 0);
 
             this.updateBubbleOpacity();
 
-            if(this.model.entities.brush.length === 1){
-                var d = utils.clone(this.model.entities.brush[0]); 
-                
-                if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)){
-                    d["time"] = _this.timeFormatter.parse(""+_this.model.time.lockNonSelected);
-                }else{
+            if (this.model.entities.brush.length === 1) {
+                var d = utils.clone(this.model.entities.brush[0]);
+
+                if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
+                    d["time"] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+                } else {
                     d["time"] = _this.time;
                 }
-                
+
                 this._axisProjections(d);
-            }else{
+            } else {
                 this._axisProjections();
             }
         },
-        
-        updateBubbleOpacity: function(duration){
+
+        updateBubbleOpacity: function(duration) {
             var _this = this;
             //if(!duration)duration = 0;
-            
+
             var OPACITY_HIGHLT = 1.0;
             var OPACITY_HIGHLT_DIM = 0.3;
             var OPACITY_SELECT = 0.8;
             var OPACITY_REGULAR = this.model.entities.opacityRegular;
             var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
-                        
+
             this.entityBubbles
                 //.transition().duration(duration)
-                .style("opacity", function(d){
-                
-                    if(_this.someHighlighted){
+                .style("opacity", function(d) {
+
+                    if (_this.someHighlighted) {
                         //highlight or non-highlight
                         if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
                     }
-                
-                    if(_this.someSelected){
+
+                    if (_this.someSelected) {
                         //selected or non-selected
-                        return _this.model.entities.isSelected(d)? OPACITY_SELECT : OPACITY_SELECT_DIM;
+                        return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
                     }
-                    
-                    if(_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-                
+
+                    if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
                     return OPACITY_REGULAR;
                 });
-            
-            
-            var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim<0.01;
-            
+
+
+            var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+
             // when pointer events need update...
-            if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1){
-                this.entityBubbles.style("pointer-events", function(d){
-                    return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d))?
-                        "visible":"none";
+            if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+                this.entityBubbles.style("pointer-events", function(d) {
+                    return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+                        "visible" : "none";
                 });
             }
-            
-            this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim<0.01;
+
+            this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
         }
 
 
@@ -1199,9 +1229,9 @@
     });
 
 
-    
-    
-    
+
+
+
 
     //BUBBLE CHART TOOL
     Vizabi.Tool.extend('BubbleChart', {
@@ -1218,316 +1248,159 @@
 
             //specifying components
             this.components = [{
-                    component: 'gapminder-bubblechart',
-                    placeholder: '.vzb-tool-viz',
-                    model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
-                },
-                {
-                    component: 'gapminder-timeslider',
-                    placeholder: '.vzb-tool-timeslider',
-                    model: ["state.time"]
-                },
-                {
-                    component: 'gapminder-buttonlist',
-                    placeholder: '.vzb-tool-buttonlist',
-                    model: ['state', 'ui', 'language']
-                }
-            ];
+                component: 'gapminder-bubblechart',
+                placeholder: '.vzb-tool-viz',
+                model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+            }, {
+                component: 'gapminder-timeslider',
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"]
+            }, {
+                component: 'gapminder-buttonlist',
+                placeholder: '.vzb-tool-buttonlist',
+                model: ['state', 'ui', 'language']
+            }];
 
-    //default options
+            //default options
             this.default_options = {
                 state: {
-                    _type_: "model",
-                    _defs_: {
-                        //timespan of the visualization
-                        time: {
-                            _type_: "model",
-                            _defs_: {
-                                start: 1952,
-                                end: 2012,
-                                value: 2000,
-                                step: 1,
-                                speed: 300,
-                                round: "ceil",
-                                formatInput: "%Y",
-                                trails: true,
-                                lockNonSelected: 0,
-                                adaptMinMaxZoom: false
-                            }
-                        },
-                        //entities we want to show
-                        entities: {
-                            _type_: "model",
-                            _defs_: {
-                                show: {
-                                    _type_: "model",
-                                    _defs_: {
-                                        dim: {
-                                            _type_: "string",
-                                            _defs_: "geo"
-                                        },
-                                        filter: {
-                                            _type_: "object",
-                                            _defs_: {
-                                                "geo": ["afg", "alb", "dza", "ago", "atg", "arg", "arm", "abw", "aus", "aut", "aze", "bhs", "bhr", "bgd", "brb", "blr", "bel", "blz", "ben", "btn", "bol", "bih", "bwa", "bra", "chn", "brn", "bgr", "bfa", "bdi", "khm", "cmr", "can", "cpv", "caf", "tcd", "_cis", "chl", "col", "com", "cod", "cog", "cri", "civ", "hrv", "cub", "cyp", "cze", "dnk", "dji", "dom", "ecu", "egy", "slv", "gnq", "eri", "est", "eth", "fji", "fin", "fra", "guf", "pyf", "gab", "gmb", "geo", "deu", "gha", "grc", "grd", "glp", "gum", "gtm", "gin", "gnb", "guy", "hti", "hnd", "hkg", "hun", "isl", "ind", "idn", "irn", "irq", "irl", "isr", "ita", "jam", "jpn", "jor", "kaz", "ken", "kir", "prk", "kor", "kwt", "kgz", "lao", "lva", "lbn", "lso", "lbr", "lby", "ltu", "lux", "mac", "mkd", "mdg", "mwi", "mys", "mdv", "mli", "mlt", "mtq", "mrt", "mus", "myt", "mex", "fsm", "mda", "mng", "mne", "mar", "moz", "mmr", "nam", "npl", "nld", "ant", "ncl", "nzl", "nic", "ner", "nga", "nor", "omn", "pak", "pan", "png", "pry", "per", "phl", "pol", "prt", "pri", "qat", "reu", "rou", "rus", "rwa", "lca", "vct", "wsm", "stp", "sau", "sen", "srb", "syc", "sle", "sgp", "svk", "svn", "slb", "som", "zaf", "sds", "esp", "lka", "sdn", "sur", "swz", "swe", "che", "syr", "twn", "tjk", "tza", "tha", "tls", "tgo", "ton", "tto", "tun", "tur", "tkm", "uga", "ukr", "are", "gbr", "usa", "ury", "uzb", "vut", "ven", "pse", "esh", "vnm", "vir", "yem", "zmb", "zwe"],
-                                                "geo.cat": ["country"]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-
-                        //how we show it
-                        marker: {
-                            _type_: "model",
-                            _defs_: {
-                                dimensions: {
-                                    _type_: "array",
-                                    _defs_: ["entities", "time"]
-                                },
-                                type: "geometry",
-                                shape: "circle",
-                                label: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "property",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "geo.name"
-                                        }
-                                    }
-                                },
-                                axis_y: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "indicator",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "lex"
-                                        },
-                                        scaleType: {
-                                            _type_: "string",
-                                            _defs_: "linear"
-                                        },
-                                        unit: {
-                                            _type_: "string",
-                                            _defs_: "years"
-                                        }
-                                    }
-                                },
-                                axis_x: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "indicator",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "gdp_per_cap"
-                                        },
-                                        scaleType: {
-                                            _type_: "string",
-                                            _defs_: "log"
-                                        },
-                                        unit: {
-                                            _type_: "string",
-                                            _defs_: "$/year/person"
-                                        }
-                                    }
-                                },
-                                size: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "indicator",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "pop"
-                                        },
-                                        scaleType: {
-                                            _type_: "string",
-                                            _defs_: "linear"
-                                        },
-                                        max: {
-                                            _type_: "number",
-                                            _defs_: 0.75
-                                        },
-                                        unit: {
-                                            _type_: "string",
-                                            _defs_: ""
-                                        }
-                                    }
-                                },
-                                color: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "property",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "geo.region"
-                                        },
-                                        scaleType: {
-                                            _type_: "string",
-                                            _defs_: "ordinal"
-                                        },
-                                        unit: {
-                                            _type_: "string",
-                                            _defs_: ""
-                                        }
-                                    }
+                    time: {
+                        start: "1952",
+                        end: "2012",
+                        value: "2000",
+                        step: 1,
+                        speed: 300,
+                        formatInput: "%Y",
+                        round: "ceil",
+                        trails: true,
+                        lockNonSelected: 0,
+                        adaptMinMaxZoom: false
+                    },
+                    entities: {
+                        show: {
+                            dim: "geo",
+                            filter: {
+                                _defs_: {
+                                    "geo": ["afg", "alb", "dza", "ago", "atg", "arg", "arm", "abw", "aus", "aut", "aze", "bhs", "bhr", "bgd", "brb", "blr", "bel", "blz", "ben", "btn", "bol", "bih", "bwa", "bra", "chn", "brn", "bgr", "bfa", "bdi", "khm", "cmr", "can", "cpv", "caf", "tcd", "_cis", "chl", "col", "com", "cod", "cog", "cri", "civ", "hrv", "cub", "cyp", "cze", "dnk", "dji", "dom", "ecu", "egy", "slv", "gnq", "eri", "est", "eth", "fji", "fin", "fra", "guf", "pyf", "gab", "gmb", "geo", "deu", "gha", "grc", "grd", "glp", "gum", "gtm", "gin", "gnb", "guy", "hti", "hnd", "hkg", "hun", "isl", "ind", "idn", "irn", "irq", "irl", "isr", "ita", "jam", "jpn", "jor", "kaz", "ken", "kir", "prk", "kor", "kwt", "kgz", "lao", "lva", "lbn", "lso", "lbr", "lby", "ltu", "lux", "mac", "mkd", "mdg", "mwi", "mys", "mdv", "mli", "mlt", "mtq", "mrt", "mus", "myt", "mex", "fsm", "mda", "mng", "mne", "mar", "moz", "mmr", "nam", "npl", "nld", "ant", "ncl", "nzl", "nic", "ner", "nga", "nor", "omn", "pak", "pan", "png", "pry", "per", "phl", "pol", "prt", "pri", "qat", "reu", "rou", "rus", "rwa", "lca", "vct", "wsm", "stp", "sau", "sen", "srb", "syc", "sle", "sgp", "svk", "svn", "slb", "som", "zaf", "sds", "esp", "lka", "sdn", "sur", "swz", "swe", "che", "syr", "twn", "tjk", "tza", "tha", "tls", "tgo", "ton", "tto", "tun", "tur", "tkm", "uga", "ukr", "are", "gbr", "usa", "ury", "uzb", "vut", "ven", "pse", "esh", "vnm", "vir", "yem", "zmb", "zwe"],
+                                    "geo.cat": ["country"]
                                 }
                             }
                         }
-
+                    },
+                    marker: {
+                        dimensions: ["entities", "time"],
+                        type: "geometry",
+                        shape: "circle",
+                        label: {
+                            use: "property",
+                            which: "geo.name"
+                        },
+                        axis_y: {
+                            use: "indicator",
+                            which: "lex",
+                            scaleType: "linear",
+                            unit: "years"
+                        },
+                        axis_x: {
+                            use: "indicator",
+                            which: "gdp_per_cap",
+                            scaleType: "log",
+                            unit: "$/year/person"
+                        },
+                        color: {
+                            use: "property",
+                            which: "geo.region",
+                            scaleType: "ordinal",
+                            unit: "",
+                            palette: {
+                                _defs_: {
+                                    "_default": "#ffb600",
+                                    "world": "#ffb600",
+                                    "eur": "#FFE700",
+                                    "afr": "#00D5E9",
+                                    "asi": "#FF5872",
+                                    "ame": "#7FEB00"
+                                }
+                            }
+                        },
+                        size: {
+                            use: "indicator",
+                            which: "pop",
+                            scaleType: "linear",
+                            max: 0.75,
+                            unit: ""
+                        }
                     }
                 },
-
                 data: {
-                    _type_: "model",
-                    _defs_: {
-//                        reader: {
-//                            _type_: "string",
-//                            _defs_: "waffle-server"
-//                        }
-                        reader: {
-                            _type_: "string",
-                            _defs_: "local-json"
-                        },
-                        path: {
-                            _type_: "string",
-                            _defs_: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
-                        }
-                    }
+                    reader: "local-json",
+                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
                 ui: {
-                    _type_: "model",
-                    _defs_: {
-                        'vzb-tool-bar-chart': {
-                            _type_: "object",
-                            _defs_: {
-                                whenHovering: {
-                                    showProjectionLineX: true,
-                                    showProjectionLineY: true,
-                                    higlightValueX: true,
-                                    higlightValueY: true
-                                },
-                                labels: {
-                                    autoResolveCollisions: true,
-                                    dragging: true
-                                }
+                    'vzb-tool-bar-chart': {
+                        _defs_: {
+                            whenHovering: {
+                                showProjectionLineX: true,
+                                showProjectionLineY: true,
+                                higlightValueX: true,
+                                higlightValueY: true
+                            },
+                            labels: {
+                                autoResolveCollisions: true,
+                                dragging: true
                             }
-                        },
-                        'buttons': {
-                            _type_: "array",
-                            _defs_: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                         }
-                    }                
+                    },
+                    'buttons': ['more-options', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                 },
 
-                //language properties
                 language: {
-                    _type_: "model",
-                    _defs_: {
-                        id: {
-                            _type_: "string",
-                            _defs_: "en"
-                        },
-                        strings: {
-                            _type_: "object",
-                            _defs_: {
-                                en: {
-                                    "title": "Bubble Chart Title",
-                                    "buttons/expand": "Go big",
-                                    "buttons/unexpand": "Go small",
-                                    "buttons/trails": "Trails",
-                                    "buttons/lock": "Lock",
-                                    "buttons/find": "Find",
-                                    "buttons/deselect": "Deselect",
-                                    "buttons/ok": "OK",
-                                    "buttons/colors": "Colors",
-                                    "buttons/size": "Size",
-                                    "buttons/axes": "Axes",
-                                    "buttons/more_options": "Options",
-                                    "indicator/lex": "Life expectancy",
-                                    "indicator/gdp_per_cap": "GDP per capita",
-                                    "indicator/pop": "Population",
-                                    "indicator/geo.region": "Region",
-                                    "indicator/geo": "Geo code",
-                                    "indicator/time": "Time",
-                                    "indicator/geo.category": "Geo category",
-                                    "scaletype/linear": "Linear",
-                                    "scaletype/log": "Logarithmic",
-                                    "scaletype/genericLog": "Generic log",
-                                    "scaletype/time": "Time",
-                                    "scaletype/ordinal": "Ordinal",
-                                    "color/geo.region/asi": "Asia",
-                                    "color/geo.region/eur": "Europe",
-                                    "color/geo.region/ame": "Americas",
-                                    "color/geo.region/afr": "Afrika",
-                                    "color/geo.region/_default": "Other"
-                                },
-                                pt: {
-                                    "title": "Título do Bubble Chart",
-                                    "buttons/expand": "Expandir",
-                                    "buttons/unexpand": "Nia expandir",
-                                    "buttons/trails": "Led",
-                                    "buttons/lock": "Lås",
-                                    "buttons/find": "Encontre",
-                                    "buttons/deselect": "Välj ingen",
-                                    "buttons/ok": "Okej",
-                                    "buttons/colors": "Cores",
-                                    "buttons/size": "Tamanho",
-                                    "buttons/axes": "Axlar",
-                                    "buttons/more_options": "Opções",
-                                    "indicator/lex": "Expectables Livappulo",
-                                    "indicator/gdp_per_cap": "PIB pers capitous",
-                                    "indicator/pop": "Peoples",                    
-                                    "indicator/geo.region": "Regiono",
-                                    "indicator/geo": "Geo codo",
-                                    "indicator/time": "Tid",
-                                    "indicator/geo.category": "Geo catego",
-                                    "scaletype/linear": "Linjär",
-                                    "scaletype/log": "Logaritmisk",
-                                    "scaletype/genericLog": "Allmän log",
-                                    "scaletype/time": "Tid",
-                                    "scaletype/ordinal": "Ordning",
-                                    "geo.region/asi": "Asien",
-                                    "geo.region/eur": "Europa",
-                                    "geo.region/ame": "Amerikor",
-                                    "geo.region/afr": "Afrika",
-                                    "geo.region/_default": "Other"
-
-                                }
+                    id: "en",
+                    strings: {
+                        _defs_: {
+                            en: {
+                                "title": "Bubble Chart Title",
+                                "buttons/expand": "Go big",
+                                "buttons/unexpand": "Go small",
+                                "buttons/trails": "Trails",
+                                "buttons/lock": "Lock",
+                                "buttons/find": "Find",
+                                "buttons/deselect": "Deselect",
+                                "buttons/ok": "OK",
+                                "buttons/colors": "Colors",
+                                "buttons/size": "Size",
+                                "buttons/axes": "Axes",
+                                "buttons/more_options": "Options",
+                                "indicator/lex": "Life expectancy",
+                                "indicator/gdp_per_cap": "GDP per capita",
+                                "indicator/pop": "Population",
+                                "indicator/geo.region": "Region",
+                                "indicator/geo": "Geo code",
+                                "indicator/time": "Time",
+                                "indicator/geo.category": "Geo category",
+                                "scaletype/linear": "Linear",
+                                "scaletype/log": "Logarithmic",
+                                "scaletype/genericLog": "Generic log",
+                                "scaletype/time": "Time",
+                                "scaletype/ordinal": "Ordinal",
+                                "color/geo.region/asi": "Asia",
+                                "color/geo.region/eur": "Europe",
+                                "color/geo.region/ame": "Americas",
+                                "color/geo.region/afr": "Afrika",
+                                "color/geo.region/_default": "Other"
                             }
                         }
                     }
                 }
             };
 
+
             this._super(config, options);
 
         },
-        
-        
+
+
         /**
          * Validating the tool model
          * @param model the current tool model to be validated
@@ -1557,4 +1430,4 @@
     });
 
 
-}).call(this);    
+}).call(this);

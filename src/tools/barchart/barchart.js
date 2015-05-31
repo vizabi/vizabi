@@ -141,12 +141,9 @@
             //enter selection -- init circles
             this.entityBars.enter().append("rect")
                 .attr("class", "vzb-bc-bar")
-                .on("mousemove", function(d, i) {
-                })
-                .on("mouseout", function(d, i) {
-                })
-                .on("click", function(d, i) {
-                });
+                .on("mousemove", function(d, i) {})
+                .on("mouseout", function(d, i) {})
+                .on("click", function(d, i) {});
 
             //positioning and sizes of the bars
 
@@ -288,197 +285,101 @@
 
             //specifying components
             this.components = [{
-                    component: 'gapminder-barchart',
-                    placeholder: '.vzb-tool-viz',
-                    model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
-                },
-                {
-                    component: 'gapminder-timeslider',
-                    placeholder: '.vzb-tool-timeslider',
-                    model: ["state.time"]
-                },
-                {
-                    component: 'gapminder-buttonlist',
-                    placeholder: '.vzb-tool-buttonlist',
-                    model: ['state', 'ui', 'language']
-                }
-            ];
+                component: 'gapminder-barchart',
+                placeholder: '.vzb-tool-viz',
+                model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+            }, {
+                component: 'gapminder-timeslider',
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"]
+            }, {
+                component: 'gapminder-buttonlist',
+                placeholder: '.vzb-tool-buttonlist',
+                model: ['state', 'ui', 'language']
+            }];
 
             //default options
             this.default_options = {
                 state: {
-                    _type_: "model",
-                    _defs_: {
-                        //timespan of the visualization
-                        time: {
-                            _type_: "model",
-                            _defs_: {
-                                start: 1952,
-                                end: 2012,
-                                value: 2000,
-                                step: 1,
-                                speed: 300,
-                                formatInput: "%Y"
-                            }
-                        },
-                        //entities we want to show
-                        entities: {
-                            _type_: "model",
-                            _defs_: {
-                                show: {
-                                    _type_: "model",
-                                    _defs_: {
-                                        dim: {
-                                            _type_: "string",
-                                            _defs_: "geo"
-                                        },
-                                        filter: {
-                                            _type_: "object",
-                                            _defs_: {
-                                                "geo": ["*"],
-                                                "geo.category": ["region"]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-
-                        //how we show it
-                        marker: {
-                            _type_: "model",
-                            _defs_: {
-                                dimensions: {
-                                    _type_: "array",
-                                    _defs_: ["entities", "time"]
-                                },
-                                label: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "property",
-                                            _opts_: ["property", "indicator", "value"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "geo.name"
-                                        }
-                                    }
-                                },
-                                axis_y: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "indicator"
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "lex"
-                                        },
-                                        scaleType: {
-                                            _type_: "string",
-                                            _defs_: "linear"
-                                        }
-                                    }
-                                },
-                                axis_x: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "property",
-                                            _opts_: ["property"]
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "geo.name"
-                                        }
-                                    }
-                                },
-                                color: {
-                                    _type_: "hook",
-                                    _defs_: {
-                                        use: {
-                                            _type_: "string",
-                                            _defs_: "property"
-                                        },
-                                        which: {
-                                            _type_: "string",
-                                            _defs_: "geo.region"
-                                        },
-                                        palette: {
-                                            _type_: "object",
-                                            _defs_: {
-                                                "_default": "#ffb600",
-                                                "world": "#ffb600",
-                                                "eur": "#FFE700",
-                                                "afr": "#00D5E9",
-                                                "asi": "#FF5872",
-                                                "ame": "#7FEB00"
-                                            }
-                                        }
-                                    }
+                    time: {
+                        start: "1952",
+                        end: "2012",
+                        value: "2000",
+                        step: 1,
+                        speed: 300,
+                        formatInput: "%Y"
+                    },
+                    entities: {
+                        show: {
+                            dim: "geo",
+                            filter: {
+                                _defs_: {
+                                    "geo": ["*"],
+                                    "geo.category": ["region"]
                                 }
                             }
                         }
-
+                    },
+                    marker: {
+                        dimensions: ["entities", "time"],
+                        label: {
+                            use: "property",
+                            which: "geo.name"
+                        },
+                        axis_y: {
+                            use: "indicator",
+                            which: "lex",
+                            scaleType: "linear"
+                        },
+                        axis_x: {
+                            use: "property",
+                            which: "geo.name"
+                        },
+                        color: {
+                            use: "property",
+                            which: "geo.region",
+                            palette: {
+                                _defs_: {
+                                    "_default": "#ffb600",
+                                    "world": "#ffb600",
+                                    "eur": "#FFE700",
+                                    "afr": "#00D5E9",
+                                    "asi": "#FF5872",
+                                    "ame": "#7FEB00"
+                                }
+                            }
+                        }
                     }
                 },
-
                 data: {
-                    _type_: "model",
-                    _defs_: {
-                        reader: {
-                            _type_: "string",
-                            _defs_: "local-json"
-                        },
-                        path: {
-                            _type_: "string",
-                            _defs_: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
-                        }
-                    }
+                    reader: "local-json",
+                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
                 ui: {
-                    _type_: "model",
-                    _defs_: {
-                        'buttons': {
-                            _type_: "array",
-                            _defs_: ["fullscreen"]
-                        }
-                    }
+                    buttons: ["fullscreen"]
                 },
 
-                //language properties
                 language: {
-                    _type_: "model",
-                    _defs_: {
-                        id: {
-                            _type_: "string",
-                            _defs_: "en"
-                        },
-                        strings: {
-                            _type_: "object",
-                            _defs_: {
-                                en: {
-                                    "title": "",
-                                    "buttons/expand": "Full screen",
-                                    "buttons/unexpand": "Leave full screen",
-                                    "buttons/lock": "Lock",
-                                    "buttons/find": "Find",
-                                    "buttons/colors": "Colors",
-                                    "buttons/size": "Size",
-                                    "buttons/more_options": "Options",
-                                    "indicator/lex": "Life expectancy",
-                                    "indicator/gdp_per_cap": "GDP per capita",
-                                    "indicator/pop": "Population",
-                                    "indicator/geo.region": "Region",
-                                    "indicator/geo": "Geo code",
-                                    "indicator/time": "",
-                                    "indicator/geo.category": "Geo category"
-                                }
+                    id: "en",
+                    strings: {
+                        _defs_: {
+                            en: {
+                                "title": "",
+                                "buttons/expand": "Full screen",
+                                "buttons/unexpand": "Leave full screen",
+                                "buttons/lock": "Lock",
+                                "buttons/find": "Find",
+                                "buttons/colors": "Colors",
+                                "buttons/size": "Size",
+                                "buttons/more_options": "Options",
+                                "indicator/lex": "Life expectancy",
+                                "indicator/gdp_per_cap": "GDP per capita",
+                                "indicator/pop": "Population",
+                                "indicator/geo.region": "Region",
+                                "indicator/geo": "Geo code",
+                                "indicator/time": "",
+                                "indicator/geo.category": "Geo category"
                             }
                         }
                     }
