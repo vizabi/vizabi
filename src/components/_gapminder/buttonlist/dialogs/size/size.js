@@ -23,7 +23,7 @@
 
             this.components = [{
                 component: 'gapminder-bubblesize',
-                placeholder: '.vzb-dialog-bubble-size',
+                placeholder: '.vzb-dialog-bubblesize',
                 model: ["state.marker.size"],
                 ui: {
                     show_button: false

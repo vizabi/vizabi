@@ -27,7 +27,7 @@
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = this.template || "src/components/_gapminder/bubble-size/bubble-size.html";
+            this.template = this.template || "src/components/_gapminder/bubblesize/bubblesize.html";
             
             this.model_expects = [{
                 name: "size",

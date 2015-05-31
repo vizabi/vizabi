@@ -1,12 +1,93 @@
 /* VIZABI - http://www.gapminder.org - 2015-05-31 */
 
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/bubble-size/bubble-size.html');s.innerHTML = '<div class="vzb-bs-holder"> <input type="range" id="vzb-bs-slider" class="vzb-bs-slider" step="1"> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/more-options/more-options.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubble-opacity"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubble-size"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/size/size.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/size") %> </div> <div class="vzb-dialog-content"> <p>Chose what to display as size</p> <div class="vzb-saxis-container"></div> <p>Choose maximum size of bubbles:</p> <div class="vzb-dialog-bubble-size"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/simple-checkbox/simple-checkbox.html');s.innerHTML = '<span class="vzb-sc-holder vzb-dialog-checkbox"> <input type="checkbox"><label></label> </span> ';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/bubblesize/bubblesize.html');s.innerHTML = '<div class="vzb-bs-holder"> <input type="range" id="vzb-bs-slider" class="vzb-bs-slider" step="1"> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/axes/axes.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/axes") %> </div> <div class="vzb-dialog-content"> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/colors/colors.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/colors") %> </div> <div class="vzb-dialog-content"> <span class="vzb-caxis-container"></span> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/find/find.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/find") %> </div> <div class="vzb-dialog-content vzb-find-filter"> <input id="vzb-find-search" class="vzb-dialog-input" type="text" placeholder="Search..." /> </div> <div class="vzb-dialog-content vzb-dialog-content-fixed"> <div class="vzb-find-list">  </div> </div> <div class="vzb-dialog-buttons"> <div class="vzb-dialog-bubbleopacity vzb-dialog-control"></div> <div id="vzb-find-deselect" class="vzb-dialog-button"> <%=t ( "buttons/deselect") %> </div> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> <%=t ( "buttons/ok") %> </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/moreoptions/moreoptions.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/more_options") %> </div> <div class="vzb-dialog-content"> <p>Opacity of non-selected</p> <div class="vzb-dialog-bubbleopacity"></div> <div class = "vzb-dialog-br"></div> <p>X axis</p> <div class="vzb-xaxis-container"></div> <p>Y axis</p> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> <div class = "vzb-dialog-br"></div> <p>Size</p> <div class="vzb-saxis-container"></div> <div class="vzb-dialog-bubblesize"></div> <div class = "vzb-dialog-br"></div> <p>Colors</p> <div class="vzb-caxis-container"></div> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/size/size.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/size") %> </div> <div class="vzb-dialog-content"> <p>Chose what to display as size</p> <div class="vzb-saxis-container"></div> <p>Choose maximum size of bubbles:</p> <div class="vzb-dialog-bubblesize"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubblechart"> <svg class="vzb-bubblechart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
+/*!
+ * VIZABI BUBBLE OPACITY CONTROL
+ * Reusable OPACITY SLIDER
+ */
+
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var utils = Vizabi.utils;
+
+    if (!Vizabi._require('d3')) return;
+    
+    Vizabi.Component.extend('gapminder-bubbleopacity', {
+
+        init: function(config, context) {
+            this.template = '<div class="vzb-bo-holder"><input type="range" id="vzb-bo-slider" class="vzb-bo-slider" step="1"></div>';
+
+            this.model_expects = [{
+                name: "entities",
+                type: "entities"
+            }];
+            
+            var _this = this;
+            
+            this.arg = config.arg;
+            
+            this.model_binds = {
+                "change:entities:select": function(evt) {
+                    _this.updateView();
+                }
+            }    
+            this.model_binds["change:entities:" + this.arg] = function(evt) {
+                    _this.updateView();
+                }
+            
+            
+
+            //contructor is the same as any component
+            this._super(config, context);
+        },
+
+        /**
+         * Executes after the template is loaded and rendered.
+         * Ideally, it contains HTML instantiations related to template
+         * At this point, this.element and this.placeholder are available as a d3 object
+         */
+        readyOnce: function() {
+            var _this = this;
+            this.element = d3.select(this.element);
+            this.slider = this.element.selectAll('#vzb-bo-slider');
+
+            this.slider
+                .attr('min', 0)
+                .attr('max', 1)
+                .attr('step', 0.1)
+                .on('input', function() {
+                    _this._setModel();
+                });
+            
+            this.updateView();
+        },
+
+        updateView: function () {
+            var someSelected = this.model.entities.select.length;
+            var value = this.model.entities[this.arg];
+            
+            this.slider.attr('value', value);
+        },
+        
+        _setModel: function () {
+            this.model.entities[this.arg] = +d3.event.target.value;
+        }
+        
+    });
+
+
+}).call(this);
 /*!
  * VIZABI BUBBLE SIZE slider
  * Reusable bubble size slider
@@ -36,7 +117,7 @@
          * @param context The component's parent
          */
         init: function(config, context) {
-            this.template = this.template || "src/components/_gapminder/bubble-size/bubble-size.html";
+            this.template = this.template || "src/components/_gapminder/bubblesize/bubblesize.html";
             
             this.model_expects = [{
                 name: "size",
@@ -162,7 +243,7 @@
                     icon: "search",
                     dialog: true
                 },
-                'more-options': {
+                'moreoptions': {
                     title: "buttons/more_options",
                     icon: "gear",
                     dialog: true
@@ -584,10 +665,6 @@
         readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
-            this.closeButtonsEl = this.element.selectAll("[data-click='closeDialog']");
-            this.closeButtonsEl.on('click', function() {
-                _this.parent.closeAllDialogs();
-            });
         },
 
         /**
@@ -615,7 +692,7 @@
     var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
 
     
-    Vizabi.Component.register('gapminder-buttonlist-more-options', Dialog.extend({
+    Vizabi.Component.register('gapminder-buttonlist-axes', Dialog.extend({
 
         /**
          * Initializes the dialog component
@@ -623,45 +700,285 @@
          * @param context component context (parent)
          */
         init: function(config, parent) {
-            this.name = 'more-options';
+            this.name = 'axes';
+            var _this = this;
 
             this.components = [{
-                component: 'gapminder-indicator-picker',
+                component: 'gapminder-indicatorpicker',
                 placeholder: '.vzb-xaxis-container',
                 model: ["state.marker.axis_x", "language"]
             },{
-                component: 'gapminder-indicator-picker',
+                component: 'gapminder-indicatorpicker',
                 placeholder: '.vzb-yaxis-container',
                 model: ["state.marker.axis_y", "language"]
             },{
-                component: 'gapminder-simple-checkbox',
+                component: 'gapminder-simplecheckbox',
+                placeholder: '.vzb-axes-options',
+                model: ["state", "language"],
+                submodel: 'time',
+                checkbox: 'adaptMinMaxZoom'
+            }];
+
+            this._super(config, parent);
+        }
+    }));
+
+}).call(this);
+
+
+/*!
+ * VIZABI COLOR DIALOG
+ */
+
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var utils = Vizabi.utils;
+    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
+
+    if (!Vizabi._require('d3')) return;
+    
+    Vizabi.Component.register('gapminder-buttonlist-colors', Dialog.extend({
+        
+    	/**
+         * Initializes the dialog component
+         * @param config component configuration
+         * @param context component context (parent)
+         */
+        init: function(config, parent) {
+            this.name = 'colors';
+            
+            this.components = [{
+                component: 'gapminder-indicatorpicker',
+                placeholder: '.vzb-caxis-container',
+                model: ["state.marker.color", "language"]
+            },{
+                component: 'gapminder-colorlegend',
+                placeholder: '.vzb-clegend-container',
+                model: ["state.marker.color", "state.entities", "language"]
+            }];
+            
+            
+            this._super(config, parent);
+        }
+        
+    }));
+
+
+}).call(this);
+/*!
+ * VIZABI FIND CONTROL
+ * Reusable find dialog
+ */
+
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var utils = Vizabi.utils;
+    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
+
+    if (!Vizabi._require('d3')) return;
+    
+    Vizabi.Component.register('gapminder-buttonlist-find', Dialog.extend({
+
+        init: function(config, parent) {
+            this.name = 'find';
+            var _this = this;
+            
+            this.components = [{
+                component: 'gapminder-bubbleopacity',
+                placeholder: '.vzb-dialog-bubbleopacity',
+                model: ["state.entities"]
+            }];
+            
+            this.model_binds = {
+                "change:state:entities:select": function(evt) {
+                    _this.update();
+                },
+                "ready": function(evt) {
+                    if(!_this._readyOnce) return;
+                    _this.update();
+                }
+            }
+            
+            this._super(config, parent);
+        },
+
+        /**
+         * Grab the list div
+         */
+        readyOnce: function() {
+            this.element = d3.select(this.element);
+            this.list = this.element.select(".vzb-find-list");
+            this.input_search = this.element.select("#vzb-find-search");
+            this.deselect_all = this.element.select("#vzb-find-deselect");
+            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
+
+            var _this = this;
+            this.input_search.on("input", function() {
+                _this.showHideSearch();
+            });
+
+            this.deselect_all.on("click", function() {
+                _this.deselectEntities();
+            });
+
+            this._super();
+        },
+
+        open: function() {
+            this.input_search.node().value = "";
+            this.showHideSearch();
+        },
+
+        /**
+         * Build the list everytime it updates
+         */
+        //TODO: split update in render and update methods
+        update: function() {
+            var _this = this;
+            var selected = this.model.state.entities.getSelected();
+            var labelModel = this.model.state.marker.label;
+            var data = labelModel.getItems().map(function(d) {
+                return {
+                    geo: d["geo"],
+                    name: labelModel.getValue(d)
+                };
+            });
+
+            //sort data alphabetically
+            data.sort(function(a, b) {
+                return (a.name < b.name) ? -1 : 1;
+            });
+
+            this.list.html("");
+
+            var items = this.list.selectAll(".vzb-find-item")
+                .data(data)
+                .enter()
+                .append("div")
+                .attr("class", "vzb-find-item vzb-dialog-checkbox")
+
+            items.append("input")
+                .attr("type", "checkbox")
+                .attr("class", "vzb-find-item")
+                .attr("id", function(d) {
+                    return "-find-" + d.geo;
+                })
+                .property("checked", function(d) {
+                    return (selected.indexOf(d.geo) !== -1);
+                })
+                .on("change", function(d) {
+                    _this.model.state.entities.selectEntity(d);
+                });
+
+            items.append("label")
+                .attr("for", function(d) {
+                    return "-find-" + d.geo;
+                })
+                .text(function(d) {
+                    return d.name;
+                })
+                .on("mouseover", function(d) {
+                    _this.model.state.entities.highlightEntity(d);
+                })
+                .on("mouseout", function(d) {
+                    _this.model.state.entities.clearHighlighted();
+                });
+
+            this.showHideSearch();
+            this.showHideDeselect();
+        },
+
+        showHideSearch: function() {
+
+            var search = this.input_search.node().value || "";
+            search = search.toLowerCase();
+
+            this.list.selectAll(".vzb-find-item")
+                     .classed("vzb-hidden", function(d) {
+                        var lower = d.name.toLowerCase();
+                        return (lower.indexOf(search) === -1);
+                     });
+        },
+
+        showHideDeselect: function() {
+            var someSelected = !!this.model.state.entities.select.length;
+            this.deselect_all.classed('vzb-hidden', !someSelected);
+            this.opacity_nonselected.classed('vzb-hidden', !someSelected);
+        },
+
+        deselectEntities: function() {
+            this.model.state.entities.clearSelected();
+        }
+        
+    }));
+
+
+}).call(this);
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
+
+    
+    Vizabi.Component.register('gapminder-buttonlist-moreoptions', Dialog.extend({
+
+        /**
+         * Initializes the dialog component
+         * @param config component configuration
+         * @param context component context (parent)
+         */
+        init: function(config, parent) {
+            this.name = 'moreoptions';
+
+            this.components = [{
+                component: 'gapminder-indicatorpicker',
+                placeholder: '.vzb-xaxis-container',
+                model: ["state.marker.axis_x", "language"]
+            },{
+                component: 'gapminder-indicatorpicker',
+                placeholder: '.vzb-yaxis-container',
+                model: ["state.marker.axis_y", "language"]
+            },{
+                component: 'gapminder-simplecheckbox',
                 placeholder: '.vzb-axes-options',
                 model: ["state", "language"],
                 submodel: 'time',
                 checkbox: 'adaptMinMaxZoom'
             },{
                 component: 'gapminder-bubblesize',
-                placeholder: '.vzb-dialog-bubble-size',
+                placeholder: '.vzb-dialog-bubblesize',
                 model: ["state.marker.size"]
             },{
-                component: 'gapminder-indicator-picker',
+                component: 'gapminder-indicatorpicker',
                 placeholder: '.vzb-saxis-container',
                 model: ["state.marker.size", "language"]
             },{
-                component: 'gapminder-indicator-picker',
+                component: 'gapminder-indicatorpicker',
                 placeholder: '.vzb-caxis-container',
                 model: ["state.marker.color", "language"]
             },{
-                component: 'gapminder-color-legend',
+                component: 'gapminder-colorlegend',
                 placeholder: '.vzb-clegend-container',
-                model: ["state.marker.color", "language"]
+                model: ["state.marker.color", "state.entities", "language"]
             },{
-                component: 'gapminder-bubble-opacity',
-                placeholder: '.vzb-dialog-bubble-opacity',
+                component: 'gapminder-bubbleopacity',
+                placeholder: '.vzb-dialog-bubbleopacity',
                 model: ["state.entities"]
             }];
             
             this._super(config, parent);
+        },
+        
+        readyOnce: function() {
+            this.element = d3.select(this.element);
         }
     }));
 
@@ -688,7 +1005,7 @@
 
             this.components = [{
                 component: 'gapminder-bubblesize',
-                placeholder: '.vzb-dialog-bubble-size',
+                placeholder: '.vzb-dialog-bubblesize',
                 model: ["state.marker.size"],
                 ui: {
                     show_button: false
@@ -703,6 +1020,215 @@
             this._super(config, parent);
         }
     }));
+
+}).call(this);
+/*!
+ * VIZABI BUBBLE COLOR LEGEND COMPONENT
+ */
+
+(function() {
+
+    "use strict";
+
+    var Vizabi = this.Vizabi;
+    var utils = Vizabi.utils;
+    var INDICATOR = "which";
+
+    if (!Vizabi._require('d3')) return;
+    
+    Vizabi.Component.extend('gapminder-colorlegend', {
+        
+        init: function(config, context) {
+            var _this = this;
+            this.template = '<div class="vzb-cl-holder"></div>';
+            
+            this.model_expects = [{
+                name: "color",
+                type: "color"
+            },{
+                name: "entities",
+                type: "entities"
+            },{
+                name: "language",
+                type: "language"
+            }];
+            
+            this.needsUpdate = false;
+            this.value_1 = false;
+            this.scaleType_1 = false;
+            
+            this.model_binds = {
+                "change:color": function(evt) {
+                    if(_this.model.color.value != _this.value_1 
+                       || _this.model.color.scaleType != _this.scaleType_1 ) _this.needsUpdate = true;
+                },
+                "change:language": function(evt) {
+                    _this.updateView();
+                },
+                "ready": function(evt) {
+                    if(!_this._readyOnce) return;
+                    if(_this.needsUpdate){
+                        _this.updateView();
+                        _this.needsUpdate = false;
+                    }
+                }   
+            }
+            
+            //contructor is the same as any component
+            this._super(config, context);
+        },
+
+
+        readyOnce: function() {
+            var _this = this;
+            this.element = d3.select(this.element);
+            this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
+            this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
+            this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
+            
+            this.colorPicker = d3.svg.colorPicker();
+            this.element.call(this.colorPicker);
+            
+            this.worldMap = d3.svg.worldMap();
+            this.worldmapEl.call(this.worldMap);
+            
+            this.updateView();
+        },
+        
+
+        
+        updateView: function(){
+            var _this = this;
+            this.translator = this.model.language.getTFunction();
+
+            var palette = this.model.color.palette;
+            
+            
+            var whichPalette = "_default";
+            if(Object.keys(this.model.color.getPalettes()).indexOf(this.model.color[INDICATOR]) > -1) {
+                whichPalette = this.model.color[INDICATOR];
+            }
+            
+            var paletteDefault = this.model.color.getPalettes()[whichPalette];
+            
+
+            var colors = this.listColorsEl
+                .selectAll(".vzb-cl-option")
+                .data(utils.keys(paletteDefault), function(d){return d});
+
+            colors.exit().remove();
+            
+            colors.enter().append("div").attr("class", "vzb-cl-option")
+                .each(function(){
+                    d3.select(this).append("div").attr("class", "vzb-cl-color-sample");
+                    d3.select(this).append("div").attr("class", "vzb-cl-color-legend");
+                })
+                .on("mouseover", function(){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
+                    var sample = d3.select(this).select(".vzb-cl-color-sample");
+                    sample.style("border-width", "5px");
+                    sample.style("background-color", "transparent");
+
+                })
+                .on("mouseout", function(d){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
+                    var sample = d3.select(this).select(".vzb-cl-color-sample");
+                    sample.style("border-width", "0px");
+                    sample.style("background-color", _this.model.color.palette[d]);
+                })
+                .on("click", function(d){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                
+                    _this.colorPicker
+                        .colorOld(palette[d])
+                        .colorDef(paletteDefault[d])
+                        .callback(function(value){_this.model.color.setColor(value, d)})
+                        .show(true);
+                })
+            
+            
+            if(this.model.color.use == "indicator"){
+                this.rainbowEl.classed("vzb-hidden", false)
+                    .style("height", (utils.keys(paletteDefault).length * 25 + 5) + "px")
+                    .style("background", "linear-gradient(" + utils.values(palette._data).join(", ") +")");
+            }else{
+                this.rainbowEl.classed("vzb-hidden", true);
+            }
+            
+            if(this.model.color.value == "geo.region"){
+                var regions = this.worldmapEl.classed("vzb-hidden", false)
+                    .select("svg").selectAll("g");
+                regions.each(function(){
+                    var view = d3.select(this);
+                    var color = palette[view.attr("id")];
+                    view.selectAll("path").style("fill",color);
+                })
+                .style("opacity", 0.8)
+                .on("mouseover", function(){
+                    var view = d3.select(this);
+                    var region = view.attr("id");
+                    regions.selectAll("path").style("opacity",0.5);
+                    view.selectAll("path").style("opacity",1);
+                    
+                    
+                    //TODO: accessing _filtered is an ugly hack. should be optimised later
+                    var highlight = utils.values(_this.model.color._filtered)
+                        //returns a function over time. pick the last time-value
+                        .map(function(d){return d[d.length-1]})
+                        //filter so that only countries of the correct region remain 
+                        .filter(function(f){return f["geo.region"]==region})
+                        //fish out the "geo" field, leave the rest behind
+                        .map(function(d){return {geo: d.geo}});
+                    
+                    _this.model.entities.setHighlighted(highlight);
+                })
+                .on("mouseout", function(){
+                    regions.selectAll("path").style("opacity",0.8);
+                    _this.model.entities.clearHighlighted(); 
+                })
+                .on("click", function(d){
+                    //disable interaction if so stated in metadata
+                    if(!_this.model.color.isUserSelectable(whichPalette)) return;
+                    var view = d3.select(this);
+                    var region = view.attr("id")
+                    
+                    _this.colorPicker
+                        .colorOld(palette[region])
+                        .colorDef(paletteDefault[region])
+                        .callback(function(value){_this.model.color.setColor(value, region)})
+                        .show(true);
+                })
+                colors.classed("vzb-hidden", true);
+            }else{
+                this.worldmapEl.classed("vzb-hidden", true);
+                colors.classed("vzb-hidden", false);
+            }
+            
+            colors.each(function(d, index){
+                d3.select(this).select(".vzb-cl-color-sample")
+                    .style("background-color", palette[d])
+                    .style("border", "1px solid " + palette[d]);
+
+                if(_this.model.color.use == "indicator"){
+                    var domain = _this.model.color.getScale().domain();
+                    d3.select(this).select(".vzb-cl-color-legend")
+                        .text(_this.model.color.tickFormatter(domain[index]))
+                }else{
+                    
+                    d3.select(this).select(".vzb-cl-color-legend")
+                        .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                }
+            });
+        }
+        
+
+    });
+
 
 }).call(this);
 /*!
@@ -765,7 +1291,7 @@
         }
     };
 
-    Vizabi.Component.extend('gapminder-indicator-picker', {
+    Vizabi.Component.extend('gapminder-indicatorpicker', {
 
         /**
          * Initializes the Indicator Picker.
@@ -912,16 +1438,12 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
     
-    Vizabi.Component.extend('gapminder-simple-checkbox', {
+    Vizabi.Component.extend('gapminder-simplecheckbox', {
 
         init: function(config, context) {
             this.template = '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';

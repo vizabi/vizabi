@@ -4,10 +4,7 @@
 
     var root = this;
 
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
 
     d3.svg.colorPicker = function(){
         

@@ -53,7 +53,7 @@
                     icon: "search",
                     dialog: true
                 },
-                'more-options': {
+                'moreoptions': {
                     title: "buttons/more_options",
                     icon: "gear",
                     dialog: true

@@ -7,16 +7,12 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
     
-    Vizabi.Component.extend('gapminder-simple-checkbox', {
+    Vizabi.Component.extend('gapminder-simplecheckbox', {
 
         init: function(config, context) {
             this.template = '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';

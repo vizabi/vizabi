@@ -8,11 +8,11 @@ $vzb-button-color-title: #9FBBC1;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
-    // @import '../bubble-size/bubble-size';
-    @import '../indicator-picker/indicator-picker';
-    // @import '../bubble-opacity/bubble-opacity';
-    // @import '../color-legend/color-legend';
-    @import '../simple-checkbox/simple-checkbox';
+    @import '../bubblesize/bubblesize';
+    @import '../indicatorpicker/indicatorpicker';
+    @import '../bubbleopacity/bubbleopacity';
+    @import '../colorlegend/colorlegend';
+    @import '../simplecheckbox/simplecheckbox';
     @include position(absolute, 0px);
     white-space: normal;
     
