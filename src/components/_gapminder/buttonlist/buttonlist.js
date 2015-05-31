@@ -102,10 +102,20 @@
             
             this.model_binds = {
                 "change:state:entities:select": function() {
+                    if(!_this._readyOnce) return;
+                    
                     if(_this.model.state.entities.select.length === 0){
                         _this.model.state.time.lockNonSelected = 0;
                     }
-                    // _this.startup();
+                    _this.setBubbleTrails();
+                    _this.setBubbleLock();
+                    
+                    
+                    //scroll button list to end if bottons appeared or disappeared
+                    if(_this.entitiesSelected_1 !== (_this.model.state.entities.select.length>0)){
+                        _this.scrollToEnd();
+                    }
+                    _this.entitiesSelected_1 = _this.model.state.entities.select.length>0;
                 }
             }
 
@@ -115,6 +125,14 @@
 
         readyOnce: function()  {
             this.element = d3.select(this.element);
+            this.buttonContainerEl = this.element.append("div")
+                .attr("class", "vzb-buttonlist-container-buttons");
+            this.dialogContainerEl = this.element.append("div")
+                .attr("class", "vzb-buttonlist-container-dialogs");
+            
+            
+            this.setBubbleTrails();
+            this.setBubbleLock();
         },
 
         ready: function() {
@@ -160,16 +178,6 @@
             this._prev_body_overflow = document.body.style.overflow;
         },
         
-        startup: function(){
-            var _this = this;
-            
-            button_list.forEach(function(d){
-                switch (d){
-                    case "trails": _this.setBubbleTrails(d); break;
-                    case "lock": _this.setBubbleLock(d); break;
-                }
-            })
-        },
 
         /*
          * adds buttons configuration to the components and template_data
@@ -212,20 +220,20 @@
 
             var t = this.getTranslationFunction(true);
 
-            var btns = this.element.selectAll('button').data(details_btns)
-                        .enter().append("button")
-                        .attr('class', 'vzb-buttonlist-btn')
-                        .attr('data-btn', function(d) { return d.id; })
-                        .html(function(btn) {
-                            return "<span class='vzb-buttonlist-btn-icon fa'>"+
-                                    btn.icon +"</span><span class='vzb-buttonlist-btn-title'>"+
-                                    t(btn.title) +"</span>";
-                        });
+            this.buttonContainerEl.selectAll('button').data(details_btns)
+                .enter().append("button")
+                .attr('class', 'vzb-buttonlist-btn')
+                .attr('data-btn', function(d) { return d.id; })
+                .html(function(btn) {
+                    return "<span class='vzb-buttonlist-btn-icon fa'>"+
+                            btn.icon +"</span><span class='vzb-buttonlist-btn-title'>"+
+                            t(btn.title) +"</span>";
+                });
 
-            var dialogs = this.element.selectAll('div').data(details_btns)
-                        .enter().append("div")
-                        .attr('class', 'vzb-buttonlist-dialog')
-                        .attr('data-btn', function(d) { return d.id; });
+            this.dialogContainerEl.selectAll('div').data(details_btns)
+                .enter().append("div")
+                .attr('class', 'vzb-buttonlist-dialog')
+                .attr('data-btn', function(d) { return d.id; });
 
             this.loadComponents();
 
@@ -238,6 +246,21 @@
                 });
             });
         },
+        
+        
+        scrollToEnd: function(){
+            var target = 0;
+            var parent = d3.select(".vzb-tool");
+            
+            if(parent.classed("vzb-portrait") && parent.classed("vzb-small") ){
+                if(this.model.state.entities.select.length>0) target = this.buttonContainerEl[0][0].scrollWidth
+                this.buttonContainerEl[0][0].scrollLeft = target;
+            }else{
+                if(this.model.state.entities.select.length>0) target = this.buttonContainerEl[0][0].scrollHeight
+                this.buttonContainerEl[0][0].scrollTop = target;
+            }
+        },
+        
 
         /*
          * RESIZE:
@@ -305,14 +328,16 @@
             this._active_comp = false;
         },
 
-        toggleBubbleTrails: function(id) {
+        toggleBubbleTrails: function() {
             this.model.state.time.trails = !this.model.state.time.trails;
-            this.setBubbleTrails(id);
+            this.setBubbleTrails();
         },
-        setBubbleTrails: function(id, trails) {
+        setBubbleTrails: function() {
+            var id = "trails";
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             
             btn.classed(class_active, this.model.state.time.trails);
+            btn.style("display", this.model.state.entities.select.length == 0? "none": "inline-block")
         },
         toggleBubbleLock: function(id) {
             if(this.model.state.entities.select.length == 0) return;
@@ -322,15 +347,17 @@
             locked = locked?0:timeFormatter(this.model.state.time.value);
             this.model.state.time.lockNonSelected = locked;
             
-            this.setBubbleLock(id);
+            this.setBubbleLock();
         },
-        setBubbleLock: function(id) {
+        setBubbleLock: function() {
+            var id = "lock";
             var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
             var translator = this.model.language.getTFunction();
             
             var locked = this.model.state.time.lockNonSelected;
             
             btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
+            btn.style("display", this.model.state.entities.select.length == 0? "none": "inline-block")
             
             btn.classed(class_active, locked)
             btn.select(".vzb-buttonlist-btn-title")

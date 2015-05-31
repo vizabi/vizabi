@@ -14,7 +14,12 @@ $vzb-button-color-border: #cce6ed;
     @import '../colorlegend/colorlegend';
     @import '../simplecheckbox/simplecheckbox';
     @include position(absolute, 0px);
-    white-space: normal;
+    overflow: visible;
+    
+    .vzb-buttonlist-container-buttons{
+        @include position(absolute, 0px);
+        &::-webkit-scrollbar {display: none;}
+    }
     
     text-align: center;
     .vzb-buttonlist-btn {
@@ -87,6 +92,9 @@ $vzb-button-color-border: #cce6ed;
     @import 'dialogs/dialog';
     
 }
+
+ 
+
 //responsiveness
 &.vzb-landscape, &.vzb-large {
     .vzb-buttonlist {
@@ -123,3 +131,11 @@ $vzb-button-color-border: #cce6ed;
         }
     }
 }
+
+&.vzb-landscape, &.vzb-medium, &.vzb-large{
+    .vzb-buttonlist .vzb-buttonlist-container-buttons {white-space: normal; overflow-y: scroll; overflow-x: hidden;}
+}
+&.vzb-small.vzb-portrait{
+    .vzb-buttonlist .vzb-buttonlist-container-buttons {white-space: nowrap; overflow-y: hidden; overflow-x: scroll;}
+}
+   
