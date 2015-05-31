@@ -80,114 +80,51 @@ describe("* Base: Hooks", function() {
                 //default options
                 this.default_options = {
                     state: {
-                        _type_: "model",
-                        _defs_: {
-                            //timespan of the visualization
-                            time: {
-                                _type_: "model",
-                                _defs_: {
-                                    start: "1991",
-                                    end: "1994",
-                                    value: "1994"
-                                }
-                            },
-                            //entities we want to show
-                            entities: {
-                                _type_: "model",
-                                _defs_: {
-                                    show: {
-                                        _type_: "model",
-                                        _defs_: {
-                                            dim: {
-                                                _type_: "string",
-                                                _defs_: "geo"
-                                            },
-                                            filter: {
-                                                _type_: "object",
-                                                _defs_: {
-                                                    "geo": ["*"]
-                                                }
-                                            }
-                                        }
+                        //timespan of the visualization
+                        time: {
+                            start: "1991",
+                            end: "1994",
+                            value: "1994"
+                        },
+                        //entities we want to show
+                        entities: {
+                            show: {
+                                dim: "geo",
+                                filter: {
+                                    _defs_: {
+                                        "geo": ["*"]
                                     }
                                 }
+                            }
+                        },
+                        //how we show it
+                        marker: {
+                            dimensions: ["entities", "time"],
+                            label: {
+                                use: "property",
+                                which: "geo"
                             },
-                            //how we show it
-                            marker: {
-                                _type_: "model",
-                                _defs_: {
-                                    dimensions: {
-                                        _type_: "array",
-                                        _defs_: ["entities", "time"]
-                                    },
-                                    label: {
-                                        _type_: "hook",
-                                        _defs_: {
-                                            use: {
-                                                _type_: "string",
-                                                _defs_: "property",
-                                                _opts_: ["property", "indicator", "value"]
-                                            },
-                                            which: {
-                                                _type_: "string",
-                                                _defs_: "geo"
-                                            }
-                                        }
-                                    },
-                                    info: {
-                                        _type_: "hook",
-                                        _defs_: {
-                                            use: {
-                                                _type_: "string",
-                                                _defs_: "indicator",
-                                                _opts_: ["property", "indicator", "value"]
-                                            },
-                                            which: {
-                                                _type_: "string",
-                                                _defs_: "pop"
-                                            }
-                                        }
-                                    }
-                                }
+                            info: {
+                                use: "indicator",
+                                which: "pop"
                             }
                         }
                     },
 
                     data: {
-                        _type_: "model",
-                        _defs_: {
-                            reader: {
-                                _type_: "string",
-                                _defs_: "myreader"
-                            }
-                        }
+                        reader: "myreader"
                     },
 
                     ui: {
-                        _type_: "model",
-                        _defs_: {
-                            'displayColor': {
-                                _type_: "string",
-                                _defs_: "#ffcc00"
-                            }
-                        }
+                        'displayColor': "#ffcc00"
                     },
 
                     //language properties
                     language: {
-                        _type_: "model",
-                        _defs_: {
-                            id: {
-                                _type_: "string",
-                                _defs_: "en"
-                            },
-                            strings: {
-                                _type_: "object",
-                                _defs_: {
-                                    en: {
-                                        "title": "Information"
-                                    }
-                                }
+                        id: "en",
+                        strings: {
+                            en: {
+                                "title": "Information"
                             }
                         }
                     }
