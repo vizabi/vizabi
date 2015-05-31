@@ -22,7 +22,8 @@
             this.components = [{
                 component: 'gapminder-bubbleopacity',
                 placeholder: '.vzb-dialog-bubbleopacity',
-                model: ["state.entities"]
+                model: ["state.entities"],
+                arg: "opacitySelectDim"
             }];
             
             this.model_binds = {
@@ -46,7 +47,7 @@
             this.list = this.element.select(".vzb-find-list");
             this.input_search = this.element.select("#vzb-find-search");
             this.deselect_all = this.element.select("#vzb-find-deselect");
-            this.opacity_nonselected = this.element.select(".vzb-dialog-bubble-opacity");
+            this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
             var _this = this;
             this.input_search.on("input", function() {
@@ -58,6 +59,8 @@
             });
 
             this._super();
+            
+            this.update();
         },
 
         open: function() {

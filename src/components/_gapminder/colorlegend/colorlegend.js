@@ -30,13 +30,17 @@
             }];
             
             this.needsUpdate = false;
-            this.value_1 = false;
+            this.which_1 = false;
             this.scaleType_1 = false;
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    if(_this.model.color.value != _this.value_1 
-                       || _this.model.color.scaleType != _this.scaleType_1 ) _this.needsUpdate = true;
+                    if(_this.model.color.which != _this.which_1 
+                       || _this.model.color.scaleType != _this.scaleType_1 ) {
+                        _this.needsUpdate = true;
+                        _this.which_1 = _this.model.color.which;
+                        _this.scaleType_1 = _this.model.color.scaleType;
+                    }
                 },
                 "change:language": function(evt) {
                     _this.updateView();
@@ -136,7 +140,7 @@
                 this.rainbowEl.classed("vzb-hidden", true);
             }
             
-            if(this.model.color.value == "geo.region"){
+            if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
                     .select("svg").selectAll("g");
                 regions.each(function(){
@@ -197,7 +201,7 @@
                 }else{
                     
                     d3.select(this).select(".vzb-cl-color-legend")
-                        .text(_this.translator("color/" + _this.model.color.value + "/" + d));
+                        .text(_this.translator("color/" + _this.model.color[INDICATOR] + "/" + d));
                 }
             });
         }

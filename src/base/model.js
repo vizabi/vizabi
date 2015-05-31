@@ -11,6 +11,16 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
+    
+    var time_formats = {
+        "year": d3.time.format("%Y"),
+        "month": d3.time.format("%Y-%m"),
+        "week": d3.time.format("%Y-W%W"),
+        "day": d3.time.format("%Y-%m-%d"),
+        "hour": d3.time.format("%Y-%m-%d %H"),
+        "minute": d3.time.format("%Y-%m-%d %H:%M"),
+        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+    };
 
     //names of reserved hook properties
 
@@ -682,6 +692,58 @@
             }
         },
 
+        
+        
+        /**
+         * Gets tick values for this hook
+         * @returns {Number|String} value The value for this tick
+         */
+        tickFormatter: function(x, formatterRemovePrefix) {
+            
+            //TODO: generalize for any time unit
+            if(utils.isDate(x)) return time_formats["year"](x);
+            if(utils.isString(x)) return x;
+
+            var format = "f";
+            var prec = 0;
+            if(Math.abs(x)<1) {prec = 1; format = "r"};
+
+            var prefix = "";
+            if(formatterRemovePrefix) return d3.format("."+prec+format)(x);
+
+            switch (Math.floor(Math.log10(Math.abs(x)))){
+                case -13: x = x*1000000000000; prefix = "p"; break; //0.1p
+                case -10: x = x*1000000000; prefix = "n"; break; //0.1n
+                case  -7: x = x*1000000; prefix = "µ"; break; //0.1µ
+                case  -6: x = x*1000000; prefix = "µ"; break; //1µ
+                case  -5: x = x*1000000; prefix = "µ"; break; //10µ
+                case  -4: break; //0.0001
+                case  -3: break; //0.001
+                case  -2: break; //0.01
+                case  -1: break; //0.1
+                case   0: break; //1
+                case   1: break; //10
+                case   2: break; //100
+                case   3: break; //1000
+                case   4: break; //10000
+                case   5: x = x/1000; prefix = "k"; break; //0.1M
+                case   6: x = x/1000000; prefix = "M"; prec = 1; break; //1M
+                case   7: x = x/1000000; prefix = "M"; break; //10M
+                case   8: x = x/1000000; prefix = "M"; break; //100M
+                case   9: x = x/1000000000; prefix = "B"; prec = 1; break; //1B
+                case  10: x = x/1000000000; prefix = "B"; break; //10B
+                case  11: x = x/1000000000; prefix = "B"; break; //100B
+                case  12: x = x/1000000000000; prefix = "T"; prec = 1; break; //1T
+                //use the D3 SI formatting for the extreme cases
+                default: return (d3.format("."+prec+"s")(x)).replace("G","B");
+            }
+
+            // use manual formatting for the cases above
+            return (d3.format("."+prec+format)(x)+prefix).replace("G","B");
+
+        },        
+        
+        
         /**
          * Gets the d3 scale for this hook. if no scale then builds it
          * @returns {Array} domain

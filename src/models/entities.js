@@ -133,6 +133,11 @@
         clearSelected: function() {
             this.select = [];
         },
+        
+        
+        setHighlighted: function(arg){
+            this.brush = [].concat(arg);
+        },
 
         //TODO: join the following 3 methods with the previous 3
 

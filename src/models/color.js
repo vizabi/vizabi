@@ -84,7 +84,7 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.value_1 != this.which 
+               || !this.firstLoad && this.which_1 != this.which 
                || !this.firstLoad && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
@@ -100,7 +100,7 @@
                 }
             }
 
-            this.value_1 = this.which;
+            this.which_1 = this.which;
             this.scaleType_1 = this.scaleType;
             this.firstLoad = false;
         },
@@ -144,7 +144,7 @@
             
             this.hasDefaultColor = domain.indexOf("_default")>-1;
 
-            if(this.which=="time"){
+            if(this.scaleType=="time"){
                 var limits = this.getLimits(this.which);
                 this.scale = d3.time.scale()
                     .domain([limits.min, limits.max])
