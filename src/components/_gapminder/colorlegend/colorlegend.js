@@ -30,13 +30,17 @@
             }];
             
             this.needsUpdate = false;
-            this.value_1 = false;
+            this.which_1 = false;
             this.scaleType_1 = false;
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    if(_this.model.color.value != _this.value_1 
-                       || _this.model.color.scaleType != _this.scaleType_1 ) _this.needsUpdate = true;
+                    if(_this.model.color.which != _this.which_1 
+                       || _this.model.color.scaleType != _this.scaleType_1 ) {
+                        _this.needsUpdate = true;
+                        _this.which_1 = _this.model.color.which;
+                        _this.scaleType_1 = _this.model.color.scaleType;
+                    }
                 },
                 "change:language": function(evt) {
                     _this.updateView();

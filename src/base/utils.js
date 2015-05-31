@@ -56,12 +56,21 @@
         },
 
         /*
-         * checks whether obj is a date
-         * @param {Object} obj
+         * checks whether arg is a date
+         * @param {Object} arg
          * @returns {Boolean}
          */
-        isDate: function(obj) {
-            return (obj instanceof Date);
+        isDate: function(arg) {
+            return (arg instanceof Date);
+        },
+
+        /*
+         * checks whether arg is a string
+         * @param {Object} arg
+         * @returns {Boolean}
+         */
+        isString: function(arg) {
+            return (typeof arg === "string");
         },
 
         /*

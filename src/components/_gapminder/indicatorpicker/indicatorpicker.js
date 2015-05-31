@@ -11,7 +11,7 @@
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
 
-    var INDICATOR = "value";
+    var INDICATOR = "which";
     var SCALETYPE = "scaleType";
     var MODELTYPE_COLOR = "color";
 
@@ -21,41 +21,13 @@
     }
 
     var availOpts = {
-        'geo.region': {
-            use: 'property',
-            unit: '',
-            scales: ['ordinal']
-        },
-        'geo': {
-            use: 'property',
-            unit: '',
-            scales: ['ordinal']
-        },
-        'time': {
-            use: 'indicator',
-            unit: 'year',
-            scales: ['time']
-        },
-        'lex': {
-            use: 'indicator',
-            unit: 'years',
-            scales: ['linear']
-        },
-        'gdp_per_cap': {
-            use: 'indicator',
-            unit: '$/year/person',
-            scales: ['log', 'linear']
-        },
-        'pop': {
-            use: 'indicator',
-            unit: '',
-            scales: ['linear', 'log']
-        },
-        '_default': {
-            use: 'value',
-            unit: '',
-            scales: ['linear', 'log']
-        }
+        'geo.region': {use: 'property',unit: '',scales: ['ordinal']},
+        'geo': {use: 'property',unit: '',scales: ['ordinal']},
+        'time': {use: 'indicator',unit: 'year',scales: ['time']},
+        'lex': {use: 'indicator',unit: 'years',scales: ['linear']},
+        'gdp_per_cap': {use: 'indicator',unit: '$/year/person',scales: ['log', 'linear']},
+        'pop': {use: 'indicator',unit: '',scales: ['linear', 'log']},
+        '_default': {use: 'value',unit: '',scales: ['linear', 'log']}
     };
 
     Vizabi.Component.extend('gapminder-indicatorpicker', {

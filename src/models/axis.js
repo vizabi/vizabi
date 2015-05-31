@@ -59,8 +59,8 @@
             }
 
             //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-            if(this.value_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-            this.value_1 = this.which;
+            if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+            this.which_1 = this.which;
             this.scaleType_1 = this.scaleType;
 
             //TODO: add min and max to validation

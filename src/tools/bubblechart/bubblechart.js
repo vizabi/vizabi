@@ -430,10 +430,10 @@
             this.translator = this.model.language.getTFunction();
             this.timeFormatter = d3.time.format(_this.model.time.formatInput);
 
-            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.value);
-            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.value);
-            var titleStringS = this.translator("indicator/" + this.model.marker.size.value);
-            var titleStringC = this.translator("indicator/" + this.model.marker.color.value);
+            var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+            var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
+            var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
+            var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
 
             if (!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
             if (!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
