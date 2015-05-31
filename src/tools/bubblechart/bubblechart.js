@@ -1352,7 +1352,7 @@
                             }
                         }
                     },
-                    'buttons': ['more-options', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
+                    'buttons': ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
                 },
 
                 language: {
