@@ -140,6 +140,32 @@
         isString: function(arg) {
             return (typeof arg === "string");
         },
+        
+        
+        /*
+         * checks whether arg is a NaN
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         */
+        isNaN: function(arg) {
+            // A `NaN` primitive is the only number that is not equal to itself
+            return this.isNumber(arg) && arg != +arg;
+        },
+        
+        /*
+         * checks whether arg is a number. NaN is a number too
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         * dependencies are resolved and included here
+         */
+        isNumber: function(arg) {
+            return typeof arg == 'number' 
+                   || ((!!arg && typeof arg == 'object') 
+                        && Object.prototype.toString.call(arg) == '[object Number]'
+                      );
+        },
 
         /*
          * checks whether obj is a plain object {}
@@ -1656,7 +1682,6 @@
             this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
-            this._atomic = false;
             //holds the list of dependencies for virtual models
             this._deps = {
                 parent: [],
@@ -1773,7 +1798,7 @@
             bindSettersGetters(this);
 
             //for tool model when setting for the first time
-            if (this.validate && !setting && !this._atomic) {
+            if (this.validate && !setting) {
                 this.validate();
             }
 
@@ -1854,22 +1879,6 @@
          */
         validate: function() {
             //placeholder for validate function
-        },
-
-        /**
-         * Starts an atomic operation, blocking validation and events
-         * @param {Boolean} atomic optional boolean: atomic or not
-         */
-        atomic: function(atomic) {
-            if(atomic === false) {
-                this._atomic = false;
-                this.validate();
-                this.unfreeze();
-            }
-            else {
-                this.freeze();
-                this._atomic = true;
-            }
         },
 
         /* ==========================
@@ -2546,7 +2555,7 @@
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = _interpolateValue(this, filter, this.use, this.which);
+                    var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(this._items, filter)
                         .filter(function(d) {

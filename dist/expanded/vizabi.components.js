@@ -315,20 +315,14 @@
         },
 
         readyOnce: function()  {
+
+            var _this = this;
+
             this.element = d3.select(this.element);
             this.buttonContainerEl = this.element.append("div")
                 .attr("class", "vzb-buttonlist-container-buttons");
             this.dialogContainerEl = this.element.append("div")
                 .attr("class", "vzb-buttonlist-container-dialogs");
-            
-            
-            this.setBubbleTrails();
-            this.setBubbleLock();
-        },
-
-        ready: function() {
-
-            var _this = this;
 
             //add buttons and render components
             if(this.model.ui.buttons) {
@@ -367,6 +361,9 @@
 
             //store body overflow
             this._prev_body_overflow = document.body.style.overflow;
+            
+            this.setBubbleTrails();
+            this.setBubbleLock();
         },
         
 
@@ -1426,17 +1423,22 @@
         },
 
         _setModel: function(what, value) {
+
             var mdl = this.model.axis;
-            mdl[what] = value;
+
+            var obj = {};
+            obj[what] = value;
 
             if (what == INDICATOR) {
-                mdl.use = availOpts[value].use;
-                mdl.unit = availOpts[value].unit;
+                obj.use = availOpts[value].use;
+                obj.unit = availOpts[value].unit;
 
                 if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
-                    mdl.scaleType = availOpts[value].scales[0];
+                    obj.scaleType = availOpts[value].scales[0];
                 }
             }
+
+            mdl.set(obj);
         }
 
     });

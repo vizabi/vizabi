@@ -1701,7 +1701,7 @@
             this.default_options = {
                 state: {
                     time: {
-                        start: "1952",
+                        start: "1990",
                         end: "2012",
                         value: "2000",
                         step: 1,
@@ -2161,12 +2161,14 @@
             this.model_binds = {
                 "change": function(evt) {
                     if (!_this._readyOnce) return;
-                    if(evt === "change:time:value") return;
+                    if(evt.indexOf("change:time")!=-1) return;
+                    //console.log("change", evt)
                      _this.updateShow();
                      _this.redrawDataPoints();
                 },
                 "ready": function(evt) {
                     if (!_this._readyOnce) return;
+                    //console.log("ready", evt)
                     _this.updateShow();
                     _this.updateSize();
                     _this.updateTime();
@@ -2174,6 +2176,7 @@
                 },
                 'change:time:value': function() {
                     if (!_this._readyOnce) return;
+                    //console.log("change:time:value")
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -2253,7 +2256,12 @@
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-            });
+            }); 
+            
+            _this.updateShow();
+            _this.updateSize();
+            _this.updateTime();
+            _this.redrawDataPoints();
         },
 
         /*
@@ -2267,7 +2275,7 @@
             this.translator = this.model.language.getTFunction();
             
             
-            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value); 
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.which); 
 //                + ", "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
@@ -2993,7 +3001,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#ffb600",
-                                "world": "#ffb600",
                                 "eur": "#FFE700",
                                 "afr": "#00D5E9",
                                 "asi": "#FF5872",
@@ -3005,7 +3012,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#fbbd00",
-                                "world": "#fb6d19",
                                 "eur": "#fbaf09",
                                 "afr": "#0098df",
                                 "asi": "#da0025",
