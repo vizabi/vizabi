@@ -125,7 +125,7 @@
                             showTooltip: 0
                         }
                     },
-                    buttons: ['colors', 'fullscreen']
+                    buttons: ['fullscreen']
                 },
 
                 //language properties
