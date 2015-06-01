@@ -66,20 +66,6 @@
             //TODO: add min and max to validation
         },
         
-        /**
-         * Gets tick values for this hook
-         * @returns {Number|String} value The value for this tick
-         */
-        tickFormatter: function(x) {
-            var result = x;
-            if(utils.isDate(x)) {
-                //TODO: generalize for any time unit
-                result = time_formats["year"](x);
-            }else if (this.use == "indicator") {
-                result = parseFloat(x);
-            }
-            return result;
-        },
 
         /**
          * Gets the domain for this hook
