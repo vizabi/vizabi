@@ -47,12 +47,14 @@
             this.model_binds = {
                 "change": function(evt) {
                     if (!_this._readyOnce) return;
-                    if(evt === "change:time:value") return;
+                    if(evt.indexOf("change:time")!=-1) return;
+                    //console.log("change", evt)
                      _this.updateShow();
                      _this.redrawDataPoints();
                 },
                 "ready": function(evt) {
                     if (!_this._readyOnce) return;
+                    //console.log("ready", evt)
                     _this.updateShow();
                     _this.updateSize();
                     _this.updateTime();
@@ -60,6 +62,7 @@
                 },
                 'change:time:value': function() {
                     if (!_this._readyOnce) return;
+                    //console.log("change:time:value")
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }

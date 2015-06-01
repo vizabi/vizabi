@@ -80,7 +80,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#ffb600",
-                                "world": "#ffb600",
                                 "eur": "#FFE700",
                                 "afr": "#00D5E9",
                                 "asi": "#FF5872",
@@ -92,7 +91,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#fbbd00",
-                                "world": "#fb6d19",
                                 "eur": "#fbaf09",
                                 "afr": "#0098df",
                                 "asi": "#da0025",
