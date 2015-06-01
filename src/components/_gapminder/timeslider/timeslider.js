@@ -38,32 +38,17 @@
     //margins for slider
     var profiles = {
         small: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 8,
             label_spacing: 10
         },
         medium: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 10,
             label_spacing: 12
         },
         large: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 11,
             label_spacing: 14
         }
@@ -161,6 +146,20 @@
             this.slide.selectAll(".extent,.resize")
                 .remove();
 
+            
+            this.parent.on('myEvent', function(evt, arg, mright) {
+                
+
+                // set the right margin that depends on longest label width
+                _this.element.select(".vzb-ts-slider-wrapper")
+                    .style("right", mright+"px");
+
+                profiles[_this.getLayoutProfile()].margin = 
+                    {bottom: 0, left: 0, right: 0, top: 0};
+
+                _this.xScale.range([0, arg]);
+                _this.resize();
+            });
 
             var _this = this;
 
@@ -245,31 +244,6 @@
             this._setHandle();
 
         },
-
-
-        /**
-         * Getter and setter for styling profile
-         * @returns {Structure} current profile if not set
-         * @returns {class} this if set
-         */
-        getSetProfile: function(arg) {
-            if (!arguments.length) return profiles;
-            profiles = arg;
-            return this;
-        },
-
-
-        /**
-         * Getter and setter for scale range
-         * @returns {Structure} current profile if not set
-         * @returns {class} this if set
-         */
-        getSetScaleRangeMax: function(arg) {
-            if (!arguments.length) return this.xScale.range()[1];
-            this.xScale.range([0, arg]);
-            return this;
-        },
-
 
         /**
          * Gets brushed function to be executed when dragging

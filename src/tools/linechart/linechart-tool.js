@@ -31,6 +31,11 @@
                 placeholder: '.vzb-tool-viz',
                 model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
             }, {
+                component: 'gapminder-timeslider',
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"],
+                ui: {show_value_when_drag_play: false, axis_aligned: true}
+            }, {
                 component: 'gapminder-buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language']
