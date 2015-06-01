@@ -1701,7 +1701,7 @@
             this.default_options = {
                 state: {
                     time: {
-                        start: "1952",
+                        start: "1990",
                         end: "2012",
                         value: "2000",
                         step: 1,
