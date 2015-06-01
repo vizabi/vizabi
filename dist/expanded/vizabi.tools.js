@@ -2459,7 +2459,7 @@
             this.projectionY.attr("x2",_this.xScale.range()[0]);
 
 
-            this.parent.trigger('myEvent', this.xScale.range()[1], this.margin.right);
+            this.parent.trigger('myEvent', {rangeMax: this.xScale.range()[1], mRight: this.margin.right});
             
             this.sizeUpdatedOnce = true;
         },
@@ -3019,7 +3019,7 @@
                             showTooltip: 0
                         }
                     },
-                    buttons: ['colors', 'fullscreen']
+                    buttons: ['fullscreen']
                 },
 
                 //language properties

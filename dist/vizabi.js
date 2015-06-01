@@ -5260,17 +5260,17 @@
                 .remove();
 
             
-            this.parent.on('myEvent', function(evt, arg, mright) {
+            this.parent.on('myEvent', function(evt, arg) {
                 
 
                 // set the right margin that depends on longest label width
                 _this.element.select(".vzb-ts-slider-wrapper")
-                    .style("right", mright+"px");
+                    .style("right", arg.mRight+"px");
 
                 profiles[_this.getLayoutProfile()].margin = 
                     {bottom: 0, left: 0, right: 0, top: 0};
 
-                _this.xScale.range([0, arg]);
+                _this.xScale.range([0, arg.rangeMax]);
                 _this.resize();
             });
 
@@ -9111,7 +9111,7 @@
             this.projectionY.attr("x2",_this.xScale.range()[0]);
 
 
-            this.parent.trigger('myEvent', this.xScale.range()[1], this.margin.right);
+            this.parent.trigger('myEvent', {rangeMax: this.xScale.range()[1], mRight: this.margin.right});
             
             this.sizeUpdatedOnce = true;
         },
@@ -9671,7 +9671,7 @@
                             showTooltip: 0
                         }
                     },
-                    buttons: ['colors', 'fullscreen']
+                    buttons: ['fullscreen']
                 },
 
                 //language properties
