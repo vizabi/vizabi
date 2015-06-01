@@ -227,7 +227,7 @@ function setFullscreen() {
     setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
     normalizeDivSize(placeholder, container);
     addClass(placeholder, "fullscreen");
-    updateURL();
+    throttle(updateURL, 500);
 }
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
@@ -263,6 +263,11 @@ inputHeight.onchange = changeSizes;
 
 window.addEventListener('resize', function() {
     if(forcedResize) return;
-    normalizeDivSize(placeholder, container);
-    throttle(updateURL, 500);
+    if(hasClass(placeholder, 'fullscreen')) {
+        setFullscreen();
+    }
+    else {
+        normalizeDivSize(placeholder, container);
+        throttle(updateURL, 500);
+    }
 });
