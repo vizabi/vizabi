@@ -187,6 +187,7 @@
             if (!obj) return;
             var i;
             if (this.isArray(obj)) {
+                if (!obj.length) return;
                 for (i = 0; i < obj.length; i++) {
                     if (callback.apply(ctx, [obj[i], i]) === false) {
                         break;
@@ -3214,6 +3215,7 @@
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
+            if(strings.length === 0) return;
             utils.forEach(strings, function(str) {
                 str.innerHTML = t(str.getAttribute("data-vzb-translate"));
             });

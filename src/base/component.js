@@ -385,7 +385,9 @@
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
+            if(strings.length === 0) return;
             utils.forEach(strings, function(str) {
+                if(!str || !str.getAttribute) return;
                 str.innerHTML = t(str.getAttribute("data-vzb-translate"));
             });
         },

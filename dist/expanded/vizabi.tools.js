@@ -2152,12 +2152,6 @@
             }];
             
             
-            this.components = [{
-                component: 'gapminder-timeslider',
-                placeholder: '.vzb-lc-timeslider',
-                model: ["time"]
-            }];
-            
             this.model_binds = {
                 "change": function(evt) {
                     if (!_this._readyOnce) return;
@@ -2243,9 +2237,6 @@
 //            this.filterDropshadowEl = this.element.select('#vzb-lc-filter-dropshadow');
             this.projectionX = this.graph.select("g").select(".vzb-lc-projection-x");
             this.projectionY = this.graph.select("g").select(".vzb-lc-projection-y");
-            
-            this.components[0].ui.show_value_when_drag_play = false;
-            this.components[0].ui.axis_aligned = true;
             
             this.entityLines = null;
             this.entityLabels = null;
@@ -2354,21 +2345,21 @@
 
             this.profiles = {
                 "small": {
-                    margin: { top: 30, right: 20, left: 40, bottom: 60},
+                    margin: { top: 30, right: 20, left: 40, bottom: 30},
                     tick_spacing: 60,
                     text_padding: 8,
                     lollipopRadius: 6,
                     limitMaxTickNumberX: 5
                 },
                 "medium": {
-                    margin: {top: 40,right: 60,left: 60,bottom: 80},
+                    margin: {top: 40,right: 60,left: 60,bottom: 40},
                     tick_spacing: 80,
                     text_padding: 12,
                     lollipopRadius: 7,
                     limitMaxTickNumberX: 10
                 },
                 "large": {
-                    margin: { top: 50, right: 60, left: 60, bottom: 100},
+                    margin: { top: 50, right: 60, left: 60, bottom: 50},
                     tick_spacing: 100,
                     text_padding: 20,
                     lollipopRadius: 9,
@@ -2468,25 +2459,7 @@
             this.projectionY.attr("x2",_this.xScale.range()[0]);
 
 
-            var timeSlider = this.element.select('.vzb-lc-timeslider .vzb-timeslider');
-            
-            // set the right margin that depends on longest label width
-            timeSlider.select(".vzb-ts-slider-wrapper")
-                .style("right", this.margin.right+"px");
-            
-            // override the sizing profile of time slider
-            var tsProfiles = this.components[0].getSetProfile();
-            
-            tsProfiles[this.components[0].getLayoutProfile()].margin = 
-                {bottom: 0, left: 0, right: 0, top: 0};
-            
-            this.components[0].getSetProfile(tsProfiles);
-            this.components[0].getSetScaleRangeMax(this.xScale.range()[1]);
-            
-            // call resize of a child component to apply the changes
-            this.components[0].resize();
-            
-            
+            this.parent.trigger('myEvent', this.xScale.range()[1], this.margin.right);
             
             this.sizeUpdatedOnce = true;
         },
@@ -2951,6 +2924,11 @@
                 component: 'gapminder-linechart',
                 placeholder: '.vzb-tool-viz',
                 model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+            }, {
+                component: 'gapminder-timeslider',
+                placeholder: '.vzb-tool-timeslider',
+                model: ["state.time"],
+                ui: {show_value_when_drag_play: false, axis_aligned: true}
             }, {
                 component: 'gapminder-buttonlist',
                 placeholder: '.vzb-tool-buttonlist',

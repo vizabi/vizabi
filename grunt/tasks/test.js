@@ -13,6 +13,7 @@ module.exports = function(grunt) {
             'build',
             'jasmine',
             'connect:test', //run locally
+            'watch:test' //watch for spec
         ]);
     });
 };

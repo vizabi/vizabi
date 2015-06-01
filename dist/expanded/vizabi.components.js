@@ -9,7 +9,7 @@
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/timeslider/timeslider.html');s.innerHTML = '<div class="vzb-timeslider"> <div class="vzb-ts-slider-wrapper"> <svg class="vzb-ts-slider"> <g> <g class="vzb-ts-slider-axis"></g> <g class="vzb-ts-slider-slide"> <circle class="vzb-ts-slider-handle"></circle> <text class="vzb-ts-slider-value"></text> </g> </g> </svg> </div>  <div class="vzb-ts-btns"> <button class="vzb-ts-btn-play vzb-ts-btn"> <svg class="vzb-icon vzb-icon-play" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1576 927l-1328 738q-23 13-39.5 3t-16.5-36v-1472q0-26 16.5-36t39.5 3l1328 738q23 13 23 31t-23 31z"/></svg> </button> <button class="vzb-ts-btn-pause vzb-ts-btn"> <svg class="vzb-icon vzb-icon-pause" width="1792" height="1792" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1664 192v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45zm-896 0v1408q0 26-19 45t-45 19h-512q-26 0-45-19t-19-45v-1408q0-26 19-45t45-19h512q26 0 45 19t19 45z"/></svg> </button> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/barchart/barchart.html');s.innerHTML = ' <svg class="vzb-barchart"> <g class="vzb-bc-graph"> <g class="vzb-bc-bars"></g> <g class="vzb-bc-bar-labels"></g> <text class="vzb-bc-axis-y-title"></text> <g class="vzb-bc-axis-x"></g> <g class="vzb-bc-axis-y"></g> <g class="vzb-bc-axis-labels">  </g> </g> </svg>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/bubblechart/bubblechart.html');s.innerHTML = ' <div class="vzb-bubblechart"> <svg class="vzb-bubblechart-svg"> <g class="vzb-bc-graph"> <text class="vzb-bc-year"></text> <svg class="vzb-bc-axis-x"><g></g></svg> <svg class="vzb-bc-axis-y"><g></g></svg> <line class="vzb-bc-projection-x"></line> <line class="vzb-bc-projection-y"></line> <svg class="vzb-bc-bubbles-crop"> <g class="vzb-bc-trails"></g> <g class="vzb-bc-bubbles"></g> <g class="vzb-bc-labels"></g> </svg> <g class="vzb-bc-axis-y-title"></g> <g class="vzb-bc-axis-x-title"></g> <g class="vzb-bc-axis-s-title"></g> <g class="vzb-bc-axis-c-title"></g> <rect class="vzb-bc-zoomRect"></rect> </g> <filter id="vzb-bc-blur-effect"> <feGaussianBlur stdDeviation="2" /> </filter> </svg>  <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
-(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/linechart/linechart.html');s.innerHTML = ' <div class="vzb-linechart"> <svg class="vzb-lc-graph"> <g> <g class="vzb-lc-axis-x"></g> <text class="vzb-lc-axis-x-value"></text> <text class="vzb-lc-axis-y-value"></text> <svg class="vzb-lc-lines"></svg> <g class="vzb-lc-axis-y"></g> <line class="vzb-lc-projection-x"></line>; <line class="vzb-lc-projection-y"></line>; <g class="vzb-lc-labels"> <line class="vzb-lc-vertical-now"></line>; </g> <g class="vzb-lc-axis-y-title"></g> </g>  </svg> <div class="vzb-lc-timeslider"></div> <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
+(function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/tools/linechart/linechart.html');s.innerHTML = ' <div class="vzb-linechart"> <svg class="vzb-lc-graph"> <g> <g class="vzb-lc-axis-x"></g> <text class="vzb-lc-axis-x-value"></text> <text class="vzb-lc-axis-y-value"></text> <svg class="vzb-lc-lines"></svg> <g class="vzb-lc-axis-y"></g> <line class="vzb-lc-projection-x"></line>; <line class="vzb-lc-projection-y"></line>; <g class="vzb-lc-labels"> <line class="vzb-lc-vertical-now"></line>; </g> <g class="vzb-lc-axis-y-title"></g> </g>  </svg> <div class="vzb-tooltip vzb-hidden"></div> </div>';root.document.body.appendChild(s);}).call(this);
 /*!
  * VIZABI BUBBLE OPACITY CONTROL
  * Reusable OPACITY SLIDER
@@ -1559,32 +1559,17 @@
     //margins for slider
     var profiles = {
         small: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 8,
             label_spacing: 10
         },
         medium: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 10,
             label_spacing: 12
         },
         large: {
-            margin: {
-                top: 9,
-                right: 15,
-                bottom: 10,
-                left: 15
-            },
+            margin: { top: 9, right: 15, bottom: 10, left: 15 },
             radius: 11,
             label_spacing: 14
         }
@@ -1682,6 +1667,20 @@
             this.slide.selectAll(".extent,.resize")
                 .remove();
 
+            
+            this.parent.on('myEvent', function(evt, arg, mright) {
+                
+
+                // set the right margin that depends on longest label width
+                _this.element.select(".vzb-ts-slider-wrapper")
+                    .style("right", mright+"px");
+
+                profiles[_this.getLayoutProfile()].margin = 
+                    {bottom: 0, left: 0, right: 0, top: 0};
+
+                _this.xScale.range([0, arg]);
+                _this.resize();
+            });
 
             var _this = this;
 
@@ -1766,31 +1765,6 @@
             this._setHandle();
 
         },
-
-
-        /**
-         * Getter and setter for styling profile
-         * @returns {Structure} current profile if not set
-         * @returns {class} this if set
-         */
-        getSetProfile: function(arg) {
-            if (!arguments.length) return profiles;
-            profiles = arg;
-            return this;
-        },
-
-
-        /**
-         * Getter and setter for scale range
-         * @returns {Structure} current profile if not set
-         * @returns {class} this if set
-         */
-        getSetScaleRangeMax: function(arg) {
-            if (!arguments.length) return this.xScale.range()[1];
-            this.xScale.range([0, arg]);
-            return this;
-        },
-
 
         /**
          * Gets brushed function to be executed when dragging
