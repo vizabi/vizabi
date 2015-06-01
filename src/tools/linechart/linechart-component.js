@@ -139,7 +139,12 @@
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-            });
+            }); 
+            
+            _this.updateShow();
+            _this.updateSize();
+            _this.updateTime();
+            _this.redrawDataPoints();
         },
 
         /*
@@ -153,7 +158,7 @@
             this.translator = this.model.language.getTFunction();
             
             
-            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value); 
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.which); 
 //                + ", "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.end)

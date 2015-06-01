@@ -938,7 +938,7 @@
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = _interpolateValue(this, filter, this.use, this.which);
+                    var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(this._items, filter)
                         .filter(function(d) {

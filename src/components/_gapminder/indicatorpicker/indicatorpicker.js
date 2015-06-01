@@ -153,6 +153,7 @@
 
         _setModel: function(what, value) {
             var mdl = this.model.axis;
+            mdl.atomic();
             mdl[what] = value;
 
             if (what == INDICATOR) {
@@ -163,6 +164,7 @@
                     mdl.scaleType = availOpts[value].scales[0];
                 }
             }
+            mdl.atomic(false);
         }
 
     });

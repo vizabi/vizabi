@@ -72,6 +72,32 @@
         isString: function(arg) {
             return (typeof arg === "string");
         },
+        
+        
+        /*
+         * checks whether arg is a NaN
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         */
+        isNaN: function(arg) {
+            // A `NaN` primitive is the only number that is not equal to itself
+            return this.isNumber(arg) && arg != +arg;
+        },
+        
+        /*
+         * checks whether arg is a number. NaN is a number too
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         * dependencies are resolved and included here
+         */
+        isNumber: function(arg) {
+            return typeof arg == 'number' 
+                   || ((!!arg && typeof arg == 'object') 
+                        && Object.prototype.toString.call(arg) == '[object Number]'
+                      );
+        },
 
         /*
          * checks whether obj is a plain object {}
