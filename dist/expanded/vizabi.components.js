@@ -315,20 +315,14 @@
         },
 
         readyOnce: function()  {
+
+            var _this = this;
+
             this.element = d3.select(this.element);
             this.buttonContainerEl = this.element.append("div")
                 .attr("class", "vzb-buttonlist-container-buttons");
             this.dialogContainerEl = this.element.append("div")
                 .attr("class", "vzb-buttonlist-container-dialogs");
-            
-            
-            this.setBubbleTrails();
-            this.setBubbleLock();
-        },
-
-        ready: function() {
-
-            var _this = this;
 
             //add buttons and render components
             if(this.model.ui.buttons) {
@@ -367,6 +361,9 @@
 
             //store body overflow
             this._prev_body_overflow = document.body.style.overflow;
+            
+            this.setBubbleTrails();
+            this.setBubbleLock();
         },
         
 
