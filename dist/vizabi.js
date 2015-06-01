@@ -140,6 +140,32 @@
         isString: function(arg) {
             return (typeof arg === "string");
         },
+        
+        
+        /*
+         * checks whether arg is a NaN
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         */
+        isNaN: function(arg) {
+            // A `NaN` primitive is the only number that is not equal to itself
+            return this.isNumber(arg) && arg != +arg;
+        },
+        
+        /*
+         * checks whether arg is a number. NaN is a number too
+         * @param {*} arg
+         * @returns {Boolean}
+         * from lodash: https://github.com/lodash/lodash/blob/master/lodash.js
+         * dependencies are resolved and included here
+         */
+        isNumber: function(arg) {
+            return typeof arg == 'number' 
+                   || ((!!arg && typeof arg == 'object') 
+                        && Object.prototype.toString.call(arg) == '[object Number]'
+                      );
+        },
 
         /*
          * checks whether obj is a plain object {}
@@ -1656,7 +1682,6 @@
             this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
-            this._atomic = false;
             //holds the list of dependencies for virtual models
             this._deps = {
                 parent: [],
@@ -1773,7 +1798,7 @@
             bindSettersGetters(this);
 
             //for tool model when setting for the first time
-            if (this.validate && !setting && !this._atomic) {
+            if (this.validate && !setting) {
                 this.validate();
             }
 
@@ -1854,22 +1879,6 @@
          */
         validate: function() {
             //placeholder for validate function
-        },
-
-        /**
-         * Starts an atomic operation, blocking validation and events
-         * @param {Boolean} atomic optional boolean: atomic or not
-         */
-        atomic: function(atomic) {
-            if(atomic === false) {
-                this._atomic = false;
-                this.validate();
-                this.unfreeze();
-            }
-            else {
-                this.freeze();
-                this._atomic = true;
-            }
         },
 
         /* ==========================
@@ -2546,7 +2555,7 @@
                     // save time into variable
                     var time = new Date(filter.time);
                     // filter.time will be removed during interpolation
-                    var lastValue = _interpolateValue(this, filter, this.use, this.which);
+                    var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(this._items, filter)
                         .filter(function(d) {
@@ -5007,17 +5016,22 @@
         },
 
         _setModel: function(what, value) {
+
             var mdl = this.model.axis;
-            mdl[what] = value;
+
+            var obj = {};
+            obj[what] = value;
 
             if (what == INDICATOR) {
-                mdl.use = availOpts[value].use;
-                mdl.unit = availOpts[value].unit;
+                obj.use = availOpts[value].use;
+                obj.unit = availOpts[value].unit;
 
                 if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
-                    mdl.scaleType = availOpts[value].scales[0];
+                    obj.scaleType = availOpts[value].scales[0];
                 }
             }
+
+            mdl.set(obj);
         }
 
     });
@@ -5558,20 +5572,6 @@
             //TODO: add min and max to validation
         },
         
-        /**
-         * Gets tick values for this hook
-         * @returns {Number|String} value The value for this tick
-         */
-        tickFormatter: function(x) {
-            var result = x;
-            if(utils.isDate(x)) {
-                //TODO: generalize for any time unit
-                result = time_formats["year"](x);
-            }else if (this.use == "indicator") {
-                result = parseFloat(x);
-            }
-            return result;
-        },
 
         /**
          * Gets the domain for this hook
@@ -5662,7 +5662,6 @@
             
             this.firstLoad = true;
             this.hasDefaultColor = false;
-            
         },
         
         /**
@@ -5696,8 +5695,8 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.which_1 != this.which 
-               || !this.firstLoad && this.scaleType_1 != this.scaleType){
+               || this.firstLoad===false && this.which_1 != this.which 
+               || this.firstLoad===false && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);
@@ -8841,12 +8840,14 @@
             this.model_binds = {
                 "change": function(evt) {
                     if (!_this._readyOnce) return;
-                    if(evt === "change:time:value") return;
+                    if(evt.indexOf("change:time")!=-1) return;
+                    //console.log("change", evt)
                      _this.updateShow();
                      _this.redrawDataPoints();
                 },
                 "ready": function(evt) {
                     if (!_this._readyOnce) return;
+                    //console.log("ready", evt)
                     _this.updateShow();
                     _this.updateSize();
                     _this.updateTime();
@@ -8854,6 +8855,7 @@
                 },
                 'change:time:value': function() {
                     if (!_this._readyOnce) return;
+                    //console.log("change:time:value")
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -8933,7 +8935,12 @@
                 _this.updateSize();
                 _this.updateTime();
                 _this.redrawDataPoints();
-            });
+            }); 
+            
+            _this.updateShow();
+            _this.updateSize();
+            _this.updateTime();
+            _this.redrawDataPoints();
         },
 
         /*
@@ -8947,7 +8954,7 @@
             this.translator = this.model.language.getTFunction();
             
             
-            var titleString = this.translator("indicator/" + this.model.marker.axis_y.value); 
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.which); 
 //                + ", "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
 //                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
@@ -9673,7 +9680,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#ffb600",
-                                "world": "#ffb600",
                                 "eur": "#FFE700",
                                 "afr": "#00D5E9",
                                 "asi": "#FF5872",
@@ -9685,7 +9691,6 @@
                             which: "geo.region",
                             palette: {
                                 "_default": "#fbbd00",
-                                "world": "#fb6d19",
                                 "eur": "#fbaf09",
                                 "afr": "#0098df",
                                 "asi": "#da0025",

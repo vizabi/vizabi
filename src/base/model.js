@@ -48,7 +48,6 @@
             this._loadedOnce = false;
             this._loading = []; //array of processes that are loading
             this._intervals = getIntervals(this);
-            this._atomic = false;
             //holds the list of dependencies for virtual models
             this._deps = {
                 parent: [],
@@ -165,7 +164,7 @@
             bindSettersGetters(this);
 
             //for tool model when setting for the first time
-            if (this.validate && !setting && !this._atomic) {
+            if (this.validate && !setting) {
                 this.validate();
             }
 
@@ -246,22 +245,6 @@
          */
         validate: function() {
             //placeholder for validate function
-        },
-
-        /**
-         * Starts an atomic operation, blocking validation and events
-         * @param {Boolean} atomic optional boolean: atomic or not
-         */
-        atomic: function(atomic) {
-            if(atomic === false) {
-                this._atomic = false;
-                this.validate();
-                this.unfreeze();
-            }
-            else {
-                this.freeze();
-                this._atomic = true;
-            }
         },
 
         /* ==========================

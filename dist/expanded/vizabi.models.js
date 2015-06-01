@@ -68,20 +68,6 @@
             //TODO: add min and max to validation
         },
         
-        /**
-         * Gets tick values for this hook
-         * @returns {Number|String} value The value for this tick
-         */
-        tickFormatter: function(x) {
-            var result = x;
-            if(utils.isDate(x)) {
-                //TODO: generalize for any time unit
-                result = time_formats["year"](x);
-            }else if (this.use == "indicator") {
-                result = parseFloat(x);
-            }
-            return result;
-        },
 
         /**
          * Gets the domain for this hook
@@ -172,7 +158,6 @@
             
             this.firstLoad = true;
             this.hasDefaultColor = false;
-            
         },
         
         /**
@@ -206,8 +191,8 @@
             // first load and no palette supplied in the state
             // or changing of the indicator
             if(this.palette==null 
-               || !this.firstLoad && this.which_1 != this.which 
-               || !this.firstLoad && this.scaleType_1 != this.scaleType){
+               || this.firstLoad===false && this.which_1 != this.which 
+               || this.firstLoad===false && this.scaleType_1 != this.scaleType){
                 
                 //TODO a hack that prevents adding properties to palette (need replacing)
                 this.set("palette", null, false);

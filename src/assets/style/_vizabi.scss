@@ -111,6 +111,14 @@
                 @include position(absolute, 0px 0px 0px 0px);
             }
         }
+        &.vzb-timeslider-off {
+            .vzb-tool-timeslider {
+                display: none;
+            }
+            .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
+                @include position(absolute, 0px);
+            }
+        }
     }
     //tooltip
     .vzb-tooltip {

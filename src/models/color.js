@@ -50,8 +50,6 @@
             
             this.firstLoad = true;
             this.hasDefaultColor = false;
-            
-            console.log("init color", this.firstLoad)
         },
         
         /**
@@ -73,7 +71,6 @@
          * Validates a color hook
          */
         validate: function() {
-            console.log("validate color", this.firstLoad)
             var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
             if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
                 this.scaleType = 'linear'; 
