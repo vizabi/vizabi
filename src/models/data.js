@@ -22,7 +22,7 @@
 
             this._type = "data";
             values = utils.extend({
-                reader: "local-json"
+                reader: "json-file"
             }, values);
 
             //same constructor as parent, with same arguments

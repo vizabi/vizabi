@@ -11,18 +11,18 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
-    Vizabi.Reader.extend('local-json', {
+    Vizabi.Reader.extend('json-file', {
 
         /**
          * Initializes the reader.
          * @param {Object} reader_info Information about the reader
          */
         init: function(reader_info) {
-            this._name = 'local-json';
+            this._name = 'json-file';
             this._data = [];
             this._basepath = reader_info.path;
             if (!this._basepath) {
-                utils.error("Missing base path for local-json reader");
+                utils.error("Missing base path for json-file reader");
             };
         },
 

@@ -74,7 +74,7 @@
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
          * @param {String} lang Language
-         * @param {Object} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use. E.g.: "json-file"
          * @param {String} path Where data is located
          */
 

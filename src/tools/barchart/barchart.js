@@ -352,7 +352,7 @@
                     }
                 },
                 data: {
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
