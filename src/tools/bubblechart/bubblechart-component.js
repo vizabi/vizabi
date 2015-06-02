@@ -63,16 +63,7 @@
                     if (evt == "change:marker:size:max") return;
                     if (evt.indexOf("change:marker:color:palette") > -1) return;
                     //console.log("EVENT change:marker", evt);
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-
-                    _this._trails.create();
-                    _this._trails.run("findVisible");
-                    _this.resetZoomer(); //does also redraw data points and trails resize
-                    //_this.redrawDataPoints();
-                    _this._trails.run(["recolor", "reveal"]);
+                    _this.markersUpdatedRecently = true;
                 },
                 "change:entities:select": function() {
                     if (!_this._readyOnce) return;
@@ -99,6 +90,21 @@
                         _this.updateEntities();
                         _this.redrawDataPoints();
                         _this.updateBubbleOpacity();
+                    }
+                    
+                    if (_this.markersUpdatedRecently) {
+                        _this.markersUpdatedRecently = false;
+                        
+                        _this.updateUIStrings();
+                        _this.updateIndicators();
+                        _this.updateSize();
+                        _this.updateMarkerSizeLimits();
+
+                        _this._trails.create();
+                        _this._trails.run("findVisible");
+                        _this.resetZoomer(); //does also redraw data points and trails resize
+                        //_this.redrawDataPoints();
+                        _this._trails.run(["recolor", "reveal"]);
                     }
                 },
                 'change:time:value': function() {
