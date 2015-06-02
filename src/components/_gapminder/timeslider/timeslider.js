@@ -299,9 +299,9 @@
 
             this.valueText.text(this.format(value));
 
-            var speed = this.model.time.speed;
             var old_pos = this.handle.attr("cx");
             var new_pos = this.xScale(value);
+            var speed = new_pos>old_pos? this.model.time.speed : 0;
 
             if (transition) {
                 this.handle.attr("cx", old_pos)
