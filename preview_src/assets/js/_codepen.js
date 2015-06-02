@@ -8,8 +8,8 @@ function viewOnCodepen(TITLE, TOOL, BRANCH, STATE) {
 		title: "VIZABI EXAMPLE - "+TITLE,
 		html: "<h1>Vizabi Example: "+TITLE+"</h1><div id='placeholder'></div>",
 		css: "body{font-family:Arial,sans-serif;text-align:center;background:#f2f2f2}h1{color:#ccc}#placeholder{position:relative;display:block;margin:0 auto;width:600px;height:400px;border:1px solid #ccc}",
-		js: "var viz = new Vizabi('"+TOOL+"', document.getElementById('placeholder'), { state: "+STATE+"});",
-		js_external: BASE_URL+"vizabi.js",
+		js: "var viz = Vizabi('"+TOOL+"', document.getElementById('placeholder'), { state: "+STATE+", data: { reader: 'json-file', path: 'https://dl.dropboxusercontent.com/u/4933279/Gapminder/waffles/{{LANGUAGE}}/basic-indicators.json' }});",
+		js_external: "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.js;"+BASE_URL+"vizabi.min.js",
 		css_external: BASE_URL+"vizabi.css"
 	};
 

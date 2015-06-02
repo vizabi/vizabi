@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-01 */
+/* VIZABI - http://www.gapminder.org - 2015-06-02 */
 
 /*!
  * VIZABI MAIN
@@ -1101,7 +1101,7 @@
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
          * @param {String} lang Language
-         * @param {Object} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use. E.g.: "json-file"
          * @param {String} path Where data is located
          */
 
@@ -1811,8 +1811,8 @@
                     events.push("change");
                 }
 
-                _this.triggerAll(events, _this.getObject());
                 _this._setting = false;
+                _this.triggerAll(events, _this.getObject());
 
                 if (!this.isHook()) {
                     this.setReady();
@@ -1968,10 +1968,6 @@
                     this.trigger("readyOnce");
                 }
                 this.trigger("ready");
-                //check if parent dependency is ready (virtual models)
-                for (var i = 0; i < this._deps.parent.length; i++) {
-                    this._deps.parent[i].setReady();
-                }
             }
         },
 
@@ -2148,6 +2144,11 @@
             //this is a hook, therefore it needs to reload when data changes
             this.on("change", function() {
                 _this.load();
+            });
+
+            //this is a hook, therefore it needs to reload when data changes
+            this.on("hook_change", function() {
+                _this.setReady(false);
             });
 
         },
@@ -2681,7 +2682,6 @@
             //loading has started in this submodel (multiple times)
             'hook_change': function(evt, vals) {
                 ctx.trigger(evt, ctx.getObject());
-                ctx.setReady(false);
             },
             //loading has started in this submodel (multiple times)
             'load_start': function(evt, vals) {
@@ -2699,6 +2699,8 @@
                 //trigger only for submodel
                 evt = evt.replace('ready', 'ready:' + name);
                 ctx.trigger(evt, vals);
+                //TODO: understand why we need to force it not to be ready
+                ctx.setReady(false);
                 ctx.setReady();
             }
         };
@@ -5412,9 +5414,9 @@
 
             this.valueText.text(this.format(value));
 
-            var speed = this.model.time.speed;
             var old_pos = this.handle.attr("cx");
             var new_pos = this.xScale(value);
+            var speed = new_pos>old_pos? this.model.time.speed : 0;
 
             if (transition) {
                 this.handle.attr("cx", old_pos)
@@ -5797,7 +5799,7 @@
 
             this._type = "data";
             values = utils.extend({
-                reader: "local-json"
+                reader: "json-file"
             }, values);
 
             //same constructor as parent, with same arguments
@@ -6456,18 +6458,18 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
-    Vizabi.Reader.extend('local-json', {
+    Vizabi.Reader.extend('json-file', {
 
         /**
          * Initializes the reader.
          * @param {Object} reader_info Information about the reader
          */
         init: function(reader_info) {
-            this._name = 'local-json';
+            this._name = 'json-file';
             this._data = [];
             this._basepath = reader_info.path;
             if (!this._basepath) {
-                utils.error("Missing base path for local-json reader");
+                utils.error("Missing base path for json-file reader");
             };
         },
 
@@ -7006,12 +7008,12 @@
                     }
                 },
                 data: {
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
                 ui: {
-                    buttons: ["fullscreen"]
+                    buttons: []
                 },
 
                 language: {
@@ -7139,16 +7141,7 @@
                     if (evt == "change:marker:size:max") return;
                     if (evt.indexOf("change:marker:color:palette") > -1) return;
                     //console.log("EVENT change:marker", evt);
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-
-                    _this._trails.create();
-                    _this._trails.run("findVisible");
-                    _this.resetZoomer(); //does also redraw data points and trails resize
-                    //_this.redrawDataPoints();
-                    _this._trails.run(["recolor", "reveal"]);
+                    _this.markersUpdatedRecently = true;
                 },
                 "change:entities:select": function() {
                     if (!_this._readyOnce) return;
@@ -7175,6 +7168,21 @@
                         _this.updateEntities();
                         _this.redrawDataPoints();
                         _this.updateBubbleOpacity();
+                    }
+                    
+                    if (_this.markersUpdatedRecently) {
+                        _this.markersUpdatedRecently = false;
+                        
+                        _this.updateUIStrings();
+                        _this.updateIndicators();
+                        _this.updateSize();
+                        _this.updateMarkerSizeLimits();
+
+                        _this._trails.create();
+                        _this._trails.run("findVisible");
+                        _this.resetZoomer(); //does also redraw data points and trails resize
+                        //_this.redrawDataPoints();
+                        _this._trails.run(["recolor", "reveal"]);
                     }
                 },
                 'change:time:value': function() {
@@ -8422,7 +8430,7 @@
                 },
                 data: {
                     //reader: "waffle-server",
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
@@ -8439,7 +8447,7 @@
                             dragging: true
                         }
                     },
-                    buttons: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
+                    buttons: []
                 },
 
                 language: {
@@ -9653,7 +9661,7 @@
 
                 data: {
                     //reader: "waffle-server",
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
@@ -9671,7 +9679,7 @@
                             showTooltip: 0
                         }
                     },
-                    buttons: ['fullscreen']
+                    buttons: []
                 },
 
                 //language properties

@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-01 */
+/* VIZABI - http://www.gapminder.org - 2015-06-02 */
 
 /*!
  * VIZABI BARCHART
@@ -354,12 +354,12 @@
                     }
                 },
                 data: {
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
                 ui: {
-                    buttons: ["fullscreen"]
+                    buttons: []
                 },
 
                 language: {
@@ -487,16 +487,7 @@
                     if (evt == "change:marker:size:max") return;
                     if (evt.indexOf("change:marker:color:palette") > -1) return;
                     //console.log("EVENT change:marker", evt);
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateSize();
-                    _this.updateMarkerSizeLimits();
-
-                    _this._trails.create();
-                    _this._trails.run("findVisible");
-                    _this.resetZoomer(); //does also redraw data points and trails resize
-                    //_this.redrawDataPoints();
-                    _this._trails.run(["recolor", "reveal"]);
+                    _this.markersUpdatedRecently = true;
                 },
                 "change:entities:select": function() {
                     if (!_this._readyOnce) return;
@@ -523,6 +514,21 @@
                         _this.updateEntities();
                         _this.redrawDataPoints();
                         _this.updateBubbleOpacity();
+                    }
+                    
+                    if (_this.markersUpdatedRecently) {
+                        _this.markersUpdatedRecently = false;
+                        
+                        _this.updateUIStrings();
+                        _this.updateIndicators();
+                        _this.updateSize();
+                        _this.updateMarkerSizeLimits();
+
+                        _this._trails.create();
+                        _this._trails.run("findVisible");
+                        _this.resetZoomer(); //does also redraw data points and trails resize
+                        //_this.redrawDataPoints();
+                        _this._trails.run(["recolor", "reveal"]);
                     }
                 },
                 'change:time:value': function() {
@@ -1770,7 +1776,7 @@
                 },
                 data: {
                     //reader: "waffle-server",
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
@@ -1787,7 +1793,7 @@
                             dragging: true
                         }
                     },
-                    buttons: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
+                    buttons: []
                 },
 
                 language: {
@@ -3001,7 +3007,7 @@
 
                 data: {
                     //reader: "waffle-server",
-                    reader: "local-json",
+                    reader: "json-file",
                     path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
                 },
 
@@ -3019,7 +3025,7 @@
                             showTooltip: 0
                         }
                     },
-                    buttons: ['fullscreen']
+                    buttons: []
                 },
 
                 //language properties

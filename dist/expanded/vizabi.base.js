@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-01 */
+/* VIZABI - http://www.gapminder.org - 2015-06-02 */
 
 /*!
  * VIZABI MAIN
@@ -1101,7 +1101,7 @@
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
          * @param {String} lang Language
-         * @param {Object} reader Which reader to use. E.g.: "local-json"
+         * @param {Object} reader Which reader to use. E.g.: "json-file"
          * @param {String} path Where data is located
          */
 
@@ -1811,8 +1811,8 @@
                     events.push("change");
                 }
 
-                _this.triggerAll(events, _this.getObject());
                 _this._setting = false;
+                _this.triggerAll(events, _this.getObject());
 
                 if (!this.isHook()) {
                     this.setReady();
@@ -1968,10 +1968,6 @@
                     this.trigger("readyOnce");
                 }
                 this.trigger("ready");
-                //check if parent dependency is ready (virtual models)
-                for (var i = 0; i < this._deps.parent.length; i++) {
-                    this._deps.parent[i].setReady();
-                }
             }
         },
 
@@ -2148,6 +2144,11 @@
             //this is a hook, therefore it needs to reload when data changes
             this.on("change", function() {
                 _this.load();
+            });
+
+            //this is a hook, therefore it needs to reload when data changes
+            this.on("hook_change", function() {
+                _this.setReady(false);
             });
 
         },
@@ -2681,7 +2682,6 @@
             //loading has started in this submodel (multiple times)
             'hook_change': function(evt, vals) {
                 ctx.trigger(evt, ctx.getObject());
-                ctx.setReady(false);
             },
             //loading has started in this submodel (multiple times)
             'load_start': function(evt, vals) {
@@ -2699,6 +2699,8 @@
                 //trigger only for submodel
                 evt = evt.replace('ready', 'ready:' + name);
                 ctx.trigger(evt, vals);
+                //TODO: understand why we need to force it not to be ready
+                ctx.setReady(false);
                 ctx.setReady();
             }
         };
