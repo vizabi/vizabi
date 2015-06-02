@@ -357,7 +357,7 @@
                 },
 
                 ui: {
-                    buttons: ["fullscreen"]
+                    buttons: []
                 },
 
                 language: {

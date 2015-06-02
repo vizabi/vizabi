@@ -132,7 +132,7 @@
                             dragging: true
                         }
                     },
-                    buttons: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
+                    buttons: []
                 },
 
                 language: {
