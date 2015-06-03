@@ -878,8 +878,8 @@
             var valueC = _this.model.marker.color.getValue(d);
 
             // check if fetching data succeeded
-            if (valueL == null || valueY == null || valueX == null || valueS == null) {
-
+            //TODO: what if values are ACTUALLY 0 ?
+            if (!valueL || !valueY || !valueX || !valueS) {
                 // if entity is missing data it should hide
                 view.classed("vzb-invisible", true)
 
