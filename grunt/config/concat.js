@@ -55,37 +55,37 @@ module.exports = function(grunt) {
             dest: '.tmp/templates.js',
         },
 
-        base: {
-            src: FILES.base,
-            dest: 'dist/expanded/vizabi.base.js',
-        },
+        // base: {
+        //     src: FILES.base,
+        //     dest: 'dist/expanded/vizabi.base.js',
+        // },
 
-        models: {
-            //TODO: import all models
-            //models
-            src: FILES.models,
-            dest: 'dist/expanded/vizabi.models.js',
-        },
+        // models: {
+        //     //TODO: import all models
+        //     //models
+        //     src: FILES.models,
+        //     dest: 'dist/expanded/vizabi.models.js',
+        // },
 
-        components: {
-            src: FILES.components,
-            dest: 'dist/expanded/vizabi.components.js',
-        },
+        // components: {
+        //     src: FILES.components,
+        //     dest: 'dist/expanded/vizabi.components.js',
+        // },
 
-        readers: {
-            src: FILES.readers,
-            dest: 'dist/expanded/vizabi.readers.js',
-        },
+        // readers: {
+        //     src: FILES.readers,
+        //     dest: 'dist/expanded/vizabi.readers.js',
+        // },
 
-        tools: {
-            src: FILES.tools,
-            dest: 'dist/expanded/vizabi.tools.js',
-        },
+        // tools: {
+        //     src: FILES.tools,
+        //     dest: 'dist/expanded/vizabi.tools.js',
+        // },
 
-        plugins: {
-            src: FILES.plugins,
-            dest: 'dist/expanded/vizabi.plugins.js',
-        },
+        // plugins: {
+        //     src: FILES.plugins,
+        //     dest: 'dist/expanded/vizabi.plugins.js',
+        // },
 
         full: {
             options: {

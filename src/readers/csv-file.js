@@ -1,28 +1,3 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-02 */
-
-/*!
- * Inline Reader
- * the simplest reader possible
- */
-
-(function() {
-
-    "use strict";
-
-    var root = this;
-    var Vizabi = root.Vizabi;
-
-    Vizabi.Reader.extend('inline', {
-        init: function(reader_info) {
-            this.name = "inline";
-            this._super(reader_info);
-        },
-        read: function() {
-            return (new Vizabi.Promise).resolve();
-        }
-    });
-
-}).call(this);
 /*!
  * Local JSON reader
  */
@@ -36,18 +11,21 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
-    Vizabi.Reader.extend('json-file', {
+    var FILE_CACHED = {}; //caches files from this reader
+    var FILE_REQUESTED = {}; //caches files from this reader
+
+    Vizabi.Reader.extend('csv-file', {
 
         /**
          * Initializes the reader.
          * @param {Object} reader_info Information about the reader
          */
         init: function(reader_info) {
-            this._name = 'json-file';
+            this._name = 'csv-file';
             this._data = [];
             this._basepath = reader_info.path;
             if (!this._basepath) {
-                utils.error("Missing base path for json-file reader");
+                utils.error("Missing base path for csv-file reader");
             };
         },
 
@@ -67,14 +45,51 @@
 
             (function(query, p) {
 
-                d3.json(path, function(error, res) {
-                    if (error) {
-                        utils.error("Error Happened While Loading File: " + path, error);
-                        return;
-                    }
+                //if cached, retrieve and parse
+                if (FILE_CACHED.hasOwnProperty(path)) {
+                    parse(FILE_CACHED[path]);
+                }
+                //if requested by another hook, wait for the response
+                else if (FILE_REQUESTED.hasOwnProperty(path)) {
+                    FILE_REQUESTED[path].then(function() {
+                        parse(FILE_CACHED[path]);
+                    });
+                }
+                //if not, request and parse
+                else {
+                    d3.csv(path, function(error, res) {
 
-                    //TODO: Improve local json filtering
-                    var data = res[0];
+                        //fix CSV response
+                        res = format(res);
+
+                        //cache and resolve
+                        FILE_CACHED[path] = res;
+                        FILE_REQUESTED[path].resolve();
+                        delete FILE_REQUESTED[path];
+
+                        if (error) {
+                            utils.error("Error Happened While Loading CSV File: " + path, error);
+                            return;
+                        }
+                        parse(res);
+                    });
+                    FILE_REQUESTED[path] = new Promise();
+                }
+
+                function format(res) {
+                    //make category an array and fix missing regions
+                    res = res.map(function(row) {
+                        row['geo.cat'] = [row['geo.cat']];
+                        row['geo.region'] = row['geo.region'] || row['geo'];
+                        return row;
+                    });
+
+                    return res;
+                }
+
+                function parse(res) {
+                    
+                    var data = res;
                     //rename geo.category to geo.cat
                     var where = query.where;
                     if (where['geo.category']) {
@@ -126,98 +141,14 @@
                     //only selected items get returned
                     data = data.map(function(row) {
                         return utils.clone(row, query.select);
-                    })
+                    });
 
                     _this._data = data;
 
                     p.resolve();
-                });
+                }
 
             })(query, p);
-
-            return p;
-        },
-
-        /**
-         * Gets the data
-         * @returns all data
-         */
-        getData: function() {
-            return this._data;
-        }
-    });
-
-}).call(this);
-/*!
- * Waffle server Reader
- * the simplest reader possible
- */
-
-(function() {
-
-    "use strict";
-
-    var root = this;
-    var Vizabi = root.Vizabi;
-    var utils = Vizabi.utils;
-    var Promise = Vizabi.Promise;
-
-    Vizabi.Reader.extend('waffle-server', {
-
-        /**
-         * Initializes the reader.
-         * @param {Object} reader_info Information about the reader
-         */
-        init: function(reader_info) {
-            this._name = 'waffle-reader';
-            this._data = [];
-            this._basepath = reader_info.path || "https://waffle.gapminder.org/api/v1/query";
-        },
-
-        /**
-         * Reads from source
-         * @param {Array} query to be performed
-         * @param {String} language language
-         * @returns a promise that will be resolved when data is read
-         */
-        read: function(query, language) {
-            var _this = this;
-            var p = new Promise();
-            var formatted;
-
-            this._data = [];
-
-            var where = query.where;
-            //format time query if existing
-            if (where['time']) {
-                //[['1990', '2012']] -> '1990-2012'
-                where['time'] = where['time'][0].join('-');
-            }
-            //rename geo.category to geo.cat
-            if (where['geo.category']) {
-                where['geo.cat'] = utils.clone(where['geo.category']);
-                delete where['geo.category'];
-            }
-
-
-            formatted = {
-                "SELECT": query.select,
-                "WHERE": where,
-                "FROM": "humnum"
-            };
-
-            var pars = {
-                query: [formatted],
-                lang: language
-            };
-
-            utils.post(this._basepath, pars, function(res) {
-                _this._data = res;
-                p.resolve();
-            }, function() {
-                console.log("Error loading from Waffle Server:", _this._basepath);
-                p.reject('Could not read from waffle server');
-            }, true);
 
             return p;
         },

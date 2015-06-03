@@ -11,6 +11,9 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
+    var FILE_CACHED = {}; //caches files from this reader
+    var FILE_REQUESTED = {}; //caches files from this reader
+
     Vizabi.Reader.extend('json-file', {
 
         /**
@@ -42,12 +45,34 @@
 
             (function(query, p) {
 
-                d3.json(path, function(error, res) {
-                    if (error) {
-                        utils.error("Error Happened While Loading File: " + path, error);
-                        return;
-                    }
+                //if cached, retrieve and parse
+                if (FILE_CACHED.hasOwnProperty(path)) {
+                    parse(FILE_CACHED[path]);
+                }
+                //if requested by another hook, wait for the response
+                else if (FILE_REQUESTED.hasOwnProperty(path)) {
+                    FILE_REQUESTED[path].then(function() {
+                        parse(FILE_CACHED[path]);
+                    });
+                }
+                //if not, request and parse
+                else {
+                    d3.json(path, function(error, res) {
+                        //cache and resolve
+                        FILE_CACHED[path] = res;
+                        FILE_REQUESTED[path].resolve();
+                        delete FILE_REQUESTED[path];
 
+                        if (error) {
+                            utils.error("Error Happened While Loading File: " + path, error);
+                            return;
+                        }
+                        parse(res);
+                    });
+                    FILE_REQUESTED[path] = new Promise();
+                }
+
+                function parse(res) {
                     //TODO: Improve local json filtering
                     var data = res[0];
                     //rename geo.category to geo.cat
@@ -101,12 +126,12 @@
                     //only selected items get returned
                     data = data.map(function(row) {
                         return utils.clone(row, query.select);
-                    })
+                    });
 
                     _this._data = data;
 
                     p.resolve();
-                });
+                }
 
             })(query, p);
 
