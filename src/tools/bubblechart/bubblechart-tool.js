@@ -92,17 +92,7 @@
                             use: "property",
                             which: "geo.region",
                             scaleType: "ordinal",
-                            unit: "",
-                            palette: {
-                                _defs_: {
-                                    "_default": "#ffb600",
-                                    "world": "#ffb600",
-                                    "eur": "#FFE700",
-                                    "afr": "#00D5E9",
-                                    "asi": "#FF5872",
-                                    "ame": "#7FEB00"
-                                }
-                            }
+                            unit: ""
                         },
                         size: {
                             use: "indicator",

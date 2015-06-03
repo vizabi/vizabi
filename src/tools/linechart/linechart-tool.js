@@ -93,14 +93,7 @@
                         },
                         color_shadow: {
                             use: "property",
-                            which: "geo.region",
-                            palette: {
-                                "_default": "#fbbd00",
-                                "eur": "#fbaf09",
-                                "afr": "#0098df",
-                                "asi": "#da0025",
-                                "ame": "#00b900"
-                            }
+                            which: "geo.region"
                         }
                     }
                 },

@@ -47,9 +47,9 @@
                 playing: false,
                 loop: false,
                 round: true,
-                speed: 500,
+                speed: 300,
                 unit: "year",
-                format: "%Y", //defaults to year format
+                formatInput: "%Y", //defaults to year format
                 step: 1, //step must be integer
                 adaptMinMaxZoom: false
             }, values);
