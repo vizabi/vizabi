@@ -107,8 +107,8 @@
 
                 data: {
                     //reader: "waffle-server",
-                    reader: "json-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
+                    reader: "csv-file",
+                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
                 },
 
                 ui: {

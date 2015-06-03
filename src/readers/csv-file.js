@@ -14,18 +14,18 @@
     var FILE_CACHED = {}; //caches files from this reader
     var FILE_REQUESTED = {}; //caches files from this reader
 
-    Vizabi.Reader.extend('json-file', {
+    Vizabi.Reader.extend('csv-file', {
 
         /**
          * Initializes the reader.
          * @param {Object} reader_info Information about the reader
          */
         init: function(reader_info) {
-            this._name = 'json-file';
+            this._name = 'csv-file';
             this._data = [];
             this._basepath = reader_info.path;
             if (!this._basepath) {
-                utils.error("Missing base path for json-file reader");
+                utils.error("Missing base path for csv-file reader");
             };
         },
 
@@ -57,14 +57,18 @@
                 }
                 //if not, request and parse
                 else {
-                    d3.json(path, function(error, res) {
+                    d3.csv(path, function(error, res) {
+
+                        //fix CSV response
+                        res = format(res);
+
                         //cache and resolve
                         FILE_CACHED[path] = res;
                         FILE_REQUESTED[path].resolve();
                         delete FILE_REQUESTED[path];
 
                         if (error) {
-                            utils.error("Error Happened While Loading File: " + path, error);
+                            utils.error("Error Happened While Loading CSV File: " + path, error);
                             return;
                         }
                         parse(res);
@@ -72,9 +76,20 @@
                     FILE_REQUESTED[path] = new Promise();
                 }
 
+                function format(res) {
+                    //make category an array and fix missing regions
+                    res = res.map(function(row) {
+                        row['geo.cat'] = [row['geo.cat']];
+                        row['geo.region'] = row['geo.region'] || row['geo'];
+                        return row;
+                    });
+
+                    return res;
+                }
+
                 function parse(res) {
-                    //TODO: Improve local json filtering
-                    var data = res[0];
+                    
+                    var data = res;
                     //rename geo.category to geo.cat
                     var where = query.where;
                     if (where['geo.category']) {
