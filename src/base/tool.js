@@ -291,7 +291,7 @@
                 if (!utils.isObject(blueprint._defs_)) {
                     blueprint._defs_ = {};
                 }
-                values[field] = utils.extend(blueprint._defs_, values[field]);
+                values[field] = blueprint._defs_ || values[field];
             }
         }
 
