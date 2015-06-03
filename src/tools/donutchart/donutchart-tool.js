@@ -38,9 +38,9 @@
             //provide the default options
             this.default_options = {
                 state: {
-                    // available time would have the range of 1952-2012 years (%Y), with the deafult position at 2000
+                    // available time would have the range of 1990-2012 years (%Y), with the deafult position at 2000
                     time: {
-                        start: "1952",
+                        start: "1990",
                         end: "2012",
                         value: "2000"
                     },
@@ -85,7 +85,6 @@
                     strings: {
                         _defs_: {
                             en: {
-                                "title": "Donut chart",
                                 "buttons/colors": "Colors",
                                 "indicator/pop": "Population",
                                 "indicator/geo.region": "Region",

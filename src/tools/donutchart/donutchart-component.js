@@ -39,12 +39,12 @@
             //contructor is the same as any component
             this._super(config, context);
 
-            this.xScale = null;
+            this.colorScale = null;
             this.arc = d3.svg.arc();
             
             this.pie = d3.layout.pie()
                 .sort(null)
-                .value(function(d) { return d});
+                .value(function(d) { return d.pop; });
         },
 
         /**
@@ -52,20 +52,18 @@
          */
         readyOnce: function() {
 
-            this.element = d3.select(this.element);
-            this.svg = this.element.select("svg");
+            this.element = d3.select(this.element)
+            this.svgEl = this.element.select("svg").append("g");
+            
+            this.yearEl = this.svgEl.append("text").attr("class", "year");
+            this.titleEl = this.svgEl.append("text").attr("class", "title");
 
             var _this = this;
             this.on("resize", function() {
                 _this.resize();
                 _this.update();
-            });
-        },
-
-        /*
-         * Both model and DOM are ready
-         */
-        ready: function() {
+            });            
+        
             this.updateEntities();
             this.resize();
             this.update();
@@ -76,19 +74,25 @@
         updateEntities: function(){
             this.translator = this.model.language.getTFunction();
             this.timeFormatter = d3.time.format(this.model.time.formatInput);
-            this.xScale = this.model.marker.axis.getScale().range([0, 2*Math.PI]);
+            this.colorScale = this.model.marker.color.getScale();
             
-            var items = this.model.marker.label.getItems();
+            this.titleEl.text(this.translator("indicator/pop"));
+            this.items = this.model.marker.label.getItems();
             
-            
-            this.entities = this.svg.selectAll('.vzb-dc-entity')
-                .data(items);
+            this.entities = this.svgEl.selectAll('.vzb-dc-entity')
+                .data(this.items);
 
             //exit selection
             this.entities.exit().remove();
 
             //enter selection
-            this.entities.enter().append("g").attr("class", "vzb-dc-entity").append("path");
+            this.entities
+                .enter().append("g")
+                .attr("class", "vzb-dc-entity")
+                .each(function(){
+                d3.select(this).append("path");
+                d3.select(this).append("text").attr("class","label");
+            });
         },
         
         
@@ -101,32 +105,31 @@
 
             var duration = (this.model.time.playing) ? this.model.time.speed : 0;
             var time = this.model.time.value;
+            
+            this.yearEl.text(this.timeFormatter(time));
 
-//            var g = svg.selectAll(".arc")
-//                  .data(pie(data))
-//                .enter().append("g")
-//                  .attr("class", "arc");
+            var data = utils.clone(this.items);
+            
+            data.forEach(function(d){
+                d.pop = _this.model.marker.axis.getValue({geo: d.geo, time: time});
+                d.color = _this.model.marker.color.getValue({geo: d.geo, time: time});
+                d.label = _this.model.marker.label.getValue({geo: d.geo, time: time});
+            });
+            
+            data = this.pie(data)
 
-            this.entities.selectAll("path")
-                  .attr("d", function(d){console.log(d)})
-                  //.style("fill", function(d) { return color(d.data.age); });
 
-//
-//            this.bars.selectAll('.vzb-bc-bar')
-//                .attr("width", barWidth)
-//                .attr("fill", function(d) {
-//                    return _this.cScale(_this.model.marker.color.getValue(d));
-//                })
-//                .attr("x", function(d) {
-//                    return _this.xScale(_this.model.marker.axis.getValue(d));
-//                })
-//                .transition().duration(duration).ease("linear")
-//                .attr("y", function(d) {
-//                    return _this.yScale(_this.model.marker.axis.getValue(d));
-//                })
-//                .attr("height", function(d) {
-//                    return _this.height - _this.yScale(_this.model.marker.axis.getValue(d));
-//                });
+            this.entities
+                .data(data)
+                .select("path")
+                .attr("d", this.arc)
+                .style("fill", function(d) { return _this.colorScale(d.data.color) })
+                .style("stroke", "white")
+
+            this.entities
+                .select("text")
+                .attr("transform", function(d) { return "translate(" + _this.arc.centroid(d) + ")"; })
+                .text(function(d) { return d.data.label; });            
         },
 
         /**
@@ -136,15 +139,17 @@
         resize: function() {
             var _this = this;
 
-            this.profiles = {"small": {thickness:5}, "medium": {thickness:10}, "large": {thickness: 15} };
-            var thickness = this.profiles[this.getLayoutProfile()].thickness;
-
-            this.height = parseInt(this.element.style("height"), 10);
-            this.width = parseInt(this.element.style("width"), 10);
+            var height = parseInt(this.element.style("height"));
+            var width = parseInt(this.element.style("width"));
+            var min = Math.min(height, width);
+            
+            this.svgEl.attr("transform","translate("+(width/2)+","+(height/2)+")");
+            this.titleEl.attr("y", "-0.1em");
+            this.yearEl.attr("y", "0.1em");
             
             this.arc
-                .outerRadius(Math.min(this.height, this.width)/2)
-                .innerRadius(Math.min(this.height, this.width)/2 - thickness)
+                .outerRadius(min/2 * 0.9)
+                .innerRadius(min/2 - min * 0.1)
         }
         
     });
