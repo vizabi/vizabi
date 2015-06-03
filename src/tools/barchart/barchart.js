@@ -315,7 +315,7 @@
                             filter: {
                                 _defs_: {
                                     "geo": ["*"],
-                                    "geo.category": ["region"]
+                                    "geo.cat": ["region"]
                                 }
                             }
                         }
