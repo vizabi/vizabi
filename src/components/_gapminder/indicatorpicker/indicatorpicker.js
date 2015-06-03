@@ -79,6 +79,7 @@
             var _this = this;
 
             this.element = d3.select(this.element);
+            this.titleEl = this.element.append("p");
             this.el_select_indicator = this.element.select('.vzb-ip-indicator');
             this.el_select_scaletype = this.element.select('.vzb-ip-scaletype');
 
@@ -96,6 +97,7 @@
         updateView: function() {
             var _this = this;
             this.translator = this.model.language.getTFunction();
+            this.titleEl.text(this.translator(this.model.axis.which));
 
             var pointer = "_default";
 
