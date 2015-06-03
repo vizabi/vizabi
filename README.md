@@ -17,19 +17,13 @@ The main features are:
 
 You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.  
 
-####Can I see it in action?
 See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/)
-
-#### Where can I find the documentation?
 Checkout documentation here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/docs/)
 
 
 ## Setup & Quickstart
 
-####Dependencies
 Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower), [Grunt](https://github.com/gruntjs/grunt) and [Sass](http://sass-lang.com/install)
-
-####Clone and install
 
 Clone this repo and run the following commands:
 
@@ -40,7 +34,6 @@ bower install
 
 You may need to run ```npm install``` with administrative privilages.
 
-####Running and Developing
 
 In order to build the project, type the following:
 ```sh
