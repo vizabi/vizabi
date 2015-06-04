@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-03 */
+/* VIZABI - http://www.gapminder.org - 2015-06-04 */
 
 /*!
  * VIZABI MAIN
@@ -1257,7 +1257,7 @@
         /**
          * Initializes the event class
          */
-        init: function(config, parent) {
+        init: function() {
 
             this._id = this._id || utils.uniqueId('e');
             this._events = {};
@@ -7204,12 +7204,13 @@
                         _defs_: {
                             en: {
                                 "title": "",
-                                "buttons/expand": "Full screen",
-                                "buttons/unexpand": "Leave full screen",
+                                "buttons/expand": "Go Big",
+                                "buttons/unexpand": "Go Small",
                                 "buttons/lock": "Lock",
                                 "buttons/find": "Find",
                                 "buttons/colors": "Colors",
                                 "buttons/size": "Size",
+                                "buttons/axes": "Axes",
                                 "buttons/more_options": "Options",
                                 "indicator/lex": "Life expectancy",
                                 "indicator/gdp_per_cap": "GDP per capita",
@@ -8944,262 +8945,6 @@
                                      
     
 }).call(this);    
-/*!
- * VIZABI DONUTCHART
- */
-
-(function() {
-
-    "use strict";
-
-    var Vizabi = this.Vizabi;
-    var utils = Vizabi.utils;
-
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) return;
-
-    var comp_template = '<div class="vzb-donutchart"><svg class="vzb-donutchart-svg"></svg></div>';
-
-    //DONUT CHART COMPONENT
-    Vizabi.Component.extend('gapminder-donutchart', {
-
-        init: function(config, context) {
-            this.name = 'donutchart';
-            this.template = comp_template;
-
-            //define expected models for this component
-            this.model_expects = [
-                {name: "time", type: "time"},
-                {name: "entities", type: "entities"},
-                {name: "marker", type: "model"},
-                {name: "language", type: "language"}
-            ];
-
-            var _this = this;
-            this.model_binds = {
-                "change:time:value": function(evt) {
-                    _this.update();
-                }
-            };
-
-            //contructor is the same as any component
-            this._super(config, context);
-
-            this.xScale = null;
-            this.arc = d3.svg.arc();
-            
-            this.pie = d3.layout.pie()
-                .sort(null)
-                .value(function(d) { return d});
-        },
-
-        /**
-         * DOM is ready
-         */
-        readyOnce: function() {
-
-            this.element = d3.select(this.element);
-            this.svg = this.element.select("svg");
-
-            var _this = this;
-            this.on("resize", function() {
-                _this.resize();
-                _this.update();
-            });
-        },
-
-        /*
-         * Both model and DOM are ready
-         */
-        ready: function() {
-            this.updateEntities();
-            this.resize();
-            this.update();
-        },
-
-
-        
-        updateEntities: function(){
-            this.translator = this.model.language.getTFunction();
-            this.timeFormatter = d3.time.format(this.model.time.formatInput);
-            this.xScale = this.model.marker.axis.getScale().range([0, 2*Math.PI]);
-            
-            var items = this.model.marker.label.getItems();
-            
-            
-            this.entities = this.svg.selectAll('.vzb-dc-entity')
-                .data(items);
-
-            //exit selection
-            this.entities.exit().remove();
-
-            //enter selection
-            this.entities.enter().append("g").attr("class", "vzb-dc-entity").append("path");
-        },
-        
-        
-        /**
-         * Updates entities
-         */
-        update: function() {
-            
-            var _this = this;
-
-            var duration = (this.model.time.playing) ? this.model.time.speed : 0;
-            var time = this.model.time.value;
-
-//            var g = svg.selectAll(".arc")
-//                  .data(pie(data))
-//                .enter().append("g")
-//                  .attr("class", "arc");
-
-            this.entities.selectAll("path")
-                  .attr("d", function(d){console.log(d)})
-                  //.style("fill", function(d) { return color(d.data.age); });
-
-//
-//            this.bars.selectAll('.vzb-bc-bar')
-//                .attr("width", barWidth)
-//                .attr("fill", function(d) {
-//                    return _this.cScale(_this.model.marker.color.getValue(d));
-//                })
-//                .attr("x", function(d) {
-//                    return _this.xScale(_this.model.marker.axis.getValue(d));
-//                })
-//                .transition().duration(duration).ease("linear")
-//                .attr("y", function(d) {
-//                    return _this.yScale(_this.model.marker.axis.getValue(d));
-//                })
-//                .attr("height", function(d) {
-//                    return _this.height - _this.yScale(_this.model.marker.axis.getValue(d));
-//                });
-        },
-
-        /**
-         * Executes everytime the container or vizabi is resized
-         * Ideally,it contains only operations related to size
-         */
-        resize: function() {
-            var _this = this;
-
-            this.profiles = {"small": {thickness:5}, "medium": {thickness:10}, "large": {thickness: 15} };
-            var thickness = this.profiles[this.getLayoutProfile()].thickness;
-
-            this.height = parseInt(this.element.style("height"), 10);
-            this.width = parseInt(this.element.style("width"), 10);
-            
-            this.arc
-                .outerRadius(Math.min(this.height, this.width)/2)
-                .innerRadius(Math.min(this.height, this.width)/2 - thickness)
-        }
-        
-    });
-
-}).call(this);
-/*!
- * VIZABI BUBBLECHART
- */
-
-(function() {
-
-    "use strict";
-
-    var Vizabi = this.Vizabi;
-
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) return;
-
-    //extend the base Tool class and register it in Vizabi tools under a name 'DunutChart'
-    Vizabi.Tool.extend('DonutChart', {
-
-        //Run when the tool is created
-        init: function(config, options) {
-
-            //Let's give it a name
-            this.name = "donutchart";
-
-            //Now we can specify components that should be included in the tool: 
-            this.components = [{
-                //choose which component to use:
-                //at this point you can check Vizabi.Component.getCollection() to see which components are available
-                component: 'gapminder-donutchart', 
-                //these placeholdes are defined by the Tool prototype class
-                placeholder: '.vzb-tool-viz', 
-                //component should have access to the following models:
-                model: ["state.time", "state.entities", "state.marker", "language"] 
-            }, {
-                component: 'gapminder-timeslider',
-                placeholder: '.vzb-tool-timeslider',
-                model: ["state.time"]
-            }];
-
-            //provide the default options
-            this.default_options = {
-                state: {
-                    // available time would have the range of 1952-2012 years (%Y), with the deafult position at 2000
-                    time: {
-                        start: "1952",
-                        end: "2012",
-                        value: "2000"
-                    },
-                    //Entities include all ("*") geo's of category "regions" -- equivalent to 'geo: ["asi", "ame", "eur", "afr"]'
-                    entities: {
-                        show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.category": ["region"]
-                                }
-                            }
-                        }
-                    },
-                    //Markers correspond to visuals that we want to show. We have label, axis and color
-                    marker: {
-                        dimensions: ["entities", "time"],
-                        label: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        axis: {
-                            use: "indicator",
-                            which: "pop"
-                        },
-                        color: {
-                            use: "property",
-                            which: "geo.region"
-                        }
-                    }
-                },
-                //specify where we get the data from
-                data: {
-                    reader: "json-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.json"
-                },
-
-                //default language strings. Let's keep it minimal for now
-                language: {
-                    id: "en",
-                    strings: {
-                        _defs_: {
-                            en: {
-                                "title": "Donut chart",
-                                "buttons/colors": "Colors",
-                                "indicator/pop": "Population",
-                                "indicator/geo.region": "Region",
-                                "indicator/geo": "Geo code"
-                            }
-                        }
-                    }
-                }
-            };
-
-            //constructor is the same as any tool
-            this._super(config, options);
-        }
-
-    });
-}).call(this);
 /*!
  * VIZABI LINECHART
  */

@@ -19,7 +19,7 @@
         /**
          * Initializes the event class
          */
-        init: function(config, parent) {
+        init: function() {
 
             this._id = this._id || utils.uniqueId('e');
             this._events = {};
