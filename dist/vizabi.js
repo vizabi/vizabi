@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-03 */
+/* VIZABI - http://www.gapminder.org - 2015-06-04 */
 
 /*!
  * VIZABI MAIN
@@ -7204,12 +7204,13 @@
                         _defs_: {
                             en: {
                                 "title": "",
-                                "buttons/expand": "Full screen",
-                                "buttons/unexpand": "Leave full screen",
+                                "buttons/expand": "Go Big",
+                                "buttons/unexpand": "Go Small",
                                 "buttons/lock": "Lock",
                                 "buttons/find": "Find",
                                 "buttons/colors": "Colors",
                                 "buttons/size": "Size",
+                                "buttons/axes": "Axes",
                                 "buttons/more_options": "Options",
                                 "indicator/lex": "Life expectancy",
                                 "indicator/gdp_per_cap": "GDP per capita",
