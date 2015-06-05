@@ -59,6 +59,16 @@
                 else {
                     d3.csv(path, function(error, res) {
 
+                        if (!res) {
+                            utils.error("No permissions or empty file: " + path, error);
+                            return;
+                        }
+
+                        if (error) {
+                            utils.error("Error Happened While Loading CSV File: " + path, error);
+                            return;
+                        }
+
                         //fix CSV response
                         res = format(res);
 
@@ -67,10 +77,6 @@
                         FILE_REQUESTED[path].resolve();
                         delete FILE_REQUESTED[path];
 
-                        if (error) {
-                            utils.error("Error Happened While Loading CSV File: " + path, error);
-                            return;
-                        }
                         parse(res);
                     });
                     FILE_REQUESTED[path] = new Promise();
