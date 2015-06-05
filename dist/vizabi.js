@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-04 */
+/* VIZABI - http://www.gapminder.org - 2015-06-05 */
 
 /*!
  * VIZABI MAIN
@@ -3572,13 +3572,13 @@
                 }
                 values[field] = defaultOptions(values[field], blueprint);
             } else if (type === "object") {
-                if (!utils.isObject(original)) {
-                    values[field] = {};
+                if (!utils.isObject(original) || Object.keys(original).length === 0) {
+                    original = false; //will be overwritten
                 }
                 if (!utils.isObject(blueprint._defs_)) {
                     blueprint._defs_ = {};
                 }
-                values[field] = blueprint._defs_ || values[field];
+                values[field] = original || blueprint._defs_;
             }
         }
 
