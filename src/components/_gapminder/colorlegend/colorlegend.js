@@ -35,30 +35,22 @@
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    if(_this.model.color.which != _this.which_1 
-                       || _this.model.color.scaleType != _this.scaleType_1 ) {
-                        _this.needsUpdate = true;
-                        _this.which_1 = _this.model.color.which;
-                        _this.scaleType_1 = _this.model.color.scaleType;
-                    }
+                    _this.updateView();
                 },
                 "change:language": function(evt) {
                     _this.updateView();
                 },
                 "ready": function(evt) {
                     if(!_this._readyOnce) return;
-                    if(_this.needsUpdate){
-                        _this.updateView();
-                        _this.needsUpdate = false;
-                    }
+                     _this.updateView();
                 }   
             }
             
             //contructor is the same as any component
             this._super(config, context);
         },
-
-
+        
+        
         readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
