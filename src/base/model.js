@@ -743,7 +743,7 @@
          * @returns {Array} domain
          */
         getScale: function() {
-            if (this.scale == null) this.buildScale();
+            if (!this.scale) this.buildScale();
             return this.scale;
         },
 
@@ -798,10 +798,16 @@
                 return this._limits[attr];
             }
 
-            var filtered = this._items.map(function(d) {
-                //TODO: Move this up to readers ?
-                return (attr !== "time") ? parseFloat(d[attr]) : new Date(d[attr].toString());
-            });
+            var map = function(n) { return new Date(n.toString()) };
+            if(attr !== "time") {
+                map = function(n) { return parseFloat(n) };
+            }
+
+            var filtered = this._items.reduce(function(filtered, d) {
+                var f = map(d[attr]);
+                if(!isNaN(f)) filtered.push(f); //filter
+                return filtered;
+            }, []);
 
             var min, max, limits = {};
             for (var i = 0; i < filtered.length; i++) {
