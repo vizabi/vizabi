@@ -27,6 +27,8 @@
     //warn client if d3 is not defined
     Vizabi._require('d3');
 
+    var _DATAMANAGER = new Vizabi.Data();
+
     var Model = Vizabi.Events.extend({
 
         /**
@@ -56,9 +58,7 @@
 
             //will the model be hooked to data?
             this._space = {};
-            this._items = []; //holds hook items for this hook
-            this._unique = {}; //stores unique values per column
-            this._filtered = {}; //stores filtered values
+            this._dataId = false;
             this._limits = {}; //stores limit values
 
             this._super();
@@ -382,15 +382,13 @@
 
                 utils.timeStamp("Vizabi Model: Loading Data: " + _this._id);
 
-                this._dataManager.load(query, lang, reader, evts)
-                    .then(function(data) {
-                            _this._items = data;
+                _DATAMANAGER.load(query, lang, reader, evts)
+                    .then(function(dataId) {
+
+                            _this._dataId = dataId;
 
                             utils.timeStamp("Vizabi Model: Data loaded: " + _this._id);
 
-                            _this._unique = {};
-                            _this._filtered = {};
-                            _this._limits = {};
                             _this.afterLoad();
 
                             promise.resolve();
@@ -489,7 +487,6 @@
 
             var _this = this;
             var spaceRefs = getSpace(this);
-            this._dataManager = new Vizabi.Data();
 
             // assuming all models will need data and language support
             this._dataModel = getClosestModel(this, "data");
@@ -794,8 +791,9 @@
             }
 
             //store limits so that we stop rechecking.
-            if (this._limits[attr]) {
-                return this._limits[attr];
+            var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
+            if (cachedLimits[attr]) {
+                return cachedLimits[attr];
             }
 
             var map = function(n) { return new Date(n.toString()) };
@@ -803,7 +801,8 @@
                 map = function(n) { return parseFloat(n) };
             }
 
-            var filtered = this._items.reduce(function(filtered, d) {
+            var items = _DATAMANAGER.get(this._dataId);
+            var filtered = items.reduce(function(filtered, d) {
                 var f = map(d[attr]);
                 if(!isNaN(f)) filtered.push(f); //filter
                 return filtered;
@@ -822,7 +821,7 @@
             limits.min = min || 0;
             limits.max = max || 0;
 
-            this._limits[attr] = limits;
+            cachedLimits[attr] = limits;
             return limits;
         },
 
@@ -840,16 +839,19 @@
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
             //cache optimization
-            var uniq_id = JSON.stringify(attr),
+            var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique'),
+                uniq_id = JSON.stringify(attr),
                 uniq;
-            if (this._unique[uniq_id]) {
-                return this._unique[uniq_id];
+            if (uniqueItems[uniq_id]) {
+                return uniqueItems[uniq_id];
             }
+
+            var items = _DATAMANAGER.get(this._dataId);
 
             //if not in cache, compute
             //if it's an array, it will return a list of unique combinations.
             if (utils.isArray(attr)) {
-                var values = this._items.map(function(d) {
+                var values = items.map(function(d) {
                     return utils.clone(d, attr); //pick attrs
                 });
                 //TODO: Move this up to readers ?
@@ -864,13 +866,13 @@
             }
             //if it's a string, it will return a list of values
             else {
-                var values = this._items.map(function(d) {
+                var values = items.map(function(d) {
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? d[attr] : new Date(d[attr]);
                 });
                 uniq = utils.unique(values);
             }
-            this._unique[uniq_id] = uniq;
+            uniqueItems[uniq_id] = uniq;
             return uniq;
         },
 
@@ -911,6 +913,8 @@
 
             var values;
 
+            var items = _DATAMANAGER.get(this._dataId);
+
             if (this.use === "value") {
                 values = [this.which];
             } else if (this._space.hasOwnProperty(this.use)) {
@@ -923,7 +927,7 @@
                     // filter.time will be removed during interpolation
                     var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
-                    values = utils.filter(this._items, filter)
+                    values = utils.filter(items, filter)
                         .filter(function(d) {
                             return d.time <= time
                         })
@@ -933,10 +937,9 @@
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
-                    values = this._items.filter(filter)
-                        .map(function(d) {
-                            return d[_this.which]
-                        });
+                    values = items.filter(filter).map(function(d) {
+                                        return d[_this.which];
+                                    });
                 }
             }
             return values;
@@ -957,7 +960,7 @@
                 .key(function(d) {
                     return timeFormatter(d.time);
                 })
-                .entries(_this._items)
+                .entries(_DATAMANAGER.get(this._dataId))
                 .forEach(function(d) {
                     var values = d.values
                         .filter(function(f) {
@@ -984,10 +987,13 @@
             var filterId = JSON.stringify(filter);
             //cache optimization
             var filter_id = JSON.stringify(filter);
-            if (this._filtered[filter_id]) {
-                return this._filtered[filter_id];
+            var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
+            var found = filtered[filter_id];
+            if (filtered[filter_id]) {
+                return filtered[filter_id];
             }
-            return this._filtered[filter_id] = utils.filter(this._items, filter);
+            var items = _DATAMANAGER.get(this._dataId);
+            return filtered[filter_id] = utils.filter(items, filter);
         }
 
     });
@@ -1144,7 +1150,8 @@
      * @returns interpolated value
      */
     function interpolateValue(ctx, filter, hook, value) {
-        if (ctx._items == null || ctx._items.length == 0) {
+        var items = _DATAMANAGER.get(ctx._dataId)
+        if (items == null || items.length == 0) {
             utils.warn("interpolateValue returning NULL because items array is empty");
             return null;
         }
@@ -1154,7 +1161,7 @@
         delete filter.time;
 
         // filter items so that we only have a dataset for certain keys, like "geo"
-        var items = ctx._getFilteredItems(filter);
+        items = ctx._getFilteredItems(filter);
 
         // return constant for the hook of "values"
         if (hook == "value") return items[0][ctx[HOOK_VALUE]];

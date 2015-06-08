@@ -81,7 +81,7 @@ describe("* Base: Data", function() {
         });
 
         it("should have result cached", function() {
-            expect(Object.keys(dataMan._data).length).toEqual(1);
+            expect(Object.keys(dataMan._collection).length).toEqual(1);
         });
 
     });

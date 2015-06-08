@@ -588,6 +588,27 @@
         },
 
         /*
+         * Creates a hashcode for a string or array
+         * @param {String|Array} str
+         * @return {Number} hashCode
+         */
+        hashCode: function(str){
+            if(!this.isString(str)) {
+                str = JSON.stringify(str);
+            }
+            var hash = 0,
+                size = str.length,
+                c;
+            if (size === 0) return hash;
+            for (var i = 0; i < size; i++) {
+                c = str.charCodeAt(i);
+                hash = ((hash<<5)-hash)+c;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        },
+
+        /*
          * Performs an ajax request
          * @param {Object} options
          * @param {String} className 
@@ -1040,11 +1061,8 @@
 
     var Data = Vizabi.Class.extend({
 
-        /**
-         * Initializes the data manager.
-         */
         init: function() {
-            this._data = {};
+            this._collection = {};
         },
 
         /**
@@ -1080,12 +1098,12 @@
             wait.then(
                 function() {
                     //pass the data forward
-                    var data = _this.get(cached);
+                    var data = _this._collection[cached].data;
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
                     }
-                    promise.resolve(data);
+                    promise.resolve(cached);
                 },
                 function() {
                     //not loading anymore
@@ -1109,11 +1127,11 @@
             var _this = this;
             var promise = new Promise();
             var reader_name = reader.reader;
-            var queryId = idQuery(query, lang, reader);
+            var queryId = utils.hashCode([query, lang, reader]);
             var readerClass = Vizabi.Reader.get(reader_name);
-            
+
             var r = new readerClass(reader);
-            
+
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
@@ -1150,7 +1168,13 @@
                         return a.time - b.time;
                     });
 
-                    _this._data[queryId] = values;
+                    _this._collection[queryId] = {};
+                    var col = _this._collection[queryId];
+                    col.data = values;
+                    col.filtered = {};
+                    col.unique = {};
+                    col.limits = {};
+
                     promise.resolve(queryId);
                 },
                 //error reading
@@ -1162,37 +1186,27 @@
         },
 
         /**
-         * Gets all items
-         * @param queryId query identifier
-         * @returns {Array} items
+         * get data
          */
-        get: function(queryId) {
-            if (queryId) {
-                return this._data[queryId];
-            }
-            return this._data;
+        get: function(queryId, what) {
+            if(!queryId) return;
+            if(!what) what = "data";
+            return this._collection[queryId][what];
         },
 
         /**
-         * Checks whether it's already cached
-         * @returns {Boolean}
+         * checks whether this combination is cached or not
          */
         isCached: function(query, language, reader) {
-            //encode in one string
-            var q = idQuery(query, language, reader);
+            //encode in hashCode
+            var q = utils.hashCode([query, language, reader]);
             //simply check if we have this in internal data
-            if (Object.keys(this._data).indexOf(q) !== -1) {
+            if (Object.keys(this._collection).indexOf(q) !== -1) {
                 return q;
             }
             return false;
-        },
-
-        /**
-         * Clears all data and querying
-         */
-        clear: function() {
-            this._data = {};
         }
+
     });
 
     /**
@@ -1226,12 +1240,6 @@
 
     });
 
-    /**
-     * Encodes query into a string
-     */
-    function idQuery(query, language, reader) {
-        return JSON.stringify(query) + language + JSON.stringify(reader);
-    }
     Vizabi.Reader = Reader;
     Vizabi.Data = Data;
 
@@ -1661,6 +1669,8 @@
     //warn client if d3 is not defined
     Vizabi._require('d3');
 
+    var _DATAMANAGER = new Vizabi.Data();
+
     var Model = Vizabi.Events.extend({
 
         /**
@@ -1690,9 +1700,7 @@
 
             //will the model be hooked to data?
             this._space = {};
-            this._items = []; //holds hook items for this hook
-            this._unique = {}; //stores unique values per column
-            this._filtered = {}; //stores filtered values
+            this._dataId = false;
             this._limits = {}; //stores limit values
 
             this._super();
@@ -2016,15 +2024,13 @@
 
                 utils.timeStamp("Vizabi Model: Loading Data: " + _this._id);
 
-                this._dataManager.load(query, lang, reader, evts)
-                    .then(function(data) {
-                            _this._items = data;
+                _DATAMANAGER.load(query, lang, reader, evts)
+                    .then(function(dataId) {
+
+                            _this._dataId = dataId;
 
                             utils.timeStamp("Vizabi Model: Data loaded: " + _this._id);
 
-                            _this._unique = {};
-                            _this._filtered = {};
-                            _this._limits = {};
                             _this.afterLoad();
 
                             promise.resolve();
@@ -2123,7 +2129,6 @@
 
             var _this = this;
             var spaceRefs = getSpace(this);
-            this._dataManager = new Vizabi.Data();
 
             // assuming all models will need data and language support
             this._dataModel = getClosestModel(this, "data");
@@ -2428,8 +2433,9 @@
             }
 
             //store limits so that we stop rechecking.
-            if (this._limits[attr]) {
-                return this._limits[attr];
+            var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
+            if (cachedLimits[attr]) {
+                return cachedLimits[attr];
             }
 
             var map = function(n) { return new Date(n.toString()) };
@@ -2437,7 +2443,8 @@
                 map = function(n) { return parseFloat(n) };
             }
 
-            var filtered = this._items.reduce(function(filtered, d) {
+            var items = _DATAMANAGER.get(this._dataId);
+            var filtered = items.reduce(function(filtered, d) {
                 var f = map(d[attr]);
                 if(!isNaN(f)) filtered.push(f); //filter
                 return filtered;
@@ -2456,7 +2463,7 @@
             limits.min = min || 0;
             limits.max = max || 0;
 
-            this._limits[attr] = limits;
+            cachedLimits[attr] = limits;
             return limits;
         },
 
@@ -2474,16 +2481,19 @@
             if (!attr) attr = 'time'; //fallback in case no attr is provided
 
             //cache optimization
-            var uniq_id = JSON.stringify(attr),
+            var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique'),
+                uniq_id = JSON.stringify(attr),
                 uniq;
-            if (this._unique[uniq_id]) {
-                return this._unique[uniq_id];
+            if (uniqueItems[uniq_id]) {
+                return uniqueItems[uniq_id];
             }
+
+            var items = _DATAMANAGER.get(this._dataId);
 
             //if not in cache, compute
             //if it's an array, it will return a list of unique combinations.
             if (utils.isArray(attr)) {
-                var values = this._items.map(function(d) {
+                var values = items.map(function(d) {
                     return utils.clone(d, attr); //pick attrs
                 });
                 //TODO: Move this up to readers ?
@@ -2498,13 +2508,13 @@
             }
             //if it's a string, it will return a list of values
             else {
-                var values = this._items.map(function(d) {
+                var values = items.map(function(d) {
                     //TODO: Move this up to readers ?
                     return (attr !== "time") ? d[attr] : new Date(d[attr]);
                 });
                 uniq = utils.unique(values);
             }
-            this._unique[uniq_id] = uniq;
+            uniqueItems[uniq_id] = uniq;
             return uniq;
         },
 
@@ -2545,6 +2555,8 @@
 
             var values;
 
+            var items = _DATAMANAGER.get(this._dataId);
+
             if (this.use === "value") {
                 values = [this.which];
             } else if (this._space.hasOwnProperty(this.use)) {
@@ -2557,7 +2569,7 @@
                     // filter.time will be removed during interpolation
                     var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
-                    values = utils.filter(this._items, filter)
+                    values = utils.filter(items, filter)
                         .filter(function(d) {
                             return d.time <= time
                         })
@@ -2567,10 +2579,9 @@
                         .concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
-                    values = this._items.filter(filter)
-                        .map(function(d) {
-                            return d[_this.which]
-                        });
+                    values = items.filter(filter).map(function(d) {
+                                        return d[_this.which];
+                                    });
                 }
             }
             return values;
@@ -2591,7 +2602,7 @@
                 .key(function(d) {
                     return timeFormatter(d.time);
                 })
-                .entries(_this._items)
+                .entries(_DATAMANAGER.get(this._dataId))
                 .forEach(function(d) {
                     var values = d.values
                         .filter(function(f) {
@@ -2618,10 +2629,13 @@
             var filterId = JSON.stringify(filter);
             //cache optimization
             var filter_id = JSON.stringify(filter);
-            if (this._filtered[filter_id]) {
-                return this._filtered[filter_id];
+            var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
+            var found = filtered[filter_id];
+            if (filtered[filter_id]) {
+                return filtered[filter_id];
             }
-            return this._filtered[filter_id] = utils.filter(this._items, filter);
+            var items = _DATAMANAGER.get(this._dataId);
+            return filtered[filter_id] = utils.filter(items, filter);
         }
 
     });
@@ -2778,7 +2792,8 @@
      * @returns interpolated value
      */
     function interpolateValue(ctx, filter, hook, value) {
-        if (ctx._items == null || ctx._items.length == 0) {
+        var items = _DATAMANAGER.get(ctx._dataId)
+        if (items == null || items.length == 0) {
             utils.warn("interpolateValue returning NULL because items array is empty");
             return null;
         }
@@ -2788,7 +2803,7 @@
         delete filter.time;
 
         // filter items so that we only have a dataset for certain keys, like "geo"
-        var items = ctx._getFilteredItems(filter);
+        items = ctx._getFilteredItems(filter);
 
         // return constant for the hook of "values"
         if (hook == "value") return items[0][ctx[HOOK_VALUE]];
