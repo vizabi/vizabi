@@ -520,6 +520,27 @@
         },
 
         /*
+         * Creates a hashcode for a string or array
+         * @param {String|Array} str
+         * @return {Number} hashCode
+         */
+        hashCode: function(str){
+            if(!this.isString(str)) {
+                str = JSON.stringify(str);
+            }
+            var hash = 0,
+                size = str.length,
+                c;
+            if (size === 0) return hash;
+            for (var i = 0; i < size; i++) {
+                c = str.charCodeAt(i);
+                hash = ((hash<<5)-hash)+c;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        },
+
+        /*
          * Performs an ajax request
          * @param {Object} options
          * @param {String} className 

@@ -11,13 +11,16 @@
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
 
+    //GLOBAL VIZABI QUERY CACHING
+    var _DATA = {};
+
     var Data = Vizabi.Class.extend({
 
         /**
          * Initializes the data manager.
          */
         init: function() {
-            this._data = {};
+            this._queries = [];
         },
 
         /**
@@ -32,7 +35,7 @@
             var _this = this;
             var promise = new Promise();
             var wait = (new Promise).resolve();
-            var cached = (query === true) ? true : this.isCached(query, language, reader);
+            var cached = (query === true) ? true : isCached(query, language, reader);
             var loaded = false;
 
             //if result is cached, dont load anything
@@ -53,7 +56,7 @@
             wait.then(
                 function() {
                     //pass the data forward
-                    var data = _this.get(cached);
+                    var data = _DATA[cached];
                     //not loading anymore
                     if (loaded && evts && typeof evts.load_end === 'function') {
                         evts.load_end();
@@ -82,11 +85,11 @@
             var _this = this;
             var promise = new Promise();
             var reader_name = reader.reader;
-            var queryId = idQuery(query, lang, reader);
+            var queryId = utils.hashCode([query, lang, reader]);
             var readerClass = Vizabi.Reader.get(reader_name);
-            
+
             var r = new readerClass(reader);
-            
+
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
@@ -123,7 +126,8 @@
                         return a.time - b.time;
                     });
 
-                    _this._data[queryId] = values;
+                    _this._queries.push(queryId);
+                    _DATA[queryId] = values;
                     promise.resolve(queryId);
                 },
                 //error reading
@@ -135,36 +139,10 @@
         },
 
         /**
-         * Gets all items
-         * @param queryId query identifier
-         * @returns {Array} items
-         */
-        get: function(queryId) {
-            if (queryId) {
-                return this._data[queryId];
-            }
-            return this._data;
-        },
-
-        /**
-         * Checks whether it's already cached
-         * @returns {Boolean}
-         */
-        isCached: function(query, language, reader) {
-            //encode in one string
-            var q = idQuery(query, language, reader);
-            //simply check if we have this in internal data
-            if (Object.keys(this._data).indexOf(q) !== -1) {
-                return q;
-            }
-            return false;
-        },
-
-        /**
          * Clears all data and querying
          */
         clear: function() {
-            this._data = {};
+            this._queries = [];
         }
     });
 
@@ -200,11 +178,19 @@
     });
 
     /**
-     * Encodes query into a string
+     * Checks whether it's already cached
+     * @returns {Boolean}
      */
-    function idQuery(query, language, reader) {
-        return JSON.stringify(query) + language + JSON.stringify(reader);
-    }
+    function isCached(query, language, reader) {
+        //encode in hashCode
+        var q = utils.hashCode([query, language, reader]);
+        //simply check if we have this in internal data
+        if (Object.keys(_DATA).indexOf(q) !== -1) {
+            return q;
+        }
+        return false;
+    };
+
     Vizabi.Reader = Reader;
     Vizabi.Data = Data;
 
