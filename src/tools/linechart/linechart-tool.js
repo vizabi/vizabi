@@ -65,7 +65,7 @@
                     },
                     //how we show it
                     marker: {
-                        dimensions: ["entities", "time"],
+                        space: ["entities", "time"],
                         label: {
                             use: "property",
                             which: "geo.name"

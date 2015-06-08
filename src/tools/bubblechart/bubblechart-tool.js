@@ -69,7 +69,7 @@
                         }
                     },
                     marker: {
-                        dimensions: ["entities", "time"],
+                        space: ["entities", "time"],
                         type: "geometry",
                         shape: "circle",
                         label: {

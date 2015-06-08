@@ -55,7 +55,7 @@
             };
 
             //will the model be hooked to data?
-            this._hooks = {};
+            this._space = {};
             this._items = []; //holds hook items for this hook
             this._unique = {}; //stores unique values per column
             this._filtered = {}; //stores filtered values
@@ -472,7 +472,6 @@
         setHooks: function() {
             if (this.isHook()) {
                 //what should this hook to?
-                this.dimensions = getHookTo(this);
                 this.hookModel();
             }
             //hook submodels
@@ -489,19 +488,21 @@
         hookModel: function() {
 
             var _this = this;
+            var spaceRefs = getSpace(this);
             this._dataManager = new Vizabi.Data();
+
             // assuming all models will need data and language support
             this._dataModel = getClosestModel(this, "data");
             this._languageModel = getClosestModel(this, "language");
 
             //check what we want to hook this model to
-            utils.forEach(this.dimensions, function(name) {
+            utils.forEach(spaceRefs, function(name) {
                 //hook with the closest prefix to this model
-                _this._hooks[name] = getClosestModel(_this, name);
+                _this._space[name] = getClosestModel(_this, name);
                 //if hooks change, this should load again
                 //TODO: remove hardcoded 'show"
-                if (_this._hooks[name].show) {
-                    _this._hooks[name].on("change:show", function(evt) {
+                if (_this._space[name].show) {
+                    _this._space[name].on("change:show", function(evt) {
                         _this.load();
                     });
                 }
@@ -517,14 +518,6 @@
                 _this.setReady(false);
             });
 
-        },
-
-        /**
-         * gets a certain hook reference
-         * @returns {Object} defined hook or undefined
-         */
-        getHook: function(hook) {
-            return this._hooks[hook];
         },
 
         /**
@@ -569,8 +562,8 @@
         getAllDimensions: function() {
             var dims = [],
                 dim;
-            utils.forEach(this._hooks, function(h) {
-                if (dim = h.getDimension()) dims.push(dim);
+            utils.forEach(this._space, function(m) {
+                if (dim = m.getDimension()) dims.push(dim);
             });
             return dims;
         },
@@ -581,7 +574,7 @@
          */
         getAllFilters: function() {
             var filters = {};
-            utils.forEach(this._hooks, function(h) {
+            utils.forEach(this._space, function(h) {
                 filters = utils.extend(filters, h.getFilter());
             });
             return filters;
@@ -621,7 +614,7 @@
         },
 
         /**
-         * gets the items associated with this hook with values
+         * gets the items associated with this hook without values
          * @param value Original value
          * @returns hooked value
          */
@@ -675,7 +668,7 @@
                 return true;
             }
             //error if there's nothing to hook to
-            else if (Object.keys(this._hooks).length < 1) {
+            else if (Object.keys(this._space).length < 1) {
                 utils.error("Error:", this._id, "can't find any dimension");
                 return true;
             }
@@ -889,8 +882,8 @@
             var value;
             if (this.use === "value") {
                 value = this.which;
-            } else if (this._hooks.hasOwnProperty(this.use)) {
-                value = this.getHook(this.use)[this.which];
+            } else if (this._space.hasOwnProperty(this.use)) {
+                value = this._space[this.use][this.which];
             } else {
                 value = interpolateValue(this, filter, this.use, this.which);
             }
@@ -914,8 +907,8 @@
 
             if (this.use === "value") {
                 values = [this.which];
-            } else if (this._hooks.hasOwnProperty(this.use)) {
-                values = [this.getHook(this.use)[this.which]];
+            } else if (this._space.hasOwnProperty(this.use)) {
+                values = [this._space[this.use][this.which]];
             } else {
                 // if a specific time is requested -- return values up to this time
                 if (filter && filter.hasOwnProperty('time')) {
@@ -1126,13 +1119,13 @@
 
     /**
      * Learn what this model should hook to
-     * @returns {Array} dimensions array
+     * @returns {Array} space array
      */
-    function getHookTo(model) {
-        if (utils.isArray(model.dimensions)) {
-            return model.dimensions;
+    function getSpace(model) {
+        if (utils.isArray(model.space)) {
+            return model.space;
         } else if (model._parent) {
-            return getHookTo(model._parent);
+            return getSpace(model._parent);
         } else {
             utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
         }
