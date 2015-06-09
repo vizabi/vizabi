@@ -609,7 +609,7 @@
          * Performs a GET http request
          */
         get: function(url, pars, success, error, json) {
-            var pars = [];
+            pars = pars || [];
             this.forEach(pars, function(value, key) {
                 pars.push(key + '=' + value);
             });
@@ -1641,7 +1641,7 @@
             //we are currently setting the model
             //compute each change
             for (var a in attrs) {
-                var val = attrs[a];
+                val = attrs[a];
                 var curr = this._data[a];
                 var prev = this._prevData[a];
                 //if its a regular value
@@ -1769,14 +1769,12 @@
                 for (i = 0; i < submodels.length; i += 1) {
                     if (submodels[i].isLoading()) {
                         return true;
-                        break;
                     }
                 }
                 for (i = 0; i < this._deps.children.length; i += 1) {
                     var d = this._deps.children[i];
                     if (d.isLoading() || !d._ready) {
                         return true;
-                        break;
                     }
                 }
                 return false;
@@ -2071,7 +2069,6 @@
                     }
                     return item;
                 });
-                return values;
             } else {
                 return [];
             }
@@ -2276,7 +2273,6 @@
                 case 'property':
                     domain = this.getUnique(this.which);
                     break;
-                case 'value':
                 default:
                     domain = [this.which];
                     break;
@@ -2364,7 +2360,7 @@
                 if (attr.indexOf('time') !== -1) {
                     for (var i = 0; i < values.length; i += 1) {
                         values[i].time = new Date(values[i].time);
-                    };
+                    }
                 }
                 uniq = utils.unique(values, function(n) {
                     return JSON.stringify(n);
@@ -2558,8 +2554,8 @@
                 return val;
             } else {
                 //special model
-                var model = Vizabi.Model.get(name, true) || Model;
-                return new model(val, ctx, binds, true);
+                var Modl = Vizabi.Model.get(name, true) || Model;
+                return new Modl(val, ctx, binds, true);
             }
         }
         /**
@@ -2633,7 +2629,7 @@
         items = ctx._getFilteredItems(filter);
         // return constant for the hook of "values"
         if (hook === 'value') {
-            return items[0][ctx[HOOK_VALUE]];
+            return items[0][ctx.which];
         }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
@@ -2661,7 +2657,7 @@
         }
         // perform a simple linear interpolation
         var fraction = (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
-        var value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
+        value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
         // cast to time object if we are interpolating time
         if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
             value = new Date(value);
@@ -2903,10 +2899,11 @@
             var values = {};
             //If model_config is an array, we map it
             if (utils.isArray(model_config) && utils.isArray(model_expects)) {
+
                 //if there's a different number of models received and expected
                 if (model_expects.length !== model_config.length) {
                     utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-                    utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
+                    utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                     utils.groupEnd();
                 }
                 utils.forEach(model_config, function(m, i) {
@@ -2914,16 +2911,17 @@
                     var new_name;
                     if (model_expects[i]) {
                         new_name = model_expects[i].name;
-                        if (model_expects[i].type && model_info.type !== model_expects[i].type) {
-                            //TODO: add link to the documentation about model_expects
+                        if (model_expects[i].type && model_info.type !== model_expects[i].type && (!utils.isArray(model_expects[i].type) ||
+                                model_expects[i].type.indexOf(model_info.type) === -1)) {
+
                             utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' + model_expects[i].type + '\'');
-                            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type + '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
+                            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type + '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
                             utils.groupEnd();
                         }
                     } else {
-                        //TODO: add link to the documentation about model_expects
+
                         utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-                        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
+                        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                         utils.groupEnd();
                         new_name = model_info.name;
                     }

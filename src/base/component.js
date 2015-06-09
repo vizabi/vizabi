@@ -232,10 +232,11 @@
             var values = {};
             //If model_config is an array, we map it
             if (utils.isArray(model_config) && utils.isArray(model_expects)) {
+
                 //if there's a different number of models received and expected
                 if (model_expects.length !== model_config.length) {
                     utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
-                    utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
+                    utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                     utils.groupEnd();
                 }
                 utils.forEach(model_config, function(m, i) {
@@ -243,16 +244,17 @@
                     var new_name;
                     if (model_expects[i]) {
                         new_name = model_expects[i].name;
-                        if (model_expects[i].type && model_info.type !== model_expects[i].type) {
-                            //TODO: add link to the documentation about model_expects
+                        if (model_expects[i].type && model_info.type !== model_expects[i].type && (!utils.isArray(model_expects[i].type) ||
+                                model_expects[i].type.indexOf(model_info.type) === -1)) {
+
                             utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' + model_expects[i].type + '\'');
-                            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type + '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
+                            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type + '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
                             utils.groupEnd();
                         }
                     } else {
-                        //TODO: add link to the documentation about model_expects
+
                         utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
-                        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
+                        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'.\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                         utils.groupEnd();
                         new_name = model_info.name;
                     }
