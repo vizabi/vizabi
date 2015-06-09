@@ -118,7 +118,7 @@
 
   position: absolute;
   padding: $padding;
-  box-sizing: border-box;
+  @include box-sizing(border-box);
   margin-bottom: $arrow-length;
   background-color: $background-color;
   cursor: default;

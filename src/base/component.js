@@ -34,6 +34,8 @@
                 }
             }
             this.parent = parent || this;
+            this.root = this.parent.root || this;
+            
             this.components = this.components || [];
             this._components_config = this.components.map(function(x) {
                 return utils.clone(x);

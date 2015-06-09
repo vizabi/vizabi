@@ -2701,6 +2701,8 @@
                 }
             }
             this.parent = parent || this;
+            this.root = this.parent.root || this;
+            
             this.components = this.components || [];
             this._components_config = this.components.map(function(x) {
                 return utils.clone(x);
@@ -4333,6 +4335,13 @@
         
         readyOnce: function() {
             this.element = d3.select(this.element);
+            this.resize();
+        },
+
+        resize: function() {
+            var totalHeight = this.root.element.offsetHeight - 200;
+            var content = this.element.select('.vzb-dialog-content');
+            content.style('max-height', totalHeight+'px');
         }
     }));
 
