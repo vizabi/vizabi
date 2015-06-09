@@ -2,28 +2,22 @@
  * VIZABI UTILS
  * Util functions
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
-
     Vizabi.utils = {
-
         /*
          * returns unique id with optional prefix
          * @param {String} prefix
          * @returns {String} id
          */
-        uniqueId: (function() {
+        uniqueId: function() {
             var id = 0;
             return function(p) {
-                return (p) ? p + id++ : id++;
+                return p ? p + (id += 1) : id += 1;
             };
-        })(),
-
+        }(),
         /*
          * checks whether obj is a DOM element
          * @param {Object} obj
@@ -33,7 +27,6 @@
         isElement: function(obj) {
             return !!(obj && obj.nodeType === 1);
         },
-
         /*
          * checks whether obj is an Array
          * @param {Object} obj
@@ -43,7 +36,6 @@
         isArray: Array.isArray || function(obj) {
             return toString.call(obj) === '[object Array]';
         },
-
         /*
          * checks whether obj is an object
          * @param {Object} obj
@@ -54,26 +46,22 @@
             var type = typeof obj;
             return type === 'object' && !!obj;
         },
-
         /*
          * checks whether arg is a date
          * @param {Object} arg
          * @returns {Boolean}
          */
         isDate: function(arg) {
-            return (arg instanceof Date);
+            return arg instanceof Date;
         },
-
         /*
          * checks whether arg is a string
          * @param {Object} arg
          * @returns {Boolean}
          */
         isString: function(arg) {
-            return (typeof arg === "string");
+            return typeof arg === 'string';
         },
-        
-        
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -82,9 +70,8 @@
          */
         isNaN: function(arg) {
             // A `NaN` primitive is the only number that is not equal to itself
-            return this.isNumber(arg) && arg != +arg;
+            return this.isNumber(arg) && arg !== +arg;
         },
-        
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -93,22 +80,16 @@
          * dependencies are resolved and included here
          */
         isNumber: function(arg) {
-            return typeof arg == 'number' 
-                   || ((!!arg && typeof arg == 'object') 
-                        && Object.prototype.toString.call(arg) == '[object Number]'
-                      );
+            return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
-
         /*
          * checks whether obj is a plain object {}
          * @param {Object} obj
          * @returns {Boolean}
          */
         isPlainObject: function(obj) {
-            return obj != null &&
-                Object.prototype.toString.call(obj) === "[object Object]";
+            return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
-
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -116,25 +97,32 @@
          * @param {Object} ctx context object
          */
         forEach: function(obj, callback, ctx) {
-            if (!obj) return;
+            if (!obj) {
+                return;
+            }
             var i;
             if (this.isArray(obj)) {
-                for (i = 0; i < obj.length; i++) {
-                    if (callback.apply(ctx, [obj[i], i]) === false) {
+                for (i = 0; i < obj.length; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[i],
+                            i
+                        ]) === false) {
                         break;
                     }
                 }
             } else {
-                var keys = Object.keys(obj),
-                    size = keys.length;
-                for (i = 0; i < size; i++) {
-                    if (callback.apply(ctx, [obj[keys[i]], keys[i]]) === false) {
+                var keys = Object.keys(obj);
+                var size = keys.length;
+                for (i = 0; i < size; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[keys[i]],
+                            keys[i]
+                        ]) === false) {
                         break;
                     }
                 }
             }
         },
-
         /*
          * extends an object
          * @param {Object} destination object
@@ -154,7 +142,6 @@
             });
             return dest;
         },
-
         /*
          * merges objects instead of replacing
          * @param {Object} destination object
@@ -181,7 +168,6 @@
             });
             return dest;
         },
-
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
@@ -203,7 +189,6 @@
             });
             return clone;
         },
-
         /*
          * deep clones an object (deep copy)
          * @param {Object} src original object
@@ -223,7 +208,6 @@
             });
             return clone;
         },
-
         /*
          * Prints message to timestamp
          * @param {Arr} arr
@@ -231,10 +215,11 @@
          */
         without: function(arr, el) {
             var idx = arr.indexOf(el);
-            if (idx !== -1) arr.splice(idx, 1);
+            if (idx !== -1) {
+                arr.splice(idx, 1);
+            }
             return arr;
         },
-
         /*
          * unique items in an array
          * @param {Array} arr original array
@@ -248,10 +233,10 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     continue;
@@ -261,7 +246,6 @@
             }
             return a;
         },
-
         /*
          * unique items in an array keeping the last item
          * @param {Array} arr original array
@@ -274,20 +258,19 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     a.splice(u[key], 1); //remove old item from array
                 }
                 a.push(arr[i]);
-                u[key] = (a.length - 1);
+                u[key] = a.length - 1;
             }
             return a;
         },
-
         /*
          * returns first value that passes the test
          * @param {Array} arr original collection
@@ -297,31 +280,30 @@
             var found;
             this.forEach(arr, function(i) {
                 if (func(i)) {
-                    found = i
+                    found = i;
                     return false; //break
                 }
             });
             return found;
         },
-
         /*
          * filters an array based on object properties
          * @param {Array} arr original array
          * @returns {Object} filter properties to use as filter
          */
         filter: function(arr, filter) {
-            var index = -1,
-                length = arr.length,
-                resIndex = -1,
-                result = [],
-                keys = Object.keys(filter),
-                s_keys = keys.length,
-                i, f;
-
-            while (++index < length) {
+            var index = -1;
+            var length = arr.length;
+            var resIndex = -1;
+            var result = [];
+            var keys = Object.keys(filter);
+            var s_keys = keys.length;
+            var i;
+            var f;
+            while ((index += 1) < length) {
                 var value = arr[index];
                 var match = true;
-                for (i = 0; i < s_keys; i++) {
+                for (i = 0; i < s_keys; i += 1) {
                     f = keys[i];
                     if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
                         match = false;
@@ -329,89 +311,82 @@
                     }
                 }
                 if (match) {
-                    result[++resIndex] = value;
+                    result[resIndex += 1] = value;
                 }
             }
             return result;
         },
-
         /*
          * Converts radius to area, simple math
          * @param {Number} radius
          * @returns {Number} area
          */
         radiusToArea: function(r) {
-            return r * r * Math.PI
+            return r * r * Math.PI;
         },
-
         /*
          * Converts area to radius, simple math
          * @param {Number} area
          * @returns {Number} radius
          */
         areaToRadius: function(a) {
-            return Math.sqrt(a / Math.PI)
+            return Math.sqrt(a / Math.PI);
         },
-
         /*
          * Prints message to timestamp
          * @param {String} message
          */
         timeStamp: function(message) {
-            if (root.console && typeof root.console.timeStamp === "function") {
+            if (root.console && typeof root.console.timeStamp === 'function') {
                 root.console.timeStamp(message);
             }
         },
-
         /*
          * Prints warning
          * @param {String} message
          */
         warn: function(message) {
-            if (root.console && typeof root.console.warn === "function") {
+            if (root.console && typeof root.console.warn === 'function') {
                 root.console.warn(message);
             }
         },
-
         /*
          * Prints message for group
          * @param {String} message
          */
         groupCollapsed: function(message) {
-            if (root.console && typeof root.console.groupCollapsed === "function") {
+            if (root.console && typeof root.console.groupCollapsed === 'function') {
                 root.console.groupCollapsed(message);
             }
         },
-
         /*
          * Prints end of group
          * @param {String} message
          */
         groupEnd: function() {
-            if (root.console && typeof root.console.groupEnd === "function") {
+            if (root.console && typeof root.console.groupEnd === 'function') {
                 root.console.groupEnd();
             }
         },
-
         /*
          * Prints error
          * @param {String} message
          */
         error: function(message) {
-            if (root.console && typeof root.console.error === "function") {
+            if (root.console && typeof root.console.error === 'function') {
                 root.console.error(message);
             }
         },
-
         /*
          * Count the number of decimal numbers
          * @param {Number} number
          */
         countDecimals: function(number) {
-            if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
-            return number.toString().split(".")[1].length || 0;
+            if (Math.floor(number.valueOf()) === number.valueOf()) {
+                return 0;
+            }
+            return number.toString().split('.')[1].length || 0;
         },
-
         /*
          * Adds class to DOM element
          * @param {Element} el
@@ -420,11 +395,11 @@
         addClass: function(el, className) {
             if (el.classList) {
                 el.classList.add(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className += ' ' + className;
             }
         },
-
         /*
          * Remove class from DOM element
          * @param {Element} el
@@ -433,11 +408,11 @@
         removeClass: function(el, className) {
             if (el.classList) {
                 el.classList.remove(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
-
         /*
          * Adds or removes class depending on value
          * @param {Element} el
@@ -453,7 +428,6 @@
                 return this.hasClass(el, className);
             }
         },
-
         /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
@@ -463,30 +437,29 @@
         hasClass: function(el, className) {
             if (el.classList) {
                 return el.classList.contains(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
-
         /*
          * Throttles a function
          * @param {Function} func
          * @param {Number} ms duration 
          */
-        throttle: (function() {
+        throttle: function() {
             var isThrottled = {};
             return function(func, ms) {
                 if (isThrottled[func]) {
-                    return
-                };
+                    return;
+                }
                 isThrottled[func] = true;
                 setTimeout(function() {
                     isThrottled[func] = false;
                 }, ms);
                 func();
-            }
-        })(),
-
+            };
+        }(),
         /*
          * Returns keys of an object as array
          * @param {Object} arg
@@ -495,22 +468,20 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
-        
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
          * @return {Array}
          */
         values: function(obj) {
-            var arr,
-                keys = Object.keys(obj),
-                size = keys.length;
-            for (var i=0; i<size; i++) {
+            var arr;
+            var keys = Object.keys(obj);
+            var size = keys.length;
+            for (var i = 0; i < size; i += 1) {
                 (arr = arr || []).push(obj[keys[i]]);
-            };
+            }
             return arr;
         },
-
         /*
          * Defers a function
          * @param {Function} func
@@ -518,28 +489,28 @@
         defer: function(func) {
             setTimeout(func, 1);
         },
-
         /*
          * Creates a hashcode for a string or array
          * @param {String|Array} str
          * @return {Number} hashCode
          */
-        hashCode: function(str){
-            if(!this.isString(str)) {
+        hashCode: function(str) {
+            if (!this.isString(str)) {
                 str = JSON.stringify(str);
             }
-            var hash = 0,
-                size = str.length,
-                c;
-            if (size === 0) return hash;
-            for (var i = 0; i < size; i++) {
+            var hash = 0;
+            var size = str.length;
+            var c;
+            if (size === 0) {
+                return hash;
+            }
+            for (var i = 0; i < size; i += 1) {
                 c = str.charCodeAt(i);
-                hash = ((hash<<5)-hash)+c;
+                hash = (hash << 5) - hash + c;
                 hash = hash & hash; // Convert to 32bit integer
             }
             return hash.toString();
         },
-
         /*
          * Performs an ajax request
          * @param {Object} options
@@ -549,48 +520,52 @@
         ajax: function(options) {
             var request = new XMLHttpRequest();
             request.open(options.method, options.url, true);
-            if (options.method === "POST") {
+            if (options.method === 'POST') {
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             }
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     // Success!
-                    var data = (options.json) ? JSON.parse(request.responseText) : request.responseText;
-                    if (options.success) options.success(data);
+                    var data = options.json ? JSON.parse(request.responseText) : request.responseText;
+                    if (options.success) {
+                        options.success(data);
+                    }
                 } else {
-                    if (options.error) options.error();
+                    if (options.error) {
+                        options.error();
+                    }
                 }
             };
             request.onerror = function() {
-                if (options.error) options.error();
+                if (options.error) {
+                    options.error();
+                }
             };
             request.send(options.data);
         },
-
         /*
          * Performs a GET http request
          */
         get: function(url, pars, success, error, json) {
             var pars = [];
             this.forEach(pars, function(value, key) {
-                pars.push(key + "=" + value);
+                pars.push(key + '=' + value);
             });
-            url = (pars.length) ? url + "?" + pars.join("&") : url;
+            url = pars.length ? url + '?' + pars.join('&') : url;
             this.ajax({
-                method: "GET",
+                method: 'GET',
                 url: url,
                 success: success,
                 error: error,
                 json: json
             });
         },
-
         /*
          * Performs a POST http request
          */
         post: function(url, pars, success, error, json) {
             this.ajax({
-                method: "POST",
+                method: 'POST',
                 url: url,
                 success: success,
                 error: error,
@@ -598,8 +573,5 @@
                 data: pars
             });
         }
-
-
     };
-
-}).call(this);
+}.call(this));

@@ -2,34 +2,26 @@
  * VIZABI EVENTS
  * Manages Vizabi events
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     var _freezeAllEvents = false;
     var _frozenEventInstances = [];
     var _freezeAllExceptions = {};
-
     var Events = Vizabi.Class.extend({
         /**
          * Initializes the event class
          */
         init: function() {
-
             this._id = this._id || utils.uniqueId('e');
             this._events = {};
-
             //freezing events
             this._freeze = false;
             this._freezer = [];
             this._freezeExceptions = {};
         },
-
         /**
          * Binds a callback function to an event
          * @param {String|Array} name name of event or array with names
@@ -39,14 +31,14 @@
             var i;
             //bind multiple functions at the same time
             if (utils.isArray(func)) {
-                for (i = 0; i < func.length; i++) {
+                for (i = 0; i < func.length; i += 1) {
                     this.on(name, func[i]);
                 }
                 return;
             }
             //bind multiple at a time
             if (utils.isArray(name)) {
-                for (i = 0; i < name.length; i++) {
+                for (i = 0; i < name.length; i += 1) {
                     this.on(name[i], func);
                 }
                 return;
@@ -58,16 +50,13 @@
                 }
                 return;
             }
-
             this._events[name] = this._events[name] || [];
-
             if (typeof func === 'function') {
                 this._events[name].push(func);
             } else {
-                utils.warn("Can't bind event '" + name + "'. It must be a function.");
+                utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
             }
         },
-
         /**
          * Unbinds all events associated with a name or a specific one
          * @param {String|Array} name name of event or array with names
@@ -75,7 +64,7 @@
         unbind: function(name) {
             //unbind multiple at a time
             if (utils.isArray(name)) {
-                for (var i = 0; i < name.length; i++) {
+                for (var i = 0; i < name.length; i += 1) {
                     this.unbind(name[i]);
                 }
                 return;
@@ -84,45 +73,47 @@
                 this._events[name] = [];
             }
         },
-
         /**
          * Unbinds all events
          */
         unbindAll: function() {
             this._events = {};
         },
-
         /**
          * Triggers an event, adding it to the buffer
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
         trigger: function(name, args, original) {
-            var i, size;
+            var i;
+            var size;
             if (utils.isArray(name)) {
-                for (i = 0, size = name.length; i < size; i++) {
+                for (i = 0, size = name.length; i < size; i += 1) {
                     this.trigger(name[i], args);
                 }
             } else {
-                if (!this._events.hasOwnProperty(name)) return;
-                for (i = 0; i < this._events[name].length; i++) {
+                if (!this._events.hasOwnProperty(name)) {
+                    return;
+                }
+                for (i = 0; i < this._events[name].length; i += 1) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
                     var _this = this;
                     var execute = function() {
-                        var msg = "Vizabi Event: " + name + " - " + original;
+                        var msg = 'Vizabi Event: ' + name + ' - ' + original;
                         utils.timeStamp(msg);
-                        f.apply(_this, [(original || name), args]);
+                        f.apply(_this, [
+                            original || name,
+                            args
+                        ]);
                     };
-
                     //TODO: improve readability of freezer code
                     //only execute if not frozen and exception doesnt exist
                     if (this._freeze || _freezeAllEvents) {
                         //if exception exists for freezing, execute
-                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name)) || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
+                        if (_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name)) {
                             execute();
-                        }
-                        //otherwise, freeze it
+                        } //otherwise, freeze it
                         else {
                             this._freezer.push(execute);
                             if (_freezeAllEvents && !_frozenEventInstances[this._id]) {
@@ -136,7 +127,6 @@
                 }
             }
         },
-
         /**
          * Triggers an event and all parent events
          * @param {String|Array} name name of event or array with names
@@ -144,28 +134,31 @@
          */
         triggerAll: function(name, args, original) {
             var to_trigger = [];
-
             //default to array
             if (!utils.isArray(name)) {
                 name = [name];
             }
-            var i, size, n;
-            for (i = 0, size = name.length; i < size; i++) {
+            var i;
+            var size;
+            var n;
+            for (i = 0, size = name.length; i < size; i += 1) {
                 n = name[i];
                 var original = n;
-                var parts = n.split(":");
+                var parts = n.split(':');
                 while (parts.length) {
-                    to_trigger.push([n, args, original]);
+                    to_trigger.push([
+                        n,
+                        args,
+                        original
+                    ]);
                     parts.pop();
-                    n = parts.join(":");
+                    n = parts.join(':');
                 }
             }
-
             var once = utils.unique(to_trigger, function(d) {
                 return d[0]; //name of the event
             });
-
-            for (i = 0; i < once.length; i++) {
+            for (i = 0; i < once.length; i += 1) {
                 this.trigger.apply(this, once[i]);
             }
         },
@@ -174,13 +167,16 @@
          */
         freeze: function(exceptions) {
             this._freeze = true;
-            if (!exceptions) return;
-            if (!utils.isArray(exceptions)) exceptions = [exceptions];
-            for (var i = 0; i < exceptions.length; i++) {
+            if (!exceptions) {
+                return;
+            }
+            if (!utils.isArray(exceptions)) {
+                exceptions = [exceptions];
+            }
+            for (var i = 0; i < exceptions.length; i += 1) {
                 this._freezeExceptions[exceptions[i]] = true;
             }
         },
-
         /**
          * triggers all frozen events
          */
@@ -193,29 +189,29 @@
                 execute();
             }
         }
-
     });
     //generic event functions
-
     /**
      * freezes all events
      */
     Events.freezeAll = function(exceptions) {
         _freezeAllEvents = true;
-        if (!exceptions) return;
-        if (!utils.isArray(exceptions)) exceptions = [exceptions];
+        if (!exceptions) {
+            return;
+        }
+        if (!utils.isArray(exceptions)) {
+            exceptions = [exceptions];
+        }
         utils.forEach(exceptions, function(e) {
             _freezeAllExceptions[e] = true;
         });
     };
-
     /**
      * triggers all frozen events form all instances
      */
     Events.unfreezeAll = function() {
         _freezeAllEvents = false;
         _freezeAllExceptions = {};
-
         //unfreeze all instances
         for (var i in _frozenEventInstances) {
             var instance = _frozenEventInstances[i];
@@ -223,7 +219,5 @@
             delete _frozenEventInstances[i];
         }
     };
-
     Vizabi.Events = Events;
-
-}).call(this);
+}.call(this));

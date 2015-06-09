@@ -1,20 +1,16 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-08 */
+/* VIZABI - http://www.gapminder.org - 2015-06-09 */
 
 /*!
  * VIZABI MAIN
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var previous = root.Vizabi;
-
+    
     var Vizabi = function(tool, placeholder, options) {
         return startTool(tool, placeholder, options);
     };
-
     //stores reference to each tool on the page
     Vizabi._instances = {};
 
@@ -37,7 +33,7 @@
         } else {
             Vizabi._instances = {};
         }
-    }
+    };
 
     /*
      * throws a warning if the required variable is not defined
@@ -48,11 +44,11 @@
      */
     Vizabi._require = function(variable) {
         if (typeof root[variable] === 'undefined') {
-            Vizabi.utils.warn(variable + " is required and could not be found.");
+            Vizabi.utils.warn(variable + ' is required and could not be found.');
             return false;
         }
         return true;
-    }
+    };
 
     //if AMD define
     if (typeof define === 'function' && define.amd) {
@@ -62,36 +58,28 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = Vizabi;
     }
-
     root.Vizabi = Vizabi;
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI UTILS
  * Util functions
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
-
     Vizabi.utils = {
-
         /*
          * returns unique id with optional prefix
          * @param {String} prefix
          * @returns {String} id
          */
-        uniqueId: (function() {
+        uniqueId: function() {
             var id = 0;
             return function(p) {
-                return (p) ? p + id++ : id++;
+                return p ? p + (id += 1) : id += 1;
             };
-        })(),
-
+        }(),
         /*
          * checks whether obj is a DOM element
          * @param {Object} obj
@@ -101,7 +89,6 @@
         isElement: function(obj) {
             return !!(obj && obj.nodeType === 1);
         },
-
         /*
          * checks whether obj is an Array
          * @param {Object} obj
@@ -111,7 +98,6 @@
         isArray: Array.isArray || function(obj) {
             return toString.call(obj) === '[object Array]';
         },
-
         /*
          * checks whether obj is an object
          * @param {Object} obj
@@ -122,26 +108,22 @@
             var type = typeof obj;
             return type === 'object' && !!obj;
         },
-
         /*
          * checks whether arg is a date
          * @param {Object} arg
          * @returns {Boolean}
          */
         isDate: function(arg) {
-            return (arg instanceof Date);
+            return arg instanceof Date;
         },
-
         /*
          * checks whether arg is a string
          * @param {Object} arg
          * @returns {Boolean}
          */
         isString: function(arg) {
-            return (typeof arg === "string");
+            return typeof arg === 'string';
         },
-        
-        
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -150,9 +132,8 @@
          */
         isNaN: function(arg) {
             // A `NaN` primitive is the only number that is not equal to itself
-            return this.isNumber(arg) && arg != +arg;
+            return this.isNumber(arg) && arg !== +arg;
         },
-        
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -161,22 +142,16 @@
          * dependencies are resolved and included here
          */
         isNumber: function(arg) {
-            return typeof arg == 'number' 
-                   || ((!!arg && typeof arg == 'object') 
-                        && Object.prototype.toString.call(arg) == '[object Number]'
-                      );
+            return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
-
         /*
          * checks whether obj is a plain object {}
          * @param {Object} obj
          * @returns {Boolean}
          */
         isPlainObject: function(obj) {
-            return obj != null &&
-                Object.prototype.toString.call(obj) === "[object Object]";
+            return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
-
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -184,25 +159,32 @@
          * @param {Object} ctx context object
          */
         forEach: function(obj, callback, ctx) {
-            if (!obj) return;
+            if (!obj) {
+                return;
+            }
             var i;
             if (this.isArray(obj)) {
-                for (i = 0; i < obj.length; i++) {
-                    if (callback.apply(ctx, [obj[i], i]) === false) {
+                for (i = 0; i < obj.length; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[i],
+                            i
+                        ]) === false) {
                         break;
                     }
                 }
             } else {
-                var keys = Object.keys(obj),
-                    size = keys.length;
-                for (i = 0; i < size; i++) {
-                    if (callback.apply(ctx, [obj[keys[i]], keys[i]]) === false) {
+                var keys = Object.keys(obj);
+                var size = keys.length;
+                for (i = 0; i < size; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[keys[i]],
+                            keys[i]
+                        ]) === false) {
                         break;
                     }
                 }
             }
         },
-
         /*
          * extends an object
          * @param {Object} destination object
@@ -222,7 +204,6 @@
             });
             return dest;
         },
-
         /*
          * merges objects instead of replacing
          * @param {Object} destination object
@@ -249,7 +230,6 @@
             });
             return dest;
         },
-
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
@@ -271,7 +251,6 @@
             });
             return clone;
         },
-
         /*
          * deep clones an object (deep copy)
          * @param {Object} src original object
@@ -291,7 +270,6 @@
             });
             return clone;
         },
-
         /*
          * Prints message to timestamp
          * @param {Arr} arr
@@ -299,10 +277,11 @@
          */
         without: function(arr, el) {
             var idx = arr.indexOf(el);
-            if (idx !== -1) arr.splice(idx, 1);
+            if (idx !== -1) {
+                arr.splice(idx, 1);
+            }
             return arr;
         },
-
         /*
          * unique items in an array
          * @param {Array} arr original array
@@ -316,10 +295,10 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     continue;
@@ -329,7 +308,6 @@
             }
             return a;
         },
-
         /*
          * unique items in an array keeping the last item
          * @param {Array} arr original array
@@ -342,20 +320,19 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     a.splice(u[key], 1); //remove old item from array
                 }
                 a.push(arr[i]);
-                u[key] = (a.length - 1);
+                u[key] = a.length - 1;
             }
             return a;
         },
-
         /*
          * returns first value that passes the test
          * @param {Array} arr original collection
@@ -365,31 +342,30 @@
             var found;
             this.forEach(arr, function(i) {
                 if (func(i)) {
-                    found = i
+                    found = i;
                     return false; //break
                 }
             });
             return found;
         },
-
         /*
          * filters an array based on object properties
          * @param {Array} arr original array
          * @returns {Object} filter properties to use as filter
          */
         filter: function(arr, filter) {
-            var index = -1,
-                length = arr.length,
-                resIndex = -1,
-                result = [],
-                keys = Object.keys(filter),
-                s_keys = keys.length,
-                i, f;
-
-            while (++index < length) {
+            var index = -1;
+            var length = arr.length;
+            var resIndex = -1;
+            var result = [];
+            var keys = Object.keys(filter);
+            var s_keys = keys.length;
+            var i;
+            var f;
+            while ((index += 1) < length) {
                 var value = arr[index];
                 var match = true;
-                for (i = 0; i < s_keys; i++) {
+                for (i = 0; i < s_keys; i += 1) {
                     f = keys[i];
                     if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
                         match = false;
@@ -397,89 +373,82 @@
                     }
                 }
                 if (match) {
-                    result[++resIndex] = value;
+                    result[resIndex += 1] = value;
                 }
             }
             return result;
         },
-
         /*
          * Converts radius to area, simple math
          * @param {Number} radius
          * @returns {Number} area
          */
         radiusToArea: function(r) {
-            return r * r * Math.PI
+            return r * r * Math.PI;
         },
-
         /*
          * Converts area to radius, simple math
          * @param {Number} area
          * @returns {Number} radius
          */
         areaToRadius: function(a) {
-            return Math.sqrt(a / Math.PI)
+            return Math.sqrt(a / Math.PI);
         },
-
         /*
          * Prints message to timestamp
          * @param {String} message
          */
         timeStamp: function(message) {
-            if (root.console && typeof root.console.timeStamp === "function") {
+            if (root.console && typeof root.console.timeStamp === 'function') {
                 root.console.timeStamp(message);
             }
         },
-
         /*
          * Prints warning
          * @param {String} message
          */
         warn: function(message) {
-            if (root.console && typeof root.console.warn === "function") {
+            if (root.console && typeof root.console.warn === 'function') {
                 root.console.warn(message);
             }
         },
-
         /*
          * Prints message for group
          * @param {String} message
          */
         groupCollapsed: function(message) {
-            if (root.console && typeof root.console.groupCollapsed === "function") {
+            if (root.console && typeof root.console.groupCollapsed === 'function') {
                 root.console.groupCollapsed(message);
             }
         },
-
         /*
          * Prints end of group
          * @param {String} message
          */
         groupEnd: function() {
-            if (root.console && typeof root.console.groupEnd === "function") {
+            if (root.console && typeof root.console.groupEnd === 'function') {
                 root.console.groupEnd();
             }
         },
-
         /*
          * Prints error
          * @param {String} message
          */
         error: function(message) {
-            if (root.console && typeof root.console.error === "function") {
+            if (root.console && typeof root.console.error === 'function') {
                 root.console.error(message);
             }
         },
-
         /*
          * Count the number of decimal numbers
          * @param {Number} number
          */
         countDecimals: function(number) {
-            if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
-            return number.toString().split(".")[1].length || 0;
+            if (Math.floor(number.valueOf()) === number.valueOf()) {
+                return 0;
+            }
+            return number.toString().split('.')[1].length || 0;
         },
-
         /*
          * Adds class to DOM element
          * @param {Element} el
@@ -488,11 +457,11 @@
         addClass: function(el, className) {
             if (el.classList) {
                 el.classList.add(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className += ' ' + className;
             }
         },
-
         /*
          * Remove class from DOM element
          * @param {Element} el
@@ -501,11 +470,11 @@
         removeClass: function(el, className) {
             if (el.classList) {
                 el.classList.remove(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
-
         /*
          * Adds or removes class depending on value
          * @param {Element} el
@@ -521,7 +490,6 @@
                 return this.hasClass(el, className);
             }
         },
-
         /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
@@ -531,30 +499,29 @@
         hasClass: function(el, className) {
             if (el.classList) {
                 return el.classList.contains(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
-
         /*
          * Throttles a function
          * @param {Function} func
          * @param {Number} ms duration 
          */
-        throttle: (function() {
+        throttle: function() {
             var isThrottled = {};
             return function(func, ms) {
                 if (isThrottled[func]) {
-                    return
-                };
+                    return;
+                }
                 isThrottled[func] = true;
                 setTimeout(function() {
                     isThrottled[func] = false;
                 }, ms);
                 func();
-            }
-        })(),
-
+            };
+        }(),
         /*
          * Returns keys of an object as array
          * @param {Object} arg
@@ -563,22 +530,20 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
-        
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
          * @return {Array}
          */
         values: function(obj) {
-            var arr,
-                keys = Object.keys(obj),
-                size = keys.length;
-            for (var i=0; i<size; i++) {
+            var arr;
+            var keys = Object.keys(obj);
+            var size = keys.length;
+            for (var i = 0; i < size; i += 1) {
                 (arr = arr || []).push(obj[keys[i]]);
-            };
+            }
             return arr;
         },
-
         /*
          * Defers a function
          * @param {Function} func
@@ -586,28 +551,28 @@
         defer: function(func) {
             setTimeout(func, 1);
         },
-
         /*
          * Creates a hashcode for a string or array
          * @param {String|Array} str
          * @return {Number} hashCode
          */
-        hashCode: function(str){
-            if(!this.isString(str)) {
+        hashCode: function(str) {
+            if (!this.isString(str)) {
                 str = JSON.stringify(str);
             }
-            var hash = 0,
-                size = str.length,
-                c;
-            if (size === 0) return hash;
-            for (var i = 0; i < size; i++) {
+            var hash = 0;
+            var size = str.length;
+            var c;
+            if (size === 0) {
+                return hash;
+            }
+            for (var i = 0; i < size; i += 1) {
                 c = str.charCodeAt(i);
-                hash = ((hash<<5)-hash)+c;
+                hash = (hash << 5) - hash + c;
                 hash = hash & hash; // Convert to 32bit integer
             }
             return hash.toString();
         },
-
         /*
          * Performs an ajax request
          * @param {Object} options
@@ -617,48 +582,52 @@
         ajax: function(options) {
             var request = new XMLHttpRequest();
             request.open(options.method, options.url, true);
-            if (options.method === "POST") {
+            if (options.method === 'POST') {
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             }
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     // Success!
-                    var data = (options.json) ? JSON.parse(request.responseText) : request.responseText;
-                    if (options.success) options.success(data);
+                    var data = options.json ? JSON.parse(request.responseText) : request.responseText;
+                    if (options.success) {
+                        options.success(data);
+                    }
                 } else {
-                    if (options.error) options.error();
+                    if (options.error) {
+                        options.error();
+                    }
                 }
             };
             request.onerror = function() {
-                if (options.error) options.error();
+                if (options.error) {
+                    options.error();
+                }
             };
             request.send(options.data);
         },
-
         /*
          * Performs a GET http request
          */
         get: function(url, pars, success, error, json) {
             var pars = [];
             this.forEach(pars, function(value, key) {
-                pars.push(key + "=" + value);
+                pars.push(key + '=' + value);
             });
-            url = (pars.length) ? url + "?" + pars.join("&") : url;
+            url = pars.length ? url + '?' + pars.join('&') : url;
             this.ajax({
-                method: "GET",
+                method: 'GET',
                 url: url,
                 success: success,
                 error: error,
                 json: json
             });
         },
-
         /*
          * Performs a POST http request
          */
         post: function(url, pars, success, error, json) {
             this.ajax({
-                method: "POST",
+                method: 'POST',
                 url: url,
                 success: success,
                 error: error,
@@ -666,35 +635,23 @@
                 data: pars
             });
         }
-
-
     };
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI PROMISES
  * Util functions
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
-    /*
-     * Modified version of promises from
-     * @Author: dm.yang
-     * https://github.com/chemdemo/promiseA
-     */
-
-    ;
     (function(root, factory) {
-        if (typeof module !== 'undefined' && module.exports) { // CommonJS
+        if (typeof module !== 'undefined' && module.exports) {
+            // CommonJS
             module.exports = factory();
-        } else if (typeof define === 'function' && define.amd) { // AMD / RequireJS
+        } else if (typeof define === 'function' && define.amd) {
+            // AMD / RequireJS
             define(factory);
         } else {
             root.Promise = factory.call(root);
@@ -703,32 +660,29 @@
         'use strict';
 
         function Promise(resolver) {
-            if (!(this instanceof Promise)) return new Promise(resolver);
-
+            if (!(this instanceof Promise)) {
+                return new Promise(resolver);
+            }
             this.status = 'pending';
             this.value;
             this.reason;
-
             // then may be called multiple times on the same promise
             this._resolves = [];
             this._rejects = [];
-
-            if (isFn(resolver)) resolver(this.resolve.bind(this), this.reject.bind(this));
-
+            if (isFn(resolver)) {
+                resolver(this.resolve.bind(this), this.reject.bind(this));
+            }
             return this;
-        };
-
+        }
         Promise.prototype.then = function(resolve, reject) {
             var next = this._next || (this._next = Promise());
             var status = this.status;
             var x;
-
             if ('pending' === status) {
                 isFn(resolve) && this._resolves.push(resolve);
                 isFn(reject) && this._rejects.push(reject);
                 return next;
             }
-
             if ('resolved' === status) {
                 if (!isFn(resolve)) {
                     next.resolve(resolve);
@@ -742,7 +696,6 @@
                 }
                 return next;
             }
-
             if ('rejected' === status) {
                 if (!isFn(reject)) {
                     next.reject(reject);
@@ -757,51 +710,47 @@
                 return next;
             }
         };
-
         Promise.prototype.resolve = function(value) {
-            if ('rejected' === this.status) throw Error('Illegal call.');
-
+            if ('rejected' === this.status) {
+                throw Error('Illegal call.');
+            }
             this.status = 'resolved';
             this.value = value;
-
             this._resolves.length && fireQ(this);
-
             return this;
         };
-
         Promise.prototype.reject = function(reason) {
-            if ('resolved' === this.status) throw Error('Illegal call. ' + reason);
-
+            if ('resolved' === this.status) {
+                throw Error('Illegal call. ' + reason);
+            }
             this.status = 'rejected';
             this.reason = reason;
-
             this._rejects.length && fireQ(this);
-
             return this;
         };
-
         // shortcut of promise.then(undefined, reject)
         Promise.prototype.catch = function(reject) {
             return this.then(void 0, reject);
         };
-
         // return a promise with another promise passing in
         Promise.cast = function(arg) {
             var p = Promise();
-
-            if (arg instanceof Promise) return resolvePromise(p, arg);
-            else return Promise.resolve(arg);
+            if (arg instanceof Promise) {
+                return resolvePromise(p, arg);
+            } else {
+                return Promise.resolve(arg);
+            }
         };
-
         // return a promise which resolved with arg
         // the arg maybe a thanable object or thanable function or other
         Promise.resolve = function(arg) {
             var p = Promise();
-
-            if (isThenable(arg)) return resolveThen(p, arg);
-            else return p.resolve(arg);
+            if (isThenable(arg)) {
+                return resolveThen(p, arg);
+            } else {
+                return p.resolve(arg);
+            }
         };
-
         // accept a promises array,
         // return a promise which will resolsed with all promises's value,
         // if any promise passed rejectd, the returned promise will rejected with the same reason
@@ -811,30 +760,27 @@
             var r = [];
             var pending = 0;
             var locked;
-
             var test = promises;
-
             //modified
             utils.forEach(promises, function(p, i) {
                 p.then(function(v) {
                     r[i] = v;
-                    if (++pending === len && !locked) promise.resolve(r);
+                    if ((pending += 1) === len && !locked) {
+                        promise.resolve(r);
+                    }
                 }, function(e) {
                     locked = true;
                     promise.reject(e);
                 });
             });
-
             return promise;
         };
-
         // accept a promises array,
         // return a promise which will resolsed with the first resolved promise passed,
         // if any promise passed rejectd, the returned promise will rejected with the same reason
         Promise.any = function(promises) {
             var promise = Promise();
             var called;
-
             //modified
             utils.forEach(promises, function(p, i) {
                 p.then(function(v) {
@@ -847,64 +793,73 @@
                     promise.reject(e);
                 });
             });
-
             return promise;
         };
-
         // return a promise which reject with reason
         // reason must be an instance of Error object
         Promise.reject = function(reason) {
-            if (!(reason instanceof Error)) throw Error('reason must be an instance of Error');
-
+            if (!(reason instanceof Error)) {
+                throw Error('reason must be an instance of Error');
+            }
             var p = Promise();
-
             p.reject(reason);
-
             return p;
         };
 
         function resolveX(promise, x) {
-            if (x === promise) promise.reject(new Error('TypeError'));
-
-            if (x instanceof Promise) return resolvePromise(promise, x);
-            else if (isThenable(x)) return resolveThen(promise, x);
-            else return promise.resolve(x);
-        };
+            if (x === promise) {
+                promise.reject(new Error('TypeError'));
+            }
+            if (x instanceof Promise) {
+                return resolvePromise(promise, x);
+            } else if (isThenable(x)) {
+                return resolveThen(promise, x);
+            } else {
+                return promise.resolve(x);
+            }
+        }
 
         function resolvePromise(promise1, promise2) {
             var status = promise2.status;
-
             if ('pending' === status) {
                 promise2.then(promise1.resolve.bind(promise1), promise1.reject.bind(promise1));
             }
-            if ('resolved' === status) promise1.resolve(promise2.value);
-            if ('rejected' === status) promise1.reject(promise2.reason);
-
+            if ('resolved' === status) {
+                promise1.resolve(promise2.value);
+            }
+            if ('rejected' === status) {
+                promise1.reject(promise2.reason);
+            }
             return promise;
-        };
+        }
 
         function resolveThen(promise, thanable) {
             var called;
             var resolve = once(function(x) {
-                if (called) return;
+                if (called) {
+                    return;
+                }
                 resolveX(promise, x);
                 called = true;
             });
             var reject = once(function(r) {
-                if (called) return;
+                if (called) {
+                    return;
+                }
                 promise.reject(r);
                 called = true;
             });
-
             try {
                 thanable.then.call(thanable, resolve, reject);
             } catch (e) {
-                if (!called) throw e;
-                else promise.reject(e);
+                if (!called) {
+                    throw e;
+                } else {
+                    promise.reject(e);
+                }
             }
-
             return promise;
-        };
+        }
 
         function fireQ(promise) {
             var status = promise.status;
@@ -912,80 +867,71 @@
             var arg = promise['resolved' === status ? 'value' : 'reason'];
             var fn;
             var x;
-
             while (fn = queue.shift()) {
                 x = fn.call(promise, arg);
                 x && resolveX(promise._next, x);
             }
-
             return promise;
-        };
+        }
 
-        function noop() {};
+        function noop() {}
 
         function isFn(fn) {
             return 'function' === type(fn);
-        };
+        }
 
         function isObj(o) {
             return 'object' === type(o);
-        };
+        }
 
         function type(obj) {
             var o = {};
             return o.toString.call(obj).replace(/\[object (\w+)\]/, '$1').toLowerCase();
-        };
+        }
 
         function isThenable(obj) {
             return obj && obj.then && isFn(obj.then);
-        };
+        }
 
         function once(fn) {
             var called;
             var r;
-
             return function() {
-                if (called) return r;
+                if (called) {
+                    return r;
+                }
                 called = true;
                 return r = fn.apply(this, arguments);
             };
-        };
-
+        }
         return Promise;
     }));
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI CLASS
  * Base class
  * Based on Simple JavaScript Inheritance by John Resig
  * Source http://ejohn.org/blog/simple-javascript-inheritance/
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var initializing = false;
-
     var fnTest = /xyz/.test(function() {
         xyz;
     }) ? /\b_super\b/ : /.*/;
 
     function extend(name, extensions) {
         //in case there are two args
-        extensions = (arguments.length === 1) ? name : extensions;
+        extensions = arguments.length === 1 ? name : extensions;
         var _super = this.prototype;
-
         initializing = true;
         var prototype = new this();
         initializing = false;
-
         Vizabi.utils.forEach(extensions, function(method, name) {
-            if (typeof extensions[name] == "function" && typeof _super[name] == "function" && fnTest.test(extensions[name])) {
-                prototype[name] = (function(name, fn) {
+            if (typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
+                prototype[name] = function(name, fn) {
                     return function() {
                         var tmp = this._super;
                         this._super = _super[name];
@@ -993,26 +939,25 @@
                         this._super = tmp;
                         return ret;
                     };
-                })(name, extensions[name]);
+                }(name, extensions[name]);
             } else {
                 prototype[name] = method;
             }
         });
 
         function Class() {
-            if (!initializing && this.init) {
-                this.init.apply(this, arguments);
+                if (!initializing && this.init) {
+                    this.init.apply(this, arguments);
+                }
             }
-        }
-
-        // Populate our constructed prototype object
+            // Populate our constructed prototype object
         Class.prototype = prototype;
         Class.prototype.constructor = Class;
         Class.extend = extend;
         Class._collection = {};
         Class.register = function(name, code) {
             if (typeof this._collection[name] !== 'undefined') {
-                Vizabi.utils.warn('"'+ name +'" is already registered. Overwriting...');
+                Vizabi.utils.warn('"' + name + '" is already registered. Overwriting...');
             }
             this._collection[name] = code;
         };
@@ -1026,45 +971,35 @@
             if (this._collection.hasOwnProperty(name)) {
                 return this._collection[name];
             }
-            if(!silent) {
-                Vizabi.utils.warn('"'+ name +'" was not found.');
+            if (!silent) {
+                Vizabi.utils.warn('"' + name + '" was not found.');
             }
             return false;
         };
-
         //register extension by name
         if (arguments.length > 1 && this.register) {
             this.register(name, Class);
         }
-
         return Class;
     }
-
     Vizabi.Class = function() {};
     Vizabi.Class.extend = extend;
-    
     Vizabi.Helper = Vizabi.Class.extend({});
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI DATA
  * Manages data
  */
-
 (function() {
-
-    "use strict";
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
-
     var Data = Vizabi.Class.extend({
-
         init: function() {
             this._collection = {};
         },
-
         /**
          * Loads resource from reader or cache
          * @param {Array} query Array with queries to be loaded
@@ -1073,17 +1008,14 @@
          * @param {String} path Where data is located
          */
         load: function(query, language, reader, evts) {
-
             var _this = this;
             var promise = new Promise();
-            var wait = (new Promise).resolve();
-            var cached = (query === true) ? true : this.isCached(query, language, reader);
+            var wait = new Promise().resolve();
+            var cached = query === true ? true : this.isCached(query, language, reader);
             var loaded = false;
-
             //if result is cached, dont load anything
             if (!cached) {
-                utils.timeStamp("Vizabi Data: Loading Data");
-
+                utils.timeStamp('Vizabi Data: Loading Data');
                 if (evts && typeof evts.load_start === 'function') {
                     evts.load_start();
                 }
@@ -1094,27 +1026,23 @@
                     wait.resolve();
                 });
             }
-
-            wait.then(
-                function() {
-                    //pass the data forward
-                    var data = _this._collection[cached].data;
-                    //not loading anymore
-                    if (loaded && evts && typeof evts.load_end === 'function') {
-                        evts.load_end();
-                    }
-                    promise.resolve(cached);
-                },
-                function() {
-                    //not loading anymore
-                    if (loaded && evts && typeof evts.load_end === 'function') {
-                        evts.load_end();
-                    }
-                    promise.reject('Error loading file...');
-                });
+            wait.then(function() {
+                //pass the data forward
+                var data = _this._collection[cached].data;
+                //not loading anymore
+                if (loaded && evts && typeof evts.load_end === 'function') {
+                    evts.load_end();
+                }
+                promise.resolve(cached);
+            }, function() {
+                //not loading anymore
+                if (loaded && evts && typeof evts.load_end === 'function') {
+                    evts.load_end();
+                }
+                promise.reject('Error loading file...');
+            });
             return promise;
         },
-
         /**
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
@@ -1122,26 +1050,25 @@
          * @param {Object} reader Which reader to use. E.g.: "json-file"
          * @param {String} path Where data is located
          */
-
         loadFromReader: function(query, lang, reader) {
             var _this = this;
             var promise = new Promise();
             var reader_name = reader.reader;
-            var queryId = utils.hashCode([query, lang, reader]);
+            var queryId = utils.hashCode([
+                query,
+                lang,
+                reader
+            ]);
             var readerClass = Vizabi.Reader.get(reader_name);
-
             var r = new readerClass(reader);
-
             r.read(query, lang).then(function() {
                     //success reading
                     var values = r.getData();
                     var q = query;
-
-                    var query_region = (q.select.indexOf("geo.region") !== -1);
-
+                    var query_region = q.select.indexOf('geo.region') !== -1;
                     //make sure all queried is returned
                     values = values.map(function(d) {
-                        for (var i = 0; i < q.select.length; i++) {
+                        for (var i = 0; i < q.select.length; i += 1) {
                             var col = q.select[i];
                             if (typeof d[col] === 'undefined') {
                                 d[col] = null;
@@ -1149,11 +1076,12 @@
                         }
                         return d;
                     });
-
                     values = values.map(function(d) {
-                        if (d.geo === null) d.geo = d["geo.name"];
-                        if (query_region && d["geo.region"] === null) {
-                            d["geo.region"] = d.geo;
+                        if (d.geo === null) {
+                            d.geo = d['geo.name'];
+                        }
+                        if (query_region && d['geo.region'] === null) {
+                            d['geo.region'] = d.geo;
                         }
                         return d;
                     });
@@ -1167,48 +1095,48 @@
                     values.sort(function(a, b) {
                         return a.time - b.time;
                     });
-
                     _this._collection[queryId] = {};
                     var col = _this._collection[queryId];
                     col.data = values;
                     col.filtered = {};
                     col.unique = {};
                     col.limits = {};
-
                     promise.resolve(queryId);
-                },
-                //error reading
+                }, //error reading
                 function(err) {
                     promise.reject(err);
                 });
-
             return promise;
         },
-
         /**
          * get data
          */
         get: function(queryId, what) {
-            if(!queryId) return;
-            if(!what) what = "data";
+            if (!queryId) {
+                return;
+            }
+            if (!what) {
+                what = 'data';
+            }
             return this._collection[queryId][what];
         },
-
         /**
          * checks whether this combination is cached or not
          */
         isCached: function(query, language, reader) {
             //encode in hashCode
-            var q = utils.hashCode([query, language, reader]);
+            var q = utils.hashCode([
+                query,
+                language,
+                reader
+            ]);
             //simply check if we have this in internal data
             if (Object.keys(this._collection).indexOf(q) !== -1) {
                 return q;
             }
             return false;
         }
-
     });
-
     /**
      * Initializes the reader.
      * @param {Object} reader_info Information about the reader
@@ -1219,7 +1147,6 @@
             this._data = reader_info.data || [];
             this._basepath = this._basepath || reader_info.path || null;
         },
-
         /**
          * Reads from source
          * @param {Array} queries Queries to be performed
@@ -1229,7 +1156,6 @@
         read: function(queries, language) {
             return new Promise.resolve(this._data);
         },
-
         /**
          * Gets the data
          * @returns all data
@@ -1237,45 +1163,34 @@
         getData: function() {
             return this._data;
         }
-
     });
-
     Vizabi.Reader = Reader;
     Vizabi.Data = Data;
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI EVENTS
  * Manages Vizabi events
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     var _freezeAllEvents = false;
     var _frozenEventInstances = [];
     var _freezeAllExceptions = {};
-
     var Events = Vizabi.Class.extend({
         /**
          * Initializes the event class
          */
         init: function() {
-
             this._id = this._id || utils.uniqueId('e');
             this._events = {};
-
             //freezing events
             this._freeze = false;
             this._freezer = [];
             this._freezeExceptions = {};
         },
-
         /**
          * Binds a callback function to an event
          * @param {String|Array} name name of event or array with names
@@ -1285,14 +1200,14 @@
             var i;
             //bind multiple functions at the same time
             if (utils.isArray(func)) {
-                for (i = 0; i < func.length; i++) {
+                for (i = 0; i < func.length; i += 1) {
                     this.on(name, func[i]);
                 }
                 return;
             }
             //bind multiple at a time
             if (utils.isArray(name)) {
-                for (i = 0; i < name.length; i++) {
+                for (i = 0; i < name.length; i += 1) {
                     this.on(name[i], func);
                 }
                 return;
@@ -1304,16 +1219,13 @@
                 }
                 return;
             }
-
             this._events[name] = this._events[name] || [];
-
             if (typeof func === 'function') {
                 this._events[name].push(func);
             } else {
-                utils.warn("Can't bind event '" + name + "'. It must be a function.");
+                utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
             }
         },
-
         /**
          * Unbinds all events associated with a name or a specific one
          * @param {String|Array} name name of event or array with names
@@ -1321,7 +1233,7 @@
         unbind: function(name) {
             //unbind multiple at a time
             if (utils.isArray(name)) {
-                for (var i = 0; i < name.length; i++) {
+                for (var i = 0; i < name.length; i += 1) {
                     this.unbind(name[i]);
                 }
                 return;
@@ -1330,45 +1242,47 @@
                 this._events[name] = [];
             }
         },
-
         /**
          * Unbinds all events
          */
         unbindAll: function() {
             this._events = {};
         },
-
         /**
          * Triggers an event, adding it to the buffer
          * @param {String|Array} name name of event or array with names
          * @param args Optional arguments (values to be passed)
          */
         trigger: function(name, args, original) {
-            var i, size;
+            var i;
+            var size;
             if (utils.isArray(name)) {
-                for (i = 0, size = name.length; i < size; i++) {
+                for (i = 0, size = name.length; i < size; i += 1) {
                     this.trigger(name[i], args);
                 }
             } else {
-                if (!this._events.hasOwnProperty(name)) return;
-                for (i = 0; i < this._events[name].length; i++) {
+                if (!this._events.hasOwnProperty(name)) {
+                    return;
+                }
+                for (i = 0; i < this._events[name].length; i += 1) {
                     var f = this._events[name][i];
                     //if not in buffer, add and execute
                     var _this = this;
                     var execute = function() {
-                        var msg = "Vizabi Event: " + name + " - " + original;
+                        var msg = 'Vizabi Event: ' + name + ' - ' + original;
                         utils.timeStamp(msg);
-                        f.apply(_this, [(original || name), args]);
+                        f.apply(_this, [
+                            original || name,
+                            args
+                        ]);
                     };
-
                     //TODO: improve readability of freezer code
                     //only execute if not frozen and exception doesnt exist
                     if (this._freeze || _freezeAllEvents) {
                         //if exception exists for freezing, execute
-                        if ((_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name)) || (!_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name))) {
+                        if (_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && this._freeze && this._freezeExceptions.hasOwnProperty(name)) {
                             execute();
-                        }
-                        //otherwise, freeze it
+                        } //otherwise, freeze it
                         else {
                             this._freezer.push(execute);
                             if (_freezeAllEvents && !_frozenEventInstances[this._id]) {
@@ -1382,7 +1296,6 @@
                 }
             }
         },
-
         /**
          * Triggers an event and all parent events
          * @param {String|Array} name name of event or array with names
@@ -1390,28 +1303,31 @@
          */
         triggerAll: function(name, args, original) {
             var to_trigger = [];
-
             //default to array
             if (!utils.isArray(name)) {
                 name = [name];
             }
-            var i, size, n;
-            for (i = 0, size = name.length; i < size; i++) {
+            var i;
+            var size;
+            var n;
+            for (i = 0, size = name.length; i < size; i += 1) {
                 n = name[i];
                 var original = n;
-                var parts = n.split(":");
+                var parts = n.split(':');
                 while (parts.length) {
-                    to_trigger.push([n, args, original]);
+                    to_trigger.push([
+                        n,
+                        args,
+                        original
+                    ]);
                     parts.pop();
-                    n = parts.join(":");
+                    n = parts.join(':');
                 }
             }
-
             var once = utils.unique(to_trigger, function(d) {
                 return d[0]; //name of the event
             });
-
-            for (i = 0; i < once.length; i++) {
+            for (i = 0; i < once.length; i += 1) {
                 this.trigger.apply(this, once[i]);
             }
         },
@@ -1420,13 +1336,16 @@
          */
         freeze: function(exceptions) {
             this._freeze = true;
-            if (!exceptions) return;
-            if (!utils.isArray(exceptions)) exceptions = [exceptions];
-            for (var i = 0; i < exceptions.length; i++) {
+            if (!exceptions) {
+                return;
+            }
+            if (!utils.isArray(exceptions)) {
+                exceptions = [exceptions];
+            }
+            for (var i = 0; i < exceptions.length; i += 1) {
                 this._freezeExceptions[exceptions[i]] = true;
             }
         },
-
         /**
          * triggers all frozen events
          */
@@ -1439,29 +1358,29 @@
                 execute();
             }
         }
-
     });
     //generic event functions
-
     /**
      * freezes all events
      */
     Events.freezeAll = function(exceptions) {
         _freezeAllEvents = true;
-        if (!exceptions) return;
-        if (!utils.isArray(exceptions)) exceptions = [exceptions];
+        if (!exceptions) {
+            return;
+        }
+        if (!utils.isArray(exceptions)) {
+            exceptions = [exceptions];
+        }
         utils.forEach(exceptions, function(e) {
             _freezeAllExceptions[e] = true;
         });
     };
-
     /**
      * triggers all frozen events form all instances
      */
     Events.unfreezeAll = function() {
         _freezeAllEvents = false;
         _freezeAllExceptions = {};
-
         //unfreeze all instances
         for (var i in _frozenEventInstances) {
             var instance = _frozenEventInstances[i];
@@ -1469,23 +1388,17 @@
             delete _frozenEventInstances[i];
         }
     };
-
     Vizabi.Events = Events;
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI INTERVALS
  * Manages Vizabi layout profiles and classes
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     var Intervals = Vizabi.Class.extend({
         /**
          * Initializes intervals
@@ -1508,7 +1421,7 @@
          * @param {String} name name of interval to be removed
          */
         clearInterval: function(name) {
-            return (name) ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
+            return name ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
         },
         /**
          * Clears all intervals
@@ -1519,29 +1432,21 @@
             }
         }
     });
-
     Vizabi.Intervals = Intervals;
-
-}).call(this);
-
+}.call(this));
 /*!
  * VIZABI LAYOUT
  * Manages Vizabi layout profiles and classes
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     //classes are vzb-portrait, vzb-landscape...
-    var class_prefix = "vzb-";
-    var class_portrait = "vzb-portrait";
-    var class_lansdcape = "vzb-landscape";
-
+    var class_prefix = 'vzb-';
+    var class_portrait = 'vzb-portrait';
+    var class_lansdcape = 'vzb-landscape';
     var screen_sizes = {
         small: {
             min_width: 0,
@@ -1556,30 +1461,24 @@
             max_width: Infinity
         }
     };
-
     var Layout = Vizabi.Events.extend({
-
         /**
          * Initializes the layout manager
          */
         init: function() {
-
-            this._container = null; //dom element
+            this._container = null;
+            //dom element
             this._curr_profile = null;
             this._prev_size = {};
-
             //resize when window resizes
             var _this = this;
-
             root.addEventListener('resize', function() {
                 if (_this._container) {
                     _this.setSize();
                 }
             });
-
             this._super();
         },
-
         /**
          * Calculates the size of the newly resized container
          */
@@ -1587,9 +1486,9 @@
             var _this = this;
             var width = this._container.clientWidth;
             var height = this._container.clientHeight;
-
-            if (this._prev_size && this._prev_size.width === width && this._prev_size.height === height) return;
-
+            if (this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
+                return;
+            }
             utils.forEach(screen_sizes, function(range, size) {
                 //remove class
                 utils.removeClass(_this._container, class_prefix + size);
@@ -1598,26 +1497,20 @@
                     _this._curr_profile = size;
                 }
             });
-
             //update size class
-            utils.addClass(this._container, class_prefix+this._curr_profile);
-
+            utils.addClass(this._container, class_prefix + this._curr_profile);
             //toggle, untoggle classes based on orientation
-             if(width < height) {
+            if (width < height) {
                 utils.addClass(this._container, class_portrait);
                 utils.removeClass(this._container, class_lansdcape);
-            }
-            else {
+            } else {
                 utils.addClass(this._container, class_lansdcape);
                 utils.removeClass(this._container, class_portrait);
             }
-
             this._prev_size.width = width;
             this._prev_size.height = height;
-
             this.trigger('resize');
         },
-
         /**
          * Sets the container for this layout
          * @param container DOM element
@@ -1626,7 +1519,6 @@
             this._container = container;
             this.setSize();
         },
-
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile
@@ -1634,45 +1526,33 @@
         currentProfile: function() {
             return this._curr_profile;
         }
-
     });
-
     Vizabi.Layout = Layout;
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI MODEL
  * Base Model
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
-    
     var time_formats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%Y-%m"),
-        "week": d3.time.format("%Y-W%W"),
-        "day": d3.time.format("%Y-%m-%d"),
-        "hour": d3.time.format("%Y-%m-%d %H"),
-        "minute": d3.time.format("%Y-%m-%d %H:%M"),
-        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+        'year': d3.time.format('%Y'),
+        'month': d3.time.format('%Y-%m'),
+        'week': d3.time.format('%Y-W%W'),
+        'day': d3.time.format('%Y-%m-%d'),
+        'hour': d3.time.format('%Y-%m-%d %H'),
+        'minute': d3.time.format('%Y-%m-%d %H:%M'),
+        'second': d3.time.format('%Y-%m-%d %H:%M:%S')
     };
-
     //names of reserved hook properties
-
     //warn client if d3 is not defined
     Vizabi._require('d3');
-
     var _DATAMANAGER = new Vizabi.Data();
-
     var Model = Vizabi.Events.extend({
-
         /**
          * Initializes the model.
          * @param {Object} values The initial values of this model
@@ -1680,52 +1560,48 @@
          * @param {Object} bind Initial events to bind
          * @param {Boolean} freeze block events from being dispatched
          */
-
         init: function(values, parent, bind, freeze) {
-            this._type = this._type || "model";
-            this._id = this._id || utils.uniqueId("m");
-            this._data = {}; //holds attributes of this model
+            this._type = this._type || 'model';
+            this._id = this._id || utils.uniqueId('m');
+            this._data = {};
+            //holds attributes of this model
             this._parent = parent;
             this._set = false;
             this._ready = false;
-            this._readyOnce = false; //has this model ever been ready?
+            this._readyOnce = false;
+            //has this model ever been ready?
             this._loadedOnce = false;
-            this._loading = []; //array of processes that are loading
+            this._loading = [];
+            //array of processes that are loading
             this._intervals = getIntervals(this);
             //holds the list of dependencies for virtual models
             this._deps = {
                 parent: [],
                 children: []
             };
-
             //will the model be hooked to data?
             this._space = {};
             this._dataId = false;
-            this._limits = {}; //stores limit values
-
+            this._limits = {};
+            //stores limit values
             this._super();
-
             //bind initial events
             if (bind) {
                 this.on(bind);
             }
-
             if (freeze) {
                 //do not dispatch events
                 this.freeze();
             }
-
             //initial values
             if (values) {
                 this.set(values);
             }
         },
-
         /* ==========================
          * Getters and Setters
          * ==========================
          */
-
         /**
          * Gets an attribute from this model or all fields.
          * @param attr Optional attribute
@@ -1737,7 +1613,6 @@
             }
             return this._data[attr];
         },
-
         /**
          * Sets an attribute or multiple for this model (inspired by Backbone)
          * @param attr property name
@@ -1745,13 +1620,11 @@
          * @returns defer defer that will be resolved when set is done
          */
         set: function(attr, val, force) {
-
             var events = [];
             var changes = [];
-            var setting = this._setting
+            var setting = this._setting;
             var _this = this;
             var attrs;
-
             //expect object as default
             if (!utils.isPlainObject(attr)) {
                 (attrs = {})[attr] = val;
@@ -1759,27 +1632,24 @@
                 attrs = attr;
                 force = val;
             }
-
             //if it's the first time we are setting this, check previous
             if (!setting) {
                 this._prevData = utils.clone(this._data);
                 this._changedData = {};
             }
-
-            this._setting = true; //we are currently setting the model
-
+            this._setting = true;
+            //we are currently setting the model
             //compute each change
             for (var a in attrs) {
                 var val = attrs[a];
                 var curr = this._data[a];
                 var prev = this._prevData[a];
-
                 //if its a regular value
                 if (!utils.isPlainObject(val) || utils.isArray(val)) {
                     //change if it's not the same value
                     if (curr !== val || force || JSON.stringify(curr) !== JSON.stringify(val)) {
-                        var p = (typeof curr === 'undefined') ? 'init' : 'change';
-                        events.push(p + ":" + a);
+                        var p = typeof curr === 'undefined' ? 'init' : 'change';
+                        events.push(p + ':' + a);
                     }
                     if (prev !== val || force || JSON.stringify(prev) !== JSON.stringify(val)) {
                         this._changedData[a] = val;
@@ -1787,14 +1657,12 @@
                         delete this._changedData[a];
                     }
                     this._data[a] = val;
-                }
-                //if it's an object, it's a submodel
+                } //if it's an object, it's a submodel
                 else {
                     if (curr && isModel(curr)) {
                         events.push('change:' + a);
                         this._data[a].set(val, force);
-                    }
-                    //submodel doesnt exist, create it
+                    } //submodel doesnt exist, create it
                     else {
                         events.push('init:' + a);
                         this._data[a] = initSubmodel(a, val, this);
@@ -1802,32 +1670,26 @@
                     }
                 }
             }
-
             bindSettersGetters(this);
-
             //for tool model when setting for the first time
             if (this.validate && !setting) {
                 this.validate();
             }
-
             if (!setting || force) {
                 //trigger set if not set
                 if (!this._set) {
                     this._set = true;
-                    events.push("set");
+                    events.push('set');
                 } else if (events.length) {
-                    events.push("change");
+                    events.push('change');
                 }
-
                 _this._setting = false;
                 _this.triggerAll(events, _this.getObject());
-
                 if (!this.isHook()) {
                     this.setReady();
                 }
             }
         },
-
         /**
          * Gets the type of this model
          * @returns {String} type of the model
@@ -1835,7 +1697,6 @@
         getType: function() {
             return this._type;
         },
-
         /**
          * Gets all submodels of the current model
          */
@@ -1848,7 +1709,6 @@
             });
             return submodels;
         },
-
         /**
          * Gets the current model and submodel values as a JS object
          * @returns {Object} All model as JS object
@@ -1865,7 +1725,6 @@
             }
             return obj;
         },
-
         /**
          * Clears this model, submodels, data and events
          */
@@ -1879,49 +1738,41 @@
             this._intervals.clearAllIntervals();
             this._data = {};
         },
-
         /**
          * Validates data.
          * Interface for the validation function implemented by a model
          * @returns Promise or nothing
          */
-        validate: function() {
-            //placeholder for validate function
-        },
-
+        validate: function() {},
         /* ==========================
          * Model loading
          * ==========================
          */
-
         /**
          * checks whether this model is loading anything
          * @param {String} optional process id (to check only one)
          * @returns {Boolean} is it loading?
          */
         isLoading: function(p_id) {
-
             if (this.isHook() && !this._loadedOnce) {
                 return true;
             }
             if (p_id) {
-                return (this._loading.indexOf(p_id) !== -1);
-            }
-            //if loading something
+                return this._loading.indexOf(p_id) !== -1;
+            } //if loading something
             else if (this._loading.length > 0) {
                 return true;
-            }
-            //if not loading anything, check submodels
+            } //if not loading anything, check submodels
             else {
                 var submodels = this.getSubmodels();
                 var i;
-                for (i = 0; i < submodels.length; i++) {
+                for (i = 0; i < submodels.length; i += 1) {
                     if (submodels[i].isLoading()) {
                         return true;
                         break;
                     }
                 }
-                for (i = 0; i < this._deps.children.length; i++) {
+                for (i = 0; i < this._deps.children.length; i += 1) {
                     var d = this._deps.children[i];
                     if (d.isLoading() || !d._ready) {
                         return true;
@@ -1931,7 +1782,6 @@
                 return false;
             }
         },
-
         /**
          * specifies that the model is loading data
          * @param {String} id of the loading process
@@ -1939,12 +1789,11 @@
         setLoading: function(p_id) {
             //if this is the first time we're loading anything
             if (!this.isLoading()) {
-                this.trigger("load_start");
+                this.trigger('load_start');
             }
             //add id to the list of processes that are loading
             this._loading.push(p_id);
         },
-
         /**
          * specifies that the model is done with loading data
          * @param {String} id of the loading process
@@ -1953,12 +1802,10 @@
             this._loading = utils.without(this._loading, p_id);
             this.setReady();
         },
-
         /**
          * Sets the model as ready or not depending on its loading status
          */
         setReady: function(value) {
-
             if (value === false) {
                 this._ready = false;
                 if (this._parent && this._parent.setReady) {
@@ -1968,17 +1815,15 @@
             }
             //only ready if nothing is loading at all
             var prev_ready = this._ready;
-            this._ready = (!this.isLoading() && !this._setting && !this._loadCall);
-
+            this._ready = !this.isLoading() && !this._setting && !this._loadCall;
             if (this._ready && prev_ready !== this._ready) {
                 if (!this._readyOnce) {
                     this._readyOnce = true;
-                    this.trigger("readyOnce");
+                    this.trigger('readyOnce');
                 }
-                this.trigger("ready");
+                this.trigger('ready');
             }
         },
-
         /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
@@ -1993,99 +1838,75 @@
             var data_hook = this._dataModel;
             var language_hook = this._languageModel;
             var query = this.getQuery();
-            var promiseLoad = new Promise;
+            var promiseLoad = new Promise();
             var promises = [];
-
             //useful to check if in the middle of a load call
             this._loadCall = true;
-
             //load hook
             //if its not a hook, the promise will not be created
             if (this.isHook() && data_hook && query) {
-
                 //hook changes, regardless of actual data loading 
                 this.trigger('hook_change');
-
                 //get reader omfp
                 var reader = data_hook.getObject();
-                var lang = (language_hook) ? language_hook.id : "en";
-                var promise = new Promise;
-
+                var lang = language_hook ? language_hook.id : 'en';
+                var promise = new Promise();
                 var evts = {
                     'load_start': function() {
-                        _this.setLoading("_hook_data");
-                        Vizabi.Events.freezeAll(['load_start', 'resize', 'dom_ready']);
+                        _this.setLoading('_hook_data');
+                        Vizabi.Events.freezeAll([
+                            'load_start',
+                            'resize',
+                            'dom_ready'
+                        ]);
                     },
                     'load_end': function() {
                         Vizabi.Events.unfreezeAll();
-                        _this.setLoadingDone("_hook_data");
+                        _this.setLoadingDone('_hook_data');
                     }
                 };
-
-                utils.timeStamp("Vizabi Model: Loading Data: " + _this._id);
-
-                _DATAMANAGER.load(query, lang, reader, evts)
-                    .then(function(dataId) {
-
-                            _this._dataId = dataId;
-
-                            utils.timeStamp("Vizabi Model: Data loaded: " + _this._id);
-
-                            _this.afterLoad();
-
-                            promise.resolve();
-                        },
-                        function(err) {
-                            _this.trigger("load_error", query);
-                            promise.reject(err);
-                        });
-
+                utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
+                _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
+                    _this._dataId = dataId;
+                    utils.timeStamp('Vizabi Model: Data loaded: ' + _this._id);
+                    _this.afterLoad();
+                    promise.resolve();
+                }, function(err) {
+                    _this.trigger('load_error', query);
+                    promise.reject(err);
+                });
                 promises.push(promise);
-
             }
-
             //load submodels as well
             for (var i in submodels) {
                 promises.push(submodels[i].load());
             }
-
             //when all promises/loading have been done successfully
             //we will consider this done
-            var wait = (promises.length) ? Promise.all(promises) : new Promise.resolve();
-
+            var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
             wait.then(function() {
-
                 if (_this.validate) {
                     _this.validate();
                 }
-
-                utils.timeStamp("Vizabi Model: Model loaded: " + _this._id);
-
+                utils.timeStamp('Vizabi Model: Model loaded: ' + _this._id);
                 //end this load call
                 _this._loadedOnce = true;
                 _this._loadCall = false;
                 _this.setReady();
-
                 promiseLoad.resolve();
             });
-
             return promiseLoad;
         },
-
         /**
          * executes after data has actually been loaded
          */
-        afterLoad: function() {
-            //placeholder method
-        },
-
+        afterLoad: function() {},
         /**
          * removes all external dependency references
          */
         resetDeps: function() {
             this._deps.children = [];
         },
-
         /**
          * add external dependency ref to this model
          */
@@ -2093,19 +1914,16 @@
             this._deps.children.push(child);
             child._deps.parent.push(this);
         },
-
         /* ===============================
          * Hooking model to external data
          * ===============================
          */
-
         /**
          * is this model hooked to data?
          */
         isHook: function() {
-            return (this.use) ? true : false;
+            return this.use ? true : false;
         },
-
         /**
          * Hooks all hookable submodels to data
          */
@@ -2120,20 +1938,16 @@
                 s.setHooks();
             });
         },
-
         /**
          * Hooks this model to data, entities and time
          * @param {Object} h Object containing the hooks
          */
         hookModel: function() {
-
             var _this = this;
             var spaceRefs = getSpace(this);
-
             // assuming all models will need data and language support
-            this._dataModel = getClosestModel(this, "data");
-            this._languageModel = getClosestModel(this, "language");
-
+            this._dataModel = getClosestModel(this, 'data');
+            this._languageModel = getClosestModel(this, 'language');
             //check what we want to hook this model to
             utils.forEach(spaceRefs, function(name) {
                 //hook with the closest prefix to this model
@@ -2141,24 +1955,20 @@
                 //if hooks change, this should load again
                 //TODO: remove hardcoded 'show"
                 if (_this._space[name].show) {
-                    _this._space[name].on("change:show", function(evt) {
+                    _this._space[name].on('change:show', function(evt) {
                         _this.load();
                     });
                 }
             });
-
             //this is a hook, therefore it needs to reload when data changes
-            this.on("change", function() {
+            this.on('change', function() {
                 _this.load();
             });
-
             //this is a hook, therefore it needs to reload when data changes
-            this.on("hook_change", function() {
+            this.on('hook_change', function() {
                 _this.setReady(false);
             });
-
         },
-
         /**
          * gets all sub values for a certain hook
          * only hooks have the "hook" attribute.
@@ -2177,36 +1987,34 @@
             //now we have an array with all values in a type of hook for hooks.
             return values;
         },
-
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of indicator hooks
          */
         getIndicators: function() {
-            return this.getHookValues("indicator");
+            return this.getHookValues('indicator');
         },
-
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of property hooks
          */
         getProperties: function() {
-            return this.getHookValues("property");
+            return this.getHookValues('property');
         },
-
         /**
          * gets all hook dimensions
          * @returns {Array} all unique dimensions
          */
         getAllDimensions: function() {
-            var dims = [],
-                dim;
+            var dims = [];
+            var dim;
             utils.forEach(this._space, function(m) {
-                if (dim = m.getDimension()) dims.push(dim);
+                if (dim = m.getDimension()) {
+                    dims.push(dim);
+                }
             });
             return dims;
         },
-
         /**
          * gets all hook filters
          * @returns {Object} filters
@@ -2218,31 +2026,26 @@
             });
             return filters;
         },
-
         /**
          * gets the value specified by this hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
          * @returns hooked value
          */
-
         getValue: function(filter) {
             //extract id from original filter
             var id = utils.clone(filter, this.getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
-
         /**
          * gets multiple values from the hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
          * @returns an array of values
          */
-
         getValues: function(filter) {
             //extract id from original filter
             var id = utils.clone(filter, this.getAllDimensions());
             return this._getHookedValues(id);
         },
-
         /**
          * maps the value to this hook's specifications
          * @param value Original value
@@ -2251,7 +2054,6 @@
         mapValue: function(value) {
             return value;
         },
-
         /**
          * gets the items associated with this hook without values
          * @param value Original value
@@ -2259,33 +2061,28 @@
          */
         getItems: function(filter) {
             if (this.isHook() && this._dataModel) {
-
                 //all dimensions except time (continuous)
-                var dimensions = utils.without(this.getAllDimensions(), "time");
-
+                var dimensions = utils.without(this.getAllDimensions(), 'time');
                 return this.getUnique(dimensions).map(function(item) {
                     // Forcefully write the time to item
                     // TODO: Clean this hack
-                    if (filter && filter['time']) {
-                        item['time'] = filter['time'];
+                    if (filter && filter.time) {
+                        item.time = filter.time;
                     }
                     return item;
-                })
-
+                });
                 return values;
             } else {
                 return [];
             }
         },
-
         /**
          * Gets the dimension of this model if it has one
          * @returns {String|Boolean} dimension
          */
         getDimension: function() {
-            return false; //defaults to no dimension
+            return this.dim || false; //defaults to dim if it exists
         },
-
         /**
          * Gets the filter for this model if it has one
          * @returns {Object} filters
@@ -2293,165 +2090,238 @@
         getFilter: function() {
             return {}; //defaults to no filter
         },
-
-
         /**
          * gets query that this model/hook needs to get data
          * @returns {Array} query
          */
         getQuery: function() {
             //only perform query in these two uses
-            var needs_query = ["property", "indicator"];
+            var needs_query = [
+                'property',
+                'indicator'
+            ];
             //if it's not a hook, property or indicator, no query is necessary
             if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
                 return true;
-            }
-            //error if there's nothing to hook to
+            } //error if there's nothing to hook to
             else if (Object.keys(this._space).length < 1) {
-                utils.error("Error:", this._id, "can't find any dimension");
+                utils.error('Error:', this._id, 'can\'t find any dimension');
                 return true;
-            }
-            //else, its a hook (indicator or property) and it needs to query
+            } //else, its a hook (indicator or property) and it needs to query
             else {
-                var dimensions = this.getAllDimensions(),
-                    select = utils.unique(dimensions.concat([this.which])),
-                    filters = this.getAllFilters();
+                var dimensions = this.getAllDimensions();
+                var select = utils.unique(dimensions.concat([this.which]));
+                var filters = this.getAllFilters();
                 //return query
                 return {
-                    "from": "data",
-                    "select": select,
-                    "where": filters
+                    'from': 'data',
+                    'select': select,
+                    'where': filters
                 };
             }
         },
-
-        
-        
         /**
          * Gets tick values for this hook
          * @returns {Number|String} value The value for this tick
          */
         tickFormatter: function(x, formatterRemovePrefix) {
-            
             //TODO: generalize for any time unit
-            if(utils.isDate(x)) return time_formats["year"](x);
-            if(utils.isString(x)) return x;
-
-            var format = "f";
-            var prec = 0;
-            if(Math.abs(x)<1) {prec = 1; format = "r"};
-
-            var prefix = "";
-            if(formatterRemovePrefix) return d3.format("."+prec+format)(x);
-
-            switch (Math.floor(Math.log10(Math.abs(x)))){
-                case -13: x = x*1000000000000; prefix = "p"; break; //0.1p
-                case -10: x = x*1000000000; prefix = "n"; break; //0.1n
-                case  -7: x = x*1000000; prefix = "µ"; break; //0.1µ
-                case  -6: x = x*1000000; prefix = "µ"; break; //1µ
-                case  -5: x = x*1000000; prefix = "µ"; break; //10µ
-                case  -4: break; //0.0001
-                case  -3: break; //0.001
-                case  -2: break; //0.01
-                case  -1: break; //0.1
-                case   0: break; //1
-                case   1: break; //10
-                case   2: break; //100
-                case   3: break; //1000
-                case   4: break; //10000
-                case   5: x = x/1000; prefix = "k"; break; //0.1M
-                case   6: x = x/1000000; prefix = "M"; prec = 1; break; //1M
-                case   7: x = x/1000000; prefix = "M"; break; //10M
-                case   8: x = x/1000000; prefix = "M"; break; //100M
-                case   9: x = x/1000000000; prefix = "B"; prec = 1; break; //1B
-                case  10: x = x/1000000000; prefix = "B"; break; //10B
-                case  11: x = x/1000000000; prefix = "B"; break; //100B
-                case  12: x = x/1000000000000; prefix = "T"; prec = 1; break; //1T
-                //use the D3 SI formatting for the extreme cases
-                default: return (d3.format("."+prec+"s")(x)).replace("G","B");
+            if (utils.isDate(x)) {
+                return time_formats.year(x);
             }
-
+            if (utils.isString(x)) {
+                return x;
+            }
+            var format = 'f';
+            var prec = 0;
+            if (Math.abs(x) < 1) {
+                prec = 1;
+                format = 'r';
+            }
+            var prefix = '';
+            if (formatterRemovePrefix) {
+                return d3.format('.' + prec + format)(x);
+            }
+            switch (Math.floor(Math.log10(Math.abs(x)))) {
+                case -13:
+                    x = x * 1000000000000;
+                    prefix = 'p';
+                    break;
+                    //0.1p
+                case -10:
+                    x = x * 1000000000;
+                    prefix = 'n';
+                    break;
+                    //0.1n
+                case -7:
+                    x = x * 1000000;
+                    prefix = '\xB5';
+                    break;
+                    //0.1µ
+                case -6:
+                    x = x * 1000000;
+                    prefix = '\xB5';
+                    break;
+                    //1µ
+                case -5:
+                    x = x * 1000000;
+                    prefix = '\xB5';
+                    break;
+                    //10µ
+                case -4:
+                    break;
+                    //0.0001
+                case -3:
+                    break;
+                    //0.001
+                case -2:
+                    break;
+                    //0.01
+                case -1:
+                    break;
+                    //0.1
+                case 0:
+                    break;
+                    //1
+                case 1:
+                    break;
+                    //10
+                case 2:
+                    break;
+                    //100
+                case 3:
+                    break;
+                    //1000
+                case 4:
+                    break;
+                    //10000
+                case 5:
+                    x = x / 1000;
+                    prefix = 'k';
+                    break;
+                    //0.1M
+                case 6:
+                    x = x / 1000000;
+                    prefix = 'M';
+                    prec = 1;
+                    break;
+                    //1M
+                case 7:
+                    x = x / 1000000;
+                    prefix = 'M';
+                    break;
+                    //10M
+                case 8:
+                    x = x / 1000000;
+                    prefix = 'M';
+                    break;
+                    //100M
+                case 9:
+                    x = x / 1000000000;
+                    prefix = 'B';
+                    prec = 1;
+                    break;
+                    //1B
+                case 10:
+                    x = x / 1000000000;
+                    prefix = 'B';
+                    break;
+                    //10B
+                case 11:
+                    x = x / 1000000000;
+                    prefix = 'B';
+                    break;
+                    //100B
+                case 12:
+                    x = x / 1000000000000;
+                    prefix = 'T';
+                    prec = 1;
+                    break;
+                    //1T
+                    //use the D3 SI formatting for the extreme cases
+                default:
+                    return d3.format('.' + prec + 's')(x).replace('G', 'B');
+            }
             // use manual formatting for the cases above
-            return (d3.format("."+prec+format)(x)+prefix).replace("G","B");
-
-        },        
-        
-        
+            return (d3.format('.' + prec + format)(x) + prefix).replace('G', 'B');
+        },
         /**
          * Gets the d3 scale for this hook. if no scale then builds it
          * @returns {Array} domain
          */
         getScale: function() {
-            if (!this.scale) this.buildScale();
+            if (!this.scale) {
+                this.buildScale();
+            }
             return this.scale;
         },
-
-
         /**
          * Gets the domain for this hook
          * @returns {Array} domain
          */
         buildScale: function() {
-
             if (!this.isHook()) {
                 return;
             }
-
-            var domain,
-                scaleType = this.scaleType || "linear";
+            var domain;
+            var scaleType = this.scaleType || 'linear';
             switch (this.use) {
-                case "indicator":
+                case 'indicator':
                     var limits = this.getLimits(this.which);
-                    domain = [limits.min, limits.max];
+                    domain = [
+                        limits.min,
+                        limits.max
+                    ];
                     break;
-                case "property":
+                case 'property':
                     domain = this.getUnique(this.which);
                     break;
-                case "value":
+                case 'value':
                 default:
                     domain = [this.which];
                     break;
             }
-
             //TODO: d3 is global?
             this.scale = d3.scale[scaleType]().domain(domain);
         },
-
         /**
          * Gets limits
          * @param {String} attr parameter
          * @returns {Object} limits (min and max)
          */
         getLimits: function(attr) {
-
             if (!this.isHook()) {
                 return;
             }
-
             if (!attr) {
                 attr = 'time'; //fallback in case no attr is provided
             }
-
             //store limits so that we stop rechecking.
             var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
             if (cachedLimits[attr]) {
                 return cachedLimits[attr];
             }
-
-            var map = function(n) { return new Date(n.toString()) };
-            if(attr !== "time") {
-                map = function(n) { return parseFloat(n) };
+            var map = function(n) {
+                return new Date(n.toString());
+            };
+            if (attr !== 'time') {
+                map = function(n) {
+                    return parseFloat(n);
+                };
             }
-
             var items = _DATAMANAGER.get(this._dataId);
             var filtered = items.reduce(function(filtered, d) {
                 var f = map(d[attr]);
-                if(!isNaN(f)) filtered.push(f); //filter
+                if (!isNaN(f)) {
+                    filtered.push(f);
+                }
+                //filter
                 return filtered;
             }, []);
-
-            var min, max, limits = {};
-            for (var i = 0; i < filtered.length; i++) {
+            var min;
+            var max;
+            var limits = {};
+            for (var i = 0; i < filtered.length; i += 1) {
                 var c = filtered[i];
                 if (typeof min === 'undefined' || c < min) {
                     min = c;
@@ -2459,37 +2329,31 @@
                 if (typeof max === 'undefined' || c > max) {
                     max = c;
                 }
-            };
+            }
             limits.min = min || 0;
             limits.max = max || 0;
-
             cachedLimits[attr] = limits;
             return limits;
         },
-
         /**
          * Gets unique values in a column
          * @param {String|Array} attr parameter
          * @returns {Array} unique values
          */
         getUnique: function(attr) {
-
             if (!this.isHook()) {
                 return;
             }
-
-            if (!attr) attr = 'time'; //fallback in case no attr is provided
-
-            //cache optimization
-            var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique'),
-                uniq_id = JSON.stringify(attr),
-                uniq;
+            if (!attr) {
+                attr = 'time';
+            }
+            var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique');
+            var uniq_id = JSON.stringify(attr);
+            var uniq;
             if (uniqueItems[uniq_id]) {
                 return uniqueItems[uniq_id];
             }
-
             var items = _DATAMANAGER.get(this._dataId);
-
             //if not in cache, compute
             //if it's an array, it will return a list of unique combinations.
             if (utils.isArray(attr)) {
@@ -2497,40 +2361,37 @@
                     return utils.clone(d, attr); //pick attrs
                 });
                 //TODO: Move this up to readers ?
-                if (attr.indexOf("time") !== -1) {
-                    for (var i = 0; i < values.length; i++) {
-                        values[i]['time'] = new Date(values[i]['time']);
+                if (attr.indexOf('time') !== -1) {
+                    for (var i = 0; i < values.length; i += 1) {
+                        values[i].time = new Date(values[i].time);
                     };
                 }
                 uniq = utils.unique(values, function(n) {
                     return JSON.stringify(n);
                 });
-            }
-            //if it's a string, it will return a list of values
+            } //if it's a string, it will return a list of values
             else {
                 var values = items.map(function(d) {
                     //TODO: Move this up to readers ?
-                    return (attr !== "time") ? d[attr] : new Date(d[attr]);
+                    return attr !== 'time' ? d[attr] : new Date(d[attr]);
                 });
                 uniq = utils.unique(values);
             }
             uniqueItems[uniq_id] = uniq;
             return uniq;
         },
-
         /**
          * gets the value of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
          * @returns hooked value
          */
         _getHookedValue: function(filter) {
-
             if (!this.isHook()) {
-                utils.warn("_getHookedValue method needs the model to be hooked to data.");
+                utils.warn('_getHookedValue method needs the model to be hooked to data.');
                 return;
             }
             var value;
-            if (this.use === "value") {
+            if (this.use === 'value') {
                 value = this.which;
             } else if (this._space.hasOwnProperty(this.use)) {
                 value = this._space[this.use][this.which];
@@ -2539,7 +2400,6 @@
             }
             return value;
         },
-
         /**
          * gets the values of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -2547,17 +2407,13 @@
          */
         _getHookedValues: function(filter) {
             var _this = this;
-
             if (!this.isHook()) {
-                utils.warn("_getHookedValue method needs the model to be hooked to data.");
+                utils.warn('_getHookedValue method needs the model to be hooked to data.');
                 return;
             }
-
             var values;
-
             var items = _DATAMANAGER.get(this._dataId);
-
-            if (this.use === "value") {
+            if (this.use === 'value') {
                 values = [this.which];
             } else if (this._space.hasOwnProperty(this.use)) {
                 values = [this._space[this.use][this.which]];
@@ -2569,25 +2425,20 @@
                     // filter.time will be removed during interpolation
                     var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
-                    values = utils.filter(items, filter)
-                        .filter(function(d) {
-                            return d.time <= time
-                        })
-                        .map(function(d) {
-                            return d[_this.which]
-                        })
-                        .concat(lastValue);
+                    values = utils.filter(items, filter).filter(function(d) {
+                        return d.time <= time;
+                    }).map(function(d) {
+                        return d[_this.which];
+                    }).concat(lastValue);
                 } else {
                     // if time not requested -- return just all values
                     values = items.filter(filter).map(function(d) {
-                                        return d[_this.which];
-                                    });
+                        return d[_this.which];
+                    });
                 }
             }
             return values;
         },
-
-
         //TODO: Is this supposed to be here?
         /**
          * gets maximum, minimum and mean values from the dataset of this certain hook
@@ -2595,33 +2446,24 @@
         getMaxMinMean: function(timeFormatter) {
             var _this = this;
             var result = {};
-
             //TODO: d3 is global?
             //Can we do this without d3?
-            d3.nest()
-                .key(function(d) {
-                    return timeFormatter(d.time);
-                })
-                .entries(_DATAMANAGER.get(this._dataId))
-                .forEach(function(d) {
-                    var values = d.values
-                        .filter(function(f) {
-                            return f[_this.which] != null
-                        })
-                        .map(function(m) {
-                            return +m[_this.which]
-                        });
-                    result[d.key] = {
-                        max: d3.max(values),
-                        min: d3.min(values),
-                        mean: d3.mean(values)
-                    };
-                })
-
+            d3.nest().key(function(d) {
+                return timeFormatter(d.time);
+            }).entries(_DATAMANAGER.get(this._dataId)).forEach(function(d) {
+                var values = d.values.filter(function(f) {
+                    return f[_this.which] !== null;
+                }).map(function(m) {
+                    return +m[_this.which];
+                });
+                result[d.key] = {
+                    max: d3.max(values),
+                    min: d3.min(values),
+                    mean: d3.mean(values)
+                };
+            });
             return result;
         },
-
-
         /**
          * gets filtered dataset with fewer keys
          */
@@ -2637,271 +2479,242 @@
             var items = _DATAMANAGER.get(this._dataId);
             return filtered[filter_id] = utils.filter(items, filter);
         }
-
     });
-
     Vizabi.Model = Model;
-
-
     /* ===============================
      * Private Helper Functions
      * ===============================
      */
-
     /**
      * Checks whether an object is a model or not
      */
     function isModel(model) {
-        return model.hasOwnProperty("_data");
-    }
-
-    /**
-     * Binds all attributes in _data to magic setters and getters
-     */
+            return model.hasOwnProperty('_data');
+        }
+        /**
+         * Binds all attributes in _data to magic setters and getters
+         */
     function bindSettersGetters(model) {
-        for (var prop in model._data) {
-            Object.defineProperty(model, prop, {
-                configurable: true, //allow reconfiguration
-                get: (function(p) {
-                    return function() {
-                        return model.get(p);
-                    }
-                })(prop),
-                set: (function(p) {
-                    return function(value) {
-                        return model.set(p, value);
-                    }
-                })(prop)
-            });
+            for (var prop in model._data) {
+                Object.defineProperty(model, prop, {
+                    configurable: true,
+                    //allow reconfiguration
+                    get: function(p) {
+                        return function() {
+                            return model.get(p);
+                        };
+                    }(prop),
+                    set: function(p) {
+                        return function(value) {
+                            return model.set(p, value);
+                        };
+                    }(prop)
+                });
+            }
         }
-    }
-
-    /**
-     * Loads a submodel, when necessaary
-     * @param {String} attr Name of submodel
-     * @param {Object} val Initial values
-     * @param {Object} ctx context
-     * @returns {Object} model new submodel
-     */
+        /**
+         * Loads a submodel, when necessaary
+         * @param {String} attr Name of submodel
+         * @param {Object} val Initial values
+         * @param {Object} ctx context
+         * @returns {Object} model new submodel
+         */
     function initSubmodel(attr, val, ctx) {
-        //naming convention: underscore -> time, time_2, time_overlay
-        var name = attr.split("_")[0];
-        var binds = {
-            //the submodel has changed (multiple times)
-            'change': function(evt, vals) {
-                evt = evt.replace('change', 'change:' + name);
-                ctx.triggerAll(evt, ctx.getObject());
-            },
-            //loading has started in this submodel (multiple times)
-            'hook_change': function(evt, vals) {
-                ctx.trigger(evt, ctx.getObject());
-            },
-            //loading has started in this submodel (multiple times)
-            'load_start': function(evt, vals) {
-                evt = evt.replace('load_start', 'load_start:' + name);
-                ctx.triggerAll(evt, ctx.getObject());
-                ctx.setReady(false);
-            },
-            //loading has failed in this submodel (multiple times)
-            'load_error': function(evt, vals) {
-                evt = evt.replace('load_error', 'load_error:' + name);
-                ctx.triggerAll(evt, vals);
-            },
-            //loading has ended in this submodel (multiple times)
-            'ready': function(evt, vals) {
-                //trigger only for submodel
-                evt = evt.replace('ready', 'ready:' + name);
-                ctx.trigger(evt, vals);
-                //TODO: understand why we need to force it not to be ready
-                ctx.setReady(false);
-                ctx.setReady();
+            //naming convention: underscore -> time, time_2, time_overlay
+            var name = attr.split('_')[0];
+            var binds = {
+                //the submodel has changed (multiple times)
+                'change': function(evt, vals) {
+                    evt = evt.replace('change', 'change:' + name);
+                    ctx.triggerAll(evt, ctx.getObject());
+                },
+                //loading has started in this submodel (multiple times)
+                'hook_change': function(evt, vals) {
+                    ctx.trigger(evt, ctx.getObject());
+                },
+                //loading has started in this submodel (multiple times)
+                'load_start': function(evt, vals) {
+                    evt = evt.replace('load_start', 'load_start:' + name);
+                    ctx.triggerAll(evt, ctx.getObject());
+                    ctx.setReady(false);
+                },
+                //loading has failed in this submodel (multiple times)
+                'load_error': function(evt, vals) {
+                    evt = evt.replace('load_error', 'load_error:' + name);
+                    ctx.triggerAll(evt, vals);
+                },
+                //loading has ended in this submodel (multiple times)
+                'ready': function(evt, vals) {
+                    //trigger only for submodel
+                    evt = evt.replace('ready', 'ready:' + name);
+                    ctx.trigger(evt, vals);
+                    //TODO: understand why we need to force it not to be ready
+                    ctx.setReady(false);
+                    ctx.setReady();
+                }
+            };
+            if (isModel(val)) {
+                val.on(binds);
+                return val;
+            } else {
+                //special model
+                var model = Vizabi.Model.get(name, true) || Model;
+                return new model(val, ctx, binds, true);
             }
-        };
-
-        if (isModel(val)) {
-            val.on(binds);
-            return val;
-        } else {
-            //special model
-            var model = Vizabi.Model.get(name, true) || Model;
-            return new model(val, ctx, binds, true);
         }
-
-    }
-
-    /**
-     * gets closest interval from this model or parent
-     * @returns {Object} Intervals object
-     */
+        /**
+         * gets closest interval from this model or parent
+         * @returns {Object} Intervals object
+         */
     function getIntervals(ctx) {
-        if (ctx._intervals) {
-            return ctx._intervals;
-        } else if (ctx._parent) {
-            return getIntervals(ctx._parent);
-        } else {
-            return new Vizabi.Intervals();
-        }
-    }
-
-    /**
-     * gets closest prefix model moving up the model tree
-     * @param {String} prefix
-     * @returns {Object} submodel
-     */
-    function getClosestModel(ctx, name) {
-        var model = findSubmodel(ctx, name);
-        if (model) {
-            return model;
-        } else if (ctx._parent) {
-            return getClosestModel(ctx._parent, name);
-        }
-    }
-
-    /**
-     * find submodel with name that starts with prefix
-     * @param {String} prefix
-     * @returns {Object} submodel or false if nothing is found
-     */
-    function findSubmodel(ctx, name) {
-        for (var i in ctx._data) {
-            //found submodel
-            if (i === name && isModel(ctx._data[i])) {
-                return ctx._data[i];
+            if (ctx._intervals) {
+                return ctx._intervals;
+            } else if (ctx._parent) {
+                return getIntervals(ctx._parent);
+            } else {
+                return new Vizabi.Intervals();
             }
         }
-    }
-
-    /**
-     * Learn what this model should hook to
-     * @returns {Array} space array
-     */
-    function getSpace(model) {
-        if (utils.isArray(model.space)) {
-            return model.space;
-        } else if (model._parent) {
-            return getSpace(model._parent);
-        } else {
-            utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
+        /**
+         * gets closest prefix model moving up the model tree
+         * @param {String} prefix
+         * @returns {Object} submodel
+         */
+    function getClosestModel(ctx, name) {
+            var model = findSubmodel(ctx, name);
+            if (model) {
+                return model;
+            } else if (ctx._parent) {
+                return getClosestModel(ctx._parent, name);
+            }
         }
-    }
-
-    /**
-     * interpolates the specific value if missing
-     * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-     * filter SHOULD contain time property
-     * @returns interpolated value
-     */
+        /**
+         * find submodel with name that starts with prefix
+         * @param {String} prefix
+         * @returns {Object} submodel or false if nothing is found
+         */
+    function findSubmodel(ctx, name) {
+            for (var i in ctx._data) {
+                //found submodel
+                if (i === name && isModel(ctx._data[i])) {
+                    return ctx._data[i];
+                }
+            }
+        }
+        /**
+         * Learn what this model should hook to
+         * @returns {Array} space array
+         */
+    function getSpace(model) {
+            if (utils.isArray(model.space)) {
+                return model.space;
+            } else if (model._parent) {
+                return getSpace(model._parent);
+            } else {
+                utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
+            }
+        }
+        /**
+         * interpolates the specific value if missing
+         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+         * filter SHOULD contain time property
+         * @returns interpolated value
+         */
     function interpolateValue(ctx, filter, hook, value) {
-        var items = _DATAMANAGER.get(ctx._dataId)
-        if (items == null || items.length == 0) {
-            utils.warn("interpolateValue returning NULL because items array is empty");
+        var items = _DATAMANAGER.get(ctx._dataId);
+        if (items === null || items.length === 0) {
+            utils.warn('interpolateValue returning NULL because items array is empty');
             return null;
         }
-
         // fetch time from filter object and remove it from there
         var time = new Date(filter.time);
         delete filter.time;
-
         // filter items so that we only have a dataset for certain keys, like "geo"
         items = ctx._getFilteredItems(filter);
-
         // return constant for the hook of "values"
-        if (hook == "value") return items[0][ctx[HOOK_VALUE]];
-
+        if (hook === 'value') {
+            return items[0][ctx[HOOK_VALUE]];
+        }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
         var indexNext = d3.bisectLeft(items.map(function(d) {
-            return d.time
+            return d.time;
         }), time);
-
         // zero-order interpolation for the hook of properties
-        if (hook == "property" && indexNext == 0) return items[0][value];
-        if (hook == "property") return items[indexNext - 1][value];
-
+        if (hook === 'property' && indexNext === 0) {
+            return items[0][value];
+        }
+        if (hook === 'property') {
+            return items[indexNext - 1][value];
+        }
         // the rest is for the continuous measurements
-
         // check if the desired value is out of range. 0-order extrapolation
-        if (indexNext == 0) return items[0][value];
-        if (indexNext == items.length) return items[items.length - 1][value];
-
+        if (indexNext === 0) {
+            return items[0][value];
+        }
+        if (indexNext === items.length) {
+            return items[items.length - 1][value];
+        }
         //return null if data is missing
-        if (items[indexNext][value] == null || items[indexNext - 1][value] == null) return null;
-
+        if (items[indexNext][value] === null || items[indexNext - 1][value] === null) {
+            return null;
+        }
         // perform a simple linear interpolation
-        var fraction =
-            (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
+        var fraction = (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
         var value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
-
         // cast to time object if we are interpolating time
-        if (Object.prototype.toString.call(items[0][value]) === "[object Date]") {
+        if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
             value = new Date(value);
         }
-
         return value;
     }
-
-
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI COMPONENT
  * Base Component
  */
-
 (function() {
-
-    "use strict";
-
-    var class_loading = "vzb-loading";
+    'use strict';
+    var class_loading = 'vzb-loading';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
-
     var Component = Vizabi.Events.extend({
-
         /**
          * Initializes the component
          * @param {Object} config Initial config, with name and placeholder
          * @param {Object} parent Reference to tool
          */
         init: function(config, parent) {
-
-            this._id = this._id || utils.uniqueId("c");
+            this._id = this._id || utils.uniqueId('c');
             this._ready = false;
             this._readyOnce = false;
-
             this.name = this.name || config.name;
-            this.template = this.template || "<div></div>";
+            this.template = this.template || '<div></div>';
             this.placeholder = this.placeholder || config.placeholder;
             this.template_data = this.template_data || {
                 name: this.name
             };
-
             //make sure placeholder is DOM element
             if (this.placeholder && !utils.isElement(this.placeholder)) {
                 try {
                     this.placeholder = parent.placeholder.querySelector(this.placeholder);
                 } catch (e) {
-                    utils.error("Error finding placeholder '" + this.placeholder + "' for component '" + this.name + "'");
+                    utils.error('Error finding placeholder \'' + this.placeholder + '\' for component \'' + this.name + '\'');
                 }
             }
-
             this.parent = parent || this;
             this.components = this.components || [];
             this._components_config = this.components.map(function(x) {
                 return utils.clone(x);
             });
             this._frameRate = 10;
-
             //define expected models for this component
             this.model_expects = this.model_expects || [];
             this.model_binds = this.model_binds || {};
-
             this.ui = this.ui || config.ui;
-
             this._super();
-
             //readyOnce alias
             var _this = this;
             this.on({
@@ -2921,9 +2734,7 @@
                     }
                 }
             });
-
         },
-
         /**
          * Renders the component (after data is ready)
          */
@@ -2931,7 +2742,6 @@
             var _this = this;
             this.loadTemplate();
             this.loadComponents();
-
             //render each subcomponent
             utils.forEach(this.components, function(subcomp) {
                 subcomp.render();
@@ -2939,16 +2749,15 @@
                     subcomp.trigger('resize');
                 });
             });
-
             //if it's a root component with model
             if (this.isRoot() && this.model) {
-                this.model.on("ready", function() {
+                this.model.on('ready', function() {
                     done();
                 });
                 this.model.setHooks();
                 this.model.load();
             } else if (this.model && this.model.isLoading()) {
-                this.model.on("ready", function() {
+                this.model.on('ready', function() {
                     done();
                 });
             } else {
@@ -2958,9 +2767,8 @@
             function done() {
                 utils.removeClass(_this.placeholder, class_loading);
                 _this.setReady();
-            };
+            }
         },
-
         setReady: function() {
             if (!this._readyOnce) {
                 this.trigger('readyOnce');
@@ -2969,7 +2777,6 @@
             this._ready = true;
             this.trigger('ready');
         },
-
         /**
          * Loads the template
          * @returns defer a promise to be resolved when template is loaded
@@ -2978,29 +2785,25 @@
             var tmpl = this.template;
             var data = this.template_data;
             var _this = this;
-            var rendered = "";
-
+            var rendered = '';
             if (!this.placeholder) {
                 return;
             }
-
             //todo: improve t function getter + generalize this
             data = utils.extend(data, {
                 t: this.getTranslationFunction(true)
             });
-
             if (this.template) {
                 try {
                     rendered = templateFunc(tmpl, data);
                 } catch (e) {
-                    utils.error("Templating error for component: '" + this.name + "' - Check if path to template is correct. E.g.: 'src/components/...'");
+                    utils.error('Templating error for component: \'' + this.name + '\' - Check if path to template is correct. E.g.: \'src/components/...\'');
                 }
             }
             //add loading class and html
             utils.addClass(this.placeholder, class_loading);
             this.placeholder.innerHTML = rendered;
             this.element = this.placeholder.children[0];
-
             //only tools have layout (manage sizes)
             if (this.layout) {
                 this.layout.setContainer(this.element);
@@ -3013,7 +2816,6 @@
                 });
             }
         },
-
         /*
          * Loads all subcomponents
          */
@@ -3028,40 +2830,32 @@
             if (this.model) {
                 this.model.resetDeps();
             }
-
             // Loops through components, loading them.
             utils.forEach(this._components_config, function(c) {
-
                 if (!c.component) {
-                    utils.error("Error loading component: name not provided");
+                    utils.error('Error loading component: name not provided');
                     return;
                 }
                 if (!(comp = Vizabi.Component.get(c.component))) {
                     return;
                 }
-
                 config = utils.extend(c, {
                     name: c.component,
                     ui: _this._uiMapping(c.placeholder, c.ui)
                 });
-
                 //instantiate new subcomponent
                 var subcomp = new comp(config, _this);
                 var c_model = c.model || [];
                 subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
-
                 //subcomponent model is initialized in frozen state
                 //unfreeze to dispatch events
                 subcomp.model.unfreeze();
-
                 _this.components.push(subcomp);
             });
         },
-
         isRoot: function() {
             return this.parent === this;
         },
-
         /**
          * Get layout profile of the current resolution
          * @returns {String} profile
@@ -3074,7 +2868,6 @@
                 return this.parent.getLayoutProfile();
             }
         },
-
         //TODO: make ui mapping more powerful
         /**
          * Maps the current ui to the subcomponents
@@ -3083,14 +2876,13 @@
          * @returns {Object} the UI object
          */
         _uiMapping: function(id, ui) {
-
             //if overwritting UI
             if (ui) {
                 return new Vizabi.Model(ui);
             }
-
             if (id && this.ui) {
-                id = id.replace(".", ""); //remove trailing period
+                id = id.replace('.', '');
+                //remove trailing period
                 var sub_ui = this.ui[id];
                 if (sub_ui) {
                     return sub_ui;
@@ -3098,7 +2890,6 @@
             }
             return this.ui;
         },
-
         /**
          * Maps the current model to the subcomponents
          * @param {String} subcomponent name of the subcomponent
@@ -3108,49 +2899,38 @@
          * @returns {Object} the model
          */
         _modelMapping: function(subcomponent, model_config, model_expects, model_binds) {
-
             var _this = this;
             var values = {};
-
             //If model_config is an array, we map it
             if (utils.isArray(model_config) && utils.isArray(model_expects)) {
                 //if there's a different number of models received and expected
-
                 if (model_expects.length !== model_config.length) {
-                    utils.groupCollapsed("DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED");
-                    utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + _this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + _this.name + "'\nSubcomponent: '" + subcomponent + "'\nNumber of Models Expected: " + model_expects.length + "\nNumber of Models Received: " + model_config.length);
+                    utils.groupCollapsed('DIFFERENCE IN NUMBER OF MODELS EXPECTED AND RECEIVED');
+                    utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                     utils.groupEnd();
                 }
-
                 utils.forEach(model_config, function(m, i) {
                     var model_info = _mapOne(m);
                     var new_name;
-
                     if (model_expects[i]) {
                         new_name = model_expects[i].name;
-
                         if (model_expects[i].type && model_info.type !== model_expects[i].type) {
-
                             //TODO: add link to the documentation about model_expects
-                            utils.groupCollapsed("UNEXPECTED MODEL TYPE: '" + model_info.type + "' instead of '" + model_expects[i].type + "'");
-                            utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + _this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + _this.name + "'\nSubcomponent: '" + subcomponent + "'\nExpected Model: '" + model_expects[i].type + "'\nReceived Model'" + model_info.type + "'\nModel order: " + i);
+                            utils.groupCollapsed('UNEXPECTED MODEL TYPE: \'' + model_info.type + '\' instead of \'' + model_expects[i].type + '\'');
+                            utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nExpected Model: \'' + model_expects[i].type + '\'\nReceived Model\'' + model_info.type + '\'\nModel order: ' + i);
                             utils.groupEnd();
                         }
                     } else {
                         //TODO: add link to the documentation about model_expects
-                        utils.groupCollapsed("UNEXPECTED MODEL: '" + model_config[i] + "'");
-                        utils.warn("Please, configure the 'model_expects' attribute accordingly in '" + subcomponent + "' or check the models passed in '" + _this.name + "'. [ADD LINK TO DOCUMENTATION]\n\nComponent: '" + _this.name + "'\nSubcomponent: '" + subcomponent + "'\nNumber of Models Expected: " + model_expects.length + "\nNumber of Models Received: " + model_config.length);
+                        utils.groupCollapsed('UNEXPECTED MODEL: \'' + model_config[i] + '\'');
+                        utils.warn('Please, configure the \'model_expects\' attribute accordingly in \'' + subcomponent + '\' or check the models passed in \'' + _this.name + '\'. [ADD LINK TO DOCUMENTATION]\n\nComponent: \'' + _this.name + '\'\nSubcomponent: \'' + subcomponent + '\'\nNumber of Models Expected: ' + model_expects.length + '\nNumber of Models Received: ' + model_config.length);
                         utils.groupEnd();
-
                         new_name = model_info.name;
                     }
                     values[new_name] = model_info.model;
-
                 });
-
-                //check for remaining expected models
-                var existing = model_config.length,
-                    expected = model_expects.length;
+                var existing = model_config.length;
+                var expected = model_expects.length;
                 if (expected > existing) {
                     //skip existing
                     model_expects.splice(0, existing);
@@ -3162,19 +2942,17 @@
             } else {
                 return;
             }
-
             //return a new model with the defined submodels
             return new Vizabi.Model(values, null, model_binds, true);
-
             /**
              * Maps one model name to current submodel and returns info
              * @param {String} name Full model path. E.g.: "state.marker.color"
              * @returns {Object} the model info, with name and the actual model
              */
             function _mapOne(name) {
-                var parts = name.split("."),
-                    current = _this.model,
-                    current_name = "";
+                var parts = name.split('.');
+                var current = _this.model;
+                var current_name = '';
                 while (parts.length) {
                     current_name = parts.shift();
                     current = current[current_name];
@@ -3182,12 +2960,10 @@
                 return {
                     name: name,
                     model: current,
-                    type: (current) ? current.getType() : null
+                    type: current ? current.getType() : null
                 };
             }
-
         },
-
         /**
          * Get translation function for templates
          * @param {Boolean} wrap wrap in spam tags
@@ -3196,22 +2972,23 @@
         getTranslationFunction: function(wrap) {
             var t_func;
             try {
-                t_func = this.model.get("language").getTFunction();
+                t_func = this.model.get('language').getTFunction();
             } catch (err) {
-                if (this.parent && this.parent != this) {
+                if (this.parent && this.parent !== this) {
                     t_func = this.parent.getTranslationFunction();
                 }
             }
-
             if (!t_func) {
                 t_func = function(s) {
                     return s;
                 };
             }
-            if (wrap) return this._translatedStringFunction(t_func);
-            else return t_func;
+            if (wrap) {
+                return this._translatedStringFunction(t_func);
+            } else {
+                return t_func;
+            }
         },
-
         /**
          * Get function for translated string
          * @param {Function} translation_function The translation function
@@ -3223,20 +3000,22 @@
                 return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
             };
         },
-
         /**
          * Translate all strings in the template
          */
         translateStrings: function() {
             var t = this.getTranslationFunction();
             var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
-            if(strings.length === 0) return;
+            if (strings.length === 0) {
+                return;
+            }
             utils.forEach(strings, function(str) {
-                if(!str || !str.getAttribute) return;
-                str.innerHTML = t(str.getAttribute("data-vzb-translate"));
+                if (!str || !str.getAttribute) {
+                    return;
+                }
+                str.innerHTML = t(str.getAttribute('data-vzb-translate'));
             });
         },
-
         /**
          * Checks whether this component is a tool or not
          * @returns {Boolean}
@@ -3244,7 +3023,6 @@
         isTool: function() {
             return this._id[0] === 't';
         },
-
         /**
          * Executes after the template is loaded and rendered.
          * Ideally, it contains HTML instantiations related to template
@@ -3252,73 +3030,50 @@
          * as DOM elements
          */
         readyOnce: function() {},
-
         /**
          * Executes after the template and model (if any) are ready
          */
         ready: function() {},
-
         /**
          * Executes when the resize event is triggered.
          * Ideally, it only contains operations related to size
          */
         resize: function() {}
     });
-
     // Based on Simple JavaScript Templating by John Resig
     //generic templating function
     function templateFunc(str, data) {
         // Figure out if we're getting a template, or if we need to
         // load the template - and be sure to cache the result.
-        var fn = !/<[a-z][\s\S]*>/i.test(str) ?
-            templates[str] = templates[str] ||
-            templateFunc(root.document.getElementById(str).innerHTML) :
-            // Generate a reusable function that will serve as a template
+        var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(root.document.getElementById(str).innerHTML) : // Generate a reusable function that will serve as a template
             // generator (and which will be cached).
-            new Function("obj",
-                "var p=[],print=function(){p.push.apply(p,arguments);};" +
-                // Introduce the data as local variables using with(){}
-                "with(obj){p.push('" +
-                // Convert the template into pure JavaScript
-                str
-                .replace(/[\r\t\n]/g, " ")
-                .split("<%").join("\t")
-                .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-                .replace(/\t=(.*?)%>/g, "',$1,'")
-                .split("\t").join("');")
-                .split("%>").join("p.push('")
-                .split("\r").join("\\'") + "');}return p.join('');");
+            new Function('obj', 'var p=[],print=function(){p.push.apply(p,arguments);};' + // Introduce the data as local variables using with(){}
+                'with(obj){p.push(\'' + // Convert the template into pure JavaScript
+                str.replace(/[\r\t\n]/g, ' ').split('<%').join('\t').replace(/((^|%>)[^\t]*)'/g, '$1\r').replace(/\t=(.*?)%>/g, '\',$1,\'').split('\t').join('\');').split('%>').join('p.push(\'').split('\r').join('\\\'') + '\');}return p.join(\'\');');
         // Provide some basic currying to the user
         return data ? fn(data) : fn;
     }
-
     Component.isComponent = function(c) {
-        return (c._id && (c._id[0] === 't' || c._id[0] === 'c'));
-    }
-
+        return c._id && (c._id[0] === 't' || c._id[0] === 'c');
+    };
     Vizabi.Component = Component;
-
-}).call(this);
+}.call(this));
 /*!
  * VIZABI COMPONENT
  * Base Component
  */
-
 (function() {
-
-    "use strict";
-
-    var class_loading = "vzb-loading";
-    var class_loading_data = "vzb-loading";
-    var class_loading_error = "vzb-loading-error";
-    var class_placeholder = "vzb-placeholder";
-    var class_buttons_off = "vzb-buttonlist-off";
+    'use strict';
+    var class_loading = 'vzb-loading';
+    var class_loading_data = 'vzb-loading';
+    var class_loading_error = 'vzb-loading-error';
+    var class_placeholder = 'vzb-placeholder';
+    var class_buttons_off = 'vzb-buttonlist-off';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
     var toolsList = {};
-
     //tool model is quite simple and doesn't need to be registered
     var ToolModel = Vizabi.Model.extend({
         /**
@@ -3328,50 +3083,40 @@
          * @param {Function|Array} validade validate rules
          */
         init: function(values, defaults, binds, validate) {
-            this._id = utils.uniqueId("tm");
-            this._type = "tool";
-
+            this._id = utils.uniqueId('tm');
+            this._type = 'tool';
             //generate validation function
             this.validate = generateValidate(this, validate);
-
             //default submodels
             values = values || {};
             defaults = defaults || {};
             values = defaultOptions(values, defaults);
-
             //constructor is similar to model
             this._super(values, null, binds, true);
-
             // change language
             if (values.language) {
                 var _this = this;
-                this.on("change:language", function() {
-                    _this.trigger("translate");
+                this.on('change:language', function() {
+                    _this.trigger('translate');
                 });
             }
         }
     });
-
     //tool
     var Tool = Vizabi.Component.extend({
-
         /**
          * Initializes the tool
          * @param {Object} placeholder object
          * @param {Object} options Options such as state, data, etc
          */
         init: function(placeholder, options) {
-
-            this._id = utils.uniqueId("t");
+            this._id = utils.uniqueId('t');
             this.layout = new Vizabi.Layout();
-            this.template = this.template || '<div class="vzb-tool vzb-tool-'+this.name+'"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
-
+            this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name + '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
             this.model_binds = this.model_binds || {};
             this.default_options = this.default_options || {};
-
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
-
             var _this = this;
             var callbacks = utils.merge({
                 'change': function(evt, val) {
@@ -3400,32 +3145,28 @@
                     }
                 }
             }, this.model_binds);
-
             options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
             //ToolModel starts in frozen state. unfreeze;
             this.model.unfreeze();
-
             this.ui = this.model.ui;
-
             this._super({
                 name: this.name || this._id,
                 placeholder: placeholder
             }, this);
-
             this._bindEvents();
             this.render();
             this._setUIOptions();
         },
-
         /**
          * Binds events in model to outside world
          */
         _bindEvents: function() {
-            if (!this.model.bind) return;
+            if (!this.model.bind) {
+                return;
+            }
             this.on(this.model.bind.get());
         },
-
         /**
          * Sets options from external page
          * @param {Object} options new options
@@ -3440,7 +3181,6 @@
             }
             this._setUIOptions();
         },
-
         /**
          * gets all options
          * @param {Object} options new options
@@ -3450,7 +3190,6 @@
         getOptions: function() {
             return this.model.getObject() || {};
         },
-
         /**
          * Displays loading class
          */
@@ -3459,53 +3198,41 @@
                 utils.addClass(this.placeholder, class_loading_data);
             }
         },
-
         /**
          * Removes loading class
          */
         afterLoading: function() {
             utils.removeClass(this.placeholder, class_loading_data);
         },
-
         /**
          * Adds loading error class
          */
         errorLoading: function() {
             utils.addClass(this.placeholder, class_loading_error);
         },
-
         /* ==========================
          * Validation and query
          * ==========================
          */
-
         /**
          * Placeholder for model validation
          */
-        validate: function() {
-            //placeholder for tool validation methods
-        },
-
+        validate: function() {},
         _setUIOptions: function() {
             //add placeholder class
             utils.addClass(this.placeholder, class_placeholder);
-
             //add-remove buttonlist class
-            if(!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
+            if (!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
                 utils.addClass(this.element, class_buttons_off);
             } else {
                 utils.removeClass(this.element, class_buttons_off);
             }
         }
-
-
     });
-
     /* ==========================
      * Validation methods
      * ==========================
      */
-
     /**
      * Generates a validation function based on specific model validation
      * @param {Object} m model
@@ -3513,79 +3240,72 @@
      * @returns {Function} validation
      */
     function generateValidate(m, validate) {
-        var max = 10;
+            var max = 10;
 
-        function validate_func() {
-            var model = JSON.stringify(m.getObject());
-            var c = arguments[0] || 0;
-            //TODO: remove validation hotfix
-            //while setting this.model is not available
-            if(!this._readyOnce) {
-                validate(this);
+            function validate_func() {
+                var model = JSON.stringify(m.getObject());
+                var c = arguments[0] || 0;
+                //TODO: remove validation hotfix
+                //while setting this.model is not available
+                if (!this._readyOnce) {
+                    validate(this);
+                } else {
+                    validate();
+                }
+                var model2 = JSON.stringify(m.getObject());
+                if (c >= max) {
+                    utils.error('Max validation loop.');
+                } else if (model !== model2) {
+                    validate_func.call(this, [c += 1]);
+                }
             }
-            else {
-                validate();
-            }
-            var model2 = JSON.stringify(m.getObject());
-            if (c >= max) {
-                utils.error("Max validation loop.");
-            } else if (model !== model2) {
-                validate_func.call(this, [++c]);
-            }
+            return validate_func;
         }
-        return validate_func;
-    }
-
-    /* ==========================
-     * Default options methods
-     * ==========================
-     */
-
-    /**
-     * Generates a valid state based on default options
-     */
+        /* ==========================
+         * Default options methods
+         * ==========================
+         */
+        /**
+         * Generates a valid state based on default options
+         */
     function defaultOptions(values, defaults) {
-
-        var keys = Object.keys(defaults),
-            size = keys.length,
-            field, blueprint, original, type;
-
-        for(var i=0; i<size; i++) {
-
+        var keys = Object.keys(defaults);
+        var size = keys.length;
+        var field;
+        var blueprint;
+        var original;
+        var type;
+        for (var i = 0; i < size; i += 1) {
             field = keys[i];
-            if(field === "_defs_") continue;
-
+            if (field === '_defs_') {
+                continue;
+            }
             blueprint = defaults[field];
             original = values[field];
             type = typeof blueprint;
-
-            if(type === "object") {
-                type = (utils.isPlainObject(blueprint) && blueprint._defs_) ? "object" : utils.isArray(blueprint) ? "array" : "model";
+            if (type === 'object') {
+                type = utils.isPlainObject(blueprint) && blueprint._defs_ ? 'object' : utils.isArray(blueprint) ? 'array' : 'model';
             }
-            
-            if(typeof original === "undefined") {
-                if(type !== "object" && type !== "model") {
+            if (typeof original === 'undefined') {
+                if (type !== 'object' && type !== 'model') {
                     values[field] = blueprint;
-                }
-                else {
+                } else {
                     values[field] = defaultOptions({}, blueprint);
                 }
             }
-
             original = values[field];
-
-            if (type === "number" && isNaN(original)) {
+            if (type === 'number' && isNaN(original)) {
                 values[field] = 0;
-            } else if (type === "string" && typeof original !== 'string') {
-                values[field] = "";
-            } else if (type === "array" && !utils.isArray(original)) {
+            } else if (type === 'string' && typeof original !== 'string') {
+                values[field] = '';
+            } else if (type === 'array' && !utils.isArray(original)) {
                 values[field] = [];
-            } else if (type === "model") {
+            } else if (type === 'model') {
                 if (!utils.isObject(original)) {
                     values[field] = {};
                 }
                 values[field] = defaultOptions(values[field], blueprint);
-            } else if (type === "object") {
+            } else if (type === 'object') {
                 if (!utils.isObject(original) || Object.keys(original).length === 0) {
                     original = false; //will be overwritten
                 }
@@ -3595,19 +3315,13 @@
                 values[field] = original || blueprint._defs_;
             }
         }
-
         return values;
     }
-
     Tool.isTool = function(c) {
-        return (c._id && c._id[0] === 't');
-    }
-
-
+        return c._id && c._id[0] === 't';
+    };
     Vizabi.Tool = Tool;
-
-
-}).call(this);
+}.call(this));
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/bubblesize/bubblesize.html');s.innerHTML = '<div class="vzb-bs-holder"> <input type="range" id="vzb-bs-slider" class="vzb-bs-slider" step="1"> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/axes/axes.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/axes") %> </div> <div class="vzb-dialog-content"> <div class="vzb-xaxis-container"></div> <div class="vzb-yaxis-container"></div> <div class="vzb-axes-options"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/buttonlist/dialogs/colors/colors.html');s.innerHTML = '<div class="vzb-dialog-modal"> <div class="vzb-dialog-title"> <%=t ( "buttons/colors") %> </div> <div class="vzb-dialog-content"> <span class="vzb-caxis-container"></span> <div class="vzb-clegend-container"></div> </div> <div class="vzb-dialog-buttons"> <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary"> OK </div> </div> </div>';root.document.body.appendChild(s);}).call(this);
@@ -6204,6 +5918,7 @@
             this._type = "time";
             //default values for time model
             values = utils.extend({
+                dim: "time",
                 value: "1800",
                 start: "1800",
                 end: "2014",
@@ -6325,25 +6040,15 @@
         },
 
         /**
-         * Gets the dimensions in time
-         * @returns {String} time dimension
-         */
-        getDimension: function() {
-            return "time";
-        },
-
-        /**
          * Gets filter for time
          * @returns {Object} time filter
          */
         getFilter: function() {
-            var start = d3.time.format(this.format || "%Y")(this.start),
-                end = d3.time.format(this.format || "%Y")(this.end),
-                filter = {
-                    "time": [
-                        [start, end]
-                    ]
-                };
+            var start = d3.time.format(this.formatInput || "%Y")(this.start),
+                end = d3.time.format(this.formatInput || "%Y")(this.end),
+                dim = this.getDimension(),
+                filter = {};
+            filter[dim] = [[start, end]]
             return filter;
         },
 

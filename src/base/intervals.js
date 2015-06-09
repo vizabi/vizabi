@@ -2,15 +2,11 @@
  * VIZABI INTERVALS
  * Manages Vizabi layout profiles and classes
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     var Intervals = Vizabi.Class.extend({
         /**
          * Initializes intervals
@@ -33,7 +29,7 @@
          * @param {String} name name of interval to be removed
          */
         clearInterval: function(name) {
-            return (name) ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
+            return name ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
         },
         /**
          * Clears all intervals
@@ -44,7 +40,5 @@
             }
         }
     });
-
     Vizabi.Intervals = Intervals;
-
-}).call(this);
+}.call(this));
