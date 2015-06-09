@@ -641,7 +641,7 @@
          * @returns {String|Boolean} dimension
          */
         getDimension: function() {
-            return false; //defaults to no dimension
+            return this.dim || false; //defaults to dim if it exists
         },
 
         /**

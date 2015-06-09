@@ -40,6 +40,7 @@
             this._type = "time";
             //default values for time model
             values = utils.extend({
+                dim: "time",
                 value: "1800",
                 start: "1800",
                 end: "2014",
@@ -161,25 +162,15 @@
         },
 
         /**
-         * Gets the dimensions in time
-         * @returns {String} time dimension
-         */
-        getDimension: function() {
-            return "time";
-        },
-
-        /**
          * Gets filter for time
          * @returns {Object} time filter
          */
         getFilter: function() {
-            var start = d3.time.format(this.format || "%Y")(this.start),
-                end = d3.time.format(this.format || "%Y")(this.end),
-                filter = {
-                    "time": [
-                        [start, end]
-                    ]
-                };
+            var start = d3.time.format(this.formatInput || "%Y")(this.start),
+                end = d3.time.format(this.formatInput || "%Y")(this.end),
+                dim = this.getDimension(),
+                filter = {};
+            filter[dim] = [[start, end]]
             return filter;
         },
 
