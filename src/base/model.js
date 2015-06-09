@@ -110,7 +110,7 @@
             //we are currently setting the model
             //compute each change
             for (var a in attrs) {
-                var val = attrs[a];
+                val = attrs[a];
                 var curr = this._data[a];
                 var prev = this._prevData[a];
                 //if its a regular value
@@ -238,14 +238,12 @@
                 for (i = 0; i < submodels.length; i += 1) {
                     if (submodels[i].isLoading()) {
                         return true;
-                        break;
                     }
                 }
                 for (i = 0; i < this._deps.children.length; i += 1) {
                     var d = this._deps.children[i];
                     if (d.isLoading() || !d._ready) {
                         return true;
-                        break;
                     }
                 }
                 return false;
@@ -540,7 +538,6 @@
                     }
                     return item;
                 });
-                return values;
             } else {
                 return [];
             }
@@ -745,7 +742,6 @@
                 case 'property':
                     domain = this.getUnique(this.which);
                     break;
-                case 'value':
                 default:
                     domain = [this.which];
                     break;
@@ -833,7 +829,7 @@
                 if (attr.indexOf('time') !== -1) {
                     for (var i = 0; i < values.length; i += 1) {
                         values[i].time = new Date(values[i].time);
-                    };
+                    }
                 }
                 uniq = utils.unique(values, function(n) {
                     return JSON.stringify(n);
@@ -1027,8 +1023,8 @@
                 return val;
             } else {
                 //special model
-                var model = Vizabi.Model.get(name, true) || Model;
-                return new model(val, ctx, binds, true);
+                var Modl = Vizabi.Model.get(name, true) || Model;
+                return new Modl(val, ctx, binds, true);
             }
         }
         /**
@@ -1102,7 +1098,7 @@
         items = ctx._getFilteredItems(filter);
         // return constant for the hook of "values"
         if (hook === 'value') {
-            return items[0][ctx[HOOK_VALUE]];
+            return items[0][ctx.which];
         }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
@@ -1130,7 +1126,7 @@
         }
         // perform a simple linear interpolation
         var fraction = (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
-        var value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
+        value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
         // cast to time object if we are interpolating time
         if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
             value = new Date(value);

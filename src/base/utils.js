@@ -547,7 +547,7 @@
          * Performs a GET http request
          */
         get: function(url, pars, success, error, json) {
-            var pars = [];
+            pars = pars || [];
             this.forEach(pars, function(value, key) {
                 pars.push(key + '=' + value);
             });
