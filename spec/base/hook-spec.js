@@ -1,11 +1,8 @@
 /*
  * TEST HOOKS, INTEGRATION OF BETWEEN TOOLS, MODELS AND DATA FETCHING
  */
-
 //This test depends on models entities and time (not entirely self contained)
-
-describe("* Base: Hooks", function() {
-
+describe('* Base: Hooks', function() {
     var placeholder;
     var utils;
     var t;
@@ -14,19 +11,16 @@ describe("* Base: Hooks", function() {
     var MyTool;
     var MyReader;
     var options_data;
-
     beforeAll(function(done) {
-
         initializeDOM();
-        placeholder = document.getElementById("vzbp-placeholder");
+        placeholder = document.getElementById('vzbp-placeholder');
         utils = Vizabi.utils;
-
         //create a new component fo info display and register
         Vizabi.Component.unregister('info-display');
         InfoDisplay = Vizabi.Component.extend('info-display', {
             init: function(config, parent) {
-                this.name = "info-display";
-                this.template = "<div></div>";
+                this.name = 'info-display';
+                this.template = '<div></div>';
                 this.model_expects = [{
                     name: 'time',
                     type: 'time'
@@ -48,13 +42,12 @@ describe("* Base: Hooks", function() {
                 };
                 this._super(config, parent);
             },
-
             update: function(evt) {
                 var time = this.model.time.value;
                 var items = this.model.label.getItems({
                     time: time
                 });
-                var html = "";
+                var html = '';
                 for (var i in items) {
                     var d = items[i];
                     html += '<div>' + this.model.label.getValue(d) + '-' + this.model.info.getValue(d) + '</div>';
@@ -62,7 +55,6 @@ describe("* Base: Hooks", function() {
                 this.element.innerHTML = html;
             }
         });
-
         //create a new component class
         Vizabi.Tool.unregister('MyTool');
         MyTool = Vizabi.Tool.extend('MyTool', {
@@ -72,129 +64,126 @@ describe("* Base: Hooks", function() {
                 this.components = [{
                     component: 'info-display',
                     placeholder: '.display',
-                    model: ['state.time', 'state.marker.label',
+                    model: [
+                        'state.time',
+                        'state.marker.label',
                         'state.marker.info'
                     ]
                 }];
-
                 //default options
                 this.default_options = {
                     state: {
                         //timespan of the visualization
                         time: {
-                            start: "1991",
-                            end: "1994",
-                            value: "1994"
+                            start: '1991',
+                            end: '1994',
+                            value: '1994'
                         },
                         //entities we want to show
                         entities: {
                             show: {
-                                dim: "geo",
+                                dim: 'geo',
                                 filter: {
                                     _defs_: {
-                                        "geo": ["*"]
+                                        'geo': ['*']
                                     }
                                 }
                             }
                         },
                         //how we show it
                         marker: {
-                            space: ["entities", "time"],
+                            space: [
+                                'entities',
+                                'time'
+                            ],
                             label: {
-                                use: "property",
-                                which: "geo"
+                                use: 'property',
+                                which: 'geo'
                             },
                             info: {
-                                use: "indicator",
-                                which: "pop"
+                                use: 'indicator',
+                                which: 'pop'
                             }
                         }
                     },
-
                     data: {
-                        reader: "myreader"
+                        reader: 'myreader'
                     },
-
                     ui: {
-                        'displayColor': "#ffcc00"
+                        'displayColor': '#ffcc00'
                     },
-
                     //language properties
                     language: {
-                        id: "en",
+                        id: 'en',
                         strings: {
                             en: {
-                                "title": "Information"
+                                'title': 'Information'
                             }
                         }
                     }
                 };
-
                 this._super(placeholder, options);
             }
         });
-
         //create a new component fo ryear display and register
         Vizabi.Reader.unregister('myreader');
         MyReader = Vizabi.Reader.extend('myreader', {
             init: function(reader_info) {
-                this.name = "myreader";
+                this.name = 'myreader';
                 this._super(reader_info);
             },
             read: function() {
-                var p = new Vizabi.Promise;
+                var p = new Vizabi.Promise();
                 setTimeout(function() {
                     p.resolve(); //simulate async reading
                 }, 500);
                 return p;
             }
         });
-
         var options_data = {
             reader: 'myreader',
             data: [{
-                geo: "swe",
-                time: "1991",
-                pop: "1",
-                lex: "30"
+                geo: 'swe',
+                time: '1991',
+                pop: '1',
+                lex: '30'
             }, {
-                geo: "swe",
-                time: "1992",
-                pop: "2",
-                lex: "31"
+                geo: 'swe',
+                time: '1992',
+                pop: '2',
+                lex: '31'
             }, {
-                geo: "swe",
-                time: "1993",
-                pop: "3",
-                lex: "32"
+                geo: 'swe',
+                time: '1993',
+                pop: '3',
+                lex: '32'
             }, {
-                geo: "swe",
-                time: "1994",
-                pop: "4",
-                lex: "33"
+                geo: 'swe',
+                time: '1994',
+                pop: '4',
+                lex: '33'
             }, {
-                geo: "nor",
-                time: "1991",
-                pop: "10",
-                lex: "40"
+                geo: 'nor',
+                time: '1991',
+                pop: '10',
+                lex: '40'
             }, {
-                geo: "nor",
-                time: "1992",
-                pop: "20",
-                lex: "41"
+                geo: 'nor',
+                time: '1992',
+                pop: '20',
+                lex: '41'
             }, {
-                geo: "nor",
-                time: "1993",
-                pop: "30",
-                lex: "42"
+                geo: 'nor',
+                time: '1993',
+                pop: '30',
+                lex: '42'
             }, {
-                geo: "nor",
-                time: "1994",
-                pop: "40",
-                lex: "43"
+                geo: 'nor',
+                time: '1994',
+                pop: '40',
+                lex: '43'
             }]
         };
-
         t = Vizabi('MyTool', placeholder, {
             data: options_data,
             bind: {
@@ -203,35 +192,27 @@ describe("* Base: Hooks", function() {
                 }
             }
         });
-
     });
-
-    it("should initialize tool", function() {
+    it('should initialize tool', function() {
         expect(Vizabi.Tool.isTool(t)).toBe(true);
     });
-
-    it("should render tool with correct info", function() {
+    it('should render tool with correct info', function() {
         expect(placeholder.innerHTML).toContain('<div>swe-4</div><div>nor-40</div>');
     });
-
-    it("should change view instantaneously if nothing needs to be loaded (year changed)", function() {
-        t.model.state.time.value = "1993";
+    it('should change view instantaneously if nothing needs to be loaded (year changed)', function() {
+        t.model.state.time.value = '1993';
         expect(placeholder.innerHTML).toContain('<div>swe-3</div><div>nor-30</div>');
-        t.model.state.time.value = "1992";
+        t.model.state.time.value = '1992';
         expect(placeholder.innerHTML).toContain('<div>swe-2</div><div>nor-20</div>');
     });
-
-    describe("- Changing Hooks", function() {
-
+    describe('- Changing Hooks', function() {
         beforeAll(function(done) {
-
             t.on('ready', function() {
                 //make sure done is called one frame after update
                 setTimeout(function() {
                     done();
                 }, 1);
             });
-
             t.setOptions({
                 state: {
                     marker: {
@@ -242,11 +223,8 @@ describe("* Base: Hooks", function() {
                 }
             });
         });
-
-        it("should have changed indicator values", function() {
+        it('should have changed indicator values', function() {
             expect(placeholder.innerHTML).toContain('<div>swe-31</div><div>nor-41</div>');
         });
-
     });
-
 });

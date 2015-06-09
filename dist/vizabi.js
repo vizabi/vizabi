@@ -15,9 +15,9 @@
     Vizabi._instances = {};
 
     function startTool(name, placeholder, options) {
-        var tool = Vizabi.Tool.get(name);
-        if (tool) {
-            var t = new tool(placeholder, options);
+        var Tool = Vizabi.Tool.get(name);
+        if (Tool) {
+            var t = new Tool(placeholder, options);
             Vizabi._instances[t._id] = t;
             return t;
         } else {
