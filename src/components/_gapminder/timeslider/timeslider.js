@@ -26,13 +26,13 @@
     var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
     var time_formats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%b"),
-        "week": d3.time.format("week %U"),
-        "day": d3.time.format("%d/%m/%Y"),
-        "hour": d3.time.format("%d/%m/%Y %H"),
-        "minute": d3.time.format("%d/%m/%Y %H:%M"),
-        "second": d3.time.format("%d/%m/%Y %H:%M:%S")
+        "year": "%Y",
+        "month": "%b",
+        "week": "week %U",
+        "day": "%d/%m/%Y",
+        "hour": "%d/%m/%Y %H",
+        "minute": "%d/%m/%Y %H:%M",
+        "second": "%d/%m/%Y %H:%M:%S"
     };
 
     //margins for slider
@@ -171,6 +171,7 @@
             var play = this.element.select(".vzb-ts-btn-play");
             var pause = this.element.select(".vzb-ts-btn-pause");
             var _this = this;
+            var time = this.model.time;
 
             play.on('click', function() {
                 _this.model.time.play();
@@ -180,7 +181,9 @@
                 _this.model.time.pause();
             });//format
 
-            this.format = time_formats[this.model.time.unit];
+            var fmt = time.formatOutput || time_formats[time.unit];
+            this.format = d3.time.format(fmt);
+
             this.changeLimits();
             this.changeTime();
             this.resize();

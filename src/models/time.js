@@ -15,13 +15,13 @@
 
     //constant time formats
     var time_formats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%Y-%m"),
-        "week": d3.time.format("%Y-W%W"),
-        "day": d3.time.format("%Y-%m-%d"),
-        "hour": d3.time.format("%Y-%m-%d %H"),
-        "minute": d3.time.format("%Y-%m-%d %H:%M"),
-        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+        "year": "%Y",
+        "month": "%Y-%m",
+        "week": "%Y-W%W",
+        "day": "%Y-%m-%d",
+        "hour": "%Y-%m-%d %H",
+        "minute": "%Y-%m-%d %H:%M",
+        "second": "%Y-%m-%d %H:%M:%S"
     };
 
     var time_units = Object.keys(time_formats);
@@ -50,9 +50,10 @@
                 round: true,
                 speed: 300,
                 unit: "year",
-                formatInput: "%Y", //defaults to year format
                 step: 1, //step must be integer
-                adaptMinMaxZoom: false
+                adaptMinMaxZoom: false,
+                formatInput: "%Y", //defaults to year format
+                formatOutput: null
             }, values);
 
             //same constructor
@@ -89,11 +90,12 @@
         _formatToDates: function() {
 
             var date_attr = ["value", "start", "end"];
+            var fmts = [this.formatInput].concat(formatters);
             for (var i = 0; i < date_attr.length; i++) {
                 var attr = date_attr[i];
                 if (!utils.isDate(this[attr])) {
-                    for (var j = 0; j < formatters.length; j++) {
-                        var formatter = formatters[j];
+                    for (var j = 0; j < fmts.length; j++) {
+                        var formatter = d3.time.format(fmts[j]);
                         var date = formatter.parse(this[attr].toString());
                         if (utils.isDate(date)) {
                             this.set(attr, date);
