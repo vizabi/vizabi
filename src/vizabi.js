@@ -1,25 +1,21 @@
 /*!
  * VIZABI MAIN
  */
-
 (function() {
-
-    "use strict";
-
+    'use strict';
     var root = this;
     var previous = root.Vizabi;
-
+    
     var Vizabi = function(tool, placeholder, options) {
         return startTool(tool, placeholder, options);
     };
-
     //stores reference to each tool on the page
     Vizabi._instances = {};
 
     function startTool(name, placeholder, options) {
-        var tool = Vizabi.Tool.get(name);
-        if (tool) {
-            var t = new tool(placeholder, options);
+        var Tool = Vizabi.Tool.get(name);
+        if (Tool) {
+            var t = new Tool(placeholder, options);
             Vizabi._instances[t._id] = t;
             return t;
         } else {
@@ -35,7 +31,7 @@
         } else {
             Vizabi._instances = {};
         }
-    }
+    };
 
     /*
      * throws a warning if the required variable is not defined
@@ -46,11 +42,11 @@
      */
     Vizabi._require = function(variable) {
         if (typeof root[variable] === 'undefined') {
-            Vizabi.utils.warn(variable + " is required and could not be found.");
+            Vizabi.utils.warn(variable + ' is required and could not be found.');
             return false;
         }
         return true;
-    }
+    };
 
     //if AMD define
     if (typeof define === 'function' && define.amd) {
@@ -60,7 +56,5 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = Vizabi;
     }
-
     root.Vizabi = Vizabi;
-
-}).call(this);
+}.call(this));

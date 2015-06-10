@@ -99,7 +99,7 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-landscape, &.vzb-large {
     .vzb-buttonlist {
         .vzb-buttonlist-dialog {
-            @include position(absolute, -500px 40px auto auto);
+            @include position(absolute, -2000px 40px auto auto);
             &.vzb-active {
                 @include position(absolute, 20px 40px auto auto);
             }

@@ -162,7 +162,7 @@
                         .attr("cx", _this.xScale(segment.valueX))
                         .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
-                    var next = this.parentNode.children[index + 1];
+                    var next = this.parentNode.childNodes[(index+1)];
                     if (next == null) return;
                     next = next.__data__;
 
@@ -229,7 +229,7 @@
 
                     if (segment.transparent) return;
 
-                    var next = this.parentNode.children[index + 1];
+                    var next = this.parentNode.childNodes[(index + 1)];
                     if (next == null) return;
                     next = next.__data__;
 
