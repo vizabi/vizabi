@@ -127,6 +127,8 @@
             this.entityLines = null;
             this.entityLabels = null;
             this.totalLength_1 = {};
+            
+            this.KEY = this.model.entities.getDimension();
 
             //component events
             this.on("resize", function() {
@@ -147,6 +149,7 @@
          */
         updateShow: function() {
             var _this = this;
+            var KEY = this.KEY;
             
             this.duration = this.model.time.speed;
             this.translator = this.model.language.getTFunction();
@@ -183,7 +186,8 @@
             this.collisionResolver = d3.svg.collisionResolver()
                 .selector(".vzb-lc-label")
                 .value("valueY")
-                .scale(this.yScale);
+                .scale(this.yScale)
+                .KEY(KEY);
             
             //line template
             this.line = d3.svg.line()
@@ -356,6 +360,7 @@
          */
         redrawDataPoints: function() {
             var _this = this;
+            var KEY = this.KEY;
             
             if(!this.timeUpdatedOnce) {
                 this.updateTime();
@@ -435,7 +440,7 @@
                     var y = _this.model.marker.axis_y.getValues(d);
                     var xy = x.map(function(d,i){ return [+x[i],+y[i]]; });
                     xy = xy.filter(function(d){ return !utils.isNaN(d[1]); });
-                    _this.cached[d.geo] = {valueY:xy[xy.length-1][1]};
+                    _this.cached[d[KEY]] = {valueY:xy[xy.length-1][1]};
                     
                     // the following fixes the ugly line butts sticking out of the axis line
                     //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
@@ -452,13 +457,13 @@
                         
                         var totalLength = path2.node().getTotalLength();
                         
-                        if(_this.totalLength_1[d.geo]===null) {
-                            _this.totalLength_1[d.geo]=totalLength;
+                        if(_this.totalLength_1[d[KEY]]===null) {
+                            _this.totalLength_1[d[KEY]]=totalLength;
                         }
 
                         path1
                           .attr("stroke-dasharray", totalLength)
-                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d.geo])
+                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
                           .transition()
                             .duration(_this.duration)
                             .ease("linear")
@@ -466,16 +471,16 @@
 
                         path2
                           .attr("stroke-dasharray", totalLength)
-                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d.geo])
+                          .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
                           .transition()
                             .duration(_this.duration)
                             .ease("linear")
                             .attr("stroke-dashoffset", 0);
 
-                        _this.totalLength_1[d.geo] = totalLength;
+                        _this.totalLength_1[d[KEY]] = totalLength;
                     }else{
                         //reset saved line lengths
-                        _this.totalLength_1[d.geo] = null;
+                        _this.totalLength_1[d[KEY]] = null;
                         
                         path1
                           .attr("stroke-dasharray", "none")
@@ -498,17 +503,17 @@
                         .duration(_this.duration)
                         .ease("linear")
                         .attr("r", _this.profiles[_this.getLayoutProfile()].lollipopRadius)
-                        .attr("cy", _this.yScale(_this.cached[d.geo].valueY) + 1);  
+                        .attr("cy", _this.yScale(_this.cached[d[KEY]].valueY) + 1);  
                                         
 
                     entity.select(".vzb-lc-label")
                         .transition()
                         .duration(_this.duration)
                         .ease("linear")
-                        .attr("transform","translate(0," + _this.yScale(_this.cached[d.geo].valueY) + ")" );
+                        .attr("transform","translate(0," + _this.yScale(_this.cached[d[KEY]].valueY) + ")" );
                 
 
-                    var value = _this.yAxis.tickFormat()(_this.cached[d.geo].valueY);
+                    var value = _this.yAxis.tickFormat()(_this.cached[d[KEY]].valueY);
                     var name = label.length<13? label : label.substring(0, 10)+'...';
                     var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
                     
@@ -567,16 +572,17 @@
 
         entityMousemove: function(me, index, context){
             var _this = context;
+            var KEY = _this.KEY;
             
             _this.hoveringNow = me;
 
             _this.graph.selectAll(".vzb-lc-entity").each(function(){
                 d3.select(this)
                     .classed("vzb-dimmed", function(d){
-                        return d.geo !== _this.hoveringNow.geo;
+                        return d[KEY] !== _this.hoveringNow[KEY];
                     })
                     .classed("vzb-hovered", function(d){
-                        return d.geo === _this.hoveringNow.geo;
+                        return d[KEY] === _this.hoveringNow[KEY];
                     });
             });
 
@@ -590,7 +596,10 @@
                 resolvedTime = _this.time;
             }
 
-            var resolvedValue = _this.model.marker.axis_y.getValue({geo: me.geo, time: resolvedTime});
+            var pointer = {};
+            pointer[KEY] = me[KEY];
+            pointer.time = resolvedTime;
+            var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
             if(utils.isNaN(resolvedValue)) {
                 return;
@@ -677,8 +686,8 @@
 //
 //                // update inputs of force layout -- fixed nodes
 //                _this.dataForceLayout.links.forEach(function(d,i){
-//                    var source = utils.find(_this.cached, {geo:d.source.geo});
-//                    var target = utils.find(_this.cached, {geo:d.target.geo});
+//                    var source = utils.find(_this.cached, {geo:d.source[KEY]});
+//                    var target = utils.find(_this.cached, {geo:d.target[KEY]});
 //
 //                    d.source.px = _this.xScale(source.time);
 //                    d.source.py = _this.yScale(source.value);
@@ -688,8 +697,8 @@
 //
 //                // shift the boundary nodes
 //                _this.dataForceLayout.nodes.forEach(function(d){
-//                    if(d.geo == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
-//                    if(d.geo == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
+//                    if(d[KEY] == "upper_boundary"){d.x = _this.xScale(_this.time)+10; d.y = 0; return};
+//                    if(d[KEY] == "lower_boundary"){d.x = _this.xScale(_this.time)+10; d.y = _this.height; return};
 //                });
 //
 //                // update force layout size for better gravity
@@ -714,8 +723,8 @@
 //            
 //            this.data = this.model.marker.label.getItems({ time: this.time });
 //            this.data.forEach(function(d,i){
-//                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_MARKER, fixed: true});
-//                _this.dataForceLayout.nodes.push({geo: d.geo, role:_this.ROLE_LABEL, fixed: false});
+//                _this.dataForceLayout.nodes.push({geo: d[KEY], role:_this.ROLE_MARKER, fixed: true});
+//                _this.dataForceLayout.nodes.push({geo: d[KEY], role:_this.ROLE_LABEL, fixed: false});
 //                _this.dataForceLayout.links.push({source: i*2, target: i*2+1 });
 //            })
 //            _this.dataForceLayout.nodes.push({geo: "upper_boundary", role:_this.ROLE_BOUNDARY, fixed: true});
@@ -749,7 +758,7 @@
 //                .on("end", function () {
 //                                    
 //                    var entitiesOrderedByY = _this.cached
-//                        .map(function(d){return d.geo});
+//                        .map(function(d){return d[KEY]});
 //                    
 //                    var suggestedY = _this.dataForceLayout.nodes
 //                        .filter(function(d){return d.role==_this.ROLE_LABEL})
@@ -757,7 +766,7 @@
 //                
 //                    _this.graph.selectAll(".vzb-lc-label")
 //                        .each(function (d, i) {
-//                            var geoIndex = _this.cached.map(function(d){return d.geo}).indexOf(d.geo);
+//                            var geoIndex = _this.cached.map(function(d){return d[KEY]}).indexOf(d[KEY]);
 //                            var resolvedY = suggestedY[geoIndex].y || _this.yScale(_this.cached[geoIndex][geoIndex]) || 0;
 //                            d3.select(this)
 //                                .transition()

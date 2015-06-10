@@ -29,9 +29,11 @@
                 "D3 collision resolver stopped: missing height of the canvas"); return;}
             if(value == null){console.warn(
                 "D3 collision resolver stopped: missing pointer within data objects. Example: value = 'valueY' "); return;}
+            if(KEY == null){console.warn(
+                "D3 collision resolver stopped: missing a key for data. Example: key = 'geo' "); return;}
   
             g.each(function(d, index) {
-                labelHeight[d.geo] = d3.select(this).select(selector)[0][0].getBBox().height;
+                labelHeight[d[KEY]] = d3.select(this).select(selector)[0][0].getBBox().height;
             });
 
             labelPosition = resolver.calculatePositions(data, value, height, scale);
@@ -39,9 +41,9 @@
             //actually reposition the labels
             g.each(function (d, i) {
                 
-                if(data[d.geo][fixed]) return;
+                if(data[d[KEY]][fixed]) return;
                 
-                var resolvedY = labelPosition[d.geo] || scale(data[d.geo][value]) || 0;
+                var resolvedY = labelPosition[d[KEY]] || scale(data[d[KEY]][value]) || 0;
                 var resolvedX = null;
                 
                 if(handleResult!=null) {handleResult(d, i, this, resolvedX, resolvedY); return;}
@@ -153,6 +155,12 @@
         resolver.handleResult = function(arg) {
             if (!arguments.length) return handleResult;
             handleResult = arg;
+            return resolver;
+        };
+        var KEY = null;
+        resolver.KEY = function(arg) {
+            if (!arguments.length) return KEY;
+            KEY = arg;
             return resolver;
         };
         

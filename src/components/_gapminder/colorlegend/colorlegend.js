@@ -72,6 +72,7 @@
         updateView: function(){
             var _this = this;
             this.translator = this.model.language.getTFunction();
+            var KEY = this.model.entities.getDimension();
 
             var palette = this.model.color.palette;
             
@@ -132,6 +133,7 @@
                 this.rainbowEl.classed("vzb-hidden", true);
             }
             
+            //TODO: is it okay that "geo.region" is hardcoded?
             if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
                     .select("svg").selectAll("g");
@@ -154,8 +156,8 @@
                         .map(function(d){return d[d.length-1]})
                         //filter so that only countries of the correct region remain 
                         .filter(function(f){return f["geo.region"]==region})
-                        //fish out the "geo" field, leave the rest behind
-                        .map(function(d){return {geo: d.geo}});
+                        //fish out the "key" field, leave the rest behind
+                        .map(function(d){return utils.clone(d,[KEY]) });
                     
                     _this.model.entities.setHighlighted(highlight);
                 })
