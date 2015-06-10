@@ -1026,9 +1026,7 @@
 
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
-                .data(_this.model.entities.select, function(d) {
-                    return (d[KEY]);
-                });
+                .data(_this.model.entities.select, function(d) { return (d[KEY]);});
 
 
             this.entityLabels.exit()
@@ -1123,6 +1121,8 @@
                 var valueX = this.model.marker.axis_x.getValue(d);
                 var valueS = this.model.marker.size.getValue(d);
                 var radius = utils.areaToRadius(this.sScale(valueS))
+                
+                if(!valueY || !valueX || !valueS) return;
 
                 if (this.ui.whenHovering.showProjectionLineX) {
                     this.projectionX
