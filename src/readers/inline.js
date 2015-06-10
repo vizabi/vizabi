@@ -14,9 +14,6 @@
         init: function(reader_info) {
             this.name = "inline";
             this._super(reader_info);
-        },
-        read: function() {
-            return (new Vizabi.Promise).resolve();
         }
     });
 

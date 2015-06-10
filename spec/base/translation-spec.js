@@ -234,7 +234,9 @@ describe('* Base: Translation', function() {
             init: function(reader_info) {
                 this.name = 'myreader';
                 this._super(reader_info);
-                this._data = [];
+                //hack to format objects
+                data[0] = Vizabi.utils.mapRows(data[0], this._formatters);
+                data[1] = Vizabi.utils.mapRows(data[1], this._formatters);
             },
             read: function(query, language) {
                 var index = language === 'en' ? 0 : 1;

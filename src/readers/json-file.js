@@ -24,6 +24,7 @@
             this._name = 'json-file';
             this._data = [];
             this._basepath = reader_info.path;
+            this._formatters = reader_info.formatters;
             if (!this._basepath) {
                 utils.error("Missing base path for json-file reader");
             };
@@ -58,18 +59,52 @@
                 //if not, request and parse
                 else {
                     d3.json(path, function(error, res) {
+
+                        if (!res) {
+                            utils.error("No permissions or empty file: " + path, error);
+                            return;
+                        }
+
+                        if (error) {
+                            utils.error("Error Happened While Loading JSON File: " + path, error);
+                            return;
+                        }
+                        //fix JSON response
+                        res = format(res);
+                        
                         //cache and resolve
                         FILE_CACHED[path] = res;
                         FILE_REQUESTED[path].resolve();
                         delete FILE_REQUESTED[path];
 
-                        if (error) {
-                            utils.error("Error Happened While Loading File: " + path, error);
-                            return;
-                        }
+
                         parse(res);
                     });
                     FILE_REQUESTED[path] = new Promise();
+                }
+
+                function format(res) {
+                    //make category an array and fix missing regions
+                    res = res.map(function(row) {
+                        row['geo.cat'] = [row['geo.cat']];
+                        row['geo.region'] = row['geo.region'] || row['geo'];
+                        return row;
+                    });
+
+                    //format data
+                    res = utils.mapRows(res, _this._formatters);
+
+                    //TODO: fix this hack with appropriate ORDER BY
+                    //order by formatted
+                    //sort records by time
+                    var keys = Object.keys(_this._formatters);
+                    var order_by = keys[0];
+                    res.sort(function(a, b) {
+                        return a[order_by] - b[order_by];
+                    });
+                    //end of hack
+
+                    return res;
                 }
 
                 function parse(res) {
@@ -81,6 +116,9 @@
                         where['geo.cat'] = utils.clone(where['geo.category']);
                         delete where['geo.category'];
                     }
+
+                    //format values in the dataset and filters
+                    where = utils.mapRows([where], _this._formatters)[0];
 
                     data = utils.filterAny(data, where);
 
