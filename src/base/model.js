@@ -8,15 +8,7 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
-    var time_formats = {
-        'year': d3.time.format('%Y'),
-        'month': d3.time.format('%Y-%m'),
-        'week': d3.time.format('%Y-W%W'),
-        'day': d3.time.format('%Y-%m-%d'),
-        'hour': d3.time.format('%Y-%m-%d %H'),
-        'minute': d3.time.format('%Y-%m-%d %H:%M'),
-        'second': d3.time.format('%Y-%m-%d %H:%M:%S')
-    };
+
     //names of reserved hook properties
     //warn client if d3 is not defined
     Vizabi._require('d3');
@@ -305,6 +297,7 @@
             var data_hook = this._dataModel;
             var language_hook = this._languageModel;
             var query = this.getQuery();
+            var formatters = this._getAllFormatters();
             var promiseLoad = new Promise();
             var promises = [];
             //useful to check if in the middle of a load call
@@ -314,8 +307,10 @@
             if (this.isHook() && data_hook && query) {
                 //hook changes, regardless of actual data loading 
                 this.trigger('hook_change');
-                //get reader omfp
+                //get reader info
                 var reader = data_hook.getObject();
+                reader.formatters = formatters;
+
                 var lang = language_hook ? language_hook.id : 'en';
                 var promise = new Promise();
                 var evts = {
@@ -332,6 +327,7 @@
                         _this.setLoadingDone('_hook_data');
                     }
                 };
+
                 utils.timeStamp('Vizabi Model: Loading Data: ' + _this._id);
                 _DATAMANAGER.load(query, lang, reader, evts).then(function(dataId) {
                     _this._dataId = dataId;
@@ -468,31 +464,82 @@
         getProperties: function() {
             return this.getHookValues('property');
         },
+
         /**
          * gets all hook dimensions
+         * @param {Object} options
          * @returns {Array} all unique dimensions
          */
-        getAllDimensions: function() {
+        _getAllDimensions: function(opts) {
+            opts = opts || {};
             var dims = [];
             var dim;
             utils.forEach(this._space, function(m) {
+                if (opts.exceptType && m.getType() === opts.exceptType) {
+                    return true;
+                }
+                if (opts.onlyType && m.getType() !== opts.onlyType) {
+                    return true;
+                }
                 if (dim = m.getDimension()) {
                     dims.push(dim);
                 }
             });
             return dims;
         },
+
+        /**
+         * gets first dimension that matches type
+         * @param {Object} options
+         * @returns {Array} all unique dimensions
+         */
+        _getFirstDimension: function(opts) {
+            opts = opts || {};
+            var dim = false;
+            utils.forEach(this._space, function(m) {
+                if (opts.exceptType && m.getType() !== opts.exceptType) {
+                    dim = m.getDimension();
+                    return false;
+                }
+                else if (opts.type && m.getType() === opts.type) {
+                    dim = m.getDimension();
+                    return false;
+                }
+                else if (!opts.exceptType && !opts.type) {
+                    dim = m.getDimension();
+                    return false;
+                }
+            });
+            return dim;
+        },
+
         /**
          * gets all hook filters
          * @returns {Object} filters
          */
-        getAllFilters: function() {
+        _getAllFilters: function() {
             var filters = {};
             utils.forEach(this._space, function(h) {
                 filters = utils.extend(filters, h.getFilter());
             });
             return filters;
         },
+
+        /**
+         * gets all hook filters
+         * @returns {Object} filters
+         */
+        _getAllFormatters: function() {
+            var formatters = {};
+            utils.forEach(this._space, function(h) {
+                var f = h.getFormatter();
+                if (f) {
+                    formatters[h.getDimension()] = f;
+                }
+            });
+            return formatters;
+        },
+
         /**
          * gets the value specified by this hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
@@ -500,7 +547,7 @@
          */
         getValue: function(filter) {
             //extract id from original filter
-            var id = utils.clone(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
         /**
@@ -510,7 +557,7 @@
          */
         getValues: function(filter) {
             //extract id from original filter
-            var id = utils.clone(filter, this.getAllDimensions());
+            var id = utils.clone(filter, this._getAllDimensions());
             return this._getHookedValues(id);
         },
         /**
@@ -523,19 +570,25 @@
         },
         /**
          * gets the items associated with this hook without values
-         * @param value Original value
+         * @param value Original valueg
          * @returns hooked value
          */
         getItems: function(filter) {
             if (this.isHook() && this._dataModel) {
                 //all dimensions except time (continuous)
-                var dimensions = utils.without(this.getAllDimensions(), 'time');
+                var dimensions = this._getAllDimensions({
+                    exceptType: 'time'
+                });
+                var excluded = this._getAllDimensions({
+                    onlyType: 'time'
+                });
+
                 return this.getUnique(dimensions).map(function(item) {
-                    // Forcefully write the time to item
-                    // TODO: Clean this hack
-                    if (filter && filter.time) {
-                        item.time = filter.time;
-                    }
+                    utils.forEach(excluded, function(e) {
+                        if (filter && filter[e]) {
+                            item[e] = filter[e];
+                        }
+                    });
                     return item;
                 });
             } else {
@@ -556,6 +609,13 @@
         getFilter: function() {
             return {}; //defaults to no filter
         },
+
+        /**
+         * Gets formatter for this model
+         * @returns {Function|Boolean} formatter function
+         */
+        getFormatter: function() {},
+
         /**
          * gets query that this model/hook needs to get data
          * @returns {Array} query
@@ -575,9 +635,9 @@
                 return true;
             } //else, its a hook (indicator or property) and it needs to query
             else {
-                var dimensions = this.getAllDimensions();
+                var dimensions = this._getAllDimensions();
                 var select = utils.unique(dimensions.concat([this.which]));
-                var filters = this.getAllFilters();
+                var filters = this._getAllFilters();
                 //return query
                 return {
                     'from': 'data',
@@ -591,9 +651,19 @@
          * @returns {Number|String} value The value for this tick
          */
         tickFormatter: function(x, formatterRemovePrefix) {
-            //TODO: generalize for any time unit
+
             if (utils.isDate(x)) {
-                return time_formats.year(x);
+                //find time model and use its format
+                var timeModel;
+                utils.forEach(this._space, function(m) {
+                    if (m.getType() === 'time') {
+                        timeModel = m;
+                        return false;
+                    }
+                });
+                if(!timeModel) return;
+                var fmt = d3.time.format(timeModel.formatOutput || "%Y");
+                return fmt(x);
             }
             if (utils.isString(x)) {
                 return x;
@@ -758,22 +828,14 @@
             if (!this.isHook()) {
                 return;
             }
-            if (!attr) {
-                attr = 'time'; //fallback in case no attr is provided
-            }
             //store limits so that we stop rechecking.
             var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
             if (cachedLimits[attr]) {
                 return cachedLimits[attr];
             }
             var map = function(n) {
-                return new Date(n.toString());
+                return (utils.isDate(n)) ? n : parseFloat(n);
             };
-            if (attr !== 'time') {
-                map = function(n) {
-                    return parseFloat(n);
-                };
-            }
             var items = _DATAMANAGER.get(this._dataId);
             var filtered = items.reduce(function(filtered, d) {
                 var f = map(d[attr]);
@@ -796,7 +858,7 @@
                 }
             }
             limits.min = min || 0;
-            limits.max = max || 0;
+            limits.max = max || 100;
             cachedLimits[attr] = limits;
             return limits;
         },
@@ -810,7 +872,7 @@
                 return;
             }
             if (!attr) {
-                attr = 'time';
+                attr = this._getFirstDimension({ type: "time" });
             }
             var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique');
             var uniq_id = JSON.stringify(attr);
@@ -825,20 +887,13 @@
                 var values = items.map(function(d) {
                     return utils.clone(d, attr); //pick attrs
                 });
-                //TODO: Move this up to readers ?
-                if (attr.indexOf('time') !== -1) {
-                    for (var i = 0; i < values.length; i += 1) {
-                        values[i].time = new Date(values[i].time);
-                    }
-                }
                 uniq = utils.unique(values, function(n) {
                     return JSON.stringify(n);
                 });
             } //if it's a string, it will return a list of values
             else {
                 var values = items.map(function(d) {
-                    //TODO: Move this up to readers ?
-                    return attr !== 'time' ? d[attr] : new Date(d[attr]);
+                    return d[attr];
                 });
                 uniq = utils.unique(values);
             }
@@ -878,20 +933,22 @@
             }
             var values;
             var items = _DATAMANAGER.get(this._dataId);
+            var dimTime = this._getFirstDimension({type: 'time'});
+
             if (this.use === 'value') {
                 values = [this.which];
             } else if (this._space.hasOwnProperty(this.use)) {
                 values = [this._space[this.use][this.which]];
             } else {
                 // if a specific time is requested -- return values up to this time
-                if (filter && filter.hasOwnProperty('time')) {
+                if (filter && filter.hasOwnProperty(dimTime)) {
                     // save time into variable
-                    var time = new Date(filter.time);
-                    // filter.time will be removed during interpolation
+                    var time = new Date(filter[dimTime]);
+                    // filter time will be removed during interpolation
                     var lastValue = interpolateValue(this, filter, this.use, this.which);
                     // return values up to the requested time point, append an interpolated value as the last one
                     values = utils.filter(items, filter).filter(function(d) {
-                        return d.time <= time;
+                        return d[dimTime] <= time;
                     }).map(function(d) {
                         return d[_this.which];
                     }).concat(lastValue);
@@ -904,6 +961,7 @@
             }
             return values;
         },
+
         //TODO: Is this supposed to be here?
         /**
          * gets maximum, minimum and mean values from the dataset of this certain hook
@@ -913,8 +971,10 @@
             var result = {};
             //TODO: d3 is global?
             //Can we do this without d3?
+            var dim = this._getFirstDimension({ type: 'time' });
+
             d3.nest().key(function(d) {
-                return timeFormatter(d.time);
+                return timeFormatter(d[dim]);
             }).entries(_DATAMANAGER.get(this._dataId)).forEach(function(d) {
                 var values = d.values.filter(function(f) {
                     return f[_this.which] !== null;
@@ -929,6 +989,7 @@
             });
             return result;
         },
+
         /**
          * gets filtered dataset with fewer keys
          */
@@ -946,154 +1007,166 @@
         }
     });
     Vizabi.Model = Model;
+
     /* ===============================
      * Private Helper Functions
      * ===============================
      */
+
     /**
      * Checks whether an object is a model or not
      */
     function isModel(model) {
-            return model.hasOwnProperty('_data');
-        }
-        /**
-         * Binds all attributes in _data to magic setters and getters
-         */
+        return model.hasOwnProperty('_data');
+    }
+
+    /**
+     * Binds all attributes in _data to magic setters and getters
+     */
     function bindSettersGetters(model) {
-            for (var prop in model._data) {
-                Object.defineProperty(model, prop, {
-                    configurable: true,
-                    //allow reconfiguration
-                    get: function(p) {
-                        return function() {
-                            return model.get(p);
-                        };
-                    }(prop),
-                    set: function(p) {
-                        return function(value) {
-                            return model.set(p, value);
-                        };
-                    }(prop)
-                });
-            }
+        for (var prop in model._data) {
+            Object.defineProperty(model, prop, {
+                configurable: true,
+                //allow reconfiguration
+                get: function(p) {
+                    return function() {
+                        return model.get(p);
+                    };
+                }(prop),
+                set: function(p) {
+                    return function(value) {
+                        return model.set(p, value);
+                    };
+                }(prop)
+            });
         }
-        /**
-         * Loads a submodel, when necessaary
-         * @param {String} attr Name of submodel
-         * @param {Object} val Initial values
-         * @param {Object} ctx context
-         * @returns {Object} model new submodel
-         */
+    }
+
+    /**
+     * Loads a submodel, when necessaary
+     * @param {String} attr Name of submodel
+     * @param {Object} val Initial values
+     * @param {Object} ctx context
+     * @returns {Object} model new submodel
+     */
     function initSubmodel(attr, val, ctx) {
-            //naming convention: underscore -> time, time_2, time_overlay
-            var name = attr.split('_')[0];
-            var binds = {
-                //the submodel has changed (multiple times)
-                'change': function(evt, vals) {
-                    evt = evt.replace('change', 'change:' + name);
-                    ctx.triggerAll(evt, ctx.getObject());
-                },
-                //loading has started in this submodel (multiple times)
-                'hook_change': function(evt, vals) {
-                    ctx.trigger(evt, ctx.getObject());
-                },
-                //loading has started in this submodel (multiple times)
-                'load_start': function(evt, vals) {
-                    evt = evt.replace('load_start', 'load_start:' + name);
-                    ctx.triggerAll(evt, ctx.getObject());
-                    ctx.setReady(false);
-                },
-                //loading has failed in this submodel (multiple times)
-                'load_error': function(evt, vals) {
-                    evt = evt.replace('load_error', 'load_error:' + name);
-                    ctx.triggerAll(evt, vals);
-                },
-                //loading has ended in this submodel (multiple times)
-                'ready': function(evt, vals) {
-                    //trigger only for submodel
-                    evt = evt.replace('ready', 'ready:' + name);
-                    ctx.trigger(evt, vals);
-                    //TODO: understand why we need to force it not to be ready
-                    ctx.setReady(false);
-                    ctx.setReady();
-                }
-            };
-            if (isModel(val)) {
-                val.on(binds);
-                return val;
-            } else {
-                //special model
-                var Modl = Vizabi.Model.get(name, true) || Model;
-                return new Modl(val, ctx, binds, true);
+        //naming convention: underscore -> time, time_2, time_overlay
+        var name = attr.split('_')[0];
+        var binds = {
+            //the submodel has changed (multiple times)
+            'change': function(evt, vals) {
+                evt = evt.replace('change', 'change:' + name);
+                ctx.triggerAll(evt, ctx.getObject());
+            },
+            //loading has started in this submodel (multiple times)
+            'hook_change': function(evt, vals) {
+                ctx.trigger(evt, ctx.getObject());
+            },
+            //loading has started in this submodel (multiple times)
+            'load_start': function(evt, vals) {
+                evt = evt.replace('load_start', 'load_start:' + name);
+                ctx.triggerAll(evt, ctx.getObject());
+                ctx.setReady(false);
+            },
+            //loading has failed in this submodel (multiple times)
+            'load_error': function(evt, vals) {
+                evt = evt.replace('load_error', 'load_error:' + name);
+                ctx.triggerAll(evt, vals);
+            },
+            //loading has ended in this submodel (multiple times)
+            'ready': function(evt, vals) {
+                //trigger only for submodel
+                evt = evt.replace('ready', 'ready:' + name);
+                ctx.trigger(evt, vals);
+                //TODO: understand why we need to force it not to be ready
+                ctx.setReady(false);
+                ctx.setReady();
             }
+        };
+        if (isModel(val)) {
+            val.on(binds);
+            return val;
+        } else {
+            //special model
+            var Modl = Vizabi.Model.get(name, true) || Model;
+            return new Modl(val, ctx, binds, true);
         }
-        /**
-         * gets closest interval from this model or parent
-         * @returns {Object} Intervals object
-         */
+    }
+
+    /**
+     * gets closest interval from this model or parent
+     * @returns {Object} Intervals object
+     */
     function getIntervals(ctx) {
-            if (ctx._intervals) {
-                return ctx._intervals;
-            } else if (ctx._parent) {
-                return getIntervals(ctx._parent);
-            } else {
-                return new Vizabi.Intervals();
-            }
+        if (ctx._intervals) {
+            return ctx._intervals;
+        } else if (ctx._parent) {
+            return getIntervals(ctx._parent);
+        } else {
+            return new Vizabi.Intervals();
         }
-        /**
-         * gets closest prefix model moving up the model tree
-         * @param {String} prefix
-         * @returns {Object} submodel
-         */
+    }
+
+    /**
+     * gets closest prefix model moving up the model tree
+     * @param {String} prefix
+     * @returns {Object} submodel
+     */
     function getClosestModel(ctx, name) {
-            var model = findSubmodel(ctx, name);
-            if (model) {
-                return model;
-            } else if (ctx._parent) {
-                return getClosestModel(ctx._parent, name);
-            }
+        var model = findSubmodel(ctx, name);
+        if (model) {
+            return model;
+        } else if (ctx._parent) {
+            return getClosestModel(ctx._parent, name);
         }
-        /**
-         * find submodel with name that starts with prefix
-         * @param {String} prefix
-         * @returns {Object} submodel or false if nothing is found
-         */
+    }
+
+    /**
+     * find submodel with name that starts with prefix
+     * @param {String} prefix
+     * @returns {Object} submodel or false if nothing is found
+     */
     function findSubmodel(ctx, name) {
-            for (var i in ctx._data) {
-                //found submodel
-                if (i === name && isModel(ctx._data[i])) {
-                    return ctx._data[i];
-                }
+        for (var i in ctx._data) {
+            //found submodel
+            if (i === name && isModel(ctx._data[i])) {
+                return ctx._data[i];
             }
         }
-        /**
-         * Learn what this model should hook to
-         * @returns {Array} space array
-         */
+    }
+
+    /**
+     * Learn what this model should hook to
+     * @returns {Array} space array
+     */
     function getSpace(model) {
-            if (utils.isArray(model.space)) {
-                return model.space;
-            } else if (model._parent) {
-                return getSpace(model._parent);
-            } else {
-                utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
-            }
+        if (utils.isArray(model.space)) {
+            return model.space;
+        } else if (model._parent) {
+            return getSpace(model._parent);
+        } else {
+            utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
         }
-        /**
-         * interpolates the specific value if missing
-         * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-         * filter SHOULD contain time property
-         * @returns interpolated value
-         */
+    }
+
+    /**
+     * interpolates the specific value if missing
+     * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+     * filter SHOULD contain time property
+     * @returns interpolated value
+     */
     function interpolateValue(ctx, filter, hook, value) {
         var items = _DATAMANAGER.get(ctx._dataId);
         if (items === null || items.length === 0) {
             utils.warn('interpolateValue returning NULL because items array is empty');
             return null;
         }
-        // fetch time from filter object and remove it from there
-        var time = new Date(filter.time);
-        delete filter.time;
+
+        //TODO: this only allows one time variable
+        var dimTime = ctx._getFirstDimension({ type: 'time' });
+        var time = new Date(filter[dimTime]); //clone date
+        delete filter[dimTime];
+
         // filter items so that we only have a dataset for certain keys, like "geo"
         items = ctx._getFilteredItems(filter);
         // return constant for the hook of "values"
@@ -1103,7 +1176,7 @@
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
         var indexNext = d3.bisectLeft(items.map(function(d) {
-            return d.time;
+            return d[dimTime];
         }), time);
         // zero-order interpolation for the hook of properties
         if (hook === 'property' && indexNext === 0) {
@@ -1125,7 +1198,7 @@
             return null;
         }
         // perform a simple linear interpolation
-        var fraction = (time - items[indexNext - 1].time) / (items[indexNext].time - items[indexNext - 1].time);
+        var fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
         value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
         // cast to time object if we are interpolating time
         if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {

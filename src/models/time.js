@@ -177,19 +177,16 @@
         },
 
         /**
-         * gets formatted value
-         * @param {String} f Optional format. Defaults to YYYY
-         * @param {String} attr Optional attribute. Defaults to "value"
-         * @returns {String} formatted value
+         * Gets formatter for this model
+         * @returns {Function} formatter function
          */
-        getFormatted: function(f, attr) {
-            if (!f) f = "%Y";
-            if (!attr) attr = "value";
-
-            var format = d3.time.format(f);
-            return format(this[attr]);
+        getFormatter: function() {
+            var f = d3.time.format(this.formatInput || "%Y");
+            return function(d) {
+                return f.parse(d);
+            }
         },
-        
+
         /**
          * Snaps the time to integer
          * possible inputs are "start", "end", "value". "value" is default

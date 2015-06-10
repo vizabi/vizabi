@@ -98,7 +98,6 @@
             var _this = this;
             this.translator = this.model.language.getTFunction();
             this.duration = this.model.time.speed;
-            this.timeFormatter = d3.time.format(this.model.time.formatInput);
 
             var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 
@@ -125,12 +124,11 @@
 
             var _this = this;
             var time = this.model.time;
-            var currTime = time.value;
+            var timeDim = time.getDimension();
             var duration = (time.playing) ? time.speed : 0;
-
-            var items = this.model.marker.label.getItems({
-                time: currTime
-            });
+            var filter = {};
+            filter[timeDim] = time.value;
+            var items = this.model.marker.label.getItems(filter);
 
             this.entityBars = this.bars.selectAll('.vzb-bc-bar')
                 .data(items);
@@ -397,8 +395,8 @@
                 return;
             }
 
-            var dateMin = marker.getLimits('time').min;
-            var dateMax = marker.getLimits('time').max;
+            var dateMin = marker.getLimits(time.getDimension()).min;
+            var dateMax = marker.getLimits(time.getDimension()).max;
 
             if (time.start < dateMin) {
                 time.start = dateMin;

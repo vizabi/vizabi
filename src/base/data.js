@@ -78,6 +78,7 @@
                     var values = r.getData();
                     var q = query;
                     var query_region = q.select.indexOf('geo.region') !== -1;
+
                     //make sure all queried is returned
                     values = values.map(function(d) {
                         for (var i = 0; i < q.select.length; i += 1) {
@@ -88,25 +89,7 @@
                         }
                         return d;
                     });
-                    values = values.map(function(d) {
-                        if (d.geo === null) {
-                            d.geo = d['geo.name'];
-                        }
-                        if (query_region && d['geo.region'] === null) {
-                            d['geo.region'] = d.geo;
-                        }
-                        return d;
-                    });
-                    // convert time to Date()
-                    values = values.map(function(d) {
-                        d.time = new Date(d.time);
-                        d.time.setHours(0);
-                        return d;
-                    });
-                    // sort records by time
-                    values.sort(function(a, b) {
-                        return a.time - b.time;
-                    });
+                    
                     _this._collection[queryId] = {};
                     var col = _this._collection[queryId];
                     col.data = values;

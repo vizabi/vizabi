@@ -183,8 +183,8 @@
             //don't validate anything if data hasn't been loaded
             if (!marker.getItems() || marker.getItems().length < 1) return;
 
-            var dateMin = marker.getLimits('time').min;
-            var dateMax = marker.getLimits('time').max;
+            var dateMin = marker.getLimits(time.getDimension()).min;
+            var dateMax = marker.getLimits(time.getDimension()).max;
 
             if (time.start < dateMin) {
                 time.start = dateMin;

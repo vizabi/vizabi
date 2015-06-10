@@ -24,6 +24,7 @@
             this._name = 'csv-file';
             this._data = [];
             this._basepath = reader_info.path;
+            this._formatters = reader_info.formatters;
             if (!this._basepath) {
                 utils.error("Missing base path for csv-file reader");
             };
@@ -90,6 +91,19 @@
                         return row;
                     });
 
+                    //format data
+                    res = utils.mapRows(res, _this._formatters);
+
+                    //TODO: fix this hack with appropriate ORDER BY
+                    //order by formatted
+                    //sort records by time
+                    var keys = Object.keys(_this._formatters);
+                    var order_by = keys[0];
+                    res.sort(function(a, b) {
+                        return a[order_by] - b[order_by];
+                    });
+                    //end of hack
+
                     return res;
                 }
 
@@ -103,15 +117,18 @@
                         delete where['geo.category'];
                     }
 
+                    //format values in the dataset and filters
+                    where = utils.mapRows([where], _this._formatters)[0];
+
+                    //filter any rows that match where condition
                     data = utils.filterAny(data, where);
 
                     //only selected items get returned
                     data = data.map(function(row) {
                         return utils.clone(row, query.select);
                     });
-
+                    
                     _this._data = data;
-
                     p.resolve();
                 }
 

@@ -394,6 +394,47 @@
         },
 
         /*
+         * maps all rows according to the formatters
+         * @param {Array} original original dataset
+         * @param {Object} formatters formatters object
+         * @returns {Boolean} try
+         */
+        mapRows: function(original, formatters) {
+
+            var _this = this;
+            function mapRow(value, fmt) {
+                if(!_this.isArray(value)) {
+                    return fmt(value);
+                }
+                else {
+                    var res = [];
+                    for (var i = 0; i < value.length; i++) {
+                        res[i] = mapRow(value[i], fmt);
+                    }
+                    return res;
+                }
+            }
+
+            var columns = Object.keys(formatters);
+            var columns_s = columns.length;
+            original = original.map(function(row) {
+                for (var i = 0; i < columns_s; i++) {
+                    var col = columns[i], new_val;
+                    try {
+                        new_val = mapRow(row[col], formatters[col]);
+                    }
+                    catch(e) {
+                        new_val = row[col];
+                    }
+                    row[col] = new_val;
+                }
+                return row;
+            });
+
+            return original;
+        },
+
+        /*
          * Converts radius to area, simple math
          * @param {Number} radius
          * @returns {Number} area
