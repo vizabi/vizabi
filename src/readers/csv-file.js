@@ -103,46 +103,7 @@
                         delete where['geo.category'];
                     }
 
-                    for (var filter in where) {
-                        var wanted = where[filter];
-
-                        if (wanted[0] === "*") {
-                            continue;
-                        }
-
-                        //if not time, normal filtering
-                        if (filter !== "time") {
-                            data = data.filter(function(row) {
-                                var val = row[filter];
-                                var found = -1;
-
-                                //normalize
-                                if (!utils.isArray(val)) val = [val];
-
-                                //find first occurence
-                                utils.forEach(val, function(j, i) {
-                                    if (wanted.indexOf(j) !== -1) {
-                                        found = i;
-                                        return false;
-                                    }
-                                });
-                                //if found, include
-                                return found !== -1;
-                            });
-                        }
-                        //in case it's time, special filtering
-                        else {
-                            var timeRange = wanted[0];
-                            var min = timeRange[0];
-                            var max = timeRange[1] || min;
-
-                            data = data.filter(function(row) {
-                                var val = row[filter]
-                                return val >= min && val <= max;
-                            });
-                        }
-
-                    }
+                    data = utils.filterAny(data, where);
 
                     //only selected items get returned
                     data = data.map(function(row) {

@@ -316,6 +316,83 @@
             }
             return result;
         },
+
+        /*
+         * filters an array based on object properties.
+         * Properties may be arrays determining possible values
+         * @param {Array} arr original array
+         * @returns {Object} filter properties to use as filter
+         */
+        filterAny: function(arr, filter, wildcard) {
+            var index = -1;
+            var length = arr.length;
+            var resIndex = -1;
+            var result = [];
+            var keys = Object.keys(filter);
+            var s_keys = keys.length;
+            var i, f;
+            while ((index += 1) < length) {
+                var value = arr[index];
+                //normalize to array
+                var match = true;
+                for (i = 0; i < s_keys; i += 1) {
+                    f = keys[i];
+                    if (!value.hasOwnProperty(f) || !this.matchAny(value[f], filter[f], wildcard)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    result[resIndex += 1] = value;
+                }
+            }
+            return result;
+        },
+
+        /*
+         * checks if the value matches the comparison value or any in array
+         * compare may be an determining possible values
+         * @param value original value
+         * @param compare value or array
+         * @param {String} wildc wildcard value
+         * @returns {Boolean} try
+         */
+        matchAny: function(values, compare, wildc) {
+            //normalize value
+            if (!this.isArray(values)) values = [values];
+            if (!wildc) wildc = "*"; //star by default
+            var match = false;
+            for (var e = 0; e < values.length; e++) {
+                var value = values[e];
+
+                if (!this.isArray(compare) && value == compare) {
+                    match = true;
+                    break;
+                } else if (this.isArray(compare)) {
+                    var found = -1;
+                    for (var i = 0; i < compare.length; i++) {
+                        var c = compare[i];
+                        if (!this.isArray(c) && (c == value || c === wildc)) {
+                            found = i;
+                            break;
+                        } else if (this.isArray(c)) { //range
+                            var min = c[0];
+                            var max = c[1] || min;
+                            if (value >= min && value <= max) {
+                                found = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (found !== -1) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+            return match;
+        },
+
         /*
          * Converts radius to area, simple math
          * @param {Number} radius
