@@ -198,8 +198,9 @@
                     d3.event.sourceEvent.stopPropagation();
                 })
                 .on("drag", function(d, i) {
+                    var KEY = _this.KEY;
                     if (!_this.ui.labels.dragging) return;
-                    var cache = _this.cached[d.geo];
+                    var cache = _this.cached[d[KEY]];
                     cache.labelFixed = true;
 
                     cache.labelX_ += d3.event.dx / _this.width;
@@ -213,15 +214,16 @@
                     _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0);
                 })
                 .on("dragend", function(d, i) {
+                    var KEY = _this.KEY;
                     _this.model.entities.setLabelOffset(d, [
-                        Math.round(_this.cached[d.geo].labelX_ * 100) / 100,
-                        Math.round(_this.cached[d.geo].labelY_ * 100) / 100
+                        Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
+                        Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
                     ]);
                 });
 
 
 
-            this.gragRectangle = d3.behavior.drag()
+            this.dragRectangle = d3.behavior.drag()
                 .on("dragstart", function(d, i) {
                     if (!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
@@ -379,9 +381,9 @@
 
             this.element
                 .call(this.zoomer)
-                .call(this.gragRectangle);
+                .call(this.dragRectangle);
 
-
+            this.KEY = this.model.entities.getDimension();
 
             //console.log("EVENT ready once");
             _this.updateUIStrings();
@@ -475,20 +477,18 @@
          */
         updateEntities: function() {
             var _this = this;
+            var KEY = this.KEY;
 
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
             var endTime = _this.model.time.end;
             this.model.entities._visible = this.model.marker.label.getItems()
                 .map(function(d) {
-                    return {
-                        geo: d.geo,
-                        time: endTime,
-                        sortValue: _this.model.marker.size.getValue({
-                            geo: d.geo,
-                            time: endTime
-                        })
-                    }
+                    var pointer = {};
+                    pointer[KEY] = d[KEY];
+                    pointer.time = endTime;
+                    pointer.sortValue = _this.model.marker.size.getValue(pointer);
+                    return pointer;
                 })
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
@@ -500,7 +500,7 @@
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
                 .data(this.model.entities._visible, function(d) {
-                    return d.geo
+                    return d[KEY]
                 });
 
             //exit selection
@@ -517,9 +517,7 @@
                     if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
                         text = _this.timeFormatter(_this.time);
                         _this.entityLabels
-                            .filter(function(f) {
-                                return f.geo == d.geo
-                            })
+                            .filter(function(f) {return f[KEY] == d[KEY]})
                             .classed("vzb-highlighted", true);
                     } else {
                         text = _this.model.marker.label.getValue(d);
@@ -544,14 +542,14 @@
             //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
             this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
                 .data(this.model.entities._visible, function(d) {
-                    return d.geo
+                    return d[KEY]
                 });
 
             this.entityTrails.exit().remove();
 
             this.entityTrails.enter().append("g")
                 .attr("class", function(d) {
-                    return "vzb-bc-entity" + " " + d.geo
+                    return "vzb-bc-entity" + " " + d[KEY]
                 });
 
         },
@@ -799,12 +797,14 @@
 
         redrawDataPointsOnlyColors: function() {
             var _this = this;
+            var KEY = this.KEY;
 
             this.entityBubbles.style("fill", function(d) {
-                var valueC = _this.model.marker.color.getValue({
-                    geo: d.geo,
-                    time: _this.time
-                });
+                var pointer = {};
+                pointer[KEY] = d[KEY];
+                pointer.time = _this.time;
+                
+                var valueC = _this.model.marker.color.getValue(pointer);
                 return _this.cScale(valueC);
             });
         },
@@ -905,18 +905,17 @@
 
         _updateLabel: function(d, index, valueX, valueY, scaledS, valueL, duration) {
             var _this = this;
+            var KEY = this.KEY;
             if (duration == null) duration = _this.duration;
 
             // only for selected entities
             if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
 
-                if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
-                var cached = _this.cached[d.geo];
+                if (_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
+                var cached = _this.cached[d[KEY]];
 
 
-                var select = utils.find(_this.model.entities.select, function(f) {
-                    return f.geo == d.geo
-                });
+                var select = utils.find(_this.model.entities.select, function(f) {return f[KEY] == d[KEY]});
                 var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
                 cached.valueX = valueX;
@@ -941,9 +940,7 @@
 
 
                 // reposition label
-                _this.entityLabels.filter(function(f) {
-                        return f.geo == d.geo
-                    })
+                _this.entityLabels.filter(function(f) {return f[KEY] == d[KEY]})
                     .each(function(groupData) {
 
                         var labelGroup = d3.select(this);
@@ -999,8 +996,8 @@
             } else {
                 //for non-selected bubbles
                 //make sure there is no cached data
-                if (_this.cached[d.geo] != null) {
-                    delete _this.cached[d.geo]
+                if (_this.cached[d[KEY]] != null) {
+                    delete _this.cached[d[KEY]]
                 };
             }
         },
@@ -1023,13 +1020,14 @@
 
         selectDataPoints: function() {
             var _this = this;
+            var KEY = this.KEY;
 
             _this.someSelected = (_this.model.entities.select.length > 0);
 
 
             this.entityLabels = this.labelsContainer.selectAll('.vzb-bc-entity')
                 .data(_this.model.entities.select, function(d) {
-                    return (d.geo);
+                    return (d[KEY]);
                 });
 
 
@@ -1052,7 +1050,7 @@
                             //default prevented is needed to distinguish click from drag
                             if (d3.event.defaultPrevented) return
 
-                            var maxmin = _this.cached[d.geo].maxMinValues;
+                            var maxmin = _this.cached[d[KEY]].maxMinValues;
                             var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
                             _this._zoomOnRectangle(_this.element,
                                 _this.xScale(maxmin.valueXmin) - radius,
@@ -1087,7 +1085,7 @@
                     d3.select(this).selectAll(".vzb-bc-label-x")
                         .classed("vzb-transparent", true)
                     d3.select(this).select("rect")
-                        .classed("vzb-transparent", !_this.cached[d.geo].stuckOnLimit)
+                        .classed("vzb-transparent", !_this.cached[d[KEY]].stuckOnLimit)
                 });
 
 
