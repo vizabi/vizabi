@@ -39,24 +39,8 @@
             
             
             this.model_binds = {
-                "change": function(evt) {
-                    if (!_this._readyOnce) return;
-                    if(evt.indexOf("change:time")!=-1) return;
-                    //console.log("change", evt)
-                     _this.updateShow();
-                     _this.redrawDataPoints();
-                },
-                "ready": function(evt) {
-                    if (!_this._readyOnce) return;
-                    //console.log("ready", evt)
-                    _this.updateShow();
-                    _this.updateSize();
-                    _this.updateTime();
-                    _this.redrawDataPoints();
-                },
                 'change:time:value': function() {
                     if (!_this._readyOnce) return;
-                    //console.log("change:time:value")
                     _this.updateTime();
                     _this.redrawDataPoints();
                 }
@@ -70,13 +54,9 @@
             this.xAxis = d3.svg.axisSmart().orient("bottom");
             this.yAxis = d3.svg.axisSmart().orient("left");
 
-            
-            
             this.isDataPreprocessed = false;
             this.timeUpdatedOnce = false;
             this.sizeUpdatedOnce = false;
-            
-            
 
             // default UI settings
             this.ui = utils.extend({
@@ -136,11 +116,13 @@
                 _this.updateTime();
                 _this.redrawDataPoints();
             }); 
-            
-            _this.updateShow();
-            _this.updateSize();
-            _this.updateTime();
-            _this.redrawDataPoints();
+        },
+
+        ready: function() {
+            this.updateShow();
+            this.updateSize();
+            this.updateTime();
+            this.redrawDataPoints();
         },
 
         /*
@@ -154,11 +136,7 @@
             this.duration = this.model.time.speed;
             this.translator = this.model.language.getTFunction();
             
-            
-            var titleString = this.translator("indicator/" + this.model.marker.axis_y.which); 
-//                + ", "
-//                + d3.time.format(this.model.time.formatInput)(this.model.time.start) + " - "
-//                + d3.time.format(this.model.time.formatInput)(this.model.time.end)
+            var titleString = this.translator("indicator/" + this.model.marker.axis_y.which);
                 
             var yTitle = this.yTitleEl.selectAll("text").data([0]);
             yTitle.enter().append("text");
@@ -168,7 +146,6 @@
                 .attr("dy", "-0.36em")
                 .attr("dx", "-0.72em")
                 .text(titleString);
-            
             
             this.cached = {};
             
@@ -194,7 +171,6 @@
                 .interpolate("basis")
                 .x(function(d) {return _this.xScale(d[0]); })
                 .y(function(d) {return _this.yScale(d[1]); });
-            
 
         },
         
@@ -209,8 +185,13 @@
             var time_1 = (this.time === null) ? this.model.time.value : this.time;
             this.time = this.model.time.value;
             this.duration = this.model.time.playing && (this.time - time_1>0) ? this.model.time.speed*0.9 : 0;
+
+            var timeDim = this.model.time.getDimension();
+            var filter = {};
+
+            filter[timeDim] = this.time;
             
-            this.data = this.model.marker.label.getItems({ time: this.time });
+            this.data = this.model.marker.label.getItems(filter);
 
             this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
             this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -218,9 +199,6 @@
             this.timeUpdatedOnce = true;
 
         },
-
-        
-        
         
         /*
          * RESIZE:
@@ -597,8 +575,9 @@
             }
 
             var pointer = {};
+            var timeDim = _this.model.time.getDimension();
             pointer[KEY] = me[KEY];
-            pointer.time = resolvedTime;
+            pointer[timeDim] = resolvedTime;
             var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
             if(utils.isNaN(resolvedValue)) {

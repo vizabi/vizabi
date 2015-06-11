@@ -57,8 +57,10 @@
                         show: {
                             dim: "geo",
                             filter: {
-                                "geo": ["*"],
-                                "geo.cat": ["region"]
+                                _defs_: {
+                                    "geo": ["*"],
+                                    "geo.cat": ["region"]
+                                }
                             }
 
                         }
@@ -82,26 +84,11 @@
                         },
                         color: {
                             use: "property",
-                            which: "geo.region",
-                            palette: {
-                                "_default": "#ffb600",
-                                "eur": "#FFE700",
-                                "afr": "#00D5E9",
-                                "asi": "#FF5872",
-                                "ame": "#7FEB00"
-                            }
+                            which: "geo.region"
                         },
                         color_shadow: {
                             use: "property",
-                            which: "geo.region",
-                            palette: {
-                                "_default": "#fbbd00",
-                                "world": "#fb6d19",
-                                "eur": "#fbaf09",
-                                "afr": "#0098df",
-                                "asi": "#da0025",
-                                "ame": "#00b900"
-                            }
+                            which: "geo.region"
                         }
                     }
                 },
