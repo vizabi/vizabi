@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-11 */
+/* VIZABI - http://www.gapminder.org - 2015-06-12 */
 
 /*!
  * VIZABI MAIN
@@ -5825,7 +5825,7 @@
         /**
          * Selects or unselects an entity from the set
          */
-        selectEntity: function(d, timeFormatter) {
+        selectEntity: function(d, timeDim, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (this.isSelected(d)) {
@@ -5836,8 +5836,8 @@
                 var added = {};
                 added[dimension] = value;
                 added["labelOffset"] = [0, 0];
-                if (timeFormatter) {
-                    added["trailStartTime"] = timeFormatter(d.time);
+                if (timeDim && timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d[timeDim]);
                 }
                 this.select = this.select.concat(added);
             }
@@ -5887,14 +5887,14 @@
         /**
          * Highlights an entity from the set
          */
-        highlightEntity: function(d, timeFormatter) {
+        highlightEntity: function(d, timeDim, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (!this.isHighlighted(d)) {
                 var added = {};
                 added[dimension] = value;
-                if (timeFormatter) {
-                    added["trailStartTime"] = timeFormatter(d.time);
+                if (timeDim && timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d[timeDim]);
                 }
                 this.brush = this.brush.concat(added);
             }
@@ -5903,7 +5903,7 @@
         /**
          * Unhighlights an entity from the set
          */
-        unhighlightEntity: function(d, timeFormatter) {
+        unhighlightEntity: function(d) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (this.isHighlighted(d)) {
@@ -6140,9 +6140,10 @@
                 unit: "year",
                 step: 1, //step must be integer
                 adaptMinMaxZoom: false,
-                formatInput: "%Y", //defaults to year format
-                formatOutput: null
+                formatInput: "%Y" //defaults to year format
             }, values);
+
+            values.formatOutput = values.formatOutput || values.formatInput;
 
             //same constructor
             this._super(values, parent, bind);
@@ -7543,6 +7544,7 @@
                 .call(this.dragRectangle);
 
             this.KEY = this.model.entities.getDimension();
+            this.TIMEDIM = this.model.time.getDimension();
 
             //console.log("EVENT ready once");
             _this.updateUIStrings();
@@ -7593,7 +7595,7 @@
             var _this = this;
 
             this.translator = this.model.language.getTFunction();
-            this.timeFormatter = d3.time.format(_this.model.time.formatInput);
+            this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
 
             var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
             var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
@@ -7637,15 +7639,16 @@
         updateEntities: function() {
             var _this = this;
             var KEY = this.KEY;
+            var TIMEDIM = this.TIMEDIM;
 
             // get array of GEOs, sorted by the size hook
             // that makes larger bubbles go behind the smaller ones
-            var endTime = _this.model.time.end;
+            var endTime = this.model.time.end;
             this.model.entities._visible = this.model.marker.label.getItems()
                 .map(function(d) {
                     var pointer = {};
                     pointer[KEY] = d[KEY];
-                    pointer.time = endTime;
+                    pointer[TIMEDIM] = endTime;
                     pointer.sortValue = _this.model.marker.size.getValue(pointer);
                     return pointer;
                 })
@@ -7691,7 +7694,7 @@
                 })
                 .on("click", function(d, i) {
 
-                    _this.model.entities.selectEntity(d, _this.timeFormatter);
+                    _this.model.entities.selectEntity(d, this.TIMEDIM, _this.timeFormatter);
                 });
 
 
@@ -7957,11 +7960,12 @@
         redrawDataPointsOnlyColors: function() {
             var _this = this;
             var KEY = this.KEY;
+            var TIMEDIM = this.TIMEDIM;
 
             this.entityBubbles.style("fill", function(d) {
                 var pointer = {};
                 pointer[KEY] = d[KEY];
-                pointer.time = _this.time;
+                pointer[TIMEDIM] = _this.time;
                 
                 var valueC = _this.model.marker.color.getValue(pointer);
                 return _this.cScale(valueC);
@@ -8023,11 +8027,12 @@
 
         _updateBubble: function(d, index, view, duration) {
             var _this = this;
+            var TIMEDIM = this.TIMEDIM;
 
             if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-                d.time = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+                d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
             } else {
-                d.time = _this.time;
+                d[TIMEDIM] = _this.time;
             };
 
             var valueY = _this.model.marker.axis_y.getValue(d);
@@ -8322,6 +8327,7 @@
          */
         highlightDataPoints: function() {
             var _this = this;
+            var TIMEDIM = this.TIMEDIM;
 
             this.someHighlighted = (this.model.entities.brush.length > 0);
 
@@ -8331,9 +8337,9 @@
                 var d = utils.clone(this.model.entities.brush[0]);
 
                 if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-                    d["time"] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+                    d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
                 } else {
-                    d["time"] = _this.time;
+                    d[TIMEDIM] = _this.time;
                 }
 
                 this._axisProjections(d);

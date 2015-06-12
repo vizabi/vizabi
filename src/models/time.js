@@ -52,9 +52,10 @@
                 unit: "year",
                 step: 1, //step must be integer
                 adaptMinMaxZoom: false,
-                formatInput: "%Y", //defaults to year format
-                formatOutput: null
+                formatInput: "%Y" //defaults to year format
             }, values);
+
+            values.formatOutput = values.formatOutput || values.formatInput;
 
             //same constructor
             this._super(values, parent, bind);
