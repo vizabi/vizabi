@@ -136,18 +136,18 @@
             //TODO: is it okay that "geo.region" is hardcoded?
             if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
-                    .select("svg").selectAll("g");
+                    .select("svg").selectAll("path");
                 regions.each(function(){
                     var view = d3.select(this);
                     var color = palette[view.attr("id")];
-                    view.selectAll("path").style("fill",color);
+                    view.style("fill",color);
                 })
                 .style("opacity", 0.8)
                 .on("mouseover", function(){
                     var view = d3.select(this);
                     var region = view.attr("id");
-                    regions.selectAll("path").style("opacity",0.5);
-                    view.selectAll("path").style("opacity",1);
+                    regions.style("opacity",0.5);
+                    view.style("opacity",1);
                     
                     
                     //TODO: accessing _filtered is an ugly hack. should be optimised later
@@ -162,7 +162,7 @@
                     _this.model.entities.setHighlighted(highlight);
                 })
                 .on("mouseout", function(){
-                    regions.selectAll("path").style("opacity",0.8);
+                    regions.style("opacity",0.8);
                     _this.model.entities.clearHighlighted(); 
                 })
                 .on("click", function(d){
