@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-12 */
+/* VIZABI - http://www.gapminder.org - 2015-06-16 */
 
 /*!
  * VIZABI MAIN
