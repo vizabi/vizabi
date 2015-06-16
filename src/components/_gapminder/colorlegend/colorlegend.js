@@ -149,9 +149,8 @@
                     regions.style("opacity",0.5);
                     view.style("opacity",1);
                     
-                    
-                    //TODO: accessing _filtered is an ugly hack. should be optimised later
-                    var highlight = utils.values(_this.model.color._filtered)
+                    var filtered = _this.model.color.getFilteredItems();
+                    var highlight = utils.values(filtered)
                         //returns a function over time. pick the last time-value
                         .map(function(d){return d[d.length-1]})
                         //filter so that only countries of the correct region remain 

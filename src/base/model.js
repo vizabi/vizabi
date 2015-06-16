@@ -993,11 +993,11 @@
         /**
          * gets filtered dataset with fewer keys
          */
-        _getFilteredItems: function(filter) {
-            var filterId = JSON.stringify(filter);
+        getFilteredItems: function(filter) {
             //cache optimization
             var filter_id = JSON.stringify(filter);
             var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
+            if(!filter) return filtered;
             var found = filtered[filter_id];
             if (filtered[filter_id]) {
                 return filtered[filter_id];
@@ -1168,7 +1168,7 @@
         delete filter[dimTime];
 
         // filter items so that we only have a dataset for certain keys, like "geo"
-        items = ctx._getFilteredItems(filter);
+        items = ctx.getFilteredItems(filter);
         // return constant for the hook of "values"
         if (hook === 'value') {
             return items[0][ctx.which];

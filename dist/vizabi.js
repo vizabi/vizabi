@@ -2629,11 +2629,11 @@
         /**
          * gets filtered dataset with fewer keys
          */
-        _getFilteredItems: function(filter) {
-            var filterId = JSON.stringify(filter);
+        getFilteredItems: function(filter) {
             //cache optimization
             var filter_id = JSON.stringify(filter);
             var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
+            if(!filter) return filtered;
             var found = filtered[filter_id];
             if (filtered[filter_id]) {
                 return filtered[filter_id];
@@ -2804,7 +2804,7 @@
         delete filter[dimTime];
 
         // filter items so that we only have a dataset for certain keys, like "geo"
-        items = ctx._getFilteredItems(filter);
+        items = ctx.getFilteredItems(filter);
         // return constant for the hook of "values"
         if (hook === 'value') {
             return items[0][ctx.which];
@@ -4717,9 +4717,8 @@
                     regions.style("opacity",0.5);
                     view.style("opacity",1);
                     
-                    
-                    //TODO: accessing _filtered is an ugly hack. should be optimised later
-                    var highlight = utils.values(_this.model.color._filtered)
+                    var filtered = _this.model.color.getFilteredItems();
+                    var highlight = utils.values(filtered)
                         //returns a function over time. pick the last time-value
                         .map(function(d){return d[d.length-1]})
                         //filter so that only countries of the correct region remain 
