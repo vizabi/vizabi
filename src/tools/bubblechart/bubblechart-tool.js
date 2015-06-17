@@ -58,13 +58,11 @@
                         adaptMinMaxZoom: false
                     },
                     entities: {
+                        dim: "geo",
                         show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["country"]
-                                }
+                            _defs_: {
+                                "geo": ["*"],
+                                "geo.cat": ["country"]
                             }
                         }
                     },

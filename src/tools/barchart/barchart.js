@@ -308,13 +308,11 @@
                         formatInput: "%Y"
                     },
                     entities: {
+                        dim: "geo",
                         show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["region"]
-                                }
+                            _defs_: {
+                                "geo": ["*"],
+                                "geo.cat": ["region"]
                             }
                         }
                     },

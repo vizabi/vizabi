@@ -57,7 +57,7 @@
          * @returns {String} String with dimension
          */
         getDimension: function() {
-            return this.show.dim;
+            return this.dim;
         },
 
         /**
@@ -65,7 +65,7 @@
          * @returns {Array} Array of unique values
          */
         getFilter: function() {
-            return this.show.filter.getObject();
+            return this.show.getObject();
         },
 
         /**

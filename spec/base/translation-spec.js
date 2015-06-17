@@ -81,12 +81,10 @@ describe('* Base: Translation', function() {
                         },
                         //entities we want to show
                         entities: {
+                            dim: 'geo',
                             show: {
-                                dim: 'geo',
-                                filter: {
-                                    _defs_: {
-                                        'geo': ['*']
-                                    }
+                                _defs_: {
+                                    'geo': ['*']
                                 }
                             }
                         },

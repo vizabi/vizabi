@@ -54,15 +54,12 @@
                     },
                     //entities we want to show
                     entities: {
+                        dim: "geo",
                         show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["region"]
-                                }
+                            _defs_: {
+                                "geo": ["*"],
+                                "geo.cat": ["region"]
                             }
-
                         }
                     },
                     //how we show it
