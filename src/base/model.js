@@ -2,8 +2,11 @@
  * VIZABI MODEL
  * Base Model
  */
+ 
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
@@ -13,6 +16,7 @@
     //warn client if d3 is not defined
     Vizabi._require('d3');
     var _DATAMANAGER = new Vizabi.Data();
+
     var Model = Vizabi.Events.extend({
         /**
          * Initializes the model.
@@ -59,10 +63,12 @@
                 this.set(values);
             }
         },
+
         /* ==========================
          * Getters and Setters
          * ==========================
          */
+
         /**
          * Gets an attribute from this model or all fields.
          * @param attr Optional attribute
@@ -74,6 +80,7 @@
             }
             return this._data[attr];
         },
+
         /**
          * Sets an attribute or multiple for this model (inspired by Backbone)
          * @param attr property name
@@ -151,6 +158,7 @@
                 }
             }
         },
+
         /**
          * Gets the type of this model
          * @returns {String} type of the model
@@ -158,6 +166,7 @@
         getType: function() {
             return this._type;
         },
+
         /**
          * Gets all submodels of the current model
          */
@@ -170,6 +179,7 @@
             });
             return submodels;
         },
+
         /**
          * Gets the current model and submodel values as a JS object
          * @returns {Object} All model as JS object
@@ -186,6 +196,7 @@
             }
             return obj;
         },
+
         /**
          * Clears this model, submodels, data and events
          */
@@ -199,16 +210,19 @@
             this._intervals.clearAllIntervals();
             this._data = {};
         },
+
         /**
          * Validates data.
          * Interface for the validation function implemented by a model
          * @returns Promise or nothing
          */
         validate: function() {},
+
         /* ==========================
          * Model loading
          * ==========================
          */
+
         /**
          * checks whether this model is loading anything
          * @param {String} optional process id (to check only one)
@@ -241,6 +255,7 @@
                 return false;
             }
         },
+
         /**
          * specifies that the model is loading data
          * @param {String} id of the loading process
@@ -253,6 +268,7 @@
             //add id to the list of processes that are loading
             this._loading.push(p_id);
         },
+
         /**
          * specifies that the model is done with loading data
          * @param {String} id of the loading process
@@ -261,6 +277,7 @@
             this._loading = utils.without(this._loading, p_id);
             this.setReady();
         },
+
         /**
          * Sets the model as ready or not depending on its loading status
          */
@@ -283,6 +300,7 @@
                 this.trigger('ready');
             }
         },
+
         /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
@@ -360,16 +378,19 @@
             });
             return promiseLoad;
         },
+
         /**
          * executes after data has actually been loaded
          */
         afterLoad: function() {},
+
         /**
          * removes all external dependency references
          */
         resetDeps: function() {
             this._deps.children = [];
         },
+
         /**
          * add external dependency ref to this model
          */
@@ -377,10 +398,12 @@
             this._deps.children.push(child);
             child._deps.parent.push(this);
         },
+
         /* ===============================
          * Hooking model to external data
          * ===============================
          */
+
         /**
          * is this model hooked to data?
          */
@@ -401,6 +424,7 @@
                 s.setHooks();
             });
         },
+
         /**
          * Hooks this model to data, entities and time
          * @param {Object} h Object containing the hooks
@@ -432,6 +456,7 @@
                 _this.setReady(false);
             });
         },
+
         /**
          * gets all sub values for a certain hook
          * only hooks have the "hook" attribute.
@@ -450,6 +475,7 @@
             //now we have an array with all values in a type of hook for hooks.
             return values;
         },
+
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of indicator hooks
@@ -457,6 +483,7 @@
         getIndicators: function() {
             return this.getHookValues('indicator');
         },
+
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of property hooks
@@ -550,6 +577,7 @@
             var id = utils.clone(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
+
         /**
          * gets multiple values from the hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
@@ -560,6 +588,7 @@
             var id = utils.clone(filter, this._getAllDimensions());
             return this._getHookedValues(id);
         },
+
         /**
          * maps the value to this hook's specifications
          * @param value Original value
@@ -568,6 +597,7 @@
         mapValue: function(value) {
             return value;
         },
+
         /**
          * gets the items associated with this hook without values
          * @param value Original valueg
@@ -595,6 +625,7 @@
                 return [];
             }
         },
+
         /**
          * Gets the dimension of this model if it has one
          * @returns {String|Boolean} dimension
@@ -602,6 +633,7 @@
         getDimension: function() {
             return this.dim || false; //defaults to dim if it exists
         },
+
         /**
          * Gets the filter for this model if it has one
          * @returns {Object} filters
@@ -646,6 +678,7 @@
                 };
             }
         },
+
         /**
          * Gets tick values for this hook
          * @returns {Number|String} value The value for this tick
@@ -781,6 +814,7 @@
             // use manual formatting for the cases above
             return (d3.format('.' + prec + format)(x) + prefix).replace('G', 'B');
         },
+
         /**
          * Gets the d3 scale for this hook. if no scale then builds it
          * @returns {Array} domain
@@ -791,6 +825,7 @@
             }
             return this.scale;
         },
+
         /**
          * Gets the domain for this hook
          * @returns {Array} domain
@@ -819,6 +854,7 @@
             //TODO: d3 is global?
             this.scale = d3.scale[scaleType]().domain(domain);
         },
+
         /**
          * Gets limits
          * @param {String} attr parameter
@@ -862,6 +898,7 @@
             cachedLimits[attr] = limits;
             return limits;
         },
+
         /**
          * Gets unique values in a column
          * @param {String|Array} attr parameter
@@ -900,6 +937,7 @@
             uniqueItems[uniq_id] = uniq;
             return uniq;
         },
+
         /**
          * gets the value of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -920,6 +958,7 @@
             }
             return value;
         },
+
         /**
          * gets the values of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -1006,6 +1045,7 @@
             return filtered[filter_id] = utils.filter(items, filter);
         }
     });
+
     Vizabi.Model = Model;
 
     /* ===============================
@@ -1206,4 +1246,5 @@
         }
         return value;
     }
+
 }.call(this));

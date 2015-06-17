@@ -169,10 +169,12 @@
             }
         }
     });
+
     /* ==========================
      * Validation methods
      * ==========================
      */
+
     /**
      * Generates a validation function based on specific model validation
      * @param {Object} m model
@@ -180,34 +182,36 @@
      * @returns {Function} validation
      */
     function generateValidate(m, validate) {
-            var max = 10;
+        var max = 10;
 
-            function validate_func() {
-                var model = JSON.stringify(m.getObject());
-                var c = arguments[0] || 0;
-                //TODO: remove validation hotfix
-                //while setting this.model is not available
-                if (!this._readyOnce) {
-                    validate(this);
-                } else {
-                    validate();
-                }
-                var model2 = JSON.stringify(m.getObject());
-                if (c >= max) {
-                    utils.error('Max validation loop.');
-                } else if (model !== model2) {
-                    validate_func.call(this, [c += 1]);
-                }
+        function validate_func() {
+            var model = JSON.stringify(m.getObject());
+            var c = arguments[0] || 0;
+            //TODO: remove validation hotfix
+            //while setting this.model is not available
+            if (!this._readyOnce) {
+                validate(this);
+            } else {
+                validate();
             }
-            return validate_func;
+            var model2 = JSON.stringify(m.getObject());
+            if (c >= max) {
+                utils.error('Max validation loop.');
+            } else if (model !== model2) {
+                validate_func.call(this, [c += 1]);
+            }
         }
-        /* ==========================
-         * Default options methods
-         * ==========================
-         */
-        /**
-         * Generates a valid state based on default options
-         */
+        return validate_func;
+    }
+
+    /* ==========================
+     * Default options methods
+     * ==========================
+     */
+
+    /**
+     * Generates a valid state based on default options
+     */
     function defaultOptions(values, defaults) {
         var keys = Object.keys(defaults);
         var size = keys.length;
@@ -257,8 +261,12 @@
         }
         return values;
     }
+
+    //utility function to check if a component is a tool
+    //TODO: Move to utils?
     Tool.isTool = function(c) {
         return c._id && c._id[0] === 't';
     };
+
     Vizabi.Tool = Tool;
 }.call(this));

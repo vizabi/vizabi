@@ -4,14 +4,17 @@
  */
 (function() {
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
     var Data = Vizabi.Class.extend({
+
         init: function() {
             this._collection = {};
         },
+
         /**
          * Loads resource from reader or cache
          * @param {Array} query Array with queries to be loaded
@@ -55,6 +58,7 @@
             });
             return promise;
         },
+
         /**
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
@@ -102,6 +106,7 @@
                 });
             return promise;
         },
+
         /**
          * get data
          */
@@ -114,6 +119,7 @@
             }
             return this._collection[queryId][what];
         },
+
         /**
          * checks whether this combination is cached or not
          */
@@ -131,6 +137,7 @@
             return false;
         }
     });
+
     /**
      * Initializes the reader.
      * @param {Object} reader_info Information about the reader
@@ -146,6 +153,7 @@
                 this._data = utils.mapRows(this._data, this._formatters);
             }
         },
+
         /**
          * Reads from source
          * @param {Array} queries Queries to be performed
@@ -155,6 +163,7 @@
         read: function(queries, language) {
             return new Promise.resolve();
         },
+        
         /**
          * Gets the data
          * @returns all data

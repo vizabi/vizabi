@@ -11,6 +11,7 @@
     var _frozenEventInstances = [];
     var _freezeAllExceptions = {};
     var Events = Vizabi.Class.extend({
+
         /**
          * Initializes the event class
          */
@@ -22,6 +23,7 @@
             this._freezer = [];
             this._freezeExceptions = {};
         },
+
         /**
          * Binds a callback function to an event
          * @param {String|Array} name name of event or array with names
@@ -57,6 +59,7 @@
                 utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
             }
         },
+
         /**
          * Unbinds all events associated with a name or a specific one
          * @param {String|Array} name name of event or array with names
@@ -73,12 +76,14 @@
                 this._events[name] = [];
             }
         },
+
         /**
          * Unbinds all events
          */
         unbindAll: function() {
             this._events = {};
         },
+
         /**
          * Triggers an event, adding it to the buffer
          * @param {String|Array} name name of event or array with names
@@ -127,6 +132,7 @@
                 }
             }
         },
+
         /**
          * Triggers an event and all parent events
          * @param {String|Array} name name of event or array with names
@@ -162,6 +168,7 @@
                 this.trigger.apply(this, once[i]);
             }
         },
+
         /**
          * Prevents all events from being triggered, buffering them
          */
@@ -177,6 +184,7 @@
                 this._freezeExceptions[exceptions[i]] = true;
             }
         },
+
         /**
          * triggers all frozen events
          */
@@ -190,6 +198,7 @@
             }
         }
     });
+
     //generic event functions
     /**
      * freezes all events
@@ -206,6 +215,7 @@
             _freezeAllExceptions[e] = true;
         });
     };
+
     /**
      * triggers all frozen events form all instances
      */
@@ -219,5 +229,6 @@
             delete _frozenEventInstances[i];
         }
     };
+    
     Vizabi.Events = Events;
 }.call(this));

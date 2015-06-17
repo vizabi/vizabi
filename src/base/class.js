@@ -5,7 +5,9 @@
  * Source http://ejohn.org/blog/simple-javascript-inheritance/
  */
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var initializing = false;
@@ -14,12 +16,14 @@
     }) ? /\b_super\b/ : /.*/;
 
     function extend(name, extensions) {
+
         //in case there are two args
         extensions = arguments.length === 1 ? name : extensions;
         var _super = this.prototype;
         initializing = true;
         var prototype = new this();
         initializing = false;
+
         Vizabi.utils.forEach(extensions, function(method, name) {
             if (typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
                 prototype[name] = function(name, fn) {
@@ -37,11 +41,12 @@
         });
 
         function Class() {
-                if (!initializing && this.init) {
-                    this.init.apply(this, arguments);
-                }
+            if (!initializing && this.init) {
+                this.init.apply(this, arguments);
             }
-            // Populate our constructed prototype object
+        }
+        
+        // Populate our constructed prototype object
         Class.prototype = prototype;
         Class.prototype.constructor = Class;
         Class.extend = extend;
@@ -73,7 +78,9 @@
         }
         return Class;
     }
+
     Vizabi.Class = function() {};
     Vizabi.Class.extend = extend;
     Vizabi.Helper = Vizabi.Class.extend({});
+
 }.call(this));

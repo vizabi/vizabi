@@ -3,7 +3,9 @@
  * Manages Vizabi layout profiles and classes
  */
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
@@ -11,6 +13,7 @@
     var class_prefix = 'vzb-';
     var class_portrait = 'vzb-portrait';
     var class_lansdcape = 'vzb-landscape';
+
     var screen_sizes = {
         small: {
             min_width: 0,
@@ -25,7 +28,9 @@
             max_width: Infinity
         }
     };
+
     var Layout = Vizabi.Events.extend({
+
         /**
          * Initializes the layout manager
          */
@@ -43,6 +48,7 @@
             });
             this._super();
         },
+
         /**
          * Calculates the size of the newly resized container
          */
@@ -75,6 +81,7 @@
             this._prev_size.height = height;
             this.trigger('resize');
         },
+
         /**
          * Sets the container for this layout
          * @param container DOM element
@@ -83,6 +90,7 @@
             this._container = container;
             this.setSize();
         },
+        
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile

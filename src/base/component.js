@@ -3,13 +3,16 @@
  * Base Component
  */
 (function() {
+
     'use strict';
+
     var class_loading = 'vzb-loading';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
     var Component = Vizabi.Events.extend({
+
         /**
          * Initializes the component
          * @param {Object} config Initial config, with name and placeholder
@@ -66,6 +69,7 @@
                 }
             });
         },
+
         /**
          * Renders the component (after data is ready)
          */
@@ -108,6 +112,7 @@
             this._ready = true;
             this.trigger('ready');
         },
+
         /**
          * Loads the template
          * @returns defer a promise to be resolved when template is loaded
@@ -147,6 +152,7 @@
                 });
             }
         },
+
         /*
          * Loads all subcomponents
          */
@@ -184,9 +190,15 @@
                 _this.components.push(subcomp);
             });
         },
+
+        /**
+         * Checks whether this is the root component
+         * @returns {Boolean}
+         */
         isRoot: function() {
             return this.parent === this;
         },
+
         /**
          * Get layout profile of the current resolution
          * @returns {String} profile
@@ -199,6 +211,7 @@
                 return this.parent.getLayoutProfile();
             }
         },
+
         //TODO: make ui mapping more powerful
         /**
          * Maps the current ui to the subcomponents
@@ -221,6 +234,7 @@
             }
             return this.ui;
         },
+
         /**
          * Maps the current model to the subcomponents
          * @param {String} subcomponent name of the subcomponent
@@ -297,6 +311,7 @@
                 };
             }
         },
+
         /**
          * Get translation function for templates
          * @param {Boolean} wrap wrap in spam tags
@@ -322,6 +337,7 @@
                 return t_func;
             }
         },
+
         /**
          * Get function for translated string
          * @param {Function} translation_function The translation function
@@ -333,6 +349,7 @@
                 return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
             };
         },
+
         /**
          * Translate all strings in the template
          */
@@ -349,6 +366,7 @@
                 str.innerHTML = t(str.getAttribute('data-vzb-translate'));
             });
         },
+
         /**
          * Checks whether this component is a tool or not
          * @returns {Boolean}
@@ -356,6 +374,7 @@
         isTool: function() {
             return this._id[0] === 't';
         },
+
         /**
          * Executes after the template is loaded and rendered.
          * Ideally, it contains HTML instantiations related to template
@@ -363,16 +382,19 @@
          * as DOM elements
          */
         readyOnce: function() {},
+
         /**
          * Executes after the template and model (if any) are ready
          */
         ready: function() {},
+
         /**
          * Executes when the resize event is triggered.
          * Ideally, it only contains operations related to size
          */
         resize: function() {}
     });
+
     // Based on Simple JavaScript Templating by John Resig
     //generic templating function
     function templateFunc(str, data) {
@@ -386,8 +408,13 @@
         // Provide some basic currying to the user
         return data ? fn(data) : fn;
     }
+
+    //utility function to check if a component is a component
+    //TODO: Move to utils?
     Component.isComponent = function(c) {
         return c._id && (c._id[0] === 't' || c._id[0] === 'c');
     };
+    
     Vizabi.Component = Component;
+
 }.call(this));
