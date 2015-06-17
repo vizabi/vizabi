@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-16 */
+/* VIZABI - http://www.gapminder.org - 2015-06-17 */
 
 /*!
  * VIZABI MAIN
@@ -1032,7 +1032,9 @@
  * Source http://ejohn.org/blog/simple-javascript-inheritance/
  */
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var initializing = false;
@@ -1041,12 +1043,14 @@
     }) ? /\b_super\b/ : /.*/;
 
     function extend(name, extensions) {
+
         //in case there are two args
         extensions = arguments.length === 1 ? name : extensions;
         var _super = this.prototype;
         initializing = true;
         var prototype = new this();
         initializing = false;
+
         Vizabi.utils.forEach(extensions, function(method, name) {
             if (typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
                 prototype[name] = function(name, fn) {
@@ -1064,11 +1068,12 @@
         });
 
         function Class() {
-                if (!initializing && this.init) {
-                    this.init.apply(this, arguments);
-                }
+            if (!initializing && this.init) {
+                this.init.apply(this, arguments);
             }
-            // Populate our constructed prototype object
+        }
+        
+        // Populate our constructed prototype object
         Class.prototype = prototype;
         Class.prototype.constructor = Class;
         Class.extend = extend;
@@ -1100,9 +1105,11 @@
         }
         return Class;
     }
+
     Vizabi.Class = function() {};
     Vizabi.Class.extend = extend;
     Vizabi.Helper = Vizabi.Class.extend({});
+
 }.call(this));
 /*!
  * VIZABI DATA
@@ -1110,14 +1117,17 @@
  */
 (function() {
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var Promise = Vizabi.Promise;
     var Data = Vizabi.Class.extend({
+
         init: function() {
             this._collection = {};
         },
+
         /**
          * Loads resource from reader or cache
          * @param {Array} query Array with queries to be loaded
@@ -1161,6 +1171,7 @@
             });
             return promise;
         },
+
         /**
          * Loads resource from reader
          * @param {Array} query Array with queries to be loaded
@@ -1208,6 +1219,7 @@
                 });
             return promise;
         },
+
         /**
          * get data
          */
@@ -1220,6 +1232,7 @@
             }
             return this._collection[queryId][what];
         },
+
         /**
          * checks whether this combination is cached or not
          */
@@ -1237,6 +1250,7 @@
             return false;
         }
     });
+
     /**
      * Initializes the reader.
      * @param {Object} reader_info Information about the reader
@@ -1252,6 +1266,7 @@
                 this._data = utils.mapRows(this._data, this._formatters);
             }
         },
+
         /**
          * Reads from source
          * @param {Array} queries Queries to be performed
@@ -1261,6 +1276,7 @@
         read: function(queries, language) {
             return new Promise.resolve();
         },
+        
         /**
          * Gets the data
          * @returns all data
@@ -1285,6 +1301,7 @@
     var _frozenEventInstances = [];
     var _freezeAllExceptions = {};
     var Events = Vizabi.Class.extend({
+
         /**
          * Initializes the event class
          */
@@ -1296,6 +1313,7 @@
             this._freezer = [];
             this._freezeExceptions = {};
         },
+
         /**
          * Binds a callback function to an event
          * @param {String|Array} name name of event or array with names
@@ -1331,6 +1349,7 @@
                 utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
             }
         },
+
         /**
          * Unbinds all events associated with a name or a specific one
          * @param {String|Array} name name of event or array with names
@@ -1347,12 +1366,14 @@
                 this._events[name] = [];
             }
         },
+
         /**
          * Unbinds all events
          */
         unbindAll: function() {
             this._events = {};
         },
+
         /**
          * Triggers an event, adding it to the buffer
          * @param {String|Array} name name of event or array with names
@@ -1401,6 +1422,7 @@
                 }
             }
         },
+
         /**
          * Triggers an event and all parent events
          * @param {String|Array} name name of event or array with names
@@ -1436,6 +1458,7 @@
                 this.trigger.apply(this, once[i]);
             }
         },
+
         /**
          * Prevents all events from being triggered, buffering them
          */
@@ -1451,6 +1474,7 @@
                 this._freezeExceptions[exceptions[i]] = true;
             }
         },
+
         /**
          * triggers all frozen events
          */
@@ -1464,6 +1488,7 @@
             }
         }
     });
+
     //generic event functions
     /**
      * freezes all events
@@ -1480,6 +1505,7 @@
             _freezeAllExceptions[e] = true;
         });
     };
+
     /**
      * triggers all frozen events form all instances
      */
@@ -1493,6 +1519,7 @@
             delete _frozenEventInstances[i];
         }
     };
+    
     Vizabi.Events = Events;
 }.call(this));
 /*!
@@ -1500,17 +1527,21 @@
  * Manages Vizabi layout profiles and classes
  */
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var Intervals = Vizabi.Class.extend({
+
         /**
          * Initializes intervals
          */
         init: function() {
             this.intervals = {};
         },
+
         /**
          * Sets an interval
          * @param {String} name name of interval
@@ -1521,6 +1552,7 @@
             this.clearInterval(name);
             this.intervals[name] = setInterval(func, duration);
         },
+
         /**
          * Clears an interval
          * @param {String} name name of interval to be removed
@@ -1528,6 +1560,7 @@
         clearInterval: function(name) {
             return name ? clearInterval(this.intervals[name]) : this.clearAllIntervals();
         },
+
         /**
          * Clears all intervals
          */
@@ -1537,14 +1570,18 @@
             }
         }
     });
+
     Vizabi.Intervals = Intervals;
+    
 }.call(this));
 /*!
  * VIZABI LAYOUT
  * Manages Vizabi layout profiles and classes
  */
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
@@ -1552,6 +1589,7 @@
     var class_prefix = 'vzb-';
     var class_portrait = 'vzb-portrait';
     var class_lansdcape = 'vzb-landscape';
+
     var screen_sizes = {
         small: {
             min_width: 0,
@@ -1566,7 +1604,9 @@
             max_width: Infinity
         }
     };
+
     var Layout = Vizabi.Events.extend({
+
         /**
          * Initializes the layout manager
          */
@@ -1584,6 +1624,7 @@
             });
             this._super();
         },
+
         /**
          * Calculates the size of the newly resized container
          */
@@ -1616,6 +1657,7 @@
             this._prev_size.height = height;
             this.trigger('resize');
         },
+
         /**
          * Sets the container for this layout
          * @param container DOM element
@@ -1624,6 +1666,7 @@
             this._container = container;
             this.setSize();
         },
+        
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile
@@ -1638,8 +1681,11 @@
  * VIZABI MODEL
  * Base Model
  */
+ 
 (function() {
+
     'use strict';
+
     var root = this;
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
@@ -1649,6 +1695,7 @@
     //warn client if d3 is not defined
     Vizabi._require('d3');
     var _DATAMANAGER = new Vizabi.Data();
+
     var Model = Vizabi.Events.extend({
         /**
          * Initializes the model.
@@ -1695,10 +1742,12 @@
                 this.set(values);
             }
         },
+
         /* ==========================
          * Getters and Setters
          * ==========================
          */
+
         /**
          * Gets an attribute from this model or all fields.
          * @param attr Optional attribute
@@ -1710,6 +1759,7 @@
             }
             return this._data[attr];
         },
+
         /**
          * Sets an attribute or multiple for this model (inspired by Backbone)
          * @param attr property name
@@ -1787,6 +1837,7 @@
                 }
             }
         },
+
         /**
          * Gets the type of this model
          * @returns {String} type of the model
@@ -1794,6 +1845,7 @@
         getType: function() {
             return this._type;
         },
+
         /**
          * Gets all submodels of the current model
          */
@@ -1806,6 +1858,7 @@
             });
             return submodels;
         },
+
         /**
          * Gets the current model and submodel values as a JS object
          * @returns {Object} All model as JS object
@@ -1822,6 +1875,7 @@
             }
             return obj;
         },
+
         /**
          * Clears this model, submodels, data and events
          */
@@ -1835,16 +1889,19 @@
             this._intervals.clearAllIntervals();
             this._data = {};
         },
+
         /**
          * Validates data.
          * Interface for the validation function implemented by a model
          * @returns Promise or nothing
          */
         validate: function() {},
+
         /* ==========================
          * Model loading
          * ==========================
          */
+
         /**
          * checks whether this model is loading anything
          * @param {String} optional process id (to check only one)
@@ -1877,6 +1934,7 @@
                 return false;
             }
         },
+
         /**
          * specifies that the model is loading data
          * @param {String} id of the loading process
@@ -1889,6 +1947,7 @@
             //add id to the list of processes that are loading
             this._loading.push(p_id);
         },
+
         /**
          * specifies that the model is done with loading data
          * @param {String} id of the loading process
@@ -1897,6 +1956,7 @@
             this._loading = utils.without(this._loading, p_id);
             this.setReady();
         },
+
         /**
          * Sets the model as ready or not depending on its loading status
          */
@@ -1919,6 +1979,7 @@
                 this.trigger('ready');
             }
         },
+
         /**
          * loads data (if hook)
          * Hooks loads data, models ask children to load data
@@ -1996,16 +2057,19 @@
             });
             return promiseLoad;
         },
+
         /**
          * executes after data has actually been loaded
          */
         afterLoad: function() {},
+
         /**
          * removes all external dependency references
          */
         resetDeps: function() {
             this._deps.children = [];
         },
+
         /**
          * add external dependency ref to this model
          */
@@ -2013,10 +2077,12 @@
             this._deps.children.push(child);
             child._deps.parent.push(this);
         },
+
         /* ===============================
          * Hooking model to external data
          * ===============================
          */
+
         /**
          * is this model hooked to data?
          */
@@ -2037,6 +2103,7 @@
                 s.setHooks();
             });
         },
+
         /**
          * Hooks this model to data, entities and time
          * @param {Object} h Object containing the hooks
@@ -2068,6 +2135,7 @@
                 _this.setReady(false);
             });
         },
+
         /**
          * gets all sub values for a certain hook
          * only hooks have the "hook" attribute.
@@ -2086,6 +2154,7 @@
             //now we have an array with all values in a type of hook for hooks.
             return values;
         },
+
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of indicator hooks
@@ -2093,6 +2162,7 @@
         getIndicators: function() {
             return this.getHookValues('indicator');
         },
+
         /**
          * gets all sub values for indicators in this model
          * @returns {Array} all unique values of property hooks
@@ -2186,6 +2256,7 @@
             var id = utils.clone(filter, this._getAllDimensions());
             return this.mapValue(this._getHookedValue(id));
         },
+
         /**
          * gets multiple values from the hook
          * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
@@ -2196,6 +2267,7 @@
             var id = utils.clone(filter, this._getAllDimensions());
             return this._getHookedValues(id);
         },
+
         /**
          * maps the value to this hook's specifications
          * @param value Original value
@@ -2204,6 +2276,7 @@
         mapValue: function(value) {
             return value;
         },
+
         /**
          * gets the items associated with this hook without values
          * @param value Original valueg
@@ -2231,6 +2304,7 @@
                 return [];
             }
         },
+
         /**
          * Gets the dimension of this model if it has one
          * @returns {String|Boolean} dimension
@@ -2238,6 +2312,7 @@
         getDimension: function() {
             return this.dim || false; //defaults to dim if it exists
         },
+
         /**
          * Gets the filter for this model if it has one
          * @returns {Object} filters
@@ -2282,6 +2357,7 @@
                 };
             }
         },
+
         /**
          * Gets tick values for this hook
          * @returns {Number|String} value The value for this tick
@@ -2417,6 +2493,7 @@
             // use manual formatting for the cases above
             return (d3.format('.' + prec + format)(x) + prefix).replace('G', 'B');
         },
+
         /**
          * Gets the d3 scale for this hook. if no scale then builds it
          * @returns {Array} domain
@@ -2427,6 +2504,7 @@
             }
             return this.scale;
         },
+
         /**
          * Gets the domain for this hook
          * @returns {Array} domain
@@ -2455,6 +2533,7 @@
             //TODO: d3 is global?
             this.scale = d3.scale[scaleType]().domain(domain);
         },
+
         /**
          * Gets limits
          * @param {String} attr parameter
@@ -2498,6 +2577,7 @@
             cachedLimits[attr] = limits;
             return limits;
         },
+
         /**
          * Gets unique values in a column
          * @param {String|Array} attr parameter
@@ -2536,6 +2616,7 @@
             uniqueItems[uniq_id] = uniq;
             return uniq;
         },
+
         /**
          * gets the value of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -2556,6 +2637,7 @@
             }
             return value;
         },
+
         /**
          * gets the values of the hook point
          * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
@@ -2642,6 +2724,7 @@
             return filtered[filter_id] = utils.filter(items, filter);
         }
     });
+
     Vizabi.Model = Model;
 
     /* ===============================
@@ -2842,19 +2925,23 @@
         }
         return value;
     }
+
 }.call(this));
 /*!
  * VIZABI COMPONENT
  * Base Component
  */
 (function() {
+
     'use strict';
+
     var class_loading = 'vzb-loading';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
     var Component = Vizabi.Events.extend({
+
         /**
          * Initializes the component
          * @param {Object} config Initial config, with name and placeholder
@@ -2911,6 +2998,7 @@
                 }
             });
         },
+
         /**
          * Renders the component (after data is ready)
          */
@@ -2953,6 +3041,7 @@
             this._ready = true;
             this.trigger('ready');
         },
+
         /**
          * Loads the template
          * @returns defer a promise to be resolved when template is loaded
@@ -2992,6 +3081,7 @@
                 });
             }
         },
+
         /*
          * Loads all subcomponents
          */
@@ -3029,9 +3119,15 @@
                 _this.components.push(subcomp);
             });
         },
+
+        /**
+         * Checks whether this is the root component
+         * @returns {Boolean}
+         */
         isRoot: function() {
             return this.parent === this;
         },
+
         /**
          * Get layout profile of the current resolution
          * @returns {String} profile
@@ -3044,6 +3140,7 @@
                 return this.parent.getLayoutProfile();
             }
         },
+
         //TODO: make ui mapping more powerful
         /**
          * Maps the current ui to the subcomponents
@@ -3066,6 +3163,7 @@
             }
             return this.ui;
         },
+
         /**
          * Maps the current model to the subcomponents
          * @param {String} subcomponent name of the subcomponent
@@ -3142,6 +3240,7 @@
                 };
             }
         },
+
         /**
          * Get translation function for templates
          * @param {Boolean} wrap wrap in spam tags
@@ -3167,6 +3266,7 @@
                 return t_func;
             }
         },
+
         /**
          * Get function for translated string
          * @param {Function} translation_function The translation function
@@ -3178,6 +3278,7 @@
                 return '<span data-vzb-translate="' + string + '">' + translated + '</span>';
             };
         },
+
         /**
          * Translate all strings in the template
          */
@@ -3194,6 +3295,7 @@
                 str.innerHTML = t(str.getAttribute('data-vzb-translate'));
             });
         },
+
         /**
          * Checks whether this component is a tool or not
          * @returns {Boolean}
@@ -3201,6 +3303,7 @@
         isTool: function() {
             return this._id[0] === 't';
         },
+
         /**
          * Executes after the template is loaded and rendered.
          * Ideally, it contains HTML instantiations related to template
@@ -3208,16 +3311,19 @@
          * as DOM elements
          */
         readyOnce: function() {},
+
         /**
          * Executes after the template and model (if any) are ready
          */
         ready: function() {},
+
         /**
          * Executes when the resize event is triggered.
          * Ideally, it only contains operations related to size
          */
         resize: function() {}
     });
+
     // Based on Simple JavaScript Templating by John Resig
     //generic templating function
     function templateFunc(str, data) {
@@ -3231,10 +3337,15 @@
         // Provide some basic currying to the user
         return data ? fn(data) : fn;
     }
+
+    //utility function to check if a component is a component
+    //TODO: Move to utils?
     Component.isComponent = function(c) {
         return c._id && (c._id[0] === 't' || c._id[0] === 'c');
     };
+    
     Vizabi.Component = Component;
+
 }.call(this));
 /*!
  * VIZABI COMPONENT
@@ -3407,10 +3518,12 @@
             }
         }
     });
+
     /* ==========================
      * Validation methods
      * ==========================
      */
+
     /**
      * Generates a validation function based on specific model validation
      * @param {Object} m model
@@ -3418,34 +3531,36 @@
      * @returns {Function} validation
      */
     function generateValidate(m, validate) {
-            var max = 10;
+        var max = 10;
 
-            function validate_func() {
-                var model = JSON.stringify(m.getObject());
-                var c = arguments[0] || 0;
-                //TODO: remove validation hotfix
-                //while setting this.model is not available
-                if (!this._readyOnce) {
-                    validate(this);
-                } else {
-                    validate();
-                }
-                var model2 = JSON.stringify(m.getObject());
-                if (c >= max) {
-                    utils.error('Max validation loop.');
-                } else if (model !== model2) {
-                    validate_func.call(this, [c += 1]);
-                }
+        function validate_func() {
+            var model = JSON.stringify(m.getObject());
+            var c = arguments[0] || 0;
+            //TODO: remove validation hotfix
+            //while setting this.model is not available
+            if (!this._readyOnce) {
+                validate(this);
+            } else {
+                validate();
             }
-            return validate_func;
+            var model2 = JSON.stringify(m.getObject());
+            if (c >= max) {
+                utils.error('Max validation loop.');
+            } else if (model !== model2) {
+                validate_func.call(this, [c += 1]);
+            }
         }
-        /* ==========================
-         * Default options methods
-         * ==========================
-         */
-        /**
-         * Generates a valid state based on default options
-         */
+        return validate_func;
+    }
+
+    /* ==========================
+     * Default options methods
+     * ==========================
+     */
+
+    /**
+     * Generates a valid state based on default options
+     */
     function defaultOptions(values, defaults) {
         var keys = Object.keys(defaults);
         var size = keys.length;
@@ -3495,9 +3610,13 @@
         }
         return values;
     }
+
+    //utility function to check if a component is a tool
+    //TODO: Move to utils?
     Tool.isTool = function(c) {
         return c._id && c._id[0] === 't';
     };
+
     Vizabi.Tool = Tool;
 }.call(this));
 (function() {var root = this;var s = root.document.createElement('script');s.type = 'text/template';s.setAttribute('id', 'src/components/_gapminder/bubblesize/bubblesize.html');s.innerHTML = '<div class="vzb-bs-holder"> <input type="range" id="vzb-bs-slider" class="vzb-bs-slider" step="1"> </div>';root.document.body.appendChild(s);}).call(this);
