@@ -266,7 +266,8 @@
                 var value = _this.brush.extent()[0];
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                    var posX = Math.round(d3.mouse(this)[0]);
+                    value = _this.xScale.invert(posX);
                 }
 
                 //set time according to dragged position

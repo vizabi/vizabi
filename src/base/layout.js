@@ -90,7 +90,7 @@
             this._container = container;
             this.setSize();
         },
-        
+
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile
@@ -99,5 +99,7 @@
             return this._curr_profile;
         }
     });
+    
     Vizabi.Layout = Layout;
+
 }.call(this));

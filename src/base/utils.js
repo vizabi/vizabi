@@ -3,10 +3,14 @@
  * Util functions
  */
 (function() {
+    
     'use strict';
+    
     var root = this;
     var Vizabi = root.Vizabi;
+    
     Vizabi.utils = {
+
         /*
          * returns unique id with optional prefix
          * @param {String} prefix
@@ -18,6 +22,7 @@
                 return p ? p + (id += 1) : id += 1;
             };
         }(),
+
         /*
          * checks whether obj is a DOM element
          * @param {Object} obj
@@ -27,6 +32,7 @@
         isElement: function(obj) {
             return !!(obj && obj.nodeType === 1);
         },
+
         /*
          * checks whether obj is an Array
          * @param {Object} obj
@@ -36,6 +42,7 @@
         isArray: Array.isArray || function(obj) {
             return toString.call(obj) === '[object Array]';
         },
+
         /*
          * checks whether obj is an object
          * @param {Object} obj
@@ -46,6 +53,7 @@
             var type = typeof obj;
             return type === 'object' && !!obj;
         },
+
         /*
          * checks whether arg is a date
          * @param {Object} arg
@@ -54,6 +62,7 @@
         isDate: function(arg) {
             return arg instanceof Date;
         },
+
         /*
          * checks whether arg is a string
          * @param {Object} arg
@@ -62,6 +71,7 @@
         isString: function(arg) {
             return typeof arg === 'string';
         },
+
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -72,6 +82,7 @@
             // A `NaN` primitive is the only number that is not equal to itself
             return this.isNumber(arg) && arg !== +arg;
         },
+
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -82,6 +93,7 @@
         isNumber: function(arg) {
             return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
+
         /*
          * checks whether obj is a plain object {}
          * @param {Object} obj
@@ -90,6 +102,7 @@
         isPlainObject: function(obj) {
             return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
+
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -123,6 +136,7 @@
                 }
             }
         },
+
         /*
          * extends an object
          * @param {Object} destination object
@@ -142,6 +156,7 @@
             });
             return dest;
         },
+
         /*
          * merges objects instead of replacing
          * @param {Object} destination object
@@ -168,6 +183,7 @@
             });
             return dest;
         },
+
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
@@ -189,6 +205,7 @@
             });
             return clone;
         },
+
         /*
          * deep clones an object (deep copy)
          * @param {Object} src original object
@@ -208,6 +225,7 @@
             });
             return clone;
         },
+
         /*
          * Prints message to timestamp
          * @param {Arr} arr
@@ -220,6 +238,7 @@
             }
             return arr;
         },
+
         /*
          * unique items in an array
          * @param {Array} arr original array
@@ -246,6 +265,7 @@
             }
             return a;
         },
+
         /*
          * unique items in an array keeping the last item
          * @param {Array} arr original array
@@ -271,6 +291,7 @@
             }
             return a;
         },
+
         /*
          * returns first value that passes the test
          * @param {Array} arr original collection
@@ -286,6 +307,7 @@
             });
             return found;
         },
+
         /*
          * filters an array based on object properties
          * @param {Array} arr original array
@@ -442,6 +464,7 @@
         radiusToArea: function(r) {
             return r * r * Math.PI;
         },
+
         /*
          * Converts area to radius, simple math
          * @param {Number} area
@@ -450,6 +473,7 @@
         areaToRadius: function(a) {
             return Math.sqrt(a / Math.PI);
         },
+
         /*
          * Prints message to timestamp
          * @param {String} message
@@ -459,6 +483,7 @@
                 root.console.timeStamp(message);
             }
         },
+
         /*
          * Prints warning
          * @param {String} message
@@ -468,6 +493,7 @@
                 root.console.warn(message);
             }
         },
+
         /*
          * Prints message for group
          * @param {String} message
@@ -477,6 +503,7 @@
                 root.console.groupCollapsed(message);
             }
         },
+
         /*
          * Prints end of group
          * @param {String} message
@@ -486,6 +513,7 @@
                 root.console.groupEnd();
             }
         },
+
         /*
          * Prints error
          * @param {String} message
@@ -495,6 +523,7 @@
                 root.console.error(message);
             }
         },
+
         /*
          * Count the number of decimal numbers
          * @param {Number} number
@@ -505,6 +534,7 @@
             }
             return number.toString().split('.')[1].length || 0;
         },
+
         /*
          * Adds class to DOM element
          * @param {Element} el
@@ -518,6 +548,7 @@
                 el.className += ' ' + className;
             }
         },
+
         /*
          * Remove class from DOM element
          * @param {Element} el
@@ -531,6 +562,7 @@
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
+
         /*
          * Adds or removes class depending on value
          * @param {Element} el
@@ -546,6 +578,7 @@
                 return this.hasClass(el, className);
             }
         },
+
         /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
@@ -560,6 +593,7 @@
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
+
         /*
          * Throttles a function
          * @param {Function} func
@@ -578,6 +612,7 @@
                 func();
             };
         }(),
+
         /*
          * Returns keys of an object as array
          * @param {Object} arg
@@ -586,6 +621,7 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
+
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
@@ -600,6 +636,7 @@
             }
             return arr;
         },
+
         /*
          * Defers a function
          * @param {Function} func
@@ -607,6 +644,7 @@
         defer: function(func) {
             setTimeout(func, 1);
         },
+
         /*
          * Creates a hashcode for a string or array
          * @param {String|Array} str
@@ -629,6 +667,7 @@
             }
             return hash.toString();
         },
+
         /*
          * Performs an ajax request
          * @param {Object} options
@@ -661,6 +700,7 @@
             };
             request.send(options.data);
         },
+
         /*
          * Performs a GET http request
          */
@@ -678,6 +718,7 @@
                 json: json
             });
         },
+
         /*
          * Performs a POST http request
          */
@@ -691,5 +732,6 @@
                 data: pars
             });
         }
+        
     };
 }.call(this));

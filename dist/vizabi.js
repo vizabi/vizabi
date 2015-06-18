@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-17 */
+/* VIZABI - http://www.gapminder.org - 2015-06-18 */
 
 /*!
  * VIZABI MAIN
@@ -58,17 +58,23 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = Vizabi;
     }
+
     root.Vizabi = Vizabi;
+
 }.call(this));
 /*!
  * VIZABI UTILS
  * Util functions
  */
 (function() {
+    
     'use strict';
+    
     var root = this;
     var Vizabi = root.Vizabi;
+    
     Vizabi.utils = {
+
         /*
          * returns unique id with optional prefix
          * @param {String} prefix
@@ -80,6 +86,7 @@
                 return p ? p + (id += 1) : id += 1;
             };
         }(),
+
         /*
          * checks whether obj is a DOM element
          * @param {Object} obj
@@ -89,6 +96,7 @@
         isElement: function(obj) {
             return !!(obj && obj.nodeType === 1);
         },
+
         /*
          * checks whether obj is an Array
          * @param {Object} obj
@@ -98,6 +106,7 @@
         isArray: Array.isArray || function(obj) {
             return toString.call(obj) === '[object Array]';
         },
+
         /*
          * checks whether obj is an object
          * @param {Object} obj
@@ -108,6 +117,7 @@
             var type = typeof obj;
             return type === 'object' && !!obj;
         },
+
         /*
          * checks whether arg is a date
          * @param {Object} arg
@@ -116,6 +126,7 @@
         isDate: function(arg) {
             return arg instanceof Date;
         },
+
         /*
          * checks whether arg is a string
          * @param {Object} arg
@@ -124,6 +135,7 @@
         isString: function(arg) {
             return typeof arg === 'string';
         },
+
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -134,6 +146,7 @@
             // A `NaN` primitive is the only number that is not equal to itself
             return this.isNumber(arg) && arg !== +arg;
         },
+
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -144,6 +157,7 @@
         isNumber: function(arg) {
             return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
+
         /*
          * checks whether obj is a plain object {}
          * @param {Object} obj
@@ -152,6 +166,7 @@
         isPlainObject: function(obj) {
             return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
+
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -185,6 +200,7 @@
                 }
             }
         },
+
         /*
          * extends an object
          * @param {Object} destination object
@@ -204,6 +220,7 @@
             });
             return dest;
         },
+
         /*
          * merges objects instead of replacing
          * @param {Object} destination object
@@ -230,6 +247,7 @@
             });
             return dest;
         },
+
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
@@ -251,6 +269,7 @@
             });
             return clone;
         },
+
         /*
          * deep clones an object (deep copy)
          * @param {Object} src original object
@@ -270,6 +289,7 @@
             });
             return clone;
         },
+
         /*
          * Prints message to timestamp
          * @param {Arr} arr
@@ -282,6 +302,7 @@
             }
             return arr;
         },
+
         /*
          * unique items in an array
          * @param {Array} arr original array
@@ -308,6 +329,7 @@
             }
             return a;
         },
+
         /*
          * unique items in an array keeping the last item
          * @param {Array} arr original array
@@ -333,6 +355,7 @@
             }
             return a;
         },
+
         /*
          * returns first value that passes the test
          * @param {Array} arr original collection
@@ -348,6 +371,7 @@
             });
             return found;
         },
+
         /*
          * filters an array based on object properties
          * @param {Array} arr original array
@@ -504,6 +528,7 @@
         radiusToArea: function(r) {
             return r * r * Math.PI;
         },
+
         /*
          * Converts area to radius, simple math
          * @param {Number} area
@@ -512,6 +537,7 @@
         areaToRadius: function(a) {
             return Math.sqrt(a / Math.PI);
         },
+
         /*
          * Prints message to timestamp
          * @param {String} message
@@ -521,6 +547,7 @@
                 root.console.timeStamp(message);
             }
         },
+
         /*
          * Prints warning
          * @param {String} message
@@ -530,6 +557,7 @@
                 root.console.warn(message);
             }
         },
+
         /*
          * Prints message for group
          * @param {String} message
@@ -539,6 +567,7 @@
                 root.console.groupCollapsed(message);
             }
         },
+
         /*
          * Prints end of group
          * @param {String} message
@@ -548,6 +577,7 @@
                 root.console.groupEnd();
             }
         },
+
         /*
          * Prints error
          * @param {String} message
@@ -557,6 +587,7 @@
                 root.console.error(message);
             }
         },
+
         /*
          * Count the number of decimal numbers
          * @param {Number} number
@@ -567,6 +598,7 @@
             }
             return number.toString().split('.')[1].length || 0;
         },
+
         /*
          * Adds class to DOM element
          * @param {Element} el
@@ -580,6 +612,7 @@
                 el.className += ' ' + className;
             }
         },
+
         /*
          * Remove class from DOM element
          * @param {Element} el
@@ -593,6 +626,7 @@
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
+
         /*
          * Adds or removes class depending on value
          * @param {Element} el
@@ -608,6 +642,7 @@
                 return this.hasClass(el, className);
             }
         },
+
         /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
@@ -622,6 +657,7 @@
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
+
         /*
          * Throttles a function
          * @param {Function} func
@@ -640,6 +676,7 @@
                 func();
             };
         }(),
+
         /*
          * Returns keys of an object as array
          * @param {Object} arg
@@ -648,6 +685,7 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
+
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
@@ -662,6 +700,7 @@
             }
             return arr;
         },
+
         /*
          * Defers a function
          * @param {Function} func
@@ -669,6 +708,7 @@
         defer: function(func) {
             setTimeout(func, 1);
         },
+
         /*
          * Creates a hashcode for a string or array
          * @param {String|Array} str
@@ -691,6 +731,7 @@
             }
             return hash.toString();
         },
+
         /*
          * Performs an ajax request
          * @param {Object} options
@@ -723,6 +764,7 @@
             };
             request.send(options.data);
         },
+
         /*
          * Performs a GET http request
          */
@@ -740,6 +782,7 @@
                 json: json
             });
         },
+
         /*
          * Performs a POST http request
          */
@@ -753,6 +796,7 @@
                 data: pars
             });
         }
+        
     };
 }.call(this));
 /*!
@@ -1666,7 +1710,7 @@
             this._container = container;
             this.setSize();
         },
-        
+
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile
@@ -1675,7 +1719,9 @@
             return this._curr_profile;
         }
     });
+    
     Vizabi.Layout = Layout;
+
 }.call(this));
 /*!
  * VIZABI MODEL
@@ -5411,7 +5457,8 @@
                 var value = _this.brush.extent()[0];
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                    var posX = Math.round(d3.mouse(this)[0]);
+                    value = _this.xScale.invert(posX);
                 }
 
                 //set time according to dragged position
@@ -7747,7 +7794,6 @@
 
         },
 
-
         /*
          * UPDATE ENTITIES:
          * Ideally should only update when show parameters change or data changes
@@ -7771,10 +7817,6 @@
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
                 });
-
-
-
-
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
                 .data(this.model.entities._visible, function(d) {
@@ -7832,10 +7874,6 @@
 
         },
 
-
-
-
-
         adaptMinMaxZoom: function() {
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
@@ -7862,8 +7900,6 @@
                 //console.log("no rezoom")
             }
         },
-
-
 
         _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
             var _this = this;
@@ -7902,7 +7938,6 @@
             zoomer.event(element);
         },
 
-
         resetZoomer: function(element) {
             this.zoomer.scale(1);
             this.zoomer.ratioY = 1;
@@ -7911,8 +7946,6 @@
             this.zoomer.duration = 0;
             this.zoomer.event(element || this.element);
         },
-
-
 
         /*
          * UPDATE TIME:
@@ -8055,7 +8088,6 @@
 
         },
 
-
         updateMarkerSizeLimits: function() {
             var _this = this;
             var minRadius = this.activeProfile.minRadius;
@@ -8071,7 +8103,6 @@
             }
 
         },
-
 
         redrawDataPointsOnlyColors: function() {
             var _this = this;
@@ -8105,8 +8136,6 @@
             }
         },
 
-
-
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
@@ -8122,11 +8151,9 @@
 
             }); // each bubble
 
-
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if (_this.duration == 0) d3.timer.flush();
-
 
             if (_this.ui.labels.autoResolveCollisions) {
                 // cancel previously queued simulation if we just ordered a new one
@@ -8138,9 +8165,9 @@
                 }, _this.model.time.speed * 1.2)
             }
 
-        }, //redraw Data Points
+        },
 
-
+        //redraw Data Points
         _updateBubble: function(d, index, view, duration) {
             var _this = this;
             var TIMEDIM = this.TIMEDIM;
