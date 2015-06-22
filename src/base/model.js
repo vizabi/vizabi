@@ -967,7 +967,7 @@
         _getHookedValues: function(filter) {
             var _this = this;
             if (!this.isHook()) {
-                utils.warn('_getHookedValue method needs the model to be hooked to data.');
+                utils.warn('_getHookedValues method needs the model to be hooked to data.');
                 return;
             }
             var values;
@@ -1195,53 +1195,52 @@
      * filter SHOULD contain time property
      * @returns interpolated value
      */
-    function interpolateValue(ctx, filter, hook, value) {
-        var items = _DATAMANAGER.get(ctx._dataId);
+    function interpolateValue(ctx, filter, use, which) {
+
+        var dimTime = ctx._getFirstDimension({ type: 'time' });
+        var time = new Date(filter[dimTime]); //clone date
+        delete filter[dimTime];
+
+        var items = ctx.getFilteredItems(filter);
         if (items === null || items.length === 0) {
             utils.warn('interpolateValue returning NULL because items array is empty');
             return null;
         }
 
-        //TODO: this only allows one time variable
-        var dimTime = ctx._getFirstDimension({ type: 'time' });
-        var time = new Date(filter[dimTime]); //clone date
-        delete filter[dimTime];
-
-        // filter items so that we only have a dataset for certain keys, like "geo"
-        items = ctx.getFilteredItems(filter);
-        // return constant for the hook of "values"
-        if (hook === 'value') {
-            return items[0][ctx.which];
+        // return constant for the use of "value"
+        if (use === 'value') {
+            return items[0][which];
         }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
         var indexNext = d3.bisectLeft(items.map(function(d) {
             return d[dimTime];
         }), time);
-        // zero-order interpolation for the hook of properties
-        if (hook === 'property' && indexNext === 0) {
-            return items[0][value];
+        // zero-order interpolation for the use of properties
+        if (use === 'property' && indexNext === 0) {
+            return items[0][which];
         }
-        if (hook === 'property') {
-            return items[indexNext - 1][value];
+        if (use === 'property') {
+            return items[indexNext - 1][which];
         }
         // the rest is for the continuous measurements
         // check if the desired value is out of range. 0-order extrapolation
         if (indexNext === 0) {
-            return items[0][value];
+            return items[0][which];
         }
         if (indexNext === items.length) {
-            return items[items.length - 1][value];
+            return items[items.length - 1][which];
         }
         //return null if data is missing
-        if (items[indexNext][value] === null || items[indexNext - 1][value] === null) {
+        if (items[indexNext][which] === null || items[indexNext - 1][which] === null) {
             return null;
         }
+
         // perform a simple linear interpolation
         var fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
-        value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
+        var value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
         // cast to time object if we are interpolating time
-        if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
+        if (Object.prototype.toString.call(items[0][which]) === '[object Date]') {
             value = new Date(value);
         }
         return value;

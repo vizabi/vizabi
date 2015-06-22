@@ -103,6 +103,10 @@
             return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
 
+        roundStep: function(number, step) {
+            return Math.round(number/step) * step;
+        },
+
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -190,13 +194,14 @@
          * @param {Array} arr filter keys
          * @returns {Object} cloned object
          */
-        clone: function(src, arr) {
+        clone: function(src, arr, exclude) {
             if (this.isArray(src)) {
                 return src.slice(0);
             }
             var clone = {};
             this.forEach(src, function(value, k) {
-                if (arr && arr.indexOf(k) === -1) {
+                if ((arr && arr.indexOf(k) === -1)
+                  ||(exclude && exclude.indexOf(k) !== -1)) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {

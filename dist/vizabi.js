@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-18 */
+/* VIZABI - http://www.gapminder.org - 2015-06-22 */
 
 /*!
  * VIZABI MAIN
@@ -167,6 +167,10 @@
             return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
 
+        roundStep: function(number, step) {
+            return Math.round(number/step) * step;
+        },
+
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -254,13 +258,14 @@
          * @param {Array} arr filter keys
          * @returns {Object} cloned object
          */
-        clone: function(src, arr) {
+        clone: function(src, arr, exclude) {
             if (this.isArray(src)) {
                 return src.slice(0);
             }
             var clone = {};
             this.forEach(src, function(value, k) {
-                if (arr && arr.indexOf(k) === -1) {
+                if ((arr && arr.indexOf(k) === -1)
+                  ||(exclude && exclude.indexOf(k) !== -1)) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {
@@ -2692,7 +2697,7 @@
         _getHookedValues: function(filter) {
             var _this = this;
             if (!this.isHook()) {
-                utils.warn('_getHookedValue method needs the model to be hooked to data.');
+                utils.warn('_getHookedValues method needs the model to be hooked to data.');
                 return;
             }
             var values;
@@ -2920,53 +2925,52 @@
      * filter SHOULD contain time property
      * @returns interpolated value
      */
-    function interpolateValue(ctx, filter, hook, value) {
-        var items = _DATAMANAGER.get(ctx._dataId);
+    function interpolateValue(ctx, filter, use, which) {
+
+        var dimTime = ctx._getFirstDimension({ type: 'time' });
+        var time = new Date(filter[dimTime]); //clone date
+        delete filter[dimTime];
+
+        var items = ctx.getFilteredItems(filter);
         if (items === null || items.length === 0) {
             utils.warn('interpolateValue returning NULL because items array is empty');
             return null;
         }
 
-        //TODO: this only allows one time variable
-        var dimTime = ctx._getFirstDimension({ type: 'time' });
-        var time = new Date(filter[dimTime]); //clone date
-        delete filter[dimTime];
-
-        // filter items so that we only have a dataset for certain keys, like "geo"
-        items = ctx.getFilteredItems(filter);
-        // return constant for the hook of "values"
-        if (hook === 'value') {
-            return items[0][ctx.which];
+        // return constant for the use of "value"
+        if (use === 'value') {
+            return items[0][which];
         }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
         var indexNext = d3.bisectLeft(items.map(function(d) {
             return d[dimTime];
         }), time);
-        // zero-order interpolation for the hook of properties
-        if (hook === 'property' && indexNext === 0) {
-            return items[0][value];
+        // zero-order interpolation for the use of properties
+        if (use === 'property' && indexNext === 0) {
+            return items[0][which];
         }
-        if (hook === 'property') {
-            return items[indexNext - 1][value];
+        if (use === 'property') {
+            return items[indexNext - 1][which];
         }
         // the rest is for the continuous measurements
         // check if the desired value is out of range. 0-order extrapolation
         if (indexNext === 0) {
-            return items[0][value];
+            return items[0][which];
         }
         if (indexNext === items.length) {
-            return items[items.length - 1][value];
+            return items[items.length - 1][which];
         }
         //return null if data is missing
-        if (items[indexNext][value] === null || items[indexNext - 1][value] === null) {
+        if (items[indexNext][which] === null || items[indexNext - 1][which] === null) {
             return null;
         }
+
         // perform a simple linear interpolation
         var fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
-        value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
+        var value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
         // cast to time object if we are interpolating time
-        if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
+        if (Object.prototype.toString.call(items[0][which]) === '[object Date]') {
             value = new Date(value);
         }
         return value;
@@ -5202,6 +5206,7 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
+    var precision = 3;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) {
@@ -5269,9 +5274,12 @@
                     if((['change:time:start','change:time:end']).indexOf(evt) !== -1) {
                         _this.changeLimits();
                     }
-                    _this.changeTime();
-                    var transition = _this.model.time.playing;
-                    _this._setHandle(transition);
+                    _this._optionClasses();
+
+                    //only set handle position if change is external
+                    if(!_this._dragging) {
+                        _this._setHandle(_this.model.time.playing);
+                    }
                 }
             };
 
@@ -5286,7 +5294,7 @@
             // Same constructor as the superclass
             this._super(config, context);
 
-
+            this._dragging = false;
             //defaults
             this.width = 0;
             this.height = 0;
@@ -5326,10 +5334,10 @@
                 .x(this.xScale)
                 .extent([0, 0])
                 .on("brush", function() {
-                    utils.throttle(brushed.bind(this), 10);
+                    utils.throttle(brushed.bind(this), 30);
                 })
                 .on("brushend", function() {
-                    utils.throttle(brushedEnd.bind(this), 10);
+                    utils.throttle(brushedEnd.bind(this), 30);
                 });
 
             //Slide
@@ -5455,18 +5463,23 @@
                 }
 
                 var value = _this.brush.extent()[0];
+
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    var posX = Math.round(d3.mouse(this)[0]);
+                    _this._dragging = true;
+                    var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
                     value = _this.xScale.invert(posX);
+
+                    //set handle position
+                    _this.handle.attr("cx", posX);
+                    _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
+                    _this.valueText.text(_this.format(value));
                 }
 
                 //set time according to dragged position
                 if (value - _this.model.time.value !== 0) {
                     _this._setTime(value);
                 }
-                //position handle
-                _this._setHandle(_this.model.time.playing);
             };
         },
 
@@ -5481,6 +5494,7 @@
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
                 _this.model.time.snap();
+                _this._dragging = false;
             };
         },
 
