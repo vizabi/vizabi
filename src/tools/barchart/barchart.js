@@ -6,14 +6,11 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
 
     var comp_template = 'src/tools/barchart/barchart.html';
 
@@ -269,7 +266,7 @@
     });
 
     //BAR CHART TOOL
-    Vizabi.Tool.extend('BarChart', {
+    var BarChart = Vizabi.Tool.extend('BarChart', {
 
         /**
          * Initializes the tool (Bar Chart Tool).
@@ -295,83 +292,6 @@
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language']
             }];
-
-            //default options
-            this.default_options = {
-                state: {
-                    time: {
-                        start: "1952",
-                        end: "2012",
-                        value: "2000",
-                        step: 1,
-                        speed: 300,
-                        formatInput: "%Y"
-                    },
-                    entities: {
-                        dim: "geo",
-                        show: {
-                            _defs_: {
-                                "geo": ["*"],
-                                "geo.cat": ["region"]
-                            }
-                        }
-                    },
-                    marker: {
-                        space: ["entities", "time"],
-                        label: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        axis_y: {
-                            use: "indicator",
-                            which: "lex",
-                            scaleType: "linear"
-                        },
-                        axis_x: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        color: {
-                            use: "property",
-                            which: "geo.region"
-                        }
-                    }
-                },
-                data: {
-                    reader: "csv-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-                },
-
-                ui: {
-                    buttons: []
-                },
-
-                language: {
-                    id: "en",
-                    strings: {
-                        _defs_: {
-                            en: {
-                                "title": "",
-                                "buttons/expand": "Go Big",
-                                "buttons/unexpand": "Go Small",
-                                "buttons/lock": "Lock",
-                                "buttons/find": "Find",
-                                "buttons/colors": "Colors",
-                                "buttons/size": "Size",
-                                "buttons/axes": "Axes",
-                                "buttons/more_options": "Options",
-                                "indicator/lex": "Life expectancy",
-                                "indicator/gdp_per_cap": "GDP per capita",
-                                "indicator/pop": "Population",
-                                "indicator/geo.region": "Region",
-                                "indicator/geo": "Geo code",
-                                "indicator/time": "",
-                                "indicator/geo.category": "Geo category"
-                            }
-                        }
-                    }
-                }
-            };
 
             //constructor is the same as any tool
             this._super(config, options);
@@ -405,5 +325,66 @@
         }
     });
 
+    BarChart.define('default_options', {
+        state: {
+            time: {
+            },
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["region"]
+                    }
+                }
+            },
+            marker: {
+                space: ["entities", "time"],
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "lex",
+                },
+                axis_x: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region"
+                }
+            }
+        },
+        data: {
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            buttons: []
+        },
+
+        language: {
+            id: "en",
+            strings: {
+                _defs_: {
+                    en: {
+                        "title": "",
+                        "buttons/expand": "Go Big",
+                        "buttons/unexpand": "Go Small",
+                        "buttons/lock": "Lock",
+                        "buttons/find": "Find",
+                        "buttons/colors": "Colors",
+                        "buttons/size": "Size",
+                        "buttons/axes": "Axes",
+                        "buttons/more_options": "Options"
+                    }
+                }
+            }
+        }
+    });
 
 }).call(this);

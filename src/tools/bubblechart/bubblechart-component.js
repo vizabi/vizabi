@@ -6,8 +6,7 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined

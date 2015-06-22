@@ -107,6 +107,7 @@
             }
             this.on(this.model.bind.get());
         },
+
         /**
          * Sets options from external page
          * @param {Object} options new options
@@ -121,6 +122,7 @@
             }
             this._setUIOptions();
         },
+
         /**
          * gets all options
          * @param {Object} options new options
