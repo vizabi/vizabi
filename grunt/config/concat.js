@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         readers: ['src/readers/**/*.js'],
         plugins: ['src/plugins/**/*.js'],
         templates: ['src/components/**/*.html','src/tools/**/*.html'],
-        custom: ['src/vizabi_prefs/'+custom+'.js']
+        custom: ['src/vizabi_custom/'+custom+'.js']
     }
 
     var FILES_COMPONENTS = ['.tmp/templates.js',
