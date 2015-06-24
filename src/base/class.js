@@ -57,12 +57,21 @@
             }
             this._collection[name] = code;
         };
+        
         Class.unregister = function(name) {
             delete this._collection[name];
         };
+
         Class.getCollection = function() {
             return this._collection;
         };
+
+        //define a method or field in this prototype
+        Class.define = function(name, value) {
+            this.prototype[name] = value;
+        };
+
+        //get an item of the collection from this class
         Class.get = function(name, silent) {
             if (this._collection.hasOwnProperty(name)) {
                 return this._collection[name];

@@ -1,6 +1,8 @@
 //concat config
 module.exports = function(grunt) {
 
+    var custom = grunt.option('custom');
+
     var FILES = {
         base: ['src/vizabi.js',
             'src/base/utils.js',
@@ -21,12 +23,24 @@ module.exports = function(grunt) {
         tools: ['src/tools/**/*.js'],
         readers: ['src/readers/**/*.js'],
         plugins: ['src/plugins/**/*.js'],
-        templates: ['src/components/**/*.html','src/tools/**/*.html']
+        templates: ['src/components/**/*.html','src/tools/**/*.html'],
+        custom: ['src/vizabi_custom/'+custom+'.js']
     }
 
     var FILES_COMPONENTS = ['.tmp/templates.js',
         'src/components/_gapminder/timeslider/*.js'
     ];
+
+    var BUILD_FILES = ([]).concat(FILES.base)
+                     .concat(FILES.components)
+                     .concat(FILES.models)
+                     .concat(FILES.readers)
+                     .concat(FILES.tools)
+                     .concat(FILES.plugins);
+
+    if(custom) {
+        BUILD_FILES = BUILD_FILES.concat(FILES.custom);
+    }
 
     return {
         options: {
@@ -55,48 +69,11 @@ module.exports = function(grunt) {
             dest: '.tmp/templates.js',
         },
 
-        // base: {
-        //     src: FILES.base,
-        //     dest: 'dist/expanded/vizabi.base.js',
-        // },
-
-        // models: {
-        //     //TODO: import all models
-        //     //models
-        //     src: FILES.models,
-        //     dest: 'dist/expanded/vizabi.models.js',
-        // },
-
-        // components: {
-        //     src: FILES.components,
-        //     dest: 'dist/expanded/vizabi.components.js',
-        // },
-
-        // readers: {
-        //     src: FILES.readers,
-        //     dest: 'dist/expanded/vizabi.readers.js',
-        // },
-
-        // tools: {
-        //     src: FILES.tools,
-        //     dest: 'dist/expanded/vizabi.tools.js',
-        // },
-
-        // plugins: {
-        //     src: FILES.plugins,
-        //     dest: 'dist/expanded/vizabi.plugins.js',
-        // },
-
         full: {
             options: {
                 sourceMap: true
             },
-            src: ([]).concat(FILES.base)
-                     .concat(FILES.components)
-                     .concat(FILES.models)
-                     .concat(FILES.readers)
-                     .concat(FILES.tools)
-                     .concat(FILES.plugins),
+            src: BUILD_FILES,
             dest: 'dist/vizabi.js',
         }
     };

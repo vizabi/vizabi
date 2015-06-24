@@ -11,6 +11,7 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
+    var precision = 3;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) {
@@ -78,9 +79,12 @@
                     if((['change:time:start','change:time:end']).indexOf(evt) !== -1) {
                         _this.changeLimits();
                     }
-                    _this.changeTime();
-                    var transition = _this.model.time.playing;
-                    _this._setHandle(transition);
+                    _this._optionClasses();
+
+                    //only set handle position if change is external
+                    if(!_this._dragging) {
+                        _this._setHandle(_this.model.time.playing);
+                    }
                 }
             };
 
@@ -95,7 +99,7 @@
             // Same constructor as the superclass
             this._super(config, context);
 
-
+            this._dragging = false;
             //defaults
             this.width = 0;
             this.height = 0;
@@ -135,10 +139,10 @@
                 .x(this.xScale)
                 .extent([0, 0])
                 .on("brush", function() {
-                    utils.throttle(brushed.bind(this), 10);
+                    utils.throttle(brushed.bind(this), 30);
                 })
                 .on("brushend", function() {
-                    utils.throttle(brushedEnd.bind(this), 10);
+                    utils.throttle(brushedEnd.bind(this), 30);
                 });
 
             //Slide
@@ -264,17 +268,23 @@
                 }
 
                 var value = _this.brush.extent()[0];
+
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                    _this._dragging = true;
+                    var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+                    value = _this.xScale.invert(posX);
+
+                    //set handle position
+                    _this.handle.attr("cx", posX);
+                    _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
+                    _this.valueText.text(_this.format(value));
                 }
 
                 //set time according to dragged position
                 if (value - _this.model.time.value !== 0) {
                     _this._setTime(value);
                 }
-                //position handle
-                _this._setHandle(_this.model.time.playing);
             };
         },
 
@@ -289,6 +299,7 @@
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
                 _this.model.time.snap();
+                _this._dragging = false;
             };
         },
 

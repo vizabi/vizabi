@@ -6,8 +6,7 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
@@ -471,7 +470,6 @@
 
         },
 
-
         /*
          * UPDATE ENTITIES:
          * Ideally should only update when show parameters change or data changes
@@ -495,10 +493,6 @@
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
                 });
-
-
-
-
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
                 .data(this.model.entities._visible, function(d) {
@@ -556,10 +550,6 @@
 
         },
 
-
-
-
-
         adaptMinMaxZoom: function() {
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
@@ -586,8 +576,6 @@
                 //console.log("no rezoom")
             }
         },
-
-
 
         _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
             var _this = this;
@@ -626,7 +614,6 @@
             zoomer.event(element);
         },
 
-
         resetZoomer: function(element) {
             this.zoomer.scale(1);
             this.zoomer.ratioY = 1;
@@ -635,8 +622,6 @@
             this.zoomer.duration = 0;
             this.zoomer.event(element || this.element);
         },
-
-
 
         /*
          * UPDATE TIME:
@@ -779,7 +764,6 @@
 
         },
 
-
         updateMarkerSizeLimits: function() {
             var _this = this;
             var minRadius = this.activeProfile.minRadius;
@@ -795,7 +779,6 @@
             }
 
         },
-
 
         redrawDataPointsOnlyColors: function() {
             var _this = this;
@@ -829,8 +812,6 @@
             }
         },
 
-
-
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
@@ -846,11 +827,9 @@
 
             }); // each bubble
 
-
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if (_this.duration == 0) d3.timer.flush();
-
 
             if (_this.ui.labels.autoResolveCollisions) {
                 // cancel previously queued simulation if we just ordered a new one
@@ -862,9 +841,9 @@
                 }, _this.model.time.speed * 1.2)
             }
 
-        }, //redraw Data Points
+        },
 
-
+        //redraw Data Points
         _updateBubble: function(d, index, view, duration) {
             var _this = this;
             var TIMEDIM = this.TIMEDIM;

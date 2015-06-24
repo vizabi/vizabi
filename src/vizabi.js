@@ -56,5 +56,7 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = Vizabi;
     }
+
     root.Vizabi = Vizabi;
+
 }.call(this));

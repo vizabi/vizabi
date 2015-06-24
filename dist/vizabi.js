@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-17 */
+/* VIZABI - http://www.gapminder.org - 2015-06-24 */
 
 /*!
  * VIZABI MAIN
@@ -58,17 +58,23 @@
     } else if (typeof module === 'object' && module.exports) {
         module.exports = Vizabi;
     }
+
     root.Vizabi = Vizabi;
+
 }.call(this));
 /*!
  * VIZABI UTILS
  * Util functions
  */
 (function() {
+    
     'use strict';
+    
     var root = this;
     var Vizabi = root.Vizabi;
+    
     Vizabi.utils = {
+
         /*
          * returns unique id with optional prefix
          * @param {String} prefix
@@ -80,6 +86,7 @@
                 return p ? p + (id += 1) : id += 1;
             };
         }(),
+
         /*
          * checks whether obj is a DOM element
          * @param {Object} obj
@@ -89,6 +96,7 @@
         isElement: function(obj) {
             return !!(obj && obj.nodeType === 1);
         },
+
         /*
          * checks whether obj is an Array
          * @param {Object} obj
@@ -98,6 +106,7 @@
         isArray: Array.isArray || function(obj) {
             return toString.call(obj) === '[object Array]';
         },
+
         /*
          * checks whether obj is an object
          * @param {Object} obj
@@ -108,6 +117,7 @@
             var type = typeof obj;
             return type === 'object' && !!obj;
         },
+
         /*
          * checks whether arg is a date
          * @param {Object} arg
@@ -116,6 +126,7 @@
         isDate: function(arg) {
             return arg instanceof Date;
         },
+
         /*
          * checks whether arg is a string
          * @param {Object} arg
@@ -124,6 +135,7 @@
         isString: function(arg) {
             return typeof arg === 'string';
         },
+
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -134,6 +146,7 @@
             // A `NaN` primitive is the only number that is not equal to itself
             return this.isNumber(arg) && arg !== +arg;
         },
+
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -144,6 +157,7 @@
         isNumber: function(arg) {
             return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
+
         /*
          * checks whether obj is a plain object {}
          * @param {Object} obj
@@ -152,6 +166,11 @@
         isPlainObject: function(obj) {
             return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
         },
+
+        roundStep: function(number, step) {
+            return Math.round(number/step) * step;
+        },
+
         /*
          * loops through an object or array
          * @param {Object|Array} obj object or array
@@ -185,6 +204,7 @@
                 }
             }
         },
+
         /*
          * extends an object
          * @param {Object} destination object
@@ -204,6 +224,7 @@
             });
             return dest;
         },
+
         /*
          * merges objects instead of replacing
          * @param {Object} destination object
@@ -230,19 +251,21 @@
             });
             return dest;
         },
+
         /*
          * clones an object (shallow copy)
          * @param {Object} src original object
          * @param {Array} arr filter keys
          * @returns {Object} cloned object
          */
-        clone: function(src, arr) {
+        clone: function(src, arr, exclude) {
             if (this.isArray(src)) {
                 return src.slice(0);
             }
             var clone = {};
             this.forEach(src, function(value, k) {
-                if (arr && arr.indexOf(k) === -1) {
+                if ((arr && arr.indexOf(k) === -1)
+                  ||(exclude && exclude.indexOf(k) !== -1)) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {
@@ -251,6 +274,7 @@
             });
             return clone;
         },
+
         /*
          * deep clones an object (deep copy)
          * @param {Object} src original object
@@ -270,6 +294,7 @@
             });
             return clone;
         },
+
         /*
          * Prints message to timestamp
          * @param {Arr} arr
@@ -282,6 +307,7 @@
             }
             return arr;
         },
+
         /*
          * unique items in an array
          * @param {Array} arr original array
@@ -308,6 +334,7 @@
             }
             return a;
         },
+
         /*
          * unique items in an array keeping the last item
          * @param {Array} arr original array
@@ -333,6 +360,7 @@
             }
             return a;
         },
+
         /*
          * returns first value that passes the test
          * @param {Array} arr original collection
@@ -348,6 +376,7 @@
             });
             return found;
         },
+
         /*
          * filters an array based on object properties
          * @param {Array} arr original array
@@ -504,6 +533,7 @@
         radiusToArea: function(r) {
             return r * r * Math.PI;
         },
+
         /*
          * Converts area to radius, simple math
          * @param {Number} area
@@ -512,6 +542,7 @@
         areaToRadius: function(a) {
             return Math.sqrt(a / Math.PI);
         },
+
         /*
          * Prints message to timestamp
          * @param {String} message
@@ -521,6 +552,7 @@
                 root.console.timeStamp(message);
             }
         },
+
         /*
          * Prints warning
          * @param {String} message
@@ -530,6 +562,7 @@
                 root.console.warn(message);
             }
         },
+
         /*
          * Prints message for group
          * @param {String} message
@@ -539,6 +572,7 @@
                 root.console.groupCollapsed(message);
             }
         },
+
         /*
          * Prints end of group
          * @param {String} message
@@ -548,6 +582,7 @@
                 root.console.groupEnd();
             }
         },
+
         /*
          * Prints error
          * @param {String} message
@@ -557,6 +592,7 @@
                 root.console.error(message);
             }
         },
+
         /*
          * Count the number of decimal numbers
          * @param {Number} number
@@ -567,6 +603,7 @@
             }
             return number.toString().split('.')[1].length || 0;
         },
+
         /*
          * Adds class to DOM element
          * @param {Element} el
@@ -580,6 +617,7 @@
                 el.className += ' ' + className;
             }
         },
+
         /*
          * Remove class from DOM element
          * @param {Element} el
@@ -593,6 +631,7 @@
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
+
         /*
          * Adds or removes class depending on value
          * @param {Element} el
@@ -608,6 +647,7 @@
                 return this.hasClass(el, className);
             }
         },
+
         /*
          * Checks whether a DOM element has a class or not
          * @param {Element} el
@@ -622,6 +662,7 @@
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
+
         /*
          * Throttles a function
          * @param {Function} func
@@ -640,6 +681,7 @@
                 func();
             };
         }(),
+
         /*
          * Returns keys of an object as array
          * @param {Object} arg
@@ -648,6 +690,7 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
+
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
@@ -662,6 +705,7 @@
             }
             return arr;
         },
+
         /*
          * Defers a function
          * @param {Function} func
@@ -669,6 +713,7 @@
         defer: function(func) {
             setTimeout(func, 1);
         },
+
         /*
          * Creates a hashcode for a string or array
          * @param {String|Array} str
@@ -691,6 +736,7 @@
             }
             return hash.toString();
         },
+
         /*
          * Performs an ajax request
          * @param {Object} options
@@ -723,6 +769,7 @@
             };
             request.send(options.data);
         },
+
         /*
          * Performs a GET http request
          */
@@ -740,6 +787,7 @@
                 json: json
             });
         },
+
         /*
          * Performs a POST http request
          */
@@ -753,6 +801,7 @@
                 data: pars
             });
         }
+        
     };
 }.call(this));
 /*!
@@ -1084,12 +1133,21 @@
             }
             this._collection[name] = code;
         };
+        
         Class.unregister = function(name) {
             delete this._collection[name];
         };
+
         Class.getCollection = function() {
             return this._collection;
         };
+
+        //define a method or field in this prototype
+        Class.define = function(name, value) {
+            this.prototype[name] = value;
+        };
+
+        //get an item of the collection from this class
         Class.get = function(name, silent) {
             if (this._collection.hasOwnProperty(name)) {
                 return this._collection[name];
@@ -1666,7 +1724,7 @@
             this._container = container;
             this.setSize();
         },
-        
+
         /**
          * Gets the current selected profile
          * @returns {String} name of current profile
@@ -1675,7 +1733,9 @@
             return this._curr_profile;
         }
     });
+    
     Vizabi.Layout = Layout;
+
 }.call(this));
 /*!
  * VIZABI MODEL
@@ -2646,7 +2706,7 @@
         _getHookedValues: function(filter) {
             var _this = this;
             if (!this.isHook()) {
-                utils.warn('_getHookedValue method needs the model to be hooked to data.');
+                utils.warn('_getHookedValues method needs the model to be hooked to data.');
                 return;
             }
             var values;
@@ -2874,53 +2934,52 @@
      * filter SHOULD contain time property
      * @returns interpolated value
      */
-    function interpolateValue(ctx, filter, hook, value) {
-        var items = _DATAMANAGER.get(ctx._dataId);
+    function interpolateValue(ctx, filter, use, which) {
+
+        var dimTime = ctx._getFirstDimension({ type: 'time' });
+        var time = new Date(filter[dimTime]); //clone date
+        delete filter[dimTime];
+
+        var items = ctx.getFilteredItems(filter);
         if (items === null || items.length === 0) {
             utils.warn('interpolateValue returning NULL because items array is empty');
             return null;
         }
 
-        //TODO: this only allows one time variable
-        var dimTime = ctx._getFirstDimension({ type: 'time' });
-        var time = new Date(filter[dimTime]); //clone date
-        delete filter[dimTime];
-
-        // filter items so that we only have a dataset for certain keys, like "geo"
-        items = ctx.getFilteredItems(filter);
-        // return constant for the hook of "values"
-        if (hook === 'value') {
-            return items[0][ctx.which];
+        // return constant for the use of "value"
+        if (use === 'value') {
+            return items[0][which];
         }
         // search where the desired value should fall between the known points
         // TODO: d3 is global?
         var indexNext = d3.bisectLeft(items.map(function(d) {
             return d[dimTime];
         }), time);
-        // zero-order interpolation for the hook of properties
-        if (hook === 'property' && indexNext === 0) {
-            return items[0][value];
+        // zero-order interpolation for the use of properties
+        if (use === 'property' && indexNext === 0) {
+            return items[0][which];
         }
-        if (hook === 'property') {
-            return items[indexNext - 1][value];
+        if (use === 'property') {
+            return items[indexNext - 1][which];
         }
         // the rest is for the continuous measurements
         // check if the desired value is out of range. 0-order extrapolation
         if (indexNext === 0) {
-            return items[0][value];
+            return items[0][which];
         }
         if (indexNext === items.length) {
-            return items[items.length - 1][value];
+            return items[items.length - 1][which];
         }
         //return null if data is missing
-        if (items[indexNext][value] === null || items[indexNext - 1][value] === null) {
+        if (items[indexNext][which] === null || items[indexNext - 1][which] === null) {
             return null;
         }
+
         // perform a simple linear interpolation
         var fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
-        value = +items[indexNext - 1][value] + (items[indexNext][value] - items[indexNext - 1][value]) * fraction;
+        var value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
         // cast to time object if we are interpolating time
-        if (Object.prototype.toString.call(items[0][value]) === '[object Date]') {
+        if (Object.prototype.toString.call(items[0][which]) === '[object Date]') {
             value = new Date(value);
         }
         return value;
@@ -3456,6 +3515,7 @@
             }
             this.on(this.model.bind.get());
         },
+
         /**
          * Sets options from external page
          * @param {Object} options new options
@@ -3470,6 +3530,7 @@
             }
             this._setUIOptions();
         },
+
         /**
          * gets all options
          * @param {Object} options new options
@@ -5156,6 +5217,7 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
+    var precision = 3;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) {
@@ -5223,9 +5285,12 @@
                     if((['change:time:start','change:time:end']).indexOf(evt) !== -1) {
                         _this.changeLimits();
                     }
-                    _this.changeTime();
-                    var transition = _this.model.time.playing;
-                    _this._setHandle(transition);
+                    _this._optionClasses();
+
+                    //only set handle position if change is external
+                    if(!_this._dragging) {
+                        _this._setHandle(_this.model.time.playing);
+                    }
                 }
             };
 
@@ -5240,7 +5305,7 @@
             // Same constructor as the superclass
             this._super(config, context);
 
-
+            this._dragging = false;
             //defaults
             this.width = 0;
             this.height = 0;
@@ -5280,10 +5345,10 @@
                 .x(this.xScale)
                 .extent([0, 0])
                 .on("brush", function() {
-                    utils.throttle(brushed.bind(this), 10);
+                    utils.throttle(brushed.bind(this), 30);
                 })
                 .on("brushend", function() {
-                    utils.throttle(brushedEnd.bind(this), 10);
+                    utils.throttle(brushedEnd.bind(this), 30);
                 });
 
             //Slide
@@ -5409,17 +5474,23 @@
                 }
 
                 var value = _this.brush.extent()[0];
+
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                    _this._dragging = true;
+                    var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+                    value = _this.xScale.invert(posX);
+
+                    //set handle position
+                    _this.handle.attr("cx", posX);
+                    _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
+                    _this.valueText.text(_this.format(value));
                 }
 
                 //set time according to dragged position
                 if (value - _this.model.time.value !== 0) {
                     _this._setTime(value);
                 }
-                //position handle
-                _this._setHandle(_this.model.time.playing);
             };
         },
 
@@ -5434,6 +5505,7 @@
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
                 _this.model.time.snap();
+                _this._dragging = false;
             };
         },
 
@@ -5918,7 +5990,7 @@
          * @returns {String} String with dimension
          */
         getDimension: function() {
-            return this.show.dim;
+            return this.dim;
         },
 
         /**
@@ -5926,7 +5998,7 @@
          * @returns {Array} Array of unique values
          */
         getFilter: function() {
-            return this.show.filter.getObject();
+            return this.show.getObject();
         },
 
         /**
@@ -6873,14 +6945,11 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
 
     var comp_template = 'src/tools/barchart/barchart.html';
 
@@ -7136,7 +7205,7 @@
     });
 
     //BAR CHART TOOL
-    Vizabi.Tool.extend('BarChart', {
+    var BarChart = Vizabi.Tool.extend('BarChart', {
 
         /**
          * Initializes the tool (Bar Chart Tool).
@@ -7162,85 +7231,6 @@
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language']
             }];
-
-            //default options
-            this.default_options = {
-                state: {
-                    time: {
-                        start: "1952",
-                        end: "2012",
-                        value: "2000",
-                        step: 1,
-                        speed: 300,
-                        formatInput: "%Y"
-                    },
-                    entities: {
-                        show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["region"]
-                                }
-                            }
-                        }
-                    },
-                    marker: {
-                        space: ["entities", "time"],
-                        label: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        axis_y: {
-                            use: "indicator",
-                            which: "lex",
-                            scaleType: "linear"
-                        },
-                        axis_x: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        color: {
-                            use: "property",
-                            which: "geo.region"
-                        }
-                    }
-                },
-                data: {
-                    reader: "csv-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-                },
-
-                ui: {
-                    buttons: []
-                },
-
-                language: {
-                    id: "en",
-                    strings: {
-                        _defs_: {
-                            en: {
-                                "title": "",
-                                "buttons/expand": "Go Big",
-                                "buttons/unexpand": "Go Small",
-                                "buttons/lock": "Lock",
-                                "buttons/find": "Find",
-                                "buttons/colors": "Colors",
-                                "buttons/size": "Size",
-                                "buttons/axes": "Axes",
-                                "buttons/more_options": "Options",
-                                "indicator/lex": "Life expectancy",
-                                "indicator/gdp_per_cap": "GDP per capita",
-                                "indicator/pop": "Population",
-                                "indicator/geo.region": "Region",
-                                "indicator/geo": "Geo code",
-                                "indicator/time": "",
-                                "indicator/geo.category": "Geo category"
-                            }
-                        }
-                    }
-                }
-            };
 
             //constructor is the same as any tool
             this._super(config, options);
@@ -7274,6 +7264,67 @@
         }
     });
 
+    BarChart.define('default_options', {
+        state: {
+            time: {
+            },
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["region"]
+                    }
+                }
+            },
+            marker: {
+                space: ["entities", "time"],
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "lex",
+                },
+                axis_x: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region"
+                }
+            }
+        },
+        data: {
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            buttons: []
+        },
+
+        language: {
+            id: "en",
+            strings: {
+                _defs_: {
+                    en: {
+                        "title": "",
+                        "buttons/expand": "Go Big",
+                        "buttons/unexpand": "Go Small",
+                        "buttons/lock": "Lock",
+                        "buttons/find": "Find",
+                        "buttons/colors": "Colors",
+                        "buttons/size": "Size",
+                        "buttons/axes": "Axes",
+                        "buttons/more_options": "Options"
+                    }
+                }
+            }
+        }
+    });
 
 }).call(this);
 /*!
@@ -7284,8 +7335,7 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
@@ -7749,7 +7799,6 @@
 
         },
 
-
         /*
          * UPDATE ENTITIES:
          * Ideally should only update when show parameters change or data changes
@@ -7773,10 +7822,6 @@
                 .sort(function(a, b) {
                     return b.sortValue - a.sortValue;
                 });
-
-
-
-
 
             this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
                 .data(this.model.entities._visible, function(d) {
@@ -7834,10 +7879,6 @@
 
         },
 
-
-
-
-
         adaptMinMaxZoom: function() {
             var _this = this;
             var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
@@ -7864,8 +7905,6 @@
                 //console.log("no rezoom")
             }
         },
-
-
 
         _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
             var _this = this;
@@ -7904,7 +7943,6 @@
             zoomer.event(element);
         },
 
-
         resetZoomer: function(element) {
             this.zoomer.scale(1);
             this.zoomer.ratioY = 1;
@@ -7913,8 +7951,6 @@
             this.zoomer.duration = 0;
             this.zoomer.event(element || this.element);
         },
-
-
 
         /*
          * UPDATE TIME:
@@ -8057,7 +8093,6 @@
 
         },
 
-
         updateMarkerSizeLimits: function() {
             var _this = this;
             var minRadius = this.activeProfile.minRadius;
@@ -8073,7 +8108,6 @@
             }
 
         },
-
 
         redrawDataPointsOnlyColors: function() {
             var _this = this;
@@ -8107,8 +8141,6 @@
             }
         },
 
-
-
         /*
          * REDRAW DATA POINTS:
          * Here plotting happens
@@ -8124,11 +8156,9 @@
 
             }); // each bubble
 
-
             // Call flush() after any zero-duration transitions to synchronously flush the timer queue
             // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
             if (_this.duration == 0) d3.timer.flush();
-
 
             if (_this.ui.labels.autoResolveCollisions) {
                 // cancel previously queued simulation if we just ordered a new one
@@ -8140,9 +8170,9 @@
                 }, _this.model.time.speed * 1.2)
             }
 
-        }, //redraw Data Points
+        },
 
-
+        //redraw Data Points
         _updateBubble: function(d, index, view, duration) {
             var _this = this;
             var TIMEDIM = this.TIMEDIM;
@@ -8524,8 +8554,7 @@
 
     "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
 
     //warn client if d3 is not defined
@@ -8559,128 +8588,6 @@
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language']
             }];
-
-            //default options
-            this.default_options = {
-                state: {
-                    time: {
-                        start: "1990",
-                        end: "2012",
-                        value: "2000",
-                        step: 1,
-                        speed: 300,
-                        formatInput: "%Y",
-                        round: "ceil",
-                        trails: true,
-                        lockNonSelected: 0,
-                        adaptMinMaxZoom: false
-                    },
-                    entities: {
-                        show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["country"]
-                                }
-                            }
-                        }
-                    },
-                    marker: {
-                        space: ["entities", "time"],
-                        type: "geometry",
-                        shape: "circle",
-                        label: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        axis_y: {
-                            use: "indicator",
-                            which: "lex",
-                            scaleType: "linear",
-                            unit: "years"
-                        },
-                        axis_x: {
-                            use: "indicator",
-                            which: "gdp_per_cap",
-                            scaleType: "log",
-                            unit: "$/year/person"
-                        },
-                        color: {
-                            use: "property",
-                            which: "geo.region",
-                            scaleType: "ordinal",
-                            unit: ""
-                        },
-                        size: {
-                            use: "indicator",
-                            which: "pop",
-                            scaleType: "linear",
-                            max: 0.75,
-                            unit: ""
-                        }
-                    }
-                },
-                data: {
-                    //reader: "waffle-server",
-                    reader: "csv-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-                },
-
-                ui: {
-                    'vzb-tool-bubble-chart': {
-                        whenHovering: {
-                            showProjectionLineX: true,
-                            showProjectionLineY: true,
-                            higlightValueX: true,
-                            higlightValueY: true
-                        },
-                        labels: {
-                            autoResolveCollisions: true,
-                            dragging: true
-                        }
-                    },
-                    buttons: []
-                },
-
-                language: {
-                    id: "en",
-                    strings: {
-                        en: {
-                            "title": "Bubble Chart Title",
-                            "buttons/expand": "Go big",
-                            "buttons/unexpand": "Go small",
-                            "buttons/trails": "Trails",
-                            "buttons/lock": "Lock",
-                            "buttons/find": "Find",
-                            "buttons/deselect": "Deselect",
-                            "buttons/ok": "OK",
-                            "buttons/colors": "Colors",
-                            "buttons/size": "Size",
-                            "buttons/axes": "Axes",
-                            "buttons/more_options": "Options",
-                            "indicator/lex": "Life expectancy",
-                            "indicator/gdp_per_cap": "GDP per capita",
-                            "indicator/pop": "Population",
-                            "indicator/geo.region": "Region",
-                            "indicator/geo": "Geo code",
-                            "indicator/time": "Time",
-                            "indicator/geo.category": "Geo category",
-                            "scaletype/linear": "Linear",
-                            "scaletype/log": "Logarithmic",
-                            "scaletype/genericLog": "Generic log",
-                            "scaletype/time": "Time",
-                            "scaletype/ordinal": "Ordinal",
-                            "color/geo.region/asi": "Asia",
-                            "color/geo.region/eur": "Europe",
-                            "color/geo.region/ame": "Americas",
-                            "color/geo.region/afr": "Afrika",
-                            "color/geo.region/_default": "Other"
-                        }
-                    }
-                }
-            };
-
 
             this._super(config, options);
 
@@ -8716,10 +8623,103 @@
 
 }).call(this);
 
+/*!
+ * VIZABI BUBBLECHART DEFAULT OPTIONS
+ */
+
+(function() {
+        "use strict";
+        var BubbleChart = this.Vizabi.Tool.get('BubbleChart');
+
+        BubbleChart.define('default_options', {
+
+            state: {
+                time: {
+                    round: "ceil",
+                    trails: true,
+                    lockNonSelected: 0,
+                    adaptMinMaxZoom: false
+                },
+                entities: {
+                    dim: "geo",
+                    show: {
+                        _defs_: {
+                            "geo": ["*"],
+                            "geo.cat": ["country"]
+                        }
+                    }
+                },
+                marker: {
+                    space: ["entities", "time"],
+                    type: "geometry",
+                    label: {
+                        use: "property",
+                        which: "geo.name"
+                    },
+                    axis_y: {
+                        use: "indicator",
+                        which: "lex"
+                    },
+                    axis_x: {
+                        use: "indicator",
+                        which: "gdp_per_cap"
+                    },
+                    color: {
+                        use: "property",
+                        which: "geo.region"
+                    },
+                    size: {
+                        use: "indicator",
+                        which: "pop"
+                    }
+                }
+            },
+            data: {
+                //reader: "waffle-server",
+                reader: "csv-file",
+                path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            },
+
+            ui: {
+                'vzb-tool-bubble-chart': {},
+                buttons: []
+            },
+
+            language: {
+                id: "en",
+                strings: {
+                    en: {
+                        "title": "Bubble Chart Title",
+                        "buttons/expand": "Go big",
+                        "buttons/unexpand": "Go small",
+                        "buttons/trails": "Trails",
+                        "buttons/lock": "Lock",
+                        "buttons/find": "Find",
+                        "buttons/deselect": "Deselect",
+                        "buttons/ok": "OK",
+                        "buttons/colors": "Colors",
+                        "buttons/size": "Size",
+                        "buttons/axes": "Axes",
+                        "buttons/more_options": "Options",
+                        "scaletype/linear": "Linear",
+                        "scaletype/log": "Logarithmic",
+                        "scaletype/genericLog": "Generic log",
+                        "scaletype/time": "Time",
+                        "scaletype/ordinal": "Ordinal",
+                        "color/geo.region/asi": "Asia",
+                        "color/geo.region/eur": "Europe",
+                        "color/geo.region/ame": "Americas",
+                        "color/geo.region/afr": "Afrika",
+                        "color/geo.region/_default": "Other"
+                    }
+                }
+            }
+        });
+
+}).call(this);
 (function() {
     
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
     
     Vizabi.Helper.extend("gapminder-bublechart-trails", {
@@ -9789,111 +9789,6 @@
                 model: ['state', 'ui', 'language']
             }];
 
-            //default options
-            this.default_options = {
-                state: {
-                    time: {
-                        start: 1990,
-                        end: 2012,
-                        value: 2012,
-                        step: 1,
-                        speed: 300,
-                        formatInput: "%Y"
-                    },
-                    //entities we want to show
-                    entities: {
-                        show: {
-                            dim: "geo",
-                            filter: {
-                                _defs_: {
-                                    "geo": ["*"],
-                                    "geo.cat": ["region"]
-                                }
-                            }
-
-                        }
-                    },
-                    //how we show it
-                    marker: {
-                        space: ["entities", "time"],
-                        label: {
-                            use: "property",
-                            which: "geo.name"
-                        },
-                        axis_y: {
-                            use: "indicator",
-                            which: "gdp_per_cap",
-                            scaleType: "log"
-                        },
-                        axis_x: {
-                            use: "indicator",
-                            which: "time",
-                            scaleType: "time"
-                        },
-                        color: {
-                            use: "property",
-                            which: "geo.region"
-                        },
-                        color_shadow: {
-                            use: "property",
-                            which: "geo.region"
-                        }
-                    }
-                },
-
-                data: {
-                    //reader: "waffle-server",
-                    reader: "csv-file",
-                    path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-                },
-
-                ui: {
-                    'vzb-tool-line-chart': {
-                       entity_labels: {
-                            min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
-                        },
-                        whenHovering: {
-                            hideVerticalNow: 0,
-                            showProjectionLineX: true,
-                            showProjectionLineY: true,
-                            higlightValueX: true,
-                            higlightValueY: true,
-                            showTooltip: 0
-                        }
-                    },
-                    buttons: []
-                },
-
-                //language properties
-                language: {
-                    id: "en",
-                    strings: {
-                        en: {
-                            "title": "Line Chart Title",
-                            "buttons/find": "Find",
-                            "buttons/expand": "Expand",
-                            "buttons/colors": "Colors",
-                            "buttons/size": "Size",
-                            "buttons/more_options": "Options",
-                            "indicator/lex": "Life expectancy",
-                            "indicator/gdp_per_cap": "GDP per capita",
-                            "indicator/pop": "Population",
-                        },
-                        pt: {
-                            "title": "Título do Linulaula Chart",
-                            "buttons/expand": "Expandir",
-                            "buttons/find": "Encontre",
-                            "buttons/colors": "Cores",
-                            "buttons/size": "Tamanho",
-                            "buttons/more_options": "Opções",
-                            "indicator/lex": "Expectables Livappulo",
-                            "indicator/gdp_per_cap": "PIB pers capitous",
-                            "indicator/pop": "Peoples",
-                        }
-                    }
-                }
-            };
-
             this._super(config, options);
         },
 
@@ -9921,6 +9816,116 @@
             }
         }
 
+    });
+
+}).call(this);
+/*!
+ * VIZABI LINECHART DEFAULT OPTIONS
+ */
+
+(function() {
+    "use strict";
+    var LineChart = this.Vizabi.Tool.get('LineChart');
+
+    LineChart.define('default_options', {
+        state: {
+            time: {
+                start: 1990,
+                end: 2012,
+                value: 2012,
+                step: 1,
+                speed: 300,
+                formatInput: "%Y"
+            },
+            //entities we want to show
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["region"]
+                    }
+                }
+            },
+            //how we show it
+            marker: {
+                space: ["entities", "time"],
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "gdp_per_cap",
+                    scaleType: "log"
+                },
+                axis_x: {
+                    use: "indicator",
+                    which: "time",
+                    scaleType: "time"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region"
+                },
+                color_shadow: {
+                    use: "property",
+                    which: "geo.region"
+                }
+            }
+        },
+
+        data: {
+            //reader: "waffle-server",
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            'vzb-tool-line-chart': {
+                entity_labels: {
+                    min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+                },
+                whenHovering: {
+                    hideVerticalNow: 0,
+                    showProjectionLineX: true,
+                    showProjectionLineY: true,
+                    higlightValueX: true,
+                    higlightValueY: true,
+                    showTooltip: 0
+                }
+            },
+            buttons: []
+        },
+
+        //language properties
+        language: {
+            id: "en",
+            strings: {
+                en: {
+                    "title": "Line Chart Title",
+                    "buttons/find": "Find",
+                    "buttons/expand": "Expand",
+                    "buttons/colors": "Colors",
+                    "buttons/size": "Size",
+                    "buttons/more_options": "Options",
+                    "indicator/lex": "Life expectancy",
+                    "indicator/gdp_per_cap": "GDP per capita",
+                    "indicator/pop": "Population",
+                },
+                pt: {
+                    "title": "Título do Linulaula Chart",
+                    "buttons/expand": "Expandir",
+                    "buttons/find": "Encontre",
+                    "buttons/colors": "Cores",
+                    "buttons/size": "Tamanho",
+                    "buttons/more_options": "Opções",
+                    "indicator/lex": "Expectables Livappulo",
+                    "indicator/gdp_per_cap": "PIB pers capitous",
+                    "indicator/pop": "Peoples",
+                }
+            }
+        }
     });
 
 }).call(this);
@@ -11529,5 +11534,320 @@
       return worldMap;
     }();
   };
+}.call(this));
+/*!
+ * VIZABI GAPMINDER PREFERENCES (included only in Gapminder build)
+ */
+
+(function() {
+    'use strict';
+    var root = this;
+    var Vizabi = root.Vizabi;
+
+    //DEFAULT OPTIONS
+    var BarChart = this.Vizabi.Tool.get('BarChart');
+    var LineChart = this.Vizabi.Tool.get('LineChart');
+    var BubbleChart = this.Vizabi.Tool.get('BubbleChart');
+
+    BarChart.define('default_options', {
+        state: {
+            time: {
+                start: "1952",
+                end: "2012",
+                value: "2000",
+                step: 1,
+                speed: 300,
+                formatInput: "%Y"
+            },
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["region"]
+                    }
+                }
+            },
+            marker: {
+                space: ["entities", "time"],
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "lex",
+                    scaleType: "linear"
+                },
+                axis_x: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region"
+                }
+            }
+        },
+        data: {
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            buttons: []
+        },
+
+        language: {
+            id: "en",
+            strings: {
+                _defs_: {
+                    en: {
+                        "title": "",
+                        "buttons/expand": "Go Big",
+                        "buttons/unexpand": "Go Small",
+                        "buttons/lock": "Lock",
+                        "buttons/find": "Find",
+                        "buttons/colors": "Colors",
+                        "buttons/size": "Size",
+                        "buttons/axes": "Axes",
+                        "buttons/more_options": "Options",
+                        "indicator/lex": "Life expectancy",
+                        "indicator/gdp_per_cap": "GDP per capita",
+                        "indicator/pop": "Population",
+                        "indicator/_default": "Value",
+                        "indicator/geo.region": "Region",
+                        "indicator/geo": "Geo code",
+                        "indicator/time": "",
+                        "indicator/geo.category": "Geo category"
+                    }
+                }
+            }
+        }
+    });
+
+    LineChart.define('default_options', {
+        state: {
+            time: {
+                start: 1990,
+                end: 2012,
+                value: 2012,
+                step: 1,
+                speed: 300,
+                formatInput: "%Y"
+            },
+            //entities we want to show
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["region"]
+                    }
+                }
+            },
+            //how we show it
+            marker: {
+                space: ["entities", "time"],
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "gdp_per_cap",
+                    scaleType: "log"
+                },
+                axis_x: {
+                    use: "indicator",
+                    which: "time",
+                    scaleType: "time"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region"
+                },
+                color_shadow: {
+                    use: "property",
+                    which: "geo.region"
+                }
+            }
+        },
+
+        data: {
+            //reader: "waffle-server",
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            'vzb-tool-line-chart': {
+                entity_labels: {
+                    min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+                },
+                whenHovering: {
+                    hideVerticalNow: 0,
+                    showProjectionLineX: true,
+                    showProjectionLineY: true,
+                    higlightValueX: true,
+                    higlightValueY: true,
+                    showTooltip: 0
+                }
+            },
+            buttons: []
+        },
+
+        //language properties
+        language: {
+            id: "en",
+            strings: {
+                en: {
+                    "title": "Line Chart Title",
+                    "buttons/find": "Find",
+                    "buttons/expand": "Expand",
+                    "buttons/colors": "Colors",
+                    "buttons/size": "Size",
+                    "buttons/more_options": "Options",
+                    "indicator/lex": "Life expectancy",
+                    "indicator/gdp_per_cap": "GDP per capita",
+                    "indicator/pop": "Population",
+                },
+                pt: {
+                    "title": "Título do Linulaula Chart",
+                    "buttons/expand": "Expandir",
+                    "buttons/find": "Encontre",
+                    "buttons/colors": "Cores",
+                    "buttons/size": "Tamanho",
+                    "buttons/more_options": "Opções",
+                    "indicator/lex": "Expectables Livappulo",
+                    "indicator/gdp_per_cap": "PIB pers capitous",
+                    "indicator/pop": "Peoples",
+                    "indicator/_default": "Value"
+                }
+            }
+        }
+    });
+
+    BubbleChart.define('default_options', {
+
+        state: {
+            time: {
+                start: "1990",
+                end: "2012",
+                value: "2000",
+                step: 1,
+                speed: 300,
+                formatInput: "%Y",
+                round: "ceil",
+                trails: true,
+                lockNonSelected: 0,
+                adaptMinMaxZoom: false
+            },
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["*"],
+                        "geo.cat": ["country"]
+                    }
+                }
+            },
+            marker: {
+                space: ["entities", "time"],
+                type: "geometry",
+                shape: "circle",
+                label: {
+                    use: "property",
+                    which: "geo.name"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "lex",
+                    scaleType: "linear",
+                    unit: "years"
+                },
+                axis_x: {
+                    use: "indicator",
+                    which: "gdp_per_cap",
+                    scaleType: "log",
+                    unit: "$/year/person"
+                },
+                color: {
+                    use: "property",
+                    which: "geo.region",
+                    scaleType: "ordinal",
+                    unit: ""
+                },
+                size: {
+                    use: "indicator",
+                    which: "pop",
+                    scaleType: "linear",
+                    max: 0.75,
+                    unit: ""
+                }
+            }
+        },
+        data: {
+            //reader: "waffle-server",
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+        },
+
+        ui: {
+            'vzb-tool-bubble-chart': {
+                whenHovering: {
+                    showProjectionLineX: true,
+                    showProjectionLineY: true,
+                    higlightValueX: true,
+                    higlightValueY: true
+                },
+                labels: {
+                    autoResolveCollisions: true,
+                    dragging: true
+                }
+            },
+            buttons: []
+        },
+
+        language: {
+            id: "en",
+            strings: {
+                en: {
+                    "title": "Bubble Chart Title",
+                    "buttons/expand": "Go big",
+                    "buttons/unexpand": "Go small",
+                    "buttons/trails": "Trails",
+                    "buttons/lock": "Lock",
+                    "buttons/find": "Find",
+                    "buttons/deselect": "Deselect",
+                    "buttons/ok": "OK",
+                    "buttons/colors": "Colors",
+                    "buttons/size": "Size",
+                    "buttons/axes": "Axes",
+                    "buttons/more_options": "Options",
+                    "indicator/lex": "Life expectancy",
+                    "indicator/gdp_per_cap": "GDP per capita",
+                    "indicator/pop": "Population",
+                    "indicator/_default": "Value",
+                    "indicator/geo.region": "Region",
+                    "indicator/geo": "Geo code",
+                    "indicator/time": "Time",
+                    "indicator/geo.category": "Geo category",
+                    "scaletype/linear": "Linear",
+                    "scaletype/log": "Logarithmic",
+                    "scaletype/genericLog": "Generic log",
+                    "scaletype/time": "Time",
+                    "scaletype/ordinal": "Ordinal",
+                    "color/geo.region/asi": "Asia",
+                    "color/geo.region/eur": "Europe",
+                    "color/geo.region/ame": "Americas",
+                    "color/geo.region/afr": "Afrika",
+                    "color/geo.region/_default": "Other"
+                }
+            }
+        }
+    });
+
+
 }.call(this));
 //# sourceMappingURL=vizabi.js.map
