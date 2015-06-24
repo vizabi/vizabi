@@ -4,8 +4,6 @@
   "undef": true,
   "devel": true,
   "globals": {
-    "define": true,
-    "require": true,
-    "_vzb_available_plugins": true
+    "d3": true
   }
 }

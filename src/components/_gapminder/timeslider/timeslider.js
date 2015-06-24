@@ -11,6 +11,7 @@
     var Vizabi = root.Vizabi;
     var Promise = Vizabi.Promise;
     var utils = Vizabi.utils;
+    var precision = 3;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) {
@@ -26,13 +27,13 @@
     var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
     var time_formats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%b"),
-        "week": d3.time.format("week %U"),
-        "day": d3.time.format("%d/%m/%Y"),
-        "hour": d3.time.format("%d/%m/%Y %H"),
-        "minute": d3.time.format("%d/%m/%Y %H:%M"),
-        "second": d3.time.format("%d/%m/%Y %H:%M:%S")
+        "year": "%Y",
+        "month": "%b",
+        "week": "week %U",
+        "day": "%d/%m/%Y",
+        "hour": "%d/%m/%Y %H",
+        "minute": "%d/%m/%Y %H:%M",
+        "second": "%d/%m/%Y %H:%M:%S"
     };
 
     //margins for slider
@@ -78,9 +79,12 @@
                     if((['change:time:start','change:time:end']).indexOf(evt) !== -1) {
                         _this.changeLimits();
                     }
-                    _this.changeTime();
-                    var transition = _this.model.time.playing;
-                    _this._setHandle(transition);
+                    _this._optionClasses();
+
+                    //only set handle position if change is external
+                    if(!_this._dragging) {
+                        _this._setHandle(_this.model.time.playing);
+                    }
                 }
             };
 
@@ -95,7 +99,7 @@
             // Same constructor as the superclass
             this._super(config, context);
 
-
+            this._dragging = false;
             //defaults
             this.width = 0;
             this.height = 0;
@@ -135,10 +139,10 @@
                 .x(this.xScale)
                 .extent([0, 0])
                 .on("brush", function() {
-                    utils.throttle(brushed.bind(this), 10);
+                    utils.throttle(brushed.bind(this), 30);
                 })
                 .on("brushend", function() {
-                    utils.throttle(brushedEnd.bind(this), 10);
+                    utils.throttle(brushedEnd.bind(this), 30);
                 });
 
             //Slide
@@ -171,6 +175,7 @@
             var play = this.element.select(".vzb-ts-btn-play");
             var pause = this.element.select(".vzb-ts-btn-pause");
             var _this = this;
+            var time = this.model.time;
 
             play.on('click', function() {
                 _this.model.time.play();
@@ -180,7 +185,9 @@
                 _this.model.time.pause();
             });//format
 
-            this.format = time_formats[this.model.time.unit];
+            var fmt = time.formatOutput || time_formats[time.unit];
+            this.format = d3.time.format(fmt);
+
             this.changeLimits();
             this.changeTime();
             this.resize();
@@ -261,17 +268,23 @@
                 }
 
                 var value = _this.brush.extent()[0];
+
                 //set brushed properties
                 if (d3.event.sourceEvent) {
-                    value = _this.xScale.invert(d3.mouse(this)[0]);
+                    _this._dragging = true;
+                    var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+                    value = _this.xScale.invert(posX);
+
+                    //set handle position
+                    _this.handle.attr("cx", posX);
+                    _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
+                    _this.valueText.text(_this.format(value));
                 }
 
                 //set time according to dragged position
                 if (value - _this.model.time.value !== 0) {
                     _this._setTime(value);
                 }
-                //position handle
-                _this._setHandle(_this.model.time.playing);
             };
         },
 
@@ -286,6 +299,7 @@
                 _this.model.time.pause();
                 _this.element.classed(class_dragging, false);
                 _this.model.time.snap();
+                _this._dragging = false;
             };
         },
 
@@ -303,13 +317,25 @@
             var new_pos = this.xScale(value);
             var speed = new_pos>old_pos? this.model.time.speed : 0;
 
-            if (transition) {
+
+            if(transition) {
                 this.handle.attr("cx", old_pos)
                     .transition()
                     .duration(speed)
                     .ease("linear")
                     .attr("cx", new_pos);
+            }
+            else {
+                this.handle.attr("cx", new_pos);
+            }
 
+            var txtWidth = this.valueText.node().getBoundingClientRect().width;
+            var sliderWidth = this.slider.node().getBoundingClientRect().width;
+            var lmt_min = txtWidth/2;
+            var lmt_max = sliderWidth - lmt_min;
+            var new_mod = (new_pos < lmt_min) ? (lmt_min - new_pos) : ((new_pos > lmt_max) ? (lmt_max - new_pos) : 0);
+
+            if (transition && new_mod === 0 ) {
                 this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
                     .transition()
                     .duration(speed)
@@ -317,8 +343,7 @@
                     .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
 
             } else {
-                this.handle.attr("cx", new_pos);
-                this.valueText.attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
+                this.valueText.attr("transform", "translate(" + (new_pos + new_mod) + "," + (this.height / 2) + ")");
             }
         },
 

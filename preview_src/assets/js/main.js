@@ -25,10 +25,25 @@ document.getElementById("vzbp-btn-share").onclick = shareLink;
 //share link
 function shareLink() {
     updateURL();
+
+    //TINYURL
+    // var address = "http://tinyurl.com/api-create.php",
+    //     params = {
+    //         url: encodeURIComponent(document.URL)
+    //     };
+    // getJSON(address, params, function(response) {
+    //     if (response) {
+    //         prompt("Copy the following link: ", response);
+    //     } else {
+    //         prompt("Copy the following link: ", window.location);
+    //     }
+    // });
+
+    //BITLY
     var address = "https://api-ssl.bitly.com/v3/shorten",
         params = {
             access_token: "8765eb3be5b975830e72af4e0949022cb53d9596",
-            longUrl: document.URL
+            longUrl: encodeURIComponent(document.URL)
         };
     getJSON(address, params, function(response) {
         if (response.status_code == "200") {

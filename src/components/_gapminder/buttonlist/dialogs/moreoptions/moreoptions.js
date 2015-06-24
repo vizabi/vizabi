@@ -67,6 +67,13 @@
         
         readyOnce: function() {
             this.element = d3.select(this.element);
+            this.resize();
+        },
+
+        resize: function() {
+            var totalHeight = this.root.element.offsetHeight - 200;
+            var content = this.element.select('.vzb-dialog-content');
+            content.style('max-height', totalHeight+'px');
         }
     }));
 

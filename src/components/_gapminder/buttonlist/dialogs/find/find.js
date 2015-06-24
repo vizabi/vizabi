@@ -49,6 +49,8 @@
             this.deselect_all = this.element.select("#vzb-find-deselect");
             this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
+            this.KEY = this.model.state.entities.getDimension();
+            
             var _this = this;
             this.input_search.on("input", function() {
                 _this.showHideSearch();
@@ -74,13 +76,14 @@
         //TODO: split update in render and update methods
         update: function() {
             var _this = this;
+            var KEY = this.KEY;
             var selected = this.model.state.entities.getSelected();
             var labelModel = this.model.state.marker.label;
             var data = labelModel.getItems().map(function(d) {
-                return {
-                    geo: d["geo"],
-                    name: labelModel.getValue(d)
-                };
+                var pointer = {};
+                pointer[KEY] = d[KEY];
+                pointer.name = labelModel.getValue(d);
+                return pointer;
             });
 
             //sort data alphabetically
@@ -100,10 +103,10 @@
                 .attr("type", "checkbox")
                 .attr("class", "vzb-find-item")
                 .attr("id", function(d) {
-                    return "-find-" + d.geo;
+                    return "-find-" + d[KEY];
                 })
                 .property("checked", function(d) {
-                    return (selected.indexOf(d.geo) !== -1);
+                    return (selected.indexOf(d[KEY]) !== -1);
                 })
                 .on("change", function(d) {
                     _this.model.state.entities.selectEntity(d);
@@ -111,7 +114,7 @@
 
             items.append("label")
                 .attr("for", function(d) {
-                    return "-find-" + d.geo;
+                    return "-find-" + d[KEY];
                 })
                 .text(function(d) {
                     return d.name;

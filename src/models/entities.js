@@ -57,7 +57,7 @@
          * @returns {String} String with dimension
          */
         getDimension: function() {
-            return this.show.dim;
+            return this.dim;
         },
 
         /**
@@ -65,7 +65,7 @@
          * @returns {Array} Array of unique values
          */
         getFilter: function() {
-            return this.show.filter.getObject();
+            return this.show.getObject();
         },
 
         /**
@@ -82,7 +82,7 @@
         /**
          * Selects or unselects an entity from the set
          */
-        selectEntity: function(d, timeFormatter) {
+        selectEntity: function(d, timeDim, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (this.isSelected(d)) {
@@ -93,8 +93,8 @@
                 var added = {};
                 added[dimension] = value;
                 added["labelOffset"] = [0, 0];
-                if (timeFormatter) {
-                    added["trailStartTime"] = timeFormatter(d.time);
+                if (timeDim && timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d[timeDim]);
                 }
                 this.select = this.select.concat(added);
             }
@@ -144,14 +144,14 @@
         /**
          * Highlights an entity from the set
          */
-        highlightEntity: function(d, timeFormatter) {
+        highlightEntity: function(d, timeDim, timeFormatter) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (!this.isHighlighted(d)) {
                 var added = {};
                 added[dimension] = value;
-                if (timeFormatter) {
-                    added["trailStartTime"] = timeFormatter(d.time);
+                if (timeDim && timeFormatter) {
+                    added["trailStartTime"] = timeFormatter(d[timeDim]);
                 }
                 this.brush = this.brush.concat(added);
             }
@@ -160,7 +160,7 @@
         /**
          * Unhighlights an entity from the set
          */
-        unhighlightEntity: function(d, timeFormatter) {
+        unhighlightEntity: function(d) {
             var dimension = this.getDimension();
             var value = d[dimension];
             if (this.isHighlighted(d)) {

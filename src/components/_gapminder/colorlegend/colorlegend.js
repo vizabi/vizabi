@@ -35,30 +35,22 @@
             
             this.model_binds = {
                 "change:color": function(evt) {
-                    if(_this.model.color.which != _this.which_1 
-                       || _this.model.color.scaleType != _this.scaleType_1 ) {
-                        _this.needsUpdate = true;
-                        _this.which_1 = _this.model.color.which;
-                        _this.scaleType_1 = _this.model.color.scaleType;
-                    }
+                    _this.updateView();
                 },
                 "change:language": function(evt) {
                     _this.updateView();
                 },
                 "ready": function(evt) {
                     if(!_this._readyOnce) return;
-                    if(_this.needsUpdate){
-                        _this.updateView();
-                        _this.needsUpdate = false;
-                    }
+                     _this.updateView();
                 }   
             }
             
             //contructor is the same as any component
             this._super(config, context);
         },
-
-
+        
+        
         readyOnce: function() {
             var _this = this;
             this.element = d3.select(this.element);
@@ -80,6 +72,7 @@
         updateView: function(){
             var _this = this;
             this.translator = this.model.language.getTFunction();
+            var KEY = this.model.entities.getDimension();
 
             var palette = this.model.color.palette;
             
@@ -140,35 +133,35 @@
                 this.rainbowEl.classed("vzb-hidden", true);
             }
             
+            //TODO: is it okay that "geo.region" is hardcoded?
             if(this.model.color[INDICATOR] == "geo.region"){
                 var regions = this.worldmapEl.classed("vzb-hidden", false)
-                    .select("svg").selectAll("g");
+                    .select("svg").selectAll("path");
                 regions.each(function(){
                     var view = d3.select(this);
                     var color = palette[view.attr("id")];
-                    view.selectAll("path").style("fill",color);
+                    view.style("fill",color);
                 })
                 .style("opacity", 0.8)
                 .on("mouseover", function(){
                     var view = d3.select(this);
                     var region = view.attr("id");
-                    regions.selectAll("path").style("opacity",0.5);
-                    view.selectAll("path").style("opacity",1);
+                    regions.style("opacity",0.5);
+                    view.style("opacity",1);
                     
-                    
-                    //TODO: accessing _filtered is an ugly hack. should be optimised later
-                    var highlight = utils.values(_this.model.color._filtered)
+                    var filtered = _this.model.color.getFilteredItems();
+                    var highlight = utils.values(filtered)
                         //returns a function over time. pick the last time-value
                         .map(function(d){return d[d.length-1]})
                         //filter so that only countries of the correct region remain 
                         .filter(function(f){return f["geo.region"]==region})
-                        //fish out the "geo" field, leave the rest behind
-                        .map(function(d){return {geo: d.geo}});
+                        //fish out the "key" field, leave the rest behind
+                        .map(function(d){return utils.clone(d,[KEY]) });
                     
                     _this.model.entities.setHighlighted(highlight);
                 })
                 .on("mouseout", function(){
-                    regions.selectAll("path").style("opacity",0.8);
+                    regions.style("opacity",0.8);
                     _this.model.entities.clearHighlighted(); 
                 })
                 .on("click", function(d){

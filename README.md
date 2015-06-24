@@ -42,7 +42,7 @@ grunt build
 
 You can find the build output under ```dist/```.
 
-In order to run the project in development mode, type the following:
+In order to run the project in **development mode**, type the following:
 ```sh
 grunt dev
 ```

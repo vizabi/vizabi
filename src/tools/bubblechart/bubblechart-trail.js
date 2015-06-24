@@ -1,7 +1,6 @@
 (function() {
     
-    var root = this;
-    var Vizabi = root.Vizabi;
+    var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
     
     Vizabi.Helper.extend("gapminder-bublechart-trails", {
@@ -26,6 +25,7 @@
             
             create: function(selection) {
                 var _this = this.context;
+                var KEY = _this.KEY;
 
                 //quit if the function is called accidentally
                 if(!_this.model.time.trails || !_this.model.entities.select.length) return;
@@ -42,9 +42,9 @@
 
                     var trailSegmentData = timePoints.map(function(m){return {t: _this.timeFormatter.parse("" + m)} });
 
-                    if (_this.cached[d.geo] == null) _this.cached[d.geo] = {};
+                    if (_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
 
-                    _this.cached[d.geo].maxMinValues = {
+                    _this.cached[d[KEY]].maxMinValues = {
                         valueXmax: null,
                         valueXmin: null,
                         valueYmax: null,
@@ -52,10 +52,10 @@
                         valueSmax: null
                     };
 
-                    var maxmin = _this.cached[d.geo].maxMinValues;
+                    var maxmin = _this.cached[d[KEY]].maxMinValues;
 
                     var trail = _this.entityTrails
-                        .filter(function(f) {return f.geo == d.geo})
+                        .filter(function(f) {return f[KEY] == d[KEY]})
                         .selectAll("g")
                         .data(trailSegmentData);
 
@@ -64,11 +64,16 @@
                     trail.enter().append("g")
                         .attr("class", "trailSegment")
                         .on("mousemove", function(segment, index) {
-                            var geo = d3.select(this.parentNode).data()[0].geo;
-                            _this._axisProjections({ geo: geo, time: segment.t });
+                            var _key = d3.select(this.parentNode).data()[0][KEY];
+                        
+                            var pointer = {};
+                            pointer[KEY] = _key;
+                            pointer.time = segment.t;
+                        
+                            _this._axisProjections(pointer);
                             _this._setTooltip(_this.timeFormatter(segment.t));
                             _this.entityLabels
-                                .filter(function(f) {return f.geo == geo})
+                                .filter(function(f) {return f[KEY] == _key})
                                 .classed("vzb-highlighted", true);
                         })
                         .on("mouseout", function(segment, index) {
@@ -85,10 +90,14 @@
 
                     trail.each(function(segment, index) {
                         //update segment data (maybe for new indicators)
-                        segment.valueY = _this.model.marker.axis_y.getValue({geo: d.geo,time: segment.t});
-                        segment.valueX = _this.model.marker.axis_x.getValue({geo: d.geo,time: segment.t});
-                        segment.valueS = _this.model.marker.size.getValue({geo: d.geo,time: segment.t});
-                        segment.valueC = _this.model.marker.color.getValue({geo: d.geo,time: segment.t});
+                        var pointer = {};
+                        pointer[KEY] = d[KEY];
+                        pointer.time = segment.t;
+                        
+                        segment.valueY = _this.model.marker.axis_y.getValue(pointer);
+                        segment.valueX = _this.model.marker.axis_x.getValue(pointer);
+                        segment.valueS = _this.model.marker.size.getValue(pointer);
+                        segment.valueC = _this.model.marker.color.getValue(pointer);
 
                         //update min max frame: needed to zoom in on the trail
                         if (segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;
@@ -107,6 +116,7 @@
             
             run: function(actions, selection, duration){
                 var _this = this.context;
+                var KEY = _this.KEY;
             
             
                 //quit if function is called accidentally
@@ -120,7 +130,7 @@
                 selection.forEach(function(d) {
 
                     var trail = _this.entityTrails
-                        .filter(function(f) { return f.geo == d.geo })
+                        .filter(function(f) { return f[KEY] == d[KEY] })
                         .selectAll("g")
 
                     //do all the actions over "trail"
@@ -151,7 +161,7 @@
                         .attr("cx", _this.xScale(segment.valueX))
                         .attr("r", utils.areaToRadius(_this.sScale(segment.valueS)));
 
-                    var next = this.parentNode.children[index + 1];
+                    var next = this.parentNode.childNodes[(index+1)];
                     if (next == null) return;
                     next = next.__data__;
 
@@ -183,6 +193,7 @@
 
             _findVisible: function(trail, duration, d) {
                 var _this = this.context;
+                var KEY = _this.KEY;
 
                 var firstVisible = true;
                 var trailStartTime = _this.timeFormatter.parse("" + d.trailStartTime);
@@ -196,9 +207,9 @@
                         || (d.trailStartTime - _this.timeFormatter(_this.time) >= 0);
 
                     if(firstVisible && !segment.transparent){
-                        _this.cached[d.geo].labelX0 = segment.valueX;
-                        _this.cached[d.geo].labelY0 = segment.valueY;
-                        _this.cached[d.geo].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
+                        _this.cached[d[KEY]].labelX0 = segment.valueX;
+                        _this.cached[d[KEY]].labelY0 = segment.valueY;
+                        _this.cached[d[KEY]].scaledS0 = utils.areaToRadius(_this.sScale(segment.valueS));
                         firstVisible = false;
                     }
                 });
@@ -207,6 +218,7 @@
 
             _reveal: function(trail, duration, d) {
                 var _this = this.context;
+                var KEY = _this.KEY;
 
                 trail.each(function(segment, index){
 
@@ -216,12 +228,12 @@
 
                     if (segment.transparent) return;
 
-                    var next = this.parentNode.children[index + 1];
+                    var next = this.parentNode.childNodes[(index + 1)];
                     if (next == null) return;
                     next = next.__data__;
 
                     if (segment.t - _this.time <= 0 && _this.time - next.t <= 0) {
-                        next = _this.cached[d.geo];
+                        next = _this.cached[d[KEY]];
 
                         view.select("line")
                             .attr("x2", _this.xScale(segment.valueX))

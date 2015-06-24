@@ -1,12 +1,11 @@
-describe("* Tool: Line Chart", function() {
-
-    var placeholder, utils, tool;
-
+describe('* Tool: Line Chart', function() {
+    var placeholder;
+    var utils;
+    var tool;
     beforeAll(function(done) {
         initializeDOM();
-        placeholder = document.getElementById("vzbp-placeholder");
+        placeholder = document.getElementById('vzbp-placeholder');
         utils = Vizabi.utils;
-
         tool = Vizabi('LineChart', placeholder, {
             bind: {
                 'ready': function() {
@@ -16,14 +15,9 @@ describe("* Tool: Line Chart", function() {
                 }
             }
         });
-
     });
-
-    it("should render line chart correctly in placeholder", function() {
+    it('should render line chart correctly in placeholder', function() {
         var bc = placeholder.querySelectorAll('.vzb-lc-lines');
         expect(bc.length > 0).toBeTruthy();
-    });
-
-    //TODO: Testing for detailed features, interaction, etc
-
+    }); //TODO: Testing for detailed features, interaction, etc
 });

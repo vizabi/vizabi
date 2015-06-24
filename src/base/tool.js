@@ -2,22 +2,18 @@
  * VIZABI COMPONENT
  * Base Component
  */
-
 (function() {
-
-    "use strict";
-
-    var class_loading = "vzb-loading";
-    var class_loading_data = "vzb-loading";
-    var class_loading_error = "vzb-loading-error";
-    var class_placeholder = "vzb-placeholder";
-    var class_buttons_off = "vzb-buttonlist-off";
+    'use strict';
+    var class_loading = 'vzb-loading';
+    var class_loading_data = 'vzb-loading';
+    var class_loading_error = 'vzb-loading-error';
+    var class_placeholder = 'vzb-placeholder';
+    var class_buttons_off = 'vzb-buttonlist-off';
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
     var templates = {};
     var toolsList = {};
-
     //tool model is quite simple and doesn't need to be registered
     var ToolModel = Vizabi.Model.extend({
         /**
@@ -27,50 +23,40 @@
          * @param {Function|Array} validade validate rules
          */
         init: function(values, defaults, binds, validate) {
-            this._id = utils.uniqueId("tm");
-            this._type = "tool";
-
+            this._id = utils.uniqueId('tm');
+            this._type = 'tool';
             //generate validation function
             this.validate = generateValidate(this, validate);
-
             //default submodels
             values = values || {};
             defaults = defaults || {};
             values = defaultOptions(values, defaults);
-
             //constructor is similar to model
             this._super(values, null, binds, true);
-
             // change language
             if (values.language) {
                 var _this = this;
-                this.on("change:language", function() {
-                    _this.trigger("translate");
+                this.on('change:language', function() {
+                    _this.trigger('translate');
                 });
             }
         }
     });
-
     //tool
     var Tool = Vizabi.Component.extend({
-
         /**
          * Initializes the tool
          * @param {Object} placeholder object
          * @param {Object} options Options such as state, data, etc
          */
         init: function(placeholder, options) {
-
-            this._id = utils.uniqueId("t");
+            this._id = utils.uniqueId('t');
             this.layout = new Vizabi.Layout();
-            this.template = this.template || '<div class="vzb-tool vzb-tool-'+this.name+'"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
-
+            this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name + '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
             this.model_binds = this.model_binds || {};
             this.default_options = this.default_options || {};
-
             //bind the validation function with the tool
             var validate = this.validate.bind(this);
-
             var _this = this;
             var callbacks = utils.merge({
                 'change': function(evt, val) {
@@ -99,29 +85,26 @@
                     }
                 }
             }, this.model_binds);
-
             options = options || {};
             this.model = new ToolModel(options, this.default_options, callbacks, validate);
             //ToolModel starts in frozen state. unfreeze;
             this.model.unfreeze();
-
             this.ui = this.model.ui;
-
             this._super({
                 name: this.name || this._id,
                 placeholder: placeholder
             }, this);
-
             this._bindEvents();
             this.render();
             this._setUIOptions();
         },
-
         /**
          * Binds events in model to outside world
          */
         _bindEvents: function() {
-            if (!this.model.bind) return;
+            if (!this.model.bind) {
+                return;
+            }
             this.on(this.model.bind.get());
         },
 
@@ -149,7 +132,6 @@
         getOptions: function() {
             return this.model.getObject() || {};
         },
-
         /**
          * Displays loading class
          */
@@ -158,46 +140,36 @@
                 utils.addClass(this.placeholder, class_loading_data);
             }
         },
-
         /**
          * Removes loading class
          */
         afterLoading: function() {
             utils.removeClass(this.placeholder, class_loading_data);
         },
-
         /**
          * Adds loading error class
          */
         errorLoading: function() {
             utils.addClass(this.placeholder, class_loading_error);
         },
-
         /* ==========================
          * Validation and query
          * ==========================
          */
-
         /**
          * Placeholder for model validation
          */
-        validate: function() {
-            //placeholder for tool validation methods
-        },
-
+        validate: function() {},
         _setUIOptions: function() {
             //add placeholder class
             utils.addClass(this.placeholder, class_placeholder);
-
             //add-remove buttonlist class
-            if(!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
+            if (!this.ui || !this.ui.buttons || !this.ui.buttons.length) {
                 utils.addClass(this.element, class_buttons_off);
             } else {
                 utils.removeClass(this.element, class_buttons_off);
             }
         }
-
-
     });
 
     /* ==========================
@@ -219,17 +191,16 @@
             var c = arguments[0] || 0;
             //TODO: remove validation hotfix
             //while setting this.model is not available
-            if(!this._readyOnce) {
+            if (!this._readyOnce) {
                 validate(this);
-            }
-            else {
+            } else {
                 validate();
             }
             var model2 = JSON.stringify(m.getObject());
             if (c >= max) {
-                utils.error("Max validation loop.");
+                utils.error('Max validation loop.');
             } else if (model !== model2) {
-                validate_func.call(this, [++c]);
+                validate_func.call(this, [c += 1]);
             }
         }
         return validate_func;
@@ -244,66 +215,60 @@
      * Generates a valid state based on default options
      */
     function defaultOptions(values, defaults) {
-
-        var keys = Object.keys(defaults),
-            size = keys.length,
-            field, blueprint, original, type;
-
-        for(var i=0; i<size; i++) {
-
+        var keys = Object.keys(defaults);
+        var size = keys.length;
+        var field;
+        var blueprint;
+        var original;
+        var type;
+        for (var i = 0; i < size; i += 1) {
             field = keys[i];
-            if(field === "_defs_") continue;
-
+            if (field === '_defs_') {
+                continue;
+            }
             blueprint = defaults[field];
             original = values[field];
             type = typeof blueprint;
-
-            if(type === "object") {
-                type = (utils.isPlainObject(blueprint) && blueprint._defs_) ? "object" : utils.isArray(blueprint) ? "array" : "model";
+            if (type === 'object') {
+                type = utils.isPlainObject(blueprint) && blueprint._defs_ ? 'object' : utils.isArray(blueprint) ? 'array' : 'model';
             }
-            
-            if(typeof original === "undefined") {
-                if(type !== "object" && type !== "model") {
+            if (typeof original === 'undefined') {
+                if (type !== 'object' && type !== 'model') {
                     values[field] = blueprint;
-                }
-                else {
+                } else {
                     values[field] = defaultOptions({}, blueprint);
                 }
             }
-
             original = values[field];
-
-            if (type === "number" && isNaN(original)) {
+            if (type === 'number' && isNaN(original)) {
                 values[field] = 0;
-            } else if (type === "string" && typeof original !== 'string') {
-                values[field] = "";
-            } else if (type === "array" && !utils.isArray(original)) {
+            } else if (type === 'string' && typeof original !== 'string') {
+                values[field] = '';
+            } else if (type === 'array' && !utils.isArray(original)) {
                 values[field] = [];
-            } else if (type === "model") {
+            } else if (type === 'model') {
                 if (!utils.isObject(original)) {
                     values[field] = {};
                 }
                 values[field] = defaultOptions(values[field], blueprint);
-            } else if (type === "object") {
-                if (!utils.isObject(original)) {
-                    values[field] = {};
+            } else if (type === 'object') {
+                if (!utils.isObject(original) || Object.keys(original).length === 0) {
+                    original = false; //will be overwritten
                 }
                 if (!utils.isObject(blueprint._defs_)) {
                     blueprint._defs_ = {};
                 }
-                values[field] = blueprint._defs_ || values[field];
+                values[field] = original || blueprint._defs_;
             }
         }
-
         return values;
     }
 
+    //utility function to check if a component is a tool
+    //TODO: Move to utils?
     Tool.isTool = function(c) {
-        return (c._id && c._id[0] === 't');
-    }
-
+        return c._id && c._id[0] === 't';
+    };
 
     Vizabi.Tool = Tool;
-
-
-}).call(this);
+}.call(this));

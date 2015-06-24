@@ -69,6 +69,7 @@
     }
     .vzb-dialog-input {
         @include border-radius(4px);
+        @include box-sizing(border-box);
         border: 1px solid rgba($vzb-color-grey, .4);
         padding: 9px;
         font-size: 13px;

@@ -2,19 +2,17 @@
  * VIZABI LAYOUT
  * Manages Vizabi layout profiles and classes
  */
-
 (function() {
 
-    "use strict";
+    'use strict';
 
     var root = this;
     var Vizabi = root.Vizabi;
     var utils = Vizabi.utils;
-
     //classes are vzb-portrait, vzb-landscape...
-    var class_prefix = "vzb-";
-    var class_portrait = "vzb-portrait";
-    var class_lansdcape = "vzb-landscape";
+    var class_prefix = 'vzb-';
+    var class_portrait = 'vzb-portrait';
+    var class_lansdcape = 'vzb-landscape';
 
     var screen_sizes = {
         small: {
@@ -37,20 +35,17 @@
          * Initializes the layout manager
          */
         init: function() {
-
-            this._container = null; //dom element
+            this._container = null;
+            //dom element
             this._curr_profile = null;
             this._prev_size = {};
-
             //resize when window resizes
             var _this = this;
-
             root.addEventListener('resize', function() {
                 if (_this._container) {
                     _this.setSize();
                 }
             });
-
             this._super();
         },
 
@@ -61,9 +56,9 @@
             var _this = this;
             var width = this._container.clientWidth;
             var height = this._container.clientHeight;
-
-            if (this._prev_size && this._prev_size.width === width && this._prev_size.height === height) return;
-
+            if (this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
+                return;
+            }
             utils.forEach(screen_sizes, function(range, size) {
                 //remove class
                 utils.removeClass(_this._container, class_prefix + size);
@@ -72,23 +67,18 @@
                     _this._curr_profile = size;
                 }
             });
-
             //update size class
-            utils.addClass(this._container, class_prefix+this._curr_profile);
-
+            utils.addClass(this._container, class_prefix + this._curr_profile);
             //toggle, untoggle classes based on orientation
-             if(width < height) {
+            if (width < height) {
                 utils.addClass(this._container, class_portrait);
                 utils.removeClass(this._container, class_lansdcape);
-            }
-            else {
+            } else {
                 utils.addClass(this._container, class_lansdcape);
                 utils.removeClass(this._container, class_portrait);
             }
-
             this._prev_size.width = width;
             this._prev_size.height = height;
-
             this.trigger('resize');
         },
 
@@ -108,9 +98,8 @@
         currentProfile: function() {
             return this._curr_profile;
         }
-
     });
-
+    
     Vizabi.Layout = Layout;
 
-}).call(this);
+}.call(this));

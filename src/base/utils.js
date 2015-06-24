@@ -2,14 +2,13 @@
  * VIZABI UTILS
  * Util functions
  */
-
 (function() {
-
-    "use strict";
-
+    
+    'use strict';
+    
     var root = this;
     var Vizabi = root.Vizabi;
-
+    
     Vizabi.utils = {
 
         /*
@@ -17,12 +16,12 @@
          * @param {String} prefix
          * @returns {String} id
          */
-        uniqueId: (function() {
+        uniqueId: function() {
             var id = 0;
             return function(p) {
-                return (p) ? p + id++ : id++;
+                return p ? p + (id += 1) : id += 1;
             };
-        })(),
+        }(),
 
         /*
          * checks whether obj is a DOM element
@@ -61,7 +60,7 @@
          * @returns {Boolean}
          */
         isDate: function(arg) {
-            return (arg instanceof Date);
+            return arg instanceof Date;
         },
 
         /*
@@ -70,10 +69,9 @@
          * @returns {Boolean}
          */
         isString: function(arg) {
-            return (typeof arg === "string");
+            return typeof arg === 'string';
         },
-        
-        
+
         /*
          * checks whether arg is a NaN
          * @param {*} arg
@@ -82,9 +80,9 @@
          */
         isNaN: function(arg) {
             // A `NaN` primitive is the only number that is not equal to itself
-            return this.isNumber(arg) && arg != +arg;
+            return this.isNumber(arg) && arg !== +arg;
         },
-        
+
         /*
          * checks whether arg is a number. NaN is a number too
          * @param {*} arg
@@ -93,10 +91,7 @@
          * dependencies are resolved and included here
          */
         isNumber: function(arg) {
-            return typeof arg == 'number' 
-                   || ((!!arg && typeof arg == 'object') 
-                        && Object.prototype.toString.call(arg) == '[object Number]'
-                      );
+            return typeof arg === 'number' || !!arg && typeof arg === 'object' && Object.prototype.toString.call(arg) === '[object Number]';
         },
 
         /*
@@ -105,8 +100,11 @@
          * @returns {Boolean}
          */
         isPlainObject: function(obj) {
-            return obj != null &&
-                Object.prototype.toString.call(obj) === "[object Object]";
+            return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
+        },
+
+        roundStep: function(number, step) {
+            return Math.round(number/step) * step;
         },
 
         /*
@@ -116,19 +114,27 @@
          * @param {Object} ctx context object
          */
         forEach: function(obj, callback, ctx) {
-            if (!obj) return;
+            if (!obj) {
+                return;
+            }
             var i;
             if (this.isArray(obj)) {
-                for (i = 0; i < obj.length; i++) {
-                    if (callback.apply(ctx, [obj[i], i]) === false) {
+                for (i = 0; i < obj.length; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[i],
+                            i
+                        ]) === false) {
                         break;
                     }
                 }
             } else {
-                var keys = Object.keys(obj),
-                    size = keys.length;
-                for (i = 0; i < size; i++) {
-                    if (callback.apply(ctx, [obj[keys[i]], keys[i]]) === false) {
+                var keys = Object.keys(obj);
+                var size = keys.length;
+                for (i = 0; i < size; i += 1) {
+                    if (callback.apply(ctx, [
+                            obj[keys[i]],
+                            keys[i]
+                        ]) === false) {
                         break;
                     }
                 }
@@ -188,13 +194,14 @@
          * @param {Array} arr filter keys
          * @returns {Object} cloned object
          */
-        clone: function(src, arr) {
+        clone: function(src, arr, exclude) {
             if (this.isArray(src)) {
                 return src.slice(0);
             }
             var clone = {};
             this.forEach(src, function(value, k) {
-                if (arr && arr.indexOf(k) === -1) {
+                if ((arr && arr.indexOf(k) === -1)
+                  ||(exclude && exclude.indexOf(k) !== -1)) {
                     return;
                 }
                 if (src.hasOwnProperty(k)) {
@@ -231,7 +238,9 @@
          */
         without: function(arr, el) {
             var idx = arr.indexOf(el);
-            if (idx !== -1) arr.splice(idx, 1);
+            if (idx !== -1) {
+                arr.splice(idx, 1);
+            }
             return arr;
         },
 
@@ -248,10 +257,10 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     continue;
@@ -274,16 +283,16 @@
             var a = [];
             if (!func) {
                 func = function(d) {
-                    return d
+                    return d;
                 };
             }
-            for (var i = 0, l = arr.length; i < l; ++i) {
+            for (var i = 0, l = arr.length; i < l; i += 1) {
                 var key = func(arr[i]);
                 if (u.hasOwnProperty(key)) {
                     a.splice(u[key], 1); //remove old item from array
                 }
                 a.push(arr[i]);
-                u[key] = (a.length - 1);
+                u[key] = a.length - 1;
             }
             return a;
         },
@@ -297,7 +306,7 @@
             var found;
             this.forEach(arr, function(i) {
                 if (func(i)) {
-                    found = i
+                    found = i;
                     return false; //break
                 }
             });
@@ -310,18 +319,18 @@
          * @returns {Object} filter properties to use as filter
          */
         filter: function(arr, filter) {
-            var index = -1,
-                length = arr.length,
-                resIndex = -1,
-                result = [],
-                keys = Object.keys(filter),
-                s_keys = keys.length,
-                i, f;
-
-            while (++index < length) {
+            var index = -1;
+            var length = arr.length;
+            var resIndex = -1;
+            var result = [];
+            var keys = Object.keys(filter);
+            var s_keys = keys.length;
+            var i;
+            var f;
+            while ((index += 1) < length) {
                 var value = arr[index];
                 var match = true;
-                for (i = 0; i < s_keys; i++) {
+                for (i = 0; i < s_keys; i += 1) {
                     f = keys[i];
                     if (!value.hasOwnProperty(f) || value[f] !== filter[f]) {
                         match = false;
@@ -329,10 +338,127 @@
                     }
                 }
                 if (match) {
-                    result[++resIndex] = value;
+                    result[resIndex += 1] = value;
                 }
             }
             return result;
+        },
+
+        /*
+         * filters an array based on object properties.
+         * Properties may be arrays determining possible values
+         * @param {Array} arr original array
+         * @returns {Object} filter properties to use as filter
+         */
+        filterAny: function(arr, filter, wildcard) {
+            var index = -1;
+            var length = arr.length;
+            var resIndex = -1;
+            var result = [];
+            var keys = Object.keys(filter);
+            var s_keys = keys.length;
+            var i, f;
+            while ((index += 1) < length) {
+                var value = arr[index];
+                //normalize to array
+                var match = true;
+                for (i = 0; i < s_keys; i += 1) {
+                    f = keys[i];
+                    if (!value.hasOwnProperty(f) || !this.matchAny(value[f], filter[f], wildcard)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    result[resIndex += 1] = value;
+                }
+            }
+            return result;
+        },
+
+        /*
+         * checks if the value matches the comparison value or any in array
+         * compare may be an determining possible values
+         * @param value original value
+         * @param compare value or array
+         * @param {String} wildc wildcard value
+         * @returns {Boolean} try
+         */
+        matchAny: function(values, compare, wildc) {
+            //normalize value
+            if (!this.isArray(values)) values = [values];
+            if (!wildc) wildc = "*"; //star by default
+            var match = false;
+            for (var e = 0; e < values.length; e++) {
+                var value = values[e];
+
+                if (!this.isArray(compare) && value == compare) {
+                    match = true;
+                    break;
+                } else if (this.isArray(compare)) {
+                    var found = -1;
+                    for (var i = 0; i < compare.length; i++) {
+                        var c = compare[i];
+                        if (!this.isArray(c) && (c == value || c === wildc)) {
+                            found = i;
+                            break;
+                        } else if (this.isArray(c)) { //range
+                            var min = c[0];
+                            var max = c[1] || min;
+                            if (value >= min && value <= max) {
+                                found = i;
+                                break;
+                            }
+                        }
+                    }
+                    if (found !== -1) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+            return match;
+        },
+
+        /*
+         * maps all rows according to the formatters
+         * @param {Array} original original dataset
+         * @param {Object} formatters formatters object
+         * @returns {Boolean} try
+         */
+        mapRows: function(original, formatters) {
+
+            var _this = this;
+            function mapRow(value, fmt) {
+                if(!_this.isArray(value)) {
+                    return fmt(value);
+                }
+                else {
+                    var res = [];
+                    for (var i = 0; i < value.length; i++) {
+                        res[i] = mapRow(value[i], fmt);
+                    }
+                    return res;
+                }
+            }
+
+            var columns = Object.keys(formatters);
+            var columns_s = columns.length;
+            original = original.map(function(row) {
+                for (var i = 0; i < columns_s; i++) {
+                    var col = columns[i], new_val;
+                    try {
+                        new_val = mapRow(row[col], formatters[col]);
+                    }
+                    catch(e) {
+                        new_val = row[col];
+                    }
+                    row[col] = new_val;
+                }
+                return row;
+            });
+
+            return original;
         },
 
         /*
@@ -341,7 +467,7 @@
          * @returns {Number} area
          */
         radiusToArea: function(r) {
-            return r * r * Math.PI
+            return r * r * Math.PI;
         },
 
         /*
@@ -350,7 +476,7 @@
          * @returns {Number} radius
          */
         areaToRadius: function(a) {
-            return Math.sqrt(a / Math.PI)
+            return Math.sqrt(a / Math.PI);
         },
 
         /*
@@ -358,7 +484,7 @@
          * @param {String} message
          */
         timeStamp: function(message) {
-            if (root.console && typeof root.console.timeStamp === "function") {
+            if (root.console && typeof root.console.timeStamp === 'function') {
                 root.console.timeStamp(message);
             }
         },
@@ -368,7 +494,7 @@
          * @param {String} message
          */
         warn: function(message) {
-            if (root.console && typeof root.console.warn === "function") {
+            if (root.console && typeof root.console.warn === 'function') {
                 root.console.warn(message);
             }
         },
@@ -378,7 +504,7 @@
          * @param {String} message
          */
         groupCollapsed: function(message) {
-            if (root.console && typeof root.console.groupCollapsed === "function") {
+            if (root.console && typeof root.console.groupCollapsed === 'function') {
                 root.console.groupCollapsed(message);
             }
         },
@@ -388,7 +514,7 @@
          * @param {String} message
          */
         groupEnd: function() {
-            if (root.console && typeof root.console.groupEnd === "function") {
+            if (root.console && typeof root.console.groupEnd === 'function') {
                 root.console.groupEnd();
             }
         },
@@ -398,7 +524,7 @@
          * @param {String} message
          */
         error: function(message) {
-            if (root.console && typeof root.console.error === "function") {
+            if (root.console && typeof root.console.error === 'function') {
                 root.console.error(message);
             }
         },
@@ -408,8 +534,10 @@
          * @param {Number} number
          */
         countDecimals: function(number) {
-            if (Math.floor(number.valueOf()) === number.valueOf()) return 0;
-            return number.toString().split(".")[1].length || 0;
+            if (Math.floor(number.valueOf()) === number.valueOf()) {
+                return 0;
+            }
+            return number.toString().split('.')[1].length || 0;
         },
 
         /*
@@ -420,7 +548,8 @@
         addClass: function(el, className) {
             if (el.classList) {
                 el.classList.add(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className += ' ' + className;
             }
         },
@@ -433,7 +562,8 @@
         removeClass: function(el, className) {
             if (el.classList) {
                 el.classList.remove(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
             }
         },
@@ -463,7 +593,8 @@
         hasClass: function(el, className) {
             if (el.classList) {
                 return el.classList.contains(className);
-            } else { //IE<10
+            } else {
+                //IE<10
                 return new RegExp('(^| )' + className + '( |$)', 'gi').test(el.className);
             }
         },
@@ -473,19 +604,19 @@
          * @param {Function} func
          * @param {Number} ms duration 
          */
-        throttle: (function() {
+        throttle: function() {
             var isThrottled = {};
             return function(func, ms) {
                 if (isThrottled[func]) {
-                    return
-                };
+                    return;
+                }
                 isThrottled[func] = true;
                 setTimeout(function() {
                     isThrottled[func] = false;
                 }, ms);
                 func();
-            }
-        })(),
+            };
+        }(),
 
         /*
          * Returns keys of an object as array
@@ -495,19 +626,19 @@
         keys: function(arg) {
             return Object.keys(arg);
         },
-        
+
         /*
          * returns the values of an object in an array format
          * @param {Object} obj
          * @return {Array}
          */
         values: function(obj) {
-            var arr,
-                keys = Object.keys(obj),
-                size = keys.length;
-            for (var i=0; i<size; i++) {
+            var arr;
+            var keys = Object.keys(obj);
+            var size = keys.length;
+            for (var i = 0; i < size; i += 1) {
                 (arr = arr || []).push(obj[keys[i]]);
-            };
+            }
             return arr;
         },
 
@@ -520,6 +651,29 @@
         },
 
         /*
+         * Creates a hashcode for a string or array
+         * @param {String|Array} str
+         * @return {Number} hashCode
+         */
+        hashCode: function(str) {
+            if (!this.isString(str)) {
+                str = JSON.stringify(str);
+            }
+            var hash = 0;
+            var size = str.length;
+            var c;
+            if (size === 0) {
+                return hash;
+            }
+            for (var i = 0; i < size; i += 1) {
+                c = str.charCodeAt(i);
+                hash = (hash << 5) - hash + c;
+                hash = hash & hash; // Convert to 32bit integer
+            }
+            return hash.toString();
+        },
+
+        /*
          * Performs an ajax request
          * @param {Object} options
          * @param {String} className 
@@ -528,20 +682,26 @@
         ajax: function(options) {
             var request = new XMLHttpRequest();
             request.open(options.method, options.url, true);
-            if (options.method === "POST") {
+            if (options.method === 'POST') {
                 request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             }
             request.onload = function() {
                 if (request.status >= 200 && request.status < 400) {
                     // Success!
-                    var data = (options.json) ? JSON.parse(request.responseText) : request.responseText;
-                    if (options.success) options.success(data);
+                    var data = options.json ? JSON.parse(request.responseText) : request.responseText;
+                    if (options.success) {
+                        options.success(data);
+                    }
                 } else {
-                    if (options.error) options.error();
+                    if (options.error) {
+                        options.error();
+                    }
                 }
             };
             request.onerror = function() {
-                if (options.error) options.error();
+                if (options.error) {
+                    options.error();
+                }
             };
             request.send(options.data);
         },
@@ -550,13 +710,13 @@
          * Performs a GET http request
          */
         get: function(url, pars, success, error, json) {
-            var pars = [];
+            pars = pars || [];
             this.forEach(pars, function(value, key) {
-                pars.push(key + "=" + value);
+                pars.push(key + '=' + value);
             });
-            url = (pars.length) ? url + "?" + pars.join("&") : url;
+            url = pars.length ? url + '?' + pars.join('&') : url;
             this.ajax({
-                method: "GET",
+                method: 'GET',
                 url: url,
                 success: success,
                 error: error,
@@ -569,7 +729,7 @@
          */
         post: function(url, pars, success, error, json) {
             this.ajax({
-                method: "POST",
+                method: 'POST',
                 url: url,
                 success: success,
                 error: error,
@@ -577,8 +737,6 @@
                 data: pars
             });
         }
-
-
+        
     };
-
-}).call(this);
+}.call(this));

@@ -15,13 +15,13 @@
 
     //constant time formats
     var time_formats = {
-        "year": d3.time.format("%Y"),
-        "month": d3.time.format("%Y-%m"),
-        "week": d3.time.format("%Y-W%W"),
-        "day": d3.time.format("%Y-%m-%d"),
-        "hour": d3.time.format("%Y-%m-%d %H"),
-        "minute": d3.time.format("%Y-%m-%d %H:%M"),
-        "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+        "year": "%Y",
+        "month": "%Y-%m",
+        "week": "%Y-W%W",
+        "day": "%Y-%m-%d",
+        "hour": "%Y-%m-%d %H",
+        "minute": "%Y-%m-%d %H:%M",
+        "second": "%Y-%m-%d %H:%M:%S"
     };
 
     var time_units = Object.keys(time_formats);
@@ -40,6 +40,7 @@
             this._type = "time";
             //default values for time model
             values = utils.extend({
+                dim: "time",
                 value: "1800",
                 start: "1800",
                 end: "2014",
@@ -49,10 +50,12 @@
                 round: true,
                 speed: 300,
                 unit: "year",
-                formatInput: "%Y", //defaults to year format
                 step: 1, //step must be integer
-                adaptMinMaxZoom: false
+                adaptMinMaxZoom: false,
+                formatInput: "%Y" //defaults to year format
             }, values);
+
+            values.formatOutput = values.formatOutput || values.formatInput;
 
             //same constructor
             this._super(values, parent, bind);
@@ -88,11 +91,12 @@
         _formatToDates: function() {
 
             var date_attr = ["value", "start", "end"];
+            var fmts = [this.formatInput].concat(formatters);
             for (var i = 0; i < date_attr.length; i++) {
                 var attr = date_attr[i];
                 if (!utils.isDate(this[attr])) {
-                    for (var j = 0; j < formatters.length; j++) {
-                        var formatter = formatters[j];
+                    for (var j = 0; j < fmts.length; j++) {
+                        var formatter = d3.time.format(fmts[j]);
                         var date = formatter.parse(this[attr].toString());
                         if (utils.isDate(date)) {
                             this.set(attr, date);
@@ -161,42 +165,29 @@
         },
 
         /**
-         * Gets the dimensions in time
-         * @returns {String} time dimension
-         */
-        getDimension: function() {
-            return "time";
-        },
-
-        /**
          * Gets filter for time
          * @returns {Object} time filter
          */
         getFilter: function() {
-            var start = d3.time.format(this.format || "%Y")(this.start),
-                end = d3.time.format(this.format || "%Y")(this.end),
-                filter = {
-                    "time": [
-                        [start, end]
-                    ]
-                };
+            var start = d3.time.format(this.formatInput || "%Y")(this.start),
+                end = d3.time.format(this.formatInput || "%Y")(this.end),
+                dim = this.getDimension(),
+                filter = {};
+            filter[dim] = [[start, end]]
             return filter;
         },
 
         /**
-         * gets formatted value
-         * @param {String} f Optional format. Defaults to YYYY
-         * @param {String} attr Optional attribute. Defaults to "value"
-         * @returns {String} formatted value
+         * Gets formatter for this model
+         * @returns {Function} formatter function
          */
-        getFormatted: function(f, attr) {
-            if (!f) f = "%Y";
-            if (!attr) attr = "value";
-
-            var format = d3.time.format(f);
-            return format(this[attr]);
+        getFormatter: function() {
+            var f = d3.time.format(this.formatInput || "%Y");
+            return function(d) {
+                return f.parse(d);
+            }
         },
-        
+
         /**
          * Snaps the time to integer
          * possible inputs are "start", "end", "value". "value" is default
