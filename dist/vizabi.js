@@ -1,4 +1,4 @@
-/* VIZABI - http://www.gapminder.org - 2015-06-17 */
+/* VIZABI - http://www.gapminder.org - 2015-06-24 */
 
 /*!
  * VIZABI MAIN
@@ -8292,9 +8292,58 @@
                 .transition().duration(duration || 0).ease("linear")
                 .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
 
+            var width = parseInt(labelGroup.select("rect").attr("width"));
+            var height = parseInt(labelGroup.select("rect").attr("height"));
+            var diffX1 = resolvedX0 - resolvedX;
+            var diffY1 = resolvedY0 - resolvedY;
+            var diffX2 = 0;
+            var diffY2 = 0;
+            if (diffX1 < 0 && diffY1 < 0) {
+            if (diffX1 < diffY1) {
+            		diffX2 = 0;
+            		diffY2 = height / 2;
+            	}
+            	else {
+            		diffX2 = width / 2;
+            		diffY2 = 0;
+            	}
+            }
+            else if (diffX1 < 0 && diffY1 >= 0) {
+            	if (diffX1 < -diffY1) {
+            		diffX2 = 0;
+            		diffY2 = height / 2;
+            	}
+            	else {
+            		diffX2 = width / 2;
+            		diffY2 = height;
+            	}
+            }
+            else if (diffX1 >= 0 && diffY1 >= 0) {
+            	if (diffX1 < diffY1) {
+            		diffX2 = width / 2;
+            		diffY2 = height;
+            	}
+            	else {
+            		diffX2 = width;
+            		diffY2 = height / 2;
+            	}
+            }
+            else {
+            	if (-diffX1 < diffY1) {
+            		diffX2 = width;
+            		diffY2 = height / 2;
+            	}
+            	else {
+            		diffX2 = width / 2;
+            		diffY2 = 0;
+            	}
+            }
+
             labelGroup.selectAll("line")
-                .attr("x1", resolvedX0 - resolvedX)
-                .attr("y1", resolvedY0 - resolvedY);
+                .attr("x1", diffX1)
+                .attr("y1", diffY1)
+                .attr("x2", diffX2)
+                .attr("y2", diffY2);
 
         },
 
@@ -8345,7 +8394,8 @@
                     view.append("text").attr("class", "vzb-bc-label-content");
 
                     view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
-                        .on("click", function(d, i) {
+                        .on("click", function (d, i) {
+                        	_this.model.entities.clearHighlighted();
                             //default prevented is needed to distinguish click from drag
                             if (d3.event.defaultPrevented) return
                             _this.model.entities.selectEntity(d);
@@ -8355,13 +8405,15 @@
 
                     _this._trails.create(d);
                 })
-                .on("mousemove", function() {
+                .on("mousemove", function () {
+                	_this.model.entities.highlightEntity(this.__data__);
                     d3.select(this).selectAll(".vzb-bc-label-x")
                         .classed("vzb-transparent", false)
                     d3.select(this).select("rect")
                         .classed("vzb-transparent", false)
                 })
-                .on("mouseout", function(d) {
+                .on("mouseout", function (d) {
+                	_this.model.entities.clearHighlighted();
                     d3.select(this).selectAll(".vzb-bc-label-x")
                         .classed("vzb-transparent", true)
                     d3.select(this).select("rect")
