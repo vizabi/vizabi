@@ -78,6 +78,7 @@
                         "indicator/lex": "Life expectancy",
                         "indicator/gdp_per_cap": "GDP per capita",
                         "indicator/pop": "Population",
+                        "indicator/_default": "Value",
                         "indicator/geo.region": "Region",
                         "indicator/geo": "Geo code",
                         "indicator/time": "",
@@ -184,6 +185,7 @@
                     "indicator/lex": "Expectables Livappulo",
                     "indicator/gdp_per_cap": "PIB pers capitous",
                     "indicator/pop": "Peoples",
+                    "indicator/_default": "Value"
                 }
             }
         }
@@ -289,6 +291,7 @@
                     "indicator/lex": "Life expectancy",
                     "indicator/gdp_per_cap": "GDP per capita",
                     "indicator/pop": "Population",
+                    "indicator/_default": "Value",
                     "indicator/geo.region": "Region",
                     "indicator/geo": "Geo code",
                     "indicator/time": "Time",
