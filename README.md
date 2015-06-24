@@ -47,6 +47,14 @@ In order to run the project in **development mode**, type the following:
 grunt dev
 ```
 
+In order to build the project with Gapminder's custom options, run one of the following:
+```sh
+#build project
+grunt build --custom=gapminder
+#build and serve project
+grunt dev --custom=gapminder
+```
+
 ####Testing
 
 Current tests are written in the folder `specs/`. In order to run them, type the following:
