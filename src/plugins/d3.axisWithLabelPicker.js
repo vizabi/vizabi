@@ -14,9 +14,11 @@
       var OPTIMISTIC = 'optimistic approximation: labels have different lengths';
       var PESSIMISTIC = 'pessimistic approximation: all labels have the largest length';
       var DEFAULT_LOGBASE = 10;
+
       function onlyUnique(value, index, self) {
         return self.indexOf(value) === index;
       }
+
       function axis(g) {
         if (highlightValue != null) {
           axis.highlightValueRun(g);
@@ -58,9 +60,9 @@
           if (axis.repositionLabels() == null)
             return;
           var shift = axis.repositionLabels()[i] || {
-            x: 0,
-            y: 0
-          };
+              x: 0,
+              y: 0
+            };
           view.attr('x', +view.attr('x') + shift.x);
           view.attr('y', +view.attr('y') + shift.y);
         });
@@ -75,6 +77,7 @@
         var scale = axis.scale();
         minorTicks.attr('y1', orient == HORIZONTAL ? (axis.orient() == 'top' ? 1 : -1) * tickLengthIn : scale).attr('y2', orient == HORIZONTAL ? (axis.orient() == 'top' ? -1 : 1) * tickLengthOut : scale).attr('x1', orient == VERTICAL ? (axis.orient() == 'right' ? -1 : 1) * tickLengthIn : scale).attr('x2', orient == VERTICAL ? (axis.orient() == 'right' ? 1 : -1) * tickLengthOut : scale);
       }
+
       axis.highlightValueRun = function (g) {
         var orient = axis.orient() == 'top' || axis.orient() == 'bottom' ? HORIZONTAL : VERTICAL;
         g.selectAll('.tick').each(function (d, t) {
@@ -185,104 +188,104 @@
             if (options.formatterRemovePrefix)
               return d3.format('.' + prec + format)(d);
             switch (Math.floor(Math.log10(Math.abs(d)))) {
-            case -13:
-              d = d * 1000000000000;
-              prefix = 'p';
-              break;
-            //0.1p
-            case -10:
-              d = d * 1000000000;
-              prefix = 'n';
-              break;
-            //0.1n
-            case -7:
-              d = d * 1000000;
-              prefix = '\xB5';
-              break;
-            //0.1µ
-            case -6:
-              d = d * 1000000;
-              prefix = '\xB5';
-              break;
-            //1µ
-            case -5:
-              d = d * 1000000;
-              prefix = '\xB5';
-              break;
-            //10µ
-            case -4:
-              break;
-            //0.0001
-            case -3:
-              break;
-            //0.001
-            case -2:
-              break;
-            //0.01
-            case -1:
-              break;
-            //0.1
-            case 0:
-              break;
-            //1
-            case 1:
-              break;
-            //10
-            case 2:
-              break;
-            //100
-            case 3:
-              break;
-            //1000
-            case 4:
-              break;
-            //10000
-            case 5:
-              d = d / 1000;
-              prefix = 'k';
-              break;
-            //0.1M
-            case 6:
-              d = d / 1000000;
-              prefix = 'M';
-              prec = 1;
-              break;
-            //1M
-            case 7:
-              d = d / 1000000;
-              prefix = 'M';
-              break;
-            //10M
-            case 8:
-              d = d / 1000000;
-              prefix = 'M';
-              break;
-            //100M
-            case 9:
-              d = d / 1000000000;
-              prefix = 'B';
-              prec = 1;
-              break;
-            //1B
-            case 10:
-              d = d / 1000000000;
-              prefix = 'B';
-              break;
-            //10B
-            case 11:
-              d = d / 1000000000;
-              prefix = 'B';
-              break;
-            //100B
-            case 12:
-              d = d / 1000000000000;
-              prefix = 'T';
-              prec = 1;
-              break;
-            //1T
-            //use the D3 SI formatting for the extreme cases
-            default:
-              return d3.format('.' + prec + 's')(d).replace('G', 'B');
+              case -13:
+                d = d * 1000000000000;
+                prefix = 'p';
+                break;
+              //0.1p
+              case -10:
+                d = d * 1000000000;
+                prefix = 'n';
+                break;
+              //0.1n
+              case -7:
+                d = d * 1000000;
+                prefix = '\xB5';
+                break;
+              //0.1µ
+              case -6:
+                d = d * 1000000;
+                prefix = '\xB5';
+                break;
+              //1µ
+              case -5:
+                d = d * 1000000;
+                prefix = '\xB5';
+                break;
+              //10µ
+              case -4:
+                break;
+              //0.0001
+              case -3:
+                break;
+              //0.001
+              case -2:
+                break;
+              //0.01
+              case -1:
+                break;
+              //0.1
+              case 0:
+                break;
+              //1
+              case 1:
+                break;
+              //10
+              case 2:
+                break;
+              //100
+              case 3:
+                break;
+              //1000
+              case 4:
+                break;
+              //10000
+              case 5:
+                d = d / 1000;
+                prefix = 'k';
+                break;
+              //0.1M
+              case 6:
+                d = d / 1000000;
+                prefix = 'M';
+                prec = 1;
+                break;
+              //1M
+              case 7:
+                d = d / 1000000;
+                prefix = 'M';
+                break;
+              //10M
+              case 8:
+                d = d / 1000000;
+                prefix = 'M';
+                break;
+              //100M
+              case 9:
+                d = d / 1000000000;
+                prefix = 'B';
+                prec = 1;
+                break;
+              //1B
+              case 10:
+                d = d / 1000000000;
+                prefix = 'B';
+                break;
+              //10B
+              case 11:
+                d = d / 1000000000;
+                prefix = 'B';
+                break;
+              //100B
+              case 12:
+                d = d / 1000000000000;
+                prefix = 'T';
+                prec = 1;
+                break;
+              //1T
+              //use the D3 SI formatting for the extreme cases
+              default:
+                return d3.format('.' + prec + 's')(d).replace('G', 'B');
             }
             // use manual formatting for the cases above
             return (d3.format('.' + prec + format)(d) + prefix).replace('G', 'B');
@@ -347,16 +350,18 @@
         var tickValuesMinor = [];
         //[min, max];
         var ticksNumber = 5;
+
         function getBaseLog(x, base) {
           if (base == null)
             base = options.logBase;
           return Math.log(x) / Math.log(base);
         }
+
         // estimate the longest formatted label in pixels
         var estLongestLabelLength = //take 17 sample values and measure the longest formatted label
-        d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(function (d) {
-          return options.formatter(d).length;
-        })) * options.widthOfOneDigit + parseInt(options.cssMarginLeft);
+          d3.max(d3.range(min, max, (max - min) / 17).concat(max).map(function (d) {
+            return options.formatter(d).length;
+          })) * options.widthOfOneDigit + parseInt(options.cssMarginLeft);
         var pivot = options.isPivotAuto && (estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit && orient == VERTICAL || !(estLongestLabelLength + axis.tickPadding() + axis.tickSize() > options.pivotingLimit) && !(orient == VERTICAL));
         var labelsStackOnTop = orient == HORIZONTAL && pivot || orient == VERTICAL && !pivot;
         // conditions to remove labels altogether
@@ -391,15 +396,15 @@
             // log scales need to rescale labels, so that 9 takes more space than 2
             if (rescalingLabels == 'log') {
               // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
-              // yes, this is hacky and experimental 
+              // yes, this is hacky and experimental
               lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
               return lengthRange > d3.sum(tickValues.map(function (d) {
-                return (options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(d).length) + marginsLR) * (1 + Math.log10((d + '').substr(0, 1)));
-              }));
+                  return (options.widthOfOneDigit * (approximationStyle == PESSIMISTIC ? maxLength : options.formatter(d).length) + marginsLR) * (1 + Math.log10((d + '').substr(0, 1)));
+                }));
             } else {
               return lengthRange > tickValues.length * marginsLR + (approximationStyle == PESSIMISTIC ? options.widthOfOneDigit * tickValues.length * maxLength : 0) + (approximationStyle == OPTIMISTIC ? options.widthOfOneDigit * tickValues.map(function (d) {
-                return options.formatter(d);
-              }).join('').length : 0);
+                  return options.formatter(d);
+                }).join('').length : 0);
             }
           }
         };
@@ -471,11 +476,11 @@
             // don't skip taken values
             var tickValues_1 = tickValues;
             for (var j = 0; j < doublingLabels.length; j++) {
-              // compose an attempt to add more axis labels    
+              // compose an attempt to add more axis labels
               var trytofit = tickValues_1.concat(doublingLabels[j]).filter(function (d) {
                 return !collisionBetween(d, avoidCollidingWith);
               }).filter(onlyUnique);
-              // stop populating if labels don't fit 
+              // stop populating if labels don't fit
               if (!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, 'none'))
                 break;
               // apply changes if no blocking instructions
@@ -495,16 +500,16 @@
             options.stops.forEach(function (stop, i) {
               if (i == 0) {
                 for (var j = 0; j < spawn.length; j++) {
-                  // compose an attempt to add more axis labels    
+                  // compose an attempt to add more axis labels
                   var trytofit = tickValues.concat(spawn[j].map(function (d) {
                     return d * stop;
                   }))  // throw away labels that collide with "special" labels 0, min, max
-.filter(function (d) {
-                    return !collisionBetween(d, avoidCollidingWith);
-                  }).filter(function (d) {
-                    return min <= d && d <= max;
-                  }).filter(onlyUnique);
-                  // stop populating if labels don't fit 
+                    .filter(function (d) {
+                      return !collisionBetween(d, avoidCollidingWith);
+                    }).filter(function (d) {
+                      return min <= d && d <= max;
+                    }).filter(onlyUnique);
+                  // stop populating if labels don't fit
                   if (!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC, 'none'))
                     break;
                   // apply changes if no blocking instructions
@@ -553,20 +558,20 @@
           addLabels = groupByPriorities(addLabels, false);
           var tickValues_1 = tickValues;
           for (var j = 0; j < addLabels.length; j++) {
-            // compose an attempt to add more axis labels    
+            // compose an attempt to add more axis labels
             var trytofit = tickValues_1.concat(addLabels[j]).filter(function (d) {
               return !collisionBetween(d, avoidCollidingWith);
             }).filter(onlyUnique);
-            // stop populating if labels don't fit 
+            // stop populating if labels don't fit
             if (!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, 'none'))
               break;
             // apply changes if no blocking instructions
             tickValues = trytofit;
           }
           tickValues = tickValues  //.concat(addLabels)
-.filter(function (d) {
-            return !collisionBetween(d, avoidCollidingWith);
-          }).filter(onlyUnique);
+            .filter(function (d) {
+              return !collisionBetween(d, avoidCollidingWith);
+            }).filter(onlyUnique);
         }
         if (tickValues != null && tickValues.length <= 2 && !bothSidesUsed)
           tickValues = [
@@ -640,16 +645,17 @@
         }
         return result;
       }
+
       // REPOSITION LABELS THAT STICK OUT
       // Purpose: the outer labels can easily be so large, they stick out of the allotted area
       // Example:
       // Label is fine:    Label sticks out:    Label sticks out more:    Solution - label is shifted:
-      //      12345 |           1234|                123|5                   12345|          
-      // _______.   |      _______. |           _______.|                 _______.|          
-      // 
+      //      12345 |           1234|                123|5                   12345|
+      // _______.   |      _______. |           _______.|                 _______.|
+      //
       // this is what the function does on the first step (only outer labels)
       // on the second step it shifts the inner labels that start to overlap with the shifted outer labels
-      // 
+      //
       // requires tickValues array to be sorted from tail-first
       // tail means left or bottom, head means top or right
       //
@@ -704,13 +710,13 @@
             return;
           // compute the influence of the head-side outer label
           var repositionHead = // take the distance between head and the tick at hand
-          Math.abs(scale(d) - scale(tickValues[tickValues.length - 1]))  // substract the shift of the tail
-- (dimension == 'y' && orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension] - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length - (dimension == 'y') * options.heightOfOneDigit * 0.7;
+            Math.abs(scale(d) - scale(tickValues[tickValues.length - 1]))  // substract the shift of the tail
+            - (dimension == 'y' && orient == HORIZONTAL ? -1 : 1) * result[tickValues.length - 1][dimension] - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length - (dimension == 'y') * options.heightOfOneDigit * 0.7;
           //TODO remove magic constant - relation of actual font height to BBox-measured height
           // compute the influence of the tail-side outer label
           var repositionTail = // take the distance between tail and the tick at hand
-          Math.abs(scale(d) - scale(tickValues[0]))  // substract the shift of the tail
-- (dimension == 'y' && orient == VERTICAL ? -1 : 1) * result[0][dimension] - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length - (dimension == 'y') * options.heightOfOneDigit * 0.7;
+            Math.abs(scale(d) - scale(tickValues[0]))  // substract the shift of the tail
+            - (dimension == 'y' && orient == VERTICAL ? -1 : 1) * result[0][dimension] - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == 'x') * options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length - (dimension == 'y') * options.heightOfOneDigit * 0.7;
           //TODO remove magic constant - relation of actual font height to BBox-measured height
           // apply limits in order to cancel repositioning of labels that are good
           if (repositionHead > 0)
@@ -726,6 +732,7 @@
         });
         return result;
       }
+
       // function repositionLabelsThatStickOut()
       axis.copy = function () {
         return d3_axis_smart(d3.svg.axis());

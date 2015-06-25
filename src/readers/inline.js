@@ -3,18 +3,18 @@
  * the simplest reader possible
  */
 
-(function() {
+(function () {
 
-    "use strict";
+  "use strict";
 
-    var root = this;
-    var Vizabi = root.Vizabi;
+  var root = this;
+  var Vizabi = root.Vizabi;
 
-    Vizabi.Reader.extend('inline', {
-        init: function(reader_info) {
-            this.name = "inline";
-            this._super(reader_info);
-        }
-    });
+  Vizabi.Reader.extend('inline', {
+    init: function (reader_info) {
+      this.name = "inline";
+      this._super(reader_info);
+    }
+  });
 
 }).call(this);

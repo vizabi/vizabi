@@ -50,79 +50,82 @@ $vzb-loader-bgcolor: $vzb-color-white;
 //   Common styles
 // ----------------------------------------------------------------------------
 .vzb-hidden {
-    display: none !important;
+  display: none !important;
 }
+
 .vzb-invisible {
-    visibility: hidden !important;
+  visibility: hidden !important;
 }
+
 .vzb-transparent {
-    opacity: 0 !important;
+  opacity: 0 !important;
 }
+
 .vzb-placeholder {
-    position: relative;
-    background-color: $vzb-color-white;
+  position: relative;
+  background-color: $vzb-color-white;
 
-    &.vzb-loading, &.vzb-loading-data {
-        //todo: Make background transparent, but not preloader circles
-        &:before {
-            content: ' ';
-            background-color: $vzb-loader-bgcolor;
-            display: block;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            bottom: 0px;
-            right: 0px;
-            z-index: 9998;
-        }
-
-        &:after {
-            @include animation-duration($vzb-loader-speed);
-            @include animation-iteration-count(infinite);
-            @include animation-name(rotate-forever);
-            @include animation-timing-function(linear);
-            @include size($vzb-loader-size);
-            @include position(absolute, 50% 0 0 50%);
-            content: ' ';
-            display: inline-block;
-            border: $vzb-loader-thickness solid $vzb-loader-color;
-            border-right-color: transparent;
-            border-radius: 50%;
-            margin: -1 * $vzb-loader-size/2;
-            z-index: 9999;
-        }
-    }
-    //loading data specifically
-    &.vzb-loading-data {
-        &:before {
-            @include opacity(0.9);
-        }
-    }
-    //loading anything
-    &.vzb-loading {
-        // * {
-        //     visibility: hidden;
-        // }
-        &:before {
-            @include opacity(0.8);
-        }
+  &.vzb-loading, &.vzb-loading-data {
+    //todo: Make background transparent, but not preloader circles
+    &:before {
+      content: ' ';
+      background-color: $vzb-loader-bgcolor;
+      display: block;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      bottom: 0px;
+      right: 0px;
+      z-index: 9998;
     }
 
-    //loading anything
-    &.vzb-force-fullscreen {
-        @include position(fixed, 0px 0px 0px 0px);
-        display: inline-table;
-        width: 100% !important;
-        height: 100% !important;
-        z-index: 9997;
-        margin: 0px;
+    &:after {
+      @include animation-duration($vzb-loader-speed);
+      @include animation-iteration-count(infinite);
+      @include animation-name(rotate-forever);
+      @include animation-timing-function(linear);
+      @include size($vzb-loader-size);
+      @include position(absolute, 50% 0 0 50%);
+      content: ' ';
+      display: inline-block;
+      border: $vzb-loader-thickness solid $vzb-loader-color;
+      border-right-color: transparent;
+      border-radius: 50%;
+      margin: -1 * $vzb-loader-size/2;
+      z-index: 9999;
     }
+  }
+  //loading data specifically
+  &.vzb-loading-data {
+    &:before {
+      @include opacity(0.9);
+    }
+  }
+  //loading anything
+  &.vzb-loading {
+    // * {
+    //     visibility: hidden;
+    // }
+    &:before {
+      @include opacity(0.8);
+    }
+  }
 
-    .vzb-icon {
-        width: 15px;
-        height: 15px;
-        path {
-            fill: $vzb-color-primary;
-        }
+  //loading anything
+  &.vzb-force-fullscreen {
+    @include position(fixed, 0px 0px 0px 0px);
+    display: inline-table;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9997;
+    margin: 0px;
+  }
+
+  .vzb-icon {
+    width: 15px;
+    height: 15px;
+    path {
+      fill: $vzb-color-primary;
     }
+  }
 }
