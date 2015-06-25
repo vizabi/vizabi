@@ -7,5 +7,5 @@ before_script:
   - sudo apt-get install ruby
   - gem install sass
   - bower install
-notifications:
-  slack: gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q
+script:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && grunt build-deploy --custom=gapminder || grunt --custom=gapminder'

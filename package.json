@@ -7,9 +7,6 @@
     "test": "test"
   },
   "dependencies": {},
-  "scripts": {
-    "test": "grunt build-deploy --custom=gapminder"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Gapminder/vizabi"
