@@ -37,6 +37,7 @@
         }
         return true;
       };
+
       function scale(x) {
         var ratio = 1;
         var shiftNeg = 0;
@@ -87,6 +88,7 @@
         if (-eps <= x && x < 0)
           return -linScale(-x) / ratio + shiftAll + shiftNeg;
       }
+
       scale.eps = function (arg) {
         if (!arguments.length)
           return eps;
@@ -109,49 +111,49 @@
         if (_arg.length != 2)
           console.warn('generic log scale is best for 2 values in domain, but it tries to support other cases too');
         switch (_arg.length) {
-        // if no values are given, reset input to the default domain (do nothing)
-        case 0:
-          arg = domain;
-          break;
-        // use the given value as a center, get the domain /2 and *2 around it
-        case 1:
-          arg = [
-            _arg[0] / 2,
-            _arg[0] * 2
-          ];
-          break;
-        // two is the standard case. just use these
-        case 2:
-          arg = [
-            _arg[0],
-            _arg[1]
-          ];
-          break;
-        // use the edge values as domain, center as ±epsilon
-        case 3:
-          arg = [
-            _arg[0],
-            _arg[2]
-          ];
-          eps = abs(_arg[1]);
-          break;
-        // use the edge values as domain, center two values as ±epsilon
-        //                    case 4: arg = [_arg[0], _arg[3]]; 
-        //                        // if the domain is pointing forward
-        //                        if(_arg[0]<=_arg[3]){eNeg = -abs(_arg[1]); ePos = abs(_arg[2]);}
-        //                        // if the domain is pointing backward
-        //                        if(_arg[0]>=_arg[3]){eNeg = -abs(_arg[2]); ePos = abs(_arg[1]);}
-        //                         break;
-        // use the edge values as domain, the minimum of the rest be the epsilon
-        default:
-          arg = [
-            _arg[0],
-            _arg[_arg.length - 1]
-          ];
-          eps = d3.min(abs(_arg.filter(function (d, i) {
-            return i != 0 && i != _arg.length - 1;
-          })));
-          break;
+          // if no values are given, reset input to the default domain (do nothing)
+          case 0:
+            arg = domain;
+            break;
+          // use the given value as a center, get the domain /2 and *2 around it
+          case 1:
+            arg = [
+              _arg[0] / 2,
+              _arg[0] * 2
+            ];
+            break;
+          // two is the standard case. just use these
+          case 2:
+            arg = [
+              _arg[0],
+              _arg[1]
+            ];
+            break;
+          // use the edge values as domain, center as ±epsilon
+          case 3:
+            arg = [
+              _arg[0],
+              _arg[2]
+            ];
+            eps = abs(_arg[1]);
+            break;
+          // use the edge values as domain, center two values as ±epsilon
+          //                    case 4: arg = [_arg[0], _arg[3]];
+          //                        // if the domain is pointing forward
+          //                        if(_arg[0]<=_arg[3]){eNeg = -abs(_arg[1]); ePos = abs(_arg[2]);}
+          //                        // if the domain is pointing backward
+          //                        if(_arg[0]>=_arg[3]){eNeg = -abs(_arg[2]); ePos = abs(_arg[1]);}
+          //                         break;
+          // use the edge values as domain, the minimum of the rest be the epsilon
+          default:
+            arg = [
+              _arg[0],
+              _arg[_arg.length - 1]
+            ];
+            eps = d3.min(abs(_arg.filter(function (d, i) {
+              return i != 0 && i != _arg.length - 1;
+            })));
+            break;
         }
         //if the domain is just a single value
         if (arg[0] == arg[1]) {
@@ -261,39 +263,39 @@
         if (arg.length != 2)
           console.warn('generic log scale is best for 2 values in range, but it tries to support other cases too');
         switch (arg.length) {
-        // reset input to the default range
-        case 0:
-          arg = range;
-          break;
-        // use the only value as a center, get the range ±100 around it
-        case 1:
-          arg = [
-            arg[0] - 100,
-            arg[0] + 100
-          ];
-          break;
-        // two is the standard case. do nothing
-        case 2:
-          arg = arg;
-          break;
-        // use the edge values as range, center as delta
-        case 3:
-          delta = arg[1];
-          arg = [
-            arg[0],
-            arg[2]
-          ];
-          break;
-        // use the edge values as range, the minimum of the rest be the delta
-        default:
-          delta = d3.min(arg.filter(function (d, i) {
-            return i != 0 && i != arg.length - 1;
-          }));
-          arg = [
-            arg[0],
-            arg[arg.length - 1]
-          ];
-          break;
+          // reset input to the default range
+          case 0:
+            arg = range;
+            break;
+          // use the only value as a center, get the range ±100 around it
+          case 1:
+            arg = [
+              arg[0] - 100,
+              arg[0] + 100
+            ];
+            break;
+          // two is the standard case. do nothing
+          case 2:
+            arg = arg;
+            break;
+          // use the edge values as range, center as delta
+          case 3:
+            delta = arg[1];
+            arg = [
+              arg[0],
+              arg[2]
+            ];
+            break;
+          // use the edge values as range, the minimum of the rest be the delta
+          default:
+            delta = d3.min(arg.filter(function (d, i) {
+              return i != 0 && i != arg.length - 1;
+            }));
+            arg = [
+              arg[0],
+              arg[arg.length - 1]
+            ];
+            break;
         }
         if (!useLinear) {
           logScale.range(arg);
