@@ -3,77 +3,76 @@
  * Reusable OPACITY SLIDER
  */
 
-(function() {
+(function () {
 
-    "use strict";
+  "use strict";
 
-    var Vizabi = this.Vizabi;
-    var utils = Vizabi.utils;
+  var Vizabi = this.Vizabi;
+  var utils = Vizabi.utils;
 
-    if (!Vizabi._require('d3')) return;
-    
-    Vizabi.Component.extend('gapminder-bubbleopacity', {
+  if (!Vizabi._require('d3')) return;
 
-        init: function(config, context) {
-            this.template = '<div class="vzb-bo-holder"><input type="range" id="vzb-bo-slider" class="vzb-bo-slider" step="1"></div>';
+  Vizabi.Component.extend('gapminder-bubbleopacity', {
 
-            this.model_expects = [{
-                name: "entities",
-                type: "entities"
-            }];
-            
-            var _this = this;
-            
-            this.arg = config.arg;
-            
-            this.model_binds = {
-                "change:entities:select": function(evt) {
-                    _this.updateView();
-                }
-            }    
-            this.model_binds["change:entities:" + this.arg] = function(evt) {
-                    _this.updateView();
-                }
-            
-            
+    init: function (config, context) {
+      this.template = '<div class="vzb-bo-holder"><input type="range" id="vzb-bo-slider" class="vzb-bo-slider" step="1"></div>';
 
-            //contructor is the same as any component
-            this._super(config, context);
-        },
+      this.model_expects = [{
+        name: "entities",
+        type: "entities"
+      }];
 
-        /**
-         * Executes after the template is loaded and rendered.
-         * Ideally, it contains HTML instantiations related to template
-         * At this point, this.element and this.placeholder are available as a d3 object
-         */
-        readyOnce: function() {
-            var _this = this;
-            this.element = d3.select(this.element);
-            this.slider = this.element.selectAll('#vzb-bo-slider');
+      var _this = this;
 
-            this.slider
-                .attr('min', 0)
-                .attr('max', 1)
-                .attr('step', 0.1)
-                .on('input', function() {
-                    _this._setModel();
-                });
-            
-            this.updateView();
-        },
+      this.arg = config.arg;
 
-        updateView: function () {
-            var someSelected = this.model.entities.select.length;
-            var value = this.model.entities[this.arg];
-            
-            this.slider.attr('value', value);
-        },
-        
-        _setModel: function () {
-            this.model.entities[this.arg] = +d3.event.target.value;
+      this.model_binds = {
+        "change:entities:select": function (evt) {
+          _this.updateView();
         }
-        
-    });
+      }
+      this.model_binds["change:entities:" + this.arg] = function (evt) {
+        _this.updateView();
+      }
+
+
+      //contructor is the same as any component
+      this._super(config, context);
+    },
+
+    /**
+     * Executes after the template is loaded and rendered.
+     * Ideally, it contains HTML instantiations related to template
+     * At this point, this.element and this.placeholder are available as a d3 object
+     */
+    readyOnce: function () {
+      var _this = this;
+      this.element = d3.select(this.element);
+      this.slider = this.element.selectAll('#vzb-bo-slider');
+
+      this.slider
+        .attr('min', 0)
+        .attr('max', 1)
+        .attr('step', 0.1)
+        .on('input', function () {
+          _this._setModel();
+        });
+
+      this.updateView();
+    },
+
+    updateView: function () {
+      var someSelected = this.model.entities.select.length;
+      var value = this.model.entities[this.arg];
+
+      this.slider.attr('value', value);
+    },
+
+    _setModel: function () {
+      this.model.entities[this.arg] = +d3.event.target.value;
+    }
+
+  });
 
 
 }).call(this);
