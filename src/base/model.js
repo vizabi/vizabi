@@ -1194,15 +1194,14 @@
 
   /**
    * interpolates the specific value if missing
-   * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+   * @param {Object} _filter Id the row. e.g: {geo: "swe", time: "1999"}
    * filter SHOULD contain time property
    * @returns interpolated value
    */
-  function interpolateValue(ctx, filter, use, which) {
-
+  function interpolateValue(ctx, _filter, use, which) {
     var dimTime = ctx._getFirstDimension({type: 'time'});
-    var time = new Date(filter[dimTime]); //clone date
-    delete filter[dimTime];
+    var time = new Date(_filter[dimTime]); //clone date
+    var filter = utils.clone(_filter, null, dimTime);
 
     var items = ctx.getFilteredItems(filter);
     if (items === null || items.length === 0) {
