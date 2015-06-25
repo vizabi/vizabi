@@ -16,59 +16,14 @@ The main features are:
 4. Translation & Localization
 5. Unified data-schema for multi dimensional statistics.
 
-You can use Vizabi to create a new visualization based on your data or modify our set of vizualization tools.
+You can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.
 
 See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/)
 Checkout documentation here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/docs/)
 
 ## Setup & Quickstart
 
-Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower), [Grunt](https://github.com/gruntjs/grunt) and [Sass](http://sass-lang.com/install)
-
-Clone this repo and run the following commands:
-
-```shell
-npm install
-bower install
-```
-
-You may need to run ```npm install``` with administrative privileges.
-
-In order to build the project, type the following:
-```shell
-grunt build
-```
-
-You can find the build output under ```dist/```.
-
-In order to run the project in **development mode**, type the following:
-
-```shell
-grunt dev
-```
-
-In order to build the project with Gapminder's custom options, run one of the following:
-
-```shell
-#build project
-grunt build --custom=gapminder
-#build and serve project
-grunt dev --custom=gapminder
-```
-
-## Testing
-
-Current tests are written in the folder `specs/`. In order to run them, type the following:
-
-```shell
-grunt test
-```
-
-If you want to see them running in a browser, type:
-
-```shell
-grunt test:browser
-```
+See [contributing guide](CONTRIBUTING.md)
 
 ## License
 
