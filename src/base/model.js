@@ -957,7 +957,7 @@
       } else if (this._space.hasOwnProperty(this.use)) {
         value = this._space[this.use][this.which];
       } else {
-        value = interpolateValue(this, filter, this.use, this.which);
+        value = interpolateValue.call(this, filter, this.use, this.which);
       }
       return value;
     },
@@ -987,7 +987,7 @@
           // save time into variable
           var time = new Date(filter[dimTime]);
           // filter time will be removed during interpolation
-          var lastValue = interpolateValue(this, filter, this.use, this.which);
+          var lastValue = interpolateValue.call(this, filter, this.use, this.which);
           // return values up to the requested time point, append an interpolated value as the last one
           values = utils.filter(items, filter).filter(function (d) {
             return d[dimTime] <= time;
@@ -1198,12 +1198,12 @@
    * filter SHOULD contain time property
    * @returns interpolated value
    */
-  function interpolateValue(ctx, _filter, use, which) {
-    var dimTime = ctx._getFirstDimension({type: 'time'});
+  var interpolateValue = utils.memoize(function interpolateValue(_filter, use, which) {
+    var dimTime = this._getFirstDimension({type: 'time'});
     var time = new Date(_filter[dimTime]); //clone date
     var filter = utils.clone(_filter, null, dimTime);
 
-    var items = ctx.getFilteredItems(filter);
+    var items = this.getFilteredItems(filter);
     if (items === null || items.length === 0) {
       utils.warn('interpolateValue returning NULL because items array is empty');
       return null;
@@ -1246,6 +1246,6 @@
       value = new Date(value);
     }
     return value;
-  }
+  });
 
 }.call(this));
