@@ -737,6 +737,28 @@
         json: json,
         data: pars
       });
+    },
+
+    /**
+     * Make function memoized
+     * @param {Function} fn
+     * @returns {Function}
+     */
+    memoize: function (fn) {
+      return function () {
+        var args = Array.prototype.slice.call(arguments);
+        var hash = '';
+        var i = args.length;
+        var currentArg = null;
+
+        while (i--) {
+          currentArg = args[i];
+          hash += (currentArg === Object(currentArg)) ? JSON.stringify(currentArg) : currentArg;
+          fn.memoize || (fn.memoize = {});
+        }
+
+        return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
+      };
     }
 
   };
