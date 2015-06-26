@@ -205,6 +205,7 @@
       for (var i in submodels) {
         submodels[i].clear();
       }
+      this._dimensions = null;
       this.setReady(false);
       this.unbindAll();
       this._intervals.clearAllIntervals();
@@ -455,6 +456,7 @@
       });
       //this is a hook, therefore it needs to reload when data changes
       this.on('hook_change', function () {
+        _this._dimensions = null;
         _this.setReady(false);
       });
     },
@@ -500,6 +502,9 @@
      * @returns {Array} all unique dimensions
      */
     _getAllDimensions: function (opts) {
+
+      if(this._dimensions) return this._dimensions;
+
       opts = opts || {};
       var dims = [];
       var dim;
@@ -514,6 +519,8 @@
           dims.push(dim);
         }
       });
+
+      this._dimensions = dims;
       return dims;
     },
 
@@ -1208,7 +1215,7 @@
    * filter SHOULD contain time property
    * @returns interpolated value
    */
-  var interpolateValue = utils.memoize(function interpolateValue(_filter, use, which) {
+  function interpolateValue(_filter, use, which) {
     
     var dimTime, time, filter, items, space_id, indexNext, fraction, value;
 
@@ -1272,6 +1279,6 @@
       value = new Date(value);
     }
     return value;
-  });
+  };
 
 }.call(this));
