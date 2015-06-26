@@ -1194,9 +1194,13 @@
     } else if (model._parent) {
       return getSpace(model._parent);
     } else {
-      utils.error('ERROR: dimensions not found.\n You must specify the objects this hook will use under the dimensions attribute in the state.\n Example:\n dimensions: ["entities", "time"]');
+      utils.error('ERROR: space not found.\n You must specify the objects this hook will use under the "space" attribute in the state.\n Example:\n space: ["entities", "time"]');
     }
   }
+
+  //caches interpolation indexes globally.
+  //TODO: what if there are 2 visualizations with 2 data sources?
+  var interpIndexes = {};
 
   /**
    * interpolates the specific value if missing
@@ -1205,11 +1209,15 @@
    * @returns interpolated value
    */
   var interpolateValue = utils.memoize(function interpolateValue(_filter, use, which) {
-    var dimTime = this._getFirstDimension({type: 'time'});
-    var time = new Date(_filter[dimTime]); //clone date
-    var filter = utils.clone(_filter, null, dimTime);
+    
+    var dimTime, time, filter, items, space_id, indexNext, fraction, value;
 
-    var items = this.getFilteredItems(filter);
+    dimTime = this._getFirstDimension({type: 'time'});
+    time = new Date(_filter[dimTime]); //clone date
+    filter = utils.clone(_filter, null, dimTime);
+
+
+    items = this.getFilteredItems(filter);
     if (items === null || items.length === 0) {
       utils.warn('interpolateValue returning NULL because items array is empty');
       return null;
@@ -1219,11 +1227,24 @@
     if (use === 'value') {
       return items[0][which];
     }
+    
     // search where the desired value should fall between the known points
-    // TODO: d3 is global?
-    var indexNext = d3.bisectLeft(items.map(function (d) {
-      return d[dimTime];
-    }), time);
+    space_id = this._spaceId || (this._spaceId = Object.keys(this._space).join('-'));
+    interpIndexes[space_id] = interpIndexes[space_id] || {};
+
+    if(time in interpIndexes[space_id]) {
+      indexNext = interpIndexes[space_id][time].next;   
+    }
+    else {
+      indexNext = d3.bisectLeft(items.map(function (d) {
+          return d[dimTime];
+        }), time);
+      //store indexNext and fraction
+      interpIndexes[space_id][time] = {
+        next: indexNext
+      };
+    }
+
     // zero-order interpolation for the use of properties
     if (use === 'property' && indexNext === 0) {
       return items[0][which];
@@ -1244,9 +1265,8 @@
       return null;
     }
 
-    // perform a simple linear interpolation
-    var fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
-    var value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
+    fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
+    value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
     // cast to time object if we are interpolating time
     if (Object.prototype.toString.call(items[0][which]) === '[object Date]') {
       value = new Date(value);
