@@ -46,6 +46,8 @@
       };
       //will the model be hooked to data?
       this._space = {};
+      this._spaceDims = {};
+
       this._dataId = false;
       this._limits = {};
       //stores limit values
@@ -205,7 +207,7 @@
       for (var i in submodels) {
         submodels[i].clear();
       }
-      this._dimensions = null;
+      this._spaceDims = {};
       this.setReady(false);
       this.unbindAll();
       this._intervals.clearAllIntervals();
@@ -456,7 +458,7 @@
       });
       //this is a hook, therefore it needs to reload when data changes
       this.on('hook_change', function () {
-        _this._dimensions = null;
+        _this._spaceDims = {};
         _this.setReady(false);
       });
     },
@@ -503,7 +505,11 @@
      */
     _getAllDimensions: function (opts) {
 
-      if(this._dimensions) return this._dimensions;
+      var optsStr = JSON.stringify(opts);
+
+      if(optsStr in this._spaceDims) {
+        return this._spaceDims[optsStr];
+      }
 
       opts = opts || {};
       var dims = [];
@@ -520,7 +526,7 @@
         }
       });
 
-      this._dimensions = dims;
+      this._spaceDims[optsStr] = dims;
       return dims;
     },
 
