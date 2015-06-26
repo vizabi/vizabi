@@ -872,11 +872,19 @@
         var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
         view.classed("vzb-invisible", false)
-          .style("fill", _this.cScale(valueC))
-          .transition().duration(duration).ease("linear")
-          .attr("cy", _this.yScale(valueY))
-          .attr("cx", _this.xScale(valueX))
-          .attr("r", scaledS)
+            .style("fill", _this.cScale(valueC));
+
+        if(duration) {
+          view.transition().duration(duration).ease("linear")
+              .attr("cy", _this.yScale(valueY))
+              .attr("cx", _this.xScale(valueX))
+              .attr("r", scaledS);
+        }
+        else {
+          view.attr("cy", _this.yScale(valueY))
+              .attr("cx", _this.xScale(valueX))
+              .attr("r", scaledS);
+        }
 
         _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
 
@@ -971,9 +979,12 @@
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
 
-            cached.stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
+            var stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
 
-            rect.classed("vzb-transparent", !cached.stuckOnLimit);
+            if(cached.stuckOnLimit !== stuckOnLimit) {
+              cached.stuckOnLimit = stuckOnLimit
+              rect.classed("vzb-transparent", !cached.stuckOnLimit);
+            }
 
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
 
@@ -992,9 +1003,14 @@
 
       var labelGroup = d3.select(context);
 
-      labelGroup
-        .transition().duration(duration || 0).ease("linear")
+      if(duration) {
+        labelGroup
+        .transition().duration(duration).ease("linear")
         .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      }
+      else {
+        labelGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      }
 
       var width = parseInt(labelGroup.select("rect").attr("width"));
       var height = parseInt(labelGroup.select("rect").attr("height"));
