@@ -957,7 +957,9 @@
       } else if (this._space.hasOwnProperty(this.use)) {
         value = this._space[this.use][this.which];
       } else {
-        value = interpolateValue.call(this, filter, this.use, this.which);
+        //TODO: get meta info about translatable data
+        var l = (this.use !== 'property') ? null : this._languageModel.id;
+        value = interpolateValue.call(this, filter, this.use, this.which, l);
       }
       return value;
     },
@@ -987,7 +989,11 @@
           // save time into variable
           var time = new Date(filter[dimTime]);
           // filter time will be removed during interpolation
-          var lastValue = interpolateValue.call(this, filter, this.use, this.which);
+
+          //TODO: get meta info about translatable data
+          var l = (this.use !== 'property') ? null : this._languageModel.id;
+          var lastValue = interpolateValue.call(this, filter, this.use, this.which, l);
+          
           // return values up to the requested time point, append an interpolated value as the last one
           values = utils.filter(items, filter).filter(function (d) {
             return d[dimTime] <= time;
