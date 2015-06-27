@@ -326,7 +326,7 @@
       this._loadCall = true;
       //load hook
       //if its not a hook, the promise will not be created
-      if (this.isHook() && data_hook && query) {
+      if (this.isHook() && data_hook && query && this.use !== "value") {
         //hook changes, regardless of actual data loading
         this.trigger('hook_change');
         //get reader info
@@ -835,9 +835,10 @@
      * Gets the d3 scale for this hook. if no scale then builds it
      * @returns {Array} domain
      */
-    getScale: function () {
+    getScale: function (margins) {
+      if(margins !== false) margins = true;
       if (!this.scale) {
-        this.buildScale();
+        this.buildScale(margins);
       }
       return this.scale;
     },
