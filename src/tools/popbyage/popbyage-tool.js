@@ -29,7 +29,7 @@
       this.components = [{
         component: 'gapminder-popbyage',
         placeholder: '.vzb-tool-viz',
-        model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+        model: ["state.time", "state.entities", "state.age", "state.marker", "language"] //pass models to component
       }, {
         component: 'gapminder-timeslider',
         placeholder: '.vzb-tool-timeslider',
@@ -79,7 +79,7 @@
         dim: "geo",
         show: {
           _defs_: {
-            "geo": ["swe"]
+            "geo": ["usa"]
           }
         }
       },
@@ -89,11 +89,11 @@
       marker: {
         space: ["entities", "age", "time"],
         label: {
-          use: "property",
+          use: "indicator",
           which: "age"
         },
         axis_y: {
-          use: "property",
+          use: "indicator",
           which: "age"
         },
         axis_x: {
@@ -101,8 +101,8 @@
           which: "population"
         },
         color: {
-          use: "indicator",
-          which: "age"
+          use: "value",
+          which: "#ffb600"
         }
       }
     },

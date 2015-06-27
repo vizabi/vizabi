@@ -98,6 +98,7 @@
           res = res.map(function (row) {
             row['geo.cat'] = [row['geo.cat']];
             row['geo.region'] = row['geo.region'] || row['geo'];
+
             return row;
           });
 

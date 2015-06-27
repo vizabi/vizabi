@@ -33,6 +33,9 @@
         name: "entities",
         type: "entities"
       }, {
+        name: "age",
+        type: "model"
+      },{
         name: "marker",
         type: "model"
       }, {
@@ -120,6 +123,7 @@
       var _this = this;
       var time = this.model.time;
       var timeDim = time.getDimension();
+      var ageDim = this.model.age.getDimension();
       var duration = (time.playing) ? time.speed : 0;
       var filter = {};
       filter[timeDim] = time.value;
@@ -144,7 +148,7 @@
       //positioning and sizes of the bars
 
       var bars = this.bars.selectAll('.vzb-bc-bar');
-      var barWidth = this.yScale.rangeBand();
+      var barWidth = this.height / items.length;
 
       this.bars.selectAll('.vzb-bc-bar')
         .attr("fill", function (d) {
@@ -153,7 +157,7 @@
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
         .attr("y", function (d) {
-          return _this.yScale(_this.model.marker.axis_y.getValue(d));
+          return _this.yScale(_this.model.marker.axis_y.getValue(d)) - barWidth;
         })
         .attr("height", barWidth)
         .attr("width", function (d) {
@@ -248,8 +252,6 @@
 
       this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
         .call(this.xAxis);
-
-      this.yScale.rangeBands([this.height, 0]);
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
