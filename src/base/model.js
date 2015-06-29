@@ -637,7 +637,17 @@
           return item;
         });
       } else {
-        return [];
+        var smdls = this.getSubmodels();
+        var found = [];
+        if(smdls.length > 1) {
+          utils.forEach(smdls, function(s) {
+            if(s.getItems) {
+              found = s.getItems();
+              return false;
+            }
+          });
+        }
+        return found;
       }
     },
 
