@@ -125,7 +125,7 @@
       var duration = (time.playing) ? time.speed : 0;
       var filter = {};
       filter[timeDim] = time.value;
-      var items = this.model.marker.label.getItems(filter);
+      var items = this.model.marker.label.getKeys(filter);
 
       this.entityBars = this.bars.selectAll('.vzb-bc-bar')
         .data(items);
@@ -312,7 +312,7 @@
       var marker = model.state.marker.label;
 
       //don't validate anything if data hasn't been loaded
-      if (!marker.getItems() || marker.getItems().length < 1) {
+      if (!marker.getKeys() || marker.getKeys().length < 1) {
         return;
       }
 

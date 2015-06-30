@@ -195,7 +195,7 @@
 
       filter[timeDim] = this.time;
 
-      this.data = this.model.marker.label.getItems(filter);
+      this.data = this.model.marker.label.getKeys(filter);
 
       this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
       this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -245,7 +245,7 @@
 
 
       //adjust right this.margin according to biggest label
-      var lineLabelsText = this.model.marker.label.getItems().map(function (d, i) {
+      var lineLabelsText = this.model.marker.label.getKeys().map(function (d, i) {
         return _this.model.marker.label.getValue(d);
       });
 
@@ -704,7 +704,7 @@
 //            this.ROLE_MARKER = 'node fixed to marker';
 //            this.ROLE_LABEL = 'node for floating label';
 //
-//            this.data = this.model.marker.label.getItems({ time: this.time });
+//            this.data = this.model.marker.label.getKeys({ time: this.time });
 //            this.data.forEach(function(d,i){
 //                _this.dataForceLayout.nodes.push({geo: d[KEY], role:_this.ROLE_MARKER, fixed: true});
 //                _this.dataForceLayout.nodes.push({geo: d[KEY], role:_this.ROLE_LABEL, fixed: false});

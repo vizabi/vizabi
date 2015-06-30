@@ -481,7 +481,7 @@
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
-      this.model.entities._visible = this.model.marker.getItems()
+      this.model.entities._visible = this.model.marker.getKeys()
         .map(function (d) {
           var pointer = {};
           pointer[KEY] = d[KEY];

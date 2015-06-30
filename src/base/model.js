@@ -674,16 +674,13 @@
           next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
           u = hook.use;
           w = hook.which;
-
           filtered = hook.getNestedItems(f_keys);
           utils.forEach(f_values, function(v) {
             filtered = filtered[v]; //get precise array (leaf)
           });
-
           if(!fraction) {
-            fraction = (time - filtered[next - 1][dimTime]) / (filtered[next][dimTime] - filtered[next - 1][dimTime]);
+            fraction = (next===0) ? 1 : (time - filtered[next - 1][dimTime]) / (filtered[next][dimTime] - filtered[next - 1][dimTime]);
           }
-
           value = interpolatePoint(filtered, u, w, next, fraction);
           response[name] = hook.mapValue(value);
         });
@@ -699,7 +696,7 @@
           w = hook.which;
           utils.forEach(filtered, function(arr, id) {
             if(!fraction) {
-              fraction = (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
+              fraction = (next===0) ? 1 : (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
             }
             value = interpolatePoint(arr, u, w, next, fraction);
             response[name][id] = hook.mapValue(value);
@@ -724,7 +721,7 @@
      * @param filter filter
      * @returns hooked value
      */
-    getItems: function (filter) {
+    getKeys: function (filter) {
       if (this.isHook() && this._dataModel) {
         //all dimensions except time (continuous)
         var dimensions = this._getAllDimensions({
@@ -747,7 +744,7 @@
         var found = [];
         if(sub.length > 1) {
           utils.forEach(sub, function(s) {
-            found = s.getItems();
+            found = s.getKeys();
             return false;
           });
         }
