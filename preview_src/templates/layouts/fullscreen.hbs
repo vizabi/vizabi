@@ -1,0 +1,97 @@
+---
+control_buttons: { play: true, languages: ["en", "pt"] }
+control_state: true
+control_sizes: true
+control_buttons: {play: true, language: true}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+
+    {{#if redirect}}
+      <meta http-equiv="refresh" content="0; url={{redirect}}.html" />
+    {{/if}}
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    
+    <title>Vizabi - {{ title }}</title>
+    <link rel="stylesheet" href="{{assets}}css/main.css">
+    <link rel="stylesheet" href="../../dist/vizabi.css">
+  </head>
+  <body>
+
+    <div id="vzbp-main" class="vzbp-fullscreen">
+      <div id="vzbp-placeholder" class="vzbp-viewer"></div>
+    </div>
+
+
+    <script src="{{assets}}js/d3.min.js"></script>
+    <script src="../../dist/vizabi.js"></script>
+    <script src="{{assets}}js/_utils.js"></script>
+    <script src="{{assets}}js/_url.js"></script>
+
+    {{#if tool}}
+      <script>
+        var placeholder = document.getElementById('vzbp-placeholder');
+
+        parseURL();
+
+        VIZ = Vizabi("{{tool}}", placeholder, {
+          state: URL.state || {},
+          bind: {
+            "ready": function(evt, vals) {
+              updateURL();
+            }
+          },
+          language: {
+            id: URL.lang || "en",
+            strings: {
+              en: {
+                  "title": "{{ title }}",
+                  "buttons/expand": "Go big",
+                  "buttons/unexpand": "Go small",
+                  "buttons/trails": "Trails",
+                  "buttons/lock": "Lock",
+                  "buttons/find": "Find",
+                  "buttons/deselect": "Deselect",
+                  "buttons/ok": "OK",
+                  "buttons/colors": "Colors",
+                  "buttons/size": "Size",
+                  "buttons/axes": "Axes",
+                  "buttons/more_options": "Options",
+                  "indicator/lex": "Life expectancy",
+                  "indicator/gdp_per_cap": "GDP per capita",
+                  "indicator/pop": "Population",
+                  "indicator/geo.region": "Region",
+                  "indicator/geo": "Geo code",
+                  "indicator/time": "Time",
+                  "indicator/geo.category": "Geo category",
+                  "scaletype/linear": "Linear",
+                  "scaletype/log": "Logarithmic",
+                  "scaletype/genericLog": "Generic log",
+                  "scaletype/time": "Time",
+                  "scaletype/ordinal": "Ordinal",
+                  "color/geo.region/asi": "Asia",
+                  "color/geo.region/eur": "Europe",
+                  "color/geo.region/ame": "Americas",
+                  "color/geo.region/afr": "Afrika",
+                  "color/geo.region/_default": "Other"
+                }
+            }
+          },
+          ui: {
+            buttons: {{{chart_buttons}}}
+          },
+          data: {
+            reader: "csv-file",
+            path: "../local_data/waffles/en/basic-indicators.csv"
+          }
+        });
+
+      </script>
+    {{/if}}
+    
+  </body>
+</html>
