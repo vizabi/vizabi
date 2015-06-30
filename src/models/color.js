@@ -17,13 +17,9 @@
 
   var palettes = {
     'geo.region': {'asi': '#FF5872', 'eur': '#FFE700', 'ame': '#7FEB00', 'afr': '#00D5E9', '_default': '#ffb600'},
-    'geo': {'color1': '#F77481', 'color2': '#E1CE00', 'color3': '#B4DE79', 'color4': '#62CCE3'},
-    'time': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
-    'lex': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
     'gdp_per_cap': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79', "3": '#62CCE3'},
-    'pop': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
-    '_continuous': {'0': '#8BC1F0', '1': '#030C6B'},
-    '_discrete': {'color1': '#F77481', 'color2': '#E1CE00', 'color3': '#B4DE79', 'color4': '#62CCE3'},
+    '_continuous': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
+    '_discrete': d3.scale.category20(), //{'color1': '#F77481', 'color2': '#E1CE00', 'color3': '#B4DE79', 'color4': '#62CCE3'},
     '_default': {'_default': '#fa5ed6'}
   };
   var userSelectable = {
@@ -96,10 +92,14 @@
           this.palette = utils.clone(palettes[this.which]);
         } else if (this.use === "value") {
           this.palette = {"_default": this.which};
-        } else if (this.scaleType === "linear") {
+        } else if (this.use === "indicator") {
           this.palette = utils.clone(palettes["_continuous"]);
-        } else if (this.scaleType === "ordinal") {
-          this.palette = utils.clone(palettes["_discrete"]);
+        } else if (this.use === "property") {
+          if(palettes["_discrete"].range()){
+            this.palette = utils.extend({}, palettes["_discrete"].range());
+          }else{
+            this.palette = utils.clone(palettes["_discrete"]);
+          }
         } else {
           this.palette = utils.clone(palettes["_default"]);
         }
