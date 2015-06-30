@@ -109,8 +109,7 @@
 
         this.xScale = null;
         this.yScale = null;
-        this.rScale = null;
-        this.cScale = d3.scale.category10();
+        this.cScale = null;
 
         this.xAxis = d3.svg.axisSmart();
 
@@ -179,7 +178,7 @@
         //scales
         this.yScale = this.model.marker.axis_y.getScale();
         this.xScale = this.model.marker.axis_x.getScale();
-        this.rScale = this.model.marker.size.getScale();
+        this.cScale = this.model.marker.color.getScale();
 
         var _this = this;
         this.xAxis.tickFormat(function(d) {
@@ -303,7 +302,7 @@
 
         this.mountains
             .style("fill", function(d) {
-                return _this.model.marker.color.getValue(d);
+                return _this.cScale(_this.model.marker.color.getValue(d));
             })
             //.transition().duration(speed).ease("linear")
             .attr("d", function(d) { return _this.area(d.points); })

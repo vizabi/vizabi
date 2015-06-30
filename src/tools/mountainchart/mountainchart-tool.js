@@ -114,7 +114,7 @@
                 },
                 color: {
                     use: "property",
-                    which: "geo.region",
+                    which: "geo",
                     scaleType: "ordinal"
                 }
             }
