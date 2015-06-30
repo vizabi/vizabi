@@ -122,6 +122,9 @@
           where = utils.mapRows([where], _this._formatters)[0];
 
           data = utils.filterAny(data, where);
+        
+          //warn if filtering returns empty array
+          if(data.length==0) utils.warn("data reader returns empty array, that's bad");
 
           //only selected items get returned
           data = data.map(function (row) {

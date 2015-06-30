@@ -13,6 +13,13 @@ p {
     margin: 0px;
 }
 
+a {
+    color: #404040;
+    &:hover {
+        color: #333333;
+    }
+}
+
 .vzbp-input {
     border-color:#cccccc;
     border-style:solid;
@@ -36,6 +43,10 @@ p {
     @include position(absolute, 0 $vzbp-width-sidebar 0 $vzbp-width-nav);
     @include transition(right 0.2s linear);
     @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
+
+    &.vzbp-fullscreen {
+        @include position(absolute, 0 0 0 0);
+    }
 }
 
 #vzbp-sidebar {
