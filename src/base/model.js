@@ -191,17 +191,6 @@
     },
 
     /**
-     * Gets all submodels of the current model that are hooks
-     * @param object [object=false] Should it return an object?
-     * @returns {Array|Object} hooks array or object
-     */
-    getSubhooks: function (object) {
-      return this.getSubmodels(object, function(s) {
-        return s.isHook();
-      });
-    },
-
-    /**
      * Gets the current model and submodel values as a JS object
      * @returns {Object} All model as JS object
      */
@@ -427,6 +416,37 @@
       child._deps.parent.push(this);
     },
 
+    /**
+     * gets query that this model/hook needs to get data
+     * @returns {Array} query
+     */
+    getQuery: function () {
+      //only perform query in these two uses
+      var needs_query = [
+        'property',
+        'indicator'
+      ];
+      //if it's not a hook, property or indicator, no query is necessary
+      if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
+        return true;
+      } //error if there's nothing to hook to
+      else if (Object.keys(this._space).length < 1) {
+        utils.error('Error:', this._id, 'can\'t find any dimension');
+        return true;
+      } //else, its a hook (indicator or property) and it needs to query
+      else {
+        var dimensions = this._getAllDimensions();
+        var select = utils.unique(dimensions.concat([this.which]));
+        var filters = this._getAllFilters();
+        //return query
+        return {
+          'from': 'data',
+          'select': select,
+          'where': filters
+        };
+      }
+    },
+
     /* ===============================
      * Hooking model to external data
      * ===============================
@@ -489,19 +509,30 @@
     },
 
     /**
+     * Gets all submodels of the current model that are hooks
+     * @param object [object=false] Should it return an object?
+     * @returns {Array|Object} hooks array or object
+     */
+    getSubhooks: function (object) {
+      return this.getSubmodels(object, function(s) {
+        return s.isHook();
+      });
+    },
+
+    /**
      * gets all sub values for a certain hook
      * only hooks have the "hook" attribute.
      * @param {String} type specific type to lookup
      * @returns {Array} all unique values with specific hook use
      */
-    getHookValues: function (type) {
+    getHookWhich: function (type) {
       var values = [];
       if (this.use && this.use === type) {
         values.push(this.which);
       }
       //repeat for each submodel
       utils.forEach(this.getSubmodels(), function (s) {
-        values = utils.unique(values.concat(s.getHookValues(type)));
+        values = utils.unique(values.concat(s.getHookWhich(type)));
       });
       //now we have an array with all values in a type of hook for hooks.
       return values;
@@ -512,7 +543,7 @@
      * @returns {Array} all unique values of indicator hooks
      */
     getIndicators: function () {
-      return this.getHookValues('indicator');
+      return this.getHookWhich('indicator');
     },
 
     /**
@@ -520,149 +551,43 @@
      * @returns {Array} all unique values of property hooks
      */
     getProperties: function () {
-      return this.getHookValues('property');
+      return this.getHookWhich('property');
     },
 
     /**
-     * gets all hook dimensions
-     * @param {Object} opts options with exceptType or onlyType
-     * @returns {Array} all unique dimensions
+     * Gets the dimension of this model if it has one
+     * @returns {String|Boolean} dimension
      */
-    _getAllDimensions: function (opts) {
-
-      var optsStr = JSON.stringify(opts);
-      if(optsStr in this._spaceDims) {
-        return this._spaceDims[optsStr];
-      }
-
-      opts = opts || {};
-      var dims = [];
-      var dim;
-
-      var models = this._space;
-      //in case it's a parent of hooks
-      if(!this.isHook() && this.space) {
-        models = [];
-        var _this = this;
-        utils.forEach(this.space, function (name) {
-          models.push(getClosestModel(_this, name));
-        });
-      }
-
-      utils.forEach(models, function (m) {
-        if (opts.exceptType && m.getType() === opts.exceptType) {
-          return true;
-        }
-        if (opts.onlyType && m.getType() !== opts.onlyType) {
-          return true;
-        }
-        if (dim = m.getDimension()) {
-          dims.push(dim);
-        }
-      });
-
-      this._spaceDims[optsStr] = dims;
-      return dims;
+    getDimension: function () {
+      return this.dim || false; //defaults to dim if it exists
     },
 
     /**
-     * gets first dimension that matches type
-     * @param {Object} options
-     * @returns {Array} all unique dimensions
-     */
-    _getFirstDimension: function (opts) {
-      opts = opts || {};
-
-      var models = this._space;
-      //in case it's a parent of hooks
-      if(!this.isHook() && this.space) {
-        models = [];
-        var _this = this;
-        utils.forEach(this.space, function (name) {
-          models.push(getClosestModel(_this, name));
-        });
-      }
-
-      var dim = false;
-      utils.forEach(models, function (m) {
-        if (opts.exceptType && m.getType() !== opts.exceptType) {
-          dim = m.getDimension();
-          return false;
-        }
-        else if (opts.type && m.getType() === opts.type) {
-          dim = m.getDimension();
-          return false;
-        }
-        else if (!opts.exceptType && !opts.type) {
-          dim = m.getDimension();
-          return false;
-        }
-      });
-      return dim;
-    },
-
-    /**
-     * gets all hook filters
+     * Gets the filter for this model if it has one
      * @returns {Object} filters
      */
-    _getAllFilters: function () {
-      var filters = {};
-      utils.forEach(this._space, function (h) {
-        filters = utils.extend(filters, h.getFilter());
-      });
-      return filters;
-    },
-
-    /**
-     * gets all hook filters
-     * @returns {Object} filters
-     */
-    _getAllFormatters: function () {
-      var formatters = {};
-      utils.forEach(this._space, function (h) {
-        var f = h.getFormatter();
-        if (f) {
-          formatters[h.getDimension()] = f;
-        }
-      });
-      return formatters;
-    },
-
-    /**
-     * gets the value specified by this hook
-     * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
-     * @returns hooked value
-     */
-    getValue: function (filter) {
-      //extract id from original filter
-      var id = utils.clone(filter, this._getAllDimensions());
-      return this.mapValue(this._getHookedValue(id));
+    getFilter: function () {
+      return {}; //defaults to no filter
     },
 
     /**
      * gets multiple values from the hook
      * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
+     * @param {Array} group_by How to nest e.g: ["geo"]
      * @returns an array of values
      */
-    getValues: function (filter, group_by) {
-      var id = utils.clone(filter, this._getAllDimensions());
+    getValues: function(filter, group_by) {
+
       if(this.isHook()) {
-        //extract id from original filter
-        return this._getHookedValues(id);
+        return [];
       }
-      else {
-        return this._getDataCubeSlice(id, group_by);
-      }
-    },
 
-    _getDataCubeSlice: function(_filter, group_by) {
-      var dimTime, time, filter, filtered, next, fraction, u, w, value;
-
+      var dimTime, time, filtered, next, fraction, u, w, value;
       this._dataCube = this._dataCube || this.getSubhooks(true);
-
+      filter = utils.clone(filter, this._getAllDimensions());
       dimTime = this._getFirstDimension({type: 'time'});
-      time = new Date(_filter[dimTime]); //clone date
-      filter = utils.clone(_filter, null, dimTime);
+      time = new Date(filter[dimTime]); //clone date
+      filter = utils.clone(filter, null, dimTime);
 
       var response = {};
       var f_keys = Object.keys(filter);
@@ -705,6 +630,31 @@
       }
 
       return response;
+    },
+
+    /**
+     * gets the value of the hook point
+     * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
+     * @returns hooked value
+     */
+    getValue: function (filter) {
+      //extract id from original filter
+      filter = utils.clone(filter, this._getAllDimensions());
+      if (!this.isHook()) {
+        utils.warn('_getHookedValue method needs the model to be hooked to data.');
+        return;
+      }
+      var value;
+      if (this.use === 'value') {
+        value = this.which;
+      } else if (this._space.hasOwnProperty(this.use)) {
+        value = this._space[this.use][this.which];
+      } else {
+        //TODO: get meta info about translatable data
+        var l = (this.use !== 'property') ? null : this._languageModel.id;
+        value = interpolateValue.call(this, filter, this.use, this.which, l);
+      }
+      return this.mapValue(value);
     },
 
     /**
@@ -753,19 +703,53 @@
     },
 
     /**
-     * Gets the dimension of this model if it has one
-     * @returns {String|Boolean} dimension
+     * gets filtered dataset with fewer keys
+     * @param {Object} filter
      */
-    getDimension: function () {
-      return this.dim || false; //defaults to dim if it exists
+    getFilteredItems: function (filter) {
+      //cache optimization
+      var filter_id = JSON.stringify(filter);
+      var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
+      if (!filter) return filtered;
+      var found = filtered[filter_id];
+      if (filtered[filter_id]) {
+        return filtered[filter_id];
+      }
+      var items = _DATAMANAGER.get(this._dataId);
+      return filtered[filter_id] = utils.filter(items, filter);
     },
 
     /**
-     * Gets the filter for this model if it has one
-     * @returns {Object} filters
+     * gets nested dataset
+     * @param {Array} order
      */
-    getFilter: function () {
-      return {}; //defaults to no filter
+    getNestedItems: function (order) {
+      //cache optimization
+      var order_id = order.join("-");
+      var nested = _DATAMANAGER.get(this._dataId, 'nested');
+      if (!order) return nested;
+      var found = nested[order_id];
+      if (nested[order_id]) {
+        return nested[order_id];
+      }
+      var items = _DATAMANAGER.get(this._dataId);
+      var nest = d3.nest();
+      for (var i = 0; i < order.length; i++) {
+        nest = nest.key((function(k) {
+          return function(d) { return d[k]; };
+        })(order[i]));
+      };
+
+      function nestToObj(arr) {
+        if(!arr || !arr[0].key) return arr;
+        var res = {};
+        for (var i = 0; i < arr.length; i++) {
+          res[arr[i].key] = nestToObj(arr[i].values);
+        };
+        return res;
+      }
+
+      return nested[order_id] = nestToObj(nest.entries(items));
     },
 
     /**
@@ -773,37 +757,6 @@
      * @returns {Function|Boolean} formatter function
      */
     getFormatter: function () {
-    },
-
-    /**
-     * gets query that this model/hook needs to get data
-     * @returns {Array} query
-     */
-    getQuery: function () {
-      //only perform query in these two uses
-      var needs_query = [
-        'property',
-        'indicator'
-      ];
-      //if it's not a hook, property or indicator, no query is necessary
-      if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
-        return true;
-      } //error if there's nothing to hook to
-      else if (Object.keys(this._space).length < 1) {
-        utils.error('Error:', this._id, 'can\'t find any dimension');
-        return true;
-      } //else, its a hook (indicator or property) and it needs to query
-      else {
-        var dimensions = this._getAllDimensions();
-        var select = utils.unique(dimensions.concat([this.which]));
-        var filters = this._getAllFilters();
-        //return query
-        return {
-          'from': 'data',
-          'select': select,
-          'where': filters
-        };
-      }
     },
 
     /**
@@ -1065,75 +1018,6 @@
       return uniq;
     },
 
-    /**
-     * gets the value of the hook point
-     * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-     * @returns hooked value
-     */
-    _getHookedValue: function (filter) {
-      if (!this.isHook()) {
-        utils.warn('_getHookedValue method needs the model to be hooked to data.');
-        return;
-      }
-      var value;
-      if (this.use === 'value') {
-        value = this.which;
-      } else if (this._space.hasOwnProperty(this.use)) {
-        value = this._space[this.use][this.which];
-      } else {
-        //TODO: get meta info about translatable data
-        var l = (this.use !== 'property') ? null : this._languageModel.id;
-        value = interpolateValue.call(this, filter, this.use, this.which, l);
-      }
-      return value;
-    },
-
-    /**
-     * gets the values of the hook point
-     * @param {Object} filter Id the row. e.g: {geo: "swe", time: "1999"}
-     * @returns an array of hooked values
-     */
-    _getHookedValues: function (filter) {
-      var _this = this;
-      if (!this.isHook()) {
-        utils.warn('_getHookedValues method needs the model to be hooked to data.');
-        return;
-      }
-      var values;
-      var items = _DATAMANAGER.get(this._dataId);
-      var dimTime = this._getFirstDimension({type: 'time'});
-
-      if (this.use === 'value') {
-        values = [this.which];
-      } else if (this._space.hasOwnProperty(this.use)) {
-        values = [this._space[this.use][this.which]];
-      } else {
-        // if a specific time is requested -- return values up to this time
-        if (filter && filter.hasOwnProperty(dimTime)) {
-          // save time into variable
-          var time = new Date(filter[dimTime]);
-          // filter time will be removed during interpolation
-
-          //TODO: get meta info about translatable data
-          var l = (this.use !== 'property') ? null : this._languageModel.id;
-          var lastValue = interpolateValue.call(this, filter, this.use, this.which, l);
-          
-          // return values up to the requested time point, append an interpolated value as the last one
-          values = utils.filter(items, filter).filter(function (d) {
-            return d[dimTime] <= time;
-          }).map(function (d) {
-            return d[_this.which];
-          }).concat(lastValue);
-        } else {
-          // if time not requested -- return just all values
-          values = items.filter(filter).map(function (d) {
-            return d[_this.which];
-          });
-        }
-      }
-      return values;
-    },
-
     //TODO: Is this supposed to be here?
     /**
      * gets maximum, minimum and mean values from the dataset of this certain hook
@@ -1163,54 +1047,110 @@
     },
 
     /**
-     * gets filtered dataset with fewer keys
-     * @param {Object} filter
+     * gets all hook dimensions
+     * @param {Object} opts options with exceptType or onlyType
+     * @returns {Array} all unique dimensions
      */
-    getFilteredItems: function (filter) {
-      //cache optimization
-      var filter_id = JSON.stringify(filter);
-      var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
-      if (!filter) return filtered;
-      var found = filtered[filter_id];
-      if (filtered[filter_id]) {
-        return filtered[filter_id];
+    _getAllDimensions: function (opts) {
+
+      var optsStr = JSON.stringify(opts);
+      if(optsStr in this._spaceDims) {
+        return this._spaceDims[optsStr];
       }
-      var items = _DATAMANAGER.get(this._dataId);
-      return filtered[filter_id] = utils.filter(items, filter);
+
+      opts = opts || {};
+      var dims = [];
+      var dim;
+
+      var models = this._space;
+      //in case it's a parent of hooks
+      if(!this.isHook() && this.space) {
+        models = [];
+        var _this = this;
+        utils.forEach(this.space, function (name) {
+          models.push(getClosestModel(_this, name));
+        });
+      }
+
+      utils.forEach(models, function (m) {
+        if (opts.exceptType && m.getType() === opts.exceptType) {
+          return true;
+        }
+        if (opts.onlyType && m.getType() !== opts.onlyType) {
+          return true;
+        }
+        if (dim = m.getDimension()) {
+          dims.push(dim);
+        }
+      });
+
+      this._spaceDims[optsStr] = dims;
+      return dims;
     },
 
     /**
-     * gets nested dataset
-     * @param {Array} order
+     * gets first dimension that matches type
+     * @param {Object} options
+     * @returns {Array} all unique dimensions
      */
-    getNestedItems: function (order) {
-      //cache optimization
-      var order_id = order.join("-");
-      var nested = _DATAMANAGER.get(this._dataId, 'nested');
-      if (!order) return nested;
-      var found = nested[order_id];
-      if (nested[order_id]) {
-        return nested[order_id];
-      }
-      var items = _DATAMANAGER.get(this._dataId);
-      var nest = d3.nest();
-      for (var i = 0; i < order.length; i++) {
-        nest = nest.key((function(k) {
-          return function(d) { return d[k]; };
-        })(order[i]));
-      };
+    _getFirstDimension: function (opts) {
+      opts = opts || {};
 
-      function nestToObj(arr) {
-        if(!arr || !arr[0].key) return arr;
-        var res = {};
-        for (var i = 0; i < arr.length; i++) {
-          res[arr[i].key] = nestToObj(arr[i].values);
-        };
-        return res;
+      var models = this._space;
+      //in case it's a parent of hooks
+      if(!this.isHook() && this.space) {
+        models = [];
+        var _this = this;
+        utils.forEach(this.space, function (name) {
+          models.push(getClosestModel(_this, name));
+        });
       }
 
-      return nested[order_id] = nestToObj(nest.entries(items));
+      var dim = false;
+      utils.forEach(models, function (m) {
+        if (opts.exceptType && m.getType() !== opts.exceptType) {
+          dim = m.getDimension();
+          return false;
+        }
+        else if (opts.type && m.getType() === opts.type) {
+          dim = m.getDimension();
+          return false;
+        }
+        else if (!opts.exceptType && !opts.type) {
+          dim = m.getDimension();
+          return false;
+        }
+      });
+      return dim;
+    },
+
+    /**
+     * gets all hook filters
+     * @returns {Object} filters
+     */
+    _getAllFilters: function () {
+      var filters = {};
+      utils.forEach(this._space, function (h) {
+        filters = utils.extend(filters, h.getFilter());
+      });
+      return filters;
+    },
+
+    /**
+     * gets all hook filters
+     * @returns {Object} filters
+     */
+    _getAllFormatters: function () {
+      var formatters = {};
+      utils.forEach(this._space, function (h) {
+        var f = h.getFormatter();
+        if (f) {
+          formatters[h.getDimension()] = f;
+        }
+      });
+      return formatters;
     }
+
   });
 
   Vizabi.Model = Model;
