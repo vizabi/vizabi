@@ -171,15 +171,34 @@
 
     /**
      * Gets all submodels of the current model
+     * @param object [object=false] Should it return an object?
+     * @returns {Array} submodels
      */
-    getSubmodels: function () {
-      var submodels = [];
-      utils.forEach(this._data, function (s) {
-        if (s && typeof s._id !== 'undefined') {
-          submodels.push(s);
+    getSubmodels: function (object, fn) {
+      var submodels = (object) ? {} : [];
+      var fn = fn || function() { return true; };
+      utils.forEach(this._data, function (s, name) {
+        if (s && typeof s._id !== 'undefined' && fn(s)) {
+          if(object) {
+            submodels[name] = s;
+          }
+          else {
+            submodels.push(s);
+          }
         }
       });
       return submodels;
+    },
+
+    /**
+     * Gets all submodels of the current model that are hooks
+     * @param object [object=false] Should it return an object?
+     * @returns {Array|Object} hooks array or object
+     */
+    getSubhooks: function (object) {
+      return this.getSubmodels(object, function(s) {
+        return s.isHook();
+      });
     },
 
     /**
@@ -315,7 +334,6 @@
      */
     load: function () {
       var _this = this;
-      var submodels = this.getSubmodels();
       var data_hook = this._dataModel;
       var language_hook = this._languageModel;
       var query = this.getQuery();
@@ -324,6 +342,8 @@
       var promises = [];
       //useful to check if in the middle of a load call
       this._loadCall = true;
+
+
       //load hook
       //if its not a hook, the promise will not be created
       if (this.isHook() && data_hook && query) {
@@ -362,10 +382,13 @@
         });
         promises.push(promise);
       }
+
       //load submodels as well
-      for (var i in submodels) {
-        promises.push(submodels[i].load());
-      }
+      var _this = this;
+      utils.forEach(this.getSubmodels(true), function(sm, name) {
+        promises.push(sm.load());
+      });
+
       //when all promises/loading have been done successfully
       //we will consider this done
       var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
@@ -423,11 +446,13 @@
         //what should this hook to?
         this.hookModel();
       }
-      //hook submodels
-      var submodels = this.getSubmodels();
-      utils.forEach(submodels, function (s) {
-        s.setHooks();
-      });
+      else {
+        //hook submodels
+        var submodels = this.getSubmodels();
+        utils.forEach(submodels, function (s) {
+          s.setHooks();
+        });
+      }
     },
 
     /**
@@ -500,13 +525,12 @@
 
     /**
      * gets all hook dimensions
-     * @param {Object} options
+     * @param {Object} opts options with exceptType or onlyType
      * @returns {Array} all unique dimensions
      */
     _getAllDimensions: function (opts) {
 
       var optsStr = JSON.stringify(opts);
-
       if(optsStr in this._spaceDims) {
         return this._spaceDims[optsStr];
       }
@@ -514,7 +538,18 @@
       opts = opts || {};
       var dims = [];
       var dim;
-      utils.forEach(this._space, function (m) {
+
+      var models = this._space;
+      //in case it's a parent of hooks
+      if(!this.isHook() && this.space) {
+        models = [];
+        var _this = this;
+        utils.forEach(this.space, function (name) {
+          models.push(getClosestModel(_this, name));
+        });
+      }
+
+      utils.forEach(models, function (m) {
         if (opts.exceptType && m.getType() === opts.exceptType) {
           return true;
         }
@@ -537,8 +572,19 @@
      */
     _getFirstDimension: function (opts) {
       opts = opts || {};
+
+      var models = this._space;
+      //in case it's a parent of hooks
+      if(!this.isHook() && this.space) {
+        models = [];
+        var _this = this;
+        utils.forEach(this.space, function (name) {
+          models.push(getClosestModel(_this, name));
+        });
+      }
+
       var dim = false;
-      utils.forEach(this._space, function (m) {
+      utils.forEach(models, function (m) {
         if (opts.exceptType && m.getType() !== opts.exceptType) {
           dim = m.getDimension();
           return false;
@@ -598,10 +644,70 @@
      * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
      * @returns an array of values
      */
-    getValues: function (filter) {
-      //extract id from original filter
+    getValues: function (filter, group_by) {
       var id = utils.clone(filter, this._getAllDimensions());
-      return this._getHookedValues(id);
+      if(this.isHook()) {
+        //extract id from original filter
+        return this._getHookedValues(id);
+      }
+      else {
+        return this._getDataCubeSlice(id, group_by);
+      }
+    },
+
+    _getDataCubeSlice: function(_filter, group_by) {
+      var dimTime, time, filter, filtered, next, fraction, u, w, value;
+
+      this._dataCube = this._dataCube || this.getSubhooks(true);
+
+      dimTime = this._getFirstDimension({type: 'time'});
+      time = new Date(_filter[dimTime]); //clone date
+      filter = utils.clone(_filter, null, dimTime);
+
+      var response = {};
+      var f_keys = Object.keys(filter);
+      var f_values = f_keys.map(function(k) { return filter[k]; });
+
+      //if there's a filter, interpolate only that
+      if(f_keys.length) {
+        utils.forEach(this._dataCube, function(hook, name) {
+          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+          u = hook.use;
+          w = hook.which;
+
+          filtered = hook.getNestedItems(f_keys);
+          utils.forEach(f_values, function(v) {
+            filtered = filtered[v]; //get precise array (leaf)
+          });
+
+          if(!fraction) {
+            fraction = (time - filtered[next - 1][dimTime]) / (filtered[next][dimTime] - filtered[next - 1][dimTime]);
+          }
+
+          value = interpolatePoint(filtered, u, w, next, fraction);
+          response[name] = hook.mapValue(value);
+        });
+      }
+      //else, interpolate all with time
+      else {
+        utils.forEach(this._dataCube, function(hook, name) {
+          filtered = hook.getNestedItems(group_by);
+          response[name] = {};
+          //find position from first hook
+          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+          u = hook.use;
+          w = hook.which;
+          utils.forEach(filtered, function(arr, id) {
+            if(!fraction) {
+              fraction = (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
+            }
+            value = interpolatePoint(arr, u, w, next, fraction);
+            response[name][id] = hook.mapValue(value);
+          });
+        });
+      }
+
+      return response;
     },
 
     /**
@@ -615,7 +721,7 @@
 
     /**
      * gets the items associated with this hook without values
-     * @param value Original valueg
+     * @param filter filter
      * @returns hooked value
      */
     getItems: function (filter) {
@@ -637,14 +743,12 @@
           return item;
         });
       } else {
-        var smdls = this.getSubmodels();
+        var sub = this.getSubhooks();
         var found = [];
-        if(smdls.length > 1) {
-          utils.forEach(smdls, function(s) {
-            if(s.getItems) {
-              found = s.getItems();
-              return false;
-            }
+        if(sub.length > 1) {
+          utils.forEach(sub, function(s) {
+            found = s.getItems();
+            return false;
           });
         }
         return found;
@@ -1063,6 +1167,7 @@
 
     /**
      * gets filtered dataset with fewer keys
+     * @param {Object} filter
      */
     getFilteredItems: function (filter) {
       //cache optimization
@@ -1075,6 +1180,39 @@
       }
       var items = _DATAMANAGER.get(this._dataId);
       return filtered[filter_id] = utils.filter(items, filter);
+    },
+
+    /**
+     * gets nested dataset
+     * @param {Array} order
+     */
+    getNestedItems: function (order) {
+      //cache optimization
+      var order_id = order.join("-");
+      var nested = _DATAMANAGER.get(this._dataId, 'nested');
+      if (!order) return nested;
+      var found = nested[order_id];
+      if (nested[order_id]) {
+        return nested[order_id];
+      }
+      var items = _DATAMANAGER.get(this._dataId);
+      var nest = d3.nest();
+      for (var i = 0; i < order.length; i++) {
+        nest = nest.key((function(k) {
+          return function(d) { return d[k]; };
+        })(order[i]));
+      };
+
+      function nestToObj(arr) {
+        if(!arr || !arr[0].key) return arr;
+        var res = {};
+        for (var i = 0; i < arr.length; i++) {
+          res[arr[i].key] = nestToObj(arr[i].values);
+        };
+        return res;
+      }
+
+      return nested[order_id] = nestToObj(nest.entries(items));
     }
   });
 
@@ -1224,6 +1362,55 @@
   //caches interpolation indexes globally.
   //TODO: what if there are 2 visualizations with 2 data sources?
   var interpIndexes = {};
+
+  /**
+   * interpolates the specific value missing
+   * @param {Array} list
+   * @param {String} use
+   * @param {String} which
+   * @param {Number} i the next item in the array
+   * @param {Number} fraction
+   * @returns interpolated value
+   */
+  function interpolatePoint(arr, use, which, i, fraction) {
+    var value;
+
+    if (arr === null || arr.length === 0) {
+      utils.warn('interpolatePoint returning NULL: array is empty');
+      return null;
+    }
+    // return constant for the use of "value"
+    if (use === 'value') {
+      return which;
+    }
+    // zero-order interpolation for the use of properties
+    if (use === 'property' && i === 0) {
+      return arr[0][which];
+    }
+    if (use === 'property') {
+      return arr[i - 1][which];
+    }
+
+    // the rest is for the continuous measurements
+    // check if the desired value is out of range. 0-order extrapolation
+    if (i === 0) {
+      return arr[0][which];
+    }
+    if (i === arr.length) {
+      return arr[arr.length - 1][which];
+    }
+    //return null if data is missing
+    if (arr[i][which] === null || arr[i-1][which] === null) {
+      return null;
+    }
+
+    value = +arr[i-1][which] + (arr[i][which] - arr[i-1][which]) * fraction;
+    // cast to time object if we are interpolating time
+    if (utils.isDate(arr[0][which])) {
+      value = new Date(value);
+    }
+    return value;
+  }
 
   /**
    * interpolates the specific value if missing
