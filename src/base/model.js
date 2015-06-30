@@ -1259,9 +1259,7 @@
       indexNext = interpIndexes[space_id][time].next;   
     }
     else {
-      indexNext = d3.bisectLeft(items.map(function (d) {
-          return d[dimTime];
-        }), time);
+      indexNext = d3.bisectLeft(this.getUnique(dimTime), time);
       //store indexNext and fraction
       interpIndexes[space_id][time] = {
         next: indexNext
