@@ -122,10 +122,12 @@
       var _this = this;
       var time = this.model.time;
       var timeDim = time.getDimension();
+      var entityDim = this.model.entities.getDimension();
       var duration = (time.playing) ? time.speed : 0;
       var filter = {};
       filter[timeDim] = time.value;
-      var items = this.model.marker.label.getKeys(filter);
+      var items = this.model.marker.getKeys(filter);
+      var values = this.model.marker.getValues(filter, [entityDim]);
 
       this.entityBars = this.bars.selectAll('.vzb-bc-bar')
         .data(items);
@@ -151,17 +153,17 @@
       this.bars.selectAll('.vzb-bc-bar')
         .attr("width", barWidth)
         .attr("fill", function (d) {
-          return _this.cScale(_this.model.marker.color.getValue(d));
+          return _this.cScale(values.color[d[entityDim]]);
         })
         .attr("x", function (d) {
-          return _this.xScale(_this.model.marker.axis_x.getValue(d));
+          return _this.xScale(values.axis_x[d[entityDim]]);
         })
         .transition().duration(duration).ease("linear")
         .attr("y", function (d) {
-          return _this.yScale(_this.model.marker.axis_y.getValue(d));
+          return _this.yScale(values.axis_y[d[entityDim]]);
         })
         .attr("height", function (d) {
-          return _this.height - _this.yScale(_this.model.marker.axis_y.getValue(d));
+          return _this.height - _this.yScale(values.axis_y[d[entityDim]]);
         });
     },
 

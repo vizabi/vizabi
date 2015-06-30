@@ -119,9 +119,9 @@
     },
 
     ready: function () {
+      this.updateTime();
       this.updateShow();
       this.updateSize();
-      this.updateTime();
       this.redrawDataPoints();
     },
 
@@ -185,6 +185,7 @@
      */
     updateTime: function () {
       var _this = this;
+      var KEY = this.KEY;
 
       var time_1 = (this.time === null) ? this.model.time.value : this.time;
       this.time = this.model.time.value;
@@ -195,7 +196,9 @@
 
       filter[timeDim] = this.time;
 
-      this.data = this.model.marker.label.getKeys(filter);
+      this.data = this.model.marker.getKeys(filter);
+      this.values = this.model.marker.getValues(filter, [KEY]);
+      this.prev_values = this.model.marker.getValues(filter, [KEY], true);
 
       this.entityLines = this.linesContainer.selectAll('.vzb-lc-entity').data(this.data);
       this.entityLabels = this.labelsContainer.selectAll('.vzb-lc-entity').data(this.data);
@@ -212,6 +215,8 @@
     updateSize: function () {
 
       var _this = this;
+      var values = this.values;
+      var KEY = this.KEY;
 
       var padding = 2;
 
@@ -245,8 +250,8 @@
 
 
       //adjust right this.margin according to biggest label
-      var lineLabelsText = this.model.marker.label.getKeys().map(function (d, i) {
-        return _this.model.marker.label.getValue(d);
+      var lineLabelsText = this.model.marker.getKeys().map(function (d, i) {
+        return values.label[d[KEY]];
       });
 
       var longestLabelWidth = 0;
@@ -339,6 +344,7 @@
     redrawDataPoints: function () {
       var _this = this;
       var KEY = this.KEY;
+      var values = this.values;
 
       if (!this.timeUpdatedOnce) {
         this.updateTime();
@@ -361,8 +367,8 @@
         })
         .each(function (d, index) {
           var entity = d3.select(this);
-          var color = _this.cScale(_this.model.marker.color.getValue(d));
-          var colorShadow = _this.cShadeScale(_this.model.marker.color_shadow.getValue(d));
+          var color = _this.cScale(values.color[d[KEY]]);
+          var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
 
           entity.append("path")
             .attr("class", "vzb-lc-line-shadow")
@@ -385,9 +391,9 @@
         })
         .each(function (d, index) {
           var entity = d3.select(this);
-          var color = _this.cScale(_this.model.marker.color.getValue(d));
-          var colorShadow = _this.cShadeScale(_this.model.marker.color_shadow.getValue(d));
-          var label = _this.model.marker.label.getValue(d);
+          var color = _this.cScale(values.color[d[KEY]]);
+          var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
+          var label = values.label[d[KEY]];
 
           entity.append("circle")
             .attr("class", "vzb-lc-circle")
@@ -407,15 +413,17 @@
             .attr("dy", "1.6em");
         });
 
+      var prev_values = this.prev_values;
+
       this.entityLines
         .each(function (d, index) {
           var entity = d3.select(this);
-          var label = _this.model.marker.label.getValue(d);
+          var label = values.label[d[KEY]];
 
           //TODO: optimization is possible if getValues would return both x and time
           //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
-          var x = _this.model.marker.axis_x.getValues(d);
-          var y = _this.model.marker.axis_y.getValues(d);
+          var x = prev_values.axis_x[d[KEY]];
+          var y = prev_values.axis_y[d[KEY]];
           var xy = x.map(function (d, i) {
             return [+x[i], +y[i]];
           });
@@ -478,7 +486,7 @@
       this.entityLabels
         .each(function (d, index) {
           var entity = d3.select(this);
-          var label = _this.model.marker.label.getValue(d);
+          var label = values.label[d[KEY]];
 
           entity.select(".vzb-lc-circle")
             .transition()
@@ -555,6 +563,7 @@
     entityMousemove: function (me, index, context) {
       var _this = context;
       var KEY = _this.KEY;
+      var values = _this.values;
 
       _this.hoveringNow = me;
 
@@ -582,7 +591,7 @@
       var timeDim = _this.model.time.getDimension();
       pointer[KEY] = me[KEY];
       pointer[timeDim] = resolvedTime;
-      var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
+      var resolvedValue = values.axis_y[pointer[KEY]];
 
       if (utils.isNaN(resolvedValue)) {
         return;

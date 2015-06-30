@@ -574,9 +574,10 @@
      * gets multiple values from the hook
      * @param {Object} filter Reference to the row. e.g: {geo: "swe", time: "1999", ... }
      * @param {Array} group_by How to nest e.g: ["geo"]
+     * @param {Boolean} [previous = false] previous Append previous data points
      * @returns an array of values
      */
-    getValues: function(filter, group_by) {
+    getValues: function(filter, group_by, previous) {
 
       if(this.isHook()) {
         return [];
@@ -608,6 +609,16 @@
           }
           value = interpolatePoint(filtered, u, w, next, fraction);
           response[name] = hook.mapValue(value);
+
+          //concat previous data points
+          if(previous) {
+            var values = utils.filter(filtered, filter).filter(function (d) {
+                          return d[dimTime] <= time;
+                         }).map(function(d) {
+                          return hook.mapValue(d[w]);
+                         }).concat(response[name]);
+            response[name] = values;
+          }
         });
       }
       //else, interpolate all with time
@@ -625,6 +636,17 @@
             }
             value = interpolatePoint(arr, u, w, next, fraction);
             response[name][id] = hook.mapValue(value);
+
+            //concat previous data points
+            if(previous) {
+              var values = utils.filter(arr, filter).filter(function (d) {
+                            return d[dimTime] <= time;
+                           }).map(function(d) {
+                            return hook.mapValue(d[w]);
+                           }).concat(response[name][id]);
+              response[name][id] = values;
+            }
+
           });
         });
       }
@@ -641,7 +663,7 @@
       //extract id from original filter
       filter = utils.clone(filter, this._getAllDimensions());
       if (!this.isHook()) {
-        utils.warn('_getHookedValue method needs the model to be hooked to data.');
+        utils.warn('getValue method needs the model to be hooked to data.');
         return;
       }
       var value;

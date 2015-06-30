@@ -797,18 +797,25 @@
     redrawDataPointsOnlySize: function () {
       var _this = this;
 
-      if (this.someSelected) {
-        _this.entityBubbles.each(function (d, index) {
-          _this._updateBubble(d, index, d3.select(this), 0);
-        });
-      } else {
-        this.entityBubbles.each(function (d, index) {
-          var valueS = _this.model.marker.size.getValue(d);
-          if (valueS == null) return;
+      // if (this.someSelected) {
+      //   _this.entityBubbles.each(function (d, index) {
+      //     _this._updateBubble(d, index, d3.select(this), 0);
+      //   });
+      // } else {
+      //   this.entityBubbles.each(function (d, index) {
+      //     var valueS = _this.model.marker.size.getValue(d);
+      //     if (valueS == null) return;
 
-          d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
-        });
-      }
+      //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
+      //   });
+      // }
+
+      this.entityBubbles.each(function (d, index) {
+        var valueS = _this.model.marker.size.getValue(d);
+        if (valueS == null) return;
+
+        d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
+      });
     },
 
     /*
