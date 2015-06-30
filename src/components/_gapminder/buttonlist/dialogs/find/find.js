@@ -79,7 +79,7 @@
       var KEY = this.KEY;
       var selected = this.model.state.entities.getSelected();
       var labelModel = this.model.state.marker.label;
-      var data = labelModel.getItems().map(function (d) {
+      var data = labelModel.getKeys().map(function (d) {
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer.name = labelModel.getValue(d);
