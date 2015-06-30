@@ -87,7 +87,7 @@
                 show: {
                     _defs_: {
                         "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-                        "geo.category": ["country"]
+                        "geo.cat": ["country"]
                     }
                 }
             },

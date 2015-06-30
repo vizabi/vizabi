@@ -153,28 +153,15 @@
         var _this = this;
         this.on("resize", function () {
             console.log("acting on resize");
-            _this.updateSize();
+            _this.resize();
             _this.updateTime();
             _this.redrawDataPoints();
         });
         
-        
-        console.log("ready once");
-
-    },
-
-    /*
-     * Both model and DOM are ready
-     */
-    ready: function () {
-        if(!this.doneReadyOnce){
-            this.doneReadyOnce = true;
-            
-            this.updateEntities();
-            this.resize();
-            this.updateTime();
-            this.redrawDataPoints();
-        }
+        this.updateEntities();
+        this.resize();
+        this.updateTime();
+        this.redrawDataPoints();
     },
 
 
