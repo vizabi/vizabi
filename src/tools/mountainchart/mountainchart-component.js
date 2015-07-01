@@ -212,7 +212,7 @@
                 var result = _this.data
                     .map(function(dd){return populateDistributionsInto(dd, _this)});
 
-                return _this.stackingIsOn?_this.stack(result):result;
+                return _this.model.marker.stack?_this.stack(result):result;
             });
 
     },
