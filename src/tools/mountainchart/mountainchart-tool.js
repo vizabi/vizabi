@@ -122,8 +122,8 @@
             }
         },
         data: {
-            reader: "json-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains.json"
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
         }
     });
 
