@@ -42,29 +42,7 @@
     };
 
 
-    function populateDistributionsInto(d, context){
-        var _this = context;
-        // we need to generate the distributions based on mu, variance and scale
-        // we span a uniform range of 'points' across the entire X scale,
-        // resolution: 1 point per pixel. If width not defined assume it equal 500px
-        var rangeFrom = Math.log(_this.xScale.domain()[0]);
-        var rangeTo = Math.log(_this.xScale.domain()[1]);
-        var rangeStep = (rangeTo - rangeFrom)/500;//(width?500:width);
 
-        var scale = _this.model.marker.axis_y.getValue(d);
-        var mean = _this.model.marker.axis_x.getValue(d);
-        var variance = _this.model.marker.size.getValue(d);
-        
-        
-        d.points = d3.range(rangeFrom, rangeTo, rangeStep)
-            .map(function(dX){
-                // get Y value for every X
-                return {x: Math.exp(dX),
-                        y0: 0, // the initial base of areas is at zero
-                        y:scale * pdf.y(Math.exp(dX), Math.log(mean), variance, pdf.DISTRIBUTIONS_LOGNORMAL)}
-            });
-        return d;
-    }
     
     
 
@@ -97,9 +75,16 @@
                     console.log("change", evt);
                 },
                 'change:time:value': function() {
-                    console.log("change time value");
+                    //console.log("change time value");
                     _this.updateTime();
                     _this.redrawDataPoints();
+                },
+                'change:marker:stack': function() {
+                    //console.log("change marker stack");
+                    this.updateEntities();
+                    this.resize();
+                    this.updateTime();
+                    this.redrawDataPoints();
                 }
             }
 
@@ -113,7 +98,7 @@
 
         this.xAxis = d3.svg.axisSmart();
 
-
+        this.cached = [];
 
         // define path generator
         this.area = d3.svg.area()
@@ -157,6 +142,9 @@
             _this.redrawDataPoints();
         });
         
+        this.KEY = this.model.entities.getDimension();
+        this.TIMEDIM = this.model.time.getDimension();
+
         this.updateEntities();
         this.resize();
         this.updateTime();
@@ -187,10 +175,60 @@
 
 
         //TODO remove magic constant
-        this.yScale
-            .domain([0, this.model.marker.stack?50000:20000]);
+        
         this.xScale
             .domain(this.model.marker.axis_x.scaleType == "log" ? [0.01,1000] : [0,20]);
+        
+        
+
+        this.cached = this.model.marker.getKeys()
+            .map(function (d) {
+              var pointer = {};
+              pointer[_this.KEY] = d[_this.KEY];
+              pointer[_this.TIMEDIM] = _this.model.time.end;
+              pointer.sortValue = _this.peakValue(pointer);
+              return pointer;
+            })
+            .sort(function (a, b) {
+              return b.sortValue - a.sortValue;
+            })
+        
+        
+        this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
+            .data(this.cached, function (d) {
+                return d[_this.KEY];
+            });
+            
+        var peaks = this.cached.map(function(d){return d.sortValue});
+        
+        this.yScale
+            .domain([0, this.model.marker.stack ? d3.sum(peaks) : d3.max(peaks) ]);
+            
+        
+        //exit selection
+        this.mountains.exit().remove();
+
+        //enter selection -- init circles
+        this.mountains.enter().append("path")
+            .attr("class", "vzb-mc-mountain")
+            .on("mousemove", function(d, i) {
+                var mouse = d3.mouse(_this.graph.node()).map(function(d) {
+                    return parseInt(d);
+                });
+
+                //position tooltip
+                _this.tooltip.classed("vzb-hidden", false)
+                    .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                    .html(_this.model.marker.label.getValue(d));
+
+            })
+            .on("mouseout", function(d, i) {
+                _this.tooltip.classed("vzb-hidden", true);
+            })
+            .on("click", function(d, i) {
+                _this.model.entities.selectEntity(d);
+            });
+        
     },
 
       
@@ -202,19 +240,40 @@
         var _this = this;
 
         this.time = this.model.time.value;
-        this.data = this.model.marker.label.getKeys({ time: this.time.toString() });
-        this.stackingIsOn = this.model.marker.stack;
-
         this.yearEl.text(this.time.getFullYear().toString());
+    
+    },
+      
+      
+    generateDistribution: function(d){
+        var _this = this;
+        // we need to generate the distributions based on mu, variance and scale
+        // we span a uniform range of 'points' across the entire X scale,
+        // resolution: 1 point per pixel. If width not defined assume it equal 500px
+        var rangeFrom = Math.log(_this.xScale.domain()[0]);
+        var rangeTo = Math.log(_this.xScale.domain()[1]);
+        var rangeStep = (rangeTo - rangeFrom)/(this.width?this.width:500);
 
-        this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
-            .data(function(){
-                var result = _this.data
-                    .map(function(dd){return populateDistributionsInto(dd, _this)});
-
-                return _this.model.marker.stack?_this.stack(result):result;
+        var norm = _this.model.marker.axis_y.getValue(d);
+        var mean = _this.model.marker.axis_x.getValue(d);
+        var variance = _this.model.marker.size.getValue(d);
+        
+        
+        var result =  d3.range(rangeFrom, rangeTo, rangeStep)
+            .map(function(dX){
+                // get Y value for every X
+                return {x: Math.exp(dX),
+                        y0: 0, // the initial base of areas is at zero
+                        y: norm * pdf.y(Math.exp(dX), Math.log(mean), variance, pdf.DISTRIBUTIONS_LOGNORMAL)
+                       }
             });
-
+        
+        
+        return result;
+    },   
+        
+    peakValue: function(d){
+        return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
     },
       
       
@@ -243,8 +302,8 @@
                 break;
         };
 
-        var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-        var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+        this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+        this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph
@@ -252,13 +311,13 @@
 
         //year is centered
         this.yearEl
-            .attr("x", width / 2)
-            .attr("y", height / 3 * 1)
-            .style("font-size", Math.max(height / 4, width / 4) + "px");
+            .attr("x", this.width / 2)
+            .attr("y", this.height / 3 * 1)
+            .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
 
         //update scales to the new range
-        this.yScale.range([height, 0]).nice();
-        this.xScale.range([0, width]);
+        this.yScale.range([this.height, 0]);
+        this.xScale.range([0, this.width]);
         
 
         //axis is updated
@@ -273,11 +332,11 @@
 
 
         this.xAxisEl
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + this.height + ")")
             .call(this.xAxis);
 
         this.xTitleEl
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + this.height + ")")
             .select("text")
             .attr("dy", "-0.36em")
 
@@ -290,43 +349,26 @@
     redrawDataPoints: function() {                
         var _this = this;
 
-        //exit selection
-        this.mountains.exit().remove();
-
-        //enter selection -- init circles
-        this.mountains.enter().append("path")
-            .attr("class", "vzb-mc-mountain");
-
         //update selection
         //var speed = this.model.time.speed;
+        
+        //regenerate distributions
+        this.cached.forEach(function(d, i){
+            _this.cached[i][_this.TIMEDIM] = _this.time;
+            _this.cached[i].points = _this.generateDistribution(d);
+        })
+        
+        
+        if(_this.model.marker.stack) _this.stack(this.cached);
 
         this.mountains
             .style("fill", function(d) {
                 return _this.cScale(_this.model.marker.color.getValue(d));
             })
             //.transition().duration(speed).ease("linear")
-            .attr("d", function(d) { return _this.area(d.points); })
-            //.sort(this.order);
+            .attr("d", function(d,i) { return _this.area(_this.cached[i].points); }) 
 
-        /* TOOLTIP */
-        //TODO: improve tooltip
-        this.mountains.on("mousemove", function(d, i) {
-                var mouse = d3.mouse(_this.graph.node()).map(function(d) {
-                    return parseInt(d);
-                });
 
-                //position tooltip
-                _this.tooltip.classed("vzb-hidden", false)
-                    .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                    .html(_this.model.marker.label.getValue(d));
-
-            })
-            .on("mouseout", function(d, i) {
-                _this.tooltip.classed("vzb-hidden", true);
-            })
-            .on("click", function(d, i) {
-                _this.model.entities.selectEntity(d);
-            });
     }
       
   });
