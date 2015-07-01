@@ -92,6 +92,7 @@
                 }
             },
             marker: {
+                stack: true,
                 space: ["entities", "time"],
                 label: {
                     use: "property",
@@ -105,7 +106,8 @@
                 axis_x: {
                     use: "indicator",
                     which: "mean",
-                    scaleType: 'log'
+                    scaleType: 'log',
+                    unit: "indicator/dollarperday"
                 },
                 size: {
                     use: "indicator",
@@ -122,27 +124,6 @@
         data: {
             reader: "json-file",
             path: "local_data/waffles/{{LANGUAGE}}/mountains.json"
-        },
-
-        ui: {
-        },
-
-        language: {
-            id: "en",
-            strings: {
-                _defs_: {
-                    en: {
-                        "title": "",
-                        "buttons/expand": "Go Big",
-                        "buttons/unexpand": "Go Small",
-                        "buttons/find": "Find",
-                        "buttons/colors": "Colors",
-                        "buttons/size": "Size",
-                        "buttons/axes": "Axes",
-                        "buttons/more_options": "Options"
-                    }
-                }
-            }
         }
     });
 

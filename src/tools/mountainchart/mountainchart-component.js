@@ -173,7 +173,7 @@
 
         var xTitle = this.xTitleEl.selectAll("text").data([0]);
         xTitle.enter().append("text");
-        xTitle.text("$/" + this.translator("axistitle/day"));
+        xTitle.text(this.translator(this.model.marker.axis_x.unit));
 
         //scales
         this.yScale = this.model.marker.axis_y.getScale();
@@ -252,9 +252,9 @@
 
         //year is centered
         this.yearEl
-            .attr("x", "50%")
-            .attr("y", "50%")
-            .attr("transform", "translate(" + (-margin.left) + ", " + (-margin.top) + ")");
+            .attr("x", width / 2)
+            .attr("y", height / 3 * 1)
+            .style("font-size", Math.max(height / 4, width / 4) + "px");
 
         //update scales to the new range
         this.yScale.range([height, 0]).nice();
