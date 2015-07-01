@@ -378,7 +378,7 @@ meow("********** "+orient+" **********");
                                         + marginsLR
                                     ) 
                                     // this is a logarithmic rescaling of labels
-                                    * (1 + Math.log10((d+"").substr(0,1)))
+                                    * (1 + Math.log10( d.toString().replace(/([0\.])/g,"")[0] ))
                             }))
 
                     }else{

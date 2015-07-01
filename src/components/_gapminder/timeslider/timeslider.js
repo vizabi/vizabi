@@ -295,11 +295,11 @@
     _getBrushedEnd: function () {
       var _this = this;
       return function () {
+        _this._dragging = false;
         _this._blockUpdate = false;
         _this.model.time.pause();
         _this.element.classed(class_dragging, false);
         _this.model.time.snap();
-        _this._dragging = false;
       };
     },
 
