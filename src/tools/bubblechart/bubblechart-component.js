@@ -481,7 +481,7 @@
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
-      this.model.entities._visible = this.model.marker.label.getItems()
+      this.model.entities._visible = this.model.marker.getKeys()
         .map(function (d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
@@ -797,18 +797,25 @@
     redrawDataPointsOnlySize: function () {
       var _this = this;
 
-      if (this.someSelected) {
-        _this.entityBubbles.each(function (d, index) {
-          _this._updateBubble(d, index, d3.select(this), 0);
-        });
-      } else {
-        this.entityBubbles.each(function (d, index) {
-          var valueS = _this.model.marker.size.getValue(d);
-          if (valueS == null) return;
+      // if (this.someSelected) {
+      //   _this.entityBubbles.each(function (d, index) {
+      //     _this._updateBubble(d, index, d3.select(this), 0);
+      //   });
+      // } else {
+      //   this.entityBubbles.each(function (d, index) {
+      //     var valueS = _this.model.marker.size.getValue(d);
+      //     if (valueS == null) return;
 
-          d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
-        });
-      }
+      //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
+      //   });
+      // }
+
+      this.entityBubbles.each(function (d, index) {
+        var valueS = _this.model.marker.size.getValue(d);
+        if (valueS == null) return;
+
+        d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
+      });
     },
 
     /*
@@ -818,11 +825,28 @@
     redrawDataPoints: function (duration) {
       var _this = this;
 
+      // Example on how it would be possible to interpolate all at once
+      // this.model.marker.getValues({ time: this.model.time.value }, ["geo"]);
+
       if (duration == null) duration = _this.duration;
+
+      var t = {}, tLocked = {};
+      var TIMEDIM = this.TIMEDIM;
+      var KEY = this.KEY;
+      var values, valuesLocked;
+
+      //get values for locked and not locked
+      if (this.model.time.lockNonSelected && this.someSelected) {
+        tLocked[TIMEDIM] = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        valuesLocked = this.model.marker.getValues(tLocked, [KEY]);
+      }
+
+      t[TIMEDIM] = this.time;
+      values = this.model.marker.getValues(t, [KEY]);
 
       this.entityBubbles.each(function (d, index) {
         var view = d3.select(this);
-        _this._updateBubble(d, index, view, duration);
+        _this._updateBubble(d, values, valuesLocked, index, view, duration);
 
       }); // each bubble
 
@@ -843,22 +867,21 @@
     },
 
     //redraw Data Points
-    _updateBubble: function (d, index, view, duration) {
+    _updateBubble: function (d, values, valuesL, index, view, duration) {
+
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
+      var KEY = this.KEY;
 
       if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-        d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
-      } else {
-        d[TIMEDIM] = _this.time;
+        values = valuesL;
       }
-      ;
 
-      var valueY = _this.model.marker.axis_y.getValue(d);
-      var valueX = _this.model.marker.axis_x.getValue(d);
-      var valueS = _this.model.marker.size.getValue(d);
-      var valueL = _this.model.marker.label.getValue(d);
-      var valueC = _this.model.marker.color.getValue(d);
+      var valueY = values.axis_y[d[KEY]];
+      var valueX = values.axis_x[d[KEY]];
+      var valueS = values.size[d[KEY]];
+      var valueL = values.label[d[KEY]];
+      var valueC = values.color[d[KEY]];
 
       // check if fetching data succeeded
       //TODO: what if values are ACTUALLY 0 ?
