@@ -202,7 +202,7 @@
         var _this = this;
 
         this.time = this.model.time.value;
-        this.data = this.model.marker.label.getItems({ time: this.time.toString() });
+        this.data = this.model.marker.label.getKeys({ time: this.time.toString() });
         this.stackingIsOn = this.model.marker.stack;
 
         this.yearEl.text(this.time.getFullYear().toString());
