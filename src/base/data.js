@@ -97,6 +97,7 @@
           var col = _this._collection[queryId];
           col.data = values;
           col.filtered = {};
+          col.nested = {};
           col.unique = {};
           col.limits = {};
           promise.resolve(queryId);
