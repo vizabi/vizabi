@@ -45,7 +45,7 @@ function updateURL(optimize) {
     }
 
     //optimize for timeslider
-    throttle(update, 10);
+    throttle(update, 1000);
     // if(optimize) {
     // }
     // else {
