@@ -164,19 +164,23 @@
 
         model = this.model || model;
         
-        if(!model) utils.warn("tool validation: model looks wrong: " + model);
+        if(!model || !model.state) {utils.warn("tool validation aborted: model.state looks wrong: " + model); return;};
 
         var time = model.state.time;
-        var marker = model.state.marker.label;
+        var marker = model.state.marker;
         
-        if(!time) utils.warn("tool validation: time looks wrong: " + time);
-        if(!marker) utils.warn("tool validation: marker looks wrong: " + marker);
+        if(!time) {utils.warn("tool validation aborted: time looks wrong: " + time); return;};
+        if(!marker) {utils.warn("tool validation aborted: marker looks wrong: " + marker); return;};
+        
+        var label = marker.label;
+        
+        if(!label) {utils.warn("tool validation aborted: marker label looks wrong: " + label); return;};
 
         //don't validate anything if data hasn't been loaded
-        if (!marker.getKeys() || marker.getKeys().length < 1) return;        
+        if (!label.getKeys() || label.getKeys().length < 1) return;        
 
-        var dateMin = marker.getLimits(time.getDimension()).min;
-        var dateMax = marker.getLimits(time.getDimension()).max;
+        var dateMin = label.getLimits(time.getDimension()).min;
+        var dateMax = label.getLimits(time.getDimension()).max;
 
         if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
         if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
