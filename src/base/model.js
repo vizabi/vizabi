@@ -747,11 +747,11 @@
      */
     getNestedItems: function (order) {
       //cache optimization
+      if(!this._dataId) return {};
       var order_id = order.join("-");
       var nested = _DATAMANAGER.get(this._dataId, 'nested');
       if (!order) return nested;
-      var found = nested[order_id];
-      if (nested[order_id]) {
+      if (nested && order_id in nested) {
         return nested[order_id];
       }
       var items = _DATAMANAGER.get(this._dataId);
