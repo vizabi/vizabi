@@ -71,7 +71,7 @@
      * Gets the domain for this hook
      * @returns {Array} domain
      */
-    buildScale: function () {
+    buildScale: function (margins) {
       var domain;
       var scaleType = this.scaleType || "linear";
 
@@ -85,9 +85,14 @@
         case "indicator":
           var limits = this.getLimits(this.which),
             margin = (limits.max - limits.min) / 20;
-          domain = [(limits.min - margin), (limits.max + margin)];
-          if (scaleType == "log") {
-            domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
+
+          if(margins) {
+            domain = [(limits.min - margin), (limits.max + margin)];
+            if (scaleType == "log") {
+              domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
+            }
+          } else {
+            domain = [limits.min, limits.max];
           }
 
           break;
