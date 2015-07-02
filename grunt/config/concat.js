@@ -1,7 +1,7 @@
 //concat config
 module.exports = function(grunt) {
 
-    var custom = grunt.option('custom');
+    var custom = grunt.option('custom') || "gapminder";
 
     var FILES = {
         base: ['src/vizabi.js',
