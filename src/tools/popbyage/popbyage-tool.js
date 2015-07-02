@@ -56,7 +56,7 @@
       var marker = model.state.marker.label;
 
       //don't validate anything if data hasn't been loaded
-      if (!marker.getItems() || marker.getItems().length < 1) {
+      if (!marker.getKeys() || marker.getKeys().length < 1) {
         return;
       }
 
@@ -101,8 +101,8 @@
           which: "population"
         },
         color: {
-          use: "value",
-          which: "#ffb600"
+          use: "indicator",
+          which: "age"
         }
       }
     },

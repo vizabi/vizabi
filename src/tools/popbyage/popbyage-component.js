@@ -127,7 +127,8 @@
       var duration = (time.playing) ? time.speed : 0;
       var filter = {};
       filter[timeDim] = time.value;
-      var items = this.model.marker.label.getItems(filter);
+      var items = this.model.marker.getKeys(filter);
+      var values = this.model.marker.getValues(filter, [ageDim]);
 
       this.entityBars = this.bars.selectAll('.vzb-bc-bar')
         .data(items);
@@ -152,16 +153,16 @@
 
       this.bars.selectAll('.vzb-bc-bar')
         .attr("fill", function (d) {
-          return _this.cScale(_this.model.marker.color.getValue(d));
+          return _this.cScale(values.color[d[ageDim]]);
         })
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
         .attr("y", function (d) {
-          return _this.yScale(_this.model.marker.axis_y.getValue(d)) - barWidth;
+          return _this.yScale(values.axis_y[d[ageDim]]) - barWidth;
         })
         .attr("height", barWidth)
         .attr("width", function (d) {
-          return _this.xScale(_this.model.marker.axis_x.getValue(d));
+          return _this.xScale(values.axis_x[d[ageDim]]);
         });
     },
 
