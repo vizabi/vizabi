@@ -85,8 +85,9 @@
         }
 
         function format(res) {
+          //TODO: Improve local json filtering
           //make category an array and fix missing regions
-          res = res.map(function (row) {
+          res = res[0].map(function (row) {
             row['geo.cat'] = [row['geo.cat']];
             row['geo.region'] = row['geo.region'] || row['geo'];
             return row;
@@ -109,8 +110,7 @@
         }
 
         function parse(res) {
-          //TODO: Improve local json filtering
-          var data = res[0];
+          var data = res;
           //rename geo.category to geo.cat
           var where = query.where;
           if (where['geo.category']) {

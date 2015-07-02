@@ -73,36 +73,6 @@
           higlightValueY: true,
           showTooltip: 0
         }
-      },
-      buttons: []
-    },
-
-    //language properties
-    language: {
-      id: "en",
-      strings: {
-        en: {
-          "title": "Line Chart Title",
-          "buttons/find": "Find",
-          "buttons/expand": "Expand",
-          "buttons/colors": "Colors",
-          "buttons/size": "Size",
-          "buttons/more_options": "Options",
-          "indicator/lex": "Life expectancy",
-          "indicator/gdp_per_cap": "GDP per capita",
-          "indicator/pop": "Population",
-        },
-        pt: {
-          "title": "Título do Linulaula Chart",
-          "buttons/expand": "Expandir",
-          "buttons/find": "Encontre",
-          "buttons/colors": "Cores",
-          "buttons/size": "Tamanho",
-          "buttons/more_options": "Opções",
-          "indicator/lex": "Expectables Livappulo",
-          "indicator/gdp_per_cap": "PIB pers capitous",
-          "indicator/pop": "Peoples",
-        }
       }
     }
   });

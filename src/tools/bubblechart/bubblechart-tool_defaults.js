@@ -53,41 +53,6 @@
       //reader: "waffle-server",
       reader: "csv-file",
       path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-    },
-
-    ui: {
-      'vzb-tool-bubble-chart': {},
-      buttons: []
-    },
-
-    language: {
-      id: "en",
-      strings: {
-        en: {
-          "title": "Bubble Chart Title",
-          "buttons/expand": "Go big",
-          "buttons/unexpand": "Go small",
-          "buttons/trails": "Trails",
-          "buttons/lock": "Lock",
-          "buttons/find": "Find",
-          "buttons/deselect": "Deselect",
-          "buttons/ok": "OK",
-          "buttons/colors": "Colors",
-          "buttons/size": "Size",
-          "buttons/axes": "Axes",
-          "buttons/more_options": "Options",
-          "scaletype/linear": "Linear",
-          "scaletype/log": "Logarithmic",
-          "scaletype/genericLog": "Generic log",
-          "scaletype/time": "Time",
-          "scaletype/ordinal": "Ordinal",
-          "color/geo.region/asi": "Asia",
-          "color/geo.region/eur": "Europe",
-          "color/geo.region/ame": "Americas",
-          "color/geo.region/afr": "Afrika",
-          "color/geo.region/_default": "Other"
-        }
-      }
     }
   });
 

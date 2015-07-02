@@ -157,10 +157,38 @@
      * ==========================
      */
     /**
-     * Placeholder for model validation
+     * Validating the tool model
+     * @param model the current tool model to be validated
      */
-    validate: function () {
+    validate: function (model) {
+
+        model = this.model || model;
+        
+        if(!model || !model.state) {utils.warn("tool validation aborted: model.state looks wrong: " + model); return;};
+
+        var time = model.state.time;
+        var marker = model.state.marker;
+        
+        if(!time) {utils.warn("tool validation aborted: time looks wrong: " + time); return;};
+        if(!marker) {utils.warn("tool validation aborted: marker looks wrong: " + marker); return;};
+        
+        var label = marker.label;
+        
+        if(!label) {utils.warn("tool validation aborted: marker label looks wrong: " + label); return;};
+
+        //don't validate anything if data hasn't been loaded
+        if (!label.getKeys() || label.getKeys().length < 1) return;        
+
+        var dateMin = label.getLimits(time.getDimension()).min;
+        var dateMax = label.getLimits(time.getDimension()).max;
+
+        if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
+        if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
+        
+        if (time.start < dateMin) time.start = dateMin;
+        if (time.end > dateMax) time.end = dateMax;
     },
+      
     _setUIOptions: function () {
       //add placeholder class
       utils.addClass(this.placeholder, class_placeholder);
