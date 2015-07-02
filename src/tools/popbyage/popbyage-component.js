@@ -34,7 +34,7 @@
         type: "entities"
       }, {
         name: "age",
-        type: "model"
+        type: "entities"
       },{
         name: "marker",
         type: "model"
@@ -140,8 +140,14 @@
       this.entityBars.enter().append("rect")
         .attr("class", "vzb-bc-bar")
         .on("mousemove", function (d, i) {
+          _this.bars.selectAll('.vzb-bc-bar').classed('vzb-dimmed', true);
+          var curr = d3.select(this);
+          curr.classed('vzb-dimmed', false);
+          curr.classed('vzb-hovered', true);
         })
         .on("mouseout", function (d, i) {
+          _this.bars.selectAll('.vzb-bc-bar.vzb-dimmed').classed('vzb-dimmed', false);
+          _this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
         })
         .on("click", function (d, i) {
         });

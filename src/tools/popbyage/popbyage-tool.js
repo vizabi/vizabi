@@ -29,7 +29,7 @@
       this.components = [{
         component: 'gapminder-popbyage',
         placeholder: '.vzb-tool-viz',
-        model: ["state.time", "state.entities", "state.age", "state.marker", "language"] //pass models to component
+        model: ["state.time", "state.entities", "state.entities_age", "state.marker", "language"] //pass models to component
       }, {
         component: 'gapminder-timeslider',
         placeholder: '.vzb-tool-timeslider',
@@ -74,7 +74,9 @@
 
   PopByAge.define('default_options', {
     state: {
-      time: {},
+      time: {
+        value: '2013'
+      },
       entities: {
         dim: "geo",
         show: {
@@ -83,11 +85,16 @@
           }
         }
       },
-      age: {
-        dim: "age"
+      entities_age: {
+        dim: "age",
+        show: {
+          _defs_: {
+            "age": [[1,100]] //show 1 through 100
+          }
+        }
       },
       marker: {
-        space: ["entities", "age", "time"],
+        space: ["entities", "entities_age", "time"],
         label: {
           use: "indicator",
           which: "age"

@@ -29,6 +29,12 @@
     .vzb-bc-bar {
       stroke: none;
     }
+    .vzb-bc-bar.vzb-hovered {
+      opacity: 1;
+    }
+    .vzb-bc-bar.vzb-dimmed {
+      opacity: 0.8;
+    }
   }
   &.vzb-large {
     .vzb-bc-axis-x text, .vzb-bc-axis-y text {
