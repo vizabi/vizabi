@@ -39,7 +39,7 @@
             this.model_binds = {
                 "change": function(evt) {
                     if (!_this._readyOnce) return;
-                    if (evt=="change:time:value") return;
+                    if (evt.indexOf("change:time")!=-1) return;
                     console.log("change", evt);
                 },
                 'change:time:value': function() {
@@ -107,7 +107,7 @@
 
         var _this = this;
         this.on("resize", function () {
-            console.log("acting on resize");
+            //console.log("acting on resize");
             _this.resize();
             _this.updateTime();
             _this.redrawDataPoints();
@@ -175,7 +175,7 @@
         var peaks = this.cached.map(function(d){return d.sortValue});
         
         this.yScale
-            .domain([0, this.model.marker.stack ? d3.sum(peaks) : d3.max(peaks) ]);
+            .domain([0, 0 ? d3.sum(peaks) : d3.max(peaks) ]);
             
         
         //exit selection
@@ -348,7 +348,33 @@
         })
         
         
-        if(_this.model.marker.stack) _this.stack(this.cached);
+        
+        if(_this.model.marker.stack.use === "value"){
+            if(_this.model.marker.stack.which === "all") _this.stack(this.cached);
+        }else if(_this.model.marker.stack.use === "property"){
+            //var unique = _this.model.marker.stack.getUnique(_this.KEY);
+            
+            var nest = d3.nest()
+                .key(function(d) { return _this.model.marker.stack.getValue(d) });
+            
+            var dataByGroup = nest.entries(this.cached);
+            var data = [];
+            
+            
+            dataByGroup.forEach(function(group){
+                _this.stack(group.values);
+                
+                data = data.concat(group.values);
+                
+            })
+            
+            this.cached = data;
+            
+            
+        }
+            
+            
+            
 
         this.mountains.each(function(d,i){
             var view = d3.select(this);

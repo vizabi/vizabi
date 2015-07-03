@@ -59,13 +59,12 @@
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['*'],//['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }
             },
             marker: {
-                stack: false,
                 space: ["entities", "time"],
                 label: {
                     use: "property",
@@ -91,8 +90,12 @@
                 },
                 color: {
                     use: "property",
-                    which: "geo",
+                    which: "geo.region",
                     scaleType: "ordinal"
+                },
+                stack: {
+                    use: "property",
+                    which: "geo.region" // set any property of data or values "all" or "none"
                 }
             }
         },
