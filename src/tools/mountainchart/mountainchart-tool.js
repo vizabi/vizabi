@@ -59,7 +59,7 @@
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['*'],//['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }

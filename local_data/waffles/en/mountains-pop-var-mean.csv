@@ -7332,7 +7332,7 @@ cub,Cuba,country,ame,2008,11266905,,0
 cub,Cuba,country,ame,2009,11262628,,0
 cub,Cuba,country,ame,2010,11257979,,0
 cub,Cuba,country,ame,2011,11253665,,0
-cub,Cuba,country,ame,2012,11249266,#NUM!,0
+cub,Cuba,country,ame,2012,11249266,,0
 cze,Czech Rep.,country,eur,1820,5516349,7.19,0.4096
 cze,Czech Rep.,country,eur,1821,5536570,7.19,0.4225
 cze,Czech Rep.,country,eur,1822,5556865,7.19,0.4356
@@ -22964,8 +22964,8 @@ pri,Puerto Rico,country,ame,2007,3765404,,0
 pri,Puerto Rico,country,ame,2008,3758981,,0
 pri,Puerto Rico,country,ame,2009,3753576,,0
 pri,Puerto Rico,country,ame,2010,3749009,,0
-pri,Puerto Rico,country,ame,2011,3745526,#NUM!,0
-pri,Puerto Rico,country,ame,2012,3743380,#NUM!,0
+pri,Puerto Rico,country,ame,2011,3745526,,0
+pri,Puerto Rico,country,ame,2012,3743380,,0
 qat,Qatar,country,asi,1820,14092,,0
 qat,Qatar,country,asi,1821,14092,,0
 qat,Qatar,country,asi,1822,14092,,0
@@ -23347,11 +23347,11 @@ reu,Reunion,country,afr,2004,784124,,0
 reu,Reunion,country,afr,2005,794833,,0
 reu,Reunion,country,afr,2006,805399,,0
 reu,Reunion,country,afr,2007,815803,,0
-reu,Reunion,country,afr,2008,826048,#NUM!,0
-reu,Reunion,country,afr,2009,836137,#NUM!,0
-reu,Reunion,country,afr,2010,846068,#NUM!,0
-reu,Reunion,country,afr,2011,855849,#NUM!,0
-reu,Reunion,country,afr,2012,865479,#NUM!,0
+reu,Reunion,country,afr,2008,826048,,0
+reu,Reunion,country,afr,2009,836137,,0
+reu,Reunion,country,afr,2010,846068,,0
+reu,Reunion,country,afr,2011,855849,,0
+reu,Reunion,country,afr,2012,865479,,0
 rou,Romania,country,eur,1820,6389000,6.61,0.8281
 rou,Romania,country,eur,1821,6437068,6.62,0.8281
 rou,Romania,country,eur,1822,6485498,6.63,0.8281
@@ -25860,7 +25860,7 @@ som,Somalia,country,afr,2008,8922260,6.44,0.8281
 som,Somalia,country,afr,2009,9119848,6.44,0.8281
 som,Somalia,country,afr,2010,9330872,6.44,0.8281
 som,Somalia,country,afr,2011,9556873,,0
-som,Somalia,country,afr,2012,9797445,#NUM!,0
+som,Somalia,country,afr,2012,9797445,,0
 zaf,South Africa,country,afr,1820,1550000,6.42,0.4356
 zaf,South Africa,country,afr,1821,1565473,6.43,0.4356
 zaf,South Africa,country,afr,1822,1581101,6.44,0.4356
@@ -27597,7 +27597,7 @@ syr,Syria,country,asi,2008,19694259,,0
 syr,Syria,country,asi,2009,20053743,,0
 syr,Syria,country,asi,2010,20410606,,0
 syr,Syria,country,asi,2011,20766037,,0
-syr,Syria,country,asi,2012,21117690,#NUM!,0
+syr,Syria,country,asi,2012,21117690,,0
 twn,Taiwan,country,asi,1820,2000000,6.59,0.36
 twn,Taiwan,country,asi,1821,2006364,6.59,0.36
 twn,Taiwan,country,asi,1822,2012748,6.59,0.36
@@ -31070,8 +31070,8 @@ pse,West Bank and Gaza,country,asi,2007,3728259,,0
 pse,West Bank and Gaza,country,asi,2008,3826546,,0
 pse,West Bank and Gaza,country,asi,2009,3930672,,0
 pse,West Bank and Gaza,country,asi,2010,4039192,,0
-pse,West Bank and Gaza,country,asi,2011,4152369,#NUM!,0
-pse,West Bank and Gaza,country,asi,2012,4270791,#NUM!,0
+pse,West Bank and Gaza,country,asi,2011,4152369,,0
+pse,West Bank and Gaza,country,asi,2012,4270791,,0
 vnm,Vietnam,country,asi,1820,6551000,5.85,0.5625
 vnm,Vietnam,country,asi,1821,6613454,5.85,0.5625
 vnm,Vietnam,country,asi,1822,6676504,5.85,0.5625

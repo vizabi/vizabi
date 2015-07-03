@@ -147,10 +147,10 @@
         
 
 
-        //TODO remove magic constant
-        
+        //TODO i dunno how to remove this magic constant
+        // we have to know in advance where to calculate distributions
         this.xScale
-            .domain(this.model.marker.axis_x.scaleType == "log" ? [0.01,1000] : [0,20]);
+            .domain(this.model.marker.axis_x.scaleType == "log" ? [0.02,200] : [1,50]);
         
         
 
@@ -220,25 +220,29 @@
       
     generateDistribution: function(d){
         var _this = this;
+        
+        var scaleType = this.model.marker.axis_x.scaleType;
+        
         // we need to generate the distributions based on mu, variance and scale
         // we span a uniform range of 'points' across the entire X scale,
         // resolution: 1 point per pixel. If width not defined assume it equal 500px
-        var rangeFrom = Math.log(_this.xScale.domain()[0]);
-        var rangeTo = Math.log(_this.xScale.domain()[1]);
-        var rangeStep = (rangeTo - rangeFrom)/(this.width?this.width:500);
+        var rangeFrom = scaleType == "linear"? _this.xScale.domain()[0] : Math.log(_this.xScale.domain()[0]);
+        var rangeTo = scaleType == "linear"? _this.xScale.domain()[1] : Math.log(_this.xScale.domain()[1]);
+        var rangeStep = (rangeTo - rangeFrom)/(this.width?this.width/3:196);
 
         var norm = _this.model.marker.axis_y.getValue(d);
         var mean = _this.model.marker.axis_x.getValue(d);
-        //var mean = _this._math.gdpToMean(_this.model.marker.axis_x.getValue(d));
         var variance = _this.model.marker.size.getValue(d);
+        //var mean = _this._math.gdpToMean(_this.model.marker.axis_x.getValue(d));
         //var variance = _this._math.giniToVariance(_this.model.marker.size.getValue(d));
         
         var result =  d3.range(rangeFrom, rangeTo, rangeStep)
             .map(function(dX){
                 // get Y value for every X
-                return {x: Math.exp(dX),
+                if(scaleType != "linear") dX = Math.exp(dX);
+                return {x: dX,
                         y0: 0, // the initial base of areas is at zero
-                        y: norm * _this._math.pdf.y(Math.exp(dX), Math.log(mean), variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
+                        y: norm * _this._math.pdf.y(dX, Math.log(mean), variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
                        }
             });
         
@@ -246,7 +250,17 @@
     },   
         
     peakValue: function(d){
-        return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
+        
+        var norm = this.model.marker.axis_y.getValue(d);
+        var mean = this.model.marker.axis_x.getValue(d);
+        var variance = this.model.marker.size.getValue(d);
+        //var mean = this._math.gdpToMean(this.model.marker.axis_x.getValue(d));
+        //var variance = this._math.giniToVariance(this.model.marker.size.getValue(d));
+
+        return norm * this._math.pdf.y(Math.exp(Math.log(mean)-variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
+        
+        //TODO: lazy way. remove it
+        //return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
     },
       
       
