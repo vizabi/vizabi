@@ -28,7 +28,6 @@
       if (!this._basepath) {
         utils.error("Missing base path for csv-file reader");
       }
-      ;
     },
 
     /**
@@ -42,7 +41,17 @@
       var p = new Promise();
 
       //this specific reader has support for the tag {{LANGUAGE}}
-      var path = this._basepath.replace("{{LANGUAGE}}", language);
+      var path = this._basepath.replace("{{LANGUAGE}}", language)
+
+      //replace conditional tags {{<any conditional>}}
+      path = path.replace(/{{(.*?)}}/g, function(match, capture){
+        capture = capture.toLowerCase();
+        if(utils.isArray(query.where[capture])) {
+          return query.where[capture].sort().join('-');
+        }
+        return query.where[capture];
+      });
+
       _this._data = [];
 
       (function (query, p) {
@@ -89,6 +98,7 @@
           res = res.map(function (row) {
             row['geo.cat'] = [row['geo.cat']];
             row['geo.region'] = row['geo.region'] || row['geo'];
+
             return row;
           });
 

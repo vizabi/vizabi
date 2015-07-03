@@ -48,7 +48,7 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1970,
+                start: 1980,
                 end: 2006,
                 value: 1970,
                 step: 1,
@@ -59,13 +59,13 @@
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['*'],//['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }
             },
             marker: {
-                stack: true,
+                stack: false,
                 space: ["entities", "time"],
                 label: {
                     use: "property",
@@ -79,12 +79,14 @@
                 axis_x: {
                     use: "indicator",
                     which: "mean",
+                    //which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "indicator/dollarperday"
                 },
                 size: {
                     use: "indicator",
                     which: "variance",
+                    //which: "gini",
                     scaleType: 'linear'
                 },
                 color: {
@@ -97,6 +99,8 @@
         data: {
             reader: "csv-file",
             path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
 

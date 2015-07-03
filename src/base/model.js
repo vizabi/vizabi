@@ -335,7 +335,7 @@
 
       //load hook
       //if its not a hook, the promise will not be created
-      if (this.isHook() && data_hook && query) {
+      if (this.isHook() && data_hook && query && this.use !== "value") {
         //hook changes, regardless of actual data loading
         this.trigger('hook_change');
         //get reader info
@@ -747,11 +747,11 @@
      */
     getNestedItems: function (order) {
       //cache optimization
+      if(!this._dataId) return {};
       var order_id = order.join("-");
       var nested = _DATAMANAGER.get(this._dataId, 'nested');
       if (!order) return nested;
-      var found = nested[order_id];
-      if (nested[order_id]) {
+      if (nested && order_id in nested) {
         return nested[order_id];
       }
       var items = _DATAMANAGER.get(this._dataId);
@@ -921,9 +921,10 @@
      * Gets the d3 scale for this hook. if no scale then builds it
      * @returns {Array} domain
      */
-    getScale: function () {
+    getScale: function (margins) {
+      if(margins !== false) margins = true;
       if (!this.scale) {
-        this.buildScale();
+        this.buildScale(margins);
       }
       return this.scale;
     },

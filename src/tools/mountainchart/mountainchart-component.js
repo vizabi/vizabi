@@ -1,5 +1,5 @@
 /*!
- * VIZABI BARCHART
+ * VIZABI MOUNTAINCHART
  */
 
 (function () {
@@ -12,46 +12,14 @@
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) return;
     
-    
-    
-    // this function returns PDF values for a specified distribution
-    // TODO this is in fact a universal utility function and thus it can go somewhere else
-    var pdf = {
-        //constants
-        DISTRIBUTIONS_NORMAL: "normal distribution",
-        DISTRIBUTIONS_LOGNORMAL: "lognormal distribution",
-        
-        y: function(x, mu, variance, type){
-            if (type==null) type = this.DISTRIBUTIONS_NORMAL;
-            switch(type){
-                case this.DISTRIBUTIONS_NORMAL:
-                return Math.exp(
-                    - 0.5 * Math.log(2 * Math.PI)
-                    - Math.log(variance)/2
-                    - Math.pow(x - mu, 2) / (2 * variance)
-                    );
-
-                case this.DISTRIBUTIONS_LOGNORMAL:
-                return Math.exp(
-                    - 0.5 * Math.log(2 * Math.PI) - Math.log(x)
-                    - Math.log(variance)/2
-                    - Math.pow(Math.log(x) - mu, 2) / (2 * variance)
-                    );
-            }
-        }
-    };
-
-
 
     
-    
 
-
-  //BAR CHART COMPONENT
+  //MOUNTAIN CHART COMPONENT
   Vizabi.Component.extend('gapminder-mountainchart', {
 
     /**
-     * Initializes the component (Bar Chart).
+     * Initializes the component (Mountain Chart).
      * Executed once before any template is rendered.
      * @param {Object} config The options passed to the component
      * @param {Object} context The component's parent
@@ -79,18 +47,21 @@
                     _this.updateTime();
                     _this.redrawDataPoints();
                 },
-                'change:marker:stack': function() {
+                'change:marker': function() {
                     //console.log("change marker stack");
-                    this.updateEntities();
-                    this.resize();
-                    this.updateTime();
-                    this.redrawDataPoints();
+                    _this.updateEntities();
+                    _this.resize();
+                    _this.updateTime();
+                    _this.redrawDataPoints();
                 }
             }
 
 
 
         this._super(config, context);
+        
+        var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
+        this._math = new MountainChartMath(this);
 
         this.xScale = null;
         this.yScale = null;
@@ -172,12 +143,14 @@
         this.xAxis.tickFormat(function(d) {
             return _this.model.marker.axis_x.getTick(d);
         });
-
-
-        //TODO remove magic constant
         
+        
+
+
+        //TODO i dunno how to remove this magic constant
+        // we have to know in advance where to calculate distributions
         this.xScale
-            .domain(this.model.marker.axis_x.scaleType == "log" ? [0.01,1000] : [0,20]);
+            .domain(this.model.marker.axis_x.scaleType == "log" ? [0.02,200] : [1,50]);
         
         
 
@@ -247,33 +220,47 @@
       
     generateDistribution: function(d){
         var _this = this;
+        
+        var scaleType = this.model.marker.axis_x.scaleType;
+        
         // we need to generate the distributions based on mu, variance and scale
         // we span a uniform range of 'points' across the entire X scale,
         // resolution: 1 point per pixel. If width not defined assume it equal 500px
-        var rangeFrom = Math.log(_this.xScale.domain()[0]);
-        var rangeTo = Math.log(_this.xScale.domain()[1]);
-        var rangeStep = (rangeTo - rangeFrom)/(this.width?this.width:500);
+        var rangeFrom = scaleType == "linear"? _this.xScale.domain()[0] : Math.log(_this.xScale.domain()[0]);
+        var rangeTo = scaleType == "linear"? _this.xScale.domain()[1] : Math.log(_this.xScale.domain()[1]);
+        var rangeStep = (rangeTo - rangeFrom)/(this.width?this.width/3:196);
 
         var norm = _this.model.marker.axis_y.getValue(d);
         var mean = _this.model.marker.axis_x.getValue(d);
         var variance = _this.model.marker.size.getValue(d);
-        
+        //var mean = _this._math.gdpToMean(_this.model.marker.axis_x.getValue(d));
+        //var variance = _this._math.giniToVariance(_this.model.marker.size.getValue(d));
         
         var result =  d3.range(rangeFrom, rangeTo, rangeStep)
             .map(function(dX){
                 // get Y value for every X
-                return {x: Math.exp(dX),
+                if(scaleType != "linear") dX = Math.exp(dX);
+                return {x: dX,
                         y0: 0, // the initial base of areas is at zero
-                        y: norm * pdf.y(Math.exp(dX), Math.log(mean), variance, pdf.DISTRIBUTIONS_LOGNORMAL)
+                        y: norm * _this._math.pdf.y(dX, Math.log(mean), variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
                        }
             });
-        
         
         return result;
     },   
         
     peakValue: function(d){
-        return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
+        
+        var norm = this.model.marker.axis_y.getValue(d);
+        var mean = this.model.marker.axis_x.getValue(d);
+        var variance = this.model.marker.size.getValue(d);
+        //var mean = this._math.gdpToMean(this.model.marker.axis_x.getValue(d));
+        //var variance = this._math.giniToVariance(this.model.marker.size.getValue(d));
+
+        return norm * this._math.pdf.y(Math.exp(Math.log(mean)-variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
+        
+        //TODO: lazy way. remove it
+        //return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
     },
       
       
@@ -356,17 +343,25 @@
         this.cached.forEach(function(d, i){
             _this.cached[i][_this.TIMEDIM] = _this.time;
             _this.cached[i].points = _this.generateDistribution(d);
+            _this.cached[i].allZeros = 
+                (d3.sum(_this.cached[i].points.map(function(m){return m.y})) == 0)
         })
         
         
         if(_this.model.marker.stack) _this.stack(this.cached);
 
-        this.mountains
-            .style("fill", function(d) {
-                return _this.cScale(_this.model.marker.color.getValue(d));
-            })
-            //.transition().duration(speed).ease("linear")
-            .attr("d", function(d,i) { return _this.area(_this.cached[i].points); }) 
+        this.mountains.each(function(d,i){
+            var view = d3.select(this);
+            
+            view.classed("vzb-hidden", _this.cached[i].allZeros);
+            if(!_this.cached[i].allZeros){
+                view//.transition().duration(speed).ease("linear")
+                    .style("fill", _this.cScale(_this.model.marker.color.getValue(d)))
+                    .attr("d", _this.area(_this.cached[i].points) ) 
+            }
+            
+            
+        })
 
 
     }
