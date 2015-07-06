@@ -269,6 +269,9 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
+          var temp = _this.model._data.entities.brush;
+          _this.model._data.entities.clearHighlighted();
+
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
           var ratioY = _this.zoomer.ratioY;
@@ -320,6 +323,10 @@
           _this._trails.run("resize", null, _this.zoomer.duration);
 
           _this.zoomer.duration = 0;
+
+          temp.forEach(function (item) {
+          	_this.model._data.entities.highlightEntity(item);
+          });
         });
 
       this.zoomer.ratioX = 1;
