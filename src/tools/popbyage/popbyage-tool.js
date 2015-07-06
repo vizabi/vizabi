@@ -108,8 +108,8 @@
           which: "population"
         },
         color: {
-          use: "indicator",
-          which: "age"
+          use: "value",
+          which: "#ffb600"
         }
       }
     },

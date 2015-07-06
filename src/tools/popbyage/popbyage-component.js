@@ -161,6 +161,9 @@
         .attr("fill", function (d) {
           return _this.cScale(values.color[d[ageDim]]);
         })
+        .style("stroke", function (d) {
+          return _this.cScale(values.color[d[ageDim]]);
+        })
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
         .attr("y", function (d) {
