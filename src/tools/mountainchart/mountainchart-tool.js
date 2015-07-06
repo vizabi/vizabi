@@ -48,8 +48,8 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1980,
-                end: 2006,
+                start: 1850,
+                end: 2000,
                 value: 1970,
                 step: 1,
                 speed: 100,
@@ -59,7 +59,7 @@
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['*'],//['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }
@@ -101,8 +101,8 @@
         },
         data: {
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
             //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
