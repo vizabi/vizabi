@@ -204,7 +204,7 @@
             if(options.scaleType=='ordinal') return axis.tickValues(null);
 
             if(options.logBase==null) options.logBase = DEFAULT_LOGBASE;
-            if(options.baseValues==null) options.stops = [1,2,5,3,7,4,6,8,9];
+            if(options.stops==null) options.stops = [1,2,5,3,7,4,6,8,9];
             
             
             
@@ -756,8 +756,8 @@ meow("final result",tickValues);
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges
-                    //- (dimension=="x") * parseInt(options.cssMarginRight);
-                    //- (dimension=="y") * parseInt(options.cssMarginTop);
+                    - (dimension=="x") * parseInt(options.cssMarginRight);
+                    - (dimension=="y") * parseInt(options.cssMarginTop);
                 
                 // compute the influence of the axis tail
                 var repositionTail = Math.min(margin.tail, options.widthOfOneDigit)
@@ -767,8 +767,8 @@ meow("final result",tickValues);
                     - (dimension=="x") * options.formatter(d).length * options.widthOfOneDigit / 2
                     - (dimension=="y") * options.heightOfOneDigit / 2
                     // we may consider or not the label margins to give them a bit of spacing from the edges
-                    //- (dimension=="x") * parseInt(options.cssMarginLeft);
-                    //- (dimension=="y") * parseInt(options.cssMarginBottom);
+                    - (dimension=="x") * parseInt(options.cssMarginLeft);
+                    - (dimension=="y") * parseInt(options.cssMarginBottom);
                 
                 // apply limits in order to cancel repositioning of labels that are good
                 if(repositionHead>0)repositionHead=0;

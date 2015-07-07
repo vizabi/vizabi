@@ -51,8 +51,10 @@
         speed: 300,
         unit: "year",
         step: 1, //step must be integer
-        adaptMinMaxZoom: false,
-        formatInput: "%Y" //defaults to year format
+        adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
+        formatInput: "%Y", //defaults to year format
+        xLogStops: [1,2], //TODO: remove from here. only for mountain chart
+        yMaxMethod: "latest" //TODO: remove from here. only for mountain chart
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;

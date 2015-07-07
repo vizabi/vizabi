@@ -39,8 +39,11 @@
             }
             text {
                 fill: $vzb-mc-color-axis;
-                @include font-size(15px);
+                @include font-size(40px);
             }
+        }
+        .vzb-mc-axis-x-title text{
+            @include font-size(40px);
         }
         .vzb-mc-axis-x,
         .vzb-mc-axis-y {
@@ -57,7 +60,6 @@
         }
         .vzb-mc-year {
             @include opacity(0.1);
-            @include font-size(250px);
             fill: $vzb-mc-color-mountain;
             text-anchor: middle;
             -webkit-touch-callout: none;
@@ -68,22 +70,19 @@
             user-select: none;
         }
     }
+}
     &.vzb-medium {
         .vzb-mountainchart {
-            .vzb-mc-year {
-                @include font-size($vzb-mc-year-size / 3 * 2);
+            .vzb-mc-axis text, .vzb-mc-axis-x-title text {
+                @include font-size(30px);
             }
         }
     }
     &.vzb-small {
         .vzb-mountainchart {
-            .vzb-mc-axis-x text, .vzb-mc-axis-y text {
-                @include font-size(14px);
-            }
-            .vzb-mc-year {
-                @include font-size($vzb-mc-year-size / 3);
+            .vzb-mc-axis text, .vzb-mc-axis-x-title text {
+                @include font-size(20px);
             }
         }
     }
-}
 }

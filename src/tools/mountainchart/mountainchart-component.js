@@ -57,6 +57,19 @@
                 'change:time:value': function () {
                     //console.log("change time value");
                     _this.updateTime();
+                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this.redrawDataPoints();
+                },
+                'change:time:xLogStops': function () {
+                    _this.resize();
+                },
+                'change:time:yMaxMethod': function () {
+                    var method = _this.model.time.yMaxMethod;
+                    
+                    _this.resize();
+                    _this.updateTime(method=="latest"?_this.model.time.end:null);
+                    _this._adjustMaxY();
+                    _this.updateTime();
                     _this.redrawDataPoints();
                 },
                 'change:marker': function () {
@@ -65,7 +78,7 @@
                     _this.updateEntities();
                     _this.resize();
                     _this.updateTime();
-                    _this._adjustMaxY(0);
+                    _this._adjustMaxY();
                     _this.redrawDataPoints();
                     
                 }
@@ -121,7 +134,6 @@
             this.on("resize", function () {
                 //console.log("acting on resize");
                 _this.resize();
-                _this.updateTime();
                 _this.redrawDataPoints();
             });
 
@@ -162,7 +174,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.09, 110] : [1, 50]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.1, 100] : [1, 50]);
 
         },
         
@@ -257,13 +269,14 @@
          * UPDATE TIME:
          * Ideally should only update when time or data changes
          */
-        updateTime: function () {
+        updateTime: function (time) {
             var _this = this;
 
-            this.time = this.model.time.value;
-            this.yearEl.text(this.time.getFullYear().toString());
+            
+            if(time==null)time = this.model.time.value;
+            this.yearEl.text(time.getFullYear().toString());
             var filter = {};
-            filter[_this.TIMEDIM] = this.time;
+            filter[_this.TIMEDIM] = time;
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
 
             
@@ -307,15 +320,15 @@
 
             switch (this.getLayoutProfile()) {
             case "small":
-                margin = { top: 30, right: 20, left: 20, bottom: 40 };
+                margin = { top: 10, right: 10, left: 10, bottom: 30 };
                 tick_spacing = 60;
                 break;
             case "medium":
-                margin = { top: 30, right: 30, left: 30, bottom: 40 };
+                margin = { top: 20, right: 10, left: 10, bottom: 40 };
                 tick_spacing = 80;
                 break;
             case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 40 };
+                margin = { top: 30, right: 10, left: 10, bottom: 50  };
                 tick_spacing = 100;
                 break;
             };
@@ -330,7 +343,7 @@
             //year is centered
             this.yearEl
                 .attr("x", width / 2)
-                .attr("y", height / 3 * 1)
+                .attr("y", height / 3 * 1.5)
                 .style("font-size", Math.max(height / 4, width / 4) + "px");
 
             //update scales to the new range
@@ -355,7 +368,9 @@
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
                     scaleType: scaleType,
-                    toolMargin: margin
+                    toolMargin: margin,
+                    method: this.xAxis.METHOD_REPEATING,
+                    stops: this.model.time.xLogStops 
                 });
 
 

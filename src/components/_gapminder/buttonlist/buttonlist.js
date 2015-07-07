@@ -91,6 +91,11 @@
           icon: "axes",
           dialog: true
         },
+        'axes-mc': {
+          title: "buttons/axes-mc",
+          icon: "axes",
+          dialog: true
+        },
         'stack': {
           title: "buttons/stack",
           icon: "stack",

@@ -53,7 +53,9 @@
                 value: 2000,
                 step: 1,
                 speed: 100,
-                formatInput: "%Y"
+                formatInput: "%Y",
+                xLogStops: [1,2],
+                yMaxMethod: "latest"
             },
             entities: {
                 dim: "geo",
