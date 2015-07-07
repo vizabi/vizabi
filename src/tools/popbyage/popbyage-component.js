@@ -73,6 +73,7 @@
       this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
       this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
       this.bars = this.graph.select('.vzb-bc-bars');
+      this.labels = this.graph.select('.vzb-bc-labels');
 
       var _this = this;
       this.on("resize", function () {
@@ -122,6 +123,7 @@
 
       var _this = this;
       var time = this.model.time;
+      var timeFormatter = d3.time.format(this.model.time.formatInput);
       var timeDim = time.getDimension();
       var ageDim = this.model.age.getDimension();
       var duration = (time.playing) ? time.speed : 0;
@@ -133,31 +135,49 @@
       this.entityBars = this.bars.selectAll('.vzb-bc-bar')
         .data(items);
 
+      this.entityLabels = this.labels.selectAll('.vzb-bc-label')
+        .data(items);
+
       //exit selection
       this.entityBars.exit().remove();
+      this.entityLabels.exit().remove();
 
-      //enter selection -- init circles
-      this.entityBars.enter().append("rect")
-        .attr("class", "vzb-bc-bar")
-        .on("mousemove", function (d, i) {
-          _this.bars.selectAll('.vzb-bc-bar').classed('vzb-dimmed', true);
-          var curr = d3.select(this);
-          curr.classed('vzb-dimmed', false);
-          curr.classed('vzb-hovered', true);
-        })
-        .on("mouseout", function (d, i) {
-          _this.bars.selectAll('.vzb-bc-bar.vzb-dimmed').classed('vzb-dimmed', false);
-          _this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
-        })
-        .on("click", function (d, i) {
-        });
+      //enter selection -- init bars
+      this.entityBars.enter().append("g")
+          .attr("class", "vzb-bc-bar")
+          .on("mousemove", function (d, i) {
+            _this.bars.classed('vzb-dimmed', true);
+            var curr = d3.select(this);
+            curr.classed('vzb-hovered', true);
 
-      //positioning and sizes of the bars
+            //show label
+            var label = _this.labels.select("#vzb-bc-label-"+d[ageDim]);
+            label.classed('vzb-hovered', true);
+          })
+          .on("mouseout", function (d, i) {
+            _this.bars.classed('vzb-dimmed', false);
+            _this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
+            //hide label
+            _this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
+          })
+          .on("click", function (d, i) {
+            console.log('clicked', d);
+            _this.model.age.selectEntity(d);
+          })
+          .append('rect');
 
-      var bars = this.bars.selectAll('.vzb-bc-bar');
+      this.entityLabels.enter().append("g")
+          .attr("class", "vzb-bc-label")
+          .attr("id", function(d) {
+            return  "vzb-bc-label-"+d[ageDim];
+          })
+          .append('text')
+          .attr("class", "vzb-bc-age");
+
+
       var barWidth = this.height / items.length;
 
-      this.bars.selectAll('.vzb-bc-bar')
+      this.bars.selectAll('.vzb-bc-bar > rect')
         .attr("fill", function (d) {
           return _this.cScale(values.color[d[ageDim]]);
         })
@@ -173,6 +193,19 @@
         .attr("width", function (d) {
           return _this.xScale(values.axis_x[d[ageDim]]);
         });
+
+      this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
+               .text(function(d) {
+                  return values.axis_y[d[ageDim]] + "-year-olds in "+timeFormatter(time.value) + ": "+values.axis_x[d[ageDim]]
+               })
+               .attr("x", 7)
+               .attr("y", function (d) {
+                  return _this.yScale(values.axis_y[d[ageDim]]) - barWidth - 10;
+               })
+               .style("fill", function (d) {
+                  var color = _this.cScale(values.color[d[ageDim]]);
+                  return d3.rgb(color).darker(2);
+               });
     },
 
     /**

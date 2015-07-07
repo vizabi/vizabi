@@ -28,12 +28,26 @@
     }
     .vzb-bc-bar {
       stroke: none;
+      cursor: pointer;
     }
-    .vzb-bc-bar.vzb-hovered {
-      opacity: 1;
+    
+    .vzb-bc-label {
+      display: none;
+      &.vzb-hovered {
+        display: block;
+      }
+      &> .vzb-bc-age {
+       fill: #333333;
+      }
     }
-    .vzb-bc-bar.vzb-dimmed {
-      opacity: 0.8;
+
+    .vzb-dimmed {
+      &> .vzb-bc-bar {
+        opacity: 0.8;
+        &.vzb-hovered {
+          opacity: 1;
+        }
+      }
     }
   }
   &.vzb-large {
@@ -41,9 +55,17 @@
       font-size: 1.8em;
     }
 
+    .vzb-bc-label > .vzb-bc-age {
+      font-size: 1.8em;
+    }
+
   }
   &.vzb-medium {
     .vzb-bc-axis-x text, .vzb-bc-axis-y text {
+      font-size: 1.4em;
+    }
+
+    .vzb-bc-label > .vzb-bc-age {
       font-size: 1.4em;
     }
 
