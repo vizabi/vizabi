@@ -50,7 +50,7 @@
             time: {
                 start: 1850,
                 end: 2000,
-                value: 1970,
+                value: 2000,
                 step: 1,
                 speed: 100,
                 formatInput: "%Y"
@@ -59,7 +59,7 @@
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['*'],//['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }
@@ -77,15 +77,15 @@
                 },
                 axis_x: {
                     use: "indicator",
-                    which: "mean",
-                    //which: "gdp_per_cap",
+                    //which: "mean",
+                    which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "indicator/dollarperday"
                 },
                 size: {
                     use: "indicator",
-                    which: "variance",
-                    //which: "gini",
+                    //which: "variance",
+                    which: "gini",
                     scaleType: 'linear'
                 },
                 color: {
@@ -102,8 +102,8 @@
         data: {
             reader: "csv-file",
             //path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
 

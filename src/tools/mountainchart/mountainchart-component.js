@@ -52,7 +52,7 @@
                 "change": function (evt) {
                     if (!_this._readyOnce) return;
                     if (evt.indexOf("change:time") != -1) return;
-                    console.log("change", evt);
+                    //console.log("change", evt);
                 },
                 'change:time:value': function () {
                     //console.log("change time value");
@@ -61,10 +61,13 @@
                 },
                 'change:marker': function () {
                     //console.log("change marker stack");
+                    _this.updateIndicators();
                     _this.updateEntities();
                     _this.resize();
                     _this.updateTime();
+                    _this._adjustMaxY(0);
                     _this.redrawDataPoints();
+                    
                 }
             }
 
@@ -91,13 +94,9 @@
                 .y1(function (d) { return _this.yScale(d.y0 + d.y) });
 
             this.stack = d3.layout.stack()
-                //.order("inside-out")
-                .values(function (d) { return _this.cached[d[_this.KEY]].points });
+                .order("reverse")
+                .values(function (d) { return _this.cached[d.KEY()] });
 
-            // define sorting order: lower peaks to front for easier selection
-            this.order = function order(a, b) {
-                return peak(b) - peak(a);
-            }
         },
 
         /**
@@ -129,20 +128,20 @@
             this.KEY = this.model.entities.getDimension();
             this.TIMEDIM = this.model.time.getDimension();
 
+            this.updateIndicators();
             this.updateEntities();
             this.resize();
             this.updateTime();
+            this._adjustMaxY(0);
             this.redrawDataPoints();
         },
 
 
         /**
-         * Updates entities
+         * Updates indicators
          */
-        updateEntities: function () {
+        updateIndicators: function () {
             var _this = this;
-            var KEY = this.KEY;
-            var TIMEDIM = this.TIMEDIM;
 
 
             this.translator = this.model.language.getTFunction();
@@ -160,42 +159,72 @@
                 return _this.model.marker.axis_x.getTick(d);
             });
 
-
-
-
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.02, 200] : [1, 50]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.09, 110] : [1, 50]);
 
+        },
+        
+        
+        /**
+         * Updates entities
+         */
+        updateEntities: function () {
+            var _this = this;
 
-
-
+            // construct pointers
             var endTime = this.model.time.end;
             this.model.entities._visible = this.model.marker.getKeys()
                 .map(function (d) {
                     var pointer = {};
-                    pointer[KEY] = d[KEY];
-                    pointer[TIMEDIM] = endTime;
-                    pointer.sortValue = _this.peakValue(pointer);
+                    pointer[_this.KEY] = d[_this.KEY];
+                    pointer[_this.TIMEDIM] = endTime;
+                    pointer.KEY = function(){return this[_this.KEY]};
+                    pointer.sortValue = [_this.model.marker.axis_y.getValue(pointer), 0];
                     return pointer;
                 })
+            
+            // update the stacked pointers
+            if (_this.model.marker.stack.use === "property") {
+                this.stackedPointers = d3.nest()
+                    .key(function (d) {
+                        
+                        return _this.model.marker.stack.getValue(d) 
+                    })
+                    .sortValues(function(a,b) { return b.sortValue[0] - a.sortValue[0] } )
+                    .entries(this.model.entities._visible);
+            }else if(_this.model.marker.stack.which === "all"){
+                this.stackedPointers = [{values: this.model.entities._visible}];
+            }else{
+                this.stackedPointers = [];
+            }
+            
+            
+            // sort pointers
+            this.stackedPointers.forEach(function(group){
+                var groupSortValue = d3.sum(group.values.map(function(m){
+                    return m.sortValue[0]
+                }));
+                group.values.forEach(function(d){
+                    d.sortValue[1] = groupSortValue;
+                })
+            })
+            
+            this.model.entities._visible
                 .sort(function (a, b) {
-                    return b.sortValue - a.sortValue;
+                    return b.sortValue[0] - a.sortValue[0];
                 })
-                .map(function (d, i) {
-                    _this.cached[d[KEY]] = {};
-                    return d;
+                .sort(function (a, b) {
+                    return b.sortValue[1] - a.sortValue[1];
                 })
 
-
+            //console.log(this.model.entities._visible.map(function(m){return m.geo}))
+            
+            
+            //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
-                .data(this.model.entities._visible, function (d) {
-                    return d[KEY];
-                });
-
-
-         
+                .data(this.model.entities._visible);
 
             //exit selection
             this.mountains.exit().remove();
@@ -233,23 +262,36 @@
 
             this.time = this.model.time.value;
             this.yearEl.text(this.time.getFullYear().toString());
+            var filter = {};
+            filter[_this.TIMEDIM] = this.time;
+            this.values = this.model.marker.getValues(filter, [_this.KEY]);
+
+            
+            //regenerate distributions
+            this.model.entities._visible.forEach(function (d, i) {
+                var points = _this._spawn(_this.values, d)
+                _this.cached[d.KEY()] = points;
+                d.hidden = points.length==0 || d3.sum(points.map(function(m){return m.y}))==0;
+            });
+
+            
+            //recalculate stacking
+            this.stackedPointers.forEach(function (group) {
+                _this.stack( group.values.filter(function(f){return !f.hidden}) );
+            })
 
         },
 
 
 
-        peakValue: function (d) {
+        _peakValue: function (values, d) {
+            var _this = this;
 
-            var norm = this.model.marker.axis_y.getValue(d);
-            var mean = this.model.marker.axis_x.getValue(d);
-            var variance = this.model.marker.size.getValue(d);
-            //var mean = this._math.gdpToMean(this.model.marker.axis_x.getValue(d));
-            //var variance = this._math.giniToVariance(this.model.marker.size.getValue(d));
+            var norm = values.axis_y[d.KEY()];
+            var mean = values.axis_x[d.KEY()];
+            var variance = values.size[d.KEY()];
 
             return norm * this._math.pdf.y(Math.exp(Math.log(mean) - variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
-
-            //TODO: lazy way. remove it
-            //return d3.max( this.generateDistribution(d).map(function(m){return m.y}) )
         },
 
 
@@ -330,12 +372,12 @@
 
 
         // get Y value for every X
-        spawn: function (values, d) {
+        _spawn: function (values, d) {
             var _this = this;
 
-            var norm = values.axis_y[d[_this.KEY]];
-            var mean = values.axis_x[d[_this.KEY]];
-            var variance = values.size[d[_this.KEY]];
+            var norm = values.axis_y[d.KEY()];
+            var variance = _this._math.giniToVariance(values.size[d.KEY()]);
+            var mean = _this._math.gdpToMean(values.axis_x[d.KEY()], variance);
 
             if (!norm || !mean || !variance) return [];
 
@@ -349,6 +391,18 @@
 
         },
 
+        
+        _adjustMaxY: function(yMax){
+            var _this = this;
+            
+            if(!yMax) yMax = 0;
+            this.model.entities._visible.forEach(function(d){
+                var points = _this.cached[d.KEY()];
+                var max = d3.max(points.map(function(m){return m.y0 + m.y}));
+                if(max > yMax) yMax = max;
+            })
+            this.yScale.domain([0, yMax]);
+        },
 
 
         /*
@@ -357,72 +411,20 @@
          */
         redrawDataPoints: function () {
             var _this = this;
-            var KEY = this.KEY;
-            var TIMEDIM = this.TIMEDIM;
 
             //update selection
             //var speed = this.model.time.speed;
 
-            var filter = {};
-            filter[TIMEDIM] = this.time;
-            var values = _this.model.marker.getValues(filter, [KEY]);
-
-            
-            //regenerate distributions
-            this.model.entities._visible = this.model.entities._visible.map(function (d, i) {
-                var points = _this.spawn(values, d);
-                _this.cached[d[KEY]].points = points;
-                _this.cached[d[KEY]].allZeros = (d3.sum(points.map(function (m) { return m.y })) == 0);
-                return d;
-            })
-            .filter(function(f){
-                return _this.cached[f[KEY]].points.length>0 && !_this.cached[f[KEY]].allZeros;
-            })
-
-            
-
-            if (_this.model.marker.stack.use === "value") {
-                if (_this.model.marker.stack.which === "all") _this.stack(this.cached);
-            } else if (_this.model.marker.stack.use === "property") {
-                //var unique = _this.model.marker.stack.getUnique(_this.KEY);
-
-                var dataByGroup = d3.nest()
-                    .key(function (d) {return values.stack[d[KEY]] })
-                    .entries(this.model.entities._visible);
-                
-                dataByGroup.forEach(function (group) {
-                    _this.stack(group.values);
-                })
-            }
-            
-            var yMax = 0;
-            this.model.entities._visible.forEach(function(d){
-                var max = d3.max(_this.cached[d[_this.KEY]].points.map(function(m){return m.y}) )
-                if(max > yMax) yMax = max;
-                
-            })
-            
-            this.yScale.domain([0, yMax]);
-            
             this.mountains.each(function (d, i) {
                 var view = d3.select(this);
-
-                var hidden = _this.model.entities._visible.indexOf(d)==-1;
-                
-                view.classed("vzb-hidden", hidden);
-                if (!hidden) {
-
+                view.classed("vzb-hidden", d.hidden);
+                if (!d.hidden) {
                     view //.transition().duration(speed).ease("linear")
-                        .style("fill", _this.cScale(values.color[d[_this.KEY]]))
-                        .attr("d", _this.area(_this.cached[d[_this.KEY]].points))
+                        .style("fill", _this.cScale(_this.values.color[d.KEY()]))
+                        .attr("d", _this.area(_this.cached[d.KEY()]))
                 }
-
-
             })
-
-
         }
-
     });
 
 
