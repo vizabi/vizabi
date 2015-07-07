@@ -251,7 +251,7 @@
     },
 
     _unselectBars: function() {
-      this.bars.classed('vzb-selection-dimmed', false);
+      this.bars.classed('vzb-dimmed-selected', false);
       this.bars.selectAll('.vzb-bc-bar.vzb-selected').classed('vzb-selected', false);
       this.labels.selectAll('.vzb-selected').classed('vzb-selected', false);
     },
