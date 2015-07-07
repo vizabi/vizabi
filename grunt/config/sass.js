@@ -5,7 +5,7 @@ module.exports = {
             style: 'expanded'
         },
         files: {
-            'preview/vizabi.css': 'src/assets/style/vizabi.scss'
+            'dist/vizabi.css': 'src/assets/style/vizabi.scss'
         }
     },
     prod: {

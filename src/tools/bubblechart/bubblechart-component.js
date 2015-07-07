@@ -488,7 +488,7 @@
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
-      this.model.entities._visible = this.model.marker.getKeys()
+      this.model.entities.setVisible(this.model.marker.getKeys()
         .map(function (d) {
           var pointer = {};
           pointer[KEY] = d[KEY];
@@ -498,10 +498,10 @@
         })
         .sort(function (a, b) {
           return b.sortValue - a.sortValue;
-        });
+        }));
 
       this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-        .data(this.model.entities._visible, function (d) {
+        .data(this.model.entities.getVisible(), function (d) {
           return d[KEY]
         });
 
@@ -543,7 +543,7 @@
       //TODO: no need to create trail group for all entities
       //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
       this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
-        .data(this.model.entities._visible, function (d) {
+        .data(this.model.entities.getVisible(), function (d) {
           return d[KEY]
         });
 
