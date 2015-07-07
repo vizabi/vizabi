@@ -36,6 +36,9 @@
       &.vzb-hovered {
         display: block;
       }
+      &.vzb-selected {
+        display: block;
+      }
       &> .vzb-bc-age {
        fill: #333333;
       }
@@ -45,6 +48,18 @@
       &> .vzb-bc-bar {
         opacity: 0.8;
         &.vzb-hovered {
+          opacity: 1;
+        }
+      }
+    }
+
+    .vzb-dimmed-selected {
+      &> .vzb-bc-bar {
+        opacity: 0.5;
+        &.vzb-hovered {
+          opacity: 0.8;
+        }
+        &.vzb-selected {
           opacity: 1;
         }
       }
