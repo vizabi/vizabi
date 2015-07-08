@@ -66,10 +66,9 @@
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
                     
-                    //TODO: this sequence is very redundant and need optimisation
-                    _this.updateTime(method=="latest"?_this.model.time.end:null);
+                    if(method!=="immediate") _this.updateTime(_this.model.time.end);
                     _this._adjustMaxY(method);
-                    _this.updateTime();
+                    if(method!=="immediate") _this.updateTime();
                     _this.redrawDataPoints();
                 },
                 'change:marker': function () {
