@@ -48,13 +48,19 @@
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo",
+          palette: {
+            "asi": "#FF5872",
+            "eur": "#FFE700",
+            "ame": "#7FEB00",
+            "afr": "#00D5E9",
+            "_default": "#ffb600"
+          }
         }
       }
     },
     data: {
-      reader: "csv-file",
-      path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+      reader: "waffle-server"
     },
 
     ui: {
@@ -311,5 +317,8 @@
     }
   });
 
+  //Waffle Server Reader custom path
+  var WaffleReader = this.Vizabi.Reader.get('waffle-server');
+  WaffleReader.define('basepath', "http://54.154.191.20:8001/values/waffle");
 
 }.call(this));
