@@ -54,14 +54,14 @@
                 step: 1,
                 speed: 100,
                 formatInput: "%Y",
-                xLogStops: [1,2],
+                xLogStops: [1],
                 yMaxMethod: "latest"
             },
             entities: {
                 dim: "geo",
                 show: {
                     _defs_: {
-                        "geo": ['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+                        "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
                         "geo.cat": ["country"]
                     }
                 }
@@ -97,7 +97,10 @@
                 },
                 stack: {
                     use: "property",
-                    which: "geo.region" // set any property of data or values "all" or "none"
+                    which: "all" // set a property of data or values "all" or "none"
+                },
+                group: {
+                    which: "geo.region" // set a property of data
                 }
             }
         },
