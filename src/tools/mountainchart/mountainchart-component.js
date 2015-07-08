@@ -61,7 +61,7 @@
                     _this.redrawDataPoints();
                 },
                 'change:time:xLogStops': function () {
-                    _this.resize();
+                    _this.updateSize();
                 },
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
@@ -75,7 +75,7 @@
                     //console.log("change marker stack");
                     _this.updateIndicators();
                     _this.updateEntities();
-                    _this.resize();
+                    _this.updateSize();
                     _this.updateTime();
                     _this._adjustMaxY();
                     _this.redrawDataPoints();
@@ -132,7 +132,7 @@
             var _this = this;
             this.on("resize", function () {
                 //console.log("acting on resize");
-                _this.resize();
+                _this.updateSize();
                 _this.redrawDataPoints();
             });
 
@@ -141,7 +141,7 @@
 
             this.updateIndicators();
             this.updateEntities();
-            this.resize();
+            this.updateSize();
             this.updateTime();
             this._adjustMaxY();
             this.redrawDataPoints();
@@ -185,6 +185,7 @@
             var _this = this;
 
             // construct pointers
+            var stackMode = this.model.marker.stack.which;
             var endTime = this.model.time.end;
             this.model.entities._visible = this.model.marker.getKeys()
                 .map(function (d) {
@@ -196,42 +197,40 @@
                     return pointer;
                 })
             
-            // update the stacked pointers
-            if (_this.model.marker.stack.use === "property") {
-                this.stackedPointers = d3.nest()
-                    .key(function (d) {
-                        
-                        return _this.model.marker.stack.getValue(d) 
+            
+            //TODO: optimise this!
+            this.groupedPointers = d3.nest()
+                .key(function (d) {
+                    return _this.model.marker.stack.use === "property"?
+                        _this.model.marker.stack.getValue(d)
+                        : 
+                        _this.model.marker.group.getValue(d)
                     })
-                    .sortValues(function(a,b) { return b.sortValue[0] - a.sortValue[0] } )
-                    .entries(this.model.entities._visible);
-            }else if(_this.model.marker.stack.which === "all"){
-                this.stackedPointers = [{values: this.model.entities._visible}];
-            }else{
+                .entries(this.model.entities._visible)
+                .forEach(function (group) {
+                    var groupSortValue = d3.sum(group.values.map(function (m) {
+                        return m.sortValue[0];
+                    }));
+                    group.values.forEach(function (d) {
+                        d.sortValue[1] = groupSortValue;
+                    })
+                })
+            
+            // update the stacked pointers
+            if (_this.model.marker.stack.which === "none"){
                 this.stackedPointers = [];
-            }
-            
-            
-            // sort pointers
-            this.stackedPointers.forEach(function(group){
-                var groupSortValue = d3.sum(group.values.map(function(m){
-                    return m.sortValue[0]
-                }));
-                group.values.forEach(function(d){
-                    d.sortValue[1] = groupSortValue;
-                })
-            })
-            
-            this.model.entities._visible
-                .sort(function (a, b) {
-                    return b.sortValue[0] - a.sortValue[0];
-                })
-                .sort(function (a, b) {
-                    return b.sortValue[1] - a.sortValue[1];
-                })
+                this.model.entities._visible.sort(function (a, b) {return b.sortValue[0] - a.sortValue[0];})
 
-            //console.log(this.model.entities._visible.map(function(m){return m.geo}))
-            
+            }else{
+                this.stackedPointers = d3.nest()
+                    .key(function (d) { return _this.model.marker.stack.getValue(d) })
+                    .key(function (d) { return _this.model.marker.group.getValue(d) })
+                    .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
+                    .entries(this.model.entities._visible);
+                
+                this.model.entities._visible.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
+            }
+                        
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -289,7 +288,11 @@
             
             //recalculate stacking
             this.stackedPointers.forEach(function (group) {
-                _this.stack( group.values.filter(function(f){return !f.hidden}) );
+                var toStack = [];
+                group.values.forEach(function(subgroup){
+                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden}))
+                })
+                _this.stack(toStack);
             })
 
         },
@@ -311,7 +314,7 @@
          * Executes everytime the container or vizabi is resized
          * Ideally,it contains only operations related to size
          */
-        resize: function () {
+        updateSize: function () {
 
             var margin;
             var tick_spacing;
@@ -355,7 +358,7 @@
             var scaleType = this.model.marker.axis_x.scaleType;
             var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
-            var rangeStep = (rangeTo - rangeFrom) / (width ? width / 3 : 196);
+            var rangeStep = (rangeTo - rangeFrom) / Math.max(100,(width ? width / 5 : 100));
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
             if (scaleType != "linear") this.mesh =
                 this.mesh.map(function (dX) {return Math.exp(dX)}).filter(function (dX) {return dX > 0});
