@@ -194,7 +194,9 @@
 
       this.dragger = d3.behavior.drag()
         .on("dragstart", function (d, i) {
-          d3.event.sourceEvent.stopPropagation();
+        	d3.event.sourceEvent.stopPropagation();
+        	var KEY = _this.KEY;
+        	_this.druging = d[KEY];
         })
         .on("drag", function (d, i) {
           var KEY = _this.KEY;
@@ -213,7 +215,8 @@
           _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0);
         })
         .on("dragend", function (d, i) {
-          var KEY = _this.KEY;
+        	var KEY = _this.KEY;
+        _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
             Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
             Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
@@ -925,6 +928,9 @@
     _updateLabel: function (d, index, valueX, valueY, scaledS, valueL, duration) {
       var _this = this;
       var KEY = this.KEY;
+      if (d[KEY] == _this.druging)
+      	return;
+
       if (duration == null) duration = _this.duration;
 
       // only for selected entities
