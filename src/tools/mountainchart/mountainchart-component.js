@@ -66,9 +66,9 @@
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
                     
-                    _this.resize();
+                    //TODO: this sequence is very redundant and need optimisation
                     _this.updateTime(method=="latest"?_this.model.time.end:null);
-                    _this._adjustMaxY();
+                    _this._adjustMaxY(method);
                     _this.updateTime();
                     _this.redrawDataPoints();
                 },
@@ -144,7 +144,7 @@
             this.updateEntities();
             this.resize();
             this.updateTime();
-            this._adjustMaxY(0);
+            this._adjustMaxY();
             this.redrawDataPoints();
         },
 
@@ -407,16 +407,28 @@
         },
 
         
-        _adjustMaxY: function(yMax){
+        _adjustMaxY: function(method){
             var _this = this;
             
-            if(!yMax) yMax = 0;
-            this.model.entities._visible.forEach(function(d){
-                var points = _this.cached[d.KEY()];
-                var max = d3.max(points.map(function(m){return m.y0 + m.y}));
-                if(max > yMax) yMax = max;
-            })
+            var yMax = 0;
+            if(method==="total"){
+                //TODO: simplification is taken here. max thickness of mountains is being summed
+                // but as the mountains are not aligned this sum will be larger than the actual total height
+                this.model.entities._visible.forEach(function(d){
+                    var points = _this.cached[d.KEY()];
+                    var max = d3.max(points.map(function(m){return m.y}));
+                    if(max > 0) yMax += max;
+                })
+            }else{
+                this.model.entities._visible.forEach(function(d){
+                    var points = _this.cached[d.KEY()];
+                    var max = d3.max(points.map(function(m){return m.y + m.y0}));
+                    if(max > yMax) yMax = max;
+                })
+            }
             this.yScale.domain([0, yMax]);
+            
+            if(!yMax)utils.warn("Setting yMax to " + yMax + ". You failed again :-/");
         },
 
 
