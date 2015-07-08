@@ -134,19 +134,31 @@
         },
         color: {
           use: "property",
-          which: "geo.region"
+          which: "geo",
+          palette: {
+            "asi": "#FF5872",
+            "eur": "#FFE700",
+            "ame": "#7FEB00",
+            "afr": "#00D5E9",
+            "_default": "#ffb600"
+          }
         },
         color_shadow: {
           use: "property",
-          which: "geo.region"
+          which: "geo",
+          palette: {
+            "asi": "#FF5872",
+            "eur": "#FFE700",
+            "ame": "#7FEB00",
+            "afr": "#00D5E9",
+            "_default": "#ffb600"
+          }
         }
       }
     },
 
     data: {
-      //reader: "waffle-server",
-      reader: "csv-file",
-      path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+      reader: "waffle-server",
     },
 
     ui: {
