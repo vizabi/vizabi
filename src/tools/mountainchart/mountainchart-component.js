@@ -63,6 +63,18 @@
                 'change:time:xLogStops': function () {
                     _this.updateSize();
                 },
+                "change:entities:brush": function () {
+                  if (!_this._readyOnce) return;
+                  //console.log("EVENT change:entities:brush");
+                  _this.highlightDataPoints();
+                    _this.updateBubbleOpacity();
+                },
+                'change:entities:select': function () {
+                  if (!_this._readyOnce) return;
+                  //console.log("EVENT change:entities:select");
+                  _this.selectDataPoints();
+                    _this.updateBubbleOpacity();
+                },
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
                     
@@ -79,6 +91,9 @@
                     _this.updateTime();
                     _this._adjustMaxY();
                     _this.redrawDataPoints();
+                    _this.highlightDataPoints();
+                    _this.selectDataPoints();
+                    _this.updateBubbleOpacity();
                     
                 }
             }
@@ -145,6 +160,9 @@
             this.updateTime();
             this._adjustMaxY();
             this.redrawDataPoints();
+            this.highlightDataPoints();
+            this.selectDataPoints();
+            this.updateBubbleOpacity();
         },
 
 
@@ -243,6 +261,10 @@
             this.mountains.enter().append("path")
                 .attr("class", "vzb-mc-mountain")
                 .on("mousemove", function (d, i) {
+                
+                    _this.model.entities.highlightEntity(d);
+                
+                
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) {
                         return parseInt(d);
                     });
@@ -255,13 +277,78 @@
                 })
                 .on("mouseout", function (d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
+                    _this.model.entities.clearHighlighted();
                 })
                 .on("click", function (d, i) {
                     _this.model.entities.selectEntity(d);
                 });
-
+            
+        },
+        
+        /*
+         * Highlights all hovered shapes
+         */
+        highlightDataPoints: function () {
+          this.someHighlighted = (this.model.entities.brush.length > 0);
+            
         },
 
+
+
+        selectDataPoints: function () {
+          this.someSelected = (this.model.entities.select.length > 0);
+        },        
+        
+        
+        
+        
+        updateBubbleOpacity: function () {
+          var _this = this;
+          //if(!duration)duration = 0;
+
+          var OPACITY_HIGHLT = 1.0;
+          var OPACITY_HIGHLT_DIM = 0.3;
+          var OPACITY_SELECT = 0.8;
+          var OPACITY_REGULAR = this.model.entities.opacityRegular;
+          var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+
+          this.mountains
+            //.transition().duration(duration)
+            .style("opacity", function (d) {
+
+              if (_this.someHighlighted) {
+                //highlight or non-highlight
+                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+              }
+
+              if (_this.someSelected) {
+                //selected or non-selected
+                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+              }
+
+              if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+              return OPACITY_REGULAR;
+            });
+
+
+          var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+
+          // when pointer events need update...
+          if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+            this.mountains.style("pointer-events", function (d) {
+              return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+                "visible" : "none";
+            });
+          }
+
+          this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+        },
+
+        
+        
+        
+        
 
         /*
          * UPDATE TIME:

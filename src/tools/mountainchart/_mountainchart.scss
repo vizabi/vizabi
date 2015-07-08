@@ -19,14 +19,10 @@
         overflow: hidden;
         font-family: $vzb-font-family;
         .vzb-mc-mountain {
-            @include opacity(0.5);
             stroke: white;
             stroke-opacity: 0.5;
             stroke-width: 1px;
             cursor: pointer;
-            &:hover {
-                @include opacity(1);
-            }
         }
         .vzb-mc-title {
             color: $vzb-color-primary;

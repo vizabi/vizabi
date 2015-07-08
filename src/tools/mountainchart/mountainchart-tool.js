@@ -59,6 +59,8 @@
             },
             entities: {
                 dim: "geo",
+                opacitySelectDim: 0.3,
+                opacityRegular: 0.6, 
                 show: {
                     _defs_: {
                         "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
