@@ -683,8 +683,11 @@
     ajax: function (options) {
       var request = new XMLHttpRequest();
       request.open(options.method, options.url, true);
-      if (options.method === 'POST') {
+      if (options.method === 'POST' && !options.json) {
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      }
+      else if (options.method === 'POST' && options.json) {
+        request.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
       }
       request.onload = function () {
         if (request.status >= 200 && request.status < 400) {

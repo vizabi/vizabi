@@ -97,7 +97,7 @@
                 },
                 stack: {
                     use: "property",
-                    which: "all" // set a property of data or values "all" or "none"
+                    which: "geo.region" // set a property of data or values "all" or "none"
                 },
                 group: {
                     which: "geo.region" // set a property of data
