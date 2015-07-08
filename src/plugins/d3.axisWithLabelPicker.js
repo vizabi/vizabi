@@ -184,10 +184,10 @@
             return axis;
         };
         
+        axis.METHOD_REPEATING = 'repeating specified powers';
+        axis.METHOD_DOUBLING = 'doubling the value';
+        
         axis.labelFactory = function(options){
-            this.METHOD_REPEATING = 'repeating specified powers';
-            this.METHOD_DOUBLING = 'doubling the value';
-
             if(options==null) options = {}
             if(options.scaleType!="linear"&&
                options.scaleType!="time"&&
