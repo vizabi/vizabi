@@ -438,7 +438,6 @@
 
       //return query
       return {
-        'from': 'data',
         'select': select,
         'where': filters
       };
