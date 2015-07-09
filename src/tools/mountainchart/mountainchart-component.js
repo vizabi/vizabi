@@ -347,6 +347,7 @@
                     _this.model.entities.clearHighlighted();
                 })
                 .on("click", function (d, i) {
+                    _this.model.entities.clearHighlighted();
                     _this.model.entities.selectEntity(d);
                 });
                 
@@ -364,6 +365,10 @@
             this.mountainLabels
                 .attr("transform", function(d,i){return "translate(0," + (fontHeight*i) + ")"})
                 .each(function(d, i){
+                    var string = _this.values.label[d.KEY()] 
+                        + ": " + 
+                        _this.model.marker.axis_y.tickFormatter(_this.values.axis_y[d.KEY()])
+                        + (i==0?" people":"");
                 
                     d3.select(this).select("circle")
                         .attr("r", fontHeight/2.5)
@@ -375,7 +380,7 @@
                     d3.select(this).selectAll("text")
                         .attr("x", fontHeight)
                         .attr("y", fontHeight)
-                        .text(_this.values.label[d.KEY()] + " " + _this.model.marker.axis_y.tickFormatter(_this.values.axis_y[d.KEY()]))
+                        .text(string)
             }) 
         },
 
