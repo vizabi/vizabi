@@ -335,7 +335,7 @@
 
       //load hook
       //if its not a hook, the promise will not be created
-      if (this.isHook() && data_hook && query && this.use !== "value") {
+      if (this.isHook() && data_hook && query) {
         //hook changes, regardless of actual data loading
         this.trigger('hook_change');
         //get reader info
@@ -421,30 +421,26 @@
      * @returns {Array} query
      */
     getQuery: function () {
-      //only perform query in these two uses
-      var needs_query = [
-        'property',
-        'indicator'
-      ];
-      //if it's not a hook, property or indicator, no query is necessary
-      if (!this.isHook() || needs_query.indexOf(this.use) === -1) {
+
+      var dimensions, filters, select, q;
+
+      //if it's not a hook, no query is necessary
+      if (!this.isHook()) return true;
+      //error if there's nothing to hook to
+      if (Object.keys(this._space).length < 1) {
+        utils.error('Error:', this._id, 'can\'t find the space');
         return true;
-      } //error if there's nothing to hook to
-      else if (Object.keys(this._space).length < 1) {
-        utils.error('Error:', this._id, 'can\'t find any dimension');
-        return true;
-      } //else, its a hook (indicator or property) and it needs to query
-      else {
-        var dimensions = this._getAllDimensions();
-        var select = utils.unique(dimensions.concat([this.which]));
-        var filters = this._getAllFilters();
-        //return query
-        return {
-          'from': 'data',
-          'select': select,
-          'where': filters
-        };
       }
+      dimensions = this._getAllDimensions();
+      filters = this._getAllFilters();
+      if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
+      select = utils.unique(dimensions);
+
+      //return query
+      return {
+        'select': select,
+        'where': filters
+      };
     },
 
     /* ===============================
@@ -747,15 +743,15 @@
      */
     getNestedItems: function (order) {
       //cache optimization
-      if(!this._dataId) return {};
-      var order_id = order.join("-");
-      var nested = _DATAMANAGER.get(this._dataId, 'nested');
-      if (!order) return nested;
+      var order_id, nested, items, nest;
+      order_id = order.join("-");
+      nested = this._dataId ? _DATAMANAGER.get(this._dataId, 'nested') : false;
+      if (!order && nested) return nested;
       if (nested && order_id in nested) {
         return nested[order_id];
       }
-      var items = _DATAMANAGER.get(this._dataId);
-      var nest = d3.nest();
+      items = this._dataId ? _DATAMANAGER.get(this._dataId) : this.getKeys();
+      nest = d3.nest();
       for (var i = 0; i < order.length; i++) {
         nest = nest.key((function(k) {
           return function(d) { return d[k]; };

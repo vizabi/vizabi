@@ -1,0 +1,33 @@
+<div class='vzb-dialog-modal'>
+
+  <div class="vzb-dialog-title">
+    <%=t ( "buttons/axes") %>
+  </div>
+
+  <div class="vzb-dialog-content">
+    <div class="vzb-yaxis-container">
+        Maximum Y value:
+        <form>
+            <input type="radio" name="ymax" value="immediate">Immediate
+            <input type="radio" name="ymax" value="latest">Latest
+            <input type="radio" name="ymax" value="total">Total
+        </form>
+    </div>
+      <br/>
+    <div class="vzb-xaxis-container">
+        X-axis logarithmic stops:
+        <form>
+            <input type="checkbox" name="logstops" value="1">1
+            <input type="checkbox" name="logstops" value="2">2
+            <input type="checkbox" name="logstops" value="5">5
+        </form>
+    </div>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      OK
+    </div>
+  </div>
+
+</div>

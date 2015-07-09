@@ -29,6 +29,7 @@
       }, values);
 
       this._visible = [];
+      this._multiple = true;
 
       this._super(values, parent, bind);
     },
@@ -44,12 +45,38 @@
         return d[dimension]
       });
 
-      this.select = this.select.filter(function (f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      });
-      this.brush = this.brush.filter(function (f) {
-        return visible_array.indexOf(f[dimension]) !== -1;
-      });
+      if(visible_array.length) {
+        this.select = this.select.filter(function (f) {
+          return visible_array.indexOf(f[dimension]) !== -1;
+        });
+        this.brush = this.brush.filter(function (f) {
+          return visible_array.indexOf(f[dimension]) !== -1;
+        });
+      }
+    },
+
+    /**
+     * Sets the visible entities
+     * @param {Array} arr
+     */
+    setVisible: function(arr) {
+      this._visible = arr;
+    },
+
+    /**
+     * Gets the visible entities
+     * @returns {Array} visible
+     */
+    getVisible: function(arr) {
+      return this._visible;
+    },
+
+    /**
+     * Determines whether multiple entities can be selected
+     * @param {Boolean} bool
+     */
+    selectMultiple: function(bool) {
+      this._multiple = bool;
     },
 
     /**
@@ -96,7 +123,7 @@
         if (timeDim && timeFormatter) {
           added["trailStartTime"] = timeFormatter(d[timeDim]);
         }
-        this.select = this.select.concat(added);
+        this.select = (this._multiple) ? this.select.concat(added) : [added];
       }
     },
 
