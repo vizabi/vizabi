@@ -173,6 +173,26 @@
 
       this.setBubbleTrails();
       this.setBubbleLock();
+      
+      //keyboard listeners
+      d3.select("body")
+  		.on("mousedown", function (e) {
+  			var target = d3.event.target;
+        var closeDialog = true;
+  			while (target)
+  			{
+          if(target.classList.contains("vzb-dialog-modal"))
+          {
+            closeDialog = false;
+            break;
+          }
+  				target = target.parentElement;
+  			}
+  			if(closeDialog)
+        {
+          _this.closeAllDialogs();
+        }
+  		});
     },
 
 
