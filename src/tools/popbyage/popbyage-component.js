@@ -202,7 +202,8 @@
 
       this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
                .text(function(d) {
-                  return values.axis_y[d[ageDim]] + "-year-olds in "+timeFormatter(time.value) + ": "+Math.round(values.axis_x[d[ageDim]]);
+                  var formatter = _this.model.marker.axis_x.tickFormatter;
+                  return values.axis_y[d[ageDim]] + "-year-olds in "+timeFormatter(time.value) + ": "+formatter(values.axis_x[d[ageDim]]);
                })
                .attr("x", 7)
                .attr("y", function (d) {
