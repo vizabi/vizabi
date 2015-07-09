@@ -59,6 +59,7 @@
                     _this.updateTime();
                     if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
                     _this.redrawDataPoints();
+                    _this.redrawSelectList();
                 },
                 'change:time:xLogStops': function () {
                     _this.updateSize();
@@ -73,6 +74,7 @@
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:select");
                   _this.selectDataPoints();
+                    _this.redrawSelectList();
                     _this.updateBubbleOpacity();
                 },
                 'change:time:yMaxMethod': function () {
@@ -93,8 +95,15 @@
                     _this.redrawDataPoints();
                     _this.highlightDataPoints();
                     _this.selectDataPoints();
+                    _this.redrawSelectList();
                     _this.updateBubbleOpacity();
                     
+                },
+                'change:entities:opacitySelectDim': function () {
+                  _this.updateBubbleOpacity();
+                },
+                'change:entities:opacityRegular': function () {
+                  _this.updateBubbleOpacity();
                 }
             }
 
@@ -139,6 +148,7 @@
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
+            this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.mountains = null;
             this.tooltip = this.element.select('.vzb-tooltip');
 
@@ -149,6 +159,7 @@
                 //console.log("acting on resize");
                 _this.updateSize();
                 _this.redrawDataPoints();
+                _this.redrawSelectList();
             });
 
             this.KEY = this.model.entities.getDimension();
@@ -162,6 +173,7 @@
             this.redrawDataPoints();
             this.highlightDataPoints();
             this.selectDataPoints();
+            this.redrawSelectList();
             this.updateBubbleOpacity();
         },
 
@@ -183,10 +195,9 @@
             this.yScale = this.model.marker.axis_y.getScale();
             this.xScale = this.model.marker.axis_x.getScale();
             this.cScale = this.model.marker.color.getScale();
+            
+            this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
 
-            this.xAxis.tickFormat(function (d) {
-                return _this.model.marker.axis_x.getTick(d);
-            });
 
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
@@ -248,7 +259,8 @@
                 
                 this.model.entities._visible.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
             }
-                        
+                      
+            //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -289,19 +301,84 @@
          * Highlights all hovered shapes
          */
         highlightDataPoints: function () {
-          this.someHighlighted = (this.model.entities.brush.length > 0);
+            var _this = this;
+            this.someHighlighted = (this.model.entities.brush.length > 0);
             
+            if (this.model.entities.brush.length==1) {
+                var key = this.model.entities.brush[0][_this.KEY];
+                var variance = _this._math.giniToVariance(_this.values.size[key]);
+                var mean = _this._math.gdpToMean(_this.values.axis_x[key], variance);
+                this.xAxisEl.call(this.xAxis.highlightValue(Math.exp(Math.log(mean) - variance)));
+            }else{
+                this.xAxisEl.call(this.xAxis.highlightValue("none"));
+            }
+            
+            if(!this.mountainLabels || !this.someSelected) return;
+            this.mountainLabels.classed("vzb-highlight", function(d){return _this.model.entities.isHighlighted(d)});
         },
 
 
 
         selectDataPoints: function () {
-          this.someSelected = (this.model.entities.select.length > 0);
-        },        
+            var _this = this;
+            this.someSelected = (this.model.entities.select.length > 0);
+            
+            var listData = this.model.entities._visible.filter(function(f){
+                    return _this.model.entities.isSelected(f);
+                })
+                .sort(function (a, b) {
+                    if(b.max&&a.max) return b.max - a.max;
+                    return b.sortValue[0] - a.sortValue[0];
+                });
+            
+            this.mountainLabels = this.mountainLabelContainer.selectAll("g").data(listData)
+            this.mountainLabels.exit().remove();
+            this.mountainLabels.enter().append("g")
+                .attr("class", "vzb-mc-label")
+                .each(function(d, i){
+                    d3.select(this).append("circle");
+                    d3.select(this).append("text").attr("class", "vzb-mc-label-shadow");
+                    d3.select(this).append("text");
+                })
+                .on("mousemove", function (d, i) {
+                    _this.model.entities.highlightEntity(d);
+                })
+                .on("mouseout", function (d, i) {
+                    _this.model.entities.clearHighlighted();
+                })
+                .on("click", function (d, i) {
+                    _this.model.entities.selectEntity(d);
+                });
+                
+        },
         
         
-        
-        
+        redrawSelectList: function(){
+            var _this = this;
+            if(!this.mountainLabels || !this.someSelected) return;
+            
+            var sample = this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
+            var fontHeight = sample[0][0].getBBox().height;
+            d3.select(sample[0][0].parentNode).remove();
+            
+            this.mountainLabels
+                .attr("transform", function(d,i){return "translate(0," + (fontHeight*i) + ")"})
+                .each(function(d, i){
+                
+                    d3.select(this).select("circle")
+                        .attr("r", fontHeight/2.5)
+                        .attr("cx", fontHeight/2)
+                        .attr("cy", fontHeight/1.5)
+                        .style("fill", _this.cScale(_this.values.color[d.KEY()]))
+                    
+                    
+                    d3.select(this).selectAll("text")
+                        .attr("x", fontHeight)
+                        .attr("y", fontHeight)
+                        .text(_this.values.label[d.KEY()] + " " + _this.model.marker.axis_y.tickFormatter(_this.values.axis_y[d.KEY()]))
+            }) 
+        },
+
         updateBubbleOpacity: function () {
           var _this = this;
           //if(!duration)duration = 0;
@@ -459,7 +536,7 @@
                     scaleType: scaleType,
                     toolMargin: margin,
                     method: this.xAxis.METHOD_REPEATING,
-                    stops: this.model.time.xLogStops 
+                    stops: this.model.time.xLogStops
                 });
 
 
@@ -505,14 +582,15 @@
                 // but as the mountains are not aligned this sum will be larger than the actual total height
                 this.model.entities._visible.forEach(function(d){
                     var points = _this.cached[d.KEY()];
+                    d.max = d3.max(points.map(function(m){return m.y + m.y0}));
                     var max = d3.max(points.map(function(m){return m.y}));
                     if(max > 0) yMax += max;
                 })
             }else{
                 this.model.entities._visible.forEach(function(d){
                     var points = _this.cached[d.KEY()];
-                    var max = d3.max(points.map(function(m){return m.y + m.y0}));
-                    if(max > yMax) yMax = max;
+                    d.max = d3.max(points.map(function(m){return m.y + m.y0}));
+                    if(d.max > yMax) yMax = d.max;
                 })
             }
             this.yScale.domain([0, yMax]);
