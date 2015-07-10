@@ -112,22 +112,19 @@
      * Sets options from external page
      * @param {Object} options new options
      * @param {Boolean} overwrite overwrite everything instead of extending
-     * @param {Boolean} silent prevent events
      */
-    setOptions: function (options, overwrite, silent) {
+    setOptions: function (options, overwrite) {
       if (overwrite) {
         this.model.reset(options);
       } else {
-        this.model.set(options);
+        this.model.set(changedObj(options, this.getOptions()));
       }
       this._setUIOptions();
     },
 
     /**
      * gets all options
-     * @param {Object} options new options
-     * @param {Boolean} overwrite overwrite everything instead of extending
-     * @param {Boolean} silent prevent events
+     * @return {Object} JSON object with options
      */
     getOptions: function () {
       return this.model.getObject() || {};
@@ -292,6 +289,42 @@
       }
     }
     return values;
+  }
+
+  /**
+   * Outputs the difference between two objects
+   * @param {Object} obj prevailing object
+   * @param {Object} compare comparison object
+   * @returns {Object} resulting diff object
+   */
+  function changedObj(obj, compare) {
+    var acc = {};
+    utils.forEach(obj, function(val, name) {
+      if(!(name in compare)) {
+        acc[name] = val;
+        return true;
+      }
+      //if the same, no need to check deeper
+      if(JSON.stringify(val) === JSON.stringify(compare[name])) return true;
+      else if(utils.isArray(val)) {
+        acc[name] = val;
+      }
+      else if(utils.isObject(val)) {
+        acc[name] = changedObj(val, compare[name]);
+      }
+      else if(utils.isDate(compare[name])){
+        var comp1 = val.toString();
+        //TODO: workaround for years only
+        var comp2 = compare[name].getFullYear().toString();
+        if(comp1 !== comp2) {
+          acc[name] = val;
+        }
+      }
+      else {
+        acc[name] = val;
+      }
+    });
+    return acc;
   }
 
   //utility function to check if a component is a tool
