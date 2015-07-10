@@ -6,16 +6,18 @@
 
   <div class="vzb-dialog-content">
     <div class="vzb-yaxis-container">
-        Maximum Y value:
+        <p><%=t ( "hints/mount/maxYvalue") %></p>
+        <br/>
         <form>
-            <input type="radio" name="ymax" value="immediate">Immediate
-            <input type="radio" name="ymax" value="latest">Latest
-            <input type="radio" name="ymax" value="total">Total
+            <input type="radio" name="ymax" value="immediate"><%=t ( "mount/maxYmode/immediate") %>
+            <input type="radio" name="ymax" value="latest"><%=t ( "mount/maxYmode/latest") %>
+            <input type="radio" name="ymax" value="total"><%=t ( "mount/maxYmode/total") %>
         </form>
     </div>
       <br/>
     <div class="vzb-xaxis-container">
-        X-axis logarithmic stops:
+        <p><%=t ( "hints/mount/logXstops") %></p>
+        <br/>
         <form>
             <input type="checkbox" name="logstops" value="1">1
             <input type="checkbox" name="logstops" value="2">2
