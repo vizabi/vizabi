@@ -140,6 +140,7 @@
           }
         }
       }
+      
       bindSettersGetters(this);
       //for tool model when setting for the first time
       if (this.validate && !setting) {
