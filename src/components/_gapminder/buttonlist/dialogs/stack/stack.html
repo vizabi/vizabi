@@ -5,15 +5,12 @@
   </div>
 
   <div class="vzb-dialog-content">
-    <p>Chose how to stack mountains</p>
+    <p><%=t ( "hints/mount/howtostack") %></p>
+        <br/>
     <form>
-        <input type="radio" name="stack" value="geo.region">Region
-        <br>
-        <br>
-        <input type="radio" name="stack" value="all">All
-        <br>
-        <br>
-        <input type="radio" name="stack" value="none">None
+        <input type="radio" name="stack" value="geo.region"><%=t ( "mount/stacking/region") %>
+        <input type="radio" name="stack" value="all"><%=t ( "mount/stacking/world") %>
+        <input type="radio" name="stack" value="none"><%=t ( "mount/stacking/none") %>
     </form> 
   </div>
 

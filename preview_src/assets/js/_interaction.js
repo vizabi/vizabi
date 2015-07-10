@@ -30,4 +30,4 @@ function language(lang) {
 }
 
 document.getElementById("vzbp-btn-play").onclick = play;
-document.getElementById("vzbp-btn-lang").onclick = function() { language('pt') };
+document.getElementById("vzbp-btn-lang").onclick = function() { language('se') };

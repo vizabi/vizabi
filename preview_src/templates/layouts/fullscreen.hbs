@@ -1,5 +1,5 @@
 ---
-control_buttons: { play: true, languages: ["en", "pt"] }
+control_buttons: { play: true, languages: ["en", "se"] }
 control_state: true
 control_sizes: true
 control_buttons: {play: true, language: true}
@@ -43,42 +43,6 @@ control_buttons: {play: true, language: true}
           bind: {
             "ready": function(evt, vals) {
               updateURL();
-            }
-          },
-          language: {
-            id: URL.lang || "en",
-            strings: {
-              en: {
-                  "title": "{{ title }}",
-                  "buttons/expand": "Go big",
-                  "buttons/unexpand": "Go small",
-                  "buttons/trails": "Trails",
-                  "buttons/lock": "Lock",
-                  "buttons/find": "Find",
-                  "buttons/deselect": "Deselect",
-                  "buttons/ok": "OK",
-                  "buttons/colors": "Colors",
-                  "buttons/size": "Size",
-                  "buttons/axes": "Axes",
-                  "buttons/more_options": "Options",
-                  "indicator/lex": "Life expectancy",
-                  "indicator/gdp_per_cap": "GDP per capita",
-                  "indicator/pop": "Population",
-                  "indicator/geo.region": "Region",
-                  "indicator/geo": "Geo code",
-                  "indicator/time": "Time",
-                  "indicator/geo.category": "Geo category",
-                  "scaletype/linear": "Linear",
-                  "scaletype/log": "Logarithmic",
-                  "scaletype/genericLog": "Generic log",
-                  "scaletype/time": "Time",
-                  "scaletype/ordinal": "Ordinal",
-                  "color/geo.region/asi": "Asia",
-                  "color/geo.region/eur": "Europe",
-                  "color/geo.region/ame": "Americas",
-                  "color/geo.region/afr": "Afrika",
-                  "color/geo.region/_default": "Other"
-                }
             }
           },
           ui: {

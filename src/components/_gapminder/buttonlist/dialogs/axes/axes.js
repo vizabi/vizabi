@@ -24,11 +24,13 @@
       this.components = [{
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-xaxis-container',
-        model: ["state.marker.axis_x", "language"]
+        model: ["state.marker.axis_x", "language"],
+        ui: { markerName: "markerNames/axis_x"}
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-yaxis-container',
-        model: ["state.marker.axis_y", "language"]
+        model: ["state.marker.axis_y", "language"],
+        ui: { markerName: "markerNames/axis_y"}
       }, {
         component: 'gapminder-simplecheckbox',
         placeholder: '.vzb-axes-options',

@@ -189,7 +189,7 @@
 
             var xTitle = this.xTitleEl.selectAll("text").data([0]);
             xTitle.enter().append("text");
-            xTitle.text(this.translator(this.model.marker.axis_x.unit));
+            xTitle.text(this.translator("unit/" + this.model.marker.axis_x.unit));
 
             //scales
             this.yScale = this.model.marker.axis_y.getScale();

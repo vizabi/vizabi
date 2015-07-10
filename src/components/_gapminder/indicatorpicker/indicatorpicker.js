@@ -23,9 +23,9 @@
   var availOpts = {
     'geo.region': {use: 'property', unit: '', scales: ['ordinal']},
     'geo': {use: 'property', unit: '', scales: ['ordinal']},
-    'time': {use: 'indicator', unit: 'year', scales: ['time']},
-    'lex': {use: 'indicator', unit: 'years', scales: ['linear']},
-    'gdp_per_cap': {use: 'indicator', unit: '$/year/person', scales: ['log', 'linear']},
+    'time': {use: 'indicator', unit: 'time', scales: ['time']},
+    'lex': {use: 'indicator', unit: 'lex', scales: ['linear']},
+    'gdp_per_cap': {use: 'indicator', unit: 'gdp_per_cap', scales: ['log', 'linear']},
     'pop': {use: 'indicator', unit: '', scales: ['linear', 'log']},
     '_default': {use: 'value', unit: '', scales: ['linear', 'log']}
   };
@@ -51,7 +51,6 @@
         type: "language"
       }];
 
-
       this.model_binds = {
         "change:axis": function (evt) {
           _this.updateView();
@@ -66,7 +65,8 @@
 
       this.ui = utils.extend({
         selectIndicator: true,
-        selectScaletype: true
+        selectScaletype: true,
+        markerName: ""
       }, this.ui);
 
     },
@@ -79,7 +79,6 @@
       var _this = this;
 
       this.element = d3.select(this.element);
-      this.titleEl = this.element.append("p");
       this.el_select_indicator = this.element.select('.vzb-ip-indicator');
       this.el_select_scaletype = this.element.select('.vzb-ip-scaletype');
 
@@ -97,7 +96,6 @@
     updateView: function () {
       var _this = this;
       this.translator = this.model.language.getTFunction();
-      this.titleEl.text(this.translator(this.model.axis.which));
 
       var pointer = "_default";
 

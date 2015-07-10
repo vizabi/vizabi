@@ -449,11 +449,16 @@
       var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
       var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
       var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
+      
+      var unitStringY = this.translator("unit/" + this.model.marker.axis_y.unit);
+      var unitStringX = this.translator("unit/" + this.model.marker.axis_x.unit);
+      var unitStringS = this.translator("unit/" + this.model.marker.size.unit);
+      var unitStringC = this.translator("unit/" + this.model.marker.color.unit);
 
-      if (!!this.model.marker.axis_y.unit) titleStringY = titleStringY + ", " + this.model.marker.axis_y.unit;
-      if (!!this.model.marker.axis_x.unit) titleStringX = titleStringX + ", " + this.model.marker.axis_x.unit;
-      if (!!this.model.marker.size.unit) titleStringS = titleStringS + ", " + this.model.marker.size.unit;
-      if (!!this.model.marker.color.unit) titleStringC = titleStringC + ", " + this.model.marker.color.unit;
+      if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
+      if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
+      if (!!unitStringS) titleStringS = titleStringS + ", " +  unitStringS;
+      if (!!unitStringC) titleStringC = titleStringC + ", " +  unitStringC; 
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
