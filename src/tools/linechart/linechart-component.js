@@ -120,20 +120,13 @@
 
     ready: function () {
       this.updateTime();
+      this.updateUIStrings();
       this.updateShow();
       this.updateSize();
       this.redrawDataPoints();
     },
-
-    /*
-     * UPDATE SHOW:
-     * Ideally should only update when show parameters change or data changes
-     */
-    updateShow: function () {
-      var _this = this;
-      var KEY = this.KEY;
-
-      this.duration = this.model.time.speed;
+      
+    updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
 
       var titleString = this.translator("indicator/" + this.model.marker.axis_y.which);
@@ -146,6 +139,18 @@
         .attr("dy", "-0.36em")
         .attr("dx", "-0.72em")
         .text(titleString);
+    },
+
+    /*
+     * UPDATE SHOW:
+     * Ideally should only update when show parameters change or data changes
+     */
+    updateShow: function () {
+      var _this = this;
+      var KEY = this.KEY;
+
+      this.duration = this.model.time.speed;
+
 
       this.cached = {};
 

@@ -12,6 +12,7 @@
     var LineChart = this.Vizabi.Tool.get('LineChart');
     var BubbleChart = this.Vizabi.Tool.get('BubbleChart');
     var MountainChart = this.Vizabi.Tool.get('MountainChart');
+    var PopByAge = this.Vizabi.Tool.get('PopByAge');
 
 
     var language = {
@@ -45,6 +46,7 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "World",
                 "mount/stacking/none": "None",
+                "popbyage/yearOldsIn": "-year-olds in",
                 "indicator/lex": "Life expectancy",
                 "indicator/gdp_per_cap": "GDP per capita",
                 "indicator/pop": "Population",
@@ -93,6 +95,7 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "Värld",
                 "mount/stacking/none": "Ingen",
+                "popbyage/yearOldsIn": "-åringar i",
                 "indicator/lex": "Livslängd",
                 "indicator/gdp_per_cap": "PIB pro capita",
                 "indicator/pop": "Befolkning",
@@ -100,7 +103,7 @@
                 "indicator/geo": "Geokod",
                 "indicator/time": "Tid",
                 "indicator/geo.category": "Geo kategori",
-                "unit/gdp_per_cap": "$/year/person",
+                "unit/gdp_per_cap": "$/år/person",
                 "unit/": "",
                 "unit/lex": "År",
                 "unit/time": "År",
@@ -171,9 +174,9 @@
             buttons: []
         }
     });
-    
+
     MountainChart.define('default_options', {
-                state: {
+        state: {
             time: {
                 start: 1850,
                 end: 2000,
@@ -187,7 +190,7 @@
             entities: {
                 dim: "geo",
                 opacitySelectDim: 0.3,
-                opacityRegular: 0.6, 
+                opacityRegular: 0.6,
                 show: {
                     _defs_: {
                         "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
@@ -404,6 +407,57 @@
                     dragging: true
                 }
             },
+            buttons: []
+        }
+    });
+
+    PopByAge.define('default_options', {
+        state: {
+            time: {
+                value: '2013'
+            },
+            entities: {
+                dim: "geo",
+                show: {
+                    _defs_: {
+                        "geo": ["usa"]
+                    }
+                }
+            },
+            entities_age: {
+                dim: "age",
+                show: {
+                    _defs_: {
+                        "age": [[1, 100]] //show 1 through 100
+                    }
+                }
+            },
+            marker: {
+                space: ["entities", "entities_age", "time"],
+                label: {
+                    use: "indicator",
+                    which: "age"
+                },
+                axis_y: {
+                    use: "indicator",
+                    which: "age"
+                },
+                axis_x: {
+                    use: "indicator",
+                    which: "population"
+                },
+                color: {
+                    use: "value",
+                    which: "#ffb600"
+                }
+            }
+        },
+        data: {
+            reader: "csv-file",
+            path: "local_data/csv/{{geo}}.csv"
+        },
+        language: language,
+        ui: {
             buttons: []
         }
     });

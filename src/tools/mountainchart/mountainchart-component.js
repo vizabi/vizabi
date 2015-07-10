@@ -87,6 +87,7 @@
                 },
                 'change:marker': function () {
                     //console.log("change marker stack");
+                    _this.updateUIStrings();
                     _this.updateIndicators();
                     _this.updateEntities();
                     _this.updateSize();
@@ -165,6 +166,7 @@
             this.KEY = this.model.entities.getDimension();
             this.TIMEDIM = this.model.time.getDimension();
 
+            this.updateUIStrings();
             this.updateIndicators();
             this.updateEntities();
             this.updateSize();
@@ -177,19 +179,25 @@
             this.updateBubbleOpacity();
         },
 
+        ready: function(){
+            this.updateUIStrings();
+        },
+        
+        
+        updateUIStrings: function(){
+            this.translator = this.model.language.getTFunction();
+
+            var xTitle = this.xTitleEl.selectAll("text").data([0]);
+            xTitle.enter().append("text");
+            xTitle.text(this.translator("unit/" + this.model.marker.axis_x.unit));
+
+        },
 
         /**
          * Updates indicators
          */
         updateIndicators: function () {
             var _this = this;
-
-
-            this.translator = this.model.language.getTFunction();
-
-            var xTitle = this.xTitleEl.selectAll("text").data([0]);
-            xTitle.enter().append("text");
-            xTitle.text(this.translator("unit/" + this.model.marker.axis_x.unit));
 
             //scales
             this.yScale = this.model.marker.axis_y.getScale();
