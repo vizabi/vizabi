@@ -82,6 +82,8 @@
         },
         "ready": function (evt) {
           if (!_this._readyOnce) return;
+
+
           //TODO a workaround to fix the selection of entities
           if (_this.entitiesUpdatedRecently) {
             _this.entitiesUpdatedRecently = false;
@@ -93,8 +95,6 @@
 
           if (_this.markersUpdatedRecently) {
             _this.markersUpdatedRecently = false;
-
-            _this.updateUIStrings();
             _this.updateIndicators();
             _this.updateSize();
             _this.updateMarkerSizeLimits();
@@ -105,6 +105,8 @@
             //_this.redrawDataPoints();
             _this._trails.run(["recolor", "reveal"]);
           }
+
+          _this.updateUIStrings();
         },
         'change:time:value': function () {
           //console.log("EVENT change:time:value");
