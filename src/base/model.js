@@ -12,6 +12,16 @@
   var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
 
+  var time_formats = {
+    "year": "%Y",
+    "month": "%b",
+    "week": "week %U",
+    "day": "%d/%m/%Y",
+    "hour": "%d/%m/%Y %H",
+    "minute": "%d/%m/%Y %H:%M",
+    "second": "%d/%m/%Y %H:%M:%S"
+  };    
+    
   //names of reserved hook properties
   //warn client if d3 is not defined
   Vizabi._require('d3');
@@ -785,7 +795,7 @@
     tickFormatter: function(x, formatterRemovePrefix) {
 
         //TODO: generalize for any time unit
-        if(utils.isDate(x)) return time_formats["year"](x);
+        if(utils.isDate(x)) return d3.time.format(time_formats["year"])(x);
         if(utils.isString(x)) return x;
 
         var format = "f";
