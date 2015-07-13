@@ -184,9 +184,9 @@
       this.setBubbleTrails();
       this.setBubbleLock();
       
-      //keyboard listeners
-      d3.select("body")
-  		.on("mousedown", function (e) {
+      d3.select(this.root.element).on("mousedown", function (e) {
+        if(!this._active_comp) return; //don't do anything if nothing is open
+        
   			var target = d3.event.target;
         var closeDialog = true;
   			while (target)
