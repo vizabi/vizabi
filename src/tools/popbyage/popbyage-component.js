@@ -48,6 +48,9 @@
         "change:time:value": function (evt) {
           _this._updateEntities();
         },
+        "change:entities:show": function (evt) {
+          console.log('Trying to change show');
+        },
         "change:age:select": function (evt) {
           _this._selectBars();
         }
@@ -104,6 +107,7 @@
       this._updateIndicators();
       this.resize();
       this._updateEntities();
+      this._updateEntities();
     },
 
       
@@ -151,6 +155,43 @@
       filter[timeDim] = time.value;
       var items = this.model.marker.getKeys(filter);
       var values = this.model.marker.getValues(filter, [ageDim]);
+
+      //TODO: this should be done at a data layer
+      //Year Grouping
+
+      var test = function(d) {
+        return parseInt(d, 10) % group_by === 1;
+      }
+
+      var group_by = this.model.marker.group_by;
+      if(group_by > 1) {
+        items = items.filter(function(d) {
+          return test(d[ageDim]);
+        });
+
+        var new_values = {};
+        utils.forEach(values, function(hook, hook_name) {
+          new_values[hook_name] = {};
+          var hook_values = new_values[hook_name];
+          var curr = false;
+          utils.forEach(hook, function(val, key) {
+            if(test(key) || curr === false) {
+              curr = key;
+              hook_values[curr] = val;
+            }
+            //if it's a number and axis x
+            if(!utils.isNaN(val) && hook_name === "axis_x") {
+              hook_values[curr] = parseFloat(hook_values[curr]) + parseFloat(val);
+            }
+          });
+
+        });
+
+        values = new_values;
+
+      }
+
+      //End Year Grouping
 
       this.model.age.setVisible(items);
 
@@ -214,7 +255,14 @@
                .text(function(d) {
                   var formatter = _this.model.marker.axis_x.tickFormatter;
                   var yearOldsIn = _this.translator("popbyage/yearOldsIn");
-                  return values.axis_y[d[ageDim]] + yearOldsIn+" "+timeFormatter(time.value) + ": "+formatter(values.axis_x[d[ageDim]]);
+
+                  var age = parseInt(values.axis_y[d[ageDim]],10);
+
+                  if(group_by > 1) {
+                    age = age + "-to-" + (age + group_by - 1);
+                  }
+
+                  return age + yearOldsIn+" "+timeFormatter(time.value) + ": "+formatter(values.axis_x[d[ageDim]]);
                })
                .attr("x", 7)
                .attr("y", function (d) {
@@ -233,6 +281,13 @@
       this.title.text(label);
 
       this.year.text(this.timeFormatter(this.model.time.value));
+
+      //update x axis again
+      //TODO: remove this when grouping is done at data level
+      var x_domain = this.xScale.domain();
+      var x_domain_max = d3.max(utils.values(values.axis_x));
+      this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
+      this.resize();
 
     },
 

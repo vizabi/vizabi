@@ -434,6 +434,7 @@
             },
             marker: {
                 space: ["entities", "entities_age", "time"],
+                group_by: 2,
                 label: {
                     use: "indicator",
                     which: "age"
