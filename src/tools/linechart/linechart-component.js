@@ -595,7 +595,7 @@
       var timeDim = _this.model.time.getDimension();
       pointer[KEY] = me[KEY];
       pointer[timeDim] = resolvedTime;
-      var resolvedValue = values.axis_y[pointer[KEY]];
+      var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
       if (utils.isNaN(resolvedValue)) {
         return;
