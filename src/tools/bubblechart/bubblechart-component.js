@@ -434,9 +434,9 @@
       this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
 
       this.xyMaxMinMean = {
-        x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter),
-        y: this.model.marker.axis_y.getMaxMinMean(this.timeFormatter),
-        s: this.model.marker.size.getMaxMinMean(this.timeFormatter)
+        x: this.model.marker.axis_x.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true}),
+        y: this.model.marker.axis_y.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true}),
+        s: this.model.marker.size.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true})
       };
     },
 
@@ -580,7 +580,7 @@
         y2: _this.yScale(mmmY.max) - radiusMax,
       }
 
-      var TOLERANCE = 0.3;
+      var TOLERANCE = 0.0;
 
       if (!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) || suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
         _this.currentZoomFrameXY = utils.clone(suggestedFrame);
@@ -598,7 +598,6 @@
       var zoomer = _this.zoomer;
 
       if (Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
-
 
       if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
         var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();

@@ -95,18 +95,15 @@
       this.AGEDIM = this.model.age.getDimension();
       this.TIMEDIM = this.model.time.getDimension();
 
+      this.updateUIStrings();
       this._updateIndicators();
       this.resize();
       this._updateEntities();
     },
 
-    /**
-     * Changes labels for indicators
-     */
-    _updateIndicators: function () {
-      var _this = this;
+      
+    updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
-      this.duration = this.model.time.speed;
 
       var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
 
@@ -117,6 +114,14 @@
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
         .text(titleStringY);
+    },
+      
+    /**
+     * Changes labels for indicators
+     */
+    _updateIndicators: function () {
+      var _this = this;
+      this.duration = this.model.time.speed;
 
       this.yScale = this.model.marker.axis_y.getScale(false);
       this.xScale = this.model.marker.axis_x.getScale(false);
@@ -203,7 +208,8 @@
       this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
                .text(function(d) {
                   var formatter = _this.model.marker.axis_x.tickFormatter;
-                  return values.axis_y[d[ageDim]] + "-year-olds in "+timeFormatter(time.value) + ": "+formatter(values.axis_x[d[ageDim]]);
+                  var yearOldsIn = _this.translator("popbyage/yearOldsIn");
+                  return values.axis_y[d[ageDim]] + yearOldsIn+" "+timeFormatter(time.value) + ": "+formatter(values.axis_x[d[ageDim]]);
                })
                .attr("x", 7)
                .attr("y", function (d) {

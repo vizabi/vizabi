@@ -955,28 +955,33 @@
     /**
      * gets maximum, minimum and mean values from the dataset of this certain hook
      */
-    getMaxMinMean: function (timeFormatter) {
-      var _this = this;
-      var result = {};
-      //TODO: d3 is global?
-      //Can we do this without d3?
-      var dim = this._getFirstDimension({type: 'time'});
-
-      d3.nest().key(function (d) {
-        return timeFormatter(d[dim]);
-      }).entries(_DATAMANAGER.get(this._dataId)).forEach(function (d) {
-        var values = d.values.filter(function (f) {
-          return f[_this.which] !== null;
-        }).map(function (m) {
-          return +m[_this.which];
+    getMaxMinMean: function (options) {
+        var _this = this;
+        var result = {};
+        //TODO: d3 is global?
+        //Can we do this without d3?
+        //yes if we copy d3 nest to out utils https://github.com/mbostock/d3/blob/master/src/arrays/nest.js
+        var dim = this._getFirstDimension({
+            type: 'time'
         });
-        result[d.key] = {
-          max: d3.max(values),
-          min: d3.min(values),
-          mean: d3.mean(values)
-        };
-      });
-      return result;
+
+        d3.nest()
+            .key(function (d) {return options.timeFormatter(d[dim]);})
+            .entries(_DATAMANAGER.get(this._dataId))
+            .forEach(function (d) {
+                var values = d.values
+                    .filter(function (f) {return f[_this.which] !== null;})
+                    .map(function (m) {return +m[_this.which];});
+            
+                if(options.skipZeros) values = values.filter(function (f) {return f!=0})
+
+                result[d.key] = {
+                    max: d3.max(values),
+                    min: d3.min(values),
+                    mean: d3.mean(values)
+                };
+            });
+        return result;
     },
 
     /**

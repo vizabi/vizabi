@@ -642,6 +642,57 @@
       }
       return arr;
     },
+      
+      
+    /*
+     * Computes the minumum value in an array
+     * @param {Array} arr
+     */
+    arrayMin: function(arr) {
+        return arr.reduce(function (p, v) {
+            return (p < v ? p : v);
+        });
+    },
+ 
+    /*
+     * Computes the minumum value in an array
+     * @param {Array} arr
+     */
+    arrayMax: function(arr) {
+        return arr.reduce(function (p, v) {
+            return (p > v ? p : v);
+        });
+    },
+ 
+    /*
+     * Computes the mean of an array
+     * @param {Array} arr
+     */
+    arrayMean: function(arr) {
+        return this.arraySum(arr)/arr.length;
+    },
+ 
+    /*
+     * Computes the sum of an array
+     * @param {Array} arr
+     */
+    arraySum: function(arr) {
+        return arr.reduce(function(a, b) { return a + b; });
+    },
+ 
+    /*
+     * Computes the median of an array
+     * @param {Array} arr
+     */
+    arrayMedian: function(arr) {
+        arr = arr.sort(function(a, b) {return a - b;});
+        var middle = Math.floor((arr.length - 1) / 2);
+        if (arr.length % 2) {
+            return arr[middle];
+        } else {
+            return (arr[middle] + arr[middle + 1]) / 2;
+        }
+    },
 
     /*
      * Defers a function
