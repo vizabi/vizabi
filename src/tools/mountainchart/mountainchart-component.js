@@ -85,20 +85,10 @@
                     if(method!=="immediate") _this.updateTime();
                     _this.redrawDataPoints();
                 },
-                'change:marker': function () {
-                    //console.log("change marker stack");
-                    _this.updateUIStrings();
-                    _this.updateIndicators();
-                    _this.updateEntities();
-                    _this.updateSize();
-                    _this.updateTime();
-                    _this._adjustMaxY();
-                    _this.redrawDataPoints();
-                    _this.highlightDataPoints();
-                    _this.selectDataPoints();
-                    _this.redrawSelectList();
-                    _this.updateBubbleOpacity();
-                    
+                'change:marker': function (evt) {
+                    if (!_this._readyOnce) return;
+                    //console.log("EVENT change:marker", evt);
+                    _this.markersUpdatedRecently = true;
                 },
                 'change:entities:opacitySelectDim': function () {
                   _this.updateBubbleOpacity();
@@ -180,7 +170,22 @@
         },
 
         ready: function(){
-            this.updateUIStrings();
+            var _this = this;
+            if (_this.markersUpdatedRecently) {
+                _this.markersUpdatedRecently = false;
+                //console.log("change marker stack");
+                _this.updateUIStrings();
+                _this.updateIndicators();
+                _this.updateEntities();
+                _this.updateSize();
+                _this.updateTime();
+                _this._adjustMaxY();
+                _this.redrawDataPoints();
+                _this.highlightDataPoints();
+                _this.selectDataPoints();
+                _this.redrawSelectList();
+                _this.updateBubbleOpacity();              
+            }
         },
         
         
