@@ -64,6 +64,17 @@
         }
       }
     }
+
+    .vzb-bc-title {
+      font-size: 18px;
+      fill: $vzb-color-primary;
+    }
+
+    .vzb-bc-year {
+      font-size: 18px;
+      fill: $vzb-color-grey;
+      text-anchor: end
+    }
   }
   &.vzb-large {
     .vzb-bc-axis-x text, .vzb-bc-axis-y text {
@@ -74,6 +85,10 @@
       font-size: 1.8em;
     }
 
+    .vzb-bc-title, .vzb-bc-year {
+      font-size: 28px;
+    }
+
   }
   &.vzb-medium {
     .vzb-bc-axis-x text, .vzb-bc-axis-y text {
@@ -82,6 +97,10 @@
 
     .vzb-bc-label > .vzb-bc-age {
       font-size: 1.4em;
+    }
+
+    .vzb-bc-title, .vzb-bc-year {
+      font-size: 22px;
     }
 
   }
