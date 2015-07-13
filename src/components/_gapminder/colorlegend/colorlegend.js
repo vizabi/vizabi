@@ -152,7 +152,7 @@
             regions.style("opacity", 0.5);
             view.style("opacity", 1);
 
-            var filtered = _this.model.color.getFilteredItems();
+            var filtered = _this.model.color.getNestedItems([KEY]);
             var highlight = utils.values(filtered)
               //returns a function over time. pick the last time-value
               .map(function (d) {
