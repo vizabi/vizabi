@@ -178,10 +178,12 @@
       var time = this.model.time;
 
       play.on('click', function () {
+        _this._dragging = false;
         _this.model.time.play();
       });
 
       pause.on('click', function () {
+        _this._dragging = false;
         _this.model.time.pause();
       });//format
 

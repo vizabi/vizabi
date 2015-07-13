@@ -734,12 +734,16 @@
     /**
      * gets filtered dataset with fewer keys
      * @param {Object} filter
+     * @returns {Object} filtered items object
      */
     getFilteredItems: function (filter) {
+      if (!filter) {
+        utils.warn("No filter provided to getFilteredItems(<filter>)");
+        return {};
+      }
       //cache optimization
       var filter_id = JSON.stringify(filter);
       var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
-      if (!filter) return filtered;
       var found = filtered[filter_id];
       if (filtered[filter_id]) {
         return filtered[filter_id];
@@ -751,13 +755,17 @@
     /**
      * gets nested dataset
      * @param {Array} order
+     * @returns {Object} nest items object
      */
     getNestedItems: function (order) {
+      if (!order) {
+        utils.warn("No order array provided to getNestedItems(<order>). E.g.: getNestedItems(['geo'])");
+        return {};
+      }
       //cache optimization
       var order_id, nested, items, nest;
       order_id = order.join("-");
       nested = this._dataId ? _DATAMANAGER.get(this._dataId, 'nested') : false;
-      if (!order && nested) return nested;
       if (nested && order_id in nested) {
         return nested[order_id];
       }
