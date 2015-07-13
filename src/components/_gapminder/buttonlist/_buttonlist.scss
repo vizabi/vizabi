@@ -66,7 +66,7 @@ $vzb-button-color-border: #cce6ed;
     &.vzb-buttonlist-btn-more > .btn-icon {
       background-color: $vzb-button-more-bg;
     }
-    &.vzb-active {
+    &.vzb-active, &.vzb-active-locked {
       & > .vzb-buttonlist-btn-icon {
         color: $vzb-button-bg;
         background-color: $vzb-button-color;
