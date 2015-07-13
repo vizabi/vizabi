@@ -438,6 +438,10 @@
                     use: "indicator",
                     which: "age"
                 },
+                label_name: {
+                    use: "property",
+                    which: "geo"
+                },
                 axis_y: {
                     use: "indicator",
                     which: "age"

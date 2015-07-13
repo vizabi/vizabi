@@ -78,6 +78,9 @@
       this.bars = this.graph.select('.vzb-bc-bars');
       this.labels = this.graph.select('.vzb-bc-labels');
 
+      this.title = this.element.select('.vzb-bc-title');
+      this.year = this.element.select('.vzb-bc-year');
+
       //only allow selecting one at a time
       this.model.age.selectMultiple(false);
 
@@ -94,6 +97,8 @@
 
       this.AGEDIM = this.model.age.getDimension();
       this.TIMEDIM = this.model.time.getDimension();
+
+      this.timeFormatter = d3.time.format(this.model.time.formatOutput);
 
       this.updateUIStrings();
       this._updateIndicators();
@@ -219,6 +224,16 @@
                   var color = _this.cScale(values.color[d[ageDim]]);
                   return d3.rgb(color).darker(2);
                });
+
+      var label = utils.values(values.label_name).reverse()[0]; //get last name
+
+      //TODO: remove hack
+      label = label === "usa" ? "United States" : "Sweden";
+
+      this.title.text(label);
+
+      this.year.text(this.timeFormatter(this.model.time.value));
+
     },
 
     /**
@@ -274,7 +289,7 @@
       this.profiles = {
         "small": {
           margin: {
-            top: 30,
+            top: 70,
             right: 20,
             left: 40,
             bottom: 40
@@ -284,7 +299,7 @@
         },
         "medium": {
           margin: {
-            top: 30,
+            top: 80,
             right: 60,
             left: 60,
             bottom: 40
@@ -294,7 +309,7 @@
         },
         "large": {
           margin: {
-            top: 30,
+            top: 100,
             right: 60,
             left: 60,
             bottom: 40
@@ -353,6 +368,10 @@
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
+
+      this.title.attr('x', margin.right).attr('y', margin.top/2);
+
+      this.year.attr('x', this.width + margin.left).attr('y', margin.top/2);
 
     }
   });
