@@ -149,7 +149,6 @@
       var _this = this;
       var KEY = this.KEY;
 
-      this.duration = this.model.time.speed;
 
 
       this.cached = {};
@@ -227,21 +226,21 @@
 
       this.profiles = {
         "small": {
-          margin: {top: 30, right: 20, left: 40, bottom: 30},
+          margin: {top: 30, right: 20, left: 55, bottom: 30},
           tick_spacing: 60,
           text_padding: 8,
           lollipopRadius: 6,
           limitMaxTickNumberX: 5
         },
         "medium": {
-          margin: {top: 40, right: 60, left: 60, bottom: 40},
+          margin: {top: 40, right: 60, left: 55, bottom: 40},
           tick_spacing: 80,
           text_padding: 12,
           lollipopRadius: 7,
           limitMaxTickNumberX: 10
         },
         "large": {
-          margin: {top: 50, right: 60, left: 60, bottom: 50},
+          margin: {top: 50, right: 60, left: 55, bottom: 50},
           tick_spacing: 100,
           text_padding: 20,
           lollipopRadius: 9,
@@ -596,7 +595,7 @@
       var timeDim = _this.model.time.getDimension();
       pointer[KEY] = me[KEY];
       pointer[timeDim] = resolvedTime;
-      var resolvedValue = values.axis_y[pointer[KEY]];
+      var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
       if (utils.isNaN(resolvedValue)) {
         return;
