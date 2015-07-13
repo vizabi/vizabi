@@ -151,9 +151,13 @@
 
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);
+        var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
+        domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
+        
         this.scale = d3.time.scale()
-          .domain([limits.min, limits.max])
-          .range(range);
+          .domain(domain)
+          .range(range)
+          .interpolate(d3.interpolateRgb);
         return;
       }
 
