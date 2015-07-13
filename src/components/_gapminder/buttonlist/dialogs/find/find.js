@@ -28,11 +28,10 @@
 
       this.model_binds = {
         "change:state:entities:select": function (evt) {
-          _this.update();
+          _this.ready();
         },
-        "ready": function (evt) {
-          if (!_this._readyOnce) return;
-          _this.update();
+        "change:state:time:value": function (evt) {
+          _this.ready();
         }
       }
 
@@ -61,8 +60,6 @@
       });
 
       this._super();
-
-      this.update();
     },
 
     open: function () {
@@ -74,17 +71,32 @@
      * Build the list everytime it updates
      */
     //TODO: split update in render and update methods
-    update: function () {
+    ready: function () {
       var _this = this;
       var KEY = this.KEY;
+      var TIMEDIM = this.model.state.time.getDimension();
       var selected = this.model.state.entities.getSelected();
-      var labelModel = this.model.state.marker.label;
-      var data = labelModel.getKeys().map(function (d) {
+      var marker = this.model.state.marker;
+      var filter = {};
+      filter[TIMEDIM] = this.model.state.time.value;
+
+      var values = marker.getValues(filter, [KEY])
+
+      var data = marker.getKeys().map(function (d) {
         var pointer = {};
         pointer[KEY] = d[KEY];
-        pointer.name = labelModel.getValue(d);
+        pointer.name = values.label[d[KEY]];
         return pointer;
-      });
+      }).filter(function(d) {
+        var include = true;
+        utils.forEach(values, function(hook) {
+          if(!hook[d[KEY]]) {
+            include = false;
+            return false;
+          }
+        });
+        return include;
+      })
 
       //sort data alphabetically
       data.sort(function (a, b) {
