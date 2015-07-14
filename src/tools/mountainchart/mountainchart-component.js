@@ -215,7 +215,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.1, 100] : [1, 50]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [10, 100000] : [1, 50]);
 
         },
         
@@ -320,8 +320,8 @@
             if (this.model.entities.brush.length==1) {
                 var key = this.model.entities.brush[0][_this.KEY];
                 var variance = _this._math.giniToVariance(_this.values.size[key]);
-                var mean = _this._math.gdpToMean(_this.values.axis_x[key], variance);
-                this.xAxisEl.call(this.xAxis.highlightValue(Math.exp(Math.log(mean) - variance)));
+                var mean = _this.values.axis_x[key] //_this._math.gdpToMean(_this.values.axis_x[key], variance);
+                this.xAxisEl.call(this.xAxis.highlightValue( mean ));
             }else{
                 this.xAxisEl.call(this.xAxis.highlightValue("none"));
             }
@@ -481,15 +481,15 @@
 
 
 
-        _peakValue: function (values, d) {
-            var _this = this;
-
-            var norm = values.axis_y[d.KEY()];
-            var mean = values.axis_x[d.KEY()];
-            var variance = values.size[d.KEY()];
-
-            return norm * this._math.pdf.y(Math.exp(Math.log(mean) - variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
-        },
+//        _peakValue: function (values, d) {
+//            var _this = this;
+//
+//            var norm = values.axis_y[d.KEY()];
+//            var mean = values.axis_x[d.KEY()];
+//            var variance = values.size[d.KEY()];
+//
+//            return norm * this._math.pdf.y(Math.exp(Math.log(mean) - variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
+//        },
 
 
         /**
@@ -584,7 +584,7 @@
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * _this._math.pdf.y(dX, Math.log(mean), variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
+                    y: norm * _this._math.pdf.y(dX, mean, variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
                 }
             });
 

@@ -178,7 +178,7 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1850,
+                start: 1960,
                 end: 2000,
                 value: 2000,
                 step: 1,
@@ -238,10 +238,9 @@
         },
         language: language,
         data: {
-            reader: "csv-file",
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains.csv"
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-var-mean.csv"
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            reader: "waffle-server",
+            //reader: "csv-file",
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
 
