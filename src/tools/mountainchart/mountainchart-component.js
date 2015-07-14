@@ -215,7 +215,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.1, 100] : [1, 50]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 100] : [0, 20]);
 
         },
         
@@ -319,9 +319,12 @@
             
             if (this.model.entities.brush.length==1) {
                 var key = this.model.entities.brush[0][_this.KEY];
-                var variance = _this._math.giniToVariance(_this.values.size[key]);
-                var mean = _this._math.gdpToMean(_this.values.axis_x[key], variance);
-                this.xAxisEl.call(this.xAxis.highlightValue( mean ));
+                var sigma = _this._math.giniToSigma(_this.values.size[key]);
+                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma);
+                
+                // here we highlight the value where the mountain is reaching its peak
+                // which is mode. not mean, not median and not mu. see https://en.wikipedia.org/wiki/Log-normal_distribution
+                this.xAxisEl.call(this.xAxis.highlightValue( Math.exp(mu - sigma*sigma) ));
             }else{
                 this.xAxisEl.call(this.xAxis.highlightValue("none"));
             }
@@ -542,8 +545,10 @@
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
             var rangeStep = (rangeTo - rangeFrom) / Math.max(100,(width ? width / 5 : 100));
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
-            if (scaleType != "linear") this.mesh =
-                this.mesh.map(function (dX) {return Math.exp(dX)}).filter(function (dX) {return dX > 0});
+                
+            if (scaleType != "linear") this.mesh = this.mesh
+                .map(function (dX) {return Math.exp(dX)})
+                .filter(function (dX) {return dX > 0});;
 
             //axis is updated
             this.xAxis.scale(this.xScale)
@@ -575,16 +580,16 @@
             var _this = this;
 
             var norm = values.axis_y[d.KEY()];
-            var variance = _this._math.giniToVariance(values.size[d.KEY()]);
-            var mean = _this._math.gdpToMean(values.axis_x[d.KEY()], variance);
+            var sigma = _this._math.giniToSigma(values.size[d.KEY()]);
+            var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
 
-            if (!norm || !mean || !variance) return [];
+            if (!norm || !mu || !sigma) return [];
 
             return this.mesh.map(function (dX) {
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * _this._math.pdf.y(dX, mean, variance, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
+                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
                 }
             });
 
