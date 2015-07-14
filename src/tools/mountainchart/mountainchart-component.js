@@ -215,7 +215,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [10, 100000] : [1, 50]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.1, 100] : [1, 50]);
 
         },
         
@@ -320,7 +320,7 @@
             if (this.model.entities.brush.length==1) {
                 var key = this.model.entities.brush[0][_this.KEY];
                 var variance = _this._math.giniToVariance(_this.values.size[key]);
-                var mean = _this.values.axis_x[key] //_this._math.gdpToMean(_this.values.axis_x[key], variance);
+                var mean = _this._math.gdpToMean(_this.values.axis_x[key], variance);
                 this.xAxisEl.call(this.xAxis.highlightValue( mean ));
             }else{
                 this.xAxisEl.call(this.xAxis.highlightValue("none"));

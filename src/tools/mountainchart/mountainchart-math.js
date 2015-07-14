@@ -11,7 +11,7 @@
 
         
         gdpToMean: function(gdp, variance){
-            return Math.log(gdp)-variance/2
+            return Math.log(gdp/365)-variance/2
         },
         
         giniToVariance: function (gini) {
