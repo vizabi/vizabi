@@ -433,9 +433,14 @@
             },
             marker: {
                 space: ["entities", "entities_age", "time"],
+                group_by: 1,
                 label: {
                     use: "indicator",
                     which: "age"
+                },
+                label_name: {
+                    use: "property",
+                    which: "geo"
                 },
                 axis_y: {
                     use: "indicator",
