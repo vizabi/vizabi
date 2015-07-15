@@ -298,9 +298,9 @@
 
           _this.zoomer.duration = 0;
 
-          temp.forEach(function (item) {
-          	_this.model._data.entities.highlightEntity(item);
-          });
+          // temp.forEach(function (item) {
+          // 	_this.model._data.entities.highlightEntity(item);
+          // });
         });
 
       this.zoomer.ratioX = 1;
