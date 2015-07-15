@@ -10,13 +10,15 @@
         },
 
         
-        gdpToMean: function(gdp, variance){
-            return Math.log(gdp)-variance/2
+        gdpToMu: function(gdp, sigma){
+            // converting gdp per capita per day into MU for lognormal distribution
+            // see https://en.wikipedia.org/wiki/Log-normal_distribution
+            return Math.log(gdp/365)-sigma*sigma/2;
         },
         
-        giniToVariance: function (gini) {
-            //The ginis are turned into variance. Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
-            return Math.pow(this.normsinv( ( (gini / 100) + 1 ) / 2 ), 2) * 2;
+        giniToSigma: function (gini) {
+            //The ginis are turned into std deviation. Mattias uses this formula in Excel: stddev = NORMSINV( ((gini/100)+1)/2 )*2^0.5
+            return this.normsinv( ( (gini / 100) + 1 ) / 2 ) * Math.pow(2,0.5);
         },
         
                          
@@ -26,22 +28,23 @@
             DISTRIBUTIONS_NORMAL: "normal distribution",
             DISTRIBUTIONS_LOGNORMAL: "lognormal distribution",
 
-            y: function(x, mu, variance, type){
+            y: function(x, mu, sigma, type, scaleType){
                 if (type==null) type = this.DISTRIBUTIONS_NORMAL;
+                if (scaleType==null) scaleType = "log";
                 switch(type){
                     case this.DISTRIBUTIONS_NORMAL:
                     return Math.exp(
                         - 0.5 * Math.log(2 * Math.PI)
-                        - Math.log(variance)/2
-                        - Math.pow(x - mu, 2) / (2 * variance)
+                        - Math.log(sigma)
+                        - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                         );
 
                     case this.DISTRIBUTIONS_LOGNORMAL:
                     return Math.exp(
-                        - 0.5 * Math.log(2 * Math.PI) - Math.log(x)
-                        - Math.log(variance)/2
-                        - Math.pow(Math.log(x) - mu, 2) / (2 * variance)
-                        );
+                        - 0.5 * Math.log(2 * Math.PI) - (scaleType=="linear"?Math.log(x):0)
+                        - Math.log(sigma)
+                        - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
+                    );
                 }
             }
         },

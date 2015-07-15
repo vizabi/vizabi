@@ -1322,7 +1322,7 @@
 
     items = this.getFilteredItems(filter);
     if (items === null || items.length === 0) {
-      utils.warn('interpolateValue returning NULL because items array is empty');
+      utils.warn('interpolateValue returns ' + which + ' = NULL because items array is empty in ' + JSON.stringify(filter));
       return null;
     }
 
