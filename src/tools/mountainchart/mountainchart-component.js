@@ -215,7 +215,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 100] : [0, 20]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 20]);
 
         },
         

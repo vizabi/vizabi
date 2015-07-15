@@ -40,7 +40,7 @@
 
                     case this.DISTRIBUTIONS_LOGNORMAL:
                     return Math.exp(
-                        - 0.5 * Math.log(2 * Math.PI) - Math.log(x)
+                        - 0.5 * Math.log(2 * Math.PI) //- Math.log(x)
                         - Math.log(sigma)
                         - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
                     );
