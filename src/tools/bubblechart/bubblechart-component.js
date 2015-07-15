@@ -77,37 +77,6 @@
           //console.log("EVENT change:entities:brush");
           _this.highlightDataPoints();
         },
-        "readyOnce": function (evt) {
-
-        },
-        "ready": function (evt) {
-          if (!_this._readyOnce) return;
-
-
-          //TODO a workaround to fix the selection of entities
-          if (_this.entitiesUpdatedRecently) {
-            _this.entitiesUpdatedRecently = false;
-            //console.log("EVENT ready");
-            _this.updateEntities();
-            _this.redrawDataPoints();
-            _this.updateBubbleOpacity();
-          }
-
-          if (_this.markersUpdatedRecently) {
-            _this.markersUpdatedRecently = false;
-            _this.updateIndicators();
-            _this.updateSize();
-            _this.updateMarkerSizeLimits();
-
-            _this._trails.create();
-            _this._trails.run("findVisible");
-            _this.resetZoomer(); //does also redraw data points and trails resize
-            //_this.redrawDataPoints();
-            _this._trails.run(["recolor", "reveal"]);
-          }
-
-          _this.updateUIStrings();
-        },
         'change:time:value': function () {
           //console.log("EVENT change:time:value");
           _this.updateTime();
@@ -275,7 +244,7 @@
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
           var temp = _this.model._data.entities.brush;
-          _this.model._data.entities.clearHighlighted();
+          // _this.model._data.entities.clearHighlighted();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
@@ -329,9 +298,9 @@
 
           _this.zoomer.duration = 0;
 
-          temp.forEach(function (item) {
-          	_this.model._data.entities.highlightEntity(item);
-          });
+          // temp.forEach(function (item) {
+          // 	_this.model._data.entities.highlightEntity(item);
+          // });
         });
 
       this.zoomer.ratioX = 1;
@@ -389,7 +358,7 @@
         })
         .on("keyup", function () {
           if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
-        })
+        });
 
       this.element
         .call(this.zoomer)
@@ -398,22 +367,53 @@
       this.KEY = this.model.entities.getDimension();
       this.TIMEDIM = this.model.time.getDimension();
 
-      //console.log("EVENT ready once");
-      _this.updateUIStrings();
-      _this.updateIndicators();
-      _this.updateEntities();
-      _this.updateTime();
-      _this.updateSize();
-      _this.updateMarkerSizeLimits();
-      _this.selectDataPoints();
-      _this.updateBubbleOpacity();
-      _this._trails.create();
+      this._calculateAllValues();
+      this._valuesCalculated = true; //hack to avoid recalculation
 
-      _this.resetZoomer(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "findVisible", "reveal"]);
-      if (_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+      this.updateUIStrings();
+      this.updateIndicators();
+      this.updateEntities();
+      this.updateTime();
+      this.updateSize();
+      this.updateMarkerSizeLimits();
+      this.selectDataPoints();
+      this.updateBubbleOpacity();
+      this._trails.create();
+      this.resetZoomer(); // includes redraw data points and trail resize
+      this._trails.run(["recolor", "findVisible", "reveal"]);
+      if (this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
     },
 
+    ready: function() {
+
+      if(!this._valuesCalculated) this._calculateAllValues();
+      else this._valuesCalculated = false;
+
+      //TODO a workaround to fix the selection of entities
+      if (this.entitiesUpdatedRecently) {
+        this.entitiesUpdatedRecently = false;
+        //console.log("EVENT ready");
+        this.updateEntities();
+        this.redrawDataPoints();
+        this.updateBubbleOpacity();
+      }
+
+      if (this.markersUpdatedRecently) {
+        this.markersUpdatedRecently = false;
+        this.updateIndicators();
+        this.updateSize();
+        this.updateMarkerSizeLimits();
+
+        this._trails.create();
+        this._trails.run("findVisible");
+        this.resetZoomer(); //does also redraw data points and trails resize
+        //_this.redrawDataPoints();
+        this._trails.run(["recolor", "reveal"]);
+      }
+
+      this.updateUIStrings();
+
+    },
 
     /*
      * UPDATE INDICATORS
@@ -834,6 +834,8 @@
       });
     },
 
+    
+
     /*
      * REDRAW DATA POINTS:
      * Here plotting happens
@@ -841,24 +843,19 @@
     redrawDataPoints: function (duration) {
       var _this = this;
 
-      // Example on how it would be possible to interpolate all at once
-      // this.model.marker.getValues({ time: this.model.time.value }, ["geo"]);
-
       if (duration == null) duration = _this.duration;
 
-      var t = {}, tLocked = {};
       var TIMEDIM = this.TIMEDIM;
       var KEY = this.KEY;
       var values, valuesLocked;
 
       //get values for locked and not locked
       if (this.model.time.lockNonSelected && this.someSelected) {
-        tLocked[TIMEDIM] = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-        valuesLocked = this.model.marker.getValues(tLocked, [KEY]);
+        var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        valuesLocked = this._getValuesInterpolated(tLocked);
       }
 
-      t[TIMEDIM] = this.time;
-      values = this.model.marker.getValues(t, [KEY]);
+      values = this._getValuesInterpolated(this.time);
 
       this.entityBubbles.each(function (d, index) {
         var view = d3.select(this);
@@ -1318,6 +1315,57 @@
       }
 
       this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    },
+
+    /*
+     * Calculates all values for this data configuration
+     */
+    _calculateAllValues: function() {
+      this.STEPS = this.model.time.getAllSteps();
+      this.VALUES = {};
+      var f = {};
+      for (var i = 0; i < this.STEPS.length; i++) {
+        var t = this.STEPS[i];
+        f[this.TIMEDIM] = t;
+        this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
+      };
+    },
+
+    /*
+     * Gets all values for any point in time
+     * @param {Date} t time value
+     */
+    _getValuesInterpolated: function(t) {
+
+      if(!this.VALUES) this._calculateAllValues();
+      if(this.VALUES[t]) return this.VALUES[t];
+
+      var next = d3.bisectLeft(this.STEPS, t);
+
+      //if first
+      if(next === 0) {
+        return this.VALUES[this.STEPS[0]];
+      }
+      if(next > this.STEPS.length) {
+        return this.VALUES[this.STEPS[this.STEPS.length - 1]];
+      }
+
+      var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
+
+      var pValues = this.VALUES[this.STEPS[next - 1]];
+      var nValues = this.VALUES[this.STEPS[next]];
+
+      var curr = {};
+      utils.forEach(pValues, function(values, hook) {
+        curr[hook] = {};
+        utils.forEach(values, function(val, id) {
+          var val2 = nValues[hook][id];
+          curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val)*fraction);
+        });
+      });
+
+      console.log(curr);
+      return curr;
     }
 
 

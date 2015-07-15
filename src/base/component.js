@@ -62,6 +62,11 @@
             _this.ready();
           }
         },
+        'domReady': function () {
+          if (typeof _this.domReady === 'function') {
+            _this.domReady();
+          }
+        },
         'resize': function () {
           if (typeof _this.resize === 'function') {
             _this.resize();
@@ -151,6 +156,8 @@
           }
         });
       }
+      //template is ready
+      this.trigger('domReady');
     },
 
     /*
