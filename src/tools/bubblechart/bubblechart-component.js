@@ -131,6 +131,7 @@
       this.cached = {};
       this.xyMaxMinMean = {};
       this.currentZoomFrameXY = null;
+      this.draggingNow = null;
 
       // default UI settings
       this.ui = utils.extend({
@@ -243,8 +244,8 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-          var temp = _this.model._data.entities.brush;
-          // _this.model._data.entities.clearHighlighted();
+          _this.draggingNow = true;
+          _this.model._data.entities.clearHighlighted();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
@@ -298,9 +299,6 @@
 
           _this.zoomer.duration = 0;
 
-          // temp.forEach(function (item) {
-          // 	_this.model._data.entities.highlightEntity(item);
-          // });
         });
 
       this.zoomer.ratioX = 1;
@@ -362,7 +360,10 @@
 
       this.element
         .call(this.zoomer)
-        .call(this.dragRectangle);
+        .call(this.dragRectangle)
+        .on("click", function(){
+             _this.draggingNow = false;
+        });
 
       this.KEY = this.model.entities.getDimension();
       this.TIMEDIM = this.model.time.getDimension();
@@ -539,13 +540,12 @@
           _this._setTooltip(text);
         })
         .on("mouseout", function (d, i) {
-
           _this.model.entities.clearHighlighted();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
         })
         .on("click", function (d, i) {
-
+          if(_this.draggingNow) return;
           _this.model.entities.selectEntity(d, this.TIMEDIM, _this.timeFormatter);
         });
 
