@@ -505,7 +505,7 @@
         }
       });
       //this is a hook, therefore it needs to reload when data changes
-      this.on('change', function () {
+      this.on('change:which', function (evt) {
         _this.load();
       });
       //this is a hook, therefore it needs to reload when data changes
