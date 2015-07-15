@@ -1364,7 +1364,6 @@
         });
       });
 
-      console.log(curr);
       return curr;
     }
 
