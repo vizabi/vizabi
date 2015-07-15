@@ -12,8 +12,8 @@
     var utils = Vizabi.utils;
 
     var INDICATOR = "which";
-    var DOMAIN_MIN = "domain min";
-    var DOMAIN_MAX = "domain max";
+    var MIN = "min";
+    var MAX = "max";
     var SCALETYPE = "scaleType";
     var MODELTYPE_COLOR = "color";
 
@@ -92,8 +92,8 @@
             this.el_select_indicator.on("change", function() { _this._setModel(INDICATOR, this.value)});
             this.el_select_scaletype.on("change", function() { _this._setModel(SCALETYPE, this.value)});
             
-            this.el_domain_fieldMin.on("change", function() { _this._setModel(DOMAIN_MIN, this.value)});
-            this.el_domain_fieldMax.on("change", function() { _this._setModel(DOMAIN_MAX, this.value)});
+            this.el_domain_fieldMin.on("keyup", function() { _this._setModel(MIN, this.value)});
+            this.el_domain_fieldMax.on("keyup", function() { _this._setModel(MAX, this.value)});
             
         },
 
@@ -157,15 +157,6 @@
 
             var mdl = this.model.axis;
             
-            if(what==DOMAIN_MAX) {
-                mdl.scale.domain([ mdl.scale.domain()[0], value ]);
-                return;
-            }
-            if(what==DOMAIN_MIN){
-                mdl.scale.domain([ value, mdl.scale.domain()[1] ]);
-                return;
-            }
-
             var obj = {};
             obj[what] = value;
 

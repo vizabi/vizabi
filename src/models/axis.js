@@ -40,7 +40,8 @@
         use: "value",
         unit: "",
         which: undefined,
-       // domain: null
+        min: null,
+        max: null
       }, values);
       this._super(values, parent, bind);
     },
@@ -64,11 +65,15 @@
       this.which_1 = this.which;
       this.scaleType_1 = this.scaleType;
 
-//      if(this._readyOnce){
-//          var limits = this.getLimits(this.which);
-//          if(this.domain[0]==null || this.domain[0] < limits.min) this.domain[0] = limits.min;
-//          if(this.domain[1]==null || this.domain[1] > limits.max) this.domain[1] = limits.max;  
-//      }   
+      if(this.scale && this._readyOnce){
+          if(this.min==null) this.min = this.scale.domain()[0];
+          if(this.max==null) this.max = this.scale.domain()[1];
+          
+          
+          if(this.min!=this.scale.domain()[0] ||
+             this.max!=this.scale.domain()[1] 
+            ) this.scale.domain([this.min, this.max]);
+      }   
     },
 
 
@@ -112,7 +117,8 @@
 
       this.scale = d3.scale[scaleType]().domain(domain);
         
-      //this.domain = domain;
+      this.min = domain[0];
+      this.max = domain[1];
     }
   });
 }).call(this);

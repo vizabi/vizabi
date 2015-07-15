@@ -61,6 +61,10 @@
           if (!_this._readyOnce) return;
           if (evt == "change:marker:size:max") return;
           if (evt.indexOf("change:marker:color:palette") > -1) return;
+          if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+              _this.updateSize();
+              _this.redrawDataPoints();
+          }
           //console.log("EVENT change:marker", evt);
           _this.markersUpdatedRecently = true;
         },
