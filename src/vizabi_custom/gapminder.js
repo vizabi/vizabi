@@ -228,8 +228,8 @@
                     scaleType: "ordinal"
                 },
                 stack: {
-                    use: "property",
-                    which: "geo.region" // set a property of data or values "all" or "none"
+                    use: "value",
+                    which: "all" // set a property of data or values "all" or "none"
                 },
                 group: {
                     which: "geo.region" // set a property of data
