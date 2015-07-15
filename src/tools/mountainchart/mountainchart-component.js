@@ -123,6 +123,8 @@
             this.stack = d3.layout.stack()
                 .order("reverse")
                 .values(function (d) { return _this.cached[d.KEY()] });
+            
+            
 
         },
 
@@ -143,8 +145,6 @@
             this.mountains = null;
             this.tooltip = this.element.select('.vzb-tooltip');
 
-
-
             var _this = this;
             this.on("resize", function () {
                 //console.log("acting on resize");
@@ -156,6 +156,7 @@
             this.KEY = this.model.entities.getDimension();
             this.TIMEDIM = this.model.time.getDimension();
 
+            this.drawPrecomputedShapes();
             this.updateUIStrings();
             this.updateIndicators();
             this.updateEntities();
@@ -279,8 +280,8 @@
                 this.model.entities._visible.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
             }
                       
-            console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
-            console.log(this.stackedPointers)
+            //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
+            //console.log(this.stackedPointers)
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -547,7 +548,7 @@
             // we need to generate the distributions based on mu, variance and scale
             // we span a uniform range of 'points' across the entire X scale,
             // resolution: 1 point per pixel. If width not defined assume it equal 500px
-            var scaleType = this.model.marker.axis_x.scaleType;
+            var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
             var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
             var rangeStep = (rangeTo - rangeFrom) / Math.max(100,(width ? width / 5 : 100));
@@ -568,7 +569,7 @@
                     scaleType: scaleType,
                     toolMargin: margin,
                     method: this.xAxis.METHOD_REPEATING,
-                    stops: this.model.time.xLogStops
+                    stops: this._readyOnce? this.model.time.xLogStops : [1] 
                 });
 
 
@@ -650,7 +651,30 @@
                         .attr("d", _this.area(_this.cached[d.KEY()]))
                 }
             })
+        },
+        
+        drawPrecomputedShapes: function(){
+            var _this = this;
+            var world2000 = [{x:0.05000,y0:0,y:284825},{x:0.05331,y0:0,y:350864},{x:0.05683,y0:0,y:430833},{x:0.06059,y0:0,y:527329},{x:0.06460,y0:0,y:643351},{x:0.06888,y0:0,y:782345},{x:0.07343,y0:0,y:948249},{x:0.07829,y0:0,y:1145538},{x:0.08347,y0:0,y:1379270},{x:0.08899,y0:0,y:1655127},{x:0.09488,y0:0,y:1979451},{x:0.1012,y0:0,y:2359277},{x:0.1078,y0:0,y:2802361},{x:0.1150,y0:0,y:3317189},{x:0.1226,y0:0,y:3912983},{x:0.1307,y0:0,y:4599694},{x:0.1393,y0:0,y:5387968},{x:0.1486,y0:0,y:6289110},{x:0.1584,y0:0,y:7315013},{x:0.1689,y0:0,y:8478079},{x:0.1800,y0:0,y:9791109},{x:0.1920,y0:0,y:11267177},{x:0.2047,y0:0,y:12919477},{x:0.2182,y0:0,y:14761152},{x:0.2326,y0:0,y:16805098},{x:0.2480,y0:0,y:19063758},{x:0.2644,y0:0,y:21548894},{x:0.2819,y0:0,y:24271348},{x:0.3006,y0:0,y:27240799},{x:0.3205,y0:0,y:30465513},{x:0.3416,y0:0,y:33952104},{x:0.3643,y0:0,y:37705287},{x:0.3883,y0:0,y:41727665},{x:0.4140,y0:0,y:46019520},{x:0.4414,y0:0,y:50578632},{x:0.4706,y0:0,y:55400138},{x:0.5018,y0:0,y:60476414},{x:0.5350,y0:0,y:65797001},{x:0.5704,y0:0,y:71348572},{x:0.6081,y0:0,y:77114945},{x:0.6483,y0:0,y:83077139},{x:0.6912,y0:0,y:89213468},{x:0.7369,y0:0,y:101571964},{x:0.7857,y0:0,y:117668395},{x:0.8377,y0:0,y:135713933},{x:0.8931,y0:0,y:155839276},{x:0.9522,y0:0,y:178167024},{x:1.015,y0:0,y:202808551},{x:1.082,y0:0,y:229860684},{x:1.154,y0:0,y:259402223},{x:1.230,y0:0,y:291490353},{x:1.312,y0:0,y:326156995},{x:1.398,y0:0,y:363405171},{x:1.491,y0:0,y:403205447},{x:1.590,y0:0,y:445492548},{x:1.695,y0:0,y:490162229},{x:1.807,y0:0,y:537068523},{x:1.926,y0:0,y:586021478},{x:2.054,y0:0,y:636785514},{x:2.190,y0:0,y:689078532},{x:2.334,y0:0,y:742571907},{x:2.489,y0:0,y:796891501},{x:2.654,y0:0,y:851619805},{x:2.829,y0:0,y:906299303},{x:3.016,y0:0,y:960437122},{x:3.216,y0:0,y:1013511002},{x:3.429,y0:0,y:1064976535},{x:3.655,y0:0,y:1114275629},{x:3.897,y0:0,y:1160846041},{x:4.155,y0:0,y:1204131789},{x:4.430,y0:0,y:1243594207},{x:4.723,y0:0,y:1278723338},{x:5.035,y0:0,y:1309049330},{x:5.369,y0:0,y:1334153485},{x:5.724,y0:0,y:1353678568},{x:6.102,y0:0,y:1367338029},{x:6.506,y0:0,y:1374923796},{x:6.936,y0:0,y:1376312323},{x:7.395,y0:0,y:1371468669},{x:7.885,y0:0,y:1360448428},{x:8.406,y0:0,y:1343397417},{x:8.962,y0:0,y:1320549129},{x:9.555,y0:0,y:1292220013},{x:10.19,y0:0,y:1258802754},{x:10.86,y0:0,y:1220757782},{x:11.58,y0:0,y:1178603299},{x:12.35,y0:0,y:1132904155},{x:13.16,y0:0,y:1084259928},{x:14.03,y0:0,y:1033292571},{x:14.96,y0:0,y:980633961},{x:15.95,y0:0,y:926913687},{x:17.01,y0:0,y:872747337},{x:18.13,y0:0,y:818725533},{x:19.33,y0:0,y:765403891},{x:20.61,y0:0,y:713294052},{x:21.97,y0:0,y:662855882},{x:23.43,y0:0,y:614490934},{x:24.98,y0:0,y:568537205},{x:26.63,y0:0,y:525265276},{x:28.39,y0:0,y:484875854},{x:30.27,y0:0,y:447498813},{x:32.27,y0:0,y:413193767},{x:34.41,y0:0,y:381952256},{x:36.68,y0:0,y:353701559},{x:39.11,y0:0,y:328310166},{x:41.70,y0:0,y:306105830},{x:44.46,y0:0,y:308224930},{x:47.40,y0:0,y:309257953},{x:50.53,y0:0,y:309138727},{x:53.88,y0:0,y:307808534},{x:57.44,y0:0,y:305219050},{x:61.24,y0:0,y:301335514},{x:65.29,y0:0,y:296139944},{x:69.61,y0:0,y:289634195},{x:74.22,y0:0,y:281842583},{x:79.12,y0:0,y:272813829},{x:84.36,y0:0,y:262622071},{x:89.94,y0:0,y:251366759},{x:95.89,y0:0,y:239171313},{x:102.2,y0:0,y:226180522},{x:109.0,y0:0,y:212556784},{x:116.2,y0:0,y:198475350},{x:123.9,y0:0,y:184118865},{x:132.1,y0:0,y:169671508},{x:140.8,y0:0,y:156846553},{x:150.1,y0:0,y:147894026},{x:160.1,y0:0,y:138754815},{x:170.7,y0:0,y:129517408},{x:182.0,y0:0,y:120269512},{x:194.0,y0:0,y:111096012},{x:206.8,y0:0,y:102077116},{x:220.5,y0:0,y:93286718},{x:235.1,y0:0,y:84791056},{x:250.7,y0:0,y:76647669},{x:267.2,y0:0,y:68904690},{x:284.9,y0:0,y:61600461},{x:303.8,y0:0,y:54763465},{x:323.9,y0:0,y:48412551},{x:345.3,y0:0,y:42557401},{x:368.1,y0:0,y:37199231},{x:392.5,y0:0,y:32331636},{x:418.4,y0:0,y:27941570},{x:446.1,y0:0,y:24010393},{x:475.6,y0:0,y:20514942},{x:507.1,y0:0,y:17428594},{x:540.7,y0:0,y:14722286},{x:576.4,y0:0,y:12365452},{x:614.6,y0:0,y:10326875},{x:655.2,y0:0,y:8575425},{x:698.6,y0:0,y:7080685},{x:744.8,y0:0,y:5813453},{x:794.0,y0:0,y:4746138},{x:846.6,y0:0,y:3853042},{x:902.6,y0:0,y:3110539},{x:962.3,y0:0,y:2497180}];
+
+                
+                
+            
+            this.xScale = d3.scale.log().domain([0.05, 1000]);
+            this.yScale = d3.scale.linear().domain([0, d3.max(world2000.map(function(m){return m.y})) ]);
+
+            _this.updateSize();
+            
+            var mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
+                .data([0]);
+            
+            mountains.enter().append("path")
+                .attr("class", "vzb-mc-mountain")
+                .style("fill", "grey")
+                .attr("d", _this.area(world2000))
         }
+        
+        
     });
 
 
