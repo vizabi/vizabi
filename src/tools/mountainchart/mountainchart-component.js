@@ -215,7 +215,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 20]);
+                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 100]);
 
         },
         
@@ -248,8 +248,9 @@
                         : 
                         _this.model.marker.group.getValue(d)
                     })
-                .entries(this.model.entities._visible)
-                .forEach(function (group) {
+                .entries(this.model.entities._visible);
+            
+            this.groupedPointers .forEach(function (group) {
                     var groupSortValue = d3.sum(group.values.map(function (m) {
                         return m.sortValue[0];
                     }));
@@ -257,6 +258,10 @@
                         d.sortValue[1] = groupSortValue;
                     })
                 })
+            
+            var sortGroupKeys = {};
+            _this.groupedPointers.map(function(m){sortGroupKeys[m.key] = m.values[0].sortValue[1] });
+            
             
             // update the stacked pointers
             if (_this.model.marker.stack.which === "none"){
@@ -267,13 +272,15 @@
                 this.stackedPointers = d3.nest()
                     .key(function (d) { return _this.model.marker.stack.getValue(d) })
                     .key(function (d) { return _this.model.marker.group.getValue(d) })
+                    .sortKeys(function(a,b) {return sortGroupKeys[b] - sortGroupKeys[a]})
                     .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
                     .entries(this.model.entities._visible);
                 
                 this.model.entities._visible.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
             }
                       
-            //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
+            console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
+            console.log(this.stackedPointers)
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -546,9 +553,11 @@
             var rangeStep = (rangeTo - rangeFrom) / Math.max(100,(width ? width / 5 : 100));
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
                 
-            if (scaleType != "linear") this.mesh = this.mesh
-                .map(function (dX) {return Math.exp(dX)})
-                .filter(function (dX) {return dX > 0});;
+            if (scaleType != "linear") {
+                this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)});
+            }else{
+                this.mesh = this.mesh.filter(function (dX) {return dX > 0});
+            }                
 
             //axis is updated
             this.xAxis.scale(this.xScale)
@@ -589,7 +598,7 @@
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL)
+                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType)
                 }
             });
 
