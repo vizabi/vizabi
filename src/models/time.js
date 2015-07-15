@@ -193,6 +193,20 @@
     },
 
     /**
+     * Gets an array with all time steps for this model
+     * @returns {Array} time array
+     */
+    getAllSteps: function() {
+      var arr = [];
+      var curr = this.start;
+      while(curr <= this.end) {
+        arr.push(curr);
+        curr = d3.time[this.unit].offset(curr, this.step);
+      }
+      return arr;
+    },
+
+    /**
      * Snaps the time to integer
      * possible inputs are "start", "end", "value". "value" is default
      */
