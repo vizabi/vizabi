@@ -31,7 +31,9 @@
           _this.ready();
         },
         "change:state:time:value": function (evt) {
-          _this.ready();
+          if(!_this.model.state.time.playing) {
+            _this.ready();
+          }
         }
       }
 
