@@ -700,7 +700,10 @@
             mountains.enter().append("path")
                 .attr("class", "vzb-mc-mountain")
                 .style("fill", "grey")
+                .style("opacity", 0)
                 .attr("d", _this.area(shape))
+                .transition().duration(4000).ease("linear")
+                .style("opacity", 1);
         }
         
         
