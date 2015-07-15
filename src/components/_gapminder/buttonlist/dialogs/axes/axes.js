@@ -25,12 +25,12 @@
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-xaxis-container',
         model: ["state.marker.axis_x", "language"],
-        ui: { markerName: "markerNames/axis_x"}
+        ui: {selectMinMax: true}
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-yaxis-container',
         model: ["state.marker.axis_y", "language"],
-        ui: { markerName: "markerNames/axis_y"}
+        ui: {selectMinMax: true}
       }, {
         component: 'gapminder-simplecheckbox',
         placeholder: '.vzb-axes-options',

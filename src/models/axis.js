@@ -39,7 +39,8 @@
       values = utils.extend({
         use: "value",
         unit: "",
-        which: undefined
+        which: undefined,
+       // domain: null
       }, values);
       this._super(values, parent, bind);
     },
@@ -63,7 +64,11 @@
       this.which_1 = this.which;
       this.scaleType_1 = this.scaleType;
 
-      //TODO: add min and max to validation
+//      if(this._readyOnce){
+//          var limits = this.getLimits(this.which);
+//          if(this.domain[0]==null || this.domain[0] < limits.min) this.domain[0] = limits.min;
+//          if(this.domain[1]==null || this.domain[1] > limits.max) this.domain[1] = limits.max;  
+//      }   
     },
 
 
@@ -73,8 +78,8 @@
      */
     buildScale: function (margins) {
       var domain;
-      var scaleType = this.scaleType || "linear";
-
+      var scaleType = this.scaleType || "linear";      
+    
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);
         this.scale = d3.time.scale().domain([limits.min, limits.max]);
@@ -106,6 +111,8 @@
       }
 
       this.scale = d3.scale[scaleType]().domain(domain);
+        
+      //this.domain = domain;
     }
   });
 }).call(this);
