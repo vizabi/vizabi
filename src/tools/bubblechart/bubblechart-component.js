@@ -52,10 +52,6 @@
           //console.log("EVENT change:time:lockNonSelected");
           _this.redrawDataPoints(500);
         },
-        "change:entities:show": function (evt) {
-          //console.log("EVENT change:entities:show");
-          _this.entitiesUpdatedRecently = true;
-        },
         "change:marker": function (evt) {
           // bubble size change is processed separately
           if (!_this._readyOnce) return;
@@ -66,7 +62,6 @@
               _this.redrawDataPoints();
           }
           //console.log("EVENT change:marker", evt);
-          _this.markersUpdatedRecently = true;
         },
         "change:entities:select": function () {
           if (!_this._readyOnce) return;
@@ -394,27 +389,16 @@
       if(!this._valuesCalculated) this._calculateAllValues();
       else this._valuesCalculated = false;
 
-      //TODO a workaround to fix the selection of entities
-      if (this.entitiesUpdatedRecently) {
-        this.entitiesUpdatedRecently = false;
-        //console.log("EVENT ready");
-        this.updateEntities();
-        this.redrawDataPoints();
-        this.updateBubbleOpacity();
-      }
-
-      if (this.markersUpdatedRecently) {
-        this.markersUpdatedRecently = false;
-        this.updateIndicators();
-        this.updateSize();
-        this.updateMarkerSizeLimits();
-
-        this._trails.create();
-        this._trails.run("findVisible");
-        this.resetZoomer(); //does also redraw data points and trails resize
-        //_this.redrawDataPoints();
-        this._trails.run(["recolor", "reveal"]);
-      }
+      this.updateEntities();
+      this.redrawDataPoints();
+      this.updateBubbleOpacity();
+      this.updateIndicators();
+      this.updateSize();
+      this.updateMarkerSizeLimits();
+      this._trails.create();
+      this._trails.run("findVisible");
+      this.resetZoomer();
+      this._trails.run(["recolor", "reveal"]);
 
       this.updateUIStrings();
 
