@@ -252,7 +252,7 @@
           var ratioX = _this.zoomer.ratioX;
           
           
-          console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
+          // console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
           
           _this.draggingNow = true;
         
