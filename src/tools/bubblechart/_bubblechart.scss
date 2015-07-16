@@ -39,10 +39,10 @@
       }
       .vzb-bc-labels .vzb-bc-entity text {
         pointer-events: none;
-        /*text-anchor: middle;*/
+        text-anchor: end;
+        dominant-baseline: alphabetical;
 
         opacity: 0.9;
-        dominant-baseline: hanging;
         fill: $vzb-color-primary;
         &.vzb-bc-label-shadow {
           fill: white;

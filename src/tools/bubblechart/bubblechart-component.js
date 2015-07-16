@@ -243,15 +243,15 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-          _this.draggingNow = true;
           _this.model._data.entities.clearHighlighted();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
           var ratioY = _this.zoomer.ratioY;
           var ratioX = _this.zoomer.ratioX;
-
-
+          
+          _this.draggingNow = true;
+        
           //value protections and fallbacks
           if (isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
           if (isNaN(zoom) || zoom == null) zoom = 1;
@@ -978,30 +978,30 @@
               cached.contentBBox = contentBBox;
 
               labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
-                .attr("y", contentBBox.height * 0.0 - 4);
+                .attr("x", contentBBox.height * 0.0 + 2)
+                .attr("y", contentBBox.height * -1);
 
               labelGroup.select("circle")
-                .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
-                .attr("cy", contentBBox.height * 0.0 - 4)
+                .attr("cx", contentBBox.height * 0.0 + 2)
+                .attr("cy", contentBBox.height * -1)
                 .attr("r", contentBBox.height * 0.5);
 
               rect.attr("width", contentBBox.width + 4)
                 .attr("height", contentBBox.height + 4)
-                .attr("x", -2)
-                .attr("y", -4)
+                .attr("x", -contentBBox.width -2)
+                .attr("y", -contentBBox.height)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
 
-            cached.labelX_ = select.labelOffset[0] || cached.scaledS0 / _this.width;
-            cached.labelY_ = select.labelOffset[1] || cached.scaledS0 / _this.width;
+            cached.labelX_ = select.labelOffset[0] || -cached.scaledS0 / 2 / _this.width;
+            cached.labelY_ = select.labelOffset[1] || -cached.scaledS0 / 2 / _this.width;
 
             var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
             var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
 
-            var limitedX = resolvedX > 0 ? (resolvedX < _this.width - cached.contentBBox.width ? resolvedX : _this.width - cached.contentBBox.width) : 0;
-            var limitedY = resolvedY > 0 ? (resolvedY < _this.height - cached.contentBBox.height ? resolvedY : _this.height - cached.contentBBox.height) : 0;
+            var limitedX = resolvedX - cached.contentBBox.width > 0 ? (resolvedX < _this.width ? resolvedX : _this.width) : cached.contentBBox.width;
+            var limitedY = resolvedY - cached.contentBBox.height > 0 ? (resolvedY < _this.height ? resolvedY : _this.height) : cached.contentBBox.height;
 
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
@@ -1045,52 +1045,23 @@
       var diffY1 = resolvedY0 - resolvedY;
       var diffX2 = 0;
       var diffY2 = 0;
-      if (diffX1 < 0 && diffY1 < 0) {
-        if (diffX1 < diffY1) {
-          diffX2 = 0;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = 0;
-        }
-      }
-      else if (diffX1 < 0 && diffY1 >= 0) {
-        if (diffX1 < -diffY1) {
-          diffX2 = 0;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = height;
-        }
-      }
-      else if (diffX1 >= 0 && diffY1 >= 0) {
-        if (diffX1 < diffY1) {
-          diffX2 = width / 2;
-          diffY2 = height;
-        }
-        else {
-          diffX2 = width;
-          diffY2 = height / 2;
-        }
-      }
-      else {
-        if (-diffX1 < diffY1) {
-          diffX2 = width;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = 0;
-        }
-      }
 
+      var angle = Math.atan2(diffX1 + width/2, diffY1 + height/2) * 180 / Math.PI;
+      // middle bottom
+      if(Math.abs(angle)<=45){ diffX2 = width / 2; diffY2 = 0}
+      // right middle
+      if(angle>45 && angle<135){ diffX2 = 0; diffY2 = height/4; }
+      // middle top
+      if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
+      // left middle
+      if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
+      
+        
       labelGroup.selectAll("line")
         .attr("x1", diffX1)
         .attr("y1", diffY1)
-        .attr("x2", diffX2)
-        .attr("y2", diffY2);
+        .attr("x2", -diffX2)
+        .attr("y2", -diffY2);
 
     },
 
