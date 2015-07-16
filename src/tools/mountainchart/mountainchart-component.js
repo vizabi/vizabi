@@ -87,7 +87,14 @@
                 },
                 'change:marker': function (evt) {
                     if (!_this._readyOnce) return;
-                    //console.log("EVENT change:marker", evt);
+                    //console.log("EVENT change:marker", evt);                    
+                    if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+                      _this.updateSize();
+                      _this.updateTime();
+                      _this._adjustMaxY();
+                      _this.redrawDataPoints();
+                    }
+                    
                     _this.markersUpdatedRecently = true;
                 },
                 'change:entities:opacitySelectDim': function () {
@@ -167,6 +174,8 @@
             this.selectDataPoints();
             this.redrawSelectList();
             this.updateBubbleOpacity();
+            
+            this.mountainContainer.select(".vzb-mc-prerender").remove();
         },
 
         ready: function(){
@@ -214,8 +223,8 @@
 
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
-            this.xScale
-                .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 100]);
+            //this.xScale
+            //    .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 100]);
 
         },
         
@@ -651,6 +660,7 @@
 //                        ))
 //                    
 //                })
+            
 
             this.mountains.each(function (d, i) {
                 var view = d3.select(this);
@@ -694,11 +704,11 @@
             
             shape = shape.map(function(m,i){return {x: _this.mesh[i], y0:0, y:+m}})
             
-            var mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
+            var mountains = this.mountainContainer.selectAll('.vzb-mc-prerender')
                 .data([0]);
             
             mountains.enter().append("path")
-                .attr("class", "vzb-mc-mountain")
+                .attr("class", "vzb-mc-prerender")
                 .style("fill", "grey")
                 .style("opacity", 0)
                 .attr("d", _this.area(shape))

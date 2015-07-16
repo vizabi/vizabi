@@ -41,6 +41,7 @@
                 "hints/mount/maxYvalue": "Maximum Y value:",
                 "hints/mount/logXstops": "X-axis logarithmic stops:",
                 "hints/mount/howtostack": "Chose how to stack mountains:",
+                "hints/mount/xlimits": "X-axis limits:",
                 "hints/min": "min",
                 "hints/max": "max",
                 "mount/maxYmode/immediate": "Immediate",
@@ -92,6 +93,7 @@
                 "hints/mount/maxYvalue": "Max Y-tal:",
                 "hints/mount/logXstops": "Log X-axel stoppas vid:",
                 "hints/mount/howtostack": "Välj hur ska berg stackas:",
+                "hints/mount/xlimits": "X-axel gränser:",
                 "hints/min": "min",
                 "hints/max": "max",
                 "mount/maxYmode/immediate": "Direkt",
@@ -219,7 +221,9 @@
                     //which: "mean",
                     which: "gdp_per_cap",
                     scaleType: 'log',
-                    unit: "gdp_per_cap_daily"
+                    unit: "gdp_per_cap_daily",
+                    min: 0.05, //0
+                    max: 1000 //100
                 },
                 size: {
                     use: "indicator",

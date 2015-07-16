@@ -106,6 +106,14 @@
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
     },
+      
+    /*
+     * transforms a string into a validated fload value
+     * @param {string} string to be transformed
+     */
+    strToFloat: function (string) {
+      return +string.replace(/[^\d.-]/g, '');
+    },
 
     /*
      * loops through an object or array

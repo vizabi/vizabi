@@ -29,6 +29,15 @@
                 _this.updateView();
             }
         };
+        
+      this.components = [{
+        component: 'gapminder-indicatorpicker',
+        placeholder: '.vzb-xlimits-container',
+        model: ["state.marker.axis_x", "language"],          
+        ui: {selectIndicator: false, selectScaletype: false, selectMinMax: true}
+      }]
+      
+      
       this._super(config, parent);
     },
       

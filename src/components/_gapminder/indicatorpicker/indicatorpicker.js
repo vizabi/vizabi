@@ -42,7 +42,7 @@
          */
         init: function (config, context) {
 
-            this.template = '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max"></span>';
+            this.template = '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max"> <button class="vzb-ip-domain-button">OK</button>';
             var _this = this;
 
             this.model_expects = [{
@@ -88,12 +88,15 @@
             this.el_domain_labelMax = this.element.select('.vzb-ip-domainmax-label'); 
             this.el_domain_fieldMin = this.element.select('.vzb-ip-domainmin'); 
             this.el_domain_fieldMax = this.element.select('.vzb-ip-domainmax'); 
+            this.el_domain_button = this.element.select('.vzb-ip-domain-button'); 
             
             this.el_select_indicator.on("change", function() { _this._setModel(INDICATOR, this.value)});
             this.el_select_scaletype.on("change", function() { _this._setModel(SCALETYPE, this.value)});
             
-            this.el_domain_fieldMin.on("keyup", function() { _this._setModel(MIN, this.value)});
-            this.el_domain_fieldMax.on("keyup", function() { _this._setModel(MAX, this.value)});
+            this.el_domain_button.on("click", function(){
+                _this._setModel(MIN, _this.el_domain_fieldMin.node().value);
+                _this._setModel(MAX, _this.el_domain_fieldMax.node().value);
+            })
             
         },
 
@@ -147,14 +150,16 @@
             this.el_domain_labelMax.style('display', this.ui.selectMinMax ? "auto" : "none");
             this.el_domain_fieldMin.style('display', this.ui.selectMinMax ? "auto" : "none");
             this.el_domain_fieldMax.style('display', this.ui.selectMinMax ? "auto" : "none");
+            this.el_domain_button.style('display', this.ui.selectMinMax ? "auto" : "none");
             
             var formatter = d3.format(".2r");
-            this.el_domain_fieldMin.attr("value", formatter(this.model.axis.getScale().domain()[0]));
-            this.el_domain_fieldMax.attr("value", formatter(this.model.axis.getScale().domain()[1]));
+            this.el_domain_fieldMin.property("value", formatter(this.model.axis.getScale().domain()[0]));
+            this.el_domain_fieldMax.property("value", formatter(this.model.axis.getScale().domain()[1]));
         },
 
         _setModel: function (what, value) {
-
+            if(what==MIN || what==MAX) value = utils.strToFloat(value);
+            
             var mdl = this.model.axis;
             
             var obj = {};
