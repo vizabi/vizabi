@@ -40,7 +40,6 @@
       .vzb-bc-labels .vzb-bc-entity text, .vzb-bc-tooltip text  {
         pointer-events: none;
         text-anchor: end;
-        dominant-baseline: alphabetical;
 
         opacity: 0.9;
         fill: $vzb-color-primary;

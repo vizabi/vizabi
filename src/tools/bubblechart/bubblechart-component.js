@@ -244,17 +244,25 @@
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
           _this.model._data.entities.clearHighlighted();
+          _this._setTooltip();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
           var ratioY = _this.zoomer.ratioY;
           var ratioX = _this.zoomer.ratioX;
           
+          
+          console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
+          
           _this.draggingNow = true;
         
           //value protections and fallbacks
           if (isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
           if (isNaN(zoom) || zoom == null) zoom = 1;
+          
+          //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
+          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1};
+          
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
@@ -360,7 +368,7 @@
       this.element
         .call(this.zoomer)
         .call(this.dragRectangle)
-        .on("click", function(){
+        .on("mouseup", function(){
              _this.draggingNow = false;
         });
 
