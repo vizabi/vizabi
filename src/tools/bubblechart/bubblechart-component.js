@@ -337,7 +337,7 @@
 
       this.entityBubbles = null;
       this.entityLabels = null;
-      this.tooltip = this.element.select('.vzb-tooltip');
+      this.tooltip = this.element.select('.vzb-bc-tooltip');
 
       //component events
       this.on("resize", function () {
@@ -510,7 +510,7 @@
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bc-entity")
-        .on("mousemove", function (d, i) {
+        .on("mouseover", function (d, i) {
 
           _this.model.entities.highlightEntity(d);
 
@@ -518,14 +518,21 @@
           if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
             text = _this.timeFormatter(_this.time);
             _this.entityLabels
-              .filter(function (f) {
-                return f[KEY] == d[KEY]
-              })
+              .filter(function (f) {return f[KEY] == d[KEY]})
               .classed("vzb-highlighted", true);
           } else {
             text = _this.model.marker.label.getValue(d);
           }
-          _this._setTooltip(text);
+          
+          if(_this.model.entities.isSelected(d))return;
+          
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = _this.time;
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(text, x-s/2, y-s/2);
         })
         .on("mouseout", function (d, i) {
           _this.model.entities.clearHighlighted();
@@ -534,6 +541,7 @@
         })
         .on("click", function (d, i) {
           if(_this.draggingNow) return;
+          _this._setTooltip();
           _this.model.entities.selectEntity(d, this.TIMEDIM, _this.timeFormatter);
         });
 
@@ -1143,16 +1151,16 @@
     },
 
 
-    _setTooltip: function (tooltipText) {
+    _setTooltip: function (tooltipText, x, y) {
       if (tooltipText) {
-        var mouse = d3.mouse(this.graph.node()).map(function (d) {
-          return parseInt(d)
-        });
+        var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
 
         //position tooltip
         this.tooltip.classed("vzb-hidden", false)
-          .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .html(tooltipText);
+          //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+          .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
+          .selectAll("text")
+          .text(tooltipText);
 
       } else {
 
