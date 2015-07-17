@@ -65,7 +65,7 @@
       this.which_1 = this.which;
       this.scaleType_1 = this.scaleType;
 
-      if(this.scale && this._readyOnce){
+      if(this.scale && this._readyOnce && this.use=="indicator"){
           if(this.min==null) this.min = this.scale.domain()[0];
           if(this.max==null) this.max = this.scale.domain()[1];
           
