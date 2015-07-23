@@ -213,8 +213,12 @@
           var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
+          
+          var lineGroup = _this.entityLines.filter(function (f) {
+            return f[KEY] == d[KEY];
+          });
 
-          _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0);
+          _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
         })
         .on("dragend", function (d, i) {
         	var KEY = _this.KEY;
@@ -367,10 +371,12 @@
       this.bubbleContainerCrop = this.graph.select('.vzb-bc-bubbles-crop');
       this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
       this.labelsContainer = this.graph.select('.vzb-bc-labels');
+      this.linesContainer = this.graph.select('.vzb-bc-lines');
       this.zoomRect = this.element.select('.vzb-bc-zoomRect');
 
       this.entityBubbles = null;
       this.entityLabels = null;
+      this.entityLines = null;
       this.tooltip = this.element.select('.vzb-tooltip');
 
       //component events
@@ -972,7 +978,9 @@
           cached.labelY0 = valueY;
         }
 
-
+        var lineGroup = _this.entityLines.filter(function (f) {
+          return f[KEY] == d[KEY];
+        });
         // reposition label
         _this.entityLabels.filter(function (f) {
           return f[KEY] == d[KEY]
@@ -983,9 +991,8 @@
 
             var text = labelGroup.selectAll("text.vzb-bc-label-content")
               .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-
-            var line = labelGroup.select("line")
-              .style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+            
+            lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
 
             var rect = labelGroup.select("rect");
 
@@ -1029,7 +1036,7 @@
               rect.classed("vzb-transparent", !cached.stuckOnLimit);
             }
 
-            _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration);
+            _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
           })
       } else {
@@ -1042,7 +1049,7 @@
       }
     },
 
-    _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration) {
+    _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
 
       var labelGroup = d3.select(context);
 
@@ -1050,9 +1057,12 @@
         labelGroup
         .transition().duration(duration).ease("linear")
         .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+        lineGroup.transition().duration(duration).ease("linear")
+        .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
       }
       else {
         labelGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+        lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
       }
 
       var width = parseInt(labelGroup.select("rect").attr("width"));
@@ -1102,7 +1112,7 @@
         }
       }
 
-      labelGroup.selectAll("line")
+      lineGroup.selectAll("line")
         .attr("x1", diffX1)
         .attr("y1", diffY1)
         .attr("x2", diffX2)
@@ -1122,6 +1132,10 @@
         .data(_this.model.entities.select, function (d) {
           return (d[KEY]);
         });
+      this.entityLines = this.linesContainer.selectAll('.vzb-bc-entity')
+        .data(_this.model.entities.select, function (d) {
+          return (d[KEY]);
+        });
 
 
       this.entityLabels.exit()
@@ -1129,6 +1143,18 @@
           _this._trails.run("remove", d);
         })
         .remove();
+      this.entityLines.exit()
+        .each(function (d) {
+          _this._trails.run("remove", d);
+        })
+        .remove();
+      this.entityLines
+        .enter().append('g')
+        .attr("class", "vzb-bc-entity")
+        .call(_this.dragger)
+        .each(function (d, index) {
+           d3.select(this).append("line").attr("class", "vzb-bc-label-line");
+        });
 
       this.entityLabels
         .enter().append("g")
@@ -1136,7 +1162,6 @@
         .call(_this.dragger)
         .each(function (d, index) {
           var view = d3.select(this);
-          view.append("line").attr("class", "vzb-bc-label-line");
 
           view.append("rect").attr("class", "vzb-transparent")
             .on("click", function (d, i) {
