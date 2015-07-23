@@ -12,6 +12,16 @@
   var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
 
+  var time_formats = {
+    "year": "%Y",
+    "month": "%b",
+    "week": "week %U",
+    "day": "%d/%m/%Y",
+    "hour": "%d/%m/%Y %H",
+    "minute": "%d/%m/%Y %H:%M",
+    "second": "%d/%m/%Y %H:%M:%S"
+  };    
+    
   //names of reserved hook properties
   //warn client if d3 is not defined
   Vizabi._require('d3');
@@ -140,6 +150,7 @@
           }
         }
       }
+      
       bindSettersGetters(this);
       //for tool model when setting for the first time
       if (this.validate && !setting) {
@@ -494,7 +505,7 @@
         }
       });
       //this is a hook, therefore it needs to reload when data changes
-      this.on('change', function () {
+      this.on('change:which', function (evt) {
         _this.load();
       });
       //this is a hook, therefore it needs to reload when data changes
@@ -723,12 +734,16 @@
     /**
      * gets filtered dataset with fewer keys
      * @param {Object} filter
+     * @returns {Object} filtered items object
      */
     getFilteredItems: function (filter) {
+      if (!filter) {
+        utils.warn("No filter provided to getFilteredItems(<filter>)");
+        return {};
+      }
       //cache optimization
       var filter_id = JSON.stringify(filter);
       var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
-      if (!filter) return filtered;
       var found = filtered[filter_id];
       if (filtered[filter_id]) {
         return filtered[filter_id];
@@ -740,13 +755,17 @@
     /**
      * gets nested dataset
      * @param {Array} order
+     * @returns {Object} nest items object
      */
     getNestedItems: function (order) {
+      if (!order) {
+        utils.warn("No order array provided to getNestedItems(<order>). E.g.: getNestedItems(['geo'])");
+        return {};
+      }
       //cache optimization
       var order_id, nested, items, nest;
       order_id = order.join("-");
       nested = this._dataId ? _DATAMANAGER.get(this._dataId, 'nested') : false;
-      if (!order && nested) return nested;
       if (nested && order_id in nested) {
         return nested[order_id];
       }
@@ -784,7 +803,7 @@
     tickFormatter: function(x, formatterRemovePrefix) {
 
         //TODO: generalize for any time unit
-        if(utils.isDate(x)) return time_formats["year"](x);
+        if(utils.isDate(x)) return d3.time.format(time_formats["year"])(x);
         if(utils.isString(x)) return x;
 
         var format = "f";
@@ -954,28 +973,33 @@
     /**
      * gets maximum, minimum and mean values from the dataset of this certain hook
      */
-    getMaxMinMean: function (timeFormatter) {
-      var _this = this;
-      var result = {};
-      //TODO: d3 is global?
-      //Can we do this without d3?
-      var dim = this._getFirstDimension({type: 'time'});
-
-      d3.nest().key(function (d) {
-        return timeFormatter(d[dim]);
-      }).entries(_DATAMANAGER.get(this._dataId)).forEach(function (d) {
-        var values = d.values.filter(function (f) {
-          return f[_this.which] !== null;
-        }).map(function (m) {
-          return +m[_this.which];
+    getMaxMinMean: function (options) {
+        var _this = this;
+        var result = {};
+        //TODO: d3 is global?
+        //Can we do this without d3?
+        //yes if we copy d3 nest to out utils https://github.com/mbostock/d3/blob/master/src/arrays/nest.js
+        var dim = this._getFirstDimension({
+            type: 'time'
         });
-        result[d.key] = {
-          max: d3.max(values),
-          min: d3.min(values),
-          mean: d3.mean(values)
-        };
-      });
-      return result;
+
+        d3.nest()
+            .key(function (d) {return options.timeFormatter(d[dim]);})
+            .entries(_DATAMANAGER.get(this._dataId))
+            .forEach(function (d) {
+                var values = d.values
+                    .filter(function (f) {return f[_this.which] !== null;})
+                    .map(function (m) {return +m[_this.which];});
+            
+                if(options.skipZeros) values = values.filter(function (f) {return f!=0})
+
+                result[d.key] = {
+                    max: d3.max(values),
+                    min: d3.min(values),
+                    mean: d3.mean(values)
+                };
+            });
+        return result;
     },
 
     /**
@@ -1298,7 +1322,7 @@
 
     items = this.getFilteredItems(filter);
     if (items === null || items.length === 0) {
-      utils.warn('interpolateValue returning NULL because items array is empty');
+      utils.warn('interpolateValue returns ' + which + ' = NULL because items array is empty in ' + JSON.stringify(filter));
       return null;
     }
 

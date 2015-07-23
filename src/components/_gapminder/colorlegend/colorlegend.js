@@ -73,7 +73,7 @@
       this.translator = this.model.language.getTFunction();
       var KEY = this.model.entities.getDimension();
 
-      var palette = this.model.color.palette;
+      var palette = this.model.color.palette._data;
 
 
       var whichPalette = "_default";
@@ -86,7 +86,7 @@
 
       var colors = this.listColorsEl
         .selectAll(".vzb-cl-option")
-        .data(utils.keys(paletteDefault), function (d) {
+        .data(utils.keys(palette), function (d) {
           return d
         });
 
@@ -130,8 +130,8 @@
 
       if (this.model.color.use == "indicator") {
         this.rainbowEl.classed("vzb-hidden", false)
-          .style("height", (utils.keys(paletteDefault).length * 25 + 5) + "px")
-          .style("background", "linear-gradient(" + utils.values(palette._data).join(", ") + ")");
+          .style("height", (utils.keys(palette).length * 25 + 5) + "px")
+          .style("background", "linear-gradient(" + utils.values(palette).join(", ") + ")");
       } else {
         this.rainbowEl.classed("vzb-hidden", true);
       }
@@ -152,7 +152,7 @@
             regions.style("opacity", 0.5);
             view.style("opacity", 1);
 
-            var filtered = _this.model.color.getFilteredItems();
+            var filtered = _this.model.color.getNestedItems([KEY]);
             var highlight = utils.values(filtered)
               //returns a function over time. pick the last time-value
               .map(function (d) {

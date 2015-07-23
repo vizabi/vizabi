@@ -52,17 +52,16 @@
           //console.log("EVENT change:time:lockNonSelected");
           _this.redrawDataPoints(500);
         },
-        "change:entities:show": function (evt) {
-          //console.log("EVENT change:entities:show");
-          _this.entitiesUpdatedRecently = true;
-        },
         "change:marker": function (evt) {
           // bubble size change is processed separately
           if (!_this._readyOnce) return;
           if (evt == "change:marker:size:max") return;
           if (evt.indexOf("change:marker:color:palette") > -1) return;
+          if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+              _this.updateSize();
+              _this.redrawDataPoints();
+          }
           //console.log("EVENT change:marker", evt);
-          _this.markersUpdatedRecently = true;
         },
         "change:entities:select": function () {
           if (!_this._readyOnce) return;
@@ -76,37 +75,6 @@
           if (!_this._readyOnce) return;
           //console.log("EVENT change:entities:brush");
           _this.highlightDataPoints();
-        },
-        "readyOnce": function (evt) {
-
-        },
-        "ready": function (evt) {
-          if (!_this._readyOnce) return;
-
-
-          //TODO a workaround to fix the selection of entities
-          if (_this.entitiesUpdatedRecently) {
-            _this.entitiesUpdatedRecently = false;
-            //console.log("EVENT ready");
-            _this.updateEntities();
-            _this.redrawDataPoints();
-            _this.updateBubbleOpacity();
-          }
-
-          if (_this.markersUpdatedRecently) {
-            _this.markersUpdatedRecently = false;
-            _this.updateIndicators();
-            _this.updateSize();
-            _this.updateMarkerSizeLimits();
-
-            _this._trails.create();
-            _this._trails.run("findVisible");
-            _this.resetZoomer(); //does also redraw data points and trails resize
-            //_this.redrawDataPoints();
-            _this._trails.run(["recolor", "reveal"]);
-          }
-
-          _this.updateUIStrings();
         },
         'change:time:value': function () {
           //console.log("EVENT change:time:value");
@@ -162,6 +130,7 @@
       this.cached = {};
       this.xyMaxMinMean = {};
       this.currentZoomFrameXY = null;
+      this.draggingNow = null;
 
       // default UI settings
       this.ui = utils.extend({
@@ -278,18 +247,26 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-          var temp = _this.model._data.entities.brush;
           _this.model._data.entities.clearHighlighted();
+          _this._setTooltip();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
           var ratioY = _this.zoomer.ratioY;
           var ratioX = _this.zoomer.ratioX;
-
-
+          
+          
+          // console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
+          
+          _this.draggingNow = true;
+        
           //value protections and fallbacks
           if (isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
           if (isNaN(zoom) || zoom == null) zoom = 1;
+          
+          //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
+          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1};
+          
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
@@ -333,9 +310,6 @@
 
           _this.zoomer.duration = 0;
 
-          temp.forEach(function (item) {
-          	_this.model._data.entities.highlightEntity(item);
-          });
         });
 
       this.zoomer.ratioX = 1;
@@ -376,9 +350,8 @@
 
       this.entityBubbles = null;
       this.entityLabels = null;
+      this.tooltip = this.element.select('.vzb-bc-tooltip');
       this.entityLines = null;
-      this.tooltip = this.element.select('.vzb-tooltip');
-
       //component events
       this.on("resize", function () {
         //console.log("EVENT: resize");
@@ -395,31 +368,54 @@
         })
         .on("keyup", function () {
           if (!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
-        })
+        });
 
       this.element
         .call(this.zoomer)
-        .call(this.dragRectangle);
+        .call(this.dragRectangle)
+        .on("mouseup", function(){
+             _this.draggingNow = false;
+        });
 
       this.KEY = this.model.entities.getDimension();
       this.TIMEDIM = this.model.time.getDimension();
 
-      //console.log("EVENT ready once");
-      _this.updateUIStrings();
-      _this.updateIndicators();
-      _this.updateEntities();
-      _this.updateTime();
-      _this.updateSize();
-      _this.updateMarkerSizeLimits();
-      _this.selectDataPoints();
-      _this.updateBubbleOpacity();
-      _this._trails.create();
+      this._calculateAllValues();
+      this._valuesCalculated = true; //hack to avoid recalculation
 
-      _this.resetZoomer(); // includes redraw data points and trail resize
-      _this._trails.run(["recolor", "findVisible", "reveal"]);
-      if (_this.model.time.adaptMinMaxZoom) _this.adaptMinMaxZoom();
+      this.updateUIStrings();
+      this.updateIndicators();
+      this.updateEntities();
+      this.updateTime();
+      this.updateSize();
+      this.updateMarkerSizeLimits();
+      this.selectDataPoints();
+      this.updateBubbleOpacity();
+      this._trails.create();
+      this.resetZoomer(); // includes redraw data points and trail resize
+      this._trails.run(["recolor", "findVisible", "reveal"]);
+      if (this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
     },
 
+    ready: function() {
+
+      if(!this._valuesCalculated) this._calculateAllValues();
+      else this._valuesCalculated = false;
+
+      this.updateEntities();
+      this.redrawDataPoints();
+      this.updateBubbleOpacity();
+      this.updateIndicators();
+      this.updateSize();
+      this.updateMarkerSizeLimits();
+      this._trails.create();
+      this._trails.run("findVisible");
+      this.resetZoomer();
+      this._trails.run(["recolor", "reveal"]);
+
+      this.updateUIStrings();
+
+    },
 
     /*
      * UPDATE INDICATORS
@@ -440,9 +436,9 @@
       this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
 
       this.xyMaxMinMean = {
-        x: this.model.marker.axis_x.getMaxMinMean(this.timeFormatter),
-        y: this.model.marker.axis_y.getMaxMinMean(this.timeFormatter),
-        s: this.model.marker.size.getMaxMinMean(this.timeFormatter)
+        x: this.model.marker.axis_x.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true}),
+        y: this.model.marker.axis_y.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true}),
+        s: this.model.marker.size.getMaxMinMean({timeFormatter: this.timeFormatter, skipZeros: true})
       };
     },
 
@@ -527,7 +523,7 @@
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bc-entity")
-        .on("mousemove", function (d, i) {
+        .on("mouseover", function (d, i) {
 
           _this.model.entities.highlightEntity(d);
 
@@ -535,23 +531,30 @@
           if (_this.model.entities.isSelected(d) && _this.model.time.trails) {
             text = _this.timeFormatter(_this.time);
             _this.entityLabels
-              .filter(function (f) {
-                return f[KEY] == d[KEY]
-              })
+              .filter(function (f) {return f[KEY] == d[KEY]})
               .classed("vzb-highlighted", true);
           } else {
             text = _this.model.marker.label.getValue(d);
           }
-          _this._setTooltip(text);
+          
+          if(_this.model.entities.isSelected(d))return;
+          
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = _this.time;
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(text, x-s/2, y-s/2);
         })
         .on("mouseout", function (d, i) {
-
           _this.model.entities.clearHighlighted();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
         })
         .on("click", function (d, i) {
-
+          if(_this.draggingNow) return;
+          _this._setTooltip();
           _this.model.entities.selectEntity(d, this.TIMEDIM, _this.timeFormatter);
         });
 
@@ -586,7 +589,7 @@
         y2: _this.yScale(mmmY.max) - radiusMax,
       }
 
-      var TOLERANCE = 0.3;
+      var TOLERANCE = 0.0;
 
       if (!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) || suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
         _this.currentZoomFrameXY = utils.clone(suggestedFrame);
@@ -604,7 +607,6 @@
       var zoomer = _this.zoomer;
 
       if (Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
-
 
       if (Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
         var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
@@ -841,6 +843,8 @@
       });
     },
 
+    
+
     /*
      * REDRAW DATA POINTS:
      * Here plotting happens
@@ -848,24 +852,19 @@
     redrawDataPoints: function (duration) {
       var _this = this;
 
-      // Example on how it would be possible to interpolate all at once
-      // this.model.marker.getValues({ time: this.model.time.value }, ["geo"]);
-
       if (duration == null) duration = _this.duration;
 
-      var t = {}, tLocked = {};
       var TIMEDIM = this.TIMEDIM;
       var KEY = this.KEY;
       var values, valuesLocked;
 
       //get values for locked and not locked
       if (this.model.time.lockNonSelected && this.someSelected) {
-        tLocked[TIMEDIM] = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-        valuesLocked = this.model.marker.getValues(tLocked, [KEY]);
+        var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        valuesLocked = this._getValuesInterpolated(tLocked);
       }
 
-      t[TIMEDIM] = this.time;
-      values = this.model.marker.getValues(t, [KEY]);
+      values = this._getValuesInterpolated(this.time);
 
       this.entityBubbles.each(function (d, index) {
         var view = d3.select(this);
@@ -1001,30 +1000,30 @@
               cached.contentBBox = contentBBox;
 
               labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.width + contentBBox.height * 0.0 + 2)
-                .attr("y", contentBBox.height * 0.0 - 4);
+                .attr("x", contentBBox.height * 0.0 + 2)
+                .attr("y", contentBBox.height * -1);
 
               labelGroup.select("circle")
-                .attr("cx", contentBBox.width + contentBBox.height * 0.0 + 2)
-                .attr("cy", contentBBox.height * 0.0 - 4)
+                .attr("cx", contentBBox.height * 0.0 + 2)
+                .attr("cy", contentBBox.height * -1)
                 .attr("r", contentBBox.height * 0.5);
 
               rect.attr("width", contentBBox.width + 4)
                 .attr("height", contentBBox.height + 4)
-                .attr("x", -2)
-                .attr("y", -4)
+                .attr("x", -contentBBox.width -2)
+                .attr("y", -contentBBox.height)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
 
-            cached.labelX_ = select.labelOffset[0] || cached.scaledS0 / _this.width;
-            cached.labelY_ = select.labelOffset[1] || cached.scaledS0 / _this.width;
+            cached.labelX_ = select.labelOffset[0] || -cached.scaledS0 / 2 / _this.width;
+            cached.labelY_ = select.labelOffset[1] || -cached.scaledS0 / 2 / _this.width;
 
             var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
             var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
 
-            var limitedX = resolvedX > 0 ? (resolvedX < _this.width - cached.contentBBox.width ? resolvedX : _this.width - cached.contentBBox.width) : 0;
-            var limitedY = resolvedY > 0 ? (resolvedY < _this.height - cached.contentBBox.height ? resolvedY : _this.height - cached.contentBBox.height) : 0;
+            var limitedX = resolvedX - cached.contentBBox.width > 0 ? (resolvedX < _this.width ? resolvedX : _this.width) : cached.contentBBox.width;
+            var limitedY = resolvedY - cached.contentBBox.height > 0 ? (resolvedY < _this.height ? resolvedY : _this.height) : cached.contentBBox.height;
 
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
@@ -1071,52 +1070,23 @@
       var diffY1 = resolvedY0 - resolvedY;
       var diffX2 = 0;
       var diffY2 = 0;
-      if (diffX1 < 0 && diffY1 < 0) {
-        if (diffX1 < diffY1) {
-          diffX2 = 0;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = 0;
-        }
-      }
-      else if (diffX1 < 0 && diffY1 >= 0) {
-        if (diffX1 < -diffY1) {
-          diffX2 = 0;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = height;
-        }
-      }
-      else if (diffX1 >= 0 && diffY1 >= 0) {
-        if (diffX1 < diffY1) {
-          diffX2 = width / 2;
-          diffY2 = height;
-        }
-        else {
-          diffX2 = width;
-          diffY2 = height / 2;
-        }
-      }
-      else {
-        if (-diffX1 < diffY1) {
-          diffX2 = width;
-          diffY2 = height / 2;
-        }
-        else {
-          diffX2 = width / 2;
-          diffY2 = 0;
-        }
-      }
 
+      var angle = Math.atan2(diffX1 + width/2, diffY1 + height/2) * 180 / Math.PI;
+      // middle bottom
+      if(Math.abs(angle)<=45){ diffX2 = width / 2; diffY2 = 0}
+      // right middle
+      if(angle>45 && angle<135){ diffX2 = 0; diffY2 = height/4; }
+      // middle top
+      if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
+      // left middle
+      if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
+      
+        
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
         .attr("y1", diffY1)
-        .attr("x2", diffX2)
-        .attr("y2", diffY2);
+        .attr("x2", -diffX2)
+        .attr("y2", -diffY2);
 
     },
 
@@ -1213,16 +1183,16 @@
     },
 
 
-    _setTooltip: function (tooltipText) {
+    _setTooltip: function (tooltipText, x, y) {
       if (tooltipText) {
-        var mouse = d3.mouse(this.graph.node()).map(function (d) {
-          return parseInt(d)
-        });
+        var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
 
         //position tooltip
         this.tooltip.classed("vzb-hidden", false)
-          .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .html(tooltipText);
+          //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+          .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
+          .selectAll("text")
+          .text(tooltipText);
 
       } else {
 
@@ -1344,6 +1314,56 @@
       }
 
       this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    },
+
+    /*
+     * Calculates all values for this data configuration
+     */
+    _calculateAllValues: function() {
+      this.STEPS = this.model.time.getAllSteps();
+      this.VALUES = {};
+      var f = {};
+      for (var i = 0; i < this.STEPS.length; i++) {
+        var t = this.STEPS[i];
+        f[this.TIMEDIM] = t;
+        this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
+      };
+    },
+
+    /*
+     * Gets all values for any point in time
+     * @param {Date} t time value
+     */
+    _getValuesInterpolated: function(t) {
+
+      if(!this.VALUES) this._calculateAllValues();
+      if(this.VALUES[t]) return this.VALUES[t];
+
+      var next = d3.bisectLeft(this.STEPS, t);
+
+      //if first
+      if(next === 0) {
+        return this.VALUES[this.STEPS[0]];
+      }
+      if(next > this.STEPS.length) {
+        return this.VALUES[this.STEPS[this.STEPS.length - 1]];
+      }
+
+      var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
+
+      var pValues = this.VALUES[this.STEPS[next - 1]];
+      var nValues = this.VALUES[this.STEPS[next]];
+
+      var curr = {};
+      utils.forEach(pValues, function(values, hook) {
+        curr[hook] = {};
+        utils.forEach(values, function(val, id) {
+          var val2 = nValues[hook][id];
+          curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val)*fraction);
+        });
+      });
+
+      return curr;
     }
 
 

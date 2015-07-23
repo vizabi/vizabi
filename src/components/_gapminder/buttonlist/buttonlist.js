@@ -19,6 +19,7 @@
 
   //default existing buttons
   var class_active = "vzb-active";
+  var class_active_locked = "vzb-active-locked";
   var class_unavailable = "vzb-unavailable";
   var class_vzb_fullscreen = "vzb-force-fullscreen";
 
@@ -184,9 +185,9 @@
       this.setBubbleTrails();
       this.setBubbleLock();
       
-      //keyboard listeners
-      d3.select("body")
-  		.on("mousedown", function (e) {
+      d3.select(this.root.element).on("mousedown", function (e) {
+        if(!this._active_comp) return; //don't do anything if nothing is open
+
   			var target = d3.event.target;
         var closeDialog = true;
   			while (target)
@@ -368,7 +369,7 @@
       var id = "trails";
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
-      btn.classed(class_active, this.model.state.time.trails);
+      btn.classed(class_active_locked, this.model.state.time.trails);
       btn.style("display", this.model.state.entities.select.length == 0 ? "none" : "inline-block")
     },
     toggleBubbleLock: function (id) {
@@ -391,7 +392,7 @@
       btn.classed(class_unavailable, this.model.state.entities.select.length == 0);
       btn.style("display", this.model.state.entities.select.length == 0 ? "none" : "inline-block")
 
-      btn.classed(class_active, locked)
+      btn.classed(class_active_locked, locked)
       btn.select(".vzb-buttonlist-btn-title")
         .text(locked ? locked : translator("buttons/lock"));
 
@@ -423,7 +424,7 @@
       utils.classed(pholder, class_vzb_fullscreen, fs);
       this.model.ui.fullscreen = fs;
       var translator = this.model.language.getTFunction();
-      btn.classed(class_active, fs);
+      btn.classed(class_active_locked, fs);
 
       btn.select(".vzb-buttonlist-btn-icon").html(this._icons[fs ? "unexpand" : "expand"]);
       btn.select(".vzb-buttonlist-btn-title").text(
