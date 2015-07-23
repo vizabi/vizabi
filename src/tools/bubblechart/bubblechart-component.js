@@ -682,7 +682,7 @@
             top: 30,
             right: 60,
             left: 60,
-            bottom: 40
+            bottom: 70
           },
           padding: 2,
           minRadius: 3,
@@ -693,7 +693,7 @@
             top: 30,
             right: 60,
             left: 60,
-            bottom: 40
+            bottom: 60
           },
           padding: 2,
           minRadius: 4,
