@@ -331,22 +331,11 @@
         this.handle.attr("cx", new_pos);
       }
 
-      var txtWidth = this.valueText.node().getBoundingClientRect().width;
-      var sliderWidth = this.slider.node().getBoundingClientRect().width;
-      var lmt_min = txtWidth / 2;
-      var lmt_max = sliderWidth - lmt_min;
-      var new_mod = (new_pos < lmt_min) ? (lmt_min - new_pos) : ((new_pos > lmt_max) ? (lmt_max - new_pos) : 0);
-
-      if (transition && new_mod === 0) {
-        this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
-          .transition()
-          .duration(speed)
-          .ease("linear")
-          .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
-
-      } else {
-        this.valueText.attr("transform", "translate(" + (new_pos + new_mod) + "," + (this.height / 2) + ")");
-      }
+      this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
+        .transition()
+        .duration(speed)
+        .ease("linear")
+        .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     },
 
     /**
