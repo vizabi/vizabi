@@ -185,7 +185,7 @@ function normalizeDivSize(div, container) {
     var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
 
     if (divWidth != width || divHeight != height) {
-        // console.warn("Size outside range. Setting size to:", width, height);
+         //console.warn("Size outside range. Setting size to:", width, height);
         setDivSize(div, width, height);
     }
 }
@@ -225,7 +225,6 @@ resizableDiv(placeholder, container, 300, 300, function() {
 
 function setFullscreen() {
     setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
-    normalizeDivSize(placeholder, container);
     addClass(placeholder, "fullscreen");
     throttle(updateURL, 500);
 }
