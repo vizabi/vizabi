@@ -1,0 +1,18 @@
+//styles for the page header (title and loading spinner)
+
+.header {
+  @include box-sizing(border-box);
+  background-color: $color-primary;
+  box-shadow: rgba(0,0,0,0.1) 0px 2px 1px 2px;
+  min-width: $body-min-width;
+  padding: 0 15px;
+  flex: 0 0 $header-height;
+}
+
+.header-title {
+  color: white;
+  float: left;
+  font-size: 17px;
+  line-height: $header-height;
+  margin: 0;
+}

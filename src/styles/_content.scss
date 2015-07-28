@@ -1,0 +1,92 @@
+//styles for the content section (where currencies are displayed)
+
+.content {
+  height: 100%;
+  padding: 10px;
+  display: flex;
+  x-justify-content: space-around;
+  x-align-items: stretch;
+
+  @include breakpoint(small) {
+    display: block;
+  }
+
+}
+
+.column {
+  padding: 15px;
+}
+
+.column.left, .column.right {
+  flex: 0 0 $size-column;
+  @include breakpoint(medium) {
+    flex: 0 0 $size-column - 85px;
+  }
+}
+
+.column.left {
+  @include fadeInLeft(0.5s, 0s);
+}
+
+.column.center {
+    @include box-sizing(border-box);
+    width: 100%;
+    background: white;
+    position: relative;
+
+    @include breakpoint(small) {
+      height: 500px;
+    }
+}
+
+.card {
+  background: white;
+  border-radius: 2px;
+  box-shadow: rgba(0,0,0,0.02) 0px 2px 1px 2px;
+  padding: 20px;
+  margin: 0px auto 10px auto;
+  max-width: 250px;
+
+  @include breakpoint(small) {
+    max-width: 100%;
+  }
+
+  //animate down
+  @for $i from 0 through 9{
+    &:nth-child(#{$i}) { 
+      opacity: 0;
+      @include fadeInDown(0.5s, ($i/4)*1s );
+    }
+  }
+}
+
+.btn {
+  @include box-sizing(border-box);
+  background: $color-grey;
+  border: 0px;
+  border-radius: 2px;
+  box-shadow: rgba(0,0,0,0.02) 0px 2px 1px 2px;
+  padding: 8px 10px;
+  margin: 0px 3px 7px 3px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-family: 'Lato', Arial, sans-serif;
+
+  &:hover {
+    cursor: pointer;
+    background: darken( $color-grey, 10% );
+  }
+
+  &.primary {
+    background: $color-primary;
+    &:hover {
+      background: darken( $color-primary, 10% );
+    }
+  }
+
+  &.block {
+    width: 100%;
+    display: block;
+  }
+}

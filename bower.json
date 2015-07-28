@@ -1,0 +1,21 @@
+{
+  "name": "Gapminder World Vizabi",
+  "version": "0.0.1",
+  "authors": [
+    "Arthur Camara <arthurcamara@gmail.com>"
+  ],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.3"
+  },
+  "devDependencies": {
+    "bourbon": "~4.2.1",
+    "angular-mocks": "~1.4.3",
+    "d3": "~3.5.6"
+  }
+}

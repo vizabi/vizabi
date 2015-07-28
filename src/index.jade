@@ -1,0 +1,18 @@
+doctype html
+html(lang="en", ng-app='gapminderWorld')
+  head
+    title Gapminder World
+    //-include google font + styles
+    link(href='http://fonts.googleapis.com/css?family=Lato', rel='stylesheet')
+    link(href='./styles/main.css', rel='stylesheet')
+    link(href='./public/favicon.ico', rel='shortcut icon')
+    //-Vizabi stylesheet
+    link(href='http://static.gapminderdev.org/vizabi/release/v0.6.0/dist/vizabi.css', rel='stylesheet')
+  body(ng-controller='gapminderWorldCtrl', ng-class='{"loading" : loading}', class="{{ bodyClass }}", ng-cloak)
+    include ./views/header.jade
+    include ./views/content.jade
+    //- include dependencies and app script
+    script(src='./vendor/d3/d3.min.js')
+    script(src='http://static.gapminderdev.org/vizabi/release/v0.6.0/dist/vizabi.min.js')
+    script(src='./vendor/angular/angular.min.js')
+    script(src='./scripts/app.js')
