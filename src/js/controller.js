@@ -9,7 +9,7 @@ angular.module('gapminderWorld')
   $scope.started = false;
   $scope.loadingError = false;
 
-  vizabiFactory.render('BubbleChart', placeholder, {
+  var viz = vizabiFactory.render('BubbleChart', placeholder, {
   	bind: {
   		'ready': function(evt, options) {
   			$scope.loading = false;
@@ -37,5 +37,23 @@ angular.module('gapminderWorld')
       path: 'https://dl.dropboxusercontent.com/u/4933279/csv/basic-indicators.csv'
     }
   });
+
+
+  var initOpts = viz.getOptions();
+  $scope.sizeValue = initOpts.state.marker.size.max * 100;
+
+  $scope.changeSize = function() {
+    var newSize = $scope.sizeValue / 100;
+    viz.setOptions({
+      state: {
+        marker: {
+          size: {
+            max: newSize
+          }
+        }
+      }
+    });
+  };
+
 
 }]);

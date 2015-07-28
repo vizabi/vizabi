@@ -3,7 +3,8 @@
 .card
   p GW Country Selector
 .card
-  p GW Size Picker
+  p Size Picker
+  input(type="range", ng-model="sizeValue", ng-change="changeSize()")
 .card
   p Example: Hover country
   p {{hoveredCountry}}
