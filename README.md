@@ -1,6 +1,8 @@
 # Gapminder World based on Vizabi
 > This is the gapminder world app based on Vizabi
 
+Demo: [http://static.gapminderdev.org/gw-vizabi/](http://static.gapminderdev.org/gw-vizabi/)
+
 The following dependencies must be preinstalled:
 
 - [Node.js](https://nodejs.org/)
