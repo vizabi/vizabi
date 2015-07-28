@@ -4,9 +4,9 @@
 
 .vzb-tool {
   $heightTitle: 8px;
-  $sizeButtonList: 60px;
-  $sizeButtonListSmall: 50px;
-  $sizeTimeSlider: 70px;
+  $sizeButtonList: 80px;
+  $sizeButtonListSmall: 80px;
+  $sizeTimeSlider: 80px;
   $sizeTimeSliderSmall: 50px;
   @include position(absolute, 0px);
   @include user-select(none);
