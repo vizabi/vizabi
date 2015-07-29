@@ -497,20 +497,24 @@
       var KEY = this.KEY;
       var TIMEDIM = this.TIMEDIM;
 
+      var getKeys = function (prefix) {
+          prefix = prefix || "";
+          return this.model.marker.getKeys()
+            .map(function (d) {
+                var pointer = {};
+                pointer[KEY] = d[KEY];
+                pointer[TIMEDIM] = endTime;
+                pointer.sortValue = _this.model.marker.size.getValue(pointer);
+                pointer[KEY] = prefix + d[KEY];
+                return pointer;
+            })
+            .sort(function (a, b) { return b.sortValue - a.sortValue; })
+      }
+
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
-      this.model.entities.setVisible(this.model.marker.getKeys()
-        .map(function (d) {
-          var pointer = {};
-          pointer[KEY] = d[KEY];
-          pointer[TIMEDIM] = endTime;
-          pointer.sortValue = _this.model.marker.size.getValue(pointer);
-          return pointer;
-        })
-        .sort(function (a, b) {
-          return b.sortValue - a.sortValue;
-        }));
+      this.model.entities.setVisible(getKeys.call(this));
 
       this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
         .data(this.model.entities.getVisible(), function (d) {
@@ -522,7 +526,9 @@
 
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
-        .attr("class", "vzb-bc-entity")
+        .attr("class", function (d) {
+            return "vzb-bc-entity " + d[KEY];
+        })
         .on("mouseover", function (d, i) {
 
           _this.model.entities.highlightEntity(d);
@@ -561,15 +567,15 @@
 
       //TODO: no need to create trail group for all entities
       //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-      this.entityTrails = this.trailsContainer.selectAll(".vzb-bc-entity")
-        .data(this.model.entities.getVisible(), function (d) {
-          return d[KEY]
-        });
+      this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
+        .data(getKeys.call(this, "trail-"), function (d) {
+                return d[KEY];
+            }
+        );
 
-      this.entityTrails.exit().remove();
-
-      this.entityTrails.enter().append("g")
-        .attr("class", function (d) {
+        this.entityTrails.enter().insert("g", function (d) {
+            return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+        }).attr("class", function (d) {
           return "vzb-bc-entity" + " " + d[KEY]
         });
 
