@@ -615,6 +615,6 @@
 
     //Waffle Server Reader custom path
     var WaffleReader = this.Vizabi.Reader.get('waffle-server');
-    WaffleReader.define('basepath', "http://54.154.191.20:8001/values/waffle");
+    WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
 }.call(this));
