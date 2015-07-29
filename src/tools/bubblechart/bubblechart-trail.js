@@ -58,7 +58,7 @@
 
         var trail = _this.entityTrails
           .filter(function (f) {
-            return f[KEY] == d[KEY]
+              return f[KEY] == "trail-" + d[KEY]
           })
           .selectAll("g")
           .data(trailSegmentData);
@@ -71,7 +71,7 @@
             var _key = d3.select(this.parentNode).data()[0][KEY];
 
             var pointer = {};
-            pointer[KEY] = _key;
+            pointer[KEY] = _key.replace("trail-", "");
             pointer.time = segment.t;
 
             _this._axisProjections(pointer);
@@ -134,7 +134,7 @@
 
         var trail = _this.entityTrails
           .filter(function (f) {
-            return f[KEY] == d[KEY]
+            return f[KEY] == "trail-"+d[KEY]
           })
           .selectAll("g")
 
