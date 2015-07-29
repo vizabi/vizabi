@@ -184,7 +184,7 @@
 
       this.setBubbleTrails();
       this.setBubbleLock();
-      
+
       d3.select(this.root.element).on("mousedown", function (e) {
         if(!this._active_comp) return; //don't do anything if nothing is open
 
@@ -412,13 +412,13 @@
         component = this.parent;
         pholder = component.placeholder;
       }
-      ;
 
       //TODO: figure out a way to avoid fullscreen resize delay in firefox
       if (fs) {
         launchIntoFullscreen(pholder);
+        subscribeFullscreenChangeEvent.call(this, this.toggleFullScreen.bind(this, id));
       } else {
-        exitFullscreen();
+        exitFullscreen.call(this);
       }
 
       utils.classed(pholder, class_vzb_fullscreen, fs);
@@ -464,6 +464,44 @@
 
   });
 
+  function isFullscreen() {
+    if (root.document.webkitIsFullScreen !== undefined)
+      return root.document.webkitIsFullScreen;
+    if (root.document.mozFullScreen !== undefined)
+      return root.document.mozFullScreen;
+    if (root.document.msFullscreenElement !== undefined)
+      return root.document.msFullscreenElement;
+
+    return false;
+  }
+
+  function exitHandler(emulateClickFunc)
+  {
+    if (!isFullscreen())
+    {
+      emulateClickFunc();
+    }
+  }
+
+  function subscribeFullscreenChangeEvent(exitFunc) {
+    var doc = root.document;
+
+    this.exitFullscreenHandler = exitHandler.bind(this, exitFunc);
+    doc.addEventListener('webkitfullscreenchange', this.exitFullscreenHandler, false);
+    doc.addEventListener('mozfullscreenchange', this.exitFullscreenHandler, false);
+    doc.addEventListener('fullscreenchange', this.exitFullscreenHandler, false);
+    doc.addEventListener('MSFullscreenChange', this.exitFullscreenHandler, false);
+  }
+
+  function removeFullscreenChangeEvent() {
+    var doc = root.document;
+
+    doc.removeEventListener('webkitfullscreenchange', this.exitFullscreenHandler);
+    doc.removeEventListener('mozfullscreenchange', this.exitFullscreenHandler);
+    doc.removeEventListener('fullscreenchange', this.exitFullscreenHandler);
+    doc.removeEventListener('MSFullscreenChange', this.exitFullscreenHandler);
+  }
+
   function launchIntoFullscreen(elem) {
     if (elem.requestFullscreen) {
       elem.requestFullscreen();
@@ -477,6 +515,8 @@
   }
 
   function exitFullscreen() {
+    removeFullscreenChangeEvent.call(this);
+
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
