@@ -20,8 +20,8 @@
     "hour": "%d/%m/%Y %H",
     "minute": "%d/%m/%Y %H:%M",
     "second": "%d/%m/%Y %H:%M:%S"
-  };    
-    
+  };
+
   //names of reserved hook properties
   //warn client if d3 is not defined
   Vizabi._require('d3');
@@ -150,7 +150,7 @@
           }
         }
       }
-      
+
       bindSettersGetters(this);
       //for tool model when setting for the first time
       if (this.validate && !setting) {
@@ -843,7 +843,7 @@
         // use manual formatting for the cases above
         return (d3.format("."+prec+format)(x)+prefix).replace("G","B");
 
-    },     
+    },
 
     /**
      * Gets the d3 scale for this hook. if no scale then builds it
@@ -883,7 +883,7 @@
           break;
       }
       //TODO: d3 is global?
-      this.scale = d3.scale[scaleType]().domain(domain);
+      this.scale = scaleType === 'time' ? d3.time.scale().domain(domain) : d3.scale[scaleType]().domain(domain);
     },
 
     /**
@@ -990,7 +990,7 @@
                 var values = d.values
                     .filter(function (f) {return f[_this.which] !== null;})
                     .map(function (m) {return +m[_this.which];});
-            
+
                 if(options.skipZeros) values = values.filter(function (f) {return f!=0})
 
                 result[d.key] = {
@@ -1312,7 +1312,7 @@
    * @returns interpolated value
    */
   function interpolateValue(_filter, use, which) {
-    
+
     var dimTime, time, filter, items, space_id, indexNext, fraction, value;
 
     dimTime = this._getFirstDimension({type: 'time'});
@@ -1330,13 +1330,13 @@
     if (use === 'value') {
       return items[0][which];
     }
-    
+
     // search where the desired value should fall between the known points
     space_id = this._spaceId || (this._spaceId = Object.keys(this._space).join('-'));
     interpIndexes[space_id] = interpIndexes[space_id] || {};
 
     if(time in interpIndexes[space_id]) {
-      indexNext = interpIndexes[space_id][time].next;   
+      indexNext = interpIndexes[space_id][time].next;
     }
     else {
       indexNext = d3.bisectLeft(this.getUnique(dimTime), time);
