@@ -783,8 +783,8 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
-      this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
+      this.xTitleEl.attr("transform", "translate(" + (this.width - 15) + "," + this.height + ")");
+      this.sTitleEl.attr("transform", "translate(" + this.width + "," + "-15" + ") rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
