@@ -1,14 +1,14 @@
-<button class="vzbp-button" id="vzbp-btn-refresh" data-tooltip="Refresh">
+<button class="vzbp-button" id="vzbp-btn-refresh" data-vzb-translate="sidebar/refresh" data-tooltip="Refresh">
 	<i class="fa fa-refresh"></i>
 </button> 
 {{#if source_code}}
-<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-github"onclick="openLink('{{source_code}}')" data-tooltip="Github">
+<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-github"onclick="openLink('{{source_code}}')" data-vzb-translate="sidebar/github" data-tooltip="Github">
 	<i class="fa fa-github"></i>
 </button> {{/if}}
-<button class="vzbp-button" id="vzbp-btn-codepen" data-tooltip="Codepen">
+<button class="vzbp-button" id="vzbp-btn-codepen" data-vzb-translate="sidebar/codepen" data-tooltip="Codepen">
 	<i class="fa fa-codepen"></i>
 </button> 
-<button class="vzbp-button" id="vzbp-btn-share" data-tooltip="Share">
+<button class="vzbp-button" id="vzbp-btn-share" data-vzb-translate="sidebar/share" data-tooltip="Share">
 	<i class="fa fa-paper-plane"></i>
 </button>
 
@@ -16,20 +16,20 @@
 <hr class="vzbp-hr"/>
 
 <div id="resp-sect" class="collapsible-section open">
-	<h2 class="vzbp-subtitle vzbp-collapsible-title">Responsiveness</h2>
+	<h2 class="vzbp-subtitle vzbp-collapsible-title" data-vzb-translate="sidebar/responsiveness" >Responsiveness</h2>
 
 	<div class="vzbp-collapsible">
 
-		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-portrait" data-tooltip="Portrait">
+		<button class="vzbp-button vzbp-button-bigger" data-vzb-translate="sidebar/portrait" id="vzbp-btn-portrait" data-tooltip="Portrait">
   			<i class="fa fa-mobile"></i>
   		</button> 
-  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-landscape" data-tooltip="Landscp">
+  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-landscape" data-vzb-translate="sidebar/landscp" data-tooltip="Landscp">
   			<i class="fa fa-mobile fa-rotate-90"></i>
   		</button> 
-  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-desktop" data-tooltip="Full">
+  		<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-desktop" data-vzb-translate="sidebar/full" data-tooltip="Full">
   			<i class="fa fa-desktop"></i>
   		</button> 
-  		<button class="vzbp-button" id="vzbp-btn-random" data-tooltip="Random">
+  		<button class="vzbp-button" id="vzbp-btn-random" data-tooltip="Random"  data-vzb-translate="sidebar/random">
   			<i class="fa fa-random"></i>
   		</button>
 
@@ -38,7 +38,7 @@
 		</p>
 
 		<p align="center"><a href="fullscreen/{{ page.filename }}" target="blank">
-  			<i class="fa fa-share"></i> Fullscreen page
+  			<i class="fa fa-share"></i> <span data-vzb-translate="sidebar/fullscreenpage">Fullscreen page</span>
   		</a> </p>
 	</div>
 </div>
@@ -48,16 +48,16 @@
 <hr class="vzbp-hr"/>
 
 <div id="state-section-panel" class="collapsible-panel">
-	<h2 id="state-section" class="vzbp-subtitle vzbp-collapsible-title">State</h2>
+	<h2 id="state-section" class="vzbp-subtitle vzbp-collapsible-title" data-vzb-translate="sidebar/state">State</h2>
 </div>
 {{/if}}
 
 <hr class="vzbp-hr"/>
 
 <div id="info-sect" class="collapsible-section open">
-	<h2 class="vzbp-subtitle vzbp-collapsible-title">Info</h2>
+	<h2 class="vzbp-subtitle vzbp-collapsible-title" data-vzb-translate="sidebar/info">Info</h2>
 	<div class="vzbp-collapsible">
-		<p>{{description}}</p>
+		<p data-vzb-translate="sidebar/info_desc">{{description}}</p>
 	</div>
 </div>
 
@@ -65,16 +65,16 @@
 <hr class="vzbp-hr"/>
 
 <div id="butt-sect" class="collapsible-section open">
-	<h2 class="vzbp-subtitle vzbp-collapsible-title">Interaction Buttons</h2>
+	<h2 class="vzbp-subtitle vzbp-collapsible-title" data-vzb-translate="sidebar/interaction_buttons">Interaction Buttons</h2>
 
 	<div class="vzbp-collapsible">
 		{{#if control_buttons.play}}	
-			<button class="vzbp-button" id="vzbp-btn-play"data-tooltip="Play">
+			<button class="vzbp-button" id="vzbp-btn-play" data-tooltip="Play" data-vzb-translate="sidebar/play">
       			<i class="fa fa-play"></i>
       		</button> 
 		{{/if}}
 		{{#if control_buttons.language}}	
-			<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-lang"data-tooltip="Switch language">
+			<button class="vzbp-button vzbp-button-bigger" id="vzbp-btn-lang"data-tooltip="Switch language" data-vzb-translate="sidebar/switch_language">
       			<i class="fa fa-globe"></i>
       		</button>
 		{{/if}}

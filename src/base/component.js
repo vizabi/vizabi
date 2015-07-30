@@ -362,7 +362,7 @@
      */
     translateStrings: function () {
       var t = this.getTranslationFunction();
-      var strings = this.placeholder.querySelectorAll('[data-vzb-translate]');
+      var strings = document.querySelector('body').querySelectorAll('[data-vzb-translate]');
       if (strings.length === 0) {
         return;
       }
@@ -370,7 +370,13 @@
         if (!str || !str.getAttribute) {
           return;
         }
-        str.innerHTML = t(str.getAttribute('data-vzb-translate'));
+
+          if(str.hasAttribute("data-tooltip")){
+              str.setAttribute("data-tooltip", t(str.getAttribute('data-vzb-translate')));
+          }else{
+              str.innerHTML = t(str.getAttribute('data-vzb-translate'));
+          }
+
       });
     },
 
