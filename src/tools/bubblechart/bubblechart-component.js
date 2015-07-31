@@ -19,7 +19,7 @@
     /**
      * Initializes the component (Bubble Chart).
      * Executed once before any template is rendered.
-     * @param {Object} config The options passed to the component
+     * @param {Object} options The options passed to the component
      * @param {Object} context The component's parent
      */
     init: function (context, options) {
@@ -114,7 +114,7 @@
         'change:entities:opacityRegular': function () {
           _this.updateBubbleOpacity();
         }
-      }
+      };
 
       this._super(context, options);
 
@@ -182,7 +182,7 @@
           var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
-          
+
           var lineGroup = _this.entityLines.filter(function (f) {
             return f[KEY] == d[KEY];
           });
@@ -254,19 +254,19 @@
           var pan = d3.event.translate;
           var ratioY = _this.zoomer.ratioY;
           var ratioX = _this.zoomer.ratioX;
-          
-          
+
+
           // console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
-          
+
           _this.draggingNow = true;
-        
+
           //value protections and fallbacks
           if (isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
           if (isNaN(zoom) || zoom == null) zoom = 1;
-          
+
           //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1};
-          
+          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1}
+
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
 
@@ -276,12 +276,10 @@
             ratioY = 1 / zoom;
             _this.zoomer.ratioY = ratioY
           }
-          ;
           if (zoom * ratioX < 1) {
             ratioX = 1 / zoom;
             _this.zoomer.ratioX = ratioX
           }
-          ;
 
           //limit the panning, so that we are never outside the possible range
           if (pan[0] > 0) pan[0] = 0;
@@ -359,7 +357,7 @@
         _this.updateMarkerSizeLimits();
         _this._trails.run("findVisible");
         _this.resetZoomer(); // includes redraw data points and trail resize
-      })
+      });
 
       //keyboard listeners
       d3.select("body")
@@ -453,7 +451,7 @@
       var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
       var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
       var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
-      
+
       var unitStringY = this.translator("unit/" + this.model.marker.axis_y.unit);
       var unitStringX = this.translator("unit/" + this.model.marker.axis_x.unit);
       var unitStringS = this.translator("unit/" + this.model.marker.size.unit);
@@ -462,7 +460,7 @@
       if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
       if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
       if (!!unitStringS) titleStringS = titleStringS + ", " +  unitStringS;
-      if (!!unitStringC) titleStringC = titleStringC + ", " +  unitStringC; 
+      if (!!unitStringC) titleStringC = titleStringC + ", " +  unitStringC;
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
@@ -509,7 +507,7 @@
                 return pointer;
             })
             .sort(function (a, b) { return b.sortValue - a.sortValue; })
-      }
+      };
 
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
@@ -542,9 +540,9 @@
           } else {
             text = _this.model.marker.label.getValue(d);
           }
-          
+
           if(_this.model.entities.isSelected(d))return;
-          
+
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = _this.time;
@@ -592,8 +590,8 @@
         x1: _this.xScale(mmmX.min) - radiusMax,
         y1: _this.yScale(mmmY.min) + radiusMax,
         x2: _this.xScale(mmmX.max) + radiusMax,
-        y2: _this.yScale(mmmY.max) - radiusMax,
-      }
+        y2: _this.yScale(mmmY.max) - radiusMax
+      };
 
       var TOLERANCE = 0.0;
 
@@ -633,7 +631,7 @@
 
       var pan = [
         (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX, (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
-      ]
+      ];
 
       zoomer.scale(zoom);
       zoomer.ratioY = ratioY;
@@ -783,7 +781,15 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
+      var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
+      var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
+      var sTitleSize = this.sTitleEl.node().getBoundingClientRect();
+      var xTitleX = 0;
+      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height)
+        xTitleX = -sTitleSize.width;
+
       this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
+      this.xTitleEl.selectAll("text").data([0]).attr('x', xTitleX + 'px');
       this.sTitleEl.attr("transform", "translate(" + this.width + "," + 0 + ") rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
@@ -791,7 +797,6 @@
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
-
     },
 
     updateMarkerSizeLimits: function () {
@@ -848,8 +853,6 @@
         d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
       });
     },
-
-    
 
     /*
      * REDRAW DATA POINTS:
@@ -996,7 +999,7 @@
 
             var text = labelGroup.selectAll("text.vzb-bc-label-content")
               .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-            
+
             lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
 
             var rect = labelGroup.select("rect");
@@ -1037,7 +1040,7 @@
             var stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
 
             if(cached.stuckOnLimit !== stuckOnLimit) {
-              cached.stuckOnLimit = stuckOnLimit
+              cached.stuckOnLimit = stuckOnLimit;
               rect.classed("vzb-transparent", !cached.stuckOnLimit);
             }
 
@@ -1050,7 +1053,6 @@
         if (_this.cached[d[KEY]] != null) {
           delete _this.cached[d[KEY]]
         }
-        ;
       }
     },
 
@@ -1086,8 +1088,7 @@
       if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
       // left middle
       if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
-      
-        
+
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
         .attr("y1", diffY1)
@@ -1142,7 +1143,7 @@
           view.append("rect").attr("class", "vzb-transparent")
             .on("click", function (d, i) {
               //default prevented is needed to distinguish click from drag
-              if (d3.event.defaultPrevented) return
+              if (d3.event.defaultPrevented) return;
 
               var maxmin = _this.cached[d[KEY]].maxMinValues;
               var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
@@ -1173,14 +1174,14 @@
         .on("mousemove", function () {
           _this.model.entities.highlightEntity(this.__data__);
           d3.select(this).selectAll(".vzb-bc-label-x")
-            .classed("vzb-transparent", false)
+            .classed("vzb-transparent", false);
           d3.select(this).select("rect")
             .classed("vzb-transparent", false)
         })
         .on("mouseout", function (d) {
           _this.model.entities.clearHighlighted();
           d3.select(this).selectAll(".vzb-bc-label-x")
-            .classed("vzb-transparent", true)
+            .classed("vzb-transparent", true);
           d3.select(this).select("rect")
             .classed("vzb-transparent", !_this.cached[d[KEY]].stuckOnLimit)
         });
@@ -1215,7 +1216,7 @@
         var valueY = this.model.marker.axis_y.getValue(d);
         var valueX = this.model.marker.axis_x.getValue(d);
         var valueS = this.model.marker.size.getValue(d);
-        var radius = utils.areaToRadius(this.sScale(valueS))
+        var radius = utils.areaToRadius(this.sScale(valueS));
 
         if (!valueY || !valueX || !valueS) return;
 
@@ -1333,7 +1334,7 @@
         var t = this.STEPS[i];
         f[this.TIMEDIM] = t;
         this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
-      };
+      }
     },
 
     /*
