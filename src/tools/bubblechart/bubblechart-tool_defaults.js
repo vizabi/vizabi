@@ -10,7 +10,7 @@
 
     state: {
       time: {
-        round: "ceil",
+        round: "round",
         trails: true,
         lockNonSelected: 0,
         adaptMinMaxZoom: false
