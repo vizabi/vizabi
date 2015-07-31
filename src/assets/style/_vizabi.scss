@@ -75,7 +75,7 @@
       $posTop: $heightTitle - 8px;
       @include position(absolute, $posTop 0px 0px 0px);
       .vzb-tool-stage {
-        @include position(absolute, 0px $sizeButtonListSmall 0px 0px);
+        @include position(absolute, 0px $sizeButtonList 0px 0px);
         .vzb-tool-viz {
           @include position(absolute, 0px 0px $sizeTimeSliderSmall 0px);
         }
