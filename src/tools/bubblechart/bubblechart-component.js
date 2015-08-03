@@ -290,8 +290,8 @@
           if (pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
           _this.zoomer.translate(pan);
 
-          _this.xScale.range([0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]]);
-          _this.yScale.range([_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]]);
+          _this.xScale.range([0 * zoom * ratioX + 1  + pan[0], _this.width * zoom * ratioX  + pan[0]]);
+          _this.yScale.range([_this.height * zoom * ratioY - 1 + pan[1], 0 * zoom * ratioY + pan[1]]);
 
           // Keep the min and max size (pixels) constant, when zooming.
           //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
