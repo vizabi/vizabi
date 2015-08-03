@@ -92,6 +92,9 @@
         @include position(absolute, 0px 0px 0px 0px);
       }
     }
+    .vzb-tool-buttonlist {
+      width: $sizeButtonListSmall + 10;
+    }
   }
   &.vzb-small.vzb-portrait {
     .vzb-tool-content {
