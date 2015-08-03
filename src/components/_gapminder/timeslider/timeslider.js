@@ -317,6 +317,8 @@
 
       var old_pos = this.handle.attr("cx");
       var new_pos = this.xScale(value);
+        
+      if(old_pos==null) old_pos = new_pos;
       var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
 
