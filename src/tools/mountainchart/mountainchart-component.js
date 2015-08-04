@@ -68,14 +68,14 @@
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:brush");
                   _this.highlightDataPoints();
-                    _this.updateBubbleOpacity();
+                    _this.updateOpacity();
                 },
                 'change:entities:select': function () {
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:select");
                   _this.selectDataPoints();
                     _this.redrawSelectList();
-                    _this.updateBubbleOpacity();
+                    _this.updateOpacity();
                 },
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
@@ -97,11 +97,16 @@
                     
                     _this.markersUpdatedRecently = true;
                 },
+                'change:marker:group:merge': function (evt) {
+                    if (!_this._readyOnce) return;
+                    _this.markersUpdatedRecently = true;
+                    _this.ready();
+                },
                 'change:entities:opacitySelectDim': function () {
-                  _this.updateBubbleOpacity();
+                  _this.updateOpacity();
                 },
                 'change:entities:opacityRegular': function () {
-                  _this.updateBubbleOpacity();
+                  _this.updateOpacity();
                 }
             }
 
@@ -147,6 +152,7 @@
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
+            this.mountainMergedContainer = this.graph.select('.vzb-mc-mountains-merged');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.mountains = null;
@@ -156,6 +162,7 @@
             this.on("resize", function () {
                 //console.log("acting on resize");
                 _this.updateSize();
+                _this.updateTime(); // respawn is needed
                 _this.redrawDataPoints();
                 _this.redrawSelectList();
             });
@@ -173,7 +180,7 @@
             this.highlightDataPoints();
             this.selectDataPoints();
             this.redrawSelectList();
-            this.updateBubbleOpacity();
+            this.updateOpacity();
             
             this.mountainContainer.select(".vzb-mc-prerender").remove();
         },
@@ -193,7 +200,7 @@
                 _this.highlightDataPoints();
                 _this.selectDataPoints();
                 _this.redrawSelectList();
-                _this.updateBubbleOpacity();              
+                _this.updateOpacity();              
             }
         },
         
@@ -257,9 +264,10 @@
                         : 
                         _this.model.marker.group.getValue(d)
                     })
+                .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
                 .entries(this.model.entities._visible);
             
-            this.groupedPointers .forEach(function (group) {
+            this.groupedPointers.forEach(function (group) {
                     var groupSortValue = d3.sum(group.values.map(function (m) {
                         return m.sortValue[0];
                     }));
@@ -290,6 +298,35 @@
                       
             //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
             //console.log(this.stackedPointers)
+
+            //bind the data to DOM elements
+            this.mountainsMerged = this.mountainMergedContainer.selectAll('.vzb-mc-mountain-merged')
+                .data(this.groupedPointers);
+
+            //exit selection
+            this.mountainsMerged.exit().remove();
+
+            //enter selection -- init circles
+            this.mountainsMerged.enter().append("path")
+                .attr("class", "vzb-mc-mountain-merged")
+                .on("mousemove", function (d, i) {
+                
+                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
+                        .html(_this.translator("region/" + d.key));
+
+                })
+                .on("mouseout", function (d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function (d, i) {
+                });
+            
+            
+            
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -312,7 +349,7 @@
 
                     //position tooltip
                     _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
                         .html(_this.model.marker.label.getValue(d));
 
                 })
@@ -416,7 +453,7 @@
             }) 
         },
 
-        updateBubbleOpacity: function () {
+        updateOpacity: function () {
           var _this = this;
           //if(!duration)duration = 0;
 
@@ -444,6 +481,9 @@
 
               return OPACITY_REGULAR;
             });
+            
+            this.mountainsMerged
+                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
 
 
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
@@ -647,6 +687,7 @@
          */
         redrawDataPoints: function () {
             var _this = this;
+            var merge = _this.model.marker.group.merge;
 
             //update selection
             //var speed = this.model.time.speed;
@@ -661,16 +702,43 @@
 //                    
 //                })
             
+            
+                this.mountainsMerged
+                    .each(function (d) {
+                        var view = d3.select(this);
+                    
+                        view.classed("vzb-hidden", !merge);
+                        if(!merge) return;
+                    
+                        var visible = d.values.filter(function(f){return !f.hidden})
+                        //console.log(d, visible.map(function(m){return m.geo}))
+                    
+                        var first = visible[0].KEY();
+                        var last = visible[visible.length-1].KEY();
+                        //console.log(first, _this.cached[first].length, last, _this.cached[last].length)
+                    
+                        var array = _this.mesh.map(function(m, i){
+                            return { x: m, y0: _this.cached[last][i].y0, y: _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0 }
+                        })
+                        
+                        view //.transition().duration(speed).ease("linear")
+                                .style("fill", _this.cScale(_this.values.color[first]))
+                                .attr("d", _this.area(array))
 
-            this.mountains.each(function (d, i) {
-                var view = d3.select(this);
-                view.classed("vzb-hidden", d.hidden);
-                if (!d.hidden) {
+                    })
+                                
+                                
+
+                this.mountains.each(function (d, i) {
+                    var view = d3.select(this);
+                    var hidden = d.hidden || (merge && !_this.model.entities.isSelected(d));
+                    view.classed("vzb-hidden", hidden);
+                    if (hidden) return;
                     view //.transition().duration(speed).ease("linear")
                         .style("fill", _this.cScale(_this.values.color[d.KEY()]))
                         .attr("d", _this.area(_this.cached[d.KEY()]))
-                }
-            })
+                    
+                })
         },
         
         domReady: function(){

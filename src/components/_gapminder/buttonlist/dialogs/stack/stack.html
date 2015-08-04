@@ -7,11 +7,15 @@
   <div class="vzb-dialog-content">
     <p><%=t ( "hints/mount/howtostack") %></p>
         <br/>
-    <form>
-        <input type="radio" name="stack" value="geo.region"><%=t ( "mount/stacking/region") %>
-        <input type="radio" name="stack" value="all"><%=t ( "mount/stacking/world") %>
-        <input type="radio" name="stack" value="none"><%=t ( "mount/stacking/none") %>
-    </form> 
+        <form id="vzb-howtostack">
+            <input type="radio" name="stack" value="geo.region"><%=t ( "mount/stacking/region") %>
+            <input type="radio" name="stack" value="all"><%=t ( "mount/stacking/world") %>
+            <input type="radio" name="stack" value="none"><%=t ( "mount/stacking/none") %>
+        </form>
+    <br/><br/>
+        <form id="vzb-merge">
+            <input type="checkbox" name="merge"><%=t ( "mount/merging") %>
+        </form>
   </div>
 
   <div class="vzb-dialog-buttons">
