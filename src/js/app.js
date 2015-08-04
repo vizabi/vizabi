@@ -11,3 +11,10 @@ function forceResizeEvt() {
     event.eventName = "resize";
     window.dispatchEvent(event);
 }
+
+function dataToUrl(data) {
+    var state = {};
+    state.id =  data.language.id;
+    state.state = data.state;
+    location.hash = JSON.stringify(state);
+}
