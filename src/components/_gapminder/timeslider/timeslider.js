@@ -274,7 +274,7 @@
         //set brushed properties
         if (d3.event.sourceEvent) {
           _this._dragging = true;
-          var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+          var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), _this.width / (_this.model.time.end.getYear() - _this.model.time.start.getYear())) + 1;
           value = _this.xScale.invert(posX);
 
           //set handle position
@@ -317,6 +317,8 @@
 
       var old_pos = this.handle.attr("cx");
       var new_pos = this.xScale(value);
+        
+      if(old_pos==null) old_pos = new_pos;
       var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
 
