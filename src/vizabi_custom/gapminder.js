@@ -615,7 +615,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "/local_data/csv/{{geo}}.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
         },
         language: language,
         ui: {
