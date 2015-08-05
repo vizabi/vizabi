@@ -76,6 +76,7 @@
                   _this.selectDataPoints();
                     _this.redrawSelectList();
                     _this.updateOpacity();
+                    _this.redrawDataPoints();
                 },
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
@@ -98,6 +99,11 @@
                     _this.markersUpdatedRecently = true;
                 },
                 'change:marker:group:merge': function (evt) {
+                    if (!_this._readyOnce) return;
+                    _this.markersUpdatedRecently = true;
+                    _this.ready();
+                },
+                'change:marker:stack:merge': function (evt) {
                     if (!_this._readyOnce) return;
                     _this.markersUpdatedRecently = true;
                     _this.ready();
@@ -152,7 +158,8 @@
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
-            this.mountainMergedContainer = this.graph.select('.vzb-mc-mountains-merged');
+            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
+            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.mountains = null;
@@ -299,16 +306,42 @@
             //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
             //console.log(this.stackedPointers)
 
+            
+            this.mountainsMergeStacked = this.mountainMergeStackedContainer.selectAll('.vzb-mc-mountain')
+                .data(this.stackedPointers);
+            //exit selection
+            this.mountainsMergeStacked.exit().remove();
+            
+            //enter selection -- init
+            this.mountainsMergeStacked.enter().append("path")
+                .attr("class", "vzb-mc-mountain")
+                .on("mousemove", function (d, i) {
+                
+                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
+                        .html(_this.translator("region/" + d.key));
+
+                })
+                .on("mouseout", function (d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function (d, i) {
+                });
+            
+            
             //bind the data to DOM elements
-            this.mountainsMerged = this.mountainMergedContainer.selectAll('.vzb-mc-mountain-merged')
+            this.mountainsMergeGrouped = this.mountainMergeGroupedContainer.selectAll('.vzb-mc-mountain')
                 .data(this.groupedPointers);
 
             //exit selection
-            this.mountainsMerged.exit().remove();
+            this.mountainsMergeGrouped.exit().remove();
 
-            //enter selection -- init circles
-            this.mountainsMerged.enter().append("path")
-                .attr("class", "vzb-mc-mountain-merged")
+            //enter selection -- init
+            this.mountainsMergeGrouped.enter().append("path")
+                .attr("class", "vzb-mc-mountain")
                 .on("mousemove", function (d, i) {
                 
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
@@ -482,7 +515,10 @@
               return OPACITY_REGULAR;
             });
             
-            this.mountainsMerged
+            this.mountainsMergeGrouped
+                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
+            
+            this.mountainsMergeStacked
                 .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
 
 
@@ -687,7 +723,8 @@
          */
         redrawDataPoints: function () {
             var _this = this;
-            var merge = _this.model.marker.group.merge;
+            var mergeGrouped = _this.model.marker.group.merge;
+            var mergeStacked = _this.model.marker.stack.merge;
 
             //update selection
             //var speed = this.model.time.speed;
@@ -703,14 +740,39 @@
 //                })
             
             
-                this.mountainsMerged
+                this.mountainsMergeStacked
                     .each(function (d) {
                         var view = d3.select(this);
                     
-                        view.classed("vzb-hidden", !merge);
-                        if(!merge) return;
+                        view.classed("vzb-hidden", !mergeStacked);
+                        if(!mergeStacked) return;
                     
-                        var visible = d.values.filter(function(f){return !f.hidden})
+                        if(d.key == "all"){
+                            var visible = d.values[0].values.filter(function(f){return !f.hidden});
+                            var first = visible[0].KEY();
+                            
+                            var array = _this.mesh.map(function(m, i){
+                                return { x: m, y0: 0, y: _this.cached[first][i].y0 + _this.cached[first][i].y }
+                            })
+                            
+                            view //.transition().duration(speed).ease("linear")
+                                .style("fill", "grey")
+                                .attr("d", _this.area(array))
+                        }else{
+                        
+                            //TODO here should come the processing for regional stacking, but we haven't yet needed this case
+                        }
+
+                    })
+            
+                this.mountainsMergeGrouped
+                    .each(function (d) {
+                        var view = d3.select(this);
+                    
+                        view.classed("vzb-hidden", !mergeGrouped || mergeStacked);
+                        if(!mergeGrouped || mergeStacked) return;
+                    
+                        var visible = d.values.filter(function(f){return !f.hidden});
                         //console.log(d, visible.map(function(m){return m.geo}))
                     
                         var first = visible[0].KEY();
@@ -731,7 +793,7 @@
 
                 this.mountains.each(function (d, i) {
                     var view = d3.select(this);
-                    var hidden = d.hidden || (merge && !_this.model.entities.isSelected(d));
+                    var hidden = d.hidden || ((mergeGrouped || mergeStacked) && !_this.model.entities.isSelected(d));
                     view.classed("vzb-hidden", hidden);
                     if (hidden) return;
                     view //.transition().duration(speed).ease("linear")

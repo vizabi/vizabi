@@ -50,7 +50,8 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "World",
                 "mount/stacking/none": "None",
-                "mount/merging": "Merge grouped",
+                "mount/mergegrouped": "Merge grouped",
+                "mount/mergestacked": "Merge stacked too",
                 "popbyage/yearOldsIn": "-year-olds in",
                 "indicator/lex": "Life expectancy",
                 "indicator/gdp_per_cap": "GDP per capita",
@@ -74,7 +75,8 @@
                 "region/ame": "America",
                 "region/asi": "Asia",
                 "region/afr": "Africa",
-                "region/eur": "Europe"
+                "region/eur": "Europe",
+                "region/all": "World"
             },
             se: {
                 "buttons/expand": "Gå stor",
@@ -107,7 +109,8 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "Värld",
                 "mount/stacking/none": "Ingen",
-                "mount/merging": "Packa ihop de gruppade",
+                "mount/mergegrouped": "Slå ihop de gruppade",
+                "mount/mergestacked": "Slå ihop de stackade också",
                 "popbyage/yearOldsIn": "-åringar i",
                 "indicator/lex": "Livslängd",
                 "indicator/gdp_per_cap": "PIB pro capita",
@@ -131,7 +134,8 @@
                 "region/ame": "Amerika",
                 "region/asi": "Asien",
                 "region/afr": "Afrika",
-                "region/eur": "Europa"
+                "region/eur": "Europa",
+                "region/all": "Värld"
             }
         }
     };
