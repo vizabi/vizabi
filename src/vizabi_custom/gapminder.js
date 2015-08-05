@@ -60,6 +60,7 @@
                 "indicator/geo": "Geo code",
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
+                "indicator/geo.name": "Geo name",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
@@ -119,6 +120,7 @@
                 "indicator/geo": "Geokod",
                 "indicator/time": "Tid",
                 "indicator/geo.category": "Geo kategori",
+                "indicator/geo.name": "Geo namn",
                 "unit/gdp_per_cap": "$/år/person",
                 "unit/": "",
                 "unit/lex": "År",
@@ -266,8 +268,8 @@
             path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
-    
-    
+
+
     MountainChartComponent.define('precomputedShapes',
 
     {
@@ -403,7 +405,7 @@
     }
 
     );
-    
+
 
     LineChart.define('default_options', {
         state: {
