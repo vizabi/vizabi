@@ -400,7 +400,7 @@
       //apply scales to axes and redraw
       this.yAxis.scale(this.yScale)
         .orient("left")
-        .tickSize(6, 0)
+        .tickSize(6, 6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_y.scaleType,
