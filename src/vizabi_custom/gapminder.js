@@ -50,6 +50,7 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "World",
                 "mount/stacking/none": "None",
+                "mount/merging": "Merge grouped",
                 "popbyage/yearOldsIn": "-year-olds in",
                 "indicator/lex": "Life expectancy",
                 "indicator/gdp_per_cap": "GDP per capita",
@@ -69,7 +70,11 @@
                 "scaletype/time": "Time",
                 "scaletype/ordinal": "Ordinal",
                 "color/_default": "Other",
-                "check/adaptMinMaxZoom": "Follow bubbles with zoom"
+                "check/adaptMinMaxZoom": "Follow bubbles with zoom",
+                "region/ame": "America",
+                "region/asi": "Asia",
+                "region/afr": "Africa",
+                "region/eur": "Europe"
             },
             se: {
                 "buttons/expand": "Gå stor",
@@ -102,6 +107,7 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "Värld",
                 "mount/stacking/none": "Ingen",
+                "mount/merging": "Packa ihop de gruppade",
                 "popbyage/yearOldsIn": "-åringar i",
                 "indicator/lex": "Livslängd",
                 "indicator/gdp_per_cap": "PIB pro capita",
@@ -121,7 +127,11 @@
                 "scaletype/time": "Tid",
                 "scaletype/ordinal": "Ordning",
                 "color/_default": "Annat",
-                "check/adaptMinMaxZoom": "Följ bubblar med zoom"
+                "check/adaptMinMaxZoom": "Följ bubblar med zoom",
+                "region/ame": "Amerika",
+                "region/asi": "Asien",
+                "region/afr": "Afrika",
+                "region/eur": "Europa"
             }
         }
     };
@@ -247,9 +257,9 @@
         },
         language: language,
         data: {
-            reader: "waffle-server"
-            //reader: "csv-file",
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //reader: "waffle-server"
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
     
@@ -605,7 +615,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "/local_data/csv/{{geo}}.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
         },
         language: language,
         ui: {

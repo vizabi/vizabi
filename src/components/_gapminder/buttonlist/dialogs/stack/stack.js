@@ -36,9 +36,14 @@
             var _this = this;
             this.element = d3.select(this.element);
             
-            this.radio = this.element.selectAll('input')
+            this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
                 .on("change", function(){
-                    _this.setModel(d3.select(this).node().value);
+                    _this.setModel("stack", d3.select(this).node().value);
+                })
+            
+            this.mergeEl = this.element.select('#vzb-merge').selectAll("input")
+                .on("change", function(){
+                    _this.setModel("merge", d3.select(this).property("checked"));
                 })
             
             this.updateView();
@@ -48,23 +53,32 @@
         updateView: function(){
             var _this = this;
             
-            this.radio.property('checked', function(){
+            this.howToStackEl.property('checked', function(){
                 return d3.select(this).node().value === _this.model.state.marker.stack.which;
             })  
+            
+            this.mergeEl.property('checked', this.model.state.marker.group.merge);
         },
         
-        setModel: function(value) {
-            var mdl = this.model.state.marker.stack;
-
-            var obj = {};
-            obj.which = value;
-            if(utils.values(mdl.getPalettes()).indexOf(value) == -1){
-                obj.use = "property";
+        setModel: function(what, value) {
+            
+            if(what == "merge"){
+                this.model.state.marker.group.merge = value;
+                
             }else{
-                obj.use = "value";
-            }
+                
+                var mdl = this.model.state.marker.stack;
 
-            mdl.set(obj);
+                var obj = {};
+                obj.which = value;
+                if(utils.values(mdl.getPalettes()).indexOf(value) == -1){
+                    obj.use = "property";
+                }else{
+                    obj.use = "value";
+                }
+
+                mdl.set(obj);
+            }
         }
     }));
 
