@@ -91,6 +91,7 @@
       this.graph = this.element.select('.vzb-lc-graph');
       this.yAxisEl = this.graph.select('.vzb-lc-axis-y');
       this.xAxisEl = this.graph.select('.vzb-lc-axis-x');
+      this.xTitleEl = this.graph.select('.vzb-lc-axis-x-title');
       this.yTitleEl = this.graph.select('.vzb-lc-axis-y-title');
       this.xValueEl = this.graph.select('.vzb-lc-axis-x-value');
       this.yValueEl = this.graph.select('.vzb-lc-axis-y-value');
@@ -125,11 +126,19 @@
       this.updateSize();
       this.redrawDataPoints();
     },
-      
-    updateUIStrings: function(){
+
+    updateUIStrings: function() {
       this.translator = this.model.language.getTFunction();
 
-      var titleString = this.translator("indicator/" + this.model.marker.axis_y.which);
+      var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
+      var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+
+      var xTitle = this.xTitleEl.selectAll("text").data([0]);
+      xTitle.enter().append("text");
+      xTitle
+        .attr("text-anchor", "end")
+        .attr("y", "-0.32em")
+        .text(titleStringX);
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
@@ -138,7 +147,7 @@
         .attr("x", "-9px")
         .attr("dy", "-0.36em")
         .attr("dx", "-0.72em")
-        .text(titleString);
+        .text(titleStringY);
     },
 
     /*
@@ -328,6 +337,7 @@
       this.xValueEl.attr("transform", "translate(0," + this.height + ")")
         .attr("y", this.xAxis.tickPadding() + this.xAxis.tickSize());
 
+      this.xTitleEl.attr("transform", "translate(" + this.width + "," + this.height + ")");
 
       // adjust the vertical dashed line
       this.verticalNow.attr("y1", this.yScale.range()[0]).attr("y2", this.yScale.range()[1])
