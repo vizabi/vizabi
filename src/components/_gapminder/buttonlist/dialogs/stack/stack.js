@@ -27,6 +27,10 @@
                 'change:state:marker:stack': function () {
                     //console.log("stack change event");
                     _this.updateView();
+                },
+                'change:state:marker:group': function () {
+                    //console.log("group change event");
+                    _this.updateView();
                 }
             }
             this._super(config, parent);
@@ -41,9 +45,13 @@
                     _this.setModel("stack", d3.select(this).node().value);
                 })
             
-            this.mergeEl = this.element.select('#vzb-merge').selectAll("input")
+            this.mergeGroupedEl = this.element.select('#vzb-merge-grouped').selectAll("input")
                 .on("change", function(){
-                    _this.setModel("merge", d3.select(this).property("checked"));
+                    _this.setModel("merge grouped", d3.select(this).property("checked"));
+                })
+            this.mergeStackedEl = this.element.select('#vzb-merge-stacked').selectAll("input")
+                .on("change", function(){
+                    _this.setModel("merge stacked", d3.select(this).property("checked"));
                 })
             
             this.updateView();
@@ -57,13 +65,16 @@
                 return d3.select(this).node().value === _this.model.state.marker.stack.which;
             })  
             
-            this.mergeEl.property('checked', this.model.state.marker.group.merge);
+            this.mergeGroupedEl.property('checked', this.model.state.marker.group.merge);
+            this.mergeStackedEl.property('checked', this.model.state.marker.stack.merge);
         },
         
         setModel: function(what, value) {
             
-            if(what == "merge"){
+            if(what == "merge grouped"){
                 this.model.state.marker.group.merge = value;
+            }else if (what == "merge stacked"){
+                this.model.state.marker.stack.merge = value;
                 
             }else{
                 

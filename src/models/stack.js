@@ -31,7 +31,8 @@
             this._type = "model";
             values = utils.extend({
                 use: "value",
-                which: undefined
+                which: undefined,
+                merge: false
             }, values);
             this._super(values, parent, bind);
         },
