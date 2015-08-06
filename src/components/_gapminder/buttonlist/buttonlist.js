@@ -359,6 +359,7 @@
         this._active_comp.close();
       }
       this._active_comp = false;
+      this.model.state.entities.setNeedUpdate();
     },
 
     toggleBubbleTrails: function () {

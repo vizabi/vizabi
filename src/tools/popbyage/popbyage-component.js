@@ -48,6 +48,9 @@
         "change:time:value": function (evt) {
           _this._updateEntities();
         },
+      "change:entities:needUpdate": function (evt) {
+        _this._updateEntities();
+        },
         "change:entities:show": function (evt) {
           console.log('Trying to change show');
         },

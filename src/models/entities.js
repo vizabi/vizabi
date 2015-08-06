@@ -25,7 +25,8 @@
         select: [],
         brush: [],
         opacitySelectDim: 0.3,
-        opacityRegular: 0.8
+        opacityRegular: 0.8,
+        needUpdate: {}
       }, values);
 
       this._visible = [];
@@ -217,6 +218,9 @@
      */
     clearHighlighted: function () {
       this.brush = [];
+    },
+    setNeedUpdate: function(){
+      this.needUpdate = new Date();
     }
   });
 
