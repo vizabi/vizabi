@@ -152,14 +152,15 @@
 
 
       this.parent.on('myEvent', function (evt, arg) {
+        var layoutProfile = _this.getLayoutProfile();
 
+        if (arg.profile && arg.profile.margin) {
+          profiles[layoutProfile].margin = arg.profile.margin;
+        }
 
         // set the right margin that depends on longest label width
         _this.element.select(".vzb-ts-slider-wrapper")
-          .style("right", arg.mRight + "px");
-
-        profiles[_this.getLayoutProfile()].margin =
-        {bottom: 0, left: 0, right: 0, top: 0};
+          .style("right", (arg.mRight - profiles[layoutProfile].margin.right) + "px");
 
         _this.xScale.range([0, arg.rangeMax]);
         _this.resize();
@@ -317,7 +318,7 @@
 
       var old_pos = this.handle.attr("cx");
       var new_pos = this.xScale(value);
-        
+
       if(old_pos==null) old_pos = new_pos;
       var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
