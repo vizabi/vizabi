@@ -110,7 +110,7 @@
       this._updateEntities();
     },
 
-      
+
     updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
 
@@ -124,7 +124,7 @@
         .attr("dx", "-0.72em")
         .text(titleStringY);
     },
-      
+
     /**
      * Changes labels for indicators
      */
@@ -285,7 +285,7 @@
       //update x axis again
       //TODO: remove this when grouping is done at data level
       var x_domain = this.xScale.domain();
-      var x_domain_max = d3.max(utils.values(values.axis_x));
+      var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
       this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
       this.resize();
 
