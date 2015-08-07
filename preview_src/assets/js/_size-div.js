@@ -35,7 +35,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
 
-    // Touch events 
+    // Touch events
     pane.addEventListener('touchstart', onTouchDown);
     document.addEventListener('touchmove', onTouchMove);
     document.addEventListener('touchend', onTouchEnd);
@@ -154,9 +154,9 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
 function setDivSize(div, width, height) {
     div.style.width = width + 'px';
     div.style.height = height + 'px';
+    normalizeDivSize(div, container);
     removeClass(div, "fullscreen");
     forceResizeEvt();
-    updateSizePanel(div, width, height);
 }
 
 function setDivRandomSize(div, container) {
@@ -188,6 +188,7 @@ function normalizeDivSize(div, container) {
          //console.warn("Size outside range. Setting size to:", width, height);
         setDivSize(div, width, height);
     }
+    updateSizePanel(div, width, height);
 }
 
 var forcedResize = false;
@@ -231,12 +232,10 @@ function setFullscreen() {
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
     setDivSize(placeholder, 320, 568);
-    normalizeDivSize(placeholder, container);
     updateURL();
 };
 document.getElementById('vzbp-btn-landscape').onclick = function() {
     setDivSize(placeholder, 568, 320);
-    normalizeDivSize(placeholder, container);
     updateURL();
 };
 document.getElementById('vzbp-btn-desktop').onclick = setFullscreen;
@@ -253,7 +252,6 @@ function changeSizes() {
     var width = parseInt(inputWidth.value, 10);
     var height = parseInt(inputHeight.value, 10);
     setDivSize(placeholder, width, height);
-    normalizeDivSize(placeholder, container);
     updateURL();
 }
 
