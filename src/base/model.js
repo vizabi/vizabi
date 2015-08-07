@@ -850,7 +850,6 @@
      * @returns {Array} domain
      */
     getScale: function (margins) {
-      if(margins !== false) margins = true;
       if (!this.scale) {
         this.buildScale(margins);
       }
