@@ -121,7 +121,9 @@
             this._super(config, context);
 
             var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
+            var MountainChartExport = Vizabi.Helper.get("gapminder-mountainchart-export");
             this._math = new MountainChartMath(this);
+            this._export = new MountainChartExport(this);
 
             this.xScale = null;
             this.yScale = null;
@@ -666,6 +668,8 @@
                 .attr("transform", "translate(0," + height + ")")
                 .select("text")
                 .attr("dy", "-0.36em")
+            
+            if(this.model.time.record) this._export.open(this.element, width + margin.left + margin.right, height + margin.top + margin.bottom);
 
         },
 
@@ -725,6 +729,9 @@
             var _this = this;
             var mergeGrouped = _this.model.marker.group.merge;
             var mergeStacked = _this.model.marker.stack.merge;
+            
+            var record = this.model.time.record;
+            var year = this.model.time.value.getFullYear();
 
             //update selection
             //var speed = this.model.time.speed;
@@ -758,6 +765,8 @@
                             view //.transition().duration(speed).ease("linear")
                                 .style("fill", "grey")
                                 .attr("d", _this.area(array))
+                            
+                            if(record) _this._export.write({type: "path", id: d.key, time: year, fill: "grey", d: _this.area(array)});
                         }else{
                         
                             //TODO here should come the processing for regional stacking, but we haven't yet needed this case
@@ -784,8 +793,10 @@
                         })
                         
                         view //.transition().duration(speed).ease("linear")
-                                .style("fill", _this.cScale(_this.values.color[first]))
-                                .attr("d", _this.area(array))
+                            .style("fill", _this.cScale(_this.values.color[first]))
+                            .attr("d", _this.area(array))
+                        
+                        if(record) _this._export.write({type: "path", id: d.key, time: year, fill: _this.cScale(_this.values.color[first]), d: _this.area(array)});
 
                     })
                                 
@@ -800,8 +811,12 @@
                         .style("fill", _this.cScale(_this.values.color[d.KEY()]))
                         .attr("d", _this.area(_this.cached[d.KEY()]))
                     
+                    if(record) _this._export.write({type: "path", id: d.KEY(), time: year, fill: _this.cScale(_this.values.color[d.KEY()]), d: _this.area(_this.cached[d.KEY()])});
+
                 })
         },
+        
+        
         
         domReady: function(){
             var _this = this;
