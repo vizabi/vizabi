@@ -125,7 +125,7 @@
       this.updateSize();
       this.redrawDataPoints();
     },
-      
+
     updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
 
@@ -248,6 +248,18 @@
         }
       };
 
+      var timeSliderProfiles = {
+        small: {
+          margin: {top: 9, right: 15, bottom: 10, left: 5}
+        },
+        medium: {
+          margin: {top: 9, right: 15, bottom: 10, left: 5}
+        },
+        large: {
+          margin: {top: 9, right: 15, bottom: 10, left: 10}
+        }
+      };
+
       this.activeProfile = this.profiles[this.getLayoutProfile()];
       this.margin = this.activeProfile.margin;
       this.tick_spacing = this.activeProfile.tick_spacing;
@@ -336,7 +348,12 @@
       this.projectionY.attr("x2", _this.xScale.range()[0]);
 
 
-      this.parent.trigger('myEvent', {rangeMax: this.xScale.range()[1], mRight: this.margin.right});
+      var opts = {
+        rangeMax: this.xScale.range()[1],
+        mRight: this.margin.right,
+        profile: timeSliderProfiles[this.getLayoutProfile()]
+      };
+      this.parent.trigger('myEvent', opts);
 
       this.sizeUpdatedOnce = true;
     },
