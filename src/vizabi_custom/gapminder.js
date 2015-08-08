@@ -92,7 +92,7 @@
                 "buttons/axes-mc": "X och Y",
                 "buttons/axis_x": "X axel",
                 "buttons/axis_y": "Y axel",
-                "buttons/stack": "Stack",
+                "buttons/stack": "Stapel",
                 "buttons/more_options": "Mer...",
                 "buttons/opacityNonselect": "Synlighet av ej valda",
                 "buttons/opacityRegular": "Vanlig synlighet",
