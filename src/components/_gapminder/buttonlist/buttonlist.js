@@ -197,7 +197,7 @@
          d3.event.stopPropagation();
        });
 
-      document.getElementById('vzbp-main').addEventListener('click', function(){
+      this.root.element.addEventListener('click', function(){
         _this.closeAllDialogs();
       });
 
