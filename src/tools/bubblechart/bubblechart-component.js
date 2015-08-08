@@ -43,6 +43,14 @@
       }];
 
       this.model_binds = {
+        "change:time:record": function () {
+            //console.log("change time record");
+            if(_this.model.time.record) {
+                _this._export.open(this.element, this.name);
+            }else{
+                _this._export.reset();
+            }
+        },
         "change:time:trails": function (evt) {
           //console.log("EVENT change:time:trails");
           _this._trails.toggle(_this.model.time.trails);
@@ -153,6 +161,13 @@
 
       var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
       this._trails = new Trail(this);
+    
+      var Exporter = Vizabi.Helper.get("gapminder-svgexport");
+      this._export = new Exporter(this);
+      this._export
+            .prefix("vzb-bc-")
+            .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect", "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"]); 
+
 
 
       //            this.collisionResolver = d3.svg.collisionResolver()
@@ -946,6 +961,16 @@
               .attr("cx", _this.xScale(valueX))
               .attr("r", scaledS);
         }
+          
+        if(this.model.time.record) _this._export.write({
+            type: "circle", 
+            id: d[KEY], 
+            time: this.model.time.value.getFullYear(), 
+            fill: _this.cScale(valueC), 
+            cx: _this.xScale(valueX), 
+            cy: _this.yScale(valueY), 
+            r: scaledS
+        });
 
         _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
 

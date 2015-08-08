@@ -132,6 +132,9 @@
             var Exporter = Vizabi.Helper.get("gapminder-svgexport");
             this._math = new MountainChartMath(this);
             this._export = new Exporter(this);
+            this._export
+                .prefix("vzb-mc-")
+                .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
 
             this.xScale = null;
             this.yScale = null;
@@ -285,10 +288,15 @@
                 .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
                 .entries(this.model.entities._visible);
             
+            
+            var groupManualSort = this.model.marker.group.manualSorting;
             this.groupedPointers.forEach(function (group) {
                     var groupSortValue = d3.sum(group.values.map(function (m) {
                         return m.sortValue[0];
                     }));
+                
+                    if(groupManualSort && groupManualSort.length>1) groupSortValue = groupManualSort.indexOf(group.key);
+                        
                     group.values.forEach(function (d) {
                         d.sortValue[1] = groupSortValue;
                     })

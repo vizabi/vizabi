@@ -2,6 +2,8 @@
 
     var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
+    var prefix = "";
+    var deleteClasses = [];
     
     var SVGHEADER = '<?xml version="1.0" encoding="utf-8"?>';
 
@@ -11,7 +13,6 @@
             this.context = context;
             this.shapes = [];
             this.groups = [];
-            this.usefulElements = ["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"];
             this.counter = 0;
             this.name = "";
             this.label = "";
@@ -23,6 +24,17 @@
             this.context.element.selectAll(".vzb-export-counter").remove();
             this.counter = 0;
         },
+        
+        prefix: function(arg){
+            if (!arguments.length) return prefix;
+            prefix = arg;
+            return this;
+        },
+        deleteClasses: function(arg){
+            if (!arguments.length) return deleteClasses;
+            deleteClasses = arg;
+            return this;
+        }, 
         
         open: function(element, name){
             var _this = this;
@@ -88,13 +100,13 @@
             
 
             
-            this.root = this.svg.select(".vzb-mc-graph");
+            this.root = this.svg.select("."+prefix+"graph");
 
-            this.root.selectAll("g, text")
+            this.root.selectAll("g, text, svg, line, rect")
                 .filter(function(){
                     var view = d3.select(this);
                     var result = false;
-                    _this.usefulElements.forEach(function(one){ result = result || view.classed(one); })
+                    deleteClasses.forEach(function(one){ result = result || view.classed(one); })
                     return result;
                 })
                 .remove();
@@ -102,8 +114,10 @@
             this.svg.selectAll(".tick line")
                 .attr("fill", "none")
                 .attr("stroke", "#999");
-            
-            this.svg.selectAll(".vzb-mc-axis-x path")
+            this.svg.selectAll("."+prefix+"axis-x path")
+                .attr("fill", "none")
+                .attr("stroke", "#999");
+            this.svg.selectAll("."+prefix+"axis-y path")
                 .attr("fill", "none")
                 .attr("stroke", "#999");
         },

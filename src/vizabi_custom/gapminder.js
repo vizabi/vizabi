@@ -255,7 +255,8 @@
                     which: "all" // set a property of data or values "all" or "none"
                 },
                 group: {
-                    which: "geo.region" // set a property of data
+                    which: "geo.region", // set a property of data
+                    manualSorting: ["eur", "ame", "afr", "asi"]
                 }
             }
         },
