@@ -11,6 +11,7 @@
   @include position(absolute, 0px);
   @include user-select(none);
   text-align: left;
+  overflow: hidden;
   .vzb-tool-title {
     @include position(absolute, 0px 0px null 0px);
     @include font-size(18px);
