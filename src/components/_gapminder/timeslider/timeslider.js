@@ -277,6 +277,13 @@
           var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), _this.width / (_this.model.time.end.getYear() - _this.model.time.start.getYear())) + 1;
           value = _this.xScale.invert(posX);
 
+          var textWidth = _this.valueText.node().getBoundingClientRect().width;
+          var sliderWidth = _this.slider.node().getBoundingClientRect().width - textWidth / 2;
+          if (posX > sliderWidth)
+            posX = sliderWidth;
+          else if (posX < 0)
+            posX = 0;
+
           //set handle position
           _this.handle.attr("cx", posX);
           _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");

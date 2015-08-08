@@ -52,22 +52,26 @@
         'find': {
           title: "buttons/find",
           icon: "search",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'moreoptions': {
           title: "buttons/more_options",
           icon: "gear",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'colors': {
           title: "buttons/colors",
           icon: "paint-brush",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'size': {
           title: "buttons/size",
           icon: "circle",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'fullscreen': {
           title: "buttons/expand",
@@ -90,17 +94,20 @@
         'axes': {
           title: "buttons/axes",
           icon: "axes",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'axes-mc': {
           title: "buttons/axes-mc",
           icon: "axes",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         'stack': {
           title: "buttons/stack",
           icon: "stack",
-          dialog: true
+          dialog: true,
+          ispin:false
         },
         '_default': {
           title: "Button",
@@ -153,6 +160,8 @@
 
       //activate each dialog when clicking the button
       buttons.on('click', function () {
+        d3.event.preventDefault();
+        d3.event.stopPropagation();
         var btn = d3.select(this),
           id = btn.attr("data-btn"),
           classes = btn.attr("class"),
@@ -176,6 +185,19 @@
 
       var close_buttons = this.element.selectAll("[data-click='closeDialog']");
       close_buttons.on('click', function () {
+        _this.closeAllDialogs();
+      });
+      var pinDialog = this.element.selectAll("[data-click='pinDialog']");
+      pinDialog.on('click', function () {
+        _this.pinDialog(this);
+      });
+
+       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
+         d3.event.preventDefault();
+         d3.event.stopPropagation();
+       });
+
+      this.root.element.addEventListener('click', function(){
         _this.closeAllDialogs();
       });
 
@@ -311,7 +333,8 @@
      */
     openDialog: function (id) {
 
-      this.closeAllDialogs();
+        this.closeAllDialogs(true);
+
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -323,6 +346,25 @@
       //call component function
       this._active_comp.open();
     },
+
+
+      pinDialog: function (button) {
+        var id = button.getAttribute('data-dialogtype');
+        var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
+        var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+        if(this._available_buttons[id].ispin){
+         // button.textContent = '';
+          btn.classed('pinned', false);
+          this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
+          this._available_buttons[id].ispin = false;
+        } else {
+        //  button.textContent = '';
+          btn.classed('pinned', true);
+          dialog.classed('pinned', true);
+          this._available_buttons[id].ispin = true;
+        }
+      },
+
 
     /*
      * Closes a button dialog
@@ -347,10 +389,12 @@
     /*
      * Close all dialogs
      */
-    closeAllDialogs: function () {
+    closeAllDialogs: function (forceclose) {
       //remove classes
-      var all_btns = this.element.selectAll(".vzb-buttonlist-btn"),
-        all_dialogs = this.element.selectAll(".vzb-buttonlist-dialog");
+      var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)"
+      var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
+      var all_btns = this.element.selectAll(btnClass),
+        all_dialogs = this.element.selectAll(dialogClass);
       all_btns.classed(class_active, false);
       all_dialogs.classed(class_active, false);
 

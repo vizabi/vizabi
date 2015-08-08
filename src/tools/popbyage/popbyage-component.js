@@ -85,7 +85,7 @@
       this.year = this.element.select('.vzb-bc-year');
 
       //only allow selecting one at a time
-      this.model.age.selectMultiple(false);
+      this.model.age.selectMultiple(true);
 
       var _this = this;
       this.on("resize", function () {
