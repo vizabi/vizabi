@@ -1,98 +1,96 @@
 .vzb-tool-mountainchart {
-    $vzb-mc-color-mountain:#999999;
-    $vzb-mc-color-stroke:#666666;
-    $vzb-mc-margin:10px;
-    $vzb-mc-margin-axis:60px;
-    $vzb-mc-color-axis:#999999;
-    $vzb-mc-year-size:300px;
+  $vzb-mc-color-mountain: #999999;
+  $vzb-mc-color-stroke: #666666;
+  $vzb-mc-margin: 10px;
+  $vzb-mc-margin-axis: 60px;
+  $vzb-mc-color-axis: #999999;
+  $vzb-mc-year-size: 300px;
 
-
-.vzb-mountainchart {
+  .vzb-mountainchart {
     @include position(absolute, 0px);
-    overflow: hidden;
-    
+
     .vzb-mountainchart-svg {
-        @include position(absolute, 0px);
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        overflow: hidden;
-        font-family: $vzb-font-family;
-        .vzb-mc-mountain {
-            stroke: white;
-            stroke-opacity: 0.5;
-            stroke-width: 1px;
-            cursor: pointer;
+      @include position(absolute, 0px);
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      font-family: $vzb-font-family;
+      .vzb-mc-mountain {
+        stroke: white;
+        stroke-opacity: 0.5;
+        stroke-width: 1px;
+        cursor: pointer;
+      }
+      .vzb-mc-title {
+        color: $vzb-color-primary;
+        fill: currentColor;
+      }
+      .vzb-mc-axis {
+        path, line {
+          fill: none;
+          stroke: $vzb-mc-color-axis;
+          shape-rendering: crispEdges;
         }
-        .vzb-mc-title {
-            color: $vzb-color-primary;
-            fill: currentColor;
+        text {
+          fill: $vzb-mc-color-axis;
+          @include font-size(40px);
         }
-        .vzb-mc-axis {
-            path, line {
-                fill: none;
-                stroke: $vzb-mc-color-axis;
-                shape-rendering: crispEdges;
-            }
-            text {
-                fill: $vzb-mc-color-axis;
-                @include font-size(40px);
-            }
-        }
-        .vzb-mc-axis-x-title text{
-            @include font-size(40px);
-        }
-        .vzb-mc-mountains-labels text, .vzb-mc-mountains-labels circle{
-            cursor: pointer;
-            fill: $vzb-mc-color-axis;
-            @include font-size(40px);
-        }
-        .vzb-mc-mountains-labels text.vzb-mc-label-shadow {
-            stroke: white;
-            stroke-width: 5;
-            stroke-opacity: 0.6;
-        }
-        .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
-            stroke: yellow;
-        }
-        .vzb-mc-axis-x,
-        .vzb-mc-axis-y {
-            @extend .vzb-mc-axis;
-        }
-        .vzb-mc-axis-y-title,
-        .vzb-mc-axis-x-title {
-            @extend .vzb-mc-title;
-        }
-        .vzb-mc-line {
-            fill: none;
-            stroke: $vzb-mc-color-axis;
-            stroke-width: 1px;
-        }
-        .vzb-mc-year {
-            @include opacity(0.1);
-            fill: $vzb-mc-color-mountain;
-            text-anchor: middle;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+      }
+      .vzb-mc-axis-x-title text {
+        @include font-size(40px);
+      }
+      .vzb-mc-mountains-labels text, .vzb-mc-mountains-labels circle {
+        cursor: pointer;
+        fill: $vzb-mc-color-axis;
+        @include font-size(40px);
+      }
+      .vzb-mc-mountains-labels text.vzb-mc-label-shadow {
+        stroke: white;
+        stroke-width: 5;
+        stroke-opacity: 0.6;
+      }
+      .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
+        stroke: yellow;
+      }
+      .vzb-mc-axis-x,
+      .vzb-mc-axis-y {
+        @extend .vzb-mc-axis;
+      }
+      .vzb-mc-axis-y-title,
+      .vzb-mc-axis-x-title {
+        @extend .vzb-mc-title;
+      }
+      .vzb-mc-line {
+        fill: none;
+        stroke: $vzb-mc-color-axis;
+        stroke-width: 1px;
+      }
+      .vzb-mc-year {
+        @include opacity(0.1);
+        fill: $vzb-mc-color-mountain;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
     }
-}
-    &.vzb-medium {
-        .vzb-mountainchart {
-            .vzb-mc-axis text, .vzb-mc-axis-x-title text, .vzb-mc-mountains-labels text{
-                @include font-size(30px);
-            }
-        }
+  }
+  &.vzb-medium {
+    .vzb-mountainchart {
+      .vzb-mc-axis text, .vzb-mc-axis-x-title text, .vzb-mc-mountains-labels text {
+        @include font-size(30px);
+      }
     }
-    &.vzb-small {
-        .vzb-mountainchart {
-            .vzb-mc-axis text, .vzb-mc-axis-x-title text, .vzb-mc-mountains-labels text{
-                @include font-size(20px);
-            }
-        }
+  }
+  &.vzb-small {
+    .vzb-mountainchart {
+      .vzb-mc-axis text, .vzb-mc-axis-x-title text, .vzb-mc-mountains-labels text {
+        @include font-size(20px);
+      }
     }
+  }
 }

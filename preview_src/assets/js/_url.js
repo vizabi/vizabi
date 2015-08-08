@@ -58,7 +58,7 @@ function parseURL() {
     var hash = window.location.hash;
 
     if (hash) {
-        options = URLON.parse(hash.replace("#", ""));
+        options = URLON.parse(URLON.stringify(hash.replace("#", "")));
 
         URL.state = options.state;
         URL.lang = options.lang;
