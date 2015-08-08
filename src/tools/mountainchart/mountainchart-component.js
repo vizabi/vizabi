@@ -61,6 +61,14 @@
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                 },
+                'change:time:record': function () {
+                    //console.log("change time record");
+                    if(_this.model.time.record) {
+                        _this._export.open(this.element, this.name);
+                    }else{
+                        _this._export.reset();
+                    }
+                },
                 'change:time:xLogStops': function () {
                     _this.updateSize();
                 },
@@ -121,9 +129,9 @@
             this._super(config, context);
 
             var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
-            var MountainChartExport = Vizabi.Helper.get("gapminder-mountainchart-export");
+            var Exporter = Vizabi.Helper.get("gapminder-svgexport");
             this._math = new MountainChartMath(this);
-            this._export = new MountainChartExport(this);
+            this._export = new Exporter(this);
 
             this.xScale = null;
             this.yScale = null;
@@ -192,6 +200,7 @@
             this.updateOpacity();
             
             this.mountainContainer.select(".vzb-mc-prerender").remove();
+            
         },
 
         ready: function(){
@@ -668,9 +677,6 @@
                 .attr("transform", "translate(0," + height + ")")
                 .select("text")
                 .attr("dy", "-0.36em")
-            
-            if(this.model.time.record) this._export.open(this.element, width + margin.left + margin.right, height + margin.top + margin.bottom);
-
         },
 
 
