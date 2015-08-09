@@ -760,7 +760,6 @@
             var record = this.model.time.record;
             var year = this.model.time.value.getFullYear();
             
-            console.log(this.mesh.length)
 
             //update selection
             //var speed = this.model.time.speed;
