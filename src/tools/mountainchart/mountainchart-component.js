@@ -576,9 +576,9 @@
             
             //regenerate distributions
             this.model.entities._visible.forEach(function (d, i) {
-                var points = _this._spawn(_this.values, d)
-                _this.cached[d.KEY()] = points;
-                d.hidden = points.length==0 || d3.sum(points.map(function(m){return m.y}))==0;
+                var vertices = _this._spawn(_this.values, d)
+                _this.cached[d.KEY()] = vertices;
+                d.hidden = vertices.length==0 || d3.sum(vertices.map(function(m){return m.y}))==0;
             });
 
             
@@ -630,6 +630,11 @@
                 tick_spacing = 100;
                 break;
             };
+            
+            var RESOLUTION_PPP = 1/5; // 1 point per 5 pixels
+            var MIN_N_VERTICES = 100; 
+            var MAX_N_VERTICES = 500; 
+            
 
             var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
             var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
@@ -649,9 +654,17 @@
             this.xScale.range([0, width]);
 
             // we need to generate the distributions based on mu, variance and scale
-            // we span a uniform range of 'points' across the entire X scale,
-            // resolution: 1 point per pixel. If width not defined assume it equal 500px
-            if(!meshLength) meshLength =  Math.max(100,(width ? width / 5 : 100));
+            // we span a uniform mesh across the entire X scale,
+            if(!meshLength) {
+                meshLength = width ? width * RESOLUTION_PPP : -1;
+                if(this.model.entities._visible.length > 100 && 
+                   !this.model.marker.group.merge &&
+                   !this.model.marker.stack.merge) MAX_N_VERTICES = 100*150/this.model.entities._visible.length;
+                meshLength = Math.max(MIN_N_VERTICES, meshLength);
+                meshLength = Math.min(MAX_N_VERTICES, meshLength);
+            }
+            
+            
             var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
             var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
@@ -717,15 +730,15 @@
                 //TODO: simplification is taken here. max thickness of mountains is being summed
                 // but as the mountains are not aligned this sum will be larger than the actual total height
                 this.model.entities._visible.forEach(function(d){
-                    var points = _this.cached[d.KEY()];
-                    d.max = d3.max(points.map(function(m){return m.y + m.y0}));
-                    var max = d3.max(points.map(function(m){return m.y}));
+                    var vertices = _this.cached[d.KEY()];
+                    d.max = d3.max(vertices.map(function(m){return m.y + m.y0}));
+                    var max = d3.max(vertices.map(function(m){return m.y}));
                     if(max > 0) yMax += max;
                 })
             }else{
                 this.model.entities._visible.forEach(function(d){
-                    var points = _this.cached[d.KEY()];
-                    d.max = d3.max(points.map(function(m){return m.y + m.y0}));
+                    var vertices = _this.cached[d.KEY()];
+                    d.max = d3.max(vertices.map(function(m){return m.y + m.y0}));
                     if(d.max > yMax) yMax = d.max;
                 })
             }
@@ -746,6 +759,8 @@
             
             var record = this.model.time.record;
             var year = this.model.time.value.getFullYear();
+            
+            console.log(this.mesh.length)
 
             //update selection
             //var speed = this.model.time.speed;
@@ -856,7 +871,7 @@
             
             
                 
-            this.xScale = d3.scale.log().domain([0.05, 1000]);
+            this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
             this.yScale = d3.scale.linear().domain([0, d3.max(shape.map(function(m){return m})) ]);
 
             _this.updateSize(shape.length);
