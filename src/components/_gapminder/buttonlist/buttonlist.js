@@ -176,7 +176,7 @@
 
       var close_buttons = this.element.selectAll("[data-click='closeDialog']");
       close_buttons.on('click', function () {
-        _this.closeAllDialogs();
+        _this.closeAllDialogs(true);
       });
 
       //store body overflow
@@ -206,6 +206,7 @@
   		});
     },
 
+       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
 
     /*
      * adds buttons configuration to the components and template_data
