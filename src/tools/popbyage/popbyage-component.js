@@ -233,13 +233,15 @@
 
 
       var barWidth = this.height / items.length;
-
+        console.log(_this.model.marker.color.scaleType);
       this.bars.selectAll('.vzb-bc-bar > rect')
         .attr("fill", function (d) {
-          return _this.cScale(values.color[d[ageDim]]);
+           return   _this._temporaryBarsColorAdapter(values, d, ageDim);
+      //    return _this.cScale(values.color[d[ageDim]]);
         })
         .style("stroke", function (d) {
-          return _this.cScale(values.color[d[ageDim]]);
+              return   _this._temporaryBarsColorAdapter(values, d, ageDim);
+         // return _this.cScale(values.color[d[ageDim]]);
         })
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
@@ -290,6 +292,14 @@
       this.resize();
 
     },
+
+      _temporaryBarsColorAdapter : function(values, d, ageDim){
+          // I don't know how work color transformation, ( 160: var values = this.model.marker.getValues(filter, [ageDim]);)
+          // but if we use linear color scale then all colors equals null
+          // values.color is array of null
+
+          return this.model.marker.color.scaleType != 'time' ? this.cScale(d[ageDim]) :  this.cScale(values.color[d[ageDim]]);
+      },
 
     /**
      * Highlight and unhighlight labels
