@@ -61,6 +61,14 @@
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                 },
+                'change:time:record': function () {
+                    //console.log("change time record");
+                    if(_this.model.time.record) {
+                        _this._export.open(this.element, this.name);
+                    }else{
+                        _this._export.reset();
+                    }
+                },
                 'change:time:xLogStops': function () {
                     _this.updateSize();
                 },
@@ -68,14 +76,15 @@
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:brush");
                   _this.highlightDataPoints();
-                    _this.updateBubbleOpacity();
+                    _this.updateOpacity();
                 },
                 'change:entities:select': function () {
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:select");
                   _this.selectDataPoints();
                     _this.redrawSelectList();
-                    _this.updateBubbleOpacity();
+                    _this.updateOpacity();
+                    _this.redrawDataPoints();
                 },
                 'change:time:yMaxMethod': function () {
                     var method = _this.model.time.yMaxMethod;
@@ -97,11 +106,21 @@
                     
                     _this.markersUpdatedRecently = true;
                 },
+                'change:marker:group:merge': function (evt) {
+                    if (!_this._readyOnce) return;
+                    _this.markersUpdatedRecently = true;
+                    _this.ready();
+                },
+                'change:marker:stack:merge': function (evt) {
+                    if (!_this._readyOnce) return;
+                    _this.markersUpdatedRecently = true;
+                    _this.ready();
+                },
                 'change:entities:opacitySelectDim': function () {
-                  _this.updateBubbleOpacity();
+                  _this.updateOpacity();
                 },
                 'change:entities:opacityRegular': function () {
-                  _this.updateBubbleOpacity();
+                  _this.updateOpacity();
                 }
             }
 
@@ -110,7 +129,9 @@
             this._super(config, context);
 
             var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
+            var Exporter = Vizabi.Helper.get("gapminder-svgexport");
             this._math = new MountainChartMath(this);
+            this._export = new Exporter(this);
 
             this.xScale = null;
             this.yScale = null;
@@ -147,6 +168,8 @@
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
+            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
+            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.mountains = null;
@@ -156,6 +179,7 @@
             this.on("resize", function () {
                 //console.log("acting on resize");
                 _this.updateSize();
+                _this.updateTime(); // respawn is needed
                 _this.redrawDataPoints();
                 _this.redrawSelectList();
             });
@@ -173,9 +197,10 @@
             this.highlightDataPoints();
             this.selectDataPoints();
             this.redrawSelectList();
-            this.updateBubbleOpacity();
+            this.updateOpacity();
             
             this.mountainContainer.select(".vzb-mc-prerender").remove();
+            
         },
 
         ready: function(){
@@ -193,7 +218,7 @@
                 _this.highlightDataPoints();
                 _this.selectDataPoints();
                 _this.redrawSelectList();
-                _this.updateBubbleOpacity();              
+                _this.updateOpacity();              
             }
         },
         
@@ -257,9 +282,10 @@
                         : 
                         _this.model.marker.group.getValue(d)
                     })
+                .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
                 .entries(this.model.entities._visible);
             
-            this.groupedPointers .forEach(function (group) {
+            this.groupedPointers.forEach(function (group) {
                     var groupSortValue = d3.sum(group.values.map(function (m) {
                         return m.sortValue[0];
                     }));
@@ -290,6 +316,61 @@
                       
             //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
             //console.log(this.stackedPointers)
+
+            
+            this.mountainsMergeStacked = this.mountainMergeStackedContainer.selectAll('.vzb-mc-mountain')
+                .data(this.stackedPointers);
+            //exit selection
+            this.mountainsMergeStacked.exit().remove();
+            
+            //enter selection -- init
+            this.mountainsMergeStacked.enter().append("path")
+                .attr("class", "vzb-mc-mountain")
+                .on("mousemove", function (d, i) {
+                
+                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
+                        .html(_this.translator("region/" + d.key));
+
+                })
+                .on("mouseout", function (d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function (d, i) {
+                });
+            
+            
+            //bind the data to DOM elements
+            this.mountainsMergeGrouped = this.mountainMergeGroupedContainer.selectAll('.vzb-mc-mountain')
+                .data(this.groupedPointers);
+
+            //exit selection
+            this.mountainsMergeGrouped.exit().remove();
+
+            //enter selection -- init
+            this.mountainsMergeGrouped.enter().append("path")
+                .attr("class", "vzb-mc-mountain")
+                .on("mousemove", function (d, i) {
+                
+                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                    //position tooltip
+                    _this.tooltip.classed("vzb-hidden", false)
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
+                        .html(_this.translator("region/" + d.key));
+
+                })
+                .on("mouseout", function (d, i) {
+                    _this.tooltip.classed("vzb-hidden", true);
+                })
+                .on("click", function (d, i) {
+                });
+            
+            
+            
             
             //bind the data to DOM elements
             this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
@@ -312,7 +393,7 @@
 
                     //position tooltip
                     _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
                         .html(_this.model.marker.label.getValue(d));
 
                 })
@@ -416,7 +497,7 @@
             }) 
         },
 
-        updateBubbleOpacity: function () {
+        updateOpacity: function () {
           var _this = this;
           //if(!duration)duration = 0;
 
@@ -444,6 +525,12 @@
 
               return OPACITY_REGULAR;
             });
+            
+            this.mountainsMergeGrouped
+                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
+            
+            this.mountainsMergeStacked
+                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
 
 
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
@@ -590,7 +677,6 @@
                 .attr("transform", "translate(0," + height + ")")
                 .select("text")
                 .attr("dy", "-0.36em")
-
         },
 
 
@@ -647,6 +733,11 @@
          */
         redrawDataPoints: function () {
             var _this = this;
+            var mergeGrouped = _this.model.marker.group.merge;
+            var mergeStacked = _this.model.marker.stack.merge;
+            
+            var record = this.model.time.record;
+            var year = this.model.time.value.getFullYear();
 
             //update selection
             //var speed = this.model.time.speed;
@@ -661,17 +752,77 @@
 //                    
 //                })
             
+            
+                this.mountainsMergeStacked
+                    .each(function (d) {
+                        var view = d3.select(this);
+                    
+                        view.classed("vzb-hidden", !mergeStacked);
+                        if(!mergeStacked) return;
+                    
+                        if(d.key == "all"){
+                            var visible = d.values[0].values.filter(function(f){return !f.hidden});
+                            var first = visible[0].KEY();
+                            
+                            var array = _this.mesh.map(function(m, i){
+                                return { x: m, y0: 0, y: _this.cached[first][i].y0 + _this.cached[first][i].y }
+                            })
+                            
+                            view //.transition().duration(speed).ease("linear")
+                                .style("fill", "grey")
+                                .attr("d", _this.area(array))
+                            
+                            if(record) _this._export.write({type: "path", id: d.key, time: year, fill: "grey", d: _this.area(array)});
+                        }else{
+                        
+                            //TODO here should come the processing for regional stacking, but we haven't yet needed this case
+                        }
 
-            this.mountains.each(function (d, i) {
-                var view = d3.select(this);
-                view.classed("vzb-hidden", d.hidden);
-                if (!d.hidden) {
+                    })
+            
+                this.mountainsMergeGrouped
+                    .each(function (d) {
+                        var view = d3.select(this);
+                    
+                        view.classed("vzb-hidden", !mergeGrouped || mergeStacked);
+                        if(!mergeGrouped || mergeStacked) return;
+                    
+                        var visible = d.values.filter(function(f){return !f.hidden});
+                        //console.log(d, visible.map(function(m){return m.geo}))
+                    
+                        var first = visible[0].KEY();
+                        var last = visible[visible.length-1].KEY();
+                        //console.log(first, _this.cached[first].length, last, _this.cached[last].length)
+                    
+                        var array = _this.mesh.map(function(m, i){
+                            return { x: m, y0: _this.cached[last][i].y0, y: _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0 }
+                        })
+                        
+                        view //.transition().duration(speed).ease("linear")
+                            .style("fill", _this.cScale(_this.values.color[first]))
+                            .attr("d", _this.area(array))
+                        
+                        if(record) _this._export.write({type: "path", id: d.key, time: year, fill: _this.cScale(_this.values.color[first]), d: _this.area(array)});
+
+                    })
+                                
+                                
+
+                this.mountains.each(function (d, i) {
+                    var view = d3.select(this);
+                    var hidden = d.hidden || ((mergeGrouped || mergeStacked) && !_this.model.entities.isSelected(d));
+                    view.classed("vzb-hidden", hidden);
+                    if (hidden) return;
                     view //.transition().duration(speed).ease("linear")
                         .style("fill", _this.cScale(_this.values.color[d.KEY()]))
                         .attr("d", _this.area(_this.cached[d.KEY()]))
-                }
-            })
+                    
+                    if(record) _this._export.write({type: "path", id: d.KEY(), time: year, fill: _this.cScale(_this.values.color[d.KEY()]), d: _this.area(_this.cached[d.KEY()])});
+
+                })
         },
+        
+        
         
         domReady: function(){
             var _this = this;

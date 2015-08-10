@@ -274,8 +274,15 @@
         //set brushed properties
         if (d3.event.sourceEvent) {
           _this._dragging = true;
-          var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+          var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), _this.width / (_this.model.time.end.getYear() - _this.model.time.start.getYear())) + 1;
           value = _this.xScale.invert(posX);
+
+          var textWidth = _this.valueText.node().getBoundingClientRect().width;
+          var sliderWidth = _this.slider.node().getBoundingClientRect().width - textWidth / 2;
+          if (posX > sliderWidth)
+            posX = sliderWidth;
+          else if (posX < 0)
+            posX = 0;
 
           //set handle position
           _this.handle.attr("cx", posX);
@@ -317,6 +324,8 @@
 
       var old_pos = this.handle.attr("cx");
       var new_pos = this.xScale(value);
+        
+      if(old_pos==null) old_pos = new_pos;
       var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
 

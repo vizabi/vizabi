@@ -47,14 +47,15 @@
         playable: true,
         playing: false,
         loop: false,
-        round: true,
+        round: 'floor',
         speed: 300,
         unit: "year",
         step: 1, //step must be integer
         adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
         formatInput: "%Y", //defaults to year format
         xLogStops: [1,2], //TODO: remove from here. only for mountain chart
-        yMaxMethod: "latest" //TODO: remove from here. only for mountain chart
+        yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
+        record: false
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;
@@ -105,10 +106,8 @@
               break;
             }
           }
-          ;
         }
       }
-      ;
     },
 
     /**
@@ -177,7 +176,7 @@
         end = d3.time.format(this.formatInput || "%Y")(this.end),
         dim = this.getDimension(),
         filter = {};
-      filter[dim] = [[start, end]]
+      filter[dim] = [[start, end]];
       return filter;
     },
 
@@ -211,7 +210,7 @@
      * possible inputs are "start", "end", "value". "value" is default
      */
     snap: function (what) {
-      if (!this.round) return
+      if (!this.round) return;
       if (what == null) what = "value";
       var op = 'round';
       if (this.round === 'ceil') op = 'ceil';

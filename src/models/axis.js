@@ -68,14 +68,14 @@
       if(this.scale && this._readyOnce && this.use=="indicator"){
           if(this.min==null) this.min = this.scale.domain()[0];
           if(this.max==null) this.max = this.scale.domain()[1];
-          
+
           if(this.min<=0 && this.scaleType=="log") this.min = 0.01;
           if(this.max<=0 && this.scaleType=="log") this.max = 10;
           if(this.min>=this.max) this.min = this.max/2;
-          
-          if(this.min!=this.scale.domain()[0] || this.max!=this.scale.domain()[1]) 
+
+          if(this.min!=this.scale.domain()[0] || this.max!=this.scale.domain()[1])
               this.scale.domain([this.min, this.max]);
-      }   
+      }
     },
 
 
@@ -85,8 +85,8 @@
      */
     buildScale: function (margins) {
       var domain;
-      var scaleType = this.scaleType || "linear";      
-    
+      var scaleType = this.scaleType || "linear";
+
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);
         this.scale = d3.time.scale().domain([limits.min, limits.max]);
@@ -117,12 +117,14 @@
           break;
       }
 
-        
-      if(this.min!=null && this.max!=null)domain = [this.min, this.max];
+
+      if (this.min!=null && this.max!=null && scaleType !== 'ordinal') {
+        domain = [this.min, this.max];
+        this.min = domain[0];
+        this.max = domain[1];
+      }
+
       this.scale = d3.scale[scaleType]().domain(domain);
-        
-      this.min = domain[0];
-      this.max = domain[1];
     }
   });
 }).call(this);

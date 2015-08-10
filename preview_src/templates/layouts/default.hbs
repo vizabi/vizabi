@@ -1,8 +1,8 @@
 ---
-control_buttons: { play: true, languages: ["en", "se"] }
+control_buttons: { play: true, languages: ["en", "se"], record: true }
 control_state: true
 control_sizes: true
-control_buttons: {play: true, language: true}
+control_buttons: {play: true, language: true, record: true }
 ---
 
 <!DOCTYPE html>
@@ -101,6 +101,24 @@ control_buttons: {play: true, language: true}
                 } else {
                     langButton.onclick = function() { language('en'); };
                     langButton.setAttribute("data-tooltip", "Set Lang: EN");
+                }
+              };
+          {{/if}}
+          {{#if control_buttons.record}}  
+              var recButton = document.getElementById("vzbp-btn-record");
+              var recButtonIcon = recButton.querySelectorAll("i")[0];
+
+              VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
+                if (vals.state.time.record) {
+                    recButton.onclick = recstop;
+                    recButton.setAttribute("data-tooltip", "Stop");
+                    removeClass(recButtonIcon, 'fa-circle');
+                    addClass(recButtonIcon, 'fa-bullseye');
+                } else {
+                    recButton.onclick = recstart;
+                    recButton.setAttribute("data-tooltip", "Record");
+                    removeClass(recButtonIcon, 'fa-bullseye');
+                    addClass(recButtonIcon, 'fa-circle');
                 }
               };
           {{/if}}

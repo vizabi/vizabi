@@ -50,6 +50,8 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "World",
                 "mount/stacking/none": "None",
+                "mount/mergegrouped": "Merge grouped",
+                "mount/mergestacked": "Merge stacked too",
                 "popbyage/yearOldsIn": "-year-olds in",
                 "indicator/lex": "Life expectancy",
                 "indicator/gdp_per_cap": "GDP per capita",
@@ -58,6 +60,7 @@
                 "indicator/geo": "Geo code",
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
+                "indicator/geo.name": "Geo name",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
@@ -69,7 +72,12 @@
                 "scaletype/time": "Time",
                 "scaletype/ordinal": "Ordinal",
                 "color/_default": "Other",
-                "check/adaptMinMaxZoom": "Follow bubbles with zoom"
+                "check/adaptMinMaxZoom": "Follow bubbles with zoom",
+                "region/ame": "America",
+                "region/asi": "Asia",
+                "region/afr": "Africa",
+                "region/eur": "Europe",
+                "region/all": "World"
             },
             se: {
                 "buttons/expand": "Gå stor",
@@ -85,7 +93,7 @@
                 "buttons/axes-mc": "X och Y",
                 "buttons/axis_x": "X axel",
                 "buttons/axis_y": "Y axel",
-                "buttons/stack": "Stack",
+                "buttons/stack": "Stapel",
                 "buttons/more_options": "Mer...",
                 "buttons/opacityNonselect": "Synlighet av ej valda",
                 "buttons/opacityRegular": "Vanlig synlighet",
@@ -102,14 +110,17 @@
                 "mount/stacking/region": "Region",
                 "mount/stacking/world": "Värld",
                 "mount/stacking/none": "Ingen",
+                "mount/mergegrouped": "Slå ihop de gruppade",
+                "mount/mergestacked": "Slå ihop de stackade också",
                 "popbyage/yearOldsIn": "-åringar i",
                 "indicator/lex": "Livslängd",
-                "indicator/gdp_per_cap": "PIB pro capita",
+                "indicator/gdp_per_cap": "BNP per invånare",
                 "indicator/pop": "Befolkning",
-                "indicator/geo.region": "Region",
+                "indicator/geo.region": "Regionen",
                 "indicator/geo": "Geokod",
                 "indicator/time": "Tid",
                 "indicator/geo.category": "Geo kategori",
+                "indicator/geo.name": "Geo namn",
                 "unit/gdp_per_cap": "$/år/person",
                 "unit/": "",
                 "unit/lex": "År",
@@ -121,7 +132,12 @@
                 "scaletype/time": "Tid",
                 "scaletype/ordinal": "Ordning",
                 "color/_default": "Annat",
-                "check/adaptMinMaxZoom": "Följ bubblar med zoom"
+                "check/adaptMinMaxZoom": "Följ bubblar med zoom",
+                "region/ame": "Amerika",
+                "region/asi": "Asien",
+                "region/afr": "Afrika",
+                "region/eur": "Europa",
+                "region/all": "Värld"
             }
         }
     };
@@ -247,13 +263,13 @@
         },
         language: language,
         data: {
-            reader: "waffle-server"
-            //reader: "csv-file",
-            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //reader: "waffle-server"
+            reader: "csv-file",
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
-    
-    
+
+
     MountainChartComponent.define('precomputedShapes',
 
     {
@@ -389,7 +405,7 @@
     }
 
     );
-    
+
 
     LineChart.define('default_options', {
         state: {
@@ -485,7 +501,6 @@
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
-                round: "ceil",
                 trails: true,
                 lockNonSelected: 0,
                 adaptMinMaxZoom: false
@@ -605,7 +620,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "/local_data/csv/{{geo}}.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
         },
         language: language,
         ui: {
