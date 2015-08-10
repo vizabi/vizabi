@@ -15,7 +15,7 @@ function toggleStateEditor() {
     setTimeout(function() {
         var placeholder = document.getElementById('vzbp-placeholder');
         var container = document.getElementById('vzbp-main');
-        normalizeDivSize(placeholder, container);
+        setDivSize(placeholder, container);
         updateURL();
     }, 300);
 }
@@ -35,7 +35,7 @@ function setState() {
         state = JSON.parse(state);
         removeClass(editorTextArea, "invalid");
         VIZABI_OPTIONS.state = state;
-        VIZ.setOptions(VIZABI_OPTIONS); 
+        VIZ.setOptions(VIZABI_OPTIONS);
         updateURL();
     }
     catch(err) {
