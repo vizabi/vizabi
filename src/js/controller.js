@@ -3,8 +3,9 @@
 angular.module('gapminderWorld')
 .controller('gapminderWorldCtrl', ['$scope', 'vizabiFactory', function($scope, vizabiFactory) {
 
+
   var placeholder = document.getElementById('vizabi-placeholder');
-  
+
   $scope.loading = true;
   $scope.started = false;
   $scope.loadingError = false;
@@ -25,12 +26,20 @@ angular.module('gapminderWorld')
   			$scope.$apply();
   		},
 
+      'change:marker': function(evt, options) {
+        console.log(options);
+      },
+
   		//bind variable to hovered country
   		'change:state:time:value': function(evt, options) {
   			var time = options.state.time.value;
   			$scope.time = time.getFullYear();
   			$scope.$apply();
-  		}
+  		},
+
+      'change:state': function(evt, options) {
+        dataToUrl(options);
+      }
   	},
     data: {
       reader: 'csv-file',
