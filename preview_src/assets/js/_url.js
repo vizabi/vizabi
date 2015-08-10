@@ -64,7 +64,7 @@ function parseURL() {
         URL.lang = options.lang;
 
         if(options.width && options.height && placeholder && setDivSize) {
-            setDivSize(placeholder, options.width, options.height);
+            setDivSize(placeholder, container, options.width, options.height);
             if(options.fullscreen) {
                 setFullscreen();
             }
