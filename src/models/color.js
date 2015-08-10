@@ -153,7 +153,7 @@
         var limits = this.getLimits(this.which);
         var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
         domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
-        
+
         this.scale = d3.time.scale()
           .domain(domain)
           .range(range)
@@ -168,7 +168,9 @@
           domain = d3.range(limits.min, limits.max, step).concat(limits.max);
 
           if (this.scaleType == "log") {
-            var s = d3.scale.log().domain([limits.min, limits.max]).range([limits.min, limits.max]);
+            var s = d3.scale.log()
+              .domain([limits.min === 0 ? 1 : limits.min, limits.max])
+              .range([limits.min, limits.max]);
             domain = domain.map(function (d) {
               return s.invert(d)
             });
