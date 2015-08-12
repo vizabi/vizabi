@@ -112,13 +112,13 @@ control_buttons: {play: true, language: true, record: true }
                 if (vals.state.time.record) {
                     recButton.onclick = recstop;
                     recButton.setAttribute("data-tooltip", "Stop");
-                    removeClass(recButtonIcon, 'fa-circle');
-                    addClass(recButtonIcon, 'fa-bullseye');
+                    removeClass(recButtonIcon, 'fa-bullseye');
+                    addClass(recButtonIcon, 'fa-circle');
                 } else {
                     recButton.onclick = recstart;
                     recButton.setAttribute("data-tooltip", "Record");
-                    removeClass(recButtonIcon, 'fa-bullseye');
-                    addClass(recButtonIcon, 'fa-circle');
+                    removeClass(recButtonIcon, 'fa-circle');
+                    addClass(recButtonIcon, 'fa-bullseye');
                 }
               };
           {{/if}}

@@ -171,11 +171,19 @@
             var result = SVGHEADER + " " + this.container.node().innerHTML
                 .replace("_xmlns_", "xmlns")
                 .replace("_xmlns:xlink_", "xmlns:xlink");
+            
+            if(result.length/1024/1024 > 2){
+                
+                alert("The file size is " + Math.round(result.length/1024) + "kB, which is too large to download. Will try to print it in the console instead...")
+                console.log(result);
+                
+            }else{
          
             var link = document.createElement('a');
             link.download = this.name + " " + this.counter + " shapes" + ".svg";
             link.href = 'data:,' + result;
             link.click();
+            }
         }
 
 
