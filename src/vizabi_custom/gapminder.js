@@ -499,9 +499,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2012",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
