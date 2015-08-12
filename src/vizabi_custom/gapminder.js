@@ -529,7 +529,7 @@
                 axis_y: {
                     use: "indicator",
                     which: "childSurv",
-                    scaleType: "linear",
+                    scaleType: "log",
                     unit: "childSurv"
                 },
                 axis_x: {
