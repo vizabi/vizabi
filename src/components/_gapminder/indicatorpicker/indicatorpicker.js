@@ -22,17 +22,6 @@
         return;
     }
 
-    var availOpts = {
-        'geo.region': {use: 'property',unit: '',scales: ['ordinal'] },
-        'geo': {use: 'property',unit: '',scales: ['ordinal'] },
-        'time': {use: 'indicator',unit: 'time',scales: ['time'] },
-        'lex': {use: 'indicator',unit: 'lex',scales: ['linear'] },
-        'gdp_per_cap': {use: 'indicator',unit: 'gdp_per_cap',scales: ['log', 'linear'] },
-        'pop': {use: 'indicator',unit: '',scales: ['linear', 'log'] },
-        'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
-        '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
-    };
-
     Vizabi.Component.extend('gapminder-indicatorpicker', {
 
         /**
@@ -42,6 +31,16 @@
          * @param context The component's parent
          */
         init: function (config, context) {
+            this.availOpts = {
+              'geo.region': {use: 'property', unit: '',scales: ['ordinal'] },
+              'geo': {use: 'property', unit: '', scales: ['ordinal'] },
+              'time': {use: 'indicator', unit: 'time', scales: ['time'] },
+              'lex': {use: 'indicator', unit: 'lex', scales: ['linear'] },
+              'gdp_per_cap': {use: 'indicator', unit: 'gdp_per_cap', scales: ['log', 'linear'] },
+              'pop': {use: 'indicator', unit: '', scales: ['linear', 'log'] },
+              'geo.name': {use: 'property', unit: '', scales: ['ordinal'] },
+              '_default': {use: 'value', unit: '', scales: ['linear', 'log'] }
+            };
 
             this.template = '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max">';
             var _this = this;
@@ -72,6 +71,7 @@
                 selectMinMax: false
             }, this.ui.getObject());
 
+            this.availOpts = config.availOpts ? config.availOpts : this.availOpts;
         },
 
         ready: function () {
@@ -107,11 +107,11 @@
             var pointer = "_default";
 
             var data = {};
-            data[INDICATOR] = Object.keys(availOpts);
+            data[INDICATOR] = Object.keys(this.availOpts);
 
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
 
-            data[SCALETYPE] = availOpts[pointer].scales;
+            data[SCALETYPE] = this.availOpts[pointer].scales;
 
             //bind the data to the selector lists
             var elOptionsIndicator = this.el_select_indicator.selectAll("option")
@@ -162,11 +162,11 @@
             obj[what] = value;
 
             if (what == INDICATOR) {
-                obj.use = availOpts[value].use;
-                obj.unit = availOpts[value].unit;
+                obj.use = this.availOpts[value].use;
+                obj.unit = this.availOpts[value].unit;
 
-                if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
-                    obj.scaleType = availOpts[value].scales[0];
+                if (this.availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
+                    obj.scaleType = this.availOpts[value].scales[0];
                 }
             }
 

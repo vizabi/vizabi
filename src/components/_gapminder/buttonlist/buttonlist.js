@@ -135,7 +135,7 @@
           }
           _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
         }
-      }
+      };
 
       this._super(config, context);
 
@@ -192,12 +192,12 @@
         _this.pinDialog(this);
       });
 
-       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
+       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function() {
          d3.event.preventDefault();
          d3.event.stopPropagation();
        });
 
-      this.root.element.addEventListener('click', function(){
+      this.root.element.addEventListener('click', function() {
         _this.closeAllDialogs();
       });
 
@@ -239,6 +239,7 @@
       var button_list = this.model.ui.buttons;
       var details_btns = [];
       if (!button_list.length) return;
+      var dialog_config = this.parent.model.dialog_config;
       //add a component for each button
       for (var i = 0; i < button_list.length; i++) {
 
@@ -253,7 +254,8 @@
           comps.push({
             component: 'gapminder-buttonlist-' + btn,
             placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-            model: ["state", "ui", "language"]
+            model: ["state", "ui", "language"],
+            dialog_config: dialog_config
           });
 
           btn_config.component = comps.length - 1;
@@ -267,7 +269,6 @@
         details_btn.icon = this._icons[details_btn.icon];
         details_btns.push(details_btn);
       }
-      ;
 
       var t = this.getTranslationFunction(true);
 
@@ -301,7 +302,6 @@
         });
       });
     },
-
 
     scrollToEnd: function () {
       var target = 0;
@@ -352,7 +352,7 @@
         var id = button.getAttribute('data-dialogtype');
         var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
         var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-        if(this._available_buttons[id].ispin){
+        if(this._available_buttons[id].ispin) {
          // button.textContent = '';
           btn.classed('pinned', false);
           this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
@@ -364,7 +364,6 @@
           this._available_buttons[id].ispin = true;
         }
       },
-
 
     /*
      * Closes a button dialog
@@ -410,6 +409,7 @@
       this.model.state.time.trails = !this.model.state.time.trails;
       this.setBubbleTrails();
     },
+
     setBubbleTrails: function () {
       var id = "trails";
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
@@ -417,6 +417,7 @@
       btn.classed(class_active_locked, this.model.state.time.trails);
       btn.style("display", this.model.state.entities.select.length == 0 ? "none" : "inline-block")
     },
+
     toggleBubbleLock: function (id) {
       if (this.model.state.entities.select.length == 0) return;
 
@@ -427,6 +428,7 @@
 
       this.setBubbleLock();
     },
+
     setBubbleLock: function () {
       var id = "lock";
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
@@ -444,6 +446,7 @@
       btn.select(".vzb-buttonlist-btn-icon")
         .html(this._icons[locked ? "lock" : "unlock"]);
     },
+
     toggleFullScreen: function (id) {
 
       var component = this;

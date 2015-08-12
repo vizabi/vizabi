@@ -23,12 +23,12 @@
       this.components = [{
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-xaxis-container',
-        model: ["state.marker.axis_x", "language"],          
+        model: ["state.marker.axis_x", "language"],
         ui: {selectMinMax: true}
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-yaxis-container',
-        model: ["state.marker.axis_y", "language"],          
+        model: ["state.marker.axis_y", "language"],
         ui: {selectMinMax: true}
       }, {
         component: 'gapminder-simplecheckbox',
@@ -47,7 +47,8 @@
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-caxis-container',
-        model: ["state.marker.color", "language"]
+        model: ["state.marker.color", "language"],
+        availOpts: config.dialog_config && config.dialog_config.colors ? config.dialog_config.colors : null
       }, {
         component: 'gapminder-colorlegend',
         placeholder: '.vzb-clegend-container',

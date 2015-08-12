@@ -25,7 +25,8 @@
       this.components = [{
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-caxis-container',
-        model: ["state.marker.color", "language"]
+        model: ["state.marker.color", "language"],
+        availOpts: config.dialog_config && config.dialog_config.colors ? config.dialog_config.colors : null
       }, {
         component: 'gapminder-colorlegend',
         placeholder: '.vzb-clegend-container',
