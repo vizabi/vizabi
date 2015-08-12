@@ -614,7 +614,8 @@
                 },
                 color: {
                     use: "value",
-                    which: "#ffb600"
+                    which: "_default",
+                    value: "#ffb600"
                 }
             }
         },
@@ -626,6 +627,18 @@
         ui: {
             buttons: []
         }
+    });
+
+    PopByAge.define('dialog_config', {
+      'colors': {
+        'geo.region': {use: 'property', unit: '', scales: ['ordinal']},
+        'geo': {use: 'property', unit: '', scales: ['ordinal']},
+        'lex': {use: 'indicator', unit: 'lex', scales: ['linear']},
+        'gdp_per_cap': {use: 'indicator', unit: 'gdp_per_cap', scales: ['log', 'linear']},
+        'pop': {use: 'indicator', unit: '', scales: ['linear', 'log']},
+        'geo.name': {use: 'property', unit: '', scales: ['ordinal']},
+        '_default': {use: 'value', unit: '', scales: ['linear', 'log']}
+      }
     });
 
     //Waffle Server Reader custom path
