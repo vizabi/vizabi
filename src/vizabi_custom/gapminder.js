@@ -614,7 +614,8 @@
                 },
                 color: {
                     use: "value",
-                    which: "#ffb600"
+                    which: "_default",
+                    value: "#ffb600"
                 }
             }
         },
