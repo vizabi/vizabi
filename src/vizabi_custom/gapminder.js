@@ -60,6 +60,7 @@
                 "indicator/geo": "Geo code",
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
+                "indicator/geo.name": "Geo name",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
@@ -92,7 +93,7 @@
                 "buttons/axes-mc": "X och Y",
                 "buttons/axis_x": "X axel",
                 "buttons/axis_y": "Y axel",
-                "buttons/stack": "Stack",
+                "buttons/stack": "Stapel",
                 "buttons/more_options": "Mer...",
                 "buttons/opacityNonselect": "Synlighet av ej valda",
                 "buttons/opacityRegular": "Vanlig synlighet",
@@ -113,12 +114,13 @@
                 "mount/mergestacked": "Slå ihop de stackade också",
                 "popbyage/yearOldsIn": "-åringar i",
                 "indicator/lex": "Livslängd",
-                "indicator/gdp_per_cap": "PIB pro capita",
+                "indicator/gdp_per_cap": "BNP per invånare",
                 "indicator/pop": "Befolkning",
-                "indicator/geo.region": "Region",
+                "indicator/geo.region": "Regionen",
                 "indicator/geo": "Geokod",
                 "indicator/time": "Tid",
                 "indicator/geo.category": "Geo kategori",
+                "indicator/geo.name": "Geo namn",
                 "unit/gdp_per_cap": "$/år/person",
                 "unit/": "",
                 "unit/lex": "År",
@@ -267,8 +269,8 @@
             path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
-    
-    
+
+
     MountainChartComponent.define('precomputedShapes',
 
     {
@@ -404,7 +406,7 @@
     }
 
     );
-    
+
 
     LineChart.define('default_options', {
         state: {
@@ -500,7 +502,6 @@
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
-                round: "round",
                 trails: true,
                 lockNonSelected: 0,
                 adaptMinMaxZoom: false

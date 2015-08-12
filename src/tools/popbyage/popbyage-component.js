@@ -48,6 +48,9 @@
         "change:time:value": function (evt) {
           _this._updateEntities();
         },
+      "change:entities:needUpdate": function (evt) {
+        _this._updateEntities();
+        },
         "change:entities:show": function (evt) {
           console.log('Trying to change show');
         },
@@ -85,7 +88,7 @@
       this.year = this.element.select('.vzb-bc-year');
 
       //only allow selecting one at a time
-      this.model.age.selectMultiple(false);
+      this.model.age.selectMultiple(true);
 
       var _this = this;
       this.on("resize", function () {
@@ -110,7 +113,7 @@
       this._updateEntities();
     },
 
-      
+
     updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
 
@@ -124,7 +127,7 @@
         .attr("dx", "-0.72em")
         .text(titleStringY);
     },
-      
+
     /**
      * Changes labels for indicators
      */
@@ -233,13 +236,15 @@
 
 
       var barWidth = this.height / items.length;
-
+        console.log(_this.model.marker.color.scaleType);
       this.bars.selectAll('.vzb-bc-bar > rect')
         .attr("fill", function (d) {
-          return _this.cScale(values.color[d[ageDim]]);
+           return   _this._temporaryBarsColorAdapter(values, d, ageDim);
+      //    return _this.cScale(values.color[d[ageDim]]);
         })
         .style("stroke", function (d) {
-          return _this.cScale(values.color[d[ageDim]]);
+              return   _this._temporaryBarsColorAdapter(values, d, ageDim);
+         // return _this.cScale(values.color[d[ageDim]]);
         })
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
@@ -285,11 +290,19 @@
       //update x axis again
       //TODO: remove this when grouping is done at data level
       var x_domain = this.xScale.domain();
-      var x_domain_max = d3.max(utils.values(values.axis_x));
+      var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
       this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
       this.resize();
 
     },
+
+      _temporaryBarsColorAdapter : function(values, d, ageDim){
+          // I don't know how work color transformation, ( 160: var values = this.model.marker.getValues(filter, [ageDim]);)
+          // but if we use linear color scale then all colors equals null
+          // values.color is array of null
+
+          return this.model.marker.color.scaleType != 'time' ? this.cScale(d[ageDim]) :  this.cScale(values.color[d[ageDim]]);
+      },
 
     /**
      * Highlight and unhighlight labels
@@ -400,7 +413,7 @@
       //apply scales to axes and redraw
       this.yAxis.scale(this.yScale)
         .orient("left")
-        .tickSize(6, 0)
+        .tickSize(6, 6)
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_y.scaleType,

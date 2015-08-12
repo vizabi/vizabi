@@ -19,7 +19,7 @@
     /**
      * Initializes the component (Bubble Chart).
      * Executed once before any template is rendered.
-     * @param {Object} config The options passed to the component
+     * @param {Object} options The options passed to the component
      * @param {Object} context The component's parent
      */
     init: function (context, options) {
@@ -68,7 +68,9 @@
           if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
               _this.updateSize();
               _this.redrawDataPoints();
+              return;
           }
+          _this.ready();
           //console.log("EVENT change:marker", evt);
         },
         "change:entities:select": function () {
@@ -280,7 +282,7 @@
           if (isNaN(zoom) || zoom == null) zoom = 1;
 
           //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1};
+          if (zoom==1) {_this.zoomer.ratioX = 1; ratioX = 1; _this.zoomer.ratioY = 1; ratioY = 1}
 
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
           if (isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
@@ -291,12 +293,10 @@
             ratioY = 1 / zoom;
             _this.zoomer.ratioY = ratioY
           }
-
           if (zoom * ratioX < 1) {
             ratioX = 1 / zoom;
             _this.zoomer.ratioX = ratioX
           }
-
 
           //limit the panning, so that we are never outside the possible range
           if (pan[0] > 0) pan[0] = 0;
@@ -534,7 +534,7 @@
                 return pointer;
             })
             .sort(function (a, b) { return b.sortValue - a.sortValue; })
-      }
+      };
 
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
@@ -617,7 +617,7 @@
         x1: _this.xScale(mmmX.min) - radiusMax,
         y1: _this.yScale(mmmY.min) + radiusMax,
         x2: _this.xScale(mmmX.max) + radiusMax,
-        y2: _this.yScale(mmmY.max) - radiusMax,
+        y2: _this.yScale(mmmY.max) - radiusMax
       };
 
       var TOLERANCE = 0.0;
@@ -808,15 +808,22 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
+      var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
+      var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
+      var sTitleSize = this.sTitleEl.node().getBoundingClientRect();
+      var xTitleX = 0;
+      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height)
+        xTitleX = -sTitleSize.width;
+
       this.xTitleEl.attr("transform", "translate(" + (this.width - 15) + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + "," + "-15" + ") rotate(-90)");
+      this.xTitleEl.selectAll("text").data([0]).attr('x', xTitleX + 'px');
+      this.sTitleEl.attr("transform", "translate(" + this.width + ",-15) rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
-
     },
 
     updateMarkerSizeLimits: function () {
@@ -873,8 +880,6 @@
         d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
       });
     },
-
-
 
     /*
      * REDRAW DATA POINTS:
@@ -1072,7 +1077,7 @@
             var stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
 
             if(cached.stuckOnLimit !== stuckOnLimit) {
-              cached.stuckOnLimit = stuckOnLimit
+              cached.stuckOnLimit = stuckOnLimit;
               rect.classed("vzb-transparent", !cached.stuckOnLimit);
             }
 
@@ -1085,7 +1090,6 @@
         if (_this.cached[d[KEY]] != null) {
           delete _this.cached[d[KEY]]
         }
-        ;
       }
     },
 
@@ -1121,7 +1125,6 @@
       if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
       // left middle
       if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
-
 
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
@@ -1177,7 +1180,7 @@
           view.append("rect").attr("class", "vzb-transparent")
             .on("click", function (d, i) {
               //default prevented is needed to distinguish click from drag
-              if (d3.event.defaultPrevented) return
+              if (d3.event.defaultPrevented) return;
 
               var maxmin = _this.cached[d[KEY]].maxMinValues;
               var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));

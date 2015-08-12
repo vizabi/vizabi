@@ -97,6 +97,27 @@
     margin-top: 36px;
   }
 
+  .thumb-tack-class{
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #cce6ed;
+    display: inline-block;
+    position: relative;
+    float: right;
+    margin-right: 8px;
+    margin-top: 8px;
+  }
+  .thumb-tack-class-ico {
+    position: absolute!important;
+    left: 7px!important;
+    top: 4px!important;
+    cursor: pointer;
+  }
+  .thumb-tack-class-ico:before {
+    color: #4B98AA!important;
+
+  }
   .vzb-dialog-checkbox {
     display: block;
     height: 18px;
@@ -137,5 +158,15 @@
     input[type=checkbox]:checked + label:after {
       @include opacity(1);
     }
+  }
+}
+.vzb-buttonlist-dialog.pinned {
+  .thumb-tack-class{
+    background-color: #4B98AA;
+    border: 1px solid #4B98AA;
+  }
+  .thumb-tack-class-ico:before {
+    color: #fff!important;
+
   }
 }

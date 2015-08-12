@@ -71,6 +71,7 @@
       this.yAxisEl = this.graph.select('.vzb-bc-axis-y');
       this.xAxisEl = this.graph.select('.vzb-bc-axis-x');
       this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
+      this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
       this.bars = this.graph.select('.vzb-bc-bars');
 
       var _this = this;
@@ -97,6 +98,7 @@
       this.duration = this.model.time.speed;
 
       var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
+      var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
@@ -105,6 +107,13 @@
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
         .text(titleStringY);
+
+      var xTitle = this.xTitleEl.selectAll("text").data([0]);
+      xTitle.enter().append("text");
+      xTitle
+        .attr("y", "-3px")
+        .attr("dx", "-0.72em")
+        .text(titleStringX);
 
       this.yScale = this.model.marker.axis_y.getScale();
       this.xScale = this.model.marker.axis_x.getScale();
@@ -262,6 +271,11 @@
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
+      var xAxisSize = this.xAxisEl.node().getBoundingClientRect();
+      var xTitleSize = this.xTitleEl.node().getBoundingClientRect();
+      var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
+      var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
+      this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
     }
   });
 
@@ -318,7 +332,7 @@
         },
         axis_y: {
           use: "indicator",
-          which: "lex",
+          which: "lex"
         },
         axis_x: {
           use: "property",

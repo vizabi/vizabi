@@ -58,13 +58,13 @@ function parseURL() {
     var hash = window.location.hash;
 
     if (hash) {
-        options = URLON.parse(hash.replace("#", ""));
+        options = URLON.parse(URLON.stringify(hash.replace("#", "")));
 
         URL.state = options.state;
         URL.lang = options.lang;
 
         if(options.width && options.height && placeholder && setDivSize) {
-            setDivSize(placeholder, options.width, options.height);
+            setDivSize(placeholder, container, options.width, options.height);
             if(options.fullscreen) {
                 setFullscreen();
             }
