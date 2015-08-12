@@ -61,7 +61,6 @@
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
                 "indicator/geo.name": "Geo name",
-                "indicator/gdppc": "GDP per capita",
                 "indicator/childSurv": "Child survival",
                 "indicator/u5mr": "Child under 5 mortality",
                 "indicator/size": "Big or mini",
@@ -69,7 +68,6 @@
                 "unit/": "",
                 "unit/lex": "Years",
                 "unit/time": "Years",
-                "unit/gdppc": "$/year/person",
                 "unit/childSurv": "per 1000",
                 "unit/u5mr": "per 1000",
                 "unit/gdp_per_cap_daily": "$/day",
@@ -537,9 +535,9 @@
                 },
                 axis_x: {
                     use: "indicator",
-                    which: "gdppc",
+                    which: "gdp_per_cap",
                     scaleType: "log",
-                    unit: "gdppc"
+                    unit: "gdp_per_cap"
                 },
                 color: {
                     use: "property",
