@@ -60,7 +60,9 @@
           if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
               _this.updateSize();
               _this.redrawDataPoints();
+              return;
           }
+          _this.ready();
           //console.log("EVENT change:marker", evt);
         },
         "change:entities:select": function () {
