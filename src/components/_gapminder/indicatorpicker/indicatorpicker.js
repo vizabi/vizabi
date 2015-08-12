@@ -32,6 +32,7 @@
         'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
         'u5mr': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
         'size': {use: 'property',unit: '',scales: ['ordinal'] },
+        'gini': {use: 'indicator',unit: 'gini',scales: ['linear'] },
         '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
     };
 

@@ -64,12 +64,14 @@
                 "indicator/childSurv": "Child survival",
                 "indicator/u5mr": "Child under 5 mortality",
                 "indicator/size": "Big or mini",
+                "indicator/gini": "Gini coefficient",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
                 "unit/time": "Years",
                 "unit/childSurv": "per 1000",
                 "unit/u5mr": "per 1000",
+                "unit/gini": "",
                 "unit/gdp_per_cap_daily": "$/day",
                 "scaletype/linear": "Linear",
                 "scaletype/log": "Logarithmic",
@@ -206,8 +208,8 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1960,
-                end: 2000,
+                start: 1800,
+                end: 2030,
                 value: 2000,
                 step: 1,
                 speed: 100,
@@ -270,7 +272,8 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
 
@@ -558,7 +561,7 @@
             //reader: "waffle-server",
             reader: "csv-file",
             //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-            path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_aug12.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
         },
         language: language,
         ui: {
