@@ -185,7 +185,7 @@
 
       var close_buttons = this.element.selectAll("[data-click='closeDialog']");
       close_buttons.on('click', function () {
-        _this.closeAllDialogs();
+        _this.closeAllDialogs(true);
       });
       var pinDialog = this.element.selectAll("[data-click='pinDialog']");
       pinDialog.on('click', function () {
@@ -193,7 +193,6 @@
       });
 
        d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
-         d3.event.preventDefault();
          d3.event.stopPropagation();
        });
 
