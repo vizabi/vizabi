@@ -199,8 +199,8 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1960,
-                end: 2000,
+                start: 1800,
+                end: 2030,
                 value: 2000,
                 step: 1,
                 speed: 100,
@@ -264,7 +264,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
     
