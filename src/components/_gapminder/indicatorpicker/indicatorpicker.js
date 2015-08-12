@@ -26,10 +26,13 @@
         'geo.region': {use: 'property',unit: '',scales: ['ordinal'] },
         'geo': {use: 'property',unit: '',scales: ['ordinal'] },
         'time': {use: 'indicator',unit: 'time',scales: ['time'] },
-        'lex': {use: 'indicator',unit: 'lex',scales: ['linear'] },
+        'childSurv': {use: 'indicator',unit: 'childSurv',scales: ['linear', 'log'] },
         'gdp_per_cap': {use: 'indicator',unit: 'gdp_per_cap',scales: ['log', 'linear'] },
         'pop': {use: 'indicator',unit: '',scales: ['linear', 'log'] },
         'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
+        'u5mr': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
+        'size': {use: 'property',unit: '',scales: ['ordinal'] },
+        'gini': {use: 'indicator',unit: 'gini',scales: ['linear'] },
         '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
     };
 

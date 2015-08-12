@@ -61,10 +61,17 @@
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
                 "indicator/geo.name": "Geo name",
+                "indicator/childSurv": "Child survival",
+                "indicator/u5mr": "Child under 5 mortality",
+                "indicator/size": "Big or mini",
+                "indicator/gini": "Gini coefficient",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
                 "unit/time": "Years",
+                "unit/childSurv": "per 1000",
+                "unit/u5mr": "per 1000",
+                "unit/gini": "",
                 "unit/gdp_per_cap_daily": "$/day",
                 "scaletype/linear": "Linear",
                 "scaletype/log": "Logarithmic",
@@ -266,6 +273,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
             path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
@@ -496,9 +504,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2012",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
@@ -525,9 +533,9 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
-                    scaleType: "linear",
-                    unit: "lex"
+                    which: "childSurv",
+                    scaleType: "log",
+                    unit: "childSurv"
                 },
                 axis_x: {
                     use: "indicator",
@@ -553,7 +561,8 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
         },
         language: language,
         ui: {
