@@ -61,6 +61,10 @@
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
                 "indicator/geo.name": "Geo name",
+                "indicator/gdppc": "GDP per capita",
+                "indicator/childSurv": "Child survival",
+                "indicator/u5mr": "Infant mortality",
+                "indicator/size": "Big or mini",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
@@ -524,15 +528,15 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
+                    which: "childSurv",
                     scaleType: "linear",
-                    unit: "lex"
+                    unit: "childSurv"
                 },
                 axis_x: {
                     use: "indicator",
-                    which: "gdp_per_cap",
+                    which: "gdppc",
                     scaleType: "log",
-                    unit: "gdp_per_cap"
+                    unit: "gdppc"
                 },
                 color: {
                     use: "property",
@@ -552,7 +556,8 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_aug12.csv"
         },
         language: language,
         ui: {
