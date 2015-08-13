@@ -55,7 +55,8 @@
         formatInput: "%Y", //defaults to year format
         xLogStops: [1,2], //TODO: remove from here. only for mountain chart
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
-        record: false
+        record: false,
+        povertyline: 1.25
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;

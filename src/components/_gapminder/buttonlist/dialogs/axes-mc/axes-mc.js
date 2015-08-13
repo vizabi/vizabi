@@ -27,6 +27,9 @@
             },
             'change:state:time:yMaxMethod': function () {
                 _this.updateView();
+            },
+            'change:state:time:povertyline': function () {
+                _this.updateView();
             }
         };
         
@@ -55,6 +58,9 @@
                 _this.setModel("xLogStops", d3.select(this).node().value);
             })
 
+        this.povertyLineFieldEl = this.element.select(".vzb-povertyline-field")
+            .on("change", function(){_this.setModel("povertyline", this.value)});
+        
         this.updateView();
 
     },
@@ -68,6 +74,7 @@
         this.xLogStops.property('checked', function(){
             return _this.model.state.time.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
         })  
+        this.povertyLineFieldEl.property("value", this.model.state.time.povertyline);
     },
 
     setModel: function(what, value) {
@@ -81,6 +88,9 @@
             this.xLogStops.each(function(){
                 if(d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
             })
+        }
+        if(what == "povertyline"){
+            result = +value;
         }
         
         this.model.state.time[what] = result;

@@ -60,6 +60,7 @@
                     if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
+                    _this.updatePovertyLine();
                 },
                 'change:time:record': function () {
                     //console.log("change time record");
@@ -93,6 +94,9 @@
                     _this._adjustMaxY(method);
                     if(method!=="immediate") _this.updateTime();
                     _this.redrawDataPoints();
+                },
+                'change:time:povertyline': function () {
+                    _this.updatePovertyLine();
                 },
                 'change:marker': function (evt) {
                     if (!_this._readyOnce) return;
@@ -186,6 +190,7 @@
                 _this.updateTime(); // respawn is needed
                 _this.redrawDataPoints();
                 _this.redrawSelectList();
+                _this.updatePovertyLine();
             });
 
             this.KEY = this.model.entities.getDimension();
@@ -202,6 +207,7 @@
             this.selectDataPoints();
             this.redrawSelectList();
             this.updateOpacity();
+            this.updatePovertyLine();
             
             this.mountainContainer.select(".vzb-mc-prerender").remove();
             
@@ -222,7 +228,8 @@
                 _this.highlightDataPoints();
                 _this.selectDataPoints();
                 _this.redrawSelectList();
-                _this.updateOpacity();              
+                _this.updateOpacity();      
+                _this.updatePovertyLine();
             }
         },
         
@@ -636,8 +643,8 @@
             var MAX_N_VERTICES = 500; 
             
 
-            var height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            var width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
@@ -645,18 +652,18 @@
 
             //year is centered
             this.yearEl
-                .attr("x", width / 2)
-                .attr("y", height / 3 * 1.5)
-                .style("font-size", Math.max(height / 4, width / 4) + "px");
+                .attr("x", this.width / 2)
+                .attr("y", this.height / 3 * 1.5)
+                .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
 
             //update scales to the new range
-            this.yScale.range([height, 0]);
-            this.xScale.range([0, width]);
+            this.yScale.range([this.height, 0]);
+            this.xScale.range([0, this.width]);
 
             // we need to generate the distributions based on mu, variance and scale
             // we span a uniform mesh across the entire X scale,
             if(!meshLength) {
-                meshLength = width ? width * RESOLUTION_PPP : -1;
+                meshLength = this.width ? this.width * RESOLUTION_PPP : -1;
                 if(this.model.entities._visible.length > 100 && 
                    !this.model.marker.group.merge &&
                    !this.model.marker.stack.merge) MAX_N_VERTICES = 100*150/this.model.entities._visible.length;
@@ -691,39 +698,14 @@
 
 
             this.xAxisEl
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(0," + this.height + ")")
                 .call(this.xAxis);
 
             this.xTitleEl
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(0," + this.height + ")")
                 .select("text")
                 .attr("dy", "-0.36em");
-            
-            this.povertylineEl
-                .selectAll("line").data([1]).enter().append("line")
-                .style("stroke", "grey")
-                .style("stroke-dasharray", "5 5")
-            
-            this.povertylineEl
-                .selectAll("text").data([1]).enter().append("text")
-                .style("fill", "grey")
-                .style("text-anchor","end")
-                .style("dominant-baseline","hanging");
 
-            
-            this.povertylineEl
-                .selectAll("line")
-                .attr("x1",this.xScale(1.25))
-                .attr("x2",this.xScale(1.25))
-                .attr("y1",height)
-                .attr("y2",height*0.66);
-            
-            this.povertylineEl
-                .selectAll("text")
-                .attr("x",this.xScale(1.25) - 5)
-                .attr("y",height*0.66)
-                .text("00%"); 
-            
         },
 
 
@@ -773,6 +755,44 @@
             if(!yMax)utils.warn("Setting yMax to " + yMax + ". You failed again :-/");
         },
 
+        
+        updatePovertyLine: function(){
+            var _this = this;
+            var povertyline = this.model.time.povertyline;
+            
+            this.povertylineEl.classed("vzb-hidden", !povertyline);
+            if(!povertyline) return;
+            
+            var totalPop = 0;
+            var poorPop = 0;
+            
+            this.model.entities._visible
+                .filter(function(f){return !f.hidden})
+                .forEach(function(d){
+                    var vertices = _this.cached[d.KEY()];
+                
+                    var array = _this.mesh.map(function(m, i){
+                        totalPop += vertices[i].y;
+                        if(m<povertyline)poorPop += vertices[i].y;
+                    })
+                })
+            
+            
+            this.povertylineEl.select("line")
+                .attr("x1",this.xScale(povertyline))
+                .attr("x2",this.xScale(povertyline))
+                .attr("y1",this.height)
+                .attr("y2",this.height*0.66);
+
+            this.povertylineEl.select("text")
+                .attr("x",this.xScale(povertyline) - 5)
+                .attr("y",this.height*0.66)
+                .text(Math.round(poorPop/totalPop*100) + "%"); 
+            
+            if(this.model.time.record) console.log(year + ", " + poorPop/totalPop*100);                        
+            
+        },
+        
 
         /*
          * REDRAW DATA POINTS:
@@ -812,26 +832,14 @@
                             var visible = d.values[0].values.filter(function(f){return !f.hidden});
                             var first = visible[0].KEY();
                             
-                            var totalPop = 0;
-                            var poorPop = 0;
-                            
                             var array = _this.mesh.map(function(m, i){
-                                var y = _this.cached[first][i].y0 + _this.cached[first][i].y;
-                                totalPop += y;
-                                if(m<1.25)poorPop += y;
-                                return { x: m, y0: 0, y: y};
+                                return { x: m, y0: 0, y: _this.cached[first][i].y0 + _this.cached[first][i].y};
                             })
                             
                             view //.transition().duration(speed).ease("linear")
                                 .style("fill", "grey")
                                 .attr("d", _this.area(array));
                             
-                            if(mergeStacked && _this.model.marker.stack.which == "all"){
-                                _this.povertylineEl.select("text").text(Math.round(poorPop/totalPop*100) + "%");
-                            };
-                            
-                            if(record) console.log(year + ", " + poorPop/totalPop*100)
-
                             
                             if(record) _this._export.write({type: "path", id: d.key, time: year, fill: "grey", d: _this.area(array)});
                         }else{
@@ -840,7 +848,6 @@
 
                     })
                 
-                this.povertylineEl.classed("vzb-hidden", !mergeStacked);
                 
             
                 this.mountainsMergeGrouped

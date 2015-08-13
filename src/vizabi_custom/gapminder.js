@@ -42,6 +42,7 @@
                 "hints/mount/logXstops": "X-axis logarithmic stops:",
                 "hints/mount/howtostack": "Chose how to stack mountains:",
                 "hints/mount/xlimits": "X-axis limits:",
+                "hints/mount/povertyline": "Poverty line",
                 "hints/min": "min",
                 "hints/max": "max",
                 "mount/maxYmode/immediate": "Immediate",
@@ -245,7 +246,7 @@
                     which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
-                    min: 0.05, //0
+                    min: 0.1, //0
                     max: 1000 //100
                 },
                 size: {

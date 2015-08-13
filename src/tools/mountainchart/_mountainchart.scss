@@ -39,6 +39,15 @@
                 @include font-size(40px);
             }
         }
+        .vzb-mc-povertyline text{
+            dominant-baseline: hanging;
+            text-anchor: end;
+            fill: grey;
+        }
+        .vzb-mc-povertyline line{
+            stroke: grey;
+            stroke-dasharray: 5 5;
+        }
         .vzb-mc-axis-x-title text{
             @include font-size(40px);
         }
