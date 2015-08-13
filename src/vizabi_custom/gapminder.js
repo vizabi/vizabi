@@ -535,9 +535,9 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "childSurv",
+                    which: "u5mr",
                     scaleType: "log",
-                    unit: "childSurv"
+                    unit: "u5mr"
                 },
                 axis_x: {
                     use: "indicator",
