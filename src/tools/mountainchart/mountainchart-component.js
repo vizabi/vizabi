@@ -177,6 +177,7 @@
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.mountains = null;
             this.tooltip = this.element.select('.vzb-tooltip');
+            this.povertylineEl = this.element.select('.vzb-mc-povertyline');
 
             var _this = this;
             this.on("resize", function () {
@@ -264,7 +265,6 @@
             var _this = this;
 
             // construct pointers
-            var stackMode = this.model.marker.stack.which;
             var endTime = this.model.time.end;
             this.model.entities._visible = this.model.marker.getKeys()
                 .map(function (d) {
@@ -697,7 +697,33 @@
             this.xTitleEl
                 .attr("transform", "translate(0," + height + ")")
                 .select("text")
-                .attr("dy", "-0.36em")
+                .attr("dy", "-0.36em");
+            
+            this.povertylineEl
+                .selectAll("line").data([1]).enter().append("line")
+                .style("stroke", "grey")
+                .style("stroke-dasharray", "5 5")
+            
+            this.povertylineEl
+                .selectAll("text").data([1]).enter().append("text")
+                .style("fill", "grey")
+                .style("text-anchor","end")
+                .style("dominant-baseline","hanging");
+
+            
+            this.povertylineEl
+                .selectAll("line")
+                .attr("x1",this.xScale(1.25))
+                .attr("x2",this.xScale(1.25))
+                .attr("y1",height)
+                .attr("y2",height*0.66);
+            
+            this.povertylineEl
+                .selectAll("text")
+                .attr("x",this.xScale(1.25) - 5)
+                .attr("y",height*0.66)
+                .text("00%"); 
+            
         },
 
 
@@ -786,21 +812,36 @@
                             var visible = d.values[0].values.filter(function(f){return !f.hidden});
                             var first = visible[0].KEY();
                             
+                            var totalPop = 0;
+                            var poorPop = 0;
+                            
                             var array = _this.mesh.map(function(m, i){
-                                return { x: m, y0: 0, y: _this.cached[first][i].y0 + _this.cached[first][i].y }
+                                var y = _this.cached[first][i].y0 + _this.cached[first][i].y;
+                                totalPop += y;
+                                if(m<1.25)poorPop += y;
+                                return { x: m, y0: 0, y: y};
                             })
                             
                             view //.transition().duration(speed).ease("linear")
                                 .style("fill", "grey")
-                                .attr("d", _this.area(array))
+                                .attr("d", _this.area(array));
+                            
+                            if(mergeStacked && _this.model.marker.stack.which == "all"){
+                                _this.povertylineEl.select("text").text(Math.round(poorPop/totalPop*100) + "%");
+                            };
+                            
+                            if(record) console.log(year + ", " + poorPop/totalPop*100)
+
                             
                             if(record) _this._export.write({type: "path", id: d.key, time: year, fill: "grey", d: _this.area(array)});
                         }else{
-                        
                             //TODO here should come the processing for regional stacking, but we haven't yet needed this case
                         }
 
                     })
+                
+                this.povertylineEl.classed("vzb-hidden", !mergeStacked);
+                
             
                 this.mountainsMergeGrouped
                     .each(function (d) {
@@ -861,6 +902,7 @@
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
+            this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             
             if(this.model.marker.stack.use == "property"){
                 shape = this.precomputedShapes["incomeMount_shape_stack_region"][_this.model.time.value.getFullYear()]
