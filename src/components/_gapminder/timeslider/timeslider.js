@@ -139,10 +139,10 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          utils.throttle(brushed.bind(this), 30);
+          brushed.call(this);
         })
         .on("brushend", function () {
-          utils.throttle(brushedEnd.bind(this), 30);
+          brushedEnd.call(this);
         });
 
       //Slide
@@ -324,7 +324,7 @@
 
       var old_pos = this.handle.attr("cx");
       var new_pos = this.xScale(value);
-        
+
       if(old_pos==null) old_pos = new_pos;
       var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
