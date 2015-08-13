@@ -532,9 +532,9 @@
      * Prints error
      * @param {String} message
      */
-    error: function (message) {
+    error: function (message1, message2) {
       if (root.console && typeof root.console.error === 'function') {
-        root.console.error(message);
+        root.console.error(message1, message2);
       }
     },
 
