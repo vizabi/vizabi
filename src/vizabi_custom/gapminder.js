@@ -276,7 +276,7 @@
             reader: "csv-file",
             //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
             //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
-            path: "https://dl.dropboxusercontent.com/u/91563274/mountains-pop-gdp-gini-1800-2030.csv"
+            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
 
