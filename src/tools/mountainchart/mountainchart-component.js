@@ -777,6 +777,7 @@
                     })
                 })
             
+            var formatter = d3.format(".3r");
             
             this.povertylineEl.select("line")
                 .attr("x1",this.xScale(povertyline))
@@ -787,7 +788,7 @@
             this.povertylineEl.selectAll("text")
                 .attr("x",this.xScale(povertyline) - 5)
                 .attr("y",this.height*0.66)
-                .text(Math.round(poorPop/totalPop*100) + "%"); 
+                .text(formatter(poorPop/totalPop*100) + "%"); 
             
             if(this.model.time.record) console.log(year + ", " + poorPop/totalPop*100);                        
             
