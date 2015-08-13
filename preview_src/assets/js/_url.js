@@ -55,10 +55,14 @@ function updateURL(optimize) {
 }
 
 function parseURL() {
-    var hash = window.location.hash;
+    var loc = window.location.toString();
+    var hash = null;
+    if (loc.indexOf('#') >= 0) {
+      hash = loc.substring(loc.indexOf('#') + 1);
+    }
 
     if (hash) {
-        options = URLON.parse(URLON.stringify(hash.replace("#", "")));
+        options = URLON.parse(hash);
 
         URL.state = options.state;
         URL.lang = options.lang;
