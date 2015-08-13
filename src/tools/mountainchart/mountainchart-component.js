@@ -784,7 +784,7 @@
                 .attr("y1",this.height)
                 .attr("y2",this.height*0.66);
 
-            this.povertylineEl.select("text")
+            this.povertylineEl.selectAll("text")
                 .attr("x",this.xScale(povertyline) - 5)
                 .attr("y",this.height*0.66)
                 .text(Math.round(poorPop/totalPop*100) + "%"); 
