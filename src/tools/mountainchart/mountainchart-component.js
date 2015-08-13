@@ -781,7 +781,7 @@
                 .attr("y",this.height*0.66)
                 .text(formatter(poorPop/totalPop*100) + "%"); 
             
-            if(this.model.time.record) console.log(year + ", " + poorPop/totalPop*100);                        
+            if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + poorPop/totalPop*100);                        
             
         },
         
