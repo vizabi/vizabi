@@ -151,6 +151,7 @@
 
             // define path generator
             this.area = d3.svg.area()
+                .interpolate("basis")
                 .x(function (d) { return _this.xScale(d.x) })
                 .y0(function (d) { return _this.yScale(d.y0) })
                 .y1(function (d) { return _this.yScale(d.y0 + d.y) });
@@ -638,9 +639,7 @@
                 break;
             };
             
-            var RESOLUTION_PPP = 1/5; // 1 point per 5 pixels
-            var MIN_N_VERTICES = 100; 
-            var MAX_N_VERTICES = 500; 
+            var N_VERTICES = 40; 
             
 
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -662,15 +661,7 @@
 
             // we need to generate the distributions based on mu, variance and scale
             // we span a uniform mesh across the entire X scale,
-            if(!meshLength) {
-                meshLength = this.width ? this.width * RESOLUTION_PPP : -1;
-                if(this.model.entities._visible.length > 100 && 
-                   !this.model.marker.group.merge &&
-                   !this.model.marker.stack.merge) MAX_N_VERTICES = 100*150/this.model.entities._visible.length;
-                meshLength = Math.max(MIN_N_VERTICES, meshLength);
-                meshLength = Math.min(MAX_N_VERTICES, meshLength);
-            }
-            
+            if(!meshLength) meshLength = N_VERTICES;
             
             var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
             var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
