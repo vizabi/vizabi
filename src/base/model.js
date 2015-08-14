@@ -363,10 +363,6 @@
               'resize',
               'dom_ready'
             ]);
-          },
-          'load_end': function () {
-            Vizabi.Events.unfreezeAll();
-            _this.setLoadingDone('_hook_data');
           }
         };
 
@@ -410,6 +406,8 @@
      * executes after data has actually been loaded
      */
     afterLoad: function () {
+      Vizabi.Events.unfreezeAll();
+      this.setLoadingDone('_hook_data');
     },
 
     /**
