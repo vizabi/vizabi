@@ -55,8 +55,8 @@
             this.svg
                 .attr("viewBox", "0 0 " + width + " " + height)
                 .attr("version", "1.1")
-                .attr("_xmlns_", "http://www.w3.org/2000/svg")
-                .attr("_xmlns:xlink_", "http://www.w3.org/1999/xlink")
+                .attr("param1", "http://www.w3.org/2000/svg")
+                .attr("param2", "http://www.w3.org/1999/xlink")
                 .attr("x", "0px")
                 .attr("y", "0px")
                 .attr("style", "enable-background:new " + "0 0 " + width + " " + height)
@@ -168,9 +168,13 @@
         },
         
         close: function () {
+            
             var result = SVGHEADER + " " + this.container.node().innerHTML
-                .replace("_xmlns_", "xmlns")
-                .replace("_xmlns:xlink_", "xmlns:xlink");
+                .replace("param1", "xmlns")
+                .replace("param2", "xmlns:xlink")
+                //round all numbers in SVG code 
+                .replace(/\d+(\.\d+)/g,function(x){return Math.round(+x*100)/100+""});
+            
             
             if(result.length/1024/1024 > 2){
                 
