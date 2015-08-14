@@ -909,7 +909,7 @@
                 shape = this.precomputedShapes["incomeMount_shape_stack_" + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
             } 
             
-            
+            if(!shape || shape.length == 0) return;
                 
             this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
             this.yScale = d3.scale.linear().domain([0, d3.max(shape.map(function(m){return m})) ]);
