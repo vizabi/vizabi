@@ -218,7 +218,8 @@
                 xLogStops: [1],
                 yMaxMethod: "immediate",
                 povertyline: 1.25,
-                povertyCutoff: 0.5
+                povertyCutoff: 0.5,
+                povertyFade: 0.4
             },
             entities: {
                 dim: "geo",

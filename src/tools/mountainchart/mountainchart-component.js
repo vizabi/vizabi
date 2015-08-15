@@ -62,6 +62,22 @@
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
                 },
+                'change:time:povertyCutoff': function () {
+                    //console.log("change time value");
+                    _this.updateTime();
+                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this.redrawDataPoints();
+                    _this.redrawSelectList();
+                    _this.updatePovertyLine();
+                },
+                'change:time:povertyFade': function () {
+                    //console.log("change time value");
+                    _this.updateTime();
+                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this.redrawDataPoints();
+                    _this.redrawSelectList();
+                    _this.updatePovertyLine();
+                },
                 'change:time:record': function () {
                     //console.log("change time record");
                     if(_this.model.time.record) {
@@ -674,8 +690,6 @@
                 this.mesh = this.mesh.filter(function (dX) {return dX > 0});
             }
             
-            this.povertyCutoffIndex = d3.bisectLeft(this.mesh, this.model.time.povertyCutoff);
-
             //axis is updated
             this.xAxis.scale(this.xScale)
                 .orient("bottom")
@@ -711,13 +725,9 @@
 
             if (!norm || !mu || !sigma) return [];
 
-            var level = 0.5;
-            var fade = 0.4;
-            var result = [];
-            var indexAlLevel = 0;
+            var level = this.model.time.povertyCutoff;
+            var fade = this.model.time.povertyFade;
             var acc = 0;
-            var redistCoeff = 0.5; //1 - all remaining
-            var redist = Math.ceil((this.mesh.length-this.povertyCutoffIndex) * redistCoeff);
             var mask = [];
             var distribution = [];
             
@@ -738,9 +748,7 @@
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * distribution[i] * (1 - mask[i]) * (1 + changeArea) 
-                              // + ((i>_this.povertyCutoffIndex && i<= _this.povertyCutoffIndex + redist )?acc/redist : 0)
-                              //)
+                    y: norm * distribution[i] * (1 - mask[i]) * (1 + changeArea)
                 }
                 
             });
