@@ -218,7 +218,7 @@
                 xLogStops: [1, 2, 5],
                 yMaxMethod: "immediate",
                 povertyline: 1.25,
-                povertyCutoff: 0.5,
+                povertyCutoff: 0.2,
                 povertyFade: 0.2
             },
             entities: {
