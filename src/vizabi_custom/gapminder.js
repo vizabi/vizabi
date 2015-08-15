@@ -215,11 +215,11 @@
                 step: 1,
                 speed: 100,
                 formatInput: "%Y",
-                xLogStops: [1],
+                xLogStops: [1, 2, 5],
                 yMaxMethod: "immediate",
                 povertyline: 1.25,
                 povertyCutoff: 0.5,
-                povertyFade: 0.4
+                povertyFade: 0.2
             },
             entities: {
                 dim: "geo",

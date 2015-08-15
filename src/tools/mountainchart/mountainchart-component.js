@@ -735,7 +735,7 @@
             
             this.mesh.map(function (dX,i) {
                 distribution[i] = _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType);
-                mask[i] = dX<level?1:(dX>fade*7?0:Math.exp(level-dX/fade))
+                mask[i] = dX<level?1:(dX>fade*7?0:Math.exp((level-dX)/fade))
                 acc += mask[i] * distribution[i];
             });
                  

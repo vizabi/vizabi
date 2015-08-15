@@ -53,7 +53,7 @@
         step: 1, //step must be integer
         adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
         formatInput: "%Y", //defaults to year format
-        xLogStops: [1,2], //TODO: remove from here. only for mountain chart
+        xLogStops: [], //TODO: remove from here. only for mountain chart
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
         record: false,
         povertyline: 0, //TODO: remove from here. only for mountain chart
