@@ -667,12 +667,14 @@
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
             var rangeStep = (rangeTo - rangeFrom) / meshLength;
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
-                
+            
             if (scaleType != "linear") {
                 this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)});
             }else{
                 this.mesh = this.mesh.filter(function (dX) {return dX > 0});
-            }                
+            }
+            
+            this.povertyCutoffIndex = d3.bisectLeft(this.mesh, this.model.time.povertyCutoff);
 
             //axis is updated
             this.xAxis.scale(this.xScale)
@@ -709,14 +711,54 @@
 
             if (!norm || !mu || !sigma) return [];
 
-            return this.mesh.map(function (dX) {
+            var level = 0.5;
+            var fade = 0.4;
+            var result = [];
+            var indexAlLevel = 0;
+            var acc = 0;
+            var redistCoeff = 0.5; //1 - all remaining
+            var redist = Math.ceil((this.mesh.length-this.povertyCutoffIndex) * redistCoeff);
+            var mask = [];
+            var distribution = [];
+            
+            
+            
+            this.mesh.map(function (dX,i) {
+                distribution[i] = _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType);
+                mask[i] = dX<level?1:(dX>fade*7?0:Math.exp(level-dX/fade))
+                acc += mask[i] * distribution[i];
+            });
+                 
+            
+            
+            var changeArea = acc/ d3.sum(distribution);
+            
+            var result = this.mesh.map(function (dX, i) {
+                
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType)
+                    y: norm * distribution[i] * (1 - mask[i]) * (1 + changeArea) 
+                              // + ((i>_this.povertyCutoffIndex && i<= _this.povertyCutoffIndex + redist )?acc/redist : 0)
+                              //)
                 }
+                
             });
-
+            
+            
+            
+            //console.log(d3.sum(distribution), d3.sum(result.map(function(d){return d.y/norm})) )
+            return result;
+            
+            
+//            return this.mesh.map(function (dX) {
+//                return {
+//                    x: dX,
+//                    y0: 0, // the initial base of areas is at zero
+//                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType)
+//                }
+//            });
+            
         },
 
         

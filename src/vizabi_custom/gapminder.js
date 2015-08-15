@@ -216,7 +216,9 @@
                 speed: 100,
                 formatInput: "%Y",
                 xLogStops: [1],
-                yMaxMethod: "immediate"
+                yMaxMethod: "immediate",
+                povertyline: 1.25,
+                povertyCutoff: 0.5
             },
             entities: {
                 dim: "geo",

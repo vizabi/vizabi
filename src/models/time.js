@@ -56,7 +56,8 @@
         xLogStops: [1,2], //TODO: remove from here. only for mountain chart
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
         record: false,
-        povertyline: 1.25
+        povertyline: 0, //TODO: remove from here. only for mountain chart
+        povertyCutoff: 0 //TODO: remove from here. only for mountain chart
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;
