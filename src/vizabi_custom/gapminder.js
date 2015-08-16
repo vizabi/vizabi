@@ -270,7 +270,8 @@
                 },
                 group: {
                     which: "geo.region", // set a property of data
-                    manualSorting: ["eur", "ame", "afr", "asi"]
+                    manualSorting: ["eur", "ame", "afr", "asi"],
+                    merge: true
                 }
             }
         },
