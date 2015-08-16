@@ -217,11 +217,11 @@
                 formatInput: "%Y",
                 xLogStops: [1, 2, 5],
                 yMaxMethod: "immediate",
-                povertyline: 1.25,
+                povertyline: 1.82,
                 povertyCutoff: 0.2,
                 povertyFade: 0.2,
-                gdpFactor: 0.000651245,
-                gdpShift: 0
+                gdpFactor: 1.38,
+                gdpShift: -9.8334
             },
             entities: {
                 dim: "geo",
