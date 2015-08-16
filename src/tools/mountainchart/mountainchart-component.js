@@ -70,6 +70,14 @@
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
                 },
+                'change:time:gdpFactor': function () {
+                    //console.log("change time value");
+                    _this.updateTime();
+                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this.redrawDataPoints();
+                    _this.redrawSelectList();
+                    _this.updatePovertyLine();
+                },
                 'change:time:povertyFade': function () {
                     //console.log("change time value");
                     _this.updateTime();
@@ -445,11 +453,12 @@
         highlightDataPoints: function () {
             var _this = this;
             this.someHighlighted = (this.model.entities.brush.length > 0);
+            var gdpFactor = this.model.time.gdpFactor;
             
             if (this.model.entities.brush.length==1) {
                 var key = this.model.entities.brush[0][_this.KEY];
                 var sigma = _this._math.giniToSigma(_this.values.size[key]);
-                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma);
+                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma, gdpFactor);
                 
                 // here we highlight the value where the mountain is reaching its peak
                 // which is mode. not mean, not median and not mu. see https://en.wikipedia.org/wiki/Log-normal_distribution
@@ -719,9 +728,10 @@
         _spawn: function (values, d) {
             var _this = this;
 
+            var gdpFactor = this.model.time.gdpFactor;
             var norm = values.axis_y[d.KEY()];
             var sigma = _this._math.giniToSigma(values.size[d.KEY()]);
-            var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
+            var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma, gdpFactor);
 
             if (!norm || !mu || !sigma) return [];
 

@@ -219,7 +219,8 @@
                 yMaxMethod: "immediate",
                 povertyline: 1.25,
                 povertyCutoff: 0.2,
-                povertyFade: 0.2
+                povertyFade: 0.2,
+                gdpFactor: 0.2
             },
             entities: {
                 dim: "geo",

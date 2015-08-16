@@ -58,7 +58,8 @@
         record: false,
         povertyline: 0, //TODO: remove from here. only for mountain chart
         povertyCutoff: 0, //TODO: remove from here. only for mountain chart
-        povertyFade: 1 //TODO: remove from here. only for mountain chart
+        povertyFade: 1, //TODO: remove from here. only for mountain chart
+        gdpFactor: 1 //TODO: remove from here. only for mountain chart
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;

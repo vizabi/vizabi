@@ -10,10 +10,10 @@
         },
 
         
-        gdpToMu: function(gdp, sigma){
+        gdpToMu: function(gdp, sigma, gdpFactor){
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
-            return Math.log(gdp/365/5)-sigma*sigma/2;
+            return Math.log(gdp/365*gdpFactor)-sigma*sigma/2;
         },
         
         giniToSigma: function (gini) {
