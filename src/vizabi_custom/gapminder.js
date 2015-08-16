@@ -218,7 +218,7 @@
                 xLogStops: [1, 2, 5],
                 yMaxMethod: "immediate",
                 povertyline: 1.82,
-                povertyCutoff: 0.2,
+                povertyCutoff: 0.1,
                 povertyFade: 0.5,
                 gdpFactor: 1.379969318,
                 gdpShift: -1.691733947
@@ -251,8 +251,8 @@
                     which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
-                    min: 0.1, //0
-                    max: 1000 //100
+                    min: 0.05, //0
+                    max: 5000 //100
                 },
                 size: {
                     use: "indicator",

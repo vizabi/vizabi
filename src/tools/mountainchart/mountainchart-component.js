@@ -776,11 +776,12 @@
                 acc += mask[i] * distribution[i];
             });
                  
-            var k = 4//Math.abs(povertyline-level)/2/Math.PI;
-            var m = 3//povertyline - Math.PI*k; 
+            var k = 2*Math.PI/(Math.log(povertyline)-Math.log(level));
+            var m = Math.PI - Math.log(povertyline) * k;  
             
-            
-            var changeArea = acc/ d3.sum(distribution);
+            var cosineArea = d3.sum(this.mesh.map(function (dX) {
+                return (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 )
+            }));
             
             var result = this.mesh.map(function (dX, i) {
                 
@@ -788,8 +789,8 @@
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
                     y: norm *(
-                        (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m))/27.283923622153758*acc : 0 )
-                         +distribution[i] * (1 - mask[i]) //* (1 + changeArea)
+                        (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m))/cosineArea * acc : 0 )
+                         +distribution[i] * (1 - mask[i]) 
                         )
                 }
                 
@@ -797,7 +798,7 @@
             
             
             
-            //console.log(d3.sum(distribution), d3.sum(result.map(function(d){return d.y/norm})) )
+            //console.log(Math.round(d3.sum(distribution)/d3.sum(result.map(function(d){return d.y/norm}))*10000)/10000 )
             return result;
             
             
