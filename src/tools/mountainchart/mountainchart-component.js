@@ -184,10 +184,12 @@
             // define path generator
             this.area = d3.svg.area()
                 .interpolate("basis")
-                .x(function (d) { return _this.xScale(d.x) })
+                .x(function (d) { return _this.xScale(Math.exp( 1.379969318 * Math.log(d.x) -1.691733947  )) })
                 .y0(function (d) { return _this.yScale(d.y0) })
                 .y1(function (d) { return _this.yScale(d.y0 + d.y) });
 
+
+                           
             this.stack = d3.layout.stack()
                 .order("reverse")
                 .values(function (d) { return _this.cached[d.KEY()] });
@@ -702,8 +704,16 @@
             var rangeStep = (rangeTo - rangeFrom) / meshLength;
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
             
+               var gdpFactor = this.model.time.gdpFactor;
+            var gdpShift = this.model.time.gdpShift;  
+            
+                   // .map(function(m){return Math.exp( gdpFactor * Math.log(m.x) + gdpShift );} 
+                                             
+                                             
+            
+            
             if (scaleType != "linear") {
-                this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)});
+                this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)}); 
             }else{
                 this.mesh = this.mesh.filter(function (dX) {return dX > 0});
             }
@@ -833,7 +843,8 @@
                 
                     var array = _this.mesh.map(function(m, i){
                         totalPop += vertices[i].y;
-                        if(m<povertyline)poorPop += vertices[i].y;
+                        
+                        if(Math.exp( 1.379969318 * Math.log(m) -1.691733947  )<povertyline)poorPop += vertices[i].y;
                     })
                 })
             
@@ -936,8 +947,7 @@
                         if(record) _this._export.write({type: "path", id: d.key, time: year, fill: _this.cScale(_this.values.color[first]), d: _this.area(array)});
 
                     })
-                                
-                                
+                   
 
                 this.mountains.each(function (d, i) {
                     var view = d3.select(this);
