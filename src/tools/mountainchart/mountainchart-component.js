@@ -180,14 +180,22 @@
 
             this.cached = {};
             this.mesh = [];
+            
+            
+
+            this.rescale = function(x){
+                return Math.exp( _this.model.time.gdpFactor* Math.log(x) + _this.model.time.gdpShift  );
+            }
+            this.unscale = function(x){
+                return Math.exp((Math.log( x ) - _this.model.time.gdpShift )/_this.model.time.gdpFactor);
+            }
 
             // define path generator
             this.area = d3.svg.area()
                 .interpolate("basis")
-                .x(function (d) { return _this.xScale(Math.exp( 1.379969318 * Math.log(d.x) -1.691733947  )) })
+                .x(function (d) { return _this.xScale(_this.rescale(d.x)) })
                 .y0(function (d) { return _this.yScale(d.y0) })
                 .y1(function (d) { return _this.yScale(d.y0 + d.y) });
-
 
                            
             this.stack = d3.layout.stack()
@@ -747,15 +755,14 @@
         _spawn: function (values, d) {
             var _this = this;
 
-            var gdpFactor = this.model.time.gdpFactor;
-            var gdpShift = this.model.time.gdpShift;
             var norm = values.axis_y[d.KEY()];
             var sigma = _this._math.giniToSigma(values.size[d.KEY()]);
-            var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma, gdpFactor, gdpShift);
+            var mu = _this._math.gdpToMu(values.axis_x[d.KEY()], sigma);
 
             if (!norm || !mu || !sigma) return [];
 
-            var level = this.model.time.povertyCutoff;
+            var povertyline = this.unscale(this.model.time.povertyline);
+            var level = this.unscale(this.model.time.povertyCutoff);
             var fade = this.model.time.povertyFade;
             var acc = 0;
             var mask = [];
@@ -769,6 +776,8 @@
                 acc += mask[i] * distribution[i];
             });
                  
+            var k = 4//Math.abs(povertyline-level)/2/Math.PI;
+            var m = 3//povertyline - Math.PI*k; 
             
             
             var changeArea = acc/ d3.sum(distribution);
@@ -778,7 +787,10 @@
                 return {
                     x: dX,
                     y0: 0, // the initial base of areas is at zero
-                    y: norm * distribution[i] //* (1 - mask[i]) * (1 + changeArea)
+                    y: norm *(
+                        (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m))/27.283923622153758*acc : 0 )
+                         +distribution[i] * (1 - mask[i]) //* (1 + changeArea)
+                        )
                 }
                 
             });
@@ -844,7 +856,7 @@
                     var array = _this.mesh.map(function(m, i){
                         totalPop += vertices[i].y;
                         
-                        if(Math.exp( 1.379969318 * Math.log(m) -1.691733947  )<povertyline)poorPop += vertices[i].y;
+                        if(_this.rescale(m)<povertyline)poorPop += vertices[i].y;
                     })
                 })
             

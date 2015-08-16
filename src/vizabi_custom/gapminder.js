@@ -219,9 +219,9 @@
                 yMaxMethod: "immediate",
                 povertyline: 1.82,
                 povertyCutoff: 0.2,
-                povertyFade: 0.2,
-                gdpFactor: 1.38,
-                gdpShift: -9.8334
+                povertyFade: 0.5,
+                gdpFactor: 1.379969318,
+                gdpShift: -1.691733947
             },
             entities: {
                 dim: "geo",
@@ -251,7 +251,7 @@
                     which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
-                    min: 0.01, //0
+                    min: 0.1, //0
                     max: 1000 //100
                 },
                 size: {
