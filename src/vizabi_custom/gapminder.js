@@ -220,7 +220,8 @@
                 povertyline: 1.25,
                 povertyCutoff: 0.2,
                 povertyFade: 0.2,
-                gdpFactor: 0.190165
+                gdpFactor: 0.000651245,
+                gdpShift: 0
             },
             entities: {
                 dim: "geo",
@@ -250,7 +251,7 @@
                     which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
-                    min: 0.1, //0
+                    min: 0.01, //0
                     max: 1000 //100
                 },
                 size: {
