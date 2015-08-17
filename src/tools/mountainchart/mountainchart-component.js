@@ -94,6 +94,14 @@
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
                 },
+                'change:time:xPoints': function () {
+                    //console.log("acting on resize");
+                    _this.updateSize();
+                    _this.updateTime(); // respawn is needed
+                    _this.redrawDataPoints();
+                    _this.redrawSelectList();
+                    _this.updatePovertyLine();
+                },
                 'change:time:record': function () {
                     //console.log("change time record");
                     if(_this.model.time.record) {
@@ -682,7 +690,6 @@
                 break;
             };
             
-            var N_VERTICES = 200; 
             
 
             this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -704,21 +711,13 @@
 
             // we need to generate the distributions based on mu, variance and scale
             // we span a uniform mesh across the entire X scale,
-            if(!meshLength) meshLength = N_VERTICES;
+            if(!meshLength) meshLength = this.model.time.xPoints;
             
             var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
             var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
             var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
             var rangeStep = (rangeTo - rangeFrom) / meshLength;
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
-            
-               var gdpFactor = this.model.time.gdpFactor;
-            var gdpShift = this.model.time.gdpShift;  
-            
-                   // .map(function(m){return Math.exp( gdpFactor * Math.log(m.x) + gdpShift );} 
-                                             
-                                             
-            
             
             if (scaleType != "linear") {
                 this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)}); 

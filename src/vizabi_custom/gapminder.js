@@ -211,17 +211,18 @@
             time: {
                 start: 1800,
                 end: 2030,
-                value: 2000,
+                value: 2030,
                 step: 1,
                 speed: 100,
                 formatInput: "%Y",
                 xLogStops: [1, 2, 5],
-                yMaxMethod: "immediate",
+                yMaxMethod: "latest",
                 povertyline: 1.82,
                 povertyCutoff: 0.1,
                 povertyFade: 0.5,
                 gdpFactor: 1.379969318,
-                gdpShift: -1.691733947
+                gdpShift: -1.691733947,
+                xPoints: 200
             },
             entities: {
                 dim: "geo",
