@@ -14,8 +14,10 @@ function updateURL(optimize) {
            state = VIZ.getOptions().state
         }
         formatDates(state);
-
+        var lang = document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+        if(!lang) {lang = 'en'; document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');}
         var url = {
+            lang: lang,
             width: parseInt(placeholder.style.width,10),
             height: parseInt(placeholder.style.height,10),
             fullscreen: hasClass(placeholder, 'fullscreen'),
