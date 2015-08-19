@@ -110,13 +110,13 @@
                         .transition()
                         .duration(highlightTransDuration)
                         .ease("linear")
-                        .style("opacity", highlightValue=="none"? 1 : Math.min(1, Math.pow(
-                                    Math.abs(axis.scale()(d)-axis.scale()(highlightValue))/
-                                    (axis.scale().range()[1] - axis.scale().range()[0])*5, 2) 
-                              ))
+                        .style("opacity", highlightValue=="none"? 1 : orient=="horizontal axis"?1: Math.min(1, Math.pow(
+                                                          Math.abs(axis.scale()(d)-axis.scale()(highlightValue))/
+                                                         (axis.scale().range()[1] - axis.scale().range()[0])*5, 2)
+                                             ))
                 })
             
-            
+
             g.select('.vzb-axis-value')    
                 .transition()
                 .duration(highlightTransDuration)
@@ -125,10 +125,11 @@
                     + (orient==HORIZONTAL?axis.scale()(highlightValue):0) +","
                     + (orient==VERTICAL?axis.scale()(highlightValue):0) + ")"
                 )
-                
-            g.select('.vzb-axis-value').select("text")
-                .text(axis.tickFormat()(highlightValue=="none"?0:highlightValue))
-                .style("opacity",(highlightValue=="none"?0:1));
+
+
+                               g.select('.vzb-axis-value').select("text")
+                                   .text(axis.tickFormat()(highlightValue=="none"?0:highlightValue))
+                                   .style("opacity",(highlightValue=="none"?0:orient == "horizontal axis"?0:1));
 
             highlightValue = null;
         }
