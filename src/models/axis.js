@@ -88,6 +88,8 @@
     buildScale: function (margins) {
       var domain;
       var scaleType = this.scaleType || "linear";
+      if (margins === undefined)
+        margins = true;
 
       if (typeof margins === 'boolean') {
         var res = margins;
@@ -107,7 +109,7 @@
           var limits = this.getLimits(this.which),
             margin = (limits.max - limits.min) / 20;
 
-          domain = [(limits.min - (margins.min ? margin : 0)), (limits.max + (margins.max ? margin : 0))];
+          domain = [(limits.min - (margins.min && margin ? margin : 0)), (limits.max + (margins.max && margin ? margin : 0))];
           if (scaleType == "log") {
             domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
           }
