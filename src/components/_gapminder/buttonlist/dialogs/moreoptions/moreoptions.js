@@ -38,8 +38,14 @@
         checkbox: 'adaptMinMaxZoom'
       }, {
         component: 'gapminder-bubblesize',
-        placeholder: '.vzb-dialog-bubblesize',
-        model: ["state.marker.size"]
+        placeholder: '.vzb-dialog-bubblesize-min',
+        model: ["state.marker.size"],
+        field: 'min'
+      }, {
+        component: 'gapminder-bubblesize',
+        placeholder: '.vzb-dialog-bubblesize-max',
+        model: ["state.marker.size"],
+        field: 'max'
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-saxis-container',

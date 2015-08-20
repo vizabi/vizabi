@@ -29,6 +29,8 @@
       values = utils.extend({
         use: "value",
         unit: "",
+        min: 0,
+        max: 1,
         which: undefined
       }, values);
       this._super(values, parent, bind);
@@ -45,9 +47,10 @@
       if (typeof this.max === 'undefined' || this.max > 1) {
         this.max = 1;
       }
-      if (this.min > this.max) {
-        this.min = this.max;
+      if (this.max < this.min) {
+        this.set('min', this.max, true);
       }
+      
       //value must always be between min and max
       if (this.use === "value" && this.which > this.max) {
         this.which = this.max;

@@ -37,6 +37,7 @@
                 "buttons/more_options": "Options",
                 "buttons/opacityNonselect": "Opacity of non-selected",
                 "buttons/opacityRegular": "Regular opacity",
+                "hints/bubbl/setminsize": "Minimum bubble size:",
                 "hints/bubbl/setmaxsize": "Maximum bubble size:",
                 "hints/mount/maxYvalue": "Maximum Y value:",
                 "hints/mount/logXstops": "X-axis logarithmic stops:",
@@ -97,6 +98,7 @@
                 "buttons/more_options": "Mer...",
                 "buttons/opacityNonselect": "Synlighet av ej valda",
                 "buttons/opacityRegular": "Vanlig synlighet",
+                "hints/bubbl/setminsize": "Min bubblar storlek:",
                 "hints/bubbl/setmaxsize": "Max bubblar storlek:",
                 "hints/mount/maxYvalue": "Max Y-tal:",
                 "hints/mount/logXstops": "Log X-axel stoppas vid:",
@@ -544,6 +546,7 @@
                     use: "indicator",
                     which: "pop",
                     scaleType: "linear",
+                    min: 0,
                     max: 0.75,
                     unit: ""
                 }

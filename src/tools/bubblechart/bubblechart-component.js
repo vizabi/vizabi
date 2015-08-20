@@ -55,7 +55,7 @@
         "change:marker": function (evt) {
           // bubble size change is processed separately
           if (!_this._readyOnce) return;
-          if (evt == "change:marker:size:max") return;
+          if (evt.indexOf("change:marker:size") !== -1) return;
           if (evt.indexOf("change:marker:color:palette") > -1) return;
           if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
               _this.updateSize();
@@ -98,7 +98,7 @@
             _this.resetZoomer();
           }
         },
-        'change:marker:size:max': function () {
+        'change:marker:size': function () {
           //console.log("EVENT change:marker:size:max");
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
