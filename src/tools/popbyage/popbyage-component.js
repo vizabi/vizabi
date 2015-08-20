@@ -113,7 +113,6 @@
       this._updateEntities();
     },
 
-
     updateUIStrings: function(){
       this.translator = this.model.language.getTFunction();
 
@@ -135,7 +134,7 @@
       var _this = this;
       this.duration = this.model.time.speed;
 
-      this.yScale = this.model.marker.axis_y.getScale(false);
+      this.yScale = this.model.marker.axis_y.getScale({max: true});
       this.xScale = this.model.marker.axis_x.getScale(false);
       this.cScale = this.model.marker.color.getScale();
 
@@ -235,8 +234,8 @@
           .attr("class", "vzb-bc-age");
 
 
-      var barWidth = this.height / items.length;
-        console.log(_this.model.marker.color.scaleType);
+      this.barHeight = this.height / items.length;
+      
       this.bars.selectAll('.vzb-bc-bar > rect')
         .attr("fill", function (d) {
            return   _this._temporaryBarsColorAdapter(values, d, ageDim);
@@ -249,9 +248,9 @@
         .attr("x", 0)
         .transition().duration(duration).ease("linear")
         .attr("y", function (d) {
-          return _this.yScale(values.axis_y[d[ageDim]]) - barWidth;
+          return _this.yScale(values.axis_y[d[ageDim]]) - _this.barHeight;
         })
-        .attr("height", barWidth)
+        .attr("height", this.barHeight)
         .attr("width", function (d) {
           return _this.xScale(values.axis_x[d[ageDim]]);
         });
@@ -271,7 +270,7 @@
                })
                .attr("x", 7)
                .attr("y", function (d) {
-                  return _this.yScale(values.axis_y[d[ageDim]]) - barWidth - 10;
+                  return _this.yScale(values.axis_y[d[ageDim]]) - _this.barHeight - 10;
                })
                .style("fill", function (d) {
                   var color = _this.cScale(values.color[d[ageDim]]);
@@ -440,6 +439,15 @@
       this.title.attr('x', margin.right).attr('y', margin.top/2);
 
       this.year.attr('x', this.width + margin.left).attr('y', margin.top/2);
+
+      // fix tick labels position
+      this.yAxisEl.selectAll('g[class="tick"]')
+        .attr('transform', function (d) {
+          var yPos = _this.yScale(d) - _this.barHeight / 2;
+          if (isNaN(yPos))
+            yPos = 0;
+          return 'translate(0,' + yPos +')';
+        });
 
     }
   });
