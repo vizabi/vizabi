@@ -34,6 +34,17 @@
         type: "size"
       }];
 
+      this.field = config.field || 'max';
+
+      var _this = this;
+      this.model_binds = {
+        'change:size': function(evt) {
+          if(evt.indexOf(_this.field) > -1) {
+            _this.sliderEl.node().value = _this.model.size[_this.field];
+          }
+        }
+      };
+
       //contructor is the same as any component
       this._super(config, context);
     },
@@ -44,7 +55,7 @@
      * At this point, this.element and this.placeholder are available as a d3 object
      */
     readyOnce: function () {
-      var value = this.model.size.max,
+      var value = this.model.size[this.field],
         _this = this;
       this.element = d3.select(this.element);
       this.indicatorEl = this.element.select('#vzb-bs-indicator');
@@ -60,21 +71,8 @@
         });
     },
 
-    /**
-     * Executes everytime there's a data event.
-     * Ideally, only operations related to changes in the model
-     * At this point, this.element is available as a d3 object
-     */
     modelReady: function () {
-      this.indicatorEl.text(this.model.size.max);
-    },
-
-    /**
-     * Executes everytime the container or vizabi is resized
-     * Ideally,it contains only operations related to size
-     */
-    resize: function () {
-      //E.g: var height = this.placeholder.style('height');
+      this.indicatorEl.text(this.model.size[this.field]);
     },
 
     slideHandler: function () {
@@ -89,11 +87,12 @@
       var frameRate = 50;
 
       //implement throttle
+      //TODO: use utils.throttle
       var now = new Date();
       if (this._updTime != null && now - this._updTime < frameRate) return;
       this._updTime = now;
 
-      this.model.size.max = value;
+      this.model.size[this.field] = value;
     }
   });
 

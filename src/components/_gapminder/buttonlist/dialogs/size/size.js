@@ -23,11 +23,20 @@
 
       this.components = [{
         component: 'gapminder-bubblesize',
-        placeholder: '.vzb-dialog-bubblesize',
+        placeholder: '.vzb-dialog-bubblesize-min',
         model: ["state.marker.size"],
         ui: {
           show_button: false
-        }
+        },
+        field: 'min'
+      },{
+        component: 'gapminder-bubblesize',
+        placeholder: '.vzb-dialog-bubblesize-max',
+        model: ["state.marker.size"],
+        ui: {
+          show_button: false
+        },
+        field: 'max'
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-saxis-container',
