@@ -198,6 +198,15 @@
         }
     });
 
+    BarChart.define('dialog_config', {
+      'xAxis': {
+        'geo.region': {use: 'property', unit: '', scales: ['ordinal']},
+        'geo': {use: 'property', unit: '', scales: ['ordinal']},
+        'geo.name': {use: 'property', unit: '', scales: ['ordinal']},
+        '_default': {use: 'value', unit: '', scales: ['linear', 'log']}
+      }
+    });
+
     MountainChart.define('default_options', {
         state: {
             time: {
