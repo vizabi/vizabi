@@ -71,7 +71,9 @@
 
           if(this.min<=0 && this.scaleType=="log") this.min = 0.01;
           if(this.max<=0 && this.scaleType=="log") this.max = 10;
-          if(this.min>=this.max) this.min = this.max/2;
+
+          // Max may be less than min
+          // if(this.min>=this.max) this.min = this.max/2;
 
           if(this.min!=this.scale.domain()[0] || this.max!=this.scale.domain()[1])
               this.scale.domain([this.min, this.max]);
