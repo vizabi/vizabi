@@ -1,0 +1,44 @@
+<div class='vzb-dialog-modal'>
+
+  <div class="vzb-dialog-title">
+    <%=t ( "buttons/axes") %>
+  </div>
+
+  <div class="vzb-dialog-content">
+    <div class="vzb-yaxis-container">
+        <p><%=t ( "hints/mount/maxYvalue") %></p>
+        <br/>
+        <form>
+            <input type="radio" name="ymax" value="immediate"><%=t ( "mount/maxYmode/immediate") %>
+            <input type="radio" name="ymax" value="latest"><%=t ( "mount/maxYmode/latest") %>
+            <input type="radio" name="ymax" value="total"><%=t ( "mount/maxYmode/total") %>
+        </form>
+    </div>
+      <br/>
+    <div class="vzb-xaxis-container">
+        <p><%=t ( "hints/mount/logXstops") %></p>
+        <br/>
+        <form>
+            <input type="checkbox" name="logstops" value="1">1
+            <input type="checkbox" name="logstops" value="2">2
+            <input type="checkbox" name="logstops" value="5">5
+        </form>
+    </div>
+            <br/>
+             <p><%=t ( "hints/mount/xlimits") %></p>
+                 
+    <span class="vzb-xlimits-container"></span>   
+                 
+    <div class="vzb-povertyline-container">
+        <p><%=t ( "hints/mount/povertyline") %></p>
+        <input type="text" class="vzb-povertyline-field" name="povertyline">
+    </div>           
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      OK
+    </div>
+  </div>
+
+</div>

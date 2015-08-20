@@ -9,7 +9,7 @@ module.exports = function(grunt) {
         'sass:prod', //compile scss
         'sass:preview',
         'copy:preview',
-        'assemble:prod',
+        'assemble',
         'copy:local_data', //copies local_data
         'copy:minified', //copies minified file
         'clean:tmp', //clean tmp folder

@@ -1,4 +1,4 @@
-$vzb-button-width: 50px;
+$vzb-button-width: 65px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: #ffffff;
@@ -8,134 +8,144 @@ $vzb-button-color-title: #9FBBC1;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
 .vzb-buttonlist {
-    @import '../bubblesize/bubblesize';
-    @import '../indicatorpicker/indicatorpicker';
-    @import '../bubbleopacity/bubbleopacity';
-    @import '../colorlegend/colorlegend';
-    @import '../simplecheckbox/simplecheckbox';
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../bubbleopacity/bubbleopacity';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @include position(absolute, 0px);
+  overflow: visible;
+
+  .vzb-buttonlist-container-buttons {
     @include position(absolute, 0px);
-    overflow: visible;
-    
-    .vzb-buttonlist-container-buttons{
-        @include position(absolute, 0px);
-        &::-webkit-scrollbar {display: none;}
+    &::-webkit-scrollbar {
+      display: none;
     }
-    
+  }
+
+  text-align: center;
+  .vzb-buttonlist-btn {
+    outline: none;
+    background: none;
+    border: 0px;
     text-align: center;
-    .vzb-buttonlist-btn {
-        outline: none;
-        background: none;
-        border: 0px;
-        text-align: center;
-        display: inline-block;
-        padding: 5px;
-        cursor: pointer;
-        width: $vzb-button-width;
-        &>.vzb-buttonlist-btn-icon {
-            @include transition(all 100ms ease-in);
-            @include border-radius($vzb-button-radius);
-            font-size: 1.15em;
-            text-align: center;
-            display: inline-block;
-            border: 1px solid $vzb-button-color-border;
-            background-color: $vzb-button-bg;
-            color: $vzb-button-color;
-            width: $vzb-button-size;
-            height: $vzb-button-size;
-            padding: 5px;
-            // border: 1px solid $vzb-button-color-border;
-            .vzb-icon {
-                width: 14px;
-                height: 14px;
-                path {
-                    fill: $vzb-button-color;
-                }
-            }
+    display: inline-block;
+    padding: 5px;
+    cursor: pointer;
+    width: $vzb-button-width;
+    & > .vzb-buttonlist-btn-icon {
+      @include transition(all 100ms ease-in);
+      @include border-radius($vzb-button-radius);
+      font-size: 1.15em;
+      text-align: center;
+      display: inline-block;
+      border: 1px solid $vzb-button-color-border;
+      background-color: $vzb-button-bg;
+      color: $vzb-button-color;
+      width: $vzb-button-size;
+      height: $vzb-button-size;
+      padding: 5px;
+      // border: 1px solid $vzb-button-color-border;
+      .vzb-icon {
+        width: 14px;
+        height: 14px;
+        path {
+          fill: $vzb-button-color;
         }
-        &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span {
-            font-size: 0.85em;
-            padding-top: 1px;
-            text-align: center;
-            display: block;
-            color: $vzb-button-color-title;
-            font-family: $vzb-font-family;
-            text-transform: uppercase;
-        }
-        &.vzb-buttonlist-btn-more > .btn-icon {
-            background-color: $vzb-button-more-bg;
-        }
-        &.vzb-active {
-            &>.vzb-buttonlist-btn-icon {
-                color: $vzb-button-bg;
-                background-color: $vzb-button-color;
-                border: 1px solid $vzb-button-color;
-
-                .vzb-icon path {
-                    fill: $vzb-button-bg;
-                }
-            }
-            &>.vzb-buttonlist-btn-title {
-                color: $vzb-button-color-title-active;
-            }
-        }
-        &.vzb-unavailable {
-            &>.vzb-buttonlist-btn-icon {
-                border: 1px solid $vzb-button-color-border;
-                opacity: 0.4;
-            }
-            &>.vzb-buttonlist-btn-title {
-                opacity: 0.4;
-            }
-        }
+      }
     }
+    & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
+      font-size: 0.85em;
+      padding-top: 1px;
+      text-align: center;
+      display: block;
+      color: $vzb-button-color-title;
+      font-family: $vzb-font-family;
+      text-transform: uppercase;
+    }
+    &.vzb-buttonlist-btn-more > .btn-icon {
+      background-color: $vzb-button-more-bg;
+    }
+    &.vzb-active, &.vzb-active-locked {
+      & > .vzb-buttonlist-btn-icon {
+        color: $vzb-button-bg;
+        background-color: $vzb-button-color;
+        border: 1px solid $vzb-button-color;
 
-    @import 'dialogs/dialog';
-    
+        .vzb-icon path {
+          fill: $vzb-button-bg;
+        }
+      }
+      & > .vzb-buttonlist-btn-title {
+        color: $vzb-button-color-title-active;
+      }
+    }
+    &.vzb-unavailable {
+      & > .vzb-buttonlist-btn-icon {
+        border: 1px solid $vzb-button-color-border;
+        opacity: 0.4;
+      }
+      & > .vzb-buttonlist-btn-title {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  @import 'dialogs/dialog';
+
 }
-
- 
 
 //responsiveness
 &.vzb-landscape, &.vzb-large {
-    .vzb-buttonlist {
-        .vzb-buttonlist-dialog {
-            @include position(absolute, -2000px 40px auto auto);
-            &.vzb-active {
-                @include position(absolute, 20px 40px auto auto);
-            }
-        }
+  .vzb-buttonlist {
+    .vzb-buttonlist-dialog {
+      @include position(absolute, -2000px 40px auto auto);
+      &.vzb-active {
+        @include position(absolute, 20px 40px auto auto);
+      }
     }
-}
-&.vzb-small.vzb-portrait {
-    .vzb-buttonlist {
-        .vzb-buttonlist-btn {
-            width: $vzb-button-width + 3;
-        }
-    }
-}
-&.vzb-medium, &.vzb-large {
-    .vzb-buttonlist {
-        .vzb-buttonlist-btn {
-            width: $vzb-button-width + 10;
-            &>.vzb-btn-icon {
-                // @include font-size(23px);
-                font-size: 1.15em;
-                padding: 9px;
-                width: $vzb-button-size + 10;
-                height: $vzb-button-size + 10;
-            }
-            &>.vzb-buttonlist-btn-title, &>.vzb-buttonlist-btn-title span {
-                font-size: 0.95em;
-                padding-top: 2px;
-            }
-        }
-    }
+  }
 }
 
-&.vzb-landscape, &.vzb-medium, &.vzb-large{
-    .vzb-buttonlist .vzb-buttonlist-container-buttons {white-space: normal; overflow-y: scroll; overflow-x: hidden;}
+&.vzb-small.vzb-portrait {
+  .vzb-buttonlist {
+    .vzb-buttonlist-btn {
+      width: $vzb-button-width + 3;
+    }
+  }
 }
-&.vzb-small.vzb-portrait{
-    .vzb-buttonlist .vzb-buttonlist-container-buttons {white-space: nowrap; overflow-y: hidden; overflow-x: scroll;}
+
+&.vzb-medium, &.vzb-large {
+  .vzb-buttonlist {
+    .vzb-buttonlist-btn {
+      width: $vzb-button-width + 10;
+      & > .vzb-btn-icon {
+        // @include font-size(23px);
+        font-size: 1.15em;
+        padding: 9px;
+        width: $vzb-button-size + 10;
+        height: $vzb-button-size + 10;
+      }
+      & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
+        font-size: 0.95em;
+        padding-top: 2px;
+      }
+    }
+  }
 }
-   
+
+&.vzb-landscape, &.vzb-medium, &.vzb-large {
+  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+    white-space: normal;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+}
+
+&.vzb-small.vzb-portrait {
+  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+    white-space: nowrap;
+    overflow-y: hidden;
+    overflow-x: scroll;
+  }
+}

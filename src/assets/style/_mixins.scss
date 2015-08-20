@@ -8,21 +8,18 @@
 //      E.g: $vzb-border-color-blue;
 //
 // ****************************************************************************
-
 // ----------------------------------------------------------------------------
 //   Bourbon mixins: http://bourbon.io/docs/
 // ----------------------------------------------------------------------------
-
 @import "../../../lib/bourbon/app/assets/stylesheets/bourbon";
-
 
 // ----------------------------------------------------------------------------
 //   Sizes, borders and margins
 // ----------------------------------------------------------------------------
 
 @mixin reset-margin-padding() {
-    padding:0px;
-    margin:0px;
+  padding: 0px;
+  margin: 0px;
 }
 
 //center a box horizontally (div, anything)
@@ -41,11 +38,11 @@
 }
 
 @mixin translate($x, $y) {
-  @include prefixer(transform, translate( $x , $y ), webkit moz ms o spec);
+  @include prefixer(transform, translate($x, $y), webkit moz ms o spec);
 }
 
 @mixin rotate($r) {
-  @include prefixer(transform, rotate( $r ), webkit moz ms o spec);
+  @include prefixer(transform, rotate($r), webkit moz ms o spec);
 }
 
 @mixin box-shadow($x, $y, $blur, $color, $inset: false) {
@@ -61,9 +58,9 @@
 // ----------------------------------------------------------------------------
 
 @mixin opacity($v) {
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + ($v * 100) + ")";
-    filter: alpha(opacity=($v * 100));
-    opacity: $v;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + ($v * 100) + ")";
+  filter: alpha(opacity=($v * 100));
+  opacity: $v;
 }
 
 // ----------------------------------------------------------------------------
@@ -71,15 +68,15 @@
 // ----------------------------------------------------------------------------
 
 //converts pixels to em
-@mixin font-size($sizeValue: 12px ){
+@mixin font-size($sizeValue: 12px ) {
   font-size: $sizeValue; //fallback for old browsers
   font-size: (0.06 * $sizeValue / 1px) + em;
 }
 
 //same with line height
-@mixin line-height($heightValue: 12px ){
-    line-height: $heightValue + px; //fallback for old browsers
-    line-height: (0.125 * $heightValue / 1px) + em;
+@mixin line-height($heightValue: 12px ) {
+  line-height: $heightValue + px; //fallback for old browsers
+  line-height: (0.125 * $heightValue / 1px) + em;
 }
 
 // ----------------------------------------------------------------------------
@@ -87,20 +84,33 @@
 // ----------------------------------------------------------------------------
 
 @mixin rotate-forever {
-  0%    { @include transform(rotate(0deg)); }
-  100%  { @include transform(rotate(360deg)); }
+  0% {
+    @include transform(rotate(0deg));
+  }
+  100% {
+    @include transform(rotate(360deg));
+  }
 }
-@-webkit-keyframes rotate-forever { @include rotate-forever; }
-   @-moz-keyframes rotate-forever { @include rotate-forever; }
-        @keyframes rotate-forever { @include rotate-forever; }
+
+@-webkit-keyframes rotate-forever {
+  @include rotate-forever;
+}
+
+@-moz-keyframes rotate-forever {
+  @include rotate-forever;
+}
+
+@keyframes rotate-forever {
+  @include rotate-forever;
+}
 
 // ----------------------------------------------------------------------------
 //   Responsiveness
 // ----------------------------------------------------------------------------
 
 //overflow mobile y
-@mixin overflow-mobile(){
-  overflow:scroll;
+@mixin overflow-mobile() {
+  overflow: scroll;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -127,8 +137,10 @@
   &:after {
     content: "";
     position: absolute;
-    top: 100%; left: 50%;
-    width: 0; height: 0;
+    top: 100%;
+    left: 50%;
+    width: 0;
+    height: 0;
     border-top: ($arrow-length - $border-width) solid $background-color;
     border-left: ($arrow-base / 2 - $border-width) solid transparent;
     border-right: ($arrow-base / 2 - $border-width) solid transparent;
@@ -141,11 +153,13 @@
     &:before {
       content: "";
       position: absolute;
-      top: 100%; left: 50%;
-      width: 0; height: 0;
+      top: 100%;
+      left: 50%;
+      width: 0;
+      height: 0;
       border-top: $arrow-length solid $border-color;
       border-left: ($arrow-base / 2) solid transparent;
-      border-right: ($arrow-base / 2) solid transparent;    
+      border-right: ($arrow-base / 2) solid transparent;
       margin-left: ($arrow-base / -2);
     }
   }

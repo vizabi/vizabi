@@ -1,145 +1,146 @@
 @import "_mixins";
 @import "_common";
 @import "_reset";
+
 .vzb-tool {
-    $heightTitle: 8px;
-    $sizeButtonList: 60px;
-    $sizeButtonListSmall: 50px;
-    $sizeTimeSlider: 70px;
-    $sizeTimeSliderSmall: 50px;
-    @include position(absolute, 0px);
-    @include user-select(none);
-    text-align: left;
-    overflow: hidden;
+  $heightTitle: 8px;
+  $sizeButtonList: 75px;
+  $sizeButtonListSmall: 50px;
+  $sizeTimeSlider: 80px;
+  $sizeTimeSliderSmall: 50px;
+  @include position(absolute, 0px);
+  @include user-select(none);
+  text-align: left;
+  overflow: hidden;
+  .vzb-tool-title {
+    @include position(absolute, 0px 0px null 0px);
+    @include font-size(18px);
+    height: $heightTitle;
+    background-color: $vzb-color-primary-lightest;
+    font-family: $vzb-font-family;
+    padding: 10px;
+    color: #666666;
+  }
+  .vzb-tool-content {
+    @include position(absolute, $heightTitle 0px 0px 0px);
+    .vzb-tool-stage {
+      @include position(absolute, 0px $sizeButtonList 0px 0px);
+      transform: translate3d(0, 0, 0);
+      .vzb-tool-viz {
+        @include position(absolute, 0px 0px $sizeTimeSlider 0px);
+      }
+      .vzb-tool-timeslider {
+        @include position(absolute, null 0px 0px 0px);
+        height: $sizeTimeSlider;
+      }
+    }
+    .vzb-tool-buttonlist {
+      @include position(absolute, 0px 0px 0px null);
+      width: $sizeButtonList;
+      background-color: $vzb-color-primary-lightest;
+    }
+  }
+  // hide sections
+  &.vzb-title-off {
     .vzb-tool-title {
-        @include position(absolute, 0px 0px null 0px);
-        @include font-size(18px);
-        height: $heightTitle;
-        background-color: $vzb-color-primary-lightest;
-        font-family: $vzb-font-family;
-        padding: 10px;
-        color: #666666;
+      display: none;
     }
     .vzb-tool-content {
-        @include position(absolute, $heightTitle 0px 0px 0px);
-        .vzb-tool-stage {
-            @include position(absolute, 0px $sizeButtonList 0px 0px);
-            transform: translate3d(0, 0, 0);
-            .vzb-tool-viz {
-                @include position(absolute, 0px 0px $sizeTimeSlider 0px);
-            }
-            .vzb-tool-timeslider {
-                @include position(absolute, null 0px 0px 0px);
-                height: $sizeTimeSlider;
-            }
-        }
-        .vzb-tool-buttonlist {
-            @include position(absolute, 0px 0px 0px null);
-            width: $sizeButtonList;
-            background-color: $vzb-color-primary-lightest;
-        }
+      @include position(absolute, 0px);
     }
-    // hide sections
-    &.vzb-title-off {
-        .vzb-tool-title {
-            display: none;
-        }
-        .vzb-tool-content {
-            @include position(absolute, 0px);
-        }
+  }
+  &.vzb-timeslider-off {
+    .vzb-tool-timeslider {
+      display: none;
     }
-    &.vzb-timeslider-off {
+    .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
+      @include position(absolute, 0px);
+    }
+  }
+  &.vzb-buttonlist-off {
+    .vzb-tool-buttonlist {
+      display: none;
+    }
+    .vzb-tool-content .vzb-tool-stage {
+      @include position(absolute, 0px 0px 0px 0px);
+    }
+  }
+  //Responsiveness
+  &.vzb-small {
+    .vzb-tool-title {
+      height: $heightTitle - 8px;
+      @include font-size(14px);
+    }
+    .vzb-tool-content {
+      $posTop: $heightTitle - 8px;
+      @include position(absolute, $posTop 0px 0px 0px);
+      .vzb-tool-stage {
+        @include position(absolute, 0px $sizeButtonList 0px 0px);
+        .vzb-tool-viz {
+          @include position(absolute, 0px 0px $sizeTimeSliderSmall 0px);
+        }
         .vzb-tool-timeslider {
-            display: none;
+          height: $sizeTimeSliderSmall;
         }
-        .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
-            @include position(absolute, 0px);
-        }
+      }
     }
     &.vzb-buttonlist-off {
-        .vzb-tool-buttonlist {
-            display: none;
-        }
-        .vzb-tool-content .vzb-tool-stage {
-            @include position(absolute, 0px 0px 0px 0px);
-        }
+      .vzb-tool-buttonlist {
+        display: none;
+      }
+      .vzb-tool-content .vzb-tool-stage {
+        @include position(absolute, 0px 0px 0px 0px);
+      }
     }
-    //Responsiveness
-    &.vzb-small {
-        .vzb-tool-title {
-            height: $heightTitle - 8px;
-            @include font-size(14px);
-        }
-        .vzb-tool-content {
-            $posTop: $heightTitle - 8px;
-            @include position(absolute, $posTop 0px 0px 0px);
-            .vzb-tool-stage {
-                @include position(absolute, 0px $sizeButtonListSmall 0px 0px);
-                .vzb-tool-viz {
-                    @include position(absolute, 0px 0px $sizeTimeSliderSmall 0px);
-                }
-                .vzb-tool-timeslider {
-                    height: $sizeTimeSliderSmall;
-                }
-            }
-        }
-        &.vzb-buttonlist-off {
-            .vzb-tool-buttonlist {
-                display: none;
-            }
-            .vzb-tool-content .vzb-tool-stage {
-                @include position(absolute, 0px 0px 0px 0px);
-            }
-        }
-    }
-    &.vzb-small.vzb-portrait {
-        .vzb-tool-content {
-            .vzb-tool-stage {
-                @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
-            }
-            .vzb-tool-buttonlist {
-                @include position(absolute, auto 0px 0px 0px);
-                width: auto;
-                height: $sizeButtonListSmall;
-            }
-        }
-        &.vzb-buttonlist-off {
-            .vzb-tool-buttonlist {
-                display: none;
-            }
-            .vzb-tool-content .vzb-tool-stage {
-                @include position(absolute, 0px 0px 0px 0px);
-            }
-        }
-        &.vzb-timeslider-off {
-            .vzb-tool-timeslider {
-                display: none;
-            }
-            .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
-                @include position(absolute, 0px);
-            }
-        }
-    }
-    //tooltip
-    .vzb-tooltip {
-        @include border-radius(3px);
-        @include opacity(0.9);
-        position: absolute;
-        background: #666;
-        padding: 7px 10px;
-        color: white;
-        font-size: 12px;
-        z-index: 11;
-        font-weight: 300;
-    }
-    //remove tool title
-    .vzb-tool-title {
-        display: none !important;
-    }
+  }
+  &.vzb-small.vzb-portrait {
     .vzb-tool-content {
-        @include position(absolute, 0px);
+      .vzb-tool-stage {
+        @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
+      }
+      .vzb-tool-buttonlist {
+        @include position(absolute, auto 0px 0px 0px);
+        width: auto;
+        height: $sizeButtonListSmall;
+      }
     }
-    //common tool components
-    @import '../../components/_gapminder/buttonlist/buttonlist';
-    @import '../../components/_gapminder/timeslider/timeslider';
+    &.vzb-buttonlist-off {
+      .vzb-tool-buttonlist {
+        display: none;
+      }
+      .vzb-tool-content .vzb-tool-stage {
+        @include position(absolute, 0px 0px 0px 0px);
+      }
+    }
+    &.vzb-timeslider-off {
+      .vzb-tool-timeslider {
+        display: none;
+      }
+      .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
+        @include position(absolute, 0px);
+      }
+    }
+  }
+  //tooltip
+  .vzb-tooltip {
+    @include border-radius(3px);
+    @include opacity(0.9);
+    position: absolute;
+    background: #666;
+    padding: 7px 10px;
+    color: white;
+    font-size: 12px;
+    z-index: 11;
+    font-weight: 300;
+  }
+  //remove tool title
+  .vzb-tool-title {
+    display: none !important;
+  }
+  .vzb-tool-content {
+    @include position(absolute, 0px);
+  }
+  //common tool components
+  @import '../../components/_gapminder/buttonlist/buttonlist';
+  @import '../../components/_gapminder/timeslider/timeslider';
 }

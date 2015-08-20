@@ -35,7 +35,7 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
 
-    // Touch events 
+    // Touch events
     pane.addEventListener('touchstart', onTouchDown);
     document.addEventListener('touchmove', onTouchMove);
     document.addEventListener('touchend', onTouchEnd);
@@ -151,12 +151,18 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
     }
 }
 
-function setDivSize(div, width, height) {
-    div.style.width = width + 'px';
-    div.style.height = height + 'px';
+function setDivSize(div, container, width, height) {
+    if (!width)
+      width = parseInt(div.style.width, 10);
+    if (!height)
+      height = parseInt(div.style.height, 10);
+
+    var size = getNormalDivSize(div, container, width, height);
+    div.style.width = size.width + 'px';
+    div.style.height = size.height + 'px';
     removeClass(div, "fullscreen");
     forceResizeEvt();
-    updateSizePanel(div, width, height);
+    updateSizePanel(div, size.width, size.height);
 }
 
 function setDivRandomSize(div, container) {
@@ -169,25 +175,20 @@ function setDivRandomSize(div, container) {
     var width = Math.round(Math.random() * (maxWidth - minWidth)) + minWidth;
     var height = Math.round(Math.random() * (maxHeight - minHeight)) + minHeight;
 
-    setDivSize(div, width, height);
+    setDivSize(div, container, width, height);
 }
 
-function normalizeDivSize(div, container) {
+function getNormalDivSize(div, container, divWidth, divHeight) {
     var MARGINS = 20;
     var maxWidth = container.offsetWidth - MARGINS;
     var maxHeight = container.offsetHeight - MARGINS;
     var minWidth = 300;
     var minHeight = 300;
-    var divWidth = parseInt(div.style.width, 10);
-    var divHeight = parseInt(div.style.height, 10);
 
     var width = Math.min(Math.max(divWidth, minWidth), maxWidth);
     var height = Math.min(Math.max(divHeight, minHeight), maxHeight);
 
-    if (divWidth != width || divHeight != height) {
-        // console.warn("Size outside range. Setting size to:", width, height);
-        setDivSize(div, width, height);
-    }
+    return {width: width, height: height};
 }
 
 var forcedResize = false;
@@ -213,7 +214,7 @@ function updateSizePanel(div, width, height) {
  */
 
 //update size
-setDivSize(placeholder, 320, 568);
+setDivSize(placeholder, container, 320, 568);
 //resize div
 resizableDiv(placeholder, container, 300, 300, function() {
     forceResizeEvt();
@@ -224,20 +225,17 @@ resizableDiv(placeholder, container, 300, 300, function() {
 });
 
 function setFullscreen() {
-    setDivSize(placeholder, container.offsetWidth, container.offsetHeight);
-    normalizeDivSize(placeholder, container);
+    setDivSize(placeholder, container, container.offsetWidth, container.offsetHeight);
     addClass(placeholder, "fullscreen");
     throttle(updateURL, 500);
 }
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
-    setDivSize(placeholder, 320, 568);
-    normalizeDivSize(placeholder, container);
+    setDivSize(placeholder, container, 320, 568);
     updateURL();
 };
 document.getElementById('vzbp-btn-landscape').onclick = function() {
-    setDivSize(placeholder, 568, 320);
-    normalizeDivSize(placeholder, container);
+    setDivSize(placeholder, container, 568, 320);
     updateURL();
 };
 document.getElementById('vzbp-btn-desktop').onclick = setFullscreen;
@@ -253,8 +251,7 @@ var inputHeight = document.getElementById('vzbp-input-height');
 function changeSizes() {
     var width = parseInt(inputWidth.value, 10);
     var height = parseInt(inputHeight.value, 10);
-    setDivSize(placeholder, width, height);
-    normalizeDivSize(placeholder, container);
+    setDivSize(placeholder, container, width, height);
     updateURL();
 }
 
@@ -267,7 +264,6 @@ window.addEventListener('resize', function() {
         setFullscreen();
     }
     else {
-        normalizeDivSize(placeholder, container);
         throttle(updateURL, 500);
     }
 });
