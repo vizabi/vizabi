@@ -87,6 +87,13 @@
       var domain;
       var scaleType = this.scaleType || "linear";
 
+      if (typeof margins === 'boolean') {
+        var res = margins;
+        margins = {};
+        margins.min = res;
+        margins.max = res;
+      }
+
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);
         this.scale = d3.time.scale().domain([limits.min, limits.max]);
@@ -98,13 +105,9 @@
           var limits = this.getLimits(this.which),
             margin = (limits.max - limits.min) / 20;
 
-          if(margins) {
-            domain = [(limits.min - margin), (limits.max + margin)];
-            if (scaleType == "log") {
-              domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
-            }
-          } else {
-            domain = [limits.min, limits.max];
+          domain = [(limits.min - (margins.min ? margin : 0)), (limits.max + (margins.max ? margin : 0))];
+          if (scaleType == "log") {
+            domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
           }
 
           break;
