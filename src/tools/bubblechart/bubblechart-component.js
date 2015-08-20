@@ -803,7 +803,7 @@
 
       this.yAxisElContainer
         .attr("width", this.activeProfile.margin.left)
-        .attr("height", this.height)
+        .attr("height", this.height+4)
         .attr("x", -this.activeProfile.margin.left);
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
