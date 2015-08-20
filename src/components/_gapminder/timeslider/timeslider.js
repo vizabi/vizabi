@@ -103,6 +103,8 @@
       //defaults
       this.width = 0;
       this.height = 0;
+
+      this.getValueWidth = utils.memoize(this.getValueWidth);
     },
 
     //template is ready
@@ -251,8 +253,18 @@
       this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
         .attr("r", this.profile.radius);
 
+      this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+
       this._setHandle();
 
+    },
+
+    /**
+     * Returns width of slider text value.
+     * Parameters in this function needed for memoize function, so they are not redundant.
+     */
+    getValueWidth: function (layout, value) {
+      return this.valueText.node().getBoundingClientRect().width;
     },
 
     /**
@@ -278,10 +290,11 @@
           var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), _this.width / (_this.model.time.end.getYear() - _this.model.time.start.getYear())) + 1;
           value = _this.xScale.invert(posX);
 
-          var textWidth = _this.valueText.node().getBoundingClientRect().width;
-          var sliderWidth = _this.slider.node().getBoundingClientRect().width - textWidth / 2;
-          if (posX > sliderWidth)
-            posX = sliderWidth;
+          var layoutProfile = _this.getLayoutProfile();
+          var textWidth = _this.getValueWidth(layoutProfile, value);
+          var maxPosX = _this.sliderWidth - textWidth / 2;
+          if (posX > maxPosX)
+            posX = maxPosX;
           else if (posX < 0)
             posX = 0;
 
