@@ -324,6 +324,11 @@
 
       this.zoomer.ratioX = 1;
       this.zoomer.ratioY = 1;
+
+      this.fontSettings = {
+        minSize: 8,
+        step: 2
+      };
     },
 
 
@@ -347,6 +352,8 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
+
+      this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
       this.projectionX = this.graph.select(".vzb-bc-projection-x");
       this.projectionY = this.graph.select(".vzb-bc-projection-y");
@@ -405,6 +412,8 @@
       this.resetZoomer(); // includes redraw data points and trail resize
       this._trails.run(["recolor", "findVisible", "reveal"]);
       if (this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
+      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
     },
 
     ready: function() {
@@ -685,7 +694,6 @@
 
       var _this = this;
 
-
       this.profiles = {
         "small": {
           margin: {
@@ -793,16 +801,64 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
+      // avoid overlapping (x label with s label)
       var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
       var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-      var sTitleSize = this.sTitleEl.node().getBoundingClientRect();
-      var xTitleX = 0;
-      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height)
-        xTitleX = -sTitleSize.width;
+      var xTitleTextEl = this.xTitleEl.selectAll('text').data([0]);
+      var sTitleTextEl = this.sTitleEl.selectAll('text').data([0]);
+      var sTitleSize = sTitleTextEl.node().getBoundingClientRect();
+      var xTitleSize = xTitleTextEl.node().getBoundingClientRect();
+      // in case when maximum font size is different for different layout profiles
+      var maxFontSize = this.fontSettings.maxTitleFontSize;
+      var fontStep = this.fontSettings.step;
+      var minFontSize = this.fontSettings.minSize;
+      var fontSize = parseInt(sTitleTextEl.style('font-size'), 10);
+      // if overlapping is noted
+      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
+        while (fontSize > minFontSize && sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
+          var diffDec = (fontSize - fontStep - minFontSize) * -1;
+          if (diffDec <= 0) {
+            fontSize -= fontStep;
+          }
+          else if (diffDec > 0 && diffDec < fontStep) {
+            fontSize -= fontStep - diffDec;
+          }
+          sTitleTextEl.style('font-size', fontSize + 'px');
+          xTitleTextEl.style('font-size', fontSize + 'px');
 
-      this.xTitleEl.attr("transform", "translate(" + (this.width - 15) + "," + this.height + ")");
-      this.xTitleEl.selectAll("text").data([0]).attr('x', xTitleX + 'px');
-      this.sTitleEl.attr("transform", "translate(" + this.width + ",-15) rotate(-90)");
+          // calculate the new size
+          sTitleSize = sTitleTextEl.node().getBoundingClientRect();
+          xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
+        }
+      }
+      else {
+        this.sTitleHelpEl.text(sTitleTextEl.text());
+        this.xTitleHelpEl.text(xTitleTextEl.text());
+        // try to restore default font size
+        while (fontSize < maxFontSize) {
+          var diffInc = fontSize + fontStep - maxFontSize;
+          if (diffInc <= 0) {
+            fontSize += fontStep;
+          }
+          else if (diffInc > 0 && diffInc < fontStep) {
+            fontSize += fontStep - diffInc;
+          }
+          this.sTitleHelpEl.style('font-size', fontSize + 'px');
+          this.xTitleHelpEl.style('font-size', fontSize + 'px');
+          var sTitleHelpSize = this.sTitleHelpEl.node().getBoundingClientRect();
+          var xTitleHelpSize = this.xTitleHelpEl.node().getBoundingClientRect();
+          if (sTitleHelpSize.height + xAxisSize.width < yAxisSize.height - xTitleHelpSize.height) {
+            sTitleTextEl.style('font-size', fontSize + 'px');
+            xTitleTextEl.style('font-size', fontSize + 'px');
+          }
+          else {
+            break;
+          }
+        }
+      }
+
+      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
+      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
@@ -1384,7 +1440,6 @@
 
       return curr;
     }
-
 
   });
 
