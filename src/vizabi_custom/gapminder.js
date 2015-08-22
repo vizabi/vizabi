@@ -224,8 +224,8 @@
                 povertyline: 1.82,
                 povertyCutoff: 0.1,
                 povertyFade: 0.5,
-                gdpFactor: 1.379969318,
-                gdpShift: -1.691733947,
+                gdpFactor: 0.9971005335,
+                gdpShift: -1.056221322,
                 xPoints: 200
             },
             entities: {
