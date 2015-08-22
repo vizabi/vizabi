@@ -576,8 +576,8 @@
             //reader: "waffle-server",
             reader: "csv-file",
             //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-            path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
-            //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
+            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
         },
         language: language,
         ui: {
