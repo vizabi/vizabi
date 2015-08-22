@@ -37,7 +37,7 @@
     },
 
     /**
-     * Validates a color hook
+     * Validates a size hook
      */
     validate: function () {
       //there must be a min and a max
