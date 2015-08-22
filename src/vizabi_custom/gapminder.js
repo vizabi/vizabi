@@ -67,6 +67,8 @@
                 "indicator/u5mr": "Child under 5 mortality",
                 "indicator/size": "Big or mini",
                 "indicator/gini": "Gini coefficient",
+                "indicator/gdppc_pday": "GDP/cap/day",
+                "indicator/inc_pday": "Income/cap/day",
                 "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
