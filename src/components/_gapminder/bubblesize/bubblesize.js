@@ -16,7 +16,7 @@
     return;
   }
 
-  var min = 1, max = 100;
+  var min = 0.1, max = 100;
 
   Vizabi.Component.extend('gapminder-bubblesize', {
 
