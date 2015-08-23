@@ -33,8 +33,8 @@
         'u5mr': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
         'size': {use: 'property',unit: '',scales: ['ordinal'] },
         'gini': {use: 'indicator',unit: 'gini',scales: ['linear'] },
-        'gdppc_pday':{use: 'indicator',unit: 'GPD/cap/day',scales: ['log', 'linear'] },
-        'inc_pday':{use: 'indicator',unit: 'Income/cap/day',scales:['log', 'linear'] },
+        'gdppc_pday':{use: 'indicator',unit: 'gdppc_pday',scales: ['log', 'linear'] },
+        'inc_pday':{use: 'indicator',unit: 'inc_pday',scales:['log', 'linear'] },
         '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
     };
 
