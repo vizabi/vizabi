@@ -30,6 +30,7 @@
         'gdp_per_cap': {use: 'indicator',unit: 'gdp_per_cap',scales: ['log', 'linear'] },
         'pop': {use: 'indicator',unit: '',scales: ['linear', 'log'] },
         'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
+        'u5mr_not': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
         'u5mr': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
         'size': {use: 'property',unit: '',scales: ['ordinal'] },
         'gini': {use: 'indicator',unit: 'gini',scales: ['linear'] },
