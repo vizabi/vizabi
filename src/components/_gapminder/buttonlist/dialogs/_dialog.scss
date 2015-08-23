@@ -159,6 +159,10 @@
       @include opacity(1);
     }
   }
+  .vzb-dialog-sublabel{
+    color: $vzb-color-primary;
+    font-style: italic;
+  }
 }
 .vzb-buttonlist-dialog.pinned {
   .thumb-tack-class{
