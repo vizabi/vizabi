@@ -562,8 +562,6 @@
             text = _this.model.marker.label.getValue(d);
           }
 
-          if(_this.model.entities.isSelected(d))return;
-
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = _this.time;
