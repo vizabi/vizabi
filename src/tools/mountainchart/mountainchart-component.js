@@ -677,15 +677,15 @@
 
             switch (this.getLayoutProfile()) {
             case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 30 };
+                margin = { top: 10, right: 10, left: 10, bottom: 40 };
 //                margin = {top: 30, right: 20, left: 40, bottom: 40}
                 break;
             case "medium":
-                margin = { top: 20, right: 10, left: 10, bottom: 60 };
+                margin = { top: 20, right: 10, left: 10, bottom: 70 };
 //                margin = {top: 30, right: 60, left: 60, bottom: 70}
                 break;
             case "large":
-                margin = { top: 30, right: 10, left: 10, bottom: 70  };
+                margin = { top: 30, right: 10, left: 10, bottom: 90  };
 //                margin = {top: 30, right: 60, left: 60, bottom: 60}
                 break;
             };
