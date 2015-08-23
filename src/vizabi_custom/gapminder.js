@@ -65,6 +65,7 @@
                 "indicator/geo.name": "Geo name",
                 "indicator/childSurv": "Child survival",
                 "indicator/u5mr": "Child under 5 mortality",
+                "indicator/u5mr_not": "Prev u5mr with UNPOP",
                 "indicator/size": "Big or mini",
                 "indicator/gini": "Gini coefficient",
                 "indicator/gdppc_pday": "Daily GDP per capita",
@@ -579,7 +580,8 @@
             reader: "csv-file",
             //path: "/local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
             //path: "/local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
-            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
+            //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
+            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
         ui: {
