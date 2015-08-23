@@ -505,6 +505,7 @@
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
+                round: "ceil",
                 trails: true,
                 lockNonSelected: 0,
                 adaptMinMaxZoom: false
