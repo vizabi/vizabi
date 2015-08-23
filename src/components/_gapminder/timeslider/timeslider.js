@@ -144,7 +144,7 @@
           utils.throttle(brushed.bind(this), 30);
         })
         .on("brushend", function () {
-          utils.throttle(brushedEnd.bind(this), 30);
+          brushedEnd.call(this);
         });
 
       //Slide
