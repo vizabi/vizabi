@@ -71,6 +71,7 @@
                 "indicator/gdppc_pday": "Daily GDP per capita",
                 "indicator/inc_pday": "Daily income",
                 "unit/gdp_per_cap": "$/year",
+                "indicator/_default": "Constant",
                 "unit/": "",
                 "unit/lex": "Years",
                 "unit/time": "Years",
@@ -85,7 +86,7 @@
                 "scaletype/genericLog": "Generic log",
                 "scaletype/time": "Time",
                 "scaletype/ordinal": "Ordinal",
-                "color/_default": "Other",
+                "color/_default": "Single color",
                 "check/adaptMinMaxZoom": "Follow bubbles with zoom",
                 "region/ame": "America",
                 "region/asi": "Asia",
@@ -136,6 +137,7 @@
                 "indicator/time": "Tid",
                 "indicator/geo.category": "Geo kategori",
                 "indicator/geo.name": "Geo namn",
+                "indicator/_default": "Konstant",
                 "unit/gdp_per_cap": "$/år/person",
                 "unit/": "",
                 "unit/lex": "År",
@@ -146,7 +148,7 @@
                 "scaletype/genericLog": "Generic log",
                 "scaletype/time": "Tid",
                 "scaletype/ordinal": "Ordning",
-                "color/_default": "Annat",
+                "color/_default": "Enkel färg",
                 "check/adaptMinMaxZoom": "Följ bubblar med zoom",
                 "region/ame": "Amerika",
                 "region/asi": "Asien",
@@ -288,8 +290,8 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            //path: "/local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
-            //path: "/local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
             path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
@@ -526,6 +528,7 @@
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
+                round: "ceil",
                 trails: true,
                 lockNonSelected: 0,
                 adaptMinMaxZoom: false
@@ -578,8 +581,8 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            //path: "/local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
-            //path: "/local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
             path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
@@ -649,7 +652,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "/local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
+            path: "local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
         },
         language: language,
         ui: {

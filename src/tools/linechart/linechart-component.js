@@ -624,9 +624,7 @@
       pointer[timeDim] = resolvedTime;
       var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
-      if (utils.isNaN(resolvedValue)) {
-        return;
-      }
+      if (utils.isNaN(resolvedValue)) return;
 
       var scaledTime = _this.xScale(resolvedTime);
       var scaledValue = _this.yScale(resolvedValue);
@@ -634,7 +632,8 @@
       if (_this.ui.whenHovering.showTooltip) {
         //position tooltip
         _this.tooltip
-          .style("right", (_this.width - scaledTime + _this.margin.left + _this.margin.right ) + "px")
+          //.style("right", (_this.width - scaledTime + _this.margin.right ) + "px")
+          .style("left", (scaledTime + _this.margin.left ) + "px")
           .style("bottom", (_this.height - scaledValue + _this.margin.bottom) + "px")
           .text(_this.yAxis.tickFormat()(resolvedValue))
           .classed("vzb-hidden", false);
