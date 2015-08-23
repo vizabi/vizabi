@@ -139,7 +139,7 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          brushed.call(this);
+          utils.throttle(brushed.bind(this), 30);
         })
         .on("brushend", function () {
           brushedEnd.call(this);
