@@ -31,10 +31,13 @@
 
 
       this.model_binds = {
+        "change:mdl": function (evt) {
+          _this.updateView();
+        },
         "change:language": function (evt) {
           _this.updateView();
         }
-      }
+      };
 
       this.model_binds["change:mdl:" + this.submodel + ":" + this.checkbox] = function () {
         _this.updateView();
