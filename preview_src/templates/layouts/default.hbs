@@ -15,9 +15,9 @@ control_buttons: {play: true, language: true, record: true }
     {{/if}}
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    
+
     <title>Vizabi - {{ title }}</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     {{!-- Styles --}}
     <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
     <link rel="stylesheet" href="{{assets}}css/main.css">
@@ -74,6 +74,7 @@ control_buttons: {play: true, language: true, record: true }
           };
 
           {{#if control_buttons.play}}
+
               var playButton = document.getElementById("vzbp-btn-play");
               var playButtonIcon = playButton.querySelectorAll("i")[0];
 
@@ -91,20 +92,22 @@ control_buttons: {play: true, language: true, record: true }
                 }
               };
           {{/if}}
-          {{#if control_buttons.language}}  
+          {{#if control_buttons.language}}
               var langButton = document.getElementById("vzbp-btn-lang");
 
               VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
                 if (vals.language.id === "en") {
                     langButton.onclick = function() { language('se'); };
                     langButton.setAttribute("data-tooltip", "Set Lang: SE");
+                    langButton.setAttribute("data-next_lang", 'se');
                 } else {
                     langButton.onclick = function() { language('en'); };
                     langButton.setAttribute("data-tooltip", "Set Lang: EN");
+                    langButton.setAttribute("data-next_lang", 'en');
                 }
               };
           {{/if}}
-          {{#if control_buttons.record}}  
+          {{#if control_buttons.record}}
               var recButton = document.getElementById("vzbp-btn-record");
               var recButtonIcon = recButton.querySelectorAll("i")[0];
 
@@ -136,7 +139,7 @@ control_buttons: {play: true, language: true, record: true }
       </div>
 
       <hr class="vzbp-hr"/>
-    
+
     </div>
 
 
@@ -173,15 +176,16 @@ control_buttons: {play: true, language: true, record: true }
         parseURL();
 
         if(!VIZABI_OPTIONS) {
-          VIZABI_OPTIONS = { state: {}, language: { id: "en" }}; //fallback
+          VIZABI_OPTIONS = { state: {}}; //fallback
         }
+        VIZABI_OPTIONS.language = {};
         if(URL.state) VIZABI_OPTIONS.state = URL.state;
         if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
-        
+
         VIZ = Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
 
       </script>
     {{/if}}
-    
+
   </body>
 </html>
