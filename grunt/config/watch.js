@@ -19,6 +19,6 @@ module.exports = {
     },
     preview: {
         files: ['preview_src/**/*'], //['src/**/*.js', 'specs/**/*.js'],
-        tasks: ['sass:preview','copy:preview','assemble:prod']
+        tasks: ['sass:preview','copy:preview','assemble']
     }
 };

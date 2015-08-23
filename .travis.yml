@@ -1,11 +1,13 @@
 language: node_js
 node_js:
   - '0.10'
+  - '0.12'
+  - 'iojs'
 before_install:
   - sudo apt-get update
 before_script:
   - sudo apt-get install ruby
   - gem install sass
   - bower install
-notifications:
-  slack: gapminder:siB4Z9ymsYR6qHnRPpgUoB2Q
+script:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && grunt build-deploy --custom=gapminder || grunt --custom=gapminder'

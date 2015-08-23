@@ -14,8 +14,10 @@ function updateURL(optimize) {
            state = VIZ.getOptions().state
         }
         formatDates(state);
-
+        var lang = document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+        if(!lang) {lang = 'en'; document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');}
         var url = {
+            lang: lang,
             width: parseInt(placeholder.style.width,10),
             height: parseInt(placeholder.style.height,10),
             fullscreen: hasClass(placeholder, 'fullscreen'),
@@ -45,7 +47,7 @@ function updateURL(optimize) {
     }
 
     //optimize for timeslider
-    throttle(update, 10);
+    throttle(update, 1000);
     // if(optimize) {
     // }
     // else {
@@ -55,16 +57,20 @@ function updateURL(optimize) {
 }
 
 function parseURL() {
-    var hash = window.location.hash;
+    var loc = window.location.toString();
+    var hash = null;
+    if (loc.indexOf('#') >= 0) {
+      hash = loc.substring(loc.indexOf('#') + 1);
+    }
 
     if (hash) {
-        options = URLON.parse(hash.replace("#", ""));
+        options = URLON.parse(hash);
 
         URL.state = options.state;
         URL.lang = options.lang;
 
-        if(setDivSize && options.width && options.height) {
-            setDivSize(placeholder, options.width, options.height);
+        if(options.width && options.height && placeholder && setDivSize) {
+            setDivSize(placeholder, container, options.width, options.height);
             if(options.fullscreen) {
                 setFullscreen();
             }

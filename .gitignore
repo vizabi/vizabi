@@ -8,4 +8,7 @@ preview/
 /src/plugins.js
 .grunt/
 .tmp/
+dist/
 test.html
+
+.idea/

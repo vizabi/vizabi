@@ -49,6 +49,7 @@
           d3.select(this).selectAll(selector).transition().duration(DURATION).attr('transform', 'translate(0,' + resolvedY + ')');
         });
       }
+
       // CALCULATE OPTIMIZED POSITIONS BASED ON LABELS' HEIGHT AND THEIR PROXIMITY (DELTA)
       resolver.calculatePositions = function (data, value, height, scale) {
         var result = {};
@@ -58,7 +59,7 @@
         keys.forEach(function (d, index) {
           //initial positioning
           result[d] = scale(data[d][value]);
-          // check the overlapping chain reaction all the way down 
+          // check the overlapping chain reaction all the way down
           for (var j = index; j > 0; j--) {
             // if overlap found shift the overlapped label downwards
             var delta = result[keys[j - 1]] - result[keys[j]] - labelHeight[keys[j]];
@@ -71,11 +72,11 @@
         });
         // check if the lowest label is breaking the boundary...
         var delta = height - result[keys[0]] - labelHeight[keys[0]];
-        // if it does, then                
+        // if it does, then
         if (delta < 0) {
           // shift the lowest up
           result[keys[0]] += delta;
-          // check the overlapping chain reaction all the way up 
+          // check the overlapping chain reaction all the way up
           for (var j = 0; j < keys.length - 1; j++) {
             // if overlap found shift the overlapped label upwards
             var delta = result[keys[j]] - result[keys[j + 1]] - labelHeight[keys[j + 1]];

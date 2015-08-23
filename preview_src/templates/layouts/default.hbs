@@ -1,8 +1,8 @@
 ---
-control_buttons: { play: true, languages: ["en", "pt"] }
+control_buttons: { play: true, languages: ["en", "se"], record: true }
 control_state: true
 control_sizes: true
-control_buttons: {play: true, language: true}
+control_buttons: {play: true, language: true, record: true }
 ---
 
 <!DOCTYPE html>
@@ -15,19 +15,13 @@ control_buttons: {play: true, language: true}
     {{/if}}
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    
+
     <title>Vizabi - {{ title }}</title>
-    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
     {{!-- Styles --}}
     <link rel="stylesheet" href="{{assets}}css/font-awesome.min.css">
     <link rel="stylesheet" href="{{assets}}css/main.css">
-
-    {{!-- Vizabi Production and Development --}}
-    {{#if production}}
-      <link rel="stylesheet" href="../dist/vizabi.css">
-    {{else}}
-      <link rel="stylesheet" href="vizabi.css">
-    {{/if}}
+    <link rel="stylesheet" href="../dist/vizabi.css">
   </head>
   <body>
     {{!-- Navigation --}}
@@ -55,62 +49,6 @@ control_buttons: {play: true, language: true}
                 updateStateEditor(VIZ.getOptions().state);
               }
             },
-            language: {
-              id: "en",
-              strings: {
-                en: {
-                    "title": "Bubble Chart Title",
-                    "buttons/expand": "Go big",
-                    "buttons/unexpand": "Go small",
-                    "buttons/trails": "Trails",
-                    "buttons/lock": "Lock",
-                    "buttons/find": "Find",
-                    "buttons/deselect": "Deselect",
-                    "buttons/ok": "OK",
-                    "buttons/colors": "Colors",
-                    "buttons/size": "Size",
-                    "buttons/axes": "Axes",
-                    "buttons/more_options": "Options",
-                    "indicator/lex": "Life expectancy",
-                    "indicator/gdp_per_cap": "GDP per capita",
-                    "indicator/pop": "Population",
-                    "indicator/geo.region": "Region",
-                    "indicator/geo": "Geo code",
-                    "indicator/time": "Time",
-                    "indicator/geo.category": "Geo category",
-                    "scaletype/linear": "Linear",
-                    "scaletype/log": "Logarithmic",
-                    "scaletype/genericLog": "Generic log",
-                    "scaletype/time": "Time",
-                    "scaletype/ordinal": "Ordinal",
-                    "color/geo.region/asi": "Asia",
-                    "color/geo.region/eur": "Europe",
-                    "color/geo.region/ame": "Americas",
-                    "color/geo.region/afr": "Afrika",
-                    "color/geo.region/_default": "Other"
-                  },
-                pt: {
-                  "title": "{{ title }}",
-                  "buttons/expand": "Expandir",
-                  "buttons/unexpand": "Retrair",
-                  "buttons/trails": "Pegadas",
-                  "buttons/lock": "Travar",
-                  "buttons/find": "Encontre",
-                  "buttons/deselect": "Desmarcar",
-                  "buttons/ok": "OK",
-                  "buttons/colors": "Cores",
-                  "buttons/size": "Tamanho",
-                  "buttons/more_options": "Opções",
-                  "indicator/lex": "Expectativa de Vida",
-                  "indicator/gdp_per_cap": "PIB per capita",
-                  "indicator/pop": "População",                    
-                  "indicator/geo.region": "Região",
-                  "indicator/geo": "Código Geo",
-                  "indicator/time": "",
-                  "indicator/geo.category": "Categoria"
-                }
-              }
-            },
             ui: {
               buttons: {{{chart_buttons}}}
             }
@@ -136,6 +74,7 @@ control_buttons: {play: true, language: true}
           };
 
           {{#if control_buttons.play}}
+
               var playButton = document.getElementById("vzbp-btn-play");
               var playButtonIcon = playButton.querySelectorAll("i")[0];
 
@@ -151,18 +90,39 @@ control_buttons: {play: true, language: true}
                     removeClass(playButtonIcon, 'fa-pause');
                     addClass(playButtonIcon, 'fa-play');
                 }
+
+                {{#if control_buttons.record}}
+                  var recButton = document.getElementById("vzbp-btn-record");
+                  var recButtonIcon = recButton.querySelectorAll("i")[0];
+
+                  if (vals.state.time.record) {
+                      recButton.onclick = recstop;
+                      recButton.setAttribute("data-tooltip", "Stop");
+                      removeClass(recButtonIcon, 'fa-circle');
+                      addClass(recButtonIcon, 'fa-bullseye');
+                  } else {
+                      recButton.onclick = recstart;
+                      recButton.setAttribute("data-tooltip", "Record");
+                      removeClass(recButtonIcon, 'fa-bullseye');
+                      addClass(recButtonIcon, 'fa-circle');
+                  }
+              {{/if}}
+
               };
           {{/if}}
-          {{#if control_buttons.language}}  
+          {{#if control_buttons.language}}
               var langButton = document.getElementById("vzbp-btn-lang");
 
               VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
+                
                 if (vals.language.id === "en") {
-                    langButton.onclick = function() { language('pt'); };
-                    langButton.setAttribute("data-tooltip", "Set Lang: PT");
+                    langButton.onclick = function() { language('se'); };
+                    langButton.setAttribute("data-tooltip", "Set Lang: SE");
+                    langButton.setAttribute("data-next_lang", 'se');
                 } else {
                     langButton.onclick = function() { language('en'); };
                     langButton.setAttribute("data-tooltip", "Set Lang: EN");
+                    langButton.setAttribute("data-next_lang", 'en');
                 }
               };
           {{/if}}
@@ -180,7 +140,7 @@ control_buttons: {play: true, language: true}
       </div>
 
       <hr class="vzbp-hr"/>
-    
+
     </div>
 
 
@@ -217,15 +177,16 @@ control_buttons: {play: true, language: true}
         parseURL();
 
         if(!VIZABI_OPTIONS) {
-          VIZABI_OPTIONS = { state: {}, language: { id: "en" }}; //fallback
+          VIZABI_OPTIONS = { state: {}}; //fallback
         }
+        VIZABI_OPTIONS.language = {};
         if(URL.state) VIZABI_OPTIONS.state = URL.state;
         if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
-        
+
         VIZ = Vizabi("{{tool}}", placeholder, VIZABI_OPTIONS);
 
       </script>
     {{/if}}
-    
+
   </body>
 </html>

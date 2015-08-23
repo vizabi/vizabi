@@ -1,0 +1,31 @@
+<div class='vzb-dialog-modal'>
+
+  <div class="vzb-dialog-title">
+    <%=t ( "buttons/stack") %>
+  </div>
+
+  <div class="vzb-dialog-content">
+    <p><%=t ( "hints/mount/howtostack") %></p>
+        <br/>
+        <form id="vzb-howtostack">
+            <input type="radio" name="stack" value="geo.region"><%=t ( "mount/stacking/region") %>
+            <input type="radio" name="stack" value="all"><%=t ( "mount/stacking/world") %>
+            <input type="radio" name="stack" value="none"><%=t ( "mount/stacking/none") %>
+        </form>
+    <br/><br/>
+        <form id="vzb-merge-grouped">
+            <input type="checkbox" name="mergeGrouped"><%=t ( "mount/mergegrouped") %>
+        </form>    
+    <br/><br/>
+        <form id="vzb-merge-stacked">
+            <input type="checkbox" name="mergeStacked"><%=t ( "mount/mergestacked") %>
+        </form>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      OK
+    </div>
+  </div>
+
+</div>

@@ -48,27 +48,27 @@
       var colorData = [];
       //here we store color data. formatted as follows:
       /*
-            [
-                [ // outer circle
-                    {display: "#123456", meaning: "#123456"}, // first angle
-                    ... 
-                    {display: "#123456", meaning: "#123456"} // last angle, clockwise
-                ],
-                [ // next circle
-                    {display: "#123456", meaning: "#123456"}, // first angle
-                    ...
-                    {display: "#123456", meaning: "#123456"} // last angle, clockwise
-                ],
-                
-                ...
-                
-                [ // inner circle
-                    {display: "#123456", meaning: "#123456"}, // first angle
-                    ...
-                    {display: "#123456", meaning: "#123456"} // last angle, clockwise
-                ]
-            ]
-            */
+       [
+       [ // outer circle
+       {display: "#123456", meaning: "#123456"}, // first angle
+       ...
+       {display: "#123456", meaning: "#123456"} // last angle, clockwise
+       ],
+       [ // next circle
+       {display: "#123456", meaning: "#123456"}, // first angle
+       ...
+       {display: "#123456", meaning: "#123456"} // last angle, clockwise
+       ],
+
+       ...
+
+       [ // inner circle
+       {display: "#123456", meaning: "#123456"}, // first angle
+       ...
+       {display: "#123456", meaning: "#123456"} // last angle, clockwise
+       ]
+       ]
+       */
       var arc = d3.svg.arc();
       var pie = d3.layout.pie().sort(null).value(function (d) {
         return 1;
@@ -82,6 +82,7 @@
       var callback = function (value) {
         console.info('Color picker callback example. Setting color to ' + value);
       };
+
       function _generateColorData() {
         var result = [];
         // loop across circles
@@ -101,6 +102,7 @@
         }
         return result;
       }
+
       function _hslToRgb(h, s, l) {
         var r, g, b;
         if (s == 0) {
@@ -127,9 +129,10 @@
         }
         return '#' + Math.round(r * 255).toString(16) + Math.round(g * 255).toString(16) + Math.round(b * 255).toString(16);
       }
+
       // this is init function. call it once after you are satisfied with parameters tuning
       // container should be a D3 selection that has a div where we want to render color picker
-      // that div should have !=0 width and height in its style 
+      // that div should have !=0 width and height in its style
       function colorPicker(container) {
         colorData = _generateColorData();
         svg = container.append('svg').style('position', 'absolute').style('top', '0').style('left', '0').style('width', '100%').style('height', '100%').attr('class', css.COLOR_PICKER).classed(css.INVISIBLE, !showColorPicker);
@@ -176,8 +179,9 @@
         });
         _doTheStyling(svg);
       }
+
       var _doTheStyling = function (svg) {
-        //styling                
+        //styling
         svg.select('.' + css.COLOR_BACKGR).style('fill', 'white');
         svg.select('.' + css.COLOR_POINTER).style('stroke-width', 2).style('stroke', 'white').style('pointer-events', 'none').style('fill', 'none');
         svg.selectAll('.' + css.COLOR_BUTTON).style('cursor', 'pointer');
