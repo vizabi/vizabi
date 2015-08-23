@@ -160,7 +160,8 @@
     }
   }
   .vzb-dialog-sublabel{
-    color: #607889;
+    color: $vzb-color-primary;
+    font-style: italic;
   }
 }
 .vzb-buttonlist-dialog.pinned {
