@@ -205,7 +205,7 @@
         } else {
 
           d3.select(this).select(".vzb-cl-color-legend")
-            .text(_this.translator("color/" + _this.model.color[INDICATOR] + "/" + d));
+            .text(_this.translator("color/" + d));
         }
       });
     }
