@@ -267,7 +267,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            path: "/local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
         }
     });
 
@@ -555,7 +555,7 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            path: "/local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
         },
         language: language,
         ui: {
@@ -623,7 +623,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
+            path: "/local_data/waffles/{{LANGUAGE}}/{{geo}}.csv"
         },
         language: language,
         ui: {
