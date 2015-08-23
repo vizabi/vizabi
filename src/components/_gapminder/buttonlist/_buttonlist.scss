@@ -1,4 +1,4 @@
-$vzb-button-width: 65px;
+$vzb-button-width: 60px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: #ffffff;
@@ -55,7 +55,7 @@ $vzb-button-color-border: #cce6ed;
       }
     }
     & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
-      font-size: 0.85em;
+      font-size: 1em;
       padding-top: 1px;
       text-align: center;
       display: block;
@@ -110,7 +110,7 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-small.vzb-portrait {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
-      width: $vzb-button-width + 3;
+      width: $vzb-button-width;
     }
   }
 }
@@ -118,7 +118,7 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-medium, &.vzb-large {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
-      width: $vzb-button-width + 10;
+      width: $vzb-button-width;
       & > .vzb-btn-icon {
         // @include font-size(23px);
         font-size: 1.15em;
