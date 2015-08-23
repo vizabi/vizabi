@@ -227,10 +227,12 @@
                 xLogStops: [1, 2, 5],
                 yMaxMethod: "latest",
                 povertyline: 1.82,
-                povertyCutoff: 0.1,
-                povertyFade: 0.5,
-                gdpFactor: 0.9971005335,
-                gdpShift: -1.056221322,
+                povertyCutoff: 0.2,
+                povertyFade: 0.7,
+                gdpFactor: 1.039781626,
+                //0.9971005335,
+                gdpShift: -1.127066411,
+                //-1.056221322,
                 xPoints: 200
             },
             entities: {
