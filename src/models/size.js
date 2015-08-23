@@ -18,7 +18,7 @@
   Vizabi.Model.extend('size', {
 
     /**
-     * Initializes the color hook
+     * Initializes the size hook
      * @param {Object} values The initial values of this model
      * @param parent A reference to the parent model
      * @param {Object} bind Initial events to bind
@@ -37,7 +37,7 @@
     },
 
     /**
-     * Validates a color hook
+     * Validates a size hook
      */
     validate: function () {
       //there must be a min and a max
