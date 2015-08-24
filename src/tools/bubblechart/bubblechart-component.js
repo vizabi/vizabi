@@ -402,6 +402,7 @@
 
       this.updateUIStrings();
       this.updateIndicators();
+      this.defaultDomain = this.xScale.domain();
       this.updateEntities();
       this.updateTime();
       this.updateSize();
@@ -926,6 +927,7 @@
      */
     redrawDataPoints: function (duration) {
       var _this = this;
+      this.maxBubbleSizeRight = 0;
 
       if (duration == null) duration = _this.duration;
 
@@ -961,6 +963,16 @@
         }, _this.model.time.speed * 1.2)
       }
 
+      // adjust x-scale if some part of bubble is outside the graph
+      var zoom = d3.event && d3.event.scale ? d3.event.scale : 1;
+      if (this.maxBubbleSizeRight > 0 && zoom == 1 && this.model.marker.axis_x.scaleType !== 'ordinal') {
+        var xDomain = this.xScale.domain();
+        var xMaxDomain = this.xScale.invert(this.maxBubbleSizeRight);
+        if (this.defaultDomain[1] > xMaxDomain) {
+          xMaxDomain = this.defaultDomain[1];
+        }
+        this.xScale.domain([xDomain[0], xMaxDomain]);
+      }
     },
 
     //redraw Data Points
@@ -1008,6 +1020,10 @@
 
         _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
 
+        var bubbleRightSize = this.xScale(valueX) + scaledS;
+        if (bubbleRightSize > this.maxBubbleSizeRight) {
+          this.maxBubbleSizeRight = bubbleRightSize; // in px
+        }
       } // data exists
     },
 
