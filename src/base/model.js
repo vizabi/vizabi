@@ -498,7 +498,10 @@
         //TODO: remove hardcoded 'show"
         if (_this._space[name].show) {
           _this._space[name].on('change:show', function (evt) {
-            _this.load();
+            //avoid calling twice in the same event loop
+            utils.throttle(function() {
+              _this.load();
+            }, 1);
           });
         }
       });

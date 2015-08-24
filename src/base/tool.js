@@ -62,7 +62,7 @@
         'change': function (evt, val) {
           if (_this._ready) {
             _this.model.validate();
-            _this.triggerAll(evt, val);
+            _this.trigger(evt, val);
           }
         },
         'translate': function (evt, val) {
