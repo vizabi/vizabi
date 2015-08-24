@@ -103,17 +103,13 @@
                       _this._adjustMaxY();
                       _this.redrawDataPoints();
                     }
-                    
-                    _this.markersUpdatedRecently = true;
                 },
                 'change:marker:group:merge': function (evt) {
                     if (!_this._readyOnce) return;
-                    _this.markersUpdatedRecently = true;
                     _this.ready();
                 },
                 'change:marker:stack:merge': function (evt) {
                     if (!_this._readyOnce) return;
-                    _this.markersUpdatedRecently = true;
                     _this.ready();
                 },
                 'change:entities:opacitySelectDim': function () {
@@ -204,22 +200,17 @@
         },
 
         ready: function(){
-            var _this = this;
-            if (_this.markersUpdatedRecently) {
-                _this.markersUpdatedRecently = false;
-                //console.log("change marker stack");
-                _this.updateUIStrings();
-                _this.updateIndicators();
-                _this.updateEntities();
-                _this.updateSize();
-                _this.updateTime();
-                _this._adjustMaxY();
-                _this.redrawDataPoints();
-                _this.highlightDataPoints();
-                _this.selectDataPoints();
-                _this.redrawSelectList();
-                _this.updateOpacity();              
-            }
+            this.updateUIStrings();
+            this.updateIndicators();
+            this.updateEntities();
+            this.updateSize();
+            this.updateTime();
+            this._adjustMaxY();
+            this.redrawDataPoints();
+            this.highlightDataPoints();
+            this.selectDataPoints();
+            this.redrawSelectList();
+            this.updateOpacity();
         },
         
         
