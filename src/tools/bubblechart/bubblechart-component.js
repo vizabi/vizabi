@@ -701,7 +701,7 @@
             bottom: 40
           },
           padding: 2,
-          minRadius: 2,
+          minRadius: 1,
           maxRadius: 40
         },
         "medium": {
@@ -712,7 +712,7 @@
             bottom: 70
           },
           padding: 2,
-          minRadius: 3,
+          minRadius: 2,
           maxRadius: 60
         },
         "large": {
@@ -723,7 +723,7 @@
             bottom: 60
           },
           padding: 2,
-          minRadius: 4,
+          minRadius: 3,
           maxRadius: 80
         }
       };
@@ -871,7 +871,7 @@
       var maxRadius = this.activeProfile.maxRadius;
 
       this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-      this.maxRadius = maxRadius * this.model.marker.size.max;
+      this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
 
       if (this.model.marker.size.scaleType !== "ordinal") {
         this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
