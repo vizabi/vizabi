@@ -273,7 +273,7 @@ describe('* Base: Translation', function() {
             t.on('ready', function() {
                 setTimeout(function() {
                     done();
-                }, 500);
+                }, 1000);
             });
             t.setOptions({
                 language: {
