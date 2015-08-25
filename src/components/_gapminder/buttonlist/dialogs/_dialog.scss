@@ -159,6 +159,9 @@
       @include opacity(1);
     }
   }
+  &.notransition {
+    @include transition(none);
+  }
 }
 .vzb-buttonlist-dialog.pinned {
   .thumb-tack-class{

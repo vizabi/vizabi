@@ -29,18 +29,18 @@
                 _this.updateView();
             }
         };
-        
+
       this.components = [{
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-xlimits-container',
-        model: ["state.marker.axis_x", "language"],          
+        model: ["state.marker.axis_x", "language"],
         ui: {selectIndicator: false, selectScaletype: false, selectMinMax: true}
       }]
-      
-      
+
+
       this._super(config, parent);
     },
-      
+
     readyOnce: function(){
         var _this = this;
         this.element = d3.select(this.element);
@@ -49,7 +49,7 @@
             .on("change", function(){
                 _this.setModel("yMaxMethod", d3.select(this).node().value);
             })
-                            
+
         this.xLogStops = this.element.select('.vzb-xaxis-container').selectAll('input')
             .on("change", function(){
                 _this.setModel("xLogStops", d3.select(this).node().value);
@@ -57,6 +57,7 @@
 
         this.updateView();
 
+      this._super();
     },
 
     updateView: function(){
@@ -64,15 +65,15 @@
 
         this.yMaxRadio.property('checked', function(){
             return d3.select(this).node().value === _this.model.state.time.yMaxMethod;
-        })  
+        })
         this.xLogStops.property('checked', function(){
             return _this.model.state.time.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
-        })  
+        })
     },
 
     setModel: function(what, value) {
         var result;
-        
+
         if(what == "yMaxMethod"){
             result = value;
         }
@@ -82,7 +83,7 @@
                 if(d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
             })
         }
-        
+
         this.model.state.time[what] = result;
     }
   }));
