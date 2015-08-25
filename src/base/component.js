@@ -89,6 +89,7 @@
           subcomp.trigger('resize');
         });
       });
+
       //if it's a root component with model
       if (this.isRoot() && this.model) {
         this.model.on('ready', function () {

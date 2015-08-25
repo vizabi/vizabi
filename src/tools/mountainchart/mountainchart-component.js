@@ -200,6 +200,7 @@
         },
 
         ready: function(){
+
             this.updateUIStrings();
             this.updateIndicators();
             this.updateEntities();
@@ -835,9 +836,7 @@
                 shape = this.precomputedShapes["incomeMount_shape_stack_region"][_this.model.time.value.getFullYear()]
             }else{
                 shape = this.precomputedShapes["incomeMount_shape_stack_" + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
-            } 
-            
-            
+            }
                 
             this.xScale = d3.scale.log().domain([0.05, 1000]);
             this.yScale = d3.scale.linear().domain([0, d3.max(shape.map(function(m){return m})) ]);
@@ -857,8 +856,6 @@
                 .transition().duration(4000).ease("linear")
                 .style("opacity", 1);
         }
-        
-        
     });
 
 

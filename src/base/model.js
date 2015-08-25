@@ -252,7 +252,7 @@
      * @returns {Boolean} is it loading?
      */
     isLoading: function (p_id) {
-      if (this.isHook() && !this._loadedOnce) {
+      if (this.isHook() && (!this._loadedOnce || this._loadCall)) {
         return true;
       }
       if (p_id) {
@@ -395,9 +395,14 @@
         utils.timeStamp('Vizabi Model: Model loaded: ' + _this._id);
         //end this load call
         _this._loadedOnce = true;
-        _this._loadCall = false;
-        _this.setReady();
-        promiseLoad.resolve();
+
+        //we need to defer to make sure all other submodels
+        //have a chance to call loading for the second time
+        utils.defer(function() {
+          _this._loadCall = false;
+          _this.setReady();
+          promiseLoad.resolve();
+        });
       });
       return promiseLoad;
     },
@@ -498,10 +503,7 @@
         //TODO: remove hardcoded 'show"
         if (_this._space[name].show) {
           _this._space[name].on('change:show', function (evt) {
-            //avoid calling twice in the same event loop
-            utils.throttle(function() {
               _this.load();
-            }, 1);
           });
         }
       });
@@ -1153,7 +1155,6 @@
    * @returns {Object} model new submodel
    */
   function initSubmodel(attr, val, ctx) {
-    //naming convention: underscore -> time, time_2, time_overlay
     var name = attr.split('_')[0];
     var binds = {
       //the submodel has changed (multiple times)
@@ -1180,10 +1181,9 @@
       'ready': function (evt, vals) {
         //trigger only for submodel
         evt = evt.replace('ready', 'ready:' + name);
-        ctx.trigger(evt, vals);
-        //TODO: understand why we need to force it not to be ready
         ctx.setReady(false);
         ctx.setReady();
+        // ctx.trigger(evt, vals);
       }
     };
     if (isModel(val)) {
