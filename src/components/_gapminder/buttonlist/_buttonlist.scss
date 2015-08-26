@@ -1,4 +1,4 @@
-$vzb-button-width: 60px;
+$vzb-button-width: 54px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: #ffffff;
@@ -30,7 +30,10 @@ $vzb-button-color-border: #cce6ed;
     border: 0px;
     text-align: center;
     display: inline-block;
-    padding: 5px;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-buttom: 0px;
     cursor: pointer;
     width: $vzb-button-width;
     & > .vzb-buttonlist-btn-icon {
@@ -55,7 +58,7 @@ $vzb-button-color-border: #cce6ed;
       }
     }
     & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
-      font-size: 1em;
+      font-size: 0.9em;
       padding-top: 1px;
       text-align: center;
       display: block;
