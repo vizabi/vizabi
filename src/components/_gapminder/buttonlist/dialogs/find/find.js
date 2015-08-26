@@ -65,6 +65,8 @@
     },
 
     open: function () {
+      this._super();
+
       this.input_search.node().value = "";
       this.showHideSearch();
     },
@@ -74,6 +76,8 @@
      */
     //TODO: split update in render and update methods
     ready: function () {
+      this._super();
+
       var _this = this;
       var KEY = this.KEY;
       var TIMEDIM = this.model.state.time.getDimension();

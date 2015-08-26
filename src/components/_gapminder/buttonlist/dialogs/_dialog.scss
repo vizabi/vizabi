@@ -159,6 +159,9 @@
       @include opacity(1);
     }
   }
+  &.notransition {
+    @include transition(none);
+  }
   .vzb-dialog-sublabel{
     color: $vzb-color-primary;
     font-style: italic;
