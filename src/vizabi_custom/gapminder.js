@@ -125,7 +125,7 @@
                 "indicator/geo.category": "Geo kategori",
                 "indicator/geo.name": "Geo namn",
                 "indicator/_default": "Konstant",
-                "unit/gdp_per_cap": "$/år/person",
+                "unit/gdp_per_cap": "$/år/människa",
                 "unit/": "",
                 "unit/lex": "År",
                 "unit/time": "År",
