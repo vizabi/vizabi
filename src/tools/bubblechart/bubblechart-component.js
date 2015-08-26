@@ -352,6 +352,8 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
+      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -412,8 +414,6 @@
       this.resetZoomer(); // includes redraw data points and trail resize
       this._trails.run(["recolor", "findVisible", "reveal"]);
       if (this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
-      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
-      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
     },
 
     ready: function() {
