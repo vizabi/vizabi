@@ -15,7 +15,7 @@
   Vizabi.Component.extend('gapminder-simplecheckbox', {
 
     init: function (config, context) {
-      this.template = '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';
+        TOOL=="BubbleChart"?this.template = '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>':this.template ='';
       var _this = this;
 
       this.checkbox = config.checkbox;
