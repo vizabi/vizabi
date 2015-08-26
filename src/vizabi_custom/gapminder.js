@@ -212,7 +212,7 @@
                 speed: 100,
                 formatInput: "%Y",
                 xLogStops: [1],
-                yMaxMethod: "immediate"
+                yMaxMethod: "latest"
             },
             entities: {
                 dim: "geo",
@@ -261,7 +261,8 @@
                     which: "all" // set a property of data or values "all" or "none"
                 },
                 group: {
-                    which: "geo.region" // set a property of data
+                    which: "geo.region",
+                    merge: true
                 }
             }
         },
