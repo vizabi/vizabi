@@ -337,11 +337,13 @@
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
+      this._active_comp = this.components[this._available_buttons[id].component];
+
+      this._active_comp.beforeOpen();
       //add classes
       btn.classed(class_active, true);
       dialog.classed(class_active, true);
 
-      this._active_comp = this.components[this._available_buttons[id].component];
       //call component function
       this._active_comp.open();
     },
@@ -374,6 +376,9 @@
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
+      if (this._active_comp) {
+        this._active_comp.beforeClose();
+      }
       //remove classes
       btn.classed(class_active, false);
       dialog.classed(class_active, false);
@@ -394,6 +399,11 @@
       var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
       var all_btns = this.element.selectAll(btnClass),
         all_dialogs = this.element.selectAll(dialogClass);
+
+      if (this._active_comp) {
+        this._active_comp.beforeClose();
+      }
+
       all_btns.classed(class_active, false);
       all_dialogs.classed(class_active, false);
 

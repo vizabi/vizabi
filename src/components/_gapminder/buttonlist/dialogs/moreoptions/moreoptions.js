@@ -23,12 +23,12 @@
       this.components = [{
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-xaxis-container',
-        model: ["state.marker.axis_x", "language"],          
+        model: ["state.marker.axis_x", "language"],
         ui: {selectMinMax: true}
       }, {
         component: 'gapminder-indicatorpicker',
         placeholder: '.vzb-yaxis-container',
-        model: ["state.marker.axis_y", "language"],          
+        model: ["state.marker.axis_y", "language"],
         ui: {selectMinMax: true}
       }, {
         component: 'gapminder-simplecheckbox',
@@ -82,6 +82,8 @@
       var totalHeight = this.root.element.offsetHeight - 200;
       var content = this.element.select('.vzb-dialog-content');
       content.style('max-height', totalHeight + 'px');
+
+      this._super();
     }
   }));
 
