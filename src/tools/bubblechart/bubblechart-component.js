@@ -782,7 +782,7 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_y.scaleType,
-          toolMargin: margin,
+          toolMargin: {top: 0, right: margin.right, left: margin.left, bottom: 0},
           limitMaxTickNumber: 6
         });
 
@@ -792,7 +792,7 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_x.scaleType,
-          toolMargin: margin
+          toolMargin: {top: margin.top, right: 5, left: 5, bottom: margin.bottom}
         });
 
 
