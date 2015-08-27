@@ -10,10 +10,10 @@
         },
 
         
-        gdpToMu: function(gdp, sigma){
+        gdpToMu: function(gdp, sigma, gdpFactor, gdpShift){
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
-            return Math.log(gdp/365)-sigma*sigma/2;
+            return Math.log(gdp/365) - sigma*sigma/2;
         },
         
         giniToSigma: function (gini) {
@@ -25,27 +25,27 @@
         // this function returns PDF values for a specified distribution
         pdf: {
             //constants
-            DISTRIBUTIONS_NORMAL: "normal distribution",
-            DISTRIBUTIONS_LOGNORMAL: "lognormal distribution",
+//            DISTRIBUTIONS_NORMAL: "normal distribution",
+//            DISTRIBUTIONS_LOGNORMAL: "lognormal distribution",
 
             y: function(x, mu, sigma, type, scaleType){
-                if (type==null) type = this.DISTRIBUTIONS_NORMAL;
-                if (scaleType==null) scaleType = "log";
-                switch(type){
-                    case this.DISTRIBUTIONS_NORMAL:
-                    return Math.exp(
-                        - 0.5 * Math.log(2 * Math.PI)
-                        - Math.log(sigma)
-                        - Math.pow(x - mu, 2) / (2 * sigma * sigma)
-                        );
+//                if (type==null) type = this.DISTRIBUTIONS_NORMAL;
+//                if (scaleType==null) scaleType = "log";
+//                switch(type){
+//                    case this.DISTRIBUTIONS_NORMAL:
+//                    return Math.exp(
+//                        - 0.5 * Math.log(2 * Math.PI)
+//                        - Math.log(sigma)
+//                        - Math.pow(x - mu, 2) / (2 * sigma * sigma)
+//                        );
 
-                    case this.DISTRIBUTIONS_LOGNORMAL:
+//                    case this.DISTRIBUTIONS_LOGNORMAL:
                     return Math.exp(
-                        - 0.5 * Math.log(2 * Math.PI) - (scaleType=="linear"?Math.log(x):0)
+                        - 0.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
                         - Math.log(sigma)
                         - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
                     );
-                }
+ //               }
             }
         },
 

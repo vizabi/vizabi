@@ -28,6 +28,7 @@
                 use: "property",
                 which: undefined,
                 merge: false,
+                manualSorting: null
             }, values);
             this._super(values, parent, bind);
         },

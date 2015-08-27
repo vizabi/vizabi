@@ -43,6 +43,7 @@
                 "hints/mount/logXstops": "X-axis logarithmic stops:",
                 "hints/mount/howtostack": "Chose how to stack mountains:",
                 "hints/mount/xlimits": "X-axis limits:",
+                "hints/mount/povertyline": "Poverty line",
                 "hints/min": "min",
                 "hints/max": "max",
                 "mount/maxYmode/immediate": "Immediate",
@@ -55,18 +56,30 @@
                 "mount/mergestacked": "Merge stacked too",
                 "popbyage/yearOldsIn": "-year-olds in",
                 "indicator/lex": "Life expectancy",
-                "indicator/gdp_per_cap": "GDP per capita",
+                "indicator/gdp_per_cap": "Yearly GDP per capita",
                 "indicator/pop": "Population",
                 "indicator/geo.region": "Region",
                 "indicator/geo": "Geo code",
                 "indicator/time": "Time",
                 "indicator/geo.category": "Geo category",
                 "indicator/geo.name": "Geo name",
+                "indicator/childSurv": "Child survival",
+                "indicator/u5mr": "Child under 5 mortality",
+                "indicator/u5mr_not": "Prev u5mr with UNPOP",
+                "indicator/size": "Big or mini",
+                "indicator/gini": "Gini coefficient",
+                "indicator/gdppc_pday": "Daily GDP per capita",
+                "indicator/inc_pday": "Daily income",
+                "unit/gdp_per_cap": "$/year",
                 "indicator/_default": "Constant",
-                "unit/gdp_per_cap": "$/year/person",
                 "unit/": "",
                 "unit/lex": "Years",
                 "unit/time": "Years",
+                "unit/childSurv": "per 1000",
+                "unit/u5mr": "per 1000",
+                "unit/gini": "",
+                "unit/gdppc_pday": "$/day",
+                "unit/inc_pday": "$/day",
                 "unit/gdp_per_cap_daily": "$/day",
                 "scaletype/linear": "Linear",
                 "scaletype/log": "Logarithmic",
@@ -205,14 +218,22 @@
     MountainChart.define('default_options', {
         state: {
             time: {
-                start: 1960,
-                end: 2000,
-                value: 2000,
+                start: 1800,
+                end: 2030,
+                value: 2030,
                 step: 1,
                 speed: 100,
                 formatInput: "%Y",
-                xLogStops: [1],
-                yMaxMethod: "latest"
+                xLogStops: [1, 2, 5],
+                yMaxMethod: "latest",
+                povertyline: 1.82,
+                povertyCutoff: 0.2,
+                povertyFade: 0.7,
+                gdpFactor: 1.039781626,
+                //0.9971005335,
+                gdpShift: -1.127066411,
+                //-1.056221322,
+                xPoints: 200
             },
             entities: {
                 dim: "geo",
@@ -243,7 +264,7 @@
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
                     min: 0.05, //0
-                    max: 1000 //100
+                    max: 5000 //100
                 },
                 size: {
                     use: "indicator",
@@ -261,7 +282,8 @@
                     which: "all" // set a property of data or values "all" or "none"
                 },
                 group: {
-                    which: "geo.region",
+                    which: "geo.region", // set a property of data
+                    manualSorting: ["eur", "ame", "afr", "asi"],
                     merge: true
                 }
             }
@@ -270,7 +292,9 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/mountains-pop-gdp-gini-1800-2030.csv"
+            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
 
@@ -500,9 +524,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2012",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
@@ -530,9 +554,9 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
-                    scaleType: "linear",
-                    unit: "lex"
+                    which: "u5mr",
+                    scaleType: "log",
+                    unit: "u5mr"
                 },
                 axis_x: {
                     use: "indicator",
@@ -559,7 +583,10 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+            //path: "local_data/waffles/{{LANGUAGE}}/childsurvdata_andginis_aug12b.csv"
+            //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/childsurvdata_andginis_aug12b.csv"
+            path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
         ui: {
