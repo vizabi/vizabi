@@ -233,7 +233,7 @@
                 //0.9971005335,
                 gdpShift: -1.127066411,
                 //-1.056221322,
-                xPoints: 200
+                xPoints: 50
             },
             entities: {
                 dim: "geo",
