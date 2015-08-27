@@ -478,17 +478,17 @@
             var gdpFactor = this.model.time.gdpFactor;
             var gdpShift = this.model.time.gdpShift;
             
-            if (this.model.entities.brush.length==1) {
-                var key = this.model.entities.brush[0][_this.KEY];
-                var sigma = _this._math.giniToSigma(_this.values.size[key]);
-                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma, gdpFactor, gdpShift);
-                
-                // here we highlight the value where the mountain is reaching its peak
-                // which is mode. not mean, not median and not mu. see https://en.wikipedia.org/wiki/Log-normal_distribution
-                this.xAxisEl.call(this.xAxis.highlightValue( Math.exp(mu - sigma*sigma) ));
-            }else{
-                this.xAxisEl.call(this.xAxis.highlightValue("none"));
-            }
+//            if (this.model.entities.brush.length==1) {
+//                var key = this.model.entities.brush[0][_this.KEY];
+//                var sigma = _this._math.giniToSigma(_this.values.size[key]);
+//                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma, gdpFactor, gdpShift);
+//                
+//                // here we highlight the value where the mountain is reaching its peak
+//                // which is mode. not mean, not median and not mu. see https://en.wikipedia.org/wiki/Log-normal_distribution
+//                this.xAxisEl.call(this.xAxis.highlightValue( Math.exp(mu - sigma*sigma) ));
+//            }else{
+//                this.xAxisEl.call(this.xAxis.highlightValue("none"));
+//            }
             
             if(!this.mountainLabels || !this.someSelected) return;
             this.mountainLabels.classed("vzb-highlight", function(d){return _this.model.entities.isHighlighted(d)});
