@@ -57,7 +57,6 @@
                 'change:time:value': function () {
                     //console.log("change time value");
                     _this.updateTime();
-                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -65,7 +64,7 @@
                 'change:time:povertyCutoff': function () {
                     //console.log("change time value");
                     _this.updateTime();
-                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -73,7 +72,7 @@
                 'change:time:gdpFactor': function () {
                     //console.log("change time value");
                     _this.updateTime();
-                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -81,7 +80,7 @@
                 'change:time:gdpShift': function () {
                     //console.log("change time value");
                     _this.updateTime();
-                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -89,7 +88,7 @@
                 'change:time:povertyFade': function () {
                     //console.log("change time value");
                     _this.updateTime();
-                    if(_this.model.time.yMaxMethod==="immediate")_this._adjustMaxY();
+                    _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -128,11 +127,7 @@
                     _this.redrawDataPoints();
                 },
                 'change:time:yMaxMethod': function () {
-                    var method = _this.model.time.yMaxMethod;
-                    
-                    if(method!=="immediate") _this.updateTime(_this.model.time.end);
-                    _this._adjustMaxY(method);
-                    if(method!=="immediate") _this.updateTime();
+                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
                 },
                 'change:time:povertyline': function () {
@@ -144,7 +139,7 @@
                     if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
                       _this.updateSize();
                       _this.updateTime();
-                      _this._adjustMaxY();
+                      _this._adjustMaxY({force:true});
                       _this.redrawDataPoints();
                     }
                 },
@@ -248,7 +243,7 @@
             this.updateEntities();
             this.updateSize();
             this.updateTime();
-            this._adjustMaxY();
+            this._adjustMaxY({force:true});
             this.redrawDataPoints();
             this.highlightDataPoints();
             this.selectDataPoints();
@@ -270,7 +265,7 @@
                 this.updateEntities();
                 this.updateSize();
                 this.updateTime();
-                this._adjustMaxY();
+                this._adjustMaxY({force:true});
                 this.redrawDataPoints();
                 this.highlightDataPoints();
                 this.selectDataPoints();
@@ -354,6 +349,8 @@
                     group.values.forEach(function (d) {
                         d.sortValue[1] = groupSortValue;
                     })
+                    
+                    group.KEY = function(){return this.key};
                 })
             
             var sortGroupKeys = {};
@@ -374,6 +371,11 @@
                     .entries(this.model.entities._visible);
                 
                 this.model.entities._visible.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
+                
+                
+                this.stackedPointers.forEach(function (stack) {
+                    stack.KEY = function(){return this.key};
+                })
             }
                       
             //console.log(JSON.stringify(this.model.entities._visible.map(function(m){return m.geo})))
@@ -646,20 +648,55 @@
                 })
                 _this.stack(toStack);
             })
+            
+            var mergeGrouped = _this.model.marker.group.merge;
+            var mergeStacked = _this.model.marker.stack.merge;
+
+            if(mergeStacked){
+                this.mountainsMergeStacked
+                    .each(function (d) {
+                        var view = d3.select(this);
+                    
+                        var visible = d.values[0].values.filter(function(f){return !f.hidden});
+                        var first = visible[0].KEY();
+
+                        var vertices = _this.mesh.map(function(m, i){
+                            var y = _this.cached[first][i].y0 + _this.cached[first][i].y;
+                            return { x: m, y0: 0, y: y};
+                        })
+
+                        _this.values.color[d.key] = "_default";
+                        _this.cached[d.key] = vertices;
+                    })     
+            }
+            
+            if(mergeGrouped && !mergeStacked){
+                this.mountainsMergeGrouped
+                    .each(function (d) {
+                        var view = d3.select(this);
+                                        
+                        var visible = d.values.filter(function(f){return !f.hidden});
+                        var first = visible[0].KEY();
+                        var last = visible[visible.length-1].KEY();
+                    
+                        var vertices = _this.mesh.map(function(m, i){
+                            var y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
+                            var y0 = _this.cached[last][i].y0;
+                            return { x: m, y0: y0, y: y}
+                        })
+                        
+                        _this.values.color[d.key] = _this.values.color[first];
+                        _this.cached[d.key] = vertices;
+                    })
+            }
+                   
+            
+            
 
         },
 
 
 
-//        _peakValue: function (values, d) {
-//            var _this = this;
-//
-//            var norm = values.axis_y[d.KEY()];
-//            var mean = values.axis_x[d.KEY()];
-//            var variance = values.size[d.KEY()];
-//
-//            return norm * this._math.pdf.lognormal(Math.exp(Math.log(mean) - variance), Math.log(mean), variance);
-//        },
 
 
         /**
@@ -780,12 +817,9 @@
             
             var result = this.mesh.map(function (dX, i) {
                 
-                return {
-                    x: dX,
-                    y0: 0, // the initial base of areas is at zero
-                    y: norm *(
+                return {x: dX, y0: 0, y: norm *(
                         (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m))/cosineArea * acc : 0 )
-                         +distribution[i] * (1 - mask[i]) 
+                         + distribution[i] * (1 - mask[i]) 
                         )
                 }
                 
@@ -802,29 +836,48 @@
         },
 
         
-        _adjustMaxY: function(method){
+        _adjustMaxY: function(options){
+            if(!options) options = {};
             var _this = this;
+            var method = this.model.time.yMaxMethod;
+            
+            if(method!=="immediate" && !options.force) return;
+            
+            if(method=="latest") _this.updateTime(_this.model.time.end);
             
             var yMax = 0;
-            if(method==="total"){
-                //TODO: simplification is taken here. max thickness of mountains is being summed
-                // but as the mountains are not aligned this sum will be larger than the actual total height
-                this.model.entities._visible.forEach(function(d){
-                    var vertices = _this.cached[d.KEY()];
-                    d.max = d3.max(vertices.map(function(m){return m.y + m.y0}));
-                    var max = d3.max(vertices.map(function(m){return m.y}));
-                    if(max > 0) yMax += max;
-                })
-            }else{
-                this.model.entities._visible.forEach(function(d){
-                    var vertices = _this.cached[d.KEY()];
-                    d.max = d3.max(vertices.map(function(m){return m.y + m.y0}));
+            
+            var mergeGrouped = _this.model.marker.group.merge;
+            var mergeStacked = _this.model.marker.stack.merge;
+
+            if(mergeStacked){
+                
+                this.mountainsMergeStacked.each(function (d) {
+                    d.max = d3.max(_this.cached[d.KEY()].map(function(m){return m.y + m.y0}));
                     if(d.max > yMax) yMax = d.max;
                 })
+
+            }else if(!mergeStacked && mergeGrouped){
+                
+                this.mountainsMergeGrouped.each(function (d) {
+                    d.max = d3.max(_this.cached[d.KEY()].map(function(m){return m.y + m.y0}));
+                    if(d.max > yMax) yMax = d.max;
+                })
+            
+            }else{
+                
+                this.model.entities._visible.forEach(function(d){
+                    d.max = d3.max(_this.cached[d.KEY()].map(function(m){return m.y + m.y0}));
+                    if(d.max > yMax) yMax = d.max;
+                })
+                
             }
+            
+                
+            if(!yMax)utils.warn("Setting yMax to " + yMax + ". You failed again :-/");
             this.yScale.domain([0, yMax]);
             
-            if(!yMax)utils.warn("Setting yMax to " + yMax + ". You failed again :-/");
+            if(method=="latest") _this.updateTime();
         },
 
         
@@ -877,92 +930,45 @@
             var mergeGrouped = _this.model.marker.group.merge;
             var mergeStacked = _this.model.marker.stack.merge;
             
-            var record = this.model.time.record;
-            var year = this.model.time.value.getFullYear();
-            
-
-            //update selection
             //var speed = this.model.time.speed;
-//            
+            this._adjustMaxY();
+            
+            this.mountainsMergeStacked.each(function (d) {
+                var view = d3.select(this);
+                var hidden = !mergeStacked;
+                _this._renderShape(view, d.KEY(), hidden);
+            })
+
+            this.mountainsMergeGrouped.each(function (d) {
+                var view = d3.select(this);
+                var hidden = !mergeGrouped || mergeStacked;
+                _this._renderShape(view, d.KEY(), hidden);
+            })
+
+            this.mountains.each(function (d, i) {
+                var view = d3.select(this);
+                var hidden = d.hidden || ((mergeGrouped || mergeStacked) && !_this.model.entities.isSelected(d));
+                _this._renderShape(view, d.KEY(), hidden);
+            })
+                
 //            if (!this.shapes) this.shapes = {}
-//            this.shapes[this.model.time.value.getFullYear().toString()] = 
-//                this.mesh.map(function (d, i) {
-//                    return d3.format(".2e")(d3.max(utils.values(_this.cached)
-//                            .filter(function (f) {return f.length > 0})
-//                            .map(function (m) {return m[i].y + m[i].y0})
-//                        ))
-//                    
-//                })
-            
-            
-                this.mountainsMergeStacked
-                    .each(function (d) {
-                        var view = d3.select(this);
-                    
-                        view.classed("vzb-hidden", !mergeStacked);
-                        if(!mergeStacked) return;
-                    
-                        if(d.key == "all"){
-                            var visible = d.values[0].values.filter(function(f){return !f.hidden});
-                            var first = visible[0].KEY();
-                            
-                            var array = _this.mesh.map(function(m, i){
-                                return { x: m, y0: 0, y: _this.cached[first][i].y0 + _this.cached[first][i].y};
-                            })
-                            
-                            view //.transition().duration(speed).ease("linear")
-                                .style("fill", "grey")
-                                .attr("d", _this.area(array));
-                            
-                            
-                            if(record) _this._export.write({type: "path", id: d.key, time: year, fill: "grey", d: _this.area(array)});
-                        }else{
-                            //TODO here should come the processing for regional stacking, but we haven't yet needed this case
-                        }
-
-                    })
+//            this.shapes[this.model.time.value.getFullYear()] = _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y)})
                 
-                
+        },
+        
+        
+        
+        _renderShape: function(view, key, hidden){
+            var record = this.model.time.record;
+            var year = this.model.time.value.getFullYear();            
             
-                this.mountainsMergeGrouped
-                    .each(function (d) {
-                        var view = d3.select(this);
-                    
-                        view.classed("vzb-hidden", !mergeGrouped || mergeStacked);
-                        if(!mergeGrouped || mergeStacked) return;
-                    
-                        var visible = d.values.filter(function(f){return !f.hidden});
-                        //console.log(d, visible.map(function(m){return m.geo}))
-                    
-                        var first = visible[0].KEY();
-                        var last = visible[visible.length-1].KEY();
-                        //console.log(first, _this.cached[first].length, last, _this.cached[last].length)
-                    
-                        var array = _this.mesh.map(function(m, i){
-                            return { x: m, y0: _this.cached[last][i].y0, y: _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0 }
-                        })
-                        
-                        view //.transition().duration(speed).ease("linear")
-                            .style("fill", _this.cScale(_this.values.color[first]))
-                            .attr("d", _this.area(array))
-                        
-                        if(record) _this._export.write({type: "path", id: d.key, time: year, fill: _this.cScale(_this.values.color[first]), d: _this.area(array)});
-
-                    })
-                   
-
-                this.mountains.each(function (d, i) {
-                    var view = d3.select(this);
-                    var hidden = d.hidden || ((mergeGrouped || mergeStacked) && !_this.model.entities.isSelected(d));
-                    view.classed("vzb-hidden", hidden);
-                    if (hidden) return;
-                    view //.transition().duration(speed).ease("linear")
-                        .style("fill", _this.cScale(_this.values.color[d.KEY()]))
-                        .attr("d", _this.area(_this.cached[d.KEY()]))
-                    
-                    if(record) _this._export.write({type: "path", id: d.KEY(), time: year, fill: _this.cScale(_this.values.color[d.KEY()]), d: _this.area(_this.cached[d.KEY()])});
-
-                })
+            view.classed("vzb-hidden", hidden);
+            if(hidden) return;
+            view //.transition().duration(speed).ease("linear")
+                .style("fill", this.cScale(this.values.color[key]))
+                .attr("d", this.area(this.cached[key]));
+            
+            if(record) this._export.write({type: "path", id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key])});  
         },
         
         
