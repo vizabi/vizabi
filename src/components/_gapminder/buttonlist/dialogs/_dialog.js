@@ -53,6 +53,7 @@
       var _this = this;
       this.placeholderEl = d3.select(this.placeholder);
       this.rootEl = d3.select(this.root.element);
+      this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
 
       var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
       var dragBehavior = d3.behavior.drag()
@@ -66,7 +67,7 @@
             return;
           dg.drag(d3.event);
         });
-      this.placeholderEl.call(dragBehavior);
+      this.dragHandler.call(dragBehavior);
     },
 
     resize: function () {
