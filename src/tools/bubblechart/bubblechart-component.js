@@ -1019,6 +1019,8 @@
           view.attr("cy", _this.yScale(valueY))
               .attr("cx", _this.xScale(valueX))
               .attr("r", scaledS);
+          // fix for #407 & #408
+          d3.timer.flush();
         }
           
         if(this.model.time.record) _this._export.write({
