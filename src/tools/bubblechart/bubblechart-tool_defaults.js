@@ -52,7 +52,7 @@
     data: {
       //reader: "waffle-server",
       reader: "csv-file",
-      path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+      path: "local_data/waffles/basic-indicators.csv"
     }
   });
 
