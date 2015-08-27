@@ -121,6 +121,19 @@
           //format values in the dataset and filters
           where = utils.mapRows([where], _this._formatters)[0];
 
+          //make sure conditions don't contain invalid conditions
+          var validConditions = [];
+          utils.forEach(where, function(v, p) {
+            for (var i = 0, s = data.length; i<s; i++) {
+              if(data[i].hasOwnProperty(p)) {
+                validConditions.push(p);
+                return true;
+              }
+            };
+          });
+          //only use valid conditions
+          where = utils.clone(where, validConditions);
+
           data = utils.filterAny(data, where);
         
           //warn if filtering returns empty array
