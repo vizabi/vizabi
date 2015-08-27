@@ -658,7 +658,7 @@
 //            var mean = values.axis_x[d.KEY()];
 //            var variance = values.size[d.KEY()];
 //
-//            return norm * this._math.pdf.y(Math.exp(Math.log(mean) - variance), Math.log(mean), variance, this._math.pdf.DISTRIBUTIONS_LOGNORMAL);
+//            return norm * this._math.pdf.lognormal(Math.exp(Math.log(mean) - variance), Math.log(mean), variance);
 //        },
 
 
@@ -766,7 +766,7 @@
             
             
             this.mesh.map(function (dX,i) {
-                distribution[i] = _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType);
+                distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
                 mask[i] = dX<level?1:(dX>fade*7?0:Math.exp((level-dX)/fade))
                 acc += mask[i] * distribution[i];
             });
@@ -797,13 +797,7 @@
             return result;
             
             
-//            return this.mesh.map(function (dX) {
-//                return {
-//                    x: dX,
-//                    y0: 0, // the initial base of areas is at zero
-//                    y: norm * _this._math.pdf.y(dX, mu, sigma, _this._math.pdf.DISTRIBUTIONS_LOGNORMAL, _this.model.marker.axis_x.scaleType)
-//                }
-//            });
+
             
         },
 

@@ -24,28 +24,19 @@
                          
         // this function returns PDF values for a specified distribution
         pdf: {
-            //constants
-//            DISTRIBUTIONS_NORMAL: "normal distribution",
-//            DISTRIBUTIONS_LOGNORMAL: "lognormal distribution",
-
-            y: function(x, mu, sigma, type, scaleType){
-//                if (type==null) type = this.DISTRIBUTIONS_NORMAL;
-//                if (scaleType==null) scaleType = "log";
-//                switch(type){
-//                    case this.DISTRIBUTIONS_NORMAL:
-//                    return Math.exp(
-//                        - 0.5 * Math.log(2 * Math.PI)
-//                        - Math.log(sigma)
-//                        - Math.pow(x - mu, 2) / (2 * sigma * sigma)
-//                        );
-
-//                    case this.DISTRIBUTIONS_LOGNORMAL:
-                    return Math.exp(
-                        - 0.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
-                        - Math.log(sigma)
-                        - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
+            normal: function(x, mu, sigma){
+                return Math.exp(
+                    - 0.5 * Math.log(2 * Math.PI)
+                    - Math.log(sigma)
+                    - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                     );
- //               }
+            },
+            lognormal: function(x, mu, sigma){
+                return Math.exp(
+                    - 0.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
+                    - Math.log(sigma)
+                    - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
+                );
             }
         },
 
