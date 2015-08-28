@@ -77,6 +77,8 @@
         showTooltip: true
       }, this.ui.whenHovering);
 
+      this.getValuesForYear = utils.memoize(this.getValuesForYear);
+      this.getNearestKey = utils.memoize(this.getNearestKey);
     },
 
     /*
@@ -125,6 +127,10 @@
       this.updateShow();
       this.updateSize();
       this.redrawDataPoints();
+
+      this.graph
+        .on('mousemove', this.entityMousemove.bind(this, null, null, this, true))
+        .on('mouseleave', this.entityMouseout.bind(this, null, null, this));
     },
 
     updateUIStrings: function() {
@@ -390,12 +396,6 @@
 
       this.entityLines.enter().append("g")
         .attr("class", "vzb-lc-entity")
-        .on("mousemove", function (d, i) {
-          _this.entityMousemove(d, i, _this);
-        })
-        .on("mouseout", function (d, i) {
-          _this.entityMouseout(d, i, _this);
-        })
         .each(function (d, index) {
           var entity = d3.select(this);
           var color = _this.cScale(values.color[d[KEY]]);
@@ -414,12 +414,6 @@
 
       this.entityLabels.enter().append("g")
         .attr("class", "vzb-lc-entity")
-        .on("mousemove", function (d, i) {
-          _this.entityMousemove(d, i, _this);
-        })
-        .on("mouseout", function (d, i) {
-          _this.entityMouseout(d, i, _this);
-        })
         .each(function (d, index) {
           var entity = d3.select(this);
           var color = _this.cScale(values.color[d[KEY]]);
@@ -591,10 +585,36 @@
 
     },
 
-    entityMousemove: function (me, index, context) {
+    entityMousemove: function (me, index, context, closestToMouse) {
       var _this = context;
       var KEY = _this.KEY;
       var values = _this.values;
+
+      var mouse = d3.mouse(_this.graph.node()).map(function (d) {
+        return parseInt(d);
+      });
+
+      var resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
+      if (_this.time - resolvedTime < 0) {
+        resolvedTime = _this.time;
+      } else if (resolvedTime < this.model.time['start']) {
+        resolvedTime = this.model.time['start'];
+      }
+      var resolvedValue;
+      var timeDim = _this.model.time.getDimension();
+      if (closestToMouse) {
+        var mousePos = mouse[1] - _this.margin.bottom;
+        var data = this.getValuesForYear(resolvedTime);
+        var nearestKey = this.getNearestKey(mousePos, data.axis_y, _this.yScale.bind(_this));
+        resolvedValue = data.axis_y[nearestKey];
+        if (!me) me = {};
+        me[KEY] = nearestKey;
+      } else {
+        var pointer = {};
+        pointer[KEY] = me[KEY];
+        pointer[timeDim] = resolvedTime;
+        resolvedValue = _this.model.marker.axis_y.getValue(pointer);
+      }
 
       _this.hoveringNow = me;
 
@@ -607,22 +627,6 @@
             return d[KEY] === _this.hoveringNow[KEY];
           });
       });
-
-
-      var mouse = d3.mouse(_this.graph.node()).map(function (d) {
-        return parseInt(d);
-      });
-
-      var resolvedTime = _this.xScale.invert(mouse[0] - _this.margin.left);
-      if (_this.time - resolvedTime < 0) {
-        resolvedTime = _this.time;
-      }
-
-      var pointer = {};
-      var timeDim = _this.model.time.getDimension();
-      pointer[KEY] = me[KEY];
-      pointer[timeDim] = resolvedTime;
-      var resolvedValue = _this.model.marker.axis_y.getValue(pointer);
 
       if (utils.isNaN(resolvedValue)) return;
 
@@ -673,6 +677,7 @@
 
     entityMouseout: function (me, index, context) {
       var _this = context;
+      if (d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
 
       // hide and show things like it was before hovering
       _this.unhoverTimeout = setTimeout(function () {
@@ -690,6 +695,28 @@
         _this.hoveringNow = null;
       }, 300);
 
+    },
+
+    getValuesForYear: function(year) {
+      if (!utils.isDate(year)) {
+        year = new Date('00:00:00 ' + year);
+      }
+      return this.model.marker.getValues({ time: year }, [this.KEY]);
+    },
+
+    /**
+     * Returns key from obj which value has the smallest difference with val
+     */
+    getNearestKey: function (val, obj, fn) {
+      var keys = Object.keys(obj);
+      var resKey = keys[0];
+      for (var i = 1; i < keys.length; i++) {
+        var key = keys[i];
+        if (Math.abs((fn ? fn(obj[key]) : obj[key]) - val) < Math.abs((fn ? fn(obj[resKey]) : obj[resKey]) - val)) {
+          resKey = key;
+        }
+      }
+      return resKey;
     }
 
 
