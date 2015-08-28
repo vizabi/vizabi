@@ -163,12 +163,12 @@
 
       var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
       this._trails = new Trail(this);
-    
+
       var Exporter = Vizabi.Helper.get("gapminder-svgexport");
       this._export = new Exporter(this);
       this._export
             .prefix("vzb-bc-")
-            .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect", "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"]); 
+            .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect", "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"]);
 
 
 
@@ -367,8 +367,6 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
-      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
-      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -418,6 +416,10 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
+
+      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+
       this.updateIndicators();
       this.updateEntities();
       this.updateTime();
@@ -1022,14 +1024,14 @@
           // fix for #407 & #408
           d3.timer.flush();
         }
-          
+
         if(this.model.time.record) _this._export.write({
-            type: "circle", 
-            id: d[KEY], 
-            time: this.model.time.value.getFullYear(), 
-            fill: _this.cScale(valueC), 
-            cx: _this.xScale(valueX), 
-            cy: _this.yScale(valueY), 
+            type: "circle",
+            id: d[KEY],
+            time: this.model.time.value.getFullYear(),
+            fill: _this.cScale(valueC),
+            cx: _this.xScale(valueX),
+            cy: _this.yScale(valueY),
             r: scaledS
         });
 
