@@ -9,6 +9,7 @@
   var class_loading = 'vzb-loading';
   var root = this;
   var Vizabi = root.Vizabi;
+  var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
   var templates = {};
   var Component = Vizabi.Events.extend({
@@ -76,6 +77,13 @@
     },
 
     /**
+     * Preloads data before anything else
+     */
+    preload: function(promise) {
+      promise.resolve(); //by default, load nothing
+    },
+
+    /**
      * Renders the component (after data is ready)
      */
     render: function () {
@@ -96,7 +104,11 @@
           done();
         });
         this.model.setHooks();
-        this.model.load();
+        
+        preloader(this).then(function() {
+          _this.model.load();
+        });
+
       } else if (this.model && this.model.isLoading()) {
         this.model.on('ready', function () {
           done();
@@ -405,6 +417,30 @@
     resize: function () {
     }
   });
+
+  /**
+   * Preloader implementation with promises
+   * @param {Object} comp any component
+   * @returns {Promise}
+   */
+  function preloader(comp) {
+    var promise = new Promise();
+    var promises = []; //holds all promises
+
+    //preload all subcomponents first
+    utils.forEach(comp.components, function (subcomp) {
+        promises.push(preloader(subcomp));
+    });
+
+    var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+    wait.then(function () {
+      comp.preload(promise);
+    }, function(err) {
+      utils.error("Error preloading data:", err);
+    });
+
+    return promise;
+  }
 
   // Based on Simple JavaScript Templating by John Resig
   //generic templating function
