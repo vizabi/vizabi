@@ -97,7 +97,7 @@
     margin-top: 36px;
   }
 
-  .thumb-tack-class{
+  .thumb-tack-class {
     border-radius: 50%;
     width: 26px;
     height: 26px;
@@ -115,8 +115,11 @@
     cursor: pointer;
   }
   .thumb-tack-class-ico-drag {
-    left: 6px!important;
     cursor: move;
+    & svg {
+      @include transform(translate(4px, 4px));
+      cursor: move;
+    }
   }
   .thumb-tack-class-ico:before {
     color: #4B98AA!important;
