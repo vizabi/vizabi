@@ -141,7 +141,7 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          utils.throttle(brushed.bind(this), 30);
+          utils.throttle(brushed.bind(this), 50);
         })
         .on("brushend", function () {
           brushedEnd.call(this);
@@ -367,13 +367,13 @@
      */
     _setTime: function (time) {
       //update state
-      var _this = this,
-        frameRate = 50;
+      var _this = this;
+      //  frameRate = 50;
 
       //avoid updating more than once in "frameRate"
-      var now = new Date();
-      if (this._updTime != null && now - this._updTime < frameRate) return;
-      this._updTime = now;
+      //var now = new Date();
+      //if (this._updTime != null && now - this._updTime < frameRate) return;
+      //this._updTime = now;
 
       _this.model.time.value = time;
     },
