@@ -145,7 +145,16 @@
                 },
                 'change:marker:group': function (evt) {
                     if (!_this._readyOnce) return;
+                    if(evt == "change:marker:group:merge") return;
+                    //console.log("group event")
                     _this.ready();
+                },
+                
+                'change:marker:group:merge': function (evt) {
+                    if (!_this._readyOnce) return;
+                    //console.log("group merge event")
+                    _this.updateTime();
+                    _this.redrawDataPoints();
                 },
                 'change:marker:stack': function (evt) {
                     if (!_this._readyOnce) return;
@@ -156,6 +165,32 @@
                 },
                 'change:entities:opacityRegular': function () {
                   _this.updateOpacity();
+                },
+                'change:time:dragging': function () {
+                  if (!_this._readyOnce) return;
+                  if(_this.model.marker.stack.which === "none") return;
+                    
+                  if(_this.model.time.dragging){
+                    _this.groupMergeTemp = _this.model.marker.group.merge;
+                    _this.model.marker.group.merge = true;
+                  }
+                    
+                  if(!_this.model.time.dragging){
+                    _this.model.marker.group.merge = _this.groupMergeTemp;
+                  }
+                },
+                'change:time:playing': function () {
+                  if (!_this._readyOnce) return;
+                  if(_this.model.marker.stack.which === "none") return;    
+                  
+                  if(_this.model.time.playing){
+                    _this.groupMergeTemp = _this.model.marker.group.merge;
+                    _this.model.marker.group.merge = true;
+                  }
+                    
+                  if(!_this.model.time.playing){
+                    _this.model.marker.group.merge = _this.groupMergeTemp;
+                  }
                 }
             }
 

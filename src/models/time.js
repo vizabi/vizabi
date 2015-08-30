@@ -56,6 +56,7 @@
         xLogStops: [], //TODO: remove from here. only for mountain chart
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
         record: false,
+        dragging: false,
         povertyline: 0, //TODO: remove from here. only for mountain chart
         povertyCutoff: 0, //TODO: remove from here. only for mountain chart
         povertyFade: 1, //TODO: remove from here. only for mountain chart
@@ -163,6 +164,16 @@
      */
     pause: function () {
       this.playing = false;
+    },
+      
+    /**
+     * Indicates dragging of time
+     */
+    dragStart: function () {
+      this.dragging = true;
+    },
+     dragStop: function () {
+      this.dragging = false;
     },
 
     /**

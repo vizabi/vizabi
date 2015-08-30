@@ -287,6 +287,7 @@
         //set brushed properties
         if (d3.event.sourceEvent) {
           _this._dragging = true;
+          _this.model.time.dragStart();
           var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
           value = _this.xScale.invert(posX);
 
@@ -319,6 +320,7 @@
       var _this = this;
       return function () {
         _this._dragging = false;
+        _this.model.time.dragStop();
         _this._blockUpdate = false;
         _this.element.classed(class_dragging, false);
         _this.model.time.pause();
