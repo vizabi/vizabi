@@ -28,7 +28,8 @@
         'time': {use: 'indicator',unit: 'time',scales: ['time'] },
         'childSurv': {use: 'indicator',unit: 'childSurv',scales: ['linear', 'log'] },
         'gdp_per_cap': {use: 'indicator',unit: 'gdp_per_cap',scales: ['log', 'linear'] },
-        'pop': {use: 'indicator',unit: '',scales: ['linear', 'log'] },
+        'pop': {use: 'indicator',unit: '',scales: ['linear', 'genericLog'] },
+        'lex': {use: 'indicator',unit: 'lex',scales: ['linear'] },
         'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
         'u5mr_not': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
         'u5mr': {use: 'indicator',unit: 'u5mr',scales: ['linear', 'log'] },
@@ -36,7 +37,7 @@
         'gini': {use: 'indicator',unit: 'gini',scales: ['linear'] },
         'gdppc_pday':{use: 'indicator',unit: 'gdppc_pday',scales: ['log', 'linear'] },
         'inc_pday':{use: 'indicator',unit: 'inc_pday',scales:['log', 'linear'] },
-        '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
+        '_default': {use: 'value',unit: '',scales: ['ordinal'] }
     };
 
     Vizabi.Component.extend('gapminder-indicatorpicker', {
@@ -121,11 +122,31 @@
             var pointer = "_default";
 
             var data = {};
-            data[INDICATOR] = Object.keys(availOpts);
+            
+            var allowed = Object.keys(availOpts).filter(function(f){
+                
+                var opt = availOpts[f];
+                
+                if(!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
+                if(_this.model.axis.allow.scales[0] == "*") return true;
+            
+                for(var i = opt.scales.length-1; i>=0; i--){
+                    if(opt.scales[i] == _this.model.axis.scaleType) return true;
+                    if(_this.model.axis.allow.scales.indexOf(opt.scales[i])>-1) return true;
+                }
+                
+                return false;
+            })
+            
+            data[INDICATOR] = allowed;
 
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
 
-            data[SCALETYPE] = availOpts[pointer].scales;
+            data[SCALETYPE] = availOpts[pointer].scales.filter(function(f){
+                if(!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
+                if(_this.model.axis.allow.scales[0] == "*") return true;
+                return _this.model.axis.allow.scales.indexOf(f)>-1;
+            });
 
             //bind the data to the selector lists
             var elOptionsIndicator = this.el_select_indicator.selectAll("option")

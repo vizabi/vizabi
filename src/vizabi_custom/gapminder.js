@@ -135,6 +135,7 @@
                 "indicator/geo.region": "Regionen",
                 "indicator/geo": "Geokod",
                 "indicator/time": "Tid",
+                "indicator/size": "Stor eller liten",
                 "indicator/geo.category": "Geo kategori",
                 "indicator/geo.name": "Geo namn",
                 "indicator/_default": "Konstant",
@@ -187,11 +188,13 @@
                 axis_y: {
                     use: "indicator",
                     which: "lex",
-                    scaleType: "linear"
+                    scaleType: "linear",
+                    allow: {scales: ["linear", "log"]}
                 },
                 axis_x: {
                     use: "property",
-                    which: "geo.name"
+                    which: "geo.name",
+                    allow: {scales: ["ordinal"]}
                 },
                 color: {
                     use: "property",
@@ -555,12 +558,14 @@
                     use: "indicator",
                     which: "lex",
                     scaleType: "linear",
+                    allow: {scales: ["linear", "log", "genericLog"]},
                     unit: "lex"
                 },
                 axis_x: {
                     use: "indicator",
                     which: "gdp_per_cap",
                     scaleType: "log",
+                    allow: {scales: ["linear", "log", "genericLog"]},
                     unit: "gdp_per_cap"
                 },
                 color: {
@@ -573,6 +578,7 @@
                     use: "indicator",
                     which: "pop",
                     scaleType: "linear",
+                    allow: {scales: ["linear", "log"]},
                     min: 0,
                     max: 0.75,
                     unit: ""
