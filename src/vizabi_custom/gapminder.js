@@ -266,8 +266,8 @@
                     which: "gdp_per_cap",
                     scaleType: 'log',
                     unit: "gdp_per_cap_daily",
-                    min: 0.05, //0
-                    max: 5000 //100
+                    min: 0.11, //0
+                    max: 500 //100
                 },
                 size: {
                     use: "indicator",
