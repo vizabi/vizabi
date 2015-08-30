@@ -718,7 +718,7 @@
             bottom: 40
           },
           padding: 2,
-          minRadius: 1,
+          minRadius: 0.5,
           maxRadius: 40
         },
         "medium": {
@@ -729,7 +729,7 @@
             bottom: 70
           },
           padding: 2,
-          minRadius: 2,
+          minRadius: 1,
           maxRadius: 60
         },
         "large": {
@@ -740,7 +740,7 @@
             bottom: 60
           },
           padding: 2,
-          minRadius: 3,
+          minRadius: 1,
           maxRadius: 80
         }
       };
