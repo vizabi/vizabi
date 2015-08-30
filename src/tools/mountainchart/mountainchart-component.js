@@ -747,10 +747,10 @@
             if(!meshLength) meshLength = this.model.time.xPoints;
             
             var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
-            var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.xScale.domain()[0]);
-            var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.xScale.domain()[1]);
+            var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.unscale(this.xScale.domain()[0]));
+            var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.unscale(this.xScale.domain()[1]));
             var rangeStep = (rangeTo - rangeFrom) / meshLength;
-            this.mesh = d3.range(rangeFrom, rangeTo, rangeStep);
+            this.mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
             
             if (scaleType != "linear") {
                 this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)}); 
