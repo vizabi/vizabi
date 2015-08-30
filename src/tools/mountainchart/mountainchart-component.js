@@ -900,18 +900,17 @@
             this.povertylineEl.classed("vzb-hidden", !povertyline);
             if(!povertyline) return;
             
-            var totalPop = 0;
-            var poorPop = 0;
+            var sumValue = 0;
+            var totalArea = 0;
+            var leftArea = 0;
             
             this.mountainPointers
                 .filter(function(f){return !f.hidden})
                 .forEach(function(d){
-                    var vertices = _this.cached[d.KEY()];
-                
-                    var array = _this.mesh.map(function(m, i){
-                        totalPop += vertices[i].y;
-                        
-                        if(_this.rescale(m)<povertyline)poorPop += vertices[i].y;
+                    sumValue += _this.values.axis_y[d.KEY()];
+                    _this.cached[d.KEY()].forEach(function(d){
+                        totalArea += d.y;
+                        if(_this.rescale(d.x)<povertyline)leftArea += d.y;
                     })
                 })
             
@@ -923,12 +922,29 @@
                 .attr("y1",this.height)
                 .attr("y2",this.height*0.66);
 
-            this.povertylineEl.selectAll("text")
+            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUL")
                 .attr("x",this.xScale(povertyline) - 5)
                 .attr("y",this.height*0.66)
-                .text(formatter(poorPop/totalPop*100) + "%"); 
+                .text(formatter(leftArea/totalArea*100) + "%"); 
             
-            if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + poorPop/totalPop*100);                        
+            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDL")
+                .attr("x",this.xScale(povertyline) - 5)
+                .attr("y",this.height*0.66)
+                .attr("dy","2em")
+                .text(_this.model.marker.axis_y.tickFormatter(sumValue * leftArea / totalArea) ); 
+            
+            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUR")
+                .attr("x",this.xScale(povertyline) + 5)
+                .attr("y",this.height*0.66)
+                .text(formatter(100-leftArea/totalArea*100) + "%"); 
+            
+            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDR")
+                .attr("x",this.xScale(povertyline) + 5)
+                .attr("y",this.height*0.66)
+                .attr("dy","2em")
+                .text(_this.model.marker.axis_y.tickFormatter(sumValue * (1 - leftArea / totalArea)) ); 
+            
+            //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + leftArea/totalArea*100);                        
             
         },
         

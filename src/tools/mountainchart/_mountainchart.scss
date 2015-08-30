@@ -41,8 +41,13 @@
         }
         .vzb-mc-povertyline text{
             dominant-baseline: hanging;
-            text-anchor: end;
             fill: grey;
+        }
+        .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL, .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL{
+            text-anchor: end;
+        }
+        .vzb-mc-povertyline text.vzb-mc-povertyline-valueUR, .vzb-mc-povertyline text.vzb-mc-povertyline-valueDR{
+            text-anchor: start;
         }
         .vzb-mc-povertyline text.vzb-shadow{
             stroke: white;
