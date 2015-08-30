@@ -991,10 +991,15 @@
             var year = this.model.time.value.getFullYear();            
             
             view.classed("vzb-hidden", hidden);
-            if(hidden) return;
-            view //.transition().duration(speed).ease("linear")
+            if(hidden){ 
+                view.style("stroke-opacity", 0);
+                return;
+            }
+            view
                 .style("fill", this.cScale(this.values.color[key]))
-                .attr("d", this.area(this.cached[key]));
+                .attr("d", this.area(this.cached[key]))
+                .transition().duration(500).ease("circle")
+                .style("stroke-opacity", 0.5);
             
             if(record) this._export.write({type: "path", id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key])});  
         },
