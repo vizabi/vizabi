@@ -64,11 +64,16 @@
       this._super();
     },
 
+    beforeOpen: function () {
+      this._super();
+
+      this.input_search.node().focus();
+    },
+
     open: function () {
       this._super();
 
       this.input_search.node().value = "";
-      this.input_search.node().focus();
       this.showHideSearch();
     },
 
