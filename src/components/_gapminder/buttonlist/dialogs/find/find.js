@@ -68,6 +68,7 @@
       this._super();
 
       this.input_search.node().value = "";
+      this.input_search.node().focus();
       this.showHideSearch();
     },
 

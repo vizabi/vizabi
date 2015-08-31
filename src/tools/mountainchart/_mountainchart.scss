@@ -39,6 +39,25 @@
                 @include font-size(40px);
             }
         }
+        .vzb-mc-povertyline text{
+            dominant-baseline: hanging;
+            fill: grey;
+        }
+        .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL, .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL{
+            text-anchor: end;
+        }
+        .vzb-mc-povertyline text.vzb-mc-povertyline-valueUR, .vzb-mc-povertyline text.vzb-mc-povertyline-valueDR{
+            text-anchor: start;
+        }
+        .vzb-mc-povertyline text.vzb-shadow{
+            stroke: white;
+            stroke-width: 5;
+            stroke-opacity: 0.6;
+        }
+        .vzb-mc-povertyline line{
+            stroke: grey;
+            stroke-dasharray: 5 5;
+        }
         .vzb-mc-axis-x-title text{
             @include font-size(40px);
         }

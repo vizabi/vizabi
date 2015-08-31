@@ -781,7 +781,7 @@
       };
 
       function nestToObj(arr) {
-        if(!arr || !arr[0].key) return arr;
+        if(!arr || !arr.length || !arr[0].key) return arr;
         var res = {};
         for (var i = 0; i < arr.length; i++) {
           res[arr[i].key] = nestToObj(arr[i].values);

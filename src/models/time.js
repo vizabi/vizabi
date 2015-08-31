@@ -53,9 +53,16 @@
         step: 1, //step must be integer
         adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
         formatInput: "%Y", //defaults to year format
-        xLogStops: [1,2], //TODO: remove from here. only for mountain chart
+        xLogStops: [], //TODO: remove from here. only for mountain chart
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
-        record: false
+        record: false,
+        dragging: false,
+        povertyline: 0, //TODO: remove from here. only for mountain chart
+        povertyCutoff: 0, //TODO: remove from here. only for mountain chart
+        povertyFade: 1, //TODO: remove from here. only for mountain chart
+        gdpFactor: 1, //TODO: remove from here. only for mountain chart
+        gdpShift: 0, //TODO: remove from here. only for mountain chart
+        xPoints: 50 //TODO: remove from here. only for mountain chart
       }, values);
 
       values.formatOutput = values.formatOutput || values.formatInput;
@@ -157,6 +164,16 @@
      */
     pause: function () {
       this.playing = false;
+    },
+      
+    /**
+     * Indicates dragging of time
+     */
+    dragStart: function () {
+      this.dragging = true;
+    },
+     dragStop: function () {
+      this.dragging = false;
     },
 
     /**
