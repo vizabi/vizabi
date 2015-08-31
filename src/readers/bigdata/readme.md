@@ -6,6 +6,8 @@ Reads from Drill's [REST API](https://docs.google.com/document/d/1mRsuWk4Dpt6ts-
 Follow the [Drill in 10 minutes](http://drill.apache.org/docs/drill-in-10-minutes/) tutorial to setup a local server.
 ###Setup
 Create a storage plugin called "vzb" pointing to your local data (see details in the Drill tutorial):
+
+```JSON
 {
   ...
   "workspaces": {
@@ -29,9 +31,11 @@ Create a storage plugin called "vzb" pointing to your local data (see details in
     ...
   }
 }
+```
 
 From the shell, copy the basic-indicators.csv data into a Parquet table (see details in the Drill tutorial):
 
+```SQL
 ALTER SESSION SET `store.format`='parquet';
 
 CREATE TABLE vzb.dev.`/bigdata/parquet_basic_indicators` AS
@@ -57,13 +61,16 @@ CASE
     ELSE columns[7] 
 END as `geo_region`
 FROM vzb.dev.`/waffles/en/basic-indicators.csv`;
+```
 
 ###Test
 Call Vizabi using:
+
+```JavaScript
 Vizabi('BubbleChart', placeholder, {
 	data: { reader: 'drill-rest', 
 			dbpath: 'http://localhost:8047/query.json',
 			sql_query: 'select `time`, `geo`, `gdp_per_cap`, `lex`, `pop`, `geo_name` as `geo.name`, `geo_cat` as `geo.cat`, `geo_region` as `geo.region` from  vzb.dev.`/bigdata/parquet_basic_indicators`'}
 });
-
+```
 
