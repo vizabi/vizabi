@@ -141,7 +141,7 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          utils.throttle(brushed.bind(this), 30);
+          utils.throttle(brushed.bind(this), 50);
         })
         .on("brushend", function () {
           brushedEnd.call(this);
@@ -287,6 +287,7 @@
         //set brushed properties
         if (d3.event.sourceEvent) {
           _this._dragging = true;
+          _this.model.time.dragStart();
           var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
           value = _this.xScale.invert(posX);
 
@@ -319,6 +320,7 @@
       var _this = this;
       return function () {
         _this._dragging = false;
+        _this.model.time.dragStop();
         _this._blockUpdate = false;
         _this.element.classed(class_dragging, false);
         _this.model.time.pause();
@@ -367,13 +369,13 @@
      */
     _setTime: function (time) {
       //update state
-      var _this = this,
-        frameRate = 50;
+      var _this = this;
+      //  frameRate = 50;
 
       //avoid updating more than once in "frameRate"
-      var now = new Date();
-      if (this._updTime != null && now - this._updTime < frameRate) return;
-      this._updTime = now;
+      //var now = new Date();
+      //if (this._updTime != null && now - this._updTime < frameRate) return;
+      //this._updTime = now;
 
       _this.model.time.value = time;
     },

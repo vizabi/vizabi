@@ -51,7 +51,7 @@
      */
     validate: function () {
 
-      var possibleScales = ["log", "linear", "time", "pow"];
+      var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
       if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
         this.scaleType = 'linear';
       }
