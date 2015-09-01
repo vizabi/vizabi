@@ -1,0 +1,24 @@
+.vzb-dl-holder {
+  .sortable {
+    margin: auto;
+    padding: 0;
+    width: 200px;
+    @include user-select(none);
+  }
+  .sortable li {
+    list-style: none;
+    border: 1px solid #CCC;
+    background: #F6F6F6;
+    color: #1C94C4;
+    margin: 5px;
+    padding: 5px;
+    height: 20px;
+  }
+  ul {
+    height: 115px;
+    overflow-y: scroll;
+  }
+  li.over {
+    border: 2px dashed #000;
+  }
+}

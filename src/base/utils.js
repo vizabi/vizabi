@@ -106,7 +106,7 @@
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
     },
-      
+
     /*
      * transforms a string into a validated fload value
      * @param {string} string to be transformed
@@ -650,8 +650,8 @@
       }
       return arr;
     },
-      
-      
+
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -661,7 +661,7 @@
             return (p < v ? p : v);
         });
     },
- 
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -671,7 +671,7 @@
             return (p > v ? p : v);
         });
     },
- 
+
     /*
      * Computes the mean of an array
      * @param {Array} arr
@@ -679,7 +679,7 @@
     arrayMean: function(arr) {
         return this.arraySum(arr)/arr.length;
     },
- 
+
     /*
      * Computes the sum of an array
      * @param {Array} arr
@@ -687,7 +687,7 @@
     arraySum: function(arr) {
         return arr.reduce(function(a, b) { return a + b; });
     },
- 
+
     /*
      * Computes the median of an array
      * @param {Array} arr
@@ -822,6 +822,5 @@
         return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
       };
     }
-
   };
 }.call(this));

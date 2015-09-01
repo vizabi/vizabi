@@ -23,9 +23,18 @@
 
             // in dialog, this.model_expects = ["state", "data"];
 
+            this.components = [{
+              component: 'gapminder-draggablelist',
+              placeholder: '.vzb-dialog-draggablelist',
+              model: ["language"],
+              dataArrFn: _this.manualSorting.bind(_this),
+              lang: 'region/'
+            }];
+
             this.model_binds = {
                 'change:state:marker:stack': function () {
                     //console.log("stack change event");
+                    console.log(_this.model.state.marker.group.manualSorting);
                     _this.updateView();
                 },
                 'change:state:marker:group': function () {
@@ -55,8 +64,9 @@
                 })
 
             this.updateView();
+            //console.log(this.model.state.marker.group.manualSorting);
 
-            this._super();
+          this._super();
         },
 
         updateView: function(){
@@ -68,6 +78,11 @@
 
             this.mergeGroupedEl.property('checked', this.model.state.marker.group.merge);
             this.mergeStackedEl.property('checked', this.model.state.marker.stack.merge);
+        },
+
+        manualSorting: function (value) {
+          if (arguments.length === 0) return this.model.state.marker.group.manualSorting;
+          this.model.state.marker.group.manualSorting = value;
         },
 
         setModel: function(what, value) {
@@ -89,7 +104,7 @@
                     obj.use = "value";
                 }
 
-                mdl.set(obj);
+              mdl.set(obj);
             }
         }
     }));
