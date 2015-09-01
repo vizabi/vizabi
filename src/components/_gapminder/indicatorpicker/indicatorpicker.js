@@ -122,22 +122,22 @@
             var pointer = "_default";
 
             var data = {};
-            
+
             var allowed = Object.keys(availOpts).filter(function(f){
-                
+
                 var opt = availOpts[f];
-                
+
                 if(!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
                 if(_this.model.axis.allow.scales[0] == "*") return true;
-            
+
                 for(var i = opt.scales.length-1; i>=0; i--){
                     if(opt.scales[i] == _this.model.axis.scaleType) return true;
                     if(_this.model.axis.allow.scales.indexOf(opt.scales[i])>-1) return true;
                 }
-                
+
                 return false;
             })
-            
+
             data[INDICATOR] = allowed;
 
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
@@ -214,8 +214,10 @@
             if (what == INDICATOR) {
                 obj.use = availOpts[value].use;
                 obj.unit = availOpts[value].unit;
-                obj.min = null;
-                obj.max = null;
+                if (mdl.getType() == 'axis') {
+                  obj.min = null;
+                  obj.max = null;
+                }
 
                 if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
                     obj.scaleType = availOpts[value].scales[0];
