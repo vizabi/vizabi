@@ -18,6 +18,10 @@
         margin: 0;
         overflow: hidden;
         font-family: $vzb-font-family;
+        .vzb-mc-eventarea{
+            fill: none;
+            pointer-events: all;
+        }
         .vzb-mc-mountain {
             stroke: white;
             stroke-opacity: 0.5;
@@ -42,6 +46,7 @@
         .vzb-mc-povertyline text{
             dominant-baseline: hanging;
             fill: grey;
+            pointer-events: none;
         }
         .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL, .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL{
             text-anchor: end;
@@ -57,6 +62,7 @@
         .vzb-mc-povertyline line{
             stroke: grey;
             stroke-dasharray: 5 5;
+            pointer-events: none;
         }
         .vzb-mc-axis-x-title text{
             @include font-size(40px);
@@ -77,10 +83,12 @@
         .vzb-mc-axis-x,
         .vzb-mc-axis-y {
             @extend .vzb-mc-axis;
+            pointer-events: none;
         }
         .vzb-mc-axis-y-title,
         .vzb-mc-axis-x-title {
             @extend .vzb-mc-title;
+            pointer-events: none;
         }
         .vzb-mc-line {
             fill: none;
@@ -97,6 +105,7 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            pointer-events: none;
         }
     }
 }

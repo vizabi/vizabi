@@ -260,6 +260,20 @@
             this.mountains = null;
             this.tooltip = this.element.select('.vzb-tooltip');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
+            this.eventAreaEl = this.element.select(".vzb-mc-eventarea");
+            
+            this.eventAreaEl.on("mousemove", function(){
+                var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                //console.log(mouse[0], )
+                _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true})
+            
+            }).on("mouseout", function(){
+                var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
+
+                _this.updatePovertyLine();
+            
+            })
 
             var _this = this;
             this.on("resize", function () {
@@ -826,6 +840,11 @@
                 .attr("transform", "translate(0," + this.height + ")")
                 .select("text")
                 .attr("dy", "-0.36em");
+            
+            this.eventAreaEl
+                .attr("y", this.height)
+                .attr("width", this.width)
+                .attr("height", margin.bottom);
 
         },
 
@@ -893,12 +912,16 @@
         },
 
         
-        updatePovertyLine: function(){
+        updatePovertyLine: function(options){
             var _this = this;
-            var povertyline = this.model.time.povertyline;
+            if(!options)options = {};
             
-            this.povertylineEl.classed("vzb-hidden", !povertyline);
-            if(!povertyline) return;
+            if(!options.level) options.level = this.model.time.povertyline;
+            
+            this.povertylineEl.classed("vzb-hidden", !options.level);
+            if(!options.level) return;
+            
+            this.xAxisEl.call(this.xAxis.highlightValue(options.full? options.level : "none"));
             
             var sumValue = 0;
             var totalArea = 0;
@@ -910,39 +933,42 @@
                     sumValue += _this.values.axis_y[d.KEY()];
                     _this.cached[d.KEY()].forEach(function(d){
                         totalArea += d.y;
-                        if(_this.rescale(d.x)<povertyline)leftArea += d.y;
+                        if(_this.rescale(d.x)<options.level)leftArea += d.y;
                     })
                 })
             
             var formatter = d3.format(".3r");
             
             this.povertylineEl.select("line")
-                .attr("x1",this.xScale(povertyline))
-                .attr("x2",this.xScale(povertyline))
+                .attr("x1",this.xScale(options.level))
+                .attr("x2",this.xScale(options.level))
                 .attr("y1",this.height)
                 .attr("y2",this.height*0.66);
 
             this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUL")
-                .attr("x",this.xScale(povertyline) - 5)
-                .attr("y",this.height*0.66)
-                .text(formatter(leftArea/totalArea*100) + "%"); 
+                .text(formatter(leftArea/totalArea*100) + "%") 
+                .attr("x",this.xScale(options.level) - 5)
+                .attr("y",this.height*0.66);
             
             this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDL")
-                .attr("x",this.xScale(povertyline) - 5)
+                .text(_this.model.marker.axis_y.tickFormatter(sumValue * leftArea / totalArea) )
+                .attr("x",this.xScale(options.level) - 5)
                 .attr("y",this.height*0.66)
-                .attr("dy","2em")
-                .text(_this.model.marker.axis_y.tickFormatter(sumValue * leftArea / totalArea) ); 
+                .attr("dy","1.5em")
+                .classed("vzb-hidden", !options.full);
             
             this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUR")
-                .attr("x",this.xScale(povertyline) + 5)
+                .text(formatter(100-leftArea/totalArea*100) + "%")
+                .attr("x",this.xScale(options.level) + 5)
                 .attr("y",this.height*0.66)
-                .text(formatter(100-leftArea/totalArea*100) + "%"); 
+                .classed("vzb-hidden", !options.full);
             
             this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDR")
-                .attr("x",this.xScale(povertyline) + 5)
+                .text(_this.model.marker.axis_y.tickFormatter(sumValue * (1 - leftArea / totalArea)) + " " + this.translator("mount/people"))
+                .classed("vzb-hidden", !options.full)
+                .attr("x",this.xScale(options.level) + 5)
                 .attr("y",this.height*0.66)
-                .attr("dy","2em")
-                .text(_this.model.marker.axis_y.tickFormatter(sumValue * (1 - leftArea / totalArea)) ); 
+                .attr("dy","1.5em");
             
             //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + leftArea/totalArea*100);                        
             
@@ -1038,6 +1064,7 @@
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
+             this.eventAreaEl = this.element.select(".vzb-mc-eventarea");
             
             if(this.model.marker.stack.use == "property"){
                 shape = this.precomputedShapes["incomeMount_shape_stack_region"][_this.model.time.value.getFullYear()]
