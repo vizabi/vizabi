@@ -115,13 +115,13 @@
                 "change:entities:highlight": function () {
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:highlight");
-                  _this.highlightDataPoints();
+                  _this.highlightEntities();
                     _this.updateOpacity();
                 },
                 'change:entities:select': function () {
                   if (!_this._readyOnce) return;
                   //console.log("EVENT change:entities:select");
-                  _this.selectDataPoints();
+                  _this.selectEntities();
                     _this.redrawSelectList();
                     _this.updateOpacity();
                     _this.redrawDataPoints();
@@ -257,7 +257,6 @@
             this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
-            this.mountains = null;
             this.tooltip = this.element.select('.vzb-tooltip');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             this.eventAreaEl = this.element.select(".vzb-mc-eventarea");
@@ -295,8 +294,8 @@
             this.updateTime();
             this._adjustMaxY({force:true});
             this.redrawDataPoints();
-            this.highlightDataPoints();
-            this.selectDataPoints();
+            this.highlightEntities();
+            this.selectEntities();
             this.redrawSelectList();
             this.updateOpacity();
             this.updatePovertyLine();
@@ -317,8 +316,8 @@
                 this.updateTime();
                 this._adjustMaxY({force:true});
                 this.redrawDataPoints();
-                this.highlightDataPoints();
-                this.selectDataPoints();
+                this.highlightEntities();
+                this.selectEntities();
                 this.redrawSelectList();
                 this.updateOpacity();      
                 this.updatePovertyLine();
@@ -372,6 +371,7 @@
                     pointer[_this.TIMEDIM] = endTime;
                     pointer.KEY = function(){return this[_this.KEY]};
                     pointer.sortValue = [_this.model.marker.axis_y.getValue(pointer), 0];
+                    pointer.aggrLevel = 0;
                     return pointer;
                 })
             
@@ -400,7 +400,9 @@
                         d.sortValue[1] = groupSortValue;
                     })
                     
+                    group[_this.model.entities.getDimension()] = group.key; // hack to get highlihgt and selection work
                     group.KEY = function(){return this.key};
+                    group.aggrLevel = 1;
                 })
             
             var sortGroupKeys = {};
@@ -425,6 +427,8 @@
                 
                 this.stackedPointers.forEach(function (stack) {
                     stack.KEY = function(){return this.key};
+                    stack[_this.model.entities.getDimension()] = stack.key; // hack to get highlihgt and selection work
+                    stack.aggrLevel = 2;
                 })
             }
                       
@@ -442,6 +446,8 @@
                 .attr("class", "vzb-mc-mountain")
                 .on("mousemove", function (d, i) {
                 
+                    _this.model.entities.highlightEntity(d);
+                
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
@@ -452,8 +458,10 @@
                 })
                 .on("mouseout", function (d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
+                    _this.model.entities.clearHighlighted();
                 })
                 .on("click", function (d, i) {
+                    _this.model.entities.selectEntity(d);
                 });
             
             
@@ -469,6 +477,8 @@
                 .attr("class", "vzb-mc-mountain")
                 .on("mousemove", function (d, i) {
                 
+                    _this.model.entities.highlightEntity(d);
+                
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
@@ -479,22 +489,24 @@
                 })
                 .on("mouseout", function (d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
+                    _this.model.entities.clearHighlighted();
                 })
                 .on("click", function (d, i) {
+                    _this.model.entities.selectEntity(d);
                 });
             
             
             
             
             //bind the data to DOM elements
-            this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain')
+            this.mountainsAtomic = this.mountainContainer.selectAll('.vzb-mc-mountain')
                 .data(this.mountainPointers);
 
             //exit selection
-            this.mountains.exit().remove();
+            this.mountainsAtomic.exit().remove();
 
             //enter selection -- init circles
-            this.mountains.enter().append("path")
+            this.mountainsAtomic.enter().append("path")
                 .attr("class", "vzb-mc-mountain")
                 .on("mousemove", function (d, i) {
                 
@@ -524,35 +536,21 @@
         /*
          * Highlights all hovered shapes
          */
-        highlightDataPoints: function () {
+        highlightEntities: function () {
             var _this = this;
             this.someHighlighted = (this.model.entities.highlight.length > 0);
-            var gdpFactor = this.model.time.gdpFactor;
-            var gdpShift = this.model.time.gdpShift;
             
-//            if (this.model.entities.highlight.length==1) {
-//                var key = this.model.entities.highlight[0][_this.KEY];
-//                var sigma = _this._math.giniToSigma(_this.values.size[key]);
-//                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma, gdpFactor, gdpShift);
-//                
-//                // here we highlight the value where the mountain is reaching its peak
-//                // which is mode. not mean, not median and not mu. see https://en.wikipedia.org/wiki/Log-normal_distribution
-//                this.xAxisEl.call(this.xAxis.highlightValue( Math.exp(mu - sigma*sigma) ));
-//            }else{
-//                this.xAxisEl.call(this.xAxis.highlightValue("none"));
-//            }
-            
-            if(!this.mountainLabels || !this.someSelected) return;
-            this.mountainLabels.classed("vzb-highlight", function(d){return _this.model.entities.isHighlighted(d)});
+            if(!this.selectList || !this.someSelected) return;
+            this.selectList.classed("vzb-highlight", function(d){return _this.model.entities.isHighlighted(d)});
         },
 
 
 
-        selectDataPoints: function () {
+        selectEntities: function () {
             var _this = this;
             this.someSelected = (this.model.entities.select.length > 0);
             
-            var listData = this.mountainPointers.filter(function(f){
+            var listData = this.mountainPointers.concat(this.groupedPointers).concat(this.stackedPointers).filter(function(f){
                     return _this.model.entities.isSelected(f);
                 })
                 .sort(function (a, b) {
@@ -560,9 +558,9 @@
                     return b.sortValue[0] - a.sortValue[0];
                 });
             
-            this.mountainLabels = this.mountainLabelContainer.selectAll("g").data(listData)
-            this.mountainLabels.exit().remove();
-            this.mountainLabels.enter().append("g")
+            this.selectList = this.mountainLabelContainer.selectAll("g").data(listData)
+            this.selectList.exit().remove();
+            this.selectList.enter().append("g")
                 .attr("class", "vzb-mc-label")
                 .each(function(d, i){
                     d3.select(this).append("circle");
@@ -583,21 +581,36 @@
         },
         
         
+        getDeep: function(branch, marker){
+            var _this = this;
+            if(!branch.key) return _this.values[marker][branch.KEY()];
+            return d3.sum( branch.values.map(function(m){
+                return _this.getDeep(m, marker)
+            }) )
+        },
+        
         redrawSelectList: function(){
             var _this = this;
-            if(!this.mountainLabels || !this.someSelected) return;
+            if(!this.selectList || !this.someSelected) return;
             
             var sample = this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
             var fontHeight = sample[0][0].getBBox().height;
             d3.select(sample[0][0].parentNode).remove();
+            var formatter = _this.model.marker.axis_y.tickFormatter;
             
-            this.mountainLabels
+            
+            this.selectList
                 .attr("transform", function(d,i){return "translate(0," + (fontHeight*i) + ")"})
                 .each(function(d, i){
-                    var string = _this.values.label[d.KEY()] 
-                        + ": " + 
-                        _this.model.marker.axis_y.tickFormatter(_this.values.axis_y[d.KEY()])
-                        + (i==0?" people":"");
+                
+                
+                    var name = d.key? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
+                    var number = _this.getDeep(d, "axis_y");
+                        
+                        //d3.sum(d.values.map(function(m){return _this.values.axis_y[m.KEY()]}))
+                        //: _this.values.axis_y[d.KEY()] ; 
+                
+                    var string = name + ": " + formatter(number) + (i==0?" people":"");
                 
                     d3.select(this).select("circle")
                         .attr("r", fontHeight/2.5)
@@ -623,7 +636,7 @@
           var OPACITY_REGULAR = this.model.entities.opacityRegular;
           var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
-          this.mountains
+          this.mountainsAtomic
             //.transition().duration(duration)
             .style("opacity", function (d) {
 
@@ -643,17 +656,47 @@
             });
             
             this.mountainsMergeGrouped
-                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
+                .style("opacity", function (d) {
+
+              if (_this.someHighlighted) {
+                //highlight or non-highlight
+                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+              }
+
+              if (_this.someSelected) {
+                //selected or non-selected
+                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+              }
+
+              if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+              return OPACITY_REGULAR;
+            });
+            
             
             this.mountainsMergeStacked
-                .style("opacity", _this.someSelected ? OPACITY_SELECT_DIM : OPACITY_REGULAR);
+                .style("opacity", function (d) {
 
+              if (_this.someHighlighted) {
+                //highlight or non-highlight
+                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+              }
+
+              if (_this.someSelected) {
+                //selected or non-selected
+                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+              }
+
+              if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+              return OPACITY_REGULAR;
+            });
 
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
           // when pointer events need update...
           if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
-            this.mountains.style("pointer-events", function (d) {
+            this.mountainsAtomic.style("pointer-events", function (d) {
               return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
                 "visible" : "none";
             });
@@ -725,7 +768,7 @@
                 })     
             }
             
-            if(mergeGrouped && !mergeStacked){
+            if(mergeGrouped || mergeStacked){
                 this.groupedPointers.forEach(function (d) {
                     var visible = d.values.filter(function(f){return !f.hidden});
                     var first = visible[0].KEY();
@@ -996,18 +1039,18 @@
 
             this.mountainsMergeGrouped.each(function (d) {
                 var view = d3.select(this);
-                var hidden = !mergeGrouped || mergeStacked;
+                var hidden = !mergeGrouped || (mergeStacked && !_this.model.entities.isSelected(d));
                 _this._renderShape(view, d.KEY(), hidden);
             });
 
-            this.mountains.each(function (d, i) {
+            this.mountainsAtomic.each(function (d, i) {
                 var view = d3.select(this);
                 var hidden = d.hidden || ((mergeGrouped || mergeStacked) && !_this.model.entities.isSelected(d));
                 _this._renderShape(view, d.KEY(), hidden);
             })
             
             if(stackMode == "none"){
-                this.mountains.sort(function(a,b){return b.yMax - a.yMax});
+                this.mountainsAtomic.sort(function(a,b){return b.yMax - a.yMax});
             
             }else if(stackMode == "all"){
                 // do nothing if everything is stacked
@@ -1016,7 +1059,7 @@
                 if(mergeGrouped){
                     this.mountainsMergeGrouped.sort(function(a,b){return b.yMax - a.yMax});
                 }else{
-                    this.mountains.sort(function(a,b){return b.yMaxGroup - a.yMaxGroup});
+                    this.mountainsAtomic.sort(function(a,b){return b.yMaxGroup - a.yMaxGroup});
                 }
             }
             
