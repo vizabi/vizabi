@@ -112,9 +112,9 @@
                 'change:time:xLogStops': function () {
                     _this.updateSize();
                 },
-                "change:entities:brush": function () {
+                "change:entities:highlight": function () {
                   if (!_this._readyOnce) return;
-                  //console.log("EVENT change:entities:brush");
+                  //console.log("EVENT change:entities:highlight");
                   _this.highlightDataPoints();
                     _this.updateOpacity();
                 },
@@ -526,12 +526,12 @@
          */
         highlightDataPoints: function () {
             var _this = this;
-            this.someHighlighted = (this.model.entities.brush.length > 0);
+            this.someHighlighted = (this.model.entities.highlight.length > 0);
             var gdpFactor = this.model.time.gdpFactor;
             var gdpShift = this.model.time.gdpShift;
             
-//            if (this.model.entities.brush.length==1) {
-//                var key = this.model.entities.brush[0][_this.KEY];
+//            if (this.model.entities.highlight.length==1) {
+//                var key = this.model.entities.highlight[0][_this.KEY];
 //                var sigma = _this._math.giniToSigma(_this.values.size[key]);
 //                var mu = _this._math.gdpToMu(_this.values.axis_x[key], sigma, gdpFactor, gdpShift);
 //                

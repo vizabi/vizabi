@@ -81,9 +81,9 @@
           _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
           _this.updateBubbleOpacity();
         },
-        "change:entities:brush": function () {
+        "change:entities:highlight": function () {
           if (!_this._readyOnce) return;
-          //console.log("EVENT change:entities:brush");
+          //console.log("EVENT change:entities:highlight");
           _this.highlightDataPoints();
         },
         'change:time:value': function () {
@@ -1356,12 +1356,12 @@
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
 
-      this.someHighlighted = (this.model.entities.brush.length > 0);
+      this.someHighlighted = (this.model.entities.highlight.length > 0);
 
       this.updateBubbleOpacity();
 
-      if (this.model.entities.brush.length === 1) {
-        var d = utils.clone(this.model.entities.brush[0]);
+      if (this.model.entities.highlight.length === 1) {
+        var d = utils.clone(this.model.entities.highlight[0]);
 
         if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
           d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
