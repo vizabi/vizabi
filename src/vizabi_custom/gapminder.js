@@ -20,8 +20,8 @@
         id: "en",
         strings: {
             en: {
-                "buttons/expand": "Go big",
-                "buttons/unexpand": "Go small",
+                "buttons/expand": "Expand",
+                "buttons/unexpand": "Restore",
                 "buttons/trails": "Trails",
                 "buttons/lock": "Lock",
                 "buttons/find": "Find",
@@ -96,8 +96,8 @@
                 "region/all": "World"
             },
             se: {
-                "buttons/expand": "Gå stor",
-                "buttons/unexpand": "Gå små",
+                "buttons/expand": "Större",
+                "buttons/unexpand": "Mindre",
                 "buttons/trails": "Ledar",
                 "buttons/lock": "Lås",
                 "buttons/find": "Hitta",
