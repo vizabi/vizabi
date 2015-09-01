@@ -94,8 +94,11 @@
       transitionEvents.forEach(function (event) {
         this.placeholderEl.on(event, transitionEnd.bind(this, event));
       }.bind(this));
-      if (this.leftPos) {
+      if (this.leftPos && !this.rootEl.classed('vzb-portrait')) {
         this.placeholderEl.style('left', this.leftPos);
+      }
+      if (this.rootEl.classed('vzb-portrait')) {
+        this.placeholderEl.style('top', ''); // issues: 369 & 442
       }
     },
 
@@ -104,12 +107,15 @@
      */
     open: function () {
       this.isOpen = true;
-      if (this.topPos) {
+      if (this.topPos && !this.rootEl.classed('vzb-portrait')) {
         this.placeholderEl.style('top', this.topPos);
       }
     },
 
     beforeClose: function () {
+      if (this.rootEl.classed('vzb-portrait')) {
+        this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
+      }
       this.placeholderEl.classed('notransition', false);
       this.placeholderEl.node().offsetHeight; // trigger a reflow (flushing the css changes)
     },
@@ -118,11 +124,13 @@
      * User has closed this dialog
      */
     close: function () {
-      if (this.isOpen) {
+      if (this.isOpen || !this.rootEl.classed('vzb-portrait')) {
         this.leftPos = this.placeholderEl.style('left');
         this.topPos = this.placeholderEl.style('top');
       }
-      this.placeholderEl.style('top', '');
+      if (!this.rootEl.classed('vzb-portrait')) {
+        this.placeholderEl.style('top', ''); // issues: 369 & 442
+      }
       this.isOpen = false;
     },
 
