@@ -1,11 +1,11 @@
 .vzb-dl-holder {
-  .sortable {
+  .vzb-draggable {
     margin: auto;
     padding: 0;
     width: 200px;
     @include user-select(none);
   }
-  .sortable li {
+  .vzb-draggable li {
     list-style: none;
     border: 1px solid #CCC;
     background: #F6F6F6;

@@ -12,7 +12,7 @@
   Vizabi.Component.extend('gapminder-draggablelist', {
 
     init: function (config, context) {
-      this.template = '<span class="vzb-dl-holder"><ul class="sortable list"></ul></span>';
+      this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list"></ul></span>';
       var _this = this;
 
       this.dataArrFn = config.dataArrFn;
