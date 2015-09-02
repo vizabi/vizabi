@@ -105,6 +105,7 @@
       this.height = 0;
 
       this.getValueWidth = utils.memoize(this.getValueWidth);
+      this._setTime = utils.debounce(this._setTime, 50);
     },
 
     //template is ready
@@ -141,7 +142,7 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          utils.throttle(brushed.bind(this), 50);
+          brushed.call(this);
         })
         .on("brushend", function () {
           brushedEnd.call(this);
@@ -167,9 +168,6 @@
         _this.xScale.range([0, arg.rangeMax]);
         _this.resize();
       });
-
-      var _this = this;
-
     },
 
     //template and model are ready
