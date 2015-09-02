@@ -34,7 +34,6 @@
             this.model_binds = {
                 'change:state:marker:stack': function () {
                     //console.log("stack change event");
-                    console.log(_this.model.state.marker.group.manualSorting);
                     _this.updateView();
                 },
                 'change:state:marker:group': function () {
@@ -64,7 +63,6 @@
                 })
 
             this.updateView();
-            //console.log(this.model.state.marker.group.manualSorting);
 
           this._super();
         },
