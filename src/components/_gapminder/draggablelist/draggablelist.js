@@ -35,6 +35,8 @@
       };
 
       this._super(config, context);
+
+      this.updateData = utils.debounce(this.updateData, 1000);
     },
 
     ready: function() {
