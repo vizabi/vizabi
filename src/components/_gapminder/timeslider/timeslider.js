@@ -353,7 +353,11 @@
           .attr("cx", new_pos);
       }
       else {
-        this.handle.attr("cx", new_pos);
+        // issues: 445 & 456
+        this.handle.transition()
+          .duration(0)
+          .attr("cx", new_pos);
+        d3.timer.flush();
       }
 
       this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
