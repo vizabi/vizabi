@@ -1366,7 +1366,7 @@
         if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
           d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
         } else {
-          d[TIMEDIM] = _this.time;
+          d[TIMEDIM] = d.trailStartTime || _this.time;
         }
 
         this._axisProjections(d);
