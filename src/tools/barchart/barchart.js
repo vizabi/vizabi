@@ -46,7 +46,10 @@
       this.model_binds = {
         "change:time:value": function (evt) {
           _this.updateEntities();
-        }
+        },
+        'change:marker:color:palette': utils.debounce(function (evt) {
+          _this.updateEntities();
+        }, 200)
       };
 
       //contructor is the same as any component
