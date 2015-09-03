@@ -67,7 +67,10 @@
           if (evt.indexOf("change:marker:color:palette") > -1) return;
           if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
               _this.updateSize();
+              _this.updateMarkerSizeLimits();
+              _this._trails.run("findVisible");
               _this.redrawDataPoints();
+              _this._trails.run("resize");
               return;
           }
           _this.ready();
