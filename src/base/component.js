@@ -84,6 +84,15 @@
     },
 
     /**
+     * Executes after preloading is finished
+     */
+    afterPreload: function() {
+      if(this.model) {
+        this.model.afterPreload();
+      }
+    },
+
+    /**
      * Renders the component (after data is ready)
      */
     render: function () {
@@ -440,9 +449,7 @@
     });
 
     return promise.then(function() {
-      if(comp.model) {
-        comp.model.afterPreload();
-      }
+      comp.afterPreload();
       return true;
     });
   }
