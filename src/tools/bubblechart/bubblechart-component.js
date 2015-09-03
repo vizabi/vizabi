@@ -816,6 +816,15 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
+      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
+      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
+
+      this.yAxisEl.call(this.yAxis);
+      this.xAxisEl.call(this.xAxis);
+
+      this.projectionX.attr("y1", _this.yScale.range()[0]);
+      this.projectionY.attr("x2", _this.xScale.range()[0]);
+
       // avoid overlapping (x label with s label)
       var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
       var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
@@ -828,7 +837,6 @@
       var fontStep = this.fontSettings.step;
       var minFontSize = this.fontSettings.minSize;
       var fontSize = parseInt(sTitleTextEl.style('font-size'), 10);
-      // if overlapping is noted
       if (sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
         while (fontSize > minFontSize && sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
           var diffDec = (fontSize - fontStep - minFontSize) * -1;
@@ -871,15 +879,6 @@
           }
         }
       }
-
-      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
-
-      this.yAxisEl.call(this.yAxis);
-      this.xAxisEl.call(this.xAxis);
-
-      this.projectionX.attr("y1", _this.yScale.range()[0]);
-      this.projectionY.attr("x2", _this.xScale.range()[0]);
     },
 
     updateMarkerSizeLimits: function () {
