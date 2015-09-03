@@ -1159,6 +1159,7 @@
     var binds = {
       //the submodel has changed (multiple times)
       'change': function (evt, vals) {
+        if(!ctx._ready) return; //block change propagation if model isnt ready
         evt = evt.replace('change', 'change:' + name);
         ctx.triggerAll(evt, ctx.getObject());
       },
