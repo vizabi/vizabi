@@ -129,8 +129,17 @@
 
 
       if (this.model.color.use == "indicator") {
+        var gradientHeight;
+        var colorOptions = this.listColorsEl.selectAll('.vzb-cl-option');
+        if (colorOptions && colorOptions[0]) {
+          var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
+          var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
+          gradientHeight = (lastOptionSize.top + lastOptionSize.height) - firstOptionSize.top;
+        }
+        if (!isFinite(gradientHeight))
+          gradientHeight = utils.keys(palette).length * 25 + 5;
         this.rainbowEl.classed("vzb-hidden", false)
-          .style("height", (utils.keys(palette).length * 25 + 5) + "px")
+          .style("height", gradientHeight + "px")
           .style("background", "linear-gradient(" + utils.values(palette).join(", ") + ")");
       } else {
         this.rainbowEl.classed("vzb-hidden", true);
