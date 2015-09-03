@@ -106,7 +106,7 @@
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
     },
-      
+
     /*
      * transforms a string into a validated fload value
      * @param {string} string to be transformed
@@ -650,8 +650,8 @@
       }
       return arr;
     },
-      
-      
+
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -661,7 +661,7 @@
             return (p < v ? p : v);
         });
     },
- 
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -671,7 +671,7 @@
             return (p > v ? p : v);
         });
     },
- 
+
     /*
      * Computes the mean of an array
      * @param {Array} arr
@@ -679,7 +679,7 @@
     arrayMean: function(arr) {
         return this.arraySum(arr)/arr.length;
     },
- 
+
     /*
      * Computes the sum of an array
      * @param {Array} arr
@@ -687,7 +687,7 @@
     arraySum: function(arr) {
         return arr.reduce(function(a, b) { return a + b; });
     },
- 
+
     /*
      * Computes the median of an array
      * @param {Array} arr
@@ -821,7 +821,25 @@
 
         return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
       };
-    }
+    },
 
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    debounce: function (func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      }
+    }
   };
 }.call(this));

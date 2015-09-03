@@ -13,6 +13,7 @@ $vzb-button-color-border: #cce6ed;
   @import '../bubbleopacity/bubbleopacity';
   @import '../colorlegend/colorlegend';
   @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
   @include position(absolute, 0px);
   overflow: visible;
 
