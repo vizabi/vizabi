@@ -13,9 +13,11 @@
   font-size: 0.9em;
   display: block;
   top: -2000px; // issues: 369 & 442
+  visibility: hidden;
   &.vzb-active {
     @include position(absolute, null null 45px 50%);
     z-index: 20;
+    visibility: visible;
   }
   .vzb-dialog-title {
     color: $vzb-color-primary;
