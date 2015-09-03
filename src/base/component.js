@@ -439,7 +439,12 @@
       utils.error("Error preloading data:", err);
     });
 
-    return promise;
+    return promise.then(function() {
+      if(comp.model) {
+        comp.model.afterPreload();
+      }
+      return true;
+    });
   }
 
   // Based on Simple JavaScript Templating by John Resig

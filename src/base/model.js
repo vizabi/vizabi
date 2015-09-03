@@ -408,6 +408,16 @@
     },
 
     /**
+     * executes after preloading processing is done
+     */
+    afterPreload: function () {
+      var submodels = this.getSubmodels();
+      utils.forEach(submodels, function(s) {
+        s.afterPreload();
+      });
+    },
+
+    /**
      * executes after data has actually been loaded
      */
     afterLoad: function () {

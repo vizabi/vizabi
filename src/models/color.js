@@ -41,7 +41,6 @@
 
       this._firstLoad = true;
       this._hasDefaultColor = false;
-      this._loadedColors = false;
     },
 
     /**
@@ -70,11 +69,6 @@
           "_default": "#fa5ed6"
         }
       };
-
-      if(!this._loadedColors && globals.metadata) {
-        this._loadedColors = true;
-        this.afterPreload();
-      }
 
       return palettes;
     },
