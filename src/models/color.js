@@ -17,7 +17,7 @@
 
   var palettes = {
     'geo.region': {'asi': '#FF5872', 'eur': '#FFE700', 'ame': '#7FEB00', 'afr': '#00D5E9', '_default': '#ffb600'},
-    'gdp_per_cap': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79', "3": '#62CCE3'},
+    'gdp_per_cap': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
     '_continuous': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
     '_discrete': d3.scale.category20(), //{'color1': '#F77481', 'color2': '#E1CE00', 'color3': '#B4DE79', 'color4': '#62CCE3'},
     '_default': {'_default': '#fa5ed6'}
