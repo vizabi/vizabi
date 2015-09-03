@@ -105,7 +105,7 @@
       this.height = 0;
 
       this.getValueWidth = utils.memoize(this.getValueWidth);
-      this._setTime = utils.debounce(this._setTime, 50);
+      this._setTime = utils.throttle(this._setTime, 50);
     },
 
     //template is ready

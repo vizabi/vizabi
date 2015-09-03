@@ -608,24 +608,59 @@
       }
     },
 
+    ///*
+    // * Throttles a function
+    // * @param {Function} func
+    // * @param {Number} ms duration
+    // */
+    //throttle: function () {
+    //  var isThrottled = {};
+    //  return function (func, ms) {
+    //    if (isThrottled[func]) {
+    //      return;
+    //    }
+    //    isThrottled[func] = true;
+    //    setTimeout(function () {
+    //      isThrottled[func] = false;
+    //    }, ms);
+    //    func();
+    //  };
+    //}(),
+
     /*
      * Throttles a function
      * @param {Function} func
      * @param {Number} ms duration
      */
-    throttle: function () {
-      var isThrottled = {};
-      return function (func, ms) {
-        if (isThrottled[func]) {
+    throttle: function (func, ms) {
+
+      var isThrottled = false,
+        savedArgs,
+        savedThis;
+
+      function wrapper() {
+
+        if (isThrottled) {
+          savedArgs = arguments;
+          savedThis = this;
           return;
         }
-        isThrottled[func] = true;
-        setTimeout(function () {
-          isThrottled[func] = false;
+
+        func.apply(this, arguments);
+
+        isThrottled = true;
+
+        setTimeout(function() {
+          isThrottled = false;
+          if (savedArgs) {
+            wrapper.apply(savedThis, savedArgs);
+            savedArgs = savedThis = null;
+          }
         }, ms);
-        func();
-      };
-    }(),
+      }
+
+      return wrapper;
+    },
 
     /*
      * Returns keys of an object as array

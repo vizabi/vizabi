@@ -74,6 +74,7 @@
           }
         }
       });
+      this.triggerResize = utils.throttle(this.triggerResize);
     },
 
     /**
@@ -104,7 +105,7 @@
           done();
         });
         this.model.setHooks();
-        
+
         preloader(this).then(function() {
           _this.model.load();
         });
@@ -163,14 +164,16 @@
         this.layout.setContainer(this.element);
         this.layout.on('resize', function () {
           if (_this._ready) {
-            utils.throttle(function () {
-              _this.trigger('resize');
-            }, _this._frameRate);
+            _this.triggerResize();
           }
         });
       }
       //template is ready
       this.trigger('domReady');
+    },
+
+    triggerResize: function () {
+      this.trigger('resize');
     },
 
     /*
