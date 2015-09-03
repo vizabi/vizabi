@@ -436,102 +436,63 @@
             //console.log(this.stackedPointers)
 
             
-            this.mountainsMergeStacked = this.mountainMergeStackedContainer.selectAll('.vzb-mc-mountain')
+            //bind the data to DOM elements
+            this.mountainsMergeStacked = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel2')
                 .data(this.stackedPointers);
-            //exit selection
-            this.mountainsMergeStacked.exit().remove();
-            
-            //enter selection -- init
-            this.mountainsMergeStacked.enter().append("path")
-                .attr("class", "vzb-mc-mountain")
-                .on("mousemove", function (d, i) {
-                
-                    _this.model.entities.highlightEntity(d);
-                
-                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
-
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
-                        .html(_this.translator("region/" + d.key));
-
-                })
-                .on("mouseout", function (d, i) {
-                    _this.tooltip.classed("vzb-hidden", true);
-                    _this.model.entities.clearHighlighted();
-                })
-                .on("click", function (d, i) {
-                    _this.model.entities.selectEntity(d);
-                });
-            
-            
-            //bind the data to DOM elements
-            this.mountainsMergeGrouped = this.mountainMergeGroupedContainer.selectAll('.vzb-mc-mountain')
+            this.mountainsMergeGrouped = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel1')
                 .data(this.groupedPointers);
-
-            //exit selection
-            this.mountainsMergeGrouped.exit().remove();
-
-            //enter selection -- init
-            this.mountainsMergeGrouped.enter().append("path")
-                .attr("class", "vzb-mc-mountain")
-                .on("mousemove", function (d, i) {
-                
-                    _this.model.entities.highlightEntity(d);
-                
-                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
-
-                    //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
-                        .html(_this.translator("region/" + d.key));
-
-                })
-                .on("mouseout", function (d, i) {
-                    _this.tooltip.classed("vzb-hidden", true);
-                    _this.model.entities.clearHighlighted();
-                })
-                .on("click", function (d, i) {
-                    _this.model.entities.selectEntity(d);
-                });
-            
-            
-            
-            
-            //bind the data to DOM elements
-            this.mountainsAtomic = this.mountainContainer.selectAll('.vzb-mc-mountain')
+            this.mountainsAtomic = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel0')
                 .data(this.mountainPointers);
 
-            //exit selection
+            //exit selection -- remove shapes
+            this.mountainsMergeStacked.exit().remove();
+            this.mountainsMergeGrouped.exit().remove();
             this.mountainsAtomic.exit().remove();
-
-            //enter selection -- init circles
+            
+            //enter selection -- add shapes
+            this.mountainsMergeStacked.enter().append("path")
+                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2");
+            this.mountainsMergeGrouped.enter().append("path")
+                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1");
             this.mountainsAtomic.enter().append("path")
-                .attr("class", "vzb-mc-mountain")
-                .on("mousemove", function (d, i) {
-                
+                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0");
+            
+            //add interaction
+            this.mountainContainer.selectAll('.vzb-mc-mountain')
+                .on("mousemove", this._interact().mousemove)
+                .on("mouseout", this._interact().mouseout)
+                .on("click", this._interact().click);
+            
+        },
+    
+        
+        _interact: function() {
+            var _this = this;
+            
+            return {
+                mousemove: function (d, i) {
+                    
                     _this.model.entities.highlightEntity(d);
-                
-                
-                    var mouse = d3.mouse(_this.graph.node()).map(function (d) {
-                        return parseInt(d);
-                    });
+                    
+                    var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
                     _this.tooltip.classed("vzb-hidden", false)
                         .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
-                        .html(_this.model.marker.label.getValue(d));
+                        .html(d.key?_this.translator("region/" + d.key):_this.model.marker.label.getValue(d));
 
-                })
-                .on("mouseout", function (d, i) {
+                },
+                mouseout: function (d, i) {
                     _this.tooltip.classed("vzb-hidden", true);
                     _this.model.entities.clearHighlighted();
-                })
-                .on("click", function (d, i) {
+                },
+                click: function (d, i) {
                     _this.model.entities.selectEntity(d);
-                });
-            
+                }
+            }
+        
         },
+        
         
         /*
          * Highlights all hovered shapes
