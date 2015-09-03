@@ -178,6 +178,7 @@
       if (!this.isHighlighted(d)) {
         var added = {};
         added[dimension] = value;
+        added = utils.extend(d, added);
         if (timeDim && timeFormatter) {
           added["trailStartTime"] = timeFormatter(d[timeDim]);
         }
