@@ -566,7 +566,7 @@
 
 
             this.selectList
-                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')'})
+                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')';})
                 .each(function(d, i){
 
 
@@ -582,14 +582,14 @@
                         .attr('r', fontHeight/2.5)
                         .attr('cx', fontHeight/2)
                         .attr('cy', fontHeight/1.5)
-                        .style('fill', _this.cScale(_this.values.color[d.KEY()]))
+                        .style('fill', _this.cScale(_this.values.color[d.KEY()]));
 
 
                     d3.select(this).selectAll('text')
                         .attr('x', fontHeight)
                         .attr('y', fontHeight)
-                        .text(string)
-            })
+                        .text(string);
+            });
         },
 
         updateOpacity: function () {
@@ -619,7 +619,7 @@
 
               return OPACITY_REGULAR;
           
-          }) 
+          });
             
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
@@ -656,9 +656,9 @@
 
             //regenerate distributions
             this.mountainPointers.forEach(function (d, i) {
-                var vertices = _this._spawn(_this.values, d)
+                var vertices = _this._spawn(_this.values, d);
                 _this.cached[d.KEY()] = vertices;
-                d.hidden = vertices.length===0 || d3.sum(vertices.map(function(m){return m.y}))===0;
+                d.hidden = vertices.length===0 || d3.sum(vertices.map(function(m){return m.y;}))===0;
             });
 
             this.yMax = 0;
@@ -668,29 +668,29 @@
             this.stackedPointers.forEach(function (group) {
                 var toStack = [];
                 group.values.forEach(function(subgroup){
-                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden}))
-                })
+                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden;}))
+                });
                 _this.stack(toStack);
-            })
+            });
 
             this.mountainPointers.forEach(function(d){
-                d.yMax = d3.max(_this.cached[d.KEY()].map(function(m){return m.y0 + m.y}));
+                d.yMax = d3.max(_this.cached[d.KEY()].map(function(m){return m.y0 + m.y;}));
                 if(_this.yMax < d.yMax) _this.yMax = d.yMax;
-            })
+            });
 
             var mergeGrouped = _this.model.marker.group.merge;
             var mergeStacked = _this.model.marker.stack.merge;
 
             if(mergeStacked){
                 this.stackedPointers.forEach(function (d) {
-                    var visible = d.values[0].values.filter(function(f){return !f.hidden});
+                    var visible = d.values[0].values.filter(function(f){return !f.hidden;});
                     var first = visible[0].KEY();
                     d.yMax = visible[0].yMax;
 
                     var vertices = _this.mesh.map(function(m, i){
                         var y = _this.cached[first][i].y0 + _this.cached[first][i].y;
                         return { x: m, y0: 0, y: y};
-                    })
+                    });
 
                     _this.values.color[d.key] = '_default';
                     _this.cached[d.key] = vertices;
