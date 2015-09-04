@@ -18,150 +18,7 @@
 
     var language = {
         id: "en",
-        strings: {
-            en: {
-                "buttons/expand": "Expand",
-                "buttons/unexpand": "Restore",
-                "buttons/trails": "Trails",
-                "buttons/lock": "Lock",
-                "buttons/find": "Find",
-                "buttons/deselect": "Deselect",
-                "buttons/ok": "OK",
-                "buttons/colors": "Colors",
-                "buttons/size": "Size",
-                "buttons/axes": "X and Y",
-                "buttons/axes-mc": "X and Y",
-                "buttons/axis_x": "X axis",
-                "buttons/axis_y": "Y axis",
-                "buttons/stack": "Stack",
-                "buttons/more_options": "Options",
-                "buttons/opacityNonselect": "Opacity of non-selected",
-                "buttons/opacityRegular": "Regular opacity",
-                "hints/bubbl/setminsize": "Minimum bubble size:",
-                "hints/bubbl/setmaxsize": "Maximum bubble size:",
-                "hints/mount/maxYvalue": "Maximum Y value:",
-                "hints/mount/logXstops": "X-axis logarithmic stops:",
-                "hints/mount/howtostack": "Chose how to stack mountains:",
-                "hints/mount/xlimits": "X-axis limits:",
-                "hints/mount/povertyline": "Poverty line",
-                "hints/min": "min",
-                "hints/max": "max",
-                "mount/maxYmode/immediate": "Immediate",
-                "mount/maxYmode/latest": "Latest",
-                "mount/maxYmode/total": "Total",
-                "mount/stacking/region": "Region",
-                "mount/stacking/world": "World",
-                "mount/stacking/none": "None",
-                "mount/manualSorting": "Manual sorting of groups",
-                "mount/mergegrouped": "Merge grouped",
-                "mount/mergestacked": "Merge stacked too",
-                "mount/people": "people",
-                "popbyage/yearOldsIn": "-year-olds in",
-                "indicator/lex": "Life expectancy",
-                "indicator/gdp_per_cap": "Yearly GDP per capita",
-                "indicator/pop": "Population",
-                "indicator/geo.region": "Region",
-                "indicator/geo": "Geo code",
-                "indicator/time": "Time",
-                "indicator/geo.category": "Geo category",
-                "indicator/geo.name": "Geo name",
-                "indicator/childSurv": "Child survival",
-                "indicator/u5mr": "Child under 5 mortality",
-                "indicator/u5mr_not": "Prev u5mr with UNPOP",
-                "indicator/size": "Big or mini",
-                "indicator/gini": "Gini coefficient",
-                "indicator/gdppc_pday": "Daily GDP per capita",
-                "indicator/inc_pday": "Daily income",
-                "unit/gdp_per_cap": "$/year",
-                "indicator/_default": "Constant",
-                "unit/": "",
-                "unit/lex": "Years",
-                "unit/time": "Years",
-                "unit/childSurv": "per 1000",
-                "unit/u5mr": "per 1000",
-                "unit/gini": "",
-                "unit/gdppc_pday": "$/day",
-                "unit/inc_pday": "$/day",
-                "unit/gdp_per_cap_daily": "$/day",
-                "scaletype/linear": "Linear",
-                "scaletype/log": "Logarithmic",
-                "scaletype/genericLog": "Generic log",
-                "scaletype/time": "Time",
-                "scaletype/ordinal": "Ordinal",
-                "color/_default": "Single color",
-                "check/adaptMinMaxZoom": "Follow bubbles with zoom",
-                "region/ame": "America",
-                "region/asi": "Asia",
-                "region/afr": "Africa",
-                "region/eur": "Europe",
-                "region/all": "World"
-            },
-            se: {
-                "buttons/expand": "Större",
-                "buttons/unexpand": "Mindre",
-                "buttons/trails": "Ledar",
-                "buttons/lock": "Lås",
-                "buttons/find": "Hitta",
-                "buttons/deselect": "Välj ej",
-                "buttons/ok": "OK",
-                "buttons/colors": "Färg",
-                "buttons/size": "Storlek",
-                "buttons/axes": "X och Y",
-                "buttons/axes-mc": "X och Y",
-                "buttons/axis_x": "X axel",
-                "buttons/axis_y": "Y axel",
-                "buttons/stack": "Stapel",
-                "buttons/more_options": "Mer...",
-                "buttons/opacityNonselect": "Synlighet av ej valda",
-                "buttons/opacityRegular": "Vanlig synlighet",
-                "hints/bubbl/setminsize": "Min bubblar storlek:",
-                "hints/bubbl/setmaxsize": "Max bubblar storlek:",
-                "hints/mount/maxYvalue": "Max Y-tal:",
-                "hints/mount/logXstops": "Log X-axel stoppas vid:",
-                "hints/mount/howtostack": "Välj hur ska berg stackas:",
-                "hints/mount/xlimits": "X-axel gränser:",
-                "hints/min": "min",
-                "hints/max": "max",
-                "mount/maxYmode/immediate": "Direkt",
-                "mount/maxYmode/latest": "Senast",
-                "mount/maxYmode/total": "Totalt",
-                "mount/stacking/region": "Region",
-                "mount/stacking/world": "Värld",
-                "mount/stacking/none": "Ingen",
-                "mount/mergegrouped": "Slå ihop de gruppade",
-                "mount/mergestacked": "Slå ihop de stackade också",
-                "mount/people": "människor",
-                "mount/manualSorting": "Manual sorting of groups",
-                "popbyage/yearOldsIn": "-åringar i",
-                "indicator/lex": "Livslängd",
-                "indicator/gdp_per_cap": "BNP per invånare",
-                "indicator/pop": "Befolkning",
-                "indicator/geo.region": "Regionen",
-                "indicator/geo": "Geokod",
-                "indicator/time": "Tid",
-                "indicator/size": "Stor eller liten",
-                "indicator/geo.category": "Geo kategori",
-                "indicator/geo.name": "Geo namn",
-                "indicator/_default": "Konstant",
-                "unit/gdp_per_cap": "$/år/person",
-                "unit/": "",
-                "unit/lex": "År",
-                "unit/time": "År",
-                "unit/gdp_per_cap_daily": "$/dag",
-                "scaletype/linear": "Linjär",
-                "scaletype/log": "Logaritmisk",
-                "scaletype/genericLog": "Generic log",
-                "scaletype/time": "Tid",
-                "scaletype/ordinal": "Ordning",
-                "color/_default": "Enkel färg",
-                "check/adaptMinMaxZoom": "Följ bubblar med zoom",
-                "region/ame": "Amerika",
-                "region/asi": "Asien",
-                "region/afr": "Afrika",
-                "region/eur": "Europa",
-                "region/all": "Värld"
-            }
-        }
+        strings: {}
     };
 
     BarChart.define('default_options', {
@@ -550,13 +407,24 @@
 
     //preloading metadata for all charts
     Vizabi.Tool.define("preload", function(done) {
+
         var metadata_path = "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
+        var langModel = this.model.language;
+        var translation_path = "local_data/translation/"+langModel.id+".json";
 
-        d3.json(metadata_path, function(data) {
-            globals.metadata = data;
-            done.resolve();
+        //TODO: concurrent
+        //load translations first
+        d3.json(translation_path, function(langdata) {
+            langModel.strings[langModel.id] = langdata;
+
+            //then metadata
+            d3.json(metadata_path, function(metadata) {
+                globals.metadata = metadata;
+                done.resolve();
+            });
         });
+
     });
 
 }.call(this));
