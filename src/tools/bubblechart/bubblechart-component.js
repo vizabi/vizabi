@@ -204,7 +204,7 @@
             return f[KEY] == d[KEY];
           });
 
-          _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+          _this._repositionLabels(d, i, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup, _this);
         })
         .on("dragend", function (d, i) {
         	var KEY = _this.KEY;
@@ -522,6 +522,40 @@
         .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
         this.translator("buttons/colors") + ": " + titleStringC);
 
+    },
+
+    adjustLabelsPosition: function (element, label, firstSelector, secondSelector) {
+      var moveNum = 1;
+      while (moveNum > 0) {
+        moveNum = 0;
+        var a = label.getBoundingClientRect();
+
+        element
+          .selectAll(secondSelector || firstSelector)
+          .each(function() {
+            if (this != label) {
+              var b = this.getBoundingClientRect();
+              if ((Math.abs(a.left - b.left) * 2 < (a.width + b.width))
+                && (Math.abs(a.top - b.top) * 2 < (a.height + b.height))) {
+                // overlap found
+                var dx = (Math.max(0, a.right - b.left) + Math.min(0, a.left - b.right)) * 0.01;
+                var dy = (Math.max(0, a.bottom - b.top) + Math.min(0, a.top - b.bottom)) * 0.02;
+                var thisTranslate = d3.transform(d3.select(this).attr("transform"));
+                var labelTransform = d3.transform(d3.select(label).attr("transform"));
+
+                moveNum += Math.abs(dx) + Math.abs(dy);
+
+                labelTransform.translate = [ labelTransform.translate[0] + dx, labelTransform.translate[1] + dy ];
+                thisTranslate.translate = [ thisTranslate.translate[0] - dx, thisTranslate.translate[1] - dy ];
+
+                d3.select(this).attr("transform", "translate(" + thisTranslate.translate + ")");
+                d3.select(label).attr("transform", "translate(" + labelTransform.translate + ")");
+
+                a = this.getBoundingClientRect();
+              }
+            }
+          });
+      }
     },
 
     /*
@@ -1138,7 +1172,7 @@
               rect.classed("vzb-transparent", !cached.stuckOnLimit);
             }
 
-            _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
+            _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup, _this);
 
           })
       } else {
@@ -1150,7 +1184,7 @@
       }
     },
 
-    _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
+    _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup, _this) {
 
       var labelGroup = d3.select(context);
 
@@ -1165,6 +1199,7 @@
         labelGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
         lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
       }
+      _this.adjustLabelsPosition(_this.labelsContainer, context, '.vzb-bc-entity');
 
       var width = parseInt(labelGroup.select("rect").attr("width"));
       var height = parseInt(labelGroup.select("rect").attr("height"));
