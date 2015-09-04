@@ -945,38 +945,33 @@
                     })
                 })
 
-            var formatter = d3.format(".3r");
+            var formatter1 = d3.format(".3r");
+            var formatter2 = _this.model.marker.axis_y.tickFormatter;
+            var HEIGHT_OF_LABELS = 0.66;
 
             this.povertylineEl.select("line")
                 .attr("x1",this.xScale(options.level))
                 .attr("x2",this.xScale(options.level))
                 .attr("y1",this.height)
-                .attr("y2",this.height*0.66);
+                .attr("y2",this.height*HEIGHT_OF_LABELS);
 
-            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUL")
-                .text(formatter(leftArea/totalArea*100) + "%")
-                .attr("x",this.xScale(options.level) - 5)
-                .attr("y",this.height*0.66);
-
-            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDL")
-                .text(_this.model.marker.axis_y.tickFormatter(sumValue * leftArea / totalArea) )
-                .attr("x",this.xScale(options.level) - 5)
-                .attr("y",this.height*0.66)
-                .attr("dy","1.5em")
-                .classed("vzb-hidden", !options.full);
-
-            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueUR")
-                .text(formatter(100-leftArea/totalArea*100) + "%")
-                .attr("x",this.xScale(options.level) + 5)
-                .attr("y",this.height*0.66)
-                .classed("vzb-hidden", !options.full);
-
-            this.povertylineEl.selectAll(".vzb-mc-povertyline-valueDR")
-                .text(_this.model.marker.axis_y.tickFormatter(sumValue * (1 - leftArea / totalArea)) + " " + this.translator("mount/people"))
-                .classed("vzb-hidden", !options.full)
-                .attr("x",this.xScale(options.level) + 5)
-                .attr("y",this.height*0.66)
-                .attr("dy","1.5em");
+            this.povertylineEl.selectAll("text")
+                .each(function(d,i){
+                    var view = d3.select(this);
+                
+                    var string;
+                    if(i==0 || i==4) string = formatter1(leftArea/totalArea*100) + "%";
+                    if(i==1 || i==5) string = formatter2(sumValue * leftArea / totalArea);
+                    if(i==2 || i==6) string = formatter1(100-leftArea/totalArea*100) + "%";
+                    if(i==3 || i==7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + " " + _this.translator("mount/people"); 
+                
+                    view.text(string)
+                        .classed("vzb-hidden", !options.full && [0,4].indexOf(i)>-1)
+                        .attr("x",_this.xScale(options.level) + ([0,1,4,5].indexOf(i)>-1? -5:+5))
+                        .attr("y",_this.height * HEIGHT_OF_LABELS)
+                        .attr("dy", i+"em") //[1,3,5,7].indexOf(i)>-1 ? 0 : "1.5em");
+                })
+            
 
             //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + leftArea/totalArea*100);
 
