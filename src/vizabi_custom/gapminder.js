@@ -406,24 +406,41 @@
     });
 
     //preloading metadata for all charts
-    Vizabi.Tool.define("preload", function(done) {
+    Vizabi.Tool.define("preload", function(promise) {
 
         var metadata_path = "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
-        var langModel = this.model.language;
-        var translation_path = "local_data/translation/"+langModel.id+".json";
 
         //TODO: concurrent
-        //load translations first
-        d3.json(translation_path, function(langdata) {
-            langModel.strings[langModel.id] = langdata;
-
+        //load language first
+        this.preloadLanguage().then(function() {
             //then metadata
             d3.json(metadata_path, function(metadata) {
                 globals.metadata = metadata;
-                done.resolve();
+                promise.resolve();
             });
         });
+
+    });
+
+    Vizabi.Tool.define("preloadLanguage", function() {
+
+        var promise = new Vizabi.Promise();
+
+        var langModel = this.model.language;
+        var translation_path = "local_data/translation/"+langModel.id+".json";
+
+        if(!langModel.strings[langModel.id]) {
+            d3.json(translation_path, function(langdata) {
+                langModel.strings[langModel.id] = langdata;
+                promise.resolve();
+            });
+        }
+        else {
+            promise = promise.resolve();
+        }
+
+        return promise;
 
     });
 
