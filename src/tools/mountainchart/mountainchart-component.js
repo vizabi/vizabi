@@ -4,7 +4,7 @@
 
 (function () {
 
-    "use strict";
+    'use strict';
 
     var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
@@ -32,41 +32,41 @@
 
             //define expected models for this component
             this.model_expects = [{
-                    name: "time",
-                    type: "time"
+                    name: 'time',
+                    type: 'time'
                 },
                 {
-                    name: "entities",
-                    type: "entities"
+                    name: 'entities',
+                    type: 'entities'
                 },
                 {
-                    name: "marker",
-                    type: "model"
+                    name: 'marker',
+                    type: 'model'
                 },
                 {
-                    name: "language",
-                    type: "language"
+                    name: 'language',
+                    type: 'language'
                 }];
 
             this.model_binds = {
-                "change": function (evt) {
+                'change': function (evt) {
                     if (!_this._readyOnce) return;
-                    if (evt.indexOf("change:time") != -1) return;
-                    //console.log("change", evt);
+                    if (evt.indexOf('change:time') != -1) return;
+                    //console.log('change', evt);
                 },
                 'change:marker:color:palette': utils.debounce(function (evt) {
                   _this.redrawDataPoints();
                   _this.redrawSelectList();
                 }, 200),
                 'change:time:value': function () {
-                    //console.log("change time value");
+                    //console.log('change time value');
                     _this.updateTime();
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
                 },
                 'change:time:povertyCutoff': function () {
-                    //console.log("change time value");
+                    //console.log('change time value');
                     _this.updateTime();
                     _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
@@ -74,7 +74,7 @@
                     _this.updatePovertyLine();
                 },
                 'change:time:gdpFactor': function () {
-                    //console.log("change time value");
+                    //console.log('change time value');
                     _this.updateTime();
                     _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
@@ -82,7 +82,7 @@
                     _this.updatePovertyLine();
                 },
                 'change:time:gdpShift': function () {
-                    //console.log("change time value");
+                    //console.log('change time value');
                     _this.updateTime();
                     _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
@@ -90,7 +90,7 @@
                     _this.updatePovertyLine();
                 },
                 'change:time:povertyFade': function () {
-                    //console.log("change time value");
+                    //console.log('change time value');
                     _this.updateTime();
                     _this._adjustMaxY({force:true});
                     _this.redrawDataPoints();
@@ -98,7 +98,7 @@
                     _this.updatePovertyLine();
                 },
                 'change:time:xPoints': function () {
-                    //console.log("acting on resize");
+                    //console.log('acting on resize');
                     _this.updateSize();
                     _this.updateTime(); // respawn is needed
                     _this.redrawDataPoints();
@@ -106,7 +106,7 @@
                     _this.updatePovertyLine();
                 },
                 'change:time:record': function () {
-                    //console.log("change time record");
+                    //console.log('change time record');
                     if(_this.model.time.record) {
                         _this._export.open(this.element, this.name);
                     }else{
@@ -116,15 +116,15 @@
                 'change:time:xLogStops': function () {
                     _this.updateSize();
                 },
-                "change:entities:highlight": function () {
+                'change:entities:highlight': function () {
                   if (!_this._readyOnce) return;
-                  //console.log("EVENT change:entities:highlight");
+                  //console.log('EVENT change:entities:highlight');
                   _this.highlightEntities();
                     _this.updateOpacity();
                 },
                 'change:entities:select': function () {
                   if (!_this._readyOnce) return;
-                  //console.log("EVENT change:entities:select");
+                  //console.log('EVENT change:entities:select');
                   _this.selectEntities();
                     _this.redrawSelectList();
                     _this.updateOpacity();
@@ -139,8 +139,8 @@
                 },
                 'change:marker': function (evt) {
                     if (!_this._readyOnce) return;
-                    //console.log("EVENT change:marker", evt);
-                    if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+                    //console.log('EVENT change:marker', evt);
+                    if (evt.indexOf('min') > -1 || evt.indexOf('max') > -1) {
                       _this.updateSize();
                       _this.updateTime();
                       _this._adjustMaxY({force:true});
@@ -149,14 +149,14 @@
                 },
                 'change:marker:group': function (evt) {
                     if (!_this._readyOnce) return;
-                    if(evt == "change:marker:group:merge") return;
-                    //console.log("group event")
+                    if(evt == 'change:marker:group:merge') return;
+                    //console.log('group event')
                     _this.ready();
                 },
 
                 'change:marker:group:merge': function (evt) {
                     if (!_this._readyOnce) return;
-                    //console.log("group merge event")
+                    //console.log('group merge event')
                     _this.updateTime();
                     _this.redrawDataPoints();
                 },
@@ -172,7 +172,7 @@
                 },
                 'change:time:dragging': function () {
                   if (!_this._readyOnce) return;
-                  if(_this.model.marker.stack.which === "none") return;
+                  if(_this.model.marker.stack.which === 'none') return;
 
                   if(_this.model.time.dragging){
                     _this.groupMergeTemp = _this.model.marker.group.merge;
@@ -185,7 +185,7 @@
                 },
                 'change:time:playing': function () {
                   if (!_this._readyOnce) return;
-                  if(_this.model.marker.stack.which === "none") return;
+                  if(_this.model.marker.stack.which === 'none') return;
 
                   if(_this.model.time.playing){
                     _this.groupMergeTemp = _this.model.marker.group.merge;
@@ -202,13 +202,13 @@
 
             this._super(config, context);
 
-            var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
-            var Exporter = Vizabi.Helper.get("gapminder-svgexport");
+            var MountainChartMath = Vizabi.Helper.get('gapminder-mountainchart-math');
+            var Exporter = Vizabi.Helper.get('gapminder-svgexport');
             this._math = new MountainChartMath(this);
             this._export = new Exporter(this);
             this._export
-                .prefix("vzb-mc-")
-                .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
+                .prefix('vzb-mc-')
+                .deleteClasses(['vzb-mc-mountains-mergestacked', 'vzb-mc-mountains-mergegrouped', 'vzb-mc-mountains', 'vzb-mc-year', 'vzb-mc-mountains-labels', 'vzb-mc-axis-labels']);
 
             this.xScale = null;
             this.yScale = null;
@@ -230,14 +230,14 @@
 
             // define path generator
             this.area = d3.svg.area()
-                .interpolate("basis")
+                .interpolate('basis')
                 .x(function (d) { return _this.xScale(_this.rescale(d.x)) })
                 .y0(function (d) { return _this.yScale(d.y0) })
                 .y1(function (d) { return _this.yScale(d.y0 + d.y) });
 
 
             this.stack = d3.layout.stack()
-                .order("reverse")
+                .order('reverse')
                 .values(function (d) { return _this.cached[d.KEY()] })
                 .out(function out(d, y0, y) {
                   d.y0 = y0;
@@ -263,15 +263,15 @@
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
             this.tooltip = this.element.select('.vzb-tooltip');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-            this.eventAreaEl = this.element.select(".vzb-mc-eventarea");
+            this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
 
-            this.eventAreaEl.on("mousemove", function(){
+            this.eventAreaEl.on('mousemove', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                 //console.log(mouse[0], )
                 _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true})
 
-            }).on("mouseout", function(){
+            }).on('mouseout', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                 _this.updatePovertyLine();
@@ -279,8 +279,8 @@
             })
 
             var _this = this;
-            this.on("resize", function () {
-                //console.log("acting on resize");
+            this.on('resize', function () {
+                //console.log('acting on resize');
                 _this.updateSize();
                 _this.updateTime(); // respawn is needed
                 _this.redrawDataPoints();
@@ -304,7 +304,7 @@
             this.updateOpacity();
             this.updatePovertyLine();
 
-            this.mountainContainer.select(".vzb-mc-prerender").remove();
+            this.mountainContainer.select('.vzb-mc-prerender').remove();
 
         },
 
@@ -312,7 +312,7 @@
 //            var _this = this;
 //            if (_this.markersUpdatedRecently) {
 //                _this.markersUpdatedRecently = false;
-//                console.log("ready");
+//                console.log('ready');
                 this.updateUIStrings();
                 this.updateIndicators();
                 this.updateEntities();
@@ -332,9 +332,9 @@
         updateUIStrings: function(){
             this.translator = this.model.language.getTFunction();
 
-            var xTitle = this.xTitleEl.selectAll("text").data([0]);
-            xTitle.enter().append("text");
-            xTitle.text(this.translator("unit/" + this.model.marker.axis_x.unit));
+            var xTitle = this.xTitleEl.selectAll('text').data([0]);
+            xTitle.enter().append('text');
+            xTitle.text(this.translator('unit/' + this.model.marker.axis_x.unit));
 
         },
 
@@ -355,7 +355,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             //this.xScale
-            //    .domain(this.model.marker.axis_x.scaleType == "log" ? [0.05, 1000] : [0, 100]);
+            //    .domain(this.model.marker.axis_x.scaleType == 'log' ? [0.05, 1000] : [0, 100]);
 
         },
 
@@ -383,7 +383,7 @@
             //TODO: optimise this!
             this.groupedPointers = d3.nest()
                 .key(function (d) {
-                    return _this.model.marker.stack.use === "property"?
+                    return _this.model.marker.stack.use === 'property'?
                         _this.model.marker.stack.getValue(d)
                         :
                         _this.model.marker.group.getValue(d)
@@ -414,7 +414,7 @@
 
 
             // update the stacked pointers
-            if (_this.model.marker.stack.which === "none"){
+            if (_this.model.marker.stack.which === 'none'){
                 this.stackedPointers = [];
                 this.mountainPointers.sort(function (a, b) {return b.sortValue[0] - a.sortValue[0];})
 
@@ -454,19 +454,20 @@
             this.mountainsAtomic.exit().remove();
 
             //enter selection -- add shapes
-            this.mountainsMergeStacked.enter().append("path")
-                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel2");
-            this.mountainsMergeGrouped.enter().append("path")
-                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel1");
-            this.mountainsAtomic.enter().append("path")
-                .attr("class", "vzb-mc-mountain vzb-mc-aggrlevel0");
+            this.mountainsMergeStacked.enter().append('path')
+                .attr('class', 'vzb-mc-mountain vzb-mc-aggrlevel2');
+            this.mountainsMergeGrouped.enter().append('path')
+                .attr('class', 'vzb-mc-mountain vzb-mc-aggrlevel1');
+            this.mountainsAtomic.enter().append('path')
+                .attr('class', 'vzb-mc-mountain vzb-mc-aggrlevel0');
 
             //add interaction
-            this.mountainContainer.selectAll('.vzb-mc-mountain')
-                .on("mousemove", this._interact().mousemove)
-                .on("mouseout", this._interact().mouseout)
-                .on("click", this._interact().click);
-
+            this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain');
+            
+            this.mountains
+                .on('mousemove', this._interact().mousemove)
+                .on('mouseout', this._interact().mouseout)
+                .on('click', this._interact().click);
         },
 
 
@@ -481,13 +482,13 @@
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
-                    _this.tooltip.classed("vzb-hidden", false)
-                        .attr("style", "left:" + (mouse[0] + 25) + "px;top:" + (mouse[1] + 25) + "px")
-                        .html(d.key?_this.translator("region/" + d.key):_this.model.marker.label.getValue(d));
+                    _this.tooltip.classed('vzb-hidden', false)
+                        .attr('style', 'left:' + (mouse[0] + 25) + 'px;top:' + (mouse[1] + 25) + 'px')
+                        .html(d.key?_this.translator('region/' + d.key):_this.model.marker.label.getValue(d));
 
                 },
                 mouseout: function (d, i) {
-                    _this.tooltip.classed("vzb-hidden", true);
+                    _this.tooltip.classed('vzb-hidden', true);
                     _this.model.entities.clearHighlighted();
                 },
                 click: function (d, i) {
@@ -506,7 +507,7 @@
             this.someHighlighted = (this.model.entities.highlight.length > 0);
 
             if(!this.selectList || !this.someSelected) return;
-            this.selectList.classed("vzb-highlight", function(d){return _this.model.entities.isHighlighted(d)});
+            this.selectList.classed('vzb-highlight', function(d){return _this.model.entities.isHighlighted(d)});
         },
 
 
@@ -523,22 +524,22 @@
                     return b.sortValue[0] - a.sortValue[0];
                 });
 
-            this.selectList = this.mountainLabelContainer.selectAll("g").data(listData)
+            this.selectList = this.mountainLabelContainer.selectAll('g').data(listData)
             this.selectList.exit().remove();
-            this.selectList.enter().append("g")
-                .attr("class", "vzb-mc-label")
+            this.selectList.enter().append('g')
+                .attr('class', 'vzb-mc-label')
                 .each(function(d, i){
-                    d3.select(this).append("circle");
-                    d3.select(this).append("text").attr("class", "vzb-mc-label-shadow");
-                    d3.select(this).append("text");
+                    d3.select(this).append('circle');
+                    d3.select(this).append('text').attr('class', 'vzb-mc-label-shadow');
+                    d3.select(this).append('text');
                 })
-                .on("mousemove", function (d, i) {
+                .on('mousemove', function (d, i) {
                     _this.model.entities.highlightEntity(d);
                 })
-                .on("mouseout", function (d, i) {
+                .on('mouseout', function (d, i) {
                     _this.model.entities.clearHighlighted();
                 })
-                .on("click", function (d, i) {
+                .on('click', function (d, i) {
                     _this.model.entities.clearHighlighted();
                     _this.model.entities.selectEntity(d);
                 });
@@ -558,35 +559,35 @@
             var _this = this;
             if(!this.selectList || !this.someSelected) return;
 
-            var sample = this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
+            var sample = this.mountainLabelContainer.append('g').attr('class', 'vzb-mc-label').append('text').text('0');
             var fontHeight = sample[0][0].getBBox().height;
             d3.select(sample[0][0].parentNode).remove();
             var formatter = _this.model.marker.axis_y.tickFormatter;
 
 
             this.selectList
-                .attr("transform", function(d,i){return "translate(0," + (fontHeight*i) + ")"})
+                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')'})
                 .each(function(d, i){
 
 
-                    var name = d.key? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
-                    var number = _this.getDeep(d, "axis_y");
+                    var name = d.key? _this.translator('region/' + d.key) : _this.values.label[d.KEY()];
+                    var number = _this.getDeep(d, 'axis_y');
 
                         //d3.sum(d.values.map(function(m){return _this.values.axis_y[m.KEY()]}))
                         //: _this.values.axis_y[d.KEY()] ;
 
-                    var string = name + ": " + formatter(number) + (i==0?" people":"");
+                    var string = name + ': ' + formatter(number) + (i==0?' people':'');
 
-                    d3.select(this).select("circle")
-                        .attr("r", fontHeight/2.5)
-                        .attr("cx", fontHeight/2)
-                        .attr("cy", fontHeight/1.5)
-                        .style("fill", _this.cScale(_this.values.color[d.KEY()]))
+                    d3.select(this).select('circle')
+                        .attr('r', fontHeight/2.5)
+                        .attr('cx', fontHeight/2)
+                        .attr('cy', fontHeight/1.5)
+                        .style('fill', _this.cScale(_this.values.color[d.KEY()]))
 
 
-                    d3.select(this).selectAll("text")
-                        .attr("x", fontHeight)
-                        .attr("y", fontHeight)
+                    d3.select(this).selectAll('text')
+                        .attr('x', fontHeight)
+                        .attr('y', fontHeight)
                         .text(string)
             })
         },
@@ -600,11 +601,10 @@
           var OPACITY_SELECT = 0.8;
           var OPACITY_REGULAR = this.model.entities.opacityRegular;
           var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+            
 
-          this.mountainsAtomic
-            //.transition().duration(duration)
-            .style("opacity", function (d) {
-
+          this.mountains.style('opacity', function(d){
+              
               if (_this.someHighlighted) {
                 //highlight or non-highlight
                 if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
@@ -618,52 +618,16 @@
               if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
 
               return OPACITY_REGULAR;
-            });
-
-            this.mountainsMergeGrouped
-                .style("opacity", function (d) {
-
-              if (_this.someHighlighted) {
-                //highlight or non-highlight
-                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
-              }
-
-              if (_this.someSelected) {
-                //selected or non-selected
-                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-              }
-
-              if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-              return OPACITY_REGULAR;
-            });
-
-
-            this.mountainsMergeStacked
-                .style("opacity", function (d) {
-
-              if (_this.someHighlighted) {
-                //highlight or non-highlight
-                if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
-              }
-
-              if (_this.someSelected) {
-                //selected or non-selected
-                return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
-              }
-
-              if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
-
-              return OPACITY_REGULAR;
-            });
-
+          
+          }) 
+            
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
           // when pointer events need update...
           if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
-            this.mountainsAtomic.style("pointer-events", function (d) {
+            this.mountainsAtomic.style('pointer-events', function (d) {
               return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
-                "visible" : "none";
+                'visible' : 'none';
             });
           }
 
@@ -728,7 +692,7 @@
                         return { x: m, y0: 0, y: y};
                     })
 
-                    _this.values.color[d.key] = "_default";
+                    _this.values.color[d.key] = '_default';
                     _this.cached[d.key] = vertices;
                 })
             }
@@ -753,7 +717,7 @@
 
 
 
-            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!="all" && this.model.marker.stack.which!="none"){
+            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!='all' && this.model.marker.stack.which!='none'){
                 this.groupedPointers.forEach(function (d) {
                     var visible = d.values.filter(function(f){return !f.hidden});
                     d.yMax = visible[0].yMax;
@@ -778,15 +742,15 @@
             var padding = 2;
 
             switch (this.getLayoutProfile()) {
-            case "small":
+            case 'small':
                 margin = { top: 10, right: 10, left: 10, bottom: 40 };
 //                margin = {top: 30, right: 20, left: 40, bottom: 40}
                 break;
-            case "medium":
+            case 'medium':
                 margin = { top: 20, right: 10, left: 10, bottom: 70 };
 //                margin = {top: 30, right: 60, left: 60, bottom: 70}
                 break;
-            case "large":
+            case 'large':
                 margin = { top: 30, right: 10, left: 10, bottom: 90  };
 //                margin = {top: 30, right: 60, left: 60, bottom: 60}
                 break;
@@ -794,18 +758,18 @@
 
 
 
-            this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-            this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+            this.height = parseInt(this.element.style('height'), 10) - margin.top - margin.bottom;
+            this.width = parseInt(this.element.style('width'), 10) - margin.left - margin.right;
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
             this.graph
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
             //year is centered
             this.yearEl
-                .attr("x", this.width / 2)
-                .attr("y", this.height / 3 * 1.5)
-                .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
+                .attr('x', this.width / 2)
+                .attr('y', this.height / 3 * 1.5)
+                .style('font-size', Math.max(this.height / 4, this.width / 4) + 'px');
 
             //update scales to the new range
             this.yScale.range([this.height, 0]);
@@ -815,13 +779,13 @@
             // we span a uniform mesh across the entire X scale,
             if(!meshLength) meshLength = this.model.time.xPoints;
 
-            var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : "log";
-            var rangeFrom = scaleType == "linear" ? this.xScale.domain()[0] : Math.log(this.unscale(this.xScale.domain()[0]));
-            var rangeTo = scaleType == "linear" ? this.xScale.domain()[1] : Math.log(this.unscale(this.xScale.domain()[1]));
+            var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : 'log';
+            var rangeFrom = scaleType == 'linear' ? this.xScale.domain()[0] : Math.log(this.unscale(this.xScale.domain()[0]));
+            var rangeTo = scaleType == 'linear' ? this.xScale.domain()[1] : Math.log(this.unscale(this.xScale.domain()[1]));
             var rangeStep = (rangeTo - rangeFrom) / meshLength;
             this.mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
 
-            if (scaleType != "linear") {
+            if (scaleType != 'linear') {
                 this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)});
             }else{
                 this.mesh = this.mesh.filter(function (dX) {return dX > 0});
@@ -829,7 +793,7 @@
 
             //axis is updated
             this.xAxis.scale(this.xScale)
-                .orient("bottom")
+                .orient('bottom')
                 .tickSize(6, 0)
                 .tickSizeMinor(3, 0)
                 .labelerOptions({
@@ -841,18 +805,18 @@
 
 
             this.xAxisEl
-                .attr("transform", "translate(0," + this.height + ")")
+                .attr('transform', 'translate(0,' + this.height + ')')
                 .call(this.xAxis);
 
             this.xTitleEl
-                .attr("transform", "translate(0," + this.height + ")")
-                .select("text")
-                .attr("dy", "-0.36em");
+                .attr('transform', 'translate(0,' + this.height + ')')
+                .select('text')
+                .attr('dy', '-0.36em');
 
             this.eventAreaEl
-                .attr("y", this.height)
-                .attr("width", this.width)
-                .attr("height", margin.bottom);
+                .attr('y', this.height)
+                .attr('width', this.width)
+                .attr('height', margin.bottom);
 
         },
 
@@ -909,14 +873,14 @@
             var _this = this;
             var method = this.model.time.yMaxMethod;
 
-            if(method!=="immediate" && !options.force) return;
+            if(method!=='immediate' && !options.force) return;
 
-            if(method=="latest") _this.updateTime(_this.model.time.end);
+            if(method=='latest') _this.updateTime(_this.model.time.end);
 
-            if(!_this.yMax)utils.warn("Setting yMax to " + _this.yMax + ". You failed again :-/");
+            if(!_this.yMax)utils.warn('Setting yMax to ' + _this.yMax + '. You failed again :-/');
             this.yScale.domain([0, _this.yMax]);
 
-            if(method=="latest") _this.updateTime();
+            if(method=='latest') _this.updateTime();
         },
 
 
@@ -926,15 +890,16 @@
 
             if(!options.level) options.level = this.model.time.povertyline;
 
-            this.povertylineEl.classed("vzb-hidden", !options.level);
+            this.povertylineEl.classed('vzb-hidden', !options.level);
             if(!options.level) return;
 
-            this.xAxisEl.call(this.xAxis.highlightValue(options.full? options.level : "none"));
+            this.xAxisEl.call(this.xAxis.highlightValue(options.full? options.level : 'none'));
 
             var sumValue = 0;
             var totalArea = 0;
             var leftArea = 0;
 
+            //TODO: optimise this by taking a shortcut calculation when stacking is on
             this.mountainPointers
                 .filter(function(f){return !f.hidden})
                 .forEach(function(d){
@@ -945,35 +910,35 @@
                     })
                 })
 
-            var formatter1 = d3.format(".3r");
+            var formatter1 = d3.format('.3r');
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
             var HEIGHT_OF_LABELS = 0.66;
 
-            this.povertylineEl.select("line")
-                .attr("x1",this.xScale(options.level))
-                .attr("x2",this.xScale(options.level))
-                .attr("y1",this.height)
-                .attr("y2",this.height*HEIGHT_OF_LABELS);
+            this.povertylineEl.select('line')
+                .attr('x1',this.xScale(options.level))
+                .attr('x2',this.xScale(options.level))
+                .attr('y1',this.height)
+                .attr('y2',this.height*HEIGHT_OF_LABELS);
 
-            this.povertylineEl.selectAll("text")
+            this.povertylineEl.selectAll('text')
                 .each(function(d,i){
                     var view = d3.select(this);
                 
                     var string;
-                    if(i==0 || i==4) string = formatter1(leftArea/totalArea*100) + "%";
-                    if(i==1 || i==5) string = formatter1(100-leftArea/totalArea*100) + "%";
+                    if(i==0 || i==4) string = formatter1(leftArea/totalArea*100) + '%';
+                    if(i==1 || i==5) string = formatter1(100-leftArea/totalArea*100) + '%';
                     if(i==2 || i==6) string = formatter2(sumValue * leftArea / totalArea);
-                    if(i==3 || i==7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + " " + _this.translator("mount/people"); 
+                    if(i==3 || i==7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + ' ' + _this.translator('mount/people'); 
                 
                     view.text(string)
-                        .classed("vzb-hidden", !options.full && i!=0 && i!=4)
-                        .attr("x",_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
-                        .attr("y",_this.height * HEIGHT_OF_LABELS)
-                        .attr("dy", [0,1,4,5].indexOf(i)>-1 ? 0 : "1.5em");
+                        .classed('vzb-hidden', !options.full && i!=0 && i!=4)
+                        .attr('x',_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
+                        .attr('y',_this.height * HEIGHT_OF_LABELS)
+                        .attr('dy', [0,1,4,5].indexOf(i)>-1 ? 0 : '1.5em');
                 })
             
 
-            //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + leftArea/totalArea*100);
+            //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ', ' + leftArea/totalArea*100);
 
         },
 
@@ -1009,10 +974,10 @@
                 _this._renderShape(view, d.KEY(), hidden);
             })
 
-            if(stackMode == "none"){
+            if(stackMode == 'none'){
                 this.mountainsAtomic.sort(function(a,b){return b.yMax - a.yMax});
 
-            }else if(stackMode == "all"){
+            }else if(stackMode == 'all'){
                 // do nothing if everything is stacked
 
             }else{
@@ -1025,7 +990,7 @@
 
 
 //            if (!this.shapes) this.shapes = {}
-//            this.shapes[this.model.time.value.getFullYear()] = _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y)})
+//            this.shapes[this.model.time.value.getFullYear()] = _this.cached['all'].map(function (d) {return d3.format('.2e')(d.y)})
 
         },
 
@@ -1035,18 +1000,18 @@
             var record = this.model.time.record;
             var year = this.model.time.value.getFullYear();
 
-            view.classed("vzb-hidden", hidden);
+            view.classed('vzb-hidden', hidden);
             if(hidden){
-                view.style("stroke-opacity", 0);
+                view.style('stroke-opacity', 0);
                 return;
             }
             view
-                .style("fill", this.cScale(this.values.color[key]))
-                .attr("d", this.area(this.cached[key]))
-                .transition().duration(500).ease("circle")
-                .style("stroke-opacity", 0.5);
+                .style('fill', this.cScale(this.values.color[key]))
+                .attr('d', this.area(this.cached[key]))
+                .transition().duration(500).ease('circle')
+                .style('stroke-opacity', 0.5);
 
-            if(record) this._export.write({type: "path", id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key])});
+            if(record) this._export.write({type: 'path', id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key])});
         },
 
 
@@ -1067,12 +1032,12 @@
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-             this.eventAreaEl = this.element.select(".vzb-mc-eventarea");
+             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
 
-            if(this.model.marker.stack.use == "property"){
-                shape = this.precomputedShapes["incomeMount_shape_stack_region"][_this.model.time.value.getFullYear()]
+            if(this.model.marker.stack.use == 'property'){
+                shape = this.precomputedShapes['incomeMount_shape_stack_region'][_this.model.time.value.getFullYear()]
             }else{
-                shape = this.precomputedShapes["incomeMount_shape_stack_" + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
+                shape = this.precomputedShapes['incomeMount_shape_stack_' + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
             }
 
             if(!shape || shape.length == 0) return;
@@ -1087,13 +1052,13 @@
             var mountains = this.mountainContainer.selectAll('.vzb-mc-prerender')
                 .data([0]);
 
-            mountains.enter().append("path")
-                .attr("class", "vzb-mc-prerender")
-                .style("fill", "grey")
-                .style("opacity", 0)
-                .attr("d", _this.area(shape))
-                .transition().duration(4000).ease("linear")
-                .style("opacity", 1);
+            mountains.enter().append('path')
+                .attr('class', 'vzb-mc-prerender')
+                .style('fill', 'grey')
+                .style('opacity', 0)
+                .attr('d', _this.area(shape))
+                .transition().duration(4000).ease('linear')
+                .style('opacity', 1);
         }
     });
 
