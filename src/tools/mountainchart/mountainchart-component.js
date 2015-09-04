@@ -51,7 +51,7 @@
             this.model_binds = {
                 'change': function (evt) {
                     if (!_this._readyOnce) return;
-                    if (evt.indexOf('change:time') != -1) return;
+                    if (evt.indexOf('change:time') !== -1) return;
                     //console.log('change', evt);
                 },
                 'change:marker:color:palette': utils.debounce(function (evt) {
@@ -149,7 +149,7 @@
                 },
                 'change:marker:group': function (evt) {
                     if (!_this._readyOnce) return;
-                    if(evt == 'change:marker:group:merge') return;
+                    if(evt === 'change:marker:group:merge') return;
                     //console.log('group event')
                     _this.ready();
                 },
@@ -231,14 +231,14 @@
             // define path generator
             this.area = d3.svg.area()
                 .interpolate('basis')
-                .x(function (d) { return _this.xScale(_this.rescale(d.x)) })
-                .y0(function (d) { return _this.yScale(d.y0) })
-                .y1(function (d) { return _this.yScale(d.y0 + d.y) });
+                .x(function (d) { return _this.xScale(_this.rescale(d.x)); })
+                .y0(function (d) { return _this.yScale(d.y0); })
+                .y1(function (d) { return _this.yScale(d.y0 + d.y); });
 
 
             this.stack = d3.layout.stack()
                 .order('reverse')
-                .values(function (d) { return _this.cached[d.KEY()] })
+                .values(function (d) { return _this.cached[d.KEY()]; })
                 .out(function out(d, y0, y) {
                   d.y0 = y0;
                   if(_this.yMax < y+y0) _this.yMax = y+y0;
@@ -355,7 +355,7 @@
             //TODO i dunno how to remove this magic constant
             // we have to know in advance where to calculate distributions
             //this.xScale
-            //    .domain(this.model.marker.axis_x.scaleType == 'log' ? [0.05, 1000] : [0, 100]);
+            //    .domain(this.model.marker.axis_x.scaleType === 'log' ? [0.05, 1000] : [0, 100]);
 
         },
 
@@ -576,7 +576,7 @@
                         //d3.sum(d.values.map(function(m){return _this.values.axis_y[m.KEY()]}))
                         //: _this.values.axis_y[d.KEY()] ;
 
-                    var string = name + ': ' + formatter(number) + (i==0?' people':'');
+                    var string = name + ': ' + formatter(number) + (i===0?' people':'');
 
                     d3.select(this).select('circle')
                         .attr('r', fontHeight/2.5)
@@ -624,7 +624,7 @@
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
           // when pointer events need update...
-          if (someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
+          if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
             this.mountainsAtomic.style('pointer-events', function (d) {
               return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
                 'visible' : 'none';
@@ -658,7 +658,7 @@
             this.mountainPointers.forEach(function (d, i) {
                 var vertices = _this._spawn(_this.values, d)
                 _this.cached[d.KEY()] = vertices;
-                d.hidden = vertices.length==0 || d3.sum(vertices.map(function(m){return m.y}))==0;
+                d.hidden = vertices.length===0 || d3.sum(vertices.map(function(m){return m.y}))===0;
             });
 
             this.yMax = 0;
@@ -717,7 +717,7 @@
 
 
 
-            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!='all' && this.model.marker.stack.which!='none'){
+            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!=='all' && this.model.marker.stack.which!=='none'){
                 this.groupedPointers.forEach(function (d) {
                     var visible = d.values.filter(function(f){return !f.hidden});
                     d.yMax = visible[0].yMax;
@@ -756,16 +756,14 @@
                 break;
             };
 
-
-
+            //mesure width and height
             this.height = parseInt(this.element.style('height'), 10) - margin.top - margin.bottom;
             this.width = parseInt(this.element.style('width'), 10) - margin.left - margin.right;
 
             //graph group is shifted according to margins (while svg element is at 100 by 100%)
-            this.graph
-                .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            this.graph.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-            //year is centered
+            //year is centered and resized
             this.yearEl
                 .attr('x', this.width / 2)
                 .attr('y', this.height / 3 * 1.5)
@@ -775,21 +773,8 @@
             this.yScale.range([this.height, 0]);
             this.xScale.range([0, this.width]);
 
-            // we need to generate the distributions based on mu, variance and scale
-            // we span a uniform mesh across the entire X scale,
-            if(!meshLength) meshLength = this.model.time.xPoints;
-
+            //need to know scale type of X to move on
             var scaleType = this._readyOnce? this.model.marker.axis_x.scaleType : 'log';
-            var rangeFrom = scaleType == 'linear' ? this.xScale.domain()[0] : Math.log(this.unscale(this.xScale.domain()[0]));
-            var rangeTo = scaleType == 'linear' ? this.xScale.domain()[1] : Math.log(this.unscale(this.xScale.domain()[1]));
-            var rangeStep = (rangeTo - rangeFrom) / meshLength;
-            this.mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
-
-            if (scaleType != 'linear') {
-                this.mesh = this.mesh.map(function (dX) {return Math.exp(dX)});
-            }else{
-                this.mesh = this.mesh.filter(function (dX) {return dX > 0});
-            }
 
             //axis is updated
             this.xAxis.scale(this.xScale)
@@ -817,7 +802,27 @@
                 .attr('y', this.height)
                 .attr('width', this.width)
                 .attr('height', margin.bottom);
+            
+            this._generateMesh(meshLength, scaleType);
+        },
+        
+        _generateMesh: function(length, scaleType){
+            // we need to generate the distributions based on mu, variance and scale
+            // we span a uniform mesh across the entire X scale,
+            if(!length) length = this.model.time.xPoints;
 
+            var rangeFrom = scaleType === 'linear' ? this.xScale.domain()[0] : Math.log(this.unscale(this.xScale.domain()[0]));
+            var rangeTo = scaleType === 'linear' ? this.xScale.domain()[1] : Math.log(this.unscale(this.xScale.domain()[1]));
+            var rangeStep = (rangeTo - rangeFrom) / length;
+            this.mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
+
+            if (scaleType !== 'linear') {
+                this.mesh = this.mesh.map(function (dX) {return Math.exp(dX);});
+            }else{
+                this.mesh = this.mesh.filter(function (dX) {return dX > 0;});
+            }
+            
+            return this.mesh;
         },
 
 
@@ -849,7 +854,7 @@
             var m = Math.PI - Math.log(povertyline) * k;
 
             var cosineArea = d3.sum(this.mesh.map(function (dX) {
-                return (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 )
+                return (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 );
             }));
 
             var result = this.mesh.map(function (dX, i) {
@@ -862,7 +867,7 @@
 
             });
 
-            //console.log(Math.round(d3.sum(distribution)/d3.sum(result.map(function(d){return d.y/norm}))*10000)/10000 )
+            //console.log(Math.round(d3.sum(distribution)/d3.sum(result.map(function(d){return d.y/norm;}))*10000)/10000 )
             return result;
 
         },
@@ -875,12 +880,12 @@
 
             if(method!=='immediate' && !options.force) return;
 
-            if(method=='latest') _this.updateTime(_this.model.time.end);
+            if(method==='latest') _this.updateTime(_this.model.time.end);
 
             if(!_this.yMax)utils.warn('Setting yMax to ' + _this.yMax + '. You failed again :-/');
             this.yScale.domain([0, _this.yMax]);
 
-            if(method=='latest') _this.updateTime();
+            if(method==='latest') _this.updateTime();
         },
 
 
@@ -901,7 +906,7 @@
 
             //TODO: optimise this by taking a shortcut calculation when stacking is on
             this.mountainPointers
-                .filter(function(f){return !f.hidden})
+                .filter(function(f){return !f.hidden;})
                 .forEach(function(d){
                     sumValue += _this.values.axis_y[d.KEY()];
                     _this.cached[d.KEY()].forEach(function(d){
@@ -925,13 +930,13 @@
                     var view = d3.select(this);
                 
                     var string;
-                    if(i==0 || i==4) string = formatter1(leftArea/totalArea*100) + '%';
-                    if(i==1 || i==5) string = formatter1(100-leftArea/totalArea*100) + '%';
-                    if(i==2 || i==6) string = formatter2(sumValue * leftArea / totalArea);
-                    if(i==3 || i==7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + ' ' + _this.translator('mount/people'); 
+                    if(i===0 || i===4) string = formatter1(leftArea/totalArea*100) + '%';
+                    if(i===1 || i===5) string = formatter1(100-leftArea/totalArea*100) + '%';
+                    if(i===2 || i===6) string = formatter2(sumValue * leftArea / totalArea);
+                    if(i===3 || i===7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + ' ' + _this.translator('mount/people'); 
                 
                     view.text(string)
-                        .classed('vzb-hidden', !options.full && i!=0 && i!=4)
+                        .classed('vzb-hidden', !options.full && i!==0 && i!==4)
                         .attr('x',_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
                         .attr('y',_this.height * HEIGHT_OF_LABELS)
                         .attr('dy', [0,1,4,5].indexOf(i)>-1 ? 0 : '1.5em');
@@ -974,23 +979,23 @@
                 _this._renderShape(view, d.KEY(), hidden);
             })
 
-            if(stackMode == 'none'){
-                this.mountainsAtomic.sort(function(a,b){return b.yMax - a.yMax});
+            if(stackMode === 'none'){
+                this.mountainsAtomic.sort(function(a,b){return b.yMax - a.yMax;});
 
-            }else if(stackMode == 'all'){
+            }else if(stackMode === 'all'){
                 // do nothing if everything is stacked
 
             }else{
                 if(mergeGrouped){
-                    this.mountainsMergeGrouped.sort(function(a,b){return b.yMax - a.yMax});
+                    this.mountainsMergeGrouped.sort(function(a,b){return b.yMax - a.yMax;});
                 }else{
-                    this.mountainsAtomic.sort(function(a,b){return b.yMaxGroup - a.yMaxGroup});
+                    this.mountainsAtomic.sort(function(a,b){return b.yMaxGroup - a.yMaxGroup;});
                 }
             }
 
 
 //            if (!this.shapes) this.shapes = {}
-//            this.shapes[this.model.time.value.getFullYear()] = _this.cached['all'].map(function (d) {return d3.format('.2e')(d.y)})
+//            this.shapes[this.model.time.value.getFullYear()] = _this.cached['all'].map(function (d) {return d3.format('.2e')(d.y);})
 
         },
 
@@ -1011,7 +1016,7 @@
                 .transition().duration(500).ease('circle')
                 .style('stroke-opacity', 0.5);
 
-            if(record) this._export.write({type: 'path', id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key])});
+            if(record) this._export.write({type: 'path', id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key]) });
         },
 
 
@@ -1034,20 +1039,20 @@
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
              this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
 
-            if(this.model.marker.stack.use == 'property'){
+            if(this.model.marker.stack.use === 'property'){
                 shape = this.precomputedShapes['incomeMount_shape_stack_region'][_this.model.time.value.getFullYear()]
             }else{
                 shape = this.precomputedShapes['incomeMount_shape_stack_' + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
             }
 
-            if(!shape || shape.length == 0) return;
+            if(!shape || shape.length === 0) return;
 
             this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
-            this.yScale = d3.scale.linear().domain([0, d3.max(shape.map(function(m){return m})) ]);
+            this.yScale = d3.scale.linear().domain([0, d3.max(shape.map(function(m){return m;})) ]);
 
             _this.updateSize(shape.length);
 
-            shape = shape.map(function(m,i){return {x: _this.mesh[i], y0:0, y:+m}})
+            shape = shape.map(function(m,i){return {x: _this.mesh[i], y0:0, y:+m};})
 
             var mountains = this.mountainContainer.selectAll('.vzb-mc-prerender')
                 .data([0]);
