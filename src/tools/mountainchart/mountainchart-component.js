@@ -196,7 +196,7 @@
                     _this.model.marker.group.merge = _this.groupMergeTemp;
                   }
                 }
-            }
+            };
 
 
 
@@ -223,10 +223,10 @@
 
             this.rescale = function(x){
                 return Math.exp( _this.model.time.gdpFactor* Math.log(x) + _this.model.time.gdpShift  );
-            }
+            };
             this.unscale = function(x){
                 return Math.exp((Math.log( x ) - _this.model.time.gdpShift )/_this.model.time.gdpFactor);
-            }
+            };
 
             // define path generator
             this.area = d3.svg.area()
@@ -269,14 +269,14 @@
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                 //console.log(mouse[0], )
-                _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true})
+                _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true});
 
             }).on('mouseout', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                 _this.updatePovertyLine();
 
-            })
+            });
 
             var _this = this;
             this.on('resize', function () {
@@ -373,11 +373,11 @@
                     var pointer = {};
                     pointer[_this.KEY] = d[_this.KEY];
                     pointer[_this.TIMEDIM] = endTime;
-                    pointer.KEY = function(){return this[_this.KEY]};
+                    pointer.KEY = function(){return this[_this.KEY];};
                     pointer.sortValue = [_this.model.marker.axis_y.getValue(pointer), 0];
                     pointer.aggrLevel = 0;
                     return pointer;
-                })
+                });
 
 
             //TODO: optimise this!
@@ -386,9 +386,9 @@
                     return _this.model.marker.stack.use === 'property'?
                         _this.model.marker.stack.getValue(d)
                         :
-                        _this.model.marker.group.getValue(d)
+                        _this.model.marker.group.getValue(d);
                     })
-                .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
+                .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0];})
                 .entries(this.mountainPointers);
 
 
@@ -402,38 +402,38 @@
 
                     group.values.forEach(function (d) {
                         d.sortValue[1] = groupSortValue;
-                    })
+                    });
 
                     group[_this.model.entities.getDimension()] = group.key; // hack to get highlihgt and selection work
-                    group.KEY = function(){return this.key};
+                    group.KEY = function(){return this.key;};
                     group.aggrLevel = 1;
-                })
+                });
 
             var sortGroupKeys = {};
-            _this.groupedPointers.map(function(m){sortGroupKeys[m.key] = m.values[0].sortValue[1] });
+            _this.groupedPointers.map(function(m){sortGroupKeys[m.key] = m.values[0].sortValue[1]; });
 
 
             // update the stacked pointers
             if (_this.model.marker.stack.which === 'none'){
                 this.stackedPointers = [];
-                this.mountainPointers.sort(function (a, b) {return b.sortValue[0] - a.sortValue[0];})
+                this.mountainPointers.sort(function (a, b) {return b.sortValue[0] - a.sortValue[0];});
 
             }else{
                 this.stackedPointers = d3.nest()
-                    .key(function (d) { return _this.model.marker.stack.getValue(d) })
-                    .key(function (d) { return _this.model.marker.group.getValue(d) })
-                    .sortKeys(function(a,b) {return sortGroupKeys[b] - sortGroupKeys[a]})
-                    .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]})
+                    .key(function (d) { return _this.model.marker.stack.getValue(d); })
+                    .key(function (d) { return _this.model.marker.group.getValue(d); })
+                    .sortKeys(function(a,b) {return sortGroupKeys[b] - sortGroupKeys[a]; })
+                    .sortValues(function (a, b) {return b.sortValue[0] - a.sortValue[0]; })
                     .entries(this.mountainPointers);
 
-                this.mountainPointers.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];})
+                this.mountainPointers.sort(function (a, b) {return b.sortValue[1] - a.sortValue[1];});
 
 
                 this.stackedPointers.forEach(function (stack) {
-                    stack.KEY = function(){return this.key};
+                    stack.KEY = function(){return this.key;};
                     stack[_this.model.entities.getDimension()] = stack.key; // hack to get highlihgt and selection work
                     stack.aggrLevel = 2;
-                })
+                });
             }
 
             //console.log(JSON.stringify(this.mountainPointers.map(function(m){return m.geo})))
@@ -494,7 +494,7 @@
                 click: function (d, i) {
                     _this.model.entities.selectEntity(d);
                 }
-            }
+            };
 
         },
 
@@ -507,7 +507,7 @@
             this.someHighlighted = (this.model.entities.highlight.length > 0);
 
             if(!this.selectList || !this.someSelected) return;
-            this.selectList.classed('vzb-highlight', function(d){return _this.model.entities.isHighlighted(d)});
+            this.selectList.classed('vzb-highlight', function(d){return _this.model.entities.isHighlighted(d);});
         },
 
 
@@ -524,7 +524,7 @@
                     return b.sortValue[0] - a.sortValue[0];
                 });
 
-            this.selectList = this.mountainLabelContainer.selectAll('g').data(listData)
+            this.selectList = this.mountainLabelContainer.selectAll('g').data(listData);
             this.selectList.exit().remove();
             this.selectList.enter().append('g')
                 .attr('class', 'vzb-mc-label')
@@ -551,8 +551,8 @@
             var _this = this;
             if(!branch.key) return _this.values[marker][branch.KEY()];
             return d3.sum( branch.values.map(function(m){
-                return _this.getDeep(m, marker)
-            }) )
+                return _this.getDeep(m, marker);
+            }) );
         },
 
         redrawSelectList: function(){
