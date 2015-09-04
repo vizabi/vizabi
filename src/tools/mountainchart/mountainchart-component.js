@@ -961,15 +961,15 @@
                 
                     var string;
                     if(i==0 || i==4) string = formatter1(leftArea/totalArea*100) + "%";
-                    if(i==1 || i==5) string = formatter2(sumValue * leftArea / totalArea);
-                    if(i==2 || i==6) string = formatter1(100-leftArea/totalArea*100) + "%";
+                    if(i==1 || i==5) string = formatter1(100-leftArea/totalArea*100) + "%";
+                    if(i==2 || i==6) string = formatter2(sumValue * leftArea / totalArea);
                     if(i==3 || i==7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + " " + _this.translator("mount/people"); 
                 
                     view.text(string)
-                        .classed("vzb-hidden", !options.full && [0,4].indexOf(i)>-1)
-                        .attr("x",_this.xScale(options.level) + ([0,1,4,5].indexOf(i)>-1? -5:+5))
+                        .classed("vzb-hidden", !options.full && i!=0 && i!=4)
+                        .attr("x",_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
                         .attr("y",_this.height * HEIGHT_OF_LABELS)
-                        .attr("dy", i+"em") //[1,3,5,7].indexOf(i)>-1 ? 0 : "1.5em");
+                        .attr("dy", [0,1,4,5].indexOf(i)>-1 ? 0 : "1.5em");
                 })
             
 
