@@ -50,6 +50,10 @@
       this.element = d3.select(this.element);
       this.slider = this.element.selectAll('#vzb-bo-slider');
 
+      this.elementSize = this.element.node().getBoundingClientRect();
+      this.sliderSize = this.slider.node().getBoundingClientRect();
+      this.slider.style('left', (this.elementSize.left - this.sliderSize.left) + 'px');
+
       this.slider
         .attr('min', 0)
         .attr('max', 1)
