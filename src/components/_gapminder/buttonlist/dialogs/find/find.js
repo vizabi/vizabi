@@ -64,12 +64,6 @@
       this._super();
     },
 
-    beforeOpen: function () {
-      this._super();
-
-      this.input_search.node().focus();
-    },
-
     open: function () {
       this._super();
 
@@ -174,6 +168,12 @@
 
     deselectEntities: function () {
       this.model.state.entities.clearSelected();
+    },
+
+    transitionEnd: function (event) {
+      this._super(event);
+
+      this.input_search.node().focus();
     }
 
   }));
