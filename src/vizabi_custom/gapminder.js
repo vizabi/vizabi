@@ -430,7 +430,7 @@
         var langModel = this.model.language;
         var translation_path = "local_data/translation/"+langModel.id+".json";
 
-        if(!langModel.strings[langModel.id]) {
+        if(langModel && !langModel.strings[langModel.id]) {
             d3.json(translation_path, function(langdata) {
                 langModel.strings[langModel.id] = langdata;
                 promise.resolve();

@@ -10,8 +10,9 @@ describe('* Base: Tool', function() {
         placeholder.innerHTML = '';
         utils = Vizabi.utils;
         //create a new model for time
-        Vizabi.Model.unregister('mytime');
-        TimeModel = Vizabi.Model.extend('mytime', {
+        Vizabi.Model.unregister('time');
+
+        TimeModel = Vizabi.Model.extend('time', {
             init: function(values, parent, bind) {
                 this._type = 'time';
                 //default values for time model
@@ -57,35 +58,46 @@ describe('* Base: Tool', function() {
                 this.components = [{
                     component: 'year-display',
                     placeholder: '.display',
-                    model: ['mytime']
+                    model: ['state.time']
                 }];
                 this._super(placeholder, options);
+            },
+            //dont preload anything
+            preload: function(promise) {
+                promise.resolve();
             }
         });
+
     });
     it('should have registered as a tool', function() {
         expect(Vizabi.Tool._collection.hasOwnProperty('MyTool')).toBe(true);
     });
     it('should initialize and render tool', function() {
         tool = new MyTool(placeholder, {
-            mytime: {
-                value: 2013
+            state: {
+                time: {
+                    value: 2013
+                }
             }
         });
         expect(placeholder.innerHTML).toContain('<div class="display"><h2>2013</h2></div>');
     });
     it('should be initialized from name by Vizabi', function() {
         tool = Vizabi('MyTool', placeholder, {
-            mytime: {
-                value: 2011
+            state: {
+                time: {
+                    value: 2011
+                }
             }
         });
         expect(placeholder.innerHTML).toContain('<div class="display"><h2>2011</h2></div>');
     });
     it('should be root component', function() {
         tool = Vizabi('MyTool', placeholder, {
-            mytime: {
-                value: 2011
+            state: {
+                time: {
+                    value: 2011
+                }
             }
         });
         expect(tool.isRoot()).toBe(true);
@@ -93,27 +105,35 @@ describe('* Base: Tool', function() {
     it('should be in instances of Vizabi', function() {
         Vizabi.clearInstances();
         tool = Vizabi('MyTool', placeholder, {
-            mytime: {
-                value: 2011
+            state: {
+                time: {
+                    value: 2011
+                }
             }
         });
         tool2 = Vizabi('MyTool', placeholder, {
-            mytime: {
-                value: 2013
+            state: {
+                time: {
+                    value: 2013
+                }
             }
         });
         expect(Object.keys(Vizabi._instances).length).toEqual(2);
     });
     it('should update view when changing value', function() {
         tool = Vizabi('MyTool', placeholder, {
-            mytime: {
-                value: 2011
+            state: {
+                time: {
+                    value: 2011
+                }
             }
         });
         expect(placeholder.innerHTML).toContain('<div class="display"><h2>2011</h2></div>');
         tool.setOptions({
-            mytime: {
-                value: 2010
+            state: {
+                time: {
+                    value: 2010
+                }
             }
         });
         expect(placeholder.innerHTML).toContain('<div class="display"><h2>2010</h2></div>');
