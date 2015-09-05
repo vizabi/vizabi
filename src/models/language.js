@@ -62,7 +62,7 @@
         return _this.getUIString(string, lang, strings);
       }
     }
-
+    
   });
 
 }).call(this);

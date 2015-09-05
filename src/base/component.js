@@ -85,6 +85,15 @@
     },
 
     /**
+     * Executes after preloading is finished
+     */
+    afterPreload: function() {
+      if(this.model) {
+        this.model.afterPreload();
+      }
+    },
+
+    /**
      * Renders the component (after data is ready)
      */
     render: function () {
@@ -442,7 +451,10 @@
       utils.error("Error preloading data:", err);
     });
 
-    return promise;
+    return promise.then(function() {
+      comp.afterPreload();
+      return true;
+    });
   }
 
   // Based on Simple JavaScript Templating by John Resig
