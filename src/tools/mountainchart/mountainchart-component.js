@@ -252,30 +252,13 @@
 
             //this.element = d3.select(this.element);
 
-            // reference elements
-            this.graph = this.element.select('.vzb-mc-graph');
-            this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
-            this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
-            this.yearEl = this.graph.select('.vzb-mc-year');
-            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
-            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
-            this.mountainContainer = this.graph.select('.vzb-mc-mountains');
-            this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
-            this.tooltip = this.element.select('.vzb-tooltip');
-            this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-            this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
-
             this.eventAreaEl.on('mousemove', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
-
-                //console.log(mouse[0], )
                 _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true});
 
             }).on('mouseout', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
-
                 _this.updatePovertyLine();
-
             });
 
             var _this = this;
@@ -668,7 +651,7 @@
             this.stackedPointers.forEach(function (group) {
                 var toStack = [];
                 group.values.forEach(function(subgroup){
-                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden;}))
+                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden;}));
                 });
                 _this.stack(toStack);
             });
@@ -694,12 +677,12 @@
 
                     _this.values.color[d.key] = '_default';
                     _this.cached[d.key] = vertices;
-                })
+                });
             }
 
             if(mergeGrouped || mergeStacked){
                 this.groupedPointers.forEach(function (d) {
-                    var visible = d.values.filter(function(f){return !f.hidden});
+                    var visible = d.values.filter(function(f){return !f.hidden;});
                     var first = visible[0].KEY();
                     var last = visible[visible.length-1].KEY();
                     d.yMax = visible[0].yMax;
@@ -707,22 +690,22 @@
                     var vertices = _this.mesh.map(function(m, i){
                         var y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
                         var y0 = _this.cached[last][i].y0;
-                        return { x: m, y0: y0, y: y}
-                    })
+                        return { x: m, y0: y0, y: y};
+                    });
 
                     _this.values.color[d.key] = _this.values.color[first];
                     _this.cached[d.key] = vertices;
-                })
+                });
             }
 
 
 
             if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!=='all' && this.model.marker.stack.which!=='none'){
                 this.groupedPointers.forEach(function (d) {
-                    var visible = d.values.filter(function(f){return !f.hidden});
+                    var visible = d.values.filter(function(f){return !f.hidden;});
                     d.yMax = visible[0].yMax;
-                    d.values.forEach(function(e){e.yMaxGroup = d.yMax});
-                })
+                    d.values.forEach(function(e){e.yMaxGroup = d.yMax;});
+                });
             }
 
 
@@ -754,7 +737,7 @@
                 margin = { top: 30, right: 10, left: 10, bottom: 90  };
 //                margin = {top: 30, right: 60, left: 60, bottom: 60}
                 break;
-            };
+            }
 
             //mesure width and height
             this.height = parseInt(this.element.style('height'), 10) - margin.top - margin.bottom;
@@ -1030,14 +1013,20 @@
 
             if(!this.precomputedShapes) return;
 
+
             // reference elements
             this.graph = this.element.select('.vzb-mc-graph');
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yearEl = this.graph.select('.vzb-mc-year');
+            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
+            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainContainer = this.graph.select('.vzb-mc-mountains');
+            this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
+            this.tooltip = this.element.select('.vzb-tooltip');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
+            this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
+
 
             if(this.model.marker.stack.use === 'property'){
                 shape = this.precomputedShapes['incomeMount_shape_stack_region'][_this.model.time.value.getFullYear()]
