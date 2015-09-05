@@ -12,6 +12,9 @@
   //stores reference to each tool on the page
   Vizabi._instances = {};
 
+  //stores global variables accessible by any tool or component
+  Vizabi._globals = {};
+
   function startTool(name, placeholder, options) {
     var Tool = Vizabi.Tool.get(name);
     if (Tool) {

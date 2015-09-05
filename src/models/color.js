@@ -9,22 +9,12 @@
   var root = this;
   var Vizabi = root.Vizabi;
   var utils = Vizabi.utils;
+  var globals = Vizabi._globals;
 
   //warn client if d3 is not defined
   if (!Vizabi._require('d3')) {
     return;
   }
-
-  var palettes = {
-    'geo.region': {'asi': '#FF5872', 'eur': '#FFE700', 'ame': '#7FEB00', 'afr': '#00D5E9', '_default': '#ffb600'},
-    'gdp_per_cap': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79', "3": '#62CCE3'},
-    '_continuous': {'0': '#F77481', "1": '#E1CE00', "2": '#B4DE79'},
-    '_discrete': d3.scale.category20(), //{'color1': '#F77481', 'color2': '#E1CE00', 'color3': '#B4DE79', 'color4': '#62CCE3'},
-    '_default': {'_default': '#fa5ed6'}
-  };
-  var userSelectable = {
-    'geo.region': false
-  };
 
   Vizabi.Model.extend('color', {
 
@@ -44,23 +34,57 @@
         palette: null,
         which: undefined
       }, values);
+
+      this._original_palette = values.palette;
+
       this._super(values, parent, bind);
 
-      this.firstLoad = true;
-      this.hasDefaultColor = false;
+      this._firstLoad = true;
+      this._hasDefaultColor = false;
     },
 
     /**
      * Get the above constants
      */
     getPalettes: function () {
+      var palettes = (globals.metadata) ? globals.metadata.color.palettes : {
+        "_continuous": {
+          "0": "#F77481",
+          "1": "#E1CE00",
+          "2": "#B4DE79"
+        },
+        "_discrete": {
+          "0": "#1f77b4",
+          "1": "#aec7e8",
+          "3": "#ff7f0e",
+          "4": "#2ca02c",
+          "5": "#98df8a",
+          "6": "#ffbb78",
+          "7": "#d62728",
+          "8": "#ff9896",
+          "9": "#9467bd",
+          "10": "#c5b0d5"
+        },
+        "_default": {
+          "_default": "#fa5ed6"
+        }
+      };
+
       return palettes;
+    },
+
+    afterPreload: function() {
+      this._resetPalette = true;
+      this._super();
     },
 
     /**
      * Get the above constants
      */
     isUserSelectable: function (whichPalette) {
+
+      var userSelectable = (globals.metadata) ? globals.metadata.color.selectable : {};
+
       if (userSelectable[whichPalette] == null) return true;
       return userSelectable[whichPalette];
     },
@@ -69,6 +93,9 @@
      * Validates a color hook
      */
     validate: function () {
+
+      var palettes = this.getPalettes();
+
       var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
       if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
         this.scaleType = 'linear';
@@ -81,11 +108,12 @@
       // first load and no palette supplied in the state
       // or changing of the indicator
       if (this.palette == null
-        || this.firstLoad === false && this.which_1 != this.which
-        || this.firstLoad === false && this.scaleType_1 != this.scaleType) {
+        || this._firstLoad === false && this.which_1 != this.which
+        || this._firstLoad === false && this.scaleType_1 != this.scaleType
+        || this._resetPalette) {
 
         //TODO a hack that prevents adding properties to palette (need replacing)
-        this.set("palette", null, false);
+        this.set("palette", this._original_palette, false);
         //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
         this.scale = null;
         if (palettes[this.which]) {
@@ -95,19 +123,17 @@
         } else if (this.use === "indicator") {
           this.palette = utils.clone(palettes["_continuous"]);
         } else if (this.use === "property") {
-          if(palettes["_discrete"].range()){
-            this.palette = utils.extend({}, palettes["_discrete"].range());
-          }else{
-            this.palette = utils.clone(palettes["_discrete"]);
-          }
+          this.palette = utils.clone(palettes["_discrete"]);
         } else {
           this.palette = utils.clone(palettes["_default"]);
         }
+
+        this._resetPalette = false;
       }
 
       this.which_1 = this.which;
       this.scaleType_1 = this.scaleType;
-      this.firstLoad = false;
+      this._firstLoad = false;
     },
 
     /**
@@ -131,7 +157,7 @@
       // otherwise the missing value would be added to the domain
       if (this.scale != null
         && this.use == "property"
-        && this.hasDefaultColor
+        && this._hasDefaultColor
         && this.scale.domain().indexOf(value) == -1) value = "_default";
       return this._super(value);
     },
@@ -147,7 +173,7 @@
       var domain = Object.keys(_this.palette.getObject());
       var range = utils.values(_this.palette.getObject());
 
-      this.hasDefaultColor = domain.indexOf("_default") > -1;
+      this._hasDefaultColor = domain.indexOf("_default") > -1;
 
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);

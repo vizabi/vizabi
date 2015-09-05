@@ -124,6 +124,10 @@ describe('* Base: Translation', function() {
                     }
                 };
                 this._super(placeholder, options);
+            },
+            //dont preload anything
+            preload: function(promise) {
+                promise.resolve();
             }
         });
         var data = [

@@ -67,10 +67,11 @@
         },
         'translate': function (evt, val) {
           if (_this._ready) {
-            _this.model.load().then(function () {
-              _this.model.validate();
-              _this.translateStrings();
-            });
+            Vizabi.Promise.all([_this.preloadLanguage(), _this.model.load()])
+                          .then(function() {
+                            _this.model.validate();
+                            _this.translateStrings();
+                          });
           }
         },
         'load_start': function () {
@@ -195,6 +196,10 @@
       } else {
         utils.removeClass(this.element, class_buttons_off);
       }
+    },
+
+    preloadLanguage: function() {
+      return Vizabi.Promise.resolve();
     }
   });
 

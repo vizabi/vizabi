@@ -408,6 +408,16 @@
     },
 
     /**
+     * executes after preloading processing is done
+     */
+    afterPreload: function () {
+      var submodels = this.getSubmodels();
+      utils.forEach(submodels, function(s) {
+        s.afterPreload();
+      });
+    },
+
+    /**
      * executes after data has actually been loaded
      */
     afterLoad: function () {
@@ -1159,6 +1169,7 @@
     var binds = {
       //the submodel has changed (multiple times)
       'change': function (evt, vals) {
+        if(!ctx._ready) return; //block change propagation if model isnt ready
         evt = evt.replace('change', 'change:' + name);
         ctx.triggerAll(evt, ctx.getObject());
       },
