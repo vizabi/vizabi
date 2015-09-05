@@ -31,22 +31,12 @@
             this.template = 'src/tools/mountainchart/mountainchart.html';
 
             //define expected models for this component
-            this.model_expects = [{
-                    name: 'time',
-                    type: 'time'
-                },
-                {
-                    name: 'entities',
-                    type: 'entities'
-                },
-                {
-                    name: 'marker',
-                    type: 'model'
-                },
-                {
-                    name: 'language',
-                    type: 'language'
-                }];
+            this.model_expects = [
+                { name: 'time', type: 'time' },
+                { name: 'entities', type: 'entities' },
+                { name: 'marker', type: 'model' },
+                { name: 'language', type: 'language' }
+            ];
 
             this.model_binds = {
                 'change': function (evt) {
@@ -55,8 +45,8 @@
                     //console.log('change', evt);
                 },
                 'change:marker:color:palette': utils.debounce(function (evt) {
-                  _this.redrawDataPoints();
-                  _this.redrawSelectList();
+                    _this.redrawDataPoints();
+                    _this.redrawSelectList();
                 }, 200),
                 'change:time:value': function () {
                     //console.log('change time value');
@@ -68,7 +58,7 @@
                 'change:time:povertyCutoff': function () {
                     //console.log('change time value');
                     _this.updateTime();
-                    _this._adjustMaxY({force:true});
+                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -76,7 +66,7 @@
                 'change:time:gdpFactor': function () {
                     //console.log('change time value');
                     _this.updateTime();
-                    _this._adjustMaxY({force:true});
+                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -84,7 +74,7 @@
                 'change:time:gdpShift': function () {
                     //console.log('change time value');
                     _this.updateTime();
-                    _this._adjustMaxY({force:true});
+                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -92,7 +82,7 @@
                 'change:time:povertyFade': function () {
                     //console.log('change time value');
                     _this.updateTime();
-                    _this._adjustMaxY({force:true});
+                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
@@ -107,9 +97,9 @@
                 },
                 'change:time:record': function () {
                     //console.log('change time record');
-                    if(_this.model.time.record) {
+                    if (_this.model.time.record) {
                         _this._export.open(this.element, this.name);
-                    }else{
+                    } else {
                         _this._export.reset();
                     }
                 },
@@ -117,15 +107,15 @@
                     _this.updateSize();
                 },
                 'change:entities:highlight': function () {
-                  if (!_this._readyOnce) return;
-                  //console.log('EVENT change:entities:highlight');
-                  _this.highlightEntities();
+                    if (!_this._readyOnce) return;
+                    //console.log('EVENT change:entities:highlight');
+                    _this.highlightEntities();
                     _this.updateOpacity();
                 },
                 'change:entities:select': function () {
-                  if (!_this._readyOnce) return;
-                  //console.log('EVENT change:entities:select');
-                  _this.selectEntities();
+                    if (!_this._readyOnce) return;
+                    //console.log('EVENT change:entities:select');
+                    _this.selectEntities();
                     _this.redrawSelectList();
                     _this.updateOpacity();
                     _this.redrawDataPoints();
@@ -141,15 +131,17 @@
                     if (!_this._readyOnce) return;
                     //console.log('EVENT change:marker', evt);
                     if (evt.indexOf('min') > -1 || evt.indexOf('max') > -1) {
-                      _this.updateSize();
-                      _this.updateTime();
-                      _this._adjustMaxY({force:true});
-                      _this.redrawDataPoints();
+                        _this.updateSize();
+                        _this.updateTime();
+                        _this._adjustMaxY({
+                            force: true
+                        });
+                        _this.redrawDataPoints();
                     }
                 },
                 'change:marker:group': function (evt) {
                     if (!_this._readyOnce) return;
-                    if(evt === 'change:marker:group:merge') return;
+                    if (evt === 'change:marker:group:merge') return;
                     //console.log('group event')
                     _this.ready();
                 },
@@ -165,36 +157,36 @@
                     _this.ready();
                 },
                 'change:entities:opacitySelectDim': function () {
-                  _this.updateOpacity();
+                    _this.updateOpacity();
                 },
                 'change:entities:opacityRegular': function () {
-                  _this.updateOpacity();
+                    _this.updateOpacity();
                 },
                 'change:time:dragging': function () {
-                  if (!_this._readyOnce) return;
-                  if(_this.model.marker.stack.which === 'none') return;
+                    if (!_this._readyOnce) return;
+                    if (_this.model.marker.stack.which === 'none') return;
 
-                  if(_this.model.time.dragging){
-                    _this.groupMergeTemp = _this.model.marker.group.merge;
-                    _this.model.marker.group.merge = true;
-                  }
+                    if (_this.model.time.dragging) {
+                        _this.groupMergeTemp = _this.model.marker.group.merge;
+                        _this.model.marker.group.merge = true;
+                    }
 
-                  if(!_this.model.time.dragging){
-                    _this.model.marker.group.merge = _this.groupMergeTemp;
-                  }
+                    if (!_this.model.time.dragging) {
+                        _this.model.marker.group.merge = _this.groupMergeTemp;
+                    }
                 },
                 'change:time:playing': function () {
-                  if (!_this._readyOnce) return;
-                  if(_this.model.marker.stack.which === 'none') return;
+                    if (!_this._readyOnce) return;
+                    if (_this.model.marker.stack.which === 'none') return;
 
-                  if(_this.model.time.playing){
-                    _this.groupMergeTemp = _this.model.marker.group.merge;
-                    _this.model.marker.group.merge = true;
-                  }
+                    if (_this.model.time.playing) {
+                        _this.groupMergeTemp = _this.model.marker.group.merge;
+                        _this.model.marker.group.merge = true;
+                    }
 
-                  if(!_this.model.time.playing){
-                    _this.model.marker.group.merge = _this.groupMergeTemp;
-                  }
+                    if (!_this.model.time.playing) {
+                        _this.model.marker.group.merge = _this.groupMergeTemp;
+                    }
                 }
             };
 
@@ -221,27 +213,27 @@
             this.yMax = 0;
 
 
-            this.rescale = function(x){
-                return Math.exp( _this.model.time.gdpFactor* Math.log(x) + _this.model.time.gdpShift  );
+            this.rescale = function (x) {
+                return Math.exp(_this.model.time.gdpFactor * Math.log(x) + _this.model.time.gdpShift);
             };
-            this.unscale = function(x){
-                return Math.exp((Math.log( x ) - _this.model.time.gdpShift )/_this.model.time.gdpFactor);
+            this.unscale = function (x) {
+                return Math.exp((Math.log(x) - _this.model.time.gdpShift) / _this.model.time.gdpFactor);
             };
 
             // define path generator
             this.area = d3.svg.area()
                 .interpolate('basis')
-                .x(function (d) { return _this.xScale(_this.rescale(d.x)); })
-                .y0(function (d) { return _this.yScale(d.y0); })
-                .y1(function (d) { return _this.yScale(d.y0 + d.y); });
+                .x(function (d) {return _this.xScale(_this.rescale(d.x));})
+                .y0(function (d) {return _this.yScale(d.y0);})
+                .y1(function (d) {return _this.yScale(d.y0 + d.y);});
 
 
             this.stack = d3.layout.stack()
                 .order('reverse')
-                .values(function (d) { return _this.cached[d.KEY()]; })
+                .values(function (d) {return _this.cached[d.KEY()];})
                 .out(function out(d, y0, y) {
-                  d.y0 = y0;
-                  if(_this.yMax < y+y0) _this.yMax = y+y0;
+                    d.y0 = y0;
+                    if (_this.yMax < y + y0) _this.yMax = y + y0;
                 });
         },
 
@@ -251,6 +243,7 @@
         readyOnce: function () {
 
             //this.element = d3.select(this.element);
+            //console.log("readyonce")
 
             this.eventAreaEl.on('mousemove', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
@@ -292,6 +285,7 @@
         },
 
         ready: function(){
+            //console.log("ready")
 //            var _this = this;
 //            if (_this.markersUpdatedRecently) {
 //                _this.markersUpdatedRecently = false;
@@ -1006,15 +1000,9 @@
 
         domReady: function(){
             var _this = this;
-            var shape = [];
-
-
-            this.element = d3.select(this.element);
-
-            if(!this.precomputedShapes) return;
-
-
+            
             // reference elements
+            this.element = d3.select(this.element);
             this.graph = this.element.select('.vzb-mc-graph');
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
@@ -1026,8 +1014,16 @@
             this.tooltip = this.element.select('.vzb-tooltip');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
+            
+            this.displayPrecomputedShape();
+        },
+        
+        
+        displayPrecomputedShape: function(){
+            if(!this.precomputedShapes) return;
 
-
+            var shape = [];
+            
             if(this.model.marker.stack.use === 'property'){
                 shape = this.precomputedShapes['incomeMount_shape_stack_region'][_this.model.time.value.getFullYear()]
             }else{
