@@ -197,9 +197,9 @@
             // define path generator
             this.area = d3.svg.area()
                 .interpolate('basis')
-                .x(function (d) {return _this.xScale(_this.rescale(d.x));})
-                .y0(function (d) {return _this.yScale(d.y0);})
-                .y1(function (d) {return _this.yScale(d.y0 + d.y);});
+                .x(function (d) {return Math.round(_this.xScale(_this.rescale(d.x)));})
+                .y0(function (d) {return Math.round(_this.yScale(d.y0));})
+                .y1(function (d) {return Math.round(_this.yScale(d.y0 + d.y));});
 
 
             this.stack = d3.layout.stack()
@@ -211,10 +211,31 @@
         /**
          * DOM is ready
          */
+        
+        domReady: function(){
+            var _this = this;
+            
+            // reference elements
+            this.element = d3.select(this.element);
+            this.graph = this.element.select('.vzb-mc-graph');
+            this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
+            this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
+            this.yearEl = this.graph.select('.vzb-mc-year');
+            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
+            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
+            this.mountainAtomicContainer = this.graph.select('.vzb-mc-mountains');
+            this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
+            this.tooltip = this.element.select('.vzb-tooltip');
+            this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
+            this.povertylineEl = this.element.select('.vzb-mc-povertyline');
+            this.povertylineLineEl = this.povertylineEl.select('line');
+            this.povertylineTextEl = this.povertylineEl.selectAll('text');
+            
+        },
+        
+        
         readyOnce: function () {
 
-            //this.element = d3.select(this.element);
-            //console.log("readyonce")
 
             this.eventAreaEl.on('mousemove', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
@@ -238,7 +259,7 @@
             this.KEY = this.model.entities.getDimension();
             this.TIMEDIM = this.model.time.getDimension();
 
-            this.mountainContainer.select('.vzb-mc-prerender').remove();
+            this.mountainAtomicContainer.select('.vzb-mc-prerender').remove();
 
         },
 
@@ -376,11 +397,11 @@
 
 
             //bind the data to DOM elements
-            this.mountainsMergeStacked = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel2')
+            this.mountainsMergeStacked = this.mountainAtomicContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel2')
                 .data(this.stackedPointers);
-            this.mountainsMergeGrouped = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel1')
+            this.mountainsMergeGrouped = this.mountainAtomicContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel1')
                 .data(this.groupedPointers);
-            this.mountainsAtomic = this.mountainContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel0')
+            this.mountainsAtomic = this.mountainAtomicContainer.selectAll('.vzb-mc-mountain.vzb-mc-aggrlevel0')
                 .data(this.mountainPointers);
 
             //exit selection -- remove shapes
@@ -397,7 +418,7 @@
                 .attr('class', 'vzb-mc-mountain vzb-mc-aggrlevel0');
 
             //add interaction
-            this.mountains = this.mountainContainer.selectAll('.vzb-mc-mountain');
+            this.mountains = this.mountainAtomicContainer.selectAll('.vzb-mc-mountain');
             
             this.mountains
                 .on('mousemove', this._interact().mousemove)
@@ -459,7 +480,7 @@
                     return b.sortValue[0] - a.sortValue[0];
                 });
 
-            this.selectList = this.mountainLabelContainer.selectAll('g').data(listData);
+            this.selectList = this.mountainLabelContainer.selectAll('g').data(utils.unique(listData));
             this.selectList.exit().remove();
             this.selectList.enter().append('g')
                 .attr('class', 'vzb-mc-label')
@@ -595,13 +616,15 @@
 
 
             //recalculate stacking
-            this.stackedPointers.forEach(function (group) {
-                var toStack = [];
-                group.values.forEach(function(subgroup){
-                    toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden;}));
+            if(_this.model.marker.stack.which!=="none"){
+                this.stackedPointers.forEach(function (group) {
+                    var toStack = [];
+                    group.values.forEach(function(subgroup){
+                        toStack = toStack.concat(subgroup.values.filter(function(f){return !f.hidden;}));
+                    });
+                    _this.stack(toStack);
                 });
-                _this.stack(toStack);
-            });
+            }
 
             this.mountainPointers.forEach(function(d){
                 d.yMax = d3.max(_this.cached[d.KEY()].map(function(m){return m.y0 + m.y;}));
@@ -839,6 +862,7 @@
             if(method==='latest') _this.updateTime();
         },
 
+        
 
         updatePovertyLine: function(options){
             var _this = this;
@@ -854,15 +878,22 @@
             var sumValue = 0;
             var totalArea = 0;
             var leftArea = 0;
-
-            this.stackedPointers
-                .forEach(function (d) {
-                    sumValue += _this.values.axis_y[d.KEY()];
-                    _this.cached[d.KEY()].forEach(function(d){
-                        totalArea += d.y;
-                        if(_this.rescale(d.x)<options.level)leftArea += d.y;
-                    })
+            
+            var computeAreas = function(d) {
+                sumValue += _this.values.axis_y[d.KEY()];
+                _this.cached[d.KEY()].forEach(function(d){
+                    totalArea += d.y;
+                    if(_this.rescale(d.x)<options.level)leftArea += d.y;
                 })
+            };
+
+            if(this.model.marker.stack.which==="all"){
+                this.stackedPointers.forEach(computeAreas);
+            }else if(this.model.marker.stack.which==="none"){
+                this.mountainPointers.forEach(computeAreas);
+            }else{
+                this.groupedPointers.forEach(computeAreas);
+            }
 
             var formatter1 = d3.format('.3r');
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
@@ -953,15 +984,18 @@
         _renderShape: function(view, key, hidden){
             var record = this.model.time.record;
             var year = this.model.time.value.getFullYear();
+            var stack = this.model.marker.stack.which;
 
             view.classed('vzb-hidden', hidden);
             if(hidden){
-                view.style('stroke-opacity', 0);
+                if(stack !== "none") view.style('stroke-opacity', 0);
                 return;
             }
             view
                 .style('fill', this.cScale(this.values.color[key]))
                 .attr('d', this.area(this.cached[key]))
+            
+            if(stack !== "none") view
                 .transition().duration(500).ease('circle')
                 .style('stroke-opacity', 0.5);
 
@@ -970,30 +1004,11 @@
 
 
 
-        domReady: function(){
+        
+        
+        afterPreload: function(){
             var _this = this;
             
-            // reference elements
-            this.element = d3.select(this.element);
-            this.graph = this.element.select('.vzb-mc-graph');
-            this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
-            this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
-            this.yearEl = this.graph.select('.vzb-mc-year');
-            this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
-            this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
-            this.mountainContainer = this.graph.select('.vzb-mc-mountains');
-            this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
-            this.tooltip = this.element.select('.vzb-tooltip');
-            this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
-            this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-            this.povertylineLineEl = this.povertylineEl.select('line');
-            this.povertylineTextEl = this.povertylineEl.selectAll('text');
-            
-            this.displayPrecomputedShape();
-        },
-        
-        
-        displayPrecomputedShape: function(){
             if(!this.precomputedShapes) return;
 
             var shape = [];
@@ -1013,7 +1028,7 @@
 
             shape = shape.map(function(m,i){return {x: _this.mesh[i], y0:0, y:+m};})
 
-            var mountains = this.mountainContainer.selectAll('.vzb-mc-prerender')
+            var mountains = this.mountainAtomicContainer.selectAll('.vzb-mc-prerender')
                 .data([0]);
 
             mountains.enter().append('path')
