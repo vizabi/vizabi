@@ -627,6 +627,12 @@
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
             this.yMax = 0;
 
+            this.tune = {};
+            this.tune.povertyline = this.unscale(this.model.time.povertyline);
+            this.tune.level = this.unscale(this.model.time.povertyCutoff);
+            this.tune.fade = this.model.time.povertyFade;
+            this.tune.k = 2*Math.PI/(Math.log(this.tune.povertyline)-Math.log(this.tune.level));
+            this.tune.m = Math.PI - Math.log(this.tune.povertyline) * this.tune.k;
 
             //spawn the original mountains
             this.mountainPointers.forEach(function (d, i) {
@@ -831,35 +837,23 @@
 
             if (!norm || !mu || !sigma) return [];
 
-            var povertyline = this.unscale(this.model.time.povertyline);
-            var level = this.unscale(this.model.time.povertyCutoff);
-            var fade = this.model.time.povertyFade;
-            var acc = 0;
             var mask = [];
             var distribution = [];
-
+            var acc = 0;
+            var cosine = [];
 
             this.mesh.map(function (dX,i) {
                 distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
-                mask[i] = dX<level?1:(dX>fade*7?0:Math.exp((level-dX)/fade))
+                mask[i] = dX<_this.tune.level?1:(dX>_this.tune.fade*7?0:Math.exp((_this.tune.level-dX)/_this.tune.fade))
+                cosine[i] = (dX>_this.tune.level && dX<_this.tune.povertyline? (1+Math.cos(Math.log(dX)*_this.tune.k+_this.tune.m)) : 0 );
                 acc += mask[i] * distribution[i];
             });
-
-            var k = 2*Math.PI/(Math.log(povertyline)-Math.log(level));
-            var m = Math.PI - Math.log(povertyline) * k;
-
-            var cosineArea = d3.sum(this.mesh.map(function (dX) {
-                return (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 );
-            }));
+            
+            var cosineArea = d3.sum(cosine);
 
             var result = this.mesh.map(function (dX, i) {
-
-                return {x: dX, y0: 0, y: norm *(
-                        (dX>level && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m))/cosineArea * acc : 0 )
-                         + distribution[i] * (1 - mask[i])
-                        )
+                return {x: dX, y0: 0, y: norm * (distribution[i] * (1 - mask[i]) + cosine[i]/cosineArea * acc)
                 }
-
             });
 
             //console.log(Math.round(d3.sum(distribution)/d3.sum(result.map(function(d){return d.y/norm;}))*10000)/10000 )
