@@ -238,12 +238,13 @@
         afterPreload: function(){
             var _this = this;
             
-            var year = _this.model.time.value.getFullYear();
+            var yearNow = _this.model.time.value.getFullYear();
+            var yearEnd = _this.model.time.end.getFullYear();
             
-            if(!this.precomputedShapes || this.precomputedShapes[year]) return;
+            if(!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
-            var yMax = this.precomputedShapes[year].yMax;
-            var shape = this.precomputedShapes[year].shape;
+            var yMax = this.precomputedShapes[this.model.time.yMaxMethod == 'immediate'? yearNow : yearEnd].yMax;
+            var shape = this.precomputedShapes[yearNow].shape;
 
             if(!yMax || !shape || shape.length === 0) return;
 

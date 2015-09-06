@@ -399,8 +399,9 @@
     MountainChartComponent.define("preload", function(done) {
         var shape_path = "local_data/mc_precomputed_shapes.json";
 
-        d3.json(shape_path, function(data) {
-            MountainChartComponent.define('precomputedShapes', data);
+        d3.json(shape_path, function(error, json) {
+            if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
+            MountainChartComponent.define('precomputedShapes', json);
             done.resolve();
         });
     });
