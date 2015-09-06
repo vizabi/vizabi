@@ -680,7 +680,7 @@
                 });
             //}
 
-            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.which!=='all' && this.model.marker.stack.which!=='none'){
+            if(!mergeStacked && !mergeGrouped && this.model.marker.stack.use==='property'){
                 this.groupedPointers.forEach(function (d) {
                     var visible = d.values.filter(function(f){return !f.hidden;});
                     d.yMax = visible[0].yMax;
@@ -981,7 +981,7 @@
                 // do nothing if everything is stacked
 
             }else{
-                if(mergeGrouped){
+                if(mergeGrouped || dragOrPlay){
                     this.mountainsMergeGrouped.sort(function(a,b){return b.yMax - a.yMax;});
                 }else{
                     this.mountainsAtomic.sort(function(a,b){return b.yMaxGroup - a.yMaxGroup;});
