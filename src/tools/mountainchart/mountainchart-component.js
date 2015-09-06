@@ -666,7 +666,7 @@
 
 
         
-        _getFirstLastPointersInStack(group){
+        _getFirstLastPointersInStack: function(group){
             var _this = this;
 
             var visible, visible2;
@@ -685,7 +685,7 @@
             return {first: first, last: last};
         },
         
-        _getVerticesOfaMergedShape(arg){
+        _getVerticesOfaMergedShape: function(arg){
             var _this = this;
 
             var first = arg.first.KEY();
@@ -1011,13 +1011,7 @@
             
             if(!this.precomputedShapes) return;
 
-            var shape = [];
-            
-            if(this.model.marker.stack.use === 'property'){
-                shape = this.precomputedShapes['incomeMount_shape_stack_region'][_this.model.time.value.getFullYear()]
-            }else{
-                shape = this.precomputedShapes['incomeMount_shape_stack_' + this.model.marker.stack.which][_this.model.time.value.getFullYear()]
-            }
+            var shape = this.precomputedShapes[_this.model.time.value.getFullYear()];
 
             if(!shape || shape.length === 0) return;
 
@@ -1034,10 +1028,10 @@
             mountains.enter().append('path')
                 .attr('class', 'vzb-mc-prerender')
                 .style('fill', 'grey')
-                .style('opacity', 0)
+                //.style('opacity', 0)
                 .attr('d', _this.area(shape))
-                .transition().duration(4000).ease('linear')
-                .style('opacity', 1);
+                //.transition().duration(4000).ease('linear')
+                //.style('opacity', 1);
         }
     });
 
