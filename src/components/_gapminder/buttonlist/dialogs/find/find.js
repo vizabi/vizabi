@@ -31,7 +31,7 @@
           _this.ready();
         },
         "change:state:time:value": function (evt) {
-          if(!_this.model.state.time.playing) {
+          if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
             _this.ready();
           }
         }
