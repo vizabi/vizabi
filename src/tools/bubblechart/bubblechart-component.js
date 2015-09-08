@@ -661,7 +661,6 @@
         },
 
         click: function (d, i) {
-          //alert(_this.draggingNow);
           if(_this.draggingNow) return;
           _this._setTooltip();
           _this.model.entities.selectEntity(d, TIMEDIM, _this.timeFormatter);
