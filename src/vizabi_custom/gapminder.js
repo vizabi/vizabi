@@ -313,7 +313,6 @@
             //reader: "waffle-server",
             reader: "csv-file",
             path: "local_data/waffles/basic-indicators.csv",
-            metadata: "local_data/waffles/metadata.csv"
             //path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
@@ -395,9 +394,13 @@
     var WaffleReader = this.Vizabi.Reader.get('waffle-server');
     WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
+    Vizabi._globals.gapminder_paths = {
+        baseUrl: ""
+    };
+
     //preloading mountain chart precomputed shapes
     MountainChartComponent.define("preload", function(done) {
-        var shape_path = "local_data/mc_precomputed_shapes.json";
+        var shape_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/mc_precomputed_shapes.json";
 
         d3.json(shape_path, function(error, json) {
             if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -409,7 +412,7 @@
     //preloading metadata for all charts
     Vizabi.Tool.define("preload", function(promise) {
 
-        var metadata_path = "local_data/waffles/metadata.json";
+        var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
 
         //TODO: concurrent
@@ -429,7 +432,7 @@
         var promise = new Vizabi.Promise();
 
         var langModel = this.model.language;
-        var translation_path = "local_data/translation/"+langModel.id+".json";
+        var translation_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/translation/"+langModel.id+".json";
 
         if(langModel && !langModel.strings[langModel.id]) {
             d3.json(translation_path, function(langdata) {
