@@ -330,13 +330,18 @@
      * Basically, this method:
      * loads is theres something to be loaded:
      * does not load if there's nothing to be loaded
+     * @param {Object} options (includes firstScreen)
      * @returns defer
      */
-    load: function () {
+    load: function (opts) {
+
+      opts = opts || {};
+      var firstScreen = opts.firstScreen || false;
+
       var _this = this;
       var data_hook = this._dataModel;
       var language_hook = this._languageModel;
-      var query = this.getQuery();
+      var query = this.getQuery(firstScreen);
       var formatters = this._getAllFormatters();
       var promiseLoad = new Promise();
       var promises = [];
@@ -382,7 +387,7 @@
       //load submodels as well
       var _this = this;
       utils.forEach(this.getSubmodels(true), function(sm, name) {
-        promises.push(sm.load());
+        promises.push(sm.load(opts));
       });
 
       //when all promises/loading have been done successfully
@@ -398,10 +403,10 @@
 
         //we need to defer to make sure all other submodels
         //have a chance to call loading for the second time
+        _this._loadCall = false;
+        promiseLoad.resolve();
         utils.defer(function() {
-          _this._loadCall = false;
           _this.setReady();
-          promiseLoad.resolve();
         });
       });
       return promiseLoad;
@@ -444,7 +449,7 @@
      * gets query that this model/hook needs to get data
      * @returns {Array} query
      */
-    getQuery: function () {
+    getQuery: function (firstScreen) {
 
       var dimensions, filters, select, q;
 
@@ -456,7 +461,8 @@
         return true;
       }
       dimensions = this._getAllDimensions();
-      filters = this._getAllFilters();
+      filters = this._getAllFilters(firstScreen);
+
       if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
       select = utils.unique(dimensions);
 
@@ -647,7 +653,7 @@
           filtered = hook.getNestedItems(group_by);
           response[name] = {};
           //find position from first hook
-          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+          next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
           u = hook.use;
           w = hook.which;
           utils.forEach(filtered, function(arr, id) {
@@ -1094,12 +1100,13 @@
 
     /**
      * gets all hook filters
+     * @param {Boolean} firstScreen get filters for first screen only
      * @returns {Object} filters
      */
-    _getAllFilters: function () {
+    _getAllFilters: function (firstScreen) {
       var filters = {};
       utils.forEach(this._space, function (h) {
-        filters = utils.extend(filters, h.getFilter());
+        filters = utils.extend(filters, h.getFilter(firstScreen));
       });
       return filters;
     },

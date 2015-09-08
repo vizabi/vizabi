@@ -116,7 +116,9 @@
         this.model.setHooks();
 
         preloader(this).then(function() {
-          _this.model.load();
+          _this.model.load({ firstScreen: true }).then(function(){
+            _this.model.load();
+          });
         });
 
       } else if (this.model && this.model.isLoading()) {
