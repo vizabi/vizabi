@@ -250,9 +250,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2014",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
@@ -280,10 +280,10 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
-                    scaleType: "linear",
-                    allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "lex"
+                    which: "u5mr",
+                    scaleType: "log",
+                    unit: "u5mr",
+                    allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 axis_x: {
                     use: "indicator",
@@ -312,10 +312,10 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/basic-indicators.csv",
+            //path: "local_data/waffles/basic-indicators.csv"
+            path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv",
+            //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv",
             metadata: "local_data/waffles/metadata.csv"
-            //path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
-            //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
         ui: {
