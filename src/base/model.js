@@ -330,18 +330,18 @@
      * Basically, this method:
      * loads is theres something to be loaded:
      * does not load if there's nothing to be loaded
-     * @param {Object} options (includes firstScreen)
+     * @param {Object} options (includes splashScreen)
      * @returns defer
      */
     load: function (opts) {
 
       opts = opts || {};
-      var firstScreen = opts.firstScreen || false;
+      var splashScreen = opts.splashScreen || false;
 
       var _this = this;
       var data_hook = this._dataModel;
       var language_hook = this._languageModel;
-      var query = this.getQuery(firstScreen);
+      var query = this.getQuery(splashScreen);
       var formatters = this._getAllFormatters();
       var promiseLoad = new Promise();
       var promises = [];
@@ -385,7 +385,6 @@
       }
 
       //load submodels as well
-      var _this = this;
       utils.forEach(this.getSubmodels(true), function(sm, name) {
         promises.push(sm.load(opts));
       });
@@ -409,6 +408,7 @@
           _this.setReady();
         });
       });
+
       return promiseLoad;
     },
 
@@ -449,7 +449,7 @@
      * gets query that this model/hook needs to get data
      * @returns {Array} query
      */
-    getQuery: function (firstScreen) {
+    getQuery: function (splashScreen) {
 
       var dimensions, filters, select, q;
 
@@ -461,7 +461,7 @@
         return true;
       }
       dimensions = this._getAllDimensions();
-      filters = this._getAllFilters(firstScreen);
+      filters = this._getAllFilters(splashScreen);
 
       if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
       select = utils.unique(dimensions);
@@ -1100,13 +1100,13 @@
 
     /**
      * gets all hook filters
-     * @param {Boolean} firstScreen get filters for first screen only
+     * @param {Boolean} splashScreen get filters for first screen only
      * @returns {Object} filters
      */
-    _getAllFilters: function (firstScreen) {
+    _getAllFilters: function (splashScreen) {
       var filters = {};
       utils.forEach(this._space, function (h) {
-        filters = utils.extend(filters, h.getFilter(firstScreen));
+        filters = utils.extend(filters, h.getFilter(splashScreen));
       });
       return filters;
     },

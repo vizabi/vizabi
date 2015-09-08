@@ -115,10 +115,22 @@
         });
         this.model.setHooks();
 
+        var splashScreen = this.model.data.splash;
+
         preloader(this).then(function() {
-          _this.model.load({ firstScreen: true }).then(function(){
-            _this.model.load();
-          });
+
+          if(splashScreen) {
+            _this.model.load({ splashScreen: true }).then(function(){
+              _this.model.load().then(function() {
+                console.log('both ready');
+              });
+            });
+          }
+          else {
+            _this.model.load().then(function() {
+              console.log('all ready');
+            });
+          }
         });
 
       } else if (this.model && this.model.isLoading()) {

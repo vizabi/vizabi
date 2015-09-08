@@ -71,7 +71,8 @@
             }
         },
         data: {
-            reader: "waffle-server"
+            reader: "waffle-server",
+            splash: true
         },
         language: language,
         ui: {
