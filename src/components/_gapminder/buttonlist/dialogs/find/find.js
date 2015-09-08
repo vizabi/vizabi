@@ -31,7 +31,7 @@
           _this.ready();
         },
         "change:state:time:value": function (evt) {
-          if(!_this.model.state.time.playing) {
+          if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
             _this.ready();
           }
         }
@@ -65,6 +65,8 @@
     },
 
     open: function () {
+      this._super();
+
       this.input_search.node().value = "";
       this.showHideSearch();
     },
@@ -74,6 +76,8 @@
      */
     //TODO: split update in render and update methods
     ready: function () {
+      this._super();
+
       var _this = this;
       var KEY = this.KEY;
       var TIMEDIM = this.model.state.time.getDimension();
@@ -164,6 +168,12 @@
 
     deselectEntities: function () {
       this.model.state.entities.clearSelected();
+    },
+
+    transitionEnd: function (event) {
+      this._super(event);
+
+      this.input_search.node().focus();
     }
 
   }));

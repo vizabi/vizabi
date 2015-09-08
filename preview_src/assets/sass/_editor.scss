@@ -76,4 +76,8 @@
     .CommentColor {
         color: #555555;
     }
+
+    @media screen and (max-width: 700px) {
+        display: none
+    }
 }

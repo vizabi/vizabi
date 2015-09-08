@@ -9,6 +9,7 @@
   var class_loading = 'vzb-loading';
   var root = this;
   var Vizabi = root.Vizabi;
+  var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
   var templates = {};
   var Component = Vizabi.Events.extend({
@@ -73,6 +74,23 @@
           }
         }
       });
+      this.triggerResize = utils.throttle(this.triggerResize);
+    },
+
+    /**
+     * Preloads data before anything else
+     */
+    preload: function(promise) {
+      promise.resolve(); //by default, load nothing
+    },
+
+    /**
+     * Executes after preloading is finished
+     */
+    afterPreload: function() {
+      if(this.model) {
+        this.model.afterPreload();
+      }
     },
 
     /**
@@ -89,13 +107,18 @@
           subcomp.trigger('resize');
         });
       });
+
       //if it's a root component with model
       if (this.isRoot() && this.model) {
         this.model.on('ready', function () {
           done();
         });
         this.model.setHooks();
-        this.model.load();
+
+        preloader(this).then(function() {
+          _this.model.load();
+        });
+
       } else if (this.model && this.model.isLoading()) {
         this.model.on('ready', function () {
           done();
@@ -150,14 +173,16 @@
         this.layout.setContainer(this.element);
         this.layout.on('resize', function () {
           if (_this._ready) {
-            utils.throttle(function () {
-              _this.trigger('resize');
-            }, _this._frameRate);
+            _this.triggerResize();
           }
         });
       }
       //template is ready
       this.trigger('domReady');
+    },
+
+    triggerResize: function () {
+      this.trigger('resize');
     },
 
     /*
@@ -404,6 +429,33 @@
     resize: function () {
     }
   });
+
+  /**
+   * Preloader implementation with promises
+   * @param {Object} comp any component
+   * @returns {Promise}
+   */
+  function preloader(comp) {
+    var promise = new Promise();
+    var promises = []; //holds all promises
+
+    //preload all subcomponents first
+    utils.forEach(comp.components, function (subcomp) {
+        promises.push(preloader(subcomp));
+    });
+
+    var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
+    wait.then(function () {
+      comp.preload(promise);
+    }, function(err) {
+      utils.error("Error preloading data:", err);
+    });
+
+    return promise.then(function() {
+      comp.afterPreload();
+      return true;
+    });
+  }
 
   // Based on Simple JavaScript Templating by John Resig
   //generic templating function

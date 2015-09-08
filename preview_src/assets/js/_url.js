@@ -9,13 +9,19 @@ function updateURL(optimize) {
 
     function update() {
 
-        var state;
+        var state, lang, options;
         if(typeof VIZ !== 'undefined') {
-           state = VIZ.getOptions().state
+           state = VIZ.getOptions().state;
+           options = VIZ.getOptions();
         }
         formatDates(state);
-        var lang = document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
-        if(!lang) {lang = 'en'; document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');}
+        if (options) {
+          lang = options.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
+        }
+        if (!lang) {
+          lang = 'en';
+          document.getElementById('vzbp-btn-lang').setAttribute('data-next_lang', 'se');
+        }
         var url = {
             lang: lang,
             width: parseInt(placeholder.style.width,10),

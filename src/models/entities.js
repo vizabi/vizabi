@@ -23,7 +23,7 @@
       values = utils.extend({
         show: {},
         select: [],
-        brush: [],
+        highlight: [],
         opacitySelectDim: 0.3,
         opacityRegular: 0.8,
         needUpdate: {}
@@ -50,7 +50,7 @@
         this.select = this.select.filter(function (f) {
           return visible_array.indexOf(f[dimension]) !== -1;
         });
-        this.brush = this.brush.filter(function (f) {
+        this.highlight = this.highlight.filter(function (f) {
           return visible_array.indexOf(f[dimension]) !== -1;
         });
       }
@@ -164,7 +164,7 @@
 
 
     setHighlighted: function (arg) {
-      this.brush = [].concat(arg);
+      this.highlight = [].concat(arg);
     },
 
     //TODO: join the following 3 methods with the previous 3
@@ -178,10 +178,11 @@
       if (!this.isHighlighted(d)) {
         var added = {};
         added[dimension] = value;
+        added = utils.extend(d, added);
         if (timeDim && timeFormatter) {
           added["trailStartTime"] = timeFormatter(d[timeDim]);
         }
-        this.brush = this.brush.concat(added);
+        this.highlight = this.highlight.concat(added);
       }
     },
 
@@ -192,7 +193,7 @@
       var dimension = this.getDimension();
       var value = d[dimension];
       if (this.isHighlighted(d)) {
-        this.brush = this.brush.filter(function (d) {
+        this.highlight = this.highlight.filter(function (d) {
           return d[dimension] !== value;
         });
       }
@@ -206,18 +207,18 @@
       var dimension = this.getDimension();
       var value = d[this.getDimension()];
 
-      var brush_array = this.brush.map(function (d) {
+      var highlight_array = this.highlight.map(function (d) {
         return d[dimension];
       });
 
-      return brush_array.indexOf(value) !== -1;
+      return highlight_array.indexOf(value) !== -1;
     },
 
     /**
      * Clears selection of items
      */
     clearHighlighted: function () {
-      this.brush = [];
+      this.highlight = [];
     },
     setNeedUpdate: function(){
       this.needUpdate = new Date();

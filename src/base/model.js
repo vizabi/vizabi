@@ -252,7 +252,7 @@
      * @returns {Boolean} is it loading?
      */
     isLoading: function (p_id) {
-      if (this.isHook() && !this._loadedOnce) {
+      if (this.isHook() && (!this._loadedOnce || this._loadCall)) {
         return true;
       }
       if (p_id) {
@@ -395,11 +395,26 @@
         utils.timeStamp('Vizabi Model: Model loaded: ' + _this._id);
         //end this load call
         _this._loadedOnce = true;
-        _this._loadCall = false;
-        _this.setReady();
-        promiseLoad.resolve();
+
+        //we need to defer to make sure all other submodels
+        //have a chance to call loading for the second time
+        utils.defer(function() {
+          _this._loadCall = false;
+          _this.setReady();
+          promiseLoad.resolve();
+        });
       });
       return promiseLoad;
+    },
+
+    /**
+     * executes after preloading processing is done
+     */
+    afterPreload: function () {
+      var submodels = this.getSubmodels();
+      utils.forEach(submodels, function(s) {
+        s.afterPreload();
+      });
     },
 
     /**
@@ -498,7 +513,7 @@
         //TODO: remove hardcoded 'show"
         if (_this._space[name].show) {
           _this._space[name].on('change:show', function (evt) {
-            _this.load();
+              _this.load();
           });
         }
       });
@@ -776,7 +791,7 @@
       };
 
       function nestToObj(arr) {
-        if(!arr || !arr[0].key) return arr;
+        if(!arr || !arr.length || !arr[0].key) return arr;
         var res = {};
         for (var i = 0; i < arr.length; i++) {
           res[arr[i].key] = nestToObj(arr[i].values);
@@ -1150,11 +1165,11 @@
    * @returns {Object} model new submodel
    */
   function initSubmodel(attr, val, ctx) {
-    //naming convention: underscore -> time, time_2, time_overlay
     var name = attr.split('_')[0];
     var binds = {
       //the submodel has changed (multiple times)
       'change': function (evt, vals) {
+        if(!ctx._ready) return; //block change propagation if model isnt ready
         evt = evt.replace('change', 'change:' + name);
         ctx.triggerAll(evt, ctx.getObject());
       },
@@ -1177,10 +1192,9 @@
       'ready': function (evt, vals) {
         //trigger only for submodel
         evt = evt.replace('ready', 'ready:' + name);
-        ctx.trigger(evt, vals);
-        //TODO: understand why we need to force it not to be ready
         ctx.setReady(false);
         ctx.setReady();
+        // ctx.trigger(evt, vals);
       }
     };
     if (isModel(val)) {

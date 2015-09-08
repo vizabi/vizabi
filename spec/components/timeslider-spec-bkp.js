@@ -17,6 +17,10 @@ describe('* Component: Timeslider', function() {
                     model: ['time']
                 }];
                 this._super(placeholder, options);
+            },
+            //dont preload anything
+            preload: function(promise) {
+                promise.resolve();
             }
         });
         tool = Vizabi('MyTool', placeholder, {

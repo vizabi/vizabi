@@ -12,9 +12,11 @@
   text-align: left;
   font-size: 0.9em;
   display: block;
+  visibility: hidden;
   &.vzb-active {
     @include position(absolute, null null 45px 50%);
     z-index: 20;
+    visibility: visible;
   }
   .vzb-dialog-title {
     color: $vzb-color-primary;
@@ -97,7 +99,7 @@
     margin-top: 36px;
   }
 
-  .thumb-tack-class{
+  .thumb-tack-class {
     border-radius: 50%;
     width: 26px;
     height: 26px;
@@ -113,6 +115,13 @@
     left: 7px!important;
     top: 4px!important;
     cursor: pointer;
+  }
+  .thumb-tack-class-ico-drag {
+    cursor: move;
+    & svg {
+      @include transform(translate(4px, 4px));
+      cursor: move;
+    }
   }
   .thumb-tack-class-ico:before {
     color: #4B98AA!important;
@@ -158,6 +167,9 @@
     input[type=checkbox]:checked + label:after {
       @include opacity(1);
     }
+  }
+  &.notransition {
+    @include transition(none);
   }
   .vzb-dialog-sublabel{
     color: $vzb-color-primary;

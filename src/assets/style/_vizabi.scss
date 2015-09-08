@@ -120,6 +120,14 @@
         @include position(absolute, 0px);
       }
     }
+    // issues: 369 & 442
+    .vzb-buttonlist {
+      .vzb-buttonlist-dialog {
+        &.vzb-active {
+          top: auto;
+        }
+      }
+    }
   }
   //tooltip
   .vzb-tooltip {

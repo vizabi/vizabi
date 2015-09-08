@@ -105,6 +105,7 @@
       this.height = 0;
 
       this.getValueWidth = utils.memoize(this.getValueWidth);
+      this._setTime = utils.throttle(this._setTime, 50);
     },
 
     //template is ready
@@ -141,7 +142,7 @@
         .x(this.xScale)
         .extent([0, 0])
         .on("brush", function () {
-          utils.throttle(brushed.bind(this), 30);
+          brushed.call(this);
         })
         .on("brushend", function () {
           brushedEnd.call(this);
@@ -167,9 +168,6 @@
         _this.xScale.range([0, arg.rangeMax]);
         _this.resize();
       });
-
-      var _this = this;
-
     },
 
     //template and model are ready
@@ -287,6 +285,7 @@
         //set brushed properties
         if (d3.event.sourceEvent) {
           _this._dragging = true;
+          _this.model.time.dragStart();
           var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
           value = _this.xScale.invert(posX);
 
@@ -319,6 +318,7 @@
       var _this = this;
       return function () {
         _this._dragging = false;
+        _this.model.time.dragStop();
         _this._blockUpdate = false;
         _this.element.classed(class_dragging, false);
         _this.model.time.pause();
@@ -351,7 +351,11 @@
           .attr("cx", new_pos);
       }
       else {
-        this.handle.attr("cx", new_pos);
+        // issues: 445 & 456
+        this.handle.transition()
+          .duration(0)
+          .attr("cx", new_pos);
+        d3.timer.flush();
       }
 
       this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
@@ -367,13 +371,13 @@
      */
     _setTime: function (time) {
       //update state
-      var _this = this,
-        frameRate = 50;
+      var _this = this;
+      //  frameRate = 50;
 
       //avoid updating more than once in "frameRate"
-      var now = new Date();
-      if (this._updTime != null && now - this._updTime < frameRate) return;
-      this._updTime = now;
+      //var now = new Date();
+      //if (this._updTime != null && now - this._updTime < frameRate) return;
+      //this._updTime = now;
 
       _this.model.time.value = time;
     },

@@ -11,6 +11,7 @@ module.exports = function(grunt) {
         'copy:preview',
         'assemble',
         'copy:local_data', //copies local_data
+        'copy:local_data_fs', //copies local_data fullscreen
         'copy:minified', //copies minified file
         'clean:tmp', //clean tmp folder
     ]);

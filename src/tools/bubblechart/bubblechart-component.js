@@ -43,6 +43,14 @@
       }];
 
       this.model_binds = {
+        "change:time:record": function () {
+            //console.log("change time record");
+            if(_this.model.time.record) {
+                _this._export.open(this.element, this.name);
+            }else{
+                _this._export.reset();
+            }
+        },
         "change:time:trails": function (evt) {
           //console.log("EVENT change:time:trails");
           _this._trails.toggle(_this.model.time.trails);
@@ -59,7 +67,10 @@
           if (evt.indexOf("change:marker:color:palette") > -1) return;
           if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
               _this.updateSize();
+              _this.updateMarkerSizeLimits();
+              _this._trails.run("findVisible");
               _this.redrawDataPoints();
+              _this._trails.run("resize");
               return;
           }
           _this.ready();
@@ -73,9 +84,9 @@
           _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
           _this.updateBubbleOpacity();
         },
-        "change:entities:brush": function () {
+        "change:entities:highlight": function () {
           if (!_this._readyOnce) return;
-          //console.log("EVENT change:entities:brush");
+          //console.log("EVENT change:entities:highlight");
           _this.highlightDataPoints();
         },
         'change:time:value': function () {
@@ -155,6 +166,13 @@
 
       var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
       this._trails = new Trail(this);
+
+      var Exporter = Vizabi.Helper.get("gapminder-svgexport");
+      this._export = new Exporter(this);
+      this._export
+            .prefix("vzb-bc-")
+            .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect", "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"]);
+
 
 
       //            this.collisionResolver = d3.svg.collisionResolver()
@@ -401,6 +419,10 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
+
+      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+
       this.updateIndicators();
       this.updateEntities();
       this.updateTime();
@@ -412,8 +434,6 @@
       this.resetZoomer(); // includes redraw data points and trail resize
       this._trails.run(["recolor", "findVisible", "reveal"]);
       if (this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
-      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
-      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
     },
 
     ready: function() {
@@ -701,7 +721,7 @@
             bottom: 40
           },
           padding: 2,
-          minRadius: 2,
+          minRadius: 0.5,
           maxRadius: 40
         },
         "medium": {
@@ -712,7 +732,7 @@
             bottom: 70
           },
           padding: 2,
-          minRadius: 3,
+          minRadius: 1,
           maxRadius: 60
         },
         "large": {
@@ -723,7 +743,7 @@
             bottom: 60
           },
           padding: 2,
-          minRadius: 4,
+          minRadius: 1,
           maxRadius: 80
         }
       };
@@ -767,7 +787,7 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_y.scaleType,
-          toolMargin: margin,
+          toolMargin: {top: 0, right: margin.right, left: margin.left, bottom: 0},
           limitMaxTickNumber: 6
         });
 
@@ -777,7 +797,7 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_x.scaleType,
-          toolMargin: margin
+          toolMargin: {top: margin.top, right: 5, left: 5, bottom: margin.bottom}
         });
 
 
@@ -799,6 +819,15 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
+      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
+      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
+
+      this.yAxisEl.call(this.yAxis);
+      this.xAxisEl.call(this.xAxis);
+
+      this.projectionX.attr("y1", _this.yScale.range()[0]);
+      this.projectionY.attr("x2", _this.xScale.range()[0]);
+
       // avoid overlapping (x label with s label)
       var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
       var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
@@ -811,7 +840,6 @@
       var fontStep = this.fontSettings.step;
       var minFontSize = this.fontSettings.minSize;
       var fontSize = parseInt(sTitleTextEl.style('font-size'), 10);
-      // if overlapping is noted
       if (sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
         while (fontSize > minFontSize && sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
           var diffDec = (fontSize - fontStep - minFontSize) * -1;
@@ -854,15 +882,6 @@
           }
         }
       }
-
-      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
-
-      this.yAxisEl.call(this.yAxis);
-      this.xAxisEl.call(this.xAxis);
-
-      this.projectionX.attr("y1", _this.yScale.range()[0]);
-      this.projectionY.attr("x2", _this.xScale.range()[0]);
     },
 
     updateMarkerSizeLimits: function () {
@@ -871,7 +890,7 @@
       var maxRadius = this.activeProfile.maxRadius;
 
       this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-      this.maxRadius = maxRadius * this.model.marker.size.max;
+      this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
 
       if (this.model.marker.size.scaleType !== "ordinal") {
         this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
@@ -1004,7 +1023,19 @@
           view.attr("cy", _this.yScale(valueY))
               .attr("cx", _this.xScale(valueX))
               .attr("r", scaledS);
+          // fix for #407 & #408
+          d3.timer.flush();
         }
+
+        if(this.model.time.record) _this._export.write({
+            type: "circle",
+            id: d[KEY],
+            time: this.model.time.value.getFullYear(),
+            fill: _this.cScale(valueC),
+            cx: _this.xScale(valueX),
+            cy: _this.yScale(valueY),
+            r: scaledS
+        });
 
         _this._updateLabel(d, index, valueX, valueY, scaledS, valueL, duration);
 
@@ -1327,17 +1358,17 @@
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
 
-      this.someHighlighted = (this.model.entities.brush.length > 0);
+      this.someHighlighted = (this.model.entities.highlight.length > 0);
 
       this.updateBubbleOpacity();
 
-      if (this.model.entities.brush.length === 1) {
-        var d = utils.clone(this.model.entities.brush[0]);
+      if (this.model.entities.highlight.length === 1) {
+        var d = utils.clone(this.model.entities.highlight[0]);
 
         if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
           d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
         } else {
-          d[TIMEDIM] = _this.time;
+          d[TIMEDIM] = d.trailStartTime || _this.time;
         }
 
         this._axisProjections(d);

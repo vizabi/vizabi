@@ -106,7 +106,7 @@
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
     },
-      
+
     /*
      * transforms a string into a validated fload value
      * @param {string} string to be transformed
@@ -532,9 +532,9 @@
      * Prints error
      * @param {String} message
      */
-    error: function (message) {
+    error: function (message1, message2) {
       if (root.console && typeof root.console.error === 'function') {
-        root.console.error(message);
+        root.console.error(message1, message2);
       }
     },
 
@@ -608,24 +608,59 @@
       }
     },
 
+    ///*
+    // * Throttles a function
+    // * @param {Function} func
+    // * @param {Number} ms duration
+    // */
+    //throttle: function () {
+    //  var isThrottled = {};
+    //  return function (func, ms) {
+    //    if (isThrottled[func]) {
+    //      return;
+    //    }
+    //    isThrottled[func] = true;
+    //    setTimeout(function () {
+    //      isThrottled[func] = false;
+    //    }, ms);
+    //    func();
+    //  };
+    //}(),
+
     /*
      * Throttles a function
      * @param {Function} func
      * @param {Number} ms duration
      */
-    throttle: function () {
-      var isThrottled = {};
-      return function (func, ms) {
-        if (isThrottled[func]) {
+    throttle: function (func, ms) {
+
+      var isThrottled = false,
+        savedArgs,
+        savedThis;
+
+      function wrapper() {
+
+        if (isThrottled) {
+          savedArgs = arguments;
+          savedThis = this;
           return;
         }
-        isThrottled[func] = true;
-        setTimeout(function () {
-          isThrottled[func] = false;
+
+        func.apply(this, arguments);
+
+        isThrottled = true;
+
+        setTimeout(function() {
+          isThrottled = false;
+          if (savedArgs) {
+            wrapper.apply(savedThis, savedArgs);
+            savedArgs = savedThis = null;
+          }
         }, ms);
-        func();
-      };
-    }(),
+      }
+
+      return wrapper;
+    },
 
     /*
      * Returns keys of an object as array
@@ -650,8 +685,8 @@
       }
       return arr;
     },
-      
-      
+
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -661,7 +696,7 @@
             return (p < v ? p : v);
         });
     },
- 
+
     /*
      * Computes the minumum value in an array
      * @param {Array} arr
@@ -671,7 +706,7 @@
             return (p > v ? p : v);
         });
     },
- 
+
     /*
      * Computes the mean of an array
      * @param {Array} arr
@@ -679,7 +714,7 @@
     arrayMean: function(arr) {
         return this.arraySum(arr)/arr.length;
     },
- 
+
     /*
      * Computes the sum of an array
      * @param {Array} arr
@@ -687,7 +722,7 @@
     arraySum: function(arr) {
         return arr.reduce(function(a, b) { return a + b; });
     },
- 
+
     /*
      * Computes the median of an array
      * @param {Array} arr
@@ -821,7 +856,25 @@
 
         return (hash in fn.memoize) ? fn.memoize[hash] : fn.memoize[hash] = fn.apply(this, args);
       };
-    }
+    },
 
+    // Returns a function, that, as long as it continues to be invoked, will not
+    // be triggered. The function will be called after it stops being called for
+    // N milliseconds. If `immediate` is passed, trigger the function on the
+    // leading edge, instead of the trailing.
+    debounce: function (func, wait, immediate) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      }
+    }
   };
 }.call(this));

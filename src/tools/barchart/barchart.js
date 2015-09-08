@@ -46,7 +46,10 @@
       this.model_binds = {
         "change:time:value": function (evt) {
           _this.updateEntities();
-        }
+        },
+        'change:marker:color:palette': utils.debounce(function (evt) {
+          _this.updateEntities();
+        }, 200)
       };
 
       //contructor is the same as any component
@@ -190,7 +193,7 @@
             top: 30,
             right: 20,
             left: 40,
-            bottom: 40
+            bottom: 50
           },
           padding: 2,
           minRadius: 2,
@@ -201,7 +204,7 @@
             top: 30,
             right: 60,
             left: 60,
-            bottom: 70
+            bottom: 60
           },
           padding: 2,
           minRadius: 3,
@@ -212,7 +215,7 @@
             top: 30,
             right: 60,
             left: 60,
-            bottom: 60
+            bottom: 80
           },
           padding: 2,
           minRadius: 4,
@@ -346,7 +349,7 @@
     },
     data: {
       reader: "csv-file",
-      path: "local_data/waffles/{{LANGUAGE}}/basic-indicators.csv"
+      path: "local_data/waffles/basic-indicators.csv"
     }
   });
 

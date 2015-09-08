@@ -209,7 +209,7 @@ describe('* Base: Hooks', function() {
                 //make sure done is called one frame after update
                 setTimeout(function() {
                     done();
-                }, 1);
+                }, 100);
             });
             t.setOptions({
                 state: {

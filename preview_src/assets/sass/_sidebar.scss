@@ -60,4 +60,8 @@
             background-color: white;
         }
     }
+
+    @media screen and (max-width: 700px) {
+        display: none
+    }
 }

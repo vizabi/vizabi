@@ -30,6 +30,13 @@ module.exports = {
         dest: 'preview/local_data/',
         expand: true
     },
+
+    local_data_fs: {
+        cwd: 'local_data',
+        src: ['**/*'],
+        dest: 'preview/fullscreen/local_data/',
+        expand: true
+    },
     
     /*
      * copy test files to preview to be able to rerun on stage

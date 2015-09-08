@@ -1,0 +1,120 @@
+{
+    "color": {
+        "palettes": {
+            "geo.region": {
+                "asi": "#FF5872",
+                "eur": "#FFE700",
+                "ame": "#7FEB00",
+                "afr": "#00D5E9",
+                "_default": "#ffb600"
+            },
+            "gdp_per_cap": {
+                "0": "#62CCE3",
+                "1": "#B4DE79",
+                "2": "#E1CE00",
+                "3": "#F77481"
+            },
+            "_continuous": {
+                "0": "#F77481",
+                "1": "#E1CE00",
+                "2": "#B4DE79"
+            },
+            "_discrete": {
+                "0": "#1f77b4",
+                "1": "#aec7e8",
+                "3": "#ff7f0e",
+                "4": "#2ca02c",
+                "5": "#98df8a",
+                "6": "#ffbb78",
+                "7": "#d62728",
+                "8": "#ff9896",
+                "9": "#9467bd",
+                "10": "#c5b0d5"
+            },
+            "_default": {
+                "_default": "#fa5ed6"
+            }
+        },
+        "selectable": {
+            "geo.region": false
+        }
+    },
+
+    "indicators": {
+        "geo.region": {
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"]
+        },
+        "geo": {
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"]
+        },
+        "time": {
+            "use": "indicator",
+            "unit": "time",
+            "scales": ["time"]
+        },
+        "childSurv": {
+            "use": "indicator",
+            "unit": "childSurv",
+            "scales": ["linear", "log"]
+        },
+        "gdp_per_cap": {
+            "use": "indicator",
+            "unit": "gdp_per_cap",
+            "scales": ["log", "linear"]
+        },
+        "pop": {
+            "use": "indicator",
+            "unit": "",
+            "scales": ["linear", "genericLog"]
+        },
+        "lex": {
+            "use": "indicator",
+            "unit": "lex",
+            "scales": ["linear"]
+        },
+        "geo.name": {
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"]
+        },
+        "u5mr_not": {
+            "use": "indicator",
+            "unit": "u5mr",
+            "scales": ["linear", "log"]
+        },
+        "u5mr": {
+            "use": "indicator",
+            "unit": "u5mr",
+            "scales": ["linear", "log"]
+        },
+        "size": {
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"]
+        },
+        "gini": {
+            "use": "indicator",
+            "unit": "gini",
+            "scales": ["linear"]
+        },
+        "gdppc_pday": {
+            "use": "indicator",
+            "unit": "gdppc_pday",
+            "scales": ["log", "linear"]
+        },
+        "inc_pday": {
+            "use": "indicator",
+            "unit": "inc_pday",
+            "scales": ["log", "linear"]
+        },
+        "_default": {
+            "use": "value",
+            "unit": "",
+            "scales": ["ordinal"]
+        }
+    }
+}

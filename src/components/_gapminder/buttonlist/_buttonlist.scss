@@ -13,6 +13,7 @@ $vzb-button-color-border: #cce6ed;
   @import '../bubbleopacity/bubbleopacity';
   @import '../colorlegend/colorlegend';
   @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
   @include position(absolute, 0px);
   overflow: visible;
 
@@ -55,7 +56,7 @@ $vzb-button-color-border: #cce6ed;
       }
     }
     & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
-      font-size: 1em;
+      font-size: 0.9em;
       padding-top: 1px;
       text-align: center;
       display: block;
@@ -99,9 +100,9 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-landscape, &.vzb-large {
   .vzb-buttonlist {
     .vzb-buttonlist-dialog {
-      @include position(absolute, -2000px 40px auto auto);
+      @include position(absolute, -2000px 40px auto -130px);
       &.vzb-active {
-        @include position(absolute, 20px 40px auto auto);
+        @include position(absolute, 20px 40px auto -130px);
       }
     }
   }

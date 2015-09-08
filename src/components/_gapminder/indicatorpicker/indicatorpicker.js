@@ -3,12 +3,13 @@
  * Reusable indicator picker component
  */
 
-(function () {
+(function() {
 
     "use strict";
 
     var root = this;
     var Vizabi = root.Vizabi;
+    var globals = Vizabi._globals;
     var utils = Vizabi.utils;
 
     var INDICATOR = "which";
@@ -22,16 +23,16 @@
         return;
     }
 
-    var availOpts = {
-        'geo.region': {use: 'property',unit: '',scales: ['ordinal'] },
-        'geo': {use: 'property',unit: '',scales: ['ordinal'] },
-        'time': {use: 'indicator',unit: 'time',scales: ['time'] },
-        'lex': {use: 'indicator',unit: 'lex',scales: ['linear'] },
-        'gdp_per_cap': {use: 'indicator',unit: 'gdp_per_cap',scales: ['log', 'linear'] },
-        'pop': {use: 'indicator',unit: '',scales: ['linear', 'log'] },
-        'geo.name': {use: 'property',unit: '',scales: ['ordinal'] },
-        '_default': {use: 'value',unit: '',scales: ['linear', 'log'] }
-    };
+    function getAvailableOptions() {
+
+        return (globals.metadata && globals.metadata.indicators) ? globals.metadata.indicators : {
+            "_default": {
+                "use": "value",
+                "unit": "",
+                "scales": ["ordinal"]
+            }
+        };
+    }
 
     Vizabi.Component.extend('gapminder-indicatorpicker', {
 
@@ -41,24 +42,24 @@
          * @param config The options passed to the component
          * @param context The component's parent
          */
-        init: function (config, context) {
+        init: function(config, context) {
 
             this.template = '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max">';
             var _this = this;
 
             this.model_expects = [{
                 name: "axis"
-                //TODO: learn how to expect model "axis" or "size" or "color"
+                    //TODO: learn how to expect model "axis" or "size" or "color"
             }, {
                 name: "language",
                 type: "language"
             }];
 
             this.model_binds = {
-                "change:axis": function (evt) {
+                "change:axis": function(evt) {
                     _this.updateView();
                 },
-                "change:language": function (evt) {
+                "change:language": function(evt) {
                     _this.updateView();
                 }
             };
@@ -74,11 +75,15 @@
 
         },
 
-        ready: function () {
+        ready: function() {
             this.updateView();
         },
 
-        readyOnce: function () {
+        afterPreload: function() {
+            console.log("test");
+        },
+
+        readyOnce: function() {
             var _this = this;
 
             this.element = d3.select(this.element);
@@ -90,44 +95,64 @@
             this.el_domain_fieldMin = this.element.select('.vzb-ip-domainmin');
             this.el_domain_fieldMax = this.element.select('.vzb-ip-domainmax');
 
-            this.el_select_indicator.on("change", function () {
+            this.el_select_indicator.on("change", function() {
                 _this._setModel(INDICATOR, this.value)
             });
-            this.el_select_scaletype.on("change", function () {
+            this.el_select_scaletype.on("change", function() {
                 _this._setModel(SCALETYPE, this.value)
             });
 
-            _this.el_domain_fieldMin.on("change", function () {
+            _this.el_domain_fieldMin.on("change", function() {
                 _this._setModel(MIN, this.value)
             });
-            _this.el_domain_fieldMax.on("change", function () {
+            _this.el_domain_fieldMax.on("change", function() {
                 _this._setModel(MAX, this.value)
             });
         },
 
-        updateView: function () {
+        updateView: function() {
             var _this = this;
             this.translator = this.model.language.getTFunction();
 
             this.el_domain_labelMin.text(this.translator("min") + ":");
             this.el_domain_labelMax.text(this.translator("max") + ":");
 
+            var availOpts = getAvailableOptions();
             var pointer = "_default";
-
             var data = {};
-            data[INDICATOR] = Object.keys(availOpts);
+
+            var allowed = Object.keys(availOpts).filter(function(f) {
+
+                var opt = availOpts[f];
+
+                if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
+                if (_this.model.axis.allow.scales[0] == "*") return true;
+
+                for (var i = opt.scales.length - 1; i >= 0; i--) {
+                    if (opt.scales[i] == _this.model.axis.scaleType) return true;
+                    if (_this.model.axis.allow.scales.indexOf(opt.scales[i]) > -1) return true;
+                }
+
+                return false;
+            })
+
+            data[INDICATOR] = allowed;
 
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
 
-            data[SCALETYPE] = availOpts[pointer].scales;
+            data[SCALETYPE] = availOpts[pointer].scales.filter(function(f) {
+                if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
+                if (_this.model.axis.allow.scales[0] == "*") return true;
+                return _this.model.axis.allow.scales.indexOf(f) > -1;
+            });
 
             //bind the data to the selector lists
             var elOptionsIndicator = this.el_select_indicator.selectAll("option")
-                .data(data[INDICATOR], function (d) {
+                .data(data[INDICATOR], function(d) {
                     return d
                 });
             var elOptionsScaletype = this.el_select_scaletype.selectAll("option")
-                .data(data[SCALETYPE], function (d) {
+                .data(data[SCALETYPE], function(d) {
                     return d
                 });
 
@@ -136,18 +161,18 @@
             elOptionsScaletype.exit().remove();
 
             //populate options into the list
-            elOptionsIndicator.enter().append("option").attr("value", function (d) {
+            elOptionsIndicator.enter().append("option").attr("value", function(d) {
                 return d
             });
-            elOptionsScaletype.enter().append("option").attr("value", function (d) {
+            elOptionsScaletype.enter().append("option").attr("value", function(d) {
                 return d
             });
 
             //show translated UI string
-            elOptionsIndicator.text(function (d) {
+            elOptionsIndicator.text(function(d) {
                 return _this.translator("indicator/" + d)
             });
-            elOptionsScaletype.text(function (d) {
+            elOptionsScaletype.text(function(d) {
                 return _this.translator("scaletype/" + d)
             });
 
@@ -175,7 +200,9 @@
             this.el_domain_fieldMax.property("value", formatter(this.model.axis.getScale().domain()[1]));
         },
 
-        _setModel: function (what, value) {
+        _setModel: function(what, value) {
+
+            var availOpts = getAvailableOptions();
 
             if (what === MIN || what === MAX) value = utils.strToFloat(value);
 
@@ -187,6 +214,10 @@
             if (what == INDICATOR) {
                 obj.use = availOpts[value].use;
                 obj.unit = availOpts[value].unit;
+                if (mdl.getType() == 'axis') {
+                    obj.min = null;
+                    obj.max = null;
+                }
 
                 if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
                     obj.scaleType = availOpts[value].scales[0];
