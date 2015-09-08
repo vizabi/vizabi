@@ -100,6 +100,8 @@
             _this.redrawDataPoints();
           }
           _this._trails.run("reveal");
+          _this.tooltipMobile.classed('vzb-hidden', true);
+          _this._bubblesInteract().mouseout();
         },
         'change:time:adaptMinMaxZoom': function () {
           //console.log("EVENT change:time:adaptMinMaxZoom");
@@ -389,6 +391,7 @@
       this.entityBubbles = null;
       this.entityLabels = null;
       this.tooltip = this.element.select('.vzb-bc-tooltip');
+      this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
       this.entityLines = null;
       //component events
       this.on("resize", function () {
@@ -416,6 +419,7 @@
         })
         .onTap(function () {
           _this._bubblesInteract().mouseout();
+          _this.tooltipMobile.classed('vzb-hidden', true);
         });
 
       this.KEY = this.model.entities.getDimension();
@@ -590,11 +594,16 @@
           _this._bubblesInteract().click(d, i);
         })
         .onTap(function (d, i) {
+          var evt = d3.event;
+          _this.tooltipMobile.classed('vzb-hidden', false)
+            .attr('style', 'left:' + (evt.changedTouches[0].clientX + 15) + 'px;top:' + (evt.changedTouches[0].clientY - 25) + 'px')
+            .html('Hold bubble to select it');
           d3.event.stopPropagation();
           _this._bubblesInteract().mouseout();
           _this._bubblesInteract().mouseover(d, i);
         })
         .onLongTap(function (d, i) {
+          _this.tooltipMobile.classed('vzb-hidden', true);
           d3.event.stopPropagation();
           _this._bubblesInteract().mouseout();
           _this._bubblesInteract().click(d, i);
