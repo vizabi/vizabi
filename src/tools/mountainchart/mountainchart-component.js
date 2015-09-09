@@ -46,6 +46,7 @@
                 },
                 'change:marker:color:palette': utils.debounce(function (evt) {
                     _this.redrawDataPoints();
+                    _this.redrawDataPointsOnlyColors();
                     _this.redrawSelectList();
                 }, 200),
                 'change:time:value': function () {
@@ -57,43 +58,23 @@
                 },
                 'change:time:povertyCutoff': function () {
                     //console.log('change time value');
-                    _this.updateTime();
-                    _this._adjustMaxY({force: true});
-                    _this.redrawDataPoints();
-                    _this.redrawSelectList();
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:time:gdpFactor': function () {
                     //console.log('change time value');
-                    _this.updateTime();
-                    _this._adjustMaxY({force: true});
-                    _this.redrawDataPoints();
-                    _this.redrawSelectList();
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:time:gdpShift': function () {
                     //console.log('change time value');
-                    _this.updateTime();
-                    _this._adjustMaxY({force: true});
-                    _this.redrawDataPoints();
-                    _this.redrawSelectList();
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:time:povertyFade': function () {
                     //console.log('change time value');
-                    _this.updateTime();
-                    _this._adjustMaxY({force: true});
-                    _this.redrawDataPoints();
-                    _this.redrawSelectList();
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:time:xPoints': function () {
                     //console.log('acting on resize');
-                    _this.updateSize();
-                    _this.updateTime(); // respawn is needed
-                    _this.redrawDataPoints();
-                    _this.redrawSelectList();
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:time:record': function () {
                     //console.log('change time record');
@@ -125,7 +106,7 @@
                     _this.redrawDataPoints();
                 },
                 'change:time:povertyline': function () {
-                    _this.updatePovertyLine();
+                    _this.ready();
                 },
                 'change:marker': function (evt) {
                     if (!_this._readyOnce) return;
@@ -300,9 +281,11 @@
             this.updateIndicators();
             this.updateEntities();
             this.updateSize();
+            this._spawnMasks();
             this.updateTime();
             this._adjustMaxY({force:true});
             this.redrawDataPoints();
+            this.redrawDataPointsOnlyColors();
             this.highlightEntities();
             this.selectEntities();
             this.redrawSelectList();
@@ -627,13 +610,7 @@
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
             this.yMax = 0;
 
-            this.tune = {};
-            this.tune.povertyline = this.unscale(this.model.time.povertyline);
-            this.tune.level = this.unscale(this.model.time.povertyCutoff);
-            this.tune.fade = this.model.time.povertyFade;
-            this.tune.k = 2*Math.PI/(Math.log(this.tune.povertyline)-Math.log(this.tune.level));
-            this.tune.m = Math.PI - Math.log(this.tune.povertyline) * this.tune.k;
-
+            
             //spawn the original mountains
             this.mountainPointers.forEach(function (d, i) {
                 var vertices = _this._spawn(_this.values, d);
@@ -825,6 +802,27 @@
             
             return this.mesh;
         },
+        
+        _spawnMasks: function(){
+            var _this = this;
+            
+            var povertyline = this.unscale(this.model.time.povertyline);
+            var cutoff = this.unscale(this.model.time.povertyCutoff);
+            var fade = this.model.time.povertyFade;
+            var k = 2*Math.PI/(Math.log(povertyline)-Math.log(cutoff));
+            var m = Math.PI - Math.log(povertyline) * k;
+
+
+            this.spawnMask = [];
+            this.cosineShape = [];
+            this.cosineArea = 0;
+
+            this.mesh.map(function (dX,i) {
+                _this.spawnMask[i] = dX<cutoff?1:(dX>fade*7?0:Math.exp((cutoff-dX)/fade))
+                _this.cosineShape[i] = (dX>cutoff && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 );
+                _this.cosineArea += _this.cosineShape[i];
+            });    
+        },
 
 
         // get Y value for every X
@@ -837,28 +835,21 @@
 
             if (!norm || !mu || !sigma) return [];
 
-            var mask = [];
             var distribution = [];
             var acc = 0;
-            var cosine = [];
 
             this.mesh.map(function (dX,i) {
                 distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
-                mask[i] = dX<_this.tune.level?1:(dX>_this.tune.fade*7?0:Math.exp((_this.tune.level-dX)/_this.tune.fade))
-                cosine[i] = (dX>_this.tune.level && dX<_this.tune.povertyline? (1+Math.cos(Math.log(dX)*_this.tune.k+_this.tune.m)) : 0 );
-                acc += mask[i] * distribution[i];
+                acc += _this.spawnMask[i] * distribution[i];
             });
             
-            var cosineArea = d3.sum(cosine);
-
             var result = this.mesh.map(function (dX, i) {
-                return {x: dX, y0: 0, y: norm * (distribution[i] * (1 - mask[i]) + cosine[i]/cosineArea * acc)
+                return {x: dX, y0: 0, 
+                    y: norm * (distribution[i] * (1 - _this.spawnMask[i]) + _this.cosineShape[i]/_this.cosineArea * acc)
                 }
             });
 
-            //console.log(Math.round(d3.sum(distribution)/d3.sum(result.map(function(d){return d.y/norm;}))*10000)/10000 )
             return result;
-
         },
 
 
@@ -997,30 +988,41 @@
 
         },
 
+        
+
+        /*
+         * REDRAW DATA POINTS:
+         * Here plotting happens
+         */
+        redrawDataPointsOnlyColors: function () {
+            var _this = this;
+            this.mountains.style('fill', function(d){ return _this.cScale(_this.values.color[d.KEY()]); });
+        },        
 
         /*
          * RENDER SHAPE:
          * Helper function for plotting
          */
         _renderShape: function(view, key, hidden){
-            var record = this.model.time.record;
-            var year = this.model.time.value.getFullYear();
             var stack = this.model.marker.stack.which;
 
             view.classed('vzb-hidden', hidden);
+            
             if(hidden){
                 if(stack !== "none") view.style('stroke-opacity', 0);
                 return;
             }
-            view
-                .style('fill', this.cScale(this.values.color[key]))
-                .attr('d', this.area(this.cached[key]))
+            
+            view.attr('d', this.area(this.cached[key]));
+            
+            if(this.model.marker.color.use==="indicator") view
+                .style('fill', this.cScale(this.values.color[key]));
             
             if(stack !== "none") view
-                .transition().duration(500).ease('circle')
+                .transition().duration(Math.random()*900 + 100).ease('circle')
                 .style('stroke-opacity', 0.5);
 
-            if(record) this._export.write({type: 'path', id: key, time: year, fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key]) });
+            if(this.model.time.record) this._export.write({type: 'path', id: key, time: this.model.time.value.getFullYear(), fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key]) });
         }
 
 

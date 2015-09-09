@@ -100,6 +100,8 @@
             _this.redrawDataPoints();
           }
           _this._trails.run("reveal");
+          _this.tooltipMobile.classed('vzb-hidden', true);
+          _this._bubblesInteract().mouseout();
         },
         'change:time:adaptMinMaxZoom': function () {
           //console.log("EVENT change:time:adaptMinMaxZoom");
@@ -338,6 +340,9 @@
 
           _this.zoomer.duration = 0;
 
+        })
+        .on('zoomend', function () {
+          _this.draggingNow = false;
         });
 
       this.zoomer.ratioX = 1;
@@ -386,6 +391,7 @@
       this.entityBubbles = null;
       this.entityLabels = null;
       this.tooltip = this.element.select('.vzb-bc-tooltip');
+      this.tooltipMobile = this.element.select('.vzb-tooltip-mobile');
       this.entityLines = null;
       //component events
       this.on("resize", function () {
@@ -409,7 +415,11 @@
         .call(this.zoomer)
         .call(this.dragRectangle)
         .on("mouseup", function(){
-             _this.draggingNow = false;
+          _this.draggingNow = false;
+        })
+        .onTap(function () {
+          _this._bubblesInteract().mouseout();
+          _this.tooltipMobile.classed('vzb-hidden', true);
         });
 
       this.KEY = this.model.entities.getDimension();
@@ -569,7 +579,60 @@
             return "vzb-bc-entity " + d[KEY];
         })
         .on("mouseover", function (d, i) {
+          if (utils.isTouchDevice()) return;
 
+          _this._bubblesInteract().mouseover(d, i);
+        })
+        .on("mouseout", function (d, i) {
+          if (utils.isTouchDevice()) return;
+
+          _this._bubblesInteract().mouseout(d, i);
+        })
+        .on("click", function (d, i) {
+          if (utils.isTouchDevice()) return;
+
+          _this._bubblesInteract().click(d, i);
+        })
+        .onTap(function (d, i) {
+          var evt = d3.event;
+          _this.tooltipMobile.classed('vzb-hidden', false)
+            .attr('style', 'left:' + (evt.changedTouches[0].clientX + 15) + 'px;top:' + (evt.changedTouches[0].clientY - 25) + 'px')
+            .html('Hold bubble to select it');
+          d3.event.stopPropagation();
+          _this._bubblesInteract().mouseout();
+          _this._bubblesInteract().mouseover(d, i);
+        })
+        .onLongTap(function (d, i) {
+          _this.tooltipMobile.classed('vzb-hidden', true);
+          d3.event.stopPropagation();
+          _this._bubblesInteract().mouseout();
+          _this._bubblesInteract().click(d, i);
+        });
+
+
+      //TODO: no need to create trail group for all entities
+      //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
+      this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
+        .data(getKeys.call(this, "trail-"), function (d) {
+                return d[KEY];
+            }
+        );
+
+        this.entityTrails.enter().insert("g", function (d) {
+            return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
+        }).attr("class", function (d) {
+          return "vzb-bc-entity" + " " + d[KEY]
+        });
+
+    },
+
+    _bubblesInteract: function () {
+      var _this = this;
+      var KEY = this.KEY;
+      var TIMEDIM = this.TIMEDIM;
+
+      return {
+        mouseover: function (d, i) {
           _this.model.entities.highlightEntity(d);
 
           var text = "";
@@ -589,33 +652,20 @@
           var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
           var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
           _this._setTooltip(text, x-s/2, y-s/2);
-        })
-        .on("mouseout", function (d, i) {
+        },
+
+        mouseout: function (d, i) {
           _this.model.entities.clearHighlighted();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
-        })
-        .on("click", function (d, i) {
+        },
+
+        click: function (d, i) {
           if(_this.draggingNow) return;
           _this._setTooltip();
-          _this.model.entities.selectEntity(d, this.TIMEDIM, _this.timeFormatter);
-        });
-
-
-      //TODO: no need to create trail group for all entities
-      //TODO: instead of :append an :insert should be used to keep order, thus only few trail groups can be inserted
-      this.entityTrails = this.bubbleContainer.selectAll(".vzb-bc-entity")
-        .data(getKeys.call(this, "trail-"), function (d) {
-                return d[KEY];
-            }
-        );
-
-        this.entityTrails.enter().insert("g", function (d) {
-            return document.querySelector(".vzb-bc-bubbles ." + d[KEY].replace("trail-", ""));
-        }).attr("class", function (d) {
-          return "vzb-bc-entity" + " " + d[KEY]
-        });
-
+          _this.model.entities.selectEntity(d, TIMEDIM, _this.timeFormatter);
+        }
+      }
     },
 
     adaptMinMaxZoom: function () {
