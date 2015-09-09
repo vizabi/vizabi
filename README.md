@@ -1,7 +1,7 @@
-# Gapminder World based on Vizabi
-> This is the gapminder world app based on Vizabi
+# Gapminder Tools page
+> This is the gapminder tools page
 
-Demo: [http://static.gapminderdev.org/gw-vizabi/](http://static.gapminderdev.org/gw-vizabi/)
+Demo: [http://static.gapminderdev.org/tools/](http://static.gapminderdev.org/tools/)
 
 The following dependencies must be preinstalled:
 
