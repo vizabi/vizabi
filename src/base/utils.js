@@ -875,6 +875,10 @@
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
       }
+    },
+
+    isTouchDevice: function () {
+      return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
     }
   };
 }.call(this));
