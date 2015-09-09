@@ -140,6 +140,7 @@ $vzb-button-color-border: #cce6ed;
     white-space: normal;
     overflow-y: scroll;
     overflow-x: hidden;
+    margin-right: -15px;
   }
 }
 
@@ -148,5 +149,6 @@ $vzb-button-color-border: #cce6ed;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: scroll;
+    margin-bottom: -15px;
   }
 }
