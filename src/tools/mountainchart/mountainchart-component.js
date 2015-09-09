@@ -255,10 +255,12 @@
         readyOnce: function () {
 
             this.eventAreaEl.on('mousemove', function(){
+                if (_this.model.time.dragging)return;
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
                 _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true});
 
             }).on('mouseout', function(){
+                if (_this.model.time.dragging)return;
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
                 _this.updatePovertyLine();
             });
