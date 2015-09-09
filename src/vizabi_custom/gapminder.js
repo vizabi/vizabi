@@ -394,8 +394,9 @@
     var WaffleReader = this.Vizabi.Reader.get('waffle-server');
     WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
+    //TODO: remove hardcoded path from source code
     Vizabi._globals.gapminder_paths = {
-        baseUrl: ""
+        baseUrl: "http://static.gapminderdev.org/vizabi/release/v0.7.1/preview/"
     };
 
     //preloading mountain chart precomputed shapes
