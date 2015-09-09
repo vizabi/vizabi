@@ -189,13 +189,13 @@
                 .out(function out(d, y0, y) {d.y0 = y0;});
         },
 
-        
+
         /**
          * DOM is ready
          */
         domReady: function(){
             var _this = this;
-            
+
             // reference elements
             this.element = d3.select(this.element);
             this.graph = this.element.select('.vzb-mc-graph');
@@ -210,18 +210,23 @@
             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             this.povertylineLineEl = this.povertylineEl.select('line');
-            this.povertylineTextEl = this.povertylineEl.selectAll('text');   
+            this.povertylineTextEl = this.povertylineEl.selectAll('text');
+
+            this.element
+              .onTap(function (d, i) {
+                _this._interact()._mouseout(d, i);
+              });
         },
-        
-        
-                
-        
+
+
+
+
         afterPreload: function(){
             var _this = this;
-            
+
             var yearNow = _this.model.time.value.getFullYear();
             var yearEnd = _this.model.time.end.getFullYear();
-            
+
             if(!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
             var yMax = this.precomputedShapes[this.model.time.yMaxMethod == 'immediate'? yearNow : yearEnd].yMax;
@@ -246,9 +251,9 @@
                 //.transition().duration(4000).ease('linear')
                 //.style('opacity', 1);
         },
-        
+
         readyOnce: function () {
-        
+
             this.eventAreaEl.on('mousemove', function(){
                 var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
                 _this.updatePovertyLine({level: _this.xScale.invert(mouse[0]), full: true});
@@ -323,11 +328,10 @@
          */
         updateEntities: function () {
             var _this = this;
-            
+
             var filter = {};
             filter[_this.TIMEDIM] = this.model.time.end;
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
-            
 
             // construct pointers
             this.mountainPointers = this.model.marker.getKeys()
@@ -421,11 +425,37 @@
 
             //add interaction
             this.mountains = this.mountainAtomicContainer.selectAll('.vzb-mc-mountain');
-            
+
             this.mountains
-                .on('mousemove', this._interact()._mousemove)
-                .on('mouseout', this._interact()._mouseout)
-                .on('click', this._interact()._click);
+              .on('mousemove', function (d, i) {
+                if (utils.isTouchDevice()) return;
+
+                _this._interact()._mousemove(d, i);
+              })
+              .on('mouseout', function (d, i) {
+                if (utils.isTouchDevice()) return;
+
+                _this._interact()._mouseout(d, i);
+              })
+              .on('click', function (d, i) {
+                if (utils.isTouchDevice()) return;
+
+                _this._interact()._click(d, i);
+              })
+              .onTap(function (d, i) {
+                _this._interact()._mouseout(d, i);
+                _this._interact()._mousemove(d, i);
+
+                _this.tooltip.classed('vzb-hidden', false)
+                  .html(_this.tooltip.html() + '<br>Hold to select it');
+
+                d3.event.stopPropagation();
+              })
+              .onLongTap(function (d, i) {
+                _this._interact()._mouseout(d, i);
+                _this._interact()._click(d, i);
+                d3.event.stopPropagation();
+              })
         },
 
 
@@ -484,7 +514,7 @@
 
             this.selectList = this.mountainLabelContainer.selectAll('g')
                 .data(utils.unique(listData, function(d){return d.KEY()}));
-            
+
             this.selectList.exit().remove();
             this.selectList.enter().append('g')
                 .attr('class', 'vzb-mc-label')
@@ -558,10 +588,9 @@
           var OPACITY_SELECT = 0.8;
           var OPACITY_REGULAR = this.model.entities.opacityRegular;
           var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
-            
 
           this.mountains.style('opacity', function(d){
-              
+
               if (_this.someHighlighted) {
                 //highlight or non-highlight
                 if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
@@ -575,9 +604,9 @@
               if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
 
               return OPACITY_REGULAR;
-          
+
           });
-            
+
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
           // when pointer events need update...
@@ -610,7 +639,7 @@
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
             this.yMax = 0;
 
-            
+
             //spawn the original mountains
             this.mountainPointers.forEach(function (d, i) {
                 var vertices = _this._spawn(_this.values, d);
@@ -669,12 +698,12 @@
         },
 
 
-        
+
         _getFirstLastPointersInStack: function(group){
             var _this = this;
 
             var visible, visible2;
-            
+
             if(group.values[0].values){
                 visible = group.values[0].values.filter(function(f){return !f.hidden;});
                 visible2 = group.values[group.values.length-1].values.filter(function(f){return !f.hidden;});
@@ -685,27 +714,23 @@
                 var first = visible[0];
                 var last = visible[visible.length-1];
             }
-            
+
             return {first: first, last: last};
         },
-        
+
         _getVerticesOfaMergedShape: function(arg){
             var _this = this;
 
             var first = arg.first.KEY();
             var last = arg.last.KEY();
-            
+
             return _this.mesh.map(function(m, i){
                 var y = _this.cached[first][i].y0 + _this.cached[first][i].y - _this.cached[last][i].y0;
                 var y0 = _this.cached[last][i].y0;
                 return { x: m, y0: y0, y: y};
-            }); 
+            });
         },
 
-            
-            
-            
-            
 
 
 
@@ -780,10 +805,10 @@
                 .attr('y', this.height)
                 .attr('width', this.width)
                 .attr('height', margin.bottom);
-            
+
             this._generateMesh(meshLength, scaleType);
         },
-        
+
         _generateMesh: function(length, scaleType){
             // we need to generate the distributions based on mu, variance and scale
             // we span a uniform mesh across the entire X scale,
@@ -799,13 +824,13 @@
             }else{
                 this.mesh = this.mesh.filter(function (dX) {return dX > 0;});
             }
-            
+
             return this.mesh;
         },
-        
+
         _spawnMasks: function(){
             var _this = this;
-            
+
             var povertyline = this.unscale(this.model.time.povertyline);
             var cutoff = this.unscale(this.model.time.povertyCutoff);
             var fade = this.model.time.povertyFade;
@@ -821,7 +846,7 @@
                 _this.spawnMask[i] = dX<cutoff?1:(dX>fade*7?0:Math.exp((cutoff-dX)/fade))
                 _this.cosineShape[i] = (dX>cutoff && dX<povertyline? (1+Math.cos(Math.log(dX)*k+m)) : 0 );
                 _this.cosineArea += _this.cosineShape[i];
-            });    
+            });
         },
 
 
@@ -842,9 +867,9 @@
                 distribution[i] = _this._math.pdf.lognormal(dX, mu, sigma);
                 acc += _this.spawnMask[i] * distribution[i];
             });
-            
+
             var result = this.mesh.map(function (dX, i) {
-                return {x: dX, y0: 0, 
+                return {x: dX, y0: 0,
                     y: norm * (distribution[i] * (1 - _this.spawnMask[i]) + _this.cosineShape[i]/_this.cosineArea * acc)
                 }
             });
@@ -868,7 +893,6 @@
             if(method==='latest') _this.updateTime();
         },
 
-        
 
         updatePovertyLine: function(options){
             var _this = this;
@@ -884,7 +908,7 @@
             var sumValue = 0;
             var totalArea = 0;
             var leftArea = 0;
-            
+
             var _computeAreas = function(d) {
                 sumValue += _this.values.axis_y[d.KEY()];
                 _this.cached[d.KEY()].forEach(function(d){
@@ -918,7 +942,7 @@
                 if(i===0 || i===4) string = formatter1(leftArea/totalArea*100) + '%';
                 if(i===1 || i===5) string = formatter1(100-leftArea/totalArea*100) + '%';
                 if(i===2 || i===6) string = formatter2(sumValue * leftArea / totalArea);
-                if(i===3 || i===7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + ' ' + _this.translator('mount/people'); 
+                if(i===3 || i===7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + ' ' + _this.translator('mount/people');
 
                 view.text(string)
                     .classed('vzb-hidden', !options.full && i!==0 && i!==4)
@@ -926,7 +950,6 @@
                     .attr('y',_this.height * HEIGHT_OF_LABELS)
                     .attr('dy', [0,1,4,5].indexOf(i)>-1 ? 0 : '1.5em');
             })
-            
 
             //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ', ' + leftArea/totalArea*100);
 
@@ -988,7 +1011,6 @@
 
         },
 
-        
 
         /*
          * REDRAW DATA POINTS:
@@ -997,7 +1019,7 @@
         redrawDataPointsOnlyColors: function () {
             var _this = this;
             this.mountains.style('fill', function(d){ return _this.cScale(_this.values.color[d.KEY()]); });
-        },        
+        },
 
         /*
          * RENDER SHAPE:
@@ -1007,17 +1029,17 @@
             var stack = this.model.marker.stack.which;
 
             view.classed('vzb-hidden', hidden);
-            
+
             if(hidden){
                 if(stack !== "none") view.style('stroke-opacity', 0);
                 return;
             }
-            
+
             view.attr('d', this.area(this.cached[key]));
-            
+
             if(this.model.marker.color.use==="indicator") view
                 .style('fill', this.cScale(this.values.color[key]));
-            
+
             if(stack !== "none") view
                 .transition().duration(Math.random()*900 + 100).ease('circle')
                 .style('stroke-opacity', 0.5);
