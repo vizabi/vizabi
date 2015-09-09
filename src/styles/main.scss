@@ -1,7 +1,7 @@
 //import bourbon
 @import '../../bower_components/bourbon/app/assets/stylesheets/bourbon';
 
-$color-primary: #4A75E6;
+$color-primary: #FFCA34;
 $color-grey: #999999;
 $color-grey-light: #ECEBE9;
 
@@ -15,7 +15,7 @@ $size-column: 230px;
 
 body {
   @include position(absolute, 0 0 0 0);
-  background-color: $color-grey-light;
+  background-color: white;
   font-family: 'Lato', Arial, sans-serif;
   min-width: $body-min-width;
   padding: 0;

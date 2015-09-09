@@ -1,18 +1,20 @@
 doctype html
-html(lang="en", ng-app='gapminderWorld')
+html(lang="en", ng-app='gapminderTools')
   head
-    title Gapminder World
+    title Gapminder Tools
+    meta(name="viewport", content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no")
     //-include google font + styles
     link(href='http://fonts.googleapis.com/css?family=Lato', rel='stylesheet')
     link(href='./styles/main.css', rel='stylesheet')
     link(href='./public/favicon.ico', rel='shortcut icon')
     //-Vizabi stylesheet
-    link(href='http://static.gapminderdev.org/vizabi/release/v0.6.0/dist/vizabi.css', rel='stylesheet')
-  body(ng-controller='gapminderWorldCtrl', ng-class='{"loading" : loading}', class="{{ bodyClass }}", ng-cloak)
+    link(href='http://static.gapminderdev.org/vizabi/release/v0.7.1/dist/vizabi.css', rel='stylesheet')
+  body(ng-controller='gapminderToolsCtrl', ng-class='{"loading" : loading}', class="{{ bodyClass }}", ng-cloak)
     include ./views/header.jade
     include ./views/content.jade
     //- include dependencies and app script
     script(src='./vendor/d3/d3.min.js')
-    script(src='http://static.gapminderdev.org/vizabi/release/v0.6.0/dist/vizabi.min.js')
+    script(src='http://static.gapminderdev.org/vizabi/release/v0.7.1/dist/vizabi.min.js')
     script(src='./vendor/angular/angular.min.js')
+    script(src='./vendor/angular-ui-router/release/angular-ui-router.min.js')
     script(src='./scripts/app.js')

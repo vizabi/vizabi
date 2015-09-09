@@ -1,6 +1,6 @@
 //service wraps single endpoint
 
-angular.module('gapminderWorld')
+angular.module('gapminderTools')
 .factory("vizabiFactory", ['$rootScope', '$timeout', function($rootScope, $timeout) {
 
   return {
@@ -29,6 +29,7 @@ angular.module('gapminderWorld')
         options.state = state.state;
       }
 
+      Vizabi._globals.baseUrl = "http://localhost:9000";
 
       return Vizabi(tool, placeholder, options);
     }

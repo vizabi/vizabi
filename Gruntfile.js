@@ -9,7 +9,7 @@ module.exports = function (grunt) {
     connect: {
       dev: {
         options: {
-          port: 9000,
+          port: 9001,
           base: 'dist',
           hostname: 'localhost',
           open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/'
@@ -20,7 +20,7 @@ module.exports = function (grunt) {
     copy: {
       vendor: {
           cwd: 'bower_components/',
-          src: ['angular/angular.min.js', 'd3/d3.min.js'],
+          src: ['angular/angular.min.js', 'angular-ui-router/release/angular-ui-router.min.js', 'd3/d3.min.js'],
           dest: 'dist/vendor/',
           expand: true
       },

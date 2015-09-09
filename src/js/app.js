@@ -1,6 +1,10 @@
+//changing Vizabi
+
+Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
+
 //main app module
 
-angular.module('gapminderWorld', []);
+angular.module('gapminderTools', []);
 
 //TODO: remove global
 
@@ -10,11 +14,4 @@ function forceResizeEvt() {
     event.initEvent("resize", true, true);
     event.eventName = "resize";
     window.dispatchEvent(event);
-}
-
-function dataToUrl(data) {
-    var state = {};
-    state.id =  data.language.id;
-    state.state = data.state;
-    location.hash = JSON.stringify(state);
 }

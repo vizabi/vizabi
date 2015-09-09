@@ -6,6 +6,8 @@
   display: flex;
   x-justify-content: space-around;
   x-align-items: stretch;
+  flex-direction: row-reverse; 
+  -webkit-flex-direction: row-reverse;
 
   @include breakpoint(small) {
     display: block;
@@ -17,7 +19,7 @@
   padding: 15px;
 }
 
-.column.left, .column.right {
+.column.left {
   flex: 0 0 $size-column;
   @include breakpoint(medium) {
     flex: 0 0 $size-column - 85px;
@@ -28,7 +30,7 @@
   @include fadeInLeft(0.5s, 0s);
 }
 
-.column.center {
+.column.main {
     @include box-sizing(border-box);
     width: 100%;
     background: white;
