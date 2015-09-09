@@ -83,14 +83,13 @@
 
       var paletteDefault = this.model.color.getPalettes()[whichPalette];
 
+      this.listColorsEl.selectAll(".vzb-cl-option").remove();
 
       var colors = this.listColorsEl
         .selectAll(".vzb-cl-option")
         .data(utils.keys(palette), function (d) {
           return d
         });
-
-      colors.exit().remove();
 
       colors.enter().append("div").attr("class", "vzb-cl-option")
         .each(function () {
