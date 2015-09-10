@@ -555,29 +555,32 @@
             var fontHeight = sample[0][0].getBBox().height;
             d3.select(sample[0][0].parentNode).remove();
             var formatter = _this.model.marker.axis_y.tickFormatter;
-
+            
+            var maxFontHeight = this.height / (this.selectList.data().length + 3);
+            if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
             this.selectList
                 .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')';})
                 .each(function(d, i){
 
-
+                    var view = d3.select(this);
                     var name = d.key? _this.translator('region/' + d.key) : _this.values.label[d.KEY()];
                     var number = _this.values.axis_y[d.KEY()];
 
                     var string = name + ': ' + formatter(number) + (i===0?' people':'');
 
-                    d3.select(this).select('circle')
+                    view.select('circle')
                         .attr('r', fontHeight/2.5)
                         .attr('cx', fontHeight/2)
                         .attr('cy', fontHeight/1.5)
                         .style('fill', _this.cScale(_this.values.color[d.KEY()]));
 
 
-                    d3.select(this).selectAll('text')
+                    view.selectAll('text')
                         .attr('x', fontHeight)
                         .attr('y', fontHeight)
-                        .text(string);
+                        .text(string)
+                        .style('font-size', fontHeight === maxFontHeight? fontHeight : null);
             });
         },
 
