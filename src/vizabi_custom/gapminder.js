@@ -21,6 +21,11 @@
         strings: {}
     };
 
+    //TODO: remove hardcoded path from source code
+    Vizabi._globals.gapminder_paths = {
+        baseUrl: "http://static.gapminderdev.org/vizabi/release/v0.7.1/preview/"
+    };
+
     BarChart.define('default_options', {
         state: {
             time: {
@@ -156,7 +161,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: "local_data/waffles/mountains-pop-gdp-gini-1800-2030.csv"
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/mountains-pop-gdp-gini-1800-2030.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
@@ -312,7 +317,7 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: "local_data/waffles/basic-indicators.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
             //path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
@@ -382,7 +387,7 @@
         },
         data: {
             reader: "csv-file",
-            path: "local_data/waffles/{{geo}}.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/{{geo}}.csv",
         },
         language: language,
         ui: {
@@ -393,11 +398,6 @@
     //Waffle Server Reader custom path
     var WaffleReader = this.Vizabi.Reader.get('waffle-server');
     WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
-
-    //TODO: remove hardcoded path from source code
-    Vizabi._globals.gapminder_paths = {
-        baseUrl: "http://static.gapminderdev.org/vizabi/release/v0.7.1/preview/"
-    };
 
     //preloading mountain chart precomputed shapes
     MountainChartComponent.define("preload", function(done) {
