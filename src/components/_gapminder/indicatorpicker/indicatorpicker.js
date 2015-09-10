@@ -29,7 +29,8 @@
             "_default": {
                 "use": "value",
                 "unit": "",
-                "scales": ["ordinal"]
+                "scales": ["ordinal"],
+                "sourceLink": ""
             }
         };
     }
