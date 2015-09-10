@@ -44,77 +44,92 @@
         "geo.region": {
             "use": "property",
             "unit": "",
-            "scales": ["ordinal"]
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo": {
             "use": "property",
             "unit": "",
-            "scales": ["ordinal"]
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "time": {
             "use": "indicator",
             "unit": "time",
-            "scales": ["time"]
+            "scales": ["time"],
+            "sourceLink": ""
         },
         "childSurv": {
             "use": "indicator",
             "unit": "childSurv",
-            "scales": ["linear", "log"]
+            "scales": ["linear", "log"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "gdp_per_cap": {
             "use": "indicator",
             "unit": "gdp_per_cap",
-            "scales": ["log", "linear"]
+            "scales": ["log", "linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "pop": {
             "use": "indicator",
             "unit": "",
-            "scales": ["linear", "genericLog"]
+            "scales": ["linear", "genericLog"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
         },
         "lex": {
             "use": "indicator",
             "unit": "lex",
-            "scales": ["linear"]
+            "scales": ["linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "geo.name": {
             "use": "property",
             "unit": "",
-            "scales": ["ordinal"]
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "u5mr_not": {
             "use": "indicator",
             "unit": "u5mr",
-            "scales": ["linear", "log"]
+            "scales": ["linear", "log"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "u5mr": {
             "use": "indicator",
             "unit": "u5mr",
-            "scales": ["linear", "log"]
+            "scales": ["linear", "log"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "size": {
             "use": "property",
             "unit": "",
-            "scales": ["ordinal"]
+            "scales": ["ordinal"],
+            "sourceLink": ""
         },
         "gini": {
             "use": "indicator",
             "unit": "gini",
-            "scales": ["linear"]
+            "scales": ["linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1Iztdl7Ddaz77K3HheGpkvQ1o_ui_L1s-sze_ZpTM0F0/pub?gid=1"
         },
         "gdppc_pday": {
             "use": "indicator",
             "unit": "gdppc_pday",
-            "scales": ["log", "linear"]
+            "scales": ["log", "linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "inc_pday": {
             "use": "indicator",
             "unit": "inc_pday",
-            "scales": ["log", "linear"]
+            "scales": ["log", "linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "_default": {
             "use": "value",
             "unit": "",
-            "scales": ["ordinal"]
+            "scales": ["ordinal"],
+            "sourceLink": ""
         }
     }
 }
