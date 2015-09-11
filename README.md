@@ -18,8 +18,7 @@ The main features are:
 
 You can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.
 
-See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/)
-And DOCS here: [Vizabi Examples](http://vizabi.org)
+See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/), and DOCS here: [Vizabi Docs](http://vizabi.org)
 
 ## Setup & Quickstart
 
