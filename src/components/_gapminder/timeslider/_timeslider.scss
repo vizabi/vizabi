@@ -14,6 +14,7 @@ $vzb-ts-value-width: 40px;
     bottom: 0%;
     opacity: 0.3; 
     font-style: italic;
+    pointer-events: none;
 };
   .vzb-ts-btns {
     @include position(absolute, 0px null 0px 5px);
