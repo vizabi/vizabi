@@ -215,15 +215,18 @@
             if (what == INDICATOR) {
                 obj.use = availOpts[value].use;
                 obj.unit = availOpts[value].unit;
-                if (mdl.getType() == 'axis') {
-                    obj.min = null;
-                    obj.max = null;
-                }
 
                 if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
                     obj.scaleType = availOpts[value].scales[0];
                 }
             }
+            
+             if (what == INDICATOR || what == SCALETYPE) {
+                if (mdl.getType() == 'axis') {
+                    obj.min = null;
+                    obj.max = null;
+                }
+             }
 
             mdl.set(obj);
         }

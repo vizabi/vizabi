@@ -127,10 +127,13 @@
 
       if (this.min!=null && this.max!=null && scaleType !== 'ordinal') {
         domain = [this.min, this.max];
-        this.min = domain[0];
-        this.max = domain[1];
       }
-
+        
+      if (scaleType !== 'ordinal') {
+        this.min = domain[0];
+        this.max = domain[1]; 
+      }
+        
       this.scale = d3.scale[scaleType]().domain(domain);
     }
   });

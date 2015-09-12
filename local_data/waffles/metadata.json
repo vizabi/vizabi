@@ -80,7 +80,7 @@
             "allowCharts": ["*"],
             "use": "indicator",
             "unit": "",
-            "scales": ["linear", "genericLog"],
+            "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
         },
         "lex": {
