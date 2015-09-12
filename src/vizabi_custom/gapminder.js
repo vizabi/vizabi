@@ -22,9 +22,12 @@
         strings: {}
     };
 
+    var locationArray = window.location.href.split("/");
+    var baseUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
+    
     //TODO: remove hardcoded path from source code
     Vizabi._globals.gapminder_paths = {
-        baseUrl: window.location.origin + "/preview/"
+        baseUrl: baseUrl + "/preview/"
     };
 
     BarChart.define('default_options', {
