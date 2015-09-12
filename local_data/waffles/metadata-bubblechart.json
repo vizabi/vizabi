@@ -42,105 +42,84 @@
 
     "indicators": {
         "time": {
-            "allowCharts": ["*"],
             "use": "indicator",
             "unit": "time",
             "scales": ["time"],
             "sourceLink": ""
         },
         "geo": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.name": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "geo.region": {
-            "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "size": {
-            "allowCharts": ["bubblechart"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""
         },
         "pop": {
-            "allowCharts": ["*"],
             "use": "indicator",
             "unit": "",
             "scales": ["linear", "genericLog"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
         },
-        "lex": {
-            "allowCharts": ["linechart", "barchart"],
-            "use": "indicator",
-            "unit": "lex",
-            "scales": ["linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
-        },
         "gini": {
-            "allowCharts": ["mountainchart"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1Iztdl7Ddaz77K3HheGpkvQ1o_ui_L1s-sze_ZpTM0F0/pub?gid=1"
         },
         "gdp_per_cap": {
-            "allowCharts": ["*"],
             "use": "indicator",
             "unit": "gdp_per_cap",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "gdppc_pday": {
-            "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "gdppc_pday",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "inc_pday": {
-            "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "inc_pday",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "u5mr_not": {
-            "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "u5mr": {
-            "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "childSurv": {
-            "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "childSurv",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "_default": {
-            "allowCharts": ["*"],
             "use": "value",
             "unit": "",
             "scales": ["ordinal"],

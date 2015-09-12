@@ -6,6 +6,7 @@
     'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
 
     //DEFAULT OPTIONS
     var BarChart = this.Vizabi.Tool.get('BarChart');
@@ -23,7 +24,7 @@
 
     //TODO: remove hardcoded path from source code
     Vizabi._globals.gapminder_paths = {
-        baseUrl: "http://static.gapminderdev.org/vizabi/release/v0.7.1/preview/"
+        baseUrl: window.location.origin + "/preview/"
     };
 
     BarChart.define('default_options', {
@@ -255,9 +256,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2014",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
@@ -285,10 +286,10 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
-                    scaleType: "linear",
+                    which: "u5mr",
+                    scaleType: "log",
                     allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "lex"
+                    unit: "u5mr"
                 },
                 axis_x: {
                     use: "indicator",
@@ -317,8 +318,8 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
-            //path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
+            //path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
@@ -413,15 +414,28 @@
     //preloading metadata for all charts
     Vizabi.Tool.define("preload", function(promise) {
 
+        var chartName = utils.arrayLast(window.location.pathname.split("/")).split(".htm")[0];
+    
         var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
-
+        
+        
         //TODO: concurrent
         //load language first
         this.preloadLanguage().then(function() {
             //then metadata
             d3.json(metadata_path, function(metadata) {
-                globals.metadata = metadata;
+                globals.metadata = {};
+                globals.metadata.color = metadata.color;
+                globals.metadata.indicators = {};
+                
+                //TODO: this is a hack that helps to hide indicators which are not present in data
+                utils.values(metadata.indicators).forEach(function(d,i){
+                    if(d.allowCharts.indexOf(chartName)!=-1 || d.allowCharts.indexOf("*")!=-1){
+                        globals.metadata.indicators[utils.keys(metadata.indicators)[i]] = d;
+                    }
+                })
+
                 promise.resolve();
             });
         });

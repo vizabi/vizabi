@@ -738,6 +738,15 @@
     },
 
     /*
+     * Returns the last value of array
+     * @param {Array} arr
+     */
+    arrayLast: function(arr) {
+        if(!arr.length) return null;
+        return arr[arr.length-1];
+    },
+      
+    /*
      * Defers a function
      * @param {Function} func
      */
