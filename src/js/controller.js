@@ -51,7 +51,7 @@ angular.module('gapminderTools')
       },
       data: {
         reader: 'csv-file',
-        path: 'http://static.gapminderdev.org/vizabi/develop/preview/local_data/waffles/basic-indicators.csv'
+        path: 'http://static.gapminderdev.org/vizabi/develop/preview/local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv'
       },
       ui: {
         buttons: ['moreoptions', 'find', 'axes', 'size', 'colors', 'fullscreen', 'trails', 'lock']
