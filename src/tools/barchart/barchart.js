@@ -61,12 +61,21 @@
 
       this.xAxis = d3.svg.axisSmart();
       this.yAxis = d3.svg.axisSmart();
+        
+        
+      this.pinetree = d3.pinetreeMenu();
     },
 
     /**
      * DOM is ready
      */
     readyOnce: function () {
+        
+      this.pinetreeContainer = d3.select(this.element.parentNode)
+        .append("div")
+        .attr("class", "vzb-pinetree-menu")
+        .style("width", "100%")
+        .style("height", "100%");
 
       this.element = d3.select(this.element);
 
@@ -124,6 +133,11 @@
 
       this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
       this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+        
+       this.pinetreeContainer.call(
+           this.pinetree.data(Vizabi._globals.metadata.indicators)
+       );
+      
     },
 
     /**
