@@ -59,6 +59,8 @@
                     use: "indicator",
                     which: "lex",
                     scaleType: "linear",
+                    min: 0,
+                    max: 90,
                     allow: {scales: ["linear", "log"]}
                 },
                 axis_x: {
@@ -68,14 +70,8 @@
                 },
                 color: {
                     use: "property",
-                    which: "geo",
-                    palette: {
-                        "asi": "#FF5872",
-                        "eur": "#FFE700",
-                        "ame": "#7FEB00",
-                        "afr": "#00D5E9",
-                        "_default": "#ffb600"
-                    }
+                    which: "geo.region",
+                    scaleType: "ordinal"
                 }
             }
         },
