@@ -4,6 +4,10 @@
   @include prefixer(box-sizing, $box, webkit moz spec);
 }
 
+@mixin border-radius($radius) {
+  @include prefixer(border-radius, $radius, webkit moz spec);
+}
+
 @mixin breakpoint($media) {
   @if $media == small {
     @media only screen and (max-width: $small-screen) {

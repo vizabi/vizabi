@@ -1,6 +1,2 @@
 .header
   h1.header-title GAPMINDER TOOLS
-  div.menu
-    ul.menu-primary
-      li.menu-item(ng-repeat="(key, tool) in tools")
-        a(ng-class="{active: activeTool == key}", ng-href="{{key}}") {{tool.title}}

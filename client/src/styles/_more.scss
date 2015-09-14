@@ -87,3 +87,52 @@
     font-style: italic;
   }
 }
+
+.menu {
+    display: block;
+    margin: 0 auto;
+    font-size: 1em;
+    text-align: left;
+    text-transform: uppercase;
+    margin-left: 200px;
+
+    @include breakpoint(not-large) {
+      display: none;
+    }
+
+}
+
+.menu-primary {
+    list-style: none;
+    position: relative;
+    z-index: 100;
+    background: white;
+    padding: 0;
+    margin: 0;
+    & > .menu-item {
+        display: block;
+        color: #808285;
+        position: relative;
+        & > a {
+            @include transition(padding 0.1s);
+            cursor: pointer;
+            color: #808285;
+            font-size: 14px;
+            font-weight: 300;
+            padding: 15px 20px;
+            margin: 1px 0 0 0;
+            display: block;
+            text-decoration: none;
+            @include border-radius(3px);
+
+            &:hover:not(.active) {
+              padding: 15px 17px 15px 23px;
+            }
+
+            &.active {
+              font-family: 'Bariol Bold';
+              background-color: #f2f2f2;
+            }
+        }
+    }
+}
