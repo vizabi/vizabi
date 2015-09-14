@@ -1,0 +1,66 @@
+//import bourbon
+@import '../../../bower_components/bourbon/app/assets/stylesheets/bourbon';
+@import 'fonts';
+
+$color-primary: #FFCA34;
+$color-grey: #999999;
+$color-grey-light: #ECEBE9;
+
+$body-min-width: 250px;
+$header-height: 50px;
+
+$small-screen: 700px;
+$large-screen: 1000px;
+
+$size-column: 230px;
+
+html, body {
+  height: 100%;
+}
+body {
+  @include position(absolute, 0 0 0 0);
+  background-color: white;
+  font-family: 'Bariol Regular', Arial, sans-serif;
+  min-width: $body-min-width;
+  padding: 0;
+  margin: 0;
+}
+
+.wrapper {
+  display: block;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.wrapper-error {
+  padding: 50px;
+  text-align: center;
+  .header-title {
+    display: block;
+    float: none;
+    margin: 0 auto;
+  }
+}
+
+.hidden,
+[ng\:cloak],
+[ng-cloak],
+[data-ng-cloak],
+[x-ng-cloak],
+.ng-cloak,
+.x-ng-cloak {
+  display: none !important;
+}
+
+.invisible {
+	visibility: hidden;
+}
+
+@import 'mixins';
+@import 'common';
+@import 'header';
+@import 'loader';
+@import 'content';
+@import 'more';

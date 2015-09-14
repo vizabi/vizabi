@@ -1,0 +1,52 @@
+.more
+  .related
+    h2.heading-2 Related
+    ul.related-items
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+      li.related-item
+        a
+          div.related-item-thumbnail
+            img(src='http://cms.gapminder.org/files-api/p3media/file/image?id=136&preset=160x96&title=media&extension=.jpg')
+          div.related-item-info
+            span.title How Reliable is the World Population Forecast?
+            span.subtitle Short answer —  Very reliable
+  .about
+    h2.heading-2 Tools
+    div.menu
+    ul.menu-primary
+      li.menu-item(ng-repeat="(key, tool) in tools")
+        a(ng-class="{active: activeTool == key}", ng-href="{{key}}") {{tool.title}}

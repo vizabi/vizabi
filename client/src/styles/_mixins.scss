@@ -1,0 +1,75 @@
+//complementary mixins
+
+@mixin box-sizing($box) {
+  @include prefixer(box-sizing, $box, webkit moz spec);
+}
+
+@mixin border-radius($radius) {
+  @include prefixer(border-radius, $radius, webkit moz spec);
+}
+
+@mixin breakpoint($media) {
+  @if $media == small {
+    @media only screen and (max-width: $small-screen) {
+    	@content;
+    }
+  }
+  @if $media == medium {
+    @media only screen and (min-width: $small-screen + 1) and (max-width: $large-screen - 1) {
+      @content;
+    }
+  }
+  @if $media == large{
+    @media only screen and (min-width: $large-screen) {
+    	@content;
+    }
+  }
+  @if $media == not-large {
+    @media only screen and (max-width: $large-screen - 1) {
+      @content;
+    }
+  }
+  @if $media == not-small {
+    @media only screen and (min-width: $small-screen + 1) {
+      @content;
+    }
+  }
+
+}
+
+@include keyframes(rotate-continuous) {
+  0% {
+    @include transform(rotate(0deg));
+  }
+  100% {
+    @include transform(rotate(360deg));
+  }
+}
+
+@include keyframes(fadeInDown) {
+  0% {
+    opacity: 0;
+    @include transform(translateY(-20px) translateZ(0));
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@include keyframes(fadeInLeft) {
+  0% {
+    opacity: 0;
+    @include transform(translateX(-20px) translateZ(0));
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@mixin fadeInDown($duration: 1s, $delay: 0s, $fill-mode: forwards) {
+  @include animation(fadeInDown $duration $delay $fill-mode);
+}
+
+@mixin fadeInLeft($duration: 1s, $delay: 0s, $fill-mode: forwards) {
+  @include animation(fadeInLeft $duration $delay $fill-mode);
+}

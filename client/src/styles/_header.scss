@@ -1,0 +1,23 @@
+//styles for the page header (title and loading spinner)
+.header {
+    @include box-sizing(border-box);
+    border-bottom: 2px solid $color-primary;
+    min-width: $body-min-width;
+    padding: 0 15px;
+    height: 50px;
+}
+
+.header-title {
+    text-indent: -9999px;
+    overflow: hidden;
+    background-image: url(../public/logo.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 170px;
+    background-size: 100%;
+    color: white;
+    float: left;
+    font-size: 17px;
+    line-height: $header-height;
+    margin: 0;
+}

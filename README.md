@@ -3,26 +3,18 @@
 
 Demo: [http://static.gapminderdev.org/tools/](http://static.gapminderdev.org/tools/)
 
-The following dependencies must be preinstalled:
+## Requirements
 
-- [Node.js](https://nodejs.org/)
+- [Node and npm](http://nodejs.org)
 - [Ruby](http://ruby-lang.com/)
 - [Sass](http://sass-lang.com/) : `gem install sass`
 - [Grunt CLI](http://gruntjs.com/using-the-cli) : `npm install -g grunt-cli`
 - [Bower](http://bower.io/) : `npm install -g bower`
 
-In order to install and serve the application, clone the project, go to the project's folder and **run the following**:
+## Installation
 
-```sh
-npm install
-bower install
-grunt serve
-```
-
-The distribution-ready files will be available in `client/dist/`.
-
-In order to just build the project without serving, run:
-
-```sh
-grunt build
-```
+1. Clone the repository: `git clone git@github.com:Gapminder/gapminder-tools-vizabi.git`
+2. Install the application: `npm install & bower install`
+3. Build the project: `grunt build`
+3. Start the server: `node server/server.js`
+4. View in browser at `http://localhost:8080`

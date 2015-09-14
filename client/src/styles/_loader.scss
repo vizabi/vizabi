@@ -1,0 +1,31 @@
+.loader-wrapper {
+  @include box-sizing(border-box);
+  @include position(fixed, $header-height 0 0 0);
+  background-color: white;
+  padding: 10px;
+  text-align: center;
+  z-index: 111111;
+}
+
+.loader {
+  @include animation-duration(0.75s);
+  @include animation-iteration-count(infinite);
+  @include animation-name(rotate-continuous);
+  @include animation-timing-function(linear);
+  @include size(25px);
+  border: 5px solid #ccc;
+  border-right-color: transparent;
+  border-radius: 50%;
+  display: none;
+  float: right;
+  margin: auto;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+//only display loader is app is loading
+.loading .loader {
+  display: block;
+}

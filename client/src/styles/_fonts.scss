@@ -1,0 +1,97 @@
+$fonts_dir: "../public/fonts/";
+
+@font-face {
+    font-family: 'Bariol Thin';
+    src: url($fonts_dir + 'bariol_thin-webfont.eot');
+    src: url($fonts_dir + 'bariol_thin-webfont.eot?#iefix') format('embedded-opentype'),
+         url($fonts_dir + 'bariol_thin-webfont.woff2') format('woff2'),
+         url($fonts_dir + 'bariol_thin-webfont.woff') format('woff'),
+         url($fonts_dir + 'bariol_thin-webfont.ttf') format('truetype'),
+         url($fonts_dir + 'bariol_thin-webfont.svg#bariolthin') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Thin Italic';
+    src: url($fonts_dir + 'bariol_thin_italic-webfont.eot');
+    src: url($fonts_dir + 'bariol_thin_italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url($fonts_dir + 'bariol_thin_italic-webfont.woff2') format('woff2'),
+         url($fonts_dir + 'bariol_thin_italic-webfont.woff') format('woff'),
+         url($fonts_dir + 'bariol_thin_italic-webfont.ttf') format('truetype'),
+         url($fonts_dir + 'bariol_thin_italic-webfont.svg#bariolthin_italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Light';
+    src: url($fonts_dir + 'bariol_light-webfont.eot');
+    src: url($fonts_dir + 'bariol_light-webfont.eot?#iefix') format('embedded-opentype'),
+    url($fonts_dir + 'bariol_light-webfont.woff2') format('woff2'),
+    url($fonts_dir + 'bariol_light-webfont.woff') format('woff'),
+    url($fonts_dir + 'bariol_light-webfont.ttf') format('truetype'),
+    url($fonts_dir + 'bariol_light-webfont.svg#bariol_lightlight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Light Italic';
+    src: url($fonts_dir + 'bariol_light_italic-webfont.eot');
+    src: url($fonts_dir + 'bariol_light_italic-webfont.eot?#iefix') format('embedded-opentype'),
+    url($fonts_dir + 'bariol_light_italic-webfont.woff2') format('woff2'),
+    url($fonts_dir + 'bariol_light_italic-webfont.woff') format('woff'),
+    url($fonts_dir + 'bariol_light_italic-webfont.ttf') format('truetype'),
+    url($fonts_dir + 'bariol_light_italic-webfont.svg#bariollight_italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Regular';
+    src: url($fonts_dir + 'bariol_regular-webfont.eot');
+    src: url($fonts_dir + 'bariol_regular-webfont.eot?#iefix') format('embedded-opentype'),
+    url($fonts_dir + 'bariol_regular-webfont.woff2') format('woff2'),
+    url($fonts_dir + 'bariol_regular-webfont.woff') format('woff'),
+    url($fonts_dir + 'bariol_regular-webfont.ttf') format('truetype'),
+    url($fonts_dir + 'bariol_regular-webfont.svg#bariol_regularregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Regular Italic';
+    src: url($fonts_dir + 'bariol_regular_italic-webfont.eot');
+    src: url($fonts_dir + 'bariol_regular_italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url($fonts_dir + 'bariol_regular_italic-webfont.woff2') format('woff2'),
+         url($fonts_dir + 'bariol_regular_italic-webfont.woff') format('woff'),
+         url($fonts_dir + 'bariol_regular_italic-webfont.ttf') format('truetype'),
+         url($fonts_dir + 'bariol_regular_italic-webfont.svg#bariolregular_italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Bold';
+    src: url($fonts_dir + 'bariol_bold-webfont.eot');
+    src: url($fonts_dir + 'bariol_bold-webfont.eot?#iefix') format('embedded-opentype'),
+    url($fonts_dir + 'bariol_bold-webfont.woff2') format('woff2'),
+    url($fonts_dir + 'bariol_bold-webfont.woff') format('woff'),
+    url($fonts_dir + 'bariol_bold-webfont.ttf') format('truetype'),
+    url($fonts_dir + 'bariol_bold-webfont.svg#bariol_boldbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Bariol Bold Italic';
+    src: url($fonts_dir + 'bariol_bold_italic-webfont.eot');
+    src: url($fonts_dir + 'bariol_bold_italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url($fonts_dir + 'bariol_bold_italic-webfont.woff2') format('woff2'),
+         url($fonts_dir + 'bariol_bold_italic-webfont.woff') format('woff'),
+         url($fonts_dir + 'bariol_bold_italic-webfont.ttf') format('truetype'),
+         url($fonts_dir + 'bariol_bold_italic-webfont.svg#bariol_boldbold_italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
