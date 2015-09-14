@@ -36,3 +36,26 @@ angular.module('gapminderTools')
   };
 
 }]);
+
+
+angular.module('gapminderTools')
+.factory("vizabiItems", ['$http', function($http) {
+
+  return {
+    /**
+     * Get All Items
+     */
+    getItems: function() {
+      //return the promise directly.
+      return $http.get('/api/item')
+                  .then(function(result) {
+                      var items = {}, i, s;
+                      for(i=0, s=result.data.length; i<s; i++) {
+                        items[result.data[i].slug] = result.data[i];
+                      }
+                      return items;
+                  });
+    }
+  };
+
+}]);
