@@ -353,16 +353,18 @@
         var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
         var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
         var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-        if(this._available_buttons[id].ispin){
+        if (this._available_buttons[id].ispin) {
          // button.textContent = '';
           btn.classed('pinned', false);
           this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
           this._available_buttons[id].ispin = false;
+          this._active_comp.isPin = false;
         } else {
         //  button.textContent = '';
           btn.classed('pinned', true);
           dialog.classed('pinned', true);
           this._available_buttons[id].ispin = true;
+          this._active_comp.isPin = true;
         }
       },
 
