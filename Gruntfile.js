@@ -3,31 +3,20 @@ module.exports = function (grunt) {
   grunt.initConfig({
 
     clean: {
-      dist: ['dist']
-    },
-
-    connect: {
-      dev: {
-        options: {
-          port: 9001,
-          base: 'dist',
-          hostname: 'localhost',
-          open: 'http://<%= connect.dev.options.hostname %>:<%= connect.dev.options.port %>/'
-        }
-      }
+      dist: ['client/dist']
     },
 
     copy: {
       vendor: {
           cwd: 'bower_components/',
           src: ['angular/angular.min.js', 'angular-ui-router/release/angular-ui-router.min.js', 'd3/d3.min.js'],
-          dest: 'dist/vendor/',
+          dest: 'client/dist/vendor/',
           expand: true
       },
       images: {
-          cwd: 'src/',
+          cwd: 'client/src/',
           src: ['public/**/*'],
-          dest: 'dist/',
+          dest: 'client/dist/',
           expand: true
       }
     },
@@ -40,23 +29,14 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          "dist/index.html": ["src/index.jade"]
+          "client/dist/index.html": ["client/src/index.jade"]
         }
       }
     },
 
-    //unit tests
-    jasmine: {
-      src: 'dist/scripts/app.js',
-      options: {
-          specs: 'test/unit/*.js',
-          vendor: ['dist/vendor/angular.min.js', 'bower_components/angular-mocks/angular-mocks.js']
-      }
-    },
-    
     //code style
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'client/src/**/*.js'],
       options: {
           reporter: require('jshint-stylish')
       }
@@ -65,7 +45,7 @@ module.exports = function (grunt) {
     sass: {
         dist: {
             files: {
-                'dist/styles/main.css': 'src/styles/main.scss'
+                'client/dist/styles/main.css': 'client/src/styles/main.scss'
             }
         }
     },
@@ -77,7 +57,7 @@ module.exports = function (grunt) {
           mangle: true
         },
         files: {
-          'dist/scripts/app.js': ['src/js/app.js', 'src/**/*.js']
+          'client/dist/scripts/app.js': ['client/src/js/app.js', 'client/src/**/*.js']
         }
       }
     },
@@ -85,19 +65,15 @@ module.exports = function (grunt) {
     watch: {
       scripts: {
         files: ['<%= jshint.files %>'],
-        tasks: ['jshint', 'uglify'/*, 'jasmine'*/]
+        tasks: ['jshint', 'uglify']
       },
       jade: {
-        files: ['src/**/*.jade'],
+        files: ['client/src/**/*.jade'],
         tasks: ['jade']
       },
       styles: {
-        files: ['src/styles/**/*.scss'],
+        files: ['client/src/styles/**/*.scss'],
         tasks: ['sass']
-      },
-      tests: {
-        files: ['test/unit/**/*.js'],
-        tasks: ['jasmine']
       }
     }
 
@@ -107,9 +83,7 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
   //main grunt tasks
-  grunt.registerTask('test', ['jasmine']);
-  grunt.registerTask('build', ['clean', 'copy', 'jade', 'uglify', 'sass'/*, 'test'*/]);
-  grunt.registerTask('serve', ['jshint', 'build', 'connect', 'watch']);
+  grunt.registerTask('build', ['clean', 'copy', 'jade', 'uglify', 'sass']);
   grunt.registerTask('default', ['build']);
 
 };

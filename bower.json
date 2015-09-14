@@ -1,5 +1,5 @@
 {
-  "name": "gapminder-tools",
+  "name": "gapmindertools",
   "version": "0.0.1",
   "authors": [
     "Arthur Camara <arthurcamara@gmail.com>"
@@ -10,13 +10,11 @@
     "node_modules",
     "bower_components"
   ],
-  "dependencies": {
-    "angular": "~1.4.3"
-  },
   "devDependencies": {
+    "angular": "~1.4.3",
     "bourbon": "~4.2.1",
     "angular-mocks": "~1.4.3",
-    "angular-ui-router": "~0.2.15"
-    "d3": "~3.5.6",
+    "angular-ui-router": "~0.2.15",
+    "d3": "~3.5.6"
   }
 }
