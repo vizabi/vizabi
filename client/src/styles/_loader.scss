@@ -1,6 +1,6 @@
 .loader-wrapper {
   @include box-sizing(border-box);
-  @include position(absolute, $header-height 0 0 0);
+  @include position(fixed, $header-height 0 0 0);
   background-color: white;
   padding: 10px;
   text-align: center;

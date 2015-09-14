@@ -10,8 +10,10 @@ html(lang="en", ng-app='gapminderTools')
     //-Vizabi stylesheet
     link(href='http://static.gapminderdev.org/vizabi/develop/dist/vizabi.css', rel='stylesheet')
   body(ng-controller='gapminderToolsCtrl', ng-class='{"loading" : loading}', class="{{ bodyClass }}", ng-cloak)
-    include ./views/header.jade
-    include ./views/content.jade
+    .wrapper
+        include ./views/header.jade
+        include ./views/content.jade
+        include ./views/more.jade
     //- include dependencies and app script
     script(src='./vendor/d3/d3.min.js')
     script(src='http://static.gapminderdev.org/vizabi/develop/dist/vizabi.min.js')

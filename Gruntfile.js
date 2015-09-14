@@ -84,6 +84,7 @@ module.exports = function (grunt) {
 
   //main grunt tasks
   grunt.registerTask('build', ['clean', 'copy', 'jade', 'uglify', 'sass']);
+  grunt.registerTask('dev', ['build', 'watch']);
   grunt.registerTask('default', ['build']);
 
 };

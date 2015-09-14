@@ -9,13 +9,13 @@ angular.module('gapminderTools')
   $scope.started = false;
   $scope.loadingError = false;
   $scope.tools = {
-    "wealth-and-health": {
+    "bubbles": {
       title: "Wealth & Health of Nations",
       render: showBubbleChart,
       description: "This graph shows how long people live and how much money they earn. Click the play button to see how countries have developed since 1800.",
       category: "Tools"
     },
-    "world-income": {
+    "mountain": {
       title: "World Income Distribution",
       render: showMountainChart,
       description: "This graph shows the amount of people in the world across each income level",
@@ -23,7 +23,7 @@ angular.module('gapminderTools')
     }
   };
 
-  $scope.activeTool = "wealth-and-health";
+  $scope.activeTool = "bubbles";
 
   $scope.changeChart = function(chart) {
     $scope.activeTool = chart;

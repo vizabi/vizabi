@@ -13,6 +13,9 @@ $large-screen: 1000px;
 
 $size-column: 230px;
 
+html, body {
+  height: 100%;
+}
 body {
   @include position(absolute, 0 0 0 0);
   background-color: white;
@@ -20,8 +23,14 @@ body {
   min-width: $body-min-width;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+}
+
+.wrapper {
+  display: block;
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .hidden,
@@ -39,7 +48,8 @@ body {
 }
 
 @import 'mixins';
+@import 'common';
 @import 'header';
 @import 'loader';
 @import 'content';
-@import 'sidebar';
+@import 'more';
