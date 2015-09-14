@@ -30,7 +30,6 @@
 
       values = utils.extend({
         use: "value",
-        unit: "",
         palette: null,
         which: undefined
       }, values);
