@@ -4,7 +4,26 @@ Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi
 
 //main app module
 
-angular.module('gapminderTools', []);
+angular.module('gapminderTools', ['ngRoute']).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+
+  $routeProvider
+    .when('/:slug', {
+        controller : 'gapminderToolsCtrl'
+    })
+    .otherwise({
+      redirectTo: '/bubbles'
+    });
+  //   .when('/contact', {
+  //       templateUrl : 'partials/contact.html',
+  //       controller : mainController
+  //   });
+
+  // use the HTML5 History API
+  $locationProvider.html5Mode({
+    enabled: true,
+    requireBase: false
+  });
+}]);
 
 //TODO: remove global
 

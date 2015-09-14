@@ -9,7 +9,7 @@ module.exports = function (grunt) {
     copy: {
       vendor: {
           cwd: 'bower_components/',
-          src: ['angular/angular.min.js', 'angular-ui-router/release/angular-ui-router.min.js', 'd3/d3.min.js'],
+          src: ['angular/angular.min.js', 'angular-route/angular-route.min.js', 'd3/d3.min.js'],
           dest: 'client/dist/vendor/',
           expand: true
       },

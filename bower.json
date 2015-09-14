@@ -14,7 +14,7 @@
     "angular": "~1.4.3",
     "bourbon": "~4.2.1",
     "angular-mocks": "~1.4.3",
-    "angular-ui-router": "~0.2.15",
+    "angular-route": "~1.4.5",
     "d3": "~3.5.6"
   }
 }

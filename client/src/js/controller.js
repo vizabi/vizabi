@@ -1,7 +1,7 @@
 //main app controller
 
 angular.module('gapminderTools')
-.controller('gapminderToolsCtrl', ['$scope', 'vizabiFactory', function($scope, vizabiFactory) {
+.controller('gapminderToolsCtrl', ['$scope', '$route', '$routeParams', '$location', 'vizabiFactory', function($scope, $route, $routeParams, $location, vizabiFactory) {
 
   var placeholder = document.getElementById('vizabi-placeholder');
 
@@ -23,19 +23,21 @@ angular.module('gapminderTools')
     }
   };
 
-  $scope.activeTool = "bubbles";
+  var validTools = Object.keys($scope.tools);
 
-  $scope.changeChart = function(chart) {
-    $scope.activeTool = chart;
-  };
+  $scope.$on('$routeChangeSuccess', function() {
+    if(validTools.indexOf($routeParams.slug) === -1) {
+      //redirect
+      $location.path('/' + validTools[0]);
+      return;
+    }
 
-  $scope.$watch('activeTool', function() {
-      var tool = $scope.tools[$scope.activeTool];
-      tool.render();
+    console.log($routeParams);
 
-      $scope.title = tool.title;
-      $scope.description = tool.description;
-      $scope.category = tool.category;
+    $scope.activeTool = $routeParams.slug;
+    var tool = $scope.tools[$scope.activeTool];
+    tool.render();
+
   });
 
   function showBubbleChart() {
