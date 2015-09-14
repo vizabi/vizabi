@@ -28,7 +28,6 @@
       this._type = "size";
       values = utils.extend({
         use: "value",
-        unit: "",
         min: 0,
         max: 1,
         which: undefined

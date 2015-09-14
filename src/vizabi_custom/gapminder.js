@@ -23,11 +23,13 @@
     };
 
     var locationArray = window.location.href.split("/");
-    var baseUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
+    var localUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
+    localUrl += "/preview/";
+    var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
     
     //TODO: remove hardcoded path from source code
     Vizabi._globals.gapminder_paths = {
-        baseUrl: baseUrl + "/preview/"
+        baseUrl: localUrl
     };
 
     BarChart.define('default_options', {
@@ -131,7 +133,6 @@
                     //which: "mean",
                     which: "gdp_per_cap",
                     scaleType: 'log',
-                    unit: "gdp_per_cap_daily",
                     min: 0.11, //0
                     max: 500 //100
                 },
@@ -287,21 +288,18 @@
                     use: "indicator",
                     which: "u5mr",
                     scaleType: "log",
-                    allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "u5mr"
+                    allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 axis_x: {
                     use: "indicator",
                     which: "gdp_per_cap",
                     scaleType: "log",
-                    allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "gdp_per_cap"
+                    allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 color: {
                     use: "property",
                     which: "geo.region",
-                    scaleType: "ordinal",
-                    unit: ""
+                    scaleType: "ordinal"
                 },
                 size: {
                     use: "indicator",
@@ -309,8 +307,7 @@
                     scaleType: "linear",
                     allow: {scales: ["linear", "log"]},
                     min: 0.04,
-                    max: 0.75,
-                    unit: ""
+                    max: 0.75
                 }
             }
         },
@@ -424,17 +421,16 @@
         this.preloadLanguage().then(function() {
             //then metadata
             d3.json(metadata_path, function(metadata) {
-                globals.metadata = {};
-                globals.metadata.color = metadata.color;
-                globals.metadata.indicators = {};
+                
+                globals.metadata = metadata;
                 
                 //TODO: this is a hack that helps to hide indicators which are not present in data
-                utils.values(metadata.indicators).forEach(function(d,i){
-                    if(d.allowCharts.indexOf(chartName)!=-1 || d.allowCharts.indexOf("*")!=-1){
-                        globals.metadata.indicators[utils.keys(metadata.indicators)[i]] = d;
-                    }
-                })
-
+                globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
+                    .filter(function(f){
+                        var one = metadata.indicatorsDB[f];
+                        return one.allowCharts.indexOf(chartName)!=-1 || one.allowCharts.indexOf("*")!=-1;
+                    });
+                
                 promise.resolve();
             });
         });

@@ -38,7 +38,6 @@
       this._type = "axis";
       values = utils.extend({
         use: "value",
-        unit: "",
         which: undefined,
         min: null,
         max: null

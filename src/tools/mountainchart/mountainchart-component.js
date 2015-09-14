@@ -303,10 +303,12 @@
 
         updateUIStrings: function(){
             this.translator = this.model.language.getTFunction();
+            var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+
 
             var xTitle = this.xTitleEl.selectAll('text').data([0]);
             xTitle.enter().append('text');
-            xTitle.text(this.translator('unit/' + this.model.marker.axis_x.unit));
+            xTitle.text(this.translator('unit/' + indicatorsDB[this.model.marker.axis_x.which].unit));
 
         },
 

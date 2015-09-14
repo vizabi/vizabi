@@ -19,21 +19,7 @@
     var MODELTYPE_COLOR = "color";
 
     //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
-
-    function getAvailableOptions() {
-
-        return (globals.metadata && globals.metadata.indicators) ? globals.metadata.indicators : {
-            "_default": {
-                "use": "value",
-                "unit": "",
-                "scales": ["ordinal"],
-                "sourceLink": ""
-            }
-        };
-    }
+    if (!Vizabi._require('d3')) return;
 
     Vizabi.Component.extend('gapminder-indicatorpicker', {
 
@@ -118,30 +104,33 @@
             this.el_domain_labelMin.text(this.translator("min") + ":");
             this.el_domain_labelMax.text(this.translator("max") + ":");
 
-            var availOpts = getAvailableOptions();
+            var indicatorsDB = globals.metadata.indicatorsDB;
+            var indicatorsArray = globals.metadata.indicatorsArray;
             var pointer = "_default";
             var data = {};
 
-            var allowed = Object.keys(availOpts).filter(function(f) {
+            data[INDICATOR] = indicatorsArray
+                .filter(function(f) {
+                
+                    //keep indicator if nothing is specified in tool properties
+                    if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
+                    //keep indicator if any scale is allowed in tool properties
+                    if (_this.model.axis.allow.scales[0] == "*") return true;
 
-                var opt = availOpts[f];
+                    //check if there is an intersection between the allowed tool scale types and the ones of indicator
+                    for (var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
+                        //if (f.scales[i] == _this.model.axis.scaleType) return true;
+                        if (_this.model.axis.allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
+                    }
 
-                if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
-                if (_this.model.axis.allow.scales[0] == "*") return true;
+                    return false;
+                });
+            
 
-                for (var i = opt.scales.length - 1; i >= 0; i--) {
-                    if (opt.scales[i] == _this.model.axis.scaleType) return true;
-                    if (_this.model.axis.allow.scales.indexOf(opt.scales[i]) > -1) return true;
-                }
-
-                return false;
-            })
-
-            data[INDICATOR] = allowed;
-
+            
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
 
-            data[SCALETYPE] = availOpts[pointer].scales.filter(function(f) {
+            data[SCALETYPE] = indicatorsDB[pointer].scales.filter(function(f) {
                 if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
                 if (_this.model.axis.allow.scales[0] == "*") return true;
                 return _this.model.axis.allow.scales.indexOf(f) > -1;
@@ -203,7 +192,7 @@
 
         _setModel: function(what, value) {
 
-            var availOpts = getAvailableOptions();
+            var indicatorsDB = globals.metadata.indicatorsDB;
 
             if (what === MIN || what === MAX) value = utils.strToFloat(value);
 
@@ -213,11 +202,10 @@
             obj[what] = value;
 
             if (what == INDICATOR) {
-                obj.use = availOpts[value].use;
-                obj.unit = availOpts[value].unit;
+                obj.use = indicatorsDB[value].use;
 
-                if (availOpts[value].scales.indexOf(mdl.scaleType) == -1) {
-                    obj.scaleType = availOpts[value].scales[0];
+                if (indicatorsDB[value].scales.indexOf(mdl.scaleType) == -1) {
+                    obj.scaleType = indicatorsDB[value].scales[0];
                 }
             }
             

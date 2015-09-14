@@ -31,28 +31,24 @@ describe('* Tool: Bubble Chart', function() {
                 axis_y: {
                     use: "indicator",
                     which: "lex",
-                    scaleType: "linear",
-                    unit: "lex"
+                    scaleType: "linear"
                 },
                 axis_x: {
                     use: "indicator",
                     which: "gdp_per_cap",
-                    scaleType: "log",
-                    unit: "gdp_per_cap"
+                    scaleType: "log"
                 },
                 color: {
                     use: "property",
                     which: "geo.region",
-                    scaleType: "ordinal",
-                    unit: ""
+                    scaleType: "ordinal"
                 },
                 size: {
                     use: "indicator",
                     which: "pop",
                     scaleType: "linear",
                     min: 0,
-                    max: 0.75,
-                    unit: ""
+                    max: 0.75
                 }
             }
         },

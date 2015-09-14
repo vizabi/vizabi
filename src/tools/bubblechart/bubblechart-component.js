@@ -497,16 +497,17 @@
 
       this.translator = this.model.language.getTFunction();
       this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
+      var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
 
       var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
       var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
       var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
       var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
 
-      var unitStringY = this.translator("unit/" + this.model.marker.axis_y.unit);
-      var unitStringX = this.translator("unit/" + this.model.marker.axis_x.unit);
-      var unitStringS = this.translator("unit/" + this.model.marker.size.unit);
-      var unitStringC = this.translator("unit/" + this.model.marker.color.unit);
+      var unitStringY = this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit);
+      var unitStringX = this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit);
+      var unitStringS = this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit);
+      var unitStringC = this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit);
 
       if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
       if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
