@@ -1434,7 +1434,7 @@
 
       var OPACITY_HIGHLT = 1.0;
       var OPACITY_HIGHLT_DIM = 0.3;
-      var OPACITY_SELECT = 0.8;
+      var OPACITY_SELECT = this.model.entities.opacityRegular;
       var OPACITY_REGULAR = this.model.entities.opacityRegular;
       var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 

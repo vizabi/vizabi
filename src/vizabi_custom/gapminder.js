@@ -307,7 +307,7 @@
                     scaleType: "linear",
                     allow: {scales: ["linear", "log"]},
                     min: 0.04,
-                    max: 0.75
+                    max: 0.9
                 }
             }
         },

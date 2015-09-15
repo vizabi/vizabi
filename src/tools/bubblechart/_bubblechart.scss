@@ -17,7 +17,6 @@
         stroke: $vzb-color-grey;
       }
       .vzb-bc-trails .vzb-bc-entity {
-        @include opacity(0.8);
         stroke: white;
         cursor: pointer;
         line {
@@ -26,7 +25,8 @@
       }
       .vzb-bc-bubbles {
         .vzb-bc-entity {
-          stroke: white;
+          stroke: black;
+          stroke-opacity: 0.7;
           cursor: pointer;
           pointer-events: visible;
         }
@@ -34,8 +34,6 @@
       .vzb-bc-labels .vzb-bc-entity text, .vzb-bc-tooltip text  {
         pointer-events: none;
         text-anchor: end;
-
-        opacity: 0.9;
         fill: $vzb-color-primary;
         &.vzb-bc-label-shadow, &.vzb-bc-tooltip-shadow {
           fill: white;
@@ -46,7 +44,6 @@
       .vzb-bc-labels .vzb-bc-entity rect {
         @include transition(opacity 200ms linear);
         cursor: pointer;
-        opacity: 0.8;
         fill: white;
         stroke: $vzb-color-primary;
       }
