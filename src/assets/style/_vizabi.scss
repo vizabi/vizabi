@@ -1,6 +1,7 @@
 @import "_mixins";
 @import "_common";
 @import "_reset";
+@import "_chart";
 
 .vzb-tool {
   $heightTitle: 8px;
@@ -12,12 +13,15 @@
   @include user-select(none);
   text-align: left;
   overflow: hidden;
+
+  font-size: $vzb-font-size-base; //important to set the base in px
+  font-family: $vzb-font-family;
+
   .vzb-tool-title {
     @include position(absolute, 0px 0px null 0px);
-    @include font-size(18px);
+    font-size: $vzb-font-size-small;
     height: $heightTitle;
     background-color: $vzb-color-primary-lightest;
-    font-family: $vzb-font-family;
     padding: 10px;
     color: #666666;
   }
@@ -69,7 +73,7 @@
   &.vzb-small {
     .vzb-tool-title {
       height: $heightTitle - 8px;
-      @include font-size(14px);
+      font-size: $vzb-font-size-small;
     }
     .vzb-tool-content {
       $posTop: $heightTitle - 8px;
@@ -137,7 +141,7 @@
     background: #666;
     padding: 7px 10px;
     color: white;
-    font-size: 12px;
+    font-size: $vzb-font-size-tiny;
     z-index: 11;
     font-weight: 300;
   }
