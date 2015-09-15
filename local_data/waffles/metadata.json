@@ -147,20 +147,17 @@
             "sourceLink": ""
         }
     },
-    "indicatorsTree": {
-        "id": "_root",
-        "children": [
-            {
-                "id": "time"
-            }, {
-                "id": "_indicators",
-                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
-            }, {
-                "id": "_properties",
-                "children": [{"id": "pop"}, {"id": "lex"}, {"id": "gini"}, {"id": "gdp_per_cap"}, {"id": "gdppc_pday"}, {"id": "inc_pday"}, {"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
-            }, {
-                "id": "_default"
-            }
-        ]
-    }
+    "indicatorsTree": [
+        {
+            "id": "time"
+        }, {
+            "id": "_indicators",
+            "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
+        }, {
+            "id": "_properties",
+            "children": [{"id": "pop"}, {"id": "lex"}, {"id": "gini"}, {"id": "gdp_per_cap"}, {"id": "gdppc_pday"}, {"id": "inc_pday"}, {"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
+        }, {
+            "id": "_default"
+        }
+    ]
 }
