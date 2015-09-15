@@ -11,6 +11,7 @@
   var Vizabi = root.Vizabi;
   var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
+  var globals = Vizabi._globals;
 
   var time_formats = {
     "year": "%Y",
@@ -178,6 +179,16 @@
      */
     getType: function () {
       return this._type;
+    },
+      
+    /**
+     * Gets the metadata of the hooks
+     * @returns {Object} metadata
+     */
+    getMetadata: function () {
+      if (!this.isHook()) return {};
+      return (globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use === 'property')) ? 
+          globals.metadata.indicators[this.which] : {};
     },
 
     /**

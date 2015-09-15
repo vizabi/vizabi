@@ -350,19 +350,21 @@
 
 
       pinDialog: function (button) {
-        var id = button.getAttribute('data-dialogtype');
+        var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
         var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
         var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-        if(this._available_buttons[id].ispin){
+        if (this._available_buttons[id].ispin) {
          // button.textContent = '';
           btn.classed('pinned', false);
           this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
           this._available_buttons[id].ispin = false;
+          this._active_comp.isPin = false;
         } else {
         //  button.textContent = '';
           btn.classed('pinned', true);
           dialog.classed('pinned', true);
           this._available_buttons[id].ispin = true;
+          this._active_comp.isPin = true;
         }
       },
 
@@ -375,6 +377,9 @@
 
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+
+      if (this._available_buttons[id].ispin)
+        this.pinDialog(id);
 
       if (this._active_comp) {
         this._active_comp.beforeClose();
@@ -399,8 +404,10 @@
       var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
       var all_btns = this.element.selectAll(btnClass),
         all_dialogs = this.element.selectAll(dialogClass);
+      if (forceclose)
+        this.unpinAllDialogs();
 
-      if (this._active_comp) {
+      if (this._active_comp && (forceclose || !this._available_buttons[this._active_comp.name].ispin)) {
         this._active_comp.beforeClose();
       }
 
@@ -408,11 +415,22 @@
       all_dialogs.classed(class_active, false);
 
       //call component close function
-      if (this._active_comp) {
+      if (this._active_comp && (forceclose || !this._available_buttons[this._active_comp.name].ispin)) {
         this._active_comp.close();
       }
-      this._active_comp = false;
+      if (this._active_comp && !this._available_buttons[this._active_comp.name].ispin)
+        this._active_comp = false;
+
       this.model.state.entities.setNeedUpdate();
+    },
+
+    unpinAllDialogs: function () {
+      var availBtns = this._available_buttons;
+      var keys = Object.keys(availBtns);
+      keys.forEach(function (dialogName) {
+        if (availBtns[dialogName].ispin)
+          this.pinDialog(dialogName);
+      }.bind(this));
     },
 
     toggleBubbleTrails: function () {

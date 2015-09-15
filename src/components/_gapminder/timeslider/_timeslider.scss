@@ -5,212 +5,214 @@ $vzb-ts-btn-bg-active: #2F7687;
 $vzb-ts-slider-color: $vzb-color-primary;
 $vzb-ts-value-width: 40px;
 .vzb-timeslider {
-  min-height: $vzb-ts-btn-area;
-  position: relative;
-  .vzb-ts-btns {
-    @include position(absolute, 0px null 0px 5px);
-    width: $vzb-ts-btn-area;
-    .vzb-ts-btn {
-      @include border-radius($vzb-ts-btn-width);
-      font-size: 1em;
-      // @include font-size(18px);
-      width: $vzb-ts-btn-width;
-      height: $vzb-ts-btn-width;
-      background: $vzb-ts-btn-bg;
-      display: block;
-      border: none;
-      .vzb-icon {
-        path {
-          fill: white;
-        }
-      }
-      padding: 10px 14px;
-      margin: 5px;
-      cursor: pointer;
-      &.vzb-ts-btn-pause {
-        display: none;
-        padding: 10px;
-      }
-      &:active, &:focus {
-        outline: none;
-        background: $vzb-ts-btn-bg-active;
-      }
+    min-height: $vzb-ts-btn-area;
+    position: relative;
+    .vzb-warning-data {
+        color: red;
+        position: absolute;
+        right: 15px;
+        bottom: 0%;
+        opacity: 0.3;
+        font-style: italic;
+        pointer-events: none;
     }
-  }
-  .vzb-ts-slider-wrapper {
-    @include position(absolute, 5px 9px 5px $vzb-ts-btn-area+5);
-    // margin: 17px 7px;
-    // Slider
-    .vzb-ts-slider {
-      @include position(absolute, 0px);
-      @include font-size(12px);
-      overflow: visible;
-      font-family: $vzb-font-family;
-      color: $vzb-ts-slider-color;
-      width: 100%;
-      height: 100%;
-      .background {
-        cursor: pointer !important;
-      }
-      .vzb-ts-slider-axis {
-        @include user-select(none);
-        font: 9px $vzb-font-family;
-        fill: $vzb-ts-slider-color;
-        opacity: 0.6;
-        font-weight: bold;
-        cursor: pointer;
-        .domain {
-          fill: none;
-          opacity: 1 !important;
-          stroke: $vzb-ts-slider-color;
-          stroke-opacity: 0.3;
-          stroke-width: 5px;
-          stroke-linecap: round;
-        }
-      }
-      .vzb-ts-slider-handle {
-        fill: $vzb-ts-slider-color;
-        stroke: #FFFFFF;
-        stroke-width: 4px;
-        cursor: pointer;
-      }
-      .vzb-ts-slider-value {
-        display: none;
-        @include user-select(none);
-        font: 11px $vzb-font-family;
-        fill: $vzb-ts-slider-color;
-        font-weight: bold;
-      }
-    }
-  }
-  //show pause instead if it's playing
-  &.vzb-playing {
+    ;
     .vzb-ts-btns {
-      .vzb-ts-btn-play {
-        @extend .vzb-hidden;
-      }
-      .vzb-ts-btn-pause {
-        display: block;
-      }
-      &:hover .vzb-ts-btn-pause-tooltip {
-        opacity: 1;
-      }
-      &:hover .vzb-ts-btn-play-tooltip {
-        opacity: 0;
-      }
-    }
-  }
-  &.vzb-ts-hide-play-button {
-    .vzb-ts-btns {
-      @extend .vzb-hidden;
+        @include position(absolute, 0px null 0px 5px);
+        width: $vzb-ts-btn-area;
+        .vzb-ts-btn {
+            @include border-radius($vzb-ts-btn-width);
+            font-size: $vzb-font-size-regular;
+            width: $vzb-ts-btn-width;
+            height: $vzb-ts-btn-width;
+            background: $vzb-ts-btn-bg;
+            display: block;
+            border: none;
+            .vzb-icon {
+                path {
+                    fill: white;
+                }
+            }
+            padding: 12px 14px;
+            margin: 5px;
+            cursor: pointer;
+            &.vzb-ts-btn-pause {
+                display: none;
+                padding: 10px;
+            }
+            &:active,
+            &:focus {
+                outline: none;
+                background: $vzb-ts-btn-bg-active;
+            }
+        }
     }
     .vzb-ts-slider-wrapper {
-      @include position(absolute, 5px 9px 5px 5px);
+        @include position(absolute, 5px 9px 5px $vzb-ts-btn-area+5);
+        // margin: 17px 7px;
+        // Slider
+        .vzb-ts-slider {
+            @include position(absolute, 0px);
+            font-size: $vzb-font-size-small;
+            overflow: visible;
+            color: $vzb-ts-slider-color;
+            width: 100%;
+            height: 100%;
+            .background {
+                cursor: pointer !important;
+            }
+            .vzb-ts-slider-axis {
+                @include user-select(none);
+                fill: $vzb-ts-slider-color;
+                opacity: 0.6;
+                font-weight: bold;
+                cursor: pointer;
+                .domain {
+                    fill: none;
+                    opacity: 1 !important;
+                    stroke: $vzb-ts-slider-color;
+                    stroke-opacity: 0.3;
+                    stroke-width: 5px;
+                    stroke-linecap: round;
+                }
+            }
+            .vzb-ts-slider-handle {
+                fill: $vzb-ts-slider-color;
+                stroke: #FFFFFF;
+                stroke-width: 4px;
+                cursor: pointer;
+            }
+            .vzb-ts-slider-value {
+                display: none;
+                @include user-select(none);
+                fill: $vzb-ts-slider-color;
+                font-weight: bold;
+            }
+        }
     }
-  }
-  &.vzb-ts-show-value {
-    .vzb-ts-slider-value {
-      display: block !important;
+    //show pause instead if it's playing
+    &.vzb-playing {
+        .vzb-ts-btns {
+            .vzb-ts-btn-play {
+                @extend .vzb-hidden;
+            }
+            .vzb-ts-btn-pause {
+                display: block;
+            }
+            &:hover .vzb-ts-btn-pause-tooltip {
+                opacity: 1;
+            }
+            &:hover .vzb-ts-btn-play-tooltip {
+                opacity: 0;
+            }
+        }
     }
-  }
-  &.vzb-playing.vzb-ts-show-value-when-drag-play {
-    .vzb-ts-slider-value {
-      display: block !important;
+    &.vzb-ts-hide-play-button {
+        .vzb-ts-btns {
+            @extend .vzb-hidden;
+        }
+        .vzb-ts-slider-wrapper {
+            @include position(absolute, 5px 9px 5px 5px);
+        }
     }
-  }
-  &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
-    .vzb-ts-slider-value {
-      display: block !important;
+    &.vzb-ts-show-value {
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
     }
-  }
+    &.vzb-playing.vzb-ts-show-value-when-drag-play {
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
+    }
+    &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
+        .vzb-ts-slider-value {
+            display: block !important;
+        }
+    }
 }
 
 &.vzb-small {
-  .vzb-timeslider.vzb-ts-axis-aligned {
-    .vzb-ts-btns {
-      width: $vzb-ts-btn-area - 20;
-      @include position(absolute, 0px 0px 5px 5px);
-      .vzb-ts-btn {
-
-        width: $vzb-ts-btn-width - 14;
-        height: $vzb-ts-btn-width - 14;
-        margin: 0px;
-        padding: 7px 10px;
-
-        .vzb-icon {
-          width: 12px;
-          height: 12px;
-        }
-        &.vzb-ts-btn-play {
-          padding: 7px 8px;
-        }
-        &.vzb-ts-btn-pause {
-          padding: 7px 6px;
-        }
-      }
+    .vzb-warning-data {
+        font-size: $vzb-font-size-small
     }
-    .vzb-ts-slider-wrapper {
-      $posLeft: $vzb-ts-btn-area - 20 + 10;
-      @include position(absolute, 0px 0px 5px $posLeft);
+    .vzb-timeslider.vzb-ts-axis-aligned {
+        .vzb-ts-btns {
+            width: $vzb-ts-btn-area - 20;
+            @include position(absolute, 0px 0px 5px 5px);
+            .vzb-ts-btn {
+                width: $vzb-ts-btn-width - 14;
+                height: $vzb-ts-btn-width - 14;
+                margin: 0px;
+                padding: 7px 10px;
+                .vzb-icon {
+                    width: 12px;
+                    height: 12px;
+                }
+                &.vzb-ts-btn-play {
+                    padding: 7px 8px;
+                }
+                &.vzb-ts-btn-pause {
+                    padding: 7px 6px;
+                }
+            }
+        }
+        .vzb-ts-slider-wrapper {
+            $posLeft: $vzb-ts-btn-area - 20 + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
+        }
+        min-height: $vzb-ts-btn-area - 20;
     }
-    min-height: $vzb-ts-btn-area - 20;
-  }
 }
 
 &.vzb-medium {
-  .vzb-timeslider.vzb-ts-axis-aligned {
-    .vzb-ts-btns {
-      @include position(absolute, 0px 0px 5px 5px);
+    .vzb-timeslider.vzb-ts-axis-aligned {
+        .vzb-ts-btns {
+            @include position(absolute, 0px 0px 5px 5px);
+        }
+        .vzb-ts-slider-wrapper {
+            $posLeft: $vzb-ts-btn-area + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
+        }
     }
-    .vzb-ts-slider-wrapper {
-      $posLeft: $vzb-ts-btn-area + 10;
-      @include position(absolute, 0px 0px 5px $posLeft);
+    .vzb-timeslider {
+        min-height: $vzb-ts-btn-area + 5;
+        .vzb-ts-slider-wrapper {
+            .vzb-ts-slider-axis .domain {
+                stroke-width: 7px;
+            }
+            .vzb-ts-slider-handle {
+                stroke-width: 5px;
+            }
+        }
     }
-  }
-  .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 5;
-    .vzb-ts-slider-wrapper {
-      .vzb-ts-slider-axis {
-        font-size: 11px;
-      }
-      .vzb-ts-slider-axis .domain {
-        stroke-width: 7px;
-      }
-      .vzb-ts-slider-handle {
-        stroke-width: 5px;
-      }
-      .vzb-ts-slider-value {
-        font-size: 13px;
-      }
-    }
-  }
 }
 
 &.vzb-large {
-  .vzb-timeslider.vzb-ts-axis-aligned {
-    .vzb-ts-btns {
-      @include position(absolute, 0px 0px 5px 5px);
+    .vzb-warning-data {
+        font-size: $vzb-font-size-large
     }
-    .vzb-ts-slider-wrapper {
-      $posLeft: $vzb-ts-btn-area + 10;
-      @include position(absolute, 0px 0px 5px $posLeft);
+    .vzb-timeslider.vzb-ts-axis-aligned {
+        .vzb-ts-btns {
+            @include position(absolute, 0px 0px 5px 5px);
+        }
+        .vzb-ts-slider-wrapper {
+            $posLeft: $vzb-ts-btn-area + 10;
+            @include position(absolute, 0px 0px 5px $posLeft);
+        }
     }
-  }
-  .vzb-timeslider {
-    min-height: $vzb-ts-btn-area + 10;
-    .vzb-ts-slider-wrapper {
-      .vzb-ts-slider-axis {
-        font-size: 13px;
-      }
-      .vzb-ts-slider-axis .domain {
-        stroke-width: 9px;
-      }
-      .vzb-ts-slider-handle {
-        stroke-width: 6px;
-      }
-      .vzb-ts-slider-value {
-        font-size: 15px;
-      }
+    .vzb-timeslider {
+        min-height: $vzb-ts-btn-area + 10;
+        .vzb-ts-slider-wrapper {
+            .vzb-ts-slider {
+              font-size: $vzb-font-size-regular
+            }
+            .vzb-ts-slider-axis .domain {
+                stroke-width: 9px;
+            }
+            .vzb-ts-slider-handle {
+                stroke-width: 6px;
+            }
+        }
     }
-  }
 }

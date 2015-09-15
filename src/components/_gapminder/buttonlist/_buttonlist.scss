@@ -16,6 +16,11 @@ $vzb-button-color-border: #cce6ed;
   @import '../draggablelist/draggablelist';
   @include position(absolute, 0px);
   overflow: visible;
+  text-align: center;
+
+  input, textarea, keygen, select, button {
+    font-family: $vzb-font-family;
+  }
 
   .vzb-buttonlist-container-buttons {
     @include position(absolute, 0px);
@@ -24,7 +29,6 @@ $vzb-button-color-border: #cce6ed;
     }
   }
 
-  text-align: center;
   .vzb-buttonlist-btn {
     outline: none;
     background: none;
@@ -37,7 +41,7 @@ $vzb-button-color-border: #cce6ed;
     & > .vzb-buttonlist-btn-icon {
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
-      font-size: 1.15em;
+      font-size: $vzb-font-size-medium;
       text-align: center;
       display: inline-block;
       border: 1px solid $vzb-button-color-border;
@@ -50,18 +54,18 @@ $vzb-button-color-border: #cce6ed;
       .vzb-icon {
         width: 14px;
         height: 14px;
+        vertical-align: top;
         path {
           fill: $vzb-button-color;
         }
       }
     }
-    & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
-      font-size: 0.9em;
+    & > .vzb-buttonlist-btn-title {
+      font-size: $vzb-font-size-tiny;
       padding-top: 1px;
       text-align: center;
       display: block;
       color: $vzb-button-color-title;
-      font-family: $vzb-font-family;
       text-transform: uppercase;
     }
     &.vzb-buttonlist-btn-more > .btn-icon {
@@ -111,24 +115,26 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-small.vzb-portrait {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
+      margin-bottom: 20px;
       width: $vzb-button-width;
     }
   }
 }
 
-&.vzb-medium, &.vzb-large {
+&.vzb-landscape, &.vzb-medium, &.vzb-large {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
       width: $vzb-button-width;
+      margin-right: 20px;
       & > .vzb-btn-icon {
         // @include font-size(23px);
-        font-size: 1.15em;
+        font-size: $vzb-font-size-medium;
         padding: 9px;
         width: $vzb-button-size + 10;
         height: $vzb-button-size + 10;
       }
-      & > .vzb-buttonlist-btn-title, & > .vzb-buttonlist-btn-title span {
-        font-size: 0.95em;
+      & > .vzb-buttonlist-btn-title {
+        font-size: $vzb-font-size-tiny;
         padding-top: 2px;
       }
     }
@@ -140,6 +146,7 @@ $vzb-button-color-border: #cce6ed;
     white-space: normal;
     overflow-y: scroll;
     overflow-x: hidden;
+    margin-right: -20px;
   }
 }
 
@@ -148,5 +155,7 @@ $vzb-button-color-border: #cce6ed;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: scroll;
+    margin-bottom: -20px;
   }
 }
+

@@ -1,50 +1,46 @@
 .vzb-tool-barchart {
-  .vzb-barchart {
-    @include position(absolute, 0px);
-    font-family: $vzb-font-family;
-    color: #666666;
-    width: 100%;
-    height: 100%;
-    .vzb-bc-title {
-      color: $vzb-color-primary;
-      fill: currentColor;
+    .vzb-barchart {
+        @extend %vzb-chart-svg;
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend %vzb-chart-axis;
+        }
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend %vzb-chart-axis-title;
+        }
+        .vzb-bc-bar {
+            stroke: none;
+        }
     }
-    .vzb-bc-axis {
-      fill: none;
-      stroke: #999999;
-      color: #999999;
-      text {
-        fill: currentColor;
-        stroke: none;
-      }
+    &.vzb-large {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend %vzb-chart-ticks-large;
+        }
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend %vzb-chart-axis-title-large;
+        }
     }
-    .vzb-bc-axis-x,
-    .vzb-bc-axis-y {
-      @extend .vzb-bc-axis;
+    &.vzb-medium {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend %vzb-chart-ticks-medium;
+        }
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend %vzb-chart-axis-title-medium;
+        }
     }
-    .vzb-bc-axis-x-title,
-    .vzb-bc-axis-y-title {
-      @extend .vzb-bc-title;
+    &.vzb-small {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend %vzb-chart-ticks-small;
+        }
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend %vzb-chart-axis-title-small;
+        }
     }
-    .vzb-bc-bar {
-      stroke: none;
-    }
-  }
-  &.vzb-large {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.8em;
-    }
-
-  }
-  &.vzb-medium {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.4em;
-    }
-
-  }
-  &.vzb-small {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.0em;
-    }
-  }
 }

@@ -1,29 +1,22 @@
 .vzb-tool-bubblechart {
-  $vzb-bc-color-bubble: #999999;
-  $vzb-bc-color-stroke: #666666;
   $vzb-bc-margin: 10px;
   $vzb-bc-margin-axis: 60px;
-  $vzb-bc-color-axis: #999999;
-  $vzb-bc-year-size: 300px;
+  $vzb-bc-year-size: 15em;
+
   .vzb-bubblechart {
-    @include position(absolute, 0px);
-    overflow: hidden;
+    @extend %vzb-chart-wrapper;
+
     .vzb-zoomin {
       cursor: zoom-in;
     }
     .vzb-bubblechart-svg {
-      @include position(absolute, 0px);
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-      font-family: $vzb-font-family;
+      @extend %vzb-chart-svg;
+
       .vzb-bc-zoomRect {
         fill: none;
-        stroke: $vzb-bc-color-axis;
+        stroke: $vzb-color-grey;
       }
       .vzb-bc-trails .vzb-bc-entity {
-        @include opacity(0.8);
         stroke: white;
         cursor: pointer;
         line {
@@ -32,7 +25,8 @@
       }
       .vzb-bc-bubbles {
         .vzb-bc-entity {
-          stroke: white;
+          stroke: black;
+          stroke-opacity: 0.7;
           cursor: pointer;
           pointer-events: visible;
         }
@@ -40,8 +34,6 @@
       .vzb-bc-labels .vzb-bc-entity text, .vzb-bc-tooltip text  {
         pointer-events: none;
         text-anchor: end;
-
-        opacity: 0.9;
         fill: $vzb-color-primary;
         &.vzb-bc-label-shadow, &.vzb-bc-tooltip-shadow {
           fill: white;
@@ -52,7 +44,6 @@
       .vzb-bc-labels .vzb-bc-entity rect {
         @include transition(opacity 200ms linear);
         cursor: pointer;
-        opacity: 0.8;
         fill: white;
         stroke: $vzb-color-primary;
       }
@@ -84,32 +75,19 @@
         stroke: $vzb-color-primary;
         opacity: 0.8;
       }
-      .vzb-bc-title {
-        color: $vzb-color-primary;
-        fill: currentColor;
-      }
-      .vzb-bc-axis {
-        path, line {
-          fill: none;
-          stroke: $vzb-bc-color-axis;
-          shape-rendering: crispEdges;
-        }
-        text {
-          fill: $vzb-bc-color-axis;
-          @include font-size(15px);
-        }
-      }
+
       .vzb-bc-axis-x,
       .vzb-bc-axis-y {
-        @extend .vzb-bc-axis;
+        @extend %vzb-chart-axis;
       }
-      .vzb-bc-axis-y-title,
-      .vzb-bc-axis-x-title {
-        @extend .vzb-bc-title;
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        @extend %vzb-chart-axis-title;
       }
+
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
-        @extend .vzb-bc-title;
+        @extend %vzb-chart-axis;
         opacity: 0.3;
       }
       .vzb-bc-projection-x,
@@ -120,13 +98,13 @@
       }
       .vzb-bc-line {
         fill: none;
-        stroke: $vzb-bc-color-axis;
+        stroke: $vzb-color-grey;
         stroke-width: 1px;
       }
       .vzb-bc-year {
         @include opacity(0.1);
-        @include font-size(250px);
-        fill: $vzb-bc-color-bubble;
+        font-size: $vzb-bc-year-size;
+        fill: $vzb-color-grey;
         text-anchor: middle;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
@@ -147,16 +125,20 @@
         stroke-opacity: 1.0;
       }
       .vzb-bc-labels text {
-        font-size: 1.6em;
         &.vzb-bc-label-shadow {
           stroke-width: 4px
         }
       }
-      .vzb-axis-value text {
-        font-size: 1.6em;
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        @extend %vzb-chart-axis-title-large;
       }
-      .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-        font-size: 1.6em;
+      .vzb-bc-labels,
+      .vzb-bc-tooltip,
+      .vzb-axis-value,
+      .vzb-bc-axis-x,
+      .vzb-bc-axis-y {
+        @extend %vzb-chart-ticks-large;
       }
     }
   }
@@ -166,16 +148,20 @@
         stroke-opacity: 0.8;
       }
       .vzb-bc-labels text, .vzb-bc-tooltip text {
-        font-size: 1.4em;
         &.vzb-bc-label-shadow, .vzb-bc-tooltip-shadow {
           stroke-width: 3px
         }
       }
-      .vzb-axis-value text {
-        font-size: 1.4em;
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        @extend %vzb-chart-axis-title-medium;
       }
-      .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-        font-size: 1.4em;
+      .vzb-bc-labels,
+      .vzb-bc-tooltip,
+      .vzb-axis-value,
+      .vzb-bc-axis-x,
+      .vzb-bc-axis-y {
+        @extend %vzb-chart-ticks-medium;
       }
     }
   }
@@ -185,16 +171,20 @@
         stroke-opacity: 0.7;
       }
       .vzb-bc-labels text, .vzb-bc-tooltip text {
-        font-size: 0.9em;
         &.vzb-bc-label-shadow, .vzb-bc-tooltip-shadow {
           stroke-width: 2px
         }
       }
-      .vzb-axis-value text {
-        font-size: 0.9em;
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        @extend %vzb-chart-axis-title-small;
       }
-      .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-        font-size: 0.9em;
+      .vzb-bc-labels,
+      .vzb-bc-tooltip,
+      .vzb-axis-value,
+      .vzb-bc-axis-x,
+      .vzb-bc-axis-y {
+        @extend %vzb-chart-ticks-small;
       }
     }
   }

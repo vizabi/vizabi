@@ -14,22 +14,22 @@
   var class_portrait = 'vzb-portrait';
   var class_lansdcape = 'vzb-landscape';
 
-  var screen_sizes = {
-    small: {
-      min_width: 0,
-      max_width: 749
-    },
-    medium: {
-      min_width: 750,
-      max_width: 969
-    },
-    large: {
-      min_width: 970,
-      max_width: Infinity
-    }
-  };
-
   var Layout = Vizabi.Events.extend({
+
+    screen_profiles: {
+      small: {
+        min_width: 0,
+        max_width: 749
+      },
+      medium: {
+        min_width: 750,
+        max_width: 969
+      },
+      large: {
+        min_width: 970,
+        max_width: Infinity
+      }
+    },
 
     /**
      * Initializes the layout manager
@@ -59,7 +59,8 @@
       if (this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
         return;
       }
-      utils.forEach(screen_sizes, function (range, size) {
+
+      utils.forEach(this.screen_profiles, function (range, size) {
         //remove class
         utils.removeClass(_this._container, class_prefix + size);
         //find best fit
@@ -67,6 +68,7 @@
           _this._curr_profile = size;
         }
       });
+
       //update size class
       utils.addClass(this._container, class_prefix + this._curr_profile);
       //toggle, untoggle classes based on orientation
@@ -98,6 +100,7 @@
     currentProfile: function () {
       return this._curr_profile;
     }
+
   });
 
   Vizabi.Layout = Layout;

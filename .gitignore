@@ -10,5 +10,6 @@ preview/
 .tmp/
 dist/
 test.html
+download/
 
 .idea/
