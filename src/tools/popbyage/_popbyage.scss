@@ -1,112 +1,90 @@
 .vzb-tool-popbyage {
-  .vzb-popbyage {
-    @include position(absolute, 0px);
-    font-family: $vzb-font-family;
-    color: #666666;
-    width: 100%;
-    height: 100%;
-    .vzb-bc-title {
-      color: $vzb-color-primary;
-      fill: currentColor;
-    }
-    .vzb-bc-axis {
-      fill: none;
-      stroke: #999999;
-      color: #999999;
-      text {
-        fill: currentColor;
-        stroke: none;
-      }
-    }
-    .vzb-bc-axis-x,
-    .vzb-bc-axis-y {
-      @extend .vzb-bc-axis;
-    }
-    .vzb-bc-axis-x-title,
-    .vzb-bc-axis-y-title {
-      @extend .vzb-bc-title;
-    }
-    .vzb-bc-bar {
-      stroke: none;
-      cursor: pointer;
-    }
-    
-    .vzb-bc-label {
-      display: none;
-      &.vzb-hovered {
-        display: block;
-      }
-      &.vzb-selected {
-        display: block;
-      }
-      &> .vzb-bc-age {
-       fill: #333333;
-      }
-    }
-
-    .vzb-dimmed {
-      &> .vzb-bc-bar {
-        opacity: 0.8;
-        &.vzb-hovered {
-          opacity: 1;
+    .vzb-popbyage {
+        @extend %vzb-chart-svg;
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y {
+            @extend %vzb-chart-axis;
         }
-      }
-    }
-
-    .vzb-dimmed-selected {
-      &> .vzb-bc-bar {
-        opacity: 0.5;
-        &.vzb-hovered {
-          opacity: 0.8;
+        .vzb-bc-axis-x-title,
+        .vzb-bc-axis-y-title {
+            @extend %vzb-chart-axis-title;
         }
-        &.vzb-selected {
-          opacity: 1;
+        .vzb-bc-bar {
+            stroke: none;
+            cursor: pointer;
         }
-      }
+        .vzb-bc-label {
+            display: none;
+            &.vzb-hovered {
+                display: block;
+            }
+            &.vzb-selected {
+                display: block;
+            }
+            &> .vzb-bc-age {
+                fill: $vzb-color-grey-darkest;
+            }
+        }
+        .vzb-dimmed {
+            &> .vzb-bc-bar {
+                opacity: 0.8;
+                &.vzb-hovered {
+                    opacity: 1;
+                }
+            }
+        }
+        .vzb-dimmed-selected {
+            &> .vzb-bc-bar {
+                opacity: 0.5;
+                &.vzb-hovered {
+                    opacity: 0.8;
+                }
+                &.vzb-selected {
+                    opacity: 1;
+                }
+            }
+        }
+        .vzb-bc-title {
+            @extend %vzb-chart-axis-title;
+            fill: $vzb-color-primary;
+        }
+        .vzb-bc-year {
+            @extend %vzb-chart-axis-title;
+            fill: $vzb-color-grey;
+            text-anchor: end
+        }
     }
-
-    .vzb-bc-title {
-      font-size: 18px;
-      fill: $vzb-color-primary;
+    &.vzb-large {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y,
+        .vzb-bc-label > .vzb-bc-age {
+            @extend %vzb-chart-ticks-large;
+        }
+        .vzb-bc-title,
+        .vzb-bc-year {
+            @extend %vzb-chart-axis-title-large;
+        }
     }
-
-    .vzb-bc-year {
-      font-size: 18px;
-      fill: $vzb-color-grey;
-      text-anchor: end
+    &.vzb-medium {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y,
+        .vzb-bc-label > .vzb-bc-age {
+            @extend %vzb-chart-ticks-medium;
+        }
+        .vzb-bc-title,
+        .vzb-bc-year {
+            @extend %vzb-chart-axis-title-medium;
+        }
     }
-  }
-  &.vzb-large {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.8em;
+    &.vzb-small {
+        .vzb-bc-axis-x,
+        .vzb-bc-axis-y,
+        .vzb-bc-label > .vzb-bc-age {
+            @extend %vzb-chart-ticks-small;
+        }
+        .vzb-bc-title,
+        .vzb-bc-year {
+            @extend %vzb-chart-axis-title-small;
+        }
     }
-
-    .vzb-bc-label > .vzb-bc-age {
-      font-size: 1.8em;
-    }
-
-    .vzb-bc-title, .vzb-bc-year {
-      font-size: 28px;
-    }
-
-  }
-  &.vzb-medium {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.4em;
-    }
-
-    .vzb-bc-label > .vzb-bc-age {
-      font-size: 1.4em;
-    }
-
-    .vzb-bc-title, .vzb-bc-year {
-      font-size: 22px;
-    }
-
-  }
-  &.vzb-small {
-    .vzb-bc-axis-x text, .vzb-bc-axis-y text {
-      font-size: 1.0em;
-    }
-  }
 }

@@ -410,7 +410,7 @@
     //preloading metadata for all charts
     Vizabi.Tool.define("preload", function(promise) {
 
-        var chartName = utils.arrayLast(window.location.pathname.split("/")).split(".htm")[0];
+        var _this = this; 
     
         var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
@@ -428,7 +428,7 @@
                 globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
                     .filter(function(f){
                         var one = metadata.indicatorsDB[f];
-                        return one.allowCharts.indexOf(chartName)!=-1 || one.allowCharts.indexOf("*")!=-1;
+                        return one.allowCharts.indexOf(_this.name)!=-1 || one.allowCharts.indexOf("*")!=-1;
                     });
                 
                 promise.resolve();

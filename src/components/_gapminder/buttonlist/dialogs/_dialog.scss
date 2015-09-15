@@ -10,7 +10,6 @@
   vertical-align: top;
   background-color: #fff;
   text-align: left;
-  font-size: 0.9em;
   display: block;
   visibility: hidden;
   &.vzb-active {
@@ -20,12 +19,12 @@
   }
   .vzb-dialog-title {
     color: $vzb-color-primary;
-    font-size: 1.3em;
-    font-family: $vzb-font-family;
+    font-size: $vzb-font-size-medium;
     padding: 25px 25px 10px 25px;
   }
   .vzb-dialog-content {
     font-family: $vzb-font-family-alt;
+    font-size: $vzb-font-size-small;
     color: $vzb-color-grey-dark;
     padding: 0px 25px 10px 25px;
     max-height: $vzb-dialog-content-height;
@@ -35,6 +34,11 @@
       height: $vzb-dialog-content-height;
     }
   }
+  
+  input {
+    font-size: 1em; //inherit from dialog content
+  }
+
   .vzb-dialog-buttons {
     display: table;
     width: 100%;
@@ -65,7 +69,6 @@
     }
     color: $vzb-color-grey;
     font-family: $vzb-font-family;
-    font-size: 0.8em;
     text-align: center;
     text-transform: uppercase;
 
@@ -82,7 +85,6 @@
     @include box-sizing(border-box);
     border: 1px solid rgba($vzb-color-grey, .4);
     padding: 9px;
-    font-size: 13px;
     display: block;
     width: 100%;
     outline: none;
@@ -173,7 +175,7 @@
   }
   .vzb-dialog-sublabel{
     color: $vzb-color-primary;
-    font-style: italic;
+    font-weight: bold;
   }
 }
 .vzb-buttonlist-dialog.pinned {
