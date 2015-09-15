@@ -9,63 +9,20 @@
 
     var root = this;
     var Vizabi = root.Vizabi;
+    var globals = Vizabi._globals;
     var utils = Vizabi.utils;
 
     var INDICATOR = "which";
+    var MIN = "min";
+    var MAX = "max";
     var SCALETYPE = "scaleType";
     var MODELTYPE_COLOR = "color";
 
     //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) {
-        return;
-    }
+    if (!Vizabi._require('d3')) return;
 
-    var data = [
-	    {
-	    "id": "properties",
-	    "children": [{
-	            "id": "geo",
-	            "unit": "",
-	            "use": "property",
-	            "scales": ["ordinal"]
-	        },
-	        {
-	            "id": "geo.region",
-	            "unit": "",
-	            "use": "property",
-	            "scales": ["ordinal"]
-	        }]
-	    },
-	    {
-	    "id": "indicators",
-	    "children": [{
-	            "id": "lex",
-	            "unit": "years",
-	            "use": "indicator",
-	            "scales": ["linear"]
-	        },
-	        {
-	            "id": "gdp_per_cap",
-	            "unit": "$/year/person",
-	            "use": "indicator",
-	            "scales": ["log","linear"]
-	        },
-	        {
-	            "id": "pop",
-	            "unit": "",
-	            "use": "indicator",
-	            "scales": ["linear","log"]
-	        }]
-	    },
-	    {
-	        "id": "time",
-	        "unit": "year",
-	        "use": "indicator",
-	        "scales": ["time"]
-	    }
-	];
 
-	var translator = {
+	var langStrings = {
 	    "en":{
 	        "geo": "Country",
 	        "geo.region": "World region",
@@ -83,7 +40,62 @@
 	        "time": "Tid"
 	    }
 	};
+    	        //css custom classes
+	        var css = {
+	            wrapper: 'dl-menu-wrap',
+	            search: 'dl-menu-search',
+	            list: 'dl-menu-list',
+	            list_item: 'dl-menu-list_item',
+	            hasChild: 'dl-menu-list_item--children',
+	            list_item_label: 'dl-menu-list_item_label',
+	            list_top_level: 'dl-menu-list_top',
+	            search_wrap: 'dl-menu-search_wrap',
+	            isSpecial: 'dl-menu-list_item--special'
+	        };
+    
+    	        //options and globals
+	        var OPTIONS = {
+	            MENU_ID: 'menu-' + this._id, //identify this menu
+	            MOUSE_LOCS: [], //contains last locations of mouse
+	            MOUSE_LOCS_TRACKED: 3, //max number of locations of mouse
+	            DELAY: 200, //amazons multilevel delay
+	            TOLERANCE: 150, //this parameter is used for controlling the angle of multilevel dropdown
+	            LAST_DELAY_LOC: null, //this is cached location of mouse, when was a delay
+	            TIMEOUT: null, //timeout id
+	            SEARCH_PROPERTY: 'id', //property in input data we we'll search by
+	            SUBMENUS: 'children', //property for submenus (used by search)
+	            SEARCH_MIN_STR: 2, //minimal length of query string to start searching
+	            CONTAINER_DIMENSIONS: {}, //current container width, height
+	            RESIZE_TIMEOUT: null, //container resize timeout
+	            MOBILE_BREAKPOINT: 500, //mobile breakpoint
+	            CURRENT_PATH: [], //current active path
+	            CURRENT_PROFILE: null, //current resize profile
+	            MIN_COL_WIDTH: 50 //minimal column size
+	        };
 
+    
+    
+    
+	        //default callback
+	        var callback = function(indicator) {
+	            console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
+	        };
+
+	        //data
+	        var tree;
+
+	        //langStrings
+	        var langStrings;
+
+	        //language
+	        var lang;
+
+	        //debug function (REMOVE IN PRODUCTION)
+	        var log = function() {
+	            console.log('ok', this);
+	        };
+    
+    
 	Vizabi.Component.extend('gapminder-treemenu', {
 
 	    init: function(config, context) {
@@ -112,8 +124,7 @@
 	        this._super(config, context);
 
 	        this.ui = utils.extend({
-	            selectIndicator: true,
-	            selectScaletype: true
+                //...add properties here
 	        }, this.ui);
 
 	    },
@@ -125,128 +136,46 @@
 	    readyOnce: function() {
 	        //this function is only called once at start, when both DOM and this.model are ready
 	        //this.element contains the view where you can append the menu
-	        var container = d3.select(this.element);
+	        this.element = d3.select(this.element);
 
 	        //menu class private
 	        var _this = this;
 
 	        //init buttons
-	        d3
-	            .select(this.placeholder)
+	        d3.select(this.placeholder)
 	            .append('button')
 	            .text('Toggle')
 	            .on('click', function() { _this.toggle() });
 
-	        //css custom classes
-	        var cssClasses = {
-	            wrapper: 'dl-menu-wrap',
-	            search: 'dl-menu-search',
-	            list: 'dl-menu-list',
-	            list_item: 'dl-menu-list_item',
-	            hasChild: 'dl-menu-list_item--children',
-	            list_item_label: 'dl-menu-list_item_label',
-	            list_top_level: 'dl-menu-list_top',
-	            search_wrap: 'dl-menu-search_wrap',
-	            isSpecial: 'dl-menu-list_item--special'
-	        };
-
-	        //options and globals
-	        var OPTIONS = {
-	            MENU_ID: 'menu-' + this._id, //identify this menu
-	            MOUSE_LOCS: [], //contains last locations of mouse
-	            MOUSE_LOCS_TRACKED: 3, //max number of locations of mouse
-	            DELAY: 200, //amazons multilevel delay
-	            TOLERANCE: 150, //this parameter is used for controlling the angle of multilevel dropdown
-	            LAST_DELAY_LOC: null, //this is cached location of mouse, when was a delay
-	            TIMEOUT: null, //timeout id
-	            SEARCH_PROPERTY: 'id', //property in input data we we'll search by
-	            SUBMENUS: 'children', //property for submenus (used by search)
-	            SEARCH_MIN_STR: 2, //minimal length of query string to start searching
-	            CONTAINER_DIMENSIONS: {}, //current container width, height
-	            RESIZE_TIMEOUT: null, //container resize timeout
-	            MOBILE_BREAKPOINT: 500, //mobile breakpoint
-	            CURRENT_PATH: [], //current active path
-	            CURRENT_PROFILE: null, //current resize profile
-	            MIN_COL_WIDTH: 50 //minimal column size
-	        };
-
-	        //default callback
-	        var callback = function(indicator) {
-	            console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
-	        };
-
-	        //data
-	        var data;
-
-	        //translator
-	        var translator;
-
-	        //language
-	        var lang;
-
-	        //debug function (REMOVE IN PRODUCTION)
-	        var log = function() {
-	            console.log('ok', this);
-	        };
 
 	        //general markup
-	        var menuSkeleton = container
-	                                //.style('overflow-x', 'hidden')
-	                                .append('div')
-	                                .classed(cssClasses.wrapper, true)
-	                                .attr('id', OPTIONS.MENU_ID)
-	                                .append('div')
-	                                .classed(cssClasses.search_wrap, true)
-	                                .append('input')
-	                                .classed(cssClasses.search, true)
-	                                .attr('type', 'text')
-	                                .attr('id', cssClasses.search + '_' + OPTIONS.MENU_ID);
+	        var menuSkeleton = this.element
+                //.style('overflow-x', 'hidden')
+                .append('div')
+                .classed(css.wrapper, true)
+                .attr('id', OPTIONS.MENU_ID)
+                .append('div')
+                .classed(css.search_wrap, true)
+                .append('input')
+                .classed(css.search, true)
+                .attr('type', 'text')
+                .attr('id', css.search + '_' + OPTIONS.MENU_ID);
 
-	        /*
 
-	            METHODS AND SELFVARIABLES
-
-	        */
 
 	        this.resizeProfiles = [
-	            {
-	                col_width: 300,
-	                min: 1280
-	            },
-	            {
-	                col_width: 250,
-	                min: 1024
-	            },
-	            {
-	                col_width: 200,
-	                min: OPTIONS.MOBILE_BREAKPOINT
-	            }
+                { col_width: 300, min: 1280 },
+                { col_width: 250, min: 1024 },
+                { col_width: 200, min: OPTIONS.MOBILE_BREAKPOINT }
 	        ];
 
-	        this.toggle = function() {
-	            var wrapper = d3.select('#' + OPTIONS.MENU_ID),
-	                trigger = wrapper.classed('active');
 
-	            if (trigger) {
-	                wrapper.classed('active', false);
-	                wrapper
-	                    .selectAll('.' + cssClasses.list_item)
-	                    .filter('.marquee')
-	                    .each(function() {
-	                        marqueeToggle(this, false);
-	                    });
-	            } else {
-	                wrapper.classed('active', true);
-	            };
-	        };
 
-	        this.state = null;
 
 	        //setters-getters
-	        this.data = function(input) {
-	            if (!arguments.length) return data;
-	            data = input;
-	            render(data);
+	        this.tree = function(input) {
+	            if (!arguments.length) return tree;
+	            tree = input;
 	            return this;
 	        };
 
@@ -256,9 +185,9 @@
 	            return this;
 	        };
 
-	        this.translator = function(input) {
-	            if (!arguments.length) return translator;
-	            translator = input;
+	        this.langStrings = function(input) {
+	            if (!arguments.length) return langStrings;
+	            langStrings = input;
 	            return this;
 	        };
 
@@ -268,126 +197,47 @@
 	            return this;
 	        };
 
-	        /*
 
-	            FUNCTIONS
+	        //init functions
+	        d3.select('body')
+                .on('mousemove', _this._mousemoveDocument)
+                .select('#' + OPTIONS.MENU_ID)
+                .on('mouseleave', _this._closeAllSub);
+	        _this._enableSearch();
+	        _this._watchContainerSize();
 
-	        */
+	    },
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        toggle: function() {
+	            var wrapper = d3.select('#' + OPTIONS.MENU_ID),
+	                trigger = wrapper.classed('active');
 
-	        //open submenu
-	        var toggleSub = function(){
-
-	            var self = this;
-
-	            var curSub = self.node().parentNode;
-
-	            var possiblyActivate = function(event, it) {
-
-	                if ((OPTIONS.IS_MOBILE && event.type == 'click')) {
-
-	                    closeAll(curSub);
-	                    if (!self.classed('active')) {
-	                        open(it);
-	                    };
-	                    return;
-
-	                } else if (!OPTIONS.IS_MOBILE && event.type == 'mouseenter') {
-	                    var delay = activationDelay(curSub);
-
-	                    if (delay) {
-	                        OPTIONS.TIMEOUT = setTimeout(function() {
-	                            possiblyActivate(event, it);
-	                        }, delay);
-	                    } else {
-	                        open(it);
-	                        closeAll(curSub);
-	                    };
-	                };
-
-
-	            };
-
-	            var open = function(node){
-	                d3
-	                    .select(node)
-	                    .select('.'+cssClasses.list)
-	                    .classed('active', true);
-
-	                marqueeToggle(node, true);
-	            };
-
-	            var closeAll = function(node){
-	                var li = d3
-	                            .select(node)
-	                            .selectAll('.'+cssClasses.list_item+':not(:hover)');
-
-	                li
-	                    .each(function() {
-	                        d3
-	                            .select(this)
-	                            .selectAll('.'+cssClasses.list)
-	                            .each(function() {
-	                                d3
-	                                    .select(this)
-	                                    .classed('active', false);
-	                            });
-	                    });
-
-	                li
+	            if (trigger) {
+	                wrapper.classed('active', false);
+	                wrapper
+	                    .selectAll('.' + css.list_item)
 	                    .filter('.marquee')
 	                    .each(function() {
-	                        marqueeToggle(this, false);
+	                        _this._marqueeToggle(this, false);
 	                    });
-
-	                resizeDropdown();
-
-	            };
-
-	            var closeCurSub = function() {
-	                if (!OPTIONS.IS_MOBILE) {
-	                    var selectSub = d3.select(curSub);
-
-	                    selectSub
-	                        .classed('active', false)
-	                        .attr('style', '');
-	                };
-
-	            };
-
-
-
-	            d3
-	                .select(curSub)
-	                .select('.' + cssClasses.list_item)
-	                .node()
-	                .addEventListener('mouseleave', closeCurSub, false);
-
-	            self
-	                .node()
-	                .addEventListener('mouseenter', function() { possiblyActivate(event, this); }, false);
-
-	            self
-	                .node()
-	                .addEventListener('click', function() { possiblyActivate(event, this); }, false);
-
-	        };
-
-	        //marquee animation
-	        var marqueeToggle = function(node, toggle) {
-	            var selection = d3.select(node),
-	                label = selection.select('.' + cssClasses.list_item_label);
-
-	            if (toggle) {
-	                if(label.node().scrollWidth > node.offsetWidth) {
-	                    selection.classed('marquee', true);
-	                }
 	            } else {
-	                selection.classed('marquee', false);
-	            }
-	        };
+	                wrapper.classed('active', true);
+	            };
+	        },
+
+
+        
 
 	        //if menu lost focus close all levels
-	        var closeAllSub = function() {
+	        _closeAllSub: function() {
 	            var selfSelect = d3.select(this);
 
 	            selfSelect
@@ -398,19 +248,24 @@
 	                .selectAll('.marquee')
 	                .classed('marquee', false);
 
-	            resizeDropdown();
-	        };
+	            _this._resizeDropdown();
+	        },
 
-	        //Keep track of the last few locations of the mouse.
-	        var mousemoveDocument = function() {
+        
+        
+        
+        	        //Keep track of the last few locations of the mouse.
+	        _mousemoveDocument: function() {
 	            var coordinates = d3.mouse(this);
 	            OPTIONS.MOUSE_LOCS.push({x: coordinates[0], y: coordinates[1]});
 
 	            if (OPTIONS.MOUSE_LOCS.length > OPTIONS.MOUSE_LOCS_TRACKED) {
 	                OPTIONS.MOUSE_LOCS.shift();
 	            }
-	        };
-
+	        },
+        
+        
+        
 	        /**
 	         * Return the amount of time that should be used as a delay before the
 	         * currently hovered row is activated.
@@ -419,7 +274,7 @@
 	         * returns the number of milliseconds that should be delayed before
 	         * checking again to see if the row should be activated.
 	         */
-	        var activationDelay = function(submenu) {
+	        _activationDelay: function(submenu) {
 	            var $menu = d3.select(submenu).node();
 	            var menuWrap = $menu.parentNode;
 
@@ -511,83 +366,18 @@
 
 	            OPTIONS.LAST_DELAY_LOC = null;
 	            return 0;
-	        };
+	        },
 
-	        //search listener
-	        var enableSearch = function() {
-	            var input = d3.select('#' + cssClasses.search + '_' + OPTIONS.MENU_ID);
-
-	            //it forms the array of possible queries
-	            var getMatches = function(value) {
-	                var matches = [];
-
-	                //translator integration
-	                var translatorInt = function(value, data, i) {
-	                    var arr = [];
-	                    if (_this.translator()) {
-	                        for (var language in _this.translator()) {
-	                            for (var key in _this.translator()[language]) {
-	                                if (_this.translator()[language][key].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-	                                    return key;
-	                                };
-	                            };
-	                        };
-	                    };
-	                };
-
-	                var matching = function(data) {
-	                    for (var i = 0; i < data.length; i++) {
-	                        var match = false;
-	                        match = match || (data[i][OPTIONS.SEARCH_PROPERTY].toLowerCase().indexOf(value.toLowerCase()) >= 0) ||
-	                                data[i][OPTIONS.SEARCH_PROPERTY] == translatorInt(value, data, i);
-
-	                        if (match) {
-	                            matches.push(data[i]);
-	                        }
-
-	                        if(data[i][OPTIONS.SUBMENUS]) {
-	                            matching(data[i][OPTIONS.SUBMENUS]);
-	                        }
-	                    }
-	                };
-
-	                matching(data);
-
-	                return matches;
-	            };
-
-	            var searchIt = function() {
-	                var value = input.node().value;
-
-	                if(value.length >= OPTIONS.SEARCH_MIN_STR) {
-	                    render(getMatches(value));
-	                } else {
-	                    render(data);
-	                }
-	            };
-
-	            input.on('keyup', searchIt);
-	        };
-
-	        //this function process click on list item
-	        var selectIndicator = function() {
-	            var select = d3.select(this),
-	                data = select.data()[0];
-
-	            if (data.use) {
-	                _this.state = data;
-	                callback(data);
-	                _this.toggle();
-	            };
-
-	        };
-
+ 
+ 
+        
 	        //watch for resizing
-	        var watchContainerSize = function() {
+	        _watchContainerSize: function() {
+                var _this = this;
 
 	            OPTIONS.CONTAINER_DIMENSIONS = {
-	                height: container.node().offsetHeight,
-	                width: container.node().offsetWidth
+	                height: _this.element.node().offsetHeight,
+	                width: _this.element.node().offsetWidth
 	            };
 
 	            var switchProfile = function(width) {
@@ -607,7 +397,7 @@
 	                        .select('#' + OPTIONS.MENU_ID)
 	                        .classed('mobile', true);
 
-	                    container
+	                    _this.element
 	                        .selectAll('*')
 	                        .each(function(){
 	                            d3
@@ -621,9 +411,9 @@
 
 	            //// Start the polling loop, asynchronously.
 	            setTimeout(function(){
-	                var elem = container,
-	                    width = container.node().offsetWidth,
-	                    height = container.node().offsetHeight;
+	                var elem = _this.element,
+	                    width = _this.element.node().offsetWidth,
+	                    height = _this.element.node().offsetHeight;
 
 	                // If element size has changed since the last time, update the element
 	                // data store and trigger the 'resize' event.
@@ -635,20 +425,102 @@
 	                switchProfile(OPTIONS.CONTAINER_DIMENSIONS.width);
 
 	                //loop
-	                watchContainerSize();
+	                _this._watchContainerSize();
 
 	            }, 500 );
-	        };
+	        },
 
+ 
+ 
+        
+        
+        
+        
+	        //search listener
+	        _enableSearch: function() {
+                var _this = this;
+                
+	            var input = d3.select('#' + css.search + '_' + OPTIONS.MENU_ID);
+
+	            //it forms the array of possible queries
+	            var getMatches = function(value) {
+	                var matches = [];
+
+	                //translation integration
+	                var translation = function(value, data, i) {
+	                    var arr = [];
+	                    if (_this.langStrings()) {
+	                        for (var language in _this.langStrings()) {
+	                            for (var key in _this.langStrings()[language]) {
+	                                if (_this.langStrings()[language][key].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+	                                    return key;
+	                                };
+	                            };
+	                        };
+	                    };
+	                };
+
+	                var matching = function(data) {
+	                    for (var i = 0; i < data.length; i++) {
+	                        var match = false;
+	                        match = match || (data[i][OPTIONS.SEARCH_PROPERTY].toLowerCase().indexOf(value.toLowerCase()) >= 0) ||
+	                                data[i][OPTIONS.SEARCH_PROPERTY] == translation(value, data, i);
+
+	                        if (match) {
+	                            matches.push(data[i]);
+	                        }
+
+	                        if(data[i][OPTIONS.SUBMENUS]) {
+	                            matching(data[i][OPTIONS.SUBMENUS]);
+	                        }
+	                    }
+	                };
+
+	                matching(tree);
+
+	                return matches;
+	            };
+
+	            var searchIt = function() {
+	                var value = input.node().value;
+
+	                if(value.length >= OPTIONS.SEARCH_MIN_STR) {
+	                    _this.redraw(getMatches(value));
+	                } else {
+	                    _this.redraw();
+	                }
+	            };
+
+	            input.on('keyup', searchIt);
+	        },
+
+
+        
+        
+        	        //marquee animation
+	        _marqueeToggle: function(node, toggle) {
+	            var selection = d3.select(node),
+	                label = selection.select('.' + css.list_item_label);
+
+	            if (toggle) {
+	                if(label.node().scrollWidth > node.offsetWidth) {
+	                    selection.classed('marquee', true);
+	                }
+	            } else {
+	                selection.classed('marquee', false);
+	            }
+	        },
+ 
+        
 	        //resize function
-	        var resizeDropdown = function() {
+	       _resizeDropdown: function() {
 
 	            if (!OPTIONS.IS_MOBILE) {
 
 	                var ulArr = [];
 	                ulArr.push(d3.select('#' + OPTIONS.MENU_ID).node());
-	                container
-	                    .selectAll('.' + cssClasses.list + '.active')
+	                _this.element
+	                    .selectAll('.' + css.list + '.active')
 	                    .each(function() {
 	                        ulArr.push(this);
 	                    });
@@ -692,136 +564,256 @@
 
 	            }
 
-	        };
+	        },
+        
+        
+        
+        	        //open submenu
+	       _toggleSub: function(view){
 
-	        //function is rendering data and built structure
-	        var render = function (data){
+	            var _this = this;
 
-	            container.select('#' + OPTIONS.MENU_ID).select('.' + cssClasses.list_top_level).remove();
+	            var curSub = view.node().parentNode;
 
-	            //rendering first level
-	            var firstLevelMenu = container
-	                            .select('#' + OPTIONS.MENU_ID)
-	                            .append('ul')
-	                            .classed(cssClasses.list_top_level, true);
+	            var possiblyActivate = function(event, it) {
 
-	            //translator integration
-	            var translatorInt = function(d) {
-	                if (_this.lang()) {
-	                    for (var key in _this.translator()[_this.lang()]) {
-	                        if (_this.translator()[_this.lang()].hasOwnProperty(d['id'])) {
-	                            if (key == d['id']) {
-	                                return _this.translator()[_this.lang()][key];
-	                            }
-	                        } else {
-	                            return d['id'];
-	                        }
+	                if ((OPTIONS.IS_MOBILE && event.type == 'click')) {
+
+	                    closeAll(curSub);
+	                    if (!view.classed('active')) {
+	                        open(it);
 	                    };
-	                } else {
-	                    return d['id'];
+	                    return;
+
+	                } else if (!OPTIONS.IS_MOBILE && event.type == 'mouseenter') {
+	                    var delay = _this._activationDelay(curSub);
+
+	                    if (delay) {
+	                        OPTIONS.TIMEOUT = setTimeout(function() {
+	                            possiblyActivate(event, it);
+	                        }, delay);
+	                    } else {
+	                        open(it);
+	                        closeAll(curSub);
+	                    };
 	                };
+
+
 	            };
+
+	            var open = function(node){
+	                d3.select(node)
+	                    .select('.'+css.list)
+	                    .classed('active', true);
+
+	                _this._marqueeToggle(node, true);
+	            };
+
+	            var closeAll = function(node){
+	                var li = d3.select(node)
+	                   .selectAll('.'+css.list_item+':not(:hover)');
+
+	                li.each(function() {
+	                        d3.select(this)
+	                            .selectAll('.'+css.list)
+	                            .each(function() {
+	                                d3.select(this)
+	                                    .classed('active', false);
+	                            });
+	                    });
+
+	                li.filter('.marquee')
+	                    .each(function() {
+	                        _this._marqueeToggle(this, false);
+	                    });
+
+	                _this._resizeDropdown();
+
+	            };
+
+	            var closeCurSub = function() {
+	                if (!OPTIONS.IS_MOBILE) {
+	                    var selectSub = d3.select(curSub);
+
+	                    selectSub
+	                        .classed('active', false)
+	                        .attr('style', '');
+	                };
+
+	            };
+
+
+
+	            d3.select(curSub)
+	                .select('.' + css.list_item)
+	                .node()
+	                .addEventListener('mouseleave', closeCurSub, false);
+
+	            view.node()
+	                .addEventListener('mouseenter', function() { possiblyActivate(event, this); }, false);
+
+	            view.node()
+	                .addEventListener('click', function() { possiblyActivate(event, this); }, false);
+
+	        },
+        
+        
+        
+	        //this function process click on list item
+	        _selectIndicator: function(view) {
+                
+	            var item = d3.select(view).data()[0];
+
+                //only for leaf nodes
+	            if (!item.children) {
+	                callback(item.id);
+	                this.toggle();
+	            };
+
+	        },
+        
+        
+        
+        
+	        //function is redrawing data and built structure
+	        redraw: function (data){
+                var _this = this;
+                
+                if (data == null) data = tree;
+                    
+	            this.element
+                    .select('#' + OPTIONS.MENU_ID)
+                    .select('.' + css.list_top_level)
+                    .remove();
+
+	            //redrawing first level
+	            var firstLevelMenu = this.element
+                    .select('#' + OPTIONS.MENU_ID)
+                    .append('ul')
+                    .classed(css.list_top_level, true);
+
+	            //translation integration
+//	            var getTranslation = function(d) {
+//	                if (_this.lang()) {
+//	                    for (var key in _this.langStrings()[_this.lang()]) {
+//	                        if (_this.langStrings()[_this.lang()].hasOwnProperty(d['id'])) {
+//	                            if (key == d['id']) {
+//	                                return _this.langStrings()[_this.lang()][key];
+//	                            }
+//	                        } else {
+//	                            return d['id'];
+//	                        }
+//	                    };
+//	                } else {
+//	                    return d['id'];
+//	                };
+//	            };
 
 	            //selection
 	            var data = firstLevelMenu
-	                            .selectAll('li')
-	                            .data(data, function(d){
-	                                return d['id'];
-	                            });
+                    .selectAll('li')
+                    .data(data, function(d){
+                        return d['id'];
+                    });
 
 	            //removing old data
-	            data
-	                .exit()
-	                .remove();
+	            data.exit().remove();
 
 
 	            //adding new data
-	            var li = data
-	                    .enter()
-	                    .append('li');
+	            var li = data.enter().append('li');
 
-	            li
-	                .append('span')
-	                .classed(cssClasses.list_item_label, true)
+	            li.append('span')
+	                .classed(css.list_item_label, true)
 	                .text(function(d){
-	                    return translatorInt(d);
+	                    return _this.translator("indicator/" + d.id);
 	                })
-	                .on('click', selectIndicator);
+	                .on('click', function(){_this._selectIndicator(this)});
 
-	            li
-	                .classed(cssClasses.list_item, true)
-	                .classed(cssClasses.hasChild, function(d) { return d['children']; })
-	                .classed(cssClasses.isSpecial, function(d) { return d['special']; })
+	            li.classed(css.list_item, true)
+	                .classed(css.hasChild, function(d) { return d['children']; })
+	                .classed(css.isSpecial, function(d) { return d['special']; })
 	                .each(function(d) {
-	                    var selection = d3.select(this);
-	                    selection.call(toggleSub);
+	                    var view = d3.select(this);
+	                    _this._toggleSub(view);
 
 	                    var parsingProcess = function(select, data) {
 	                        if(data != null) {
 	                            var li = select
 	                                .append('ul')
-	                                .classed(cssClasses.list, true)
+	                                .classed(css.list, true)
 	                                .selectAll('li')
 	                                .data(data, function(d) { return d['id']; })
 	                                .enter()
 	                                .append('li');
 
-	                            li
-	                                .append('span')
-	                                .classed(cssClasses.list_item_label, true)
+	                            li.append('span')
+	                                .classed(css.list_item_label, true)
 	                                .text(function (d) {
-	                                    return translatorInt(d);
+	                                    return _this.translator("indicator/" + d.id);
 	                                })
-	                                .on('click', selectIndicator);
+	                                .on('click', function(){_this._selectIndicator(this)});
 
-	                            li
-	                                .classed(cssClasses.list_item, true)
-	                                .classed(cssClasses.hasChild, function(d) { return d['children']; })
-	                                .classed(cssClasses.isSpecial, function(d) { return d['special']; })
+	                            li.classed(css.list_item, true)
+	                                .classed(css.hasChild, function(d) { return d['children']; })
+	                                .classed(css.isSpecial, function(d) { return d['special']; })
 	                                .each(function(d){
-	                                    d3.select(this).call(toggleSub);
+	                                    _this._toggleSub(d3.select(this));
 	                                    parsingProcess(d3.select(this), d['children']);
 	                                });
 	                        };
 	                    };
 
-	                    parsingProcess(selection, d['children']);
+	                    parsingProcess(view, d['children']);
 
 	                });
 
-	        };
-
-	        //init functions
-	        d3.select('body').on('mousemove', mousemoveDocument).select('#' + OPTIONS.MENU_ID).on('mouseleave', closeAllSub);
-	        enableSearch();
-	        watchContainerSize();
-
-	    },
+	        },
+        
+        
+        
+        
+        
+        
 
 	    updateView: function() {
-	        // do some redraw and update here
-	        var setModel = this._setModel.bind(this);
 	        var _this = this;
-	        this.translator(translator).lang(_this.context.model._data.language._data.id).callback(setModel).data(data);
+            var languageID = _this.model.language.id;
+            var langStrings = {};
+            langStrings[languageID] = _this.model.language.strings[languageID];
+            
+            this.translator = this.model.language.getTFunction();
+            
+	        var setModel = this._setModel.bind(this);
+	        this.langStrings(langStrings)
+                .lang(languageID)
+                .callback(setModel)
+                .tree(globals.metadata.indicatorsTree)
+                .redraw();
 	    },
 
-	    _setModel: function() {
-
-	        var mdl = this.model.axis;
-
-	        var state = this.state;
-
-	        var obj = {};
-
-	        obj.which = state['id'];
-	        obj.use = state['use'];
-	        obj.unit = state['unit'];
-	        obj.scaleType = state['scales'][0];
+	    _setModel: function(value) {
+            
+            var indicatorsDB = globals.metadata.indicatorsDB;
 
 
-	        console.log(obj);
+            var mdl = this.model.axis;
 
-	        mdl.set(obj);
+            var obj = {};
+            
+            obj.which = value;
+	        obj.use = indicatorsDB[value].use;
+	        obj.scaleType = indicatorsDB[value].scales[0];
+            
+            if (mdl.getType() == 'axis') {
+                obj.min = null;
+                obj.max = null;
+            }
+             
+
+            mdl.set(obj);
+            
+            
 	    }
 
 

@@ -78,7 +78,8 @@
             }
         },
         data: {
-            reader: "waffle-server"
+            reader: "csv-file",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv"
         },
         language: language,
         ui: {
