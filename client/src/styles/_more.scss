@@ -125,13 +125,11 @@
             text-decoration: none;
             @include border-radius(3px);
 
+            font-family: 'Bariol Bold';
+            background-color: #f2f2f2;
+
             &:hover:not(.active) {
               padding: 15px 17px 15px 23px;
-            }
-
-            &.active {
-              font-family: 'Bariol Bold';
-              background-color: #f2f2f2;
             }
         }
     }
