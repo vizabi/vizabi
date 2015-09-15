@@ -29,8 +29,6 @@ angular.module('gapminderTools')
         options.state = state.state;
       }
 
-      Vizabi._globals.baseUrl = "http://localhost:9000";
-
       return Vizabi(tool, placeholder, options);
     }
   };

@@ -1,4 +1,3 @@
-//changing Vizabi
 
 Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
 

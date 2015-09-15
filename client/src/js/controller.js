@@ -12,7 +12,6 @@ angular.module('gapminderTools')
   //start off by getting all items
   vizabiItems.getItems().then(function(items) {
     $scope.tools = items;
-    console.log(items);
     $scope.validTools = Object.keys($scope.tools);
     $scope.$broadcast('$routeChangeSuccess');
   });
