@@ -540,7 +540,7 @@ meow("********** "+orient+" **********");
                                     .filter(onlyUnique);
                                 
                                 // stop populating if labels don't fit 
-                                if(!labelsFitIntoScale(trytofit, lengthRange, OPTIMISTIC, "none")) break;
+                                if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
                                 
                                 // apply changes if no blocking instructions
                                 tickValues = trytofit;

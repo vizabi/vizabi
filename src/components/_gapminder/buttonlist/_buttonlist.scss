@@ -114,15 +114,17 @@ $vzb-button-color-border: #cce6ed;
 &.vzb-small.vzb-portrait {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
+      margin-bottom: 20px;
       width: $vzb-button-width;
     }
   }
 }
 
-&.vzb-medium, &.vzb-large {
+&.vzb-landscape, &.vzb-medium, &.vzb-large {
   .vzb-buttonlist {
     .vzb-buttonlist-btn {
       width: $vzb-button-width;
+      margin-right: 20px;
       & > .vzb-btn-icon {
         // @include font-size(23px);
         font-size: $vzb-font-size-medium;
@@ -143,7 +145,7 @@ $vzb-button-color-border: #cce6ed;
     white-space: normal;
     overflow-y: scroll;
     overflow-x: hidden;
-    margin-right: -15px;
+    margin-right: -20px;
   }
 }
 
@@ -152,6 +154,7 @@ $vzb-button-color-border: #cce6ed;
     white-space: nowrap;
     overflow-y: hidden;
     overflow-x: scroll;
-    margin-bottom: -15px;
+    margin-bottom: -20px;
   }
 }
+

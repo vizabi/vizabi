@@ -6,6 +6,7 @@
     'use strict';
     var root = this;
     var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
 
     //DEFAULT OPTIONS
     var BarChart = this.Vizabi.Tool.get('BarChart');
@@ -21,9 +22,14 @@
         strings: {}
     };
 
+    var locationArray = window.location.href.split("/");
+    var localUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
+    localUrl += "/preview/";
+    var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
+    
     //TODO: remove hardcoded path from source code
     Vizabi._globals.gapminder_paths = {
-        baseUrl: "http://static.gapminderdev.org/vizabi/release/v0.7.1/preview/"
+        baseUrl: localUrl
     };
 
     BarChart.define('default_options', {
@@ -55,6 +61,8 @@
                     use: "indicator",
                     which: "lex",
                     scaleType: "linear",
+                    min: 0,
+                    max: 90,
                     allow: {scales: ["linear", "log"]}
                 },
                 axis_x: {
@@ -64,14 +72,8 @@
                 },
                 color: {
                     use: "property",
-                    which: "geo",
-                    palette: {
-                        "asi": "#FF5872",
-                        "eur": "#FFE700",
-                        "ame": "#7FEB00",
-                        "afr": "#00D5E9",
-                        "_default": "#ffb600"
-                    }
+                    which: "geo.region",
+                    scaleType: "ordinal"
                 }
             }
         },
@@ -131,7 +133,6 @@
                     //which: "mean",
                     which: "gdp_per_cap",
                     scaleType: 'log',
-                    unit: "gdp_per_cap_daily",
                     min: 0.11, //0
                     max: 500 //100
                 },
@@ -255,9 +256,9 @@
 
         state: {
             time: {
-                start: "1990",
-                end: "2014",
-                value: "2000",
+                start: "1800",
+                end: "2030",
+                value: "2015",
                 step: 1,
                 speed: 300,
                 formatInput: "%Y",
@@ -285,23 +286,20 @@
                 },
                 axis_y: {
                     use: "indicator",
-                    which: "lex",
-                    scaleType: "linear",
-                    allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "lex"
+                    which: "u5mr",
+                    scaleType: "log",
+                    allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 axis_x: {
                     use: "indicator",
                     which: "gdp_per_cap",
                     scaleType: "log",
-                    allow: {scales: ["linear", "log", "genericLog"]},
-                    unit: "gdp_per_cap"
+                    allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 color: {
                     use: "property",
                     which: "geo.region",
-                    scaleType: "ordinal",
-                    unit: ""
+                    scaleType: "ordinal"
                 },
                 size: {
                     use: "indicator",
@@ -309,16 +307,15 @@
                     scaleType: "linear",
                     allow: {scales: ["linear", "log"]},
                     min: 0.04,
-                    max: 0.75,
-                    unit: ""
+                    max: 0.75
                 }
             }
         },
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
-            //path: "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
+            //path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
@@ -413,15 +410,27 @@
     //preloading metadata for all charts
     Vizabi.Tool.define("preload", function(promise) {
 
+        var chartName = utils.arrayLast(window.location.pathname.split("/")).split(".htm")[0];
+    
         var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/metadata.json";
         var globals = Vizabi._globals;
-
+        
+        
         //TODO: concurrent
         //load language first
         this.preloadLanguage().then(function() {
             //then metadata
             d3.json(metadata_path, function(metadata) {
+                
                 globals.metadata = metadata;
+                
+                //TODO: this is a hack that helps to hide indicators which are not present in data
+                globals.metadata.indicatorsArray = utils.keys(metadata.indicatorsDB)
+                    .filter(function(f){
+                        var one = metadata.indicatorsDB[f];
+                        return one.allowCharts.indexOf(chartName)!=-1 || one.allowCharts.indexOf("*")!=-1;
+                    });
+                
                 promise.resolve();
             });
         });
