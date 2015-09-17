@@ -20,6 +20,7 @@
 
   //constants
   var class_playing = "vzb-playing";
+  var class_loading = "vzb-ts-loading";
   var class_hide_play = "vzb-ts-hide-play-button";
   var class_dragging = "vzb-ts-dragging";
   var class_axis_aligned = "vzb-ts-axis-aligned";
@@ -72,17 +73,15 @@
       }];
 
       var _this = this;
+
       //starts as splash
-      this._splash = true;
+      this._splash = config.ui.splash;
 
       //binds methods to this model
       this.model_binds = {
         'change:time': function (evt, original) {
           if(_this._splash !== _this.model.time.splash) {
-            console.log('splash changed');
             _this._splash = _this.model.time.splash;
-            // _this.changeLimits();
-            console.log(_this.model.time.start, _this.model.time.end);
             _this.readyOnce();
             _this.ready();
           }
@@ -98,12 +97,6 @@
               _this._setHandle(_this.model.time.playing);
             }
           }
-        },
-        'ready': function() {
-          console.log('ready again');
-        },
-        'splash:start': function() {
-
         }
       };
 
@@ -136,6 +129,7 @@
 
       //DOM to d3
       this.element = d3.select(this.element);
+      this.element.classed(class_loading, false);
 
       //html elements
       this.slider_outer = this.element.select(".vzb-ts-slider");
@@ -196,8 +190,6 @@
     ready: function () {
 
       if(this._splash) return;
-
-      console.log('ts ready');
 
       var play = this.element.select(".vzb-ts-btn-play");
       var pause = this.element.select(".vzb-ts-btn-pause");

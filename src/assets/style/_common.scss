@@ -53,10 +53,9 @@ $vzb-gapminder-main: #FFCA34;
 // ----------------------------------------------------------------------------
 //   Loader (spinner)
 // ----------------------------------------------------------------------------
-$vzb-loader-speed: 0.75s;
-$vzb-loader-thickness: 8px;
+$vzb-loader-speed: 0.6s;
+$vzb-loader-thickness: 4px;
 $vzb-loader-size: 30px;
-$vzb-loader-color: #E1E1E1;
 $vzb-loader-bgcolor: $vzb-color-white;
 // ----------------------------------------------------------------------------
 //   Common styles
@@ -73,9 +72,29 @@ $vzb-loader-bgcolor: $vzb-color-white;
   opacity: 0 !important;
 }
 
+%vzb-loader {
+  @include animation-duration($vzb-loader-speed);
+  @include animation-iteration-count(infinite);
+  @include animation-name(rotate-forever);
+  @include animation-timing-function(linear);
+  @include size($vzb-loader-size);
+  @include position(absolute, 50% 0 0 50%);
+  content: ' ';
+  display: inline-block;
+  border: $vzb-loader-thickness solid rgba($vzb-color-primary, .1);
+  border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, .6);
+  border-radius: 100%;
+  margin: -1 * $vzb-loader-size/2;
+  z-index: 9999;
+}
+
 .vzb-placeholder {
   position: relative;
   background-color: $vzb-color-white;
+
+  &.vzb-loading-first > div{
+    @extend .vzb-hidden;
+  }
 
   &.vzb-loading, &.vzb-loading-data {
     //todo: Make background transparent, but not preloader circles
@@ -92,19 +111,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
     }
 
     &:after {
-      @include animation-duration($vzb-loader-speed);
-      @include animation-iteration-count(infinite);
-      @include animation-name(rotate-forever);
-      @include animation-timing-function(linear);
-      @include size($vzb-loader-size);
-      @include position(absolute, 50% 0 0 50%);
-      content: ' ';
-      display: inline-block;
-      border: $vzb-loader-thickness solid $vzb-loader-color;
-      border-right-color: transparent;
-      border-radius: 50%;
-      margin: -1 * $vzb-loader-size/2;
-      z-index: 9999;
+      @extend %vzb-loader;
     }
   }
   //loading data specifically

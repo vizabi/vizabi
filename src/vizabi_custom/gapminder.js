@@ -163,7 +163,8 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/mountains-pop-gdp-gini-1800-2030.csv"
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/mountains-pop-gdp-gini-1800-2030.csv",
+            splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
     });
@@ -316,7 +317,8 @@
             //reader: "waffle-server",
             reader: "csv-file",
             //path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv"
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv",
+            splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
         language: language,
@@ -386,6 +388,7 @@
         data: {
             reader: "csv-file",
             path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/{{geo}}.csv",
+            splash: true
         },
         language: language,
         ui: {
