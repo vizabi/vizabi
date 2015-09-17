@@ -74,7 +74,7 @@
 
       var _this = this;
 
-      //starts as splash
+      //starts as splash if this is the option
       this._splash = config.ui.splash;
 
       //binds methods to this model
