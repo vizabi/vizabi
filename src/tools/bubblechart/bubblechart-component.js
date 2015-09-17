@@ -1005,7 +1005,7 @@
      * Here plotting happens
      * debouncing to improve performance: events might trigger it more than 1x
      */
-    redrawDataPoints: utils.debounce(function (duration) {
+    redrawDataPoints: function (duration) {
       var _this = this;
 
       if (duration == null) duration = _this.duration;
@@ -1042,7 +1042,7 @@
         }, _this.model.time.speed * 1.2)
       }
 
-    }, 2, true),
+    },
 
     //redraw Data Points
     _updateBubble: function (d, values, valuesL, index, view, duration) {
