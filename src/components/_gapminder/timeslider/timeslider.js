@@ -72,19 +72,38 @@
       }];
 
       var _this = this;
+      //starts as splash
+      this._splash = true;
 
       //binds methods to this model
       this.model_binds = {
         'change:time': function (evt, original) {
-          if ((['change:time:start', 'change:time:end']).indexOf(evt) !== -1) {
-            _this.changeLimits();
+          if(_this._splash !== _this.model.time.splash) {
+            console.log('splash changed');
+            _this._splash = _this.model.time.splash;
+            // _this.changeLimits();
+            console.log(_this.model.time.start, _this.model.time.end);
+            _this.readyOnce();
+            _this.ready();
           }
-          _this._optionClasses();
 
-          //only set handle position if change is external
-          if (!_this._dragging) {
-            _this._setHandle(_this.model.time.playing);
+          if(!_this._splash) {
+
+            if ((['change:time:start', 'change:time:end']).indexOf(evt) !== -1) {
+              _this.changeLimits();
+            }
+            _this._optionClasses();
+            //only set handle position if change is external
+            if (!_this._dragging) {
+              _this._setHandle(_this.model.time.playing);
+            }
           }
+        },
+        'ready': function() {
+          console.log('ready again');
+        },
+        'splash:start': function() {
+
         }
       };
 
@@ -110,6 +129,9 @@
 
     //template is ready
     readyOnce: function () {
+
+      if(this._splash) return;
+
       var _this = this;
 
       //DOM to d3
@@ -172,6 +194,10 @@
 
     //template and model are ready
     ready: function () {
+
+      if(this._splash) return;
+
+      console.log('ts ready');
 
       var play = this.element.select(".vzb-ts-btn-play");
       var pause = this.element.select(".vzb-ts-btn-pause");

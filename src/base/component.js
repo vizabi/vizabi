@@ -120,10 +120,26 @@
         preloader(this).then(function() {
 
           if(splashScreen) {
+
+            var timeMdl = _this.model.state.time;
+            timeMdl.splash = true;
+            var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
+
+            console.log(temp);
+            
             _this.model.load({ splashScreen: true }).then(function(){
-              _this.model.load().then(function() {
-                console.log('both ready');
-              });
+
+              //delay to avoid conflicting with setReady
+              utils.delay(function() {
+                timeMdl.start = temp.start;
+                timeMdl.end =  temp.end;
+                _this.model.load().then(function() {
+                  console.log('both ready');
+                  timeMdl.splash = false;
+                  timeMdl.trigger('change');
+                });
+              }, 1000);
+
             });
           }
           else {

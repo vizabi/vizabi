@@ -359,7 +359,6 @@
       //useful to check if in the middle of a load call
       this._loadCall = true;
 
-
       //load hook
       //if its not a hook, the promise will not be created
       if (this.isHook() && data_hook && query) {
@@ -404,6 +403,8 @@
       //we will consider this done
       var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
       wait.then(function () {
+
+        //only validate if not showing splash screen to avoid fixing the year
         if (_this.validate) {
           _this.validate();
         }
