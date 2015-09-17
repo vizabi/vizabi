@@ -19,10 +19,10 @@
     /**
      * Initializes the component (Bubble Chart).
      * Executed once before any template is rendered.
-     * @param {Object} options The options passed to the component
+     * @param {Object} config The options passed to the component
      * @param {Object} context The component's parent
      */
-    init: function (context, options) {
+    init: function (config, context) {
       var _this = this;
       this.name = 'bubblechart';
       this.template = 'src/tools/bubblechart/bubblechart.html';
@@ -42,7 +42,17 @@
         type: "language"
       }];
 
+      //starts as splash if this is the option
+      this._splash = config.ui.splash;
+
       this.model_binds = {
+        'change:time': function (evt, original) {
+          if(_this._splash !== _this.model.time.splash) {
+            if (!_this._readyOnce) return;
+            _this._splash = _this.model.time.splash;
+            //TODO: adjust X & Y axis here
+          }
+        },
         "change:time:record": function () {
             //console.log("change time record");
             if(_this.model.time.record) {
@@ -131,7 +141,7 @@
         }
       };
 
-      this._super(context, options);
+      this._super(config, context);
 
       this.xScale = null;
       this.yScale = null;
@@ -993,8 +1003,9 @@
     /*
      * REDRAW DATA POINTS:
      * Here plotting happens
+     * debouncing to improve performance: events might trigger it more than 1x
      */
-    redrawDataPoints: function (duration) {
+    redrawDataPoints: utils.debounce(function (duration) {
       var _this = this;
 
       if (duration == null) duration = _this.duration;
@@ -1031,7 +1042,7 @@
         }, _this.model.time.speed * 1.2)
       }
 
-    },
+    }, 2, true),
 
     //redraw Data Points
     _updateBubble: function (d, values, valuesL, index, view, duration) {

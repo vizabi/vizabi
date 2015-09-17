@@ -7,6 +7,7 @@
   'use strict';
 
   var class_loading = 'vzb-loading';
+  var class_loading_first = 'vzb-loading-first';
   var root = this;
   var Vizabi = root.Vizabi;
   var Promise = Vizabi.Promise;
@@ -115,8 +116,37 @@
         });
         this.model.setHooks();
 
+        var splashScreen = this.model.data.splash;
+
         preloader(this).then(function() {
-          _this.model.load();
+
+          if(splashScreen) {
+
+            //TODO: cleanup hardcoded splash screen
+            var timeMdl = _this.model.state.time;
+            timeMdl.splash = true;
+            var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
+            
+            _this.model.load({ splashScreen: true }).then(function(){
+
+              //delay to avoid conflicting with setReady
+              utils.delay(function() {
+                //force loading because we're restoring time.
+                _this.model.setLoading('restore_orig_time');
+                timeMdl.start = temp.start;
+                timeMdl.end =  temp.end;
+                _this.model.load().then(function() {
+                  _this.model.setLoadingDone('restore_orig_time');
+                  timeMdl.splash = false;
+                  timeMdl.trigger('change');
+                });
+              }, 10);
+
+            });
+          }
+          else {
+            _this.model.load();
+          }
         });
 
       } else if (this.model && this.model.isLoading()) {
@@ -129,6 +159,7 @@
 
       function done() {
         utils.removeClass(_this.placeholder, class_loading);
+        utils.removeClass(_this.placeholder, class_loading_first);
         _this.setReady();
       }
     },
@@ -166,6 +197,7 @@
       }
       //add loading class and html
       utils.addClass(this.placeholder, class_loading);
+      utils.addClass(this.placeholder, class_loading_first);
       this.placeholder.innerHTML = rendered;
       this.element = this.placeholder.children[0];
       //only tools have layout (manage sizes)

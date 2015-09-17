@@ -755,6 +755,14 @@
     },
 
     /*
+     * Defers a function
+     * @param {Function} func
+     */
+    delay: function (func, delay) {
+      setTimeout(func, delay);
+    },
+
+    /*
      * Creates a hashcode for a string or array
      * @param {String|Array} str
      * @return {Number} hashCode
