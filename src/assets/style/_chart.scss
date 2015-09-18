@@ -1,0 +1,68 @@
+// ****************************************************************************
+//
+//   Common styles used in various charts
+//
+// ****************************************************************************
+
+%vzb-chart-wrapper {
+  @include position(absolute, 0px);
+  overflow: hidden;
+}
+
+%vzb-chart-svg {
+  @include position(absolute, 0px);
+  color: $vzb-color-grey-dark;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+}
+
+%vzb-chart-ticks-small {
+  font-size: $vzb-font-size-regular;
+}
+
+%vzb-chart-ticks-medium {
+  font-size: $vzb-font-size-medium;
+}
+
+%vzb-chart-ticks-large {
+  font-size: $vzb-font-size-large;
+}
+
+%vzb-chart-ticks {
+  @extend %vzb-chart-ticks-small;
+  fill: currentColor;
+  stroke: none;
+}
+
+%vzb-chart-axis-title {
+  color: $vzb-color-primary;
+  fill: currentColor;
+}
+
+%vzb-chart-axis-title-small {
+  font-size: $vzb-font-size-regular;
+}
+
+%vzb-chart-axis-title-medium {
+  font-size: $vzb-font-size-medium;
+}
+
+%vzb-chart-axis-title-large {
+  font-size: $vzb-font-size-large;
+}
+
+%vzb-chart-axis {
+  fill: none;
+  stroke: $vzb-color-grey;
+  color: $vzb-color-grey;
+  path, line {
+    fill: none;
+    stroke: $vzb-color-grey;
+    shape-rendering: crispEdges;
+  }
+  text {
+    @extend %vzb-chart-ticks;
+  }
+}

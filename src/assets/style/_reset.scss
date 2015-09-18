@@ -9,12 +9,11 @@ MOST OF THE ORIGINAL CODE IS REMOVED FROM THIS FILE (we don't use these properti
 */
 
 .vzb-placeholder {
-  font-size: $vzb-font-size-default;
+  font-size: $vzb-font-size-base;
   font-variant: normal;
   text-align: left;
 
   div, span, h1, h2, h3, h4, h5, h6, p, a, i, svg, text, g {
-    font-size: $vzb-font-size-default;
     margin: 0;
     padding: 0;
     border: 0;
@@ -24,5 +23,9 @@ MOST OF THE ORIGINAL CODE IS REMOVED FROM THIS FILE (we don't use these properti
     cursor: default;
     white-space: nowrap;
     @include box-sizing(border-box);
+  }
+
+  input, textarea, keygen, select, button {
+    font-size: $vzb-font-size-base;
   }
 }

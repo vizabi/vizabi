@@ -12,7 +12,7 @@ module.exports = {
         files: [{
             expand: true,
             cwd: '',
-            src: ['preview/**/*','dist/**/*'],
+            src: ['preview/**/*','dist/**/*','download/**/*'],
             dest: '<%= AWS_SUBFOLDER %>' + '/<%= (process.env.TRAVIS_BRANCH || gitinfo.local.branch.current.name) %>/'
         }]
     }

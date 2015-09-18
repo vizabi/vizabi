@@ -38,7 +38,6 @@
       this._type = "axis";
       values = utils.extend({
         use: "value",
-        unit: "",
         which: undefined,
         min: null,
         max: null
@@ -128,9 +127,9 @@
       if (this.min!=null && this.max!=null && scaleType !== 'ordinal') {
         domain = [this.min, this.max];
         this.min = domain[0];
-        this.max = domain[1];
+        this.max = domain[1]; 
       }
-
+        
       this.scale = d3.scale[scaleType]().domain(domain);
     }
   });

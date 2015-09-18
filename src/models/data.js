@@ -22,7 +22,8 @@
 
       this._type = "data";
       values = utils.extend({
-        reader: "json-file"
+        reader: "csv-file",
+        splash: false
       }, values);
 
       //same constructor as parent, with same arguments

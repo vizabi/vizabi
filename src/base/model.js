@@ -11,6 +11,7 @@
   var Vizabi = root.Vizabi;
   var Promise = Vizabi.Promise;
   var utils = Vizabi.utils;
+  var globals = Vizabi._globals;
 
   var time_formats = {
     "year": "%Y",
@@ -179,6 +180,16 @@
     getType: function () {
       return this._type;
     },
+      
+    /**
+     * Gets the metadata of the hooks
+     * @returns {Object} metadata
+     */
+    getMetadata: function () {
+      if (!this.isHook()) return {};
+      return (globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use === 'property')) ? 
+          globals.metadata.indicators[this.which] : {};
+    },
 
     /**
      * Gets all submodels of the current model
@@ -330,19 +341,23 @@
      * Basically, this method:
      * loads is theres something to be loaded:
      * does not load if there's nothing to be loaded
+     * @param {Object} options (includes splashScreen)
      * @returns defer
      */
-    load: function () {
+    load: function (opts) {
+
+      opts = opts || {};
+      var splashScreen = opts.splashScreen || false;
+
       var _this = this;
       var data_hook = this._dataModel;
       var language_hook = this._languageModel;
-      var query = this.getQuery();
+      var query = this.getQuery(splashScreen);
       var formatters = this._getAllFormatters();
       var promiseLoad = new Promise();
       var promises = [];
       //useful to check if in the middle of a load call
       this._loadCall = true;
-
 
       //load hook
       //if its not a hook, the promise will not be created
@@ -380,15 +395,16 @@
       }
 
       //load submodels as well
-      var _this = this;
       utils.forEach(this.getSubmodels(true), function(sm, name) {
-        promises.push(sm.load());
+        promises.push(sm.load(opts));
       });
 
       //when all promises/loading have been done successfully
       //we will consider this done
       var wait = promises.length ? Promise.all(promises) : new Promise.resolve();
       wait.then(function () {
+
+        //only validate if not showing splash screen to avoid fixing the year
         if (_this.validate) {
           _this.validate();
         }
@@ -398,12 +414,13 @@
 
         //we need to defer to make sure all other submodels
         //have a chance to call loading for the second time
+        _this._loadCall = false;
+        promiseLoad.resolve();
         utils.defer(function() {
-          _this._loadCall = false;
           _this.setReady();
-          promiseLoad.resolve();
         });
       });
+
       return promiseLoad;
     },
 
@@ -444,7 +461,7 @@
      * gets query that this model/hook needs to get data
      * @returns {Array} query
      */
-    getQuery: function () {
+    getQuery: function (splashScreen) {
 
       var dimensions, filters, select, q;
 
@@ -456,7 +473,8 @@
         return true;
       }
       dimensions = this._getAllDimensions();
-      filters = this._getAllFilters();
+      filters = this._getAllFilters(splashScreen);
+
       if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
       select = utils.unique(dimensions);
 
@@ -647,7 +665,7 @@
           filtered = hook.getNestedItems(group_by);
           response[name] = {};
           //find position from first hook
-          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+          next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
           u = hook.use;
           w = hook.which;
           utils.forEach(filtered, function(arr, id) {
@@ -1094,12 +1112,13 @@
 
     /**
      * gets all hook filters
+     * @param {Boolean} splashScreen get filters for first screen only
      * @returns {Object} filters
      */
-    _getAllFilters: function () {
+    _getAllFilters: function (splashScreen) {
       var filters = {};
       utils.forEach(this._space, function (h) {
-        filters = utils.extend(filters, h.getFilter());
+        filters = utils.extend(filters, h.getFilter(splashScreen));
       });
       return filters;
     },

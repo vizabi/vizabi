@@ -1,160 +1,131 @@
 .vzb-tool-linechart {
-  .vzb-tool-stage {
-    bottom: 0px
-  }
-
-  .vzb-lc-timeslider {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;
-  }
-
-  .vzb-linechart {
-    @include position(absolute, 0px);
-
-    font-family: $vzb-font-family;
-    color: #666666;
-    width: 100%;
-    height: 100%;
-
-    .vzb-lc-title {
-      color: $vzb-color-primary;
-      fill: currentColor;
+    .vzb-tool-stage {
+        bottom: 0px
     }
-    .vzb-lc-axis {
-      fill: none;
-      stroke: #999999;
-      color: #999999;
-      text {
-        fill: currentColor;
-        stroke: none;
-      }
+    .vzb-lc-timeslider {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
     }
-    .vzb-lc-axis-x, .vzb-lc-axis-y {
-      @extend .vzb-lc-axis;
-    }
-    .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {
-      @extend .vzb-lc-title;
-    }
-    .vzb-lc-vertical-now, .vzb-lc-projection-x, .vzb-lc-projection-y {
-      stroke-dasharray: 2 4;
-      stroke: #999999;
-      opacity: 0;
-    }
-    .vzb-lc-line {
-      fill: none;
-      stroke-linecap: round;
-      //filter:url(#vzb-lc-filter-dropshadow);
-    }
-    .vzb-lc-line-shadow {
-      fill: none;
-      stroke-linecap: round;
-    }
-    .vzb-lc-circle {
-      stroke: #000;
-    }
-    .vzb-lc-axis-value text {
-      fill: $vzb-color-primary;
-    }
-    .vzb-lc-entity {
-      opacity: 0.9;
-    }
-    .vzb-lc-entity.vzb-hovered {
-      opacity: 0.9;
-    }
-    .vzb-lc-entity.vzb-dimmed {
-      opacity: 0.3;
-    }
-    .vzb-lc-entity.vzb-selected {
-      opacity: 1.0;
-    }
-
-  }
-  &.vzb-large {
     .vzb-linechart {
-      @include font-size(18px);
-      .vzb-lc-line {
-        stroke-width: 8px;
-      }
-      .vzb-lc-line-shadow {
-        stroke-width: 11px;
-      }
-      .vzb-lc-circle {
-        stroke-width: 3px
-      }
-      .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {
-        font-size: 1.8em;
-      }
-      .vzb-lc-labelName {
-        font-size: 1.8em;
-      }
-      .vzb-lc-labelValue {
-        font-size: 1.6em;
-      }
-      .vzb-lc-axis-x text, .vzb-lc-axis-y text {
-        font-size: 1.6em
-      }
-      .vzb-lc-axis-value text {
-        font-size: 1.8em;
-      }
+        @extend %vzb-chart-svg;
+
+        .vzb-lc-axis-x,
+        .vzb-lc-axis-y {
+            @extend %vzb-chart-axis;
+        }
+        .vzb-lc-axis-y-title,
+        .vzb-lc-axis-x-title {
+            @extend %vzb-chart-axis-title;
+        }
+        .vzb-lc-vertical-now,
+        .vzb-lc-projection-x,
+        .vzb-lc-projection-y {
+            stroke-dasharray: 2 4;
+            stroke: #999999;
+            opacity: 0;
+        }
+        .vzb-lc-line {
+            fill: none;
+            stroke-linecap: round;
+            //filter:url(#vzb-lc-filter-dropshadow);
+        }
+        .vzb-lc-line-shadow {
+            fill: none;
+            stroke-linecap: round;
+        }
+        .vzb-lc-circle {
+            stroke: #000;
+        }
+        .vzb-lc-axis-value {
+            @extend %vzb-chart-ticks;
+        }
+        .vzb-lc-entity {
+            opacity: 0.9;
+        }
+        .vzb-lc-entity.vzb-hovered {
+            opacity: 0.9;
+        }
+        .vzb-lc-entity.vzb-dimmed {
+            opacity: 0.3;
+        }
+        .vzb-lc-entity.vzb-selected {
+            opacity: 1.0;
+        }
     }
-  }
-  &.vzb-medium {
-    .vzb-linechart {
-      @include font-size(15px);
-      .vzb-lc-line {
-        stroke-width: 6px;
-      }
-      .vzb-lc-line-shadow {
-        stroke-width: 8px;
-      }
-      .vzb-lc-circle {
-        stroke-width: 3px
-      }
-      .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {
-        font-size: 1.6em;
-      }
-      .vzb-lc-labelName {
-        font-size: 1.6em;
-      }
-      .vzb-lc-labelValue {
-        font-size: 1.4em;
-      }
-      .vzb-lc-axis-x text, .vzb-lc-axis-y text {
-        font-size: 1.4em
-      }
-      .vzb-lc-axis-value text {
-        font-size: 1.6em;
-      }
+    &.vzb-large {
+        .vzb-linechart {
+            .vzb-lc-line {
+                stroke-width: 8px;
+            }
+            .vzb-lc-line-shadow {
+                stroke-width: 11px;
+            }
+            .vzb-lc-circle {
+                stroke-width: 3px
+            }
+            .vzb-lc-axis-y-title,
+            .vzb-lc-axis-x-title {
+              @extend %vzb-chart-axis-title-large;
+            }
+
+            .vzb-lc-labelName,
+            .vzb-lc-labelValue,
+            .vzb-lc-axis-x,
+            .vzb-lc-axis-y,
+            .vzb-lc-axis-value {
+                @extend %vzb-chart-ticks-large;
+            }
+        }
     }
-  }
-  &.vzb-small {
-    .vzb-linechart {
-      @include font-size(12px);
-      .vzb-lc-line {
-        stroke-width: 5px;
-      }
-      .vzb-lc-line-shadow {
-        stroke-width: 7px;
-      }
-      .vzb-lc-circle {
-        stroke-width: 2px
-      }
-      .vzb-lc-axis-y-title text, .vzb-lc-axis-x-title text {
-        font-size: 1.3em;
-      }
-      .vzb-lc-labelName {
-        font-size: 1.3em;
-      }
-      .vzb-lc-labelValue {
-        font-size: 1.0em;
-      }
-      .vzb-lc-axis-x text, .vzb-lc-axis-y text {
-        font-size: 1.0em
-      }
-      .vzb-lc-axis-value text {
-        font-size: 1.3em;
-      }
+    &.vzb-medium {
+        .vzb-linechart {
+            .vzb-lc-line {
+                stroke-width: 6px;
+            }
+            .vzb-lc-line-shadow {
+                stroke-width: 8px;
+            }
+            .vzb-lc-circle {
+                stroke-width: 3px
+            }
+            .vzb-lc-axis-y-title,
+            .vzb-lc-axis-x-title {
+              @extend %vzb-chart-axis-title-medium;
+            }
+
+            .vzb-lc-labelName,
+            .vzb-lc-labelValue,
+            .vzb-lc-axis-x,
+            .vzb-lc-axis-y,
+            .vzb-lc-axis-value {
+                @extend %vzb-chart-ticks-medium;
+            }
+        }
     }
-  }
+    &.vzb-small {
+        .vzb-linechart {
+            .vzb-lc-line {
+                stroke-width: 5px;
+            }
+            .vzb-lc-line-shadow {
+                stroke-width: 7px;
+            }
+            .vzb-lc-circle {
+                stroke-width: 2px
+            }
+            .vzb-lc-axis-y-title,
+            .vzb-lc-axis-x-title {
+              @extend %vzb-chart-axis-title-small;
+            }
+
+            .vzb-lc-labelName,
+            .vzb-lc-labelValue,
+            .vzb-lc-axis-x,
+            .vzb-lc-axis-y,
+            .vzb-lc-axis-value {
+                @extend %vzb-chart-ticks-small;
+            }
+        }
+    }
 }

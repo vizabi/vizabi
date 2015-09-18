@@ -2,6 +2,7 @@
 module.exports = {
 	tmp: [".tmp"],
     dist: ["dist"],
+    download: ["download"],
     preview: ["preview"],
     test: ["test.html"]
 };

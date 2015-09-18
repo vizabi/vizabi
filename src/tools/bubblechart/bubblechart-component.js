@@ -19,10 +19,10 @@
     /**
      * Initializes the component (Bubble Chart).
      * Executed once before any template is rendered.
-     * @param {Object} options The options passed to the component
+     * @param {Object} config The options passed to the component
      * @param {Object} context The component's parent
      */
-    init: function (context, options) {
+    init: function (config, context) {
       var _this = this;
       this.name = 'bubblechart';
       this.template = 'src/tools/bubblechart/bubblechart.html';
@@ -42,7 +42,17 @@
         type: "language"
       }];
 
+      //starts as splash if this is the option
+      this._splash = config.ui.splash;
+
       this.model_binds = {
+        'change:time': function (evt, original) {
+          if(_this._splash !== _this.model.time.splash) {
+            if (!_this._readyOnce) return;
+            _this._splash = _this.model.time.splash;
+            //TODO: adjust X & Y axis here
+          }
+        },
         "change:time:record": function () {
             //console.log("change time record");
             if(_this.model.time.record) {
@@ -131,7 +141,7 @@
         }
       };
 
-      this._super(context, options);
+      this._super(config, context);
 
       this.xScale = null;
       this.yScale = null;
@@ -497,16 +507,17 @@
 
       this.translator = this.model.language.getTFunction();
       this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
+      var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
 
       var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
       var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
       var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
       var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
 
-      var unitStringY = this.translator("unit/" + this.model.marker.axis_y.unit);
-      var unitStringX = this.translator("unit/" + this.model.marker.axis_x.unit);
-      var unitStringS = this.translator("unit/" + this.model.marker.size.unit);
-      var unitStringC = this.translator("unit/" + this.model.marker.color.unit);
+      var unitStringY = this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit);
+      var unitStringX = this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit);
+      var unitStringS = this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit);
+      var unitStringC = this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit);
 
       if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
       if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
@@ -992,6 +1003,7 @@
     /*
      * REDRAW DATA POINTS:
      * Here plotting happens
+     * debouncing to improve performance: events might trigger it more than 1x
      */
     redrawDataPoints: function (duration) {
       var _this = this;
@@ -1156,18 +1168,18 @@
               cached.contentBBox = contentBBox;
 
               labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.height * 0.0 + 2)
+                .attr("x", contentBBox.height * 0.0 + 4)
                 .attr("y", contentBBox.height * -1);
 
               labelGroup.select("circle")
-                .attr("cx", contentBBox.height * 0.0 + 2)
+                .attr("cx", contentBBox.height * 0.0 + 4)
                 .attr("cy", contentBBox.height * -1)
                 .attr("r", contentBBox.height * 0.5);
 
-              rect.attr("width", contentBBox.width + 4)
-                .attr("height", contentBBox.height + 4)
-                .attr("x", -contentBBox.width -2)
-                .attr("y", -contentBBox.height)
+              rect.attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
@@ -1183,13 +1195,6 @@
 
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
-
-            var stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
-
-            if(cached.stuckOnLimit !== stuckOnLimit) {
-              cached.stuckOnLimit = stuckOnLimit;
-              rect.classed("vzb-transparent", !cached.stuckOnLimit);
-            }
 
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
@@ -1287,7 +1292,7 @@
         .each(function (d, index) {
           var view = d3.select(this);
 
-          view.append("rect").attr("class", "vzb-transparent")
+          view.append("rect")
             .on("click", function (d, i) {
               //default prevented is needed to distinguish click from drag
               if (d3.event.defaultPrevented) return;
@@ -1322,15 +1327,11 @@
           _this.model.entities.highlightEntity(this.__data__);
           d3.select(this).selectAll(".vzb-bc-label-x")
             .classed("vzb-transparent", false);
-          d3.select(this).select("rect")
-            .classed("vzb-transparent", false)
         })
         .on("mouseout", function (d) {
           _this.model.entities.clearHighlighted();
           d3.select(this).selectAll(".vzb-bc-label-x")
             .classed("vzb-transparent", true);
-          d3.select(this).select("rect")
-            .classed("vzb-transparent", !_this.cached[d[KEY]].stuckOnLimit)
         });
 
 
@@ -1347,6 +1348,14 @@
           .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
           .selectAll("text")
           .text(tooltipText);
+
+        var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
+                .attr("rx", contentBBox.height * 0.2)
+                .attr("ry", contentBBox.height * 0.2);
 
       } else {
 
@@ -1433,7 +1442,7 @@
 
       var OPACITY_HIGHLT = 1.0;
       var OPACITY_HIGHLT_DIM = 0.3;
-      var OPACITY_SELECT = 0.8;
+      var OPACITY_SELECT = this.model.entities.opacityRegular;
       var OPACITY_REGULAR = this.model.entities.opacityRegular;
       var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
