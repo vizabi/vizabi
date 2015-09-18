@@ -1168,18 +1168,18 @@
               cached.contentBBox = contentBBox;
 
               labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.height * 0.0 + 2)
+                .attr("x", contentBBox.height * 0.0 + 4)
                 .attr("y", contentBBox.height * -1);
 
               labelGroup.select("circle")
-                .attr("cx", contentBBox.height * 0.0 + 2)
+                .attr("cx", contentBBox.height * 0.0 + 4)
                 .attr("cy", contentBBox.height * -1)
                 .attr("r", contentBBox.height * 0.5);
 
-              rect.attr("width", contentBBox.width + 4)
-                .attr("height", contentBBox.height + 4)
-                .attr("x", -contentBBox.width -2)
-                .attr("y", -contentBBox.height)
+              rect.attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
@@ -1195,13 +1195,6 @@
 
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
-
-            var stuckOnLimit = limitedX != resolvedX || limitedY != resolvedY;
-
-            if(cached.stuckOnLimit !== stuckOnLimit) {
-              cached.stuckOnLimit = stuckOnLimit;
-              rect.classed("vzb-transparent", !cached.stuckOnLimit);
-            }
 
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
@@ -1299,7 +1292,7 @@
         .each(function (d, index) {
           var view = d3.select(this);
 
-          view.append("rect").attr("class", "vzb-transparent")
+          view.append("rect")
             .on("click", function (d, i) {
               //default prevented is needed to distinguish click from drag
               if (d3.event.defaultPrevented) return;
@@ -1334,15 +1327,11 @@
           _this.model.entities.highlightEntity(this.__data__);
           d3.select(this).selectAll(".vzb-bc-label-x")
             .classed("vzb-transparent", false);
-          d3.select(this).select("rect")
-            .classed("vzb-transparent", false)
         })
         .on("mouseout", function (d) {
           _this.model.entities.clearHighlighted();
           d3.select(this).selectAll(".vzb-bc-label-x")
             .classed("vzb-transparent", true);
-          d3.select(this).select("rect")
-            .classed("vzb-transparent", !_this.cached[d[KEY]].stuckOnLimit)
         });
 
 
@@ -1359,6 +1348,14 @@
           .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
           .selectAll("text")
           .text(tooltipText);
+
+        var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
+                .attr("rx", contentBBox.height * 0.2)
+                .attr("ry", contentBBox.height * 0.2);
 
       } else {
 

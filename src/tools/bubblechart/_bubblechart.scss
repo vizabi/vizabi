@@ -34,18 +34,19 @@
       .vzb-bc-labels .vzb-bc-entity text, .vzb-bc-tooltip text  {
         pointer-events: none;
         text-anchor: end;
-        fill: $vzb-color-primary;
-        &.vzb-bc-label-shadow, &.vzb-bc-tooltip-shadow {
+        fill: $vzb-color-black;
+        &.vzb-bc-tooltip-shadow {
           fill: white;
           @include opacity(0.5);
           stroke: white;
         }
       }
-      .vzb-bc-labels .vzb-bc-entity rect {
+      .vzb-bc-labels .vzb-bc-entity rect, .vzb-bc-tooltip rect {
         @include transition(opacity 200ms linear);
         cursor: pointer;
         fill: white;
-        stroke: $vzb-color-primary;
+        stroke: $vzb-color-black;
+        stroke-width: 1.5px;
       }
       .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {
         @include transition(opacity 200ms linear);
@@ -53,26 +54,23 @@
         text-anchor: middle;
         dominant-baseline: middle;
         pointer-events: none;
+        font-size: 0.9em;
       }
       .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x {
         @include transition(opacity 200ms linear);
         cursor: pointer;
-        fill: #ff89cd;
+        fill: $vzb-color-primary;
         stroke: white;
         stroke-width: 2px;
       }
-      .vzb-bc-labels .vzb-bc-entity.vzb-highlighted text {
-        fill: $vzb-color-primary;
-        opacity: 1.0;
-        &.vzb-bc-label-shadow {
-          stroke: #fff500;
-        }
+      .vzb-bc-labels .vzb-bc-entity.vzb-highlighted rect {
+        fill: rgb(255, 252, 185);
       }
       .vzb-bc-labels .vzb-bc-entity text:hover {
         opacity: 1.0;
       }
       .vzb-bc-lines .vzb-bc-entity line {
-        stroke: $vzb-color-primary;
+        stroke: $vzb-color-grey-dark;
         opacity: 0.8;
       }
 
