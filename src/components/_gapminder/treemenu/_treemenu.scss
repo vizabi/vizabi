@@ -6,9 +6,9 @@ $font-size: 12px;
 
 .vzb-tool-treemenu {
     @include position(absolute, 10px 10px 10px 10px);
-    background-color: $vzb-color-primary-lightest;
-    opacity: 0.9;
-    border: 3px solid white;
+    //background-color: $vzb-color-primary-lightest;
+    //opacity: 0.9;
+    //border: 3px solid white;
     overflow: auto;
     
     

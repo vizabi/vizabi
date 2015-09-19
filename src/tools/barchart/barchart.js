@@ -109,14 +109,22 @@
         .attr("y", "-6px")
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
-        .text(titleStringY);
+        .text(titleStringY)
+        .on("click", function(){
+            //TODO: replace components[3] with findByID. Optimise updateView
+            _this.parent.components[3].markerID("axis_y").updateView().toggle();
+        });
 
-      var xTitle = this.xTitleEl.selectAll("text").data([0]);
+      var xTitle = this.xTitleEl.selectAll("text").data([0]); 
       xTitle.enter().append("text");
       xTitle
         .attr("y", "-3px")
         .attr("dx", "-0.72em")
-        .text(titleStringX);
+        .text(titleStringX)
+        .on("click", function(){
+            //TODO: replace components[3] with findByID. Optimise updateView
+            _this.parent.components[3].markerID("axis_x").updateView().toggle();
+        });
 
       this.yScale = this.model.marker.axis_y.getScale();
       this.xScale = this.model.marker.axis_x.getScale();
@@ -311,7 +319,7 @@
       }, {
         component: 'gapminder-treemenu',
         placeholder: '.vzb-tool-treemenu',
-        model: ['state.marker.axis_y', 'language']
+        model: ['state.marker', 'language']
       }];
 
       //constructor is the same as any tool

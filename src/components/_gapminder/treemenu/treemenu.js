@@ -22,24 +22,6 @@
     if (!Vizabi._require('d3')) return;
 
 
-	var langStrings = {
-	    "en":{
-	        "geo": "Country",
-	        "geo.region": "World region",
-	        "lex": "Life expectancy",
-	        "gdp_per_cap": "GDP per capita",
-	        "pop": "Population",
-	        "time": "Time"
-	    },
-	    "se":{
-	        "geo": "Land",
-	        "geo.region": "Världsregion",
-	        "lex": "Livslängd",
-	        "gdp_per_cap": "BNP per capita",
-	        "pop": "Befolkning",
-	        "time": "Tid"
-	    }
-	};
     	        //css custom classes
 	        var css = {
 	            wrapper: 'dl-menu-wrap',
@@ -89,6 +71,9 @@
 
 	        //language
 	        var lang;
+    
+            //maker id
+            var markerID;
 
 	        //debug function (REMOVE IN PRODUCTION)
 	        var log = function() {
@@ -102,7 +87,7 @@
 	        var _this = this;
 
 	        this.model_expects = [{
-	            name: "axis"
+	            name: "marker"
 	                //TODO: learn how to expect model "axis" or "size" or "color"
 	        }, {
 	            name: "language",
@@ -140,12 +125,6 @@
 
 	        //menu class private
 	        var _this = this;
-
-	        //init buttons
-	        d3.select(this.placeholder)
-	            .append('button')
-	            .text('Toggle')
-	            .on('click', function() { _this.toggle() });
 
 
 	        //general markup
@@ -197,12 +176,18 @@
 	            return this;
 	        };
 
+	        this.markerID = function(input) {
+	            if (!arguments.length) return markerID;
+	            markerID = input;
+	            return this;
+	        };
+
 
 	        //init functions
 	        d3.select('body')
                 .on('mousemove', _this._mousemoveDocument)
                 .select('#' + OPTIONS.MENU_ID)
-                .on('mouseleave', _this._closeAllSub);
+                .on('mouseleave', function(){_this._closeAllSub(this)});
 	        _this._enableSearch();
 	        _this._watchContainerSize();
 
@@ -237,18 +222,16 @@
         
 
 	        //if menu lost focus close all levels
-	        _closeAllSub: function() {
-	            var selfSelect = d3.select(this);
+	        _closeAllSub: function(view) {
+	            view = d3.select(view);
 
-	            selfSelect
-	                .selectAll('.active')
+	            view.selectAll('.active')
 	                .classed('active', false);
 
-	            selfSelect
-	                .selectAll('.marquee')
+	            view.selectAll('.marquee')
 	                .classed('marquee', false);
 
-	            _this._resizeDropdown();
+	            this._resizeDropdown();
 	        },
 
         
@@ -514,6 +497,8 @@
         
 	        //resize function
 	       _resizeDropdown: function() {
+               
+               var _this = this;
 
 	            if (!OPTIONS.IS_MOBILE) {
 
@@ -666,7 +651,7 @@
 
                 //only for leaf nodes
 	            if (!item.children) {
-	                callback(item.id);
+	                callback(item.id, markerID);
 	                this.toggle();
 	            };
 
@@ -708,20 +693,43 @@
 //	                    return d['id'];
 //	                };
 //	            };
+                
+                var indicatorsDB = globals.metadata.indicatorsDB;
+                
+                var filterAvailable = function(data){
+                    return data
+                        .filter(function(f){
+                            return f.children || globals.metadata.indicatorsArray.indexOf(f.id) > -1;
+                        })
+                        .filter(function(f){
+                        
+                            //keep indicator if nothing is specified in tool properties
+                            if (!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
+                            //keep indicator if any scale is allowed in tool properties
+                            if (_this.model.marker[markerID].allow.scales[0] == "*") return true;
+                        
+                            //keep indicator if it is a folder
+                            if(f.children) return true;
 
-	            //selection
-	            var data = firstLevelMenu
-                    .selectAll('li')
-                    .data(data, function(d){
-                        return d['id'];
-                    });
+                            //check if there is an intersection between the allowed tool scale types and the ones of indicator
+                            for (var i = indicatorsDB[f.id].scales.length - 1; i >= 0; i--) {
+                                if (_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f.id].scales[i]) > -1) return true;
+                            }
 
-	            //removing old data
-	            data.exit().remove();
+                            return false;
+                        })
+                };
+
+	            //bind the data
+	            var li = firstLevelMenu.selectAll('li')
+                    .data(filterAvailable(data), function(d){ return d['id']; });
+
+	            //removing old items
+	            li.exit().remove();
 
 
-	            //adding new data
-	            var li = data.enter().append('li');
+	            //adding new items
+	            li.enter().append('li');
 
 	            li.append('span')
 	                .classed(css.list_item_label, true)
@@ -743,7 +751,7 @@
 	                                .append('ul')
 	                                .classed(css.list, true)
 	                                .selectAll('li')
-	                                .data(data, function(d) { return d['id']; })
+	                                .data(filterAvailable(data), function(d) { return d['id']; })
 	                                .enter()
 	                                .append('li');
 
@@ -768,6 +776,7 @@
 
 	                });
 
+                return this;
 	        },
         
         
@@ -779,25 +788,30 @@
 	    updateView: function() {
 	        var _this = this;
             var languageID = _this.model.language.id;
-            var langStrings = {};
-            langStrings[languageID] = _this.model.language.strings[languageID];
+            
+            if(!markerID) return;
+            
+            var strings = langStrings? langStrings : {};
+            strings[languageID] = _this.model.language.strings[languageID];
             
             this.translator = this.model.language.getTFunction();
             
 	        var setModel = this._setModel.bind(this);
-	        this.langStrings(langStrings)
+	        this.langStrings(strings)
                 .lang(languageID)
                 .callback(setModel)
                 .tree(globals.metadata.indicatorsTree)
                 .redraw();
+            
+            return this;
 	    },
 
-	    _setModel: function(value) {
+	    _setModel: function(value, markerID) {
             
             var indicatorsDB = globals.metadata.indicatorsDB;
 
 
-            var mdl = this.model.axis;
+            var mdl = this.model.marker[markerID];
 
             var obj = {};
             
