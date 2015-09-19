@@ -32,7 +32,8 @@
 	            list_item_label: 'dl-menu-list_item_label',
 	            list_top_level: 'dl-menu-list_top',
 	            search_wrap: 'dl-menu-search_wrap',
-	            isSpecial: 'dl-menu-list_item--special'
+	            isSpecial: 'dl-menu-list_item--special',
+	            hidden: 'vzb-hidden'
 	        };
     
     	        //options and globals
@@ -121,9 +122,9 @@
 	    readyOnce: function() {
 	        //this function is only called once at start, when both DOM and this.model are ready
 	        //this.element contains the view where you can append the menu
-	        this.element = d3.select(this.element);
+	        this.element = d3.select(this.placeholder);
 
-	        //menu class private
+	        //menu class private 
 	        var _this = this;
 
 
@@ -202,19 +203,18 @@
         
         
         toggle: function() {
-	            var wrapper = d3.select('#' + OPTIONS.MENU_ID),
-	                trigger = wrapper.classed('active');
+	            var wrapper = d3.select('#' + OPTIONS.MENU_ID);
+	            var hidden = this.element.classed(css.hidden);
 
-	            if (trigger) {
-	                wrapper.classed('active', false);
+	            this.element.classed(css.hidden, !hidden);
+            
+	            if (!hidden) {
 	                wrapper
 	                    .selectAll('.' + css.list_item)
 	                    .filter('.marquee')
 	                    .each(function() {
 	                        _this._marqueeToggle(this, false);
 	                    });
-	            } else {
-	                wrapper.classed('active', true);
 	            };
 	        },
 
