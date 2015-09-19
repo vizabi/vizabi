@@ -196,6 +196,15 @@
         var execute = this._freezer.shift();
         execute();
       }
+    },
+
+    /**
+     * clears all frozen events
+     */
+    clearFrozen: function () {
+      this._freeze = false;
+      this._freezeExceptions = {};
+      this._freezer = [];
     }
   });
 

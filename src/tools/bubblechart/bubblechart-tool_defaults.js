@@ -22,7 +22,9 @@
             "geo": ["*"],
             "geo.cat": ["country"]
           }
-        }
+        },
+        opacitySelectDim: 0.3,
+        opacityRegular: 1,
       },
       marker: {
         space: ["entities", "time"],

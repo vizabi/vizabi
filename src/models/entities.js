@@ -25,7 +25,7 @@
         select: [],
         highlight: [],
         opacitySelectDim: 0.3,
-        opacityRegular: 0.8,
+        opacityRegular: 1,
         needUpdate: {}
       }, values);
 

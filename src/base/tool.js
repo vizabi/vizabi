@@ -5,6 +5,7 @@
 (function () {
   'use strict';
   var class_loading = 'vzb-loading';
+  var class_loading_first = 'vzb-loading-first';
   var class_loading_data = 'vzb-loading';
   var class_loading_error = 'vzb-loading-error';
   var class_placeholder = 'vzb-placeholder';
@@ -91,6 +92,8 @@
       //ToolModel starts in frozen state. unfreeze;
       this.model.unfreeze();
       this.ui = this.model.ui;
+      //splash 
+      this.ui.splash = this.model.data.splash;
       this._super({
         name: this.name || this._id,
         placeholder: placeholder
@@ -134,6 +137,9 @@
      * Displays loading class
      */
     beforeLoading: function () {
+      if (!this._readyOnce) {
+        utils.addClass(this.placeholder, class_loading_first);
+      }
       if (!utils.hasClass(this.placeholder, class_loading_data)) {
         utils.addClass(this.placeholder, class_loading_data);
       }
@@ -143,6 +149,7 @@
      */
     afterLoading: function () {
       utils.removeClass(this.placeholder, class_loading_data);
+      utils.removeClass(this.placeholder, class_loading_first);
     },
     /**
      * Adds loading error class
@@ -175,7 +182,7 @@
         if(!label) {utils.warn("tool validation aborted: marker label looks wrong: " + label); return;};
 
         //don't validate anything if data hasn't been loaded
-        if (!label.getKeys() || label.getKeys().length < 1) return;        
+        if (model.isLoading() || !label.getKeys() || label.getKeys().length < 1) return;        
 
         var dateMin = label.getLimits(time.getDimension()).min;
         var dateMax = label.getLimits(time.getDimension()).max;

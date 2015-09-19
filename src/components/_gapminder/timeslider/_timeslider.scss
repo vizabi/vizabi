@@ -12,11 +12,10 @@ $vzb-ts-value-width: 40px;
         position: absolute;
         right: 15px;
         bottom: 0%;
-        opacity: 0.3;
+        @include opacity(0.3);
         font-style: italic;
         pointer-events: none;
     }
-    ;
     .vzb-ts-btns {
         @include position(absolute, 0px null 0px 5px);
         width: $vzb-ts-btn-area;
@@ -33,7 +32,7 @@ $vzb-ts-value-width: 40px;
                     fill: white;
                 }
             }
-            padding: 10px 14px;
+            padding: 12px 14px;
             margin: 5px;
             cursor: pointer;
             &.vzb-ts-btn-pause {
@@ -64,12 +63,12 @@ $vzb-ts-value-width: 40px;
             .vzb-ts-slider-axis {
                 @include user-select(none);
                 fill: $vzb-ts-slider-color;
-                opacity: 0.6;
+                @include opacity(0.6);
                 font-weight: bold;
                 cursor: pointer;
                 .domain {
                     fill: none;
-                    opacity: 1 !important;
+                    @include opacity(1);
                     stroke: $vzb-ts-slider-color;
                     stroke-opacity: 0.3;
                     stroke-width: 5px;
@@ -100,13 +99,43 @@ $vzb-ts-value-width: 40px;
                 display: block;
             }
             &:hover .vzb-ts-btn-pause-tooltip {
-                opacity: 1;
+                @include opacity(1);
             }
             &:hover .vzb-ts-btn-play-tooltip {
-                opacity: 0;
+                @include opacity(0);
             }
         }
     }
+
+    .vzb-ts-btn-loading {
+        position: relative;
+        display: none !important;
+        .vzb-loader {
+          @extend %vzb-loader;
+          border-color: rgba($vzb-color-white, .2);
+          border-top-color: rgba($vzb-color-white, .7);
+
+          @include size(28px);
+          margin: -1 * 28px/2;
+        }
+    }
+    &.vzb-ts-loading {
+        
+        @include opacity(0.3);
+
+        .vzb-warning-data {
+          display: none;
+        }
+
+        .vzb-ts-btn-play,
+        .vzb-ts-btn-pause {
+            @extend .vzb-hidden;
+        }
+        .vzb-ts-btn-loading {
+            display: block !important;
+        }
+    }
+
     &.vzb-ts-hide-play-button {
         .vzb-ts-btns {
             @extend .vzb-hidden;
@@ -205,7 +234,7 @@ $vzb-ts-value-width: 40px;
         min-height: $vzb-ts-btn-area + 10;
         .vzb-ts-slider-wrapper {
             .vzb-ts-slider {
-              font-size: $vzb-font-size-regular
+                font-size: $vzb-font-size-regular
             }
             .vzb-ts-slider-axis .domain {
                 stroke-width: 9px;
