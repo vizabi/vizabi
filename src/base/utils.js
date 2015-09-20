@@ -102,6 +102,19 @@
     isPlainObject: function (obj) {
       return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
     },
+      
+    getViewportPosition: function(element) {
+        var xPosition = 0;
+        var yPosition = 0;
+
+        while(element) {
+            xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+            yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+            element = element.offsetParent;
+        }
+
+        return { x: xPosition, y: yPosition };
+    },
 
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
