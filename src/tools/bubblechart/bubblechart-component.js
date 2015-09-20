@@ -279,12 +279,9 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
           
-          //console.log(utils.findScrollableAncestor(_this.element))
-          //console.log(utils.getViewportPosition(_this.element.node()).y, d3.event.scale )
-
-          if(d3.event.sourceEvent != null && d3.select("div.wrapper").node()
+          if(d3.event.sourceEvent != null && _this.scrollableAncestor.node()
              && (d3.event.scale == 1 || (utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1)) ){
-              d3.select("div.wrapper").node().scrollTop += d3.event.sourceEvent.deltaY;
+              _this.scrollableAncestor.node().scrollTop += d3.event.sourceEvent.deltaY;
               return;
           }
           
@@ -406,6 +403,8 @@
       this.labelsContainer = this.graph.select('.vzb-bc-labels');
       this.linesContainer = this.graph.select('.vzb-bc-lines');
       this.zoomRect = this.element.select('.vzb-bc-zoomRect');
+        
+      this.scrollableAncestor = utils.findScrollableAncestor(this.element);
 
       this.entityBubbles = null;
       this.entityLabels = null;

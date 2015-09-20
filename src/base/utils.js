@@ -117,13 +117,13 @@
     },
       
     findScrollableAncestor: function(element) {
+        var el = d3.select(element.node())
         
-        while(element && element.style("overflow")!="scroll") {
-            console.log(element, element.style("overflow"))
-            element = element.offsetParent;
+        while(el && el.node().tagName.toLowerCase() !== "html" && el.style("overflow")!="scroll" && el.style("overflow")!="auto" ) {
+            el = d3.select(el.node().parentNode);
         }
 
-        return element;
+        return el;
     },
 
     roundStep: function (number, step) {
