@@ -288,7 +288,7 @@
           }
           
           _this.model._data.entities.clearHighlighted();
-          _this._setTooltip();
+          _this._setTooltip(); 
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
