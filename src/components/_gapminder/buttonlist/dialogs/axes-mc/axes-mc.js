@@ -59,7 +59,14 @@
             })
 
         this.povertyLineFieldEl = this.element.select(".vzb-povertyline-field")
-            .on("change", function(){_this.setModel("povertyline", this.value)});
+            .on("change", function(){
+                var result = parseFloat(this.value.replace(",","."));
+                if(result <= _this.model.state.time.povertyCutoff) {
+                    this.value = _this.model.state.time.povertyline;
+                    return;
+                }
+                _this.setModel("povertyline", result);
+            });
         
         this.updateView();
 
@@ -91,7 +98,7 @@
             })
         }
         if(what == "povertyline"){
-            result = +value;
+            result = value;
         }
         
         this.model.state.time[what] = result;
