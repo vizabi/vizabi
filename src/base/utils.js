@@ -121,6 +121,7 @@
         var scrollable = ["scroll", "auto"];
         
         while(no && no.tagName !== "HTML" && scrollable.indexOf(no.style.overflow) == -1 ) {
+            console.log(no)
             no = no.parentNode;
         }
 
