@@ -542,14 +542,28 @@
         .attr("y", "-6px")
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
-        .text(titleStringY);
+        .text(titleStringY)        
+        .on("click", function(){
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_y")
+                .updateView()
+                .toggle();
+        });
 
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
       xTitle.enter().append("text");
       xTitle
         .attr("text-anchor", "end")
         .attr("y", "-0.32em")
-        .text(titleStringX);
+        .text(titleStringX)
+        .on("click", function(){
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_x")
+                .updateView()
+                .toggle();
+        });
 
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
       sTitle.enter().append("text");

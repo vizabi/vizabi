@@ -54,6 +54,8 @@
     "indicator/_default": "Constant",
     "indicator/_indicators": "Indicators",
     "indicator/_properties": "Properties",
+    "indicator/economy": "Economy",
+    "indicator/health": "Health",
     "unit/gdp_per_cap": "$/year",
     "unit/": "",
     "unit/lex": "Years",

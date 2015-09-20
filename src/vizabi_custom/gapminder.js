@@ -24,7 +24,7 @@
 
     var locationArray = window.location.href.split("/");
     var localUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
-    localUrl += "/preview/";
+    localUrl += "/preview/"; 
     var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
     
     //TODO: remove hardcoded path from source code

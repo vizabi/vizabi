@@ -262,6 +262,14 @@
     isRoot: function () {
       return this.parent === this;
     },
+      
+    /**
+     * Returns subcomponent by name
+     * @returns {Boolean}
+     */
+    findChildByName: function (name) {
+      return utils.find(this.components, function(f){return f.name === name});
+    },
 
     /**
      * Get layout profile of the current resolution

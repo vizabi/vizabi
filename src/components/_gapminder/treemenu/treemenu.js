@@ -24,16 +24,17 @@
 
     	        //css custom classes
 	        var css = {
-	            wrapper: 'dl-menu-wrap',
-	            search: 'dl-menu-search',
-	            list: 'dl-menu-list',
-	            list_item: 'dl-menu-list_item',
-	            hasChild: 'dl-menu-list_item--children',
-	            list_item_label: 'dl-menu-list_item_label',
-	            list_top_level: 'dl-menu-list_top',
-	            search_wrap: 'dl-menu-search_wrap',
-	            isSpecial: 'dl-menu-list_item--special',
-	            hidden: 'vzb-hidden'
+	            wrapper: 'vzb-treemenu-wrap',
+	            search: 'vzb-treemenu-search',
+	            list: 'vzb-treemenu-list',
+	            list_item: 'vzb-treemenu-list_item',
+	            hasChild: 'vzb-treemenu-list_item--children',
+	            list_item_label: 'vzb-treemenu-list_item_label',
+	            list_top_level: 'vzb-treemenu-list_top',
+	            search_wrap: 'vzb-treemenu-search_wrap',
+	            isSpecial: 'vzb-treemenu-list_item--special',
+	            hidden: 'vzb-hidden',
+	            title: 'vzb-treemenu-title'    
 	        };
     
     	        //options and globals
@@ -50,13 +51,17 @@
 	            SEARCH_MIN_STR: 2, //minimal length of query string to start searching
 	            CONTAINER_DIMENSIONS: {}, //current container width, height
 	            RESIZE_TIMEOUT: null, //container resize timeout
-	            MOBILE_BREAKPOINT: 500, //mobile breakpoint
+	            MOBILE_BREAKPOINT: 400, //mobile breakpoint
 	            CURRENT_PATH: [], //current active path
 	            CURRENT_PROFILE: null, //current resize profile
 	            MIN_COL_WIDTH: 50 //minimal column size
 	        };
 
-    
+	        var resizeProfiles = [
+                { col_width: 300, min: 1280 },
+                { col_width: 250, min: 1024 },
+                { col_width: 200, min: OPTIONS.MOBILE_BREAKPOINT }
+	        ];
     
     
 	        //default callback
@@ -76,15 +81,19 @@
             //maker id
             var markerID;
 
-	        //debug function (REMOVE IN PRODUCTION)
-	        var log = function() {
-	            console.log('ok', this);
-	        };
     
     
 	Vizabi.Component.extend('gapminder-treemenu', {
 
-	    init: function(config, context) {
+
+        //setters-getters
+        tree: function(input) { if (!arguments.length) return tree; tree = input; return this; },
+        lang: function(input) { if (!arguments.length) return lang; lang = input; return this; },
+        langStrings: function(input) { if (!arguments.length) return langStrings; langStrings = input; return this; },
+        callback: function(input) { if (!arguments.length) return callback; callback = input; return this; },
+        markerID: function(input) { if (!arguments.length) return markerID; markerID = input; return this; },
+
+        init: function(config, context) {
 	        var _this = this;
 
 	        this.model_expects = [{
@@ -129,59 +138,25 @@
 
 
 	        //general markup
-	        var menuSkeleton = this.element
-                //.style('overflow-x', 'hidden')
+	        var skeleton = this.element
                 .append('div')
                 .classed(css.wrapper, true)
                 .attr('id', OPTIONS.MENU_ID)
-                .append('div')
+            
+            skeleton.append('div')
+                .classed(css.title, true)
+                .append('span');
+            
+            skeleton.append('div')
                 .classed(css.search_wrap, true)
                 .append('input')
                 .classed(css.search, true)
+                .attr("placeholder", "Search...")
                 .attr('type', 'text')
                 .attr('id', css.search + '_' + OPTIONS.MENU_ID);
 
 
 
-	        this.resizeProfiles = [
-                { col_width: 300, min: 1280 },
-                { col_width: 250, min: 1024 },
-                { col_width: 200, min: OPTIONS.MOBILE_BREAKPOINT }
-	        ];
-
-
-
-
-	        //setters-getters
-	        this.tree = function(input) {
-	            if (!arguments.length) return tree;
-	            tree = input;
-	            return this;
-	        };
-
-	        this.lang = function(input) {
-	            if (!arguments.length) return lang;
-	            lang = input;
-	            return this;
-	        };
-
-	        this.langStrings = function(input) {
-	            if (!arguments.length) return langStrings;
-	            langStrings = input;
-	            return this;
-	        };
-
-	        this.callback = function(input) {
-	            if (!arguments.length) return callback;
-	            callback = input;
-	            return this;
-	        };
-
-	        this.markerID = function(input) {
-	            if (!arguments.length) return markerID;
-	            markerID = input;
-	            return this;
-	        };
 
 
 	        //init functions
@@ -364,9 +339,9 @@
 	            };
 
 	            var switchProfile = function(width) {
-	                for (var i = 0; i < _this.resizeProfiles.length; i++) {
-	                    if(_this.resizeProfiles[i].min < width && i == 0 || _this.resizeProfiles[i].min < width && i != 0 && width < _this.resizeProfiles[i - 1].min) {
-	                        OPTIONS.CURRENT_PROFILE = _this.resizeProfiles[i];
+	                for (var i = 0; i < resizeProfiles.length; i++) {
+	                    if(resizeProfiles[i].min < width && i == 0 || resizeProfiles[i].min < width && i != 0 && width < _this.resizeProfiles[i - 1].min) {
+	                        OPTIONS.CURRENT_PROFILE = resizeProfiles[i];
 	                        OPTIONS.IS_MOBILE = false;
 	                        break;
 	                    } else if (width <= OPTIONS.MOBILE_BREAKPOINT) {
@@ -663,6 +638,9 @@
 	        //function is redrawing data and built structure
 	        redraw: function (data){
                 var _this = this;
+                
+                this.element.select("." + css.title).select("span")
+                    .text( this.translator("buttons/" + markerID) );
                 
                 if (data == null) data = tree;
                     
