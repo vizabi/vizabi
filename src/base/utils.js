@@ -116,14 +116,15 @@
         return { x: xPosition, y: yPosition };
     },
       
-    findScrollableAncestor: function(element) {
-        var el = d3.select(element.node())
+    findScrollableAncestor: function(node) {
+        var no = d3.select(node).node();
+        var scrollable = ["scroll", "auto"];
         
-        while(el && el.node().tagName.toLowerCase() !== "html" && el.style("overflow")!="scroll" && el.style("overflow")!="auto" ) {
-            el = d3.select(el.node().parentNode);
+        while(no && no.tagName !== "HTML" && scrollable.indexOf(no.style.overflow) == -1 ) {
+            no = no.parentNode;
         }
 
-        return el;
+        return no;
     },
 
     roundStep: function (number, step) {

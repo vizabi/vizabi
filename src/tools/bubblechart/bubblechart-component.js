@@ -279,10 +279,14 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
           
-          if(d3.event.sourceEvent != null && _this.scrollableAncestor.node()
-             && (d3.event.scale == 1 || (utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1)) ){
-              _this.scrollableAncestor.node().scrollTop += d3.event.sourceEvent.deltaY;
-              return;
+          if(d3.event.sourceEvent != null && _this.scrollableAncestor){
+              
+              if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+              
+              if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1){
+                  _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+                  return;
+              }
           }
           
           _this.model._data.entities.clearHighlighted();
@@ -376,6 +380,8 @@
      */
     readyOnce: function () {
       var _this = this;
+        
+      this.scrollableAncestor = utils.findScrollableAncestor(this.element);
       this.element = d3.select(this.element);
 
       // reference elements
@@ -403,8 +409,6 @@
       this.labelsContainer = this.graph.select('.vzb-bc-labels');
       this.linesContainer = this.graph.select('.vzb-bc-lines');
       this.zoomRect = this.element.select('.vzb-bc-zoomRect');
-        
-      this.scrollableAncestor = utils.findScrollableAncestor(this.element);
 
       this.entityBubbles = null;
       this.entityLabels = null;
