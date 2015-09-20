@@ -120,7 +120,7 @@
         var no = d3.select(node).node();
         var scrollable = ["scroll", "auto"];
         
-        while(no && no.tagName !== "HTML" && scrollable.indexOf(no.style.overflow) == -1 ) {
+        while(no && no.tagName !== "HTML" && scrollable.indexOf(d3.select(no).style("overflow")) == -1 ) {
             console.log(no, no.style.overflow)
             no = no.parentNode;
         }
