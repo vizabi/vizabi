@@ -279,10 +279,11 @@
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
           
-          console.log(utils.getViewportPosition(_this.element.node()).y)
+          //console.log(utils.findScrollableAncestor(_this.element))
+          //console.log(utils.getViewportPosition(_this.element.node()).y, d3.event.scale )
 
-          if(d3.event.sourceEvent != null && d3.select("div.wrapper").node()){
-          if(d3.event.scale == 1 || (utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1)) 
+          if(d3.event.sourceEvent != null && d3.select("div.wrapper").node()
+             && (d3.event.scale == 1 || (utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1)) ){
               d3.select("div.wrapper").node().scrollTop += d3.event.sourceEvent.deltaY;
               return;
           }

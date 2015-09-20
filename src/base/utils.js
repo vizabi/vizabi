@@ -115,6 +115,16 @@
 
         return { x: xPosition, y: yPosition };
     },
+      
+    findScrollableAncestor: function(element) {
+        
+        while(element && element.style("overflow")!="scroll") {
+            console.log(element, element.style("overflow"))
+            element = element.offsetParent;
+        }
+
+        return element;
+    },
 
     roundStep: function (number, step) {
       return Math.round(number / step) * step;
