@@ -97,7 +97,8 @@ $vzb-loader-bgcolor: $vzb-color-white;
     @extend .vzb-hidden;
   }
 
-  &.vzb-loading, &.vzb-loading-data {
+  // &.vzb-loading, &.vzb-loading-data {
+  &.vzb-loading-first {
     //todo: Make background transparent, but not preloader circles
     &:before {
       content: ' ';

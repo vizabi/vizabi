@@ -128,7 +128,6 @@
             var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
             
             _this.model.load({ splashScreen: true }).then(function(){
-
               //delay to avoid conflicting with setReady
               utils.delay(function() {
                 //force loading because we're restoring time.
@@ -140,7 +139,7 @@
                   timeMdl.splash = false;
                   timeMdl.trigger('change');
                 });
-              }, 10);
+              }, 300);
 
             });
           }
@@ -163,11 +162,12 @@
         _this.setReady();
       }
     },
-    setReady: function () {
+    setReady: function (value) {
       if (!this._readyOnce) {
         this.trigger('readyOnce');
         this._readyOnce = true;
       }
+
       this._ready = true;
       this.trigger('ready');
     },

@@ -1203,8 +1203,8 @@
       //loading has started in this submodel (multiple times)
       'load_start': function (evt, vals) {
         evt = evt.replace('load_start', 'load_start:' + name);
-        ctx.triggerAll(evt, ctx.getObject());
         ctx.setReady(false);
+        ctx.triggerAll(evt, ctx.getObject());
       },
       //loading has failed in this submodel (multiple times)
       'load_error': function (evt, vals) {
@@ -1216,8 +1216,11 @@
         //trigger only for submodel
         evt = evt.replace('ready', 'ready:' + name);
         ctx.setReady(false);
-        ctx.setReady();
-        // ctx.trigger(evt, vals);
+        //wait to make sure it's not set false again in the next execution loop
+        utils.defer(function() {
+          ctx.setReady();
+        });
+        //ctx.trigger(evt, vals);
       }
     };
     if (isModel(val)) {
