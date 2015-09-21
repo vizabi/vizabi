@@ -200,13 +200,13 @@
     .vzb-tool-treemenu{
         width: 50%;
         height: 30%;
-        @include position(absolute, null null 10% 20%);
+        @include position(absolute, 40% null null 20%);
     }
 }
 &.vzb-large{
     .vzb-tool-treemenu{
         width: 50%;
         height: 30%;
-        @include position(absolute, null null 10% 20%);
+        @include position(absolute, 40% null null 20%);
     }
 }

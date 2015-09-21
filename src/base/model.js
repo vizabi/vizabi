@@ -622,7 +622,7 @@
         return [];
       }
 
-      var dimTime, time, filtered, next, fraction, u, w, value;
+      var dimTime, time, filtered, next, method, u, w, value, method;
       this._dataCube = this._dataCube || this.getSubhooks(true);
       filter = utils.clone(filter, this._getAllDimensions());
       dimTime = this._getFirstDimension({type: 'time'});
@@ -639,14 +639,12 @@
           next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
           u = hook.use;
           w = hook.which;
+          method = globals.metadata.indicatorsDB[hook.which]? globals.metadata.indicatorsDB[hook.which].interpolation||"linear" : "linear";
           filtered = hook.getNestedItems(f_keys);
           utils.forEach(f_values, function(v) {
             filtered = filtered[v]; //get precise array (leaf)
           });
-          if(!fraction) {
-            fraction = (next===0) ? 1 : (time - filtered[next - 1][dimTime]) / (filtered[next][dimTime] - filtered[next - 1][dimTime]);
-          }
-          value = interpolatePoint(filtered, u, w, next, fraction);
+          value = interpolatePoint(filtered, u, w, next, dimTime, time, method);
           response[name] = hook.mapValue(value);
 
           //concat previous data points
@@ -669,11 +667,9 @@
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
           u = hook.use;
           w = hook.which;
+          method = globals.metadata.indicatorsDB[hook.which]? globals.metadata.indicatorsDB[hook.which].interpolation||"linear" : "linear";
           utils.forEach(filtered, function(arr, id) {
-            if(!fraction) {
-              fraction = (next===0) ? 1 : (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
-            }
-            value = interpolatePoint(arr, u, w, next, fraction);
+            value = interpolatePoint(arr, u, w, next, dimTime, time, method);
             response[name][id] = hook.mapValue(value);
 
             //concat previous data points
@@ -713,7 +709,8 @@
       } else {
         //TODO: get meta info about translatable data
         var l = (this.use !== 'property') ? null : this._languageModel.id;
-        value = interpolateValue.call(this, filter, this.use, this.which, l);
+        var method = globals.metadata.indicatorsDB[this.which].interpolation || "linear";
+        value = interpolateValue.call(this, filter, this.use, this.which, l, method);
       }
       return this.mapValue(value);
     },
@@ -1296,11 +1293,10 @@
    * @param {String} use
    * @param {String} which
    * @param {Number} i the next item in the array
-   * @param {Number} fraction
+   * @param {String} method
    * @returns interpolated value
    */
-  function interpolatePoint(arr, use, which, i, fraction) {
-    var value;
+  function interpolatePoint(arr, use, which, i, dimTime, time, method) {
 
     if (arr === null || arr.length === 0) {
       utils.warn('interpolatePoint returning NULL: array is empty');
@@ -1330,13 +1326,19 @@
     if (arr[i][which] === null || arr[i-1][which] === null) {
       return null;
     }
+      
+    var result = _interpolator()[method](
+        arr[i - 1][dimTime], 
+        arr[i][dimTime], 
+        arr[i - 1][which], 
+        arr[i][which], 
+        time
+    );
 
-    value = +arr[i-1][which] + (arr[i][which] - arr[i-1][which]) * fraction;
     // cast to time object if we are interpolating time
-    if (utils.isDate(arr[0][which])) {
-      value = new Date(value);
-    }
-    return value;
+    if (utils.isDate(arr[0][which])) result = new Date(result);
+    
+    return result;
   }
 
   /**
@@ -1345,9 +1347,9 @@
    * filter SHOULD contain time property
    * @returns interpolated value
    */
-  function interpolateValue(_filter, use, which) {
+  function interpolateValue(_filter, use, which, l, method) {
 
-    var dimTime, time, filter, items, space_id, indexNext, fraction, value;
+    var dimTime, time, filter, items, space_id, indexNext, result;
 
     dimTime = this._getFirstDimension({type: 'time'});
     time = new Date(_filter[dimTime]); //clone date
@@ -1374,7 +1376,7 @@
     }
     else {
       indexNext = d3.bisectLeft(this.getUnique(dimTime), time);
-      //store indexNext and fraction
+      //store indexNext
       interpIndexes[space_id][time] = {
         next: indexNext
       };
@@ -1400,13 +1402,31 @@
       return null;
     }
 
-    fraction = (time - items[indexNext - 1][dimTime]) / (items[indexNext][dimTime] - items[indexNext - 1][dimTime]);
-    value = +items[indexNext - 1][which] + (items[indexNext][which] - items[indexNext - 1][which]) * fraction;
+    result = _interpolator()[method](
+        items[indexNext - 1][dimTime], 
+        items[indexNext][dimTime], 
+        items[indexNext - 1][which], 
+        items[indexNext][which], 
+        time
+    );
+
     // cast to time object if we are interpolating time
     if (Object.prototype.toString.call(items[0][which]) === '[object Date]') {
-      value = new Date(value);
+      result = new Date(result);
     }
-    return value;
+    return result;
   };
+    
+  function _interpolator(){
+  
+    return {
+        linear: function(x1, x2, y1, y2, x){
+            return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+        },
+        exp: function(x1, x2, y1, y2, x){
+            return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
+        },
+    }
+  }
 
 }.call(this));
