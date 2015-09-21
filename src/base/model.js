@@ -639,7 +639,7 @@
           next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
           u = hook.use;
           w = hook.which;
-          method = globals.metadata.indicatorsDB[hook.which].interpolation;
+          method = globals.metadata.indicatorsDB[hook.which]? globals.metadata.indicatorsDB[hook.which].interpolation||"linear" : "linear";
           filtered = hook.getNestedItems(f_keys);
           utils.forEach(f_values, function(v) {
             filtered = filtered[v]; //get precise array (leaf)
@@ -670,7 +670,7 @@
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
           u = hook.use;
           w = hook.which;
-          method = globals.metadata.indicatorsDB[hook.which].interpolation;
+          method = globals.metadata.indicatorsDB[hook.which]? globals.metadata.indicatorsDB[hook.which].interpolation||"linear" : "linear";
           utils.forEach(filtered, function(arr, id) {
 //            if(!fraction) {
 //              fraction = (next===0) ? 1 : (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
@@ -1430,8 +1430,7 @@
             return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
         },
         exp: function(x1, x2, y1, y2, x){
-            if(x-x2==0)return y2; //TODO there is something wrong with the formula
-            return +y1 * Math.pow((y2 - y1) ^ (1 / (x2 - x1)), x - x1);
+            return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
         },
     }
   }
