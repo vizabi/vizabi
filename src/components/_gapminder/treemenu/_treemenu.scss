@@ -1,0 +1,212 @@
+
+.vzb-tool-treemenu {
+
+    @include position(absolute, 10px 10px 10px 10px);
+    //background-color: $vzb-color-primary-lightest;
+    //opacity: 0.9;
+    //border: 3px solid white;
+    overflow: auto;
+    
+      @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
+      @include transition(all 300ms ease-in-out);
+      border-top: 1px solid #f7f7f7;
+      background-color: #fff;
+      padding: 0px 25px 10px 25px;
+    
+    
+    
+.vzb-treemenu-wrap {
+	position: relative;
+
+	* {
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+    
+    .vzb-treemenu-title{
+        color: $vzb-color-primary;
+        font-size: $vzb-font-size-medium;
+        padding: 25px 25px 10px 5px;
+    }
+
+	.vzb-treemenu-list_wrapper {
+		overflow-y: auto;
+	}
+
+	.vzb-treemenu-search_wrap {
+		padding: 5px;
+	}
+
+	.vzb-treemenu-search {
+		width: 100%;
+		display: block;
+        
+        @include border-radius(4px);
+        @include box-sizing(border-box);
+        border: 1px solid rgba($vzb-color-grey, .4);
+        padding: 9px;
+        outline: none;
+        font-size: $vzb-font-size-small;
+        font-family: $vzb-font-family-alt;
+        &:focus {
+            border: 1px solid rgba($vzb-color-grey, .6);
+        }   
+        
+
+		& + .vzb-treemenu-list {
+			position: relative;
+			margin-top: 10px;
+			left: 0;
+		}
+	}
+
+	.vzb-treemenu-list, .vzb-treemenu-list_top {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		left: 100%;
+	}
+
+	.vzb-treemenu-list {
+		position: absolute;
+		border: 1px solid rgba($vzb-color-grey, .4);
+		background-color: #fff;
+		display: none;
+
+		&.active {
+			display: block;
+			top: -1px;
+			bottom: -1px;
+		}
+	}
+
+	.vzb-treemenu-list.active, .vzb-treemenu-list_top {
+		//overflow-y: scroll;
+	}
+
+	.vzb-treemenu-list_item {
+		padding: 5px 0;
+		background-color: #ffffff;
+		overflow: hidden;
+		white-space: nowrap;
+
+		&:hover {
+			background-color: $vzb-color-grey-light;
+		}
+
+		&.marquee {
+			& > .vzb-treemenu-list_item_label {
+				text-overflow: inherit;
+				overflow: visible;
+				animation: marquee 10s linear infinite;
+			}
+		}
+
+		& + .vzb-treemenu-list_item--special {
+			margin-top: 15px;
+		}
+	}
+
+	.vzb-treemenu-list_item_label {
+		padding: 5px 25px 5px 5px;
+		display: block;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		position: relative;
+		cursor: pointer;
+		color: $vzb-color-grey-dark;
+        font-size: $vzb-font-size-small;
+        font-family: $vzb-font-family-alt;
+	}
+
+	.vzb-treemenu-list_item--children {
+		& > .vzb-treemenu-list_item_label:before {
+			content: '';
+			display: block;
+			position: absolute;
+			right:5px;
+			width: 0;
+			height: 0;
+			border: 6px solid transparent;
+			border-left: 6px solid $vzb-color-grey-dark;
+			margin-top: 5px;
+			z-index: 1;
+		}
+	}
+
+	&.mobile {
+		&.active {
+			display: block;
+		}
+
+		.vzb-treemenu-list {
+			position: relative;
+			border: 0;
+			background-color: #fff;
+			left:0;
+			padding-left: 15px;
+
+			&.active {
+				display: block;
+				top: inherit;
+				bottom: inherit;
+			}
+		}
+
+		.vzb-treemenu-list_item {
+			padding-bottom: 0;
+		}
+	}
+
+}
+}
+
+//marquee animation
+@keyframes marquee {
+    0%  {
+        transform:translateX(0);
+    }
+    35% {
+        transform:translateX(-100%);
+    }
+    75% {
+        transform:translateX(75%);
+    }
+    100% {
+    	transform:translateX(0);
+    }
+}
+
+&.vzb-small.vzb-portrait{
+    .vzb-tool-treemenu{
+        bottom: $sizeButtonList;
+        width: 80%;
+        height: 60%;
+        @include position(absolute, 10% null null 10%);
+    }
+}
+&.vzb-small.vzb-landscape{
+    .vzb-tool-treemenu{
+        right: $sizeButtonList;
+        margin-right: 10px;
+        width: 80%;
+        height: 60%;
+        @include position(absolute, 10% null null 10%);
+    }
+}
+&.vzb-medium{
+    .vzb-tool-treemenu{
+        width: 50%;
+        height: 30%;
+        @include position(absolute, null null 10% 20%);
+    }
+}
+&.vzb-large{
+    .vzb-tool-treemenu{
+        width: 50%;
+        height: 30%;
+        @include position(absolute, null null 10% 20%);
+    }
+}

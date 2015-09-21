@@ -440,6 +440,7 @@
     afterLoad: function () {
       Vizabi.Events.unfreezeAll();
       this.setLoadingDone('_hook_data');
+      interpIndexes = {};
     },
 
     /**

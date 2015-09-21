@@ -39,6 +39,10 @@
 %vzb-chart-axis-title {
   color: $vzb-color-primary;
   fill: currentColor;
+  cursor: pointer;
+    &:hover{
+        text-decoration: underline;
+    }
 }
 
 %vzb-chart-axis-title-small {
