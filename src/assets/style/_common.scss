@@ -94,7 +94,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
   background-color: $vzb-color-white;
 
   &.vzb-loading-first > div{
-    @extend .vzb-hidden;
+    visibility: hidden;
   }
 
   // &.vzb-loading, &.vzb-loading-data {
