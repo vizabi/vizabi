@@ -73,3 +73,36 @@
 @mixin fadeInLeft($duration: 1s, $delay: 0s, $fill-mode: forwards) {
   @include animation(fadeInLeft $duration $delay $fill-mode);
 }
+
+//TODO: cleanup - copied from bootstrap
+
+// Creates a wrapper for a series of columns
+@mixin make-row($gutter: $grid-gutter-width) {
+  margin-left:  ceil(($gutter / -2));
+  margin-right: floor(($gutter / -2));
+  @include clearfix;
+}
+
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: " "; // 1
+    display: table; // 2
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+// Generate the medium columns
+@mixin make-md-column($columns, $gutter: $grid-gutter-width) {
+  position: relative;
+  min-height: 1px;
+  padding-left:  ($gutter / 2);
+  padding-right: ($gutter / 2);
+
+  @media (min-width: $small-screen + 1) {
+    float: left;
+    width: percentage(($columns / $grid-columns));
+  }
+}

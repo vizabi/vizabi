@@ -5,6 +5,7 @@
     min-width: $body-min-width;
     padding: 0 15px;
     height: 50px;
+    position: relative;
 }
 
 .header-title {
@@ -20,4 +21,14 @@
     font-size: 17px;
     line-height: $header-height;
     margin: 0;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    z-index: 9999;
+    bottom: 0px;
+    left: 200px;
 }

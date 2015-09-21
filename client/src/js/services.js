@@ -57,3 +57,41 @@ angular.module('gapminderTools')
   };
 
 }]);
+
+angular.module('gapminderTools')
+.factory('menuFactory', ['$location', '$q', '$http', function($location, $q, $http) {
+  return {
+    cached: [],
+
+    /**
+     * Get All Items
+     */
+    getMenu: function() {
+      //return the promise directly.
+      var _this = this;
+      return $http.get('/api/menu')
+                  .then(function(result) {
+                      if(result.status === 200) {
+                        _this.cached = result.data.children;
+                      }
+                      return _this.getCachedMenu();
+                  });
+    },
+
+    /**
+     * Returns the home tree data.
+     * @returns {}
+     */
+    getCachedMenu: function() {
+      return this.cached;
+    },
+
+    /**
+     * Returns the current URL.
+     * @returns {string}
+     */
+    getCurrentUrl: function() {
+      return $location.$$path;
+    }
+  };
+}]);

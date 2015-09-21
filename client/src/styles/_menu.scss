@@ -1,0 +1,186 @@
+.nav-expandable {
+  position: relative;
+
+  &, * {
+    @include box-sizing(border-box);
+  }
+
+  .nav-expandable-item {
+    display: inline-block;
+    a {
+      color: $navbar-default-link-color;
+      cursor: pointer;
+      display: block;
+      font-family: $bariol-light-font-family;
+      font-size: 14px;
+      line-height: 1;
+      padding: 15px 15px;
+      position: relative;
+      text-transform: uppercase;
+      text-decoration: none;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+  .nav-expanded:hover + .nav-toggle-expanded {
+    border-left-color: $brand-primary;
+    border-right-color: $brand-primary;
+  }
+  .nav-toggle-expanded {
+    border-left: $navbar-border-size solid transparent;
+    border-right: $navbar-border-size solid transparent;
+    &.active,
+    &:hover {
+      background-color: white;
+      color: $brand-primary;
+    }
+    &:hover + .nav-expanded,
+    & + .nav-expanded:hover {
+      display: block;
+    }
+  }
+  .nav-expanded {
+    background-color: white;
+    border-left: $navbar-border-size solid $navbar-border-color;
+    border-right: $navbar-border-size solid $navbar-border-color;
+    border-bottom: $navbar-border-size solid $navbar-border-color;
+    box-sizing: border-box;
+    display: none;
+    padding: 30px 25px;
+    padding-bottom: 10px;
+    position: absolute;
+    left: 0px;
+    width: 700px;
+    //&:after
+    //  content: ""
+    //  position: absolute
+    //  width: 100%
+    //  left: 0
+    //  box-shadow:  0 0 30px $color-grey-mediumest
+    //  z-index: -1
+    //  bottom: 0
+    //  height: 100%
+    @include  breakpoint(medium) {
+      left: 0;
+      width: 400px;
+    }
+
+    .nav-expanded-heading {
+      @include make-md-column(12);
+      color: $color-grey-medium;
+      display: block;
+      font-family: $bariol-bold-font-family;
+      font-size: 17px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .nav-expanded-more {
+      @include make-md-column(12);
+      text-align: right;
+      text-transform: uppercase;
+    }
+    .nav-expanded-columns {
+      a {
+        padding: 0;
+      }
+      ul {
+        padding: 0;
+        list-style: none;
+      }
+      &.nav-expanded-columns-1 {
+        @include make-md-column(6);
+        .expanded-column-item {
+          @include make-md-column(12);
+        }
+      }
+      &.nav-expanded-columns-2 {
+        @include make-md-column(12);
+        .expanded-column-item {
+          @include make-md-column(6);
+          @include  breakpoint(medium) {
+            @include make-md-column(12);
+          }
+        }
+      }
+      &.nav-expanded-columns-icons {
+        border-bottom: 1px solid $color-grey-medium;
+        margin-bottom: 20px;
+        &:last-child {
+          border: none;
+          margin-bottom: 0;
+        }
+      }
+      &.nav-expanded-columns-bulletpoints {
+        margin-bottom: 7px;
+        .nav-expanded-columns-inner .expanded-column-item {
+          margin-bottom: 5px;
+        }
+        .column-item-icon {
+          background-color: $brand-primary;
+          border-radius: 50%;
+          width: 11px;
+          height: 11px;
+          top: 8px;
+          span {
+            display: none;
+          }
+        }
+        .nav-expanded-columns-inner .expanded-column-item {
+          .column-item-info {
+            margin-left: 21px;
+            .column-item-heading,
+            .column-item-description {
+              display: inline;
+              margin-left: 0;
+            }
+          }
+        }
+      }
+      &.nav-expanded-columns-plain {
+        .nav-expanded-columns-inner .expanded-column-item {
+          .column-item-icon {
+            display: none;
+          }
+          .column-item-info {
+            .column-item-heading,
+            .column-item-description {
+              margin-left: 0;
+            }
+          }
+        }
+      }
+      .nav-expanded-columns-inner {
+        @include make-row;
+        .expanded-column-item {
+          margin-bottom: 20px;
+          a {
+            text-transform: none;
+            line-height: 31px;
+          }
+          .column-item-icon {
+            color: $brand-primary;
+            font-size: 32px;
+            position: absolute;
+          }
+          .column-item-info {
+            .column-item-heading,
+            .column-item-description {
+              margin-left: 80px;
+              font-family: $bariol-regular-font-family;
+              font-size: 17px;
+              line-height: 1.4;
+            }
+            .column-item-heading {
+              font-family: $bariol-regular-font-family;
+            }
+            .column-item-description {
+              color: $color-grey-medium;
+              font-size: 15px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

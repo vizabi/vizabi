@@ -12,12 +12,7 @@ angular.module('gapminderTools', ['ngRoute']).config(['$routeProvider', '$locati
     .otherwise({
       redirectTo: '/bubbles'
     });
-  //   .when('/contact', {
-  //       templateUrl : 'partials/contact.html',
-  //       controller : mainController
-  //   });
-
-  // use the HTML5 History API
+    
   $locationProvider.html5Mode({
     enabled: true,
     requireBase: false

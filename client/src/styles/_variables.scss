@@ -1,0 +1,46 @@
+$color-primary: #FFCA34;
+$color-grey: #999999;
+$color-grey-medium: #b2b2b2;
+$color-grey-light: #ECEBE9;
+
+$body-min-width: 250px;
+$header-height: 50px;
+
+$small-screen: 700px;
+$large-screen: 1000px;
+
+$size-column: 230px;
+
+// fonts;
+// --------------------------------------------------
+
+$font-family-sans-fallback: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$bariol-thin-font-family: "Bariol Thin", $font-family-sans-fallback;
+$bariol-thin-italic-font-family: "Bariol Thin Italic", $font-family-sans-fallback;
+$bariol-light-font-family: "Bariol Light", $font-family-sans-fallback;
+$bariol-light-italic-font-family: "Bariol Light Italic", $font-family-sans-fallback;
+$bariol-regular-font-family: "Bariol Regular", $font-family-sans-fallback;
+$bariol-regular-italic-font-family: "Bariol Regular Italic", $font-family-sans-fallback;
+$bariol-bold-font-family: "Bariol Bold", $font-family-sans-fallback;
+$bariol-bold-italic-font-family: "Bariol Bold Italic", $font-family-sans-fallback;
+
+
+// Navbar
+// --------------------------------------------------
+
+$grid-columns: 12 !default;
+$grid-gutter-width: 30px !default;
+
+$navbar-height: 34px;
+$navbar-height-mobile: 50px;
+$navbar-height-tablet-portrait: 128px;
+
+$navbar-border-radius: 0;
+$navbar-border-size: 2px;
+$navbar-border-color: $color-primary;
+
+$navbar-default-color: #222222;
+$navbar-default-bg: white;
+$navbar-default-border: $color-grey-light;
+$navbar-default-link-color: #777;
+$brand-primary: $color-primary;

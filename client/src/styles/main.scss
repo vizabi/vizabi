@@ -2,17 +2,7 @@
 @import '../../../bower_components/bourbon/app/assets/stylesheets/bourbon';
 @import 'fonts';
 
-$color-primary: #FFCA34;
-$color-grey: #999999;
-$color-grey-light: #ECEBE9;
-
-$body-min-width: 250px;
-$header-height: 50px;
-
-$small-screen: 700px;
-$large-screen: 1000px;
-
-$size-column: 230px;
+@import 'variables';
 
 html, body {
   height: 100%;
@@ -61,6 +51,7 @@ body {
 @import 'mixins';
 @import 'common';
 @import 'header';
+@import 'menu';
 @import 'loader';
 @import 'content';
 @import 'more';
