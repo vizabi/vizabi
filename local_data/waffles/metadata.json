@@ -80,6 +80,7 @@
             "allowCharts": ["*"],
             "use": "indicator",
             "unit": "",
+            "interpolation": "linear",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
         },
@@ -94,6 +95,7 @@
             "allowCharts": ["mountainchart"],
             "use": "indicator",
             "unit": "gini",
+            "interpolation": "linear",
             "scales": ["linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1Iztdl7Ddaz77K3HheGpkvQ1o_ui_L1s-sze_ZpTM0F0/pub?gid=1"
         },
@@ -101,6 +103,7 @@
             "allowCharts": ["*"],
             "use": "indicator",
             "unit": "gdp_per_cap",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
@@ -108,6 +111,7 @@
             "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "gdppc_pday",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
@@ -115,6 +119,7 @@
             "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "inc_pday",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
@@ -122,6 +127,7 @@
             "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "u5mr",
+            "interpolation": "linear",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
@@ -129,6 +135,7 @@
             "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "u5mr",
+            "interpolation": "linear",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
@@ -136,6 +143,7 @@
             "allowCharts": ["bubblechart"],
             "use": "indicator",
             "unit": "childSurv",
+            "interpolation": "linear",
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
@@ -143,6 +151,7 @@
             "allowCharts": ["*"],
             "use": "value",
             "unit": "",
+            "interpolation": "linear",
             "scales": ["ordinal"],
             "sourceLink": ""
         }
