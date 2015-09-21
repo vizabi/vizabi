@@ -644,9 +644,6 @@
           utils.forEach(f_values, function(v) {
             filtered = filtered[v]; //get precise array (leaf)
           });
-//          if(!fraction) {
-//            fraction = (next===0) ? 1 : (time - filtered[next - 1][dimTime]) / (filtered[next][dimTime] - filtered[next - 1][dimTime]);
-//          }
           value = interpolatePoint(filtered, u, w, next, dimTime, time, method);
           response[name] = hook.mapValue(value);
 
@@ -672,9 +669,6 @@
           w = hook.which;
           method = globals.metadata.indicatorsDB[hook.which]? globals.metadata.indicatorsDB[hook.which].interpolation||"linear" : "linear";
           utils.forEach(filtered, function(arr, id) {
-//            if(!fraction) {
-//              fraction = (next===0) ? 1 : (time - arr[next - 1][dimTime]) / (arr[next][dimTime] - arr[next - 1][dimTime]);
-//            }
             value = interpolatePoint(arr, u, w, next, dimTime, time, method);
             response[name][id] = hook.mapValue(value);
 
