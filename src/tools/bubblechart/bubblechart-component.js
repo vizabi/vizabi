@@ -8,6 +8,7 @@
 
   var Vizabi = this.Vizabi;
   var utils = Vizabi.utils;
+  var iconset = Vizabi.iconset;
 
   //warn client if d3 is not defined
   if (!Vizabi._require('d3')) return;
@@ -402,6 +403,7 @@
         
       this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
       this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
+      this.dataWarningEl = this.graph.select('.vzb-data-warning');
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -574,12 +576,20 @@
       sTitle
         .attr("text-anchor", "end");
 
+      this.dataWarningEl.html(iconset['warn']).select("svg").attr("width", "0px").attr("height", "0px");
+      this.dataWarningEl.append("text")
+          .attr("text-anchor", "end")
+           .attr("y", "-0.32em")
+          .text(this.translator("hints/dataWarning"));
         
       //TODO: move away from UI strings, maybe to ready or ready once
       this.yInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
       })
       this.xInfoEl.on("click", function(){
+        window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
+      })  
+      this.dataWarningEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
       })  
     },
@@ -954,7 +964,19 @@
       this.sTitleEl
           .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
 
+      this.dataWarningEl
+          .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+      
+        this.dataWarningEl.select("text").text(
+            this.translator("hints/dataWarning" + (this.getLayoutProfile()==='small'?"-little":""))
+        )
         
+      var warnBB = this.dataWarningEl.select("text").node().getBBox(); 
+      this.dataWarningEl.select("svg")
+          .attr("width",warnBB.height)
+          .attr("height",warnBB.height)
+          .attr("x", -warnBB.width - warnBB.height * 1.2)
+          .attr("y", -warnBB.height * 1.2)
             
         if(this.yInfoEl.select('text').node()){
             var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;

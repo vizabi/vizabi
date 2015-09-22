@@ -24,6 +24,8 @@
     "hints/mount/xlimits": "X-axel gränser:",
     "hints/min": "min",
     "hints/max": "max",
+    "hints/dataWarning": "Data tvivel",
+    "hints/dataWarning-little": "Data",
     "mount/maxYmode/immediate": "Direkt",
     "mount/maxYmode/latest": "Senast",
     "mount/maxYmode/total": "Totalt",

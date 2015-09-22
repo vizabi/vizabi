@@ -25,6 +25,8 @@
     "hints/mount/povertyline": "Poverty line",
     "hints/min": "min",
     "hints/max": "max",
+    "hints/dataWarning": "Data doubts",
+    "hints/dataWarning-little": "Data",
     "mount/maxYmode/immediate": "Immediate",
     "mount/maxYmode/latest": "Latest",
     "mount/maxYmode/total": "Total",
