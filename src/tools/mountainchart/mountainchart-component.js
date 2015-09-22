@@ -309,7 +309,7 @@
 
 
             this.xTitleEl.select('text')
-                .text(this.translator('unit/' + xMetadata.unit));
+                .text(this.translator('unit/mountainchart_hardcoded_income_per_day'));
             
             this.yTitleEl.select('text')
                 .text(this.translator('mount/title'));

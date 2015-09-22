@@ -55,6 +55,7 @@
     "unit/lex": "År",
     "unit/time": "År",
     "unit/gdp_per_cap_daily": "$/dag",
+    "unit/mountainchart_hardcoded_income_per_day": "$/dag",
     "scaletype/linear": "Linjär",
     "scaletype/log": "Logaritmisk",
     "scaletype/genericLog": "Generic log",
