@@ -1,7 +1,7 @@
 //main app controller
 
 angular.module('gapminderTools')
-.controller('gapminderToolsCtrl', ['$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory', function($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory) {
+.controller('gapminderToolsCtrl', ['$scope', '$window', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory', function($scope, $window, $route, $routeParams, $location, vizabiItems, vizabiFactory) {
 
   var placeholder = document.getElementById('vizabi-placeholder');
 
@@ -33,6 +33,10 @@ angular.module('gapminderTools')
       $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
       $scope.relatedItems = tool.relateditems;
       $scope.$apply();
+
+      //send to google analytics
+      $window.ga('send', 'pageview', { page: $location.url() });
+      
     });
   });
 
