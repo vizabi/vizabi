@@ -7,6 +7,12 @@
 
   .nav-expandable-item {
     display: inline-block;
+    
+    @include breakpoint(small) {
+      display: block;
+      border-bottom: 1px solid #f2f2f2;
+    }
+
     a {
       color: $navbar-default-link-color;
       cursor: pointer;
@@ -64,6 +70,13 @@
     @include  breakpoint(medium) {
       left: 0;
       width: 400px;
+    }
+
+    @include  breakpoint(small) {
+      width: auto;
+      position: static;
+      padding: 4px;
+      border: 0px;
     }
 
     .nav-expanded-heading {

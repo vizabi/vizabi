@@ -6,6 +6,11 @@
     padding: 0 15px;
     height: 50px;
     position: relative;
+
+    @include breakpoint(small) {
+        height: auto;
+        min-height: 50px;
+    }
 }
 
 .header-title {
@@ -31,4 +36,51 @@
     z-index: 9999;
     bottom: 0px;
     left: 200px;
+
+    @include breakpoint(small) {
+        display: none;
+        position: static;
+        padding-top: 50px;
+
+        &:hover {
+            display: block !important;
+        }
+    }
+}
+
+%menu-bar {
+    @include border-radius(3px);
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    display: block;
+    background-color: $color-primary;
+}
+
+.menu-mobile {
+
+    @extend %menu-bar;
+    @include breakpoint(not-small) {
+        display: none;
+    }
+    border: 20px solid white;
+    cursor: pointer;
+    right: -8px;
+    top: 3px;
+
+    &:before, &:after {
+        content: '';
+        @extend %menu-bar;
+        left: 0px;
+    }
+    &:before {
+        top: -10px;
+    }
+    &:after {
+        bottom: -10px;
+    }
+
+    &:hover + [nav-expandable], &:focus + [nav-expandable], &:active + [nav-expandable] {
+        display: block !important;
+    }
 }
