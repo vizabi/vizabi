@@ -31,8 +31,13 @@
           pointer-events: visible;
         }
       }
-      .vzb-bc-labels, .vzb-bc-tooltip  {
-        @extend %vzb-chart-tooltip
+        .vzb-bc-labels{
+        @extend %vzb-chart-tooltip;
+            rect{pointer-events: visible}
+        } 
+        
+        .vzb-bc-tooltip  {
+        @extend %vzb-chart-tooltip;
       }
         .vzb-bc-label-shadow,
         .vzb-bc-tooltip-shadow {
