@@ -476,6 +476,7 @@
 
             return {
                 _mousemove: function (d, i) {
+                    if (_this.model.time.dragging)return;
 
                     _this.model.entities.highlightEntity(d);
 
@@ -488,6 +489,8 @@
 
                 },
                 _mouseout: function (d, i) {
+                    if (_this.model.time.dragging)return;
+                    
                     _this.tooltip.classed('vzb-hidden', true);
                     _this.model.entities.clearHighlighted();
                 },
