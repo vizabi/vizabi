@@ -1,5 +1,11 @@
 var ASSET_URL = '/public';
 
+var bases = document.getElementsByTagName('base');
+var baseHref = null;
+if (bases.length > 0) {
+    baseHref = bases[0].href;
+}
+
 angular.module('gapminderTools').directive('navExpandable', ['menuFactory', function(menuFactory) {
   return {
     restrict: 'A',

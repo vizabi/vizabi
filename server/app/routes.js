@@ -4,6 +4,8 @@ var Menu = require('./models/menu');
 var RelatedItem = mongoose.model('RelatedItem'); 
 var ObjectId = mongoose.Types.ObjectId;
 
+var BASEURL = '/tools/';
+
 function getAll(res, model, populate) {
     var found = model.find();
     if(populate) found = found.populate(populate);
@@ -51,19 +53,21 @@ function getMenu(which, res) {
 
 module.exports = function(app) {
 
+    console.log(BASEURL+'api/item');
+
     /* API Routes */
 
     //get all items in the database
-    app.get('/api/item', function(req, res) {
+    app.get(BASEURL+'api/item', function(req, res) {
         getItems(res);
     });
 
-    app.get('/api/item/:item_id', function(req, res) {
+    app.get(BASEURL+'api/item/:item_id', function(req, res) {
         getItem(res, req.params.item_id);
     });
 
     //insert an item to the database
-    app.post('/api/item', function(req, res) {
+    app.post(BASEURL+'api/item', function(req, res) {
         Item.create({
             title: req.body.title,
             category: req.body.category,
@@ -80,7 +84,7 @@ module.exports = function(app) {
     });
 
     // delete an item
-    app.delete('/api/item/:item_id', function(req, res) {
+    app.delete(BASEURL+'api/item/:item_id', function(req, res) {
         Item.remove({
             _id: req.params.item_id
         }, function(err, item) {
@@ -92,21 +96,21 @@ module.exports = function(app) {
     });
 
     //get menu in the database
-    app.get('/api/menu', function(req, res) {
+    app.get(BASEURL+'api/menu', function(req, res) {
         getMenu("Home", res);
     });
 
     //get all related items in the database
-    app.get('/api/related', function(req, res) {
+    app.get(BASEURL+'api/related', function(req, res) {
         getRelatedItems(res);
     });
 
-    app.get('/api/related/:related_id', function(req, res) {
+    app.get(BASEURL+'api/related/:related_id', function(req, res) {
         getRelatedItem(res, req.params.related_id);
     });
 
     //insert a related item to the database
-    app.post('/api/related', function(req, res) {
+    app.post(BASEURL+'api/related', function(req, res) {
 
         var relatedTo = req.body._relatedTo.split(",").map(function(id) {
           return ObjectId(id);
@@ -143,6 +147,6 @@ module.exports = function(app) {
 
     /* APP Routes */
     app.get('*', function(req, res) {
-        res.sendfile('./client/dist/index.html'); // load the single view file
+        res.sendfile('./client/dist'+BASEURL+'index.html'); // load the single view file
     });
 };

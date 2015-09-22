@@ -45,7 +45,7 @@ angular.module('gapminderTools')
      */
     getItems: function() {
       //return the promise directly.
-      return $http.get('/api/item')
+      return $http.get(baseHref+'api/item')
                   .then(function(result) {
                       var items = {}, i, s;
                       for(i=0, s=result.data.length; i<s; i++) {
@@ -69,7 +69,7 @@ angular.module('gapminderTools')
     getMenu: function() {
       //return the promise directly.
       var _this = this;
-      return $http.get('/api/menu')
+      return $http.get(baseHref+'api/menu')
                   .then(function(result) {
                       if(result.status === 200) {
                         _this.cached = result.data.children;
