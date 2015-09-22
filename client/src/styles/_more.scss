@@ -2,6 +2,10 @@
   padding: 20px;
   @include box-sizing(border-box);
   @include display(block);
+
+  @include breakpoint(not-small) {
+    padding-top: 0px;
+  }
 }
 .related {
   @include breakpoint(not-small) {
@@ -47,6 +51,12 @@
   a {
     @include display(flex);
     @include flex-direction(row);
+    text-decoration: none;
+    color: $color-black;
+
+    &:hover .title{
+      color: $color-blue-dark;
+    }
   }
 }
 
@@ -85,6 +95,7 @@
   .subtitle {
     font-size: 14px;
     font-style: italic;
+    color: #808080;
   }
 }
 

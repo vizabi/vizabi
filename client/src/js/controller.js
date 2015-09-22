@@ -8,6 +8,7 @@ angular.module('gapminderTools')
   $scope.loadingError = false;
   $scope.tools = {};
   $scope.validTools = [];
+  $scope.relatedItems = [];
 
   //start off by getting all items
   vizabiItems.getItems().then(function(items) {
@@ -30,6 +31,7 @@ angular.module('gapminderTools')
       $scope.activeTool = $routeParams.slug;
       var tool = $scope.tools[$scope.activeTool];
       $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
+      $scope.relatedItems = tool.relateditems;
       $scope.$apply();
     });
   });
