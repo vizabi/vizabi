@@ -289,7 +289,7 @@
                 axis_y: {
                     use: "indicator",
                     which: "u5mr",
-                    scaleType: "log",
+                    scaleType: "linear",
                     allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 axis_x: {
