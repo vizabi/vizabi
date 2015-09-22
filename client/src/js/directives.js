@@ -13,7 +13,6 @@ angular.module('gapminderTools').directive('navExpandable', ['menuFactory', func
 
       menuFactory.getMenu().then(function(items) {
         $scope.items = items;
-        console.log($scope.items);
       }); 
 
       /**

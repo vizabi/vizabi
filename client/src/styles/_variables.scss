@@ -2,6 +2,8 @@ $color-primary: #FFCA34;
 $color-grey: #999999;
 $color-grey-medium: #b2b2b2;
 $color-grey-light: #ECEBE9;
+$color-black: #222222;
+$color-blue-dark: #607889;
 
 $body-min-width: 250px;
 $header-height: 50px;
@@ -39,7 +41,7 @@ $navbar-border-radius: 0;
 $navbar-border-size: 2px;
 $navbar-border-color: $color-primary;
 
-$navbar-default-color: #222222;
+$navbar-default-color: $color-black;
 $navbar-default-bg: white;
 $navbar-default-border: $color-grey-light;
 $navbar-default-link-color: #777;

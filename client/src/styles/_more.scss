@@ -114,23 +114,41 @@
         color: #808285;
         position: relative;
         & > a {
-            @include transition(padding 0.1s);
-            cursor: pointer;
-            color: #808285;
-            font-size: 14px;
-            font-weight: 300;
-            padding: 15px 20px;
-            margin: 1px 0 0 0;
-            display: block;
-            text-decoration: none;
+            @include transition(all 0.1s);
             @include border-radius(3px);
+            display: block;
+            box-shadow: 0 1px 3px rgba(0,0,0, 0.05), 0 1px 2px rgba(0,0,0, 0.15);  
+            position: relative;
+            cursor: pointer;
+            margin: 1px 0 0 0;
+            text-decoration: none;
 
-            font-family: 'Bariol Bold';
-            background-color: #f2f2f2;
-
-            &:hover:not(.active) {
-              padding: 15px 17px 15px 23px;
+            @include breakpoint(large) {
+              width: 80%;
             }
+
+            .title {
+              font-family: 'Bariol Bold';
+              color: #808285;
+              font-size: 18px;
+              font-weight: 300;
+              display: block;
+              padding: 15px;
+            }
+
+            .image {
+              width: 100%;
+              height: auto;
+            }
+
+            &:hover {
+              box-shadow: 0 1px 11px rgba(0, 0, 0, 0.05), 0 1px 6px rgba(0, 0, 0, 0.18);
+
+              &> .title {
+                color: $color-blue-dark;
+              }
+            }
+
         }
     }
 }

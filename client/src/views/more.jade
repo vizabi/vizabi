@@ -45,8 +45,11 @@
             span.title How Reliable is the World Population Forecast?
             span.subtitle Short answer —  Very reliable
   .about
-    h2.heading-2 Tools
+    h2.heading-2 See also
     div.menu
     ul.menu-primary
       li.menu-item(ng-repeat="(key, tool) in tools")
-        a(ng-hide="activeTool == key", ng-href="{{key}}") {{tool.title}}
+        a(ng-hide="activeTool == key", ng-href="{{key}}")
+          span.title {{tool.title}}
+          img.image(src="{{tool.image}}")
+
