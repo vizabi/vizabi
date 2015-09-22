@@ -1,0 +1,166 @@
+geo,geo.name,geo.cat,geo.region,time,pop,gdp_per_cap,gini,u5mr
+afg,Afghanistan,country,asi,1978,13222547,1179,32.05,261.6
+ago,Angola,country,afr,1978,7717139,4572,46.24,239.48
+alb,Albania,country,eur,1978,2571845,4194,26.96,91.1
+are,United Arab Emirates,country,asi,1978,827394,143058,40,43.4
+arg,Argentina,country,ame,1978,27277742,10406,39.4,51.4
+arm,Armenia,country,eur,1978,2991954,3964,38.21,81
+aus,Australia,country,asi,1978,14368543,22763,37.05,14.4
+aut,Austria,country,eur,1978,7616309,23364,40.29,18.1
+aze,Azerbaijan,country,eur,1978,5975045,8456,40,91.6
+bdi,Burundi,country,afr,1978,3917866,879,42.51,236.9
+bel,Belgium,country,eur,1978,9825779,24202,30.88,15.9
+ben,Benin,country,afr,1978,3523270,1195,47.84,226.1
+bfa,Burkina Faso,country,afr,1978,6530820,778,47.86,255.8
+bgd,Bangladesh,country,asi,1978,76948378,1082,36.3,207.4
+bgr,Bulgaria,country,eur,1978,8815565,10048,21.13,31.2
+bhr,Bahrain,country,asi,1978,323511,36597,40,37.2
+bih,Bosnia and Herzegovina,country,eur,1978,4073480,3325,40,41.83
+blr,Belarus,country,eur,1978,9535069,6769,23.64,24.38
+bol,Bolivia,country,ame,1978,5350320,4602,45.48,182.1
+bra,Brazil,country,ame,1978,116532153,9759,60.31,104.2
+btn,Bhutan,country,asi,1978,387731,1090,40,214.1
+bwa,Botswana,country,afr,1978,923305,3736,53.01,85.8
+caf,Central African Republic,country,afr,1978,2158844,1248,57.24,188.7
+can,Canada,country,ame,1978,23994948,25853,33.61,14.2
+che,Switzerland,country,eur,1978,6321583,38264,37.69,11.4
+chl,Chile,country,ame,1978,10907901,7122,53.26,41.7
+chn,China,country,asi,1978,950537317,1016,28.35,70
+civ,Cote d'Ivoire,country,afr,1978,7569558,4878,47.07,177
+cmr,Cameroon,country,afr,1978,8425707,2444,40.59,188.6
+cod,"Congo, Dem. Rep.",country,afr,1978,24948113,1628,44.12,219
+cog,"Congo, Rep.",country,afr,1978,1699781,3576,40.2,117.7
+col,Colombia,country,ame,1978,26502172,5953,54.01,65.5
+com,Comoros,country,afr,1978,286583,1504,50.54,186.8
+cpv,Cape Verde,country,afr,1978,278152,814,40,91.4
+cri,Costa Rica,country,ame,1978,2266153,7465,47.56,28.9
+cub,Cuba,country,ame,1978,9711393,12312,39.64,22.3
+cyp,Cyprus,country,eur,1978,673252,12722,40,25.6
+cze,Czech Republic,country,eur,1978,10251436,18127,26.22,19.78
+deu,Germany,country,eur,1978,78426715,26444,37.88,17.1
+dji,Djibouti,country,afr,1978,308213,3632,40,164.7
+dnk,Denmark,country,eur,1978,5108836,26108,38.24,10.6
+dom,Dominican Republic,country,ame,1978,5543520,4712,43.63,94
+dza,Algeria,country,afr,1978,18212331,9730,41.1,173.9
+ecu,Ecuador,country,ame,1978,7571953,7844,42.8,102.6
+egy,Egypt,country,afr,1978,41324806,3953,46.71,186.6
+eri,Eritrea,country,afr,1978,2251129,864,40,197.1
+esp,Spain,country,eur,1978,37055640,17707,38.94,21.3
+est,Estonia,country,eur,1978,1454309,11778,26.76,25.52
+eth,Ethiopia,country,afr,1978,34053431,655,49.73,243
+fin,Finland,country,eur,1978,4749940,19608,34.83,9.9
+fji,Fiji,country,asi,1978,609348,5510,43.52,48.2
+fra,France,country,eur,1978,53685486,22928,36.06,13.3
+gab,Gabon,country,afr,1978,694734,22649,58.01,125.4
+gbr,United Kingdom,country,eur,1978,56223974,20337,33.44,15.7
+geo,Georgia,country,eur,1978,5004521,7941,31.78,62.3
+gha,Ghana,country,afr,1978,10354490,2226,50.24,171.6
+gin,Guinea,country,afr,1978,4416074,1170,44.73,296.7
+gmb,Gambia,country,afr,1978,567828,1799,40,251.2
+gnb,Guinea-Bissau,country,afr,1978,819371,1825,44.21,247.82
+gnq,Equatorial Guinea,country,afr,1978,215284,1436,40,225.12
+grc,Greece,country,eur,1978,9388188,17707,38.5,26.8
+gtm,Guatemala,country,ame,1978,6754258,6215,48.28,134.4
+guy,Guyana,country,ame,1978,773227,4304,47.11,71.5
+hnd,Honduras,country,ame,1978,3413426,3700,58.73,105.3
+hti,Haiti,country,ame,1978,5450550,2507,49.11,202.2
+hun,Hungary,country,eur,1978,10704187,16199,25.58,29.7
+idn,Indonesia,country,asi,1978,140665859,3026,41.93,128.5
+ind,India,country,asi,1978,665936435,1305,34.95,178.2
+irl,Ireland,country,eur,1978,3339499,15499,41.26,16.8
+irn,Iran,country,asi,1978,35977589,13827,50.25,127.4
+irq,Iraq,country,asi,1978,12859226,13210,41.7,79.5
+isr,Israel,country,asi,1978,3594470,13656,46.65,20.2
+ita,Italy,country,eur,1978,55983298,20882,39.36,18.1
+jam,Jamaica,country,ame,1978,2089015,6912,33.09,43.1
+jor,Jordan,country,asi,1978,2146662,6939,40,61.3
+jpn,Japan,country,asi,1978,114054587,18484,38.94,11.1
+kaz,Kazakhstan,country,asi,1978,14610810,13402,31.11,73.6
+ken,Kenya,country,afr,1978,15081598,2214,56.1,115.2
+kgz,Kyrgyz Republic,country,asi,1978,3491143,3549,32.47,105.2
+khm,Cambodia,country,asi,1978,6982522,1003,40,235.9
+kor,South Korea,country,asi,1978,36356187,5373,39.56,17.9
+kwt,Kuwait,country,asi,1978,1247597,81146,40,42.1
+lao,Lao,country,asi,1978,3164146,1486,40.67,208.3
+lbn,Lebanon,country,asi,1978,2604875,7589,52.04,54.5
+lbr,Liberia,country,afr,1978,1775200,1397,40,248.4
+lby,Libya,country,afr,1978,2952877,56017,40,79.1
+lka,Sri Lanka,country,asi,1978,14534087,2318,40.4,56.3
+lso,Lesotho,country,afr,1978,1241159,1339,40,135
+ltu,Lithuania,country,eur,1978,3380879,16039,26.44,23.9
+lux,Luxembourg,country,eur,1978,361078,34756,40,14.4
+lva,Latvia,country,eur,1978,2491980,10003,26.92,26.89
+mar,Morocco,country,afr,1978,19133462,3096,41.34,147.4
+mda,Moldova,country,eur,1978,3942141,6124,21.13,53.1
+mdg,Madagascar,country,afr,1978,8268902,2074,50.03,170.1
+mex,Mexico,country,ame,1978,66025613,11118,55.64,82.4
+mkd,"Macedonia, FYR",country,eur,1978,1877687,9133,41.81,69.73
+mli,Mali,country,afr,1978,6831530,1003,50.4,341.4
+mmr,Myanmar,country,asi,1978,32895739,1700,44.27,147.3
+mne,Montenegro,country,eur,1978,570062,15175,40,35.96
+mng,Mongolia,country,asi,1978,1603908,2167,40,179.9
+moz,Mozambique,country,afr,1978,11320103,504,50.37,263.9
+mrt,Mauritania,country,afr,1978,1448664,2797,49.19,173.4
+mus,Mauritius,country,afr,1978,937820,5061,40,46.2
+mwi,Malawi,country,afr,1978,5807170,703,52.08,275.9
+mys,Malaysia,country,asi,1978,13191699,6414,51.36,35
+nam,Namibia,country,afr,1978,970569,6619,58.31,100.1
+ner,Niger,country,afr,1978,5635954,1260,49.93,326
+nga,Nigeria,country,afr,1978,69512233,4040,35.81,223.8
+nic,Nicaragua,country,ame,1978,3065118,6433,46.86,123.2
+nld,Netherlands,country,eur,1978,13925970,25044,30.46,11.6
+nor,Norway,country,eur,1978,4056280,31348,31.76,10.9
+npl,Nepal,country,asi,1978,14228941,1049,49.92,222.2
+nzl,New Zealand,country,asi,1978,3129098,20707,32.88,16.6
+omn,Oman,country,asi,1978,1032799,21418,40,133.1
+pak,Pakistan,country,asi,1978,73204087,2002,35.6,165.3
+pan,Panama,country,ame,1978,1884512,7372,49.76,47.7
+per,Peru,country,ame,1978,16491087,7067,47.23,130.4
+phl,Philippines,country,asi,1978,44866279,4041,46.97,81.5
+png,Papua New Guinea,country,asi,1978,3047769,1915,49.06,113.6
+pol,Poland,country,eur,1978,35100942,12033,29.87,25.5
+prk,North Korea,country,asi,1978,16953621,1809,40,48.97
+prt,Portugal,country,eur,1978,9560753,13691,38.72,32.3
+pry,Paraguay,country,ame,1978,3012833,5022,40,68
+pse,West Bank and Gaza,country,asi,1978,1433382,2181,40,90.7
+qat,Qatar,country,asi,1978,192018,150718,40,40
+rou,Romania,country,eur,1978,22279485,13507,21.13,45.1
+rus,Russia,country,eur,1978,136259517,17818,24.81,34.2
+rwa,Rwanda,country,afr,1978,4804375,798,46.29,243.7
+sau,Saudi Arabia,country,asi,1978,8785326,71169,40,111.1
+sdn,Sudan,country,afr,1978,13429688,2559,36.32,144.3
+sds,South Sudan,country,afr,1978,4442665,2871,36.32,301.9
+sen,Senegal,country,afr,1978,5289445,1874,46.64,221.6
+sgp,Singapore,country,asi,1978,2344224,17799,39.22,15.1
+slb,Solomon Islands,country,asi,1978,215353,1181,40,59.9
+sle,Sierra Leone,country,afr,1978,2951001,1467,54.35,295.7
+slv,El Salvador,country,ame,1978,4415625,5867,40,122.4
+som,Somalia,country,afr,1978,5289049,995,46.84,201.41
+srb,Serbia,country,eur,1978,8746982,14503,32.99,42.91
+sur,Suriname,country,ame,1978,361463,12569,36.08,58.94
+svk,Slovak Republic,country,eur,1978,4895130,13191,26.91,25.07
+svn,Slovenia,country,eur,1978,1795649,18347,29.53,17.9
+swe,Sweden,country,eur,1978,8272499,24784,29.9,9
+swz,Swaziland,country,afr,1978,567560,4842,40,127.8
+syr,Syria,country,asi,1978,8363346,4398,41.37,67.8
+tcd,Chad,country,afr,1978,4336389,1217,36.87,243.7
+tgo,Togo,country,afr,1978,2576468,1960,46.45,186.3
+tha,Thailand,country,asi,1978,45423442,3325,44.79,66.8
+tjk,Tajikistan,country,asi,1978,3707624,4809,33.89,131.8
+tkm,Turkmenistan,country,asi,1978,2723006,10538,33.13,133.9
+tls,Timor-Leste,country,asi,1978,606295,794,40,273.58
+tto,Trinidad and Tobago,country,ame,1978,1054109,16047,43.35,42
+tun,Tunisia,country,afr,1978,6054914,4434,44.9,109.6
+tur,Turkey,country,eur,1978,41953105,8400,52.64,140.7
+tza,Tanzania,country,afr,1978,17556148,1579,34.78,182.2
+uga,Uganda,country,afr,1978,11817951,884,52.51,206
+ukr,Ukraine,country,eur,1978,49525597,9454,34.69,28.5
+ury,Uruguay,country,ame,1978,2875970,9012,37.8,48.6
+usa,United States,country,ame,1978,225239456,29281,36.53,16.3
+uzb,Uzbekistan,country,asi,1978,15148932,3577,32.33,128.9
+ven,Venezuela,country,ame,1978,14525929,19488,39.64,47.7
+vnm,Vietnam,country,asi,1978,52015279,1165,42.46,72.3
+yem,Yemen,country,asi,1978,7485921,3440,43.06,231.3
+zaf,South Africa,country,afr,1978,27674446,10952,67.68,104.6
+zmb,Zambia,country,afr,1978,5532350,3232,50.27,153.3
+zwe,Zimbabwe,country,afr,1978,6796946,2209,53.29,106.1
