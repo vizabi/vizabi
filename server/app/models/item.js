@@ -1,5 +1,5 @@
-var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 mongoose.model('RelatedItem', {
   title : {type : String, default: ''},
@@ -9,7 +9,7 @@ mongoose.model('RelatedItem', {
   _relatedTo: [{ type: Schema.Types.ObjectId, ref: 'Item' }]
 });
 
-module.exports = mongoose.model('Item', {
+mongoose.model('Item', {
 	title : {type : String, default: ''},
 	category : {type : String, default: ''},
 	description : {type : String, default: ''},
