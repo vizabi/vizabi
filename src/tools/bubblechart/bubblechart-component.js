@@ -813,7 +813,7 @@
         "small": {
           margin: {
             top: 30,
-            right: 20,
+            right: 10,
             left: 40,
             bottom: 45
           },
@@ -824,7 +824,7 @@
         "medium": {
           margin: {
             top: 40,
-            right: 60,
+            right: 15,
             left: 60,
             bottom: 55
           },
@@ -835,7 +835,7 @@
         "large": {
           margin: {
             top: 50,
-            right: 60,
+            right: 20,
             left: 60,
             bottom: 60
           },
