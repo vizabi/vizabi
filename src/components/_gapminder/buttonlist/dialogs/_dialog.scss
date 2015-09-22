@@ -34,7 +34,7 @@
       height: $vzb-dialog-content-height;
     }
   }
-  
+
   input {
     font-size: 1em; //inherit from dialog content
   }
@@ -111,6 +111,10 @@
     float: right;
     margin-right: 8px;
     margin-top: 8px;
+
+    & path {
+      fill: #4B98AA;
+    }
   }
   .thumb-tack-class-ico {
     position: absolute!important;
@@ -123,6 +127,11 @@
     & svg {
       @include transform(translate(4px, 4px));
       cursor: move;
+    }
+  }
+  .thumb-tack-class-ico-pin {
+    & svg {
+      @include transform(translate(4px, 4px));
     }
   }
   .thumb-tack-class-ico:before {
@@ -182,6 +191,10 @@
   .thumb-tack-class{
     background-color: #4B98AA;
     border: 1px solid #4B98AA;
+
+    & path {
+      fill: white;
+    }
   }
   .thumb-tack-class-ico:before {
     color: #fff!important;
