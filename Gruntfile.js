@@ -10,13 +10,13 @@ module.exports = function (grunt) {
       vendor: {
           cwd: 'bower_components/',
           src: ['angular/angular.min.js', 'angular-route/angular-route.min.js', 'd3/d3.min.js'],
-          dest: 'client/dist/vendor/',
+          dest: 'client/dist/tools/vendor/',
           expand: true
       },
       images: {
           cwd: 'client/src/',
           src: ['public/**/*'],
-          dest: 'client/dist/',
+          dest: 'client/dist/tools/',
           expand: true
       }
     },
@@ -29,7 +29,7 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          "client/dist/index.html": ["client/src/index.jade"]
+          "client/dist/tools/index.html": ["client/src/index.jade"]
         }
       }
     },
@@ -45,7 +45,7 @@ module.exports = function (grunt) {
     sass: {
         dist: {
             files: {
-                'client/dist/styles/main.css': 'client/src/styles/main.scss'
+                'client/dist/tools/styles/main.css': 'client/src/styles/main.scss'
             }
         }
     },
@@ -57,7 +57,7 @@ module.exports = function (grunt) {
           mangle: true
         },
         files: {
-          'client/dist/scripts/app.js': ['client/src/js/app.js', 'client/src/**/*.js']
+          'client/dist/tools/scripts/app.js': ['client/src/js/app.js', 'client/src/**/*.js']
         }
       }
     },
