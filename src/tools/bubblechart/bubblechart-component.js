@@ -551,11 +551,11 @@
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
         .on("click", function(){
-            _this.parent
-                .findChildByName("gapminder-treemenu")
-                .markerID("axis_y")
-                .updateView()
-                .toggle();
+//            _this.parent
+//                .findChildByName("gapminder-treemenu")
+//                .markerID("axis_y")
+//                .updateView()
+//                .toggle();
         });
 
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
@@ -564,11 +564,11 @@
         .attr("text-anchor", "end")
         .attr("y", "-0.32em")
         .on("click", function(){
-            _this.parent
-                .findChildByName("gapminder-treemenu")
-                .markerID("axis_x")
-                .updateView()
-                .toggle();
+//            _this.parent
+//                .findChildByName("gapminder-treemenu")
+//                .markerID("axis_x")
+//                .updateView()
+//                .toggle();
         });
 
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
