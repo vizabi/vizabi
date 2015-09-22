@@ -26,10 +26,28 @@ angular.module('gapminderTools')
       return;
     }
 
-    $scope.activeTool = $routeParams.slug;
-    var tool = $scope.tools[$scope.activeTool];
-    $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
+    scrollTo(document.querySelector('.wrapper'), 0, 200, function() {
+      $scope.activeTool = $routeParams.slug;
+      var tool = $scope.tools[$scope.activeTool];
+      $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
+      $scope.$apply();
+    });
   });
+
+  function scrollTo(element, to, duration, cb) {
+    if (duration < 0) return;
+    var difference = to - element.scrollTop;
+    var perTick = difference / duration * 10;
+
+    setTimeout(function() {
+      element.scrollTop = element.scrollTop + perTick;
+      if (element.scrollTop == to) {
+        cb();
+        return;
+      }
+      scrollTo(element, to, duration - 10, cb);
+    }, 10);
+  }
 
 
 }]);
