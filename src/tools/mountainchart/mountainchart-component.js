@@ -583,8 +583,8 @@
                     var string = name + ': ' + formatter(number) + (i===0?' people':'');
 
                     view.select('circle')
-                        .attr('r', fontHeight/2.5)
-                        .attr('cx', fontHeight/2)
+                        .attr('r', fontHeight/3)
+                        .attr('cx', fontHeight*0.4)
                         .attr('cy', fontHeight/1.5)
                         .style('fill', _this.cScale(_this.values.color[d.KEY()]));
 
