@@ -1,0 +1,166 @@
+geo,geo.name,geo.cat,geo.region,time,pop,gdp_per_cap,gini,u5mr
+afg,Afghanistan,country,asi,1988,11375768,1113,34.47,195
+ago,Angola,country,afr,1988,10544904,4455,45.43,226.5
+alb,Albania,country,eur,1988,3197064,4307,28.25,44.9
+are,United Arab Emirates,country,asi,1988,1613904,82687,40,18.5
+arg,Argentina,country,ame,1988,31795515,9620,42.1,29.7
+arm,Armenia,country,eur,1988,3510439,3886,38.41,81.6
+aus,Australia,country,asi,1988,16585905,27757,39.99,10.2
+aut,Austria,country,eur,1988,7642479,28951,32.47,10.5
+aze,Azerbaijan,country,eur,1988,6994139,8760,33.38,95.8
+bdi,Burundi,country,afr,1988,5284173,1044,41.38,170.1
+bel,Belgium,country,eur,1988,9931873,29092,26.49,10.7
+ben,Benin,country,afr,1988,4685375,1427,48.68,188.1
+bfa,Burkina Faso,country,afr,1988,8356306,898,47.57,205.8
+bgd,Bangladesh,country,asi,1988,100779551,1208,39.32,155.8
+bgr,Bulgaria,country,eur,1988,8918660,10567,25.27,21.4
+bhr,Bahrain,country,asi,1988,465235,31346,40,23.3
+bih,Bosnia and Herzegovina,country,eur,1988,4542757,3363,40,21.2
+blr,Belarus,country,eur,1988,10165746,8084,23.66,17.4
+bol,Bolivia,country,ame,1988,6592787,3613,42.9,134
+bra,Brazil,country,ame,1988,145150468,11062,58.66,66.3
+btn,Bhutan,country,asi,1988,517068,2004,40,145.9
+bwa,Botswana,country,afr,1988,1300097,7173,59.69,50.8
+caf,Central African Republic,country,afr,1988,2809720,933,58.76,176.7
+can,Canada,country,ame,1988,26919036,31356,33.05,8.8
+che,Switzerland,country,eur,1988,6571461,43895,38.52,8.6
+chl,Chile,country,ame,1988,12716508,8288,55.38,21.4
+chn,China,country,asi,1988,1114162025,1597,32.26,53.9
+civ,Cote d'Ivoire,country,afr,1988,11337122,3129,40.63,150.5
+cmr,Cameroon,country,afr,1988,11370394,3271,48.98,136.9
+cod,"Congo, Dem. Rep.",country,afr,1988,32688708,1478,44.06,190.8
+cog,"Congo, Rep.",country,afr,1988,2262496,5398,41.17,92.8
+col,Colombia,country,ame,1988,32975533,7371,50.32,37.4
+com,Comoros,country,afr,1988,391133,1689,50.84,133.2
+cpv,Cape Verde,country,afr,1988,328861,1546,40,68.2
+cri,Costa Rica,country,ame,1988,2944560,7036,45.25,18.3
+cub,Cuba,country,ame,1988,10379080,13925,40.77,15.2
+cyp,Cyprus,country,eur,1988,736477,21185,40,11.4
+cze,Czech Republic,country,eur,1988,10314591,20293,25.11,15.6
+deu,Germany,country,eur,1988,78146938,31906,44.07,9.5
+dji,Djibouti,country,afr,1988,523266,3364,40,125.1
+dnk,Denmark,country,eur,1988,5121511,32720,32.78,9.6
+dom,Dominican Republic,country,ame,1988,6903314,5104,49.46,65
+dza,Algeria,country,afr,1988,24591493,9888,41.26,51.2
+ecu,Ecuador,country,ame,1988,9739179,7739,48.8,62.6
+egy,Egypt,country,afr,1988,53617678,5886,42.81,96
+eri,Eritrea,country,afr,1988,3020278,891,40,162.7
+esp,Spain,country,eur,1988,39032625,22036,36.44,11.9
+est,Estonia,country,eur,1988,1564278,13392,22.52,21.5
+eth,Ethiopia,country,afr,1988,44908705,682,46.62,212
+fin,Finland,country,eur,1988,4951886,27282,31.03,7.1
+fji,Fiji,country,asi,1988,722918,5204,42.75,31.8
+fra,France,country,eur,1988,56328053,28101,36.43,9.6
+gab,Gabon,country,afr,1988,901473,15076,53.58,94.2
+gbr,United Kingdom,country,eur,1988,56797704,25750,37.28,10.4
+geo,Georgia,country,eur,1988,5441772,10135,29.98,48.6
+gha,Ghana,country,afr,1988,13852597,1865,41.12,138.2
+gin,Guinea,country,afr,1988,5548270,1122,44.62,248.8
+gmb,Gambia,country,afr,1988,843060,1463,40,183.1
+gnb,Guinea-Bissau,country,afr,1988,1009967,1585,46.53,237.5
+gnq,Equatorial Guinea,country,afr,1988,354488,1155,40,197.5
+grc,Greece,country,eur,1988,10017036,20486,34.77,14.3
+gtm,Guatemala,country,ame,1988,8729406,5269,58.94,89
+guy,Guyana,country,ame,1988,734872,3454,50.07,63.3
+hnd,Honduras,country,ame,1988,4631491,3288,54.79,64.2
+hti,Haiti,country,ame,1988,6813344,2314,47.07,154.2
+hun,Hungary,country,eur,1988,10442721,18395,27.48,20.5
+idn,Indonesia,country,asi,1988,175000919,3940,39.92,92.2
+ind,India,country,asi,1988,834944397,1649,41.21,133.4
+irl,Ireland,country,eur,1988,3563438,19420,39.54,9.9
+irn,Iran,country,asi,1988,53035939,8626,43.1,64.5
+irq,Iraq,country,asi,1988,16657708,13153,39.36,56.6
+isr,Israel,country,asi,1988,4290860,16906,47.44,12.5
+ita,Italy,country,eur,1988,56990645,28879,35.25,10.4
+jam,Jamaica,country,ame,1988,2360159,6641,42.4,32.4
+jor,Jordan,country,asi,1988,3086664,8844,39.66,39.3
+jpn,Japan,country,asi,1988,121432942,26724,34.85,6.6
+kaz,Kazakhstan,country,asi,1988,16344308,13225,29.46,54.4
+ken,Kenya,country,afr,1988,21899004,2332,50.43,94.4
+kgz,Kyrgyz Republic,country,asi,1988,4260325,3487,30.96,68.4
+khm,Cambodia,country,asi,1988,8467109,993,40,117.6
+kor,South Korea,country,asi,1988,42085050,10233,34.55,8
+kwt,Kuwait,country,asi,1988,2002645,40807,40,19.6
+lao,Lao,country,asi,1988,4009121,1620,40.24,170.5
+lbn,Lebanon,country,asi,1988,2668593,10186,47.81,35.9
+lbr,Liberia,country,afr,1988,2170426,988,40,246.9
+lby,Libya,country,afr,1988,4187631,23850,40,46.3
+lka,Sri Lanka,country,asi,1988,16883250,3138,42.73,22.5
+lso,Lesotho,country,afr,1988,1544580,1202,40,87.7
+ltu,Lithuania,country,eur,1988,3659613,17378,24.64,15.8
+lux,Luxembourg,country,eur,1988,374117,50010,37.75,9.8
+lva,Latvia,country,eur,1988,2652684,13770,24.4,18.3
+mar,Morocco,country,afr,1988,24027330,3849,41.94,88.1
+mda,Moldova,country,eur,1988,4320927,6578,26.58,34.9
+mdg,Madagascar,country,afr,1988,10877757,1626,47.02,171.7
+mex,Mexico,country,ame,1988,82223153,11817,46.23,51.4
+mkd,"Macedonia, FYR",country,eur,1988,1998471,10524,41.09,43.9
+mli,Mali,country,afr,1988,8189984,1028,48.34,265.2
+mmr,Myanmar,country,asi,1988,40711172,1709,44.27,115.6
+mne,Montenegro,country,eur,1988,616055,17714,40,18.9
+mng,Mongolia,country,asi,1988,2089716,3694,40,118.5
+moz,Mozambique,country,afr,1988,13124285,441,50.43,244.5
+mrt,Mauritania,country,afr,1988,1916240,2861,42.96,124.3
+mus,Mauritius,country,afr,1988,1037260,6883,41.25,27.1
+mwi,Malawi,country,afr,1988,8620942,540,57.4,247.4
+mys,Malaysia,country,asi,1988,17202032,8860,48.47,18.4
+nam,Namibia,country,afr,1988,1303879,5961,68.99,76
+ner,Niger,country,afr,1988,7445788,988,43.28,335.7
+nga,Nigeria,country,afr,1988,90773613,2650,42.63,212.2
+nic,Nicaragua,country,ame,1988,3968453,3295,48.02,72.6
+nld,Netherlands,country,eur,1988,14723266,29915,31,8.9
+nor,Norway,country,eur,1988,4199817,42101,29.87,9.8
+npl,Nepal,country,asi,1988,17865238,1190,46.01,155.1
+nzl,New Zealand,country,asi,1988,3332297,24060,38.3,12.4
+omn,Oman,country,asi,1988,1679089,35924,40,48.1
+pak,Pakistan,country,asi,1988,101420791,2853,38.28,143.6
+pan,Panama,country,ame,1988,2368772,7445,56.46,32.9
+per,Peru,country,ame,1988,20909897,6609,44.12,88.6
+phl,Philippines,country,asi,1988,58844392,3834,47.17,65.2
+png,Papua New Guinea,country,asi,1988,3960243,1767,49.79,92.4
+pol,Poland,country,eur,1988,37990683,11418,30.25,18.4
+prk,North Korea,country,asi,1988,19610512,2198,40,36.8
+prt,Portugal,country,eur,1988,9896416,18473,38.1,17
+pry,Paraguay,country,ame,1988,3994328,5825,40,49.9
+pse,West Bank and Gaza,country,asi,1988,1945947,2053,40,49.4
+qat,Qatar,country,asi,1988,445203,71568,40,23.7
+rou,Romania,country,eur,1988,23408397,13367,27.49,39.8
+rus,Russia,country,eur,1988,146040116,19660,26.1,27.2
+rwa,Rwanda,country,afr,1988,7048075,892,42.43,147.6
+sau,Saudi Arabia,country,asi,1988,15239174,32091,40,53.3
+sdn,Sudan,country,afr,1988,18669146,1858,35.98,131.1
+sds,South Sudan,country,afr,1988,5735170,2125,35.98,262.7
+sen,Senegal,country,afr,1988,7062540,1914,46.47,149.6
+sgp,Singapore,country,asi,1988,2880188,30453,40.69,9.2
+slb,Solomon Islands,country,asi,1988,294962,1723,40,41.4
+sle,Sierra Leone,country,afr,1988,3791078,1352,47.18,266.7
+slv,El Salvador,country,ame,1988,5117577,4449,52.08,66.5
+som,Somalia,country,afr,1988,6217331,962,47.07,184.1
+srb,Serbia,country,eur,1988,9396975,16043,37.37,33.9
+sur,Suriname,country,ame,1988,391851,10724,38.27,50.2
+svk,Slovak Republic,country,eur,1988,5234119,14707,22.87,19.2
+svn,Slovenia,country,eur,1988,1991454,21084,27.84,11.9
+swe,Sweden,country,eur,1988,8457108,30596,30.66,7.3
+swz,Swaziland,country,afr,1988,801350,4823,40,71.9
+syr,Syria,country,asi,1988,11730217,4654,40.65,40.7
+tcd,Chad,country,afr,1988,5585528,1185,38.18,220.1
+tgo,Togo,country,afr,1988,3579489,1415,42.28,150.8
+tha,Thailand,country,asi,1988,54933561,5250,49.42,41.5
+tjk,Tajikistan,country,asi,1988,5008827,3924,32.76,109.9
+tkm,Turkmenistan,country,asi,1988,3479088,8944,31.12,94
+tls,Timor-Leste,country,asi,1988,703696,999,40,192.1
+tto,Trinidad and Tobago,country,ame,1988,1204890,13310,41.99,31.6
+tun,Tunisia,country,afr,1988,7871460,5109,43.3,61.9
+tur,Turkey,country,eur,1988,52126497,10421,46.91,83.7
+tza,Tanzania,country,afr,1988,23914852,1442,45.31,168.4
+uga,Uganda,country,afr,1988,16227778,736,42.84,177.8
+ukr,Ukraine,country,eur,1988,51280766,10621,28.2,20.3
+ury,Uruguay,country,ame,1988,3069094,9770,39.8,25.1
+usa,United States,country,ame,1988,247865202,35929,39.28,11.9
+uzb,Uzbekistan,country,asi,1988,19583186,3210,30.6,74.5
+ven,Venezuela,country,ame,1988,18912431,15505,44.81,32.1
+vnm,Vietnam,country,asi,1988,65313709,1427,41.99,54.8
+yem,Yemen,country,asi,1988,10958983,3558,43.04,133.7
+zaf,South Africa,country,afr,1988,35195598,10666,63.82,65.3
+zmb,Zambia,country,afr,1988,7696070,2523,45.24,178
+zwe,Zimbabwe,country,afr,1988,9866776,2390,54.24,68
