@@ -38,7 +38,7 @@
     "mount/title": "Number of people by income",
     "popbyage/yearOldsIn": "-year-olds in",
     "indicator/lex": "Life expectancy",
-    "indicator/gdp_per_cap": "Yearly GDP per capita",
+    "indicator/gdp_per_cap": "GDP per capita", 
     "indicator/pop": "Population",
     "indicator/geo.region": "Region",
     "indicator/geo": "Geo code",
