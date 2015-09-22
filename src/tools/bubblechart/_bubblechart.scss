@@ -44,6 +44,7 @@
       .vzb-bc-labels .vzb-bc-entity rect, .vzb-bc-tooltip rect {
         @include transition(opacity 200ms linear);
         cursor: pointer;
+        pointer-events: none;
         fill: white;
         stroke: $vzb-color-black;
         stroke-width: 1.5px;
