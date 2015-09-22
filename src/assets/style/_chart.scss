@@ -19,15 +19,15 @@
 }
 
 %vzb-chart-ticks-small {
-  font-size: $vzb-font-size-regular;
+  font-size: $vzb-font-size-small;
 }
 
 %vzb-chart-ticks-medium {
-  font-size: $vzb-font-size-medium;
+  font-size: $vzb-font-size-regular;
 }
 
 %vzb-chart-ticks-large {
-  font-size: $vzb-font-size-large;
+  font-size: $vzb-font-size-medium;
 }
 
 %vzb-chart-ticks {
@@ -37,7 +37,7 @@
 }
 
 %vzb-chart-axis-title {
-  color: $vzb-color-primary;
+  color: $vzb-color-primary-darkest;
   fill: currentColor;
   //cursor: pointer;
     &:hover{

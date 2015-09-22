@@ -401,6 +401,7 @@
       this.yearEl = this.graph.select('.vzb-bc-year');
         
       this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
+      this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -548,8 +549,6 @@
       yTitle.enter().append("text");
       yTitle
         .attr("y", "-6px")
-        .attr("x", "-9px")
-        .attr("dx", "-0.72em")
         .on("click", function(){
 //            _this.parent
 //                .findChildByName("gapminder-treemenu")
@@ -561,7 +560,6 @@
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
       xTitle.enter().append("text");
       xTitle
-        .attr("text-anchor", "end")
         .attr("y", "-0.32em")
         .on("click", function(){
 //            _this.parent
@@ -580,6 +578,9 @@
       //TODO: move away from UI strings, maybe to ready or ready once
       this.yInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
+      })
+      this.xInfoEl.on("click", function(){
+        window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
       })  
     },
 
@@ -822,7 +823,7 @@
         },
         "medium": {
           margin: {
-            top: 30,
+            top: 40,
             right: 60,
             left: 60,
             bottom: 55
@@ -833,7 +834,7 @@
         },
         "large": {
           margin: {
-            top: 30,
+            top: 50,
             right: 60,
             left: 60,
             bottom: 60
@@ -943,10 +944,12 @@
       }
       probe.remove(); 
         
-        
-        
+      var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
+      this.yTitleEl
+          .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
+             
       this.xTitleEl
-          .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+          .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
      
       this.sTitleEl
           .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
@@ -956,9 +959,16 @@
         if(this.yInfoEl.select('text').node()){
             var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
             var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
-            this.yInfoEl.attr('transform', 'translate('+ (titleW - titleH * 0.2) +',' + (-titleH*0.7) + ')');
+            this.yInfoEl.attr('transform', 'translate('+ (titleW - yaxisWidth + titleH * 1.0) +',' + (-titleH*0.7) + ')');
             this.yInfoEl.select("text").attr("dy", "0.1em")
             this.yInfoEl.select("circle").attr("r", titleH/2);
+        }            
+        if(this.xInfoEl.select('text').node()){
+            var titleH = this.xInfoEl.select('text').node().getBBox().height || 0;
+            var titleW = this.xTitleEl.select('text').node().getBBox().width || 0;
+            this.xInfoEl.attr('transform', 'translate('+ (titleW + titleH * 1.0) +',' + (this.height + margin.bottom -titleH*0.7) + ')');
+            this.xInfoEl.select("text").attr("dy", "0.1em")
+            this.xInfoEl.select("circle").attr("r", titleH/2);
         }
 
     },

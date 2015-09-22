@@ -20,13 +20,13 @@ $vzb-resolution-large: 970px;
 $vzb-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-family-alt: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-size-base: 16px;
-$vzb-font-size-regular: 1em; //10px
-$vzb-font-size-tiny: 0.625em; //10px
-$vzb-font-size-small: 0.750em;   //12px
-$vzb-font-size-medium: 1.15em; //18px
-$vzb-font-size-large: 1.250em;  //20px
-$vzb-font-size-larger: 1.563em; //25px
-$vzb-font-size-largest: 2em;      //30px
+$vzb-font-size-regular: 1em; 
+$vzb-font-size-tiny: 0.625em; 
+$vzb-font-size-small: 0.8em;  
+$vzb-font-size-medium: 1.24em; 
+$vzb-font-size-large: 1.38em;  
+$vzb-font-size-larger: 1.563em; 
+$vzb-font-size-largest: 2em;     
 
 // ----------------------------------------------------------------------------
 //   Colors
@@ -35,7 +35,8 @@ $vzb-font-size-largest: 2em;      //30px
 // ----------------------------------------------------------------------------
 // Primary = Low saturated Blue
 $vzb-color-primary: #607889;
-$vzb-color-primary-dark: #4B98AA;
+$vzb-color-primary-darkest: #425663; 
+$vzb-color-primary-dark: #4B98AA; 
 $vzb-color-primary-lightest: #F2FAFC;
 // Grayscale
 $vzb-color-white: #FFFFFF;

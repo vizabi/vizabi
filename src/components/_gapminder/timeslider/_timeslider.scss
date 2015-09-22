@@ -7,15 +7,7 @@ $vzb-ts-value-width: 40px;
 .vzb-timeslider {
     min-height: $vzb-ts-btn-area;
     position: relative;
-    .vzb-warning-data {
-        color: red;
-        position: absolute;
-        right: 15px;
-        bottom: 0%;
-        @include opacity(0.3);
-        font-style: italic;
-        pointer-events: none;
-    }
+    
     .vzb-ts-btns {
         @include position(absolute, 0px null 0px 5px);
         width: $vzb-ts-btn-area;
@@ -123,10 +115,6 @@ $vzb-ts-value-width: 40px;
         
         @include opacity(0.3);
 
-        .vzb-warning-data {
-          display: none;
-        }
-
         .vzb-ts-btn-play,
         .vzb-ts-btn-pause {
             @extend .vzb-hidden;
@@ -162,9 +150,6 @@ $vzb-ts-value-width: 40px;
 }
 
 &.vzb-small {
-    .vzb-warning-data {
-        font-size: $vzb-font-size-small
-    }
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
             width: $vzb-ts-btn-area - 20;
@@ -218,9 +203,6 @@ $vzb-ts-value-width: 40px;
 }
 
 &.vzb-large {
-    .vzb-warning-data {
-        font-size: $vzb-font-size-large
-    }
     .vzb-timeslider.vzb-ts-axis-aligned {
         .vzb-ts-btns {
             @include position(absolute, 0px 0px 5px 5px);
