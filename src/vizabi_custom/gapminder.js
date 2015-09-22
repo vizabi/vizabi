@@ -259,7 +259,7 @@
         state: {
             time: {
                 start: "1800",
-                end: "2030",
+                end: "2015",
                 value: "2015",
                 step: 1,
                 speed: 300,
