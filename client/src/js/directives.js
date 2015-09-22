@@ -1,10 +1,10 @@
-var ASSET_URL = '/public';
-
 var bases = document.getElementsByTagName('base');
 var baseHref = null;
 if (bases.length > 0) {
     baseHref = bases[0].href;
 }
+
+var ASSET_URL = baseHref+'public';
 
 angular.module('gapminderTools').directive('navExpandable', ['menuFactory', function(menuFactory) {
   return {
