@@ -399,6 +399,8 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
+        
+      this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -574,6 +576,11 @@
         .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
         this.translator("buttons/colors") + ": " + titleStringC);
 
+        
+      //TODO: move away from UI strings, maybe to ready or ready once
+      this.yInfoEl.on("click", function(){
+        window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
+      })  
     },
 
     /*
@@ -909,13 +916,23 @@
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
       this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
+      this.sTitleEl.attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
+        
+        
+            
+        if(this.yInfoEl.select('text').node()){
+            var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
+            var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
+            this.yInfoEl.attr('transform', 'translate('+ (titleW - titleH * 0.2) +',' + (-titleH*0.7) + ')');
+            this.yInfoEl.select("text").attr("dy", "0.1em")
+            this.yInfoEl.select("circle").attr("r", titleH/2);
+        }
 
 //      // avoid overlapping (x label with s label)
 //      var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();

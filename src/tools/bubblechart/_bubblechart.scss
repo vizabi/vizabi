@@ -88,6 +88,12 @@
         @extend %vzb-chart-axis;
         opacity: 0.3;
       }
+    
+      .vzb-bc-axis-x-info, 
+      .vzb-bc-axis-y-info {
+        @extend %vzb-chart-info;
+      }
+    
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 2 4;
