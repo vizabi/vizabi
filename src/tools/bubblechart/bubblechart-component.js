@@ -829,7 +829,7 @@
           },
           padding: 2,
           minRadius: 1,
-          maxRadius: 60
+          maxRadius: 55
         },
         "large": {
           margin: {
@@ -840,7 +840,7 @@
           },
           padding: 2,
           minRadius: 1,
-          maxRadius: 80
+          maxRadius: 70
         }
       };
 
