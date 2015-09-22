@@ -95,3 +95,28 @@
     }
   }
 }
+
+%vzb-chart-tooltip{
+    text{
+        pointer-events: none;
+        text-anchor: end;
+        fill: $vzb-color-black;
+    }
+    rect{
+        @include transition(opacity 200ms linear);
+        cursor: pointer;
+        pointer-events: none;
+        fill: white;
+        stroke: $vzb-color-black;
+        stroke-width: 1.5px;
+    }
+}
+
+%vzb-chart-label-shadow{
+    fill: white;
+    @include opacity(0.5);
+    stroke: white;
+}
+%vzb-chart-label-shadow-small{stroke-width: 2px}
+%vzb-chart-label-shadow-medium{stroke-width: 3px}
+%vzb-chart-label-shadow-large{stroke-width: 4px}

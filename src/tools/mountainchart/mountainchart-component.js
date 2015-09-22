@@ -208,7 +208,7 @@
             this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainAtomicContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
-            this.tooltip = this.element.select('.vzb-tooltip');
+            this.tooltip = this.element.select('.vzb-mc-tooltip');
             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             this.povertylineLineEl = this.povertylineEl.select('line');
@@ -483,15 +483,13 @@
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
-                    _this.tooltip.classed('vzb-hidden', false)
-                        .attr('style', 'left:' + (mouse[0] + 25) + 'px;top:' + (mouse[1] + 25) + 'px')
-                        .html(d.key?_this.translator('region/' + d.key):_this.model.marker.label.getValue(d));
+                    _this._setTooltip(d.key?_this.translator('region/' + d.key):_this.model.marker.label.getValue(d)); 
 
                 },
                 _mouseout: function (d, i) {
                     if (_this.model.time.dragging)return;
                     
-                    _this.tooltip.classed('vzb-hidden', true);
+                    _this._setTooltip("");
                     _this.model.entities.clearHighlighted();
                 },
                 _click: function (d, i) {
@@ -1072,7 +1070,33 @@
                 .style('stroke-opacity', 0.5);
 
             if(this.model.time.record) this._export.write({type: 'path', id: key, time: this.model.time.value.getFullYear(), fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key]) });
-        }
+        },
+        
+        
+    _setTooltip: function (tooltipText, x, y) {
+      if (tooltipText) {
+        var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
+
+        //position tooltip
+        this.tooltip.classed("vzb-hidden", false)
+          //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+          .attr("transform", "translate(" + (x?x:mouse[0]-15) + "," + (y?y:mouse[1]-15) + ")")
+          .selectAll("text")
+          .text(tooltipText);
+
+        var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
+                .attr("rx", contentBBox.height * 0.2)
+                .attr("ry", contentBBox.height * 0.2);
+
+      } else {
+
+        this.tooltip.classed("vzb-hidden", true);
+      }
+    }
 
 
 

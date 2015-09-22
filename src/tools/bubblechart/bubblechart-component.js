@@ -1325,11 +1325,11 @@
                 false, 500);
             });
 
-          view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
+          view.append("text").attr("class", "vzb-bc-label-content vzb-label-shadow");
 
           view.append("text").attr("class", "vzb-bc-label-content");
 
-          view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
+          view.append("circle").attr("class", "vzb-bc-label-x vzb-label-shadow vzb-transparent")
             .on("click", function (d, i) {
               _this.model.entities.clearHighlighted();
               //default prevented is needed to distinguish click from drag
