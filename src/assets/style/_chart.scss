@@ -70,3 +70,28 @@
     @extend %vzb-chart-ticks;
   }
 }
+
+
+%vzb-chart-info {
+  opacity: 1;    
+  text {
+    fill: $vzb-color-grey-light;
+    pointer-events: none;
+    dominant-baseline: middle;
+    text-anchor: middle;
+  } 
+  circle {
+    fill: none;
+    pointer-events: visible;
+    stroke: $vzb-color-grey-light;
+    stroke-width: 2;
+    cursor: pointer;
+  }
+  &:hover{ opacity: 1;
+    text {fill: $vzb-color-primary;}
+    circle {
+        fill: $vzb-color-grey-light; 
+        stroke: $vzb-color-primary;
+    }
+  }
+}

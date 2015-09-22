@@ -201,6 +201,8 @@
             this.graph = this.element.select('.vzb-mc-graph');
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
+            this.yTitleEl = this.graph.select('.vzb-mc-axis-y-title');
+            this.infoEl = this.graph.select('.vzb-mc-axis-info');
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
             this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
@@ -303,13 +305,19 @@
 
         updateUIStrings: function(){
             this.translator = this.model.language.getTFunction();
-            var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+            var xMetadata = Vizabi._globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
 
 
-            var xTitle = this.xTitleEl.selectAll('text').data([0]);
-            xTitle.enter().append('text');
-            xTitle.text(this.translator('unit/' + indicatorsDB[this.model.marker.axis_x.which].unit));
-
+            this.xTitleEl.select('text')
+                .text(this.translator('unit/' + xMetadata.unit));
+            
+            this.yTitleEl.select('text')
+                .text(this.translator('mount/title'));
+            
+            //TODO: move away from UI strings, maybe to ready or ready once
+            this.infoEl.on("click", function(){
+                window.open(xMetadata.sourceLink, '_blank').focus();
+            })  
         },
 
         /**
@@ -558,11 +566,13 @@
             d3.select(sample[0][0].parentNode).remove();
             var formatter = _this.model.marker.axis_y.tickFormatter;
             
-            var maxFontHeight = this.height / (this.selectList.data().length + 3);
+            var titleHeight = this.yTitleEl.select('text').node().getBBox().height || 0;
+            
+            var maxFontHeight = (this.height - titleHeight*1.5) / (this.selectList.data().length + 2);
             if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
             this.selectList
-                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')';})
+                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i + titleHeight*1.5) + ')';})
                 .each(function(d, i){
 
                     var view = d3.select(this);
@@ -802,12 +812,22 @@
             this.xAxisEl
                 .attr('transform', 'translate(0,' + this.height + ')')
                 .call(this.xAxis);
-
-            this.xTitleEl
-                .attr('transform', 'translate(0,' + this.height + ')')
-                .select('text')
+            
+            this.xTitleEl.select('text')
+                .attr('transform', 'translate(' + this.width + ',' + this.height + ')')
                 .attr('dy', '-0.36em');
-
+            
+            this.yTitleEl.select('text')
+                .attr('transform', 'translate(0,' + margin.top + ')')
+            
+            if(this.infoEl.select('text').node()){
+                var titleH = this.infoEl.select('text').node().getBBox().height || 0;
+                var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
+                this.infoEl.attr('transform', 'translate('+ (titleW + titleH * 1.0) +',' + (margin.top - titleH * 0.3) + ')');
+                this.infoEl.select("text").attr("dy", "0.1em")
+                this.infoEl.select("circle").attr("r", titleH/2);
+            }
+                
             this.eventAreaEl
                 .attr('y', this.height)
                 .attr('width', this.width)

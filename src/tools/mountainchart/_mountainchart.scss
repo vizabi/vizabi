@@ -57,10 +57,17 @@
                 @extend %vzb-chart-axis;
                 pointer-events: none;
             }
-            .vzb-mc-axis-y-title,
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title;
                 pointer-events: none;
+            }
+            .vzb-mc-axis-x-title {
+                @extend %vzb-chart-axis-title;
+                text-anchor: end;
+                pointer-events: none;
+            }
+            .vzb-mc-axis-info {
+                @extend %vzb-chart-info;
             }
             .vzb-mc-line {
                 fill: none;
@@ -83,7 +90,7 @@
     }
     &.vzb-large {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-large;
             }
             .vzb-mc-axis-x,
@@ -95,7 +102,7 @@
     }
     &.vzb-medium {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-medium;
             }
             .vzb-mc-axis-x,
@@ -107,7 +114,7 @@
     }
     &.vzb-small {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-small;
             }
             .vzb-mc-axis-x,

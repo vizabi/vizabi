@@ -35,6 +35,7 @@
     "mount/mergegrouped": "Merge grouped",
     "mount/mergestacked": "Merge stacked too",
     "mount/people": "people",
+    "mount/title": "Number of people by income",
     "popbyage/yearOldsIn": "-year-olds in",
     "indicator/lex": "Life expectancy",
     "indicator/gdp_per_cap": "Yearly GDP per capita",

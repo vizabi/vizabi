@@ -81,7 +81,7 @@
             "use": "indicator",
             "unit": "",
             "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "lex": {
             "allowCharts": ["linechart", "barchart"],
@@ -95,7 +95,7 @@
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1Iztdl7Ddaz77K3HheGpkvQ1o_ui_L1s-sze_ZpTM0F0/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_per_cap": {
             "allowCharts": ["*"],
@@ -103,7 +103,7 @@
             "unit": "gdp_per_cap",
             "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdppc_pday": {
             "allowCharts": ["bubblechart"],
@@ -133,7 +133,7 @@
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "childSurv": {
             "allowCharts": ["bubblechart"],
