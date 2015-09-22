@@ -814,7 +814,7 @@
             top: 30,
             right: 20,
             left: 40,
-            bottom: 40
+            bottom: 45
           },
           padding: 2,
           minRadius: 0.5,
@@ -825,7 +825,7 @@
             top: 30,
             right: 60,
             left: 60,
-            bottom: 70
+            bottom: 55
           },
           padding: 2,
           minRadius: 1,
@@ -915,7 +915,7 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
-      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
+      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
       this.sTitleEl.attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
       this.yAxisEl.call(this.yAxis);
