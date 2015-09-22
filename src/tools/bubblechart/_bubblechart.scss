@@ -85,7 +85,7 @@
 
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
-        @extend %vzb-chart-axis;
+        @extend %vzb-chart-axis-title;
         opacity: 0.3;
       }
     
@@ -134,7 +134,9 @@
         }
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title  {
         @extend %vzb-chart-axis-title-large;
       }
       .vzb-bc-labels,
@@ -157,7 +159,9 @@
         }
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-medium;
       }
       .vzb-bc-labels,
@@ -180,7 +184,9 @@
         }
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title{
         @extend %vzb-chart-axis-title-small;
       }
       .vzb-bc-labels,

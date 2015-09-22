@@ -476,7 +476,9 @@
 
       if(!this._valuesCalculated) this._calculateAllValues();
       else this._valuesCalculated = false;
-
+      
+      this.updateUIStrings();
+        
       this.updateEntities();
       this.redrawDataPoints();
       this.updateBubbleOpacity();
@@ -487,8 +489,6 @@
       this._trails.run("findVisible");
       this.resetZoomer();
       this._trails.run(["recolor", "reveal"]);
-
-      this.updateUIStrings();
 
     },
 
@@ -525,20 +525,24 @@
       this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
       var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
 
-      var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
-      var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
-      var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
-      var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
-
-      var unitStringY = this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit);
-      var unitStringX = this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit);
-      var unitStringS = this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit);
-      var unitStringC = this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit);
-
-      if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
-      if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
-      if (!!unitStringS) titleStringS = titleStringS + ", " +  unitStringS;
-      if (!!unitStringC) titleStringC = titleStringC + ", " +  unitStringC;
+      this.strings = {
+          title:{
+              Y: this.translator("indicator/" + this.model.marker.axis_y.which),
+              X: this.translator("indicator/" + this.model.marker.axis_x.which),
+              S: this.translator("indicator/" + this.model.marker.size.which),
+              C: this.translator("indicator/" + this.model.marker.color.which)
+          },
+          unit:{
+              Y: this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit)||"",
+              X: this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit)||"",
+              S: this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit)||"",
+              C: this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit)||""
+          }
+      }
+      if (!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
+      if (!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
+      if (!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
+      if (!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
@@ -546,7 +550,6 @@
         .attr("y", "-6px")
         .attr("x", "-9px")
         .attr("dx", "-0.72em")
-        .text(titleStringY)        
         .on("click", function(){
             _this.parent
                 .findChildByName("gapminder-treemenu")
@@ -560,7 +563,6 @@
       xTitle
         .attr("text-anchor", "end")
         .attr("y", "-0.32em")
-        .text(titleStringX)
         .on("click", function(){
             _this.parent
                 .findChildByName("gapminder-treemenu")
@@ -572,9 +574,7 @@
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
       sTitle.enter().append("text");
       sTitle
-        .attr("text-anchor", "end")
-        .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
-        this.translator("buttons/colors") + ": " + titleStringC);
+        .attr("text-anchor", "end");
 
         
       //TODO: move away from UI strings, maybe to ready or ready once
@@ -915,15 +915,42 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
-      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
-
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
         
+      
+      var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+      if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
+      
+      var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+      if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
+        
+      var sTitleText = this.sTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
+        this.translator("buttons/colors") + ": " + this.strings.title.C);
+        
+      var probe = this.sTitleEl.append("text").text(sTitleText.text());
+      var font = parseInt(probe.style("font-size"))
+                 * (this.height - 20) / probe.node().getBBox().width;
+      
+      if(probe.node().getBBox().width > this.height - 20) {
+        sTitleText.style("font-size", font);
+      }else{
+        sTitleText.style("font-size", null);
+      }
+      probe.remove(); 
+        
+        
+        
+      this.xTitleEl
+          .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+     
+      this.sTitleEl
+          .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
+
         
             
         if(this.yInfoEl.select('text').node()){
@@ -934,60 +961,6 @@
             this.yInfoEl.select("circle").attr("r", titleH/2);
         }
 
-//      // avoid overlapping (x label with s label)
-//      var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-//      var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-//      var xTitleTextEl = this.xTitleEl.selectAll('text').data([0]);
-//      var sTitleTextEl = this.sTitleEl.selectAll('text').data([0]);
-//      var sTitleSize = sTitleTextEl.node().getBoundingClientRect();
-//      var xTitleSize = xTitleTextEl.node().getBoundingClientRect();
-//      // in case when maximum font size is different for different layout profiles
-//      var maxFontSize = this.fontSettings.maxTitleFontSize;
-//      var fontStep = this.fontSettings.step;
-//      var minFontSize = this.fontSettings.minSize;
-//      var fontSize = parseInt(sTitleTextEl.style('font-size'), 10);
-//      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
-//        while (fontSize > minFontSize && sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
-//          var diffDec = (fontSize - fontStep - minFontSize) * -1;
-//          if (diffDec <= 0) {
-//            fontSize -= fontStep;
-//          }
-//          else if (diffDec > 0 && diffDec < fontStep) {
-//            fontSize -= fontStep - diffDec;
-//          }
-//          sTitleTextEl.style('font-size', fontSize + 'px');
-//          xTitleTextEl.style('font-size', fontSize + 'px');
-//
-//          // calculate the new size
-//          sTitleSize = sTitleTextEl.node().getBoundingClientRect();
-//          xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-//        }
-//      }
-//      else {
-//        this.sTitleHelpEl.text(sTitleTextEl.text());
-//        this.xTitleHelpEl.text(xTitleTextEl.text());
-//        // try to restore default font size
-//        while (fontSize < maxFontSize) {
-//          var diffInc = fontSize + fontStep - maxFontSize;
-//          if (diffInc <= 0) {
-//            fontSize += fontStep;
-//          }
-//          else if (diffInc > 0 && diffInc < fontStep) {
-//            fontSize += fontStep - diffInc;
-//          }
-//          this.sTitleHelpEl.style('font-size', fontSize + 'px');
-//          this.xTitleHelpEl.style('font-size', fontSize + 'px');
-//          var sTitleHelpSize = this.sTitleHelpEl.node().getBoundingClientRect();
-//          var xTitleHelpSize = this.xTitleHelpEl.node().getBoundingClientRect();
-//          if (sTitleHelpSize.height + xAxisSize.width < yAxisSize.height - xTitleHelpSize.height) {
-//            sTitleTextEl.style('font-size', fontSize + 'px');
-//            xTitleTextEl.style('font-size', fontSize + 'px');
-//          }
-//          else {
-//            break;
-//          }
-//        }
-//      }
     },
 
     updateMarkerSizeLimits: function () {
