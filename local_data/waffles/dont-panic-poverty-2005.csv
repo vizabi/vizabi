@@ -1,166 +1,166 @@
 geo,geo.name,geo.cat,geo.region,time,pop,gdp_per_cap,gini,u5mr
-afg,Afghanistan,country,asi,2005,24399948,1146,36.64,119.6
-ago,Angola,country,afr,2005,17912942,4667,44.06,203.9
-alb,Albania,country,eur,2005,3082172,7075,41.8,20.5
-are,United Arab Emirates,country,asi,2005,4481976,102324,40,9.8
-arg,Argentina,country,ame,2005,39145491,12039,46.66,17.1
-arm,Armenia,country,eur,2005,3014917,5297,55.51,23.3
-aus,Australia,country,asi,2005,20274282,38840,44.22,5.7
-aut,Austria,country,eur,2005,8234858,40875,34.2,4.9
-aze,Azerbaijan,country,eur,2005,8563398,8052,40.51,51.7
-bdi,Burundi,country,afr,2005,7934213,692,34.41,127.1
-bel,Belgium,country,eur,2005,10561436,39881,31.81,5
-ben,Benin,country,afr,2005,8182362,1584,45.01,125.5
-bfa,Burkina Faso,country,afr,2005,13421929,1232,49.94,158.3
-bgd,Bangladesh,country,asi,2005,142929979,1934,47.2,66.8
-bgr,Bulgaria,country,eur,2005,7682614,12359,49.05,15.9
-bhr,Bahrain,country,asi,2005,867014,44031,40,10.9
-bih,Bosnia and Herzegovina,country,eur,2005,3833377,7751,40,8.2
-blr,Belarus,country,eur,2005,9640616,10851,35.18,9.4
-bol,Bolivia,country,ame,2005,9125405,4578,43.29,61.4
-bra,Brazil,country,ame,2005,188479240,12373,61.2,22.5
-btn,Bhutan,country,asi,2005,651163,4565,40,58.5
-bwa,Botswana,country,afr,2005,1864003,11460,58.73,65.6
-caf,Central African Republic,country,afr,2005,4055608,853,48.62,166.5
-can,Canada,country,ame,2005,32256333,40284,41.06,6.1
-che,Switzerland,country,eur,2005,7408608,51069,36.83,5.1
-chl,Chile,country,ame,2005,16096571,16985,53.98,9.1
-chn,China,country,asi,2005,1305600630,5675,44.43,24
-civ,Cote d'Ivoire,country,afr,2005,18132702,2828,51.31,128
-cmr,Cameroon,country,afr,2005,18126999,2532,51.75,125.3
-cod,"Congo, Dem. Rep.",country,afr,2005,56089536,556,44,138.4
-cog,"Congo, Rep.",country,afr,2005,3503086,4978,42.82,95.3
-col,Colombia,country,ame,2005,43285636,9286,57.4,21.5
+afg,Afghanistan,country,asi,2005,24399948,1146,30.3,119.6
+ago,Angola,country,afr,2005,17912942,4667,42.8,203.9
+alb,Albania,country,eur,2005,3082172,7075,31.7,20.5
+are,United Arab Emirates,country,asi,2005,4481976,102324,45.1,9.8
+arg,Argentina,country,ame,2005,39145491,12039,49.3,17.1
+arm,Armenia,country,eur,2005,3014917,5297,35.8,23.3
+aus,Australia,country,asi,2005,20274282,38840,33,5.7
+aut,Austria,country,eur,2005,8234858,40875,26.3,4.9
+aze,Azerbaijan,country,eur,2005,8563398,8052,16.6,51.7
+bdi,Burundi,country,afr,2005,7934213,692,34.4,127.1
+bel,Belgium,country,eur,2005,10561436,39881,28,5
+ben,Benin,country,afr,2005,8182362,1584,39.8,125.5
+bfa,Burkina Faso,country,afr,2005,13421929,1232,42.1,158.3
+bgd,Bangladesh,country,asi,2005,142929979,1934,33.2,66.8
+bgr,Bulgaria,country,eur,2005,7682614,12359,25,15.9
+bhr,Bahrain,country,asi,2005,867014,44031,35,10.9
+bih,Bosnia and Herzegovina,country,eur,2005,3833377,7751,33.7,8.2
+blr,Belarus,country,eur,2005,9640616,10851,27.4,9.4
+bol,Bolivia,country,ame,2005,9125405,4578,58.5,61.4
+bra,Brazil,country,ame,2005,188479240,12373,56.7,22.5
+btn,Bhutan,country,asi,2005,651163,4565,36,58.5
+bwa,Botswana,country,afr,2005,1864003,11460,58.7,65.6
+caf,Central African Republic,country,afr,2005,4055608,853,48.7,166.5
+can,Canada,country,ame,2005,32256333,40284,31.6,6.1
+che,Switzerland,country,eur,2005,7408608,51069,31.7,5.1
+chl,Chile,country,ame,2005,16096571,16985,50.6,9.1
+chn,China,country,asi,2005,1305600630,5675,42.5,24
+civ,Cote d'Ivoire,country,afr,2005,18132702,2828,42.3,128
+cmr,Cameroon,country,afr,2005,18126999,2532,41.2,125.3
+cod,"Congo, Dem. Rep.",country,afr,2005,56089536,556,44.4,138.4
+cog,"Congo, Rep.",country,afr,2005,3503086,4978,47.3,95.3
+col,Colombia,country,ame,2005,43285636,9286,48.3,21.5
 com,Comoros,country,afr,2005,618632,1498,63.8,97.8
-cpv,Cape Verde,country,afr,2005,474224,4604,40,27.7
-cri,Costa Rica,country,ame,2005,4247843,10629,44.41,10.4
-cub,Cuba,country,ame,2005,11261052,14200,42.7,6.8
-cyp,Cyprus,country,eur,2005,1032586,33592,40,4.8
-cze,Czech Republic,country,eur,2005,10230877,25571,31.34,5.2
-deu,Germany,country,eur,2005,81246801,37901,50.58,4.7
-dji,Djibouti,country,afr,2005,778406,2240,43.73,88.5
-dnk,Denmark,country,eur,2005,5417692,43919,39.2,4.9
-dom,Dominican Republic,country,ame,2005,9237565,8772,45.76,36.8
-dza,Algeria,country,afr,2005,33267887,12077,42.48,33.6
-ecu,Ecuador,country,ame,2005,13735232,8582,44.64,29.1
-egy,Egypt,country,afr,2005,74942115,8556,34.71,35.6
-eri,Eritrea,country,afr,2005,4191273,1332,40,69.5
-esp,Spain,country,eur,2005,43854761,33396,32.73,5.7
-est,Estonia,country,eur,2005,1355662,21651,38.13,7.3
-eth,Ethiopia,country,afr,2005,76608431,738,47.07,109.1
-fin,Finland,country,eur,2005,5246368,38700,27.4,3.8
-fji,Fiji,country,asi,2005,821820,7169,43.28,23.7
-fra,France,country,eur,2005,61241700,36395,37.24,4.6
-gab,Gabon,country,afr,2005,1377777,17069,41.79,75.3
-gbr,United Kingdom,country,eur,2005,60210012,36665,40.47,6
-geo,Georgia,country,eur,2005,4475273,4716,48.91,24.6
-gha,Ghana,country,afr,2005,21389514,2558,41.51,86.5
-gin,Guinea,country,afr,2005,9669023,1210,39.94,136.7
-gmb,Gambia,country,afr,2005,1440542,1552,44.16,97.9
-gnb,Guinea-Bissau,country,afr,2005,1462784,1299,38.74,146.2
-gnq,Equatorial Guinea,country,afr,2005,625866,36200,40,131.2
-grc,Greece,country,eur,2005,11069662,29768,32.4,5.5
-gtm,Guatemala,country,ame,2005,13183505,6475,55.2,41.4
-guy,Guyana,country,ame,2005,742495,5140,43.24,42.8
-hnd,Honduras,country,ame,2005,6880181,3952,58.76,30
-hti,Haiti,country,ame,2005,9263409,1562,50.11,90
-hun,Hungary,country,eur,2005,10095964,22029,29.22,8.3
-idn,Indonesia,country,asi,2005,226254703,6892,50,41.4
-ind,India,country,asi,2005,1144326293,3262,47.4,74.6
-irl,Ireland,country,eur,2005,4203700,47775,45.21,5.2
-irn,Iran,country,asi,2005,70122115,14452,41.8,25.7
-irq,Iraq,country,asi,2005,27017712,10489,39.36,40.7
-isr,Israel,country,asi,2005,6603677,25891,51.3,5.6
-ita,Italy,country,eur,2005,58657355,37130,36.72,4.4
-jam,Jamaica,country,ame,2005,2677888,8803,43.24,19.7
-jor,Jordan,country,asi,2005,5332982,9293,43.45,24.1
-jpn,Japan,country,asi,2005,126978754,33916,33.27,3.7
-kaz,Kazakhstan,country,asi,2005,15451752,15619,33.66,32.5
-ken,Kenya,country,afr,2005,35349040,2240,51.15,84.5
-kgz,Kyrgyz Republic,country,asi,2005,5115470,2370,39.3,39.3
-khm,Cambodia,country,asi,2005,13320058,1957,44.31,65.4
-kor,South Korea,country,asi,2005,47605863,25541,37.2,5.6
-kwt,Kuwait,country,asi,2005,2263604,92665,40,11.7
-lao,Lao,country,asi,2005,5745012,2930,41.59,97.2
-lbn,Lebanon,country,asi,2005,3986865,12258,38.63,14.1
-lbr,Liberia,country,afr,2005,3269786,470,40,124.7
-lby,Libya,country,afr,2005,5801543,26967,40,23.1
-lka,Sri Lanka,country,asi,2005,19526406,5843,45.95,14.1
-lso,Lesotho,country,afr,2005,1925844,1810,54,117.3
-ltu,Lithuania,country,eur,2005,3343268,18256,41.65,9.9
-lux,Luxembourg,country,eur,2005,457847,88944,42.23,3.5
-lva,Latvia,country,eur,2005,2227559,17192,42.17,12.5
-mar,Morocco,country,afr,2005,30385479,5363,46.03,40.4
-mda,Moldova,country,eur,2005,4157707,3318,43,19.5
-mdg,Madagascar,country,afr,2005,18290394,1393,47.05,80.6
-mex,Mexico,country,ame,2005,109747906,14961,46.76,19.5
-mkd,"Macedonia, FYR",country,eur,2005,2042894,9247,41.8,13.7
-mli,Mali,country,afr,2005,12881384,1483,39.01,171.8
-mmr,Myanmar,country,asi,2005,49984704,2339,44.27,70.5
-mne,Montenegro,country,eur,2005,616389,11090,40,10.4
-mng,Mongolia,country,asi,2005,2526447,6047,42.66,43.4
-moz,Mozambique,country,afr,2005,21126676,774,52.47,133.7
-mrt,Mauritania,country,afr,2005,3154087,2955,43.73,109.8
-mus,Mauritius,country,afr,2005,1222006,12747,41,15.7
-mwi,Malawi,country,afr,2005,12747846,609,39.41,116.5
-mys,Malaysia,country,asi,2005,25796124,17929,48.9,8.1
-nam,Namibia,country,afr,2005,2027026,7279,63.9,70.7
-ner,Niger,country,afr,2005,13485436,788,43.89,172.7
-nga,Nigeria,country,afr,2005,139611303,4130,51.16,158.1
-nic,Nicaragua,country,ame,2005,5379327,3740,45.09,31.7
-nld,Netherlands,country,eur,2005,16331646,43243,32.05,5.4
-nor,Norway,country,eur,2005,4624388,63573,30.5,4
-npl,Nepal,country,asi,2005,25506847,1708,49.97,60
-nzl,New Zealand,country,asi,2005,4134699,31798,37.4,6.6
-omn,Oman,country,asi,2005,2506891,41270,40,12.7
-pak,Pakistan,country,asi,2005,153356383,3910,40.69,101.2
-pan,Panama,country,ame,2005,3319301,11156,57.55,22.9
-per,Peru,country,ame,2005,27610406,7499,50.55,27.4
-phl,Philippines,country,asi,2005,86141373,4804,49.6,35.7
-png,Papua New Guinea,country,asi,2005,6086905,1822,50.31,74.2
-pol,Poland,country,eur,2005,38463514,16900,34.5,7.6
-prk,North Korea,country,asi,2005,23813324,1464,40,32.7
-prt,Portugal,country,eur,2005,10480085,26744,48.69,4.7
-pry,Paraguay,country,ame,2005,5795493,6007,57.7,28.4
-pse,West Bank and Gaza,country,asi,2005,3579462,4506,40,26.3
-qat,Qatar,country,asi,2005,836924,119134,40,10.4
-rou,Romania,country,eur,2005,21407619,13941,33.4,20.9
-rus,Russia,country,eur,2005,143622566,18118,40.01,16.7
-rwa,Rwanda,country,afr,2005,9008230,973,52.83,109.6
-sau,Saudi Arabia,country,asi,2005,24745230,38892,40,19.7
-sdn,Sudan,country,afr,2005,31990003,2672,35.42,91.9
+cpv,Cape Verde,country,afr,2005,474224,4604,46.5,27.7
+cri,Costa Rica,country,ame,2005,4247843,10629,47.8,10.4
+cub,Cuba,country,ame,2005,11261052,14200,36.9,6.8
+cyp,Cyprus,country,eur,2005,1032586,33592,28.7,4.8
+cze,Czech Republic,country,eur,2005,10230877,25571,26,5.2
+deu,Germany,country,eur,2005,81246801,37901,26.1,4.7
+dji,Djibouti,country,afr,2005,778406,2240,40,88.5
+dnk,Denmark,country,eur,2005,5417692,43919,23.9,4.9
+dom,Dominican Republic,country,ame,2005,9237565,8772,50,36.8
+dza,Algeria,country,afr,2005,33267887,12077,42.5,33.6
+ecu,Ecuador,country,ame,2005,13735232,8582,54.1,29.1
+egy,Egypt,country,afr,2005,74942115,8556,34.7,35.6
+eri,Eritrea,country,afr,2005,4191273,1332,47.5,69.5
+esp,Spain,country,eur,2005,43854761,33396,32.2,5.7
+est,Estonia,country,eur,2005,1355662,21651,34.1,7.3
+eth,Ethiopia,country,afr,2005,76608431,738,29.8,109.1
+fin,Finland,country,eur,2005,5246368,38700,26,3.8
+fji,Fiji,country,asi,2005,821820,7169,44.8,23.7
+fra,France,country,eur,2005,61241700,36395,27.7,4.6
+gab,Gabon,country,afr,2005,1377777,17069,42.2,75.3
+gbr,United Kingdom,country,eur,2005,60210012,36665,34.6,6
+geo,Georgia,country,eur,2005,4475273,4716,40.3,24.6
+gha,Ghana,country,afr,2005,21389514,2558,42.8,86.5
+gin,Guinea,country,afr,2005,9669023,1210,39.1,136.7
+gmb,Gambia,country,afr,2005,1440542,1552,47.3,97.9
+gnb,Guinea-Bissau,country,afr,2005,1462784,1299,38.7,146.2
+gnq,Equatorial Guinea,country,afr,2005,625866,36200,50.5,131.2
+grc,Greece,country,eur,2005,11069662,29768,34.6,5.5
+gtm,Guatemala,country,ame,2005,13183505,6475,52.8,41.4
+guy,Guyana,country,ame,2005,742495,5140,43.2,42.8
+hnd,Honduras,country,ame,2005,6880181,3952,59.5,30
+hti,Haiti,country,ame,2005,9263409,1562,59.2,90
+hun,Hungary,country,eur,2005,10095964,22029,27.6,8.3
+idn,Indonesia,country,asi,2005,226254703,6892,34,41.4
+ind,India,country,asi,2005,1144326293,3262,33.5,74.6
+irl,Ireland,country,eur,2005,4203700,47775,31.9,5.2
+irn,Iran,country,asi,2005,70122115,14452,38.3,25.7
+irq,Iraq,country,asi,2005,27017712,10489,39.4,40.7
+isr,Israel,country,asi,2005,6603677,25891,37.8,5.6
+ita,Italy,country,eur,2005,58657355,37130,32.8,4.4
+jam,Jamaica,country,ame,2005,2677888,8803,45.5,19.7
+jor,Jordan,country,asi,2005,5332982,9293,35.1,24.1
+jpn,Japan,country,asi,2005,126978754,33916,32.6,3.7
+kaz,Kazakhstan,country,asi,2005,15451752,15619,26.8,32.5
+ken,Kenya,country,afr,2005,35349040,2240,47.7,84.5
+kgz,Kyrgyz Republic,country,asi,2005,5115470,2370,38.3,39.3
+khm,Cambodia,country,asi,2005,13320058,1957,37.4,65.4
+kor,South Korea,country,asi,2005,47605863,25541,30.9,5.6
+kwt,Kuwait,country,asi,2005,2263604,92665,39.3,11.7
+lao,Lao,country,asi,2005,5745012,2930,34.3,97.2
+lbn,Lebanon,country,asi,2005,3986865,12258,38.6,14.1
+lbr,Liberia,country,afr,2005,3269786,470,38.4,124.7
+lby,Libya,country,afr,2005,5801543,26967,38.8,23.1
+lka,Sri Lanka,country,asi,2005,19526406,5843,40.5,14.1
+lso,Lesotho,country,afr,2005,1925844,1810,52.5,117.3
+ltu,Lithuania,country,eur,2005,3343268,18256,36.3,9.9
+lux,Luxembourg,country,eur,2005,457847,88944,26.5,3.5
+lva,Latvia,country,eur,2005,2227559,17192,36.2,12.5
+mar,Morocco,country,afr,2005,30385479,5363,40.8,40.4
+mda,Moldova,country,eur,2005,4157707,3318,36.3,19.5
+mdg,Madagascar,country,afr,2005,18290394,1393,38.9,80.6
+mex,Mexico,country,ame,2005,109747906,14961,43.5,19.5
+mkd,"Macedonia, FYR",country,eur,2005,2042894,9247,39.1,13.7
+mli,Mali,country,afr,2005,12881384,1483,39.2,171.8
+mmr,Myanmar,country,asi,2005,49984704,2339,44.3,70.5
+mne,Montenegro,country,eur,2005,616389,11090,30.1,10.4
+mng,Mongolia,country,asi,2005,2526447,6047,35,43.4
+moz,Mozambique,country,afr,2005,21126676,774,52.5,133.7
+mrt,Mauritania,country,afr,2005,3154087,2955,41.1,109.8
+mus,Mauritius,country,afr,2005,1222006,12747,36.6,15.7
+mwi,Malawi,country,afr,2005,12747846,609,39.4,116.5
+mys,Malaysia,country,asi,2005,25796124,17929,40.6,8.1
+nam,Namibia,country,afr,2005,2027026,7279,63.4,70.7
+ner,Niger,country,afr,2005,13485436,788,46.3,172.7
+nga,Nigeria,country,afr,2005,139611303,4130,40.5,158.1
+nic,Nicaragua,country,ame,2005,5379327,3740,40.5,31.7
+nld,Netherlands,country,eur,2005,16331646,43243,26.9,5.4
+nor,Norway,country,eur,2005,4624388,63573,28.2,4
+npl,Nepal,country,asi,2005,25506847,1708,40.7,60
+nzl,New Zealand,country,asi,2005,4134699,31798,33.3,6.6
+omn,Oman,country,asi,2005,2506891,41270,40.9,12.7
+pak,Pakistan,country,asi,2005,153356383,3910,32.7,101.2
+pan,Panama,country,ame,2005,3319301,11156,47.1,22.9
+per,Peru,country,ame,2005,27610406,7499,47,27.4
+phl,Philippines,country,asi,2005,86141373,4804,44.2,35.7
+png,Papua New Guinea,country,asi,2005,6086905,1822,50.3,74.2
+pol,Poland,country,eur,2005,38463514,16900,35.6,7.6
+prk,North Korea,country,asi,2005,23813324,1464,46.9,32.7
+prt,Portugal,country,eur,2005,10480085,26744,38.1,4.7
+pry,Paraguay,country,ame,2005,5795493,6007,51.4,28.4
+pse,West Bank and Gaza,country,asi,2005,3579462,4506,35.5,26.3
+qat,Qatar,country,asi,2005,836924,119134,43.7,10.4
+rou,Romania,country,eur,2005,21407619,13941,31,20.9
+rus,Russia,country,eur,2005,143622566,18118,33.8,16.7
+rwa,Rwanda,country,afr,2005,9008230,973,51,109.6
+sau,Saudi Arabia,country,asi,2005,24745230,38892,42.4,19.7
+sdn,Sudan,country,afr,2005,31990003,2672,35.4,91.9
 sds,South Sudan,country,afr,2005,8099908,3221,35.42,139.3
-sen,Senegal,country,afr,2005,11268994,2106,43.08,96.2
-sgp,Singapore,country,asi,2005,4495531,61921,45.77,2.9
-slb,Solomon Islands,country,asi,2005,469306,1602,40,33.2
-sle,Sierra Leone,country,afr,2005,5071271,1158,44.22,203.7
-slv,El Salvador,country,ame,2005,5947206,6907,46.18,24.8
-som,Somalia,country,afr,2005,8466938,616,47.62,174.3
-srb,Serbia,country,eur,2005,9186685,10568,31.31,8.9
-sur,Suriname,country,ame,2005,491999,12225,41.97,29.2
-svk,Slovak Republic,country,eur,2005,5385192,19549,28.32,9.8
-svn,Slovenia,country,eur,2005,1996522,26677,28.92,4.3
-swe,Sweden,country,eur,2005,9030163,41184,34.6,3.6
-swz,Swaziland,country,afr,2005,1104642,5618,40,120.8
-syr,Syria,country,asi,2005,18132842,5738,44.28,18.8
-tcd,Chad,country,afr,2005,10067932,1803,39.78,177
-tgo,Togo,country,afr,2005,5578219,1211,35.19,105.1
-tha,Thailand,country,asi,2005,65863973,10901,46.65,17.8
-tjk,Tajikistan,country,asi,2005,6805655,1719,39.33,65.2
-tkm,Turkmenistan,country,asi,2005,4747839,6505,46.35,70.1
-tls,Timor-Leste,country,asi,2005,989497,1301,40,83.3
-tto,Trinidad and Tobago,country,ame,2005,1296933,25439,43.06,26.9
-tun,Tunisia,country,afr,2005,10102477,8707,39.82,23
-tur,Turkey,country,eur,2005,67860617,15176,46,27.7
-tza,Tanzania,country,afr,2005,39065600,1848,44.28,90.6
-uga,Uganda,country,afr,2005,28042413,1217,54.6,109.1
-ukr,Ukraine,country,eur,2005,46795313,7265,32.91,14.5
-ury,Uruguay,country,ame,2005,3325608,12978,42.2,14.3
-usa,United States,country,ame,2005,296139635,49762,43.86,8
+sen,Senegal,country,afr,2005,11268994,2106,39.2,96.2
+sgp,Singapore,country,asi,2005,4495531,61921,45.8,2.9
+slb,Solomon Islands,country,asi,2005,469306,1602,46.5,33.2
+sle,Sierra Leone,country,afr,2005,5071271,1158,38.4,203.7
+slv,El Salvador,country,ame,2005,5947206,6907,47.9,24.8
+som,Somalia,country,afr,2005,8466938,616,47.6,174.3
+srb,Serbia,country,eur,2005,9186685,10568,32.4,8.9
+sur,Suriname,country,ame,2005,491999,12225,46.1,29.2
+svk,Slovak Republic,country,eur,2005,5385192,19549,26.2,9.8
+svn,Slovenia,country,eur,2005,1996522,26677,23.8,4.3
+swe,Sweden,country,eur,2005,9030163,41184,23.4,3.6
+swz,Swaziland,country,afr,2005,1104642,5618,52.3,120.8
+syr,Syria,country,asi,2005,18132842,5738,35.8,18.8
+tcd,Chad,country,afr,2005,10067932,1803,39.8,177
+tgo,Togo,country,afr,2005,5578219,1211,42.4,105.1
+tha,Thailand,country,asi,2005,65863973,10901,42.3,17.8
+tjk,Tajikistan,country,asi,2005,6805655,1719,33.1,65.2
+tkm,Turkmenistan,country,asi,2005,4747839,6505,46.4,70.1
+tls,Timor-Leste,country,asi,2005,989497,1301,31,83.3
+tto,Trinidad and Tobago,country,ame,2005,1296933,25439,39.5,26.9
+tun,Tunisia,country,afr,2005,10102477,8707,37.7,23
+tur,Turkey,country,eur,2005,67860617,15176,41.7,27.7
+tza,Tanzania,country,afr,2005,39065600,1848,36.7,90.6
+uga,Uganda,country,afr,2005,28042413,1217,42.6,109.1
+ukr,Ukraine,country,eur,2005,46795313,7265,29,14.5
+ury,Uruguay,country,ame,2005,3325608,12978,40.5,14.3
+usa,United States,country,ame,2005,296139635,49762,38,8
 uzb,Uzbekistan,country,asi,2005,25922239,3030,39.7,54.2
-ven,Venezuela,country,ame,2005,26769115,14981,49.63,18.5
-vnm,Vietnam,country,asi,2005,84203817,3485,43.59,28.5
-yem,Yemen,country,asi,2005,20504385,4295,45.17,75
-zaf,South Africa,country,afr,2005,48352951,11133,60.1,75.2
-zmb,Zambia,country,afr,2005,12043591,2620,49.81,111.1
+ven,Venezuela,country,ame,2005,26769115,14981,49.5,18.5
+vnm,Vietnam,country,asi,2005,84203817,3485,36.3,28.5
+yem,Yemen,country,asi,2005,20504385,4295,35.9,75
+zaf,South Africa,country,afr,2005,48352951,11133,58.5,75.2
+zmb,Zambia,country,afr,2005,12043591,2620,52.7,111.1
 zwe,Zimbabwe,country,afr,2005,12984418,1689,64,96.2
