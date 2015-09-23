@@ -2,8 +2,8 @@
 
 angular.module('gapminderTools')
   .controller('gapminderToolsCtrl', [
-    '$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory', 'vizabiIndicators',
-    function ($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory, vizabiIndicators) {
+    '$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory',
+    function ($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory) {
 
       var placeholder = document.getElementById('vizabi-placeholder');
 
@@ -35,20 +35,10 @@ angular.module('gapminderTools')
           $scope.activeTool = $routeParams.slug;
           // do not put data in $scope
           var tool = angular.copy($scope.tools[$scope.activeTool]);
-          // inline data here
-          console.time('load indicators');
-          vizabiIndicators.getIndicators(function (err, data) {
-            tool.opts.data = {
-              path: '/api/indicators/stub',
-              reader: 'ws-json',
-              data: data
-            };
-            // todo: uncomment
-            console.timeEnd('load indicators');
-            $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
-            $scope.relatedItems = tool.relateditems;
-            // $scope.$apply();
-          });
+
+          $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
+          $scope.relatedItems = tool.relateditems;
+          $scope.$apply();
         });
       }
       //);

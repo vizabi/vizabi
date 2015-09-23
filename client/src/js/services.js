@@ -95,34 +95,3 @@ angular.module('gapminderTools')
       }
     };
   }]);
-
-angular.module('gapminderTools')
-  .factory("vizabiIndicators", ['$http', '$log', function ($http, $log) {
-
-    return {
-      /**
-       * Get All Indicators
-       */
-      getIndicators: function (cb) {
-        //return the promise directly.
-        return $http.get(baseHref + 'api/indicators/stub')
-          .then(function (res) {
-            var rows = res.data.data.rows;
-            var headers = res.data.data.headers;
-            var result = new Array(rows.length);
-            // unwrap compact data into json collection
-            for (var i = 0; i < rows.length; i++) {
-              result[i] = {};
-              for (var j = 0; j < headers.length; j++) {
-                result[i][headers[j]] = (rows[i][j] || '').toString();
-              }
-            }
-            return cb(res.data.error, result);
-          }, function (response) {
-            $log.error(response);
-            return cb(response);
-          });
-      }
-    };
-
-  }]);

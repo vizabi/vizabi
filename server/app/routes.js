@@ -1,6 +1,4 @@
-var _ = require('lodash');
 var path = require('path');
-var cache = require('express-redis-cache')();
 var express = require('express');
 var mongoose = require('mongoose');
 var compression = require('compression');
@@ -11,7 +9,6 @@ require('./models');
 var Item = mongoose.model('Item');
 var Menu = mongoose.model('Menu');
 var RelatedItem = mongoose.model('RelatedItem');
-var Indicators = mongoose.model('Indicators');
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -75,7 +72,7 @@ module.exports = function (app) {
   /* API Routes */
 
   //get all items in the database
-  router.get('/item', function (req, res) {
+  router.get('/item', compression(), function (req, res) {
     return getItems(res);
   });
 
@@ -115,12 +112,12 @@ module.exports = function (app) {
   });
 
   //get menu in the database
-  router.get('/menu', function (req, res) {
+  router.get('/menu', compression(), function (req, res) {
     return getMenu("Home", res);
   });
 
   //get all related items in the database
-  router.get('/related', function (req, res) {
+  router.get('/related', compression(), function (req, res) {
     return getRelatedItems(res);
   });
 
@@ -163,31 +160,13 @@ module.exports = function (app) {
     });
   });
 
-  // indicators data source
-  router.get('/indicators/stub', compression(), cache.route({expire: 300}), function (req, res, next) {
-    return Indicators.find().sort({time: 1}).lean().exec(function (err, indicatorValues) {
-      if (err) {
-        return res.send(err);
-        // return next(err);
-      }
-
-      var headers = ['geo', 'geo.name', 'geo.cat', 'geo.region', 'time', 'pop', 'gdp_per_cap', 'u5mr'];
-      var data = {
-        headers: headers,
-        rows: _.map(indicatorValues, function (indVal) {
-          return [indVal.geo, indVal.name, indVal.cat, indVal.region, indVal.time, indVal.pop, indVal.gdp_per_cap, indVal.gini, indVal.u5mr];
-        })
-      };
-      return res.json({success: true, data: data});
-    });
-  });
-
   var base = path.join(BASEURL, 'api');
   app.use(base, router);
 
   /* APP Routes */
   app.get('*', function (req, res) {
-    res.sendfile('./client/dist' + BASEURL + 'index.html'); // load the single view file
+    return res.sendfile('./client/dist' + BASEURL + 'index.html');
+    // load the single view file
   });
 };
 
