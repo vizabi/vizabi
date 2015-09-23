@@ -56,6 +56,8 @@
       this.rootEl = d3.select(this.root.element);
       this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
       this.dragHandler.html(iconset['drag']);
+      this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
+      this.pinIcon.html(iconset['pinIcon']);
 
       var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
       var dragBehavior = d3.behavior.drag()
