@@ -31,23 +31,18 @@
           pointer-events: visible;
         }
       }
-      .vzb-bc-labels .vzb-bc-entity text, .vzb-bc-tooltip text  {
-        pointer-events: none;
-        text-anchor: end;
-        fill: $vzb-color-black;
-        &.vzb-bc-tooltip-shadow {
-          fill: white;
-          @include opacity(0.5);
-          stroke: white;
+        .vzb-bc-labels{
+        @extend %vzb-chart-tooltip;
+            rect{pointer-events: visible}
+        } 
+        
+        .vzb-bc-tooltip  {
+        @extend %vzb-chart-tooltip;
+      }
+        .vzb-bc-label-shadow,
+        .vzb-bc-tooltip-shadow {
+        @extend %vzb-chart-label-shadow
         }
-      }
-      .vzb-bc-labels .vzb-bc-entity rect, .vzb-bc-tooltip rect {
-        @include transition(opacity 200ms linear);
-        cursor: pointer;
-        fill: white;
-        stroke: $vzb-color-black;
-        stroke-width: 1.5px;
-      }
       .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {
         @include transition(opacity 200ms linear);
         fill: white;
@@ -85,9 +80,15 @@
 
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
-        @extend %vzb-chart-axis;
+        @extend %vzb-chart-axis-title;
         opacity: 0.3;
       }
+    
+      .vzb-bc-axis-x-info, 
+      .vzb-bc-axis-y-info {
+        @extend %vzb-chart-info;
+      }
+    
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 2 4;
@@ -122,20 +123,23 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 1.0;
       }
-      .vzb-bc-labels text {
-        &.vzb-bc-label-shadow {
-          stroke-width: 4px
-        }
+      .vzb-bc-label-shadow, 
+      .vzb-bc-tooltip-shadow {
+        @extend %vzb-chart-label-shadow-large;
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title  {
         @extend %vzb-chart-axis-title-large;
       }
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-large;
       }
     }
@@ -145,20 +149,23 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 0.8;
       }
-      .vzb-bc-labels text, .vzb-bc-tooltip text {
-        &.vzb-bc-label-shadow, .vzb-bc-tooltip-shadow {
-          stroke-width: 3px
-        }
+      .vzb-bc-label-shadow, 
+      .vzb-bc-tooltip-shadow {
+        @extend %vzb-chart-label-shadow-medium;
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-medium;
       }
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-medium;
       }
     }
@@ -168,20 +175,23 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 0.7;
       }
-      .vzb-bc-labels text, .vzb-bc-tooltip text {
-        &.vzb-bc-label-shadow, .vzb-bc-tooltip-shadow {
-          stroke-width: 2px
-        }
+      .vzb-bc-label-shadow, 
+      .vzb-bc-tooltip-shadow {
+        @extend %vzb-chart-label-shadow-small;
       }
       .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
+      .vzb-bc-axis-y-title,
+      .vzb-bc-axis-s-title,
+      .vzb-bc-axis-c-title{
         @extend %vzb-chart-axis-title-small;
       }
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-small;
       }
     }

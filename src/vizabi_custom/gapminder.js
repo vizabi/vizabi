@@ -24,7 +24,7 @@
 
     var locationArray = window.location.href.split("/");
     var localUrl = locationArray.splice(0,locationArray.indexOf("preview")).join("/");
-    localUrl += "/preview/";
+    localUrl += "/preview/"; 
     var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
     
     //TODO: remove hardcoded path from source code
@@ -85,6 +85,13 @@
         ui: {
             buttons: []
         }
+    });
+    
+    MountainChart.define('datawarning_content', {
+        title: "Income data has large uncertainty!",
+        body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+        doubtDomain: [1800, 1950, 2015],
+        doubtRange: [1.0, 0.8, 0.6]
     });
 
     MountainChart.define('default_options', {
@@ -163,7 +170,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/mountains-pop-gdp-gini-1800-2030.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/dont-panic-poverty.csv",
             splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
@@ -254,12 +261,19 @@
         }
     });
 
+    BubbleChart.define('datawarning_content', {
+        title: "",
+        body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+        doubtDomain: [1800, 1950, 2015],
+        doubtRange: [1.0, 0.3, 0.2]
+    });
+    
     BubbleChart.define('default_options', {
 
         state: {
             time: {
                 start: "1800",
-                end: "2030",
+                end: "2015",
                 value: "2015",
                 step: 1,
                 speed: 300,
@@ -289,7 +303,7 @@
                 axis_y: {
                     use: "indicator",
                     which: "u5mr",
-                    scaleType: "log",
+                    scaleType: "linear",
                     allow: {scales: ["linear", "log", "genericLog"]}
                 },
                 axis_x: {
@@ -309,7 +323,7 @@
                     scaleType: "linear",
                     allow: {scales: ["linear", "log"]},
                     min: 0.04,
-                    max: 0.9
+                    max: 0.90 
                 }
             }
         },
@@ -317,7 +331,7 @@
             //reader: "waffle-server",
             reader: "csv-file",
             //path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/bub_data_u5mr_inc_etc_20150823.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/dont-panic-poverty.csv",
             splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
@@ -462,4 +476,6 @@
 
     });
 
+    //if(datawarning_content) Vizabi.Tool.get("BubbleChart").define("datawarning_content",datawarning_content);
+    
 }.call(this));

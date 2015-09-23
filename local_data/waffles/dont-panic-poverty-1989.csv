@@ -1,0 +1,166 @@
+geo,geo.name,geo.cat,geo.region,time,pop,gdp_per_cap,gini,u5mr
+afg,Afghanistan,country,asi,1989,11608351,1087,35.4,187.8
+ago,Angola,country,afr,1989,10820992,4365,56.4,226.2
+alb,Albania,country,eur,1989,3253659,4325,24.6,42.5
+are,United Arab Emirates,country,asi,1989,1712117,92115,45.1,17.4
+arg,Argentina,country,ame,1989,32263559,8820,43.8,28.6
+arm,Armenia,country,eur,1989,3542720,3889,54.8,52
+aus,Australia,country,asi,1989,16849253,28556,33.2,9.7
+aut,Austria,country,eur,1989,7669601,30067,28,10
+aze,Azerbaijan,country,eur,1989,7104058,8814,33.9,94.9
+bdi,Burundi,country,afr,1989,5454475,1037,39.6,170.7
+bel,Belgium,country,eur,1989,9952253,29980,28,10.3
+ben,Benin,country,afr,1989,4836240,1352,40.8,183.9
+bfa,Burkina Faso,country,afr,1989,8579825,858,43.4,203.4
+bgd,Bangladesh,country,asi,1989,103400571,1216,34.8,149.7
+bgr,Bulgaria,country,eur,1989,8878348,10367,23.4,21.5
+bhr,Bahrain,country,asi,1989,481126,32515,35,23.2
+bih,Bosnia and Herzegovina,country,eur,1989,4559256,3263,28.3,19.7
+blr,Belarus,country,eur,1989,10206300,8251,26.3,16.9
+bol,Bolivia,country,ame,1989,6723046,3638,58.8,129.2
+bra,Brazil,country,ame,1989,147801816,11226,63.3,63.7
+btn,Bhutan,country,asi,1989,529284,2111,46.9,139.8
+bwa,Botswana,country,afr,1989,1339813,7856,45.3,50.3
+caf,Central African Republic,country,afr,1989,2871005,939,50,176.5
+can,Canada,country,ame,1989,27296517,31550,28.2,8.6
+che,Switzerland,country,eur,1989,6618268,45400,36.1,8.4
+chl,Chile,country,ame,1989,12928491,9016,54,20.4
+chn,China,country,asi,1989,1135128009,1474,39,54
+civ,Cote d'Ivoire,country,afr,1989,11744698,3385,38.9,150.2
+cmr,Cameroon,country,afr,1989,11716975,2895,47.8,135.8
+cod,"Congo, Dem. Rep.",country,afr,1989,33763056,1410,44.1,188.5
+cog,"Congo, Rep.",country,afr,1989,2323890,5350,44.5,92.8
+col,Colombia,country,ame,1989,33624442,7519,53.6,36.2
+com,Comoros,country,afr,1989,403003,1621,50.9,129.1
+cpv,Cape Verde,country,afr,1989,334473,1589,49.8,65.1
+cri,Costa Rica,country,ame,1989,3018953,7253,46.7,17.5
+cub,Cuba,country,ame,1989,10486110,13829,36.8,14.2
+cyp,Cyprus,country,eur,1989,751047,22598,29.3,11.2
+cze,Czech Republic,country,eur,1989,10319255,20432,25.9,15.1
+deu,Germany,country,eur,1989,78514790,32706,27,9
+dji,Djibouti,country,afr,1989,558810,3165,41.5,122
+dnk,Denmark,country,eur,1989,5129472,32849,22,9.3
+dom,Dominican Republic,country,ame,1989,7042940,5645,50.5,62.6
+dza,Algeria,country,afr,1989,25257671,10115,40.7,48.6
+ecu,Ecuador,country,ame,1989,9977380,7540,50.7,59.7
+egy,Egypt,country,afr,1989,55035937,5933,34.5,90.6
+eri,Eritrea,country,afr,1989,3091083,858,47.5,157.3
+esp,Spain,country,eur,1989,39110106,23141,34,11.5
+est,Estonia,country,eur,1989,1570051,13601,37,20.9
+eth,Ethiopia,country,afr,1989,46433604,657,39.2,208.4
+fin,Finland,country,eur,1989,4967776,28735,21.7,6.9
+fji,Fiji,country,asi,1989,724624,5583,44.3,30.8
+fra,France,country,eur,1989,56643349,28942,28.8,9.3
+gab,Gabon,country,afr,1989,926648,19870,53,93.1
+gbr,United Kingdom,country,eur,1989,56953861,26279,33.9,9.9
+geo,Georgia,country,eur,1989,5466610,9379,29.5,48.1
+gha,Ghana,country,afr,1989,14232493,1909,38.6,132.6
+gin,Guinea,country,afr,1989,5763843,1139,47.3,243.7
+gmb,Gambia,country,afr,1989,881146,1510,50.2,176.6
+gnb,Guinea-Bissau,country,afr,1989,1032797,1553,44.7,233.3
+gnq,Equatorial Guinea,country,afr,1989,365451,1108,50.5,193.6
+grc,Greece,country,eur,1989,10065859,21229,34,13.3
+gtm,Guatemala,country,ame,1989,8940285,5314,59.6,84.9
+guy,Guyana,country,ame,1989,726237,3312,51.8,61.9
+hnd,Honduras,country,ame,1989,4766802,3304,59.5,61.1
+hti,Haiti,country,ame,1989,6956301,2290,46.9,150
+hun,Hungary,country,eur,1989,10409854,18077,31.9,19.6
+idn,Indonesia,country,asi,1989,178233231,4234,36.1,88.4
+ind,India,country,asi,1989,852736160,1723,37.3,129.5
+irl,Ireland,country,eur,1989,3561331,20665,33.3,9.6
+irn,Iran,country,asi,1989,54735239,8753,45.3,60.8
+irq,Iraq,country,asi,1989,17048167,11519,39.4,55.3
+isr,Israel,country,asi,1989,4383341,16743,33.4,12.1
+ita,Italy,country,eur,1989,56997093,30152,32.7,10
+jam,Jamaica,country,ame,1989,2371713,7056,66,31.5
+jor,Jordan,country,asi,1989,3209466,7637,39.5,37.9
+jpn,Japan,country,asi,1989,121831143,28077,34.1,6.4
+kaz,Kazakhstan,country,asi,1989,16471843,13242,45.9,53.3
+ken,Kenya,country,afr,1989,22668238,2359,47.3,95.8
+kgz,Kyrgyz Republic,country,asi,1989,4333114,3481,48.5,66.2
+khm,Cambodia,country,asi,1989,8723550,1025,41.2,117.4
+kor,South Korea,country,asi,1989,42546704,11002,34.1,7.5
+kwt,Kuwait,country,asi,1989,2054443,46363,39.3,18.8
+lao,Lao,country,asi,1989,4126935,1621,38.2,166.4
+lbn,Lebanon,country,asi,1989,2676615,5891,47.4,34.1
+lbr,Liberia,country,afr,1989,2137018,1020,40.4,251.5
+lby,Libya,country,afr,1989,4294547,24458,38.8,43.9
+lka,Sri Lanka,country,asi,1989,17111785,3178,32.5,21.6
+lso,Lesotho,country,afr,1989,1569936,1248,62.6,85.4
+ltu,Lithuania,country,eur,1989,3683711,17564,34.1,15.5
+lux,Luxembourg,country,eur,1989,377708,54556,23.5,9.3
+lva,Latvia,country,eur,1989,2665711,14466,29.5,19
+mar,Morocco,country,afr,1989,24489354,3845,37.4,84
+mda,Moldova,country,eur,1989,4346449,6643,25.4,33.6
+mdg,Madagascar,country,afr,1989,11205548,1645,42.1,166.2
+mex,Mexico,country,ame,1989,83901643,12079,48.5,49
+mkd,"Macedonia, FYR",country,eur,1989,1999338,10350,36.9,39.7
+mli,Mali,country,afr,1989,8322726,1113,51.8,259.5
+mmr,Myanmar,country,asi,1989,41379635,1749,44.3,112.7
+mne,Montenegro,country,eur,1989,615201,17442,32.9,17.6
+mng,Mongolia,country,asi,1989,2141006,3609,36.8,113.1
+moz,Mozambique,country,afr,1989,13181941,461,39.6,241.2
+mrt,Mauritania,country,afr,1989,1968870,2899,39.8,120.7
+mus,Mauritius,country,afr,1989,1045588,7128,38.7,24.9
+mwi,Malawi,country,afr,1989,9073088,535,53.2,242.5
+mys,Malaysia,country,asi,1989,17707064,9476,46.2,17.4
+nam,Namibia,country,afr,1989,1360921,6120,74.3,73
+ner,Niger,country,afr,1989,7671233,965,46.3,332.9
+nga,Nigeria,country,afr,1989,93179755,2753,47.3,212.6
+nic,Nicaragua,country,ame,1989,4055262,3159,52.8,69.7
+nld,Netherlands,country,eur,1989,14816751,31240,28.9,8.6
+nor,Norway,country,eur,1989,4219532,42449,31.7,9.3
+npl,Nepal,country,asi,1989,18285434,1186,39.7,147.9
+nzl,New Zealand,country,asi,1989,3360350,24206,34.1,11.8
+omn,Oman,country,asi,1989,1741965,36220,40.9,43.6
+pak,Pakistan,country,asi,1989,104530689,2908,31.2,141.1
+pan,Panama,country,ame,1989,2419618,7272,58.9,31.9
+per,Peru,country,ame,1989,21368856,5681,47,84
+phl,Philippines,country,asi,1989,60391168,3982,44.6,61.7
+png,Papua New Guinea,country,asi,1989,4057406,1699,50.9,90.9
+pol,Poland,country,eur,1989,38094812,11212,26.9,17.9
+prk,North Korea,country,asi,1989,19895390,2257,46.9,39.5
+prt,Portugal,country,eur,1989,9886997,19424,36,15.9
+pry,Paraguay,country,ame,1989,4103909,5983,48.4,48.2
+pse,West Bank and Gaza,country,asi,1989,2019486,1987,37,46.7
+qat,Qatar,country,asi,1989,463062,73074,43.7,22.3
+rou,Romania,country,eur,1989,23472562,12872,23.3,39
+rus,Russia,country,eur,1989,146895053,19906,49.1,26.4
+rwa,Rwanda,country,afr,1989,7239097,884,42.6,147
+sau,Saudi Arabia,country,asi,1989,15810980,32281,42.4,48.6
+sdn,Sudan,country,afr,1989,19284633,1961,36,129.3
+sds,South Sudan,country,afr,1989,5771305,2247,35.95,257.8
+sen,Senegal,country,afr,1989,7285378,1828,42.7,144.1
+sgp,Singapore,country,asi,1989,2943633,32597,38.7,8.4
+slb,Solomon Islands,country,asi,1989,303258,1812,46.5,40.6
+sle,Sierra Leone,country,afr,1989,3878211,1341,47.9,265.2
+slv,El Salvador,country,ame,1989,5184221,4408,49,62.8
+som,Somalia,country,afr,1989,6285456,950,40.2,182.7
+srb,Serbia,country,eur,1989,9450482,15712,39,31.2
+sur,Suriname,country,ame,1989,400133,11131,59.2,48.9
+svk,Slovak Republic,country,eur,1989,5256475,14802,26.2,18.4
+svn,Slovenia,country,eur,1989,2000910,20729,25.2,11.1
+swe,Sweden,country,eur,1989,8506236,31161,25.3,7.2
+swz,Swaziland,country,afr,1989,833787,4924,58.8,68.8
+syr,Syria,country,asi,1989,12088714,3749,40.5,38.9
+tcd,Chad,country,afr,1989,5769273,1221,42.5,217.3
+tgo,Togo,country,afr,1989,3684309,1414,45.8,148.5
+tha,Thailand,country,asi,1989,55812794,5808,43.3,39.2
+tjk,Tajikistan,country,asi,1989,5160375,3855,33.1,108.1
+tkm,Turkmenistan,country,asi,1989,3570558,8822,28.6,91.9
+tls,Timor-Leste,country,asi,1989,720198,1022,36.1,183.8
+tto,Trinidad and Tobago,country,ame,1989,1213625,13206,42,31
+tun,Tunisia,country,afr,1989,8050936,5196,40.9,59.3
+tur,Turkey,country,eur,1989,53066569,10103,43.9,79
+tza,Tanzania,country,afr,1989,24663284,1454,45.6,165.9
+uga,Uganda,country,afr,1989,16802258,762,44.4,175.7
+ukr,Ukraine,country,eur,1989,51343974,10773,32.5,19.8
+ury,Uruguay,country,ame,1989,3088985,9827,42.4,24
+usa,United States,country,ame,1989,250340795,36830,34.8,11.6
+uzb,Uzbekistan,country,asi,1989,20052259,3184,28,72.5
+ven,Venezuela,country,ame,1989,19388262,14125,43.8,30.8
+vnm,Vietnam,country,asi,1989,66757401,1457,39.8,52.8
+yem,Yemen,country,asi,1989,11426912,3562,42.3,128.9
+zaf,South Africa,country,afr,1989,35965131,10670,62.1,63.2
+zmb,Zambia,country,afr,1989,7921028,2465,51.4,180
+zwe,Zimbabwe,country,afr,1989,10184966,2436,46.2,67.5

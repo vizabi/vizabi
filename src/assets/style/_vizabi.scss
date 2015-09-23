@@ -97,7 +97,7 @@
       }
     }
   }
-  &.vzb-small.vzb-portrait {
+  &.vzb-small {
     .vzb-tool-content {
       .vzb-tool-stage {
         @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
@@ -141,10 +141,26 @@
     background: #666;
     padding: 7px 10px;
     color: white;
-    font-size: $vzb-font-size-tiny;
+    font-size: $vzb-font-size-regular;
     z-index: 11;
     font-weight: 300;
   }
+ 
+    //Data warning
+   .vzb-data-warning {
+       fill: $vzb-color-accent-orange;
+       path { fill: $vzb-color-accent-orange }
+       cursor: pointer;
+       text {text-transform: uppercase;}
+       &:hover text{ 
+           text-decoration: underline;
+       }
+   }
+    &.vzb-small .vzb-data-warning text {font-size: $vzb-font-size-tiny;}
+    &.vzb-medium .vzb-data-warning text {font-size: $vzb-font-size-small;}
+    &.vzb-large .vzb-data-warning text {font-size: $vzb-font-size-small;}
+    
+    
   //remove tool title
   .vzb-tool-title {
     display: none !important;
@@ -155,4 +171,6 @@
   //common tool components
   @import '../../components/_gapminder/buttonlist/buttonlist';
   @import '../../components/_gapminder/timeslider/timeslider';
+  @import '../../components/_gapminder/treemenu/treemenu';
+  @import '../../components/_gapminder/datawarning/datawarning';
 }

@@ -70,7 +70,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
         "size": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["none"],
             "use": "property",
             "unit": "",
             "scales": ["ordinal"],
@@ -81,7 +81,7 @@
             "use": "indicator",
             "unit": "",
             "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1IbDM8z5XicMIXgr93FPwjgwoTTKMuyLfzU6cQrGZzH8/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "lex": {
             "allowCharts": ["linechart", "barchart"],
@@ -95,31 +95,34 @@
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1Iztdl7Ddaz77K3HheGpkvQ1o_ui_L1s-sze_ZpTM0F0/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_per_cap": {
             "allowCharts": ["*"],
             "use": "indicator",
             "unit": "gdp_per_cap",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdppc_pday": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["none"],
             "use": "indicator",
             "unit": "gdppc_pday",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "inc_pday": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["none"],
             "use": "indicator",
             "unit": "inc_pday",
+            "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
         },
         "u5mr_not": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["none"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
@@ -130,10 +133,10 @@
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
-            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "childSurv": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["none"],
             "use": "indicator",
             "unit": "childSurv",
             "scales": ["linear", "log"],
@@ -151,11 +154,16 @@
         {
             "id": "time"
         }, {
-            "id": "_indicators",
+            "id": "_properties",
             "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
         }, {
-            "id": "_properties",
-            "children": [{"id": "pop"}, {"id": "lex"}, {"id": "gini"}, {"id": "gdp_per_cap"}, {"id": "gdppc_pday"}, {"id": "inc_pday"}, {"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
+            "id": "economy",
+            "children": [{"id": "gini"}, {"id": "gdp_per_cap"}, {"id": "gdppc_pday"}, {"id": "inc_pday"}]
+        }, {
+            "id": "health",
+            "children": [{"id": "lex"}, {"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
+        }, {
+            "id": "pop"
         }, {
             "id": "_default"
         }

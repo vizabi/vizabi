@@ -101,7 +101,7 @@ $vzb-button-color-border: #cce6ed;
 }
 
 //responsiveness
-&.vzb-landscape, &.vzb-large {
+&.vzb-landscape, &.vzb-large, &.vzb-medium{
   .vzb-buttonlist {
     .vzb-buttonlist-dialog {
       @include position(absolute, -2000px 40px auto -130px);

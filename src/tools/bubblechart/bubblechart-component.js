@@ -8,6 +8,7 @@
 
   var Vizabi = this.Vizabi;
   var utils = Vizabi.utils;
+  var iconset = Vizabi.iconset;
 
   //warn client if d3 is not defined
   if (!Vizabi._require('d3')) return;
@@ -93,6 +94,7 @@
           _this.redrawDataPoints();
           _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
           _this.updateBubbleOpacity();
+          _this._updateDoubtOpacity();
         },
         "change:entities:highlight": function () {
           if (!_this._readyOnce) return;
@@ -102,6 +104,7 @@
         'change:time:value': function () {
           //console.log("EVENT change:time:value");
           _this.updateTime();
+          _this._updateDoubtOpacity();
 
           _this._trails.run("findVisible");
           if (_this.model.time.adaptMinMaxZoom) {
@@ -278,9 +281,21 @@
         .scaleExtent([1, 100])
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
-
+          
+          
+          //send the event to the page if fully zoomed our or page not scrolled into view
+          if(d3.event.sourceEvent != null && _this.scrollableAncestor){
+              
+              if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+              
+              if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1){
+                  _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+                  return;
+              }
+          }
+          
           _this.model._data.entities.clearHighlighted();
-          _this._setTooltip();
+          _this._setTooltip(); 
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
@@ -370,6 +385,8 @@
      */
     readyOnce: function () {
       var _this = this;
+        
+      this.scrollableAncestor = utils.findScrollableAncestor(this.element);
       this.element = d3.select(this.element);
 
       // reference elements
@@ -385,6 +402,10 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
+        
+      this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
+      this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
+      this.dataWarningEl = this.graph.select('.vzb-data-warning');
 
       this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
 
@@ -422,12 +443,13 @@
         });
 
       this.element
-        .call(this.zoomer)
-        .call(this.dragRectangle)
+        //.call(this.zoomer)
+        //.call(this.dragRectangle)
         .on("mouseup", function(){
           _this.draggingNow = false;
         })
         .onTap(function () {
+          return;
           _this._bubblesInteract().mouseout();
           _this.tooltipMobile.classed('vzb-hidden', true);
         });
@@ -439,9 +461,10 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
-
-      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
-      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+        
+      this.wScale = d3.scale.linear()
+        .domain(this.parent.datawarning_content.doubtDomain)
+        .range(this.parent.datawarning_content.doubtRange);
 
       this.updateIndicators();
       this.updateEntities();
@@ -450,6 +473,7 @@
       this.updateMarkerSizeLimits();
       this.selectDataPoints();
       this.updateBubbleOpacity();
+      this._updateDoubtOpacity();
       this._trails.create();
       this.resetZoomer(); // includes redraw data points and trail resize
       this._trails.run(["recolor", "findVisible", "reveal"]);
@@ -460,7 +484,9 @@
 
       if(!this._valuesCalculated) this._calculateAllValues();
       else this._valuesCalculated = false;
-
+      
+      this.updateUIStrings();
+        
       this.updateEntities();
       this.redrawDataPoints();
       this.updateBubbleOpacity();
@@ -471,8 +497,6 @@
       this._trails.run("findVisible");
       this.resetZoomer();
       this._trails.run(["recolor", "reveal"]);
-
-      this.updateUIStrings();
 
     },
 
@@ -509,45 +533,85 @@
       this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
       var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
 
-      var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
-      var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
-      var titleStringS = this.translator("indicator/" + this.model.marker.size.which);
-      var titleStringC = this.translator("indicator/" + this.model.marker.color.which);
-
-      var unitStringY = this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit);
-      var unitStringX = this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit);
-      var unitStringS = this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit);
-      var unitStringC = this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit);
-
-      if (!!unitStringY) titleStringY = titleStringY + ", " +  unitStringY;
-      if (!!unitStringX) titleStringX = titleStringX + ", " +  unitStringX;
-      if (!!unitStringS) titleStringS = titleStringS + ", " +  unitStringS;
-      if (!!unitStringC) titleStringC = titleStringC + ", " +  unitStringC;
+      this.strings = {
+          title:{
+              Y: this.translator("indicator/" + this.model.marker.axis_y.which),
+              X: this.translator("indicator/" + this.model.marker.axis_x.which),
+              S: this.translator("indicator/" + this.model.marker.size.which),
+              C: this.translator("indicator/" + this.model.marker.color.which)
+          },
+          unit:{
+              Y: this.translator("unit/" + indicatorsDB[this.model.marker.axis_y.which].unit)||"",
+              X: this.translator("unit/" + indicatorsDB[this.model.marker.axis_x.which].unit)||"",
+              S: this.translator("unit/" + indicatorsDB[this.model.marker.size.which].unit)||"",
+              C: this.translator("unit/" + indicatorsDB[this.model.marker.color.which].unit)||""
+          }
+      }
+      if (!!this.strings.unit.Y) this.strings.unit.Y = ", " + this.strings.unit.Y;
+      if (!!this.strings.unit.X) this.strings.unit.X = ", " + this.strings.unit.X;
+      if (!!this.strings.unit.S) this.strings.unit.S = ", " + this.strings.unit.S;
+      if (!!this.strings.unit.C) this.strings.unit.C = ", " + this.strings.unit.C;
 
       var yTitle = this.yTitleEl.selectAll("text").data([0]);
       yTitle.enter().append("text");
       yTitle
         .attr("y", "-6px")
-        .attr("x", "-9px")
-        .attr("dx", "-0.72em")
-        .text(titleStringY);
+        .on("click", function(){
+//            _this.parent
+//                .findChildByName("gapminder-treemenu")
+//                .markerID("axis_y")
+//                .updateView()
+//                .toggle();
+        });
 
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
       xTitle.enter().append("text");
       xTitle
-        .attr("text-anchor", "end")
         .attr("y", "-0.32em")
-        .text(titleStringX);
+        .on("click", function(){
+//            _this.parent
+//                .findChildByName("gapminder-treemenu")
+//                .markerID("axis_x")
+//                .updateView()
+//                .toggle();
+        });
 
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
       sTitle.enter().append("text");
       sTitle
-        .attr("text-anchor", "end")
-        .text(this.translator("buttons/size") + ": " + titleStringS + ", " +
-        this.translator("buttons/colors") + ": " + titleStringC);
+        .attr("text-anchor", "end");
 
+      this.dataWarningEl.html(iconset['warn']).select("svg").attr("width", "0px").attr("height", "0px");
+      this.dataWarningEl.append("text")
+          .attr("text-anchor", "end")
+           .attr("y", "-0.32em")
+          .text(this.translator("hints/dataWarning"));
+        
+      //TODO: move away from UI strings, maybe to ready or ready once
+      this.yInfoEl.on("click", function(){
+        window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
+      })
+      this.xInfoEl.on("click", function(){
+        window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
+      })  
+      this.dataWarningEl
+          .on("click", function(){
+                _this.parent.findChildByName("gapminder-datawarning").toggle();
+            })
+          .on("mouseover", function(){
+                _this._updateDoubtOpacity(1);
+            })  
+          .on("mouseout", function(){
+                _this._updateDoubtOpacity();
+            })  
     },
 
+    _updateDoubtOpacity: function(opacity){
+        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time)); 
+        if(this.someSelected) opacity = 1;
+        this.dataWarningEl.style("opacity", opacity);  
+    },
+      
     /*
      * UPDATE ENTITIES:
      * Ideally should only update when show parameters change or data changes
@@ -564,7 +628,7 @@
                 var pointer = {};
                 pointer[KEY] = d[KEY];
                 pointer[TIMEDIM] = endTime;
-                pointer.sortValue = _this.model.marker.size.getValue(pointer);
+                pointer.sortValue = values.size[d[KEY]];
                 pointer[KEY] = prefix + d[KEY];
                 return pointer;
             })
@@ -574,6 +638,7 @@
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
+      var values = this._getValuesInterpolated(endTime);
       this.model.entities.setVisible(getKeys.call(this));
 
       this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -605,6 +670,8 @@
           _this._bubblesInteract().click(d, i);
         })
         .onTap(function (d, i) {
+          //TODO return interaction on touch device
+          return;
           var evt = d3.event;
           _this.tooltipMobile.classed('vzb-hidden', false)
             .attr('style', 'left:' + (evt.changedTouches[0].clientX + 15) + 'px;top:' + (evt.changedTouches[0].clientY - 25) + 'px')
@@ -614,6 +681,8 @@
           _this._bubblesInteract().mouseover(d, i);
         })
         .onLongTap(function (d, i) {
+          //TODO return interaction on touch device
+          return;
           _this.tooltipMobile.classed('vzb-hidden', true);
           d3.event.stopPropagation();
           _this._bubblesInteract().mouseout();
@@ -777,9 +846,9 @@
         "small": {
           margin: {
             top: 30,
-            right: 20,
+            right: 10,
             left: 40,
-            bottom: 40
+            bottom: 45
           },
           padding: 2,
           minRadius: 0.5,
@@ -787,25 +856,25 @@
         },
         "medium": {
           margin: {
-            top: 30,
-            right: 60,
+            top: 40,
+            right: 15,
             left: 60,
-            bottom: 70
+            bottom: 55
           },
           padding: 2,
           minRadius: 1,
-          maxRadius: 60
+          maxRadius: 55
         },
         "large": {
           margin: {
-            top: 30,
-            right: 60,
+            top: 50,
+            right: 20,
             left: 60,
             bottom: 60
           },
           padding: 2,
           minRadius: 1,
-          maxRadius: 80
+          maxRadius: 70
         }
       };
 
@@ -880,69 +949,73 @@
       this.yAxisEl
         .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
 
-      this.xTitleEl.attr("transform", "translate(" + (this.width) + "," + this.height + ")");
-      this.sTitleEl.attr("transform", "translate(" + this.width + ",0) rotate(-90)");
-
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
-
-      // avoid overlapping (x label with s label)
-      var yAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-      var xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-      var xTitleTextEl = this.xTitleEl.selectAll('text').data([0]);
-      var sTitleTextEl = this.sTitleEl.selectAll('text').data([0]);
-      var sTitleSize = sTitleTextEl.node().getBoundingClientRect();
-      var xTitleSize = xTitleTextEl.node().getBoundingClientRect();
-      // in case when maximum font size is different for different layout profiles
-      var maxFontSize = this.fontSettings.maxTitleFontSize;
-      var fontStep = this.fontSettings.step;
-      var minFontSize = this.fontSettings.minSize;
-      var fontSize = parseInt(sTitleTextEl.style('font-size'), 10);
-      if (sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
-        while (fontSize > minFontSize && sTitleSize.height + xAxisSize.width >= yAxisSize.height - xTitleSize.height) {
-          var diffDec = (fontSize - fontStep - minFontSize) * -1;
-          if (diffDec <= 0) {
-            fontSize -= fontStep;
-          }
-          else if (diffDec > 0 && diffDec < fontStep) {
-            fontSize -= fontStep - diffDec;
-          }
-          sTitleTextEl.style('font-size', fontSize + 'px');
-          xTitleTextEl.style('font-size', fontSize + 'px');
-
-          // calculate the new size
-          sTitleSize = sTitleTextEl.node().getBoundingClientRect();
-          xAxisSize = this.yAxisElContainer.node().getBoundingClientRect();
-        }
+        
+      
+      var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+      if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
+      
+      var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+      if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
+        
+      var sTitleText = this.sTitleEl.select("text")
+        .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
+        this.translator("buttons/colors") + ": " + this.strings.title.C);
+        
+      var probe = this.sTitleEl.append("text").text(sTitleText.text());
+      var font = parseInt(probe.style("font-size"))
+                 * (this.height - 20) / probe.node().getBBox().width;
+      
+      if(probe.node().getBBox().width > this.height - 20) {
+        sTitleText.style("font-size", font);
+      }else{
+        sTitleText.style("font-size", null);
       }
-      else {
-        this.sTitleHelpEl.text(sTitleTextEl.text());
-        this.xTitleHelpEl.text(xTitleTextEl.text());
-        // try to restore default font size
-        while (fontSize < maxFontSize) {
-          var diffInc = fontSize + fontStep - maxFontSize;
-          if (diffInc <= 0) {
-            fontSize += fontStep;
-          }
-          else if (diffInc > 0 && diffInc < fontStep) {
-            fontSize += fontStep - diffInc;
-          }
-          this.sTitleHelpEl.style('font-size', fontSize + 'px');
-          this.xTitleHelpEl.style('font-size', fontSize + 'px');
-          var sTitleHelpSize = this.sTitleHelpEl.node().getBoundingClientRect();
-          var xTitleHelpSize = this.xTitleHelpEl.node().getBoundingClientRect();
-          if (sTitleHelpSize.height + xAxisSize.width < yAxisSize.height - xTitleHelpSize.height) {
-            sTitleTextEl.style('font-size', fontSize + 'px');
-            xTitleTextEl.style('font-size', fontSize + 'px');
-          }
-          else {
-            break;
-          }
+      probe.remove(); 
+        
+      var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
+      this.yTitleEl
+          .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
+             
+      this.xTitleEl
+          .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
+     
+      this.sTitleEl
+          .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
+
+      this.dataWarningEl
+          .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+      
+        this.dataWarningEl.select("text").text(
+            this.translator("hints/dataWarning" + (this.getLayoutProfile()==='small'?"-little":""))
+        )
+        
+      var warnBB = this.dataWarningEl.select("text").node().getBBox(); 
+      this.dataWarningEl.select("svg")
+          .attr("width",warnBB.height)
+          .attr("height",warnBB.height)
+          .attr("x", -warnBB.width - warnBB.height * 1.2)
+          .attr("y", -warnBB.height * 1.2)
+            
+        if(this.yInfoEl.select('text').node()){
+            var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
+            var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
+            this.yInfoEl.attr('transform', 'translate('+ (titleW - yaxisWidth + titleH * 1.0) +',' + (-titleH*0.7) + ')');
+            this.yInfoEl.select("text").attr("dy", "0.1em")
+            this.yInfoEl.select("circle").attr("r", titleH/2);
+        }            
+        if(this.xInfoEl.select('text').node()){
+            var titleH = this.xInfoEl.select('text').node().getBBox().height || 0;
+            var titleW = this.xTitleEl.select('text').node().getBBox().width || 0;
+            this.xInfoEl.attr('transform', 'translate('+ (titleW + titleH * 1.0) +',' + (this.height + margin.bottom -titleH*0.7) + ')');
+            this.xInfoEl.select("text").attr("dy", "0.1em")
+            this.xInfoEl.select("circle").attr("r", titleH/2);
         }
-      }
+
     },
 
     updateMarkerSizeLimits: function () {
@@ -1307,11 +1380,11 @@
                 false, 500);
             });
 
-          view.append("text").attr("class", "vzb-bc-label-content vzb-bc-label-shadow");
+          view.append("text").attr("class", "vzb-bc-label-content vzb-label-shadow");
 
           view.append("text").attr("class", "vzb-bc-label-content");
 
-          view.append("circle").attr("class", "vzb-bc-label-x vzb-bc-label-shadow vzb-transparent")
+          view.append("circle").attr("class", "vzb-bc-label-x vzb-label-shadow vzb-transparent")
             .on("click", function (d, i) {
               _this.model.entities.clearHighlighted();
               //default prevented is needed to distinguish click from drag

@@ -1,4 +1,5 @@
 .vzb-tool-mountainchart {
+    visibility: visible !important;
     $vzb-mc-margin: 10px;
     $vzb-mc-margin-axis: 60px;
     $vzb-mc-year-size: 15em;
@@ -11,15 +12,23 @@
                 pointer-events: all;
             }
             .vzb-mc-mountain {
-                stroke: white;
+                stroke: $vzb-color-white;
                 stroke-opacity: 0.5;
                 stroke-width: 1px;
                 cursor: pointer;
+                &.vzb-selected{
+                    stroke: #000;
+                }
             }
             .vzb-mc-povertyline text {
                 dominant-baseline: hanging;
                 fill: $vzb-color-primary;
                 pointer-events: none;
+                &.vzb-mc-povertyline-extremepoverty{
+                    font-variant: small-caps;
+                    letter-spacing: 0.15em;
+                    opacity: 0.7;
+                }
             }
             .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL,
             .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL {
@@ -30,24 +39,20 @@
                 text-anchor: start;
             }
             .vzb-mc-povertyline text.vzb-shadow {
-                stroke: white;
-                stroke-width: 5;
-                stroke-opacity: 0.6;
+                @extend %vzb-chart-label-shadow;
             }
             .vzb-mc-povertyline line {
-                stroke: grey;
+                stroke: $vzb-color-grey;
                 stroke-dasharray: 5 5;
                 pointer-events: none;
             }
             .vzb-mc-mountains-labels text,
             .vzb-mc-mountains-labels circle {
                 cursor: pointer;
-                fill: $vzb-color-grey;
+                fill: $vzb-color-primary;
             }
             .vzb-mc-mountains-labels text.vzb-mc-label-shadow {
-                stroke: white;
-                stroke-width: 5;
-                stroke-opacity: 0.6;
+                @extend %vzb-chart-label-shadow;
             }
             .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
                 stroke: yellow;
@@ -57,10 +62,17 @@
                 @extend %vzb-chart-axis;
                 pointer-events: none;
             }
-            .vzb-mc-axis-y-title,
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title;
                 pointer-events: none;
+            }
+            .vzb-mc-axis-x-title {
+                @extend %vzb-chart-axis-title;
+                text-anchor: end;
+                pointer-events: none;
+            }
+            .vzb-mc-axis-info {
+                @extend %vzb-chart-info;
             }
             .vzb-mc-line {
                 fill: none;
@@ -79,40 +91,64 @@
                 user-select: none;
                 pointer-events: none;
             }
+            
+            
+            .vzb-mc-tooltip {
+                @extend %vzb-chart-tooltip
+            }
+
+            
+            
+            
         }
     }
     &.vzb-large {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-large;
+            }
+            .vzb-shadow, .vzb-mc-label-shadow{
+                @extend %vzb-chart-label-shadow-large;
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline {
+            .vzb-mc-povertyline,
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info {
                 @extend %vzb-chart-ticks-large;
             }
         }
     }
     &.vzb-medium {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-medium;
+            }
+            .vzb-shadow, .vzb-mc-label-shadow{
+                @extend %vzb-chart-label-shadow-medium;
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline {
+            .vzb-mc-povertyline,
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-medium;
             }
         }
     }
     &.vzb-small {
         .vzb-mountainchart {
-            .vzb-mc-axis-x-title {
+            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
                 @extend %vzb-chart-axis-title-small;
+            }
+            .vzb-shadow, .vzb-mc-label-shadow{
+                @extend %vzb-chart-label-shadow-small;
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline {
+            .vzb-mc-povertyline,
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-small;
             }
         }

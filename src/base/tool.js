@@ -53,7 +53,7 @@
     init: function (placeholder, options) {
       this._id = utils.uniqueId('t');
       this.layout = new Vizabi.Layout();
-      this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name + '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div></div></div>';
+      this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name + '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
       this.model_binds = this.model_binds || {};
       this.default_options = this.default_options || {};
       //bind the validation function with the tool
@@ -110,6 +110,16 @@
         return;
       }
       this.on(this.model.bind.get());
+    },
+
+    /**
+     * Clears a tool
+     */
+
+    clear: function() {
+      this.layout.clear();
+      this.setOptions = this.getOptions = function() { return; };
+      this._super();
     },
 
     /**

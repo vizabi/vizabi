@@ -128,7 +128,6 @@
             var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
             
             _this.model.load({ splashScreen: true }).then(function(){
-
               //delay to avoid conflicting with setReady
               utils.delay(function() {
                 //force loading because we're restoring time.
@@ -140,7 +139,7 @@
                   timeMdl.splash = false;
                   timeMdl.trigger('change');
                 });
-              }, 10);
+              }, 300);
 
             });
           }
@@ -163,11 +162,12 @@
         _this.setReady();
       }
     },
-    setReady: function () {
+    setReady: function (value) {
       if (!this._readyOnce) {
         this.trigger('readyOnce');
         this._readyOnce = true;
       }
+
       this._ready = true;
       this.trigger('ready');
     },
@@ -261,6 +261,14 @@
      */
     isRoot: function () {
       return this.parent === this;
+    },
+      
+    /**
+     * Returns subcomponent by name
+     * @returns {Boolean}
+     */
+    findChildByName: function (name) {
+      return utils.find(this.components, function(f){return f.name === name});
     },
 
     /**
@@ -459,6 +467,17 @@
      * Ideally, it only contains operations related to size
      */
     resize: function () {
+    },
+
+    /**
+     * Clears a component
+     */
+    clear: function() {
+      this.freeze();
+      if(this.model) this.model.freeze();
+      Vizabi.utils.forEach(this.components, function(c) {
+        c.clear();
+      });
     }
   });
 

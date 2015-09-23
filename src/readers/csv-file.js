@@ -41,7 +41,12 @@
       var p = new Promise();
 
       //this specific reader has support for the tag {{LANGUAGE}}
-      var path = this._basepath.replace("{{LANGUAGE}}", language)
+      var path = this._basepath.replace("{{LANGUAGE}}", language);
+
+      //if only one year, files ending in "-YYYY.csv"
+      if(query.where.time[0].length === 1) {
+        path = path.replace(".csv", "-"+ query.where.time[0][0] +".csv");
+      }
 
       //replace conditional tags {{<any conditional>}}
       path = path.replace(/{{(.*?)}}/g, function(match, capture){

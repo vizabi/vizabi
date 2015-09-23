@@ -173,7 +173,7 @@
     transitionEnd: function (event) {
       this._super(event);
 
-      this.input_search.node().focus();
+      if (!utils.isTouchDevice()) this.input_search.node().focus(); 
     }
 
   }));

@@ -8,6 +8,7 @@
 
     var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
+    var iconset = Vizabi.iconset;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) return;
@@ -55,6 +56,8 @@
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
+                    _this._updateDoubtOpacity();
+
                 },
                 'change:time:povertyCutoff': function () {
                     //console.log('change time value');
@@ -99,6 +102,7 @@
                     _this.selectEntities();
                     _this.redrawSelectList();
                     _this.updateOpacity();
+                    _this._updateDoubtOpacity();
                     _this.redrawDataPoints();
                 },
                 'change:time:yMaxMethod': function () {
@@ -201,12 +205,15 @@
             this.graph = this.element.select('.vzb-mc-graph');
             this.xAxisEl = this.graph.select('.vzb-mc-axis-x');
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
+            this.yTitleEl = this.graph.select('.vzb-mc-axis-y-title');
+            this.infoEl = this.graph.select('.vzb-mc-axis-info');
+            this.dataWarningEl = this.graph.select('.vzb-data-warning');
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
             this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
             this.mountainAtomicContainer = this.graph.select('.vzb-mc-mountains');
             this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
-            this.tooltip = this.element.select('.vzb-tooltip');
+            this.tooltip = this.element.select('.vzb-mc-tooltip');
             this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
             this.povertylineEl = this.element.select('.vzb-mc-povertyline');
             this.povertylineLineEl = this.povertylineEl.select('line');
@@ -245,11 +252,11 @@
                 .data([0])
                 .enter().append('path')
                 .attr('class', 'vzb-mc-prerender')
-                .style('fill', 'grey')
-                //.style('opacity', 0)
+                .style('fill', 'pink')
+                .style('opacity', 0)
                 .attr('d', _this.area(shape))
-                //.transition().duration(4000).ease('linear')
-                //.style('opacity', 1);
+                .transition().duration(1000).ease('linear')
+                .style('opacity', 1);
         },
 
         readyOnce: function () {
@@ -279,7 +286,10 @@
             this.TIMEDIM = this.model.time.getDimension();
 
             this.mountainAtomicContainer.select('.vzb-mc-prerender').remove();
-
+            
+            this.wScale = d3.scale.linear()
+                .domain(this.parent.datawarning_content.doubtDomain)
+                .range(this.parent.datawarning_content.doubtRange);
         },
 
         ready: function(){
@@ -297,19 +307,50 @@
             this.selectEntities();
             this.redrawSelectList();
             this.updateOpacity();
+            this._updateDoubtOpacity();
             this.updatePovertyLine();
         },
 
 
         updateUIStrings: function(){
+            var _this = this;
+            
             this.translator = this.model.language.getTFunction();
-            var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+            var xMetadata = Vizabi._globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
 
 
-            var xTitle = this.xTitleEl.selectAll('text').data([0]);
-            xTitle.enter().append('text');
-            xTitle.text(this.translator('unit/' + indicatorsDB[this.model.marker.axis_x.which].unit));
+            this.xTitleEl.select('text')
+                .text(this.translator('unit/mountainchart_hardcoded_income_per_day'));
+            
+            this.yTitleEl.select('text')
+                .text(this.translator('mount/title'));
 
+            this.dataWarningEl.html(iconset['warn']).select("svg").attr("width", "0px").attr("height", "0px");
+            this.dataWarningEl.append("text")
+                .text(this.translator("hints/dataWarning"));
+
+            
+            //TODO: move away from UI strings, maybe to ready or ready once
+            this.infoEl.on("click", function(){
+                window.open(xMetadata.sourceLink, '_blank').focus();
+            })    
+            this.dataWarningEl
+                .on("click", function () {
+                    _this.parent.findChildByName("gapminder-datawarning").toggle();
+                })
+                .on("mouseover", function () {
+                    _this._updateDoubtOpacity(1);
+                })
+                .on("mouseout", function () {
+                    _this._updateDoubtOpacity();
+                })   
+        },
+        
+        
+        _updateDoubtOpacity: function (opacity) {
+            if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+            if (this.someSelected) opacity = 1;
+            this.dataWarningEl.style("opacity", opacity);
         },
 
         /**
@@ -468,19 +509,20 @@
 
             return {
                 _mousemove: function (d, i) {
+                    if (_this.model.time.dragging)return;
 
                     _this.model.entities.highlightEntity(d);
 
                     var mouse = d3.mouse(_this.graph.node()).map(function (d) { return parseInt(d); });
 
                     //position tooltip
-                    _this.tooltip.classed('vzb-hidden', false)
-                        .attr('style', 'left:' + (mouse[0] + 25) + 'px;top:' + (mouse[1] + 25) + 'px')
-                        .html(d.key?_this.translator('region/' + d.key):_this.model.marker.label.getValue(d));
+                    _this._setTooltip(d.key?_this.translator('region/' + d.key):_this.model.marker.label.getValue(d)); 
 
                 },
                 _mouseout: function (d, i) {
-                    _this.tooltip.classed('vzb-hidden', true);
+                    if (_this.model.time.dragging)return;
+                    
+                    _this._setTooltip("");
                     _this.model.entities.clearHighlighted();
                 },
                 _click: function (d, i) {
@@ -558,11 +600,13 @@
             d3.select(sample[0][0].parentNode).remove();
             var formatter = _this.model.marker.axis_y.tickFormatter;
             
-            var maxFontHeight = this.height / (this.selectList.data().length + 3);
+            var titleHeight = this.yTitleEl.select('text').node().getBBox().height || 0;
+            
+            var maxFontHeight = (this.height - titleHeight*3) / (this.selectList.data().length + 2);
             if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
             this.selectList
-                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i) + ')';})
+                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i + titleHeight*3) + ')';})
                 .each(function(d, i){
 
                     var view = d3.select(this);
@@ -572,8 +616,8 @@
                     var string = name + ': ' + formatter(number) + (i===0?' people':'');
 
                     view.select('circle')
-                        .attr('r', fontHeight/2.5)
-                        .attr('cx', fontHeight/2)
+                        .attr('r', fontHeight/3)
+                        .attr('cx', fontHeight*0.4)
                         .attr('cy', fontHeight/1.5)
                         .style('fill', _this.cScale(_this.values.color[d.KEY()]));
 
@@ -592,7 +636,7 @@
 
           var OPACITY_HIGHLT = 1.0;
           var OPACITY_HIGHLT_DIM = 0.3;
-          var OPACITY_SELECT = 0.8;
+          var OPACITY_SELECT = 1.0;
           var OPACITY_REGULAR = this.model.entities.opacityRegular;
           var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
@@ -613,6 +657,8 @@
               return OPACITY_REGULAR;
 
           });
+            
+          this.mountains.classed('vzb-selected', function(d){return _this.model.entities.isSelected(d)});
 
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
@@ -639,8 +685,11 @@
         updateTime: function (time) {
             var _this = this;
 
-            if(time==null)time = this.model.time.value;
+            this.time = this.model.time.value;
+            if(time==null)time = this.time;
+            
             this.yearEl.text(time.getFullYear().toString());
+            
             var filter = {};
             filter[_this.TIMEDIM] = time;
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
@@ -753,16 +802,13 @@
 
             switch (this.getLayoutProfile()) {
             case 'small':
-                margin = { top: 10, right: 10, left: 10, bottom: 40 };
-//                margin = {top: 30, right: 20, left: 40, bottom: 40}
+                margin = { top: 10, right: 10, left: 10, bottom: 25 };
                 break;
             case 'medium':
-                margin = { top: 20, right: 10, left: 10, bottom: 70 };
-//                margin = {top: 30, right: 60, left: 60, bottom: 70}
+                margin = { top: 20, right: 20, left: 20, bottom: 30 };
                 break;
             case 'large':
-                margin = { top: 30, right: 10, left: 10, bottom: 90  };
-//                margin = {top: 30, right: 60, left: 60, bottom: 60}
+                margin = { top: 30, right: 30, left: 30, bottom: 35  };
                 break;
             }
 
@@ -802,12 +848,35 @@
             this.xAxisEl
                 .attr('transform', 'translate(0,' + this.height + ')')
                 .call(this.xAxis);
-
-            this.xTitleEl
-                .attr('transform', 'translate(0,' + this.height + ')')
-                .select('text')
+            
+            this.xTitleEl.select('text')
+                .attr('transform', 'translate(' + this.width + ',' + this.height + ')')
                 .attr('dy', '-0.36em');
+            
+            this.yTitleEl.select('text')
+                .attr('transform', 'translate(0,' + margin.top + ')')
+            
+            
+            var warnBB = this.dataWarningEl.select("text").node().getBBox();
+            this.dataWarningEl.select("svg")
+                .attr("width", warnBB.height)
+                .attr("height", warnBB.height)
+                .attr("x", warnBB.height * 0.1)
+                .attr("y", -warnBB.height * 1.0 + 1)
 
+            this.dataWarningEl
+                .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+                .select("text")
+                .attr("dx", warnBB.height*1.5);
+            
+            if(this.infoEl.select('text').node()){
+                var titleH = this.infoEl.select('text').node().getBBox().height || 0;
+                var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
+                this.infoEl.attr('transform', 'translate('+ (titleW + titleH * 1.0) +',' + (margin.top - titleH * 0.3) + ')');
+                this.infoEl.select("text").attr("dy", "0.1em")
+                this.infoEl.select("circle").attr("r", titleH/2);
+            }
+                
             this.eventAreaEl
                 .attr('y', this.height)
                 .attr('width', this.width)
@@ -934,15 +1003,28 @@
 
             var formatter1 = d3.format('.3r');
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
-            var HEIGHT_OF_LABELS = 0.66;
+            this.heightOfLabels = this.heightOfLabels || (0.66 * this.height);
+            
+            this.povertylineTextEl.each(function(d,i){
+                if(i!==8) return;
+                var view = d3.select(this);
+                
+                view.text(_this.translator('mount/extremepoverty'))
+                    .classed('vzb-hidden', options.full)
+                    .attr('x',-_this.height)
+                    .attr('y',_this.xScale(options.level))
+                    .attr('dy', "-1em")
+                    .attr('dx', "0.5em")
+                    .attr("transform", "rotate(-90)"); 
+                
+                if (!options.full){
+                    _this.heightOfLabels = _this.height - view.node().getBBox().width - view.node().getBBox().height * 2;
+                }
+            });
 
-            this.povertylineLineEl
-                .attr('x1',this.xScale(options.level))
-                .attr('x2',this.xScale(options.level))
-                .attr('y1',this.height)
-                .attr('y2',this.height*HEIGHT_OF_LABELS);
 
             this.povertylineTextEl.each(function(d,i){
+                if(i===8) return;
                 var view = d3.select(this);
 
                 var string;
@@ -954,9 +1036,16 @@
                 view.text(string)
                     .classed('vzb-hidden', !options.full && i!==0 && i!==4)
                     .attr('x',_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
-                    .attr('y',_this.height * HEIGHT_OF_LABELS)
+                    .attr('y', _this.heightOfLabels)
                     .attr('dy', [0,1,4,5].indexOf(i)>-1 ? 0 : '1.5em');
-            })
+            });
+            
+            
+            this.povertylineLineEl
+                .attr('x1',this.xScale(options.level))
+                .attr('x2',this.xScale(options.level))
+                .attr('y1',this.height + 6)
+                .attr('y2',0);
 
             //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ', ' + leftArea/totalArea*100);
 
@@ -1052,7 +1141,33 @@
                 .style('stroke-opacity', 0.5);
 
             if(this.model.time.record) this._export.write({type: 'path', id: key, time: this.model.time.value.getFullYear(), fill: this.cScale(this.values.color[key]), d: this.area(this.cached[key]) });
-        }
+        },
+        
+        
+    _setTooltip: function (tooltipText, x, y) {
+      if (tooltipText) {
+        var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
+
+        //position tooltip
+        this.tooltip.classed("vzb-hidden", false)
+          //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+          .attr("transform", "translate(" + (x?x:mouse[0]-15) + "," + (y?y:mouse[1]-15) + ")")
+          .selectAll("text")
+          .text(tooltipText);
+
+        var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+                .attr("height", contentBBox.height + 8)
+                .attr("x", -contentBBox.width -4)
+                .attr("y", -contentBBox.height -1)
+                .attr("rx", contentBBox.height * 0.2)
+                .attr("ry", contentBBox.height * 0.2);
+
+      } else {
+
+        this.tooltip.classed("vzb-hidden", true);
+      }
+    }
 
 
 

@@ -39,6 +39,14 @@
         component: 'gapminder-buttonlist',
         placeholder: '.vzb-tool-buttonlist',
         model: ['state', 'ui', 'language']
+      },{
+        component: 'gapminder-treemenu',
+        placeholder: '.vzb-tool-treemenu',
+        model: ['state.marker', 'language']
+      },{
+        component: 'gapminder-datawarning',
+        placeholder: '.vzb-tool-datawarning',
+        model: ['language']
       }];
 
       this._super(config, options);

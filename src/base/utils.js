@@ -102,6 +102,30 @@
     isPlainObject: function (obj) {
       return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
     },
+      
+    getViewportPosition: function(element) {
+        var xPosition = 0;
+        var yPosition = 0;
+
+        while(element) {
+            xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+            yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
+            element = element.offsetParent;
+        }
+
+        return { x: xPosition, y: yPosition };
+    },
+      
+    findScrollableAncestor: function(node) {
+        var no = d3.select(node).node();
+        var scrollable = ["scroll", "auto"];
+        
+        while(no && no.tagName !== "HTML" && scrollable.indexOf(d3.select(no).style("overflow")) == -1 ) {
+            no = no.parentNode;
+        }
+
+        return no;
+    },
 
     roundStep: function (number, step) {
       return Math.round(number / step) * step;

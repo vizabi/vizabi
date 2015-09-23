@@ -41,11 +41,10 @@
       this._prev_size = {};
       //resize when window resizes
       var _this = this;
-      root.addEventListener('resize', function () {
-        if (_this._container) {
-          _this.setSize();
-        }
-      });
+
+      this.resizeHandler = this.resizeHandler || resize.bind(this);
+
+      root.addEventListener('resize', this.resizeHandler);
       this._super();
     },
 
@@ -99,9 +98,19 @@
      */
     currentProfile: function () {
       return this._curr_profile;
+    },
+
+    clear: function() {
+      root.removeEventListener('resize', this.resizeHandler);
     }
 
   });
+
+  function resize() {
+    if (this._container) {
+      this.setSize();
+    }
+  }
 
   Vizabi.Layout = Layout;
 
