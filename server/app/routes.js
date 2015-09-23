@@ -164,6 +164,10 @@ module.exports = function (app) {
   app.use(base, router);
 
   /* APP Routes */
+  app.get('/', function (req, res) {
+    return res.sendfile('./client/dist' + BASEURL + 'redirect.html');
+  });
+
   app.get('*', function (req, res) {
     return res.sendfile('./client/dist' + BASEURL + 'index.html');
     // load the single view file
