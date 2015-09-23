@@ -1,15 +1,19 @@
 .vzb-tool-datawarning {
 
-    background-color: $vzb-color-white;
     width: 100%;
     height: 100%;
     
-    //opacity: 0.5;
+
+    
+    .vzb-data-warning-background {
+        background-color: $vzb-color-white;
+        opacity: 0.5;
+        width: 100%;
+        height: 100%;        
+    }
     
     .vzb-data-warning-box {
-        @include position(absolute, 20% 20% null null);
-        width: 60%;
-        height: 60%;
+        
         
         
         //opacity: 1;
@@ -22,10 +26,34 @@
         padding: 0px 25px 10px 25px;
         overflow: auto;
         
+        .vzb-data-warning-link{
+            color: $vzb-color-primary;
+            font-size: $vzb-font-size-medium;
+            margin: 25px 30px 10px 5px;
+            
+            svg{
+                width: 25px;
+                height: 25px;
+                margin-bottom: -1px;
+            }
+            
+            div {
+                display: inline-block;
+                margin-left: 10px; 
+                text-transform: uppercase;
+            }
+            
+           color: $vzb-color-accent-orange;
+           path { fill: $vzb-color-accent-orange }
+           
+            
+            
+        }
         .vzb-data-warning-title{
             color: $vzb-color-primary;
             font-size: $vzb-font-size-medium;
-            padding: 25px 25px 10px 5px;
+            margin: 25px 30px 10px 5px;
+            white-space: normal;
         }
         .vzb-data-warning-body{
             font-size: $vzb-font-size-regular;
@@ -38,11 +66,13 @@
             a:hover {
                 text-decoration: underline;
             }
+            white-space: normal;
+            
         }
         .vzb-data-warning-close{
             color: $vzb-color-primary;
             font-size: $vzb-font-size-medium;
-            margin: 25px 25px 10px 5px;
+            margin: 10px 10px 10px 5px;
             border-radius: 12px;
             position: absolute;
             right: 0px;
@@ -56,6 +86,37 @@
         }
         
     }
+}
 
 
+&.vzb-small.vzb-portrait{
+    .vzb-data-warning-box{
+        bottom: $sizeButtonList;
+        width: 90%;
+        height: 80%;
+        @include position(absolute, 10% null null 5%);
+    }
+}
+&.vzb-small.vzb-landscape{
+    .vzb-data-warning-box{ 
+        right: $sizeButtonList;
+        margin-right: 10px;
+        width: 80%;
+        height: 70%;
+        @include position(absolute, 10% null null 10%);
+    }
+}
+&.vzb-medium{
+    .vzb-data-warning-box{
+        width: 60%;
+        height: 60%;
+        @include position(absolute, 20% null null 20%);
+    }
+}
+&.vzb-large{
+    .vzb-data-warning-box{
+        width: 50%;
+        height: 50%;
+        @include position(absolute, 25% null null 25%);
+    }
 }

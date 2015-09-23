@@ -16,7 +16,7 @@
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) return;
 
-    var show = false;
+    var hidden = true;
 
     Vizabi.Component.extend('gapminder-datawarning', {
 
@@ -54,15 +54,28 @@
         readyOnce: function () {
             var _this = this;
             this.element = d3.select(this.placeholder);
+                
             
             
-            var container = this.element.select("div")
+            this.element.select("div")
+                .attr("class", "vzb-data-warning-background")
+                .on("click", function(){_this.toggle(true)});
+            
+            var container = this.element.append("div")
                 .attr("class", "vzb-data-warning-box");
             
             container.append("div")
                 .attr("class", "vzb-data-warning-close")
                 .html("X")
                 .on("click", function(){_this.toggle()});
+            
+
+            var icon = container.append("div")
+                .attr("class", "vzb-data-warning-link")
+                .html(iconset['warn'])
+                
+            
+            icon.append("div").text("data doubts");
             
             container.append("div")
                 .attr("class", "vzb-data-warning-title")
@@ -77,9 +90,10 @@
 
 
 
-        toggle: function () {
-            show = !show;
-            this.element.classed("vzb-hidden", !show);
+        toggle: function (arg) {
+            if(arg==null) arg = !hidden;
+            hidden = arg;
+            this.element.classed("vzb-hidden", hidden);
         }
 
 
