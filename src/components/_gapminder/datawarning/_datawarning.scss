@@ -80,6 +80,7 @@
             width: 25px; height: 25px;
             text-align: center;
             cursor: pointer;
+            //border: 1px solid $vzb-color-primary;
             
             
             &:hover{background-color: $vzb-color-primary; color: $vzb-color-white;}
@@ -95,6 +96,8 @@
         width: 90%;
         height: 80%;
         @include position(absolute, 10% null null 5%);
+        .vzb-data-warning-title{font-size: $vzb-font-size-regular;}
+        .vzb-data-warning-body{font-size: $vzb-font-size-small;}
     }
 }
 &.vzb-small.vzb-landscape{
@@ -104,6 +107,8 @@
         width: 80%;
         height: 70%;
         @include position(absolute, 10% null null 10%);
+        .vzb-data-warning-title{font-size: $vzb-font-size-regular;}
+        .vzb-data-warning-body{font-size: $vzb-font-size-small;}
     }
 }
 &.vzb-medium{
@@ -111,6 +116,8 @@
         width: 60%;
         height: 60%;
         @include position(absolute, 20% null null 20%);
+        .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
+        .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
     }
 }
 &.vzb-large{
@@ -118,5 +125,7 @@
         width: 50%;
         height: 50%;
         @include position(absolute, 25% null null 25%);
+        .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
+        .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
     }
 }
