@@ -38,6 +38,7 @@
     "mount/mergestacked": "Merge stacked too",
     "mount/people": "people",
     "mount/title": "Number of people by income",
+    "mount/extremepoverty": "extreme poverty",
     "popbyage/yearOldsIn": "-year-olds in",
     "indicator/lex": "Life expectancy",
     "indicator/gdp_per_cap": "GDP per capita", 

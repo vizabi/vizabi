@@ -1001,15 +1001,28 @@
 
             var formatter1 = d3.format('.3r');
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
-            var HEIGHT_OF_LABELS = 0.66;
+            this.heightOfLabels = this.heightOfLabels || (0.66 * this.height);
+            
+            this.povertylineTextEl.each(function(d,i){
+                if(i!==8) return;
+                var view = d3.select(this);
+                
+                view.text(_this.translator('mount/extremepoverty'))
+                    .classed('vzb-hidden', options.full)
+                    .attr('x',-_this.height)
+                    .attr('y',_this.xScale(options.level))
+                    .attr('dy', "-1em")
+                    .attr('dx', "0.5em")
+                    .attr("transform", "rotate(-90)"); 
+                
+                if (!options.full){
+                    _this.heightOfLabels = _this.height - view.node().getBBox().width - view.node().getBBox().height * 2;
+                }
+            });
 
-            this.povertylineLineEl
-                .attr('x1',this.xScale(options.level))
-                .attr('x2',this.xScale(options.level))
-                .attr('y1',this.height)
-                .attr('y2',this.height*HEIGHT_OF_LABELS);
 
             this.povertylineTextEl.each(function(d,i){
+                if(i===8) return;
                 var view = d3.select(this);
 
                 var string;
@@ -1021,9 +1034,16 @@
                 view.text(string)
                     .classed('vzb-hidden', !options.full && i!==0 && i!==4)
                     .attr('x',_this.xScale(options.level) + ([0,4,2,6].indexOf(i)>-1? -5:+5))
-                    .attr('y',_this.height * HEIGHT_OF_LABELS)
+                    .attr('y', _this.heightOfLabels)
                     .attr('dy', [0,1,4,5].indexOf(i)>-1 ? 0 : '1.5em');
-            })
+            });
+            
+            
+            this.povertylineLineEl
+                .attr('x1',this.xScale(options.level))
+                .attr('x2',this.xScale(options.level))
+                .attr('y1',this.height + 6)
+                .attr('y2',0);
 
             //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ', ' + leftArea/totalArea*100);
 

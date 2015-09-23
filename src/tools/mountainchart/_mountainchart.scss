@@ -21,6 +21,11 @@
                 dominant-baseline: hanging;
                 fill: $vzb-color-primary;
                 pointer-events: none;
+                &.vzb-mc-povertyline-extremepoverty{
+                    font-variant: small-caps;
+                    letter-spacing: 0.15em;
+                    opacity: 0.7;
+                }
             }
             .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL,
             .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL {
