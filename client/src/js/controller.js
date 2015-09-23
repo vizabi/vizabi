@@ -2,8 +2,8 @@
 
 angular.module('gapminderTools')
   .controller('gapminderToolsCtrl', [
-    '$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory',
-    function ($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory) {
+    '$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory', '$window',
+    function ($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory, $window) {
 
       var placeholder = document.getElementById('vizabi-placeholder');
 
@@ -35,6 +35,8 @@ angular.module('gapminderTools')
           $scope.activeTool = $routeParams.slug;
           // do not put data in $scope
           var tool = angular.copy($scope.tools[$scope.activeTool]);
+
+          Vizabi.clearInstances();
 
           $scope.viz = vizabiFactory.render(tool.tool, placeholder, tool.opts);
           $scope.relatedItems = tool.relateditems;
