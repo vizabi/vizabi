@@ -29,7 +29,9 @@ module.exports = function (grunt) {
           }
         },
         files: {
-          "client/dist/tools/index.html": ["client/src/index.jade"]
+          "client/dist/tools/index.html": ["client/src/index.jade"],
+          "client/dist/tools/redirect.html": ["client/src/redirect.jade"],
+          "client/dist/tools/404.html": ["client/src/404.jade"]
         }
       }
     },
