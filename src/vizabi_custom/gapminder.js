@@ -86,6 +86,11 @@
             buttons: []
         }
     });
+    
+    MountainChart.define('datawarning_content', {
+        title: "Income data has many problems!",
+        body: "This is a text <a href='http://www.gapminder.org' target='_blank'>with a link</a> in HTML"
+    });
 
     MountainChart.define('default_options', {
         state: {
@@ -254,6 +259,11 @@
         }
     });
 
+    BubbleChart.define('datawarning_content', {
+        title: "High uncertainty before 1950",
+        body: "This is a text <a href='http://www.gapminder.org' target='_blank'>with a link</a> in HTML"
+    });
+    
     BubbleChart.define('default_options', {
 
         state: {

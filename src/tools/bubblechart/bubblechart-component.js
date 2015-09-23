@@ -590,7 +590,7 @@
         window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
       })  
       this.dataWarningEl.on("click", function(){
-        window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
+        _this.parent.findChildByName("gapminder-datawarning").toggle();
       })  
     },
 
