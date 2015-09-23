@@ -1131,7 +1131,11 @@
                 return;
             }
 
-            view.attr('d', this.area(this.cached[key]));
+            if(this.model.entities.isSelected({geo: key})){
+                view.attr('d', this.area(this.cached[key].filter(function(f){return f.y>1000000}) ));
+            }else{
+                view.attr('d', this.area(this.cached[key]));
+            }
 
             if(this.model.marker.color.use==="indicator") view
                 .style('fill', this.cScale(this.values.color[key]));
