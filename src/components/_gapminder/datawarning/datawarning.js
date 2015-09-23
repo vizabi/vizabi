@@ -75,7 +75,7 @@
                 .html(iconset['warn'])
                 
             icon.append("div")
-                .text("Data doubts | Alpha version");
+                .text("Data doubts & Alpha version");
             
             container.append("div")
                 .attr("class", "vzb-data-warning-title")
