@@ -8,7 +8,7 @@ html(lang="en", ng-app='gapminderTools')
     link(href='./styles/main.css', rel='stylesheet')
     link(href='./public/favicon.ico', rel='shortcut icon')
     //-Vizabi stylesheet
-    link(href='http://static.gapminderdev.org/vizabi/develop/dist/vizabi.css', rel='stylesheet')
+    link(href='http://static.gapminderdev.org/vizabi/master/dist/vizabi.css', rel='stylesheet')
   body(ng-controller='gapminderToolsCtrl', ng-class='{"loading" : loading}', class="{{ bodyClass }}", ng-cloak)
 
     .wrapper(ng-class='{"hidden" : loadingError}')
@@ -24,7 +24,7 @@ html(lang="en", ng-app='gapminderTools')
 
     //- include dependencies and app script
     script(src='./vendor/d3/d3.min.js')
-    script(src='http://static.gapminderdev.org/vizabi/develop/dist/vizabi.min.js')
+    script(src='http://static.gapminderdev.org/vizabi/master/dist/vizabi.min.js')
     script(src='./vendor/angular/angular.min.js')
     script(src='./vendor/angular-route/angular-route.min.js')
     script(src='./scripts/app.js')
