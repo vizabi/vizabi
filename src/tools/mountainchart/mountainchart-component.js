@@ -8,6 +8,7 @@
 
     var Vizabi = this.Vizabi;
     var utils = Vizabi.utils;
+    var iconset = Vizabi.iconset;
 
     //warn client if d3 is not defined
     if (!Vizabi._require('d3')) return;
@@ -203,6 +204,7 @@
             this.xTitleEl = this.graph.select('.vzb-mc-axis-x-title');
             this.yTitleEl = this.graph.select('.vzb-mc-axis-y-title');
             this.infoEl = this.graph.select('.vzb-mc-axis-info');
+            this.dataWarningEl = this.graph.select('.vzb-data-warning');
             this.yearEl = this.graph.select('.vzb-mc-year');
             this.mountainMergeStackedContainer = this.graph.select('.vzb-mc-mountains-mergestacked');
             this.mountainMergeGroupedContainer = this.graph.select('.vzb-mc-mountains-mergegrouped');
@@ -247,11 +249,11 @@
                 .data([0])
                 .enter().append('path')
                 .attr('class', 'vzb-mc-prerender')
-                .style('fill', 'grey')
-                //.style('opacity', 0)
+                .style('fill', 'pink')
+                .style('opacity', 0)
                 .attr('d', _this.area(shape))
-                //.transition().duration(4000).ease('linear')
-                //.style('opacity', 1);
+                .transition().duration(1000).ease('linear')
+                .style('opacity', 1);
         },
 
         readyOnce: function () {
@@ -304,6 +306,8 @@
 
 
         updateUIStrings: function(){
+            var _this = this;
+            
             this.translator = this.model.language.getTFunction();
             var xMetadata = Vizabi._globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
 
@@ -313,10 +317,18 @@
             
             this.yTitleEl.select('text')
                 .text(this.translator('mount/title'));
+
+            this.dataWarningEl.html(iconset['warn']).select("svg").attr("width", "0px").attr("height", "0px");
+            this.dataWarningEl.append("text")
+                .text(this.translator("hints/dataWarning"));
+
             
             //TODO: move away from UI strings, maybe to ready or ready once
             this.infoEl.on("click", function(){
                 window.open(xMetadata.sourceLink, '_blank').focus();
+            })    
+            this.dataWarningEl.on("click", function(){
+               _this.parent.findChildByName("gapminder-datawarning").toggle();
             })  
         },
 
@@ -817,6 +829,18 @@
             
             this.yTitleEl.select('text')
                 .attr('transform', 'translate(0,' + margin.top + ')')
+            
+            var warnBB = this.dataWarningEl.select("text").node().getBBox();
+            this.dataWarningEl.select("svg")
+                .attr("width", warnBB.height)
+                .attr("height", warnBB.height)
+                .attr("x", warnBB.height * 0.1)
+                .attr("y", -warnBB.height * 1.0 + 1)
+
+            this.dataWarningEl
+                .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+                .select("text")
+                .attr("dx", warnBB.height*1.5);
             
             if(this.infoEl.select('text').node()){
                 var titleH = this.infoEl.select('text').node().getBBox().height || 0;

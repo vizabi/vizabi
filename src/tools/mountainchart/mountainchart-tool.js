@@ -38,6 +38,10 @@
                 component: 'gapminder-buttonlist',
                 placeholder: '.vzb-tool-buttonlist',
                 model: ['state', 'ui', 'language']
+            },{
+                component: 'gapminder-datawarning',
+                placeholder: '.vzb-tool-datawarning',
+                model: ['language']
             }];
 
             //constructor is the same as any tool
