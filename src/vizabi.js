@@ -32,6 +32,9 @@
     if (id) {
       delete Vizabi._instances[id];
     } else {
+      for(var i in Vizabi._instances) {
+        Vizabi._instances[i].clear();
+      }
       Vizabi._instances = {};
     }
   };

@@ -467,6 +467,17 @@
      * Ideally, it only contains operations related to size
      */
     resize: function () {
+    },
+
+    /**
+     * Clears a component
+     */
+    clear: function() {
+      this.freeze();
+      if(this.model) this.model.freeze();
+      Vizabi.utils.forEach(this.components, function(c) {
+        c.clear();
+      });
     }
   });
 

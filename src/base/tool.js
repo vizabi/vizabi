@@ -113,6 +113,16 @@
     },
 
     /**
+     * Clears a tool
+     */
+
+    clear: function() {
+      this.layout.clear();
+      this.setOptions = this.getOptions = function() { return; };
+      this._super();
+    },
+
+    /**
      * Sets options from external page
      * @param {Object} options new options
      * @param {Boolean} overwrite overwrite everything instead of extending
