@@ -97,7 +97,7 @@
       }
     }
   }
-  &.vzb-small.vzb-portrait {
+  &.vzb-small {
     .vzb-tool-content {
       .vzb-tool-stage {
         @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
