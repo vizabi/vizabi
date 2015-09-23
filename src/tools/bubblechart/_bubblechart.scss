@@ -137,7 +137,9 @@
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-large;
       }
     }
@@ -161,7 +163,9 @@
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-medium;
       }
     }
@@ -185,7 +189,9 @@
       .vzb-bc-tooltip,
       .vzb-axis-value,
       .vzb-bc-axis-x,
-      .vzb-bc-axis-y {
+      .vzb-bc-axis-y,
+      .vzb-bc-axis-x-info,
+      .vzb-bc-axis-y-info {
         @extend %vzb-chart-ticks-small;
       }
     }

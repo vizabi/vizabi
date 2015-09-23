@@ -113,7 +113,8 @@
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
             .vzb-mc-povertyline,
-            .vzb-mc-tooltip {
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info {
                 @extend %vzb-chart-ticks-large;
             }
         }
@@ -129,7 +130,8 @@
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
             .vzb-mc-povertyline,
-            .vzb-mc-tooltip {
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-medium;
             }
         }
@@ -145,7 +147,8 @@
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
             .vzb-mc-povertyline,
-            .vzb-mc-tooltip {
+            .vzb-mc-tooltip,
+            .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-small;
             }
         }

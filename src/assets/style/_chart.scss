@@ -73,9 +73,9 @@
 
 
 %vzb-chart-info {
-  opacity: 1;    
+  opacity: 0.4;    
   text {
-    fill: $vzb-color-grey-light;
+    fill: $vzb-color-primary;
     pointer-events: none;
     dominant-baseline: middle;
     text-anchor: middle;
@@ -83,11 +83,12 @@
   circle {
     fill: none;
     pointer-events: visible;
-    stroke: $vzb-color-grey-light;
+    stroke: $vzb-color-primary;
     stroke-width: 2;
     cursor: pointer;
   }
-  &:hover{ opacity: 1;
+  &:hover{ 
+    opacity: 1;
     text {fill: $vzb-color-primary;}
     circle {
         fill: $vzb-color-grey-light; 
