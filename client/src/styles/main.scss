@@ -3,6 +3,8 @@
 @import 'fonts';
 
 @import 'variables';
+@import 'mixins';
+@import 'common';
 
 html, body {
   height: 100%;
@@ -22,6 +24,11 @@ body {
   height: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+
+  @include breakpoint(small) {
+    position: static;
+    height: auto;
+  }
 }
 
 .wrapper-error {
@@ -45,11 +52,9 @@ body {
 }
 
 .invisible {
-	visibility: hidden;
+  visibility: hidden;
 }
 
-@import 'mixins';
-@import 'common';
 @import 'header';
 @import 'menu';
 @import 'loader';

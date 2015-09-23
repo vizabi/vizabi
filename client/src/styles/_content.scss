@@ -9,6 +9,14 @@
     width: 100%;
     height: 90%;
     background: white;
+
+    @include breakpoint(small) {
+      height: 450px;
+    }
+
+    @include breakpoint(small-landscape) {
+      height: 250px;
+    }
 }
 
 .card {
