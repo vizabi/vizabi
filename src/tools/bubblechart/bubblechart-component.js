@@ -627,7 +627,7 @@
                 var pointer = {};
                 pointer[KEY] = d[KEY];
                 pointer[TIMEDIM] = endTime;
-                pointer.sortValue = _this.model.marker.size.getValue(pointer);
+                pointer.sortValue = values.size[d[KEY]];
                 pointer[KEY] = prefix + d[KEY];
                 return pointer;
             })
@@ -637,6 +637,7 @@
       // get array of GEOs, sorted by the size hook
       // that makes larger bubbles go behind the smaller ones
       var endTime = this.model.time.end;
+      var values = this._getValuesInterpolated(endTime);
       this.model.entities.setVisible(getKeys.call(this));
 
       this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
