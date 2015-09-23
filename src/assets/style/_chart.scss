@@ -114,9 +114,9 @@
 
 %vzb-chart-label-shadow{
     fill: white;
-    @include opacity(0.5);
+    @include opacity(0.7);
     stroke: white;
 }
 %vzb-chart-label-shadow-small{stroke-width: 2px}
 %vzb-chart-label-shadow-medium{stroke-width: 3px}
-%vzb-chart-label-shadow-large{stroke-width: 4px}
+%vzb-chart-label-shadow-large{stroke-width: 3px}
