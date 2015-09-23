@@ -75,11 +75,13 @@
                 .html(iconset['warn'])
                 
             icon.append("div")
-                .text("Data doubts & Alpha version");
+                .text("Data doubts");
             
-            container.append("div")
-                .attr("class", "vzb-data-warning-title")
-                .html(this.parent.datawarning_content.title);
+            if(this.parent.datawarning_content.title){
+                container.append("div")
+                    .attr("class", "vzb-data-warning-title")
+                    .html(this.parent.datawarning_content.title);
+            }
             
             container.append("div")
                 .attr("class", "vzb-data-warning-body")

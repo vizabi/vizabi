@@ -69,6 +69,7 @@
                 text-decoration: underline;
             }
             white-space: normal;
+            line-height: 150%;
             
         }
         .vzb-data-warning-close{
@@ -108,7 +109,7 @@
         right: $sizeButtonList;
         margin-right: 10px;
         width: 80%;
-        height: 70%;
+        height: 80%;
         @include position(absolute, 10% null null 10%);
         .vzb-data-warning-link{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-title{font-size: $vzb-font-size-regular;}
@@ -118,18 +119,18 @@
 &.vzb-medium{
     .vzb-data-warning-box{
         width: 60%;
-        height: 60%;
-        @include position(absolute, 20% null null 20%);
+        height: 80%;
+        @include position(absolute, 10% null null 20%);
         .vzb-data-warning-link{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
-        .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
+        .vzb-data-warning-body{font-size: $vzb-font-size-small;}
     }
 }
 &.vzb-large{
     .vzb-data-warning-box{
         width: 50%;
-        height: 50%;
-        @include position(absolute, 25% null null 25%);
+        height: 80%;
+        @include position(absolute, 10% null null 25%);
         .vzb-data-warning-link{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
