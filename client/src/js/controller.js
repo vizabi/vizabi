@@ -46,7 +46,6 @@ angular.module('gapminderTools')
           $window.ga('send', 'pageview', { page: $location.url() });
         });
       }
-      //);
 
       function scrollTo(element, to, duration, cb) {
         if (duration < 0) return;

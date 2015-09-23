@@ -11,6 +11,25 @@
         height: auto;
         min-height: 50px;
     }
+
+    &:after {
+        content: 'alpha version';
+        color: #FC6B38;
+        display: block;
+        position: absolute;
+        bottom: -40px;
+        z-index: 10000;
+        /* font-size: 12px; */
+        right: 70px;
+        opacity: 0.6;
+
+        @include breakpoint(small) {
+            top: 17px;
+            bottom: auto;
+            font-size: 12px;
+            right: 53px;
+        }
+    }
 }
 
 .header-title {
