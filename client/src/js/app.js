@@ -1,4 +1,4 @@
-Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
+Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/master/preview/";
 
 //main app module
 
