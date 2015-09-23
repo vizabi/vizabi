@@ -56,6 +56,8 @@
                     _this.redrawDataPoints();
                     _this.redrawSelectList();
                     _this.updatePovertyLine();
+                    _this._updateDoubtOpacity();
+
                 },
                 'change:time:povertyCutoff': function () {
                     //console.log('change time value');
@@ -100,6 +102,7 @@
                     _this.selectEntities();
                     _this.redrawSelectList();
                     _this.updateOpacity();
+                    _this._updateDoubtOpacity();
                     _this.redrawDataPoints();
                 },
                 'change:time:yMaxMethod': function () {
@@ -304,6 +307,7 @@
             this.selectEntities();
             this.redrawSelectList();
             this.updateOpacity();
+            this._updateDoubtOpacity();
             this.updatePovertyLine();
         },
 
@@ -335,11 +339,18 @@
                     _this.parent.findChildByName("gapminder-datawarning").toggle();
                 })
                 .on("mouseover", function () {
-                    _this.dataWarningEl.style("opacity", 1);
+                    _this._updateDoubtOpacity(1);
                 })
                 .on("mouseout", function () {
-                    _this.dataWarningEl.style("opacity", _this.wScale(+_this.time.getFullYear().toString()));
+                    _this._updateDoubtOpacity();
                 })   
+        },
+        
+        
+        _updateDoubtOpacity: function (opacity) {
+            if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+            if (this.someSelected) opacity = 1;
+            this.dataWarningEl.style("opacity", opacity);
         },
 
         /**
@@ -676,7 +687,6 @@
             if(time==null)time = this.time;
             
             this.yearEl.text(time.getFullYear().toString());
-            this.dataWarningEl.style("opacity", this.wScale(+this.time.getFullYear().toString()));
             
             var filter = {};
             filter[_this.TIMEDIM] = time;

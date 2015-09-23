@@ -94,6 +94,7 @@
           _this.redrawDataPoints();
           _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
           _this.updateBubbleOpacity();
+          _this._updateDoubtOpacity();
         },
         "change:entities:highlight": function () {
           if (!_this._readyOnce) return;
@@ -103,6 +104,7 @@
         'change:time:value': function () {
           //console.log("EVENT change:time:value");
           _this.updateTime();
+          _this._updateDoubtOpacity();
 
           _this._trails.run("findVisible");
           if (_this.model.time.adaptMinMaxZoom) {
@@ -470,6 +472,7 @@
       this.updateMarkerSizeLimits();
       this.selectDataPoints();
       this.updateBubbleOpacity();
+      this._updateDoubtOpacity();
       this._trails.create();
       this.resetZoomer(); // includes redraw data points and trail resize
       this._trails.run(["recolor", "findVisible", "reveal"]);
@@ -595,13 +598,19 @@
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
             })
           .on("mouseover", function(){
-                _this.dataWarningEl.style("opacity", 1);
+                _this._updateDoubtOpacity(1);
             })  
           .on("mouseout", function(){
-                _this.dataWarningEl.style("opacity", _this.wScale(+_this.timeFormatter(_this.time)));
+                _this._updateDoubtOpacity();
             })  
     },
 
+    _updateDoubtOpacity: function(opacity){
+        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time)); 
+        if(this.someSelected) opacity = 1;
+        this.dataWarningEl.style("opacity", opacity);  
+    },
+      
     /*
      * UPDATE ENTITIES:
      * Ideally should only update when show parameters change or data changes
@@ -817,7 +826,6 @@
       this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
 
       this.yearEl.text(this.timeFormatter(this.time));
-      this.dataWarningEl.style("opacity", this.wScale(+this.timeFormatter(this.time)))
     },
 
     /*
