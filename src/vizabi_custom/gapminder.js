@@ -88,8 +88,8 @@
     });
     
     MountainChart.define('datawarning_content', {
-        title: "Income data has many problems!",
-        body: "This is a text <a href='http://www.gapminder.org' target='_blank'>with a link</a> in HTML"
+        title: "Income data has large uncertainty!",
+        body: "There are many ways to estimate one's income, and the methods change a lot across countries and years. We at Gapminder have tried to adjust the picture for these differences, but still the precise country income shapes should be taken with a large grain of salt. <br/><br/> In reality some shapes are more flat and the others are more humpy than they appear in this chart. Some countries can even have more than one income hump. Nevertheless, we believe that the big picture of the world as a whole is quite accurate. <br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming year. <br/><br/> Learn more about the datasets and methods: <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>here</a><br/><br/> /Gapminder team"
     });
 
     MountainChart.define('default_options', {
@@ -260,8 +260,8 @@
     });
 
     BubbleChart.define('datawarning_content', {
-        title: "High uncertainty before 1950",
-        body: "This is a text <a href='http://www.gapminder.org' target='_blank'>with a link</a> in HTML"
+        title: "Higher uncertainity before 1950",
+        body: "Comparing the size of economy between countries and over time is not simple. The methods vary and the prices are changing. We at Gapminder have tried our best to adjust the picture for these differences, but still we recommend you take these numbers with a grain of salt.<br/><br/> Any country on a lower income level at any year has a lower quality of data, just because of less economic resources to collect good statistics. Estimates of GDP before 1950 are generally very rough. <br/><br/> Child mortality values on the other hand are much more accurate when it comes to comparing countries: dead children (sorry) is a universal unit that doesn’t change between places and over time. But the historic estimates of child mortality are also suffering from large uncertainty.<br/><br/> Learn more about the datasets and methods: <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>here</a><br/><br/> /Gapminder team"
     });
     
     BubbleChart.define('default_options', {
@@ -472,4 +472,6 @@
 
     });
 
+    //if(datawarning_content) Vizabi.Tool.get("BubbleChart").define("datawarning_content",datawarning_content);
+    
 }.call(this));
