@@ -443,8 +443,8 @@
         });
 
       this.element
-        .call(this.zoomer)
-        .call(this.dragRectangle)
+        //.call(this.zoomer)
+        //.call(this.dragRectangle)
         .on("mouseup", function(){
           _this.draggingNow = false;
         })
