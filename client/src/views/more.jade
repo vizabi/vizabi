@@ -5,7 +5,7 @@
       li.related-item(ng-repeat="(key, related) in relatedItems")
         a(href="{{related.link}}")
           div.related-item-thumbnail
-            img(src="{{related.image}}")
+            img(ng-src="{{related.image}}")
           div.related-item-info
             span.title {{related.title}}
             span.subtitle {{related.subtitle}}
@@ -16,5 +16,5 @@
       li.menu-item(ng-repeat="(key, tool) in tools")
         a(ng-hide="activeTool == key", ng-href="{{key}}")
           span.title {{tool.title}}
-          img.image(src="{{tool.image}}")
+          img.image(ng-src="{{tool.image}}")
 
