@@ -458,9 +458,10 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
-
-//      this.sTitleHelpEl = this.sTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
-//      this.xTitleHelpEl = this.xTitleEl.append('text').attr('text-anchor', 'end').attr('opacity', 0);
+        
+      this.wScale = d3.scale.linear()
+        .domain(this.parent.datawarning_content.doubtDomain)
+        .range(this.parent.datawarning_content.doubtRange);
 
       this.updateIndicators();
       this.updateEntities();
@@ -589,9 +590,16 @@
       this.xInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
       })  
-      this.dataWarningEl.on("click", function(){
-        _this.parent.findChildByName("gapminder-datawarning").toggle();
-      })  
+      this.dataWarningEl
+          .on("click", function(){
+                _this.parent.findChildByName("gapminder-datawarning").toggle();
+            })
+          .on("mouseover", function(){
+                _this.dataWarningEl.style("opacity", 1);
+            })  
+          .on("mouseout", function(){
+                _this.dataWarningEl.style("opacity", _this.wScale(+_this.timeFormatter(_this.time)));
+            })  
     },
 
     /*
@@ -809,6 +817,7 @@
       this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
 
       this.yearEl.text(this.timeFormatter(this.time));
+      this.dataWarningEl.style("opacity", this.wScale(+this.timeFormatter(this.time)))
     },
 
     /*

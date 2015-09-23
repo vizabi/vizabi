@@ -283,7 +283,10 @@
             this.TIMEDIM = this.model.time.getDimension();
 
             this.mountainAtomicContainer.select('.vzb-mc-prerender').remove();
-
+            
+            this.wScale = d3.scale.linear()
+                .domain(this.parent.datawarning_content.doubtDomain)
+                .range(this.parent.datawarning_content.doubtRange);
         },
 
         ready: function(){
@@ -327,9 +330,16 @@
             this.infoEl.on("click", function(){
                 window.open(xMetadata.sourceLink, '_blank').focus();
             })    
-            this.dataWarningEl.on("click", function(){
-               _this.parent.findChildByName("gapminder-datawarning").toggle();
-            })  
+            this.dataWarningEl
+                .on("click", function () {
+                    _this.parent.findChildByName("gapminder-datawarning").toggle();
+                })
+                .on("mouseover", function () {
+                    _this.dataWarningEl.style("opacity", 1);
+                })
+                .on("mouseout", function () {
+                    _this.dataWarningEl.style("opacity", _this.wScale(+_this.time.getFullYear().toString()));
+                })   
         },
 
         /**
@@ -662,8 +672,12 @@
         updateTime: function (time) {
             var _this = this;
 
-            if(time==null)time = this.model.time.value;
+            this.time = this.model.time.value;
+            if(time==null)time = this.time;
+            
             this.yearEl.text(time.getFullYear().toString());
+            this.dataWarningEl.style("opacity", this.wScale(+this.time.getFullYear().toString()));
+            
             var filter = {};
             filter[_this.TIMEDIM] = time;
             this.values = this.model.marker.getValues(filter, [_this.KEY]);
@@ -830,11 +844,6 @@
             this.yTitleEl.select('text')
                 .attr('transform', 'translate(0,' + margin.top + ')')
             
-            if(this.translator){
-            this.dataWarningEl.select("text").text(
-               this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
-           )
-            }
             
             var warnBB = this.dataWarningEl.select("text").node().getBBox();
             this.dataWarningEl.select("svg")

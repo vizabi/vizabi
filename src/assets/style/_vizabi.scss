@@ -152,7 +152,7 @@
        path { fill: $vzb-color-accent-orange }
        cursor: pointer;
        text {text-transform: uppercase;}
-       &:hover text {
+       &:hover text{ 
            text-decoration: underline;
        }
    }

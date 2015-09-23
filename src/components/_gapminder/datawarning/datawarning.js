@@ -84,17 +84,6 @@
             container.append("div")
                 .attr("class", "vzb-data-warning-body")
                 .html(this.parent.datawarning_content.body);
-            
-            if(this.parent.datawarning_content.title2 && this.parent.datawarning_content.body2)
-            {
-                container.append("div")
-                    .attr("class", "vzb-data-warning-title")
-                    .html(this.parent.datawarning_content.title2);
-
-                container.append("div")
-                    .attr("class", "vzb-data-warning-body")
-                    .html(this.parent.datawarning_content.body2);
-            }
                 
 
         },
