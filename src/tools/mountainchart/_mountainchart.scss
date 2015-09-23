@@ -12,10 +12,13 @@
                 pointer-events: all;
             }
             .vzb-mc-mountain {
-                stroke: white;
+                stroke: $vzb-color-white;
                 stroke-opacity: 0.5;
                 stroke-width: 1px;
                 cursor: pointer;
+                &.vzb-selected{
+                    stroke: #000;
+                }
             }
             .vzb-mc-povertyline text {
                 dominant-baseline: hanging;

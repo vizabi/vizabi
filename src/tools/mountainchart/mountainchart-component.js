@@ -636,7 +636,7 @@
 
           var OPACITY_HIGHLT = 1.0;
           var OPACITY_HIGHLT_DIM = 0.3;
-          var OPACITY_SELECT = 0.8;
+          var OPACITY_SELECT = 1.0;
           var OPACITY_REGULAR = this.model.entities.opacityRegular;
           var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
 
@@ -657,6 +657,8 @@
               return OPACITY_REGULAR;
 
           });
+            
+          this.mountains.classed('vzb-selected', function(d){return _this.model.entities.isSelected(d)});
 
           var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
 
