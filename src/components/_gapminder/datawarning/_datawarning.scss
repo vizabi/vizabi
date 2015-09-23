@@ -57,10 +57,11 @@
         }
         .vzb-data-warning-body{
             font-size: $vzb-font-size-regular;
-            padding: 25px 25px 10px 5px;
+            padding: 10px 25px 10px 5px;
             color: $vzb-color-black;
             a{
-                color: $vzb-color-primary-dark;
+                color: $vzb-color-accent-orange;
+                //color: $vzb-color-primary-dark;
                 text-decoration: none;
             }
             a:hover {
@@ -96,6 +97,7 @@
         width: 90%;
         height: 80%;
         @include position(absolute, 10% null null 5%);
+        .vzb-data-warning-link{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-title{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-body{font-size: $vzb-font-size-small;}
     }
@@ -107,6 +109,7 @@
         width: 80%;
         height: 70%;
         @include position(absolute, 10% null null 10%);
+        .vzb-data-warning-link{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-title{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-body{font-size: $vzb-font-size-small;}
     }
@@ -116,6 +119,7 @@
         width: 60%;
         height: 60%;
         @include position(absolute, 20% null null 20%);
+        .vzb-data-warning-link{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
     }
@@ -125,6 +129,7 @@
         width: 50%;
         height: 50%;
         @include position(absolute, 25% null null 25%);
+        .vzb-data-warning-link{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-title{font-size: $vzb-font-size-medium;}
         .vzb-data-warning-body{font-size: $vzb-font-size-regular;}
     }

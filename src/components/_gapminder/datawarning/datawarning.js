@@ -34,7 +34,7 @@
 
             this.model_binds = {
                 "change:language": function (evt) {
-                    _this.updateView();
+                    _this.ready();
                 }
             }
 
@@ -48,16 +48,16 @@
         },
 
         ready: function () {
-            
         },
 
         readyOnce: function () {
             var _this = this;
             this.element = d3.select(this.placeholder);
-                
+            this.translator = this.model.language.getTFunction();
             
+            this.element.selectAll("div").remove();
             
-            this.element.select("div")
+            this.element.append("div")
                 .attr("class", "vzb-data-warning-background")
                 .on("click", function(){_this.toggle(true)});
             
@@ -74,8 +74,8 @@
                 .attr("class", "vzb-data-warning-link")
                 .html(iconset['warn'])
                 
-            
-            icon.append("div").text("data doubts");
+            icon.append("div")
+                .text("Data doubts | Alpha version");
             
             container.append("div")
                 .attr("class", "vzb-data-warning-title")
@@ -84,6 +84,17 @@
             container.append("div")
                 .attr("class", "vzb-data-warning-body")
                 .html(this.parent.datawarning_content.body);
+            
+            if(this.parent.datawarning_content.title2 && this.parent.datawarning_content.body2)
+            {
+                container.append("div")
+                    .attr("class", "vzb-data-warning-title")
+                    .html(this.parent.datawarning_content.title2);
+
+                container.append("div")
+                    .attr("class", "vzb-data-warning-body")
+                    .html(this.parent.datawarning_content.body2);
+            }
                 
 
         },
