@@ -581,11 +581,11 @@
             
             var titleHeight = this.yTitleEl.select('text').node().getBBox().height || 0;
             
-            var maxFontHeight = (this.height - titleHeight*1.5) / (this.selectList.data().length + 2);
+            var maxFontHeight = (this.height - titleHeight*3) / (this.selectList.data().length + 2);
             if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
             this.selectList
-                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i + titleHeight*1.5) + ')';})
+                .attr('transform', function(d,i){return 'translate(0,' + (fontHeight*i + titleHeight*3) + ')';})
                 .each(function(d, i){
 
                     var view = d3.select(this);
@@ -829,6 +829,12 @@
             
             this.yTitleEl.select('text')
                 .attr('transform', 'translate(0,' + margin.top + ')')
+            
+            if(this.translator){
+            this.dataWarningEl.select("text").text(
+               this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
+           )
+            }
             
             var warnBB = this.dataWarningEl.select("text").node().getBBox();
             this.dataWarningEl.select("svg")
