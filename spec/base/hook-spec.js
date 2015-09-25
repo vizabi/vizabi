@@ -2,7 +2,7 @@
  * TEST HOOKS, INTEGRATION OF BETWEEN TOOLS, MODELS AND DATA FETCHING
  */
 //This test depends on models entities and time (not entirely self contained)
-describe('* Base: Hooks', function() {
+xdescribe('* Base: Hooks', function() {
     var placeholder;
     var utils;
     var t;
