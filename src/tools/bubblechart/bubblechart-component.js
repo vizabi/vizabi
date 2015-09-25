@@ -1414,18 +1414,40 @@
     _setTooltip: function (tooltipText, x, y, offset) {
       if (tooltipText) {
         var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
+        var xPos, yPos, xSign = -1, ySign = -1, xOffset = 0, yOffset = 0;
+
         if (offset) {
-          x = x - offset * 0.71 - 5;// 0.71 - sin and cos for 315
-          y = y - offset * 0.71 - 11; // 5 and 11 - corrective to the block Radius and text padding
+          xOffset = offset * 0.71; // 0.71 - sin and cos for 315
+          yOffset = offset * 0.71;
         }
         //position tooltip
         this.tooltip.classed("vzb-hidden", false)
           //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
           .selectAll("text")
           .text(tooltipText);
 
         var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        if (x - xOffset - contentBBox.width < 0) {
+          xSign = 1;
+          x += contentBBox.width + 5;// corrective to the block Radius and text padding
+        } else {
+          x -= 5; // corrective to the block Radius and text padding
+        }
+        if (y - yOffset - contentBBox.height < 0) {
+          ySign = 1;
+          y += contentBBox.height;
+        } else {
+          y -= 11;// corrective to the block Radius and text padding
+        }
+        if (offset) {
+          xPos = x + xOffset * xSign;
+          yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+        } else {
+          xPos = x + xOffset * xSign;// 0.71 - sin and cos for 315
+          yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+        }
+        this.tooltip.attr("transform", "translate(" + (xPos?xPos:mouse[0]) + "," + (yPos?yPos:mouse[1]) + ")")
+
         this.tooltip.select('rect').attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width -4)
@@ -1434,7 +1456,6 @@
                 .attr("ry", contentBBox.height * 0.2);
 
       } else {
-
         this.tooltip.classed("vzb-hidden", true);
       }
     },
