@@ -235,7 +235,7 @@
     for (var i in _frozenEventInstances) {
       var instance = _frozenEventInstances[i];
       instance.unfreeze();
-      delete _frozenEventInstances[i];
+      _frozenEventInstances[i] = void 0;
     }
   };
 

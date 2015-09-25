@@ -59,7 +59,7 @@
     };
 
     Class.unregister = function (name) {
-      delete this._collection[name];
+      this._collection[name] = void 0;
     };
 
     Class.getCollection = function () {
