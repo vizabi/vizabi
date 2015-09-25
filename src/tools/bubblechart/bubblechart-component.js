@@ -728,10 +728,10 @@
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = _this.time;
-          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer)) - 5;
-          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer)) - 11; // 5 and 11 - corrective to the block Radius and text padding
-          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer))) * 0.71; // sin and cos for 315
-          _this._setTooltip(text, x-s, y-s);
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(text, x, y, s);
         },
 
         mouseout: function (d, i) {
@@ -1411,10 +1411,13 @@
     },
 
 
-    _setTooltip: function (tooltipText, x, y) {
+    _setTooltip: function (tooltipText, x, y, offset) {
       if (tooltipText) {
         var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
-
+        if (offset) {
+          x = x - offset * 0.71 - 5;// 0.71 - sin and cos for 315
+          y = y - offset * 0.71 - 11; // 5 and 11 - corrective to the block Radius and text padding
+        }
         //position tooltip
         this.tooltip.classed("vzb-hidden", false)
           //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
