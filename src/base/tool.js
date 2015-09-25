@@ -91,9 +91,9 @@
       this.model = new ToolModel(options, this.default_options, callbacks, validate);
       //ToolModel starts in frozen state. unfreeze;
       this.model.unfreeze();
-      this.ui = this.model.ui;
-      //splash 
-      this.ui.splash = this.model.data.splash;
+      this.ui = this.model.ui || {};
+      //splash
+      this.ui.splash = this.model && this.model.data && this.model.data.splash;
       this._super({
         name: this.name || this._id,
         placeholder: placeholder
@@ -178,32 +178,32 @@
     validate: function (model) {
 
         model = this.model || model;
-        
+
         if(!model || !model.state) {utils.warn("tool validation aborted: model.state looks wrong: " + model); return;};
 
         var time = model.state.time;
         var marker = model.state.marker;
-        
+
         if(!time) {utils.warn("tool validation aborted: time looks wrong: " + time); return;};
         if(!marker) {utils.warn("tool validation aborted: marker looks wrong: " + marker); return;};
-        
+
         var label = marker.label;
-        
+
         if(!label) {utils.warn("tool validation aborted: marker label looks wrong: " + label); return;};
 
         //don't validate anything if data hasn't been loaded
-        if (model.isLoading() || !label.getKeys() || label.getKeys().length < 1) return;        
+        if (model.isLoading() || !label.getKeys() || label.getKeys().length < 1) return;
 
         var dateMin = label.getLimits(time.getDimension()).min;
         var dateMax = label.getLimits(time.getDimension()).max;
 
         if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
         if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
-        
+
         if (time.start < dateMin) time.start = dateMin;
         if (time.end > dateMax) time.end = dateMax;
     },
-      
+
     _setUIOptions: function () {
       //add placeholder class
       utils.addClass(this.placeholder, class_placeholder);

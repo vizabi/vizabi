@@ -1285,7 +1285,7 @@
         //for non-selected bubbles
         //make sure there is no cached data
         if (_this.cached[d[KEY]] != null) {
-          delete _this.cached[d[KEY]]
+          _this.cached[d[KEY]] = void 0;
         }
       }
     },

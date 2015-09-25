@@ -135,7 +135,7 @@
           if (prev !== val || force || JSON.stringify(prev) !== JSON.stringify(val)) {
             this._changedData[a] = val;
           } else {
-            delete this._changedData[a];
+            this._changedData[a] = void 0;
           }
           this._data[a] = val;
         } //if it's an object, it's a submodel
@@ -180,14 +180,14 @@
     getType: function () {
       return this._type;
     },
-      
+
     /**
      * Gets the metadata of the hooks
      * @returns {Object} metadata
      */
     getMetadata: function () {
       if (!this.isHook()) return {};
-      return (globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use === 'property')) ? 
+      return (globals.metadata && globals.metadata.indicators && (this.use === 'indicator' || this.use === 'property')) ?
           globals.metadata.indicators[this.which] : {};
     },
 
@@ -1326,18 +1326,18 @@
     if (arr[i][which] === null || arr[i-1][which] === null) {
       return null;
     }
-      
+
     var result = _interpolator()[method](
-        arr[i - 1][dimTime], 
-        arr[i][dimTime], 
-        arr[i - 1][which], 
-        arr[i][which], 
+        arr[i - 1][dimTime],
+        arr[i][dimTime],
+        arr[i - 1][which],
+        arr[i][which],
         time
     );
 
     // cast to time object if we are interpolating time
     if (utils.isDate(arr[0][which])) result = new Date(result);
-    
+
     return result;
   }
 
@@ -1403,10 +1403,10 @@
     }
 
     result = _interpolator()[method](
-        items[indexNext - 1][dimTime], 
-        items[indexNext][dimTime], 
-        items[indexNext - 1][which], 
-        items[indexNext][which], 
+        items[indexNext - 1][dimTime],
+        items[indexNext][dimTime],
+        items[indexNext - 1][which],
+        items[indexNext][which],
         time
     );
 
@@ -1416,9 +1416,9 @@
     }
     return result;
   };
-    
+
   function _interpolator(){
-  
+
     return {
         linear: function(x1, x2, y1, y2, x){
             return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);

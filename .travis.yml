@@ -3,6 +3,7 @@ sudo: false
 node_js:
   - '0.10'
   - '0.12'
+  - '4.1'
   - 'iojs'
 addons:
   apt:
@@ -13,3 +14,4 @@ before_script:
   - bower install
 script:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && grunt build-deploy --custom=gapminder || grunt --custom=gapminder'
+  - grunt test

@@ -30,7 +30,7 @@
   //garbage collection
   Vizabi.clearInstances = function (id) {
     if (id) {
-      delete Vizabi._instances[id];
+      Vizabi._instances[id] = void 0;
     } else {
       for(var i in Vizabi._instances) {
         Vizabi._instances[i].clear();
