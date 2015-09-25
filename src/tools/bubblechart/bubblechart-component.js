@@ -281,21 +281,21 @@
         .scaleExtent([1, 100])
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
-          
-          
+
+
           //send the event to the page if fully zoomed our or page not scrolled into view
           if(d3.event.sourceEvent != null && _this.scrollableAncestor){
-              
+
               if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-              
+
               if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1){
                   _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
                   return;
               }
           }
-          
+
           _this.model._data.entities.clearHighlighted();
-          _this._setTooltip(); 
+          _this._setTooltip();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
@@ -385,7 +385,7 @@
      */
     readyOnce: function () {
       var _this = this;
-        
+
       this.scrollableAncestor = utils.findScrollableAncestor(this.element);
       this.element = d3.select(this.element);
 
@@ -402,7 +402,7 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
-        
+
       this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
       this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
       this.dataWarningEl = this.graph.select('.vzb-data-warning');
@@ -461,7 +461,7 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
-        
+
       this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
@@ -484,9 +484,9 @@
 
       if(!this._valuesCalculated) this._calculateAllValues();
       else this._valuesCalculated = false;
-      
+
       this.updateUIStrings();
-        
+
       this.updateEntities();
       this.redrawDataPoints();
       this.updateBubbleOpacity();
@@ -586,32 +586,32 @@
           .attr("text-anchor", "end")
            .attr("y", "-0.32em")
           .text(this.translator("hints/dataWarning"));
-        
+
       //TODO: move away from UI strings, maybe to ready or ready once
       this.yInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
       })
       this.xInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
-      })  
+      })
       this.dataWarningEl
           .on("click", function(){
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
             })
           .on("mouseover", function(){
                 _this._updateDoubtOpacity(1);
-            })  
+            })
           .on("mouseout", function(){
                 _this._updateDoubtOpacity();
-            })  
+            })
     },
 
     _updateDoubtOpacity: function(opacity){
-        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time)); 
+        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time));
         if(this.someSelected) opacity = 1;
-        this.dataWarningEl.style("opacity", opacity);  
+        this.dataWarningEl.style("opacity", opacity);
     },
-      
+
     /*
      * UPDATE ENTITIES:
      * Ideally should only update when show parameters change or data changes
@@ -954,60 +954,60 @@
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
-        
-      
+
+
       var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
       if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
-      
+
       var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
       if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
-        
+
       var sTitleText = this.sTitleEl.select("text")
         .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
         this.translator("buttons/colors") + ": " + this.strings.title.C);
-        
+
       var probe = this.sTitleEl.append("text").text(sTitleText.text());
       var font = parseInt(probe.style("font-size"))
                  * (this.height - 20) / probe.node().getBBox().width;
-      
+
       if(probe.node().getBBox().width > this.height - 20) {
         sTitleText.style("font-size", font);
       }else{
         sTitleText.style("font-size", null);
       }
-      probe.remove(); 
-        
+      probe.remove();
+
       var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
       this.yTitleEl
           .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
-             
+
       this.xTitleEl
           .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
-     
+
       this.sTitleEl
           .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
 
       this.dataWarningEl
           .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
-      
+
         this.dataWarningEl.select("text").text(
             this.translator("hints/dataWarning" + (this.getLayoutProfile()==='small'?"-little":""))
         )
-        
-      var warnBB = this.dataWarningEl.select("text").node().getBBox(); 
+
+      var warnBB = this.dataWarningEl.select("text").node().getBBox();
       this.dataWarningEl.select("svg")
           .attr("width",warnBB.height)
           .attr("height",warnBB.height)
           .attr("x", -warnBB.width - warnBB.height * 1.2)
           .attr("y", -warnBB.height * 1.2)
-            
+
         if(this.yInfoEl.select('text').node()){
             var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
             var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
             this.yInfoEl.attr('transform', 'translate('+ (titleW - yaxisWidth + titleH * 1.0) +',' + (-titleH*0.7) + ')');
             this.yInfoEl.select("text").attr("dy", "0.1em")
             this.yInfoEl.select("circle").attr("r", titleH/2);
-        }            
+        }
         if(this.xInfoEl.select('text').node()){
             var titleH = this.xInfoEl.select('text').node().getBBox().height || 0;
             var titleW = this.xTitleEl.select('text').node().getBBox().width || 0;
@@ -1064,9 +1064,18 @@
       //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
       //   });
       // }
+      var values;
+      var KEY = this.KEY;
+      if (this.model.time.lockNonSelected && this.someSelected) {
+        var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        values = this._getValuesInterpolated(tLocked);
+      } else {
+        values = this._getValuesInterpolated(this.time);
+      }
 
       this.entityBubbles.each(function (d, index) {
-        var valueS = _this.model.marker.size.getValue(d);
+
+        var valueS = values.size[d[KEY]];
         if (valueS == null) return;
 
         d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
@@ -1123,7 +1132,6 @@
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
       var KEY = this.KEY;
-
       if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         values = valuesL;
       }
@@ -1147,6 +1155,7 @@
 
         view.classed("vzb-invisible", false)
             .style("fill", _this.cScale(valueC));
+
 
         if(duration) {
           view.transition().duration(duration).ease("linear")
