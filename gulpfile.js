@@ -30,10 +30,13 @@ var connect = require('gulp-connect');
 var opn = require('opn');
 var os = require('os');
 
+var jade = require('gulp-jade');
+
 var config = {
   src: './src',
-  dest: './dist',
-  preview: './preview'
+  dest: './dist/lib',
+  previewSrc: './preview',
+  previewDest: './dist/preview'
 };
 
 // ----------------------------------------------------------------------------
@@ -117,6 +120,7 @@ function bundle_js(bundler) {
     .pipe(source('vizabi.js'))
     .pipe(buffer())
     .pipe(gulp.dest(config.dest))
+    .pipe(rename('vizabi.min.js'))
     .pipe(sourcemaps.init({
       loadMaps: true
     }))
@@ -171,6 +175,26 @@ gulp.task('eslint', function() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
+
+// ----------------------------------------------------------------------------
+//   Preview page
+// ----------------------------------------------------------------------------
+
+gulp.task('preview-templates', function() {
+  gutil.log(chalk.yellow("Compiling preview page..."));
+  var YOUR_LOCALS = {};
+  gulp.src(path.join(config.previewSrc, '*.jade'))
+    .pipe(jade({
+      locals: {},
+      pretty: true
+    }))
+    .pipe(gulp.dest(config.previewDest))
+    .on('end', function() {
+      gutil.log(chalk.green("Compiling preview page... DONE!"))
+    });
+});
+
+gulp.task('preview', ['preview-templates']);
 
 // ----------------------------------------------------------------------------
 //   Watch for changes

@@ -1,0 +1,25 @@
+block variables
+  - var control_buttons = { play: true, languages: ["en", "se"], record: true }
+  - var control_state = true
+  - var control_sizes = true
+  - var control_buttons = {play: true, language: true, record: true }
+  - var title = "Preview"
+  - var description = "This page previews Vizabi"
+  - var tool = false
+  - var source_code = "https://github.com/Gapminder/vizabi/tree/develop/src/tools/"
+  - var chart_buttons = "[]"
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0', name='viewport')
+
+    title Vizabi - #{title}
+
+    //- Styles
+    link(rel='stylesheet', href='assets/css/font-awesome.min.css')
+    link(rel='stylesheet', href='assets/css/main.css')
+    link(rel='stylesheet', href='../dist/vizabi.css')
+  body
+    include ../_partials/nav.jade

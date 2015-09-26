@@ -1,11 +1,11 @@
 class Test {
   constructor(name) {
-    this.name = "name"
+    this.name = name;
   }
-  get name () {
+  get name() {
     return this.name;
   }
 }
 
-var test = new Test("Testing");
-console.log(test.name);
+const test = new Test('Testing');
+document.write(test.name);
