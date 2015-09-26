@@ -13,6 +13,8 @@ npm install
 bower install
 ```
 
+If you are still puzzled what it is or that doesn't work, read a [more detailed instruction](https://github.com/Gapminder/vizabi/wiki/Quickstart-for-Windows) (on Windows, but you'll figure things out if you have a Mac or Linux)
+
 ## Build the project
 
 In order to run the project in **development mode**, type the following:
