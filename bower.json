@@ -5,10 +5,7 @@
   "authors": [
     "Gapminder <dev@gapminder.org>"
   ],
-  "moduleType": [
-    "amd"
-  ],
-  "license": "MIT",
+  "license": "BSD",
   "private": true,
   "ignore": [
     "**/.*",
@@ -18,11 +15,11 @@
     "tests",
     "spec"
   ],
-  "main": "dist/vizabi.js",
-  "dependencies": {
+  "main": "dist/lib/vizabi.min.js",
+  "devDependencies": {
     "d3": "~3.4.6",
     "bourbon": "~4.2.1",
     "font-awesome": "~4.3.0"
   },
-  "devDependencies": {}
+  "dependencies": {}
 }

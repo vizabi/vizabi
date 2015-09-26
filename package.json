@@ -23,6 +23,7 @@
     "eslint": "^1.5.1",
     "eslint-config-airbnb": "0.0.9",
     "eslint-plugin-react": "^3.4.2",
+    "grunt-concat": "^0.1.6",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.0.2",
     "gulp-cached": "^1.1.0",
