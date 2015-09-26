@@ -27,6 +27,8 @@ var sourcemaps = require('gulp-sourcemaps');
 
 var eslint = require('gulp-eslint');
 var connect = require('gulp-connect');
+var opn = require('opn');
+var os = require('os');
 
 var config = {
   src: './src',
@@ -39,10 +41,18 @@ var config = {
 // ----------------------------------------------------------------------------
 
 gulp.task('connect', function() {
-  connect.server({
-    root: config.preview,
+  var webserver = {
+    port: 8080,
+    root: config.previewDest,
     livereload: true
-  });
+  };
+
+  var browser = os.platform() === 'linux' ? 'google-chrome' : (
+    os.platform() === 'darwin' ? 'google chrome' : (
+      os.platform() === 'win32' ? 'chrome' : 'firefox'));
+
+  connect.server(webserver);
+  opn('http://localhost:' + webserver.port, { app: browser });
 });
 
 // ----------------------------------------------------------------------------
@@ -50,7 +60,7 @@ gulp.task('connect', function() {
 // ----------------------------------------------------------------------------
 
 gulp.task('clean', function() {
-  return gulp.src(config.dest, {
+  return gulp.src('./dist', {
       read: false
     })
     .pipe(clean());
@@ -76,6 +86,7 @@ gulp.task('styles', function() {
     .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
     .pipe(minifycss())
     .pipe(gulp.dest(config.dest))
+    .pipe(connect.reload())
     .on('end', function() {
       gutil.log(chalk.green("Building CSS... DONE!"))
     });
@@ -85,7 +96,7 @@ gulp.task('styles', function() {
 //   Javascript
 // ----------------------------------------------------------------------------
 
-/* nicer browserify errors */
+// nicer browserify errors
 function nice_error(err) {
   if(err.fileName) {
     // regular error
@@ -97,8 +108,8 @@ function nice_error(err) {
     gutil.log(chalk.red(err.name) + ': ' + chalk.yellow(err.message));
   }
 }
-/* */
 
+// reusable bundler
 function bundle_js(bundler) {
   gutil.log(chalk.yellow("Compiling JS..."));
   return bundler.bundle()
@@ -113,6 +124,7 @@ function bundle_js(bundler) {
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(config.dest))
+    .pipe(connect.reload())
     .on('end', function() {
       gutil.log(chalk.green("Compiling JS... DONE!"))
     });
@@ -129,7 +141,7 @@ gulp.task('watchify', function() {
   })
 });
 
-// Without watchify
+// With source maps
 gulp.task('browserify', function() {
   var bundler = browserify(path.join(config.src, 'vizabi.js'), {
     debug: true
@@ -139,13 +151,18 @@ gulp.task('browserify', function() {
 
 // Without sourcemaps
 gulp.task('browserify-production', function() {
-  var bundler = browserify(path.join(config.src, 'vizabi.js')).transform(babelify, { /* options */ })
+  gutil.log(chalk.yellow("Compiling JS..."));
+  var bundler = browserify(path.join(config.src, 'vizabi.js')).transform(babelify, { /* options */ });
   return bundler.bundle()
-    .on('error', map_error)
+    .on('error', nice_error)
     .pipe(source('vizabi.js'))
     .pipe(buffer())
+    .pipe(rename('vizabi.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest(config.dest));
+    .pipe(gulp.dest(config.dest))
+    .on('end', function() {
+      gutil.log(chalk.green("Compiling JS... DONE!"))
+    });
 });
 
 gulp.task('eslint', function() {
@@ -170,9 +187,17 @@ gulp.task('watch-lint', function() {
 //   Command-line tasks
 // ----------------------------------------------------------------------------
 
+//Build Vizabi
 gulp.task('build', ['clean', 'styles', 'browserify-production']);
+
+//Developer task
 gulp.task('dev', ['clean', 'styles', 'eslint', 'watch-lint', 'watchify', 'watch-css', 'connect']);
+
+//Developer task without linting
 gulp.task('dev:nolint', ['clean', 'styles', 'watchify', 'watch-css']);
 
-//Default to dev
+//Serve = build + connect
+gulp.task('serve', ['build', 'connect']);
+
+//Default = dev task
 gulp.task('default', ['dev']);
