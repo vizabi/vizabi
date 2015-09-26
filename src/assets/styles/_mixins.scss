@@ -11,15 +11,15 @@
 // ----------------------------------------------------------------------------
 //   Bourbon mixins: http://bourbon.io/docs/
 // ----------------------------------------------------------------------------
-@import "../../../lib/bourbon/app/assets/stylesheets/bourbon";
+@import '../../../lib/bourbon/app/assets/stylesheets/bourbon';
 
 // ----------------------------------------------------------------------------
 //   Sizes, borders and margins
 // ----------------------------------------------------------------------------
 
 @mixin reset-margin-padding() {
-  padding: 0px;
-  margin: 0px;
+  padding: 0;
+  margin: 0;
 }
 
 //center a box horizontally (div, anything)
@@ -58,7 +58,6 @@
 // ----------------------------------------------------------------------------
 
 @mixin opacity($v) {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=" + ($v * 100) + ")";
   filter: alpha(opacity=($v * 100));
   opacity: $v;
 }
@@ -68,15 +67,13 @@
 // ----------------------------------------------------------------------------
 
 //converts pixels to em
-@mixin font-size($sizeValue: 12px ) {
-  font-size: $sizeValue; //fallback for old browsers
-  font-size: (0.06 * $sizeValue / 1px) + em;
+@mixin font-size($size: 12px) {
+  font-size: (.06 * $size / 1px) + em;
 }
 
 //same with line height
-@mixin line-height($heightValue: 12px ) {
-  line-height: $heightValue + px; //fallback for old browsers
-  line-height: (0.125 * $heightValue / 1px) + em;
+@mixin line-height($height: 12px) {
+  line-height: (.125 * $height / 1px) + em;
 }
 
 // ----------------------------------------------------------------------------
@@ -87,17 +84,10 @@
   0% {
     @include transform(rotate(0deg));
   }
+
   100% {
     @include transform(rotate(359deg));
   }
-}
-
-@-webkit-keyframes rotate-forever {
-  @include rotate-forever;
-}
-
-@-moz-keyframes rotate-forever {
-  @include rotate-forever;
 }
 
 @keyframes rotate-forever {
@@ -119,10 +109,10 @@
 // ----------------------------------------------------------------------------
 
 //TODO: evaluate if this mixin should be included at all
-@mixin tooltip($background-color: white,
-               $padding: 0.5em,
+@mixin tooltip($background-color: $vzb-color-white,
+               $padding: .5em,
                $arrow-base: 1em,
-               $arrow-length: 0.5em,
+               $arrow-length: .5em,
                $border-width: 0,
                $border-color: false) {
 
@@ -135,32 +125,32 @@
   visibility: hidden;
 
   &:after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-top: ($arrow-length - $border-width) solid $background-color;
     border-left: ($arrow-base / 2 - $border-width) solid transparent;
     border-right: ($arrow-base / 2 - $border-width) solid transparent;
+    border-top: ($arrow-length - $border-width) solid $background-color;
+    content: '';
+    height: 0;
+    left: 50%;
     margin-left: ($border-width - $arrow-base / 2);
+    position: absolute;
+    top: 100%;
+    width: 0;
   }
 
   @if $border-width {
     border: $border-width solid $border-color;
 
     &:before {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-top: $arrow-length solid $border-color;
       border-left: ($arrow-base / 2) solid transparent;
       border-right: ($arrow-base / 2) solid transparent;
+      border-top: $arrow-length solid $border-color;
+      content: '';
+      height: 0;
+      left: 50%;
       margin-left: ($arrow-base / -2);
+      position: absolute;
+      top: 100%;
+      width: 0;
     }
   }
 }

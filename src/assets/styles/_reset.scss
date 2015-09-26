@@ -1,22 +1,39 @@
-//Reset Stylesheet
+//Reset
 
 .vzb-placeholder {
   font-size: $vzb-font-size-base;
   font-variant: normal;
   text-align: left;
 
-  div, span, h1, h2, h3, h4, h5, h6, p, a, i, svg, text, g {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    vertical-align: baseline;
+  div,
+  span,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a,
+  i,
+  svg,
+  text,
+  g {
     background: transparent;
+    border: 0;
+    box-sizing: border-box;
+    margin: 0;
+    outline: 0;
+    padding: 0;
+    vertical-align: baseline;
     white-space: nowrap;
-    @include box-sizing(border-box);
   }
 
-  input, textarea, keygen, select, button {
+  input,
+  textarea,
+  keygen,
+  select,
+  button {
     font-size: $vzb-font-size-base;
   }
 }

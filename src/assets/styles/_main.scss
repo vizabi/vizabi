@@ -1,64 +1,72 @@
-@import "_mixins";
-@import "_common";
-@import "_reset";
-@import "_chart";
+@import 'mixins';
+@import 'common';
+@import 'reset';
+@import 'chart';
 
 .vzb-tool {
-  $heightTitle: 8px;
-  $sizeButtonList: 60px;
-  $sizeButtonListSmall: 50px;
-  $sizeTimeSlider: 80px;
-  $sizeTimeSliderSmall: 50px;
-  @include position(absolute, 0px);
-  @include user-select(none);
-  text-align: left;
-  overflow: hidden;
+  $height-title: 8px;
+  $size-button-list: 60px;
+  $size-button-list-small: 50px;
+  $size-timeslider: 80px;
+  $size-timeslider-small: 50px;
 
-  font-size: $vzb-font-size-base; //important to set the base in px
+  @include position(absolute, 0);
+  @include user-select(none);
   font-family: $vzb-font-family;
+  font-size: $vzb-font-size-base; //important to set the base in px
+  overflow: hidden;
+  text-align: left;
 
   .vzb-tool-title {
-    @include position(absolute, 0px 0px null 0px);
-    font-size: $vzb-font-size-small;
-    height: $heightTitle;
+    @include position(absolute, 0 0 null 0);
     background-color: $vzb-color-primary-lightest;
+    color: $vzb-color-grey-dark;
+    font-size: $vzb-font-size-small;
+    height: $height-title;
     padding: 10px;
-    color: #666666;
   }
+
   .vzb-tool-content {
-    @include position(absolute, $heightTitle 0px 0px 0px);
+    @include position(absolute, $height-title 0 0 0);
+
     .vzb-tool-stage {
-      @include position(absolute, 0px $sizeButtonList 0px 0px);
+      @include position(absolute, 0 $size-button-list 0 0);
       transform: translate3d(0, 0, 0);
+
       .vzb-tool-viz {
-        @include position(absolute, 0px 0px $sizeTimeSlider 0px);
+        @include position(absolute, 0 0 $size-timeslider 0);
       }
+
       .vzb-tool-timeslider {
-        @include position(absolute, null 0px 0px 0px);
-        height: $sizeTimeSlider;
+        @include position(absolute, null 0 0 0);
+        height: $size-timeslider;
       }
     }
+
     .vzb-tool-buttonlist {
-      @include position(absolute, 0px 0px 0px null);
-      width: $sizeButtonList;
+      @include position(absolute, 0 0 0 null);
       background-color: $vzb-color-primary-lightest;
+      width: $size-button-list;
     }
   }
+
   // hide sections
   &.vzb-title-off {
     .vzb-tool-title {
       display: none;
     }
     .vzb-tool-content {
-      @include position(absolute, 0px);
+      @include position(absolute, 0);
     }
   }
+
   &.vzb-timeslider-off {
+
     .vzb-tool-timeslider {
       display: none;
     }
     .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
-      @include position(absolute, 0px);
+      @include position(absolute, 0);
     }
   }
   &.vzb-buttonlist-off {
@@ -66,25 +74,25 @@
       display: none;
     }
     .vzb-tool-content .vzb-tool-stage {
-      @include position(absolute, 0px 0px 0px 0px);
+      @include position(absolute, 0 0 0 0);
     }
   }
   //Responsiveness
   &.vzb-small {
     .vzb-tool-title {
-      height: $heightTitle - 8px;
       font-size: $vzb-font-size-small;
+      height: $height-title - 8px;
     }
     .vzb-tool-content {
-      $posTop: $heightTitle - 8px;
-      @include position(absolute, $posTop 0px 0px 0px);
+      $posTop: $height-title - 8px;
+      @include position(absolute, $posTop 0 0 0);
       .vzb-tool-stage {
-        @include position(absolute, 0px $sizeButtonList 0px 0px);
+        @include position(absolute, 0 $size-button-list 0 0);
         .vzb-tool-viz {
-          @include position(absolute, 0px 0px $sizeTimeSliderSmall 0px);
+          @include position(absolute, 0 0 $size-timeslider-small 0);
         }
         .vzb-tool-timeslider {
-          height: $sizeTimeSliderSmall;
+          height: $size-timeslider-small;
         }
       }
     }
@@ -93,19 +101,19 @@
         display: none;
       }
       .vzb-tool-content .vzb-tool-stage {
-        @include position(absolute, 0px 0px 0px 0px);
+        @include position(absolute, 0 0 0 0);
       }
     }
   }
   &.vzb-small {
     .vzb-tool-content {
       .vzb-tool-stage {
-        @include position(absolute, 0px 0px $sizeButtonListSmall 0px);
+        @include position(absolute, 0 0 $size-button-list-small 0);
       }
       .vzb-tool-buttonlist {
-        @include position(absolute, auto 0px 0px 0px);
+        @include position(absolute, auto 0 0 0);
+        height: $size-button-list-small;
         width: auto;
-        height: $sizeButtonListSmall;
       }
     }
     &.vzb-buttonlist-off {
@@ -113,7 +121,7 @@
         display: none;
       }
       .vzb-tool-content .vzb-tool-stage {
-        @include position(absolute, 0px 0px 0px 0px);
+        @include position(absolute, 0 0 0 0);
       }
     }
     &.vzb-timeslider-off {
@@ -121,7 +129,7 @@
         display: none;
       }
       .vzb-tool-content .vzb-tool-stage .vzb-tool-viz {
-        @include position(absolute, 0px);
+        @include position(absolute, 0);
       }
     }
     // issues: 369 & 442
@@ -137,36 +145,43 @@
   .vzb-tooltip {
     @include border-radius(3px);
     @include opacity(0.9);
-    position: absolute;
-    background: #666;
-    padding: 7px 10px;
+    background: $vzb-color-grey-dark;
     color: white;
     font-size: $vzb-font-size-regular;
-    z-index: 11;
     font-weight: 300;
+    padding: 7px 10px;
+    position: absolute;
+    z-index: 11;
   }
- 
-    //Data warning
-   .vzb-data-warning {
-       fill: $vzb-color-accent-orange;
-       path { fill: $vzb-color-accent-orange }
-       cursor: pointer;
-       text {text-transform: uppercase;}
-       &:hover text{ 
-           text-decoration: underline;
-       }
-   }
-    &.vzb-small .vzb-data-warning text {font-size: $vzb-font-size-tiny;}
-    &.vzb-medium .vzb-data-warning text {font-size: $vzb-font-size-small;}
-    &.vzb-large .vzb-data-warning text {font-size: $vzb-font-size-small;}
-    
-    
+  //Data warning
+  .vzb-data-warning {
+    cursor: pointer;
+    fill: $vzb-color-accent-orange;
+    path {
+      fill: $vzb-color-accent-orange
+    }
+    text {
+      text-transform: uppercase;
+    }
+    &:hover text {
+      text-decoration: underline;
+    }
+  }
+  &.vzb-small .vzb-data-warning text {
+    font-size: $vzb-font-size-tiny;
+  }
+  &.vzb-medium .vzb-data-warning text {
+    font-size: $vzb-font-size-small;
+  }
+  &.vzb-large .vzb-data-warning text {
+    font-size: $vzb-font-size-small;
+  }
   //remove tool title
   .vzb-tool-title {
     display: none !important;
   }
   .vzb-tool-content {
-    @include position(absolute, 0px);
+    @include position(absolute, 0);
   }
   //common tool components
   // @import '../../components/_gapminder/buttonlist/buttonlist';
