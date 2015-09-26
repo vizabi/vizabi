@@ -29,6 +29,8 @@ var eslint = require('gulp-eslint');
 var connect = require('gulp-connect');
 var opn = require('opn');
 var os = require('os');
+var watch = require('gulp-watch');
+var wait = require('gulp-wait');
 
 var jade = require('gulp-jade');
 
@@ -41,7 +43,8 @@ var config = {
   srcPreview: './preview',
   dest: './dist',
   destLib: './dist/lib',
-  destPreview: './dist/preview'
+  destPreview: './dist/preview',
+  bower: './lib'
 };
 
 // ----------------------------------------------------------------------------
@@ -50,9 +53,9 @@ var config = {
 
 function clean_src(arr) {
   return gulp.src(arr, {
-    read: false
-  })
-  .pipe(clean());
+      read: false
+    })
+    .pipe(clean());
 }
 
 gulp.task('clean', function() {
@@ -66,11 +69,28 @@ gulp.task('clean:css', function() {
 gulp.task('clean:js', function() {
   return clean_src([
     path.join(config.destLib, '**/*.js'),
-    path.join(config.destLib, '**/*.js.map')]);
+    path.join(config.destLib, '**/*.js.map')
+  ]);
 });
 
 gulp.task('clean:preview', function() {
   return clean_src([config.destPreview]);
+});
+
+gulp.task('clean:preview:html', function() {
+  return clean_src([path.join(config.destPreview, '**/*.html'),]);
+});
+
+gulp.task('clean:preview:styles', function() {
+  return clean_src([path.join(config.destPreview, 'assets/css/main.css'),]);
+});
+
+gulp.task('clean:preview:js', function() {
+  return clean_src([path.join(config.destPreview, 'assets/js/*.js'),]);
+});
+
+gulp.task('clean:preview:vendor', function() {
+  return clean_src([path.join(config.destPreview, 'assets/vendor/**/*'),]);
 });
 
 
@@ -85,16 +105,19 @@ gulp.task('clean:preview', function() {
 //     .pipe(scsslint());
 // });
 
-gulp.task('styles', ['clean:css'], function() {
-  gutil.log(chalk.yellow("Building CSS..."));
-  sass(path.join(config.src, 'assets/styles/vizabi.scss'), {
+function compileSass(src, dest) {
+  return sass(src, {
       style: 'compact'
     })
     .on('error', sass.logError)
     .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
     .pipe(minifycss())
-    .pipe(gulp.dest(config.destLib))
-    .pipe(connect.reload())
+    .pipe(gulp.dest(dest));
+}
+
+gulp.task('styles', ['clean:css'], function() {
+  gutil.log(chalk.yellow("Building CSS..."));
+  return compileSass(path.join(config.src, 'assets/styles/vizabi.scss'), config.destLib)
     .on('end', function() {
       gutil.log(chalk.green("Building CSS... DONE!"))
     });
@@ -133,7 +156,6 @@ function bundle_js(bundler) {
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(config.destLib))
-    .pipe(connect.reload())
     .on('end', function() {
       gutil.log(chalk.green("Compiling JS... DONE!"))
     });
@@ -166,6 +188,7 @@ gulp.task('browserify-production', ['clean:js'], function() {
     .on('error', nice_error)
     .pipe(source('vizabi.js'))
     .pipe(buffer())
+    .pipe(gulp.dest(config.destLib))
     .pipe(rename('vizabi.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest(config.destLib))
@@ -185,7 +208,7 @@ gulp.task('eslint', function() {
 //   Preview page
 // ----------------------------------------------------------------------------
 
-gulp.task('preview:templates', ['clean:preview'], function() {
+gulp.task('preview:templates', ['clean:preview:html'], function() {
   gutil.log(chalk.yellow("Compiling preview page..."));
   var YOUR_LOCALS = {};
   return gulp.src(path.join(config.srcPreview, '*.jade'))
@@ -199,8 +222,34 @@ gulp.task('preview:templates', ['clean:preview'], function() {
     });
 });
 
-gulp.task('preview', ['preview:templates'], function(cb) {
-  cb();
+gulp.task('preview:styles', ['clean:preview:styles'], function() {
+  gutil.log(chalk.yellow("Building preview CSS..."));
+  return compileSass(path.join(config.srcPreview, 'assets/css/main.scss'), path.join(config.destPreview, 'assets/css'))
+    .on('end', function() {
+      gutil.log(chalk.green("Building preview CSS... DONE!"))
+    });
+});
+
+gulp.task('preview:js', ['clean:preview:js'], function() {
+  gutil.log(chalk.yellow("Copying preview JS..."));
+  return gulp.src(path.join(config.srcPreview, 'assets/js/*.js'))
+      .pipe(gulp.dest(path.join(config.destPreview, 'assets/js')))
+      .on('end', function() {
+        gutil.log(chalk.green("Copying preview JS... DONE!"))
+      });
+});
+
+gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
+  gulp.src(path.join(config.bower, 'font-awesome/css/font-awesome.min.css'))
+      .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
+  gulp.src(path.join(config.bower, 'font-awesome/fonts/*'))
+      .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
+  gulp.src(path.join(config.bower, 'd3/d3.min.js'))
+      .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
+});
+
+gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'], function(cb) {
+  return cb();
 });
 
 // ----------------------------------------------------------------------------
@@ -208,7 +257,13 @@ gulp.task('preview', ['preview:templates'], function(cb) {
 // ----------------------------------------------------------------------------
 gulp.task('watch', function() {
   gulp.watch(path.join(config.srcPreview, '**/*.jade'), ['preview:templates']);
+  gulp.watch(path.join(config.srcPreview, '**/*.scss'), ['preview:styles']);
+  gulp.watch(path.join(config.srcPreview, '**/*.js'), ['preview:js']);
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
+
+  watch(path.join(config.destPreview, '**/*'))
+      .pipe(wait(800))
+      .pipe(connect.reload());
 });
 
 gulp.task('watch-lint', function() {
@@ -231,7 +286,9 @@ gulp.task('connect', ['preview'], function() {
       os.platform() === 'win32' ? 'chrome' : 'firefox'));
 
   connect.server(webserver);
-  opn('http://localhost:' + webserver.port + '/preview/', { app: browser });
+  opn('http://localhost:' + webserver.port + '/preview/', {
+    app: browser
+  });
 });
 
 // ----------------------------------------------------------------------------
