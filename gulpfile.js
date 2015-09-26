@@ -32,42 +32,47 @@ var os = require('os');
 
 var jade = require('gulp-jade');
 
+// ----------------------------------------------------------------------------
+//   Config
+// ----------------------------------------------------------------------------
+
 var config = {
   src: './src',
-  dest: './dist/lib',
-  previewSrc: './preview',
-  previewDest: './dist/preview'
+  srcPreview: './preview',
+  dest: './dist',
+  destLib: './dist/lib',
+  destPreview: './dist/preview'
 };
-
-// ----------------------------------------------------------------------------
-//   Web Server
-// ----------------------------------------------------------------------------
-
-gulp.task('connect', function() {
-  var webserver = {
-    port: 8080,
-    root: config.previewDest,
-    livereload: true
-  };
-
-  var browser = os.platform() === 'linux' ? 'google-chrome' : (
-    os.platform() === 'darwin' ? 'google chrome' : (
-      os.platform() === 'win32' ? 'chrome' : 'firefox'));
-
-  connect.server(webserver);
-  opn('http://localhost:' + webserver.port, { app: browser });
-});
 
 // ----------------------------------------------------------------------------
 //   Clean dist folder
 // ----------------------------------------------------------------------------
 
+function clean_src(arr) {
+  return gulp.src(arr, {
+    read: false
+  })
+  .pipe(clean());
+}
+
 gulp.task('clean', function() {
-  return gulp.src('./dist', {
-      read: false
-    })
-    .pipe(clean());
+  return clean_src([config.dest]);
 });
+
+gulp.task('clean:css', function() {
+  return clean_src([path.join(config.destLib, '**/*.css')]);
+});
+
+gulp.task('clean:js', function() {
+  return clean_src([
+    path.join(config.destLib, '**/*.js'),
+    path.join(config.destLib, '**/*.js.map')]);
+});
+
+gulp.task('clean:preview', function() {
+  return clean_src([config.destPreview]);
+});
+
 
 // ----------------------------------------------------------------------------
 //   Styles
@@ -80,7 +85,7 @@ gulp.task('clean', function() {
 //     .pipe(scsslint());
 // });
 
-gulp.task('styles', function() {
+gulp.task('styles', ['clean:css'], function() {
   gutil.log(chalk.yellow("Building CSS..."));
   sass(path.join(config.src, 'assets/styles/vizabi.scss'), {
       style: 'compact'
@@ -88,7 +93,7 @@ gulp.task('styles', function() {
     .on('error', sass.logError)
     .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
     .pipe(minifycss())
-    .pipe(gulp.dest(config.dest))
+    .pipe(gulp.dest(config.destLib))
     .pipe(connect.reload())
     .on('end', function() {
       gutil.log(chalk.green("Building CSS... DONE!"))
@@ -119,7 +124,7 @@ function bundle_js(bundler) {
     .on('error', nice_error)
     .pipe(source('vizabi.js'))
     .pipe(buffer())
-    .pipe(gulp.dest(config.dest))
+    .pipe(gulp.dest(config.destLib))
     .pipe(rename('vizabi.min.js'))
     .pipe(sourcemaps.init({
       loadMaps: true
@@ -127,14 +132,14 @@ function bundle_js(bundler) {
     // capture sourcemaps from transforms
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(config.dest))
+    .pipe(gulp.dest(config.destLib))
     .pipe(connect.reload())
     .on('end', function() {
       gutil.log(chalk.green("Compiling JS... DONE!"))
     });
 }
 
-gulp.task('watchify', function() {
+gulp.task('watchify', ['clean:js'], function() {
   var args = merge(watchify.args, {
     debug: true
   })
@@ -146,7 +151,7 @@ gulp.task('watchify', function() {
 });
 
 // With source maps
-gulp.task('browserify', function() {
+gulp.task('browserify', ['clean:js'], function() {
   var bundler = browserify(path.join(config.src, 'vizabi.js'), {
     debug: true
   }).transform(babelify, { /* options */ })
@@ -154,7 +159,7 @@ gulp.task('browserify', function() {
 });
 
 // Without sourcemaps
-gulp.task('browserify-production', function() {
+gulp.task('browserify-production', ['clean:js'], function() {
   gutil.log(chalk.yellow("Compiling JS..."));
   var bundler = browserify(path.join(config.src, 'vizabi.js')).transform(babelify, { /* options */ });
   return bundler.bundle()
@@ -163,7 +168,7 @@ gulp.task('browserify-production', function() {
     .pipe(buffer())
     .pipe(rename('vizabi.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest(config.dest))
+    .pipe(gulp.dest(config.destLib))
     .on('end', function() {
       gutil.log(chalk.green("Compiling JS... DONE!"))
     });
@@ -180,26 +185,29 @@ gulp.task('eslint', function() {
 //   Preview page
 // ----------------------------------------------------------------------------
 
-gulp.task('preview-templates', function() {
+gulp.task('preview:templates', ['clean:preview'], function() {
   gutil.log(chalk.yellow("Compiling preview page..."));
   var YOUR_LOCALS = {};
-  gulp.src(path.join(config.previewSrc, '*.jade'))
+  return gulp.src(path.join(config.srcPreview, '*.jade'))
     .pipe(jade({
       locals: {},
       pretty: true
     }))
-    .pipe(gulp.dest(config.previewDest))
+    .pipe(gulp.dest(config.destPreview))
     .on('end', function() {
       gutil.log(chalk.green("Compiling preview page... DONE!"))
     });
 });
 
-gulp.task('preview', ['preview-templates']);
+gulp.task('preview', ['preview:templates'], function(cb) {
+  cb();
+});
 
 // ----------------------------------------------------------------------------
 //   Watch for changes
 // ----------------------------------------------------------------------------
-gulp.task('watch-css', function() {
+gulp.task('watch', function() {
+  gulp.watch(path.join(config.srcPreview, '**/*.jade'), ['preview:templates']);
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
 });
 
@@ -208,17 +216,36 @@ gulp.task('watch-lint', function() {
 });
 
 // ----------------------------------------------------------------------------
+//   Web Server
+// ----------------------------------------------------------------------------
+
+gulp.task('connect', ['preview'], function() {
+  var webserver = {
+    port: 8080,
+    root: config.dest,
+    livereload: true
+  };
+
+  var browser = os.platform() === 'linux' ? 'google-chrome' : (
+    os.platform() === 'darwin' ? 'google chrome' : (
+      os.platform() === 'win32' ? 'chrome' : 'firefox'));
+
+  connect.server(webserver);
+  opn('http://localhost:' + webserver.port + '/preview/', { app: browser });
+});
+
+// ----------------------------------------------------------------------------
 //   Command-line tasks
 // ----------------------------------------------------------------------------
 
 //Build Vizabi
-gulp.task('build', ['clean', 'styles', 'browserify-production']);
+gulp.task('build', ['styles', 'browserify-production', 'preview']);
 
 //Developer task
-gulp.task('dev', ['clean', 'styles', 'eslint', 'watch-lint', 'watchify', 'watch-css', 'connect']);
+gulp.task('dev', ['styles', 'eslint', 'watch-lint', 'watchify', 'watch', 'connect']);
 
 //Developer task without linting
-gulp.task('dev:nolint', ['clean', 'styles', 'watchify', 'watch-css']);
+gulp.task('dev:nolint', ['styles', 'watchify', 'watch', 'connect']);
 
 //Serve = build + connect
 gulp.task('serve', ['build', 'connect']);

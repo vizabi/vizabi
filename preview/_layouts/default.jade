@@ -20,6 +20,31 @@ html(lang='en')
     //- Styles
     link(rel='stylesheet', href='assets/css/font-awesome.min.css')
     link(rel='stylesheet', href='assets/css/main.css')
-    link(rel='stylesheet', href='../dist/vizabi.css')
+    link(rel='stylesheet', href='../lib/vizabi.css')
   body
     include ../_partials/nav.jade
+
+    #vzbp-sidebar
+      include ../_partials/sidebar.jade
+
+    unless !control_state
+      include ../_partials/state_editor.jade
+
+    script(src='assets/js/d3.min.js')
+    script(src='../lib/vizabi.js')
+    script(src='assets/js/_utils.js')
+    script(src='assets/js/_collapsible.js')
+    script(src='assets/js/_url.js')
+    script(src='assets/js/_codepen.js')
+    script(src='assets/js/main.js')
+    unless !control_state
+      script(src='assets/js/_state-editor.js')
+    unless !control_sizes
+      script(src='assets/js/_size-div.js')
+    unless !control_buttons
+      script(src='assets/js/_interaction.js')
+  
+    script(src='assets/js/_dropdowns.js')
+
+    unless !tool
+      include ../_partials/toolscript.jade

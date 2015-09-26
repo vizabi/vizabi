@@ -1,0 +1,60 @@
+button#vzbp-btn-refresh.vzbp-button(data-tooltip='Refresh')
+  i.fa.fa-refresh
+    
+unless !source_code
+  button#vzbp-btn-github.vzbp-button.vzbp-button-bigger(onclick="openLink('{{source_code}}')", data-tooltip='Github')
+    i.fa.fa-github
+
+button#vzbp-btn-codepen.vzbp-button(data-tooltip='Codepen')
+  i.fa.fa-codepen
+button#vzbp-btn-share.vzbp-button(data-tooltip='Share')
+  i.fa.fa-paper-plane
+
+unless !control_sizes
+  hr.vzbp-hr
+  #resp-sect.collapsible-section.open
+    h2.vzbp-subtitle.vzbp-collapsible-title Responsiveness
+    .vzbp-collapsible
+      button#vzbp-btn-portrait.vzbp-button.vzbp-button-bigger(data-tooltip='Portrait')
+        i.fa.fa-mobile
+      button#vzbp-btn-landscape.vzbp-button.vzbp-button-bigger(data-tooltip='Landscape')
+        i.fa.fa-mobile.fa-rotate-90
+      button#vzbp-btn-desktop.vzbp-button.vzbp-button-bigger(data-tooltip='Full')
+        i.fa.fa-desktop
+      button#vzbp-btn-random.vzbp-button(data-tooltip='Random')
+        i.fa.fa-random
+      p(align='center')
+        input#vzbp-input-width.vzbp-input(type='number')
+        |  x 
+        input#vzbp-input-height.vzbp-input(type='number')
+      p(align='center')
+        a(href='fullscreen/{{ page.filename }}', target='blank')
+          i.fa.fa-share
+          |  Full screen page
+
+unless !control_state
+  hr.vzbp-hr
+  #state-section-panel.collapsible-panel
+    h2#state-section.vzbp-subtitle.vzbp-collapsible-title State
+
+hr.vzbp-hr
+#info-sect.collapsible-section.open
+  h2.vzbp-subtitle.vzbp-collapsible-title Info
+  .vzbp-collapsible
+    p #{description}
+
+unless !control_buttons
+  hr.vzbp-hr
+  #butt-sect.collapsible-section.open
+    h2.vzbp-subtitle.vzbp-collapsible-title Interaction Buttons
+    .vzbp-collapsible
+      unless !control_buttons.play
+        button#vzbp-btn-play.vzbp-button(data-tooltip='Play')
+          i.fa.fa-play
+      unless !control_buttons.language
+        button#vzbp-btn-lang.vzbp-button.vzbp-button-bigger(data-tooltip='Switch language')
+          i.fa.fa-globe
+      unless !control_buttons.record
+        button#vzbp-btn-record.vzbp-button.vzbp-button-bigger(data-tooltip='Record')
+          i.fa.fa-bullseye
+hr.vzbp-hr
