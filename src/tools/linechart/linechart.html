@@ -1,0 +1,40 @@
+<!-- Line Chart Component -->
+<div class="vzb-linechart">
+  <svg class="vzb-lc-graph">
+    <g>
+
+      <g class="vzb-lc-axis-x"></g>
+      <text class="vzb-lc-axis-x-value"></text>
+      <text class="vzb-lc-axis-y-value"></text>
+
+      <svg class="vzb-lc-lines"></svg>
+      <g class="vzb-lc-axis-y"></g>
+      <line class="vzb-lc-projection-x"></line>
+      ;
+      <line class="vzb-lc-projection-y"></line>
+      ;
+
+      <g class="vzb-lc-labels">
+        <line class="vzb-lc-vertical-now"></line>
+        ;
+      </g>
+
+      <g class="vzb-lc-axis-y-title"></g>
+      <g class="vzb-lc-axis-x-title"></g>
+
+    </g>
+
+    <!--filter id="vzb-lc-filter-dropshadow">
+      <feOffset result="offOut" in="SourceGraphic" dx="0" dy="2" />
+      <feColorMatrix result = "matrixOut" in = "offOut" type = "matrix"
+                     values = "0.3 0.0 0.0 0.0 0.0
+                               0.0 0.3 0.0 0.0 0.0
+                               0.0 0.0 0.3 0.0 0.0
+                               1.0 1.0 1.0 1.0 0.0"/>
+      <feGaussianBlur result="blurOut" in="matrixOut" stdDeviation="0.8" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter-->
+
+  </svg>
+  <div class="vzb-tooltip vzb-hidden"></div>
+</div>

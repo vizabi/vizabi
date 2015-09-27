@@ -1,0 +1,38 @@
+<div class='vzb-dialog-modal'>
+  <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="stack" data-click="pinDialog"></span>
+  <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="stack" data-click="dragDialog"></span>
+
+  <div class="vzb-dialog-title">
+    <%=t ( "buttons/stack") %>
+  </div>
+
+  <div class="vzb-dialog-content">
+    <p><%=t ( "hints/mount/howtostack") %></p>
+        <br/>
+        <form id="vzb-howtostack">
+            <input type="radio" name="stack" value="geo.region"><%=t ( "mount/stacking/region") %>
+            <input type="radio" name="stack" value="all"><%=t ( "mount/stacking/world") %>
+            <input type="radio" name="stack" value="none"><%=t ( "mount/stacking/none") %>
+        </form>
+    <br/><br/>
+        <form id="vzb-merge-grouped">
+            <input type="checkbox" name="mergeGrouped"><%=t ( "mount/mergegrouped") %>
+        </form>
+    <br/><br/>
+        <form id="vzb-merge-stacked">
+            <input type="checkbox" name="mergeStacked"><%=t ( "mount/mergestacked") %>
+        </form>
+    <br/><br/>
+        <form id="vzb-manual-sorting">
+          <%=t ( "mount/manualSorting") %><br/>
+          <div class="vzb-dialog-draggablelist vzb-dialog-control"></div>
+        </form>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      OK
+    </div>
+  </div>
+
+</div>
