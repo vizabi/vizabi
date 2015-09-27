@@ -23,6 +23,8 @@ var iconset = Vizabi.iconset;
 //warn client if d3 is not defined
 if (!Vizabi._require("d3")) return;
 
+var NEGLIGABLE_HEIGHT = 1000000;
+    
 //MOUNTAIN CHART COMPONENT
 Vizabi.Component.extend("gapminder-mountainchart", {
 
@@ -52,9 +54,9 @@ Vizabi.Component.extend("gapminder-mountainchart", {
                 //console.log("MONT: " + evt);
                 _this.updateTime();
                 _this.redrawDataPoints();
-                _this.redrawSelectList();
-                _this.updateProbe();
-                _this._updateDoubtOpacity();
+                _this._selectlist.redraw();
+                _this._probe.redraw();
+                _this.updateDoubtOpacity();
             },
             "change:time:xScaleFactor": function () {
                 _this.ready();
@@ -96,9 +98,9 @@ Vizabi.Component.extend("gapminder-mountainchart", {
             "change:entities:select": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
-                _this.redrawSelectList();
+                _this._selectlist.redraw();
                 _this.updateOpacity();
-                _this._updateDoubtOpacity();
+                _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
             },
             "change:entities:opacitySelectDim": function (evt) {
@@ -132,7 +134,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
             },
             "change:marker:color:palette": function (evt) {
                 _this.redrawDataPointsOnlyColors();
-                _this.redrawSelectList();
+                _this._selectlist.redraw();
             },
         };
 
@@ -141,13 +143,17 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         // create helper instanses and put parameters in them
         var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
         var Exporter = Vizabi.Helper.get("gapminder-svgexport");
+        var Probe = Vizabi.Helper.get("gapminder-mountainchart-probe");
+        var Selectlist = Vizabi.Helper.get("gapminder-mountainchart-selectlist");
         
         this._math = new MountainChartMath(this);
         this._export = new Exporter(this);
         this._export
             .prefix("vzb-mc-")
             .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
-
+        this._probe = new Probe(this);
+        this._selectlist = new Selectlist(this);
+        
         // define path generator
         this.area = d3.svg.area()
             .interpolate("basis")
@@ -250,14 +256,14 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
-                _this.updateProbe({ 
+                _this._probe.redraw({ 
                     level: _this.xScale.invert(d3.mouse(this)[0]), 
                     full: true
                 });
             })
             .on("mouseout", function () {
                 if (_this.model.time.dragging) return;
-                _this.updateProbe();
+                _this._probe.redraw();
             });
 
         var _this = this;
@@ -266,8 +272,8 @@ Vizabi.Component.extend("gapminder-mountainchart", {
             _this.updateSize();
             _this.updateTime(); // respawn is needed
             _this.redrawDataPoints();
-            _this.redrawSelectList();
-            _this.updateProbe();
+            _this._selectlist.redraw();
+            _this._probe.redraw();
         });
 
         this.KEY = this.model.entities.getDimension();
@@ -297,10 +303,101 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.redrawDataPointsOnlyColors();
         this.highlightEntities();
         this.selectEntities();
-        this.redrawSelectList();
+        this._selectlist.redraw();
         this.updateOpacity();
-        this._updateDoubtOpacity();
-        this.updateProbe();
+        this.updateDoubtOpacity();
+        this._probe.redraw();
+    },
+    
+    updateSize: function (meshLength) {
+
+        var margin;
+        var padding = 2;
+
+        switch (this.getLayoutProfile()) {
+            case "small":
+                margin = { top: 10, right: 10, left: 10, bottom: 25 };
+                break;
+            case "medium":
+                margin = { top: 20, right: 20, left: 20, bottom: 30 };
+                break;
+            case "large":
+                margin = { top: 30, right: 30, left: 30, bottom: 35 };
+                break;
+        }
+
+        //mesure width and height
+        this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
+        this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+
+        //graph group is shifted according to margins (while svg element is at 100 by 100%)
+        this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        //year is centered and resized
+        this.yearEl
+            .attr("x", this.width / 2)
+            .attr("y", this.height / 3 * 1.5)
+            .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
+
+        //update scales to the new range
+        this.yScale.range([this.height, 0]);
+        this.xScale.range([0, this.width]);
+
+        //need to know scale type of X to move on
+        var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
+
+        //axis is updated
+        this.xAxis.scale(this.xScale)
+            .orient("bottom")
+            .tickSize(6, 0)
+            .tickSizeMinor(3, 0)
+            .labelerOptions({
+                scaleType: scaleType,
+                toolMargin: margin,
+                method: this.xAxis.METHOD_REPEATING,
+                stops: this._readyOnce ? this.model.time.xLogStops : [1]
+            });
+
+
+        this.xAxisEl
+            .attr("transform", "translate(0," + this.height + ")")
+            .call(this.xAxis);
+
+        this.xTitleEl.select("text")
+            .attr("transform", "translate(" + this.width + "," + this.height + ")")
+            .attr("dy", "-0.36em");
+
+        this.yTitleEl.select("text")
+            .attr("transform", "translate(0," + margin.top + ")")
+
+
+        var warnBB = this.dataWarningEl.select("text").node().getBBox();
+        this.dataWarningEl.select("svg")
+            .attr("width", warnBB.height)
+            .attr("height", warnBB.height)
+            .attr("x", warnBB.height * 0.1)
+            .attr("y", -warnBB.height * 1.0 + 1)
+
+        this.dataWarningEl
+            .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+            .select("text")
+            .attr("dx", warnBB.height * 1.5);
+
+        if (this.infoEl.select("text").node()) {
+            var titleH = this.infoEl.select("text").node().getBBox().height || 0;
+            var titleW = this.yTitleEl.select("text").node().getBBox().width || 0;
+            this.infoEl.attr("transform", "translate(" + (titleW + titleH * 1.0) + "," + (margin.top - titleH * 0.3) + ")");
+            this.infoEl.select("text").attr("dy", "0.1em")
+            this.infoEl.select("circle").attr("r", titleH / 2);
+        }
+
+        this.eventAreaEl
+            .attr("y", this.height)
+            .attr("width", this.width)
+            .attr("height", margin.bottom);
+
+        if (!meshLength) meshLength = this.model.time.xPoints;
+        this.mesh = this._math.generateMesh(meshLength, scaleType, this.xScale.domain());
     },
 
     updateUIStrings: function () {
@@ -330,14 +427,14 @@ Vizabi.Component.extend("gapminder-mountainchart", {
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
             })
             .on("mouseover", function () {
-                _this._updateDoubtOpacity(1);
+                _this.updateDoubtOpacity(1);
             })
             .on("mouseout", function () {
-                _this._updateDoubtOpacity();
+                _this.updateDoubtOpacity();
             })
     },
 
-    _updateDoubtOpacity: function (opacity) {
+    updateDoubtOpacity: function (opacity) {
         if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
         if (this.someSelected) opacity = 1;
         this.dataWarningEl.style("opacity", opacity);
@@ -552,38 +649,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         var _this = this;
         this.someSelected = (this.model.entities.select.length > 0);
 
-        var listData = this.mountainPointers.concat(this.groupedPointers).concat(this.stackedPointers).filter(function (f) {
-                return _this.model.entities.isSelected(f);
-            })
-            .sort(function (a, b) {
-                if (b.yMax && a.yMax) return b.yMax - a.yMax;
-                return b.sortValue[0] - a.sortValue[0];
-            });
-
-        this.selectList = this.mountainLabelContainer.selectAll("g")
-            .data(utils.unique(listData, function (d) {
-                return d.KEY()
-            }));
-
-        this.selectList.exit().remove();
-        this.selectList.enter().append("g")
-            .attr("class", "vzb-mc-label")
-            .each(function (d, i) {
-                d3.select(this).append("circle");
-                d3.select(this).append("text").attr("class", "vzb-mc-label-shadow");
-                d3.select(this).append("text");
-            })
-            .on("mousemove", function (d, i) {
-                _this.model.entities.highlightEntity(d);
-            })
-            .on("mouseout", function (d, i) {
-                _this.model.entities.clearHighlighted();
-            })
-            .on("click", function (d, i) {
-                _this.model.entities.clearHighlighted();
-                _this.model.entities.selectEntity(d);
-            });
-
+        this._selectlist.rebuild();
     },
 
     _sumLeafPointersByMarker: function (branch, marker) {
@@ -592,47 +658,6 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         return d3.sum(branch.values.map(function (m) {
             return _this._sumLeafPointersByMarker(m, marker);
         }));
-    },
-
-    redrawSelectList: function () {
-        var _this = this;
-        if (!this.selectList || !this.someSelected) return;
-
-        var sample = this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-        var fontHeight = sample[0][0].getBBox().height;
-        d3.select(sample[0][0].parentNode).remove();
-        var formatter = _this.model.marker.axis_y.tickFormatter;
-
-        var titleHeight = this.yTitleEl.select("text").node().getBBox().height || 0;
-
-        var maxFontHeight = (this.height - titleHeight * 3) / (this.selectList.data().length + 2);
-        if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
-
-        this.selectList
-            .attr("transform", function (d, i) {
-                return "translate(0," + (fontHeight * i + titleHeight * 3) + ")";
-            })
-            .each(function (d, i) {
-
-                var view = d3.select(this);
-                var name = d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
-                var number = _this.values.axis_y[d.KEY()];
-
-                var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
-
-                view.select("circle")
-                    .attr("r", fontHeight / 3)
-                    .attr("cx", fontHeight * 0.4)
-                    .attr("cy", fontHeight / 1.5)
-                    .style("fill", _this.cScale(_this.values.color[d.KEY()]));
-
-
-                view.selectAll("text")
-                    .attr("x", fontHeight)
-                    .attr("y", fontHeight)
-                    .text(string)
-                    .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
-            });
     },
 
     updateOpacity: function () {
@@ -804,97 +829,6 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         });
     },
 
-    updateSize: function (meshLength) {
-
-        var margin;
-        var padding = 2;
-
-        switch (this.getLayoutProfile()) {
-            case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 25 };
-                break;
-            case "medium":
-                margin = { top: 20, right: 20, left: 20, bottom: 30 };
-                break;
-            case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 35 };
-                break;
-        }
-
-        //mesure width and height
-        this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
-        this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
-
-        //graph group is shifted according to margins (while svg element is at 100 by 100%)
-        this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        //year is centered and resized
-        this.yearEl
-            .attr("x", this.width / 2)
-            .attr("y", this.height / 3 * 1.5)
-            .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
-
-        //update scales to the new range
-        this.yScale.range([this.height, 0]);
-        this.xScale.range([0, this.width]);
-
-        //need to know scale type of X to move on
-        var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
-
-        //axis is updated
-        this.xAxis.scale(this.xScale)
-            .orient("bottom")
-            .tickSize(6, 0)
-            .tickSizeMinor(3, 0)
-            .labelerOptions({
-                scaleType: scaleType,
-                toolMargin: margin,
-                method: this.xAxis.METHOD_REPEATING,
-                stops: this._readyOnce ? this.model.time.xLogStops : [1]
-            });
-
-
-        this.xAxisEl
-            .attr("transform", "translate(0," + this.height + ")")
-            .call(this.xAxis);
-
-        this.xTitleEl.select("text")
-            .attr("transform", "translate(" + this.width + "," + this.height + ")")
-            .attr("dy", "-0.36em");
-
-        this.yTitleEl.select("text")
-            .attr("transform", "translate(0," + margin.top + ")")
-
-
-        var warnBB = this.dataWarningEl.select("text").node().getBBox();
-        this.dataWarningEl.select("svg")
-            .attr("width", warnBB.height)
-            .attr("height", warnBB.height)
-            .attr("x", warnBB.height * 0.1)
-            .attr("y", -warnBB.height * 1.0 + 1)
-
-        this.dataWarningEl
-            .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
-            .select("text")
-            .attr("dx", warnBB.height * 1.5);
-
-        if (this.infoEl.select("text").node()) {
-            var titleH = this.infoEl.select("text").node().getBBox().height || 0;
-            var titleW = this.yTitleEl.select("text").node().getBBox().width || 0;
-            this.infoEl.attr("transform", "translate(" + (titleW + titleH * 1.0) + "," + (margin.top - titleH * 0.3) + ")");
-            this.infoEl.select("text").attr("dy", "0.1em")
-            this.infoEl.select("circle").attr("r", titleH / 2);
-        }
-
-        this.eventAreaEl
-            .attr("y", this.height)
-            .attr("width", this.width)
-            .attr("height", margin.bottom);
-
-        if (!meshLength) meshLength = this.model.time.xPoints;
-        this.mesh = this._math.generateMesh(meshLength, scaleType, this.xScale.domain());
-    },
-
     _spawnMasks: function () {
         var _this = this;
 
@@ -959,90 +893,6 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         if (method === "latest") _this.updateTime();
     },
 
-    updateProbe: function (options) {
-        var _this = this;
-        if (!options) options = {};
-
-        if (!options.level) options.level = this.model.time.probeX;
-
-        this.probeEl.classed("vzb-hidden", !options.level);
-        if (!options.level) return;
-
-        this.xAxisEl.call(this.xAxis.highlightValue(options.full ? options.level : "none"));
-
-        var sumValue = 0;
-        var totalArea = 0;
-        var leftArea = 0;
-
-        var _computeAreas = function (d) {
-            sumValue += _this.values.axis_y[d.KEY()];
-            _this.cached[d.KEY()].forEach(function (d) {
-                totalArea += d.y;
-                if (_this._math.rescale(d.x) < options.level) leftArea += d.y;
-            })
-        };
-
-        if (this.model.marker.stack.which === "all") {
-            this.stackedPointers.forEach(_computeAreas);
-        } else if (this.model.marker.stack.which === "none") {
-            this.mountainPointers.forEach(_computeAreas);
-        } else {
-            this.groupedPointers.forEach(_computeAreas);
-        }
-
-        var formatter1 = d3.format(".3r");
-        var formatter2 = _this.model.marker.axis_y.tickFormatter;
-        this.heightOfLabels = this.heightOfLabels || (0.66 * this.height);
-
-        this.probeTextEl.each(function (d, i) {
-            if (i !== 8) return;
-            var view = d3.select(this);
-
-            if (!options.full && _this.model.time.probeX == _this.model.time.tailFatX) {
-                
-                view.text(_this.translator("mount/extremepoverty"))
-                    .classed("vzb-hidden", false)
-                    .attr("x", -_this.height)
-                    .attr("y", _this.xScale(options.level))
-                    .attr("dy", "-1em")
-                    .attr("dx", "0.5em")
-                    .attr("transform", "rotate(-90)");
-
-                _this.heightOfLabels = _this.height - view.node().getBBox().width - view.node().getBBox().height * 2;
-            }else{
-                view.classed("vzb-hidden", true);
-            }
-        });
-
-
-        this.probeTextEl.each(function (d, i) {
-            if (i === 8) return;
-            var view = d3.select(this);
-
-            var string;
-            if (i === 0 || i === 4) string = formatter1(leftArea / totalArea * 100) + "%";
-            if (i === 1 || i === 5) string = formatter1(100 - leftArea / totalArea * 100) + "%";
-            if (i === 2 || i === 6) string = formatter2(sumValue * leftArea / totalArea);
-            if (i === 3 || i === 7) string = formatter2(sumValue * (1 - leftArea / totalArea)) + " " + _this.translator("mount/people");
-
-            view.text(string)
-                .classed("vzb-hidden", !options.full && i !== 0 && i !== 4)
-                .attr("x", _this.xScale(options.level) + ([0, 4, 2, 6].indexOf(i) > -1 ? -5 : +5))
-                .attr("y", _this.heightOfLabels)
-                .attr("dy", [0, 1, 4, 5].indexOf(i) > -1 ? 0 : "1.5em");
-        });
-
-
-        this.probeLineEl
-            .attr("x1", this.xScale(options.level))
-            .attr("x2", this.xScale(options.level))
-            .attr("y1", this.height + 6)
-            .attr("y2", 0);
-
-        //if(this.model.time.record) console.log(this.model.time.value.getFullYear() + ", " + leftArea/totalArea*100);
-
-    },
-
     redrawDataPoints: function () {
         var _this = this;
         var mergeGrouped = _this.model.marker.group.merge;
@@ -1092,11 +942,12 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         }
 
 
-        //            if (!this.shapes) this.shapes = {}
-        //            this.shapes[this.model.time.value.getFullYear()] = {
-        //                yMax: d3.format(".2e")(_this.yMax),
-        //                shape: _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y);})
-        //            }
+        // exporting shapes for shape preloader. is needed once in a while
+        // if (!this.shapes) this.shapes = {}
+        // this.shapes[this.model.time.value.getFullYear()] = {
+        //     yMax: d3.format(".2e")(_this.yMax),
+        //     shape: _this.cached["all"].map(function (d) {return d3.format(".2e")(d.y);})
+        // }
 
     },
 
@@ -1117,12 +968,8 @@ Vizabi.Component.extend("gapminder-mountainchart", {
             return;
         }
 
-        if (this.model.entities.isSelected({
-                geo: key
-            })) {
-            view.attr("d", this.area(this.cached[key].filter(function (f) {
-                return f.y > 1000000
-            })));
+        if (this.model.entities.isSelected({geo: key})) {
+            view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > NEGLIGABLE_HEIGHT })));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
@@ -1143,14 +990,13 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         });
     },
 
-    _setTooltip: function (tooltipText, x, y) {
+    _setTooltip: function (tooltipText) {
         if (tooltipText) {
             var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
 
             //position tooltip
             this.tooltip.classed("vzb-hidden", false)
-                //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-                .attr("transform", "translate(" + (x ? x : mouse[0] - 15) + "," + (y ? y : mouse[1] - 15) + ")")
+                .attr("transform", "translate(" + (mouse[0] - 15) + "," + (mouse[1] - 15) + ")")
                 .selectAll("text")
                 .text(tooltipText);
 
