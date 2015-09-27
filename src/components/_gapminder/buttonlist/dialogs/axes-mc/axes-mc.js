@@ -28,7 +28,7 @@
             'change:state:time:yMaxMethod': function () {
                 _this.updateView();
             },
-            'change:state:time:povertyline': function () {
+            'change:state:time:probe': function () {
                 _this.updateView();
             }
         };
@@ -58,14 +58,14 @@
                 _this.setModel("xLogStops", d3.select(this).node().value);
             })
 
-        this.povertyLineFieldEl = this.element.select(".vzb-povertyline-field")
+        this.probeFieldEl = this.element.select(".vzb-probe-field")
             .on("change", function(){
                 var result = parseFloat(this.value.replace(",","."));
-                if(result <= _this.model.state.time.povertyCutoff) {
-                    this.value = _this.model.state.time.povertyline;
+                if(result <= _this.model.state.time.tailCutX) {
+                    this.value = _this.model.state.time.probeX;
                     return;
                 }
-                _this.setModel("povertyline", result);
+                _this.setModel("probeX", result);
             });
         
         this.updateView();
@@ -82,7 +82,7 @@
         this.xLogStops.property('checked', function(){
             return _this.model.state.time.xLogStops.indexOf(+d3.select(this).node().value) !== -1;
         })  
-        this.povertyLineFieldEl.property("value", this.model.state.time.povertyline);
+        this.probeFieldEl.property("value", this.model.state.time.probeX);
     },
 
     setModel: function(what, value) {
@@ -97,7 +97,7 @@
                 if(d3.select(this).property('checked')) result.push(+d3.select(this).node().value);
             })
         }
-        if(what == "povertyline"){
+        if(what == "probeX"){
             result = value;
         }
         

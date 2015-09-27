@@ -56,19 +56,19 @@ Vizabi.Component.extend('gapminder-mountainchart', {
                 _this.updateProbe();
                 _this._updateDoubtOpacity();
             },
-            'change:time:gdpFactor': function () {
+            'change:time:xScaleFactor': function () {
                 _this.ready();
             },
-            'change:time:gdpShift': function () {
+            'change:time:xScaleShift': function () {
                 _this.ready();
             },
-            'change:time:povertyCutoff': function () {
+            'change:time:tailCutX': function () {
                 _this.ready();
             },
-            'change:time:povertyFade': function () {
+            'change:time:tailFade': function () {
                 _this.ready();
             },
-            'change:time:povertyline': function () {
+            'change:time:probeX': function () {
                 _this.ready();
             },
             'change:time:xPoints': function () {
@@ -201,9 +201,9 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         this.mountainLabelContainer = this.graph.select('.vzb-mc-mountains-labels');
         this.tooltip = this.element.select('.vzb-mc-tooltip');
         this.eventAreaEl = this.element.select('.vzb-mc-eventarea');
-        this.povertylineEl = this.element.select('.vzb-mc-povertyline');
-        this.povertylineLineEl = this.povertylineEl.select('line');
-        this.povertylineTextEl = this.povertylineEl.selectAll('text');
+        this.probeEl = this.element.select('.vzb-mc-probe');
+        this.probeLineEl = this.probeEl.select('line');
+        this.probeTextEl = this.probeEl.selectAll('text');
 
         this.element
             .onTap(function (d, i) {
@@ -217,8 +217,8 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         var yearNow = _this.model.time.value.getFullYear();
         var yearEnd = _this.model.time.end.getFullYear();
         
-        this._math.gdpFactor = this.model.time.gdpFactor;
-        this._math.gdpShift = this.model.time.gdpShift;
+        this._math.xScaleFactor = this.model.time.xScaleFactor;
+        this._math.xScaleShift = this.model.time.xScaleShift;
 
         if (!this.precomputedShapes || !this.precomputedShapes[yearNow] || !this.precomputedShapes[yearEnd]) return;
 
@@ -283,8 +283,8 @@ Vizabi.Component.extend('gapminder-mountainchart', {
     ready: function () {
         //console.log("ready")
         
-        this._math.gdpFactor = this.model.time.gdpFactor;
-        this._math.gdpShift = this.model.time.gdpShift;
+        this._math.xScaleFactor = this.model.time.xScaleFactor;
+        this._math.xScaleShift = this.model.time.xScaleShift;
         
         this.updateUIStrings();
         this.updateIndicators();
@@ -898,11 +898,11 @@ Vizabi.Component.extend('gapminder-mountainchart', {
     _spawnMasks: function () {
         var _this = this;
 
-        var povertyline = this._math.unscale(this.model.time.povertyline);
-        var cutoff = this._math.unscale(this.model.time.povertyCutoff);
-        var fade = this.model.time.povertyFade;
-        var k = 2 * Math.PI / (Math.log(povertyline) - Math.log(cutoff));
-        var m = Math.PI - Math.log(povertyline) * k;
+        var tailFatX = this._math.unscale(this.model.time.tailFatX);
+        var tailCutX = this._math.unscale(this.model.time.tailCutX);
+        var tailFade = this.model.time.tailFade;
+        var k = 2 * Math.PI / (Math.log(tailFatX) - Math.log(tailCutX));
+        var m = Math.PI - Math.log(tailFatX) * k;
 
 
         this.spawnMask = [];
@@ -910,8 +910,8 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         this.cosineArea = 0;
 
         this.mesh.map(function (dX, i) {
-            _this.spawnMask[i] = dX < cutoff ? 1 : (dX > fade * 7 ? 0 : Math.exp((cutoff - dX) / fade))
-            _this.cosineShape[i] = (dX > cutoff && dX < povertyline ? (1 + Math.cos(Math.log(dX) * k + m)) : 0);
+            _this.spawnMask[i] = dX < tailCutX ? 1 : (dX > tailFade * 7 ? 0 : Math.exp((tailCutX - dX) / tailFade))
+            _this.cosineShape[i] = (dX > tailCutX && dX < tailFatX ? (1 + Math.cos(Math.log(dX) * k + m)) : 0);
             _this.cosineArea += _this.cosineShape[i];
         });
     },
@@ -963,9 +963,9 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         var _this = this;
         if (!options) options = {};
 
-        if (!options.level) options.level = this.model.time.povertyline;
+        if (!options.level) options.level = this.model.time.probeX;
 
-        this.povertylineEl.classed('vzb-hidden', !options.level);
+        this.probeEl.classed('vzb-hidden', !options.level);
         if (!options.level) return;
 
         this.xAxisEl.call(this.xAxis.highlightValue(options.full ? options.level : 'none'));
@@ -994,25 +994,28 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         var formatter2 = _this.model.marker.axis_y.tickFormatter;
         this.heightOfLabels = this.heightOfLabels || (0.66 * this.height);
 
-        this.povertylineTextEl.each(function (d, i) {
+        this.probeTextEl.each(function (d, i) {
             if (i !== 8) return;
             var view = d3.select(this);
 
-            view.text(_this.translator('mount/extremepoverty'))
-                .classed('vzb-hidden', options.full)
-                .attr('x', -_this.height)
-                .attr('y', _this.xScale(options.level))
-                .attr('dy', "-1em")
-                .attr('dx', "0.5em")
-                .attr("transform", "rotate(-90)");
+            if (!options.full && _this.model.time.probeX == _this.model.time.tailFatX) {
+                
+                view.text(_this.translator('mount/extremepoverty'))
+                    .classed('vzb-hidden', false)
+                    .attr('x', -_this.height)
+                    .attr('y', _this.xScale(options.level))
+                    .attr('dy', "-1em")
+                    .attr('dx', "0.5em")
+                    .attr("transform", "rotate(-90)");
 
-            if (!options.full) {
                 _this.heightOfLabels = _this.height - view.node().getBBox().width - view.node().getBBox().height * 2;
+            }else{
+                view.classed('vzb-hidden', true);
             }
         });
 
 
-        this.povertylineTextEl.each(function (d, i) {
+        this.probeTextEl.each(function (d, i) {
             if (i === 8) return;
             var view = d3.select(this);
 
@@ -1030,7 +1033,7 @@ Vizabi.Component.extend('gapminder-mountainchart', {
         });
 
 
-        this.povertylineLineEl
+        this.probeLineEl
             .attr('x1', this.xScale(options.level))
             .attr('x2', this.xScale(options.level))
             .attr('y1', this.height + 6)

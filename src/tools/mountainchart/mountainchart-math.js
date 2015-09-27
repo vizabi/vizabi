@@ -8,15 +8,15 @@
         init: function (context) {
             this.context = context;
             
-            this.gdpFactor = 1;
-            this.gdpShift = 0;
+            this.xScaleFactor = 1;
+            this.xScaleShift = 0;
         },
                 
         rescale: function (x) {
-            return Math.exp(this.gdpFactor * Math.log(x) + this.gdpShift);
+            return Math.exp(this.xScaleFactor * Math.log(x) + this.xScaleShift);
         },
         unscale: function (x) {
-            return Math.exp((Math.log(x) - this.gdpShift) / this.gdpFactor);
+            return Math.exp((Math.log(x) - this.xScaleShift) / this.xScaleFactor);
         },
 
         generateMesh: function (length, scaleType, domain) {
@@ -42,7 +42,7 @@
             return mesh;
         },
         
-        gdpToMu: function(gdp, sigma, gdpFactor, gdpShift){
+        gdpToMu: function(gdp, sigma, xScaleFactor, xScaleShift){
             // converting gdp per capita per day into MU for lognormal distribution
             // see https://en.wikipedia.org/wiki/Log-normal_distribution
             return Math.log(gdp/365) - sigma*sigma/2;
