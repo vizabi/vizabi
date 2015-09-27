@@ -23,17 +23,17 @@
             // span a uniform mesh across the entire X scale
             // if the scale is log, the mesh would be exponentially distorted to look uniform
             
-            var rangeFrom = scaleType === 'linear' ? domain[0] 
+            var rangeFrom = scaleType === "linear" ? domain[0] 
                 : Math.log(this.unscale(domain[0]));
             
-            var rangeTo = scaleType === 'linear' ? domain[1] 
+            var rangeTo = scaleType === "linear" ? domain[1] 
                 : Math.log(this.unscale(domain[1]));
             
             var rangeStep = (rangeTo - rangeFrom) / length;
             
             var mesh = d3.range(rangeFrom, rangeTo, rangeStep).concat(rangeTo);
 
-            if (scaleType !== 'linear') {
+            if (scaleType !== "linear") {
                 mesh = mesh.map(function (dX) { return Math.exp(dX); });
             } else {
                 mesh = mesh.filter(function (dX) { return dX > 0; });
