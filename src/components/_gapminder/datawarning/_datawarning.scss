@@ -95,7 +95,7 @@
 
 &.vzb-small.vzb-portrait{
     .vzb-data-warning-box{
-        bottom: $sizeButtonList;
+        bottom: $size-button-list;
         width: 90%;
         height: 80%;
         @include position(absolute, 10% null null 5%);
@@ -106,10 +106,10 @@
 }
 &.vzb-small.vzb-landscape{
     .vzb-data-warning-box{ 
-        right: $sizeButtonList;
-        margin-right: 10px;
-        width: 80%;
         height: 80%;
+        margin-right: 10px;
+        right: $size-button-list;
+        width: 80%;
         @include position(absolute, 10% null null 10%);
         .vzb-data-warning-link{font-size: $vzb-font-size-regular;}
         .vzb-data-warning-title{font-size: $vzb-font-size-regular;}

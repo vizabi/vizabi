@@ -57,7 +57,7 @@
     data: {
       //reader: "waffle-server",
       reader: "csv-file",
-      path: "local_data/waffles/basic-indicators.csv"
+      path: "data/waffles/basic-indicators.csv"
     },
 
     ui: {

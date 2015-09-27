@@ -100,6 +100,10 @@ gulp.task('clean:preview:vendor', function() {
   return clean_src([path.join(config.destPreview, 'assets/vendor/**/*'), ]);
 });
 
+gulp.task('clean:preview:data', function() {
+  return clean_src([path.join(config.destPreview, 'data'), ]);
+});
+
 
 // ----------------------------------------------------------------------------
 //   Styles
@@ -274,9 +278,21 @@ gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
   gulp.src(path.join(config.bower, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
+
+
 });
 
-gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'], function(cb) {
+gulp.task('preview:data', ['clean:preview:data'], function() {
+  gutil.log(chalk.yellow("Copying preview data..."));
+  return gulp.src('./.data/**/*')
+    .pipe(gulp.dest(path.join(config.destPreview, 'data')))
+    .on('end', function() {
+      gutil.log(chalk.green("Copying preview data... DONE!"))
+    });
+});
+
+
+gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(cb) {
   return cb();
 });
 
