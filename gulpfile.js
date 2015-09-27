@@ -10,6 +10,7 @@ var sass = require('gulp-ruby-sass');
 var minifycss = require('gulp-minify-css');
 var scsslint = require('gulp-scss-lint');
 var cache = require('gulp-cached');
+var mem_cache = require('gulp-memory-cache');
 var prefix = require('gulp-autoprefixer')
 
 //useful for ES5 build
@@ -169,7 +170,7 @@ function getConcatFiles() {
     BUILD_FILES = BUILD_FILES.concat(FILES.custom);
   }
 
-  return gulp.src(BUILD_FILES);
+  return gulp.src(BUILD_FILES).pipe(mem_cache('jsfiles'));
 }
 
 function formatTemplateFile(str, filepath) {
@@ -198,13 +199,12 @@ function getTemplates() {
   return gulp.src('./src/**/*.html')
     .pipe(foreach(function(stream, file) {
       return formatTemplateFile(file.contents.toString('utf8'), path.relative('.', file.path)).pipe(uglify());
-    }))
+    })).pipe(mem_cache('templateFiles'));
 }
 
 gulp.task('javascript', ['clean:js'], function() {
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
-    .pipe(cache('jsfiles'))
     .pipe(sourcemaps.init())
       .pipe(concat('vizabi.js'))
       .pipe(gulp.dest(config.destLib))
@@ -220,7 +220,6 @@ gulp.task('javascript', ['clean:js'], function() {
 gulp.task('javascript:build', ['clean:js'], function() {
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
-    .pipe(cache('jsfiles'))
     .pipe(concat('vizabi.js'))
     .pipe(gulp.dest(config.destLib))
     .pipe(rename('vizabi.min.js'))
@@ -284,6 +283,13 @@ gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'prev
 // ----------------------------------------------------------------------------
 //   Watch for changes
 // ----------------------------------------------------------------------------
+
+function reloadOnChange(files) {
+  watch(files)
+    .pipe(wait(800))
+    .pipe(connect.reload());
+}
+
 gulp.task('watch', function() {
   gulp.watch(path.join(config.srcPreview, '**/*.jade'), ['preview:templates']);
   gulp.watch(path.join(config.srcPreview, '**/*.scss'), ['preview:styles']);
@@ -292,9 +298,9 @@ gulp.task('watch', function() {
   gulp.watch(path.join(config.src, '**/*.js'), ['javascript']);
   gulp.watch(path.join(config.src, '**/*.html'), ['javascript']);
 
-  watch(path.join(config.dest, '**/*'))
-    .pipe(wait(800))
-    .pipe(connect.reload());
+  reloadOnChange(path.join(config.destPreview, '**/*'));
+  reloadOnChange(path.join(config.destLib, 'vizabi.css'));
+  reloadOnChange(path.join(config.destLib, 'vizabi.min.js'));
 });
 
 gulp.task('watch-lint', function() {
