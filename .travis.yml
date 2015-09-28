@@ -1,10 +1,7 @@
 language: node_js
 sudo: false
 node_js:
-  - '0.10'
-  - '0.12'
   - '4.1'
-  - 'iojs'
 addons:
   apt:
     sources:
@@ -12,6 +9,7 @@ addons:
     - s3cmd
 before_script:
   - gem install sass
+  - npm install -g bower
   - bower install
 script:
   - gulp build
