@@ -4,7 +4,7 @@
 
 # Parameters
 
-BRANCH_NAME=$(git symbolic-ref --short -q HEAD)
+BRANCH_NAME=$TRAVIS_BRANCH
 DEST_DIR="s3://$AWS_BUCKET/$AWS_SUBFOLDER/$BRANCH_NAME"
 ASSET_URL="http://static.gapminderdev.org/vizabi/master/"
 BUILD_CMD="gulp build"
