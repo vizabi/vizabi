@@ -4,9 +4,9 @@ node_js:
   - '4.1'
 addons:
   apt:
-    sources:
-    - ruby
+    packages:
     - s3cmd
+    - ruby
 before_script:
   - gem install sass
   - npm install -g bower

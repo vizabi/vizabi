@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 #set -x
-# Local configuration
-source .env
 
 # Parameters
 
