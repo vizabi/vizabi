@@ -1269,9 +1269,9 @@
                 .attr("r", contentBBox.height * 0.5);
 
               rect.attr("width", contentBBox.width + 8)
-                .attr("height", contentBBox.height + 8)
+                .attr("height", contentBBox.height * 1.2)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height +3)
+                .attr("y", -contentBBox.height*0.85)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
@@ -1484,9 +1484,9 @@
         this.tooltip.attr("transform", "translate(" + (xPos?xPos:mouse[0]) + "," + (yPos?yPos:mouse[1]) + ")")
 
         this.tooltip.select('rect').attr("width", contentBBox.width + 8)
-                .attr("height", contentBBox.height + 8)
+                .attr("height", contentBBox.height * 1.2)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height + 3)
+                .attr("y", -contentBBox.height * 0.85)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
 
