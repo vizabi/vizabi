@@ -210,11 +210,30 @@
           var cache = _this.cached[d[KEY]];
           cache.labelFixed = true;
 
+          var labelGroup = d3.select(this);
+          // we need block own size for calculating min left top position
+          var width = parseInt(labelGroup.select("rect").attr("width"));
+          var height = parseInt(labelGroup.select("rect").attr("height"));
+
           cache.labelX_ += d3.event.dx / _this.width;
           cache.labelY_ += d3.event.dy / _this.height;
-
           var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+          if (resolvedX - width <= 0) { //check left
+            cache.labelX_ = (width - _this.xScale(cache.labelX0))/_this.width;
+            resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+          } else if (resolvedX + 15 > _this.width) {//check right
+            cache.labelX_ = (_this.width - 15 - _this.xScale(cache.labelX0))/_this.width;
+            resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+          }
           var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+          if (resolvedY - height <= 0 ) { // check top
+            cache.labelY_ = (height - _this.yScale(cache.labelY0))/_this.height;
+            resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+          } else if (resolvedY + 13 > _this.height) { //check bottom
+            cache.labelY_ = (_this.height - 13 - _this.yScale(cache.labelY0))/_this.height;
+            resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+          }
+
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
 
@@ -228,8 +247,8 @@
         	var KEY = _this.KEY;
         _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
-            Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
-            Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
+            _this.cached[d[KEY]].labelX_,
+            _this.cached[d[KEY]].labelY_
           ]);
         });
 
@@ -1252,19 +1271,35 @@
               rect.attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height -1)
+                .attr("y", -contentBBox.height +3)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
             }
 
-            cached.labelX_ = select.labelOffset[0] || -cached.scaledS0 / 2 / _this.width;
-            cached.labelY_ = select.labelOffset[1] || -cached.scaledS0 / 2 / _this.width;
+            cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0*0.75 - 5) / _this.width;
+            cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0*0.75 - 11) / _this.height;
 
-            var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-            var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+            var limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+            if (limitedX - cached.contentBBox.width <= 0) { //check left
+              cached.labelX_ = select.labelOffset[0] || (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
+              limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+            } else if (limitedX + 15 > _this.width) {//check right
+              cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0))/_this.width;
+              limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+            }
+            var limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+            if (limitedY - cached.contentBBox.height <= 0 ) { // check top
+              cached.labelY_ = select.labelOffset[1] || (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
+              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+            } else if (limitedY + 10 > _this.height) { //check bottom
+              cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
+              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+            }
 
+/*
             var limitedX = resolvedX - cached.contentBBox.width > 0 ? (resolvedX < _this.width ? resolvedX : _this.width) : cached.contentBBox.width;
             var limitedY = resolvedY - cached.contentBBox.height > 0 ? (resolvedY < _this.height ? resolvedY : _this.height) : cached.contentBBox.height;
+*/
 
             var limitedX0 = _this.xScale(cached.labelX0);
             var limitedY0 = _this.yScale(cached.labelY0);
@@ -1287,8 +1322,6 @@
 
       var width = parseInt(labelGroup.select("rect").attr("width"));
       var height = parseInt(labelGroup.select("rect").attr("height"));
-      resolvedX = Math.max(width, resolvedX);
-      resolvedY = Math.max(height, resolvedY);
       if(duration) {
         labelGroup
         .transition().duration(duration).ease("linear")
@@ -1308,13 +1341,13 @@
 
       var angle = Math.atan2(diffX1 + width/2, diffY1 + height/2) * 180 / Math.PI;
       // middle bottom
-      if(Math.abs(angle)<=45){ diffX2 = width / 2; diffY2 = 0}
+      if(Math.abs(angle) <= 45){ diffX2 = width / 2; diffY2 = 0}
       // right middle
       if(angle>45 && angle<135){ diffX2 = 0; diffY2 = height/4; }
       // middle top
-      if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
+      if(angle < -45 && angle > -135){ diffX2 = width - 4; diffY2 = height/4;  }
       // left middle
-      if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
+      if(Math.abs(angle) >= 135){diffX2 = width / 2; diffY2 = height/2  }
 
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
@@ -1453,7 +1486,7 @@
         this.tooltip.select('rect').attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height + 1)
+                .attr("y", -contentBBox.height + 3)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
 
