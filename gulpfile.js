@@ -2,7 +2,7 @@
 
 var path = require('path');
 var gulp = require('gulp');
-var clean = require('gulp-clean');
+var del = require('del')
 var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
@@ -52,50 +52,43 @@ var config = {
 //   Clean build folder
 // ----------------------------------------------------------------------------
 
-function clean_src(arr) {
-  return gulp.src(arr, {
-      read: false
-    })
-    .pipe(clean());
-}
-
 gulp.task('clean', function() {
-  return clean_src([config.dest]);
+  return del([config.dest]);
 });
 
 gulp.task('clean:css', function() {
-  return clean_src([path.join(config.destLib, '**/*.css')]);
+  return del([path.join(config.destLib, '**/*.css')]);
 });
 
 gulp.task('clean:js', function() {
-  return clean_src([
+  return del([
     path.join(config.destLib, '**/*.js'),
     path.join(config.destLib, '**/*.js.map')
   ]);
 });
 
 gulp.task('clean:preview', function() {
-  return clean_src([config.destPreview]);
+  return del([config.destPreview]);
 });
 
 gulp.task('clean:preview:html', function() {
-  return clean_src([path.join(config.destPreview, '**/*.html'), ]);
+  return del([path.join(config.destPreview, '**/*.html')]);
 });
 
 gulp.task('clean:preview:styles', function() {
-  return clean_src([path.join(config.destPreview, 'assets/css/main.css'), ]);
+  return del([path.join(config.destPreview, 'assets/css/main.css')]);
 });
 
 gulp.task('clean:preview:js', function() {
-  return clean_src([path.join(config.destPreview, 'assets/js/*.js'), ]);
+  return del([path.join(config.destPreview, 'assets/js/*.js')]);
 });
 
 gulp.task('clean:preview:vendor', function() {
-  return clean_src([path.join(config.destPreview, 'assets/vendor/**/*'), ]);
+  return del([path.join(config.destPreview, 'assets/vendor/**/*')]);
 });
 
 gulp.task('clean:preview:data', function() {
-  return clean_src([path.join(config.destPreview, 'data'), ]);
+  return del([path.join(config.destPreview, 'data')]);
 });
 
 
