@@ -181,7 +181,7 @@
 
 &.vzb-small.vzb-portrait{
     .vzb-tool-treemenu{
-        bottom: $sizeButtonList;
+        bottom: $size-button-list;
         width: 80%;
         height: 60%;
         @include position(absolute, 10% null null 10%);
@@ -189,7 +189,7 @@
 }
 &.vzb-small.vzb-landscape{
     .vzb-tool-treemenu{
-        right: $sizeButtonList;
+        right: $size-button-list;
         margin-right: 10px;
         width: 80%;
         height: 60%;

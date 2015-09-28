@@ -1,0 +1,88 @@
+script.
+  var TITLE = "#{title}";
+  var TOOL = "#{tool}";
+  var DESCRIPTION = "#{description}";
+
+  VIZABI_OPTIONS = {
+    state: {},
+    bind: {
+      "ready": function(evt, vals) {
+        updateURL();
+        updateStateEditor(VIZ.getOptions().state);
+      }
+    },
+    ui: {
+      buttons: #{chart_buttons}
+    }
+  };
+
+  (function() {
+    VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
+      //TODO: improve when to update
+      //only update in these cases
+      if(evt === "change:state:entities:select"
+      || evt === "change:state:time:playing"
+      || (evt === "change:state:time:value" && !vals.state.time.playing)
+      || evt.indexOf("change:state:marker") !== -1) {
+      updateURL();
+      }
+
+      updateStateEditor(VIZ.getOptions().state);
+    };
+
+    var playButton = document.getElementById("vzbp-btn-play");
+    var playButtonIcon = playButton.querySelectorAll("i")[0];
+
+    VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
+      if (vals.state.time.playing) {
+        playButton.onclick = pause;
+        playButton.setAttribute("data-tooltip", "Pause");
+        removeClass(playButtonIcon, 'fa-play');
+        addClass(playButtonIcon, 'fa-pause');
+      } else {
+        playButton.onclick = play;
+        playButton.setAttribute("data-tooltip", "Play");
+        removeClass(playButtonIcon, 'fa-pause');
+        addClass(playButtonIcon, 'fa-play');
+      }
+
+      var recButton = document.getElementById("vzbp-btn-record");
+      var recButtonIcon = recButton.querySelectorAll("i")[0];
+      if (vals.state.time.record) {
+        recButton.onclick = recstop;
+        recButton.setAttribute("data-tooltip", "Stop");
+        removeClass(recButtonIcon, 'fa-bullseye');
+        addClass(recButtonIcon, 'fa-circle');
+      } else {
+        recButton.onclick = recstart;
+        recButton.setAttribute("data-tooltip", "Record");
+        removeClass(recButtonIcon, 'fa-circle');
+        addClass(recButtonIcon, 'fa-bullseye');
+      }
+    };
+  
+    var langButton = document.getElementById("vzbp-btn-lang");
+
+    VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
+      if (vals.language.id === "en") {
+        langButton.onclick = function() { language('se'); };
+        langButton.setAttribute("data-tooltip", "Set Lang: SE");
+        langButton.setAttribute("data-next_lang", 'se');
+      } else {
+        langButton.onclick = function() { language('en'); };
+        langButton.setAttribute("data-tooltip", "Set Lang: EN");
+        langButton.setAttribute("data-next_lang", 'en');
+      }
+    };
+  })();
+
+  parseURL();
+
+  if(!VIZABI_OPTIONS) {
+    VIZABI_OPTIONS = { state: {}}; //fallback
+  }
+  VIZABI_OPTIONS.language = {};
+  if(URL.state) VIZABI_OPTIONS.state = URL.state;
+  if(URL.lang) VIZABI_OPTIONS.language.id = URL.lang;
+
+  VIZ = Vizabi("#{tool}", placeholder, VIZABI_OPTIONS);
