@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var clean = require('gulp-clean');
 var gutil = require('gulp-util');
 var chalk = require('chalk')
+var gulpif = require('gulp-if');
 
 var sass = require('gulp-ruby-sass');
 var minifycss = require('gulp-minify-css');
@@ -304,10 +305,20 @@ gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'prev
 //   Watch for changes
 // ----------------------------------------------------------------------------
 
+//reload only once every 3000ms
+var reloadLock = false;
+function notLocked() {
+  if(!reloadLock) {
+    setTimeout(function() { reloadLock = false; }, 3000);
+    reloadLock = true;
+  }
+  return reloadLock;
+}
+
 function reloadOnChange(files) {
   watch(files)
     .pipe(wait(800))
-    .pipe(connect.reload());
+    .pipe(gulpif(notLocked, connect.reload()));
 }
 
 gulp.task('watch', function() {
@@ -317,8 +328,10 @@ gulp.task('watch', function() {
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
   gulp.watch(path.join(config.src, '**/*.js'), ['javascript']);
   gulp.watch(path.join(config.src, '**/*.html'), ['javascript']);
-
-  reloadOnChange(path.join(config.destPreview, '**/*'));
+  //reloading the browser
+  reloadOnChange(path.join(config.destPreview, '**/*.js'));
+  reloadOnChange(path.join(config.destPreview, '**/*.html'));
+  reloadOnChange(path.join(config.destPreview, '**/*.css'));
   reloadOnChange(path.join(config.destLib, 'vizabi.css'));
   reloadOnChange(path.join(config.destLib, 'vizabi.min.js'));
 });
