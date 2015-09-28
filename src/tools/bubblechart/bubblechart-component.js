@@ -1285,6 +1285,10 @@
 
       var labelGroup = d3.select(context);
 
+      var width = parseInt(labelGroup.select("rect").attr("width"));
+      var height = parseInt(labelGroup.select("rect").attr("height"));
+      resolvedX = Math.max(width, resolvedX);
+      resolvedY = Math.max(height, resolvedY);
       if(duration) {
         labelGroup
         .transition().duration(duration).ease("linear")
@@ -1297,8 +1301,6 @@
         lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
       }
 
-      var width = parseInt(labelGroup.select("rect").attr("width"));
-      var height = parseInt(labelGroup.select("rect").attr("height"));
       var diffX1 = resolvedX0 - resolvedX;
       var diffY1 = resolvedY0 - resolvedY;
       var diffX2 = 0;
@@ -1451,7 +1453,7 @@
         this.tooltip.select('rect').attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height + 3)
+                .attr("y", -contentBBox.height + 1)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
 
