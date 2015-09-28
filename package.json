@@ -45,6 +45,7 @@
     "gulp-util": "^3.0.6",
     "gulp-wait": "0.0.2",
     "gulp-watch": "^4.3.5",
+    "gulp-zip": "^3.0.2",
     "opn": "^3.0.2",
     "utils-merge": "^1.0.0",
     "vinyl-buffer": "^1.0.0",

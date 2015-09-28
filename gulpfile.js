@@ -41,6 +41,8 @@ var wait = require('gulp-wait');
 
 var jade = require('gulp-jade');
 
+var zip = require('gulp-zip');
+
 // ----------------------------------------------------------------------------
 //   Config
 // ----------------------------------------------------------------------------
@@ -51,6 +53,7 @@ var config = {
   dest: './dist',
   destLib: './dist/lib',
   destPreview: './dist/preview',
+  destDownload: './dist/download',
   bower: './lib'
 };
 
@@ -343,6 +346,16 @@ gulp.task('connect', ['preview'], function() {
 });
 
 // ----------------------------------------------------------------------------
+//   Compressed file (for download)
+// ----------------------------------------------------------------------------
+
+gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
+    return gulp.src('dist/lib/**/*')
+        .pipe(zip('vizabi.zip'))
+        .pipe(gulp.dest(config.destDownload));
+});
+
+// ----------------------------------------------------------------------------
 //   Command-line tasks
 // ----------------------------------------------------------------------------
 
@@ -357,7 +370,7 @@ gulp.task('connect', ['preview'], function() {
 // gulp.task('dev:nolint', ['styles', 'watchify', 'watch', 'connect']);
 
 //Build Vizabi
-gulp.task('build', ['styles', 'javascript:build', 'preview']);
+gulp.task('build', ['compress']);
 
 //Developer task without linting
 gulp.task('dev', ['styles', 'javascript', 'watch', 'connect']);
