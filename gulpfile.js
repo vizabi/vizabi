@@ -43,6 +43,8 @@ var jade = require('gulp-jade');
 
 var zip = require('gulp-zip');
 
+// var jsdoc = require("gulp-jsdoc");
+
 // ----------------------------------------------------------------------------
 //   Config
 // ----------------------------------------------------------------------------
@@ -50,15 +52,16 @@ var zip = require('gulp-zip');
 var config = {
   src: './src',
   srcPreview: './preview',
-  dest: './dist',
-  destLib: './dist/lib',
-  destPreview: './dist/preview',
-  destDownload: './dist/download',
+  dest: './build',
+  destLib: './build/lib',
+  destPreview: './build/preview',
+  destDownload: './build/download',
+  destDocs: './build/docs',
   bower: './lib'
 };
 
 // ----------------------------------------------------------------------------
-//   Clean dist folder
+//   Clean build folder
 // ----------------------------------------------------------------------------
 
 function clean_src(arr) {
@@ -350,10 +353,19 @@ gulp.task('connect', ['preview'], function() {
 // ----------------------------------------------------------------------------
 
 gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
-    return gulp.src('dist/lib/**/*')
+    return gulp.src(path.join(config.destLib, '**/*'))
         .pipe(zip('vizabi.zip'))
         .pipe(gulp.dest(config.destDownload));
 });
+
+// ----------------------------------------------------------------------------
+//   Documentation
+// ----------------------------------------------------------------------------
+
+// gulp.task('docs', function () {
+//     return gulp.src(path.join(config.src, '**/*.js'))
+//         .pipe(jsdoc(config.destDocs));
+// });
 
 // ----------------------------------------------------------------------------
 //   Command-line tasks

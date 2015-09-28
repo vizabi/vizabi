@@ -9,9 +9,10 @@ addons:
   apt:
     sources:
     - ruby
+    - s3cmd
 before_script:
   - gem install sass
   - bower install
 script:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && grunt build-deploy --custom=gapminder || grunt --custom=gapminder'
-  - grunt test
+  - gulp build
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh'
