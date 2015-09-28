@@ -18,22 +18,12 @@ var prefix = require('gulp-autoprefixer')
 var concat = require('gulp-concat');
 var insert = require('gulp-insert');
 var foreach = require('gulp-foreach');
-
-//useful for ES6 build
-var browserify = require('browserify');
-var watchify = require('watchify');
-var babelify = require('babelify');
-
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var merge = require('utils-merge');
 var es = require('event-stream');
 
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 
-var eslint = require('gulp-eslint');
 var connect = require('gulp-connect');
 var opn = require('opn');
 var os = require('os');
@@ -41,10 +31,7 @@ var watch = require('gulp-watch');
 var wait = require('gulp-wait');
 
 var jade = require('gulp-jade');
-
 var zip = require('gulp-zip');
-
-// var jsdoc = require("gulp-jsdoc");
 
 // ----------------------------------------------------------------------------
 //   Config
@@ -54,7 +41,7 @@ var config = {
   src: './src',
   srcPreview: './preview',
   dest: './build',
-  destLib: './build/lib',
+  destLib: './build/dist',
   destPreview: './build/preview',
   destDownload: './build/download',
   destDocs: './build/docs',
@@ -372,27 +359,8 @@ gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
 });
 
 // ----------------------------------------------------------------------------
-//   Documentation
-// ----------------------------------------------------------------------------
-
-// gulp.task('docs', function () {
-//     return gulp.src(path.join(config.src, '**/*.js'))
-//         .pipe(jsdoc(config.destDocs));
-// });
-
-// ----------------------------------------------------------------------------
 //   Command-line tasks
 // ----------------------------------------------------------------------------
-
-/* TODO: Bring back ES6 builds*/
-// //Build Vizabi
-// gulp.task('build', ['styles', 'browserify-production', 'preview']);
-
-// //Developer task
-// gulp.task('dev', ['styles', 'eslint', 'watch-lint', 'watchify', 'watch', 'connect']);
-
-// //Developer task without linting
-// gulp.task('dev:nolint', ['styles', 'watchify', 'watch', 'connect']);
 
 //Build Vizabi
 gulp.task('build', ['compress']);
@@ -405,87 +373,3 @@ gulp.task('serve', ['build', 'connect']);
 
 //Default = dev task
 gulp.task('default', ['dev']);
-
-/*******
-TODO: Bring the following tasks back for ES6 and remove concat
-
-// nicer browserify errors
-function nice_error(err) {
-  if(err.fileName) {
-    // regular error
-    gutil.log(chalk.red(err.name) + ': ' + chalk.yellow(err.fileName.replace(__dirname + '/src/js/', '')) + ': ' +
-      'Line ' + chalk.magenta(err.lineNumber) + ' & ' + 'Column ' + chalk.magenta(err.columnNumber || err.column) +
-      ': ' + chalk.blue(err.description));
-  } else {
-    // browserify error..
-    gutil.log(chalk.red(err.name) + ': ' + chalk.yellow(err.message));
-  }
-}
-
-// reusable bundler
-function bundle_js(bundler) {
-  gutil.log(chalk.yellow("Compiling JS..."));
-  return bundler.bundle()
-    .on('error', nice_error)
-    .pipe(source('vizabi.js'))
-    .pipe(buffer())
-    .pipe(gulp.dest(config.destLib))
-    .pipe(rename('vizabi.min.js'))
-    .pipe(sourcemaps.init({
-      loadMaps: true
-    }))
-    // capture sourcemaps from transforms
-    .pipe(uglify())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(config.destLib))
-    .on('end', function() {
-      gutil.log(chalk.green("Compiling JS... DONE!"))
-    });
-}
-
-gulp.task('watchify', ['clean:js'], function() {
-  var args = merge(watchify.args, {
-    debug: true
-  })
-  var bundler = watchify(browserify(path.join(config.src, 'vizabi.js'), args)).transform(babelify, {});
-  bundle_js(bundler);
-  bundler.on('update', function() {
-    bundle_js(bundler);
-  })
-});
-
-// With source maps
-gulp.task('browserify', ['clean:js'], function() {
-  var bundler = browserify(path.join(config.src, 'vizabi.js'), {
-    debug: true
-  }).transform(babelify, {})
-  return bundle_js(bundler);
-});
-
-// Without sourcemaps
-gulp.task('browserify-production', ['clean:js'], function() {
-  gutil.log(chalk.yellow("Compiling JS..."));
-  var bundler = browserify(path.join(config.src, 'vizabi.js')).transform(babelify, {});
-  return bundler.bundle()
-    .on('error', nice_error)
-    .pipe(source('vizabi.js'))
-    .pipe(buffer())
-    .pipe(gulp.dest(config.destLib))
-    .pipe(rename('vizabi.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(config.destLib))
-    .on('end', function() {
-      gutil.log(chalk.green("Compiling JS... DONE!"))
-    });
-});
-
-*/
-
-//gulp.task('eslint', function() {
-//  return gulp.src([path.join(config.src, '**/*.js')])
-//    .pipe(eslint())
-//    .pipe(eslint.format())
-//    .pipe(eslint.failAfterError());
-//});
-
-/* END OF ES6 Tasks */
