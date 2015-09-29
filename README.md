@@ -1,7 +1,7 @@
 # Gapminder Tools page
 > This is the gapminder tools page
 
-Demo: [http://178.62.135.203/](http://178.62.135.203/)
+Code for page: [http://gapminder.org/tools](http://gapminder.org/tools)
 
 ## Requirements
 
