@@ -166,7 +166,17 @@ module.exports = function (app) {
 
   // indicators data source
   router.get('/indicators/stub', compression(), cache.route({expire: 300}), function (req, res, next) {
-    return Indicators.find().sort({time: 1}).lean().exec(function (err, indicatorValues) {
+    var query = {};
+    if (req.query.time) {
+      var time = parseInt(req.query.time, 10);
+      if (time) {
+        query.time = time;
+      } else {
+        time =  JSON.parse(req.query.time);
+        query.time = {$gte: time.from, $lte: time.to};
+      }
+    }
+    return Indicators.find(query).sort({time: 1}).lean().exec(function (err, indicatorValues) {
       if (err) {
         return res.send(err);
         // return next(err);

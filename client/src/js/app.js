@@ -67,11 +67,29 @@ function forceResizeEvt() {
       var _this = this;
       var p = new Promise();
       var path = this._basepath;
+      //format time query if existing
+      if (query.where.time) {
+        var time = query.where.time[0];
+        console.log(time, typeof time.join, time.length)
+        //[['1990', '2012']] -> '1990-2012'
+        var t = typeof time.join !== 'undefined' && time.length === 2 ?
+          JSON.stringify({from: getYear(time[0]), to: getYear(time[1])}) :
+          getYear(time[0]);
+        console.log(t);
+        path += '?time=' + t;
+      }
+
+      function getYear(time) {
+        if (typeof time === 'string') {
+          return time;
+        }
+
+        return time.getFullYear();
+      }
 
       _this._data = [];
 
       (function (query, p) {
-        console.log(query.select);
         //if cached, retrieve and parse
         if (FILE_CACHED.hasOwnProperty(path)) {
           parse(FILE_CACHED[path]);

@@ -9,7 +9,7 @@ mongoose.model('Indicators', {
   // geo.region
   "region": String,
   // time
-  "time": Number,
+  "time": {type: Number, index: true},
   "pop": Number,
   "gdp_per_cap": Number,
   "gini": Number,
