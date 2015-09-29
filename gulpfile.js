@@ -6,6 +6,7 @@ var del = require('del')
 var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
+var pkg = require('./package');
 
 var sass = require('gulp-ruby-sass');
 var minifycss = require('gulp-minify-css');
@@ -23,6 +24,7 @@ var es = require('event-stream');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var header = require('gulp-header');
 
 var connect = require('gulp-connect');
 var opn = require('opn');
@@ -194,6 +196,7 @@ function getTemplates() {
     })).pipe(mem_cache('templateFiles'));
 }
 
+//with source maps
 gulp.task('javascript', ['clean:js'], function() {
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
@@ -209,13 +212,25 @@ gulp.task('javascript', ['clean:js'], function() {
     });
 });
 
+//without source maps and with banner
 gulp.task('javascript:build', ['clean:js'], function() {
+
+  var banner = ['/**',
+  ' * <%= pkg.name %> - <%= pkg.description %>',
+  ' * @version v<%= pkg.version %>',
+  ' * @link <%= pkg.homepage %>',
+  ' * @license <%= pkg.license %>',
+  ' */',
+  ''].join('\n');
+
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
     .pipe(concat('vizabi.js'))
+    .pipe(header(banner, { pkg : pkg } ))
     .pipe(gulp.dest(config.destLib))
     .pipe(rename('vizabi.min.js'))
     .pipe(uglify())
+    .pipe(header(banner, { pkg : pkg } ))
     .pipe(gulp.dest(config.destLib))
     .on('end', function() {
       gutil.log(chalk.green("Bundling JS... DONE!"))
