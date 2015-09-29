@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.0.1",
+  "version": "0.8.1",
   "description": "Vizabi Framework",
   "main": "dist/lib/vizabi.min.js",
   "directories": {},
@@ -27,6 +27,7 @@
     "event-stream": "^3.3.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.0.2",
+    "gulp-bump": "^1.0.0",
     "gulp-cached": "^1.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-connect": "^2.2.0",

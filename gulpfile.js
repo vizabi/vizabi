@@ -32,6 +32,7 @@ var wait = require('gulp-wait');
 
 var jade = require('gulp-jade');
 var zip = require('gulp-zip');
+var bump = require('gulp-bump');
 
 // ----------------------------------------------------------------------------
 //   Config
@@ -349,6 +350,22 @@ gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
     return gulp.src(path.join(config.destLib, '**/*'))
         .pipe(zip('vizabi.zip'))
         .pipe(gulp.dest(config.destDownload));
+});
+
+// ----------------------------------------------------------------------------
+//   Bump version
+// ----------------------------------------------------------------------------
+
+gulp.task('bump', function(){
+  var src = gulp.src(['./bower.json', './package.json']);
+  var version = gutil.env.version;
+  var type = gutil.env.type;
+
+  if(!version && !type) type = 'patch';
+  if(version) src = src.pipe(bump({version:version}));
+  else if(type) src = src.pipe(bump({type:type}));
+
+  return src.pipe(gulp.dest('./'));
 });
 
 // ----------------------------------------------------------------------------
