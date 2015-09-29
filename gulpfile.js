@@ -326,7 +326,7 @@ gulp.task('watch-lint', function() {
 
 gulp.task('connect', ['preview'], function() {
   var webserver = {
-    port: 8080,
+    port: 9000,
     root: config.dest,
     livereload: true
   };
