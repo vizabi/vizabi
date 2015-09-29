@@ -40,7 +40,7 @@ module.exports = function (app) {
           };
         }],
 
-        templateUrl: 'menu.html'
+        template: require('./menu.html')
       };
     }]);
 };

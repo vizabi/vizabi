@@ -11,10 +11,11 @@ var CompressionPlugin = require('compression-webpack-plugin');
 var bourbon = require('node-bourbon').includePaths;
 
 var config = {
-  template: 'index.tmpl.html',
+  template: 'index.html',
   index: 'index.html',
   src: './client/src',
-  dest: './client/dist/tools'
+  dest: './client/dist/tools',
+  publicPath: '/tools/'
 };
 
 var isProduction = process.env.NODE_ENV === 'production';
@@ -33,7 +34,7 @@ var wConfig = {
   },
   output: {
     path: absDest,
-    publicPath: '/tools/',
+    publicPath: config.publicPath,
     filename: 'components/[name]-[hash:6].js',
     chunkFilename: 'components/[name]-[hash:6].js'
   },
@@ -46,8 +47,8 @@ var wConfig = {
     //noParse: new RegExp(require.resolve("vizabi"), 'ig'),
     loaders: [
       {
-        test: require.resolve('vizabi'),
-        loader: 'imports?this=>window'
+        test: /vizabi\.js/,
+        loader: 'imports?this=>window,d3'
       },
       {
         test: /\.scss/,
@@ -60,30 +61,32 @@ var wConfig = {
         //loader: 'style!css'//?root=' + absSrc
       },
       {
-        test: /\.(png|jpg|gif)$/,
-        loader: 'url?name=assets/img/[name].[ext]&limit=10000'
+        test: /.*\.(gif|png|jpe?g)$/i,
+        loaders: [
+          'file?hash=sha512&digest=hex&name=[path][name].[ext]',
+          'image-webpack?{progressive:true, optimizationLevel: 7, interlaced: false, pngquant:{quality: "65-90", speed: 4}}'
+        ]
       },
       {
         test: /\.html$/,
-        loader: 'html?name=[name].[ext]&root=' + absSrc
+        loader: 'html?name=[path][name].[ext]&root=' + absSrc
       },
-
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url?name=assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
+        loader: 'url?name=[path][name].[ext]&limit=10000&mimetype=application/font-woff'
       },
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url?name=assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
+        loader: 'url?name=[path][name].[ext]&limit=10000&mimetype=application/font-woff'
       },
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url?name=assets/fonts/[name].[ext]&limit=10000&mimetype=application/octet-stream'
+        loader: 'url?name=[path][name].[ext]&limit=10000&mimetype=application/octet-stream'
       },
-      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file?name=assets/fonts/[name].[ext]'},
+      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: 'file?name=[path][name].[ext]'},
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url?name=assets/fonts/[name].[ext]&limit=10000&mimetype=image/svg+xml'
+        loader: 'url?name=[path][name].[ext]&limit=10000&mimetype=image/svg+xml'
       }
     ]
   },
@@ -96,6 +99,12 @@ var wConfig = {
     new HtmlWebpackPlugin({
       filename: config.index,
       template: path.join(config.src, config.template),
+      chunks: ['angular', 'vizabi-tools'],
+      minify: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: '404.html',
+      template: path.join(config.src, '404.html'),
       chunks: ['angular', 'vizabi-tools'],
       minify: true
     })
@@ -112,7 +121,7 @@ var wConfig = {
       new CompressionPlugin({
         asset: '{file}.gz',
         algorithm: 'gzip',
-        regExp: /\.js$|\.html|\.css|.map$/,
+        regExp: /\.js$|\.html$|\.css$|\.map$|\.woff$|\.woff2$|\.ttf$|\.eot$|\.svg$/,
         threshold: 10240,
         minRatio: 0.8
       })
@@ -121,14 +130,26 @@ var wConfig = {
   stats: {colors: true, progress: true, children: false},
   devServer: {
     contentBase: config.dest,
-    publicPath: '/tools/',
+    publicPath: config.publicPath,
     noInfo: true,
     hot: true,
     inline: true,
-    historyApiFallback: true,
+    historyApiFallback: {
+      index: config.index,
+      logger: console.log.bind(console),
+      verbose: true,
+      rewrites: [
+        {
+          from: /^\/$|^\/tools\/.*$/,
+          to: function(context) {
+            return '/tools/';
+          }
+        }
+      ]
+    },
     devtool: 'eval',
     proxy: {
-      '*/api/*': 'http://localhost:' + process.env.PORT || '3001'
+      '*/api/*': 'http://localhost:' + (process.env.PORT || '3001')
     }
   }
 };

@@ -8,8 +8,7 @@
   {% for (var prop in o.htmlWebpackPlugin.files.css) { %}
   <link href="{%= o.htmlWebpackPlugin.files.css[prop] %}" rel="stylesheet" type="text/css">
   {% } %}
-  <link href="./public/favicon.ico" rel="shortcut icon">
-  <link href="http://static.gapminderdev.org/vizabi/master/dist/vizabi.css" rel="stylesheet">
+  <link href="./favicon.ico" rel="shortcut icon">
 </head>
 <body ng-controller="gapminderToolsCtrl" ng-class="{loading : loading}" class="{{ bodyClass }}" ng-cloak>
 <div class="wrapper" ng-class="{hidden : loadingError}">
@@ -31,14 +30,14 @@
     <div class="related">
       <h2 class="heading-2">Related</h2>
       <ul class="related-items">
-        <li class="related-item" ng-repeat="(key, related) in relatedItems">
-          <a href="{{related.link}}">
+        <li class="related-item" ng-repeat="(key, related) in relatedItems track by $index">
+          <a href="{{::related.link}}">
             <div class="related-item-thumbnail">
-              <img ng-src="{{related.image}}">
+              <img ng-src="{{::related.image}}">
             </div>
             <div class="related-item-info">
-              <span class="title">{{related.title}}</span>
-              <span class="subtitle">{{related.subtitle}}</span>
+              <span class="title">{{::related.title}}</span>
+              <span class="subtitle">{{::related.subtitle}}</span>
             </div>
           </a>
         </li>
@@ -49,10 +48,10 @@
 
       <div class="menu"></div>
       <ul class="menu-primary">
-        <li class="menu-item" ng-repeat="(key, tool) in tools">
-          <a href ng-hide="activeTool == key" ng-href="{{key}}">
-            <span class="title">{{tool.title}}</span>
-            <img class="image" ng-src="{{tool.image}}">
+        <li class="menu-item" ng-repeat="(key, tool) in tools track by $index">
+          <a href ng-hide="activeTool == key" ng-href="{{::key}}">
+            <span class="title">{{::tool.title}}</span>
+            <img class="image" ng-src="{{::tool.image}}">
           </a>
         </li>
       </ul>
@@ -67,37 +66,6 @@
 
   <h2>Ops! Something went terribly wrong</h2>
 </div>
-<!--//- Template for the menu-->
-<script type="text/ng-template" id="menu.html">
-  <li class="nav-expandable">
-    <div ng-repeat="item in items" class="nav-expandable-item">
-      <a href="{{ item.url }}"
-         ng-click="urlMgr.redirectExternal(item.url, $event)"
-         class="nav-toggle-expanded">{{ item.menu_label }}</a>
-
-      <div ng-show="item.children" ng-mouseenter="onHover($event)" ng-mouseleave="onBlur($event)" class="nav-expanded">
-        <div class="nav-expanded-columns nav-expanded-columns-2 nav-expanded-columns-icons">
-          <div class="nav-expanded-columns-inner">
-            <ul>
-              <li ng-repeat="child in item.children" class="expanded-column-item">
-                <a href="{{ child.url }}"
-                   ng-click="urlMgr.redirectExternal(child.url, $event)">
-                  <div class="column-item-icon">
-                    <img ng-src="{{ createIconUrl(child.icon_url) }}" ng-if="hasIcon(child)">
-                  </div>
-                  <div class="column-item-info">
-                    <div class="column-item-heading">{{ child.menu_label }}</div>
-                    <div class="column-item-description">{{ child.caption }}</div>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </li>
-</script>
 
 {% for (var chunk in o.htmlWebpackPlugin.files.js) { %}
 <script src="{%=o.htmlWebpackPlugin.files.js[chunk]%}"  charset="utf-8"></script>

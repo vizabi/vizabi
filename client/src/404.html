@@ -4,8 +4,10 @@
   <base href="/tools/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Gapminder Tools</title>
-  <link href="./styles/main.css" rel="stylesheet">
-  <link href="./public/favicon.ico" rel="shortcut icon">
+  {% for (var prop in o.htmlWebpackPlugin.files.css) { %}
+  <link href="{%= o.htmlWebpackPlugin.files.css[prop] %}" rel="stylesheet" type="text/css">
+  {% } %}
+  <link href="./favicon.ico" rel="shortcut icon">
 </head>
 <body>
   <h1>404 - Page not found</h1>
