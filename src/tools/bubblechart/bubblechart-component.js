@@ -233,7 +233,6 @@
             cache.labelY_ = (_this.height - 13 - _this.yScale(cache.labelY0))/_this.height;
             resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
           }
-
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
 
@@ -247,8 +246,8 @@
         	var KEY = _this.KEY;
         _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
-            _this.cached[d[KEY]].labelX_,
-            _this.cached[d[KEY]].labelY_
+            Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
+            Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
           ]);
         });
 
@@ -1327,10 +1326,28 @@
 
     _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
 
+      var cache = this.cached[d[this.KEY]];
+
       var labelGroup = d3.select(context);
 
       var width = parseInt(labelGroup.select("rect").attr("width"));
       var height = parseInt(labelGroup.select("rect").attr("height"));
+
+      if (resolvedX - width <= 0) { //check left
+        cache.labelX_ = (width - this.xScale(cache.labelX0))/this.width;
+        resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+      } else if (resolvedX + 15 > this.width) {//check right
+        cache.labelX_ = (this.width - 15 - this.xScale(cache.labelX0))/this.width;
+        resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+      }
+      if (resolvedY - height <= 0 ) { // check top
+        cache.labelY_ = (height - this.yScale(cache.labelY0))/this.height;
+        resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+      } else if (resolvedY + 13 > this.height) { //check bottom
+        cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0))/_this.height;
+        resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+      }
+
       if(duration) {
         labelGroup
         .transition().duration(duration).ease("linear")
