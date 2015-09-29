@@ -12,6 +12,11 @@ Demo: [http://178.62.135.203/](http://178.62.135.203/)
 - [Bower](http://bower.io/) : `npm install -g bower`
 - [MongoDB](https://www.mongodb.org/)
 
+## Dev requirements
+- Webpack and webpack dev server
+ ```bash
+ npm i -g webpack webpack-dev-server
+ ```
 ## Installation
 
 1. Clone the repository: `git clone git@github.com:Gapminder/gapminder-tools-vizabi.git`
