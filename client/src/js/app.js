@@ -70,12 +70,10 @@ function forceResizeEvt() {
       //format time query if existing
       if (query.where.time) {
         var time = query.where.time[0];
-        console.log(time, typeof time.join, time.length)
-        //[['1990', '2012']] -> '1990-2012'
         var t = typeof time.join !== 'undefined' && time.length === 2 ?
+          // {from: time, to: time}
           JSON.stringify({from: getYear(time[0]), to: getYear(time[1])}) :
           getYear(time[0]);
-        console.log(t);
         path += '?time=' + t;
       }
 
@@ -192,7 +190,6 @@ function forceResizeEvt() {
           data = data.map(function (row) {
             return utils.clone(row, query.select);
           });
-          //console.log(data);
           _this._data = data;
           p.resolve();
         }
