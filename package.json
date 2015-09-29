@@ -9,7 +9,6 @@
   "author": "Arthur Camara",
   "scripts": {
     "dev": "NODE_ENV=development webpack-dev-server --inline --hot --progress --color",
-    "prebuild": "npm install",
     "build": "NODE_ENV=development webpack",
     "deploy": "NODE_ENV=production webpack -p --progress --color --optimize-minimize --optimize-dedupe --optimize-occurence-order",
     "prestart": "npm run build",
