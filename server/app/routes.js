@@ -1,7 +1,10 @@
+var _ = require('lodash');
 var path = require('path');
+var cache = require('express-redis-cache')();
 var express = require('express');
 var mongoose = require('mongoose');
 var compression = require('compression');
+
 
 // register models
 require('./models');
@@ -9,6 +12,7 @@ require('./models');
 var Item = mongoose.model('Item');
 var Menu = mongoose.model('Menu');
 var RelatedItem = mongoose.model('RelatedItem');
+var Indicators = mongoose.model('Indicators');
 
 var ObjectId = mongoose.Types.ObjectId;
 
@@ -89,7 +93,7 @@ module.exports = function (app) {
       tool: req.body.tool,
       opts: req.body.opts
     }, function (err, item) {
-      if (err){
+      if (err) {
         return res.send(err);
       }
 
@@ -157,6 +161,35 @@ module.exports = function (app) {
       }
 
       return getRelatedItem(res, new_id);
+    });
+  });
+
+  // indicators data source
+  router.get('/indicators/stub', compression(), cache.route({expire: 300}), function (req, res, next) {
+    var query = {};
+    if (req.query.time) {
+      var time = parseInt(req.query.time, 10);
+      if (time) {
+        query.time = time;
+      } else {
+        time =  JSON.parse(req.query.time);
+        query.time = {$gte: time.from, $lte: time.to};
+      }
+    }
+    return Indicators.find(query).sort({time: 1}).lean().exec(function (err, indicatorValues) {
+      if (err) {
+        return res.send(err);
+        // return next(err);
+      }
+
+      var headers = ['geo', 'geo.name', 'geo.cat', 'geo.region', 'time', 'pop', 'gdp_per_cap', 'gini', 'u5mr'];
+      var data = {
+        headers: headers,
+        rows: _.map(indicatorValues, function (indVal) {
+          return [indVal.geo, indVal.name, indVal.cat, indVal.region, indVal.time, indVal.pop, indVal.gdp_per_cap, indVal.gini, indVal.u5mr];
+        })
+      };
+      return res.json({success: true, data: data});
     });
   });
 
