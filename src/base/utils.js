@@ -936,7 +936,7 @@
 		 }
 	},
 	function findNode(id,result) {
-	  
+	  	var allowed_IDs = ["time", "gdp_per_cap", "gdppc_pday"];
 	  if( this.children !=undefined && this.children.length >0){
 	    for(var i=0; i<this.children.length;i++){
 				if(allowed_IDs.indexOf(this.children[i].id)!==-1)
