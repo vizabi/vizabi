@@ -2,17 +2,19 @@
 /*eslint no-process-env:0*/
 
 var path = require('path');
+var Clean = require('clean-webpack-plugin');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CompressionPlugin = require('compression-webpack-plugin');
-/*eslint-enable */
+
+var bourbon = require('node-bourbon').includePaths;
 
 var config = {
   template: 'index.tmpl.html',
   index: 'index.html',
   src: './client/src',
-  dest: './client/dist'
+  dest: './client/dist/tools'
 };
 
 var isProduction = process.env.NODE_ENV === 'production';
@@ -31,7 +33,7 @@ var wConfig = {
   },
   output: {
     path: absDest,
-    publicPath: './tools',
+    publicPath: '/tools/',
     filename: 'components/[name]-[hash:6].js',
     chunkFilename: 'components/[name]-[hash:6].js'
   },
@@ -41,11 +43,16 @@ var wConfig = {
     extensions: ['', '.js', '.png', '.gif', '.jpg']
   },
   module: {
+    //noParse: new RegExp(require.resolve("vizabi"), 'ig'),
     loaders: [
       {
-        test: /\.less$/,
-        //loader: 'style!css!less'
-        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap&root=' + absSrc + '!sass-loader')
+        test: require.resolve('vizabi'),
+        loader: 'imports?this=>window'
+      },
+      {
+        test: /\.scss/,
+        //loader: 'style!css!sass?includePaths[]=' + bourbon
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap&root=' + absSrc + '!sass-loader?includePaths[]=' + bourbon)
       },
       {
         test: /\.css$/,
@@ -54,18 +61,13 @@ var wConfig = {
       },
       {
         test: /\.(png|jpg|gif)$/,
-        loader: 'url?name=assets/img/[name]-[hash:6].[ext]&limit=10000'
+        loader: 'url?name=assets/img/[name].[ext]&limit=10000'
       },
       {
         test: /\.html$/,
         loader: 'html?name=[name].[ext]&root=' + absSrc
       },
-      {
-        test: [/fontawesome-webfont\.svg/, /fontawesome-webfont\.eot/],
-        loader: 'file?name=assets/fonts/[name].[ext]'
-      },
-      // Needed for the css-loader when [bootstrap-webpack](https://github.com/bline/bootstrap-webpack)
-      // loads bootstrap's css.
+
       {
         test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
         loader: 'url?name=assets/fonts/[name].[ext]&limit=10000&mimetype=application/font-woff'
@@ -86,14 +88,10 @@ var wConfig = {
     ]
   },
   plugins: [
+    new Clean([config.dest]),
     new webpack.DefinePlugin({
       _isDev: !isProduction
     }),
-/*    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery'
-    }),*/
     new ExtractTextPlugin('[name]-[hash:6].css'),
     new HtmlWebpackPlugin({
       filename: config.index,
@@ -123,7 +121,7 @@ var wConfig = {
   stats: {colors: true, progress: true, children: false},
   devServer: {
     contentBase: config.dest,
-    publicPath: '/',
+    publicPath: '/tools/',
     noInfo: true,
     hot: true,
     inline: true,

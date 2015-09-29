@@ -1,8 +1,14 @@
-'use strict';
+require('../styles/main.scss');
+
 var angular = require('angular');
-var ngRoute = require('angular-route');
-Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/master/preview/";
+require('angular-route');
+
+// Vizabi stuff
 
 require('./vizabi-ws-reader');
-var app = angular.module('gapminderTools', [ngRoute]);
+
+var app = angular.module('gapminderTools', ['ngRoute']);
 require('./app.config')(app);
+require('./controller')(app);
+require('./directives')(app);
+require('./services')(app);

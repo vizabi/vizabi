@@ -1,4 +1,9 @@
 module.exports = function (app) {
+  var bases = document.getElementsByTagName('base');
+  var baseHref = null;
+  if (bases.length > 0) {
+    baseHref = bases[0].href;
+  }
 
   app
     .factory("vizabiFactory", [
