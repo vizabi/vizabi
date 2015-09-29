@@ -6,6 +6,7 @@ var del = require('del')
 var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
+var pkg = require('./package');
 
 var sass = require('gulp-ruby-sass');
 var minifycss = require('gulp-minify-css');
@@ -23,6 +24,7 @@ var es = require('event-stream');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var wrapper = require('gulp-wrapper');
 
 var connect = require('gulp-connect');
 var opn = require('opn');
@@ -32,6 +34,7 @@ var wait = require('gulp-wait');
 
 var jade = require('gulp-jade');
 var zip = require('gulp-zip');
+var bump = require('gulp-bump');
 
 // ----------------------------------------------------------------------------
 //   Config
@@ -193,32 +196,54 @@ function getTemplates() {
     })).pipe(mem_cache('templateFiles'));
 }
 
-gulp.task('javascript', ['clean:js'], function() {
+//build JS with banner and/or sourcemaps
+function buildJS(opts) {
+
+  var banner = opts.banner || false;
+  var src_maps = opts.sourcemaps || false;
+
+  var banner_str = ['/**',
+  ' * '+ pkg.name +' - '+ pkg.description,
+  ' * @version v'+ pkg.version,
+  ' * @link '+ pkg.homepage,
+  ' * @license '+ pkg.license,
+  ' */',
+  ''].join('\n');
+
+  var version_str = '; Vizabi._version = "'+pkg.version+'";';
+
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(src_maps, sourcemaps.init()))
       .pipe(concat('vizabi.js'))
+      .pipe(wrapper({ footer: version_str}))
+      .pipe(gulpif(banner, wrapper({ header: banner_str})))
       .pipe(gulp.dest(config.destLib))
       .pipe(rename('vizabi.min.js'))
       .pipe(uglify())
-    .pipe(sourcemaps.write('.'))
+      .pipe(gulpif(banner, wrapper({ header: banner_str})))
+    .pipe(gulpif(src_maps,sourcemaps.write('.')))
     .pipe(gulp.dest(config.destLib))
     .on('end', function() {
       gutil.log(chalk.green("Bundling JS... DONE!"))
     });
+
+}
+
+//with source maps
+gulp.task('javascript', ['clean:js'], function() {
+  return buildJS({
+    banner: false,
+    sourcemaps: true
+  });
 });
 
+//without source maps and with banner
 gulp.task('javascript:build', ['clean:js'], function() {
-  gutil.log(chalk.yellow("Bundling JS..."));
-  return es.merge(getConcatFiles(), getTemplates())
-    .pipe(concat('vizabi.js'))
-    .pipe(gulp.dest(config.destLib))
-    .pipe(rename('vizabi.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest(config.destLib))
-    .on('end', function() {
-      gutil.log(chalk.green("Bundling JS... DONE!"))
-    });
+  return buildJS({
+    banner: true,
+    sourcemaps: false
+  });
 });
 
 
@@ -326,7 +351,7 @@ gulp.task('watch-lint', function() {
 
 gulp.task('connect', ['preview'], function() {
   var webserver = {
-    port: 8080,
+    port: 9000,
     root: config.dest,
     livereload: true
   };
@@ -349,6 +374,22 @@ gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
     return gulp.src(path.join(config.destLib, '**/*'))
         .pipe(zip('vizabi.zip'))
         .pipe(gulp.dest(config.destDownload));
+});
+
+// ----------------------------------------------------------------------------
+//   Bump version
+// ----------------------------------------------------------------------------
+
+gulp.task('bump', function(){
+  var src = gulp.src(['./bower.json', './package.json']);
+  var version = gutil.env.version;
+  var type = gutil.env.type;
+
+  if(!version && !type) type = 'patch';
+  if(version) src = src.pipe(bump({version:version}));
+  else if(type) src = src.pipe(bump({type:type}));
+
+  return src.pipe(gulp.dest('./'));
 });
 
 // ----------------------------------------------------------------------------
