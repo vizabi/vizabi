@@ -57,11 +57,12 @@
         yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
         record: false,
         dragging: false,
-        povertyline: 0, //TODO: remove from here. only for mountain chart
-        povertyCutoff: 0, //TODO: remove from here. only for mountain chart
-        povertyFade: 1, //TODO: remove from here. only for mountain chart
-        gdpFactor: 1, //TODO: remove from here. only for mountain chart
-        gdpShift: 0, //TODO: remove from here. only for mountain chart
+        probeX: 0, //TODO: remove from here. only for mountain chart
+        tailFatX: 1, //TODO: remove from here. only for mountain chart
+        tailCutX: 0, //TODO: remove from here. only for mountain chart
+        tailFade: 1, //TODO: remove from here. only for mountain chart
+        xScaleFactor: 1, //TODO: remove from here. only for mountain chart
+        xScaleShift: 0, //TODO: remove from here. only for mountain chart
         xPoints: 50 //TODO: remove from here. only for mountain chart
       }, values);
 

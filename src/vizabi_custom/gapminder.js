@@ -105,12 +105,13 @@
                 formatInput: "%Y",
                 xLogStops: [1, 2, 5],
                 yMaxMethod: "latest",
-                povertyline: 1.82,
-                povertyCutoff: 0.2,
-                povertyFade: 0.7,
-                gdpFactor: 1.039781626,
+                probeX: 1.82,
+                tailFatX: 1.82,
+                tailCutX: 0.2,
+                tailFade: 0.7,
+                xScaleFactor: 1.039781626,
                 //0.9971005335,
-                gdpShift: -1.127066411,
+                xScaleShift: -1.127066411,
                 //-1.056221322,
                 xPoints: 50
             },
@@ -170,7 +171,7 @@
         data: {
             //reader: "waffle-server"
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/dont-panic-poverty.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
             splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
         }
@@ -330,8 +331,8 @@
         data: {
             //reader: "waffle-server",
             reader: "csv-file",
-            //path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/basic-indicators.csv",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/dont-panic-poverty.csv",
+            //path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
             splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
         },
@@ -401,7 +402,7 @@
         },
         data: {
             reader: "csv-file",
-            path: Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/{{geo}}.csv",
+            path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
             splash: true
         },
         language: language,
@@ -416,7 +417,7 @@
 
     //preloading mountain chart precomputed shapes
     MountainChartComponent.define("preload", function(done) {
-        var shape_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/mc_precomputed_shapes.json";
+        var shape_path = Vizabi._globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
 
         d3.json(shape_path, function(error, json) {
             if (error) return console.warn("Failed loading json " + shape_path + ". " + error);
@@ -430,7 +431,7 @@
 
         var _this = this; 
     
-        var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/waffles/metadata.json";
+        var metadata_path = Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/metadata.json";
         var globals = Vizabi._globals;
         
         
@@ -460,7 +461,7 @@
         var promise = new Vizabi.Promise();
 
         var langModel = this.model.language;
-        var translation_path = Vizabi._globals.gapminder_paths.baseUrl + "local_data/translation/"+langModel.id+".json";
+        var translation_path = Vizabi._globals.gapminder_paths.baseUrl + "data/translation/"+langModel.id+".json";
 
         if(langModel && !langModel.strings[langModel.id]) {
             d3.json(translation_path, function(langdata) {

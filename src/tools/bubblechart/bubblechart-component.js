@@ -1083,9 +1083,18 @@
       //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
       //   });
       // }
+      var values;
+      var KEY = this.KEY;
+      if (this.model.time.lockNonSelected && this.someSelected) {
+        var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        values = this._getValuesInterpolated(tLocked);
+      } else {
+        values = this._getValuesInterpolated(this.time);
+      }
 
       this.entityBubbles.each(function (d, index) {
-        var valueS = _this.model.marker.size.getValue(d);
+
+        var valueS = values.size[d[KEY]];
         if (valueS == null) return;
 
         d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
@@ -1142,7 +1151,6 @@
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
       var KEY = this.KEY;
-
       if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         values = valuesL;
       }
@@ -1166,6 +1174,7 @@
 
         view.classed("vzb-invisible", false)
             .style("fill", _this.cScale(valueC));
+
 
         if(duration) {
           view.transition().duration(duration).ease("linear")
@@ -1311,7 +1320,7 @@
         //for non-selected bubbles
         //make sure there is no cached data
         if (_this.cached[d[KEY]] != null) {
-          delete _this.cached[d[KEY]]
+          _this.cached[d[KEY]] = void 0;
         }
       }
     },

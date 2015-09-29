@@ -116,7 +116,7 @@
         });
         this.model.setHooks();
 
-        var splashScreen = this.model.data.splash;
+        var splashScreen = this.model && this.model.data && this.model.data.splash;
 
         preloader(this).then(function() {
 
@@ -126,7 +126,7 @@
             var timeMdl = _this.model.state.time;
             timeMdl.splash = true;
             var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
-            
+
             _this.model.load({ splashScreen: true }).then(function(){
               //delay to avoid conflicting with setReady
               utils.delay(function() {
@@ -262,7 +262,7 @@
     isRoot: function () {
       return this.parent === this;
     },
-      
+
     /**
      * Returns subcomponent by name
      * @returns {Boolean}
