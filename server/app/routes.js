@@ -172,7 +172,7 @@ module.exports = function (app) {
         // return next(err);
       }
 
-      var headers = ['geo', 'geo.name', 'geo.cat', 'geo.region', 'time', 'pop', 'gdp_per_cap', 'u5mr'];
+      var headers = ['geo', 'geo.name', 'geo.cat', 'geo.region', 'time', 'pop', 'gdp_per_cap', 'gini', 'u5mr'];
       var data = {
         headers: headers,
         rows: _.map(indicatorValues, function (indVal) {

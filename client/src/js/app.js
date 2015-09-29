@@ -21,41 +21,39 @@ angular.module('gapminderTools', ['ngRoute']).config(['$routeProvider', '$locati
 //TODO: remove global
 
 function forceResizeEvt() {
-    //force resize
-    event = document.createEvent("HTMLEvents");
-    event.initEvent("resize", true, true);
-    event.eventName = "resize";
-    window.dispatchEvent(event);
+  //force resize
+  event = document.createEvent("HTMLEvents");
+  event.initEvent("resize", true, true);
+  event.eventName = "resize";
+  window.dispatchEvent(event);
 }
-
-/*!
- * Waffle server Reader
- * the simplest reader possible
- */
 
 (function () {
 
   "use strict";
 
-  var Vizabi = this.Vizabi;
+  var root = this;
+  var Vizabi = root.Vizabi;
   var utils = Vizabi.utils;
   var Promise = Vizabi.Promise;
 
-  Vizabi.Reader.extend('waffle-server', {
+  var FILE_CACHED = {}; //caches files from this reader
+  var FILE_REQUESTED = {}; //caches files from this reader
 
-    basepath: "",
+  Vizabi.Reader.extend('ws-json', {
 
     /**
      * Initializes the reader.
      * @param {Object} reader_info Information about the reader
      */
     init: function (reader_info) {
-      this._name = 'ws-reader';
+      this._name = 'ws-json';
+      this._json = reader_info.data;
       this._data = [];
+      this._basepath = reader_info.path;
       this._formatters = reader_info.formatters;
-      this._basepath = reader_info.path || this.basepath;
       if (!this._basepath) {
-        utils.error("Missing base path for waffle-server reader");
+        utils.error("Missing base path for ws-json reader");
       }
     },
 
@@ -68,57 +66,62 @@ function forceResizeEvt() {
     read: function (query, language) {
       var _this = this;
       var p = new Promise();
-      var formatted;
+      var path = this._basepath;
 
-      this._data = [];
+      _this._data = [];
 
       (function (query, p) {
+        console.log(query.select);
+        //if cached, retrieve and parse
+        if (FILE_CACHED.hasOwnProperty(path)) {
+          parse(FILE_CACHED[path]);
+          return p;
+        }
+        //if requested by another hook, wait for the response
+        if (FILE_REQUESTED.hasOwnProperty(path)) {
+          FILE_REQUESTED[path].then(function () {
+            parse(FILE_CACHED[path]);
+          });
+          return p;
+        }
+        //if not, request and parse
+        FILE_REQUESTED[path] = new Promise();
+        utils.get(path, [], onSuccess, console.error.bind(console), true);
+        function onSuccess(resp) {
+          if (!resp) {
+            utils.error("Empty json: " + path, error);
+            return;
+          }
 
-        var where = query.where;
+          resp = format(uzip(resp.data));
+          //cache and resolve
+          FILE_CACHED[path] = resp;
+          FILE_REQUESTED[path].resolve();
+          FILE_REQUESTED[path] = void 0;
 
-        //format time query if existing
-        if (where['time']) {
-          //[['1990', '2012']] -> '1990-2012'
-          where['time'] = where['time'][0].join('-');
+          parse(resp);
         }
 
-        //rename geo.category to geo.cat
-        if (where['geo.category']) {
-          where['geo.cat'] = utils.clone(where['geo.category']);
-          where['geo.category'] = void 0;
+        return p;
+
+        function uzip(table) {
+          var rows = table.rows;
+          var headers = table.headers;
+          var result = new Array(rows.length);
+          // unwrap compact data into json collection
+          for (var i = 0; i < rows.length; i++) {
+            result[i] = {};
+            for (var j = 0; j < headers.length; j++) {
+              result[i][headers[j]] = (rows[i][j] || '').toString();
+              if (headers[j] === 'geo.cat') {
+                result[i][headers[j]] = [result[i][headers[j]]];
+              }
+            }
+          }
+          return result;
         }
-
-        formatted = {
-          "SELECT": query.select,
-          "WHERE": where,
-          "FROM": "spreedsheet"
-        };
-
-        var pars = {
-          query: [formatted],
-          lang: language
-        };
-
-        //request data
-        utils.post(_this._basepath, JSON.stringify(pars), function (res) {
-          //fix response
-          res = format(res[0]);
-          //parse and save
-          parse(res);
-
-        }, function () {
-          console.log("Error loading from Waffle Server:", _this._basepath);
-          p.reject('Could not read from waffle server');
-        }, true);
 
         function format(res) {
-          //make category an array and fix missing regions
-          res = res.map(function (row) {
-            row['geo.cat'] = [row['geo.cat']];
-            row['geo.region'] = row['geo.region'] || row['geo'];
-            return row;
-          });
-
           //format data
           res = utils.mapRows(res, _this._formatters);
 
@@ -136,9 +139,43 @@ function forceResizeEvt() {
         }
 
         function parse(res) {
-          //just check for length, no need to parse from server
-          if(res.length==0) utils.warn("data reader returns empty array, that's bad");
-          _this._data = res;
+
+          var data = res;
+          //rename geo.category to geo.cat
+          var where = query.where;
+          if (where['geo.category']) {
+            where['geo.cat'] = utils.clone(where['geo.category']);
+            delete where['geo.category'];
+          }
+
+          //format values in the dataset and filters
+          where = utils.mapRows([where], _this._formatters)[0];
+
+          //make sure conditions don't contain invalid conditions
+          var validConditions = [];
+          utils.forEach(where, function (v, p) {
+            for (var i = 0, s = data.length; i < s; i++) {
+              if (data[i].hasOwnProperty(p)) {
+                validConditions.push(p);
+                return true;
+              }
+            }
+          });
+          //only use valid conditions
+          where = utils.clone(where, validConditions);
+
+          //filter any rows that match where condition
+          data = utils.filterAny(data, where);
+
+          //warn if filtering returns empty array
+          if (data.length === 0) utils.warn("data reader returns empty array, that's bad");
+
+          //only selected items get returned
+          data = data.map(function (row) {
+            return utils.clone(row, query.select);
+          });
+          //console.log(data);
+          _this._data = data;
           p.resolve();
         }
 
