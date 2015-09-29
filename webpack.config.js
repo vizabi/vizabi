@@ -140,7 +140,7 @@ var wConfig = {
       verbose: true,
       rewrites: [
         {
-          from: /^\/$|^\/tools\/.*$/,
+          from: /^\/$|^\/tools.*$/,
           to: function(context) {
             return '/tools/';
           }
