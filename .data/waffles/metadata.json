@@ -169,7 +169,10 @@
                     }, 
                     {
                         "id": "child_health",
-                        "children": [{"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
+                        "children": [{
+                            "id": "child_health",
+                            "children": [{"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
+                        }]
                     }
                 ]
             }, {

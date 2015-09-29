@@ -45,7 +45,6 @@
 
     //options and globals
     var OPTIONS = {
-        MENU_ID: 'menu-0', //identify this menu
         MOUSE_LOCS: [], //contains last locations of mouse
         MOUSE_LOCS_TRACKED: 3, //max number of locations of mouse
         DELAY: 200, //amazons multilevel delay
@@ -55,24 +54,11 @@
         SEARCH_PROPERTY: 'id', //property in input data we we'll search by
         SUBMENUS: 'children', //property for submenus (used by search)
         SEARCH_MIN_STR: 2, //minimal length of query string to start searching
-        CONTAINER_DIMENSIONS: {}, //current container width, height
         RESIZE_TIMEOUT: null, //container resize timeout
         MOBILE_BREAKPOINT: 400, //mobile breakpoint
         CURRENT_PATH: [], //current active path
-        CURRENT_PROFILE: null, //current resize profile
         MIN_COL_WIDTH: 50 //minimal column size
     };
-
-    var resizeProfiles = [{
-        col_width: 300,
-        min: 1280
-    }, {
-        col_width: 250,
-        min: 1024
-    }, {
-        col_width: 200,
-        min: OPTIONS.MOBILE_BREAKPOINT
-    }];
 
 
     //default callback
@@ -144,68 +130,78 @@
 
             this.element.selectAll("div").remove();
             
-            OPTIONS.MENU_ID = 'menu-' + this._id;
-
             //general markup
 
             this.element.append("div")
                 .attr("class", css.background)
                 .on("click", function() { _this.toggle() });
 
-            this.skeleton = this.element
+            this.wrapper = this.element
                 .append('div')
-                .classed(css.wrapper, true)
-                .attr('id', OPTIONS.MENU_ID)
+                .classed(css.wrapper, true);
             
-            this.skeleton.append("div")
+            this.wrapper.append("div")
                 .attr("class", css.close)
                 .html("X")
                 .on("click", function(){_this.toggle()});
                         
 
-            this.skeleton.append('div')
+            this.wrapper.append('div')
                 .classed(css.title, true)
                 .append('span');
 
-            this.skeleton.append('div')
+            this.wrapper.append('div')
                 .classed(css.search_wrap, true)
                 .append('input')
                 .classed(css.search, true)
                 .attr("placeholder", "Search...")
                 .attr('type', 'text')
-                .attr('id', css.search + '_' + OPTIONS.MENU_ID);
+                .attr('id', css.search);
 
 
             //init functions
-            d3.select('body')
-                .on('mousemove', _this._mousemoveDocument)
-                .select('#' + OPTIONS.MENU_ID)
-                .on('mouseleave', function() {
-                    _this._closeAllSub(this)
-                });
+            d3.select('body').on('mousemove', _this._mousemoveDocument)
+            
+            this.wrapper.on('mouseleave', function() { _this._closeAllSub(this) });
+            
             _this._enableSearch();
+
+            _this.resize();
+        },
+
+        //happens on resizing of the container
+        resize: function() {
+            var _this = this;
+
+            this.profiles = {
+                "small": { col_width: 200 },
+                "medium": { col_width: 250 },
+                "large": { col_width: 300 }
+            };
+
+            this.activeProfile = this.profiles[this.getLayoutProfile()];
+            this.width = _this.element.node().offsetWidth;
+
+            OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
 
         },
 
 
 
-
         toggle: function() {
-            var wrapper = d3.select('#' + OPTIONS.MENU_ID);
+            var _this = this;
             var hidden = !this.element.classed(css.hidden);
 
             this.element.classed(css.hidden, hidden);
 
             if(hidden) {
-                wrapper
-                    .selectAll('.' + css.list_item)
+                this.wrapper.selectAll('.' + css.list_item)
                     .filter('.marquee')
                     .each(function() {
                         _this._marqueeToggle(this, false);
                     });
             };
 
-            var _this = this;
             this.parent.components.forEach(function(c) {
                 c.element.classed("vzb-blur", c != _this && !hidden);
             })
@@ -350,48 +346,12 @@
 
 
 
-        //watch for resizing
-//        resize: function() {
-//            var _this = this;
-//            
-//            OPTIONS.CONTAINER_DIMENSIONS = {
-//                height: _this.element.node().offsetHeight,
-//                width: _this.element.node().offsetWidth
-//            };
-//            
-//            var width = OPTIONS.CONTAINER_DIMENSIONS.width;
-//            
-//            
-//            for(var i = 0; i < resizeProfiles.length; i++) {
-//                if(resizeProfiles[i].min < width && i == 0 || resizeProfiles[i].min < width &&
-//                    i != 0 && width < resizeProfiles[i - 1].min) {
-//                    OPTIONS.CURRENT_PROFILE = resizeProfiles[i];
-//                    OPTIONS.IS_MOBILE = false;
-//                    break;
-//                } else if(width <= OPTIONS.MOBILE_BREAKPOINT) {
-//                    OPTIONS.CURRENT_PROFILE = null;
-//                    OPTIONS.IS_MOBILE = true;
-//                };
-//            };
-//
-//            if(OPTIONS.IS_MOBILE) {
-//                d3.select('#' + OPTIONS.MENU_ID).classed('mobile', true);
-//
-//                _this.element.selectAll('*').each(function() {
-//                    d3.select(this).attr('style', '');
-//                });
-//            } else {
-//                d3.select('#' + OPTIONS.MENU_ID).classed('mobile', false);
-//            };
-//        },
-
-
 
         //search listener
         _enableSearch: function() {
             var _this = this;
 
-            var input = d3.select('#' + css.search + '_' + OPTIONS.MENU_ID);
+            var input = this.wrapper.select('.' + css.search);
 
             //it forms the array of possible queries
             var getMatches = function(value) {
@@ -473,22 +433,20 @@
             if(!OPTIONS.IS_MOBILE) {
 
                 var ulArr = [];
-                ulArr.push(d3.select('#' + OPTIONS.MENU_ID).node());
+                ulArr.push(this.wrapper.node());
                 _this.element
                     .selectAll('.' + css.list + '.active')
                     .each(function() {
                         ulArr.push(this);
                     });
 
-                var fullColNumber = Math.floor(OPTIONS.CONTAINER_DIMENSIONS.width / OPTIONS.CURRENT_PROFILE
-                    .col_width);
+                var fullColNumber = Math.floor(this.width / this.activeProfile.col_width);
 
-                var remain = OPTIONS.CONTAINER_DIMENSIONS.width - fullColNumber * OPTIONS.CURRENT_PROFILE
-                    .col_width;
+                var remain = this.width - fullColNumber * this.activeProfile.col_width;
 
                 if(remain < OPTIONS.MIN_COL_WIDTH) {
                     fullColNumber -= 1;
-                    remain += OPTIONS.CURRENT_PROFILE.col_width
+                    remain += this.activeProfile.col_width
                 };
 
                 for(var i = ulArr.length - 1; i >= 0; i--) {
@@ -498,7 +456,7 @@
                         ulSelectNested
                             .transition()
                             .duration(200)
-                            .style('width', OPTIONS.CURRENT_PROFILE.col_width);
+                            .style('width', this.activeProfile.col_width);
                         fullColNumber--;
                     } else {
                         if(remain > OPTIONS.MIN_COL_WIDTH) {
@@ -639,20 +597,15 @@
         redraw: function(data) {
             var _this = this;
 
-            this.element.select("." + css.title).select("span")
+            this.element.select('.' + css.title).select("span")
                 .text(this.translator("buttons/" + markerID));
 
             if(data == null) data = tree;
 
-            this.element
-                .select('#' + OPTIONS.MENU_ID)
-                .select('.' + css.list_top_level)
-                .remove();
+            this.wrapper.select('.' + css.list_top_level).remove();
 
             //redrawing first level
-            var firstLevelMenu = this.element
-                .select('#' + OPTIONS.MENU_ID)
-                .append('ul')
+            var firstLevelMenu = this.wrapper.append('ul')
                 .classed(css.list_top_level, true);
 
             //translation integration
@@ -789,10 +742,10 @@
             if(!markerID) return;
             
 
-            this.skeleton.classed(css.alignYt, alignY === "top");
-            this.skeleton.classed(css.alignYb, alignY === "bottom");
-            this.skeleton.classed(css.alignXl, alignX === "left");
-            this.skeleton.classed(css.alignXr, alignX === "right");
+            this.wrapper.classed(css.alignYt, alignY === "top");
+            this.wrapper.classed(css.alignYb, alignY === "bottom");
+            this.wrapper.classed(css.alignXl, alignX === "left");
+            this.wrapper.classed(css.alignXr, alignX === "right");
 
             var strings = langStrings ? langStrings : {};
             strings[languageID] = _this.model.language.strings[languageID];
