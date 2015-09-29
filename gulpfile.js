@@ -167,7 +167,7 @@ function getConcatFiles() {
   return gulp.src(BUILD_FILES).pipe(mem_cache('jsfiles'));
 }
 
-function formatTemplateFile(str, filepath) {
+function formatTemplateFile(str, filename) {
   var content = str.replace(/'/g, '\"')
     .replace(/(\r\n|\n|\r)/gm, " ")
     .replace(/\s+/g, " ")
@@ -176,14 +176,14 @@ function formatTemplateFile(str, filepath) {
     "var root = this;" +
     "var s = root.document.createElement('script');" +
     "s.type = 'text/template';" +
-    "s.setAttribute('id', '" + filepath + "');" +
+    "s.setAttribute('id', '" + filename + "');" +
     "s.innerHTML = '" + content + "';" +
     "root.document.body.appendChild(s);" +
     "}).call(this);";
 
   var src = require('stream').Readable({ objectMode: true });
   src._read = function () {
-    this.push(new gutil.File({ cwd: "", base: "", path: filepath, contents: new Buffer(content) }));
+    this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(content) }));
     this.push(null);
   }
   return src;
@@ -192,7 +192,7 @@ function formatTemplateFile(str, filepath) {
 function getTemplates() {
   return gulp.src('./src/**/*.html')
     .pipe(foreach(function(stream, file) {
-      return formatTemplateFile(file.contents.toString('utf8'), path.relative('.', file.path)).pipe(uglify());
+      return formatTemplateFile(file.contents.toString('utf8'), path.basename(file.path)).pipe(uglify());
     })).pipe(mem_cache('templateFiles'));
 }
 

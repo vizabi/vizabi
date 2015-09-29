@@ -38,7 +38,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
 
         var _this = this;
         this.name = "mountainchart";
-        this.template = "src/tools/mountainchart/mountainchart.html";
+        this.template = "mountainchart.html";
 
         //define expected models for this component
         this.model_expects = [

@@ -26,7 +26,7 @@
     init: function (config, context) {
       var _this = this;
       this.name = 'bubblechart';
-      this.template = 'src/tools/bubblechart/bubblechart.html';
+      this.template = 'bubblechart.html';
 
       //define expected models for this component
       this.model_expects = [{

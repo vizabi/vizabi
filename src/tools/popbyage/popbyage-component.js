@@ -23,7 +23,7 @@
      */
     init: function (config, context) {
       this.name = 'popbyage';
-      this.template = 'src/tools/popbyage/popbyage.html';
+      this.template = 'popbyage.html';
 
       //define expected models for this component
       this.model_expects = [{
