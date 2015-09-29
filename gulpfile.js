@@ -24,7 +24,7 @@ var es = require('event-stream');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
-var header = require('gulp-header');
+var wrapper = require('gulp-wrapper');
 
 var connect = require('gulp-connect');
 var opn = require('opn');
@@ -196,45 +196,54 @@ function getTemplates() {
     })).pipe(mem_cache('templateFiles'));
 }
 
-//with source maps
-gulp.task('javascript', ['clean:js'], function() {
+//build JS with banner and/or sourcemaps
+function buildJS(opts) {
+
+  var banner = opts.banner || false;
+  var src_maps = opts.sourcemaps || false;
+
+  var banner_str = ['/**',
+  ' * '+ pkg.name +' - '+ pkg.description,
+  ' * @version v'+ pkg.version,
+  ' * @link '+ pkg.homepage,
+  ' * @license '+ pkg.license,
+  ' */',
+  ''].join('\n');
+
+  var version_str = '; Vizabi._version = "'+pkg.version+'";';
+
   gutil.log(chalk.yellow("Bundling JS..."));
   return es.merge(getConcatFiles(), getTemplates())
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(src_maps, sourcemaps.init()))
       .pipe(concat('vizabi.js'))
+      .pipe(wrapper({ footer: version_str}))
+      .pipe(gulpif(banner, wrapper({ header: banner_str})))
       .pipe(gulp.dest(config.destLib))
       .pipe(rename('vizabi.min.js'))
       .pipe(uglify())
-    .pipe(sourcemaps.write('.'))
+      .pipe(gulpif(banner, wrapper({ header: banner_str})))
+    .pipe(gulpif(src_maps,sourcemaps.write('.')))
     .pipe(gulp.dest(config.destLib))
     .on('end', function() {
       gutil.log(chalk.green("Bundling JS... DONE!"))
     });
+
+}
+
+//with source maps
+gulp.task('javascript', ['clean:js'], function() {
+  return buildJS({
+    banner: false,
+    sourcemaps: true
+  });
 });
 
 //without source maps and with banner
 gulp.task('javascript:build', ['clean:js'], function() {
-
-  var banner = ['/**',
-  ' * <%= pkg.name %> - <%= pkg.description %>',
-  ' * @version v<%= pkg.version %>',
-  ' * @link <%= pkg.homepage %>',
-  ' * @license <%= pkg.license %>',
-  ' */',
-  ''].join('\n');
-
-  gutil.log(chalk.yellow("Bundling JS..."));
-  return es.merge(getConcatFiles(), getTemplates())
-    .pipe(concat('vizabi.js'))
-    .pipe(header(banner, { pkg : pkg } ))
-    .pipe(gulp.dest(config.destLib))
-    .pipe(rename('vizabi.min.js'))
-    .pipe(uglify())
-    .pipe(header(banner, { pkg : pkg } ))
-    .pipe(gulp.dest(config.destLib))
-    .on('end', function() {
-      gutil.log(chalk.green("Bundling JS... DONE!"))
-    });
+  return buildJS({
+    banner: true,
+    sourcemaps: false
+  });
 });
 
 
