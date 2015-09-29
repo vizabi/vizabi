@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='gapminderTools'>
+<head>
+  <base href="/tools/">
+  <title>Gapminder Tools</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="./styles/main.css" rel="stylesheet">
+  <link href="./public/favicon.ico" rel="shortcut icon">
+  <link href='http://static.gapminderdev.org/vizabi/master/dist/vizabi.css' rel='stylesheet'>
+</head>
+<body ng-controller='gapminderToolsCtrl' ng-class='{"loading" : loading}' class="{{ bodyClass }}" ng-cloak>
+  <div class="wrapper" ng-class='{"hidden" : loadingError}'>
+    <!--Header-->
+    <div class="header">
+      <a class="header-title" href="http://www.gapminder.org">
+        GAPMINDER TOOLS
+      </a>
+      <div class="menu-mobile"></div>
+      <ul class="nav navbar-nav navbar-nav-left" nav-expandable='' items='expandedItems'></ul>
+    </div>
+
+    <!--Content-->
+    <div class="column main" id="vizabi-placeholder"></div>
+
+    <!--More-->
+    <div class="more">
+      <div class="related">
+        <h2 class="heading-2">Related</h2>
+        <ul class="related-items">
+          <li class="related-item" ng-repeat="(key, related) in relatedItems">
+            <a href="{{related.link}}">
+              <div class="related-item-thumbnail">
+                <img ng-src="{{related.image}}">
+              </div>
+              <div class="related-item-info">
+                <span class="title">{{related.title}}</span>
+                <span class="subtitle">{{related.subtitle}}</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="about">
+        <h2 class="heading-2">See also</h2>
+        <div class="menu"></div>
+        <ul class="menu-primary">
+          <li class="menu-item" ng-repeat="(key, tool) in tools">
+            <a href ng-hide="activeTool == key", ng-href="{{key}}">
+              <span class="title">{{tool.title}}</span>
+              <img class="image" ng-src="{{tool.image}}">
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wrapper-error" ng-class='{"hidden" : !loadingError}'>
+    <!--Error-->
+    <h1 class="header-title">GAPMINDER TOOLS</h1>
+    <h2>Ops! Something went terribly wrong</h2>
+  </div>
+  //- Template for the menu
+  <script type="text/ng-template" id="menu.html">
+    <li class="nav-expandable">
+      <div ng-repeat="item in items" class="nav-expandable-item">
+        <a href="{{ item.url }}"
+           ng-click="urlMgr.redirectExternal(item.url, $event)"
+           class="nav-toggle-expanded">{{ item.menu_label }}</a>
+
+        <div ng-show="item.children" ng-mouseenter="onHover($event)" ng-mouseleave="onBlur($event)" class="nav-expanded">
+          <div class="nav-expanded-columns nav-expanded-columns-2 nav-expanded-columns-icons">
+            <div class="nav-expanded-columns-inner">
+              <ul>
+                <li ng-repeat="child in item.children" class="expanded-column-item">
+                  <a href="{{ child.url }}"
+                     ng-click="urlMgr.redirectExternal(child.url, $event)">
+                    <div class="column-item-icon">
+                      <img ng-src="{{ createIconUrl(child.icon_url) }}" ng-if="hasIcon(child)">
+                    </div>
+                    <div class="column-item-info">
+                      <div class="column-item-heading">{{ child.menu_label }}</div>
+                      <div class="column-item-description">{{ child.caption }}</div>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+</script>
+
+
+  <script src="./vendor/d3/d3.min.js"></script>
+  <script src="http://static.gapminderdev.org/vizabi/master/dist/vizabi.min.js"></script>
+  <script src="./vendor/angular/angular.min.js"></script>
+  <script src="./vendor/angular-route/angular-route.min.js"></script>
+  <script src="./scripts/app.js"></script>
+  <script>(function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+        (i[r].q = i[r].q || []).push(arguments)
+      }, i[r].l = 1 * new Date();
+    a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+  ga('create', 'UA-67908993-1', 'auto');</script>
+
+</body>
+</html>
