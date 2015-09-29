@@ -72,6 +72,10 @@ $vzb-loader-bgcolor: $vzb-color-white;
   visibility: hidden !important;
 }
 
+.vzb-blur {
+    filter: blur(3px);
+}
+
 .vzb-transparent {
   opacity: 0 !important;
 }

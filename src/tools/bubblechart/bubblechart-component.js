@@ -557,11 +557,13 @@
       yTitle
         .attr("y", "-6px")
         .on("click", function(){
-//            _this.parent
-//                .findChildByName("gapminder-treemenu")
-//                .markerID("axis_y")
-//                .updateView()
-//                .toggle();
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_y")
+                .alignX("left")
+                .alignY("top")
+                .updateView()
+                .toggle();
         });
 
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
@@ -569,11 +571,13 @@
       xTitle
         .attr("y", "-0.32em")
         .on("click", function(){
-//            _this.parent
-//                .findChildByName("gapminder-treemenu")
-//                .markerID("axis_x")
-//                .updateView()
-//                .toggle();
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_x")
+                .alignX("left") 
+                .alignY("bottom")
+                .updateView()
+                .toggle();
         });
 
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
