@@ -13,4 +13,4 @@ before_script:
   - bower install
 script:
   - gulp build
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || false'
