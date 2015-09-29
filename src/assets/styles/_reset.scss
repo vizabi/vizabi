@@ -36,4 +36,8 @@
   button {
     font-size: $vzb-font-size-base;
   }
+
+  * {
+    -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+  }
 }
