@@ -210,29 +210,13 @@
           var cache = _this.cached[d[KEY]];
           cache.labelFixed = true;
 
-          var labelGroup = d3.select(this);
-          // we need block own size for calculating min left top position
-          var width = parseInt(labelGroup.select("rect").attr("width"));
-          var height = parseInt(labelGroup.select("rect").attr("height"));
 
           cache.labelX_ += d3.event.dx / _this.width;
           cache.labelY_ += d3.event.dy / _this.height;
+
           var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-          if (resolvedX - width <= 0) { //check left
-            cache.labelX_ = (width - _this.xScale(cache.labelX0))/_this.width;
-            resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-          } else if (resolvedX + 15 > _this.width) {//check right
-            cache.labelX_ = (_this.width - 15 - _this.xScale(cache.labelX0))/_this.width;
-            resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
-          }
           var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
-          if (resolvedY - height <= 0 ) { // check top
-            cache.labelY_ = (height - _this.yScale(cache.labelY0))/_this.height;
-            resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
-          } else if (resolvedY + 13 > _this.height) { //check bottom
-            cache.labelY_ = (_this.height - 13 - _this.yScale(cache.labelY0))/_this.height;
-            resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
-          }
+
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
 
@@ -246,8 +230,8 @@
         	var KEY = _this.KEY;
         _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
-            Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
-            Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
+            _this.cached[d[KEY]].labelX_,
+            _this.cached[d[KEY]].labelY_
           ]);
         });
 
@@ -1338,13 +1322,13 @@
         resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
       } else if (resolvedX + 15 > this.width) {//check right
         cache.labelX_ = (this.width - 15 - this.xScale(cache.labelX0))/this.width;
-        resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+        resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
       }
       if (resolvedY - height <= 0 ) { // check top
         cache.labelY_ = (height - this.yScale(cache.labelY0))/this.height;
         resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
       } else if (resolvedY + 13 > this.height) { //check bottom
-        cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0))/_this.height;
+        cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0))/this.height;
         resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
       }
 
