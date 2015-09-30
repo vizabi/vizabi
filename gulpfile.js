@@ -197,10 +197,7 @@ function getTemplates() {
 }
 
 //build JS with banner and/or sourcemaps
-function buildJS(opts) {
-
-  var banner = opts.banner || false;
-  var src_maps = opts.sourcemaps || false;
+function buildJS(dev) {
 
   var banner_str = ['/**',
   ' * '+ pkg.name +' - '+ pkg.description,
@@ -213,37 +210,41 @@ function buildJS(opts) {
   var version_str = '; Vizabi._version = "'+pkg.version+'";';
 
   gutil.log(chalk.yellow("Bundling JS..."));
-  return es.merge(getConcatFiles(), getTemplates())
-    .pipe(gulpif(src_maps, sourcemaps.init()))
-      .pipe(concat('vizabi.js'))
-      .pipe(wrapper({ footer: version_str}))
-      .pipe(gulpif(banner, wrapper({ header: banner_str})))
-      .pipe(gulp.dest(config.destLib))
-      .pipe(rename('vizabi.min.js'))
-      .pipe(uglify())
-      .pipe(gulpif(banner, wrapper({ header: banner_str})))
-    .pipe(gulpif(src_maps,sourcemaps.write('.')))
-    .pipe(gulp.dest(config.destLib))
-    .on('end', function() {
-      gutil.log(chalk.green("Bundling JS... DONE!"))
-    });
+
+  var src = es.merge(getConcatFiles(), getTemplates());
+
+  if(dev) {
+    src = src.pipe(sourcemaps.init())
+             .pipe(concat('vizabi.js'))
+             .pipe(wrapper({ footer: version_str}))
+             .pipe(sourcemaps.write('.'))
+             .pipe(gulp.dest(config.destLib));
+  }
+  else {
+    src = src.pipe(concat('vizabi.js'))
+             .pipe(wrapper({ footer: version_str}))
+             .pipe(wrapper({ header: banner_str}))
+             .pipe(gulp.dest(config.destLib))
+             .pipe(rename('vizabi.min.js'))
+             .pipe(uglify())
+             .pipe(wrapper({ header: banner_str}))
+             .pipe(gulp.dest(config.destLib));
+  }
+
+  return src.on('end', function() {
+            gutil.log(chalk.green("Bundling JS... DONE!"))
+         });
 
 }
 
 //with source maps
 gulp.task('javascript', ['clean:js'], function() {
-  return buildJS({
-    banner: false,
-    sourcemaps: true
-  });
+  return buildJS(true);
 });
 
 //without source maps and with banner
 gulp.task('javascript:build', ['clean:js'], function() {
-  return buildJS({
-    banner: true,
-    sourcemaps: false
-  });
+  return buildJS();
 });
 
 
@@ -253,12 +254,8 @@ gulp.task('javascript:build', ['clean:js'], function() {
 
 gulp.task('preview:templates', ['clean:preview:html'], function() {
   gutil.log(chalk.yellow("Compiling preview page..."));
-  var YOUR_LOCALS = {};
   return gulp.src(path.join(config.srcPreview, '*.jade'))
-    .pipe(jade({
-      locals: {},
-      pretty: true
-    }))
+    .pipe(jade())
     .pipe(gulp.dest(config.destPreview))
     .on('end', function() {
       gutil.log(chalk.green("Compiling preview page... DONE!"))
@@ -338,7 +335,7 @@ gulp.task('watch', function() {
   reloadOnChange(path.join(config.destPreview, '**/*.html'));
   reloadOnChange(path.join(config.destPreview, '**/*.css'));
   reloadOnChange(path.join(config.destLib, 'vizabi.css'));
-  reloadOnChange(path.join(config.destLib, 'vizabi.min.js'));
+  reloadOnChange(path.join(config.destLib, 'vizabi.js'));
 });
 
 gulp.task('watch-lint', function() {
