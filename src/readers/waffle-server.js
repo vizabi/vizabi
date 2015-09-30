@@ -51,11 +51,11 @@
           //[['1990', '2012']] -> '1990-2012'
           where['time'] = where['time'][0].join('-');
         }
-        
+
         //rename geo.category to geo.cat
         if (where['geo.category']) {
           where['geo.cat'] = utils.clone(where['geo.category']);
-          delete where['geo.category'];
+          where['geo.category'] = void 0;
         }
 
         formatted = {

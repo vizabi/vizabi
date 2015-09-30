@@ -64,7 +64,7 @@
      * @param context The component's parent
      */
     init: function (config, context) {
-      this.template = this.template || "src/components/_gapminder/timeslider/timeslider.html";
+      this.template = this.template || "timeslider.html";
 
       //define expected models/hooks for this component
       this.model_expects = [{

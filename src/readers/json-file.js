@@ -76,8 +76,7 @@
             //cache and resolve
             FILE_CACHED[path] = res;
             FILE_REQUESTED[path].resolve();
-            delete FILE_REQUESTED[path];
-
+            FILE_REQUESTED[path] = void 0;
 
             parse(res);
           });
@@ -115,7 +114,7 @@
           var where = query.where;
           if (where['geo.category']) {
             where['geo.cat'] = utils.clone(where['geo.category']);
-            delete where['geo.category'];
+            where['geo.category'] = void 0;
           }
 
           //format values in the dataset and filters
@@ -135,7 +134,7 @@
           where = utils.clone(where, validConditions);
 
           data = utils.filterAny(data, where);
-        
+
           //warn if filtering returns empty array
           if(data.length==0) utils.warn("data reader returns empty array, that's bad");
 

@@ -96,6 +96,11 @@
             if(arg==null) arg = !hidden;
             hidden = arg;
             this.element.classed("vzb-hidden", hidden);
+            
+            var _this = this;
+            this.parent.components.forEach(function(c){
+                c.element.classed("vzb-blur", c!=_this && !hidden);
+            })
         }
 
 

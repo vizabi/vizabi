@@ -1,0 +1,156 @@
+// ****************************************************************************
+//
+//   Common Mixins
+//   mixins can be used across all scss files, at all levels
+//
+//   -> Naming convention:
+//      general -> specific
+//      E.g: $vzb-border-color-blue;
+//
+// ****************************************************************************
+// ----------------------------------------------------------------------------
+//   Bourbon mixins: http://bourbon.io/docs/
+// ----------------------------------------------------------------------------
+@import '../../../lib/bourbon/app/assets/stylesheets/bourbon';
+
+// ----------------------------------------------------------------------------
+//   Sizes, borders and margins
+// ----------------------------------------------------------------------------
+
+@mixin reset-margin-padding() {
+  padding: 0;
+  margin: 0;
+}
+
+//center a box horizontally (div, anything)
+@mixin center-block {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@mixin box-sizing($box-model) {
+  @include prefixer(box-sizing, $box-model, webkit moz ms o spec);
+}
+
+@mixin border-radius($border-radius) {
+  @include prefixer(border-radius, $border-radius, webkit moz ms o spec);
+}
+
+@mixin translate($x, $y) {
+  @include prefixer(transform, translate($x, $y), webkit moz ms o spec);
+}
+
+@mixin rotate($r) {
+  @include prefixer(transform, rotate($r), webkit moz ms o spec);
+}
+
+@mixin box-shadow($x, $y, $blur, $color, $inset: false) {
+  @if $inset {
+    @include prefixer(box-shadow, inset $x $y $blur $color, webkit moz ms o spec);
+  } @else {
+    @include prefixer(box-shadow, $x $y $blur $color, webkit moz ms o spec);
+  }
+}
+
+// ----------------------------------------------------------------------------
+//   Color and Transformation
+// ----------------------------------------------------------------------------
+
+@mixin opacity($v) {
+  filter: alpha(opacity=($v * 100));
+  opacity: $v;
+}
+
+// ----------------------------------------------------------------------------
+//   Text
+// ----------------------------------------------------------------------------
+
+//converts pixels to em
+@mixin font-size($size: 12px) {
+  font-size: (.06 * $size / 1px) + em;
+}
+
+//same with line height
+@mixin line-height($height: 12px) {
+  line-height: (.125 * $height / 1px) + em;
+}
+
+// ----------------------------------------------------------------------------
+//   Animation
+// ----------------------------------------------------------------------------
+
+@mixin rotate-forever {
+  0% {
+    @include transform(rotate(0deg));
+  }
+
+  100% {
+    @include transform(rotate(359deg));
+  }
+}
+
+@keyframes rotate-forever {
+  @include rotate-forever;
+}
+
+// ----------------------------------------------------------------------------
+//   Responsiveness
+// ----------------------------------------------------------------------------
+
+//overflow mobile y
+@mixin overflow-mobile() {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+// ----------------------------------------------------------------------------
+//   Other
+// ----------------------------------------------------------------------------
+
+//TODO: evaluate if this mixin should be included at all
+@mixin tooltip($background-color: $vzb-color-white,
+               $padding: .5em,
+               $arrow-base: 1em,
+               $arrow-length: .5em,
+               $border-width: 0,
+               $border-color: false) {
+
+  position: absolute;
+  padding: $padding;
+  @include box-sizing(border-box);
+  margin-bottom: $arrow-length;
+  background-color: $background-color;
+  cursor: default;
+  visibility: hidden;
+
+  &:after {
+    border-left: ($arrow-base / 2 - $border-width) solid transparent;
+    border-right: ($arrow-base / 2 - $border-width) solid transparent;
+    border-top: ($arrow-length - $border-width) solid $background-color;
+    content: '';
+    height: 0;
+    left: 50%;
+    margin-left: ($border-width - $arrow-base / 2);
+    position: absolute;
+    top: 100%;
+    width: 0;
+  }
+
+  @if $border-width {
+    border: $border-width solid $border-color;
+
+    &:before {
+      border-left: ($arrow-base / 2) solid transparent;
+      border-right: ($arrow-base / 2) solid transparent;
+      border-top: $arrow-length solid $border-color;
+      content: '';
+      height: 0;
+      left: 50%;
+      margin-left: ($arrow-base / -2);
+      position: absolute;
+      top: 100%;
+      width: 0;
+    }
+  }
+}

@@ -232,11 +232,15 @@
     _freezeAllEvents = false;
     _freezeAllExceptions = {};
     //unfreeze all instances
-    for (var i in _frozenEventInstances) {
-      var instance = _frozenEventInstances[i];
+    var keys = Object.keys(_frozenEventInstances);
+    for (var i = 0; i < keys.length; i++) {
+      var instance = _frozenEventInstances[keys[i]];
+      if (!instance) {
+        continue;
+      }
       instance.unfreeze();
-      delete _frozenEventInstances[i];
     }
+    _frozenEventInstances = {};
   };
 
   Vizabi.Events = Events;

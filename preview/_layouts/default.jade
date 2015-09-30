@@ -1,0 +1,47 @@
+block variables
+  - var control_buttons = { play: true, languages: ["en", "se"], record: true }
+  - var control_buttons = {play: true, language: true, record: true }
+  - var title = "Preview"
+  - var description = "This page previews Vizabi"
+  - var tool = false
+  - var source_code = "https://github.com/Gapminder/vizabi/tree/develop/src/tools/"
+  - var chart_buttons = "[]"
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0', name='viewport')
+
+    title Vizabi - #{title}
+
+    //- Styles
+    link(rel='stylesheet', href='assets/vendor/css/font-awesome.min.css')
+    link(rel='stylesheet', href='assets/css/main.css')
+    link(rel='stylesheet', href='../dist/vizabi.css')
+  body
+    include ../_partials/nav.jade
+
+    #vzbp-main
+
+      #vzbp-placeholder.vzbp-viewer
+
+    #vzbp-sidebar
+      include ../_partials/sidebar.jade
+
+    include ../_partials/state_editor.jade
+
+    script(src='assets/vendor/js/d3.min.js')
+    script(src='../dist/vizabi.js')
+    script(src='assets/js/_utils.js')
+    script(src='assets/js/_collapsible.js')
+    script(src='assets/js/_url.js')
+    script(src='assets/js/_codepen.js')
+    script(src='assets/js/main.js')
+    script(src='assets/js/_state-editor.js')
+    script(src='assets/js/_size-div.js')
+    script(src='assets/js/_interaction.js')
+    script(src='assets/js/_dropdowns.js')
+
+    unless !tool
+      include ../_partials/toolscript.jade

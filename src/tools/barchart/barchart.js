@@ -12,7 +12,7 @@
   //warn client if d3 is not defined
   if (!Vizabi._require('d3')) return;
 
-  var comp_template = 'src/tools/barchart/barchart.html';
+  var comp_template = 'barchart.html';
 
   //BAR CHART COMPONENT
   Vizabi.Component.extend('gapminder-barchart', {
@@ -369,7 +369,7 @@
     },
     data: {
       reader: "csv-file",
-      path: "local_data/waffles/basic-indicators.csv"
+      path: "data/waffles/basic-indicators.csv"
     }
   });
 

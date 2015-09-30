@@ -26,7 +26,7 @@
     init: function (config, context) {
       var _this = this;
       this.name = 'bubblechart';
-      this.template = 'src/tools/bubblechart/bubblechart.html';
+      this.template = 'bubblechart.html';
 
       //define expected models for this component
       this.model_expects = [{
@@ -114,7 +114,7 @@
           }
           _this._trails.run("reveal");
           _this.tooltipMobile.classed('vzb-hidden', true);
-          _this._bubblesInteract().mouseout();
+          //_this._bubblesInteract().mouseout();
         },
         'change:time:adaptMinMaxZoom': function () {
           //console.log("EVENT change:time:adaptMinMaxZoom");
@@ -210,11 +210,13 @@
           var cache = _this.cached[d[KEY]];
           cache.labelFixed = true;
 
+
           cache.labelX_ += d3.event.dx / _this.width;
           cache.labelY_ += d3.event.dy / _this.height;
 
           var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
           var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+
           var resolvedX0 = _this.xScale(cache.labelX0);
           var resolvedY0 = _this.yScale(cache.labelY0);
 
@@ -226,10 +228,10 @@
         })
         .on("dragend", function (d, i) {
         	var KEY = _this.KEY;
-        _this.druging = null;
+          _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
-            Math.round(_this.cached[d[KEY]].labelX_ * 100) / 100,
-            Math.round(_this.cached[d[KEY]].labelY_ * 100) / 100
+            _this.cached[d[KEY]].labelX_,
+            _this.cached[d[KEY]].labelY_
           ]);
         });
 
@@ -281,21 +283,21 @@
         .scaleExtent([1, 100])
         .on("zoom", function () {
           if (d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
-          
-          
+
+
           //send the event to the page if fully zoomed our or page not scrolled into view
           if(d3.event.sourceEvent != null && _this.scrollableAncestor){
-              
+
               if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-              
+
               if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1){
                   _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
                   return;
               }
           }
-          
+
           _this.model._data.entities.clearHighlighted();
-          _this._setTooltip(); 
+          _this._setTooltip();
 
           var zoom = d3.event.scale;
           var pan = d3.event.translate;
@@ -385,7 +387,7 @@
      */
     readyOnce: function () {
       var _this = this;
-        
+
       this.scrollableAncestor = utils.findScrollableAncestor(this.element);
       this.element = d3.select(this.element);
 
@@ -402,7 +404,7 @@
       this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
       this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
       this.yearEl = this.graph.select('.vzb-bc-year');
-        
+
       this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
       this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
       this.dataWarningEl = this.graph.select('.vzb-data-warning');
@@ -461,7 +463,7 @@
       this._valuesCalculated = true; //hack to avoid recalculation
 
       this.updateUIStrings();
-        
+
       this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
@@ -484,14 +486,15 @@
 
       if(!this._valuesCalculated) this._calculateAllValues();
       else this._valuesCalculated = false;
-      
+
       this.updateUIStrings();
-        
+
       this.updateEntities();
       this.redrawDataPoints();
       this.updateBubbleOpacity();
       this.updateIndicators();
       this.updateSize();
+      this.cached = {};
       this.updateMarkerSizeLimits();
       this._trails.create();
       this._trails.run("findVisible");
@@ -557,11 +560,13 @@
       yTitle
         .attr("y", "-6px")
         .on("click", function(){
-//            _this.parent
-//                .findChildByName("gapminder-treemenu")
-//                .markerID("axis_y")
-//                .updateView()
-//                .toggle();
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_y")
+                .alignX("left")
+                .alignY("top")
+                .updateView()
+                .toggle();
         });
 
       var xTitle = this.xTitleEl.selectAll("text").data([0]);
@@ -569,11 +574,13 @@
       xTitle
         .attr("y", "-0.32em")
         .on("click", function(){
-//            _this.parent
-//                .findChildByName("gapminder-treemenu")
-//                .markerID("axis_x")
-//                .updateView()
-//                .toggle();
+            _this.parent
+                .findChildByName("gapminder-treemenu")
+                .markerID("axis_x")
+                .alignX("left")
+                .alignY("bottom")
+                .updateView()
+                .toggle();
         });
 
       var sTitle = this.sTitleEl.selectAll("text").data([0]);
@@ -586,32 +593,32 @@
           .attr("text-anchor", "end")
            .attr("y", "-0.32em")
           .text(this.translator("hints/dataWarning"));
-        
+
       //TODO: move away from UI strings, maybe to ready or ready once
       this.yInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_y.which].sourceLink, '_blank').focus();
       })
       this.xInfoEl.on("click", function(){
         window.open(indicatorsDB[_this.model.marker.axis_x.which].sourceLink, '_blank').focus();
-      })  
+      })
       this.dataWarningEl
           .on("click", function(){
                 _this.parent.findChildByName("gapminder-datawarning").toggle();
             })
           .on("mouseover", function(){
                 _this._updateDoubtOpacity(1);
-            })  
+            })
           .on("mouseout", function(){
                 _this._updateDoubtOpacity();
-            })  
+            })
     },
 
     _updateDoubtOpacity: function(opacity){
-        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time)); 
+        if(opacity==null) opacity = this.wScale(+this.timeFormatter(this.time));
         if(this.someSelected) opacity = 1;
-        this.dataWarningEl.style("opacity", opacity);  
+        this.dataWarningEl.style("opacity", opacity);
     },
-      
+
     /*
      * UPDATE ENTITIES:
      * Ideally should only update when show parameters change or data changes
@@ -670,23 +677,10 @@
           _this._bubblesInteract().click(d, i);
         })
         .onTap(function (d, i) {
-          //TODO return interaction on touch device
-          return;
-          var evt = d3.event;
-          _this.tooltipMobile.classed('vzb-hidden', false)
-            .attr('style', 'left:' + (evt.changedTouches[0].clientX + 15) + 'px;top:' + (evt.changedTouches[0].clientY - 25) + 'px')
-            .html('Hold bubble to select it');
           d3.event.stopPropagation();
-          _this._bubblesInteract().mouseout();
-          _this._bubblesInteract().mouseover(d, i);
+          _this._bubblesInteract().click(d, i);
         })
         .onLongTap(function (d, i) {
-          //TODO return interaction on touch device
-          return;
-          _this.tooltipMobile.classed('vzb-hidden', true);
-          d3.event.stopPropagation();
-          _this._bubblesInteract().mouseout();
-          _this._bubblesInteract().click(d, i);
         });
 
 
@@ -731,7 +725,7 @@
           var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
           var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
           var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-          _this._setTooltip(text, x-s/2, y-s/2);
+          _this._setTooltip(text, x, y, s);
         },
 
         mouseout: function (d, i) {
@@ -954,60 +948,60 @@
 
       this.projectionX.attr("y1", _this.yScale.range()[0]);
       this.projectionY.attr("x2", _this.xScale.range()[0]);
-        
-      
+
+
       var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
       if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
-      
+
       var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
       if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
-        
+
       var sTitleText = this.sTitleEl.select("text")
         .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
         this.translator("buttons/colors") + ": " + this.strings.title.C);
-        
+
       var probe = this.sTitleEl.append("text").text(sTitleText.text());
       var font = parseInt(probe.style("font-size"))
                  * (this.height - 20) / probe.node().getBBox().width;
-      
+
       if(probe.node().getBBox().width > this.height - 20) {
         sTitleText.style("font-size", font);
       }else{
         sTitleText.style("font-size", null);
       }
-      probe.remove(); 
-        
+      probe.remove();
+
       var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
       this.yTitleEl
           .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
-             
+
       this.xTitleEl
           .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
-     
+
       this.sTitleEl
           .attr("transform", "translate(" + this.width + ","+ 20 +") rotate(-90)");
 
       this.dataWarningEl
           .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
-      
+
         this.dataWarningEl.select("text").text(
             this.translator("hints/dataWarning" + (this.getLayoutProfile()==='small'?"-little":""))
         )
-        
-      var warnBB = this.dataWarningEl.select("text").node().getBBox(); 
+
+      var warnBB = this.dataWarningEl.select("text").node().getBBox();
       this.dataWarningEl.select("svg")
           .attr("width",warnBB.height)
           .attr("height",warnBB.height)
           .attr("x", -warnBB.width - warnBB.height * 1.2)
           .attr("y", -warnBB.height * 1.2)
-            
+
         if(this.yInfoEl.select('text').node()){
             var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
             var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
             this.yInfoEl.attr('transform', 'translate('+ (titleW - yaxisWidth + titleH * 1.0) +',' + (-titleH*0.7) + ')');
             this.yInfoEl.select("text").attr("dy", "0.1em")
             this.yInfoEl.select("circle").attr("r", titleH/2);
-        }            
+        }
         if(this.xInfoEl.select('text').node()){
             var titleH = this.xInfoEl.select('text').node().getBBox().height || 0;
             var titleW = this.xTitleEl.select('text').node().getBBox().width || 0;
@@ -1064,9 +1058,18 @@
       //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
       //   });
       // }
+      var values;
+      var KEY = this.KEY;
+      if (this.model.time.lockNonSelected && this.someSelected) {
+        var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+        values = this._getValuesInterpolated(tLocked);
+      } else {
+        values = this._getValuesInterpolated(this.time);
+      }
 
       this.entityBubbles.each(function (d, index) {
-        var valueS = _this.model.marker.size.getValue(d);
+
+        var valueS = values.size[d[KEY]];
         if (valueS == null) return;
 
         d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
@@ -1123,7 +1126,6 @@
       var _this = this;
       var TIMEDIM = this.TIMEDIM;
       var KEY = this.KEY;
-
       if (_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         values = valuesL;
       }
@@ -1147,6 +1149,7 @@
 
         view.classed("vzb-invisible", false)
             .style("fill", _this.cScale(valueC));
+
 
         if(duration) {
           view.transition().duration(duration).ease("linear")
@@ -1184,13 +1187,14 @@
       if (d[KEY] == _this.druging)
       	return;
 
+      var cached = _this.cached[d[KEY]];
+
       if (duration == null) duration = _this.duration;
 
       // only for selected entities
       if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
 
         if (_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-        var cached = _this.cached[d[KEY]];
 
 
         var select = utils.find(_this.model.entities.select, function (f) {
@@ -1198,24 +1202,15 @@
         });
         var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
-        cached.valueX = valueX;
-        cached.valueY = valueY;
-
         if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
 
           select.trailStartTime = _this.timeFormatter(_this.time);
           //the events in model are not triggered here. to trigger uncomment the next line
           //_this.model.entities.triggerAll("change:select");
-
           cached.scaledS0 = scaledS;
           cached.labelX0 = valueX;
           cached.labelY0 = valueY;
-        }
 
-        if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) {
-          cached.scaledS0 = scaledS;
-          cached.labelX0 = valueX;
-          cached.labelY0 = valueY;
         }
 
         var lineGroup = _this.entityLines.filter(function (f) {
@@ -1227,47 +1222,67 @@
         })
           .each(function (groupData) {
 
-            var labelGroup = d3.select(this);
+            cached.valueX = valueX;
+            cached.valueY = valueY;
 
-            var text = labelGroup.selectAll("text.vzb-bc-label-content")
-              .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
-
-            lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
-
-            var rect = labelGroup.select("rect");
-
-            var contentBBox = text[0][0].getBBox();
-            if (!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
-              cached.contentBBox = contentBBox;
-
-              labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.height * 0.0 + 4)
-                .attr("y", contentBBox.height * -1);
-
-              labelGroup.select("circle")
-                .attr("cx", contentBBox.height * 0.0 + 4)
-                .attr("cy", contentBBox.height * -1)
-                .attr("r", contentBBox.height * 0.5);
-
-              rect.attr("width", contentBBox.width + 8)
-                .attr("height", contentBBox.height + 8)
-                .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height -1)
-                .attr("rx", contentBBox.height * 0.2)
-                .attr("ry", contentBBox.height * 0.2);
+            var limitedX, limitedY, limitedX0, limitedY0;
+            if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
+              cached.scaledS0 = scaledS;
+              cached.labelX0 = valueX;
+              cached.labelY0 = valueY;
             }
+              var labelGroup = d3.select(this);
 
-            cached.labelX_ = select.labelOffset[0] || -cached.scaledS0 / 2 / _this.width;
-            cached.labelY_ = select.labelOffset[1] || -cached.scaledS0 / 2 / _this.width;
+              var text = labelGroup.selectAll("text.vzb-bc-label-content")
+                .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
-            var resolvedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-            var resolvedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
 
-            var limitedX = resolvedX - cached.contentBBox.width > 0 ? (resolvedX < _this.width ? resolvedX : _this.width) : cached.contentBBox.width;
-            var limitedY = resolvedY - cached.contentBBox.height > 0 ? (resolvedY < _this.height ? resolvedY : _this.height) : cached.contentBBox.height;
+              var rect = labelGroup.select("rect");
 
-            var limitedX0 = _this.xScale(cached.labelX0);
-            var limitedY0 = _this.yScale(cached.labelY0);
+              var contentBBox = text[0][0].getBBox();
+              if (!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
+                cached.contentBBox = contentBBox;
+
+                labelGroup.select("text.vzb-bc-label-x")
+                  .attr("x", /*contentBBox.height * 0.0 + */4)
+                  .attr("y", contentBBox.height * -1);
+
+                labelGroup.select("circle")
+                  .attr("cx", /*contentBBox.height * 0.0 + */4)
+                  .attr("cy", contentBBox.height * -1)
+                  .attr("r", contentBBox.height * 0.5);
+
+                rect.attr("width", contentBBox.width + 8)
+                  .attr("height", contentBBox.height * 1.2)
+                  .attr("x", -contentBBox.width -4)
+                  .attr("y", -contentBBox.height*0.85)
+                  .attr("rx", contentBBox.height * 0.2)
+                  .attr("ry", contentBBox.height * 0.2);
+              }
+
+              limitedX0 = _this.xScale(cached.labelX0);
+              limitedY0 = _this.yScale(cached.labelY0);
+
+              cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0*0.75 - 5) / _this.width;
+              cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0*0.75 - 11) / _this.height;
+
+              limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+              if (limitedX - cached.contentBBox.width <= 0) { //check left
+                cached.labelX_ = (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
+                limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+              } else if (limitedX + 15 > _this.width) {//check right
+                cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0))/_this.width;
+                limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+              }
+              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              if (limitedY - cached.contentBBox.height <= 0 ) { // check top
+                cached.labelY_ = (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
+                limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              } else if (limitedY + 10 > _this.height) { //check bottom
+                cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
+                limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              }
 
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
@@ -1276,14 +1291,34 @@
         //for non-selected bubbles
         //make sure there is no cached data
         if (_this.cached[d[KEY]] != null) {
-          delete _this.cached[d[KEY]]
+          _this.cached[d[KEY]] = void 0;
         }
       }
     },
 
     _repositionLabels: function (d, i, context, resolvedX, resolvedY, resolvedX0, resolvedY0, duration, lineGroup) {
 
+      var cache = this.cached[d[this.KEY]];
+
       var labelGroup = d3.select(context);
+
+      var width = parseInt(labelGroup.select("rect").attr("width"));
+      var height = parseInt(labelGroup.select("rect").attr("height"));
+
+      if (resolvedX - width <= 0) { //check left
+        cache.labelX_ = (width - this.xScale(cache.labelX0))/this.width;
+        resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+      } else if (resolvedX + 20 > this.width) {//check right
+        cache.labelX_ = (this.width - 20 - this.xScale(cache.labelX0))/this.width;
+        resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
+      }
+      if (resolvedY - height <= 0 ) { // check top
+        cache.labelY_ = (height - this.yScale(cache.labelY0))/this.height;
+        resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+      } else if (resolvedY + 13 > this.height) { //check bottom
+        cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0))/this.height;
+        resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
+      }
 
       if(duration) {
         labelGroup
@@ -1297,8 +1332,6 @@
         lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
       }
 
-      var width = parseInt(labelGroup.select("rect").attr("width"));
-      var height = parseInt(labelGroup.select("rect").attr("height"));
       var diffX1 = resolvedX0 - resolvedX;
       var diffY1 = resolvedY0 - resolvedY;
       var diffX2 = 0;
@@ -1306,13 +1339,13 @@
 
       var angle = Math.atan2(diffX1 + width/2, diffY1 + height/2) * 180 / Math.PI;
       // middle bottom
-      if(Math.abs(angle)<=45){ diffX2 = width / 2; diffY2 = 0}
+      if(Math.abs(angle) <= 45){ diffX2 = width / 2; diffY2 = 0}
       // right middle
       if(angle>45 && angle<135){ diffX2 = 0; diffY2 = height/4; }
       // middle top
-      if(angle<-45 && angle>-135){ diffX2 = width; diffY2 = height/4;  }
+      if(angle < -45 && angle > -135){ diffX2 = width - 4; diffY2 = height/4;  }
       // left middle
-      if(Math.abs(angle)>=135){diffX2 = width / 2; diffY2 = height/2  }
+      if(Math.abs(angle) >= 135){diffX2 = width / 2; diffY2 = height/2  }
 
       lineGroup.selectAll("line")
         .attr("x1", diffX1)
@@ -1367,6 +1400,8 @@
 
           view.append("rect")
             .on("click", function (d, i) {
+              //TODO: reintroduce zoom and return this
+              return;
               //default prevented is needed to distinguish click from drag
               if (d3.event.defaultPrevented) return;
 
@@ -1411,27 +1446,51 @@
     },
 
 
-    _setTooltip: function (tooltipText, x, y) {
+    _setTooltip: function (tooltipText, x, y, offset) {
       if (tooltipText) {
         var mouse = d3.mouse(this.graph.node()).map(function (d) {return parseInt(d)});
+        var xPos, yPos, xSign = -1, ySign = -1, xOffset = 0, yOffset = 0;
 
+        if (offset) {
+          xOffset = offset * 0.71; // 0.71 - sin and cos for 315
+          yOffset = offset * 0.71;
+        }
         //position tooltip
         this.tooltip.classed("vzb-hidden", false)
           //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
-          .attr("transform", "translate(" + (x?x:mouse[0]) + "," + (y?y:mouse[1]) + ")")
           .selectAll("text")
           .text(tooltipText);
 
         var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+        if (x - xOffset - contentBBox.width < 0) {
+          xSign = 1;
+          x += contentBBox.width + 5;// corrective to the block Radius and text padding
+        } else {
+          x -= 5; // corrective to the block Radius and text padding
+        }
+        if (y - yOffset - contentBBox.height < 0) {
+          ySign = 1;
+          y += contentBBox.height;
+        } else {
+          y -= 11;// corrective to the block Radius and text padding
+        }
+        if (offset) {
+          xPos = x + xOffset * xSign;
+          yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+        } else {
+          xPos = x + xOffset * xSign;// 0.71 - sin and cos for 315
+          yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+        }
+        this.tooltip.attr("transform", "translate(" + (xPos?xPos:mouse[0]) + "," + (yPos?yPos:mouse[1]) + ")")
+
         this.tooltip.select('rect').attr("width", contentBBox.width + 8)
-                .attr("height", contentBBox.height + 8)
+                .attr("height", contentBBox.height * 1.2)
                 .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height -1)
+                .attr("y", -contentBBox.height * 0.85)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
 
       } else {
-
         this.tooltip.classed("vzb-hidden", true);
       }
     },
