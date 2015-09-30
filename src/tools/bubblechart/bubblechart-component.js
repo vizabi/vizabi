@@ -494,6 +494,7 @@
       this.updateBubbleOpacity();
       this.updateIndicators();
       this.updateSize();
+      this.cached = {};
       this.updateMarkerSizeLimits();
       this._trails.create();
       this._trails.run("findVisible");
@@ -576,7 +577,7 @@
             _this.parent
                 .findChildByName("gapminder-treemenu")
                 .markerID("axis_x")
-                .alignX("left") 
+                .alignX("left")
                 .alignY("bottom")
                 .updateView()
                 .toggle();
@@ -1205,7 +1206,6 @@
       if (_this.model.entities.isSelected(d) && _this.entityLabels != null) {
 
         if (_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-        var cached = _this.cached[d[KEY]];
 
 
         var select = utils.find(_this.model.entities.select, function (f) {
@@ -1213,8 +1213,7 @@
         });
         var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
-        cached.valueX = valueX;
-        cached.valueY = valueY;
+
 
         if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
 
@@ -1222,15 +1221,6 @@
           //the events in model are not triggered here. to trigger uncomment the next line
           //_this.model.entities.triggerAll("change:select");
 
-          cached.scaledS0 = scaledS;
-          cached.labelX0 = valueX;
-          cached.labelY0 = valueY;
-        }
-
-        if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) {
-          cached.scaledS0 = scaledS;
-          cached.labelX0 = valueX;
-          cached.labelY0 = valueY;
         }
 
         var lineGroup = _this.entityLines.filter(function (f) {
@@ -1241,26 +1231,31 @@
           return f[KEY] == d[KEY]
         })
           .each(function (groupData) {
+            var cached = _this.cached[d[KEY]];
+            var limitedX, limitedY, limitedX0, limitedY0;
+            if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
+              cached.scaledS0 = scaledS;
+              cached.labelX0 = valueX;
+              cached.labelY0 = valueY;
 
-            var labelGroup = d3.select(this);
+              var labelGroup = d3.select(this);
 
-            var text = labelGroup.selectAll("text.vzb-bc-label-content")
-              .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
+              var text = labelGroup.selectAll("text.vzb-bc-label-content")
+                .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
-            lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+              lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
 
-            var rect = labelGroup.select("rect");
+              var rect = labelGroup.select("rect");
 
-            var contentBBox = text[0][0].getBBox();
-            if (!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
+              var contentBBox = text[0][0].getBBox();
               cached.contentBBox = contentBBox;
 
               labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", contentBBox.height * 0.0 + 4)
+                .attr("x", /*contentBBox.height * 0.0 + */4)
                 .attr("y", contentBBox.height * -1);
 
               labelGroup.select("circle")
-                .attr("cx", contentBBox.height * 0.0 + 4)
+                .attr("cx", /*contentBBox.height * 0.0 + */4)
                 .attr("cy", contentBBox.height * -1)
                 .attr("r", contentBBox.height * 0.5);
 
@@ -1270,35 +1265,35 @@
                 .attr("y", -contentBBox.height*0.85)
                 .attr("rx", contentBBox.height * 0.2)
                 .attr("ry", contentBBox.height * 0.2);
-            }
 
-            cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0*0.75 - 5) / _this.width;
-            cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0*0.75 - 11) / _this.height;
+              limitedX0 = _this.xScale(cached.labelX0);
+              limitedY0 = _this.yScale(cached.labelY0);
 
-            var limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-            if (limitedX - cached.contentBBox.width <= 0) { //check left
-              cached.labelX_ = select.labelOffset[0] || (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
+              cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0*0.75 - 5) / _this.width;
+              cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0*0.75 - 11) / _this.height;
+
               limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-            } else if (limitedX + 15 > _this.width) {//check right
-              cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0))/_this.width;
+              if (limitedX - cached.contentBBox.width <= 0) { //check left
+                cached.labelX_ = select.labelOffset[0] || (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
+                limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+              } else if (limitedX + 15 > _this.width) {//check right
+                cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0))/_this.width;
+                limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
+              }
+              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              if (limitedY - cached.contentBBox.height <= 0 ) { // check top
+                cached.labelY_ = select.labelOffset[1] || (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
+                limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              } else if (limitedY + 10 > _this.height) { //check bottom
+                cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
+                limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              }
+            } else {
               limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-            }
-            var limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-            if (limitedY - cached.contentBBox.height <= 0 ) { // check top
-              cached.labelY_ = select.labelOffset[1] || (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
               limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-            } else if (limitedY + 10 > _this.height) { //check bottom
-              cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
-              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
+              limitedX0 = _this.xScale(cached.labelX0);
+              limitedY0 = _this.yScale(cached.labelY0);
             }
-
-/*
-            var limitedX = resolvedX - cached.contentBBox.width > 0 ? (resolvedX < _this.width ? resolvedX : _this.width) : cached.contentBBox.width;
-            var limitedY = resolvedY - cached.contentBBox.height > 0 ? (resolvedY < _this.height ? resolvedY : _this.height) : cached.contentBBox.height;
-*/
-
-            var limitedX0 = _this.xScale(cached.labelX0);
-            var limitedY0 = _this.yScale(cached.labelY0);
 
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
@@ -1324,8 +1319,8 @@
       if (resolvedX - width <= 0) { //check left
         cache.labelX_ = (width - this.xScale(cache.labelX0))/this.width;
         resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
-      } else if (resolvedX + 15 > this.width) {//check right
-        cache.labelX_ = (this.width - 15 - this.xScale(cache.labelX0))/this.width;
+      } else if (resolvedX + 20 > this.width) {//check right
+        cache.labelX_ = (this.width - 20 - this.xScale(cache.labelX0))/this.width;
         resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
       }
       if (resolvedY - height <= 0 ) { // check top
