@@ -627,38 +627,25 @@
 
             var indicatorsDB = globals.metadata.indicatorsDB;
 
-            var filterAvailable = function(array) {
-                return array
-                    .filter(function(f) {
-                        return f.children || globals.metadata.indicatorsArray.indexOf(f.id) > -
-                            1;
-                    })
-                    .filter(function(f) {
+            var allowedIDs = globals.metadata.indicatorsArray.filter(function(f){
+                //keep indicator if nothing is specified in tool properties
+                if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
+                //keep indicator if any scale is allowed in tool properties
+                if(_this.model.marker[markerID].allow.scales[0] == "*") return true;                
+            
+                //check if there is an intersection between the allowed tool scale types and the ones of indicator
+                for(var i = indicatorsDB[f].scales.length - 1; i >= 0; i--) {
+                    if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f].scales[i]) > -1) return true;
+                }
 
-                        //keep indicator if nothing is specified in tool properties
-                        if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID]
-                            .allow.scales) return true;
-                        //keep indicator if any scale is allowed in tool properties
-                        if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
-
-                        //keep indicator if it is a folder
-                        if(f.children) return true;
-
-                        //check if there is an intersection between the allowed tool scale types and the ones of indicator
-                        for(var i = indicatorsDB[f.id].scales.length - 1; i >= 0; i--) {
-                            if(_this.model.marker[markerID].allow.scales.indexOf(indicatorsDB[f
-                                    .id].scales[i]) > -1) return true;
-                        }
-
-                        return false;
-                    })
-            };
-
+                return false;
+            })
+            
+            var dataFiltered = utils.pruneTree(data, function(f){return allowedIDs.indexOf(f.id)>-1});
+            
             //bind the data
             var li = firstLevelMenu.selectAll('li')
-                .data(filterAvailable(data.children), function(d) {
-                    return d['id'];
-                });
+                .data(dataFiltered.children, function(d) {return d['id'];});
 
             //removing old items
             li.exit().remove();
@@ -693,7 +680,7 @@
                                 .append('ul')
                                 .classed(css.list, true)
                                 .selectAll('li')
-                                .data(filterAvailable(data), function(d) {
+                                .data(data, function(d) {
                                     return d['id'];
                                 })
                                 .enter()
