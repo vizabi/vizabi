@@ -37,8 +37,7 @@
           type: "language"
         }];
 
-      this.template = 'src/components/_gapminder/buttonlist/' +
-        'dialogs/' + this.name + '/' + this.name + '.html';
+      this.template = this.name + '.html';
 
       this._super(config, parent);
     },

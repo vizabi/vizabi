@@ -2,8 +2,11 @@
   "name": "vizabi",
   "version": "0.8.1",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
-  "main": "dist/lib/vizabi.min.js",
-  "directories": {},
+  "main": "build/dist/vizabi.js",
+  "files": ["build/dist"],
+  "scripts": {
+    "prepublish": "gulp build"
+  },
   "dependencies": {},
   "repository": {
     "type": "git",

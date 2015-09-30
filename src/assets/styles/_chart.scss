@@ -39,9 +39,9 @@
 %vzb-chart-axis-title {
   color: $vzb-color-primary-darkest;
   fill: currentColor;
-  //cursor: pointer;
+  cursor: pointer;
     &:hover{
-        //text-decoration: underline;
+        text-decoration: underline;
     }
 }
 

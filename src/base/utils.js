@@ -924,11 +924,12 @@
     
     //return a pruneed tree
     pruneTree: function(tree, filterCallback) {
+      var _this = this;
       var filteredTree = {};
       var filteredChildrens = [];
       if (tree.hasOwnProperty("children")) {
         filteredChildrens = tree.children.map(function (childrenTree) {
-          return pruneTree(childrenTree, filterCallback);
+          return _this.pruneTree(childrenTree, filterCallback);
             }).filter(function (childrenTree) {
           return Object.keys(childrenTree).length !== 0;
             });

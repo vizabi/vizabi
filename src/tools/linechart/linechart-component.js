@@ -20,7 +20,7 @@
     init: function (context, options) {
       var _this = this;
       this.name = 'linechart';
-      this.template = 'src/tools/linechart/linechart.html';
+      this.template = 'linechart.html';
 
       //define expected models for this component
       this.model_expects = [{
