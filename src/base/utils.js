@@ -920,6 +920,45 @@
 
     isTouchDevice: function () {
       return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+    },
+	 /**
+     * Make function prunes
+     * @param {Function} indicatorsTree It has the whole json for tree.
+    */
+	prunes:function(indicatorsTree)
+	{
+		var result={"id":indicatorsTree.id,"children":[]};
+		for(var i=0; i<indicatorsTree.children.length;i++)
+		 {
+		  if(indicatorsTree.children[i] !=undefined)
+			findNode.call(indicatorsTree.children[i],indicatorsTree.children[i].id,result);
+			return result;
+		 }
+	},
+	function findNode(id,result) {
+	  	var allowed_IDs = ["time", "gdp_per_cap", "gdppc_pday"];
+	  if( this.children !=undefined && this.children.length >0){
+	    for(var i=0; i<this.children.length;i++){
+				if(allowed_IDs.indexOf(this.children[i].id)!==-1)
+				{
+					if(result.children[result.children.length-1].id!==id)
+					{
+						result.children.push({"id":this.id,"children":[]});
+					}
+					result.children[result.children.length-1].children.push(this.children[i])
+				}
+				if(this.children[i].children !=undefined)
+				    findNode.call(this.children[i],id,result);
+		   	}
+	  }
+	  else
+	  {
+			if(allowed_IDs.indexOf(this.id)!==-1)
+				{
+				result.children.push(this);
+				}
+	  }
+	
     }
-  };
+};
 }.call(this));
