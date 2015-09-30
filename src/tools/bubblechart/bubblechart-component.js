@@ -228,7 +228,7 @@
         })
         .on("dragend", function (d, i) {
         	var KEY = _this.KEY;
-        _this.druging = null;
+          _this.druging = null;
           _this.model.entities.setLabelOffset(d, [
             _this.cached[d[KEY]].labelX_,
             _this.cached[d[KEY]].labelY_
