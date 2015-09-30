@@ -920,6 +920,26 @@
 
     isTouchDevice: function () {
       return !!(('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch);
+    },
+    
+    //return a pruneed tree
+    pruneTree: function(tree, filterCallback) {
+      var filteredTree = {};
+      var filteredChildrens = [];
+      if (tree.hasOwnProperty("children")) {
+        filteredChildrens = tree.children.map(function (childrenTree) {
+          return pruneTree(childrenTree, filterCallback);
+            }).filter(function (childrenTree) {
+          return Object.keys(childrenTree).length !== 0;
+            });
+      }
+      if (filteredChildrens.length != 0 || filterCallback(tree)) {
+        filteredTree["id"] = tree.id;
+      }
+      if (filteredChildrens.length != 0) {
+        filteredTree["children"] = filteredChildrens;
+      }
+      return filteredTree;
     }
   };
 }.call(this));
