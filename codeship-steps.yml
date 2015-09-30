@@ -1,0 +1,3 @@
+- service: 'first'
+  command: npm install && webpack
+

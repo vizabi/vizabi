@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var path = require('path');
-var cache = require('express-redis-cache')();
+var cache = require('express-redis-cache')({
+  client: require('../config/redis-client')
+});
 var express = require('express');
 var mongoose = require('mongoose');
 var compression = require('compression');

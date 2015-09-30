@@ -1,0 +1,18 @@
+redis:
+  image: redis
+mongo:
+  image: mongo
+web:
+  container_name: web
+  build: .
+  volumes:
+    - .:/home/app
+  links:
+    - redis
+    - mongo
+  environment:
+      REDIS_URL: "redis://redis:6379"
+      MONGO_URL: "mongodb://tools:123123@ds041563.mongolab.com:41563/gampinder-tools"
+  restart: always
+  expose:
+    - '8080'
