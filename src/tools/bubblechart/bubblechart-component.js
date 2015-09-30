@@ -1187,6 +1187,8 @@
       if (d[KEY] == _this.druging)
       	return;
 
+      var cached = _this.cached[d[KEY]];
+
       if (duration == null) duration = _this.duration;
 
       // only for selected entities
@@ -1205,6 +1207,9 @@
           select.trailStartTime = _this.timeFormatter(_this.time);
           //the events in model are not triggered here. to trigger uncomment the next line
           //_this.model.entities.triggerAll("change:select");
+          cached.scaledS0 = scaledS;
+          cached.labelX0 = valueX;
+          cached.labelY0 = valueY;
 
         }
 
@@ -1216,7 +1221,6 @@
           return f[KEY] == d[KEY]
         })
           .each(function (groupData) {
-            var cached = _this.cached[d[KEY]];
 
             cached.valueX = valueX;
             cached.valueY = valueY;
