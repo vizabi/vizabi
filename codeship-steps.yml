@@ -1,3 +1,7 @@
-- service: 'first'
-  command: npm install && webpack
-
+- name: foo_step
+  tag: master
+  service: web
+  command: echo foo
+- name: bar_step
+  service: web
+  command: echo bar

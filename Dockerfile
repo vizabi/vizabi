@@ -4,7 +4,8 @@ FROM ubuntu:14.04
 RUN apt-get update
 
 # tools
-RUN apt-get install -y curl git python-virtualenv
+RUN apt-get install linux-libc-dev
+RUN apt-get install -y curl python-virtualenv
 
 # ruby and sass
 RUN apt-get install -y ruby ruby-dev ruby-bundler
