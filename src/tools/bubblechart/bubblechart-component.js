@@ -114,7 +114,7 @@
           }
           _this._trails.run("reveal");
           _this.tooltipMobile.classed('vzb-hidden', true);
-          _this._bubblesInteract().mouseout();
+          //_this._bubblesInteract().mouseout();
         },
         'change:time:adaptMinMaxZoom': function () {
           //console.log("EVENT change:time:adaptMinMaxZoom");
@@ -676,23 +676,10 @@
           _this._bubblesInteract().click(d, i);
         })
         .onTap(function (d, i) {
-          //TODO return interaction on touch device
-          return;
-          var evt = d3.event;
-          _this.tooltipMobile.classed('vzb-hidden', false)
-            .attr('style', 'left:' + (evt.changedTouches[0].clientX + 15) + 'px;top:' + (evt.changedTouches[0].clientY - 25) + 'px')
-            .html('Hold bubble to select it');
           d3.event.stopPropagation();
-          _this._bubblesInteract().mouseout();
-          _this._bubblesInteract().mouseover(d, i);
+          _this._bubblesInteract().click(d, i);
         })
         .onLongTap(function (d, i) {
-          //TODO return interaction on touch device
-          return;
-          _this.tooltipMobile.classed('vzb-hidden', true);
-          d3.event.stopPropagation();
-          _this._bubblesInteract().mouseout();
-          _this._bubblesInteract().click(d, i);
         });
 
 

@@ -576,32 +576,21 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.mountains
             .on("mousemove", function (d, i) {
                 if (utils.isTouchDevice()) return;
-
                 _this._interact()._mousemove(d, i);
             })
             .on("mouseout", function (d, i) {
                 if (utils.isTouchDevice()) return;
-
                 _this._interact()._mouseout(d, i);
             })
             .on("click", function (d, i) {
                 if (utils.isTouchDevice()) return;
-
                 _this._interact()._click(d, i);
             })
             .onTap(function (d, i) {
-                _this._interact()._mouseout(d, i);
-                _this._interact()._mousemove(d, i);
-
-                _this.tooltip.classed("vzb-hidden", false)
-                    .html(_this.tooltip.html() + "<br>Hold to select it");
-
+                _this._interact()._click(d, i);
                 d3.event.stopPropagation();
             })
             .onLongTap(function (d, i) {
-                _this._interact()._mouseout(d, i);
-                _this._interact()._click(d, i);
-                d3.event.stopPropagation();
             })
     },
 
