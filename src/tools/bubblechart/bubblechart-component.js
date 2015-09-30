@@ -1213,8 +1213,6 @@
         });
         var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
 
-
-
         if (!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
 
           select.trailStartTime = _this.timeFormatter(_this.time);
@@ -1280,7 +1278,7 @@
 
               limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
               if (limitedX - cached.contentBBox.width <= 0) { //check left
-                cached.labelX_ = select.labelOffset[0] || (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
+                cached.labelX_ = (cached.scaledS0*0.75 + cached.contentBBox.width + 10) / _this.width;
                 limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
               } else if (limitedX + 15 > _this.width) {//check right
                 cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0))/_this.width;
@@ -1288,21 +1286,13 @@
               }
               limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
               if (limitedY - cached.contentBBox.height <= 0 ) { // check top
-                cached.labelY_ = select.labelOffset[1] || (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
+                cached.labelY_ = (cached.scaledS0*0.75 + cached.contentBBox.height) / _this.height;
                 limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
               } else if (limitedY + 10 > _this.height) { //check bottom
                 cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
                 limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
               }
-/*
-            } else {
-              limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
-              limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
-              limitedX0 = _this.xScale(cached.labelX0);
-              limitedY0 = _this.yScale(cached.labelY0);
-            }
 
-*/
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
           })
