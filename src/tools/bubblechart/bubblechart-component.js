@@ -1221,7 +1221,6 @@
           return f[KEY] == d[KEY]
         })
           .each(function (groupData) {
-            var cached = _this.cached[d[KEY]];
 
             cached.valueX = valueX;
             cached.valueY = valueY;
