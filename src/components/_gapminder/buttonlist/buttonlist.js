@@ -54,25 +54,25 @@
           title: "buttons/find",
           icon: "search",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'moreoptions': {
           title: "buttons/more_options",
           icon: "gear",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'colors': {
           title: "buttons/colors",
           icon: "paint-brush",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'size': {
           title: "buttons/size",
           icon: "circle",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'fullscreen': {
           title: "buttons/expand",
@@ -96,19 +96,19 @@
           title: "buttons/axes",
           icon: "axes",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'axes-mc': {
           title: "buttons/axes-mc",
           icon: "axes",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         'stack': {
           title: "buttons/stack",
           icon: "stack",
           dialog: true,
-          ispin:false
+          ispin: false
         },
         '_default': {
           title: "Button",
@@ -136,7 +136,7 @@
           }
           _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
         }
-      }
+      };
 
       this._super(config, context);
 
@@ -193,11 +193,11 @@
         _this.pinDialog(this);
       });
 
-       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
-         d3.event.stopPropagation();
-       });
+      d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function () {
+        d3.event.stopPropagation();
+      });
 
-      this.root.element.addEventListener('click', function(){
+      this.root.element.addEventListener('click', function () {
         _this.closeAllDialogs();
       });
 
@@ -208,24 +208,21 @@
       this.setBubbleLock();
 
       d3.select(this.root.element).on("mousedown", function (e) {
-        if(!this._active_comp) return; //don't do anything if nothing is open
+        if (!this._active_comp) return; //don't do anything if nothing is open
 
-  			var target = d3.event.target;
+        var target = d3.event.target;
         var closeDialog = true;
-  			while (target)
-  			{
-          if(target.classList.contains("vzb-dialog-modal"))
-          {
+        while (target) {
+          if (target.classList.contains("vzb-dialog-modal")) {
             closeDialog = false;
             break;
           }
-  				target = target.parentElement;
-  			}
-  			if(closeDialog)
-        {
+          target = target.parentElement;
+        }
+        if (closeDialog) {
           _this.closeAllDialogs();
         }
-  		});
+      });
     },
 
 
@@ -236,9 +233,11 @@
     _addButtons: function () {
 
       this._components_config = [];
-      var button_list = this.model.ui.buttons;
+      var button_expand = true; //this.model.ui.button_expand;
+      var button_list = ["find", "colors", "size"];//this.model.ui.buttons;
       var details_btns = [];
       if (!button_list.length) return;
+console.log(this.getLayoutProfile(),'add buttons');
       //add a component for each button
       for (var i = 0; i < button_list.length; i++) {
 
@@ -267,13 +266,20 @@
         details_btn.icon = iconset[details_btn.icon];
         details_btns.push(details_btn);
       }
-      ;
 
       var t = this.getTranslationFunction(true);
-
+      var _this = this;
       this.buttonContainerEl.selectAll('button').data(details_btns)
         .enter().append("button")
-        .attr('class', 'vzb-buttonlist-btn')
+        .attr('class', function (d) {
+          console.log(d);
+          if (_this.getLayoutProfile() === 'large' && button_expand) {
+            return 'vzb-buttonlist-btn vzb-dialog-side'
+          }
+          else {
+            return 'vzb-buttonlist-btn';
+          }
+        })
         .attr('data-btn', function (d) {
           return d.id;
         })
@@ -285,7 +291,14 @@
 
       this.dialogContainerEl.selectAll('div').data(details_btns)
         .enter().append("div")
-        .attr('class', 'vzb-buttonlist-dialog')
+        .attr('class', function () {
+          if (_this.getLayoutProfile() === 'large' && button_expand) {
+            return 'vzb-buttonlist-dialog vzb-dialog-side';
+          }
+          else {
+            return 'vzb-buttonlist-dialog';
+          }
+        })
         .attr('data-btn', function (d) {
           return d.id;
         });
@@ -333,7 +346,7 @@
      */
     openDialog: function (id) {
 
-        this.closeAllDialogs(true);
+      this.closeAllDialogs(true);
 
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -350,24 +363,24 @@
     },
 
 
-      pinDialog: function (button) {
-        var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
-        var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
-        var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-        if (this._available_buttons[id].ispin) {
-         // button.textContent = '';
-          btn.classed('pinned', false);
-          this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
-          this._available_buttons[id].ispin = false;
-          this._active_comp.isPin = false;
-        } else {
+    pinDialog: function (button) {
+      var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
+      var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
+      var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+      if (this._available_buttons[id].ispin) {
+        // button.textContent = '';
+        btn.classed('pinned', false);
+        this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
+        this._available_buttons[id].ispin = false;
+        this._active_comp.isPin = false;
+      } else {
         //  button.textContent = '';
-          btn.classed('pinned', true);
-          dialog.classed('pinned', true);
-          this._available_buttons[id].ispin = true;
-          this._active_comp.isPin = true;
-        }
-      },
+        btn.classed('pinned', true);
+        dialog.classed('pinned', true);
+        this._available_buttons[id].ispin = true;
+        this._active_comp.isPin = true;
+      }
+    },
 
 
     /*
@@ -509,7 +522,7 @@
 
       //force window resize event
       (function () {
-        event = root.document.createEvent("HTMLEvents");
+        var event = root.document.createEvent("HTMLEvents");
         event.initEvent("resize", true, true);
         event.eventName = "resize";
         root.dispatchEvent(event);
@@ -530,10 +543,8 @@
     return false;
   }
 
-  function exitHandler(emulateClickFunc)
-  {
-    if (!isFullscreen())
-    {
+  function exitHandler(emulateClickFunc) {
+    if (!isFullscreen()) {
       emulateClickFunc();
     }
   }

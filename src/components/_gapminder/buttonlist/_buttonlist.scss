@@ -159,3 +159,30 @@ $vzb-button-color-border: #cce6ed;
   }
 }
 
+&.vzb-large {
+    .vzb-tool-stage {
+      right: 290px;
+    }
+
+    .vzb-tool-buttonlist{
+      width: 290px;
+
+      .vzb-buttonlist-btn {
+        &.vzb-dialog-side{
+          display: none;
+        }
+      }
+
+      .vzb-buttonlist-dialog {
+        &.vzb-dialog-side{
+          visibility: visible;
+          display: block;
+          top: 0;
+          left: 0;
+          right: 0;
+          margin: 5px;
+          position: static;
+        }
+      }
+    }
+}
