@@ -560,34 +560,27 @@
 
             d3.select(curSub)
                 .select('.' + css.list_item)
-                .node()
-                .addEventListener('mouseleave', closeCurSub, false);
+                .on('mouseleave', closeCurSub, false);
 
-            view.node()
-                .addEventListener('mouseenter', function() {
+            view.on('mouseenter', function() {
                     possiblyActivate(event, this);
-                }, false);
+                });
 
-            view.node()
-                .addEventListener('click', function() {
+            view.on('click', function() {
                     possiblyActivate(event, this);
-                }, false);
+                });
 
         },
 
 
 
         //this function process click on list item
-        _selectIndicator: function(view) {
-
-            var item = d3.select(view).data()[0];
-
+        _selectIndicator: function(item, view) {
+            
             //only for leaf nodes
-            if(!item.children) {
-                callback(item.id, markerID);
-                this.toggle();
-            };
-
+            if(item.children) return;
+            callback(item.id, markerID);
+            this.toggle();
         },
 
 
@@ -602,28 +595,7 @@
 
             if(data == null) data = tree;
 
-            this.wrapper.select('.' + css.list_top_level).remove();
-
-            //redrawing first level
-            var firstLevelMenu = this.wrapper.append('ul')
-                .classed(css.list_top_level, true);
-
-            //translation integration
-            //	            var getTranslation = function(d) {
-            //	                if (_this.lang()) {
-            //	                    for (var key in _this.langStrings()[_this.lang()]) {
-            //	                        if (_this.langStrings()[_this.lang()].hasOwnProperty(d['id'])) {
-            //	                            if (key == d['id']) {
-            //	                                return _this.langStrings()[_this.lang()][key];
-            //	                            }
-            //	                        } else {
-            //	                            return d['id'];
-            //	                        }
-            //	                    };
-            //	                } else {
-            //	                    return d['id'];
-            //	                };
-            //	            };
+            this.wrapper.select('ul').remove();
 
             var indicatorsDB = globals.metadata.indicatorsDB;
 
@@ -643,75 +615,37 @@
             
             var dataFiltered = utils.pruneTree(data, function(f){return allowedIDs.indexOf(f.id)>-1});
             
-            //bind the data
-            var li = firstLevelMenu.selectAll('li')
-                .data(dataFiltered.children, function(d) {return d['id'];});
-
-            //removing old items
-            li.exit().remove();
 
 
-            //adding new items
-            li.enter().append('li');
+            var parsingProcess = function(select, data, toplevel) {
+                if(!data.children) return;
+                var li = select.append('ul')
+                    .classed(css.list, !toplevel)
+                    .classed(css.list_top_level, toplevel)
+                    .selectAll('li')
+                    .data(data.children, function(d) {return d['id'];})
+                    .enter()
+                    .append('li');
 
-            li.append('span')
-                .classed(css.list_item_label, true)
-                .text(function(d) {
-                    return _this.translator("indicator/" + d.id);
-                })
-                .on('click', function() {
-                    _this._selectIndicator(this)
-                });
+                li.append('span')
+                    .classed(css.list_item_label, true)
+                    .text(function(d) {
+                        return _this.translator("indicator/" + d.id);
+                    })
+                    .on('click', function(d) { _this._selectIndicator(d, this) });
 
-            li.classed(css.list_item, true)
-                .classed(css.hasChild, function(d) {
-                    return d['children'];
-                })
-                .classed(css.isSpecial, function(d) {
-                    return d['special'];
-                })
-                .each(function(d) {
-                    var view = d3.select(this);
-                    _this._toggleSub(view);
+                li.classed(css.list_item, true)
+                    .classed(css.hasChild, function(d) { return d['children']; })
+                    .classed(css.isSpecial, function(d) { return d['special']; })
+                    .each(function(d) {
+                        var view = d3.select(this);
+                        _this._toggleSub(view);
+                        parsingProcess(view, d);
+                    });
+            };
 
-                    var parsingProcess = function(select, data) {
-                        if(data != null) {
-                            var li = select
-                                .append('ul')
-                                .classed(css.list, true)
-                                .selectAll('li')
-                                .data(data, function(d) {
-                                    return d['id'];
-                                })
-                                .enter()
-                                .append('li');
+            parsingProcess(this.wrapper, dataFiltered, true);
 
-                            li.append('span')
-                                .classed(css.list_item_label, true)
-                                .text(function(d) {
-                                    return _this.translator("indicator/" + d.id);
-                                })
-                                .on('click', function() {
-                                    _this._selectIndicator(this)
-                                });
-
-                            li.classed(css.list_item, true)
-                                .classed(css.hasChild, function(d) {
-                                    return d['children'];
-                                })
-                                .classed(css.isSpecial, function(d) {
-                                    return d['special'];
-                                })
-                                .each(function(d) {
-                                    _this._toggleSub(d3.select(this));
-                                    parsingProcess(d3.select(this), d['children']);
-                                });
-                        };
-                    };
-
-                    parsingProcess(view, d['children']);
-
-                });
 
             return this;
         },

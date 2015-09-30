@@ -168,9 +168,9 @@
                         "id": "lex"
                     }, 
                     {
-                        "id": "child_health",
+                        "id": "child_health1",
                         "children": [{
-                            "id": "child_health",
+                            "id": "child_health2",
                             "children": [{"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
                         }]
                     }
