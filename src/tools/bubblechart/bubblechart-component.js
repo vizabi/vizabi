@@ -1232,12 +1232,16 @@
         })
           .each(function (groupData) {
             var cached = _this.cached[d[KEY]];
+
+            cached.valueX = valueX;
+            cached.valueY = valueY;
+
             var limitedX, limitedY, limitedX0, limitedY0;
             if (cached.scaledS0 == null || cached.labelX0 == null || cached.labelX0 == null) { //initialize label once
               cached.scaledS0 = scaledS;
               cached.labelX0 = valueX;
               cached.labelY0 = valueY;
-
+            }
               var labelGroup = d3.select(this);
 
               var text = labelGroup.selectAll("text.vzb-bc-label-content")
@@ -1248,23 +1252,25 @@
               var rect = labelGroup.select("rect");
 
               var contentBBox = text[0][0].getBBox();
-              cached.contentBBox = contentBBox;
+              if (!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
+                cached.contentBBox = contentBBox;
 
-              labelGroup.select("text.vzb-bc-label-x")
-                .attr("x", /*contentBBox.height * 0.0 + */4)
-                .attr("y", contentBBox.height * -1);
+                labelGroup.select("text.vzb-bc-label-x")
+                  .attr("x", /*contentBBox.height * 0.0 + */4)
+                  .attr("y", contentBBox.height * -1);
 
-              labelGroup.select("circle")
-                .attr("cx", /*contentBBox.height * 0.0 + */4)
-                .attr("cy", contentBBox.height * -1)
-                .attr("r", contentBBox.height * 0.5);
+                labelGroup.select("circle")
+                  .attr("cx", /*contentBBox.height * 0.0 + */4)
+                  .attr("cy", contentBBox.height * -1)
+                  .attr("r", contentBBox.height * 0.5);
 
-              rect.attr("width", contentBBox.width + 8)
-                .attr("height", contentBBox.height * 1.2)
-                .attr("x", -contentBBox.width -4)
-                .attr("y", -contentBBox.height*0.85)
-                .attr("rx", contentBBox.height * 0.2)
-                .attr("ry", contentBBox.height * 0.2);
+                rect.attr("width", contentBBox.width + 8)
+                  .attr("height", contentBBox.height * 1.2)
+                  .attr("x", -contentBBox.width -4)
+                  .attr("y", -contentBBox.height*0.85)
+                  .attr("rx", contentBBox.height * 0.2)
+                  .attr("ry", contentBBox.height * 0.2);
+              }
 
               limitedX0 = _this.xScale(cached.labelX0);
               limitedY0 = _this.yScale(cached.labelY0);
@@ -1288,6 +1294,7 @@
                 cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0))/_this.height;
                 limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
               }
+/*
             } else {
               limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
               limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
@@ -1295,6 +1302,7 @@
               limitedY0 = _this.yScale(cached.labelY0);
             }
 
+*/
             _this._repositionLabels(d, index, this, limitedX, limitedY, limitedX0, limitedY0, duration, lineGroup);
 
           })
