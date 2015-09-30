@@ -91,7 +91,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "gini": {
-            "allowCharts": ["mountainchart"],
+            "allowCharts": ["mountainchart", "bubblechart"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
@@ -160,19 +160,20 @@
                 "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
             }, {
                 "id": "economy",
-                "children": [{"id": "gini"}, {"id": "gdp_per_cap"}, {"id": "gdppc_pday"}, {"id": "inc_pday"}]
+                "children": [
+                    {"id": "inequality", "children": [{"id":"gini"}]}, 
+                    {"id": "gdp_per_cap"}, 
+                    {"id": "gdppc_pday"}, 
+                    {"id": "inc_pday"}
+                ]
             }, {
                 "id": "health",
                 "children": [
+                    {"id": "lex"}, 
+                    {"id": "u5mr"},
                     {
-                        "id": "lex"
-                    }, 
-                    {
-                        "id": "child_health1",
-                        "children": [{
-                            "id": "child_health2",
-                            "children": [{"id": "u5mr_not"}, {"id": "u5mr"}, {"id": "childSurv"}]
-                        }]
+                        "id": "child_health_others",
+                        "children": [{"id": "u5mr_not"}, {"id": "childSurv"}]
                     }
                 ]
             }, {

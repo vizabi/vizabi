@@ -174,9 +174,9 @@
             var _this = this;
 
             this.profiles = {
-                "small": { col_width: 200 },
-                "medium": { col_width: 250 },
-                "large": { col_width: 300 }
+                "small": { col_width: 150 },
+                "medium": { col_width: 170 },
+                "large": { col_width: 200 }
             };
 
             this.activeProfile = this.profiles[this.getLayoutProfile()];
@@ -203,8 +203,14 @@
             };
 
             this.parent.components.forEach(function(c) {
-                c.element.classed("vzb-blur", c != _this && !hidden);
+                if(c.element.classed){
+                    c.element.classed("vzb-blur", c != _this && !hidden);
+                }else{
+                    d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
+                }
             })
+            
+            this.width = _this.element.node().offsetWidth;
         },
 
 
@@ -456,20 +462,20 @@
                         ulSelectNested
                             .transition()
                             .duration(200)
-                            .style('width', this.activeProfile.col_width);
+                            .style('width', this.activeProfile.col_width + "px");
                         fullColNumber--;
                     } else {
                         if(remain > OPTIONS.MIN_COL_WIDTH) {
                             ulSelectNested
                                 .transition()
                                 .duration(200)
-                                .style('width', remain / (i + 1));
+                                .style('width', (remain / (i + 1)) + "px");
                             remain -= remain / (i + 1);
                         } else {
                             ulSelectNested
                                 .transition()
                                 .duration(200)
-                                .style('width', remain);
+                                .style('width', remain + "px");
                             remain = 0;
                         };
                     };
@@ -577,9 +583,11 @@
         //this function process click on list item
         _selectIndicator: function(item, view) {
             
+            view = d3.select(view);
+            
             //only for leaf nodes
-            if(item.children) return;
-            callback(item.id, markerID);
+            if(view.attr("children")) return;
+            callback(view.attr("info"), markerID);
             this.toggle();
         },
 
@@ -617,7 +625,7 @@
             
 
 
-            var parsingProcess = function(select, data, toplevel) {
+            var createSubmeny = function(select, data, toplevel) {
                 if(!data.children) return;
                 var li = select.append('ul')
                     .classed(css.list, !toplevel)
@@ -632,6 +640,12 @@
                     .text(function(d) {
                         return _this.translator("indicator/" + d.id);
                     })
+                    .attr("info", function(d) {
+                        return d.id;
+                    })
+                    .attr("children", function(d) {
+                        return d.children?"true":null;
+                    })
                     .on('click', function(d) { _this._selectIndicator(d, this) });
 
                 li.classed(css.list_item, true)
@@ -640,11 +654,11 @@
                     .each(function(d) {
                         var view = d3.select(this);
                         _this._toggleSub(view);
-                        parsingProcess(view, d);
+                        createSubmeny(view, d);
                     });
             };
 
-            parsingProcess(this.wrapper, dataFiltered, true);
+            createSubmeny(this.wrapper, dataFiltered, true);
 
 
             return this;
