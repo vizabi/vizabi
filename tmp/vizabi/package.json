@@ -1,0 +1,59 @@
+{
+  "name": "vizabi",
+  "version": "0.8.0",
+  "description": "Vizabi Framework",
+  "main": "dist/vizabi.js",
+  "files": [
+    "dist"
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gapminder/vizabi.git"
+  },
+  "author": "",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/Gapminder/vizabi/issues"
+  },
+  "homepage": "http://static.gapminderdev.org/vizabi/docs/",
+  "devDependencies": {
+    "assemble": "^0.4.42",
+    "bower": "~1.3.12",
+    "chalk": "~0.4.0",
+    "generator-vizabi": "*",
+    "grunt": "^0.4.5",
+    "grunt-aws-s3": "~0.9.4",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-jasmine": "^0.8.2",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-sass": "^0.9.2",
+    "grunt-contrib-uglify": "^0.4.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-gitinfo": "~0.1.6",
+    "grunt-replace": "^0.9.2",
+    "grunt-template-jasmine-requirejs": "^0.2.0",
+    "jit-grunt": "^0.9.1",
+    "jshint-stylish": "^1.0.1",
+    "load-grunt-config": "^0.17.1",
+    "load-grunt-tasks": "^0.4.0",
+    "phantomjs": "^1.9.15"
+  },
+  "readme": "![Gapminder Vizabi 0.4](http://static.gapminder.org/vizabi/vizabi.jpg)\n\n**(Please note that Vizabi is work in progress and don't expect too much! Vizabi 1.0.0 will be the public Alpha release of the framework, and we're not there yet).**\n[![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)\n<!--[![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)-->\n\n## What is Vizabi?\n\nGapminder Vizabi is a framework for developing visual exploration tools.\n\nThe main features are:\n\n1. Embeddable tools with customization\n2. Responsive layout\n3. Support for UI Controls & Interaction\n4. Translation & Localization\n5. Unified data-schema for multi dimensional statistics.\n\nYou can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.\n\nSee our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/), and DOCS here: [Vizabi Docs](http://vizabi.org)\n\n## Setup & Quickstart\n\nSee [contributing guide](CONTRIBUTING.md)\n\n## License\n\nCopyright (c) 2012-2015, Gapminder Foundation\n\nAll rights reserved.\n\nRedistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:\n\n1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.\n\n2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.\n\n3. Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n",
+  "readmeFilename": "README.md",
+  "gitHead": "7ca6b32c108316a77d468afe6e716d4d4f8d59d2",
+  "_id": "vizabi@0.8.1",
+  "_shasum": "6de0a79d9e56bf6eb96ef4c6d0d5d721c95d9fc1",
+  "_from": "../vizabi",
+  "_resolved": "file:../vizabi"
+}

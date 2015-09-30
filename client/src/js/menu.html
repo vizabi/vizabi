@@ -1,0 +1,28 @@
+<li class="nav-expandable">
+  <div ng-repeat="item in items track by $index" class="nav-expandable-item">
+    <a href="{{ item.url }}"
+       ng-click="urlMgr.redirectExternal(item.url, $event)"
+       class="nav-toggle-expanded">{{ ::item.menu_label }}</a>
+
+    <div ng-show="item.children" ng-mouseenter="onHover($event)" ng-mouseleave="onBlur($event)" class="nav-expanded">
+      <div class="nav-expanded-columns nav-expanded-columns-2 nav-expanded-columns-icons">
+        <div class="nav-expanded-columns-inner">
+          <ul>
+            <li ng-repeat="child in item.children" class="expanded-column-item">
+              <a href="{{ child.url }}"
+                 ng-click="urlMgr.redirectExternal(child.url, $event)">
+                <div class="column-item-icon">
+                  <img ng-src="{{ createIconUrl(child.icon_url) }}" ng-if="hasIcon(child)">
+                </div>
+                <div class="column-item-info">
+                  <div class="column-item-heading">{{ child.menu_label }}</div>
+                  <div class="column-item-description">{{ child.caption }}</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
