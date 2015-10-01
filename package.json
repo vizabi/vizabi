@@ -3,7 +3,9 @@
   "version": "0.8.1",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
-  "files": ["build/dist"],
+  "files": [
+    "build/dist"
+  ],
   "scripts": {
     "prepublish": "gulp build"
   },
@@ -20,8 +22,6 @@
   "homepage": "http://vizabi.org",
   "devDependencies": {
     "babel-eslint": "^4.1.3",
-    "babelify": "^6.3.0",
-    "browserify": "^11.2.0",
     "chalk": "^1.1.1",
     "del": "^2.0.2",
     "eslint": "^1.5.1",
@@ -43,6 +43,7 @@
     "gulp-memory-cache": "^0.2.0",
     "gulp-minify-css": "^1.2.1",
     "gulp-rename": "^1.2.2",
+    "gulp-rollup": "^1.0.1",
     "gulp-ruby-sass": "^2.0.3",
     "gulp-scss-lint": "^0.3.4",
     "gulp-sourcemaps": "^1.5.2",
@@ -53,10 +54,6 @@
     "gulp-watch": "^4.3.5",
     "gulp-wrapper": "^1.0.0",
     "gulp-zip": "^3.0.2",
-    "opn": "^3.0.2",
-    "utils-merge": "^1.0.0",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.4.0"
+    "opn": "^3.0.2"
   }
 }

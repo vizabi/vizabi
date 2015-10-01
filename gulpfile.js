@@ -15,6 +15,9 @@ var cache = require('gulp-cached');
 var mem_cache = require('gulp-memory-cache');
 var prefix = require('gulp-autoprefixer')
 
+//useful for ES6 module loader
+var rollup = require('gulp-rollup');
+
 //useful for ES5 build
 var concat = require('gulp-concat');
 var insert = require('gulp-insert');
