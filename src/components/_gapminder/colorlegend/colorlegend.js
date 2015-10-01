@@ -54,7 +54,7 @@
     readyOnce: function () {
       var _this = this;
       this.element = d3.select(this.element);
-      this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
+      this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-inner").append("div").attr("class", "vzb-cl-colorList");
       this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
       this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 

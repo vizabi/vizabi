@@ -4,8 +4,20 @@
 
   height: 120px;
 
+  .vzb-cl-inner {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
   .vzb-cl-colorList {
-    position: relative
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -18px;
+    overflow: auto;
   }
 
   .vzb-cl-option {
