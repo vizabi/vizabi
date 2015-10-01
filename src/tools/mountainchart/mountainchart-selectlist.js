@@ -7,12 +7,12 @@
 
         init: function (context) {
             this.context = context;
-            
+
         },
-                
+
         rebuild: function (data) {
             var _this = this.context;
-            
+
             var listData = _this.mountainPointers
                 .concat(_this.groupedPointers)
                 .concat(_this.stackedPointers)
@@ -31,10 +31,18 @@
             _this.selectList.enter().append("g")
                 .attr("class", "vzb-mc-label")
                 .each(function (d, i) {
-                    d3.select(this).append("circle");
-                    d3.select(this).append("text").attr("class", "vzb-mc-label-shadow");
-                    d3.select(this).append("text");
-                })
+                    var label = d3.select(this);
+                    label.append("circle");
+                    label.append("text").attr("class", "vzb-mc-label-shadow");
+                    label.append("text").attr("class", "vzb-mc-label-content");
+                    label.append("circle").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
+                      .on("click", function (d, i) {
+                        _this.model.entities.clearHighlighted();
+                        _this.model.entities.selectEntity(d);
+                      });
+                    label.append("text").attr("class", "vzb-mc-label-x vzb-transparent").text("x");
+
+              })
                 .on("mousemove", function (d, i) {
                     _this.model.entities.highlightEntity(d);
                 })
@@ -46,7 +54,7 @@
                     _this.model.entities.selectEntity(d);
                 });
         },
-        
+
         redraw: function () {
             var _this = this.context;
             if (!_this.selectList || !_this.someSelected) return;

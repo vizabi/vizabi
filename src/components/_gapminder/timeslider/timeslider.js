@@ -161,6 +161,7 @@
           brushed.call(this);
         })
         .on("brushend", function () {
+          console.log('brushend');
           brushedEnd.call(this);
         });
 

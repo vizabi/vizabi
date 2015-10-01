@@ -5,7 +5,7 @@
 * Original code:
 * Angie https://github.com/angieskazka
 *
-* Contributions: 
+* Contributions:
 * IncoCode https://github.com/IncoCode/
 * Arthur https://github.com/arthurcamara1
 *
@@ -24,7 +24,7 @@ var iconset = Vizabi.iconset;
 if (!Vizabi._require("d3")) return;
 
 var NEGLIGABLE_HEIGHT = 1000000;
-    
+
 //MOUNTAIN CHART COMPONENT
 Vizabi.Component.extend("gapminder-mountainchart", {
 
@@ -145,7 +145,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         var Exporter = Vizabi.Helper.get("gapminder-svgexport");
         var Probe = Vizabi.Helper.get("gapminder-mountainchart-probe");
         var Selectlist = Vizabi.Helper.get("gapminder-mountainchart-selectlist");
-        
+
         this._math = new MountainChartMath(this);
         this._export = new Exporter(this);
         this._export
@@ -153,7 +153,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
             .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
         this._probe = new Probe(this);
         this._selectlist = new Selectlist(this);
-        
+
         // define path generator
         this.area = d3.svg.area()
             .interpolate("basis")
@@ -222,7 +222,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
 
         var yearNow = _this.model.time.value.getFullYear();
         var yearEnd = _this.model.time.end.getFullYear();
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -256,8 +256,8 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
-                _this._probe.redraw({ 
-                    level: _this.xScale.invert(d3.mouse(this)[0]), 
+                _this._probe.redraw({
+                    level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
                 });
             })
@@ -288,10 +288,10 @@ Vizabi.Component.extend("gapminder-mountainchart", {
 
     ready: function () {
         //console.log("ready")
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
-        
+
         this.updateUIStrings();
         this.updateIndicators();
         this.updateEntities();
@@ -308,7 +308,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.updateDoubtOpacity();
         this._probe.redraw();
     },
-    
+
     updateSize: function (meshLength) {
 
         var margin;
