@@ -57,6 +57,21 @@
             .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
                 stroke: yellow;
             }
+          .vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-x {
+              @include transition(opacity 200ms linear);
+              fill: white;
+              text-anchor: middle;
+              dominant-baseline: middle;
+              pointer-events: none;
+              font-size: 0.9em;
+            }
+          .vzb-mc-mountains-labels .vzb-mc-label circle.vzb-mc-label-x {
+              @include transition(opacity 200ms linear);
+              cursor: pointer;
+              fill: $vzb-color-primary;
+              stroke: white;
+              stroke-width: 2px;
+            }
             .vzb-mc-axis-x,
             .vzb-mc-axis-y {
                 @extend %vzb-chart-axis;
@@ -91,15 +106,15 @@
                 user-select: none;
                 pointer-events: none;
             }
-            
-            
+
+
             .vzb-mc-tooltip {
                 @extend %vzb-chart-tooltip
             }
 
-            
-            
-            
+
+
+
         }
     }
     &.vzb-large {

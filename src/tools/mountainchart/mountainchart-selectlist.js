@@ -32,11 +32,12 @@
                 .attr("class", "vzb-mc-label")
                 .each(function (d, i) {
                     var label = d3.select(this);
-                    label.append("circle");
-                    label.append("text").attr("class", "vzb-mc-label-shadow");
-                    label.append("text").attr("class", "vzb-mc-label-content");
+                    label.append("circle").attr('class', 'vzb-mc-label-legend');
+                    label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
+                    label.append("text").attr("class", "vzb-mc-label-text");
                     label.append("circle").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
                       .on("click", function (d, i) {
+                        d3.event.stopPropagation();
                         _this.model.entities.clearHighlighted();
                         _this.model.entities.selectEntity(d);
                       });
@@ -44,13 +45,23 @@
 
               })
                 .on("mousemove", function (d, i) {
+                    if (utils.isTouchDevice()) return;
                     _this.model.entities.highlightEntity(d);
+                    d3.select(this).selectAll(".vzb-mc-label-x")
+                      .classed("vzb-transparent", false);
+
                 })
                 .on("mouseout", function (d, i) {
+                    if (utils.isTouchDevice()) return;
                     _this.model.entities.clearHighlighted();
+                    console.log(d3.select(this));
+                    d3.select(this).selectAll(".vzb-mc-label-x")
+                      .classed("vzb-transparent", true);
+
                 })
                 .on("click", function (d, i) {
-                    _this.model.entities.clearHighlighted();
+                  if (utils.isTouchDevice()) return;
+                  _this.model.entities.clearHighlighted();
                     _this.model.entities.selectEntity(d);
                 });
         },
@@ -81,20 +92,36 @@
 
                     var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
 
-                    view.select("circle")
-                        .attr("r", fontHeight / 3)
-                        .attr("cx", fontHeight * 0.4)
-                        .attr("cy", fontHeight / 1.5)
-                        .style("fill", _this.cScale(_this.values.color[d.KEY()]));
+                    var text = view.selectAll("text.vzb-mc-label-text")
+                      .attr("x", fontHeight)
+                      .attr("y", fontHeight)
+                      .text(string)
+                      .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
+
+                    var contentBBox = text[0][0].getBBox();
+                    view.select("text.vzb-mc-label-x")
+                      .attr("x", contentBBox.width + fontHeight * 1.5)
+                      .attr("y", fontHeight/4);
+
+                    view.select("circle.vzb-mc-label-x")
+                      .attr("r", fontHeight / 2)
+                      .attr("cx", contentBBox.width + fontHeight * 1.5)
+                      .attr("cy", fontHeight/4);
 
 
-                    view.selectAll("text")
-                        .attr("x", fontHeight)
-                        .attr("y", fontHeight)
-                        .text(string)
-                        .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
+                    view.select("circle.vzb-mc-label-legend")
+                                .attr("r", fontHeight / 3)
+                                .attr("cx", fontHeight * 0.4)
+                                .attr("cy", fontHeight / 1.5)
+                                .style("fill", _this.cScale(_this.values.color[d.KEY()]));
+
+                    view.onTap(function (d, i) {
+                      d3.event.stopPropagation();
+                      view.selectAll(".vzb-mc-label-x")
+                        .classed("vzb-transparent", false);
+                    })
                 });
-        },
+        }
 
 
 
