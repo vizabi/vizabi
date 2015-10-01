@@ -1,14 +1,15 @@
 //general styles
 
-.vzb-cl-holder {
+.vzb-cl-outer {
 
   height: 120px;
 
-  .vzb-cl-inner {
+  .vzb-cl-holder {
     height: 100%;
     width: 100%;
     overflow: hidden;
     position: relative;
+
   }
 
   .vzb-cl-colorList {
