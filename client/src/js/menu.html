@@ -1,16 +1,15 @@
 <li class="nav-expandable">
   <div ng-repeat="item in items track by $index" class="nav-expandable-item">
-    <a href="{{ item.url }}"
-       ng-click="urlMgr.redirectExternal(item.url, $event)"
+    <a ng-click="showSubmenu($index)"
        class="nav-toggle-expanded">{{ ::item.menu_label }}</a>
-
-    <div ng-show="item.children" ng-mouseenter="onHover($event)" ng-mouseleave="onBlur($event)" class="nav-expanded">
+    <div ng-show="toggleSubmenu[$index]" ng-mouseenter="onHover($event)"
+         ng-mouseleave="onBlur($event)"
+         class="nav-expanded">
       <div class="nav-expanded-columns nav-expanded-columns-2 nav-expanded-columns-icons">
         <div class="nav-expanded-columns-inner">
           <ul>
             <li ng-repeat="child in item.children" class="expanded-column-item">
-              <a href="{{ child.url }}"
-                 ng-click="urlMgr.redirectExternal(child.url, $event)">
+              <a href="{{ child.url }}">
                 <div class="column-item-icon">
                   <img ng-src="{{ createIconUrl(child.icon_url) }}" ng-if="hasIcon(child)">
                 </div>
