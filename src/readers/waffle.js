@@ -1,13 +1,13 @@
-import utils from './utils';
-import Promise from './promise';
-import Reader from './reader';
+import utils from '../base/utils';
+import Promise from '../base/promise';
+import Reader from '../base/reader';
 
 /*!
  * Waffle server Reader
  * the simplest reader possible
  */
 
-var WSReader = Reader.extend('waffle-server', {
+var WSReader = Reader.extend({
 
     basepath: "",
 
@@ -16,12 +16,12 @@ var WSReader = Reader.extend('waffle-server', {
      * @param {Object} reader_info Information about the reader
      */
     init: function (reader_info) {
-      this._name = 'waffle-reader';
+      this._name = 'waffle';
       this._data = [];
       this._formatters = reader_info.formatters;
       this._basepath = reader_info.path || this.basepath;
       if (!this._basepath) {
-        utils.error("Missing base path for waffle-server reader");
+        utils.error("Missing base path for waffle reader");
       }
     },
 

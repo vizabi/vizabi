@@ -1,26 +1,24 @@
-import utils from './utils';
-import Promise from './promise';
-import Reader from './reader';
-
-
+import utils from '../base/utils';
+import Promise from '../base/promise';
+import Reader from '../base/reader';
 
 var FILE_CACHED = {}; //caches files from this reader
 var FILE_REQUESTED = {}; //caches files from this reader
 
-var JSONReader = Reader.extend('json-file', {
+var CSVReader = Reader.extend({
 
   /**
    * Initializes the reader.
    * @param {Object} reader_info Information about the reader
    */
   init: function(reader_info) {
-    this._name = 'json-file';
+    this._name = 'csv';
     this._data = [];
     this._basepath = reader_info.path;
     this._formatters = reader_info.formatters;
     if(!this._basepath) {
-      utils.error("Missing base path for json-file reader");
-    };
+      utils.error("Missing base path for csv reader");
+    }
   },
 
   /**
@@ -35,6 +33,21 @@ var JSONReader = Reader.extend('json-file', {
 
     //this specific reader has support for the tag {{LANGUAGE}}
     var path = this._basepath.replace("{{LANGUAGE}}", language);
+
+    //if only one year, files ending in "-YYYY.csv"
+    if(query.where.time[0].length === 1) {
+      path = path.replace(".csv", "-" + query.where.time[0][0] + ".csv");
+    }
+
+    //replace conditional tags {{<any conditional>}}
+    path = path.replace(/{{(.*?)}}/g, function(match, capture) {
+      capture = capture.toLowerCase();
+      if(utils.isArray(query.where[capture])) {
+        return query.where[capture].sort().join('-');
+      }
+      return query.where[capture];
+    });
+
     _this._data = [];
 
     (function(query, p) {
@@ -51,7 +64,7 @@ var JSONReader = Reader.extend('json-file', {
       }
       //if not, request and parse
       else {
-        d3.json(path, function(error, res) {
+        d3.csv(path, function(error, res) {
 
           if(!res) {
             utils.error("No permissions or empty file: " + path, error);
@@ -59,10 +72,11 @@ var JSONReader = Reader.extend('json-file', {
           }
 
           if(error) {
-            utils.error("Error Happened While Loading JSON File: " + path, error);
+            utils.error("Error Happened While Loading CSV File: " + path, error);
             return;
           }
-          //fix JSON response
+
+          //fix CSV response
           res = format(res);
 
           //cache and resolve
@@ -76,9 +90,8 @@ var JSONReader = Reader.extend('json-file', {
       }
 
       function format(res) {
-        //TODO: Improve local json filtering
         //make category an array and fix missing regions
-        res = res[0].map(function(row) {
+        res = res.map(function(row) {
           row['geo.cat'] = [row['geo.cat']];
           row['geo.region'] = row['geo.region'] || row['geo'];
           return row;
@@ -101,6 +114,7 @@ var JSONReader = Reader.extend('json-file', {
       }
 
       function parse(res) {
+
         var data = res;
         //rename geo.category to geo.cat
         var where = query.where;
@@ -125,6 +139,7 @@ var JSONReader = Reader.extend('json-file', {
         //only use valid conditions
         where = utils.clone(where, validConditions);
 
+        //filter any rows that match where condition
         data = utils.filterAny(data, where);
 
         //warn if filtering returns empty array
@@ -136,7 +151,6 @@ var JSONReader = Reader.extend('json-file', {
         });
 
         _this._data = data;
-
         p.resolve();
       }
 
@@ -154,4 +168,4 @@ var JSONReader = Reader.extend('json-file', {
   }
 });
 
-export default JSONReader;
+export default CSVReader;

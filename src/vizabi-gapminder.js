@@ -78,7 +78,7 @@
             }
         },
         data: {
-            reader: "waffle-server",
+            reader: "waffle",
             splash: true
         },
         language: language,
@@ -169,8 +169,8 @@
         },
         language: language,
         data: {
-            //reader: "waffle-server"
-            reader: "csv-file",
+            //reader: "waffle"
+            reader: "csv",
             path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
             splash: true
             //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
@@ -241,7 +241,7 @@
         },
 
         data: {
-            reader: "waffle-server"
+            reader: "waffle"
         },
         language: language,
         ui: {
@@ -329,8 +329,8 @@
             }
         },
         data: {
-            //reader: "waffle-server",
-            reader: "csv-file",
+            //reader: "waffle",
+            reader: "csv",
             //path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
             path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
             splash: true
@@ -401,7 +401,7 @@
             }
         },
         data: {
-            reader: "csv-file",
+            reader: "csv",
             path: Vizabi._globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
             splash: true
         },
@@ -412,7 +412,7 @@
     });
 
     //Waffle Server Reader custom path
-    var WaffleReader = this.Vizabi.Reader.get('waffle-server');
+    var WaffleReader = this.Vizabi.Reader.get('waffle');
     WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
     //preloading mountain chart precomputed shapes

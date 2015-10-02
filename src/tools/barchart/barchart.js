@@ -368,7 +368,7 @@
       }
     },
     data: {
-      reader: "csv-file",
+      reader: "csv",
       path: "data/waffles/basic-indicators.csv"
     }
   });

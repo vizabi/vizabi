@@ -22,7 +22,7 @@
 
       this._type = "data";
       values = utils.extend({
-        reader: "csv-file",
+        reader: "csv",
         splash: false
       }, values);
 
