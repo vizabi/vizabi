@@ -4,6 +4,7 @@ import Data from './data';
 import Events from './events';
 import Intervals from './intervals';
 import globals from './globals';
+import * as models from '../models/_index';
 
 var time_formats = {
   "year": "%Y",
@@ -1279,7 +1280,7 @@ function initSubmodel(attr, val, ctx) {
     return val;
   } else {
     //special model
-    var Modl = Model.get(name, true) || Model;
+    var Modl = Model.get(name, true) || models[name] || Model;
     return new Modl(val, ctx, binds, true);
   }
 }
