@@ -2,6 +2,7 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import { indicatorpicker } from '../../../_index'
 /*
  * Axes dialog
  */
@@ -31,7 +32,7 @@ var Axes = Dialog.extend({
     };
 
     this.components = [{
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-xlimits-container',
       model: ["state.marker.axis_x", "language"],
       ui: {

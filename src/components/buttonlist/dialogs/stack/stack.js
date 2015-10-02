@@ -2,6 +2,8 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import { draggablelist } from '../../../_index'
+
 
 /*
  * stack dialog
@@ -21,7 +23,7 @@ var Stack = Dialog.extend({
     // in dialog, this.model_expects = ["state", "data"];
 
     this.components = [{
-      component: 'gapminder-draggablelist',
+      component: draggablelist,
       placeholder: '.vzb-dialog-draggablelist',
       model: ["language"],
       dataArrFn: _this.manualSorting.bind(_this),
