@@ -101,7 +101,7 @@
                     var contentBBox = text[0][0].getBBox();
                     view.select("text.vzb-mc-label-x")
                       .attr("x", contentBBox.width + fontHeight * 1.5)
-                      .attr("y", fontHeight/4);
+                      .attr("y", fontHeight/3.9);
 
                     view.select("circle.vzb-mc-label-x")
                       .attr("r", fontHeight / 2)
@@ -117,6 +117,7 @@
 
                     view.onTap(function (d, i) {
                       d3.event.stopPropagation();
+                      _this.model.entities.highlightEntity(d);
                       view.selectAll(".vzb-mc-label-x")
                         .classed("vzb-transparent", false);
                     })
