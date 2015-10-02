@@ -246,6 +246,9 @@ function buildJS(dev, cb) {
       } else {
         generateMinified(bundle, success);
       }
+    }, function(err) {
+      gutil.log(chalk.red("Bundling JS... ERROR!"));
+      gutil.log(chalk.red(err));
     });
 
     function generateSourceMap(bundle, cb) {
