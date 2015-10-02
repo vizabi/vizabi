@@ -112,9 +112,7 @@
         || this._resetPalette) {
 
         //TODO a hack that prevents adding properties to palette (need replacing)
-        this.set("palette", this._original_palette, false);
-        //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-        this.scale = null;
+        this.set("palette", null, false);
         if (palettes[this.which]) {
           this.palette = utils.clone(palettes[this.which]);
         } else if (this.use === "value") {
@@ -128,6 +126,9 @@
         }
 
         this._resetPalette = false;
+        
+        //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
+        this.scale = null;
       }
 
       this.which_1 = this.which;
