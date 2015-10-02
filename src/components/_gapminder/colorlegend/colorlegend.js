@@ -16,7 +16,7 @@
 
     init: function (config, context) {
       var _this = this;
-      this.template = '<div class="vzb-cl-holder"></div>';
+      this.template = '<div class="vzb-cl-outer"></div>';
 
       this.model_expects = [{
         name: "color",
@@ -54,7 +54,7 @@
     readyOnce: function () {
       var _this = this;
       this.element = d3.select(this.element);
-      this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-colorList");
+      this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-holder").append("div").attr("class", "vzb-cl-colorList");
       this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
       this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 
