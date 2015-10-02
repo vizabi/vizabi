@@ -5,43 +5,6 @@
   margin: 0 auto;
   position: relative;
 
-  input[type=range]::-webkit-slider-runnable-track {
-    cursor: pointer;
-    background: transparent;
-  }
-
-  input[type=range]:focus::-webkit-slider-runnable-track {
-    background: transparent;
-  }
-
-  input[type=range]::-moz-range-track {
-    cursor: pointer;
-    background: transparent;
-  }
-
-  input[type=range]::-ms-track {
-    cursor: pointer;
-    background: transparent;
-    border-color: transparent;
-    border-width: 16px 0;
-    color: transparent;
-  }
-  input[type=range]::-ms-fill-lower {
-    background: transparent;
-  }
-  input[type=range]:focus::-ms-fill-lower {
-    background: transparent;
-  }
-  input[type=range]::-ms-fill-upper {
-    background: transparent;
-  }
-  input[type=range]:focus::-ms-fill-upper {
-    background: transparent;
-  }
-  input[type=range]::-moz-focus-outer {
-    border: 0;
-  }
-
   &:before {
     content: '';
     position: absolute;
