@@ -28,6 +28,7 @@
     "eslint-config-airbnb": "0.0.9",
     "eslint-plugin-react": "^3.4.2",
     "event-stream": "^3.3.1",
+    "glob": "^5.0.15",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^3.0.2",
     "gulp-bump": "^1.0.0",
@@ -43,7 +44,6 @@
     "gulp-memory-cache": "^0.2.0",
     "gulp-minify-css": "^1.2.1",
     "gulp-rename": "^1.2.2",
-    "gulp-rollup": "^1.0.1",
     "gulp-ruby-sass": "^2.0.3",
     "gulp-scss-lint": "^0.3.4",
     "gulp-sourcemaps": "^1.5.2",
@@ -55,6 +55,7 @@
     "gulp-wrapper": "^1.0.0",
     "gulp-zip": "^3.0.2",
     "opn": "^3.0.2",
+    "rollup": "^0.17.3",
     "slash": "^1.0.0"
   }
 }

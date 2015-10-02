@@ -15,18 +15,18 @@ Reader.register('json', json);
 Reader.register('inline', inline);
 Reader.register('waffle', waffle);
 
-var Vizabi = function(tool, placeholder, options) {
+var Vzb = function(tool, placeholder, options) {
   return startTool(tool, placeholder, options);
 };
 
 //TODO: make this configurable
-Vizabi._version = "0.8.1";
+Vzb._version = "0.8.1";
 
 //stores reference to each tool on the page
-Vizabi._instances = {};
+Vzb._instances = {};
 
 //stores global variables accessible by any tool or component
-Vizabi._globals = globals;
+Vzb._globals = globals;
 
 //stores global variables accessible by any tool or component
 
@@ -34,7 +34,7 @@ function startTool(name, placeholder, options) {
   var tool = Tool.get(name);
   if(tool) {
     var t = new tool(placeholder, options);
-    Vizabi._instances[t._id] = t;
+    Vzb._instances[t._id] = t;
     return t;
   } else {
     utils.error('Tool "' + name + '" was not found.');
@@ -43,14 +43,14 @@ function startTool(name, placeholder, options) {
 
 //TODO: clear all objects and intervals as well
 //garbage collection
-Vizabi.clearInstances = function(id) {
+Vzb.clearInstances = function(id) {
   if(id) {
-    Vizabi._instances[id] = void 0;
+    Vzb._instances[id] = void 0;
   } else {
-    for(var i in Vizabi._instances) {
-      Vizabi._instances[i].clear();
+    for(var i in Vzb._instances) {
+      Vzb._instances[i].clear();
     }
-    Vizabi._instances = {};
+    Vzb._instances = {};
   }
 };
 
@@ -63,7 +63,7 @@ Vizabi.clearInstances = function(id) {
  * @param variable
  * @returns {Boolean}
  */
-Vizabi._require = function(variable) {
+Vzb._require = function(variable) {
   if(typeof root[variable] === 'undefined') {
     utils.warn(variable + ' is required and could not be found.');
     return false;
@@ -72,9 +72,9 @@ Vizabi._require = function(variable) {
 };
 
 //makes all objects accessible
-Vizabi.Tool = Tool;
-Vizabi.Component = Component;
-Vizabi.Model = Reader;
-Vizabi.Reader = Reader;
+Vzb.Tool = Tool;
+Vzb.Component = Component;
+Vzb.Model = Reader;
+Vzb.Reader = Reader;
 
-export default Vizabi;
+export default Vzb;
