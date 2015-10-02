@@ -233,8 +233,13 @@ function buildJS(dev, cb) {
 
     gutil.log(chalk.yellow("Bundling JS..."));
 
+    var entryFile = gutil.env.custom || 'gapminder';
+    entryFile = (entryFile != 'false') ? 'vizabi-'+entryFile+'.js' : 'vizabi.js';
+
+    gutil.log(chalk.yellow(" > entry file: "+ entryFile));
+
     rollup.rollup({
-      entry: path.join(config.src, 'vizabi.js')
+      entry: path.join(config.src, entryFile)
     }).then(function(bundle) {
       if(dev) {
         generateSourceMap(bundle, success);
