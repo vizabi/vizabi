@@ -1,6 +1,11 @@
 import utils from '../../base/utils';
 import Component from '../../base/component';
-import iconset from '../../base/iconset'
+import iconset from '../../base/iconset';
+
+import Trails from './bubblechart-trail';
+
+import Exporter from '../../helpers/svgexport';
+import axisSmart from '../../helpers/d3.axisWithLabelPicker';
 
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend('gapminder-bubblechart', {
@@ -139,8 +144,8 @@ var BubbleChartComp = Component.extend('gapminder-bubblechart', {
     this.sScale = null;
     this.cScale = null;
 
-    this.xAxis = d3.svg.axisSmart();
-    this.yAxis = d3.svg.axisSmart();
+    this.xAxis = axisSmart();
+    this.yAxis = axisSmart();
 
 
     this.cached = {};
@@ -166,11 +171,7 @@ var BubbleChartComp = Component.extend('gapminder-bubblechart', {
       dragging: true
     }, this.ui.labels);
 
-
-    var Trail = Vizabi.Helper.get("gapminder-bublechart-trails");
-    this._trails = new Trail(this);
-
-    var Exporter = Vizabi.Helper.get("gapminder-svgexport");
+    this._trails = new Trails(this);
     this._export = new Exporter(this);
     this._export
       .prefix("vzb-bc-")
