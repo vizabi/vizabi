@@ -111,7 +111,7 @@
 
             data[INDICATOR] = indicatorsArray
                 .filter(function(f) {
-                
+
                     //keep indicator if nothing is specified in tool properties
                     if (!_this.model.axis.allow || !_this.model.axis.allow.scales) return true;
                     //keep indicator if any scale is allowed in tool properties
@@ -125,9 +125,9 @@
 
                     return false;
                 });
-            
 
-            
+
+
             if (data[INDICATOR].indexOf(this.model.axis[INDICATOR]) > -1) pointer = this.model.axis[INDICATOR];
 
             data[SCALETYPE] = indicatorsDB[pointer].scales.filter(function(f) {
@@ -171,14 +171,14 @@
             this.el_select_scaletype[0][0].value = this.model.axis[SCALETYPE];
 
             //disable the selector in case if there is only one option, hide if so requested by the UI setings
-            this.el_select_indicator
-                .style('display', this.ui.selectIndicator ? "auto" : "none")
-                .attr('disabled', data[INDICATOR].length <= 1 ? "true" : null);
+          this.el_select_indicator
+            .style('display', this.ui.selectIndicator ? "auto" : "none")
+            .style('max-width', data[SCALETYPE].length <= 1 ? "none" : null)
+            .attr('disabled', data[INDICATOR].length <= 1 ? "true" : null);
 
-            this.el_select_scaletype
-                .style('display', data[SCALETYPE].length == 0 ? "none" : "inline")
-                .style('display', this.ui.selectScaletype ? "auto" : "none")
-                .attr('disabled', data[SCALETYPE].length <= 1 ? "true" : null);
+          this.el_select_scaletype
+            .style('display', data[SCALETYPE].length <= 1 || !this.ui.selectScaletype ? "none" : "inline")
+            .attr('disabled', data[SCALETYPE].length <= 1 ? "true" : null);
 
             this.el_domain_labelMin.style('display', this.ui.selectMinMax ? "auto" : "none");
             this.el_domain_labelMax.style('display', this.ui.selectMinMax ? "auto" : "none");
@@ -208,7 +208,7 @@
                     obj.scaleType = indicatorsDB[value].scales[0];
                 }
             }
-            
+
              if (what == INDICATOR || what == SCALETYPE) {
                 if (mdl.getType() == 'axis') {
                     obj.min = null;
