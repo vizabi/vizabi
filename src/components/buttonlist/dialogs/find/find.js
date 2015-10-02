@@ -1,19 +1,13 @@
+import utils from '../../../../base/utils';
+import Component from '../../../../base/component';
+import Dialog from '../_dialog';
+
 /*!
  * VIZABI FIND CONTROL
  * Reusable find dialog
  */
 
-(function () {
-
-  "use strict";
-
-  var Vizabi = this.Vizabi;
-  var utils = Vizabi.utils;
-  var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
-
-  if (!Vizabi._require('d3')) return;
-
-  Vizabi.Component.register('gapminder-buttonlist-find', Dialog.extend({
+var Find = Component.register('gapminder-buttonlist-find', Dialog.extend({
 
     init: function (config, parent) {
       this.name = 'find';
@@ -179,4 +173,4 @@
   }));
 
 
-}).call(this);
+export default Find;

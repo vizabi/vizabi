@@ -1,111 +1,92 @@
-/*!
- * VIZABI INDICATOR PICKER
- * Reusable indicator picker component
- */
+import utils from '../../base/utils';
+import Component from '../../base/component';
+import globals from '../../base/globals';
+import iconset from '../../base/iconset';
 
-(function () {
+var hidden = true;
 
-    "use strict";
+var DataWarning = Component.extend('gapminder-datawarning', {
 
-    var root = this;
-    var Vizabi = root.Vizabi;
-    var globals = Vizabi._globals;
-    var utils = Vizabi.utils;
-    var iconset = Vizabi.iconset;
+  init: function(config, context) {
+    var _this = this;
 
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) return;
+    this.model_expects = [{
+      name: "language",
+      type: "language"
+    }];
 
-    var hidden = true;
+    this.context = context;
 
-    Vizabi.Component.extend('gapminder-datawarning', {
+    this.model_binds = {
+      "change:language": function(evt) {
+        _this.ready();
+      }
+    }
 
+    //contructor is the same as any component
+    this._super(config, context);
 
+    this.ui = utils.extend({
+      //...add properties here
+    }, this.ui);
 
-        init: function (config, context) {
-            var _this = this;
+  },
 
-            this.model_expects = [{
-                name: "language",
-                type: "language"
-	        }];
+  ready: function() {},
 
-            this.context = context;
+  readyOnce: function() {
+    var _this = this;
+    this.element = d3.select(this.placeholder);
+    this.translator = this.model.language.getTFunction();
 
-            this.model_binds = {
-                "change:language": function (evt) {
-                    _this.ready();
-                }
-            }
+    this.element.selectAll("div").remove();
 
-            //contructor is the same as any component
-            this._super(config, context);
+    this.element.append("div")
+      .attr("class", "vzb-data-warning-background")
+      .on("click", function() {
+        _this.toggle(true)
+      });
 
-            this.ui = utils.extend({
-                //...add properties here
-            }, this.ui);
+    var container = this.element.append("div")
+      .attr("class", "vzb-data-warning-box");
 
-        },
+    container.append("div")
+      .attr("class", "vzb-data-warning-close")
+      .html("X")
+      .on("click", function() {
+        _this.toggle()
+      });
 
-        ready: function () {
-        },
+    var icon = container.append("div")
+      .attr("class", "vzb-data-warning-link")
+      .html(iconset['warn'])
 
-        readyOnce: function () {
-            var _this = this;
-            this.element = d3.select(this.placeholder);
-            this.translator = this.model.language.getTFunction();
-            
-            this.element.selectAll("div").remove();
-            
-            this.element.append("div")
-                .attr("class", "vzb-data-warning-background")
-                .on("click", function(){_this.toggle(true)});
-            
-            var container = this.element.append("div")
-                .attr("class", "vzb-data-warning-box");
-            
-            container.append("div")
-                .attr("class", "vzb-data-warning-close")
-                .html("X")
-                .on("click", function(){_this.toggle()});
-            
+    icon.append("div")
+      .text("Data doubts");
 
-            var icon = container.append("div")
-                .attr("class", "vzb-data-warning-link")
-                .html(iconset['warn'])
-                
-            icon.append("div")
-                .text("Data doubts");
-            
-            if(this.parent.datawarning_content.title){
-                container.append("div")
-                    .attr("class", "vzb-data-warning-title")
-                    .html(this.parent.datawarning_content.title);
-            }
-            
-            container.append("div")
-                .attr("class", "vzb-data-warning-body")
-                .html(this.parent.datawarning_content.body);
-                
+    if(this.parent.datawarning_content.title) {
+      container.append("div")
+        .attr("class", "vzb-data-warning-title")
+        .html(this.parent.datawarning_content.title);
+    }
 
-        },
+    container.append("div")
+      .attr("class", "vzb-data-warning-body")
+      .html(this.parent.datawarning_content.body);
 
+  },
 
+  toggle: function(arg) {
+    if(arg == null) arg = !hidden;
+    hidden = arg;
+    this.element.classed("vzb-hidden", hidden);
 
-        toggle: function (arg) {
-            if(arg==null) arg = !hidden;
-            hidden = arg;
-            this.element.classed("vzb-hidden", hidden);
-            
-            var _this = this;
-            this.parent.components.forEach(function(c){
-                c.element.classed("vzb-blur", c!=_this && !hidden);
-            })
-        }
+    var _this = this;
+    this.parent.components.forEach(function(c) {
+      c.element.classed("vzb-blur", c != _this && !hidden);
+    })
+  }
 
+});
 
-
-
-    });
-
-}).call(this);
+export default DataWarning;

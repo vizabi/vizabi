@@ -1,110 +1,107 @@
+import utils from '../../../../base/utils';
+import Component from '../../../../base/component';
+import Dialog from '../_dialog';
+
+
 /*
  * stack dialog
  */
 
-(function () {
+var Stack = Component.register('gapminder-buttonlist-stack', Dialog.extend({
 
-    "use strict";
+  /**
+   * Initializes the dialog component
+   * @param config component configuration
+   * @param context component context (parent)
+   */
+  init: function(config, parent) {
+    this.name = 'stack';
+    var _this = this;
 
-    var Vizabi = this.Vizabi;
-    var utils = Vizabi.utils;
-    var Dialog = Vizabi.Component.get('gapminder-buttonlist-dialog');
+    // in dialog, this.model_expects = ["state", "data"];
 
-    Vizabi.Component.register('gapminder-buttonlist-stack', Dialog.extend({
+    this.components = [{
+      component: 'gapminder-draggablelist',
+      placeholder: '.vzb-dialog-draggablelist',
+      model: ["language"],
+      dataArrFn: _this.manualSorting.bind(_this),
+      lang: 'region/'
+    }];
 
-        /**
-         * Initializes the dialog component
-         * @param config component configuration
-         * @param context component context (parent)
-         */
-        init: function (config, parent) {
-            this.name = 'stack';
-            var _this = this;
+    this.model_binds = {
+      'change:state:marker:stack': function() {
+        //console.log("stack change event");
+        _this.updateView();
+      },
+      'change:state:marker:group': function() {
+        //console.log("group change event");
+        _this.updateView();
+      }
+    }
+    this._super(config, parent);
+  },
 
-            // in dialog, this.model_expects = ["state", "data"];
+  readyOnce: function() {
+    var _this = this;
+    this.element = d3.select(this.element);
 
-            this.components = [{
-              component: 'gapminder-draggablelist',
-              placeholder: '.vzb-dialog-draggablelist',
-              model: ["language"],
-              dataArrFn: _this.manualSorting.bind(_this),
-              lang: 'region/'
-            }];
+    this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
+      .on("change", function() {
+        _this.setModel("stack", d3.select(this).node().value);
+      })
 
-            this.model_binds = {
-                'change:state:marker:stack': function () {
-                    //console.log("stack change event");
-                    _this.updateView();
-                },
-                'change:state:marker:group': function () {
-                    //console.log("group change event");
-                    _this.updateView();
-                }
-            }
-            this._super(config, parent);
-        },
+    this.mergeGroupedEl = this.element.select('#vzb-merge-grouped').selectAll("input")
+      .on("change", function() {
+        _this.setModel("merge grouped", d3.select(this).property("checked"));
+      })
+    this.mergeStackedEl = this.element.select('#vzb-merge-stacked').selectAll("input")
+      .on("change", function() {
+        _this.setModel("merge stacked", d3.select(this).property("checked"));
+      })
 
-        readyOnce: function(){
-            var _this = this;
-            this.element = d3.select(this.element);
+    this.updateView();
 
-            this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
-                .on("change", function(){
-                    _this.setModel("stack", d3.select(this).node().value);
-                })
+    this._super();
+  },
 
-            this.mergeGroupedEl = this.element.select('#vzb-merge-grouped').selectAll("input")
-                .on("change", function(){
-                    _this.setModel("merge grouped", d3.select(this).property("checked"));
-                })
-            this.mergeStackedEl = this.element.select('#vzb-merge-stacked').selectAll("input")
-                .on("change", function(){
-                    _this.setModel("merge stacked", d3.select(this).property("checked"));
-                })
+  updateView: function() {
+    var _this = this;
 
-            this.updateView();
+    this.howToStackEl.property('checked', function() {
+      return d3.select(this).node().value === _this.model.state.marker.stack.which;
+    })
 
-          this._super();
-        },
+    this.mergeGroupedEl.property('checked', this.model.state.marker.group.merge);
+    this.mergeStackedEl.property('checked', this.model.state.marker.stack.merge);
+  },
 
-        updateView: function(){
-            var _this = this;
+  manualSorting: function(value) {
+    if(arguments.length === 0) return this.model.state.marker.group.manualSorting;
+    this.model.state.marker.group.manualSorting = value;
+  },
 
-            this.howToStackEl.property('checked', function(){
-                return d3.select(this).node().value === _this.model.state.marker.stack.which;
-            })
+  setModel: function(what, value) {
 
-            this.mergeGroupedEl.property('checked', this.model.state.marker.group.merge);
-            this.mergeStackedEl.property('checked', this.model.state.marker.stack.merge);
-        },
+    if(what == "merge grouped") {
+      this.model.state.marker.group.merge = value;
+    } else if(what == "merge stacked") {
+      this.model.state.marker.stack.merge = value;
 
-        manualSorting: function (value) {
-          if (arguments.length === 0) return this.model.state.marker.group.manualSorting;
-          this.model.state.marker.group.manualSorting = value;
-        },
+    } else {
 
-        setModel: function(what, value) {
+      var mdl = this.model.state.marker.stack;
 
-            if (what == "merge grouped") {
-                this.model.state.marker.group.merge = value;
-            } else if (what == "merge stacked") {
-                this.model.state.marker.stack.merge = value;
+      var obj = {};
+      obj.which = value;
+      if(utils.values(mdl.getPalettes()).indexOf(value) == -1) {
+        obj.use = "property";
+      } else {
+        obj.use = "value";
+      }
 
-            } else {
+      mdl.set(obj);
+    }
+  }
+}));
 
-                var mdl = this.model.state.marker.stack;
-
-                var obj = {};
-                obj.which = value;
-                if(utils.values(mdl.getPalettes()).indexOf(value) == -1){
-                    obj.use = "property";
-                }else{
-                    obj.use = "value";
-                }
-
-              mdl.set(obj);
-            }
-        }
-    }));
-
-}).call(this);
+export default Stack;
