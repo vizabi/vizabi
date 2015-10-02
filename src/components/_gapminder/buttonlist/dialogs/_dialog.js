@@ -71,6 +71,11 @@
           dg.drag(d3.event);
         });
       this.dragHandler.call(dragBehavior);
+
+        var profile = this.getLayoutProfile();
+        this.dragHandler.classed("vzb-hidden", profile==='small');
+        this.pinIcon.classed("vzb-hidden", profile==='small');
+
     },
 
     resize: function () {
@@ -88,6 +93,11 @@
           this.topPos = null;
           this.placeholderEl.attr('style', '');
         }
+          
+        var profile = this.getLayoutProfile();
+        this.dragHandler.classed("vzb-hidden", profile==='small');
+        this.pinIcon.classed("vzb-hidden", profile==='small');
+          
       }
     },
 
