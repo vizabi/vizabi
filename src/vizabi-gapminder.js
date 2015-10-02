@@ -2,20 +2,20 @@
  * VIZABI GAPMINDER PREFERENCES (included only in Gapminder build)
  */
 
+import globals from './base/globals';
 import utils from './base/utils';
 import Promise from './base/promise';
+import Tool from './base/tool';
 import Vzb from './vizabi';
 
 //import tools
 import BubbleChart from './tools/bubblechart/bubblechart';
+import MountainChart from './tools/mountainchart/mountainchart';
+import MCComponent from './tools/mountainchart/mountainchart-component';
+import BarChart from './tools/barchart/barchart';
 
-//DEFAULT OPTIONS
-// var BarChart = Vzb.Tool.get('BarChart');
-// var LineChart = Vzb.Tool.get('LineChart');
-// var BubbleChart = Vzb.Tool.get('BubbleChart');
-// var MountainChart = Vzb.Tool.get('MountainChart');
-// var MountainChartComponent = Vzb.Component.get('gapminder-mountainchart');
-// var PopByAge = Vzb.Tool.get('PopByAge');
+//waffle reader
+import { waffle as WaffleReader} from './readers/_index';
 
 var language = {
   id: "en",
@@ -28,158 +28,160 @@ localUrl += "/preview/";
 var onlineUrl = "http://static.gapminderdev.org/vizabi/develop/preview/";
 
 //TODO: remove hardcoded path from source code
-Vzb._globals.gapminder_paths = {
+globals.gapminder_paths = {
   baseUrl: localUrl
 };
 
-// BarChart.define('default_options', {
-//   state: {
-//     time: {
-//       start: "1952",
-//       end: "2012",
-//       value: "2000",
-//       step: 1,
-//       speed: 300,
-//       formatInput: "%Y"
-//     },
-//     entities: {
-//       dim: "geo",
-//       show: {
-//         _defs_: {
-//           "geo": ["*"],
-//           "geo.cat": ["region"]
-//         }
-//       }
-//     },
-//     marker: {
-//       space: ["entities", "time"],
-//       label: {
-//         use: "property",
-//         which: "geo.name"
-//       },
-//       axis_y: {
-//         use: "indicator",
-//         which: "lex",
-//         scaleType: "linear",
-//         min: 0,
-//         max: 90,
-//         allow: {
-//           scales: ["linear", "log"]
-//         }
-//       },
-//       axis_x: {
-//         use: "property",
-//         which: "geo.name",
-//         allow: {
-//           scales: ["ordinal"]
-//         }
-//       },
-//       color: {
-//         use: "property",
-//         which: "geo.region",
-//         scaleType: "ordinal"
-//       }
-//     }
-//   },
-//   data: {
-//     reader: "waffle",
-//     splash: true
-//   },
-//   language: language,
-//   ui: {
-//     buttons: []
-//   }
-// });
+//OVERWRITE OPTIONS
 
-// MountainChart.define('datawarning_content', {
-//   title: "Income data has large uncertainty!",
-//   body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
-//   doubtDomain: [1800, 1950, 2015],
-//   doubtRange: [1.0, 0.8, 0.6]
-// });
+BarChart.define('default_options', {
+  state: {
+    time: {
+      start: "1952",
+      end: "2012",
+      value: "2000",
+      step: 1,
+      speed: 300,
+      formatInput: "%Y"
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "lex",
+        scaleType: "linear",
+        min: 0,
+        max: 90,
+        allow: {
+          scales: ["linear", "log"]
+        }
+      },
+      axis_x: {
+        use: "property",
+        which: "geo.name",
+        allow: {
+          scales: ["ordinal"]
+        }
+      },
+      color: {
+        use: "property",
+        which: "geo.region",
+        scaleType: "ordinal"
+      }
+    }
+  },
+  data: {
+    reader: "waffle",
+    splash: true
+  },
+  language: language,
+  ui: {
+    buttons: []
+  }
+});
 
-// MountainChart.define('default_options', {
-//   state: {
-//     time: {
-//       start: 1800,
-//       end: 2015,
-//       value: 2015,
-//       step: 1,
-//       speed: 100,
-//       formatInput: "%Y",
-//       xLogStops: [1, 2, 5],
-//       yMaxMethod: "latest",
-//       probeX: 1.82,
-//       tailFatX: 1.82,
-//       tailCutX: 0.2,
-//       tailFade: 0.7,
-//       xScaleFactor: 1.039781626,
-//       //0.9971005335,
-//       xScaleShift: -1.127066411,
-//       //-1.056221322,
-//       xPoints: 50
-//     },
-//     entities: {
-//       dim: "geo",
-//       opacitySelectDim: 0.3,
-//       opacityRegular: 0.6,
-//       show: {
-//         _defs_: {
-//           "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
-//           "geo.cat": ["country"]
-//         }
-//       }
-//     },
-//     marker: {
-//       space: ["entities", "time"],
-//       label: {
-//         use: "property",
-//         which: "geo.name"
-//       },
-//       axis_y: {
-//         use: "indicator",
-//         which: "pop",
-//         scaleType: 'linear'
-//       },
-//       axis_x: {
-//         use: "indicator",
-//         //which: "mean",
-//         which: "gdp_per_cap",
-//         scaleType: 'log',
-//         min: 0.11, //0
-//         max: 500 //100
-//       },
-//       size: {
-//         use: "indicator",
-//         //which: "variance",
-//         which: "gini",
-//         scaleType: 'linear'
-//       },
-//       color: {
-//         use: "property",
-//         which: "geo.region",
-//         scaleType: "ordinal"
-//       },
-//       stack: {
-//         use: "value",
-//         which: "all" // set a property of data or values "all" or "none"
-//       },
-//       group: {
-//         which: "geo.region", // set a property of data
-//         manualSorting: ["eur", "ame", "afr", "asi"],
-//         merge: false
-//       }
-//     }
-//   },
-//   language: language,
-//   data: {
-//     //reader: "waffle"
-//     reader: "csv",
-//     path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
-//     splash: true
-//       //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
-//   }
-// });
+MountainChart.define('datawarning_content', {
+  title: "Income data has large uncertainty!",
+  body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+  doubtDomain: [1800, 1950, 2015],
+  doubtRange: [1.0, 0.8, 0.6]
+});
+
+MountainChart.define('default_options', {
+  state: {
+    time: {
+      start: 1800,
+      end: 2015,
+      value: 2015,
+      step: 1,
+      speed: 100,
+      formatInput: "%Y",
+      xLogStops: [1, 2, 5],
+      yMaxMethod: "latest",
+      probeX: 1.82,
+      tailFatX: 1.82,
+      tailCutX: 0.2,
+      tailFade: 0.7,
+      xScaleFactor: 1.039781626,
+      //0.9971005335,
+      xScaleShift: -1.127066411,
+      //-1.056221322,
+      xPoints: 50
+    },
+    entities: {
+      dim: "geo",
+      opacitySelectDim: 0.3,
+      opacityRegular: 0.6,
+      show: {
+        _defs_: {
+          "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+          "geo.cat": ["country"]
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "pop",
+        scaleType: 'linear'
+      },
+      axis_x: {
+        use: "indicator",
+        //which: "mean",
+        which: "gdp_per_cap",
+        scaleType: 'log',
+        min: 0.11, //0
+        max: 500 //100
+      },
+      size: {
+        use: "indicator",
+        //which: "variance",
+        which: "gini",
+        scaleType: 'linear'
+      },
+      color: {
+        use: "property",
+        which: "geo.region",
+        scaleType: "ordinal"
+      },
+      stack: {
+        use: "value",
+        which: "all" // set a property of data or values "all" or "none"
+      },
+      group: {
+        which: "geo.region", // set a property of data
+        manualSorting: ["eur", "ame", "afr", "asi"],
+        merge: false
+      }
+    }
+  },
+  language: language,
+  data: {
+    //reader: "waffle"
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    splash: true
+      //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
+  }
+});
 
 
 // LineChart.define('default_options', {
@@ -342,7 +344,7 @@ BubbleChart.define('default_options', {
     //reader: "waffle",
     reader: "csv",
     //path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
-    path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
       //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
   },
@@ -414,7 +416,7 @@ BubbleChart.define('default_options', {
 //   },
 //   data: {
 //     reader: "csv",
-//     path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
+//     path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
 //     splash: true
 //   },
 //   language: language,
@@ -424,22 +426,21 @@ BubbleChart.define('default_options', {
 // });
 
 //Waffle Server Reader custom path
-var WaffleReader = Vzb.Reader.get('waffle');
 WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
 
 //preloading mountain chart precomputed shapes
-// MountainChartComponent.define("preload", function(done) {
-//   var shape_path = Vzb._globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
+MCComponent.define("preload", function(done) {
+  var shape_path = globals.gapminder_paths.baseUrl + "data/mc_precomputed_shapes.json";
 
-//   d3.json(shape_path, function(error, json) {
-//     if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
-//     MountainChartComponent.define('precomputedShapes', json);
-//     done.resolve();
-//   });
-// });
+  d3.json(shape_path, function(error, json) {
+    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+    MCComponent.define('precomputedShapes', json);
+    done.resolve();
+  });
+});
 
 //preloading metadata for all charts
-Vzb.Tool.define("preload", function(promise) {
+Tool.define("preload", function(promise) {
 
   var _this = this;
 
@@ -468,7 +469,7 @@ Vzb.Tool.define("preload", function(promise) {
 
 });
 
-Vzb.Tool.define("preloadLanguage", function() {
+Tool.define("preloadLanguage", function() {
 
   var promise = new Promise();
 

@@ -131,7 +131,9 @@ var TimeSlider = Component.extend({
     var _this = this;
 
     //DOM to d3
-    this.element = d3.select(this.element);
+    this.el = (this.el) ? this.el : d3.select(this.element);
+    this.element = this.el;
+
     this.element.classed(class_loading, false);
 
     //html elements
