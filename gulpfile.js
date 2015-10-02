@@ -136,45 +136,6 @@ gulp.task('styles', ['clean:css'], function() {
 //   Javascript
 // ----------------------------------------------------------------------------
 
-function getConcatFiles() {
-  var custom = gutil.env.custom || "gapminder";
-
-  var FILES = {
-    base: ['./src/vizabi.js',
-      './src/base/utils.js',
-      './src/base/promise.js',
-      './src/base/class.js',
-      './src/base/data.js',
-      './src/base/events.js',
-      './src/base/intervals.js',
-      './src/base/layout.js',
-      './src/base/model.js',
-      './src/base/component.js',
-      './src/base/tool.js',
-      './src/base/iconset.js'
-    ],
-    components: ['./src/components/**/*.js'],
-    models: ['./src/models/**/*.js'],
-    tools: ['./src/tools/**/*.js'],
-    readers: ['./src/readers/**/*.js'],
-    plugins: ['./src/plugins/**/*.js'],
-    templates: ['./src/**/*.html'],
-    custom: ['./src/vizabi_custom/' + custom + '.js']
-  }
-  var BUILD_FILES = ([]).concat(FILES.base)
-    .concat(FILES.components)
-    .concat(FILES.models)
-    .concat(FILES.readers)
-    .concat(FILES.tools)
-    .concat(FILES.plugins);
-
-  if(custom) {
-    BUILD_FILES = BUILD_FILES.concat(FILES.custom);
-  }
-
-  return gulp.src(BUILD_FILES).pipe(mem_cache('jsfiles'));
-}
-
 function strToFile(string, name) {
   var src = require('stream').Readable({
     objectMode: true
@@ -203,7 +164,7 @@ function buildImportIndex(folder, subfolder) {
     .pipe(foreach(function(stream, file) {
       return strToFile([
         'import ' + path.basename(file.path, '.js') + ' from ',
-        '\'' + slash(path.relative(folder, file.path)) + '\';'
+        '\'./' + slash(path.relative(folder, file.path)) + '\';'
       ].join(''), path.basename(file.path));
     }))
     .pipe(concat('_top.js'));
@@ -226,16 +187,6 @@ function buildImportIndex(folder, subfolder) {
     .pipe(gulp.dest(folder));
 }
 
-//with source maps
-gulp.task('buildIndexes', ['clean:indexes'], function() {
-  return es.merge(
-    buildImportIndex(path.join(config.src, '/components/'), true),
-    buildImportIndex(path.join(config.src, '/models/')),
-    buildImportIndex(path.join(config.src, '/readers/')),
-    buildImportIndex(path.join(config.src, '/tools/'), true)
-  );
-});
-
 function formatTemplateFile(str, filename) {
   var content = str.replace(/'/g, '\"')
     .replace(/(\r\n|\n|\r)/gm, " ")
@@ -250,12 +201,11 @@ function formatTemplateFile(str, filename) {
     "root.document.body.appendChild(s);" +
     "}).call(this);";
 
-  var src = require('stream').Readable({ objectMode: true });
-  src._read = function () {
-    this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(content) }));
-    this.push(null);
-  }
-  return src;
+  var src = require('stream').Readable({
+    objectMode: true
+  });
+
+  return strToFile(content, filename);
 }
 
 function getTemplates() {
@@ -269,14 +219,15 @@ function getTemplates() {
 function buildJS(dev) {
 
   var banner_str = ['/**',
-  ' * '+ pkg.name +' - '+ pkg.description,
-  ' * @version v'+ pkg.version,
-  ' * @link '+ pkg.homepage,
-  ' * @license '+ pkg.license,
-  ' */',
-  ''].join('\n');
+    ' * ' + pkg.name + ' - ' + pkg.description,
+    ' * @version v' + pkg.version,
+    ' * @link ' + pkg.homepage,
+    ' * @license ' + pkg.license,
+    ' */',
+    ''
+  ].join('\n');
 
-  var version_str = '; Vizabi._version = "'+pkg.version+'";';
+  var version_str = '; Vizabi._version = "' + pkg.version + '";';
 
   gutil.log(chalk.yellow("Bundling JS..."));
 
@@ -284,27 +235,66 @@ function buildJS(dev) {
 
   if(dev) {
     src = src.pipe(sourcemaps.init())
-             .pipe(concat('vizabi.js'))
-             .pipe(wrapper({ footer: version_str}))
-             .pipe(sourcemaps.write('.'))
-             .pipe(gulp.dest(config.destLib));
-  }
-  else {
+      .pipe(concat('vizabi.js'))
+      .pipe(wrapper({
+        footer: version_str
+      }))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest(config.destLib));
+  } else {
     src = src.pipe(concat('vizabi.js'))
-             .pipe(wrapper({ footer: version_str}))
-             .pipe(wrapper({ header: banner_str}))
-             .pipe(gulp.dest(config.destLib))
-             .pipe(rename('vizabi.min.js'))
-             .pipe(uglify())
-             .pipe(wrapper({ header: banner_str}))
-             .pipe(gulp.dest(config.destLib));
+      .pipe(wrapper({
+        footer: version_str
+      }))
+      .pipe(wrapper({
+        header: banner_str
+      }))
+      .pipe(gulp.dest(config.destLib))
+      .pipe(rename('vizabi.min.js'))
+      .pipe(uglify())
+      .pipe(wrapper({
+        header: banner_str
+      }))
+      .pipe(gulp.dest(config.destLib));
   }
 
   return src.on('end', function() {
-            gutil.log(chalk.green("Bundling JS... DONE!"))
-         });
+    gutil.log(chalk.green("Bundling JS... DONE!"))
+  });
 
 }
+
+gulp.task('buildIndexes', ['clean:indexes'], function() {
+  return es.merge(
+    buildImportIndex(path.join(config.src, '/components/'), true),
+    buildImportIndex(path.join(config.src, '/components/buttonlist/dialogs'), true),
+    buildImportIndex(path.join(config.src, '/models/')),
+    buildImportIndex(path.join(config.src, '/readers/'))
+  );
+});
+
+gulp.task('bundle', ['clean:js', ['buildIndexes']], function() {
+
+  gutil.log(chalk.yellow("Bundling JS..."));
+
+  gulp.src(path.join(config.src, 'vizabi.js'), {
+      read: false
+    })
+    .pipe(rollup({
+      format: 'umd',
+      moduleName: 'Vizabi',
+      banner: '/* Vizabi version 0.7.5 */',
+      footer: '/* FOOTER */'
+    }))
+    .on('error', function(e) {
+      gutil.log(chalk.red("Bundling JS... ERROR!"));
+      gutil.log(e);
+    })
+    .pipe(gulp.dest(config.destLib))
+    .on('end', function() {
+      gutil.log(chalk.green("Bundling JS... DONE!"));
+    });
+});
 
 //with source maps
 gulp.task('javascript', ['clean:js'], function() {
@@ -368,7 +358,8 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(cb) {
+gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(
+  cb) {
   return cb();
 });
 
@@ -378,9 +369,12 @@ gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'prev
 
 //reload only once every 3000ms
 var reloadLock = false;
+
 function notLocked() {
   if(!reloadLock) {
-    setTimeout(function() { reloadLock = false; }, 3000);
+    setTimeout(function() {
+      reloadLock = false;
+    }, 3000);
     reloadLock = true;
   }
   return reloadLock;
@@ -436,24 +430,28 @@ gulp.task('connect', ['preview'], function() {
 //   Compressed file (for download)
 // ----------------------------------------------------------------------------
 
-gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
-    return gulp.src(path.join(config.destLib, '**/*'))
-        .pipe(zip('vizabi.zip'))
-        .pipe(gulp.dest(config.destDownload));
+gulp.task('compress', ['styles', 'javascript:build', 'preview'], function() {
+  return gulp.src(path.join(config.destLib, '**/*'))
+    .pipe(zip('vizabi.zip'))
+    .pipe(gulp.dest(config.destDownload));
 });
 
 // ----------------------------------------------------------------------------
 //   Bump version
 // ----------------------------------------------------------------------------
 
-gulp.task('bump', function(){
+gulp.task('bump', function() {
   var src = gulp.src(['./bower.json', './package.json']);
   var version = gutil.env.version;
   var type = gutil.env.type;
 
   if(!version && !type) type = 'patch';
-  if(version) src = src.pipe(bump({version:version}));
-  else if(type) src = src.pipe(bump({type:type}));
+  if(version) src = src.pipe(bump({
+    version: version
+  }));
+  else if(type) src = src.pipe(bump({
+    type: type
+  }));
 
   return src.pipe(gulp.dest('./'));
 });
@@ -466,7 +464,7 @@ gulp.task('bump', function(){
 gulp.task('build', ['compress']);
 
 //Developer task without linting
-gulp.task('dev', ['styles', 'javascript', 'watch', 'connect']);
+gulp.task('dev', ['styles', 'bundle', /*'watch',*/ 'connect']);
 
 //Serve = build + connect
 gulp.task('serve', ['build', 'connect']);
