@@ -2,7 +2,7 @@
  * VIZABI LINECHART
  */
 
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Tool from '../../base/tool';
 
 import LCComponent from './linechart-component';

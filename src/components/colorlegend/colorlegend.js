@@ -1,4 +1,4 @@
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Component from '../../base/component';
 import colorPicker from '../../helpers/d3.colorPicker';
 import worldMap from '../../helpers/d3.worldMap';

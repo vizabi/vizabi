@@ -2,7 +2,7 @@
  * VIZABI LINECHART
  */
 
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Component from '../../base/component';
 
 import axisSmart from '../../helpers/d3.axisWithLabelPicker';

@@ -1,4 +1,4 @@
-import utils from './utils';
+import * as utils from './utils';
 import Promise from './promise';
 import Class from './class';
 import Reader from './reader';

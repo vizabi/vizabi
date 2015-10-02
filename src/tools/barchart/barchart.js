@@ -2,7 +2,7 @@
  * VIZABI BARCHART
  */
 
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Tool from '../../base/tool';
 
 import BarChartComponent from './barchart-component';

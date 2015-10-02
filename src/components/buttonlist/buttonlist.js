@@ -1,6 +1,6 @@
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Component from '../../base/component';
-import iconset from '../../base/iconset';
+import * as iconset from '../../base/iconset';
 
 //dialogs
 import * as dialogs from './dialogs/_index';
@@ -56,7 +56,7 @@ var ButtonList = Component.extend({
       },
       'colors': {
         title: "buttons/colors",
-        icon: "paint-brush",
+        icon: "paintbrush",
         dialog: dialogs.colors,
         ispin: false
       },

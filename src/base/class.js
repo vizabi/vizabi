@@ -1,4 +1,4 @@
-import utils from './utils';
+import { forEach, warn } from './utils';
 
 var initializing = false;
 var fnTest = /xyz/.test(function() {
@@ -14,7 +14,7 @@ function extend(name, extensions) {
   var prototype = new this();
   initializing = false;
 
-  utils.forEach(extensions, function(method, name) {
+  forEach(extensions, function(method, name) {
     if(typeof extensions[name] === 'function' && typeof _super[name] === 'function' && fnTest.test(extensions[name])) {
       prototype[name] = function(name, fn) {
         return function() {
@@ -43,7 +43,7 @@ function extend(name, extensions) {
   Class._collection = {};
   Class.register = function(name, code) {
     if(typeof this._collection[name] !== 'undefined') {
-      utils.warn('"' + name + '" is already registered. Overwriting...');
+      warn('"' + name + '" is already registered. Overwriting...');
     }
     this._collection[name] = code;
   };
@@ -67,7 +67,7 @@ function extend(name, extensions) {
       return this._collection[name];
     }
     if(!silent) {
-      utils.warn('"' + name + '" was not found.');
+      warn('"' + name + '" was not found.');
     }
     return false;
   };

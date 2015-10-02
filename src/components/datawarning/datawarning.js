@@ -1,7 +1,8 @@
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Component from '../../base/component';
 import globals from '../../base/globals';
-import iconset from '../../base/iconset';
+
+import {warn as iconWarn} from '../../base/iconset';
 
 var hidden = true;
 
@@ -61,7 +62,7 @@ var DataWarning = Component.extend({
 
     var icon = container.append("div")
       .attr("class", "vzb-data-warning-link")
-      .html(iconset['warn'])
+      .html(iconWarn)
 
     icon.append("div")
       .text("Data doubts");

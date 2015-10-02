@@ -1,6 +1,6 @@
-import utils from '../../../base/utils';
+import * as utils from '../../../base/utils';
 import Component from '../../../base/component';
-import iconset from '../../../base/iconset'
+import { drag as iconDrag, pin as iconPin } from '../../../base/iconset'
 
 /*!
  * VIZABI DIALOG
@@ -44,9 +44,9 @@ var Dialog = Component.extend({
     this.placeholderEl = d3.select(this.placeholder);
     this.rootEl = d3.select(this.root.element);
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
-    this.dragHandler.html(iconset['drag']);
+    this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
-    this.pinIcon.html(iconset['pin']);
+    this.pinIcon.html(iconPin);
 
     var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
     var dragBehavior = d3.behavior.drag()

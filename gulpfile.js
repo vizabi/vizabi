@@ -249,6 +249,7 @@ function buildJS(dev, cb) {
     }, function(err) {
       gutil.log(chalk.red("Bundling JS... ERROR!"));
       gutil.log(chalk.red(err));
+      cb(false);
     });
 
     function generateSourceMap(bundle, cb) {

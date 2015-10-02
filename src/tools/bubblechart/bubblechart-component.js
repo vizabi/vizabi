@@ -1,11 +1,11 @@
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import Component from '../../base/component';
-import iconset from '../../base/iconset';
 
 import Trails from './bubblechart-trail';
-
 import Exporter from '../../helpers/svgexport';
 import axisSmart from '../../helpers/d3.axisWithLabelPicker';
+
+import { warn as iconWarn } from '../../base/iconset';
 
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
@@ -595,7 +595,7 @@ var BubbleChartComp = Component.extend({
     sTitle
       .attr("text-anchor", "end");
 
-    this.dataWarningEl.html(iconset['warn']).select("svg").attr("width", "0px").attr("height", "0px");
+    this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")

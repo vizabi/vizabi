@@ -12,10 +12,10 @@
 * Developed in Gapminder Foundation, 2015
 */
 
-import utils from '../../base/utils';
+import * as utils from '../../base/utils';
 import globals from '../../base/globals';
 import Component from '../../base/component';
-import iconset from '../../base/iconset';
+import { warn as iconWarn } from '../../base/iconset';
 
 import Exporter from '../../helpers/svgexport';
 import axisSmart from '../../helpers/d3.axisWithLabelPicker';
@@ -407,7 +407,7 @@ var MountainChartComponent = Component.extend({
         this.yTitleEl.select("text")
             .text(this.translator("mount/title"));
 
-        this.dataWarningEl.html(iconset["warn"]).select("svg").attr("width", "0px").attr("height", "0px");
+        this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 

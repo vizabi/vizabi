@@ -1,4 +1,4 @@
-import utils from './base/utils';
+import * as utils from './base/utils';
 import Tool from './base/tool';
 import Component from './base/component';
 import Model from './base/model';

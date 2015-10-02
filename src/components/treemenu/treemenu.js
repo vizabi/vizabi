@@ -1,4 +1,4 @@
-import utils from '../../base/utils';
+import { extend, pruneTree } from '../../base/utils';
 import Component from '../../base/component';
 import globals from '../../base/globals';
 
@@ -131,7 +131,7 @@ var TreeMenu = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.ui = utils.extend({
+    this.ui = extend({
       //...add properties here
     }, this.ui);
 
@@ -654,7 +654,7 @@ var TreeMenu = Component.extend({
       return false;
     })
 
-    var dataFiltered = utils.pruneTree(data, function(f) {
+    var dataFiltered = pruneTree(data, function(f) {
       return allowedIDs.indexOf(f.id) > -1
     });
 

@@ -1,4 +1,4 @@
-import utils from '../base/utils';
+import * as utils from '../base/utils';
 import globals from '../base/globals';
 import Model from '../base/model';
 

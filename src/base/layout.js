@@ -1,4 +1,4 @@
-import utils from './utils';
+import * as utils from './utils';
 import Events from './events';
 
 //classes are vzb-portrait, vzb-landscape...
