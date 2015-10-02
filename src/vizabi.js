@@ -6,6 +6,15 @@ import Reader from './base/reader';
 import globals from './base/globals';
 import BubbleChart from './tools/bubblechart/bubblechart';
 
+//available readers
+import { csv, json, inline, waffle } from './readers/_index';
+
+//availabel readers
+Reader.register('csv', csv);
+Reader.register('json', json);
+Reader.register('inline', inline);
+Reader.register('waffle', waffle);
+
 var Vizabi = function(tool, placeholder, options) {
   return startTool(tool, placeholder, options);
 };
@@ -45,7 +54,7 @@ Vizabi.clearInstances = function(id) {
   }
 };
 
-console.log(BubbleChart);
+(function(){})(BubbleChart);
 
 /*
  * throws a warning if the required variable is not defined
