@@ -23,10 +23,8 @@
                     if (b.yMax && a.yMax) return b.yMax - a.yMax;
                     return b.sortValue[0] - a.sortValue[0];
                 });
-
             _this.selectList = _this.mountainLabelContainer.selectAll("g")
                 .data(utils.unique(listData, function (d) { return d.KEY() }));
-
             _this.selectList.exit().remove();
             _this.selectList.enter().append("g")
                 .attr("class", "vzb-mc-label")
@@ -37,7 +35,14 @@
                     label.append("text").attr("class", "vzb-mc-label-text");
                     label.append("circle").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
                       .on("click", function (d, i) {
+                        if (utils.isTouchDevice()) return;
                         d3.event.stopPropagation();
+                        _this.model.entities.clearHighlighted();
+                        _this.model.entities.selectEntity(d);
+                      })
+                      .onTap(function (d, i) {
+                        d3.event.stopPropagation();
+                        d3.select("#" + d.geo + "-label").remove();
                         _this.model.entities.clearHighlighted();
                         _this.model.entities.selectEntity(d);
                       });
@@ -54,7 +59,6 @@
                 .on("mouseout", function (d, i) {
                     if (utils.isTouchDevice()) return;
                     _this.model.entities.clearHighlighted();
-                    console.log(d3.select(this));
                     d3.select(this).selectAll(".vzb-mc-label-x")
                       .classed("vzb-transparent", true);
 
@@ -79,14 +83,13 @@
 
             var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
             if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
-
             _this.selectList
                 .attr("transform", function (d, i) {
                     return "translate(0," + (fontHeight * i + titleHeight * 3) + ")";
                 })
                 .each(function (d, i) {
 
-                    var view = d3.select(this);
+                    var view = d3.select(this).attr("id", d.geo + '-label');
                     var name = d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
                     var number = _this.values.axis_y[d.KEY()];
 
@@ -100,12 +103,12 @@
 
                     var contentBBox = text[0][0].getBBox();
                     view.select("text.vzb-mc-label-x")
-                      .attr("x", contentBBox.width + fontHeight * 1.5)
+                      .attr("x", contentBBox.width + fontHeight * 1.4)
                       .attr("y", fontHeight/3.9);
 
                     view.select("circle.vzb-mc-label-x")
-                      .attr("r", fontHeight / 2)
-                      .attr("cx", contentBBox.width + fontHeight * 1.5)
+                      .attr("r", fontHeight / 2.5)
+                      .attr("cx", contentBBox.width + fontHeight * 1.4)
                       .attr("cy", fontHeight/4);
 
 
