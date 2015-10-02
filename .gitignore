@@ -9,3 +9,4 @@ node_modules/
 test.html
 .idea/
 npm-debug.log
+**/*/_index.js

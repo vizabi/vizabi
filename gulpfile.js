@@ -3,6 +3,7 @@
 var path = require('path');
 var gulp = require('gulp');
 var del = require('del')
+var slash = require('slash')
 var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
@@ -71,6 +72,10 @@ gulp.task('clean:js', function() {
     path.join(config.destLib, '**/*.js'),
     path.join(config.destLib, '**/*.js.map')
   ]);
+});
+
+gulp.task('clean:indexes', function() {
+  return del([path.join(config.src, '**/_index.js')]);
 });
 
 gulp.task('clean:preview', function() {
@@ -169,6 +174,67 @@ function getConcatFiles() {
 
   return gulp.src(BUILD_FILES).pipe(mem_cache('jsfiles'));
 }
+
+function strToFile(string, name) {
+  var src = require('stream').Readable({
+    objectMode: true
+  });
+  src._read = function() {
+    this.push(new gutil.File({
+      cwd: "",
+      base: "",
+      path: name,
+      contents: new Buffer(string)
+    }));
+    this.push(null);
+  }
+  return src;
+}
+
+//TODO: better way?
+function buildImportIndex(folder, subfolder) {
+
+  var search = (subfolder) ? '*/*.js' : '*.js';
+  //delete if exists
+  del(path.join(folder, '_index.js'));
+
+  //write index
+  var top = gulp.src(path.join(folder, search))
+    .pipe(foreach(function(stream, file) {
+      return strToFile([
+        'import ' + path.basename(file.path, '.js') + ' from ',
+        '\'' + slash(path.relative(folder, file.path)) + '\';'
+      ].join(''), path.basename(file.path));
+    }))
+    .pipe(concat('_top.js'));
+
+  var bottom = gulp.src(path.join(folder, search))
+    .pipe(foreach(function(stream, file) {
+      return strToFile(path.basename(file.path, '.js') + ',', path.basename(file.path));
+    }))
+    .pipe(concat('_bottom.js'))
+    .pipe(wrapper({
+      header: '\nexport {\n',
+      footer: '\n};'
+    }));
+
+  return es.merge(top, bottom)
+    .pipe(concat('_index.js'))
+    .pipe(wrapper({
+      header: '//file automatically generated during build process\n'
+    }))
+    .pipe(gulp.dest(folder));
+}
+
+//with source maps
+gulp.task('buildIndexes', ['clean:indexes'], function() {
+  return es.merge(
+    buildImportIndex(path.join(config.src, '/components/'), true),
+    buildImportIndex(path.join(config.src, '/models/')),
+    buildImportIndex(path.join(config.src, '/readers/')),
+    buildImportIndex(path.join(config.src, '/tools/'), true)
+  );
+});
 
 function formatTemplateFile(str, filename) {
   var content = str.replace(/'/g, '\"')
