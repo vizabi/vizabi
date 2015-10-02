@@ -184,8 +184,8 @@
     @include position(absolute, 0);
   }
   //common tool components
-  @import '../../components/_gapminder/buttonlist/buttonlist';
-  @import '../../components/_gapminder/timeslider/timeslider';
-  @import '../../components/_gapminder/treemenu/treemenu';
-  @import '../../components/_gapminder/datawarning/datawarning';
+  @import '../../components/buttonlist/buttonlist';
+  @import '../../components/timeslider/timeslider';
+  @import '../../components/treemenu/treemenu';
+  @import '../../components/datawarning/datawarning';
 }
