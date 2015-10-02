@@ -21,6 +21,7 @@ var rollup = require('rollup');
 var uglify = require("gulp-uglify");
 var glob = require('glob');
 var fs = require('fs');
+var q = require('q');
 
 //useful for ES5 build
 var concat = require('gulp-concat');
@@ -29,7 +30,6 @@ var foreach = require('gulp-foreach');
 var es = require('event-stream');
 
 var rename = require('gulp-rename');
-// var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var wrapper = require('gulp-wrapper');
 
@@ -155,39 +155,31 @@ function strToFile(string, name) {
   return src;
 }
 
-//TODO: better way?
+//TODO: better way to create index?
 function buildImportIndex(folder, subfolder) {
-
+  var deferred = q.defer();
   var search = (subfolder) ? '*/*.js' : '*.js';
+  var header = '//file automatically generated during build process\n';
   //delete if exists
   del(path.join(folder, '_index.js'));
 
-  //write index
-  var top = gulp.src(path.join(folder, search))
-    .pipe(foreach(function(stream, file) {
-      return strToFile([
-        'import ' + path.basename(file.path, '.js') + ' from ',
-        '\'./' + slash(path.relative(folder, file.path)) + '\';'
-      ].join(''), path.basename(file.path));
-    }))
-    .pipe(concat('_top.js'));
-
-  var bottom = gulp.src(path.join(folder, search))
-    .pipe(foreach(function(stream, file) {
-      return strToFile(path.basename(file.path, '.js') + ',', path.basename(file.path));
-    }))
-    .pipe(concat('_bottom.js'))
-    .pipe(wrapper({
-      header: '\nexport {\n',
-      footer: '\n};'
-    }));
-
-  return es.merge(top, bottom)
-    .pipe(concat('_index.js'))
-    .pipe(wrapper({
-      header: '//file automatically generated during build process\n'
-    }))
-    .pipe(gulp.dest(folder));
+  glob(path.join(folder, search), {}, function(err, matches) {
+    var str_top = [], str_middle = [], str_btm = [];
+    for(var i = 0; i < matches.length; i++) {
+      var name = path.basename(matches[i], '.js');
+      var rel_path = slash(path.relative(folder, matches[i]));
+      str_top.push('import ' + name + ' from \'./' + rel_path + '\';');
+      str_middle.push(name + ',');
+      str_btm.push(name + ' : '+ name +',');
+    }
+    str_top = str_top.join('\n');
+    str_middle = '\nexport {\n' + str_middle.join('\n') + '\n};';
+    str_btm = '\nexport default {\n' + str_btm.join('\n') + '\n};';
+    var contents = header + str_top + str_middle + str_btm;
+    fs.writeFileSync(path.join(folder, '_index.js'), contents);
+    deferred.resolve(); 
+  });
+  return deferred.promise;
 }
 
 function formatTemplateFile(str, filename) {
@@ -278,21 +270,21 @@ function buildJS(dev, cb) {
 }
 
 gulp.task('buildIndexes', ['clean:indexes'], function() {
-  return es.merge(
+  return q.all([
     buildImportIndex(path.join(config.src, '/components/'), true),
     buildImportIndex(path.join(config.src, '/components/buttonlist/dialogs'), true),
     buildImportIndex(path.join(config.src, '/models/')),
     buildImportIndex(path.join(config.src, '/readers/'))
-  );
+  ]);
 });
 
 //with source maps
-gulp.task('bundle', ['clean:js'], function(cb) {
+gulp.task('bundle', ['clean:js', 'buildIndexes'], function(cb) {
   buildJS(true, cb);
 });
 
 //without source maps and with banner
-gulp.task('bundle:build', ['clean:js'], function(cb) {
+gulp.task('bundle:build', ['clean:js', 'buildIndexes'], function(cb) {
   buildJS(false, cb);
 });
 
