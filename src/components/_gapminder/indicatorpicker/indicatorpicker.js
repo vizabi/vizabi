@@ -176,7 +176,7 @@
                 .attr('disabled', data[INDICATOR].length <= 1 ? "true" : null);
 
             this.el_select_scaletype
-                .style('display', data[SCALETYPE].length == 0 ? "none" : "inline")
+                .style('display', data[SCALETYPE].length == 0 || this.model.axis.use !== "indicator"? "none" : "inline")
                 .style('display', this.ui.selectScaletype ? "auto" : "none")
                 .attr('disabled', data[SCALETYPE].length <= 1 ? "true" : null);
 
