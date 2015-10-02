@@ -1,17 +1,13 @@
+import utils from './utils';
+import Promise from './promise';
+import Reader from './reader';
+
 /*!
  * Waffle server Reader
  * the simplest reader possible
  */
 
-(function () {
-
-  "use strict";
-
-  var Vizabi = this.Vizabi;
-  var utils = Vizabi.utils;
-  var Promise = Vizabi.Promise;
-
-  Vizabi.Reader.extend('waffle-server', {
+var WSReader = Reader.extend('waffle-server', {
 
     basepath: "",
 
@@ -126,4 +122,4 @@
     }
   });
 
-}).call(this);
+export default WSReader;
