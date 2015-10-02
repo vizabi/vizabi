@@ -48,6 +48,4 @@ init: function(config, parent) {
 }
 }));
 
-}).call(this);
-
 export default Size;

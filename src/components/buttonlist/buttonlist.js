@@ -71,7 +71,7 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
       'size': {
         title: "buttons/size",
         icon: "circle",
-        dialog: dialogs.size,
+        dialog: dialogSize,
         ispin: false
       },
       'fullscreen': {
