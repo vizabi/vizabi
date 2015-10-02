@@ -188,7 +188,7 @@ var Component = Events.extend({
         rendered = templateFunc(tmpl, data);
       } catch(e) {
         utils.error('Templating error for component: \'' + this.name +
-          '\' - Check if path to template is correct. E.g.: \'src/components/...\'');
+          '\' - Check if template name is unique and correct. E.g.: \'bubblechart\'');
       }
     }
     //add loading class and html

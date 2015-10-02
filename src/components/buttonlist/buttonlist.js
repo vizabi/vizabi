@@ -1,17 +1,15 @@
 import utils from '../../base/utils';
 import Component from '../../base/component';
-import iconset from '../../base/iconset'
+import iconset from '../../base/iconset';
 
 //dialogs
-import dialogFind from './dialogs/find/find'
-import dialogMoreOptions from './dialogs/moreoptions/moreoptions'
-import dialogColors from './dialogs/colors/colors'
-import dialogSize from './dialogs/size/size'
-import dialogAxes from './dialogs/axes/axes'
-import dialogAxesMC from './dialogs/axesmc/axesmc'
-import dialogStack from './dialogs/stack/stack'
-
-console.log(dialogs);
+import dialogFind from './dialogs/find/find';
+import dialogMoreOptions from './dialogs/moreoptions/moreoptions';
+import dialogColors from './dialogs/colors/colors';
+import dialogSize from './dialogs/size/size';
+import dialogAxes from './dialogs/axes/axes';
+import dialogAxesMC from './dialogs/axesmc/axesmc';
+import dialogStack from './dialogs/stack/stack';
 
 /*!
  * VIZABI BUTTONLIST

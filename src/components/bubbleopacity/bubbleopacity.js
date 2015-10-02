@@ -1,18 +1,10 @@
+import Component from '../../base/component';
 /*!
  * VIZABI BUBBLE OPACITY CONTROL
  * Reusable OPACITY SLIDER
  */
 
-(function () {
-
-  "use strict";
-
-  var Vizabi = this.Vizabi;
-  var utils = Vizabi.utils;
-
-  if (!Vizabi._require('d3')) return;
-
-  Vizabi.Component.extend('gapminder-bubbleopacity', {
+var BubbleOpacity = Component.extend({
 
     init: function (config, context) {
       this.template = '<div class="vzb-bo-holder"><input type="range" id="vzb-bo-slider" class="vzb-bo-slider" step="1"></div>';
@@ -78,5 +70,4 @@
 
   });
 
-
-}).call(this);
+export default BubbleOpacity;
