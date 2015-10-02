@@ -233,9 +233,10 @@ var Component = Events.extend({
         utils.error('Error loading component: name not provided');
         return;
       }
-      if(!(comp = Component.get(c.component))) {
-        return;
-      }
+      comp = (utils.isString(c.component)) ? Component.get(c.component) : c.component;
+
+      if(!comp) return;
+
       config = utils.extend(c, {
         name: c.component,
         ui: _this._uiMapping(c.placeholder, c.ui)
