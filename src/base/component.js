@@ -520,7 +520,7 @@ function preloader(comp) {
 function templateFunc(str, data) {
   // Figure out if we're getting a template, or if we need to
   // load the template - and be sure to cache the result.
-  var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(root.document.getElementById(
+  var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(document.getElementById(
       str).innerHTML) : // Generate a reusable function that will serve as a template
     // generator (and which will be cached).
     new Function('obj', 'var p=[],print=function(){p.push.apply(p,arguments);};' + // Introduce the data as local variables using with(){}
