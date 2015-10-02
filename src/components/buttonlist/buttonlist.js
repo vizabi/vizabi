@@ -16,7 +16,7 @@ var class_active_locked = "vzb-active-locked";
 var class_unavailable = "vzb-unavailable";
 var class_vzb_fullscreen = "vzb-force-fullscreen";
 
-var ButtonList = Component.extend('gapminder-buttonlist', {
+var ButtonList = Component.extend({
 
   /**
    * Initializes the buttonlist
@@ -27,7 +27,7 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
 
     //set properties
     var _this = this;
-    this.name = 'buttonlist';
+    this.name = 'gapminder-buttonlist';
     this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{

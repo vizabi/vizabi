@@ -56,7 +56,7 @@ var profiles = {
   }
 };
 
-var TimeSlider = Component.extend("gapminder-timeslider", {
+var TimeSlider = Component.extend({
   /**
    * Initializes the timeslider.
    * Executed once before any template is rendered.
@@ -64,6 +64,9 @@ var TimeSlider = Component.extend("gapminder-timeslider", {
    * @param context The component's parent
    */
   init: function(config, context) {
+
+    this.name = "gapminder-timeslider";
+
     this.template = this.template || "timeslider.html";
 
     //define expected models/hooks for this component

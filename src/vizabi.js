@@ -53,8 +53,7 @@ d3.selection.prototype.onLongTap = onLongTap;
 
 //makes all objects accessible
 Vzb.Tool = Tool;
-Vzb.Component = Component;
-Vzb.Model = Reader;
+Vzb.Model = Model;
 Vzb.Reader = Reader;
 
 export default Vzb;

@@ -65,7 +65,7 @@ var markerID;
 var alignX = "center";
 var alignY = "center";
 
-var TreeMenu = Component.extend('gapminder-treemenu', {
+var TreeMenu = Component.extend({
 
   //setters-getters
   tree: function(input) {
@@ -105,8 +105,10 @@ var TreeMenu = Component.extend('gapminder-treemenu', {
   },
 
   init: function(config, context) {
+
     var _this = this;
 
+    this.name = 'gapminder-treemenu';
     this.model_expects = [{
       name: "marker"
         //TODO: learn how to expect model "axis" or "size" or "color"

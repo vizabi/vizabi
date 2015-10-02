@@ -8,7 +8,7 @@ import Exporter from '../../helpers/svgexport';
 import axisSmart from '../../helpers/d3.axisWithLabelPicker';
 
 //BUBBLE CHART COMPONENT
-var BubbleChartComp = Component.extend('gapminder-bubblechart', {
+var BubbleChartComp = Component.extend({
 
   /**
    * Initializes the component (Bubble Chart).

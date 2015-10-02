@@ -5,10 +5,12 @@ import iconset from '../../base/iconset';
 
 var hidden = true;
 
-var DataWarning = Component.extend('gapminder-datawarning', {
+var DataWarning = Component.extend({
 
   init: function(config, context) {
     var _this = this;
+
+    this.name = 'gapminder-datawarning';
 
     this.model_expects = [{
       name: "language",

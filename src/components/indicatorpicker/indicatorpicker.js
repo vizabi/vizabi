@@ -13,7 +13,7 @@ var MAX = "max";
 var SCALETYPE = "scaleType";
 var MODELTYPE_COLOR = "color";
 
-var IndPicker = Component.extend('gapminder-indicatorpicker', {
+var IndPicker = Component.extend({
 
   /**
    * Initializes the Indicator Picker.
@@ -22,6 +22,8 @@ var IndPicker = Component.extend('gapminder-indicatorpicker', {
    * @param context The component's parent
    */
   init: function(config, context) {
+
+    this.name = 'gapminder-indicatorpicker';
 
     this.template =
       '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max">';
