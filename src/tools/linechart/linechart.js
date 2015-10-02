@@ -1,12 +1,49 @@
 /*!
- * VIZABI LINECHART DEFAULT OPTIONS
+ * VIZABI LINECHART
  */
 
-(function () {
-  "use strict";
-  var LineChart = this.Vizabi.Tool.get('LineChart');
+import utils from '../../base/utils';
+import Tool from '../../base/tool';
 
-  LineChart.define('default_options', {
+import LCComponent from './linechart-component';
+
+import {
+  timeslider,
+  buttonlist
+}
+from '../../components/_index';
+
+
+  //LINE CHART TOOL
+var LineChart = Tool.extend('LineChart', {
+    /**
+     * Initialized the tool
+     * @param config tool configurations, such as placeholder div
+     * @param options tool options, such as state, data, etc
+     */
+    init: function (config, options) {
+
+      this.name = 'linechart';
+
+      this.components = [{
+        component: LCComponent,
+        placeholder: '.vzb-tool-viz',
+        model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+      }, {
+        component: timeslider,
+        placeholder: '.vzb-tool-timeslider',
+        model: ["state.time"],
+        ui: {show_value_when_drag_play: false, axis_aligned: true}
+      }, {
+        component: buttonlist,
+        placeholder: '.vzb-tool-buttonlist',
+        model: ['state', 'ui', 'language']
+      }];
+
+      this._super(config, options);
+    },
+
+    default_options: {
     state: {
       time: {
         start: 1990,
@@ -75,6 +112,8 @@
         }
       }
     }
+  }
+
   });
 
-}).call(this);
+export default LineChart;
