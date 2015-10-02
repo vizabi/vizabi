@@ -273,7 +273,7 @@ gulp.task('buildIndexes', ['clean:indexes'], function() {
   );
 });
 
-gulp.task('bundle', ['clean:js', ['buildIndexes']], function() {
+gulp.task('bundle', ['clean:js', 'buildIndexes'], function() {
 
   gutil.log(chalk.yellow("Bundling JS..."));
 
@@ -391,8 +391,8 @@ gulp.task('watch', function() {
   gulp.watch(path.join(config.srcPreview, '**/*.scss'), ['preview:styles']);
   gulp.watch(path.join(config.srcPreview, '**/*.js'), ['preview:js']);
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
-  gulp.watch(path.join(config.src, '**/*.js'), ['javascript']);
-  gulp.watch(path.join(config.src, '**/*.html'), ['javascript']);
+  gulp.watch([path.join(config.src, '**/*.js'), '!'+path.join(config.src, '**/_index.js')], ['bundle']);
+  gulp.watch(path.join(config.src, '**/*.html'), ['bundle']);
   //reloading the browser
   reloadOnChange(path.join(config.destPreview, '**/*.js'));
   reloadOnChange(path.join(config.destPreview, '**/*.html'));
@@ -464,7 +464,7 @@ gulp.task('bump', function() {
 gulp.task('build', ['compress']);
 
 //Developer task without linting
-gulp.task('dev', ['styles', 'bundle', /*'watch',*/ 'connect']);
+gulp.task('dev', ['styles', 'bundle', 'watch', 'connect']);
 
 //Serve = build + connect
 gulp.task('serve', ['build', 'connect']);
