@@ -10,7 +10,7 @@ import axisSmart from '../../helpers/d3.axisWithLabelPicker';
 
 
 //POP BY AGE CHART COMPONENT
-var PopByAge = Component.extend('gapminder-popbyage', {
+var PopByAge = Component.extend({
 
   /**
    * Initializes the component (Bar Chart).

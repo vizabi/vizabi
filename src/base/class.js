@@ -40,6 +40,7 @@ function extend(name, extensions) {
   Class.prototype = prototype;
   Class.prototype.constructor = Class;
   Class.extend = extend;
+
   Class._collection = {};
   Class.register = function(name, code) {
     if(typeof this._collection[name] !== 'undefined') {
