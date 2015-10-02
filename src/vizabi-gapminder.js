@@ -13,6 +13,8 @@ import BubbleChart from './tools/bubblechart/bubblechart';
 import MountainChart from './tools/mountainchart/mountainchart';
 import MCComponent from './tools/mountainchart/mountainchart-component';
 import BarChart from './tools/barchart/barchart';
+import LineChart from './tools/linechart/linechart';
+import PopByAge from './tools/popbyage/popbyage';
 
 //waffle reader
 import { waffle as WaffleReader} from './readers/_index';
@@ -184,89 +186,89 @@ MountainChart.define('default_options', {
 });
 
 
-// LineChart.define('default_options', {
-//   state: {
-//     time: {
-//       start: 1990,
-//       end: 2012,
-//       value: 2012,
-//       step: 1,
-//       speed: 300,
-//       formatInput: "%Y"
-//     },
-//     //entities we want to show
-//     entities: {
-//       dim: "geo",
-//       show: {
-//         _defs_: {
-//           "geo": ["*"],
-//           "geo.cat": ["region"]
-//         }
-//       }
-//     },
-//     //how we show it
-//     marker: {
-//       space: ["entities", "time"],
-//       label: {
-//         use: "property",
-//         which: "geo.name"
-//       },
-//       axis_y: {
-//         use: "indicator",
-//         which: "gdp_per_cap",
-//         scaleType: "log"
-//       },
-//       axis_x: {
-//         use: "indicator",
-//         which: "time",
-//         scaleType: "time"
-//       },
-//       color: {
-//         use: "property",
-//         which: "geo",
-//         palette: {
-//           "asi": "#FF5872",
-//           "eur": "#FFE700",
-//           "ame": "#7FEB00",
-//           "afr": "#00D5E9",
-//           "_default": "#ffb600"
-//         }
-//       },
-//       color_shadow: {
-//         use: "property",
-//         which: "geo",
-//         palette: {
-//           "asi": "#FF5872",
-//           "eur": "#FFE700",
-//           "ame": "#7FEB00",
-//           "afr": "#00D5E9",
-//           "_default": "#ffb600"
-//         }
-//       }
-//     }
-//   },
+LineChart.define('default_options', {
+  state: {
+    time: {
+      start: 1990,
+      end: 2012,
+      value: 2012,
+      step: 1,
+      speed: 300,
+      formatInput: "%Y"
+    },
+    //entities we want to show
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
+        }
+      }
+    },
+    //how we show it
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "gdp_per_cap",
+        scaleType: "log"
+      },
+      axis_x: {
+        use: "indicator",
+        which: "time",
+        scaleType: "time"
+      },
+      color: {
+        use: "property",
+        which: "geo",
+        palette: {
+          "asi": "#FF5872",
+          "eur": "#FFE700",
+          "ame": "#7FEB00",
+          "afr": "#00D5E9",
+          "_default": "#ffb600"
+        }
+      },
+      color_shadow: {
+        use: "property",
+        which: "geo",
+        palette: {
+          "asi": "#FF5872",
+          "eur": "#FFE700",
+          "ame": "#7FEB00",
+          "afr": "#00D5E9",
+          "_default": "#ffb600"
+        }
+      }
+    }
+  },
 
-//   data: {
-//     reader: "waffle"
-//   },
-//   language: language,
-//   ui: {
-//     'vzb-tool-line-chart': {
-//       entity_labels: {
-//         min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
-//       },
-//       whenHovering: {
-//         hideVerticalNow: 0,
-//         showProjectionLineX: true,
-//         showProjectionLineY: true,
-//         higlightValueX: true,
-//         higlightValueY: true,
-//         showTooltip: 0
-//       }
-//     },
-//     buttons: []
-//   }
-// });
+  data: {
+    reader: "waffle"
+  },
+  language: language,
+  ui: {
+    'vzb-tool-line-chart': {
+      entity_labels: {
+        min_number_of_entities_when_values_hide: 2 //values hide when showing 2 entities or more
+      },
+      whenHovering: {
+        hideVerticalNow: 0,
+        showProjectionLineX: true,
+        showProjectionLineY: true,
+        higlightValueX: true,
+        higlightValueY: true,
+        showTooltip: 0
+      }
+    },
+    buttons: []
+  }
+});
 
 BubbleChart.define('datawarning_content', {
   title: "",
@@ -366,64 +368,64 @@ BubbleChart.define('default_options', {
   }
 });
 
-// PopByAge.define('default_options', {
-//   state: {
-//     time: {
-//       value: '2013'
-//     },
-//     entities: {
-//       dim: "geo",
-//       show: {
-//         _defs_: {
-//           "geo": ["usa"]
-//         }
-//       }
-//     },
-//     entities_age: {
-//       dim: "age",
-//       show: {
-//         _defs_: {
-//           "age": [
-//               [1, 100]
-//             ] //show 1 through 100
-//         }
-//       }
-//     },
-//     marker: {
-//       space: ["entities", "entities_age", "time"],
-//       group_by: 1,
-//       label: {
-//         use: "indicator",
-//         which: "age"
-//       },
-//       label_name: {
-//         use: "property",
-//         which: "geo"
-//       },
-//       axis_y: {
-//         use: "indicator",
-//         which: "age"
-//       },
-//       axis_x: {
-//         use: "indicator",
-//         which: "population"
-//       },
-//       color: {
-//         use: "value",
-//         which: "#ffb600"
-//       }
-//     }
-//   },
-//   data: {
-//     reader: "csv",
-//     path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
-//     splash: true
-//   },
-//   language: language,
-//   ui: {
-//     buttons: []
-//   }
-// });
+PopByAge.define('default_options', {
+  state: {
+    time: {
+      value: '2013'
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["usa"]
+        }
+      }
+    },
+    entities_age: {
+      dim: "age",
+      show: {
+        _defs_: {
+          "age": [
+              [1, 100]
+            ] //show 1 through 100
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "entities_age", "time"],
+      group_by: 1,
+      label: {
+        use: "indicator",
+        which: "age"
+      },
+      label_name: {
+        use: "property",
+        which: "geo"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "age"
+      },
+      axis_x: {
+        use: "indicator",
+        which: "population"
+      },
+      color: {
+        use: "value",
+        which: "#ffb600"
+      }
+    }
+  },
+  data: {
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/{{geo}}.csv",
+    splash: false
+  },
+  language: language,
+  ui: {
+    buttons: []
+  }
+});
 
 //Waffle Server Reader custom path
 WaffleReader.define('basepath', "http://52.18.235.31:8001/values/waffle");
