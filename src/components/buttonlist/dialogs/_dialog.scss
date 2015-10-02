@@ -125,7 +125,7 @@
   .thumb-tack-class-ico-drag {
     cursor: move;
     & svg {
-      @include transform(translate(4px, 4px));
+      @include transform(translate(4px, 3.5px));
       cursor: move;
     }
   }

@@ -46,7 +46,7 @@ var Dialog = Component.extend({
     this.dragHandler = this.placeholderEl.select("[data-click='dragDialog']");
     this.dragHandler.html(iconset['drag']);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
-    this.pinIcon.html(iconset['pinIcon']);
+    this.pinIcon.html(iconset['pin']);
 
     var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
     var dragBehavior = d3.behavior.drag()
@@ -61,6 +61,11 @@ var Dialog = Component.extend({
         dg.drag(d3.event);
       });
     this.dragHandler.call(dragBehavior);
+
+    var profile = this.getLayoutProfile();
+    this.dragHandler.classed("vzb-hidden", profile === 'small');
+    this.pinIcon.classed("vzb-hidden", profile === 'small');
+
   },
 
   resize: function() {
@@ -78,6 +83,11 @@ var Dialog = Component.extend({
         this.topPos = null;
         this.placeholderEl.attr('style', '');
       }
+
+      var profile = this.getLayoutProfile();
+      this.dragHandler.classed("vzb-hidden", profile === 'small');
+      this.pinIcon.classed("vzb-hidden", profile === 'small');
+
     }
   },
 
