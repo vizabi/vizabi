@@ -225,7 +225,7 @@ function buildJS(dev, cb) {
 
     var options = {
       format: 'umd',
-      banner: '/* VIZABI - version 0.8.1 */',
+      banner: banner_str,
       footer: version + templates,
       moduleName: 'Vizabi',
       dest: path.join(config.destLib, 'vizabi.js')
@@ -256,7 +256,11 @@ function buildJS(dev, cb) {
     function generateMinified(bundle, cb) {
       var generated = bundle.generate(options);
       strToFile(generated.code, 'vizabi.js')
-        .pipe(uglify())
+        .pipe(gulp.dest(config.destLib))
+        .pipe(uglify({
+          preserveComments: 'license'
+        }))
+        .pipe(rename('vizabi.min.js'))
         .on('error', function(err) {
           gutil.log(chalk.red("Bundling JS... ERROR!"));
           gutil.log(err);
