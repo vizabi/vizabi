@@ -1,3 +1,4 @@
+import d3 from 'd3';
 import utils from './base/utils';
 import Tool from './base/tool';
 import Component from './base/component';
