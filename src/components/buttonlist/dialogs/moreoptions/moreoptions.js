@@ -2,11 +2,20 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import {
+  bubbleopacity,
+  bubblesize,
+  colorlegend,
+  indicatorpicker,
+  simplecheckbox
+}
+from '../../../../components/_index';
+
 /*
  * More options dialog
  */
 
-var MO = Component.register('gapminder-buttonlist-moreoptions', Dialog.extend({
+var MO = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -17,54 +26,54 @@ var MO = Component.register('gapminder-buttonlist-moreoptions', Dialog.extend({
     this.name = 'moreoptions';
 
     this.components = [{
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-xaxis-container',
       model: ["state.marker.axis_x", "language"],
       ui: {
         selectMinMax: true
       }
     }, {
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
       model: ["state.marker.axis_y", "language"],
       ui: {
         selectMinMax: true
       }
     }, {
-      component: 'gapminder-simplecheckbox',
+      component: simplecheckbox,
       placeholder: '.vzb-axes-options',
       model: ["state", "language"],
       submodel: 'time',
       checkbox: 'adaptMinMaxZoom'
     }, {
-      component: 'gapminder-bubblesize',
+      component: bubblesize,
       placeholder: '.vzb-dialog-bubblesize-min',
       model: ["state.marker.size"],
       field: 'min'
     }, {
-      component: 'gapminder-bubblesize',
+      component: bubblesize,
       placeholder: '.vzb-dialog-bubblesize-max',
       model: ["state.marker.size"],
       field: 'max'
     }, {
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
       model: ["state.marker.size", "language"]
     }, {
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-caxis-container',
       model: ["state.marker.color", "language"]
     }, {
-      component: 'gapminder-colorlegend',
+      component: colorlegend,
       placeholder: '.vzb-clegend-container',
       model: ["state.marker.color", "state.entities", "language"]
     }, {
-      component: 'gapminder-bubbleopacity',
+      component: bubbleopacity,
       placeholder: '.vzb-dialog-bubbleopacity-regular',
       model: ["state.entities"],
       arg: "opacityRegular"
     }, {
-      component: 'gapminder-bubbleopacity',
+      component: bubbleopacity,
       placeholder: '.vzb-dialog-bubbleopacity-selectdim',
       model: ["state.entities"],
       arg: "opacitySelectDim"
@@ -85,6 +94,6 @@ var MO = Component.register('gapminder-buttonlist-moreoptions', Dialog.extend({
 
     this._super();
   }
-}));
+});
 
 export default MO;

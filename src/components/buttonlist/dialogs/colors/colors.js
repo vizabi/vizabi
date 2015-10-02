@@ -2,11 +2,13 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import { colorlegend, indicatorpicker } from '../../../../components/_index';
+
 /*!
  * VIZABI COLOR DIALOG
  */
 
-var Colors = Component.register('gapminder-buttonlist-colors', Dialog.extend({
+var Colors = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -17,11 +19,11 @@ var Colors = Component.register('gapminder-buttonlist-colors', Dialog.extend({
     this.name = 'colors';
 
     this.components = [{
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-caxis-container',
       model: ["state.marker.color", "language"]
     }, {
-      component: 'gapminder-colorlegend',
+      component: colorlegend,
       placeholder: '.vzb-clegend-container',
       model: ["state.marker.color", "state.entities", "language"]
     }];
@@ -30,6 +32,6 @@ var Colors = Component.register('gapminder-buttonlist-colors', Dialog.extend({
     this._super(config, parent);
   }
 
-}));
+});
 
 export default Colors;

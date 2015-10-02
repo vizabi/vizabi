@@ -3,13 +3,7 @@ import Component from '../../base/component';
 import iconset from '../../base/iconset';
 
 //dialogs
-import dialogFind from './dialogs/find/find';
-import dialogMoreOptions from './dialogs/moreoptions/moreoptions';
-import dialogColors from './dialogs/colors/colors';
-import dialogSize from './dialogs/size/size';
-import dialogAxes from './dialogs/axes/axes';
-import dialogAxesMC from './dialogs/axesmc/axesmc';
-import dialogStack from './dialogs/stack/stack';
+import * as dialogs from './dialogs/_index';
 
 /*!
  * VIZABI BUTTONLIST
@@ -51,25 +45,25 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
       'find': {
         title: "buttons/find",
         icon: "search",
-        dialog: dialogFind,
+        dialog: dialogs.find,
         ispin: false,
       },
       'moreoptions': {
-        title: "buttons/moreoptions",
+        title: "buttons/more_options",
         icon: "gear",
-        dialog: dialogMoreOptions,
+        dialog: dialogs.moreoptions,
         ispin: false
       },
       'colors': {
         title: "buttons/colors",
         icon: "paint-brush",
-        dialog: dialogColors,
+        dialog: dialogs.colors,
         ispin: false
       },
       'size': {
         title: "buttons/size",
         icon: "circle",
-        dialog: dialogSize,
+        dialog: dialogs.size,
         ispin: false
       },
       'fullscreen': {
@@ -93,19 +87,19 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
       'axes': {
         title: "buttons/axes",
         icon: "axes",
-        dialog: dialogAxes,
+        dialog: dialogs.axes,
         ispin: false
       },
       'axesmc': {
-        title: "buttons/axesmc",
+        title: "buttons/axes_mc",
         icon: "axes",
-        dialog: dialogAxesMC,
+        dialog: dialogs.axesmc,
         ispin: false
       },
       'stack': {
         title: "buttons/stack",
         icon: "stack",
-        dialog: dialogStack,
+        dialog: dialogs.stack,
         ispin: false
       },
       '_default': {
@@ -159,6 +153,7 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
 
     //activate each dialog when clicking the button
     buttons.on('click', function() {
+
       d3.event.preventDefault();
       d3.event.stopPropagation();
       var btn = d3.select(this),
@@ -168,6 +163,7 @@ var ButtonList = Component.extend('gapminder-buttonlist', {
 
       //if it's a dialog, open
       if(btn_config && btn_config.dialog) {
+
         //close if it's open
         if(classes.indexOf(class_active) !== -1) {
           _this.closeDialog(id);

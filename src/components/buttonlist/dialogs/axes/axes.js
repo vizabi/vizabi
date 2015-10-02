@@ -2,11 +2,13 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import { indicatorpicker,simplecheckbox } from '../../../../components/_index';
+
 /*
  * Axes dialog
  */
 
-var Axes = Component.register('gapminder-buttonlist-axes', Dialog.extend({
+var Axes = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -18,15 +20,15 @@ var Axes = Component.register('gapminder-buttonlist-axes', Dialog.extend({
     var _this = this;
 
     this.components = [{
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-xaxis-container',
       model: ["state.marker.axis_x", "language"]
     }, {
-      component: 'gapminder-indicatorpicker',
+      component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
       model: ["state.marker.axis_y", "language"]
     }, {
-      component: 'gapminder-simplecheckbox',
+      component: simplecheckbox,
       placeholder: '.vzb-axes-options',
       model: ["state", "language"],
       submodel: 'time',
@@ -35,6 +37,6 @@ var Axes = Component.register('gapminder-buttonlist-axes', Dialog.extend({
 
     this._super(config, parent);
   }
-}));
+});
 
 export default Axes;

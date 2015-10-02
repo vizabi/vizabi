@@ -2,11 +2,13 @@ import utils from '../../../../base/utils';
 import Component from '../../../../base/component';
 import Dialog from '../_dialog';
 
+import { bubblesize, indicatorpicker } from '../../../../components/_index';
+
 /*
  * Size dialog
  */
 
-var Size = Component.register('gapminder-buttonlist-size', Dialog.extend({
+var Size = Dialog.extend({
 
 /**
  * Initializes the dialog component
@@ -19,7 +21,7 @@ init: function(config, parent) {
   // in dialog, this.model_expects = ["state", "data"];
 
   this.components = [{
-    component: 'gapminder-bubblesize',
+    component: bubblesize,
     placeholder: '.vzb-dialog-bubblesize-min',
     model: ["state.marker.size"],
     ui: {
@@ -27,7 +29,7 @@ init: function(config, parent) {
     },
     field: 'min'
   }, {
-    component: 'gapminder-bubblesize',
+    component: bubblesize,
     placeholder: '.vzb-dialog-bubblesize-max',
     model: ["state.marker.size"],
     ui: {
@@ -35,7 +37,7 @@ init: function(config, parent) {
     },
     field: 'max'
   }, {
-    component: 'gapminder-indicatorpicker',
+    component: indicatorpicker,
     placeholder: '.vzb-saxis-container',
     model: ["state.marker.size", "language"],
     ui: {
@@ -46,6 +48,6 @@ init: function(config, parent) {
 
   this._super(config, parent);
 }
-}));
+});
 
 export default Size;

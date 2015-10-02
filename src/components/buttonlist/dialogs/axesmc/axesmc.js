@@ -7,7 +7,7 @@ import Dialog from '../_dialog';
  */
 
 
-var Axes = Component.register('gapminder-buttonlist-axesmc', Dialog.extend({
+var Axes = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -104,6 +104,6 @@ var Axes = Component.register('gapminder-buttonlist-axesmc', Dialog.extend({
 
     this.model.state.time[what] = result;
   }
-}));
+});
 
 export default Axes;

@@ -7,7 +7,7 @@ import Dialog from '../_dialog';
  * stack dialog
  */
 
-var Stack = Component.register('gapminder-buttonlist-stack', Dialog.extend({
+var Stack = Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -102,6 +102,6 @@ var Stack = Component.register('gapminder-buttonlist-stack', Dialog.extend({
       mdl.set(obj);
     }
   }
-}));
+});
 
 export default Stack;
