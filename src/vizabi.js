@@ -1,18 +1,9 @@
-import d3 from 'd3';
 import utils from './base/utils';
 import Tool from './base/tool';
 import Component from './base/component';
 import Model from './base/model';
 import Reader from './base/reader';
 import globals from './base/globals';
-
-//available readers
-import * as readers from './readers/_index';
-
-//register available readers
-utils.forEach(readers, function(reader, name) {
-  Reader.register(name, reader);
-});
 
 var Vzb = function(name, placeholder, options) {
   var tool = Tool.get(name);
@@ -42,6 +33,23 @@ Vzb.clearInstances = function(id) {
     Vzb._instances = {};
   }
 };
+
+//available readers = all
+import * as readers from './readers/_index';
+
+//register available readers
+utils.forEach(readers, function(reader, name) {
+  Reader.register(name, reader);
+});
+
+//d3 addons
+
+import genericLog from './helpers/d3.genericLogScale';
+import { onTap, onLongTap } from './helpers/d3.touchEvents';
+
+d3.scale.genericLog = genericLog;
+d3.selection.prototype.onTap = onTap;
+d3.selection.prototype.onLongTap = onLongTap;
 
 //makes all objects accessible
 Vzb.Tool = Tool;

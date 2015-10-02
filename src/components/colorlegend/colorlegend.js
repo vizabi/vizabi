@@ -1,5 +1,7 @@
 import utils from '../../base/utils';
 import Component from '../../base/component';
+import colorPicker from '../../helpers/d3.colorPicker';
+import worldMap from '../../helpers/d3.worldMap';
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT
@@ -54,10 +56,10 @@ var ColorLegend = Component.extend({
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 
-    this.colorPicker = d3.svg.colorPicker();
+    this.colorPicker = colorPicker();
     this.element.call(this.colorPicker);
 
-    this.worldMap = d3.svg.worldMap();
+    this.worldMap = worldMap();
     this.worldmapEl.call(this.worldMap);
 
     this.updateView();

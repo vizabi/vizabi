@@ -228,10 +228,7 @@ function buildJS(dev, cb) {
       banner: '/* VIZABI - version 0.8.1 */',
       footer: version + templates,
       moduleName: 'Vizabi',
-      dest: path.join(config.destLib, 'vizabi.js'),
-      globals: {
-        d3: 'd3' //d3 is a global dependency
-      }
+      dest: path.join(config.destLib, 'vizabi.js')
     };
 
     gutil.log(chalk.yellow("Bundling JS..."));
