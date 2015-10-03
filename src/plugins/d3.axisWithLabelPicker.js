@@ -83,20 +83,28 @@
                 })
             
             if (axis.tickValuesMinor()==null) axis.tickValuesMinor([]);
-                // add minor ticks
-                var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
-                minorTicks.exit().remove();
-                minorTicks.enter().append("line")
-                    .attr("class", "tickMinor");
+            // add minor ticks
+            var minorTicks = g.selectAll(".tickMinor").data(tickValuesMinor);
+            minorTicks.exit().remove();
+            minorTicks.enter().append("line")
+                .attr("class", "tickMinor");
 
-                var tickLengthOut = axis.tickSizeMinor().outbound;
-                var tickLengthIn = axis.tickSizeMinor().inbound;
-                var scale = axis.scale();
-                minorTicks
-                    .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
-                    .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
-                    .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
-                    .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
+            var tickLengthOut = axis.tickSizeMinor().outbound;
+            var tickLengthIn = axis.tickSizeMinor().inbound;
+            var scale = axis.scale();
+            minorTicks
+                .attr("y1", orient==HORIZONTAL? (axis.orient()=="top"?1:-1)*tickLengthIn : scale)
+                .attr("y2", orient==HORIZONTAL? (axis.orient()=="top"?-1:1)*tickLengthOut : scale)
+                .attr("x1", orient==VERTICAL? (axis.orient()=="right"?-1:1)*tickLengthIn : scale)
+                .attr("x2", orient==VERTICAL? (axis.orient()=="right"?1:-1)*tickLengthOut : scale)
+            
+            g.selectAll("path").remove();
+            g.append("line")
+                .attr("class", "vzb-axis-line")
+                .attr("x1", orient==VERTICAL? 0 : d3.min(scale.range()) - options.bump - 1)
+                .attr("x2", orient==VERTICAL? 0 : d3.max(scale.range()) + options.bump)
+                .attr("y1", orient==HORIZONTAL? 0 : d3.min(scale.range()) - options.bump)
+                .attr("y2", orient==HORIZONTAL? 0 : d3.max(scale.range()) + options.bump)
             
         };
         
@@ -263,6 +271,7 @@
             if(options.cssMarginTop==null||parseInt(options.cssMarginTop)<options.cssLabelMarginLimit) options.cssMarginTop = options.cssLabelMarginLimit + "px";
             if(options.cssMarginBottom==null||parseInt(options.cssMarginBottom)<options.cssLabelMarginLimit) options.cssMarginBottom = options.cssLabelMarginLimit + "px";
             if(options.toolMargin==null) options.toolMargin = {left: 30, bottom: 30, right: 30, top: 30};
+            if(options.bump==null) options.bump = 0;
 
             if(options.pivotingLimit==null) options.pivotingLimit = options.toolMargin[this.orient()];
             

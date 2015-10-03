@@ -87,15 +87,7 @@
     buildScale: function (margins) {
       var domain;
       var scaleType = this.scaleType || "linear";
-      if (margins === undefined)
-        margins = true;
-
-      if (typeof margins === 'boolean') {
-        var res = margins;
-        margins = {};
-        margins.min = res;
-        margins.max = res;
-      }
+      var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
 
       if (this.scaleType == "time") {
         var limits = this.getLimits(this.which);
@@ -105,14 +97,8 @@
 
       switch (this.use) {
         case "indicator":
-          var limits = this.getLimits(this.which),
-            margin = (limits.max - limits.min) / 20;
-
-          domain = [(limits.min - (margins.min && margin ? margin : 0)), (limits.max + (margins.max && margin ? margin : 0))];
-          if (scaleType == "log") {
-            domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
-          }
-
+          var limits = this.getLimits(this.which);
+          domain = indicatorsDB[this.which].domain? indicatorsDB[this.which].domain : [limits.min, limits.max];
           break;
         case "property":
           domain = this.getUnique(this.which);
@@ -125,7 +111,7 @@
 
 
       if (this.min!=null && this.max!=null && scaleType !== 'ordinal') {
-        domain = [this.min, this.max];
+        domain = [+this.min, +this.max];
         this.min = domain[0];
         this.max = domain[1]; 
       }

@@ -339,6 +339,9 @@
 
           var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
           var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
+          
+          xRange = _this._rangeBump(xRange);
+          yRange = _this._rangeBump(yRange);
 
           if (_this.model.marker.axis_x.scaleType === 'ordinal')
             _this.xScale.rangeBands(xRange);
@@ -379,6 +382,41 @@
         minSize: 8,
         step: 2
       };
+    },
+      
+      
+          
+    
+    _rangeBump: function(arg){
+        var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+        if(utils.isArray(arg) && arg.length>1) {
+            var z1 = arg[0];
+            var z2 = arg[arg.length-1];
+            
+            if(z1 < z2){
+                z1 += bump;
+                z2 -= bump;
+                if(z1 > z2) z1 = z2 = (z1 + z2) / 2;
+            }else if (z1 > z2){
+                z1 -= bump;
+                z2 += bump;
+                if(z1 < z2) z1 = z2 = (z1 + z2) / 2;
+            }else {
+                utils.warn("rangeBump error: the input scale range has 0 length. that sucks");    
+            }
+            return [z1, z2];
+        }else{
+            utils.warn("rangeBump error: input is not an array or empty");
+        }
+    },
+      
+    _marginUnBump: function(arg){
+        var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+        if(utils.isObject(arg)) {
+            return {left: arg.left - bump, right: arg.right - bump, top: arg.top - bump, bottom: arg.bottom - bump};
+        }else{
+            utils.warn("marginUnBump error: input is not an object {left top bottom right}");
+        }
     },
 
 
@@ -894,12 +932,12 @@
 
       //update scales to the new range
       if (this.model.marker.axis_y.scaleType !== "ordinal") {
-        this.yScale.range([this.height, 0]);
+        this.yScale.range(this._rangeBump([this.height, 0]));
       } else {
         this.yScale.rangePoints([this.height, 0], _this.activeProfile.padding).range();
       }
       if (this.model.marker.axis_x.scaleType !== "ordinal") {
-        this.xScale.range([0, this.width]);
+        this.xScale.range(this._rangeBump([0, this.width]));
       } else {
         this.xScale.rangePoints([0, this.width], _this.activeProfile.padding).range();
       }
@@ -911,8 +949,9 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_y.scaleType,
-          toolMargin: {top: 0, right: margin.right, left: margin.left, bottom: 0},
-          limitMaxTickNumber: 6
+          toolMargin: margin,
+          limitMaxTickNumber: 6,
+          bump: this.activeProfile.maxRadius
         });
 
       this.xAxis.scale(this.xScale)
@@ -921,7 +960,8 @@
         .tickSizeMinor(3, 0)
         .labelerOptions({
           scaleType: this.model.marker.axis_x.scaleType,
-          toolMargin: {top: margin.top, right: 5, left: 5, bottom: margin.bottom}
+          toolMargin: margin,
+          bump: this.activeProfile.maxRadius
         });
 
 
@@ -930,11 +970,12 @@
         .attr("height", this.height);
 
       this.xAxisElContainer
-        .attr("width", this.width)
+        .attr("width", this.width+1)
         .attr("height", this.activeProfile.margin.bottom)
-        .attr("y", this.height);
+        .attr("y", this.height)
+        .attr("x", -1);
       this.xAxisEl
-        .attr("transform", "translate(0," + 1 + ")");
+        .attr("transform", "translate("+1+",0)");
 
       this.yAxisElContainer
         .attr("width", this.activeProfile.margin.left)
