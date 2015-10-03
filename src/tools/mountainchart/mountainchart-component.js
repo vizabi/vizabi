@@ -12,21 +12,21 @@
 * Developed in Gapminder Foundation, 2015
 */
 
-(function () {
+import * as utils from 'base/utils';
+import globals from 'base/globals';
+import Component from 'base/component';
+import { warn as iconWarn } from 'base/iconset';
 
-"use strict";
-
-var Vizabi = this.Vizabi;
-var utils = Vizabi.utils;
-var iconset = Vizabi.iconset;
-
-//warn client if d3 is not defined
-if (!Vizabi._require("d3")) return;
+import Exporter from 'helpers/svgexport';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import MountainChartMath from './mountainchart-math';
+import Selectlist from './mountainchart-selectlist';
+import Probe from './mountainchart-probe';
 
 var NEGLIGABLE_HEIGHT = 1000000;
     
 //MOUNTAIN CHART COMPONENT
-Vizabi.Component.extend("gapminder-mountainchart", {
+var MountainChartComponent = Component.extend({
 
     /**
      * Initialize the component
@@ -139,12 +139,6 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         };
 
         this._super(config, context);
-
-        // create helper instanses and put parameters in them
-        var MountainChartMath = Vizabi.Helper.get("gapminder-mountainchart-math");
-        var Exporter = Vizabi.Helper.get("gapminder-svgexport");
-        var Probe = Vizabi.Helper.get("gapminder-mountainchart-probe");
-        var Selectlist = Vizabi.Helper.get("gapminder-mountainchart-selectlist");
         
         this._math = new MountainChartMath(this);
         this._export = new Exporter(this);
@@ -182,7 +176,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.yScale = null;
         this.cScale = null;
 
-        this.xAxis = d3.svg.axisSmart();
+        this.xAxis = axisSmart();
 
         this.cached = {};
         this.mesh = [];
@@ -404,7 +398,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         var _this = this;
 
         this.translator = this.model.language.getTFunction();
-        var xMetadata = Vizabi._globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
+        var xMetadata = globals.metadata.indicatorsDB[this.model.marker.axis_x.which];
 
 
         this.xTitleEl.select("text")
@@ -413,7 +407,7 @@ Vizabi.Component.extend("gapminder-mountainchart", {
         this.yTitleEl.select("text")
             .text(this.translator("mount/title"));
 
-        this.dataWarningEl.html(iconset["warn"]).select("svg").attr("width", "0px").attr("height", "0px");
+        this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
@@ -1006,4 +1000,4 @@ Vizabi.Component.extend("gapminder-mountainchart", {
 
 });
 
-}).call(this);
+export default MountainChartComponent;
