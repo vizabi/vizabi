@@ -758,7 +758,7 @@ meow("final result",tickValues);
                 if(i!=0 && i!=tickValues.length-1) return;
                 
                 // compute the influence of the axis head
-                var repositionHead = margin.head
+                var repositionHead = margin.head + options.bump
                     + (orient==HORIZONTAL?1:0) * d3.max(scale.range()) 
                     - (orient==HORIZONTAL?0:1) * d3.min(scale.range()) 
                     + (orient==HORIZONTAL?-1:1) * scale(d)
@@ -769,7 +769,7 @@ meow("final result",tickValues);
                     - (dimension=="y") * parseInt(options.cssMarginTop);
                 
                 // compute the influence of the axis tail
-                var repositionTail = Math.min(margin.tail, options.widthOfOneDigit)
+                var repositionTail = Math.min(margin.tail, options.widthOfOneDigit) + options.bump
                     + (orient==VERTICAL?1:0) * d3.max(scale.range()) 
                     - (orient==VERTICAL?0:1) * d3.min(scale.range()) 
                     + (orient==VERTICAL?-1:1) * scale(d)

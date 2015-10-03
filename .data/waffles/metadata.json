@@ -135,7 +135,7 @@
             "unit": "u5mr",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [0, 500]
+            "domain": [0, 550]
         },
         "childSurv": {
             "allowCharts": ["none"],

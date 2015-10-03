@@ -987,8 +987,8 @@
       this.yAxisEl.call(this.yAxis);
       this.xAxisEl.call(this.xAxis);
 
-      this.projectionX.attr("y1", _this.yScale.range()[0]);
-      this.projectionY.attr("x2", _this.xScale.range()[0]);
+      this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
+      this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
 
       var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
