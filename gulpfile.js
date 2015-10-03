@@ -164,20 +164,22 @@ function buildImportIndex(folder, subfolder) {
   del(path.join(folder, '_index.js'));
 
   glob(path.join(folder, search), {}, function(err, matches) {
-    var str_top = [], str_middle = [], str_btm = [];
+    var str_top = [],
+      str_middle = [],
+      str_btm = [];
     for(var i = 0; i < matches.length; i++) {
       var name = path.basename(matches[i], '.js');
       var rel_path = slash(path.relative(folder, matches[i]));
       str_top.push('import ' + name + ' from \'./' + rel_path + '\';');
       str_middle.push(name + ',');
-      str_btm.push(name + ' : '+ name +',');
+      str_btm.push(name + ' : ' + name + ',');
     }
     str_top = str_top.join('\n');
     str_middle = '\nexport {\n' + str_middle.join('\n') + '\n};';
     str_btm = '\nexport default {\n' + str_btm.join('\n') + '\n};';
     var contents = header + str_top + str_middle + str_btm;
     fs.writeFileSync(path.join(folder, '_index.js'), contents);
-    deferred.resolve(); 
+    deferred.resolve();
   });
   return deferred.promise;
 }
@@ -208,6 +210,18 @@ function getTemplates(cb) {
   });
 }
 
+//resolve path when finding modules
+function resolvePath(id, importer, options) {
+  //if starts with ".", follow strict path
+  if(/^\./.test(id)) return path.resolve(path.dirname(importer), id).replace(/\.js$/, "") + ".js";
+  //else, try to find it
+  var importee = id.replace(/\.js$/, "");
+  var pat = path.join(config.src,'/**/',importee.replace(/\//g, '/**/')+'.js');
+  var match = glob.sync(pat);
+  if(match.length > 0) return path.resolve('./', match[0]);
+  else return id;
+}
+
 //build JS with banner and/or sourcemaps
 //TODO: improve code quality
 function buildJS(dev, cb) {
@@ -234,12 +248,13 @@ function buildJS(dev, cb) {
     gutil.log(chalk.yellow("Bundling JS..."));
 
     var entryFile = gutil.env.custom || 'gapminder';
-    entryFile = (entryFile != 'false') ? 'vizabi-'+entryFile+'.js' : 'vizabi.js';
+    entryFile = (entryFile != 'false') ? 'vizabi-' + entryFile + '.js' : 'vizabi.js';
 
-    gutil.log(chalk.yellow(" > entry file: "+ entryFile));
+    gutil.log(chalk.yellow(" > entry file: " + entryFile));
 
     rollup.rollup({
-      entry: path.join(config.src, entryFile)
+      entry: './' + path.join(config.src, entryFile),
+      resolveId: resolvePath
     }).then(function(bundle) {
       if(dev) {
         generateSourceMap(bundle, success);
