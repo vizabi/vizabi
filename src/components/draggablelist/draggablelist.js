@@ -1,5 +1,5 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 
 var DraggableList = Component.extend({
 

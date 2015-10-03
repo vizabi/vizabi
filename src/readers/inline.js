@@ -1,4 +1,4 @@
-import Reader from '../base/reader';
+import Reader from 'base/reader';
 
 /*!
  * Inline Reader

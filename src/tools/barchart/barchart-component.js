@@ -1,7 +1,7 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 
-import axisSmart from '../../helpers/d3.axisWithLabelPicker';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
 
 //BAR CHART COMPONENT

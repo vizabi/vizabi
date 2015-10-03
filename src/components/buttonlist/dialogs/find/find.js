@@ -1,8 +1,8 @@
-import * as utils from '../../../../base/utils';
-import Component from '../../../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { bubbleopacity } from '../../../../components/_index';
+import { bubbleopacity } from 'components/_index'
 
 /*!
  * VIZABI FIND CONTROL

@@ -2,8 +2,8 @@
  * VIZABI LINECHART
  */
 
-import * as utils from '../../base/utils';
-import Tool from '../../base/tool';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
 
 import LCComponent from './linechart-component';
 
@@ -11,7 +11,7 @@ import {
   timeslider,
   buttonlist
 }
-from '../../components/_index';
+from 'components/_index';
 
 
   //LINE CHART TOOL

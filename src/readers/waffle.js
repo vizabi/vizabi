@@ -1,6 +1,6 @@
-import * as utils from '../base/utils';
-import Promise from '../base/promise';
-import Reader from '../base/reader';
+import * as utils from 'base/utils';
+import Promise from 'base/promise';
+import Reader from 'base/reader';
 
 /*!
  * Waffle server Reader

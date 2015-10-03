@@ -1,9 +1,9 @@
-import * as utils from './base/utils';
-import Tool from './base/tool';
-import Component from './base/component';
-import Model from './base/model';
-import Reader from './base/reader';
-import globals from './base/globals';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
+import Component from 'base/component';
+import Model from 'base/model';
+import Reader from 'base/reader';
+import globals from 'base/globals';
 
 var Vzb = function(name, placeholder, options) {
   var tool = Tool.get(name);
@@ -35,7 +35,7 @@ Vzb.clearInstances = function(id) {
 };
 
 //available readers = all
-import * as readers from './readers/_index';
+import * as readers from 'readers/_index';
 
 //register available readers
 utils.forEach(readers, function(reader, name) {
@@ -44,8 +44,8 @@ utils.forEach(readers, function(reader, name) {
 
 //d3 addons
 
-import genericLog from './helpers/d3.genericLogScale';
-import { onTap, onLongTap } from './helpers/d3.touchEvents';
+import genericLog from 'helpers/d3.genericLogScale';
+import { onTap, onLongTap } from 'helpers/d3.touchEvents';
 
 d3.scale.genericLog = genericLog;
 d3.selection.prototype.onTap = onTap;

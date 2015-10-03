@@ -1,6 +1,6 @@
-import { extend, pruneTree } from '../../base/utils';
-import Component from '../../base/component';
-import globals from '../../base/globals';
+import { extend, pruneTree } from 'base/utils';
+import Component from 'base/component';
+import globals from 'base/globals';
 
 /*!
  * VIZABI INDICATOR PICKER

@@ -1,8 +1,8 @@
-import * as utils from '../../../../base/utils';
-import Component from '../../../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { draggablelist } from '../../../_index'
+import { draggablelist } from 'components/_index'
 
 
 /*

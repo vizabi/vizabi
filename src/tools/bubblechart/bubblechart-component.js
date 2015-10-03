@@ -1,11 +1,11 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 
 import Trails from './bubblechart-trail';
-import Exporter from '../../helpers/svgexport';
-import axisSmart from '../../helpers/d3.axisWithLabelPicker';
+import Exporter from 'helpers/svgexport';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
-import { warn as iconWarn } from '../../base/iconset';
+import { warn as iconWarn } from 'base/iconset';
 
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({

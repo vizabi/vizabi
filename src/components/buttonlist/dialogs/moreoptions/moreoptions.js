@@ -1,5 +1,5 @@
-import * as utils from '../../../../base/utils';
-import Component from '../../../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 import Dialog from '../_dialog';
 
 import {
@@ -9,7 +9,7 @@ import {
   indicatorpicker,
   simplecheckbox
 }
-from '../../../../components/_index';
+from 'components/_index';
 
 /*
  * More options dialog

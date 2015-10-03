@@ -1,6 +1,6 @@
-import * as utils from '../../../base/utils';
-import Component from '../../../base/component';
-import { drag as iconDrag, pin as iconPin } from '../../../base/iconset'
+import * as utils from 'base/utils';
+import Component from 'base/component';
+import { drag as iconDrag, pin as iconPin } from 'base/iconset'
 
 /*!
  * VIZABI DIALOG

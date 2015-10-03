@@ -1,4 +1,4 @@
-import * as utils from './utils';
+import * as utils from 'utils';
 
 function Promise(resolver) {
   if(!(this instanceof Promise)) {

@@ -1,5 +1,5 @@
-import * as utils from '../../base/utils';
-import Class from '../../base/class';
+import * as utils from 'base/utils';
+import Class from 'base/class';
 
 var MCSelectList = Class.extend({
 

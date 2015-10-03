@@ -1,8 +1,8 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
-import globals from '../../base/globals';
+import * as utils from 'base/utils';
+import Component from 'base/component';
+import globals from 'base/globals';
 
-import {warn as iconWarn} from '../../base/iconset';
+import {warn as iconWarn} from 'base/iconset';
 
 var hidden = true;
 

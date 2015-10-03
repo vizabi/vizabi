@@ -1,6 +1,6 @@
-import * as utils from '../../base/utils';
-import globals from '../../base/globals';
-import Component from '../../base/component';
+import * as utils from 'base/utils';
+import globals from 'base/globals';
+import Component from 'base/component';
 
 /*!
  * VIZABI INDICATOR PICKER

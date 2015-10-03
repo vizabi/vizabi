@@ -1,10 +1,10 @@
-import * as utils from './utils';
-import Promise from './promise';
-import Data from './data';
-import Events from './events';
-import Intervals from './intervals';
-import globals from './globals';
-import * as models from '../models/_index';
+import * as utils from 'utils';
+import Promise from 'promise';
+import Data from 'data';
+import Events from 'events';
+import Intervals from 'intervals';
+import globals from 'globals';
+import * as models from 'models/_index';
 
 var time_formats = {
   "year": "%Y",

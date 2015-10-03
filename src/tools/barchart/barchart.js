@@ -2,8 +2,8 @@
  * VIZABI BARCHART
  */
 
-import * as utils from '../../base/utils';
-import Tool from '../../base/tool';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
 
 import BarChartComponent from './barchart-component';
 
@@ -12,7 +12,7 @@ import {
   buttonlist,
   treemenu
 }
-from '../../components/_index';
+from 'components/_index';
 
 var comp_template = 'barchart.html';
 

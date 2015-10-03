@@ -1,7 +1,7 @@
-import * as utils from './utils'
-import Model from './model'
-import Component from './component'
-import Layout from './layout'
+import * as utils from 'utils'
+import Model from 'model'
+import Component from 'component'
+import Layout from 'layout'
 
 var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';

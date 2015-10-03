@@ -1,5 +1,5 @@
-import * as utils from '../../base/utils';
-import Tool from '../../base/tool';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
 
 import MountainChartComponent from './mountainchart-component';
 import {
@@ -7,7 +7,7 @@ import {
   buttonlist,
   datawarning
 }
-from '../../components/_index';
+from 'components/_index';
 
 //MOUNTAIN CHART TOOL
 var MountainChart = Tool.extend('MountainChart', {

@@ -1,6 +1,6 @@
-import * as utils from '../base/utils';
-import globals from '../base/globals';
-import Model from '../base/model';
+import * as utils from 'base/utils';
+import globals from 'base/globals';
+import Model from 'base/model';
 
 /*!
  * VIZABI Color Model (hook)

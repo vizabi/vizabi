@@ -1,7 +1,7 @@
-import * as utils from './utils';
-import Events from './events';
-import Model from './model';
-import Promise from './promise';
+import * as utils from 'utils';
+import Events from 'events';
+import Model from 'model';
+import Promise from 'promise';
 
 var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';

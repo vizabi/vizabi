@@ -1,7 +1,7 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
-import colorPicker from '../../helpers/d3.colorPicker';
-import worldMap from '../../helpers/d3.worldMap';
+import * as utils from 'base/utils';
+import Component from 'base/component';
+import colorPicker from 'helpers/d3.colorPicker';
+import worldMap from 'helpers/d3.worldMap';
 
 /*!
  * VIZABI BUBBLE COLOR LEGEND COMPONENT

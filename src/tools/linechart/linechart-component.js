@@ -2,11 +2,11 @@
  * VIZABI LINECHART
  */
 
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 
-import axisSmart from '../../helpers/d3.axisWithLabelPicker';
-import collisionResolver from '../../helpers/d3.collisionResolver';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import collisionResolver from 'helpers/d3.collisionResolver';
 
 //LINE CHART COMPONENT
 var LCComponent = Component.extend({

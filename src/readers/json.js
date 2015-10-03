@@ -1,6 +1,6 @@
-import * as utils from '../base/utils';
-import Promise from '../base/promise';
-import Reader from '../base/reader';
+import * as utils from 'base/utils';
+import Promise from 'base/promise';
+import Reader from 'base/reader';
 
 var FILE_CACHED = {}; //caches files from this reader
 var FILE_REQUESTED = {}; //caches files from this reader

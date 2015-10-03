@@ -12,13 +12,13 @@
 * Developed in Gapminder Foundation, 2015
 */
 
-import * as utils from '../../base/utils';
-import globals from '../../base/globals';
-import Component from '../../base/component';
-import { warn as iconWarn } from '../../base/iconset';
+import * as utils from 'base/utils';
+import globals from 'base/globals';
+import Component from 'base/component';
+import { warn as iconWarn } from 'base/iconset';
 
-import Exporter from '../../helpers/svgexport';
-import axisSmart from '../../helpers/d3.axisWithLabelPicker';
+import Exporter from 'helpers/svgexport';
+import axisSmart from 'helpers/d3.axisWithLabelPicker';
 import MountainChartMath from './mountainchart-math';
 import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';

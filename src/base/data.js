@@ -1,7 +1,7 @@
-import * as utils from './utils';
-import Promise from './promise';
-import Class from './class';
-import Reader from './reader';
+import * as utils from 'utils';
+import Promise from 'promise';
+import Class from 'class';
+import Reader from 'reader';
 
 var Data = Class.extend({
 

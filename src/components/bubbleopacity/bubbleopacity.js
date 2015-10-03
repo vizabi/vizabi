@@ -1,4 +1,4 @@
-import Component from '../../base/component';
+import Component from 'base/component';
 /*!
  * VIZABI BUBBLE OPACITY CONTROL
  * Reusable OPACITY SLIDER

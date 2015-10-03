@@ -2,22 +2,22 @@
  * VIZABI GAPMINDER PREFERENCES (included only in Gapminder build)
  */
 
-import globals from './base/globals';
-import * as utils from './base/utils';
-import Promise from './base/promise';
-import Tool from './base/tool';
-import Vzb from './vizabi';
+import globals from 'base/globals';
+import * as utils from 'base/utils';
+import Promise from 'base/promise';
+import Tool from 'base/tool';
+import Vzb from 'vizabi';
 
 //import tools
-import BubbleChart from './tools/bubblechart/bubblechart';
-import MountainChart from './tools/mountainchart/mountainchart';
-import MCComponent from './tools/mountainchart/mountainchart-component';
-import BarChart from './tools/barchart/barchart';
-import LineChart from './tools/linechart/linechart';
-import PopByAge from './tools/popbyage/popbyage';
+import BubbleChart from 'tools/bubblechart';
+import MountainChart from 'tools/mountainchart';
+import MCComponent from 'tools/mountainchart-component';
+import BarChart from 'tools/barchart';
+import LineChart from 'tools/linechart';
+import PopByAge from 'tools/popbyage';
 
 //waffle reader
-import { waffle as WaffleReader} from './readers/_index';
+import { waffle as WaffleReader} from 'readers/_index';
 
 var language = {
   id: "en",

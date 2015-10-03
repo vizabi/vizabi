@@ -1,8 +1,8 @@
-import * as utils from '../../../../base/utils';
-import Component from '../../../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { indicatorpicker } from '../../../_index'
+import { indicatorpicker } from 'components/_index'
 /*
  * Axes dialog
  */

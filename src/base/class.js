@@ -1,4 +1,4 @@
-import { forEach, warn } from './utils';
+import { forEach, warn } from 'utils';
 
 var initializing = false;
 var fnTest = /xyz/.test(function() {

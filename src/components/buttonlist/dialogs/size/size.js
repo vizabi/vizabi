@@ -1,9 +1,8 @@
-import * as utils from '../../../../base/utils';
-import Component from '../../../../base/component';
+import * as utils from 'base/utils';
+import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { bubblesize, indicatorpicker } from '../../../../components/_index';
-
+import { bubblesize, indicatorpicker } from 'components/_index'
 /*
  * Size dialog
  */

@@ -2,8 +2,8 @@
  * VIZABI POPBYAGE
  */
 
-import * as utils from '../../base/utils';
-import Tool from '../../base/tool';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
 
 import PopByAgeComponent from './popbyage-component';
 
@@ -11,7 +11,7 @@ import {
   timeslider,
   buttonlist
 }
-from '../../components/_index';
+from 'components/_index';
 
 //BAR CHART TOOL
 var PopByAge = Tool.extend('PopByAge', {

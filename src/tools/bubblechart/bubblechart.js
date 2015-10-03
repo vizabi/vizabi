@@ -1,5 +1,5 @@
-import * as utils from '../../base/utils';
-import Tool from '../../base/tool';
+import * as utils from 'base/utils';
+import Tool from 'base/tool';
 
 import BubbleChartComponent from './bubblechart-component';
 import {
@@ -7,7 +7,7 @@ import {
   buttonlist,
   treemenu,
   datawarning
-} from '../../components/_index';
+} from 'components/_index';
 
 var BubbleChart = Tool.extend('BubbleChart', {
 

@@ -1,6 +1,6 @@
-import * as utils from './utils';
-import Promise from './promise';
-import Class from './class';
+import * as utils from 'utils';
+import Promise from 'promise';
+import Class from 'class';
 
 /**
  * Initializes the reader.

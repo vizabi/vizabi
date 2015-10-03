@@ -1,5 +1,5 @@
-import * as utils from '../base/utils';
-import Model from '../base/model';
+import * as utils from 'base/utils';
+import Model from 'base/model';
 
 /*
  * VIZABI Data Model (options.data)

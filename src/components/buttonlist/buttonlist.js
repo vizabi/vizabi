@@ -1,9 +1,9 @@
-import * as utils from '../../base/utils';
-import Component from '../../base/component';
-import * as iconset from '../../base/iconset';
+import * as utils from 'base/utils';
+import Component from 'base/component';
+import * as iconset from 'base/iconset';
 
 //dialogs
-import * as dialogs from './dialogs/_index';
+import * as dialogs from 'dialogs/_index';
 
 /*!
  * VIZABI BUTTONLIST
