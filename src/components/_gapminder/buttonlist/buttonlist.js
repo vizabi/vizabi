@@ -56,25 +56,25 @@
           title: "buttons/find",
           icon: "search",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'moreoptions': {
           title: "buttons/more_options",
           icon: "gear",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'colors': {
           title: "buttons/colors",
           icon: "paint-brush",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'size': {
           title: "buttons/size",
           icon: "circle",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'fullscreen': {
           title: "buttons/expand",
@@ -98,19 +98,19 @@
           title: "buttons/axes",
           icon: "axes",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'axes-mc': {
           title: "buttons/axes-mc",
           icon: "axes",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         'stack': {
           title: "buttons/stack",
           icon: "stack",
           dialog: true,
-          ispin: false
+          ispin:false
         },
         '_default': {
           title: "Button",
@@ -138,7 +138,7 @@
           }
           _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
         }
-      };
+      }
 
       this._super(config, context);
 
@@ -205,11 +205,11 @@
         _this.pinDialog(this);
       });
 
-      d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function () {
+      d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
         d3.event.stopPropagation();
       });
 
-      this.root.element.addEventListener('click', function () {
+      this.root.element.addEventListener('click', function(){
         _this.closeAllDialogs();
       });
 
@@ -220,7 +220,7 @@
       this.setBubbleLock();
 
       d3.select(this.root.element).on("mousedown", function (e) {
-        if (!this._active_comp) return; //don't do anything if nothing is open
+        if(!this._active_comp) return; //don't do anything if nothing is open
 
         var target = d3.event.target;
         var closeDialog = true;
