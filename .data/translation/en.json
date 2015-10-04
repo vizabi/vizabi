@@ -9,7 +9,7 @@
     "buttons/colors": "Color",
     "buttons/size": "Size",
     "buttons/axes": "X and Y",
-    "buttons/axes-mc": "X and Y",
+    "buttons/axesmc": "X and Y",
     "buttons/axis_x": "X axis",
     "buttons/axis_y": "Y axis",
     "buttons/stack": "Stack",

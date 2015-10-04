@@ -16,7 +16,7 @@ var Axes = Dialog.extend({
    * @param context component context (parent)
    */
   init: function(config, parent) {
-    this.name = 'axes-mc';
+    this.name = 'axesmc'; 
     var _this = this;
 
     this.model_binds = {
