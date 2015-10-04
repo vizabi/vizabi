@@ -186,7 +186,7 @@ var ButtonList = Component.extend({
     });
 
     var close_buttons = this.element.selectAll("[data-click='closeDialog']");
-    close_buttons.on('click', function() {
+    close_buttons.on('click', function(type, index) {
       if (_this.getLayoutProfile() === 'large') {
         _this.closeDialog(_this.model.ui.buttons[index]);
       }
