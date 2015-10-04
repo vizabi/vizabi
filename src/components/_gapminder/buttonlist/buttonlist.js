@@ -20,6 +20,8 @@
 
   //default existing buttons
   var class_active = "vzb-active";
+  var class_expand_dialog = "vzb-dialog-side";
+  var class_hide_btn = "vzb-dialog-side-btn";
   var class_active_locked = "vzb-active-locked";
   var class_unavailable = "vzb-unavailable";
   var class_vzb_fullscreen = "vzb-force-fullscreen";
@@ -152,6 +154,11 @@
       this.dialogContainerEl = this.element.append("div")
         .attr("class", "vzb-buttonlist-container-dialogs");
 
+      // if button_expand has been passed in with boolean param or array must check and covert to array
+      if (this.model.ui.button_expand){
+        this.model.ui.button_expand = (typeof this.model.ui.button_expand === 'boolean' && this.model.ui.button_expand === true) ? this.model.ui.buttons : this.model.ui.button_expand;
+      }
+
       //add buttons and render components
       if (this.model.ui.buttons) {
         this._addButtons();
@@ -185,8 +192,13 @@
       });
 
       var close_buttons = this.element.selectAll("[data-click='closeDialog']");
-      close_buttons.on('click', function () {
-        _this.closeAllDialogs(true);
+      close_buttons.on('click', function (type, index) {
+        if (_this.getLayoutProfile() === 'large') {
+          _this.closeDialog(_this.model.ui.buttons[index]);
+        }
+        else {
+          _this.closeAllDialogs(true);
+        }
       });
       var pinDialog = this.element.selectAll("[data-click='pinDialog']");
       pinDialog.on('click', function () {
@@ -233,15 +245,14 @@
     _addButtons: function () {
 
       this._components_config = [];
-      var button_expand = true; //this.model.ui.button_expand;
-      var button_list = ["find", "colors", "size"];//this.model.ui.buttons;
-      var details_btns = [];
-      if (!button_list.length) return;
-console.log(this.getLayoutProfile(),'add buttons');
-      //add a component for each button
-      for (var i = 0; i < button_list.length; i++) {
+      var details_btns = [],
+          button_expand = this.model.ui.button_expand;
+      if (!this.model.ui.buttons.length) return;
 
-        var btn = button_list[i];
+      //add a component for each button
+      for (var i = 0; i < this.model.ui.buttons.length; i++) {
+
+        var btn = this.model.ui.buttons[i];
         var btn_config = this._available_buttons[btn];
 
         //if it's a dialog, add component
@@ -272,13 +283,14 @@ console.log(this.getLayoutProfile(),'add buttons');
       this.buttonContainerEl.selectAll('button').data(details_btns)
         .enter().append("button")
         .attr('class', function (d) {
-          console.log(d);
-          if (_this.getLayoutProfile() === 'large' && button_expand) {
-            return 'vzb-buttonlist-btn vzb-dialog-side'
+          var cls = 'vzb-buttonlist-btn';
+          if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+            if (button_expand.indexOf(d.id) > -1) {
+              cls += ' vzb-dialog-side-btn';
+            }
           }
-          else {
-            return 'vzb-buttonlist-btn';
-          }
+
+          return cls;
         })
         .attr('data-btn', function (d) {
           return d.id;
@@ -291,13 +303,15 @@ console.log(this.getLayoutProfile(),'add buttons');
 
       this.dialogContainerEl.selectAll('div').data(details_btns)
         .enter().append("div")
-        .attr('class', function () {
-          if (_this.getLayoutProfile() === 'large' && button_expand) {
-            return 'vzb-buttonlist-dialog vzb-dialog-side';
+        .attr('class', function (d) {
+          var cls = 'vzb-buttonlist-dialog';
+          if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+            if (button_expand.indexOf(d.id) > -1) {
+              cls += ' vzb-dialog-side';
+            }
           }
-          else {
-            return 'vzb-buttonlist-dialog';
-          }
+
+          return cls;
         })
         .attr('data-btn', function (d) {
           return d.id;
@@ -305,7 +319,6 @@ console.log(this.getLayoutProfile(),'add buttons');
 
       this.loadComponents();
 
-      var _this = this;
       //render each subcomponent
       utils.forEach(this.components, function (subcomp) {
         subcomp.render();
@@ -346,7 +359,9 @@ console.log(this.getLayoutProfile(),'add buttons');
      */
     openDialog: function (id) {
 
-      this.closeAllDialogs(true);
+      if (this.getLayoutProfile() !== 'large') {
+        this.closeAllDialogs(true);
+      }
 
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -357,6 +372,11 @@ console.log(this.getLayoutProfile(),'add buttons');
       //add classes
       btn.classed(class_active, true);
       dialog.classed(class_active, true);
+
+      if (this.getLayoutProfile() === 'large') {
+        btn.classed(class_hide_btn, true);
+        dialog.classed(class_expand_dialog, true);
+      }
 
       //call component function
       this._active_comp.open();
@@ -388,7 +408,6 @@ console.log(this.getLayoutProfile(),'add buttons');
      * @param {String} id button id
      */
     closeDialog: function (id) {
-
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -402,6 +421,11 @@ console.log(this.getLayoutProfile(),'add buttons');
       btn.classed(class_active, false);
       dialog.classed(class_active, false);
 
+      if (this.getLayoutProfile() === 'large') {
+        btn.classed(class_hide_btn, false);
+        dialog.classed(class_expand_dialog, false);
+      }
+
       //call component close function
       if (this._active_comp) {
         this._active_comp.close();
@@ -414,8 +438,8 @@ console.log(this.getLayoutProfile(),'add buttons');
      */
     closeAllDialogs: function (forceclose) {
       //remove classes
-      var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)"
-      var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
+      var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)";
+      var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)";
       var all_btns = this.element.selectAll(btnClass),
         all_dialogs = this.element.selectAll(dialogClass);
       if (forceclose)
