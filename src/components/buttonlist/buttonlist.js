@@ -13,6 +13,8 @@ import * as dialogs from 'dialogs/_index';
 //default existing buttons
 var class_active = "vzb-active";
 var class_active_locked = "vzb-active-locked";
+var class_expand_dialog = "vzb-dialog-side";
+var class_hide_btn = "vzb-dialog-side-btn";
 var class_unavailable = "vzb-unavailable";
 var class_vzb_fullscreen = "vzb-force-fullscreen";
 
@@ -144,6 +146,11 @@ var ButtonList = Component.extend({
     this.dialogContainerEl = this.element.append("div")
       .attr("class", "vzb-buttonlist-container-dialogs");
 
+    // if button_expand has been passed in with boolean param or array must check and covert to array
+    if (this.model.ui.button_expand){
+      this.model.ui.button_expand = (typeof this.model.ui.button_expand === 'boolean' && this.model.ui.button_expand === true) ? this.model.ui.buttons : this.model.ui.button_expand;
+    }
+
     //add buttons and render components
     if(this.model.ui.buttons) {
       this._addButtons();
@@ -179,8 +186,13 @@ var ButtonList = Component.extend({
     });
 
     var close_buttons = this.element.selectAll("[data-click='closeDialog']");
-    close_buttons.on('click', function() {
-      _this.closeAllDialogs(true);
+    close_buttons.on('click', function(type, index) {
+      if (_this.getLayoutProfile() === 'large') {
+        _this.closeDialog(_this.model.ui.buttons[index]);
+      }
+      else {
+        _this.closeAllDialogs(true);
+      }
     });
     var pinDialog = this.element.selectAll("[data-click='pinDialog']");
     pinDialog.on('click', function() {
@@ -228,7 +240,8 @@ var ButtonList = Component.extend({
 
     this._components_config = [];
     var button_list = this.model.ui.buttons;
-    var details_btns = [];
+    var details_btns = [],
+        button_expand = this.model.ui.button_expand;
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
@@ -260,10 +273,19 @@ var ButtonList = Component.extend({
     };
 
     var t = this.getTranslationFunction(true);
-
+    var _this = this;
     this.buttonContainerEl.selectAll('button').data(details_btns)
       .enter().append("button")
-      .attr('class', 'vzb-buttonlist-btn')
+      .attr('class', function (d) {
+        var cls = 'vzb-buttonlist-btn';
+        if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
+            cls += ' vzb-dialog-side-btn';
+          }
+        }
+
+        return cls;
+      })
       .attr('data-btn', function(d) {
         return d.id;
       })
@@ -275,7 +297,16 @@ var ButtonList = Component.extend({
 
     this.dialogContainerEl.selectAll('div').data(details_btns)
       .enter().append("div")
-      .attr('class', 'vzb-buttonlist-dialog')
+      .attr('class', function (d) {
+        var cls = 'vzb-buttonlist-dialog';
+        if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
+            cls += ' vzb-dialog-side';
+          }
+        }
+
+        return cls;
+      })
       .attr('data-btn', function(d) {
         return d.id;
       });
@@ -335,6 +366,11 @@ var ButtonList = Component.extend({
     btn.classed(class_active, true);
     dialog.classed(class_active, true);
 
+    if (this.getLayoutProfile() === 'large') {
+      btn.classed(class_hide_btn, true);
+      dialog.classed(class_expand_dialog, true);
+    }
+
     //call component function
     this._active_comp.open();
   },
@@ -378,6 +414,11 @@ var ButtonList = Component.extend({
     //remove classes
     btn.classed(class_active, false);
     dialog.classed(class_active, false);
+
+    if (this.getLayoutProfile() === 'large') {
+      btn.classed(class_hide_btn, false);
+      dialog.classed(class_expand_dialog, false);
+    }
 
     //call component close function
     if(this._active_comp) {
