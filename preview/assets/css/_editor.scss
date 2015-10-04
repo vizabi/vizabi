@@ -1,0 +1,75 @@
+#vzbp-state-editor {
+  ::selection {
+    background: #cccccc;
+    /* WebKit/Blink Browsers */
+    color: #ffffff;
+    opacity: 1;
+  }
+  ::-moz-selection {
+    background: #cccccc;
+    /* Gecko Browsers */
+    color: #ffffff;
+    opacity: 1;
+  }
+  #vzbp-state-editor-textarea {
+    font-family: $vzbp-font-family-editor;
+    @include prefixer(box-sizing, border-box, webkit moz spec);
+    font-size: 11px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    resize: none;
+    background: transparent;
+    color: white;
+    border: none;
+    overflow: auto;
+    padding: 20px;
+    margin: 0px;
+    opacity: 0.7;
+    @include prefixer(box-shadow, inset 11px 0px 20px -3px rgba(0, 0, 0, 0.15), webkit moz spec);
+    &:active,
+    &:focus {
+      outline: none;
+    }
+    &.invalid {
+      background: #8E5D5D;
+    }
+  }
+  #vzbp-state-editor-okay {
+    @include position(absolute, null 20px 20px null);
+    vertical-align: top;
+    font-size: 15px;
+    color: white;
+    text-align: center;
+    background: #222222;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+    padding: 10px;
+    display: none;
+    z-index: 3;
+  }
+  #vzbp-state-editor-textarea:focus + #vzbp-state-editor-okay {
+    display: block;
+  }
+  .StringColor {
+    color: #ff8800;
+  }
+  .OptionsColor {
+    color: #ffff00;
+  }
+  .BracketsColor {
+    color: #00ffff;
+  }
+  .TagColor {
+    color: #00ff00;
+  }
+  .CommentColor {
+    color: #555555;
+  }
+  @media screen and (max-width: 700px) {
+    display: none
+  }
+}

@@ -1,0 +1,53 @@
+//general styles
+
+.vzb-cl-outer {
+
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  margin-right: -20px;
+  padding-right: 20px;    
+    
+
+  .vzb-cl-holder {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+
+  }
+
+  .vzb-cl-colorList {
+    overflow: hidden;
+  }
+
+  .vzb-cl-option {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+
+  .vzb-cl-rainbow {
+    width: 20px;
+    position: absolute
+  }
+  .vzb-cl-worldmap {
+    width: 100%;
+    svg {width: 100%}
+  }
+
+  .vzb-cl-color-sample {
+    @include transition(border-width 200ms ease-in-out);
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  .vzb-cl-color-legend {
+    display: inline-block;
+    vertical-align: super;
+    cursor: pointer;
+  }
+}
