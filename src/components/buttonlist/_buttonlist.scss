@@ -160,3 +160,79 @@ $vzb-button-color-border: #cce6ed;
   }
 }
 
+&.vzb-large {
+    .vzb-tool-stage {
+      right: 290px;
+    }
+
+    .vzb-tool-buttonlist{
+      width: 290px;
+
+      .vzb-buttonlist-container-buttons {
+        position: relative;
+      }
+
+      .vzb-buttonlist-btn {
+        &.vzb-dialog-side-btn{
+          display: none;
+        }
+      }
+
+      .vzb-buttonlist-dialog {
+        &.vzb-dialog-side{
+          visibility: visible;
+          display: block;
+          margin: 5px;
+          position: static;
+        }
+
+        .vzb-dialog-title {
+          padding: 10px 25px 0;
+        }
+
+        .vzb-dialog-button {
+          position: relative;
+        }
+
+        .vzb-dialog-buttons {
+          padding: 5px 25px;
+        }
+
+        &[data-btn="find"] {
+          .vzb-dialog-content.vzb-dialog-content-fixed {
+            max-height: 140px;
+          }
+
+          .vzb-dialog-title {
+            display: inline-block;
+            padding: 15px 0px 10px 20px;
+            vertical-align: top;
+          }
+
+          .vzb-find-filter {
+            display: inline-block;
+            position: relative;
+            padding: 10px;
+            max-width: 210px;
+          }
+        }
+
+        &[data-btn="colors"] {
+          .vzb-dialog-content {
+            max-height: 170px;
+          }
+        }
+
+        .vzb-dialog-modal {
+          .thumb-tack-class {
+
+            &.thumb-tack-class-ico-pin,
+            &.thumb-tack-class-ico-drag {
+              display: none;
+            }
+
+          }
+        }
+      }
+    }
+}
