@@ -2,7 +2,12 @@
 
 .vzb-cl-outer {
 
-  height: 120px;
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  margin-right: -20px;
+  padding-right: 20px;    
+    
 
   .vzb-cl-holder {
     height: 100%;
@@ -13,12 +18,7 @@
   }
 
   .vzb-cl-colorList {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: -18px;
-    overflow: auto;
+    overflow: hidden;
   }
 
   .vzb-cl-option {
@@ -33,8 +33,7 @@
   }
   .vzb-cl-worldmap {
     width: 100%;
-    height: 100%;
-    position: absolute
+    svg {width: 100%}
   }
 
   .vzb-cl-color-sample {
