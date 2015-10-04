@@ -1,0 +1,8 @@
+//https://github.com/airbnb/javascript
+
+{
+  "extends": "airbnb",
+  "rules": {
+    "react/jsx-quotes": 0
+  }
+}

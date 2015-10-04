@@ -20,28 +20,28 @@
                     stroke: #000;
                 }
             }
-            .vzb-mc-povertyline text {
+            .vzb-mc-probe text {
                 dominant-baseline: hanging;
                 fill: $vzb-color-primary;
                 pointer-events: none;
-                &.vzb-mc-povertyline-extremepoverty{
+                &.vzb-mc-probe-extremepoverty{
                     font-variant: small-caps;
                     letter-spacing: 0.15em;
                     opacity: 0.7;
                 }
             }
-            .vzb-mc-povertyline text.vzb-mc-povertyline-valueUL,
-            .vzb-mc-povertyline text.vzb-mc-povertyline-valueDL {
+            .vzb-mc-probe text.vzb-mc-probe-valueUL,
+            .vzb-mc-probe text.vzb-mc-probe-valueDL {
                 text-anchor: end;
             }
-            .vzb-mc-povertyline text.vzb-mc-povertyline-valueUR,
-            .vzb-mc-povertyline text.vzb-mc-povertyline-valueDR {
+            .vzb-mc-probe text.vzb-mc-probe-valueUR,
+            .vzb-mc-probe text.vzb-mc-probe-valueDR {
                 text-anchor: start;
             }
-            .vzb-mc-povertyline text.vzb-shadow {
+            .vzb-mc-probe text.vzb-shadow {
                 @extend %vzb-chart-label-shadow;
             }
-            .vzb-mc-povertyline line {
+            .vzb-mc-probe line {
                 stroke: $vzb-color-grey;
                 stroke-dasharray: 5 5;
                 pointer-events: none;
@@ -112,7 +112,7 @@
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline,
+            .vzb-mc-probe,
             .vzb-mc-tooltip,
             .vzb-mc-axis-info {
                 @extend %vzb-chart-ticks-large;
@@ -129,7 +129,7 @@
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline,
+            .vzb-mc-probe,
             .vzb-mc-tooltip,
             .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-medium;
@@ -146,7 +146,7 @@
             }
             .vzb-mc-axis-x,
             .vzb-mc-mountains-labels,
-            .vzb-mc-povertyline,
+            .vzb-mc-probe,
             .vzb-mc-tooltip,
             .vzb-mc-axis-info  {
                 @extend %vzb-chart-ticks-small;

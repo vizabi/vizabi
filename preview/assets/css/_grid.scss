@@ -1,0 +1,94 @@
+$vzbp-width-nav: 110px;
+$vzbp-width-sidebar: 190px;
+$vzbp-width-state-editor: 250px;
+body {
+  background-color: $vzbp-color-background;
+  font-family: $vzbp-font-family;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+p {
+  margin: 0px;
+}
+
+a {
+  color: #404040;
+  &:hover {
+    color: #333333;
+  }
+}
+
+.vzbp-input {
+  border-color: #cccccc;
+  border-style: solid;
+  font-size: 12px;
+  padding: 8px;
+  border-width: 1px;
+  &:focus {
+    outline: none;
+  }
+}
+
+#vzbp-nav {
+  @include prefixer(box-sizing, border-box, webkit moz spec);
+  @include position(absolute, 0 null 0 0);
+  width: $vzbp-width-nav;
+  background-color: $vzbp-color-nav;
+}
+
+#vzbp-main {
+  @include prefixer(box-sizing, border-box, webkit moz spec);
+  @include position(absolute, 0 $vzbp-width-sidebar 0 $vzbp-width-nav);
+  @include transition(right 0.2s linear);
+  @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
+  &.vzbp-fullscreen {
+    @include position(absolute, 0 0 0 0);
+  }
+}
+
+#vzbp-sidebar {
+  @include prefixer(box-sizing, border-box, webkit moz spec);
+  @include position(absolute, 0 0 0 null);
+  width: $vzbp-width-sidebar;
+  background-color: $vzbp-color-sidebar;
+  padding: 20px;
+  @include transition(right 0.2s linear);
+  @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
+}
+
+#vzbp-state-editor {
+  $posRight: $vzbp-width-state-editor * -1;
+  @include prefixer(box-sizing, border-box, webkit moz spec);
+  @include position(absolute, 0 $posRight 0 null);
+  width: $vzbp-width-state-editor;
+  background-color: $vzbp-color-editor;
+  color: white;
+  padding: 20px;
+  @include transition(right 0.2s linear);
+  @include prefixer(transform, translate3d(0, 0, 0), webkit moz spec);
+}
+
+.vzbp-nav-state-editor {
+  #vzbp-state-editor {
+    right: 0px;
+  }
+  #vzbp-sidebar {
+    right: $vzbp-width-state-editor;
+  }
+  #vzbp-main {
+    right: $vzbp-width-sidebar + $vzbp-width-state-editor;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  #vzbp-nav {
+    display: none;
+  }
+  #vzbp-sidebar {
+    display: none;
+  }
+  #vzbp-main {
+    @include position(absolute, 0 0 0 0);
+  }
+}

@@ -1,0 +1,159 @@
+// ****************************************************************************
+//
+//   Common Variables
+//   variables across tools & components
+//
+//   -> Naming convention:
+//      general -> specific
+//      E.g: $vzb-border-color-blue;
+//
+// ****************************************************************************
+// ----------------------------------------------------------------------------
+//   Sizes
+// ----------------------------------------------------------------------------
+$vzb-resolution-medium: 750px;
+$vzb-resolution-large: 970px;
+
+// ----------------------------------------------------------------------------
+//   Text
+// ----------------------------------------------------------------------------
+$vzb-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+$vzb-font-family-alt: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+$vzb-font-size-base: 16px;
+$vzb-font-size-regular: 1em; 
+$vzb-font-size-tiny: 0.625em; 
+$vzb-font-size-small: 0.8em;  
+$vzb-font-size-medium: 1.24em; 
+$vzb-font-size-large: 1.38em;  
+$vzb-font-size-larger: 1.563em; 
+$vzb-font-size-largest: 2em;     
+
+// ----------------------------------------------------------------------------
+//   Colors
+//   -> Naming convention:
+//   darkest, darker, dark, color, light, lighter, lightest
+// ----------------------------------------------------------------------------
+// Primary = Low saturated Blue
+$vzb-color-primary: #607889;
+$vzb-color-primary-darkest: #425663; 
+$vzb-color-primary-dark: #4B98AA; 
+$vzb-color-primary-lightest: #F2FAFC;
+// Grayscale
+$vzb-color-white: #FFF;
+$vzb-color-black: #333;
+$vzb-color-grey-darkest: #444;
+$vzb-color-grey-dark: #666;
+$vzb-color-grey: #999;
+$vzb-color-grey-light: #e3eef0;
+$vzb-color-grey-lightest: #FDFDFD;
+// Vizabi main colors
+$vzb-color-red: #F77481;
+$vzb-color-yellow: #E1CE00;
+$vzb-color-green: #B4DE79;
+$vzb-color-blue: #62CCE3;
+$vzb-gapminder-main: #FFCA34;
+// Accents
+$vzb-color-accent-orange: #FC6B38; 
+// ----------------------------------------------------------------------------
+//   Loader (spinner)
+// ----------------------------------------------------------------------------
+$vzb-loader-speed: 0.6s;
+$vzb-loader-thickness: 4px;
+$vzb-loader-size: 30px;
+$vzb-loader-bgcolor: $vzb-color-white;
+// ----------------------------------------------------------------------------
+//   Common styles
+// ----------------------------------------------------------------------------
+.vzb-hidden {
+  display: none !important;
+}
+
+.vzb-invisible {
+  visibility: hidden !important;
+}
+
+.vzb-blur {
+    filter: blur(3px);
+}
+
+.vzb-transparent {
+  opacity: 0 !important;
+}
+
+%vzb-loader {
+  @include animation-duration($vzb-loader-speed);
+  @include animation-iteration-count(infinite);
+  @include animation-name(rotate-forever);
+  @include animation-timing-function(linear);
+  @include size($vzb-loader-size);
+  @include position(absolute, 50% 0 0 50%);
+  content: ' ';
+  display: inline-block;
+  border: $vzb-loader-thickness solid rgba($vzb-color-primary, .1);
+  border-top: $vzb-loader-thickness solid rgba($vzb-color-primary, .6);
+  border-radius: 100%;
+  margin: -1 * $vzb-loader-size/2;
+  z-index: 9999;
+}
+
+.vzb-placeholder {
+  position: relative;
+  background-color: $vzb-color-white;
+
+  &.vzb-loading-first > div{
+    visibility: hidden;
+  }
+
+  // &.vzb-loading, &.vzb-loading-data {
+  &.vzb-loading-first {
+    //todo: Make background transparent, but not preloader circles
+    &:before {
+      content: ' ';
+      background-color: $vzb-loader-bgcolor;
+      display: block;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      bottom: 0px;
+      right: 0px;
+      z-index: 9998;
+    }
+
+    &:after {
+      @extend %vzb-loader;
+    }
+  }
+  //loading data specifically
+  &.vzb-loading-data {
+    &:before {
+      @include opacity(0.9);
+    }
+  }
+  //loading anything
+  &.vzb-loading {
+    // * {
+    //     visibility: hidden;
+    // }
+    &:before {
+      @include opacity(0.8);
+    }
+  }
+
+  //loading anything
+  &.vzb-force-fullscreen {
+    @include position(fixed, 0px 0px 0px 0px);
+    display: inline-table;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9997;
+    margin: 0px;
+  }
+
+  .vzb-icon {
+    width: 15px;
+    height: 15px;
+    path {
+      fill: $vzb-color-primary;
+    }
+  }
+}

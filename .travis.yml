@@ -1,17 +1,16 @@
 language: node_js
 sudo: false
 node_js:
-  - '0.10'
-  - '0.12'
   - '4.1'
-  - 'iojs'
 addons:
   apt:
-    sources:
+    packages:
+    - s3cmd
     - ruby
 before_script:
   - gem install sass
+  - npm install -g bower
   - bower install
 script:
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && grunt build-deploy --custom=gapminder || grunt --custom=gapminder'
-  - grunt test
+  - gulp build
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || false'

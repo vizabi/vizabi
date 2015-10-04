@@ -1,0 +1,203 @@
+.vzb-buttonlist-dialog {
+  $vzb-dialog-content-height: 250px;
+  @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
+  @include transition(all 300ms ease-in-out);
+  @include position(absolute, null null -450px 50%);
+  border-top: 1px solid #f7f7f7;
+  width: 280px;
+  margin-left: -140px;
+  z-index: -2;
+  vertical-align: top;
+  background-color: #fff;
+  text-align: left;
+  display: block;
+  visibility: hidden;
+  &.vzb-active {
+    @include position(absolute, null null 45px 50%);
+    z-index: 20;
+    visibility: visible;
+  }
+  .vzb-dialog-title {
+    color: $vzb-color-primary;
+    font-size: $vzb-font-size-medium;
+    padding: 25px 25px 10px 25px;
+  }
+  .vzb-dialog-content {
+    font-family: $vzb-font-family-alt;
+    font-size: $vzb-font-size-small;
+    color: $vzb-color-grey-dark;
+    padding: 0px 25px 10px 25px;
+    max-height: $vzb-dialog-content-height;
+    overflow: hidden;
+    overflow-y: auto;
+    &.vzb-dialog-content-fixed {
+      height: $vzb-dialog-content-height;
+    }
+  }
+
+  input {
+    font-size: 1em; //inherit from dialog content
+  }
+
+  .vzb-dialog-buttons {
+    display: table;
+    width: 100%;
+    padding: 15px 25px 20px 25px;
+  }
+  .vzb-dialog-control {
+    display: table-cell;
+    width: 100%;
+    vertical-align: middle;
+    padding: 8px;
+    &:first-child {
+      padding-left: 0px
+    }
+    &:last-child {
+      padding-right: 0px
+    }
+  }
+  .vzb-dialog-button {
+    display: table-cell;
+    width: auto;
+    cursor: pointer;
+    padding: 8px;
+    &:first-child {
+      padding-left: 0px
+    }
+    &:last-child {
+      padding-right: 0px
+    }
+    color: $vzb-color-grey;
+    font-family: $vzb-font-family;
+    text-align: center;
+    text-transform: uppercase;
+
+    &.vzb-label-primary {
+      color: $vzb-color-primary;
+      font-weight: bold;
+    }
+    &:hover {
+      color: $vzb-color-primary-dark;
+    }
+  }
+  .vzb-dialog-input {
+    @include border-radius(4px);
+    @include box-sizing(border-box);
+    border: 1px solid rgba($vzb-color-grey, .4);
+    padding: 9px;
+    display: block;
+    width: 100%;
+    outline: none;
+    font-family: $vzb-font-family-alt;
+    &:focus {
+      border: 1px solid rgba($vzb-color-grey, .6);
+    }
+  }
+
+  .vzb-dialog-br {
+    border-top: 1px solid #ededed;
+    height: 36px;
+    width: 100%;
+    margin-top: 36px;
+  }
+
+  .thumb-tack-class {
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    border: 1px solid #cce6ed;
+    display: inline-block;
+    position: relative;
+    float: right;
+    margin-right: 8px;
+    margin-top: 8px;
+
+    & path {
+      fill: #4B98AA;
+    }
+  }
+  .thumb-tack-class-ico {
+    position: absolute!important;
+    left: 7px!important;
+    top: 4px!important;
+    cursor: pointer;
+  }
+  .thumb-tack-class-ico-drag {
+    cursor: move;
+    & svg {
+      @include transform(translate(4px, 3.5px));
+      cursor: move;
+    }
+  }
+  .thumb-tack-class-ico-pin {
+    & svg {
+      @include transform(translate(4px, 4px));
+    }
+  }
+  .thumb-tack-class-ico:before {
+    color: #4B98AA!important;
+
+  }
+  .vzb-dialog-checkbox {
+    display: block;
+    height: 18px;
+    margin: 6px 0px;
+    position: relative;
+    text-indent: 23px;
+    input[type=checkbox] {
+      @extend .vzb-hidden;
+    }
+    label {
+      @include position(absolute, 0px null null null);
+      @include border-radius(4px);
+      white-space: nowrap;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      background: $vzb-color-primary-lightest;
+      border: 1px solid rgba($vzb-color-primary, .2);
+      &:after {
+        @include position(absolute, 4px null null 4px);
+        @include opacity(0);
+        @include rotate(-45deg);
+        content: '';
+        width: 8px;
+        height: 4px;
+        background: transparent;
+        border: 3px solid $vzb-color-primary;
+        border-top: none;
+        border-right: none;
+      }
+      &:hover::after {
+        @include opacity(0.3);
+      }
+    }
+    input[type=checkbox]:checked + label {
+      border: 1px solid rgba($vzb-color-primary, .5);
+    }
+    input[type=checkbox]:checked + label:after {
+      @include opacity(1);
+    }
+  }
+  &.notransition {
+    @include transition(none);
+  }
+  .vzb-dialog-sublabel{
+    color: $vzb-color-primary;
+    font-weight: bold;
+  }
+}
+.vzb-buttonlist-dialog.pinned {
+  .thumb-tack-class{
+    background-color: #4B98AA;
+    border: 1px solid #4B98AA;
+
+    & path {
+      fill: white;
+    }
+  }
+  .thumb-tack-class-ico:before {
+    color: #fff!important;
+
+  }
+}
