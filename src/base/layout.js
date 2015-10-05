@@ -11,10 +11,10 @@ var Layout = Events.extend({
   screen_profiles: {
     small: {
       min_width: 0,
-      max_width: 749
+      max_width: 599
     },
     medium: {
-      min_width: 750,
+      min_width: 600,
       max_width: 969
     },
     large: {
