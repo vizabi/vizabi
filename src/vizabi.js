@@ -43,6 +43,14 @@ utils.forEach(readers, function(reader, name) {
   Reader.register(name, reader);
 });
 
+import * as components from 'components/_index';
+
+//register available readers
+utils.forEach(components, function(component, name) {
+  Component.register(name, component);
+});
+
+
 //d3 addons
 
 import genericLog from 'helpers/d3.genericLogScale';
