@@ -1,0 +1,186 @@
+{
+    "color": {
+        "palettes": {
+            "geo.region": {
+                "asi": "#FF5872",
+                "eur": "#FFE700",
+                "ame": "#7FEB00",
+                "afr": "#00D5E9",
+                "_default": "#ffb600"
+            },
+            "gdp_per_cap": {
+                "0": "#62CCE3",
+                "1": "#B4DE79",
+                "2": "#E1CE00",
+                "3": "#F77481"
+            },
+            "_continuous": {
+                "0": "#F77481",
+                "1": "#E1CE00",
+                "2": "#B4DE79"
+            },
+            "_discrete": {
+                "0": "#1f77b4",
+                "1": "#aec7e8",
+                "3": "#ff7f0e",
+                "4": "#2ca02c",
+                "5": "#98df8a",
+                "6": "#ffbb78",
+                "7": "#d62728",
+                "8": "#ff9896",
+                "9": "#9467bd",
+                "10": "#c5b0d5"
+            },
+            "_default": {
+                "_default": "#fa5ed6"
+            }
+        },
+        "selectable": {
+            "geo.region": false
+        }
+    },
+
+    "indicatorsDB": {
+        "time": {
+            "allowCharts": ["*"],
+            "use": "indicator",
+            "unit": "time",
+            "scales": ["time"],
+            "sourceLink": ""
+        },
+        "geo": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
+        },
+        "geo.name": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
+        },
+        "geo.region": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
+        },
+        "size": {
+            "allowCharts": ["none"],
+            "use": "property",
+            "unit": "",
+            "scales": ["ordinal"],
+            "sourceLink": ""
+        },
+        "pop": {
+            "allowCharts": ["*"],
+            "use": "indicator",
+            "unit": "",
+            "scales": ["linear", "log"],
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
+        },
+        "lex": {
+            "allowCharts": ["linechart", "barchart"],
+            "use": "indicator",
+            "unit": "lex",
+            "scales": ["linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
+        },
+        "gini": {
+            "allowCharts": ["mountainchart", "bubblechart"],
+            "use": "indicator",
+            "unit": "gini",
+            "scales": ["linear"],
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
+        },
+        "gdp_per_cap": {
+            "allowCharts": ["*"],
+            "use": "indicator",
+            "unit": "gdp_per_cap",
+            "interpolation": "exp",
+            "scales": ["log", "linear"],
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
+        },
+        "gdppc_pday": {
+            "allowCharts": ["none"],
+            "use": "indicator",
+            "unit": "gdppc_pday",
+            "interpolation": "exp",
+            "scales": ["log", "linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
+        },
+        "inc_pday": {
+            "allowCharts": ["none"],
+            "use": "indicator",
+            "unit": "inc_pday",
+            "interpolation": "exp",
+            "scales": ["log", "linear"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1PybxH399kK6OjJI4T2M33UsLqgutwj3SuYbk7Yt6sxE/pub?gid=1"
+        },
+        "u5mr_not": {
+            "allowCharts": ["none"],
+            "use": "indicator",
+            "unit": "u5mr",
+            "scales": ["linear", "log"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
+        },
+        "u5mr": {
+            "allowCharts": ["bubblechart"],
+            "use": "indicator",
+            "unit": "u5mr",
+            "scales": ["linear", "log"],
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
+        },
+        "childSurv": {
+            "allowCharts": ["none"],
+            "use": "indicator",
+            "unit": "childSurv",
+            "scales": ["linear", "log"],
+            "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
+        },
+        "_default": {
+            "allowCharts": ["*"],
+            "use": "value",
+            "unit": "",
+            "scales": ["ordinal"],
+            "sourceLink": ""
+        }
+    },
+    "indicatorsTree":{ 
+        "id": "_root",
+        "children": [
+            {
+                "id": "time"
+            }, {
+                "id": "_properties",
+                "children": [{"id": "geo"}, {"id": "geo.name"}, {"id": "geo.region"}, {"id": "size"}]
+            }, {
+                "id": "economy",
+                "children": [
+                    {"id": "inequality", "children": [{"id":"gini"}]}, 
+                    {"id": "gdp_per_cap"}, 
+                    {"id": "gdppc_pday"}, 
+                    {"id": "inc_pday"}
+                ]
+            }, {
+                "id": "health",
+                "children": [
+                    {"id": "lex"}, 
+                    {"id": "u5mr"},
+                    {
+                        "id": "child_health_others",
+                        "children": [{"id": "u5mr_not"}, {"id": "childSurv"}]
+                    }
+                ]
+            }, {
+                "id": "pop"
+            }, {
+                "id": "_default"
+            }
+        ]
+    }
+}
