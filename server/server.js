@@ -31,5 +31,5 @@ app.use(gzipStatic(path.join(__dirname, '../client/dist')));
 require('./app/routes.js')(app);
 
 // listen (start app with node server.js) ======================================
-app.listen(port);
+app.listen(port, '0.0.0.0');
 console.log("App listening on port " + port);

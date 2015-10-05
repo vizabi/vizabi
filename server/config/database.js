@@ -20,7 +20,8 @@ function getDockerMongoUrl() {
   try {
     var port = r.exec(keys[0])[1];
     var host = process.env[keys[0]];
-    return 'mongodb://' + host + ':' + port +'/gapminder-tools'
+    return 'mongodb://' + host + ':' + port + '/gapminder-tools';
   } catch (e) {
     return false;
   }
+}
