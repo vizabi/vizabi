@@ -1,6 +1,6 @@
 require('d3');
 require('vizabi');
-require('vizabi/dist/vizabi.css');
+require('vizabi/build/dist/vizabi.css');
 
 var Vizabi = window.Vizabi;
 
