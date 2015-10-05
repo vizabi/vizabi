@@ -74,26 +74,15 @@
 
 %vzb-chart-info {
   opacity: 0.3;
-  circle {
-    pointer-events: visible;
-    fill: $vzb-color-primary;
-    stroke: none;
-    cursor: pointer;
-  }
   svg {
     path {
-      fill: white;
+      fill: $vzb-color-primary;
       pointer-events: visible;
       cursor: pointer;
     }
   }
   &:hover{ 
     opacity: 1;
-    svg {
-      path {
-        fill: $vzb-color-grey-light;
-      } 
-    }
   }
 }
 

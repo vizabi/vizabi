@@ -382,15 +382,12 @@ var MountainChartComponent = Component.extend({
         var titleH = titleBBox.height;
         var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
     
-        this.infoEl.select('circle')
-            .attr("cx", titleH * 0.5)
-            .attr("cy", titleH * 0.5)
-            .attr("r", titleH * 0.5 + 0.5)
         this.infoEl.select('svg')
             .attr("width", titleH)
             .attr("height", titleH)
-        this.infoEl.attr('transform', 'translate(' + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' + 
-            (titleBBox.y + translate[1] + 3) + ')' + ' scale(' + (0.75) + ')');
+        this.infoEl.attr('transform', 'translate(' 
+            + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' 
+            + (titleBBox.y + translate[1] + titleH * 0.05) + ')');
         }
 
         this.eventAreaEl
@@ -419,8 +416,9 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
-        this.infoEl.html(iconQuestion).insert('circle',':first-child');
-        this.infoEl.select("svg").attr("width", "0px").attr("height", "0px");
+        this.infoEl
+            .html(iconQuestion)
+            .select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function () {
