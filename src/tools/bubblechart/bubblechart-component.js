@@ -6,7 +6,8 @@ import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
 import {
-  warn as iconWarn
+  warn as iconWarn,
+  question as iconQuestion
 }
 from 'base/iconset';
 
@@ -646,6 +647,12 @@ var BubbleChartComp = Component.extend({
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
+      
+    this.yInfoEl.html(iconQuestion).insert('circle',':first-child');
+    this.yInfoEl.select("svg").attr("width", "0px").attr("height", "0px");
+
+    this.xInfoEl.html(iconQuestion).insert('circle',':first-child');
+    this.xInfoEl.select("svg").attr("width", "0px").attr("height", "0px");
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
@@ -1054,22 +1061,37 @@ var BubbleChartComp = Component.extend({
       .attr("x", -warnBB.width - warnBB.height * 1.2)
       .attr("y", -warnBB.height * 1.2)
 
-    if(this.yInfoEl.select('text').node()) {
-      var titleH = this.yInfoEl.select('text').node().getBBox().height || 0;
-      var titleW = this.yTitleEl.select('text').node().getBBox().width || 0;
-      this.yInfoEl.attr('transform', 'translate(' + (titleW - yaxisWidth + titleH * 1.0) + ',' + (-titleH * 0.7) +
-        ')');
-      this.yInfoEl.select("text").attr("dy", "0.1em")
-      this.yInfoEl.select("circle").attr("r", titleH / 2);
+    if(this.yInfoEl.select('svg').node()) {
+      var titleBBox = this.yTitleEl.node().getBBox();
+      var titleH = titleBBox.height;
+      var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+
+      this.yInfoEl.select('circle')
+        .attr("cx", titleH * 0.5)
+        .attr("cy", titleH * 0.5)
+        .attr("r", titleH * 0.5 + 0.5)
+      this.yInfoEl.select('svg')
+        .attr("width", titleH)
+        .attr("height", titleH)
+      this.yInfoEl.attr('transform', 'translate(' + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' + 
+        (titleBBox.y + translate[1] + 3) + ')' + ' scale(' + (0.75) + ')');
     }
-    if(this.xInfoEl.select('text').node()) {
-      var titleH = this.xInfoEl.select('text').node().getBBox().height || 0;
-      var titleW = this.xTitleEl.select('text').node().getBBox().width || 0;
-      this.xInfoEl.attr('transform', 'translate(' + (titleW + titleH * 1.0) + ',' + (this.height + margin.bottom -
-        titleH * 0.7) + ')');
-      this.xInfoEl.select("text").attr("dy", "0.1em")
-      this.xInfoEl.select("circle").attr("r", titleH / 2);
-    }
+
+    if(this.xInfoEl.select('svg').node()) {
+      var titleBBox = this.xTitleEl.node().getBBox();
+      var titleH = titleBBox.height;
+      var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
+    
+      this.xInfoEl.select('circle')
+        .attr("cx", titleH * 0.5)
+        .attr("cy", titleH * 0.5)
+        .attr("r", (titleH) * 0.5 + 0.5)
+      this.xInfoEl.select('svg')
+        .attr("width", titleH)
+        .attr("height", titleH)
+      this.xInfoEl.attr('transform', 'translate(' + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' + 
+        (titleBBox.y + translate[1] + 3) + ')' + ' scale(' + (0.75) + ')');
+   }
 
   },
 

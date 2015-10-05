@@ -15,7 +15,7 @@
 import * as utils from 'base/utils';
 import globals from 'base/globals';
 import Component from 'base/component';
-import { warn as iconWarn } from 'base/iconset';
+import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
@@ -377,12 +377,20 @@ var MountainChartComponent = Component.extend({
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
-        if (this.infoEl.select("text").node()) {
-            var titleH = this.infoEl.select("text").node().getBBox().height || 0;
-            var titleW = this.yTitleEl.select("text").node().getBBox().width || 0;
-            this.infoEl.attr("transform", "translate(" + (titleW + titleH * 1.0) + "," + (margin.top - titleH * 0.3) + ")");
-            this.infoEl.select("text").attr("dy", "0.1em")
-            this.infoEl.select("circle").attr("r", titleH / 2);
+        if(this.infoEl.select('svg').node()) {
+        var titleBBox = this.yTitleEl.node().getBBox();
+        var titleH = titleBBox.height;
+        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+    
+        this.infoEl.select('circle')
+            .attr("cx", titleH * 0.5)
+            .attr("cy", titleH * 0.5)
+            .attr("r", titleH * 0.5 + 0.5)
+        this.infoEl.select('svg')
+            .attr("width", titleH)
+            .attr("height", titleH)
+        this.infoEl.attr('transform', 'translate(' + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' + 
+            (titleBBox.y + translate[1] + 3) + ')' + ' scale(' + (0.75) + ')');
         }
 
         this.eventAreaEl
@@ -411,6 +419,8 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
+        this.infoEl.html(iconQuestion).insert('circle',':first-child');
+        this.infoEl.select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function () {

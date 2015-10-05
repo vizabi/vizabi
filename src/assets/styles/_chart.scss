@@ -73,26 +73,26 @@
 
 
 %vzb-chart-info {
-  opacity: 0.3;    
-  text {
-    fill: $vzb-color-primary;
-    pointer-events: none;
-    dominant-baseline: middle;
-    text-anchor: middle;
-  } 
+  opacity: 0.3;
   circle {
-    fill: none;
     pointer-events: visible;
-    stroke: $vzb-color-primary;
-    stroke-width: 2;
+    fill: $vzb-color-primary;
+    stroke: none;
     cursor: pointer;
+  }
+  svg {
+    path {
+      fill: white;
+      pointer-events: visible;
+      cursor: pointer;
+    }
   }
   &:hover{ 
     opacity: 1;
-    text {fill: $vzb-color-primary;}
-    circle {
-        fill: $vzb-color-grey-light; 
-        stroke: $vzb-color-primary;
+    svg {
+      path {
+        fill: $vzb-color-grey-light;
+      } 
     }
   }
 }
