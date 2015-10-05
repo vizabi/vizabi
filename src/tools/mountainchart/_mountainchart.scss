@@ -65,7 +65,7 @@
               pointer-events: none;
               font-size: 0.9em;
             }
-          .vzb-mc-mountains-labels .vzb-mc-label circle.vzb-mc-label-x {
+          .vzb-mc-mountains-labels .vzb-mc-label rect.vzb-mc-label-x {
               @include transition(opacity 200ms linear);
               cursor: pointer;
               fill: $vzb-color-primary;
