@@ -18,7 +18,7 @@
         display: block;
         position: absolute;
         bottom: -40px;
-        z-index: 10000;
+        z-index: 100;
         /* font-size: 12px; */
         right: 70px;
         opacity: 0.6;
@@ -56,8 +56,13 @@
     bottom: 0px;
     left: 200px;
 
+    &.desktop {
+        @include breakpoint(small){
+            display: none;
+        }
+    }
     @include breakpoint(small) {
-        display: none;
+        //display: none;
         position: static;
         padding-top: 50px;
 
@@ -78,28 +83,63 @@
 
 .menu-mobile {
 
-    @extend %menu-bar;
+    //@extend %menu-bar;
     @include breakpoint(not-small) {
         display: none;
     }
-    border: 20px solid white;
     cursor: pointer;
-    right: -8px;
-    top: 3px;
+    right: 0;
+    top: 0;
+    transition-duration: 0.5s;
+    width: 40px;
+    height: 50px;
+    position: absolute;
+    z-index: 9;
 
-    &:before, &:after {
-        content: '';
-        @extend %menu-bar;
-        left: 0px;
-    }
-    &:before {
-        top: -10px;
-    }
-    &:after {
-        bottom: -10px;
+    &:hover {
+        cursor: pointer;
     }
 
-    &:hover + [nav-expandable], &:focus + [nav-expandable], &:active + [nav-expandable] {
+    .icon {
+        transition-duration: 0.2s;
+        position: absolute;
+        width: 30px;
+        height: 3px;
+        background-color: $color-primary;
+        top: 24px;
+
+        &:before, &:after {
+            transition-duration: 0.5s;
+            background-color: $color-primary;
+            position: absolute;
+            content: "";
+            width: 30px;
+            height: 3px;
+        }
+        &:before {
+            top: -7px;
+        }
+        &:after {
+            top: 7px;
+        }
+    }
+    &.open {
+        .icon {
+            background-color: transparent;
+            &:before, &:after {
+                top: 0;
+            }
+            &:before {
+                transform: rotate(-45deg);
+                -webkit-transform: rotate(-45deg);
+            }
+            &:after {
+                transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+            }
+        }
+    }
+    /*&:hover + [nav-expandable], &:focus + [nav-expandable], &:active + [nav-expandable] {
         display: block !important;
-    }
+    }*/
 }
