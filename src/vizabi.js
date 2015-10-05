@@ -3,6 +3,7 @@ import Tool from 'base/tool';
 import Component from 'base/component';
 import Model from 'base/model';
 import Reader from 'base/reader';
+import Events from 'base/events';
 import globals from 'base/globals';
 
 var Vzb = function(name, placeholder, options) {
@@ -53,7 +54,9 @@ d3.selection.prototype.onLongTap = onLongTap;
 
 //makes all objects accessible
 Vzb.Tool = Tool;
+Vzb.Component = Component;
 Vzb.Model = Model;
 Vzb.Reader = Reader;
+Vzb.Events = Events;
 
 export default Vzb;
