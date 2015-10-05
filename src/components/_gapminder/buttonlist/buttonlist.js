@@ -20,6 +20,8 @@
 
   //default existing buttons
   var class_active = "vzb-active";
+  var class_expand_dialog = "vzb-dialog-side";
+  var class_hide_btn = "vzb-dialog-side-btn";
   var class_active_locked = "vzb-active-locked";
   var class_unavailable = "vzb-unavailable";
   var class_vzb_fullscreen = "vzb-force-fullscreen";
@@ -152,6 +154,11 @@
       this.dialogContainerEl = this.element.append("div")
         .attr("class", "vzb-buttonlist-container-dialogs");
 
+      // if button_expand has been passed in with boolean param or array must check and covert to array
+      if (this.model.ui.button_expand){
+        this.model.ui.button_expand = (typeof this.model.ui.button_expand === 'boolean' && this.model.ui.button_expand === true) ? this.model.ui.buttons : this.model.ui.button_expand;
+      }
+
       //add buttons and render components
       if (this.model.ui.buttons) {
         this._addButtons();
@@ -185,17 +192,22 @@
       });
 
       var close_buttons = this.element.selectAll("[data-click='closeDialog']");
-      close_buttons.on('click', function () {
-        _this.closeAllDialogs(true);
+      close_buttons.on('click', function (type, index) {
+        if (_this.getLayoutProfile() === 'large') {
+          _this.closeDialog(_this.model.ui.buttons[index]);
+        }
+        else {
+          _this.closeAllDialogs(true);
+        }
       });
       var pinDialog = this.element.selectAll("[data-click='pinDialog']");
       pinDialog.on('click', function () {
         _this.pinDialog(this);
       });
 
-       d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
-         d3.event.stopPropagation();
-       });
+      d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function(){
+        d3.event.stopPropagation();
+      });
 
       this.root.element.addEventListener('click', function(){
         _this.closeAllDialogs();
@@ -210,22 +222,19 @@
       d3.select(this.root.element).on("mousedown", function (e) {
         if(!this._active_comp) return; //don't do anything if nothing is open
 
-  			var target = d3.event.target;
+        var target = d3.event.target;
         var closeDialog = true;
-  			while (target)
-  			{
-          if(target.classList.contains("vzb-dialog-modal"))
-          {
+        while (target) {
+          if (target.classList.contains("vzb-dialog-modal")) {
             closeDialog = false;
             break;
           }
-  				target = target.parentElement;
-  			}
-  			if(closeDialog)
-        {
+          target = target.parentElement;
+        }
+        if (closeDialog) {
           _this.closeAllDialogs();
         }
-  		});
+      });
     },
 
 
@@ -236,13 +245,14 @@
     _addButtons: function () {
 
       this._components_config = [];
-      var button_list = this.model.ui.buttons;
-      var details_btns = [];
-      if (!button_list.length) return;
-      //add a component for each button
-      for (var i = 0; i < button_list.length; i++) {
+      var details_btns = [],
+          button_expand = this.model.ui.button_expand;
+      if (!this.model.ui.buttons.length) return;
 
-        var btn = button_list[i];
+      //add a component for each button
+      for (var i = 0; i < this.model.ui.buttons.length; i++) {
+
+        var btn = this.model.ui.buttons[i];
         var btn_config = this._available_buttons[btn];
 
         //if it's a dialog, add component
@@ -267,13 +277,21 @@
         details_btn.icon = iconset[details_btn.icon];
         details_btns.push(details_btn);
       }
-      ;
 
       var t = this.getTranslationFunction(true);
-
+      var _this = this;
       this.buttonContainerEl.selectAll('button').data(details_btns)
         .enter().append("button")
-        .attr('class', 'vzb-buttonlist-btn')
+        .attr('class', function (d) {
+          var cls = 'vzb-buttonlist-btn';
+          if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+            if (button_expand.indexOf(d.id) > -1) {
+              cls += ' vzb-dialog-side-btn';
+            }
+          }
+
+          return cls;
+        })
         .attr('data-btn', function (d) {
           return d.id;
         })
@@ -285,14 +303,22 @@
 
       this.dialogContainerEl.selectAll('div').data(details_btns)
         .enter().append("div")
-        .attr('class', 'vzb-buttonlist-dialog')
+        .attr('class', function (d) {
+          var cls = 'vzb-buttonlist-dialog';
+          if (_this.getLayoutProfile() === 'large' && button_expand && button_expand.length > 0) {
+            if (button_expand.indexOf(d.id) > -1) {
+              cls += ' vzb-dialog-side';
+            }
+          }
+
+          return cls;
+        })
         .attr('data-btn', function (d) {
           return d.id;
         });
 
       this.loadComponents();
 
-      var _this = this;
       //render each subcomponent
       utils.forEach(this.components, function (subcomp) {
         subcomp.render();
@@ -333,7 +359,9 @@
      */
     openDialog: function (id) {
 
+      if (this.getLayoutProfile() !== 'large') {
         this.closeAllDialogs(true);
+      }
 
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -345,29 +373,34 @@
       btn.classed(class_active, true);
       dialog.classed(class_active, true);
 
+      if (this.getLayoutProfile() === 'large') {
+        btn.classed(class_hide_btn, true);
+        dialog.classed(class_expand_dialog, true);
+      }
+
       //call component function
       this._active_comp.open();
     },
 
 
-      pinDialog: function (button) {
-        var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
-        var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
-        var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-        if (this._available_buttons[id].ispin) {
-         // button.textContent = '';
-          btn.classed('pinned', false);
-          this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
-          this._available_buttons[id].ispin = false;
-          this._active_comp.isPin = false;
-        } else {
+    pinDialog: function (button) {
+      var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
+      var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
+      var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+      if (this._available_buttons[id].ispin) {
+        // button.textContent = '';
+        btn.classed('pinned', false);
+        this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
+        this._available_buttons[id].ispin = false;
+        this._active_comp.isPin = false;
+      } else {
         //  button.textContent = '';
-          btn.classed('pinned', true);
-          dialog.classed('pinned', true);
-          this._available_buttons[id].ispin = true;
-          this._active_comp.isPin = true;
-        }
-      },
+        btn.classed('pinned', true);
+        dialog.classed('pinned', true);
+        this._available_buttons[id].ispin = true;
+        this._active_comp.isPin = true;
+      }
+    },
 
 
     /*
@@ -375,7 +408,6 @@
      * @param {String} id button id
      */
     closeDialog: function (id) {
-
       var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
         dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -389,6 +421,11 @@
       btn.classed(class_active, false);
       dialog.classed(class_active, false);
 
+      if (this.getLayoutProfile() === 'large') {
+        btn.classed(class_hide_btn, false);
+        dialog.classed(class_expand_dialog, false);
+      }
+
       //call component close function
       if (this._active_comp) {
         this._active_comp.close();
@@ -401,8 +438,8 @@
      */
     closeAllDialogs: function (forceclose) {
       //remove classes
-      var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)"
-      var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
+      var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)";
+      var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)";
       var all_btns = this.element.selectAll(btnClass),
         all_dialogs = this.element.selectAll(dialogClass);
       if (forceclose)
@@ -509,7 +546,7 @@
 
       //force window resize event
       (function () {
-        event = root.document.createEvent("HTMLEvents");
+        var event = root.document.createEvent("HTMLEvents");
         event.initEvent("resize", true, true);
         event.eventName = "resize";
         root.dispatchEvent(event);
@@ -530,10 +567,8 @@
     return false;
   }
 
-  function exitHandler(emulateClickFunc)
-  {
-    if (!isFullscreen())
-    {
+  function exitHandler(emulateClickFunc) {
+    if (!isFullscreen()) {
       emulateClickFunc();
     }
   }
