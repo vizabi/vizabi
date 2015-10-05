@@ -35,7 +35,7 @@ var MCSelectList = Class.extend({
         label.append("circle").attr('class', 'vzb-mc-label-legend');
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
-        label.append("circle").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
+        label.append("rect").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
           .on("click", function (d, i) {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
@@ -48,7 +48,11 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
-        label.append("text").attr("class", "vzb-mc-label-x vzb-transparent").text("x");
+        if (utils.isTouchDevice()) {
+          label.append("text").attr("class", "vzb-mc-label-x vzb-transparent").text("Deselect");
+        } else {
+          label.append("text").attr("class", "vzb-mc-label-x vzb-transparent").text("x");
+        }
       })
       .on("mousemove", function (d, i) {
         if (utils.isTouchDevice()) return;
@@ -103,14 +107,35 @@ var MCSelectList = Class.extend({
           .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
 
         var contentBBox = text[0][0].getBBox();
-        view.select("text.vzb-mc-label-x")
-          .attr("x", contentBBox.width + fontHeight * 1.4)
-          .attr("y", fontHeight / 3.9);
 
-        view.select("circle.vzb-mc-label-x")
-          .attr("r", fontHeight / 2.5)
-          .attr("cx", contentBBox.width + fontHeight * 1.4)
-          .attr("cy", fontHeight / 4);
+        if (utils.isTouchDevice()) {
+          var label = view.selectAll("text.vzb-mc-label-x");
+          var labelBBox = label[0][0].getBBox();
+          view.select("text.vzb-mc-label-x")
+            .attr("x", contentBBox.width + labelBBox.width)
+            .attr("y", fontHeight / 3.5);
+
+          view.select("rect.vzb-mc-label-x")
+            .attr("width", labelBBox.width + fontHeight * 0.5)
+            .attr("height", fontHeight)
+            .attr("x", contentBBox.width + fontHeight)
+            .attr("y", -fontHeight * 0.25)
+            .attr("rx", fontHeight / 2.5)
+            .attr("ry", fontHeight / 2.5);
+        } else {
+          view.select("text.vzb-mc-label-x")
+            .attr("x", contentBBox.width + fontHeight * 1.4)
+            .attr("y", fontHeight / 3.9);
+
+          view.select("rect.vzb-mc-label-x")
+            .attr("width", fontHeight / 1.25)
+            .attr("height", fontHeight / 1.25)
+            .attr("x", contentBBox.width + fontHeight)
+            .attr("y", -fontHeight * 0.15)
+            .attr("rx", fontHeight / 2.5)
+            .attr("ry", fontHeight / 2.5);
+        }
+
 
 
         view.select("circle.vzb-mc-label-legend")
@@ -124,6 +149,10 @@ var MCSelectList = Class.extend({
           _this.model.entities.highlightEntity(d);
           view.selectAll(".vzb-mc-label-x")
             .classed("vzb-transparent", false);
+          setTimeout(function() {
+            view.selectAll(".vzb-mc-label-x")
+              .classed("vzb-transparent", true);
+          }, 2000)
         });
       });
   }
