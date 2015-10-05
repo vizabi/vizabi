@@ -91,7 +91,8 @@ BarChart.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: []
+    buttons: [],
+    buttons_expand: []
   }
 });
 
@@ -266,7 +267,8 @@ LineChart.define('default_options', {
         showTooltip: 0
       }
     },
-    buttons: []
+    buttons: [],
+    buttons_expand: []
   }
 });
 
@@ -364,7 +366,8 @@ BubbleChart.define('default_options', {
         dragging: true
       }
     },
-    buttons: []
+   buttons: [],
+   buttons_expand: []
   }
 });
 
@@ -423,7 +426,8 @@ PopByAge.define('default_options', {
   },
   language: language,
   ui: {
-    buttons: []
+    buttons: [],
+    buttons_expand: []
   }
 });
 
