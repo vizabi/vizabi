@@ -3,13 +3,15 @@ require('vizabi');
 require('vizabi/dist/vizabi.css');
 
 var Vizabi = window.Vizabi;
+
 var utils = Vizabi.utils;
 var Promise = Vizabi.Promise;
 
 var FILE_CACHED = {}; //caches files from this reader
 var FILE_REQUESTED = {}; //caches files from this reader
+// temporal hack for https problem
 
-Vizabi._globals.gapminder_paths.baseUrl = "http://static.gapminderdev.org/vizabi/master/preview/";
+Vizabi._globals.gapminder_paths.baseUrl = '/api/static/';
 Vizabi.Reader.extend('ws-json', {
 
   /**

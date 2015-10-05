@@ -33,10 +33,6 @@ module.exports = function (app) {
             $scope.activeTool = $routeParams.slug;
             // do not put data in $scope
             var tool = angular.copy($scope.tools[$scope.activeTool]);
-            tool.opts.data = {
-              path: '/tools/api/indicators/stub',
-              reader: 'ws-json'
-            };
 
             Vizabi.clearInstances();
 

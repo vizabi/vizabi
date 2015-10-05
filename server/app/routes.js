@@ -196,6 +196,10 @@ module.exports = function (app) {
   var base = path.join(BASEURL, 'api');
   app.use(base, router);
 
+  // one day
+  app.use('/api/static/local_data', compression(), cache.route({expire: 86400}), express.static(path.join(__dirname, '/fixtures')));
+
+  app.use('/api/static/data', compression(), cache.route({expire: 86400}), express.static(path.join(__dirname, '/fixtures')));
   /* APP Routes */
   app.get('/', function (req, res) {
     return res.sendfile('./client/dist' + BASEURL + 'redirect.html');
