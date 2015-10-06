@@ -11,15 +11,15 @@ var Layout = Events.extend({
   screen_profiles: {
     small: {
       min_width: 0,
-      max_width: 599
+      min_height: 0
     },
     medium: {
       min_width: 600,
-      max_width: 969
+      min_height: 400
     },
     large: {
-      min_width: 970,
-      max_width: Infinity
+      min_width: 1000,
+      min_height: 880
     }
   },
 
@@ -55,7 +55,7 @@ var Layout = Events.extend({
       //remove class
       utils.removeClass(_this._container, class_prefix + size);
       //find best fit
-      if(width >= range.min_width && width <= range.max_width) {
+      if(width >= range.min_width && height >= range.min_height) {
         _this._curr_profile = size;
       }
     });
