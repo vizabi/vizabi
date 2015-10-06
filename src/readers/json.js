@@ -126,7 +126,10 @@ var JSONReader = Reader.extend({
         data = utils.filterAny(data, where);
 
         //warn if filtering returns empty array
-        if(data.length == 0) utils.warn("data reader returns empty array, that's bad");
+        if(data.length == 0) {
+          p.reject("data reader returns empty array, that's bad");
+          return;
+        }
 
         //only selected items get returned
         data = data.map(function(row) {
