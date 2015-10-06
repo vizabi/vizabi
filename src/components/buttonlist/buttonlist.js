@@ -367,7 +367,7 @@ var ButtonList = Component.extend({
     btn.classed(class_active, true);
     dialog.classed(class_active, true);
 
-    if (this.getLayoutProfile() === 'large') {
+    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
       btn.classed(class_hide_btn, true);
       dialog.classed(class_expand_dialog, true);
     }
@@ -402,7 +402,6 @@ var ButtonList = Component.extend({
    * @param {String} id button id
    */
   closeDialog: function(id) {
-
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -416,7 +415,7 @@ var ButtonList = Component.extend({
     btn.classed(class_active, false);
     dialog.classed(class_active, false);
 
-    if (this.getLayoutProfile() === 'large') {
+    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
       btn.classed(class_hide_btn, false);
       dialog.classed(class_expand_dialog, false);
     }
@@ -433,8 +432,8 @@ var ButtonList = Component.extend({
    */
   closeAllDialogs: function(forceclose) {
     //remove classes
-    var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)"
-    var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
+    var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)";
+    var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)";
     var all_btns = this.element.selectAll(btnClass),
       all_dialogs = this.element.selectAll(dialogClass);
     if(forceclose)
