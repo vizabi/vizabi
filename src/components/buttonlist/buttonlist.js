@@ -242,7 +242,7 @@ var ButtonList = Component.extend({
     this._components_config = [];
     var button_list = this.model.ui.buttons;
     var details_btns = [],
-        button_expand = this.model.ui._data.buttons_expand;
+        button_expand = this.model.ui.buttons_expand;
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
