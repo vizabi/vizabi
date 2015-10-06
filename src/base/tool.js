@@ -2,6 +2,7 @@ import * as utils from 'utils'
 import Model from 'model'
 import Component from 'component'
 import Layout from 'layout'
+import { warn as warnIcon } from 'iconset'
 
 var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
@@ -76,9 +77,6 @@ var Tool = Component.extend({
       'load_start': function() {
         _this.beforeLoading();
       },
-      'load_error': function() {
-        _this.errorLoading();
-      },
       'ready': function(evt) {
         if(_this._ready) {
           _this.afterLoading();
@@ -120,6 +118,16 @@ var Tool = Component.extend({
       return;
     };
     this._super();
+  },
+
+  /**
+   * Visually display errors
+   */
+  error: function(opts) {
+
+    var msg = (opts && opts.type === "data") ? "Error loading chart data. <br>Please, try again soon." : "Error loading chart";
+
+    this.placeholder.innerHTML = '<div class="vzb-error-message"><h1>'+warnIcon+'</h1><p>'+msg+'</p></div>';
   },
 
   /**
