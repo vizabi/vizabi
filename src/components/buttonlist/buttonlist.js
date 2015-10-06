@@ -93,7 +93,7 @@ var ButtonList = Component.extend({
         ispin: false
       },
       'axesmc': {
-        title: "buttons/axesmc",
+        title: "buttons/axes_mc",
         icon: "axes",
         dialog: dialogs.axesmc,
         ispin: false
@@ -139,6 +139,7 @@ var ButtonList = Component.extend({
   readyOnce: function() {
 
     var _this = this;
+    var button_expand = this.model.ui.buttons_expand;
 
     this.element = d3.select(this.element);
     this.buttonContainerEl = this.element.append("div")
@@ -146,9 +147,9 @@ var ButtonList = Component.extend({
     this.dialogContainerEl = this.element.append("div")
       .attr("class", "vzb-buttonlist-container-dialogs");
 
-    // if buttons_expand has been passed in with boolean param or array must check and covert to array
-    if (this.model.ui.buttons_expand){
-      this.model.ui.buttons_expand = (typeof this.model.ui.buttons_expand === 'boolean' && this.model.ui.buttons_expand === true) ? this.model.ui.buttons : this.model.ui.buttons_expand;
+    // if button_expand has been passed in with boolean param or array must check and covert to array
+    if (button_expand){
+      this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
 
     //add buttons and render components
@@ -241,7 +242,7 @@ var ButtonList = Component.extend({
     this._components_config = [];
     var button_list = this.model.ui.buttons;
     var details_btns = [],
-        buttons_expand = this.model.ui.buttons_expand;
+        button_expand = this.model.ui.buttons_expand;
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
@@ -278,8 +279,8 @@ var ButtonList = Component.extend({
       .enter().append("button")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-btn';
-        if (_this.getLayoutProfile() === 'large' && buttons_expand && buttons_expand.length > 0) {
-          if (buttons_expand.indexOf(d.id) > -1) {
+        if (button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
             cls += ' vzb-dialog-side-btn';
           }
         }
@@ -299,8 +300,8 @@ var ButtonList = Component.extend({
       .enter().append("div")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-dialog';
-        if (_this.getLayoutProfile() === 'large' && buttons_expand && buttons_expand.length > 0) {
-          if (buttons_expand.indexOf(d.id) > -1) {
+        if (button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
             cls += ' vzb-dialog-side';
           }
         }
@@ -366,7 +367,7 @@ var ButtonList = Component.extend({
     btn.classed(class_active, true);
     dialog.classed(class_active, true);
 
-    if (this.getLayoutProfile() === 'large') {
+    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
       btn.classed(class_hide_btn, true);
       dialog.classed(class_expand_dialog, true);
     }
@@ -401,7 +402,6 @@ var ButtonList = Component.extend({
    * @param {String} id button id
    */
   closeDialog: function(id) {
-
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
@@ -415,7 +415,7 @@ var ButtonList = Component.extend({
     btn.classed(class_active, false);
     dialog.classed(class_active, false);
 
-    if (this.getLayoutProfile() === 'large') {
+    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
       btn.classed(class_hide_btn, false);
       dialog.classed(class_expand_dialog, false);
     }
@@ -432,8 +432,8 @@ var ButtonList = Component.extend({
    */
   closeAllDialogs: function(forceclose) {
     //remove classes
-    var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)"
-    var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)"
+    var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)";
+    var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)";
     var all_btns = this.element.selectAll(btnClass),
       all_dialogs = this.element.selectAll(dialogClass);
     if(forceclose)
