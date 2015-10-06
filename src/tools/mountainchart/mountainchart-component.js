@@ -5,7 +5,7 @@
 * Original code:
 * Angie https://github.com/angieskazka
 *
-* Contributions: 
+* Contributions:
 * IncoCode https://github.com/IncoCode/
 * Arthur https://github.com/arthurcamara1
 *
@@ -24,7 +24,7 @@ import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';
 
 var NEGLIGABLE_HEIGHT = 1000000;
-    
+
 //MOUNTAIN CHART COMPONENT
 var MountainChartComponent = Component.extend({
 
@@ -139,7 +139,7 @@ var MountainChartComponent = Component.extend({
         };
 
         this._super(config, context);
-        
+
         this._math = new MountainChartMath(this);
         this._export = new Exporter(this);
         this._export
@@ -147,7 +147,7 @@ var MountainChartComponent = Component.extend({
             .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
         this._probe = new Probe(this);
         this._selectlist = new Selectlist(this);
-        
+
         // define path generator
         this.area = d3.svg.area()
             .interpolate("basis")
@@ -216,7 +216,7 @@ var MountainChartComponent = Component.extend({
 
         var yearNow = _this.model.time.value.getFullYear();
         var yearEnd = _this.model.time.end.getFullYear();
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -250,8 +250,8 @@ var MountainChartComponent = Component.extend({
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
-                _this._probe.redraw({ 
-                    level: _this.xScale.invert(d3.mouse(this)[0]), 
+                _this._probe.redraw({
+                    level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
                 });
             })
@@ -282,10 +282,10 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
-        
+
         this.updateUIStrings();
         this.updateIndicators();
         this.updateEntities();
@@ -302,7 +302,7 @@ var MountainChartComponent = Component.extend({
         this.updateDoubtOpacity();
         this._probe.redraw();
     },
-    
+
     updateSize: function (meshLength) {
 
         var margin, infoElHeight;
@@ -380,12 +380,12 @@ var MountainChartComponent = Component.extend({
         if(this.infoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
         var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
-    
+
         this.infoEl.select('svg')
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
-        this.infoEl.attr('transform', 'translate(' 
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+        this.infoEl.attr('transform', 'translate('
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
             + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
         }
 
@@ -633,6 +633,14 @@ var MountainChartComponent = Component.extend({
         this.selectList.classed("vzb-highlight", function (d) {
             return _this.model.entities.isHighlighted(d);
         });
+        this.selectList.each(function (d, i) {
+          d3.select(this).selectAll(".vzb-mc-label-x")
+            .classed("vzb-invisible", function(n) {
+              return !_this.model.entities.isHighlighted(d);
+            });
+
+        });
+
     },
 
     selectEntities: function () {
