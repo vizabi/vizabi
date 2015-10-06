@@ -5,7 +5,7 @@
 * Original code:
 * Angie https://github.com/angieskazka
 *
-* Contributions: 
+* Contributions:
 * IncoCode https://github.com/IncoCode/
 * Arthur https://github.com/arthurcamara1
 *
@@ -15,7 +15,7 @@
 import * as utils from 'base/utils';
 import globals from 'base/globals';
 import Component from 'base/component';
-import { warn as iconWarn } from 'base/iconset';
+import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
@@ -24,7 +24,7 @@ import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';
 
 var NEGLIGABLE_HEIGHT = 1000000;
-    
+
 //MOUNTAIN CHART COMPONENT
 var MountainChartComponent = Component.extend({
 
@@ -139,7 +139,7 @@ var MountainChartComponent = Component.extend({
         };
 
         this._super(config, context);
-        
+
         this._math = new MountainChartMath(this);
         this._export = new Exporter(this);
         this._export
@@ -147,7 +147,7 @@ var MountainChartComponent = Component.extend({
             .deleteClasses(["vzb-mc-mountains-mergestacked", "vzb-mc-mountains-mergegrouped", "vzb-mc-mountains", "vzb-mc-year", "vzb-mc-mountains-labels", "vzb-mc-axis-labels"]);
         this._probe = new Probe(this);
         this._selectlist = new Selectlist(this);
-        
+
         // define path generator
         this.area = d3.svg.area()
             .interpolate("basis")
@@ -216,7 +216,7 @@ var MountainChartComponent = Component.extend({
 
         var yearNow = _this.model.time.value.getFullYear();
         var yearEnd = _this.model.time.end.getFullYear();
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -250,8 +250,8 @@ var MountainChartComponent = Component.extend({
         this.eventAreaEl
             .on("mousemove", function () {
                 if (_this.model.time.dragging) return;
-                _this._probe.redraw({ 
-                    level: _this.xScale.invert(d3.mouse(this)[0]), 
+                _this._probe.redraw({
+                    level: _this.xScale.invert(d3.mouse(this)[0]),
                     full: true
                 });
             })
@@ -282,10 +282,10 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-        
+
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
-        
+
         this.updateUIStrings();
         this.updateIndicators();
         this.updateEntities();
@@ -302,21 +302,21 @@ var MountainChartComponent = Component.extend({
         this.updateDoubtOpacity();
         this._probe.redraw();
     },
-    
+
     updateSize: function (meshLength) {
 
-        var margin;
+        var margin, infoElHeight;
         var padding = 2;
 
         switch (this.getLayoutProfile()) {
             case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 25 };
+                margin = { top: 10, right: 10, left: 10, bottom: 25 }; infoElHeight = 16;
                 break;
             case "medium":
-                margin = { top: 20, right: 20, left: 20, bottom: 30 };
+                margin = { top: 20, right: 20, left: 20, bottom: 30 }; infoElHeight = 20;
                 break;
             case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 35 };
+                margin = { top: 30, right: 30, left: 30, bottom: 35 }; infoElHeight = 22;
                 break;
         }
 
@@ -377,12 +377,16 @@ var MountainChartComponent = Component.extend({
             .select("text")
             .attr("dx", warnBB.height * 1.5);
 
-        if (this.infoEl.select("text").node()) {
-            var titleH = this.infoEl.select("text").node().getBBox().height || 0;
-            var titleW = this.yTitleEl.select("text").node().getBBox().width || 0;
-            this.infoEl.attr("transform", "translate(" + (titleW + titleH * 1.0) + "," + (margin.top - titleH * 0.3) + ")");
-            this.infoEl.select("text").attr("dy", "0.1em")
-            this.infoEl.select("circle").attr("r", titleH / 2);
+        if(this.infoEl.select('svg').node()) {
+        var titleBBox = this.yTitleEl.node().getBBox();
+        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+
+        this.infoEl.select('svg')
+            .attr("width", infoElHeight)
+            .attr("height", infoElHeight)
+        this.infoEl.attr('transform', 'translate('
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
+            + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
         }
 
         this.eventAreaEl
@@ -411,6 +415,9 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
+        this.infoEl
+            .html(iconQuestion)
+            .select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function () {
@@ -626,6 +633,14 @@ var MountainChartComponent = Component.extend({
         this.selectList.classed("vzb-highlight", function (d) {
             return _this.model.entities.isHighlighted(d);
         });
+        this.selectList.each(function (d, i) {
+          d3.select(this).selectAll(".vzb-mc-label-x")
+            .classed("vzb-invisible", function(n) {
+              return !_this.model.entities.isHighlighted(d);
+            });
+
+        });
+
     },
 
     selectEntities: function () {

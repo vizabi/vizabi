@@ -32,10 +32,16 @@ var MCSelectList = Class.extend({
       .attr("class", "vzb-mc-label")
       .each(function (d, i) {
         var label = d3.select(this);
+        var deselectButtonOuter = "circle";
+        var deselectButtonText = "x";
+        if (utils.isTouchDevice()) {
+          deselectButtonOuter = "rect";
+          deselectButtonText = "Deselect";
+        }
         label.append("circle").attr('class', 'vzb-mc-label-legend');
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
-        label.append("circle").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-transparent")
+        label.append(deselectButtonOuter).attr("class", "vzb-mc-label-x vzb-label-shadow vzb-invisible")
           .on("click", function (d, i) {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
@@ -48,19 +54,15 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
-        label.append("text").attr("class", "vzb-mc-label-x vzb-transparent").text("x");
+          label.append("text").attr("class", "vzb-mc-label-x vzb-invisible").text(deselectButtonText);
       })
       .on("mousemove", function (d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.entities.highlightEntity(d);
-        d3.select(this).selectAll(".vzb-mc-label-x")
-          .classed("vzb-transparent", false);
       })
       .on("mouseout", function (d, i) {
         if (utils.isTouchDevice()) return;
         _this.model.entities.clearHighlighted();
-        d3.select(this).selectAll(".vzb-mc-label-x")
-          .classed("vzb-transparent", true);
 
       })
       .on("click", function (d, i) {
@@ -75,7 +77,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height;
+    var fontHeight = sample[0][0].getBBox().height * 0.7;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
@@ -103,15 +105,34 @@ var MCSelectList = Class.extend({
           .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
 
         var contentBBox = text[0][0].getBBox();
-        view.select("text.vzb-mc-label-x")
-          .attr("x", contentBBox.width + fontHeight * 1.4)
-          .attr("y", fontHeight / 3.9);
 
-        view.select("circle.vzb-mc-label-x")
-          .attr("r", fontHeight / 2.5)
-          .attr("cx", contentBBox.width + fontHeight * 1.4)
-          .attr("cy", fontHeight / 4);
+        if (utils.isTouchDevice()) {
+          var label = view.selectAll("text.vzb-mc-label-x");
+          var labelBBox = label[0][0].getBBox();
+          view.select("text.vzb-mc-label-x")
+            .classed("vzb-revert-color", true)
+            .attr("x", contentBBox.width + contentBBox.height * 1.12 + labelBBox.width/2)
+            .attr("y", contentBBox.height * 0.55);
 
+          view.select("rect.vzb-mc-label-x")
+            .classed("vzb-revert-color", true)
+            .attr("width", labelBBox.width + contentBBox.height * 0.6)
+            .attr("height", contentBBox.height)
+            .attr("x", contentBBox.width + contentBBox.height * 0.9)
+            .attr("y", 0)
+            .attr("rx", contentBBox.height * 0.25)
+            .attr("ry", contentBBox.height * 0.25);
+        } else {
+          view.select("text.vzb-mc-label-x")
+            .attr("x", contentBBox.width + contentBBox.height * 1.1)
+            .attr("y", 0)
+            .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
+
+          view.select("circle.vzb-mc-label-x")
+            .attr("r", contentBBox.height / 2.5)
+            .attr("cx", contentBBox.width + contentBBox.height * 1.1)
+            .attr("cy", 0);
+        }
 
         view.select("circle.vzb-mc-label-legend")
           .attr("r", fontHeight / 3)
@@ -122,8 +143,9 @@ var MCSelectList = Class.extend({
         view.onTap(function (d, i) {
           d3.event.stopPropagation();
           _this.model.entities.highlightEntity(d);
-          view.selectAll(".vzb-mc-label-x")
-            .classed("vzb-transparent", false);
+          setTimeout(function() {
+            _this.model.entities.unhighlightEntity(d);
+          }, 2000)
         });
       });
   }
