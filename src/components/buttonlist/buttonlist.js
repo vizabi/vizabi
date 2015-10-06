@@ -142,10 +142,10 @@ var ButtonList = Component.extend({
     var button_expand = this.model.ui.buttons_expand;
 
     this.element = d3.select(this.element);
-    this.buttonContainerEl = this.element.append("div")
-      .attr("class", "vzb-buttonlist-container-buttons");
     this.dialogContainerEl = this.element.append("div")
       .attr("class", "vzb-buttonlist-container-dialogs");
+    this.buttonContainerEl = this.element.append("div")
+      .attr("class", "vzb-buttonlist-container-buttons");
 
     // if button_expand has been passed in with boolean param or array must check and covert to array
     if (button_expand){
