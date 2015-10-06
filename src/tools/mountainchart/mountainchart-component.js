@@ -305,18 +305,18 @@ var MountainChartComponent = Component.extend({
     
     updateSize: function (meshLength) {
 
-        var margin;
+        var margin, infoElHeight;
         var padding = 2;
 
         switch (this.getLayoutProfile()) {
             case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 25 };
+                margin = { top: 10, right: 10, left: 10, bottom: 25 }; infoElHeight = 16;
                 break;
             case "medium":
-                margin = { top: 20, right: 20, left: 20, bottom: 30 };
+                margin = { top: 20, right: 20, left: 20, bottom: 30 }; infoElHeight = 20;
                 break;
             case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 35 };
+                margin = { top: 30, right: 30, left: 30, bottom: 35 }; infoElHeight = 22;
                 break;
         }
 
@@ -379,15 +379,14 @@ var MountainChartComponent = Component.extend({
 
         if(this.infoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
-        var titleH = titleBBox.height;
         var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
     
         this.infoEl.select('svg')
-            .attr("width", titleH)
-            .attr("height", titleH)
+            .attr("width", infoElHeight)
+            .attr("height", infoElHeight)
         this.infoEl.attr('transform', 'translate(' 
-            + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' 
-            + (titleBBox.y + translate[1] + titleH * 0.05) + ')');
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+            + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
         }
 
         this.eventAreaEl

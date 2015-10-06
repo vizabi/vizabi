@@ -912,7 +912,8 @@ var BubbleChartComp = Component.extend({
         },
         padding: 2,
         minRadius: 0.5,
-        maxRadius: 40
+        maxRadius: 40,
+        infoElHeight: 16
       },
       "medium": {
         margin: {
@@ -923,7 +924,8 @@ var BubbleChartComp = Component.extend({
         },
         padding: 2,
         minRadius: 1,
-        maxRadius: 55
+        maxRadius: 55,
+        infoElHeight: 20
       },
       "large": {
         margin: {
@@ -934,13 +936,14 @@ var BubbleChartComp = Component.extend({
         },
         padding: 2,
         minRadius: 1,
-        maxRadius: 70
+        maxRadius: 70,
+        infoElHeight: 22
       }
     };
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     var margin = this.activeProfile.margin;
-
+    var infoElHeight = this.activeProfile.infoElHeight;
 
     //stage
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -1065,28 +1068,26 @@ var BubbleChartComp = Component.extend({
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
-      var titleH = titleBBox.height;
       var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
       this.yInfoEl.select('svg')
-        .attr("width", titleH)
-        .attr("height", titleH)
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight)
       this.yInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' 
-        + (titleBBox.y + translate[1] + titleH * 0.05) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
-      var titleH = titleBBox.height;
       var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
     
       this.xInfoEl.select('svg')
-        .attr("width", titleH)
-        .attr("height", titleH)
+        .attr("width", infoElHeight)
+        .attr("height", infoElHeight)
       this.xInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + titleH * 0.4) + ',' 
-        + (titleBBox.y + translate[1] + titleH * 0.05) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
    }
 
   },
