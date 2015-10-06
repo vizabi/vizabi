@@ -72,7 +72,8 @@ var TimeSlider = Component.extend({
     //define expected models/hooks for this component
     this.model_expects = [{
       name: "time",
-      type: "time"
+      type: "time",
+      speed: "speed"
     }];
 
     var _this = this;
@@ -121,19 +122,18 @@ var TimeSlider = Component.extend({
 
     this.getValueWidth = utils.memoize(this.getValueWidth);
     this._setTime = utils.throttle(this._setTime, 50);
+    this._setSpeed = utils.throttle(this._setSpeed, 1000);
   },
 
   //template is ready
-  readyOnce: function() {
+  readyOnce: function () {
 
     if(this._splash) return;
 
     var _this = this;
 
     //DOM to d3
-    this.el = (this.el) ? this.el : d3.select(this.element);
-    this.element = this.el;
-
+    this.element = d3.select(this.element);
     this.element.classed(class_loading, false);
 
     //html elements
@@ -144,11 +144,39 @@ var TimeSlider = Component.extend({
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
 
+    //html elements for the speed_slider
+    this.speed_slider_outer = this.element.select(".vzb-ts-speed-slider");
+    this.speed_slider = this.speed_slider_outer.select("g");
+    this.speed_axis = this.element.select(".vzb-ts-speed-slider-axis");
+    this.speed_slide = this.element.select(".vzb-ts-speed-slider-slide");
+    this.speed_handle = this.speed_slide.select(".vzb-ts-speed-slider-handle");
+    this.speed_valueText = this.speed_slide.select('.vzb-speed-ts-slider-value');
+
+    /*var speedContainer = this.element.select(".vzb-ts-speed-slider-wrapper");
+    var icon_speed_slow = speedContainer.append("div")
+              .attr("class", "vzb-speed-slow vzb-speed")
+              .html(iconset['snail-slow']);
+
+    var iconSpeedFast = speedContainer.append("div")
+              .attr("class", "vzb-speed-fast vzb-speed")
+              .html(iconset['cheetah-fast']);
+*/
+
     //Scale
     this.xScale = d3.time.scale()
       .clamp(true);
+
+    //Speed Scale
+    this.xSpeedScale = d3.scale.linear()
+      .clamp(true);
+
     //Axis
     this.xAxis = d3.svg.axis()
+      .orient("bottom")
+      .tickSize(0);
+
+    //Speed Axis
+    this.xSpeedAxis = d3.svg.axis()
       .orient("bottom")
       .tickSize(0);
 
@@ -158,27 +186,45 @@ var TimeSlider = Component.extend({
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
 
+    var speedBrushed = _this._getSpeedBrushed(),
+      speedBrushedEnd = _this._getSpeedBrushedEnd();
+
     //Brush for dragging
     this.brush = d3.svg.brush()
       .x(this.xScale)
       .extent([0, 0])
-      .on("brush", function() {
+      .on("brush", function () {
         brushed.call(this);
       })
-      .on("brushend", function() {
+      .on("brushend", function () {
         brushedEnd.call(this);
+      });
+
+    //Speed Brush for dragging
+    this.speed_brush = d3.svg.brush()
+      .x(this.xSpeedScale)
+      .extent([0, 0])
+      .on("brush", function () {
+        speedBrushed.call(this);
+      })
+      .on("brushend", function () {
+        speedBrushedEnd.call(this);
       });
 
     //Slide
     this.slide.call(this.brush);
+    this.speed_slide.call(this.speed_brush);
     this.slide.selectAll(".extent,.resize")
       .remove();
 
+    this.speed_slide.selectAll(".extent,.resize")
+      .remove();
 
-    this.parent.on('myEvent', function(evt, arg) {
+
+    this.parent.on('myEvent', function (evt, arg) {
       var layoutProfile = _this.getLayoutProfile();
 
-      if(arg.profile && arg.profile.margin) {
+      if (arg.profile && arg.profile.margin) {
         profiles[layoutProfile].margin = arg.profile.margin;
       }
 
@@ -192,32 +238,36 @@ var TimeSlider = Component.extend({
   },
 
   //template and model are ready
-  ready: function() {
-
+  ready: function () {
     if(this._splash) return;
 
     var play = this.element.select(".vzb-ts-btn-play");
     var pause = this.element.select(".vzb-ts-btn-pause");
     var _this = this;
     var time = this.model.time;
+    var speed = this.model.time.speed;
 
-    play.on('click', function() {
+    play.on('click', function () {
       _this._dragging = false;
       _this.model.time.play();
     });
 
-    pause.on('click', function() {
+    pause.on('click', function () {
       _this._dragging = false;
       _this.model.time.pause();
-    }); //format
+    });//format
 
     var fmt = time.formatOutput || time_formats[time.unit];
     this.format = d3.time.format(fmt);
 
     this.changeLimits();
+    this.changeSpeedLimits();
     this.changeTime();
+    this.changeSpeed();
     this.resize();
     this._setHandle(this.model.time.playing);
+    this._setSpeedHandle(this.model.time.playing);
+    //this._toggleSpeedSlider();
   },
 
   changeLimits: function() {
@@ -230,6 +280,16 @@ var TimeSlider = Component.extend({
       .tickFormat(this.format);
   },
 
+  changeSpeedLimits: function () {
+      var minValue = this.model.time.speedStart;
+      var maxValue = this.model.time.speedEnd;
+      //scale
+      this.xSpeedScale.domain([minValue, maxValue]);
+      //axis
+      this.xSpeedAxis.tickValues([minValue, maxValue])
+        .tickFormat(this.format);
+    },
+
   changeTime: function() {
     this.ui.format = this.model.time.unit;
     //time slider should always receive a time model
@@ -238,47 +298,70 @@ var TimeSlider = Component.extend({
     this._optionClasses();
   },
 
+  changeSpeed: function () {
+    var speed = this.model.time.speed;
+    //special classes
+    this._optionClasses();
+    },
+
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function() {
+   resize: function () {
 
-    this.model.time.pause();
+     this.model.time.pause();
 
-    this.profile = profiles[this.getLayoutProfile()];
+     this.profile = profiles[this.getLayoutProfile()];
 
-    var slider_w = parseInt(this.slider_outer.style("width"), 10);
-    var slider_h = parseInt(this.slider_outer.style("height"), 10);
-    this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
-    this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
-    var _this = this;
+     var slider_w = parseInt(this.slider_outer.style("width"), 10);
+     var slider_h = parseInt(this.slider_outer.style("height"), 10);
+     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
+     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
+     var _this = this;
 
-    //translate according to margins
-    this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
+     //translate according to margins
+     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-    //adjust scale width if it was not set manually before
-    if(this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+     this.speed_slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top/2 + ")");
 
-    //adjust axis with scale
-    this.xAxis = this.xAxis.scale(this.xScale)
-      .tickPadding(this.profile.label_spacing);
+     //adjust scale width if it was not set manually before
+     if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
-    this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
-      .call(this.xAxis);
+     if (this.xSpeedScale.range()[1] = 1) this.xSpeedScale.range([0, this.width/6]);
 
-    this.slide.select(".background")
-      .attr("height", this.height);
+     //adjust axis with scale
+     this.xAxis = this.xAxis.scale(this.xScale)
+       .tickPadding(this.profile.label_spacing);
 
-    //size of handle
-    this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
-      .attr("r", this.profile.radius);
+     this.xSpeedAxis = this.xSpeedAxis.scale(this.xSpeedScale)
+       .tickFormat("");
 
-    this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
+       .call(this.xAxis);
 
-    this._setHandle();
+     this.speed_axis.attr("transform", "translate(0," + this.height / 2 + ")")
+       .call(this.xSpeedAxis);
 
-  },
+     this.slide.select(".background")
+       .attr("height", this.height);
+
+     this.speed_slide.select(".background")
+       .attr("height", this.height);
+
+     //size of handle
+     this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
+       .attr("r", this.profile.radius);
+
+     this.speed_handle.attr("transform", "translate(0," + this.height / 2 + ")")
+       .attr("r", this.profile.radius - 2);
+
+     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+
+     this._setHandle();
+     this._setSpeedHandle();
+
+   },
 
   /**
    * Returns width of slider text value.
@@ -350,6 +433,66 @@ var TimeSlider = Component.extend({
   },
 
   /**
+   * Gets brushed function to be executed when dragging
+   * @returns {Function} brushed function
+   */
+  _getSpeedBrushed: function () {
+    var _this = this;
+    return function () {
+      _this.model.time.pause();
+
+      if (!_this._blockUpdate) {
+        _this._optionClasses();
+        _this._blockUpdate = true;
+        _this.element.classed(class_dragging, true);
+      }
+
+      var value = _this.speed_brush.extent()[0];
+      //set brushed properties
+      if (d3.event.sourceEvent) {
+        _this._dragging = true;
+        //_this.model.time.dragStart();
+        var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
+        value = _this.xSpeedScale.invert(posX);
+
+        var layoutProfile = _this.getLayoutProfile();
+        var textWidth = _this.getValueWidth(layoutProfile, value);
+        var maxPosX = _this.sliderWidth - textWidth / 2;
+        if (posX > maxPosX)
+          posX = maxPosX;
+        else if (posX < 0)
+          posX = 0;
+
+        //set handle position
+        _this.speed_handle.attr("cx", posX);
+        _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
+        _this.valueText.text(Math.round(value).toFixed(2));
+      }
+      //set time according to dragged position
+      if (value - _this.model.time.speed.value !== 0) {
+        _this._setSpeed(value);
+      }
+    };
+  },
+
+  /**
+   * Gets brushedEnd function to be executed when dragging ends
+   * @returns {Function} brushedEnd function
+   */
+  _getSpeedBrushedEnd: function () {
+    var _this = this;
+    return function () {
+      _this._dragging = false;
+      _this.model.time.dragStop();
+      _this._blockUpdate = false;
+      _this.element.classed(class_dragging, false);
+      _this.model.time.pause();
+      _this.model.time.snap();
+    };
+
+  },
+
+  /**
    * Sets the handle to the correct position
    * @param {Boolean} transition whether to use transition or not
    */
@@ -388,6 +531,44 @@ var TimeSlider = Component.extend({
   },
 
   /**
+   * Sets the handle to the correct position
+   * @param {Boolean} transition whether to use transition or not
+   */
+  _setSpeedHandle: function (transition) {
+    var value = Math.round(this.model.time.speed).toFixed(2);
+    this.speed_slide.call(this.speed_brush.extent([value, value]));
+
+    this.valueText.text(value);
+
+    var old_pos = this.speed_handle.attr("cx");
+    var new_pos = this.xSpeedScale(value);
+
+    if(old_pos==null) old_pos = new_pos;
+    var speed = new_pos > old_pos ? this.model.time.speed : 0;
+
+    if (transition) {
+      this.speed_handle.attr("cx", old_pos)
+        .transition()
+        .duration(speed)
+        .ease("linear")
+        .attr("cx", new_pos);
+    }
+    else {
+      // issues: 445 & 456
+      this.speed_handle.transition()
+        .duration(0)
+        .attr("cx", new_pos);
+      d3.timer.flush();
+    }
+
+    this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
+      .transition()
+      .duration(speed)
+      .ease("linear")
+      .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
+  },
+
+  /**
    * Sets the current time model to time
    * @param {number} time The time
    */
@@ -402,6 +583,17 @@ var TimeSlider = Component.extend({
     //this._updTime = now;
 
     _this.model.time.value = time;
+  },
+
+    /**
+   * Sets the current speed model to speed
+   * @param {number} time The time
+   */
+  _setSpeed: function (speed) {
+    //update state
+    var _this = this;
+
+    _this.model.time.speed = speed;
   },
 
   /**
@@ -425,6 +617,24 @@ var TimeSlider = Component.extend({
     this.element.classed(class_show_value, show_value);
     this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
     this.element.classed(class_axis_aligned, axis_aligned);
+  },
+
+  /*
+   * Shows and hides Speed Slider
+   */
+  _toggleSpeedSlider: function () {
+    //show/hide speed slider
+
+    var speed_slider_outer = this.element.select(".vzb-ts-speed-slider").select("g");
+    //default value
+    speed_slider_outer.style("opacity", 0);
+
+    speed_slider_outer.on("mouseover", function(){
+        speed_slider_outer.style("opacity", 1);
+    });
+    speed_slider_outer.on("mouseout", function(){
+        speed_slider_outer.style("opacity", 0);
+    });
   }
 });
 
