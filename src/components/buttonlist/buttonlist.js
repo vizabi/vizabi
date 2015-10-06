@@ -93,7 +93,7 @@ var ButtonList = Component.extend({
         ispin: false
       },
       'axesmc': {
-        title: "buttons/axes_mc",
+        title: "buttons/axesmc",
         icon: "axes",
         dialog: dialogs.axesmc,
         ispin: false
