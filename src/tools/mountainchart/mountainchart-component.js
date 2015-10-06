@@ -310,13 +310,13 @@ var MountainChartComponent = Component.extend({
 
         switch (this.getLayoutProfile()) {
             case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 25 }, infoElHeight = 16;
+                margin = { top: 10, right: 10, left: 10, bottom: 25 }; infoElHeight = 16;
                 break;
             case "medium":
-                margin = { top: 20, right: 20, left: 20, bottom: 30 }, infoElHeight = 20;
+                margin = { top: 20, right: 20, left: 20, bottom: 30 }; infoElHeight = 20;
                 break;
             case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 35 }, infoElHeight = 22;
+                margin = { top: 30, right: 30, left: 30, bottom: 35 }; infoElHeight = 22;
                 break;
         }
 

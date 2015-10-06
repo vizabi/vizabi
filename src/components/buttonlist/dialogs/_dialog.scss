@@ -12,6 +12,7 @@
   text-align: left;
   display: block;
   visibility: hidden;
+  overflow: hidden;
   &.vzb-active {
     @include position(absolute, null null 45px 50%);
     z-index: 20;
@@ -26,7 +27,8 @@
     font-family: $vzb-font-family-alt;
     font-size: $vzb-font-size-small;
     color: $vzb-color-grey-dark;
-    padding: 0px 25px 10px 25px;
+    padding: 0px 40px 5px 20px;
+    margin-right: -20px;
     max-height: $vzb-dialog-content-height;
     overflow: hidden;
     overflow-y: auto;
