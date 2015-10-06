@@ -93,7 +93,7 @@ var ButtonList = Component.extend({
         ispin: false
       },
       'axesmc': {
-        title: "buttons/axesmc",
+        title: "buttons/axes_mc",
         icon: "axes",
         dialog: dialogs.axesmc,
         ispin: false
@@ -139,6 +139,7 @@ var ButtonList = Component.extend({
   readyOnce: function() {
 
     var _this = this;
+    var button_expand = this.model.ui.buttons_expand;
 
     this.element = d3.select(this.element);
     this.buttonContainerEl = this.element.append("div")
@@ -146,9 +147,9 @@ var ButtonList = Component.extend({
     this.dialogContainerEl = this.element.append("div")
       .attr("class", "vzb-buttonlist-container-dialogs");
 
-    // if buttons_expand has been passed in with boolean param or array must check and covert to array
-    if (this.model.ui.buttons_expand){
-      this.model.ui.buttons_expand = (typeof this.model.ui.buttons_expand === 'boolean' && this.model.ui.buttons_expand === true) ? this.model.ui.buttons : this.model.ui.buttons_expand;
+    // if button_expand has been passed in with boolean param or array must check and covert to array
+    if (button_expand){
+      this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
 
     //add buttons and render components
@@ -241,7 +242,7 @@ var ButtonList = Component.extend({
     this._components_config = [];
     var button_list = this.model.ui.buttons;
     var details_btns = [],
-        buttons_expand = this.model.ui.buttons_expand;
+        button_expand = this.model.ui._data.buttons_expand;
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
@@ -278,8 +279,8 @@ var ButtonList = Component.extend({
       .enter().append("button")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-btn';
-        if (_this.getLayoutProfile() === 'large' && buttons_expand && buttons_expand.length > 0) {
-          if (buttons_expand.indexOf(d.id) > -1) {
+        if (button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
             cls += ' vzb-dialog-side-btn';
           }
         }
@@ -299,8 +300,8 @@ var ButtonList = Component.extend({
       .enter().append("div")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-dialog';
-        if (_this.getLayoutProfile() === 'large' && buttons_expand && buttons_expand.length > 0) {
-          if (buttons_expand.indexOf(d.id) > -1) {
+        if (button_expand && button_expand.length > 0) {
+          if (button_expand.indexOf(d.id) > -1) {
             cls += ' vzb-dialog-side';
           }
         }
