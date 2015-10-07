@@ -169,6 +169,7 @@ var TimeModel = Model.extend({
     this.dragging = false;
   },
 
+
   /**
    * gets time range
    * @returns range between start and end

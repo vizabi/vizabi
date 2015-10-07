@@ -308,10 +308,13 @@ var TimeSlider = Component.extend({
       //set brushed properties
       if(d3.event.sourceEvent) {
         _this._dragging = true;
-        _this.model.time.dragStart();
+        setTimeout(function() {
+          _this.model.time.dragStart();
+          if (_this._dragging) {
+          }
+        }, 500);
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
-
         var layoutProfile = _this.getLayoutProfile();
         var textWidth = _this.getValueWidth(layoutProfile, value);
         var maxPosX = _this.sliderWidth - textWidth / 2;
@@ -341,11 +344,13 @@ var TimeSlider = Component.extend({
     var _this = this;
     return function() {
       _this._dragging = false;
-      _this.model.time.dragStop();
       _this._blockUpdate = false;
       _this.element.classed(class_dragging, false);
       _this.model.time.pause();
       _this.model.time.snap();
+      if (_this.model.time.dragging) {
+      }
+      _this.model.time.dragStop();
     };
   },
 
