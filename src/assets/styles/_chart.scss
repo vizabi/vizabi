@@ -73,28 +73,20 @@
 
 
 %vzb-chart-info {
-  opacity: 0.3;    
-  text {
+  opacity: 0.3;
+  pointer-events: visible;
+  cursor: pointer;
+    
+  path {
     fill: $vzb-color-primary;
-    pointer-events: none;
-    dominant-baseline: middle;
-    text-anchor: middle;
-  } 
+    stroke: none;
+  }
   circle {
     fill: none;
-    pointer-events: visible;
     stroke: $vzb-color-primary;
-    stroke-width: 2;
-    cursor: pointer;
   }
-  &:hover{ 
-    opacity: 1;
-    text {fill: $vzb-color-primary;}
-    circle {
-        fill: $vzb-color-grey-light; 
-        stroke: $vzb-color-primary;
-    }
-  }
+    
+  &:hover{opacity: 1}
 }
 
 %vzb-chart-tooltip{
