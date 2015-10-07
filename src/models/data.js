@@ -8,6 +8,15 @@ import Model from 'base/model';
 var DataModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    reader: "csv",
+    splash: false
+  },
+
+
+  /**
    * Initializes the data model.
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -16,10 +25,7 @@ var DataModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "data";
-    values = utils.extend({
-      reader: "csv",
-      splash: false
-    }, values);
+    values = utils.extend(this._defaults, values);
 
     //same constructor as parent, with same arguments
     this._super(values, parent, bind);

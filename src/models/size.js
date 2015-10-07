@@ -8,6 +8,16 @@ import Model from 'base/model';
 var SizeModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "value",
+    min: 0,
+    max: 1,
+    which: undefined
+  },
+
+  /**
    * Initializes the size hook
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -16,12 +26,7 @@ var SizeModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "size";
-    values = utils.extend({
-      use: "value",
-      min: 0,
-      max: 1,
-      which: undefined
-    }, values);
+    values = utils.extend(this._defaults, values);
     this._super(values, parent, bind);
   },
 

@@ -4,6 +4,14 @@ import Model from 'base/model';
 var LanguageModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    id: "en",
+    strings: {}
+  },
+
+  /**
    * Initializes the language model.
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -13,10 +21,7 @@ var LanguageModel = Model.extend({
 
     this._type = "language";
     //default values for state model
-    values = utils.extend({
-      id: "en",
-      strings: {}
-    }, values);
+    values = utils.extend(this._defaults, values);
 
     //same constructor, with same arguments
     this._super(values, parent, bind);

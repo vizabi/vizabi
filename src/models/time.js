@@ -22,6 +22,36 @@ var formatters = utils.values(time_formats);
 var TimeModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    dim: "time",
+    value: "1800",
+    start: "1800",
+    end: "2014",
+    playable: true,
+    playing: false,
+    loop: false,
+    round: 'floor',
+    speed: 300,
+    unit: "year",
+    step: 1, //step must be integer
+    adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
+    formatInput: "%Y", //defaults to year format
+    xLogStops: [], //TODO: remove from here. only for mountain chart
+    yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
+    record: false,
+    dragging: false,
+    probeX: 0, //TODO: remove from here. only for mountain chart
+    tailFatX: 1, //TODO: remove from here. only for mountain chart
+    tailCutX: 0, //TODO: remove from here. only for mountain chart
+    tailFade: 1, //TODO: remove from here. only for mountain chart
+    xScaleFactor: 1, //TODO: remove from here. only for mountain chart
+    xScaleShift: 0, //TODO: remove from here. only for mountain chart
+    xPoints: 50 //TODO: remove from here. only for mountain chart
+  },
+
+  /**
    * Initializes the language model.
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -31,33 +61,7 @@ var TimeModel = Model.extend({
 
     this._type = "time";
     //default values for time model
-    values = utils.extend({
-      dim: "time",
-      value: "1800",
-      start: "1800",
-      end: "2014",
-      playable: true,
-      playing: false,
-      loop: false,
-      round: 'floor',
-      speed: 300,
-      unit: "year",
-      step: 1, //step must be integer
-      adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
-      formatInput: "%Y", //defaults to year format
-      xLogStops: [], //TODO: remove from here. only for mountain chart
-      yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
-      record: false,
-      dragging: false,
-      probeX: 0, //TODO: remove from here. only for mountain chart
-      tailFatX: 1, //TODO: remove from here. only for mountain chart
-      tailCutX: 0, //TODO: remove from here. only for mountain chart
-      tailFade: 1, //TODO: remove from here. only for mountain chart
-      xScaleFactor: 1, //TODO: remove from here. only for mountain chart
-      xScaleShift: 0, //TODO: remove from here. only for mountain chart
-      xPoints: 50 //TODO: remove from here. only for mountain chart
-    }, values);
-
+    values = utils.extend(this._defaults, values);
     values.formatOutput = values.formatOutput || values.formatInput;
 
     //same constructor

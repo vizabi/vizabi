@@ -17,6 +17,17 @@ var time_formats = {
 };
 
 var AxisModel = Model.extend({
+
+  /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "value",
+    which: undefined,
+    min: null,
+    max: null
+  },
+
   /**
    * Initializes the color hook
    * @param {Object} values The initial values of this model
@@ -26,12 +37,7 @@ var AxisModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "axis";
-    values = utils.extend({
-      use: "value",
-      which: undefined,
-      min: null,
-      max: null
-    }, values);
+    values = utils.extend(this._defaults, values);
     this._super(values, parent, bind);
   },
 

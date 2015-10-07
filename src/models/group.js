@@ -7,6 +7,16 @@ import Model from 'base/model';
 var GroupModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "property",
+    which: undefined,
+    merge: false,
+    manualSorting: null
+  },
+
+  /**
    * Initializes the group hook
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -15,12 +25,7 @@ var GroupModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "model";
-    values = utils.extend({
-      use: "property",
-      which: undefined,
-      merge: false,
-      manualSorting: null
-    }, values);
+    values = utils.extend(this._defaults, values);
     this._super(values, parent, bind);
   },
 
