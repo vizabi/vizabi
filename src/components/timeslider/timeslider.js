@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 
-var precision = 3;
+var precision = 1;
 
 //constants
 var class_playing = "vzb-playing";
@@ -253,8 +253,11 @@ var TimeSlider = Component.extend({
     });
 
     pause.on('click', function () {
-      _this._dragging = false;
+      _this._dragging = true;
+      _this.handle.transition()
+        .duration(0);
       _this.model.time.pause();
+      _this._dragging = false;
     });//format
 
     var fmt = time.formatOutput || time_formats[time.unit];
@@ -265,8 +268,10 @@ var TimeSlider = Component.extend({
     this.changeTime();
     this.changeSpeed();
     this.resize();
+/*
     this._setHandle(this.model.time.playing);
     this._setSpeedHandle(this.model.time.playing);
+*/
     //this._toggleSpeedSlider();
   },
 
@@ -329,7 +334,6 @@ var TimeSlider = Component.extend({
      if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
      if (this.xSpeedScale.range()[1] = 1) this.xSpeedScale.range([0, this.width/6]);
-
      //adjust axis with scale
      this.xAxis = this.xAxis.scale(this.xScale)
        .tickPadding(this.profile.label_spacing);
@@ -389,19 +393,20 @@ var TimeSlider = Component.extend({
       var value = _this.brush.extent()[0];
 
       //set brushed properties
+
       if(d3.event.sourceEvent) {
         _this._dragging = true;
         _this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
-
         var layoutProfile = _this.getLayoutProfile();
-        var textWidth = _this.getValueWidth(layoutProfile, value);
-        var maxPosX = _this.sliderWidth - textWidth / 2;
-        if(posX > maxPosX)
+        var maxPosX = _this.width;
+
+        if(posX > maxPosX) {
           posX = maxPosX;
-        else if(posX < 0)
+        } else if(posX < 0) {
           posX = 0;
+        }
 
         //set handle position
         _this.handle.attr("cx", posX);
@@ -423,12 +428,14 @@ var TimeSlider = Component.extend({
   _getBrushedEnd: function() {
     var _this = this;
     return function() {
-      _this._dragging = false;
-      _this.model.time.dragStop();
       _this._blockUpdate = false;
       _this.element.classed(class_dragging, false);
       _this.model.time.pause();
-      _this.model.time.snap();
+      _this.model.time.dragStop();
+      _this._dragging = false;
+/*
+      //_this.model.time.snap();
+*/
     };
   },
 
@@ -498,7 +505,6 @@ var TimeSlider = Component.extend({
 
     var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
-
     if(old_pos == null) old_pos = new_pos;
     var speed = new_pos > old_pos ? this.model.time.speed : 0;
 
