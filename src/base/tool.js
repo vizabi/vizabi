@@ -54,6 +54,8 @@ var Tool = Component.extend({
     this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
       '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
     this.model_binds = this.model_binds || {};
+    var binds = options.bind || {};
+
     this.default_options = this.default_options || {};
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
@@ -63,6 +65,9 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.model.validate();
           _this.trigger(evt, val);
+          if(evt.indexOf("needUpdate") !== -1) {
+            _this.model.trigger('historyUpdate', _this.minState());
+          }
         }
       },
       'translate': function(evt, val) {
@@ -80,9 +85,11 @@ var Tool = Component.extend({
       'ready': function(evt) {
         if(_this._ready) {
           _this.afterLoading();
+          _this.model.trigger('historyUpdate', _this.minState());
         }
       }
-    }, this.model_binds);
+    }, this.model_binds, binds);
+
     options = options || {};
     this.model = new ToolModel(options, this.default_options, callbacks, validate);
     //ToolModel starts in frozen state. unfreeze;
@@ -106,6 +113,10 @@ var Tool = Component.extend({
       return;
     }
     this.on(this.model.bind.get());
+  },
+
+  minState: function() {
+    return this.model.state.getObject(); 
   },
 
   /**
