@@ -157,4 +157,39 @@ $vzb-loader-bgcolor: $vzb-color-white;
       fill: $vzb-color-primary;
     }
   }
+
+  &.vzb-error {
+
+    @include user-select(none);
+
+    display: table;
+    height: 100%;
+
+    & > div {
+      display: table-cell;
+      vertical-align: middle;
+      visibility: visible;
+      text-align: center;
+      color: $vzb-color-grey;
+      line-height: 1.8;
+      p{
+        white-space: normal;
+        text-transform: uppercase;
+        font-size: 0.75em;
+      }
+    }
+
+    .vzb-icon {
+      width: 25px;
+      height: 25px;
+    }
+
+    .vzb-icon path {
+      fill: $vzb-color-accent-orange;
+    }
+
+    &:before, &:after {
+      display: none;
+    }
+  }
 }

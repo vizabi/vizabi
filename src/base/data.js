@@ -33,6 +33,9 @@ var Data = Class.extend({
         loaded = true;
         cached = queryId;
         wait.resolve();
+      }, function(err) {
+        utils.warn(err);
+        wait.reject();
       });
     }
     wait.then(function() {
@@ -48,7 +51,7 @@ var Data = Class.extend({
       if(loaded && evts && typeof evts.load_end === 'function') {
         evts.load_end();
       }
-      promise.reject('Error loading file...');
+      promise.reject();
     });
     return promise;
   },

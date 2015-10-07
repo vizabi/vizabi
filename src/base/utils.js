@@ -511,6 +511,7 @@ export var timeStamp = function(message) {
  * @param {String} message
  */
 export var warn = function(message) {
+  message = Array.prototype.slice.call(arguments).join(' ');
   if(console && typeof console.warn === 'function') {
     console.warn(message);
   }
@@ -521,6 +522,7 @@ export var warn = function(message) {
  * @param {String} message
  */
 export var groupCollapsed = function(message) {
+  message = Array.prototype.slice.call(arguments).join(' ');
   if(console && typeof console.groupCollapsed === 'function') {
     console.groupCollapsed(message);
   }
@@ -540,9 +542,10 @@ export var groupEnd = function() {
  * Prints error
  * @param {String} message
  */
-export var error = function(message1, message2) {
+export var error = function(message) {
+  message = Array.prototype.slice.call(arguments).join(' ');
   if(console && typeof console.error === 'function') {
-    console.error(message1, message2);
+    console.error(message);
   }
 };
 
