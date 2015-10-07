@@ -34,6 +34,8 @@ var TimeModel = Model.extend({
     loop: false,
     round: 'floor',
     speed: 300,
+    speedStart: 1000,
+    speedEnd: 200,
     unit: "year",
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
@@ -62,6 +64,7 @@ var TimeModel = Model.extend({
     this._type = "time";
     //default values for time model
     values = utils.extend(this._defaults, values);
+
     values.formatOutput = values.formatOutput || values.formatInput;
 
     //same constructor
@@ -250,9 +253,8 @@ var TimeModel = Model.extend({
 
     this._playing_now = true;
 
-    var _this = this,
-      time = this.value,
-      interval = this.speed; // * this.step;
+    var _this = this;
+    var time = this.value;
 
     this.snap();
 
@@ -262,7 +264,17 @@ var TimeModel = Model.extend({
       _this.value = time;
     }
 
-    //we don't create intervals directly
+    this.playInterval();
+
+    this.trigger("play");
+  },
+
+  playInterval: function(){
+    var _this = this;
+    var time = this.value;
+    var interval = this.speed;
+      
+        //we don't create intervals directly
     this._intervals.setInterval('playInterval_' + this._id, function() {
       if(time >= _this.end) {
         if(_this.loop) {
@@ -275,12 +287,14 @@ var TimeModel = Model.extend({
       } else {
         time = d3.time[_this.unit].offset(time, _this.step);
         _this.value = time;
+          
+        _this._intervals.clearInterval('playInterval_' + _this._id);
+        _this.playInterval();
       }
     }, interval);
 
-    this.trigger("play");
-  },
-
+},
+    
   /**
    * Stops playing the time, clearing the interval
    */
