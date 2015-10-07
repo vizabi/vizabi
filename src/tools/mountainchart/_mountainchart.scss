@@ -57,36 +57,6 @@
             .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
                 stroke: yellow;
             }
-          .vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-x {
-              @include transition(opacity 200ms linear);
-              fill: white;
-              text-anchor: middle;
-              dominant-baseline: middle;
-              pointer-events: none;
-              font-size: 0.9em;
-            }
-          .vzb-mc-mountains-labels .vzb-mc-label circle.vzb-mc-label-x {
-            @include transition(opacity 200ms linear);
-            cursor: pointer;
-            fill: $vzb-color-primary;
-            stroke: white;
-            stroke-width: 2px;
-          }
-          .vzb-mc-mountains-labels .vzb-mc-label rect.vzb-mc-label-x {
-              @include transition(opacity 200ms linear);
-              cursor: pointer;
-              fill: $vzb-color-primary;
-              stroke: white;
-              stroke-width: 2px;
-            }
-            .vzb-mc-mountains-labels .vzb-mc-label rect.vzb-mc-label-x.vzb-revert-color {
-              fill: white;
-              stroke: $vzb-color-primary;
-            }
-            .vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-x.vzb-revert-color {
-              fill: $vzb-color-primary;
-            }
-
             .vzb-mc-axis-x,
             .vzb-mc-axis-y {
                 @extend %vzb-chart-axis;
@@ -111,9 +81,8 @@
             }
             .vzb-mc-year {
                 @include opacity(0.1);
-                fill: $vzb-color-primary;
-                text-anchor: end;
-                dominant-baseline: hanging;
+                fill: $vzb-color-grey;
+                text-anchor: middle;
                 -webkit-touch-callout: none;
                 -webkit-user-select: none;
                 -khtml-user-select: none;
@@ -122,15 +91,15 @@
                 user-select: none;
                 pointer-events: none;
             }
-
-
+            
+            
             .vzb-mc-tooltip {
                 @extend %vzb-chart-tooltip
             }
 
-
-
-
+            
+            
+            
         }
     }
     &.vzb-large {

@@ -9,66 +9,72 @@ script.
       "ready": function(evt, vals) {
         updateURL();
         updateStateEditor(VIZ.getOptions().state);
-      },
-      "historyUpdate": function(evt, state) {
-        updateURL();
       }
     },
     ui: {
-      buttons: #{chart_buttons},
-      buttons_expand: #{chart_buttons_expand}
+      buttons: #{chart_buttons}
     }
   };
 
-  VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
+  (function() {
+    VIZABI_OPTIONS.bind['change:state'] = function(evt, vals) {
+      //TODO: improve when to update
+      //only update in these cases
+      if(evt === "change:state:entities:select"
+      || evt === "change:state:time:playing"
+      || (evt === "change:state:time:value" && !vals.state.time.playing)
+      || evt.indexOf("change:state:marker") !== -1) {
+      updateURL();
+      }
 
-    updateStateEditor(VIZ.getOptions().state);
-  };
+      updateStateEditor(VIZ.getOptions().state);
+    };
 
-  var playButton = document.getElementById("vzbp-btn-play");
-  var playButtonIcon = playButton.querySelectorAll("i")[0];
+    var playButton = document.getElementById("vzbp-btn-play");
+    var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
-    if (vals.state.time.playing) {
-      playButton.onclick = pause;
-      playButton.setAttribute("data-tooltip", "Pause");
-      removeClass(playButtonIcon, 'fa-play');
-      addClass(playButtonIcon, 'fa-pause');
-    } else {
-      playButton.onclick = play;
-      playButton.setAttribute("data-tooltip", "Play");
-      removeClass(playButtonIcon, 'fa-pause');
-      addClass(playButtonIcon, 'fa-play');
-    }
+    VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
+      if (vals.state.time.playing) {
+        playButton.onclick = pause;
+        playButton.setAttribute("data-tooltip", "Pause");
+        removeClass(playButtonIcon, 'fa-play');
+        addClass(playButtonIcon, 'fa-pause');
+      } else {
+        playButton.onclick = play;
+        playButton.setAttribute("data-tooltip", "Play");
+        removeClass(playButtonIcon, 'fa-pause');
+        addClass(playButtonIcon, 'fa-play');
+      }
 
-    var recButton = document.getElementById("vzbp-btn-record");
-    var recButtonIcon = recButton.querySelectorAll("i")[0];
-    if (vals.state.time.record) {
-      recButton.onclick = recstop;
-      recButton.setAttribute("data-tooltip", "Stop");
-      removeClass(recButtonIcon, 'fa-bullseye');
-      addClass(recButtonIcon, 'fa-circle');
-    } else {
-      recButton.onclick = recstart;
-      recButton.setAttribute("data-tooltip", "Record");
-      removeClass(recButtonIcon, 'fa-circle');
-      addClass(recButtonIcon, 'fa-bullseye');
-    }
-  };
+      var recButton = document.getElementById("vzbp-btn-record");
+      var recButtonIcon = recButton.querySelectorAll("i")[0];
+      if (vals.state.time.record) {
+        recButton.onclick = recstop;
+        recButton.setAttribute("data-tooltip", "Stop");
+        removeClass(recButtonIcon, 'fa-bullseye');
+        addClass(recButtonIcon, 'fa-circle');
+      } else {
+        recButton.onclick = recstart;
+        recButton.setAttribute("data-tooltip", "Record");
+        removeClass(recButtonIcon, 'fa-circle');
+        addClass(recButtonIcon, 'fa-bullseye');
+      }
+    };
+  
+    var langButton = document.getElementById("vzbp-btn-lang");
 
-  var langButton = document.getElementById("vzbp-btn-lang");
-
-  VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
-    if (vals.language.id === "en") {
-      langButton.onclick = function() { language('se'); };
-      langButton.setAttribute("data-tooltip", "Set Lang: SE");
-      langButton.setAttribute("data-next_lang", 'se');
-    } else {
-      langButton.onclick = function() { language('en'); };
-      langButton.setAttribute("data-tooltip", "Set Lang: EN");
-      langButton.setAttribute("data-next_lang", 'en');
-    }
-  };
+    VIZABI_OPTIONS.bind['change:language'] = function(evt, vals) {
+      if (vals.language.id === "en") {
+        langButton.onclick = function() { language('se'); };
+        langButton.setAttribute("data-tooltip", "Set Lang: SE");
+        langButton.setAttribute("data-next_lang", 'se');
+      } else {
+        langButton.onclick = function() { language('en'); };
+        langButton.setAttribute("data-tooltip", "Set Lang: EN");
+        langButton.setAttribute("data-next_lang", 'en');
+      }
+    };
+  })();
 
   parseURL();
 

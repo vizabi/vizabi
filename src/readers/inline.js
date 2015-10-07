@@ -1,15 +1,20 @@
-import Reader from 'base/reader';
-
 /*!
  * Inline Reader
  * the simplest reader possible
  */
 
-var InlineReader = Reader.extend({
+(function () {
+
+  "use strict";
+
+  var root = this;
+  var Vizabi = root.Vizabi;
+
+  Vizabi.Reader.extend('inline', {
     init: function (reader_info) {
       this.name = "inline";
       this._super(reader_info);
     }
   });
 
-export default InlineReader;
+}).call(this);

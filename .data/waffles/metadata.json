@@ -103,8 +103,7 @@
             "unit": "gdp_per_cap",
             "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [500, 130000]
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdppc_pday": {
             "allowCharts": ["none"],
@@ -134,8 +133,7 @@
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
-            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [0, 550]
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "childSurv": {
             "allowCharts": ["none"],

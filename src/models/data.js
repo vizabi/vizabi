@@ -1,36 +1,35 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-
 /*
  * VIZABI Data Model (options.data)
  */
 
-var DataModel = Model.extend({
+(function () {
 
-  /**
-   * Default values for this model
-   */
-  _defaults: {
-    reader: "csv",
-    splash: false
-  },
+  "use strict";
 
+  var root = this;
+  var Vizabi = root.Vizabi;
+  var utils = Vizabi.utils;
 
-  /**
-   * Initializes the data model.
-   * @param {Object} values The initial values of this model
-   * @param parent A reference to the parent model
-   * @param {Object} bind Initial events to bind
-   */
-  init: function(values, parent, bind) {
+  Vizabi.Model.extend('data', {
 
-    this._type = "data";
-    values = utils.extend(this._defaults, values);
+    /**
+     * Initializes the data model.
+     * @param {Object} values The initial values of this model
+     * @param parent A reference to the parent model
+     * @param {Object} bind Initial events to bind
+     */
+    init: function (values, parent, bind) {
 
-    //same constructor as parent, with same arguments
-    this._super(values, parent, bind);
-  }
+      this._type = "data";
+      values = utils.extend({
+        reader: "csv-file",
+        splash: false
+      }, values);
 
-});
+      //same constructor as parent, with same arguments
+      this._super(values, parent, bind);
+    }
 
-export default DataModel;
+  });
+
+}).call(this);

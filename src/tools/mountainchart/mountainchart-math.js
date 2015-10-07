@@ -1,7 +1,9 @@
-import * as utils from 'base/utils';
-import Class from 'base/class';
+(function () {
 
-var MCMath = Class.extend({
+    var Vizabi = this.Vizabi;
+    var utils = Vizabi.utils;
+
+    Vizabi.Helper.extend("gapminder-mountainchart-math", {
 
         init: function (context) {
             this.context = context;
@@ -131,4 +133,5 @@ var MCMath = Class.extend({
 
     });
 
-export default MCMath;
+
+}).call(this);

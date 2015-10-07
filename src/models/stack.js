@@ -1,72 +1,75 @@
-import * as utils from 'base/utils';
-import Model from 'base/model';
-
 /*
  * VIZABI Data Model (options.data)
  */
 
-var palettes = {
-  'ALL': "all",
-  _default: "none"
-};
+(function () {
 
-var StackModel = Model.extend({
+    "use strict";
 
-  /**
-   * Default values for this model
-   */
-  _defaults: {
-    use: "value",
-    which: undefined,
-    merge: false
-  },
-  /**
-   * Initializes the stack hook
-   * @param {Object} values The initial values of this model
-   * @param parent A reference to the parent model
-   * @param {Object} bind Initial events to bind
-   */
-  init: function(values, parent, bind) {
+    var root = this;
+    var Vizabi = root.Vizabi;
+    var utils = Vizabi.utils;
 
-    this._type = "model";
-    values = utils.extend(this._defaults, values);
-    this._super(values, parent, bind);
-  },
+    //warn client if d3 is not defined
+    if (!Vizabi._require('d3')) return;
+    
+    var palettes = {
+        'ALL': "all",
+        _default: "none"
+    };
 
-  /**
-   * Validates a color hook
-   */
-  validate: function() {
-    //there must be no scale
-    if(this.scale) this.scale = null;
+    Vizabi.Model.extend('stack', {
 
-    //use must not be "indicator" 
-    if(this.use === "indicator") {
-      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'value' and which to '" + palettes._default)
-      this.use = "value";
-      this.which = palettes._default;
-    }
+        /**
+         * Initializes the stack hook
+         * @param {Object} values The initial values of this model
+         * @param parent A reference to the parent model
+         * @param {Object} bind Initial events to bind
+         */
+        init: function (values, parent, bind) {
 
-    //if use is "value"
-    if(this.use === "value" && utils.values(palettes).indexOf(this.which) == -1) {
-      utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '" +
-        palettes._default)
-      this.which == palettes._default;
-    }
-  },
+            this._type = "model";
+            values = utils.extend({
+                use: "value",
+                which: undefined,
+                merge: false
+            }, values);
+            this._super(values, parent, bind);
+        },
 
-  /**
-   * Get the above constants
-   */
-  getPalettes: function() {
-    return palettes;
-  },
+        /**
+         * Validates a color hook
+         */
+        validate: function () {
+            //there must be no scale
+            if (this.scale) this.scale = null;
 
-  /**
-   * There must be no scale
-   */
-  buildScale: function() {}
+            //use must not be "indicator" 
+            if (this.use === "indicator") {
+                utils.warn("stack model: use must not be 'indicator'. Resetting use to 'value' and which to '"+palettes._default)
+                this.use = "value";
+                this.which = palettes._default;
+            }
+            
+            //if use is "value"
+            if (this.use === "value" && utils.values(palettes).indexOf(this.which)==-1) {
+                utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '"+palettes._default)
+                this.which == palettes._default;
+            }
+        },
 
-});
+        /**
+         * Get the above constants
+         */
+        getPalettes: function () {
+            return palettes;
+        },
 
-export default StackModel;
+        /**
+         * There must be no scale
+         */
+        buildScale: function () {}
+
+    });
+
+}).call(this);
