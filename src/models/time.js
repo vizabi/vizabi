@@ -41,6 +41,8 @@ var TimeModel = Model.extend({
       loop: false,
       round: 'floor',
       speed: 300,
+      speedStart: 1000,
+      speedEnd: 100,
       unit: "year",
       step: 1, //step must be integer
       adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
