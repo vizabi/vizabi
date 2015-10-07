@@ -77,7 +77,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height * 0.7;
+    var fontHeight = sample[0][0].getBBox().height;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
@@ -120,18 +120,17 @@ var MCSelectList = Class.extend({
             .attr("height", contentBBox.height)
             .attr("x", contentBBox.width + contentBBox.height * 0.9)
             .attr("y", 0)
-            .attr("rx", contentBBox.height * 0.25)
-            .attr("ry", contentBBox.height * 0.25);
+            .attr("r", contentBBox.height * 0.25);
         } else {
           view.select("text.vzb-mc-label-x")
             .attr("x", contentBBox.width + contentBBox.height * 1.1)
-            .attr("y", 0)
+            .attr("y", contentBBox.height / 3)
             .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
 
           view.select("circle.vzb-mc-label-x")
             .attr("r", contentBBox.height / 2.5)
             .attr("cx", contentBBox.width + contentBBox.height * 1.1)
-            .attr("cy", 0);
+            .attr("cy", contentBBox.height / 3);
         }
 
         view.select("circle.vzb-mc-label-legend")
