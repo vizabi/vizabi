@@ -11,8 +11,9 @@
 // ----------------------------------------------------------------------------
 //   Sizes
 // ----------------------------------------------------------------------------
-$vzb-resolution-medium: 750px;
-$vzb-resolution-large: 970px;
+// this never gets used. see layout.js instead
+//$vzb-resolution-medium: 750px;
+//$vzb-resolution-large: 970px;
 
 // ----------------------------------------------------------------------------
 //   Text
@@ -154,6 +155,41 @@ $vzb-loader-bgcolor: $vzb-color-white;
     height: 15px;
     path {
       fill: $vzb-color-primary;
+    }
+  }
+
+  &.vzb-error {
+
+    @include user-select(none);
+
+    display: table;
+    height: 100%;
+
+    & > div {
+      display: table-cell;
+      vertical-align: middle;
+      visibility: visible;
+      text-align: center;
+      color: $vzb-color-grey;
+      line-height: 1.8;
+      p{
+        white-space: normal;
+        text-transform: uppercase;
+        font-size: 0.75em;
+      }
+    }
+
+    .vzb-icon {
+      width: 25px;
+      height: 25px;
+    }
+
+    .vzb-icon path {
+      fill: $vzb-color-accent-orange;
+    }
+
+    &:before, &:after {
+      display: none;
     }
   }
 }

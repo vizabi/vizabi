@@ -153,6 +153,43 @@
     position: absolute;
     z-index: 11;
   }
+    
+    
+
+  input[type=range]::-webkit-slider-runnable-track {
+      cursor: pointer;
+      background: transparent;
+  }
+  input[type=range]:focus::-webkit-slider-runnable-track {
+      background: transparent;
+  }
+  input[type=range]::-moz-range-track {
+      cursor: pointer;
+      background: transparent;
+  }
+  input[type=range]::-ms-track {
+      cursor: pointer;
+      background: transparent;
+      border-color: transparent;
+      border-width: 16px 0;
+      color: transparent;
+  }
+  input[type=range]::-ms-fill-lower {
+      background: transparent;
+  }
+  input[type=range]:focus::-ms-fill-lower {
+      background: transparent;
+  }
+  input[type=range]::-ms-fill-upper {
+      background: transparent;
+  }
+  input[type=range]:focus::-ms-fill-upper {
+      background: transparent;
+  }
+  input[type=range]::-moz-focus-outer {
+      border: 0;
+  }
+    
   //Data warning
   .vzb-data-warning {
     cursor: pointer;
@@ -184,8 +221,8 @@
     @include position(absolute, 0);
   }
   //common tool components
-  @import '../../components/_gapminder/buttonlist/buttonlist';
-  @import '../../components/_gapminder/timeslider/timeslider';
-  @import '../../components/_gapminder/treemenu/treemenu';
-  @import '../../components/_gapminder/datawarning/datawarning';
+  @import '../../components/buttonlist/buttonlist';
+  @import '../../components/timeslider/timeslider';
+  @import '../../components/treemenu/treemenu';
+  @import '../../components/datawarning/datawarning';
 }
