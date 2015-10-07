@@ -439,7 +439,6 @@ var TimeSlider = Component.extend({
   _getSpeedBrushed: function () {
     var _this = this;
     return function () {
-      _this.model.time.pause();
 
       if (!_this._blockUpdate) {
         _this._optionClasses();
@@ -450,7 +449,6 @@ var TimeSlider = Component.extend({
       var value = _this.speed_brush.extent()[0];
       //set brushed properties
       if (d3.event.sourceEvent) {
-        _this._dragging = true;
         //_this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xSpeedScale.invert(posX);
@@ -482,12 +480,8 @@ var TimeSlider = Component.extend({
   _getSpeedBrushedEnd: function () {
     var _this = this;
     return function () {
-      _this._dragging = false;
-      _this.model.time.dragStop();
       _this._blockUpdate = false;
       _this.element.classed(class_dragging, false);
-      _this.model.time.pause();
-      _this.model.time.snap();
     };
 
   },
