@@ -647,7 +647,7 @@ var BubbleChartComp = Component.extend({
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
-      
+
     this.yInfoEl
         .html(iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
@@ -955,11 +955,17 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    this.yearEl.style("text-anchor", null);
 
     this.yearEl
       .attr("x", this.width / 2)
       .attr("y", this.height / 3 * 2)
       .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
+
+    var box = this.yearEl.node().getBBox();
+    this.yearEl
+      .attr("x", box.x)
+      .style("text-anchor", "start");
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -1073,20 +1079,20 @@ var BubbleChartComp = Component.extend({
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.yInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+      this.yInfoEl.attr('transform', 'translate('
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
-    
+
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.xInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+      this.xInfoEl.attr('transform', 'translate('
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
    }
 
