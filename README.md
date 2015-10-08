@@ -1,4 +1,4 @@
-![Gapminder Vizabi 0.4](http://static.gapminder.org/vizabi/vizabi.jpg)
+![Gapminder Vizabi](http://static.gapminder.org/vizabi/vizabi.jpg)
 
 **(Please note that Vizabi is work in progress and don't expect too much! Vizabi 1.0.0 will be the public Alpha release of the framework, and we're not there yet).**
 [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)
@@ -19,6 +19,10 @@ The main features are:
 You can use Vizabi to create a new visualization based on your data or modify our set of visualization tools.
 
 See our example pages here: [Vizabi Examples](http://static.gapminderdev.org/vizabi/develop/preview/), and DOCS here: [Vizabi Docs](http://vizabi.org)
+
+![Picture of charts](http://static.gapminder.org/vizabi/charts.png)
+
+  
 
 ## Setup & Quickstart
 
