@@ -328,10 +328,17 @@ var MountainChartComponent = Component.extend({
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         //year is centered and resized
+        this.yearEl.style("text-anchor", null);
+
         this.yearEl
             .attr("x", this.width)
             .attr("y", this.height*0.15)
             .style("font-size", Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)) + "px");
+
+        var box = this.yearEl.node().getBBox();
+        this.yearEl
+          .attr("x", box.x)
+          .style("text-anchor", "start");
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
