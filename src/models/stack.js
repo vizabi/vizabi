@@ -13,6 +13,14 @@ var palettes = {
 var StackModel = Model.extend({
 
   /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "value",
+    which: undefined,
+    merge: false
+  },
+  /**
    * Initializes the stack hook
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -21,11 +29,7 @@ var StackModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "model";
-    values = utils.extend({
-      use: "value",
-      which: undefined,
-      merge: false
-    }, values);
+    values = utils.extend(this._defaults, values);
     this._super(values, parent, bind);
   },
 

@@ -379,7 +379,7 @@ var Model = Events.extend({
         _this.afterLoad();
         promise.resolve();
       }, function(err) {
-        _this.trigger('load_error', query);
+        utils.warn('Problem with query: ', JSON.stringify(query));
         promise.reject(err);
       });
       promises.push(promise);
@@ -410,6 +410,9 @@ var Model = Events.extend({
       utils.defer(function() {
         _this.setReady();
       });
+    }, function() {
+      _this.trigger('load_error');
+      promiseLoad.reject();
     });
 
     return promiseLoad;

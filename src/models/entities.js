@@ -6,6 +6,19 @@ import Model from 'base/model';
  */
 
 var EntitiesModel = Model.extend({
+
+  /**
+   * Default values for this model
+   */
+  _defaults: {
+    show: {},
+    select: [],
+    highlight: [],
+    opacitySelectDim: 0.3,
+    opacityRegular: 1,
+    needUpdate: {}
+  },
+
   /**
    * Initializes the entities model.
    * @param {Object} values The initial values of this model
@@ -15,14 +28,7 @@ var EntitiesModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "entities";
-    values = utils.extend({
-      show: {},
-      select: [],
-      highlight: [],
-      opacitySelectDim: 0.3,
-      opacityRegular: 1,
-      needUpdate: {}
-    }, values);
+    values = utils.extend(this._defaults, values);
 
     this._visible = [];
     this._multiple = true;

@@ -103,7 +103,10 @@ var WSReader = Reader.extend({
 
         function parse(res) {
           //just check for length, no need to parse from server
-          if(res.length==0) utils.warn("data reader returns empty array, that's bad");
+          if(res.length==0) {
+            p.reject("data reader returns empty array, that's bad");
+            return;
+          }
           _this._data = res;
           p.resolve();
         }

@@ -5,6 +5,7 @@ import Promise from 'promise';
 
 var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
+var class_error = 'vzb-error';
 
 var templates = {};
 var Component = Events.extend({
@@ -137,9 +138,13 @@ var Component = Events.extend({
               });
             }, 300);
 
+          }, function() {
+            renderError();
           });
         } else {
-          _this.model.load();
+          _this.model.load().catch(function() {
+            renderError();
+          });
         }
       });
 
@@ -151,12 +156,27 @@ var Component = Events.extend({
       done();
     }
 
+    function renderError() {
+      utils.removeClass(_this.placeholder, class_loading);
+      utils.addClass(_this.placeholder, class_error);
+      _this.setError({
+        type: 'data'
+      });
+    }
+
     function done() {
       utils.removeClass(_this.placeholder, class_loading);
       utils.removeClass(_this.placeholder, class_loading_first);
       _this.setReady();
     }
   },
+
+  setError: function(opts) {
+    if(typeof this.error === 'function') {
+      this.error(opts);
+    }
+  },
+
   setReady: function(value) {
     if(!this._readyOnce) {
       this.trigger('readyOnce');
@@ -189,6 +209,12 @@ var Component = Events.extend({
       } catch(e) {
         utils.error('Templating error for component: \'' + this.name +
           '\' - Check if template name is unique and correct. E.g.: \'bubblechart\'');
+
+        utils.removeClass(this.placeholder, class_loading);
+        utils.addClass(this.placeholder, class_error);
+        this.setError({
+          type: 'template'
+        });
       }
     }
     //add loading class and html
