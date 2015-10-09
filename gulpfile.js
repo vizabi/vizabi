@@ -235,7 +235,8 @@ function buildJS(dev, cb) {
       ''
     ].join('\n');
 
-    var version = '; Vizabi._version = "' + pkg.version + '";';
+    //var version = '; Vizabi._version = "' + pkg.version + '";';
+    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
 
     var options = {
       format: 'umd',
