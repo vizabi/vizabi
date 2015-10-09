@@ -5,6 +5,7 @@ import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 import {
   warn as iconWarn,
@@ -302,6 +303,8 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl = this.graph.select('.vzb-bc-axis-s-title');
     this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
     this.yearEl = this.graph.select('.vzb-bc-year');
+
+    this.year = new DynamicBackground(this.yearEl);
 
     this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
     this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
@@ -670,8 +673,8 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
-
-    this.yearEl.text(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormatter(this.time));
+    //this.yearEl.text(this.timeFormatter(this.time));
   },
 
   /*
@@ -735,17 +738,7 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.yearEl.style("text-anchor", null);
-
-    this.yearEl
-      .attr("x", this.width / 2)
-      .attr("y", this.height / 3 * 2)
-      .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
-
-    var box = this.yearEl.node().getBBox();
-    this.yearEl
-      .attr("x", box.x)
-      .style("text-anchor", "start");
+    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4), margin.top, margin.left);
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {

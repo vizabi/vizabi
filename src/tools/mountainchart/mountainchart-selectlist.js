@@ -26,7 +26,6 @@ var MCSelectList = Class.extend({
       .data(utils.unique(listData, function (d) {
         return d.KEY()
       }));
-
     _this.selectList.exit().remove();
     _this.selectList.enter().append("g")
       .attr("class", "vzb-mc-label")
