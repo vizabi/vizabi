@@ -184,7 +184,8 @@ var Model = Events.extend({
 
   /**
    * Gets all submodels of the current model
-   * @param object [object=false] Should it return an object?
+   * @param {Object} object [object=false] Should it return an object?
+   * @param {Function} fn Validation function
    * @returns {Array} submodels
    */
   getSubmodels: function(object, fn) {
@@ -1197,6 +1198,15 @@ var Model = Events.extend({
       }
     });
     return formatters;
+  },
+
+  getDefaults: function() {
+    if(this._defaults) return this._defaults;
+    var d = {};
+    utils.forEach(this.getSubmodels(true), function(model, name) {
+      d[name] = model.getDefaults();
+    });
+    return d;
   }
 
 });

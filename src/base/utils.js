@@ -91,6 +91,22 @@ export var isPlainObject = function(obj) {
   return obj !== null && Object.prototype.toString.call(obj) === '[object Object]';
 };
 
+/*
+ * checks whether two arrays are equal
+ * @param {Array} a
+ * @param {Array} b
+ * @returns {Boolean}
+ */
+export var arrayEquals = function(a, b) {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+};
+
 export var getViewportPosition = function(element) {
   var xPosition = 0;
   var yPosition = 0;
@@ -740,6 +756,31 @@ export var arrayMedian = function(arr) {
 export var arrayLast = function(arr) {
   if(!arr.length) return null;
   return arr[arr.length - 1];
+};
+
+/*
+ * Returns the resulting object of the difference between two objects
+ * @param {Object} obj2
+ * @param {Object} obj1
+ * @returns {Object}
+ */
+export var diffObject = function(obj2, obj1) {
+  var diff = {};
+  forEach(obj2, function(value, key) {
+    if(!obj1.hasOwnProperty(key)) {
+      diff[key] = value;
+    }
+    else if(value !== obj1[key]) {
+      if(isPlainObject(value) && isPlainObject(obj1[key])) {
+        var d = diffObject(value, obj1[key]);
+        if(Object.keys(d).length > 0) diff[key] = d;
+      }
+      else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
+        diff[key] = value;
+      }
+    }
+  });
+  return diff;
 };
 
 /*

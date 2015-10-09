@@ -116,7 +116,10 @@ var Tool = Component.extend({
   },
 
   minState: function() {
-    return this.model.state.getObject(); 
+    var state = this.model.state.getObject();
+    var d_state = this.default_options.state;
+    var d = utils.diffObject(state, d_state);
+    return utils.diffObject(d, this.model.state.getDefaults());
   },
 
   /**
