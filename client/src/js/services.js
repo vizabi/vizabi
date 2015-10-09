@@ -1,3 +1,5 @@
+var Vizabi = require('vizabi');
+
 module.exports = function (app) {
   var bases = document.getElementsByTagName('base');
   var baseHref = null;

@@ -28,5 +28,9 @@ Code for page: [http://gapminder.org/tools](http://gapminder.org/tools)
 2. `npm run dev` - will start webpack with watch and hot reload
 3. View in browser at `http://localhost:8080/tools/`
 
+## Update vizabi
+```bash
+npm i vizabi@latest -S
+```
 ###Obs:
 *if you change default configuration for mongoDB, you need to configure `server/app/config/database.js` accordingly*
