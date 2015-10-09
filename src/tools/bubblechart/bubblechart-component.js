@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import globals from 'base/globals';
 
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
@@ -462,7 +463,7 @@ var BubbleChartComp = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
-    var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+    var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
       title: {
