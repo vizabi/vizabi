@@ -72,7 +72,6 @@ var BubbleChartComp = Component.extend({
       },
       "change:marker": function(evt) {
         // bubble size change is processed separately
-          console.log(evt)
         if(!_this._readyOnce) return;
         if(evt.indexOf("change:marker:size") !== -1) return;
         if(evt.indexOf("change:marker:color:palette") > -1) return;
