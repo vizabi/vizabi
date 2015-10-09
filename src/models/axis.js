@@ -125,6 +125,7 @@ var AxisModel = Model.extend({
     }
 
 //    //sync the min and max in the state
+      // evokes unintended updates in tools because they listen to the model
 //    this.min = domain[0];
 //    this.max = domain[1];
 
