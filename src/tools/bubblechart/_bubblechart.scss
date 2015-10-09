@@ -34,8 +34,8 @@
         .vzb-bc-labels{
         @extend %vzb-chart-tooltip;
             rect{pointer-events: visible}
-        } 
-        
+        }
+
         .vzb-bc-tooltip  {
         @extend %vzb-chart-tooltip;
       }
@@ -83,12 +83,12 @@
         @extend %vzb-chart-axis-title;
         opacity: 0.3;
       }
-    
-      .vzb-bc-axis-x-info, 
+
+      .vzb-bc-axis-x-info,
       .vzb-bc-axis-y-info {
         @extend %vzb-chart-info;
       }
-    
+
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 2 4;
@@ -101,6 +101,7 @@
         stroke-width: 1px;
       }
       .vzb-bc-year {
+        font-family: 'Oswald', sans-serif;
         @include opacity(0.1);
         font-size: $vzb-bc-year-size;
         fill: $vzb-color-grey;
@@ -122,7 +123,7 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 1.0;
       }
-      .vzb-bc-label-shadow, 
+      .vzb-bc-label-shadow,
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-large;
       }
@@ -148,7 +149,7 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 0.8;
       }
-      .vzb-bc-label-shadow, 
+      .vzb-bc-label-shadow,
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-medium;
       }
@@ -174,7 +175,7 @@
       .vzb-bc-bubbles .vzb-bc-entity {
         stroke-opacity: 0.7;
       }
-      .vzb-bc-label-shadow, 
+      .vzb-bc-label-shadow,
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-small;
       }
