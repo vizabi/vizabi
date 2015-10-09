@@ -254,13 +254,13 @@ export var clone = function(src, arr, exclude) {
  */
 export var deepClone = function(src) {
   var clone = {};
+  if(isArray(src)) clone = [];
+
   forEach(src, function(value, k) {
-    if(src.hasOwnProperty(k)) {
-      if(isObject(value) || isArray(value)) {
-        clone[k] = deepClone(value);
-      } else {
-        clone[k] = value;
-      }
+    if(isObject(value) || isArray(value)) {
+      clone[k] = deepClone(value);
+    } else {
+      clone[k] = value;
     }
   });
   return clone;
