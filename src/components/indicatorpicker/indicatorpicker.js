@@ -184,7 +184,7 @@ var IndPicker = Component.extend({
       .style('display', this.ui.selectScaletype ? "auto" : "none")
       .attr('disabled', data[SCALETYPE].length <= 1 ? "true" : null);
 
-    this.el_domain_minmaxbreak.classed('vzb-hidden', !(this.ui.selectIndicator || this.ui.selectScaletype && this.ui.selectMinMax || this.ui.selectFakeMinMax));
+    this.el_domain_minmaxbreak.classed('vzb-hidden', !((this.ui.selectIndicator || this.ui.selectScaletype) && (this.ui.selectMinMax || this.ui.selectFakeMinMax)));
     this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectMinMax);
     this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectMinMax);
     this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectMinMax);

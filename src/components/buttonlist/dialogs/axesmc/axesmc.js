@@ -38,7 +38,8 @@ var Axes = Dialog.extend({
       ui: {
         selectIndicator: false,
         selectScaletype: false,
-        selectMinMax: true
+        selectMinMax: false,
+        selectFakeMinMax: true 
       }
     }]
 
