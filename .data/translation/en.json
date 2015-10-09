@@ -18,6 +18,7 @@
     "buttons/opacityRegular": "Regular opacity",
     "hints/bubbl/setminsize": "Minimum bubble size:",
     "hints/bubbl/setmaxsize": "Maximum bubble size:",
+    "hints/bubbl/setsize": "Bubble size:",
     "hints/mount/maxYvalue": "Maximum Y value:",
     "hints/mount/logXstops": "X-axis logarithmic stops:",
     "hints/mount/howtostack": "Chose how to stack mountains:",
