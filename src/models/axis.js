@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import globals from 'base/globals';
 
 /*!
  * VIZABI Axis Model (hook)
@@ -56,8 +57,8 @@ var AxisModel = Model.extend({
    * Validates a color hook
    */
   validate: function() {
-      
-    //only some scaleTypes are allowed depending on use. reset to default if inappropriate 
+
+    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
     //kill the scale if indicator or scale type have changed
@@ -68,8 +69,8 @@ var AxisModel = Model.extend({
 
     //here the modified min and max may change the domain, if the scale is defined
     if(this.scale && this._readyOnce && this.use === "indicator") {
-        
-      //min and max nonsense protection    
+
+      //min and max nonsense protection
       if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
       if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
 
@@ -88,7 +89,7 @@ var AxisModel = Model.extend({
 //      return Math.abs(a1[0]-a1[a1.length-1]) > Math.abs(a2[0]-a2[a2.length-1])? a1 : a2;
 //  },
 //
-//    
+//
 //  _getNarrowest: function(a1, a2){
 //      if(!a1 || !a2 || !a1.length && !a2.length) return utils.warn("_getNarrowest: bad input");
 //      if(!a1.length) return a2;
@@ -103,7 +104,7 @@ var AxisModel = Model.extend({
   buildScale: function(margins) {
     var domain;
     var scaleType = this.scaleType || "linear";
-    var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+    var indicatorsDB = globals.metadata.indicatorsDB;
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
