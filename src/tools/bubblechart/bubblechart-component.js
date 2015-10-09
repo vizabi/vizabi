@@ -71,6 +71,7 @@ var BubbleChartComp = Component.extend({
       },
       "change:marker": function(evt) {
         // bubble size change is processed separately
+          console.log(evt)
         if(!_this._readyOnce) return;
         if(evt.indexOf("change:marker:size") !== -1) return;
         if(evt.indexOf("change:marker:color:palette") > -1) return;
@@ -83,8 +84,19 @@ var BubbleChartComp = Component.extend({
           return;
         }
         if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+          if(_this.draggingNow)return;
+            _this._panZoom.zoomToMaxMin(
+              _this.model.marker.axis_x.fakeMin,  
+              _this.model.marker.axis_x.fakeMax, 
+              _this.model.marker.axis_y.fakeMin,
+              _this.model.marker.axis_y.fakeMax,
+              500
+          )
           return;
         }
+        
+        if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
+          
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
@@ -242,21 +254,22 @@ var BubbleChartComp = Component.extend({
 
 
 
-  _rangeBump: function(arg) {
+  _rangeBump: function(arg, undo) {
     var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
       var z2 = arg[arg.length - 1];
 
       //the sign of bump depends on the direction of the scale
       if(z1 < z2) {
-        z1 += bump;
-        z2 -= bump;
+        z1 += bump * undo;
+        z2 -= bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 > z2) z1 = z2 = (z1 + z2) / 2;
       } else if(z1 > z2) {
-        z1 -= bump;
-        z2 += bump;
+        z1 -= bump * undo;
+        z2 += bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 < z2) z1 = z2 = (z1 + z2) / 2;
       } else {
@@ -399,6 +412,13 @@ var BubbleChartComp = Component.extend({
     this._trails.run("findVisible");
     this._panZoom.reset();
     this._trails.run(["recolor", "reveal"]);
+      
+    this._panZoom.zoomToMaxMin(
+       this.model.marker.axis_x.fakeMin, 
+       this.model.marker.axis_x.fakeMax, 
+       this.model.marker.axis_y.fakeMin,
+       this.model.marker.axis_y.fakeMax
+    )
 
   },
 
