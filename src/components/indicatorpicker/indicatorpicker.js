@@ -10,6 +10,8 @@ import Component from 'base/component';
 var INDICATOR = "which";
 var MIN = "min";
 var MAX = "max";
+var FAKEMIN = "fakeMin";
+var FAKEMAX = "fakeMax";
 var SCALETYPE = "scaleType";
 var MODELTYPE_COLOR = "color";
 
@@ -24,9 +26,8 @@ var IndPicker = Component.extend({
   init: function(config, context) {
 
     this.name = 'gapminder-indicatorpicker';
-
-    this.template =
-      '<span class="vzb-ip-holder"><select class="vzb-ip-indicator"></select><select class="vzb-ip-scaletype"></select><br/><span class="vzb-ip-domainmin-label"></span> <input type="text" class="vzb-ip-domainmin" name="min"> <span class="vzb-ip-domainmax-label"></span> <input type="text" class="vzb-ip-domainmax" name="max">';
+    this.template = 'indicatorpicker.html';
+      
     var _this = this;
 
     this.model_expects = [{
@@ -52,7 +53,8 @@ var IndPicker = Component.extend({
     this.ui = utils.extend({
       selectIndicator: true,
       selectScaletype: true,
-      selectMinMax: false
+      selectMinMax: false,
+      selectFakeMinMax: false
     }, this.ui.getObject());
 
   },
@@ -62,7 +64,6 @@ var IndPicker = Component.extend({
   },
 
   afterPreload: function() {
-    console.log("test");
   },
 
   readyOnce: function() {
@@ -72,10 +73,17 @@ var IndPicker = Component.extend({
     this.el_select_indicator = this.element.select('.vzb-ip-indicator');
     this.el_select_scaletype = this.element.select('.vzb-ip-scaletype');
 
+    this.el_domain_minmaxbreak = this.element.select('.vzb-ip-minmax-break');
     this.el_domain_labelMin = this.element.select('.vzb-ip-domainmin-label');
     this.el_domain_labelMax = this.element.select('.vzb-ip-domainmax-label');
     this.el_domain_fieldMin = this.element.select('.vzb-ip-domainmin');
     this.el_domain_fieldMax = this.element.select('.vzb-ip-domainmax');
+
+    this.el_fake_minmaxbreak = this.element.select('.vzb-ip-fakeminmax-break');
+    this.el_fake_labelMin = this.element.select('.vzb-ip-fakemin-label');
+    this.el_fake_labelMax = this.element.select('.vzb-ip-fakemax-label');
+    this.el_fake_fieldMin = this.element.select('.vzb-ip-fakemin');
+    this.el_fake_fieldMax = this.element.select('.vzb-ip-fakemax');
 
     this.el_select_indicator.on("change", function() {
       _this._setModel(INDICATOR, this.value)
@@ -90,6 +98,13 @@ var IndPicker = Component.extend({
     _this.el_domain_fieldMax.on("change", function() {
       _this._setModel(MAX, this.value)
     });
+      
+    _this.el_fake_fieldMin.on("change", function() {
+      _this._setModel(FAKEMIN, this.value)
+    });
+    _this.el_fake_fieldMax.on("change", function() {
+      _this._setModel(FAKEMAX, this.value)
+    });
   },
 
   updateView: function() {
@@ -98,6 +113,8 @@ var IndPicker = Component.extend({
 
     this.el_domain_labelMin.text(this.translator("min") + ":");
     this.el_domain_labelMax.text(this.translator("max") + ":");
+    this.el_fake_labelMin.text(this.translator("min") + ":");
+    this.el_fake_labelMax.text(this.translator("max") + ":");
 
     var indicatorsDB = globals.metadata.indicatorsDB;
     var indicatorsArray = globals.metadata.indicatorsArray;
@@ -146,20 +163,12 @@ var IndPicker = Component.extend({
     elOptionsScaletype.exit().remove();
 
     //populate options into the list
-    elOptionsIndicator.enter().append("option").attr("value", function(d) {
-      return d
-    });
-    elOptionsScaletype.enter().append("option").attr("value", function(d) {
-      return d
-    });
+    elOptionsIndicator.enter().append("option").attr("value", function(d) { return d; });
+    elOptionsScaletype.enter().append("option").attr("value", function(d) { return d; });
 
     //show translated UI string
-    elOptionsIndicator.text(function(d) {
-      return _this.translator("indicator/" + d)
-    });
-    elOptionsScaletype.text(function(d) {
-      return _this.translator("scaletype/" + d)
-    });
+    elOptionsIndicator.text(function(d) { return _this.translator("indicator/" + d); });
+    elOptionsScaletype.text(function(d) { return _this.translator("scaletype/" + d); });
 
     //set the selected option
     this.el_select_indicator[0][0].value = this.model.axis[INDICATOR];
@@ -175,21 +184,31 @@ var IndPicker = Component.extend({
       .style('display', this.ui.selectScaletype ? "auto" : "none")
       .attr('disabled', data[SCALETYPE].length <= 1 ? "true" : null);
 
-    this.el_domain_labelMin.style('display', this.ui.selectMinMax ? "auto" : "none");
-    this.el_domain_labelMax.style('display', this.ui.selectMinMax ? "auto" : "none");
-    this.el_domain_fieldMin.style('display', this.ui.selectMinMax ? "auto" : "none");
-    this.el_domain_fieldMax.style('display', this.ui.selectMinMax ? "auto" : "none");
+    this.el_domain_minmaxbreak.classed('vzb-hidden', !(this.ui.selectIndicator || this.ui.selectScaletype && this.ui.selectMinMax || this.ui.selectFakeMinMax));
+    this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectMinMax);
+    this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectMinMax);
+    this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectMinMax);
+    this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectMinMax);
+      
+    this.el_fake_minmaxbreak.classed('vzb-hidden', !(this.ui.selectMinMax && this.ui.selectFakeMinMax));
+    this.el_fake_labelMin.classed('vzb-hidden', !this.ui.selectFakeMinMax);
+    this.el_fake_labelMax.classed('vzb-hidden', !this.ui.selectFakeMinMax);
+    this.el_fake_fieldMin.classed('vzb-hidden', !this.ui.selectFakeMinMax);
+    this.el_fake_fieldMax.classed('vzb-hidden', !this.ui.selectFakeMinMax);
 
     var formatter = d3.format(".2r");
     this.el_domain_fieldMin.property("value", formatter(this.model.axis.getScale().domain()[0]));
     this.el_domain_fieldMax.property("value", formatter(this.model.axis.getScale().domain()[1]));
+      
+    this.el_fake_fieldMin.property("value", formatter(this.model.axis.fakeMin));
+    this.el_fake_fieldMax.property("value", formatter(this.model.axis.fakeMax));
   },
 
   _setModel: function(what, value) {
 
     var indicatorsDB = globals.metadata.indicatorsDB;
 
-    if(what === MIN || what === MAX) value = utils.strToFloat(value);
+    if([MIN, MAX, FAKEMIN, FAKEMAX].indexOf(what)>-1) value = utils.strToFloat(value);
 
     var mdl = this.model.axis;
 
@@ -208,6 +227,8 @@ var IndPicker = Component.extend({
       if(mdl.getType() == 'axis') {
         obj.min = null;
         obj.max = null;
+        obj.fakeMin = null;
+        obj.fakeMax = null;
       }
     }
 

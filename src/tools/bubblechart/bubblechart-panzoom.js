@@ -153,7 +153,7 @@ export default Class.extend({
 
                 var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
                 var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
-
+                
                 xRange = _this._rangeBump(xRange);
                 yRange = _this._rangeBump(yRange);
 
@@ -169,6 +169,15 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
+                var xRangeFake = _this._rangeBump([0, _this.width]);
+                var yRangeFake = _this._rangeBump([_this.height, 0]);
+                
+                var formatter = d3.format(".2r");
+                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeFake[0]));
+                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));                
+                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeFake[0]));
+                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeFake[1]));
+                
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);

@@ -33,8 +33,8 @@ var AxisModel = Model.extend({
     which: undefined,
     min: null,
     max: null,
-    zoomR: null,
-    zoomS: null
+    fakeMin: null,
+    fakeMax: null
   },
 
   /**

@@ -82,6 +82,9 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
+        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+          return;
+        }
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
