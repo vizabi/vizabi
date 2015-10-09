@@ -236,6 +236,15 @@ export default Class.extend({
     },
 
 
+    zoomToMaxMin: function(minX, maxX, minY, maxY, duration){
+        var _this = this.context;
+        
+        var xRange = _this._rangeBump([_this.xScale(minX), _this.xScale(maxX)], "undo");
+        var yRange = _this._rangeBump([_this.yScale(minY), _this.yScale(maxY)], "undo");
+
+        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
+
+    },
 
 
     _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
