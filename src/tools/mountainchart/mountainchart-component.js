@@ -112,7 +112,7 @@ var MountainChartComponent = Component.extend({
             "change:marker": function (evt) {
                 if (!_this._readyOnce) return;
                 if (evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
-                    _this.updateSize();
+                    _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
                 }
@@ -233,6 +233,7 @@ var MountainChartComponent = Component.extend({
         this.yScale = d3.scale.linear().domain([0, +yMax]);
 
         _this.updateSize(shape.length);
+        _this.zoomToMaxMin();
 
         shape = shape.map(function (m, i) {return {x: _this.mesh[i], y0: 0, y: +m};})
 
@@ -292,6 +293,7 @@ var MountainChartComponent = Component.extend({
         this.updateIndicators();
         this.updateEntities();
         this.updateSize();
+        this.zoomToMaxMin();
         this._spawnMasks();
         this.updateTime();
         this._adjustMaxY({force: true});
@@ -344,14 +346,8 @@ var MountainChartComponent = Component.extend({
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
-        this.xScale.range([0, this.width]);
+        this.xScale.range([this.rangeShift, this.width * this.rangeRatio + this.rangeShift]);
         
-        var fakeMin = this.model.marker.axis_x.fakeMin;
-        var fakeMax = this.model.marker.axis_x.fakeMax;
-        if(fakeMin!=null && fakeMax!=null){
-            this.xScale.range([-this.xScale(fakeMin), 
-                this.width * this.width / (this.xScale(fakeMax) - this.xScale(fakeMin)) -this.xScale(fakeMin)]);            
-        }
 
         //need to know scale type of X to move on
         var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
@@ -414,6 +410,24 @@ var MountainChartComponent = Component.extend({
         this.mesh = this._math.generateMesh(meshLength, scaleType, this.xScale.domain());
     },
 
+    
+    zoomToMaxMin: function(){
+        var _this = this;
+        
+        if(this.model.marker.axis_x.fakeMin==null || this.model.marker.axis_x.fakeMax==null) return;
+        
+        var x1 = this.xScale(this.model.marker.axis_x.fakeMin);
+        var x2 = this.xScale(this.model.marker.axis_x.fakeMax);
+        
+        this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
+        this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;
+
+        this.xScale.range([this.rangeShift, this.width*this.rangeRatio + this.rangeShift]);
+        
+        this.xAxisEl.call(this.xAxis);
+    },
+    
+    
     updateUIStrings: function () {
         var _this = this;
 
