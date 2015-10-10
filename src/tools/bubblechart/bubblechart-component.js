@@ -1,7 +1,9 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import globals from 'base/globals';
 
 import Trail from './bubblechart-trail';
+import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
 
@@ -81,6 +83,20 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
+        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+          if(_this.draggingNow)return;
+            _this._panZoom.zoomToMaxMin(
+              _this.model.marker.axis_x.fakeMin,  
+              _this.model.marker.axis_x.fakeMax, 
+              _this.model.marker.axis_y.fakeMin,
+              _this.model.marker.axis_y.fakeMax,
+              500
+          )
+          return;
+        }
+        
+        if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
+          
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
@@ -105,7 +121,7 @@ var BubbleChartComp = Component.extend({
 
         _this._trails.run("findVisible");
         if(_this.model.time.adaptMinMaxZoom) {
-          _this.adaptMinMaxZoom();
+          _this._panZoom.expandCanvas();
         } else {
           _this.redrawDataPoints();
         }
@@ -116,9 +132,9 @@ var BubbleChartComp = Component.extend({
       'change:time:adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
-          _this.adaptMinMaxZoom();
+          _this._panZoom.expandCanvas();
         } else {
-          _this.resetZoomer();
+          _this._panZoom.reset();
         }
       },
       'change:marker:size': function() {
@@ -176,6 +192,7 @@ var BubbleChartComp = Component.extend({
     }, this.ui.labels);
 
     this._trails = new Trail(this);
+    this._panZoom = new PanZoom(this);
     this._export = new Exporter(this);
     this._export
       .prefix("vzb-bc-")
@@ -193,7 +210,7 @@ var BubbleChartComp = Component.extend({
     //                .handleResult(this._repositionLabels);
 
 
-    this.dragger = d3.behavior.drag()
+    this.labelDragger = d3.behavior.drag()
       .on("dragstart", function(d, i) {
         d3.event.sourceEvent.stopPropagation();
         var KEY = _this.KEY;
@@ -231,177 +248,29 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    this.dragRectangle = d3.behavior.drag()
-      .on("dragstart", function(d, i) {
-        if(!(d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-        this.ctrlKeyLock = true;
-        this.origin = {
-          x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-          y: d3.mouse(this)[1] - _this.activeProfile.margin.top
-        };
-        _this.zoomRect.classed("vzb-invisible", false);
-      })
-      .on("drag", function(d, i) {
-        if(!this.ctrlKeyLock) return;
-        var origin = this.origin;
-        var mouse = {
-          x: d3.event.x - _this.activeProfile.margin.left,
-          y: d3.event.y - _this.activeProfile.margin.top
-        };
-
-        _this.zoomRect
-          .attr("x", Math.min(mouse.x, origin.x))
-          .attr("y", Math.min(mouse.y, origin.y))
-          .attr("width", Math.abs(mouse.x - origin.x))
-          .attr("height", Math.abs(mouse.y - origin.y));
-      })
-
-    .on("dragend", function(e) {
-      if(!this.ctrlKeyLock) return;
-      this.ctrlKeyLock = false;
-
-      _this.zoomRect
-        .attr("width", 0)
-        .attr("height", 0)
-        .classed("vzb-invisible", true);
-
-      this.target = {
-        x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-        y: d3.mouse(this)[1] - _this.activeProfile.margin.top
-      };
-
-      _this._zoomOnRectangle(d3.select(this), this.origin.x, this.origin.y, this.target.x, this.target.y,
-        true, 500);
-    });
-
-    this.zoomer = d3.behavior.zoom()
-      .scaleExtent([1, 100])
-      .on("zoom", function() {
-        if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey))
-          return;
-
-
-        //send the event to the page if fully zoomed our or page not scrolled into view
-        if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
-
-          if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-
-          if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1) {
-            _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-            return;
-          }
-        }
-
-        _this.model._data.entities.clearHighlighted();
-        _this._setTooltip();
-
-        var zoom = d3.event.scale;
-        var pan = d3.event.translate;
-        var ratioY = _this.zoomer.ratioY;
-        var ratioX = _this.zoomer.ratioX;
-
-
-        // console.log(d3.event.scale, _this.zoomer.ratioY, _this.zoomer.ratioX)
-
-        _this.draggingNow = true;
-
-        //value protections and fallbacks
-        if(isNaN(zoom) || zoom == null) zoom = _this.zoomer.scale();
-        if(isNaN(zoom) || zoom == null) zoom = 1;
-
-        //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-        if(zoom == 1) {
-          _this.zoomer.ratioX = 1;
-          ratioX = 1;
-          _this.zoomer.ratioY = 1;
-          ratioY = 1
-        }
-
-        if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = _this.zoomer.translate();
-        if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
-
-
-        // limit the zooming, so that it never goes below 1 for any of the axes
-        if(zoom * ratioY < 1) {
-          ratioY = 1 / zoom;
-          _this.zoomer.ratioY = ratioY
-        }
-        if(zoom * ratioX < 1) {
-          ratioX = 1 / zoom;
-          _this.zoomer.ratioX = ratioX
-        }
-
-        //limit the panning, so that we are never outside the possible range
-        if(pan[0] > 0) pan[0] = 0;
-        if(pan[1] > 0) pan[1] = 0;
-        if(pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
-        if(pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
-        _this.zoomer.translate(pan);
-
-        var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
-        var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
-
-        xRange = _this._rangeBump(xRange);
-        yRange = _this._rangeBump(yRange);
-
-        if(_this.model.marker.axis_x.scaleType === 'ordinal')
-          _this.xScale.rangeBands(xRange);
-        else
-          _this.xScale.range(xRange);
-
-        if(_this.model.marker.axis_y.scaleType === 'ordinal')
-          _this.yScale.rangeBands(yRange);
-        else
-          _this.yScale.range(yRange);
-
-        // Keep the min and max size (pixels) constant, when zooming.
-        //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
-        //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
-
-        var optionsY = _this.yAxis.labelerOptions();
-        var optionsX = _this.xAxis.labelerOptions();
-        optionsY.limitMaxTickNumber = zoom * ratioY < 2 ? 7 : 14;
-        optionsY.transitionDuration = _this.zoomer.duration;
-        optionsX.transitionDuration = _this.zoomer.duration;
-
-        _this.xAxisEl.call(_this.xAxis.labelerOptions(optionsX));
-        _this.yAxisEl.call(_this.yAxis.labelerOptions(optionsY));
-        _this.redrawDataPoints(_this.zoomer.duration);
-        _this._trails.run("resize", null, _this.zoomer.duration);
-
-        _this.zoomer.duration = 0;
-
-      })
-      .on('zoomend', function() {
-        _this.draggingNow = false;
-      });
-
-    this.zoomer.ratioX = 1;
-    this.zoomer.ratioY = 1;
-
-    this.fontSettings = {
-      minSize: 8,
-      step: 2
-    };
   },
 
 
 
 
-  _rangeBump: function(arg) {
+  _rangeBump: function(arg, undo) {
     var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
       var z2 = arg[arg.length - 1];
 
+      //the sign of bump depends on the direction of the scale
       if(z1 < z2) {
-        z1 += bump;
-        z2 -= bump;
+        z1 += bump * undo;
+        z2 -= bump * undo;
+        // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 > z2) z1 = z2 = (z1 + z2) / 2;
       } else if(z1 > z2) {
-        z1 -= bump;
-        z2 += bump;
+        z1 -= bump * undo;
+        z2 += bump * undo;
+        // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 < z2) z1 = z2 = (z1 + z2) / 2;
       } else {
         utils.warn("rangeBump error: the input scale range has 0 length. that sucks");
@@ -412,19 +281,19 @@ var BubbleChartComp = Component.extend({
     }
   },
 
-  _marginUnBump: function(arg) {
-    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
-    if(utils.isObject(arg)) {
-      return {
-        left: arg.left - bump,
-        right: arg.right - bump,
-        top: arg.top - bump,
-        bottom: arg.bottom - bump
-      };
-    } else {
-      utils.warn("marginUnBump error: input is not an object {left top bottom right}");
-    }
-  },
+//  _marginUnBump: function(arg) {
+//    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+//    if(utils.isObject(arg)) {
+//      return {
+//        left: arg.left - bump,
+//        right: arg.right - bump,
+//        top: arg.top - bump,
+//        bottom: arg.bottom - bump
+//      };
+//    } else {
+//      utils.warn("marginUnBump error: input is not an object {left top bottom right}");
+//    }
+//  },
 
 
   /**
@@ -454,8 +323,6 @@ var BubbleChartComp = Component.extend({
     this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
     this.dataWarningEl = this.graph.select('.vzb-data-warning');
 
-    this.fontSettings.maxTitleFontSize = parseInt(this.sTitleEl.style('font-size'), 10);
-
     this.projectionX = this.graph.select(".vzb-bc-projection-x");
     this.projectionY = this.graph.select(".vzb-bc-projection-y");
 
@@ -477,7 +344,7 @@ var BubbleChartComp = Component.extend({
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this._trails.run("findVisible");
-      _this.resetZoomer(); // includes redraw data points and trail resize
+      _this._panZoom.reset(); // includes redraw data points and trail resize
     });
 
     //keyboard listeners
@@ -490,8 +357,8 @@ var BubbleChartComp = Component.extend({
       });
 
     this.element
-      //.call(this.zoomer)
-      //.call(this.dragRectangle)
+      .call(this._panZoom.zoomer)
+      .call(this._panZoom.dragRectangle)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
@@ -522,9 +389,9 @@ var BubbleChartComp = Component.extend({
     this.updateBubbleOpacity();
     this._updateDoubtOpacity();
     this._trails.create();
-    this.resetZoomer(); // includes redraw data points and trail resize
+    this._panZoom.reset(); // includes redraw data points and trail resize
     this._trails.run(["recolor", "findVisible", "reveal"]);
-    if(this.model.time.adaptMinMaxZoom) this.adaptMinMaxZoom();
+    if(this.model.time.adaptMinMaxZoom) this._panZoom.expandCanvas();
   },
 
   ready: function() {
@@ -543,8 +410,15 @@ var BubbleChartComp = Component.extend({
     this.updateMarkerSizeLimits();
     this._trails.create();
     this._trails.run("findVisible");
-    this.resetZoomer();
+    this._panZoom.reset();
     this._trails.run(["recolor", "reveal"]);
+      
+    this._panZoom.zoomToMaxMin(
+       this.model.marker.axis_x.fakeMin, 
+       this.model.marker.axis_x.fakeMax, 
+       this.model.marker.axis_y.fakeMin,
+       this.model.marker.axis_y.fakeMax
+    )
 
   },
 
@@ -588,7 +462,7 @@ var BubbleChartComp = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
-    var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+    var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
       title: {
@@ -647,7 +521,7 @@ var BubbleChartComp = Component.extend({
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
-      
+
     this.yInfoEl
         .html(iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
@@ -806,79 +680,8 @@ var BubbleChartComp = Component.extend({
     }
   },
 
-  adaptMinMaxZoom: function() {
-    var _this = this;
-    var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
-    var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
-    var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max));
-    var frame = _this.currentZoomFrameXY;
 
-    var suggestedFrame = {
-      x1: _this.xScale(mmmX.min) - radiusMax,
-      y1: _this.yScale(mmmY.min) + radiusMax,
-      x2: _this.xScale(mmmX.max) + radiusMax,
-      y2: _this.yScale(mmmY.max) - radiusMax
-    };
 
-    var TOLERANCE = 0.0;
-
-    if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
-      suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
-      _this.currentZoomFrameXY = utils.clone(suggestedFrame);
-      var frame = _this.currentZoomFrameXY;
-      _this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
-      //console.log("rezoom")
-    } else {
-      _this.redrawDataPoints(_this.duration);
-      //console.log("no rezoom")
-    }
-  },
-
-  _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
-    var _this = this;
-    var zoomer = _this.zoomer;
-
-    if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
-
-    if(Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
-      var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
-      var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
-      var ratioY = zoomer.ratioY;
-    } else {
-      var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
-      var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
-      var ratioX = zoomer.ratioX;
-    }
-
-    if(compensateDragging) {
-      zoomer.translate([
-        zoomer.translate()[0] + x1 - x2,
-        zoomer.translate()[1] + y1 - y2
-      ])
-    }
-
-    var pan = [
-      (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX, (zoomer.translate()[
-        1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
-    ];
-
-    zoomer.scale(zoom);
-    zoomer.ratioY = ratioY;
-    zoomer.ratioX = ratioX;
-    zoomer.translate(pan);
-    zoomer.duration = duration ? duration : 0;
-
-    zoomer.event(element);
-  },
-
-  resetZoomer: function(element) {
-    this.zoomer.scale(1);
-    this.zoomer.ratioY = 1;
-    this.zoomer.ratioX = 1;
-    this.zoomer.translate([0, 0]);
-    this.zoomer.duration = 0;
-    this.zoomer.event(element || this.element);
-  },
 
   /*
    * UPDATE TIME:
@@ -955,11 +758,17 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    this.yearEl.style("text-anchor", null);
 
     this.yearEl
       .attr("x", this.width / 2)
       .attr("y", this.height / 3 * 2)
       .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
+
+    var box = this.yearEl.node().getBBox();
+    this.yearEl
+      .attr("x", box.x)
+      .style("text-anchor", "start");
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -1073,20 +882,20 @@ var BubbleChartComp = Component.extend({
       this.yInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.yInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+      this.yInfoEl.attr('transform', 'translate('
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
       var titleBBox = this.xTitleEl.node().getBBox();
       var translate = d3.transform(this.xTitleEl.attr('transform')).translate;
-    
+
       this.xInfoEl.select('svg')
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
-      this.xInfoEl.attr('transform', 'translate(' 
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ',' 
+      this.xInfoEl.attr('transform', 'translate('
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
         + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
    }
 
@@ -1476,7 +1285,6 @@ var BubbleChartComp = Component.extend({
     this.entityLines
       .enter().append('g')
       .attr("class", "vzb-bc-entity")
-      .call(_this.dragger)
       .each(function(d, index) {
         d3.select(this).append("line").attr("class", "vzb-bc-label-line");
       });
@@ -1484,7 +1292,7 @@ var BubbleChartComp = Component.extend({
     this.entityLabels
       .enter().append("g")
       .attr("class", "vzb-bc-entity")
-      .call(_this.dragger)
+      .call(_this.labelDragger)
       .each(function(d, index) {
         var view = d3.select(this);
 
@@ -1497,7 +1305,7 @@ var BubbleChartComp = Component.extend({
 
             var maxmin = _this.cached[d[KEY]].maxMinValues;
             var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
-            _this._zoomOnRectangle(_this.element,
+            _this._panZoom._zoomOnRectangle(_this.element,
               _this.xScale(maxmin.valueXmin) - radius,
               _this.yScale(maxmin.valueYmin) + radius,
               _this.xScale(maxmin.valueXmax) + radius,

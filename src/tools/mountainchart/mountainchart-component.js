@@ -111,11 +111,10 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker": function (evt) {
                 if (!_this._readyOnce) return;
-                if (evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+                if (evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
                     _this.updateSize();
-                    _this.updateTime();
-                    _this._adjustMaxY({force: true});
                     _this.redrawDataPoints();
+                    _this._probe.redraw();
                 }
             },
             "change:marker:group": function (evt) {
@@ -178,6 +177,9 @@ var MountainChartComponent = Component.extend({
 
         this.xAxis = axisSmart();
 
+        
+        this.rangeRatio = 1;
+        this.rangeShift = 0;
         this.cached = {};
         this.mesh = [];
         this.yMax = 0;
@@ -328,14 +330,28 @@ var MountainChartComponent = Component.extend({
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         //year is centered and resized
+        this.yearEl.style("text-anchor", null);
+
         this.yearEl
             .attr("x", this.width)
             .attr("y", this.height*0.15)
             .style("font-size", Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)) + "px");
 
+        var box = this.yearEl.node().getBBox();
+        this.yearEl
+          .attr("x", box.x)
+          .style("text-anchor", "start");
+
         //update scales to the new range
         this.yScale.range([this.height, 0]);
         this.xScale.range([0, this.width]);
+        
+        var fakeMin = this.model.marker.axis_x.fakeMin;
+        var fakeMax = this.model.marker.axis_x.fakeMax;
+        if(fakeMin!=null && fakeMax!=null){
+            this.xScale.range([-this.xScale(fakeMin), 
+                this.width * this.width / (this.xScale(fakeMax) - this.xScale(fakeMin)) -this.xScale(fakeMin)]);            
+        }
 
         //need to know scale type of X to move on
         var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";

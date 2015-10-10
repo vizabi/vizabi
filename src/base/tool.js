@@ -3,6 +3,7 @@ import Model from 'model'
 import Component from 'component'
 import Layout from 'layout'
 import { warn as warnIcon } from 'iconset'
+import Promise from 'base/promise';
 
 var class_loading = 'vzb-loading';
 var class_loading_first = 'vzb-loading-first';
@@ -72,7 +73,7 @@ var Tool = Component.extend({
       },
       'translate': function(evt, val) {
         if(_this._ready) {
-          Vizabi.Promise.all([_this.preloadLanguage(), _this.model.load()])
+          Promise.all([_this.preloadLanguage(), _this.model.load()])
             .then(function() {
               _this.model.validate();
               _this.translateStrings();
@@ -116,7 +117,10 @@ var Tool = Component.extend({
   },
 
   minState: function() {
-    return this.model.state.getObject(); 
+    var state = this.model.state.getObject();
+    var d_state = this.default_options.state;
+    var d = utils.diffObject(state, d_state);
+    return utils.diffObject(d, this.model.state.getDefaults());
   },
 
   /**
@@ -247,7 +251,7 @@ var Tool = Component.extend({
   },
 
   preloadLanguage: function() {
-    return Vizabi.Promise.resolve();
+    return Promise.resolve();
   }
 });
 

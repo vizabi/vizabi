@@ -63,7 +63,8 @@ var TimeModel = Model.extend({
 
     this._type = "time";
     //default values for time model
-    values = utils.extend(this._defaults, values);
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
 
     values.formatOutput = values.formatOutput || values.formatInput;
 

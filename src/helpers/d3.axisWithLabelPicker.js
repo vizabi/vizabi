@@ -96,13 +96,20 @@ export default function axisSmart() {
         .attr("x1", orient == VERTICAL ? (axis.orient() == "right" ? -1 : 1) * tickLengthIn : scale)
         .attr("x2", orient == VERTICAL ? (axis.orient() == "right" ? 1 : -1) * tickLengthOut : scale)
 
-      g.selectAll("path").remove();
-      g.append("line")
-        .attr("class", "vzb-axis-line")
-        .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump - 1)
-        .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump)
-        .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - options.bump)
-        .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + options.bump)
+      if(options.bump){
+
+          g.selectAll("path").remove();
+          var rake = g.selectAll(".vzb-axis-line").data([0]);
+          rake.exit().remove();
+          rake.enter().append("line")
+              .attr("class", "vzb-axis-line");
+
+          rake
+            .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump - 1)
+            .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump)
+            .attr("y1", orient == HORIZONTAL ? 0 : d3.min(scale.range()) - options.bump)
+            .attr("y2", orient == HORIZONTAL ? 0 : d3.max(scale.range()) + options.bump)
+      }
 
     };
 
