@@ -51,8 +51,8 @@ function formatDate(date, unit) {
 
 function formatDates(state) {
   // Format date objects according to the unit
-  var unit = state.time.unit || "year";
   if(state && state.time) {
+    var unit = state.time.unit || "year";
     if(typeof state.time.value === 'object') {
       state.time.value = formatDate(state.time.value, unit);
     }

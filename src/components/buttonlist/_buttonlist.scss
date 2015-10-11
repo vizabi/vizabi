@@ -168,11 +168,19 @@ $vzb-button-color-border: #cce6ed;
     .vzb-tool-buttonlist{
       width: 290px;
 
+      .vzb-buttonlist-container-dialogs {
+        min-height: 85%;
+        overflow: hidden;
+      }
+
       .vzb-buttonlist-container-buttons {
         position: relative;
+        padding: 10px 0;
+        margin-right: -10px;
       }
 
       .vzb-buttonlist-btn {
+        margin-right: 0;
         &.vzb-dialog-side-btn{
           display: none;
         }
@@ -184,10 +192,13 @@ $vzb-button-color-border: #cce6ed;
           display: block;
           margin: 5px;
           position: static;
+          box-shadow: none;
+          background-color: $vzb-color-primary-lightest;
+          border-bottom: 1px solid rgba(200, 200, 200, 0.4);
         }
 
         .vzb-dialog-title {
-          padding: 10px 25px 0;
+          padding: 5px 25px;
         }
 
         .vzb-dialog-button {
@@ -199,11 +210,16 @@ $vzb-button-color-border: #cce6ed;
         }
 
         &[data-btn="find"] {
+          height: 400px;
           @import 'dialogs/find/find';
         }
 
         &[data-btn="colors"] {
           @import 'dialogs/colors/colors';
+        }
+
+        &[data-btn="size"] {
+          @import 'dialogs/size/size';
         }
 
         .vzb-dialog-modal {
