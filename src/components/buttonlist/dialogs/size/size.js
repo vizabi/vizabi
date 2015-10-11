@@ -19,23 +19,16 @@ init: function(config, parent) {
 
   // in dialog, this.model_expects = ["state", "data"];
 
-  this.components = [{
+  this.components = [
+  {
     component: bubblesize,
-    placeholder: '.vzb-dialog-bubblesize-min',
+    placeholder: '.vzb-dialog-bubblesize',
     model: ["state.marker.size"],
     ui: {
       show_button: false
-    },
-    field: 'min'
-  }, {
-    component: bubblesize,
-    placeholder: '.vzb-dialog-bubblesize-max',
-    model: ["state.marker.size"],
-    ui: {
-      show_button: false
-    },
-    field: 'max'
-  }, {
+    }
+  },
+  {
     component: indicatorpicker,
     placeholder: '.vzb-saxis-container',
     model: ["state.marker.size", "language"],
@@ -43,7 +36,8 @@ init: function(config, parent) {
       selectIndicator: true,
       selectScaletype: false
     }
-  }];
+  }
+  ];
 
   this._super(config, parent);
 }
