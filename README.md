@@ -39,9 +39,18 @@ sudo apt-get install redis-server
 
 ## Development
 
-1. Start API server via `PORT=3001 npm start` or via `PORT 3001 node server/server.js`
-2. `npm run dev` - will start webpack with watch and hot reload
-3. View in browser at `http://localhost:8080/tools/`
+1. `npm run dev` - start serving UI only on port 8080, uses in memory file system
+2. `npm run build` - creates static dev build of UI
+3. `npm run deploy` - creates static, production ready UI files
+4. `npm start` - starts API and `npm run build`
+5. On daily basis you will likely use
+```bash
+# one terminal or from webstorm
+MONGO_URL=mongodb://readme:123123@ds033744.mongolab.com:33744/gampinder-tools-dev node server/server.js
+# second terminal
+npm run dev
+# open http://localhost:8080/tools/bubbles
+```
 
 ## Update vizabi
 ```bash
