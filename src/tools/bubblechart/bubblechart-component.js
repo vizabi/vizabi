@@ -715,8 +715,6 @@ var BubbleChartComp = Component.extend({
           bottom: 45
         },
         padding: 2,
-        minRadius: .5,
-        maxRadius: 40,
         infoElHeight: 16
       },
       "medium": {
@@ -727,8 +725,6 @@ var BubbleChartComp = Component.extend({
           bottom: 55
         },
         padding: 2,
-        minRadius: 1,
-        maxRadius: 55,
         infoElHeight: 20
       },
       "large": {
@@ -739,8 +735,6 @@ var BubbleChartComp = Component.extend({
           bottom: 60
         },
         padding: 2,
-        minRadius: 1,
-        maxRadius: 70,
         infoElHeight: 22
       }
     };
@@ -751,10 +745,10 @@ var BubbleChartComp = Component.extend({
       .findChildByName('gapminder-buttonlist')
       .findChildByName('size')
       .findChildByName('bubblesize')
-      .minMaxBubbleRadius;
+      .getMinMaxBubbleRadius();
       
-    //this.activeProfile.minRadius = minMaxBubbleRadius[0];
-    //this.activeProfile.maxRadius = minMaxBubbleRadius[1];
+    this.activeProfile.minRadius = minMaxBubbleRadius.min;
+    this.activeProfile.maxRadius = minMaxBubbleRadius.max;
     
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
