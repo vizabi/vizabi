@@ -7,9 +7,10 @@ addons:
     packages:
     - s3cmd
     - ruby
-before_script:
+install:
   - gem install sass
   - gem install scss-lint
+before_script:
   - npm install -g bower
   - bower install
 script:
