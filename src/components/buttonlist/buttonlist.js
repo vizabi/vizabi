@@ -50,6 +50,12 @@ var ButtonList = Component.extend({
         dialog: dialogs.find,
         ispin: false,
       },
+      'show': {
+        title: "buttons/show",
+        icon: "star",
+        dialog: dialogs.show,
+        ispin: false,
+      },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",

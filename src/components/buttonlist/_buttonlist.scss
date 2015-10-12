@@ -232,6 +232,11 @@ $vzb-button-color-border: #cce6ed;
         height: 400px;
         @import 'dialogs/find/find';
       }
+    
+      &[data-btn="show"] {
+        height: 400px;
+        @import 'dialogs/show/show';
+      }
 
       &[data-btn="colors"] {
         @import 'dialogs/colors/colors';
