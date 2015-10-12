@@ -10,11 +10,11 @@
 
   .vzb-bs-slider { 
     .vzb-bs-slider-thumb-arc {
-      fill:none;
+      fill: none;
+      pointer-events: none; 
       stroke: rgba($vzb-color-primary, 1);
       stroke-width: 2px;
       stroke-linejoin: round;
-      pointer-events: none; 
     }
         
     .vzb-bs-slider-extent {

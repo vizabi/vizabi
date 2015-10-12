@@ -314,7 +314,7 @@ var LCComponent = Component.extend({
 
     lineLabelsView
       .enter().append("text")
-      .attr("class", "samplingView vzb-lc-labelName")
+      .attr("class", "samplingView vzb-lc-labelname")
       .style("opacity", 0)
       .text(function(d) {
         return(d.length < 13) ? d : d.substring(0, 10) + '...';
@@ -457,12 +457,12 @@ var LCComponent = Component.extend({
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
         labelGroup.append("text")
-          .attr("class", "vzb-lc-labelName")
+          .attr("class", "vzb-lc-labelname")
           .style("fill", colorShadow)
           .attr("dy", ".35em");
 
         labelGroup.append("text")
-          .attr("class", "vzb-lc-labelValue")
+          .attr("class", "vzb-lc-label-value")
           .style("fill", colorShadow)
           .attr("dy", "1.6em");
       });
@@ -563,11 +563,11 @@ var LCComponent = Component.extend({
         var name = label.length < 13 ? label : label.substring(0, 10) + '...';
         var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
 
-        var t = entity.select(".vzb-lc-labelName")
+        var t = entity.select(".vzb-lc-labelname")
           .attr("dx", _this.activeProfile.text_padding)
           .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
-        entity.select(".vzb-lc-labelValue")
+        entity.select(".vzb-lc-label-value")
           .attr("dx", _this.activeProfile.text_padding)
           .text("");
 
@@ -577,8 +577,8 @@ var LCComponent = Component.extend({
           var width = _this.width + _this.margin.right;
 
           if(size > width) {
-            entity.select(".vzb-lc-labelName").text(name);
-            entity.select(".vzb-lc-labelValue").text(value);
+            entity.select(".vzb-lc-labelname").text(name);
+            entity.select(".vzb-lc-label-value").text(value);
           }
         }
       });

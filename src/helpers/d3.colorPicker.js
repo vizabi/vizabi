@@ -162,11 +162,11 @@ export default function colorPicker() {
         }).on('mouseout', function() {
         d3.select(this).style('stroke', 'none');
       });
-      circles.append('circle').attr('r', minRadius - 1).attr('fill', '#FFF').attr('class', css.COLOR_BUTTON).on(
+      circles.append('circle').attr('r', minRadius - 1).attr('fill', '#fff').attr('class', css.COLOR_BUTTON).on(
         'mouseover',
         function() {
           d3.select(this).style('stroke', '#444');
-          _cellHover('#FFF');
+          _cellHover('#fff');
         }).on('mouseout', function() {
         d3.select(this).style('stroke', 'none');
       });

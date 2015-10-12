@@ -12,7 +12,7 @@
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
-      .vzb-bc-zoomRect {
+      .vzb-bc-zoom-rect {
         fill: none;
         stroke: $vzb-color-grey;
       }
@@ -27,7 +27,7 @@
 
       .vzb-bc-bubbles {
         .vzb-bc-entity {
-          stroke: black;
+          stroke: $vzb-color-black;
           stroke-opacity: .7;
           cursor: pointer;
           pointer-events: visible;
@@ -41,7 +41,7 @@
         }
       } 
         
-      .vzb-bc-tooltip  {
+      .vzb-bc-tooltip {
         @extend %vzb-chart-tooltip;
       }
       
@@ -103,7 +103,7 @@
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 2 4;
-        stroke: #999999;
+        stroke: $vzb-color-grey;
         opacity: 0;
       }
       .vzb-bc-line {
@@ -117,10 +117,6 @@
         fill: $vzb-color-grey;
         text-anchor: middle;
         -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
         user-select: none;
       }
       .vzb-axis-value text {
@@ -144,7 +140,7 @@
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title,
       .vzb-bc-axis-s-title,
-      .vzb-bc-axis-c-title  {
+      .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-large;
       }
     

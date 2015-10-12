@@ -36,13 +36,13 @@
         }
       }
     
-      .vzb-mc-probe .vzb-mc-probe-valueUL,
-      .vzb-mc-probe .vzb-mc-probe-valueDL {
+      .vzb-mc-probe .vzb-mc-probe-value-ul,
+      .vzb-mc-probe .vzb-mc-probe-value-dl {
         text-anchor: end;
       }
     
-      .vzb-mc-probe .vzb-mc-probe-valueUR,
-      .vzb-mc-probe .vzb-mc-probe-valueDR {
+      .vzb-mc-probe .vzb-mc-probe-value-ur,
+      .vzb-mc-probe .vzb-mc-probe-value-dr {
         text-anchor: start;
       }
 
@@ -67,7 +67,7 @@
       }
 
       .vzb-mc-mountains-labels .vzb-highlight .vzb-mc-label-shadow {
-        stroke: yellow;
+        stroke: $vzb-color-yellow;
       }
 
       .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
@@ -137,10 +137,6 @@
         text-anchor: end;
         dominant-baseline: hanging;
         -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
         user-select: none;
         pointer-events: none;
       }

@@ -8,12 +8,6 @@
 //      E.g: $vzb-border-color-blue;
 //
 // ****************************************************************************
-// ----------------------------------------------------------------------------
-//   Sizes
-// ----------------------------------------------------------------------------
-// this never gets used. see layout.js instead
-//$vzb-resolution-medium: 750px;
-//$vzb-resolution-large: 970px;
 
 // ----------------------------------------------------------------------------
 //   Text
@@ -38,6 +32,7 @@ $vzb-font-size-largest: 2em;
 $vzb-color-primary: #607889;
 $vzb-color-primary-darkest: #425663; 
 $vzb-color-primary-dark: #4b98aa; 
+$vzb-color-primary-strong: #4b98aa;
 $vzb-color-primary-light: #9fbbc1;
 $vzb-color-primary-lightest: #f2fafc;
 // Grayscale

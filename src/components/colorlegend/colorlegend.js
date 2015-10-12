@@ -52,7 +52,7 @@ var ColorLegend = Component.extend({
     var _this = this;
     this.element = d3.select(this.element);
     this.listColorsEl = this.element.append("div").attr("class", "vzb-cl-holder").append("div").attr("class",
-      "vzb-cl-colorList");
+      "vzb-cl-colorlist");
     this.rainbowEl = this.listColorsEl.append("div").attr("class", "vzb-cl-rainbow");
     this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 

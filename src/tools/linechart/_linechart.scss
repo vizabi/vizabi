@@ -27,7 +27,7 @@
     .vzb-lc-projection-x,
     .vzb-lc-projection-y {
       stroke-dasharray: 2 4;
-      stroke: #999999;
+      stroke: $vzb-color-grey;
       opacity: 0;
     }
     .vzb-lc-line {
@@ -62,7 +62,7 @@
     }
 
     .vzb-lc-entity.vzb-selected {
-      opacity: 1.0;
+      opacity: 1;
     }
   }
   &.vzb-large {
@@ -85,8 +85,8 @@
         @extend %vzb-chart-axis-title-large;
       }
 
-      .vzb-lc-labelName,
-      .vzb-lc-labelValue,
+      .vzb-lc-labelname,
+      .vzb-lc-label-value,
       .vzb-lc-axis-x,
       .vzb-lc-axis-y,
       .vzb-lc-axis-value {
@@ -116,8 +116,8 @@
         @extend %vzb-chart-axis-title-medium;
       }
 
-      .vzb-lc-labelName,
-      .vzb-lc-labelValue,
+      .vzb-lc-labelname,
+      .vzb-lc-label-value,
       .vzb-lc-axis-x,
       .vzb-lc-axis-y,
       .vzb-lc-axis-value {
@@ -147,8 +147,8 @@
         @extend %vzb-chart-axis-title-small;
       }
 
-      .vzb-lc-labelName,
-      .vzb-lc-labelValue,
+      .vzb-lc-labelname,
+      .vzb-lc-label-value,
       .vzb-lc-axis-x,
       .vzb-lc-axis-y,
       .vzb-lc-axis-value {

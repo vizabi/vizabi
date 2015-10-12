@@ -196,7 +196,7 @@ var BubbleChartComp = Component.extend({
     this._export = new Exporter(this);
     this._export
       .prefix("vzb-bc-")
-      .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect",
+      .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoom-rect",
         "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"
       ]);
 
@@ -331,7 +331,7 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
     this.linesContainer = this.graph.select('.vzb-bc-lines');
-    this.zoomRect = this.element.select('.vzb-bc-zoomRect');
+    this.zoomRect = this.element.select('.vzb-bc-zoom-rect');
 
     this.entityBubbles = null;
     this.entityLabels = null;

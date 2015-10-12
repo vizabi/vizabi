@@ -22,18 +22,18 @@ var css = {
   close: 'vzb-treemenu-close',
   search: 'vzb-treemenu-search',
   list: 'vzb-treemenu-list',
-  list_item: 'vzb-treemenu-list_item',
-  hasChild: 'vzb-treemenu-list_item--children',
-  list_item_label: 'vzb-treemenu-list_item_label',
-  list_top_level: 'vzb-treemenu-list_top',
-  search_wrap: 'vzb-treemenu-search_wrap',
-  isSpecial: 'vzb-treemenu-list_item--special',
+  list_item: 'vzb-treemenu-list-item',
+  hasChild: 'vzb-treemenu-list-item-children',
+  list_item_label: 'vzb-treemenu-list-item-label',
+  list_top_level: 'vzb-treemenu-list-top',
+  search_wrap: 'vzb-treemenu-search-wrap',
+  isSpecial: 'vzb-treemenu-list-item-special',
   hidden: 'vzb-hidden',
   title: 'vzb-treemenu-title',
-  alignYt: 'vzb-alignY-top',
-  alignYb: 'vzb-alignY-bottom',
-  alignXl: 'vzb-alignX-left',
-  alignXr: 'vzb-alignX-right'
+  alignYt: 'vzb-align-y-top',
+  alignYb: 'vzb-align-y-bottom',
+  alignXl: 'vzb-align-x-left',
+  alignXr: 'vzb-align-x-right'
 };
 
 //options and globals
