@@ -594,6 +594,7 @@ var TimeSlider = Component.extend({
     var _this = this;
 
     _this.model.time.speed = speed;
+    _this.model.time.speedSet = true;
   },
 
   /**
