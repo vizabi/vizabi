@@ -110,12 +110,15 @@ gulp.task('clean:preview:data', function() {
 //   Styles
 // ----------------------------------------------------------------------------
 
-// TODO: Add SCSS Linting (later, because there are too many errors to fix now)
-// gulp.task('scss-lint', function() {
-//   return gulp.src(path.join(config.src, '**/*.scss'))
-//     .pipe(cache('scsslint'))
-//     .pipe(scsslint());
-// });
+gulp.task('scss-lint', function() {
+  return gulp.src(path.join(config.src, '**/*.scss'))
+    .pipe(cache('scsslint'))
+    .pipe(scsslint())
+    .pipe(scsslint.failReporter())
+    .on('end', function() {
+      gutil.log(chalk.green("Linting SCSS... DONE!"));
+    });;
+});
 
 function compileSass(src, dest) {
   return sass(src, {
@@ -127,7 +130,7 @@ function compileSass(src, dest) {
     .pipe(gulp.dest(dest));
 }
 
-gulp.task('styles', ['clean:css'], function() {
+gulp.task('styles', ['scss-lint', 'clean:css'], function() {
   gutil.log(chalk.yellow("Building CSS..."));
   return compileSass(path.join(config.src, 'assets/styles/vizabi.scss'), config.destLib)
     .on('end', function() {
@@ -420,7 +423,7 @@ gulp.task('watch-lint', function() {
 //   Web Server
 // ----------------------------------------------------------------------------
 
-gulp.task('connect', ['preview'], function() {
+gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
   var webserver = {
     port: 9000,
     root: config.dest,
@@ -475,7 +478,7 @@ gulp.task('bump', function() {
 gulp.task('build', ['compress']);
 
 //Developer task without linting
-gulp.task('dev', ['styles', 'bundle', 'watch', 'connect']);
+gulp.task('dev', ['watch', 'connect']);
 
 //Serve = build + connect
 gulp.task('serve', ['build', 'connect']);
