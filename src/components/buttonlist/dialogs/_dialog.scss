@@ -38,16 +38,16 @@
   &[data-btn='find'] {
 
     &.vzb-buttonlist-dialog {
-       &.vzb-dialog-side {
-         .vzb-dialog-buttons{
-           display: block;
-         }
+      &.vzb-dialog-side {
+        .vzb-dialog-buttons {
+          display: block;
+        }
 
-         .vzb-dialog-button.vzb-label-primary {
-           visibility: hidden;
-         }
-       }
-     }
+        .vzb-dialog-button.vzb-label-primary {
+          visibility: hidden;
+        }
+      }
+    }
     .vzb-dialog-title {
       display: inline-block;
       vertical-align: top;
