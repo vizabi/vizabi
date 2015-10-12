@@ -24,20 +24,11 @@
     padding: 45px 25px 20px;
     display: inline-block;
   }
+  &[data-btn="axesmc"] {
+    @import "axesmc/axesmc";
+  }
   &[data-btn="stack"] {
-    .vzb-dialog-content {
-      p {
-        span {
-          font-weight: bold;
-        }
-      }
-    }
-
-    .vzb-manual-sorting {
-      span {
-        font-weight: bold;
-      }
-    }
+    @import "stack/stack";
   }
   &[data-btn="find"] {
     .vzb-dialog-title {
