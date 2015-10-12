@@ -24,7 +24,7 @@ var Show = Dialog.extend({
     }];
 
     this.model_binds = {
-      "change:state:entities:select": function(evt) {
+      "change:state:entities:show": function(evt) {
         _this.ready();
       },
       "change:state:time:value": function(evt) {
@@ -79,6 +79,7 @@ var Show = Dialog.extend({
     var KEY = this.KEY;
     var TIMEDIM = this.model.state.time.getDimension();
     var selected = this.model.state.entities.getSelected();
+    var entitiesModel = this.model.state.entities;
     var marker = this.model.state.marker;
     var show = this.model.state.entities.show.getObject();
     var filter = {};
@@ -108,10 +109,10 @@ var Show = Dialog.extend({
         return "-show-" + d[KEY];
       })
       .property("checked", function(d) {
-        return show[KEY].indexOf(d[KEY]) > -1 || show[KEY][0] === "*";
+        return entitiesModel.isShown(d);
       })
       .on("change", function(d) {
-        _this.model.state.entities.selectEntity(d);
+        _this.model.state.entities.showEntity(d);
       });
 
     items.append("label")
@@ -145,13 +146,12 @@ var Show = Dialog.extend({
   },
 
   showHideDeselect: function() {
-    var someSelected = !!this.model.state.entities.select.length;
-    this.deselect_all.classed('vzb-hidden', !someSelected);
-    this.opacity_nonselected.classed('vzb-hidden', !someSelected);
+    this.deselect_all.classed('vzb-hidden', false);
+    this.opacity_nonselected.classed('vzb-hidden', false);
   },
 
   deselectEntities: function() {
-    this.model.state.entities.clearSelected();
+    this.model.state.entities.clearShow();
   },
 
   transitionEnd: function(event) {
