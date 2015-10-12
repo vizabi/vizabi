@@ -24,6 +24,21 @@
     padding: 45px 25px 20px;
     display: inline-block;
   }
+  &[data-btn="stack"] {
+    .vzb-dialog-content {
+      p {
+        span {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .vzb-manual-sorting {
+      span {
+        font-weight: bold;
+      }
+    }
+  }
   &[data-btn="find"] {
     .vzb-dialog-title {
       display: inline-block;
