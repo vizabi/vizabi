@@ -19,7 +19,7 @@
     z-index: 20;
     visibility: visible;
   }
-  
+
   .vzb-dialog-title {
     color: $vzb-color-primary;
     font-size: $vzb-font-size-medium;
@@ -30,12 +30,24 @@
   &[data-btn='axesmc'] {
     @import 'axesmc/axesmc';
   }
-  
+
   &[data-btn='stack'] {
     @import 'stack/stack';
   }
-  
+
   &[data-btn='find'] {
+
+    &.vzb-buttonlist-dialog {
+       &.vzb-dialog-side {
+         .vzb-dialog-buttons{
+           display: block;
+         }
+
+         .vzb-dialog-button.vzb-label-primary {
+           visibility: hidden;
+         }
+       }
+     }
     .vzb-dialog-title {
       display: inline-block;
       vertical-align: top;
@@ -109,7 +121,7 @@
     overflow: hidden;
     overflow-y: auto;
     padding: 0 40px 5px 20px;
-  
+
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
     }
@@ -264,7 +276,7 @@
       @include opacity(1);
     }
   }
-  
+
   &.notransition {
     @include transition(none);
   }
