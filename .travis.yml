@@ -9,7 +9,7 @@ addons:
     - ruby
 install:
   - gem install sass
-  - gem install scss-lint
+  - gem install scss_lint
 before_script:
   - npm install -g bower
   - bower install
