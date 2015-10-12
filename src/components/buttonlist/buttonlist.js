@@ -274,7 +274,7 @@ var ButtonList = Component.extend({
     };
 
     var t = this.getTranslationFunction(true);
-    var _this = this;
+
     this.buttonContainerEl.selectAll('button').data(details_btns)
       .enter().append("button")
       .attr('class', function (d) {

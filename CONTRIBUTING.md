@@ -4,7 +4,7 @@ You can contribute to the development of tools or the framework. Read the manual
 
 ## Cloning the repository
 
-Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Sass](http://sass-lang.com/install).
+Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower), [Sass](http://sass-lang.com/install), and [SCSS Lint](https://github.com/brigade/scss-lint) `gem install scss_lint`.
 
 Clone this repo and run the following commands:
 
