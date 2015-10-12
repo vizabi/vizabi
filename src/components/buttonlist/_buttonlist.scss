@@ -195,6 +195,10 @@ $vzb-button-color-border: #cce6ed;
           box-shadow: none;
           background-color: $vzb-color-primary-lightest;
           border-bottom: 1px solid rgba(200, 200, 200, 0.4);
+
+          .vzb-dialog-buttons {
+            display: none;
+          }
         }
 
         .vzb-dialog-title {

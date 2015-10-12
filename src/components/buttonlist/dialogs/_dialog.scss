@@ -24,6 +24,12 @@
     padding: 45px 25px 20px;
     display: inline-block;
   }
+  &[data-btn="axesmc"] {
+    @import "axesmc/axesmc";
+  }
+  &[data-btn="stack"] {
+    @import "stack/stack";
+  }
   &[data-btn="find"] {
     .vzb-dialog-title {
       display: inline-block;
