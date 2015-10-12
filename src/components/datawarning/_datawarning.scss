@@ -73,20 +73,15 @@
             
         }
         .vzb-data-warning-close{
-            color: $vzb-color-primary;
-            font-size: $vzb-font-size-medium;
-            margin: 10px 10px 10px 5px;
-            border-radius: 12px;
+            fill: $vzb-color-primary;
+            fill-opacity: 0.7;
             position: absolute;
-            right: 0px;
-            top: 0px;
+            right: 10px;
+            top: 10px;
             width: 25px; height: 25px;
-            text-align: center;
             cursor: pointer;
-            //border: 1px solid $vzb-color-primary;
-            
-            
-            &:hover{background-color: $vzb-color-primary; color: $vzb-color-white;}
+                       
+            &:hover{fill-opacity: 1;}
         }
         
     }

@@ -1,6 +1,7 @@
 import { extend, pruneTree } from 'base/utils';
 import Component from 'base/component';
 import globals from 'base/globals';
+import {close as iconClose} from 'base/iconset';
 
 /*!
  * VIZABI INDICATOR PICKER
@@ -164,12 +165,14 @@ var TreeMenu = Component.extend({
       .classed(css.wrapper, true);
 
     this.wrapper.append("div")
-      .attr("class", css.close)
-      .html("X")
+      .html(iconClose)
       .on("click", function() {
         _this.toggle()
-      });
-
+      })
+      .select("svg")
+      .attr("width", "0px")
+      .attr("height", "0px")
+      .attr("class", css.close)      
 
     this.wrapper.append('div')
       .classed(css.title, true)
