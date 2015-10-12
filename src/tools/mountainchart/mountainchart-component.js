@@ -23,8 +23,6 @@ import MountainChartMath from './mountainchart-math';
 import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';
 
-var NEGLIGABLE_HEIGHT = 1000000;
-
 //MOUNTAIN CHART COMPONENT
 var MountainChartComponent = Component.extend({
 
@@ -151,13 +149,13 @@ var MountainChartComponent = Component.extend({
         this.area = d3.svg.area()
             .interpolate("basis")
             .x(function (d) {
-                return Math.round(_this.xScale(_this._math.rescale(d.x)));
+                return _this.xScale(_this._math.rescale(d.x));
             })
             .y0(function (d) {
-                return Math.round(_this.yScale(d.y0));
+                return _this.yScale(d.y0);
             })
             .y1(function (d) {
-                return Math.round(_this.yScale(d.y0 + d.y));
+                return _this.yScale(d.y0 + d.y);
             });
 
         //define d3 stack layout
@@ -988,6 +986,7 @@ var MountainChartComponent = Component.extend({
 
     _renderShape: function (view, key, hidden) {
         var stack = this.model.marker.stack.which;
+        var _this = this;
 
         view.classed("vzb-hidden", hidden);
 
@@ -996,8 +995,10 @@ var MountainChartComponent = Component.extend({
             return;
         }
 
-        if (this.model.entities.isSelected({geo: key})) {
-            view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > NEGLIGABLE_HEIGHT })));
+        var filter = {};
+        filter[this.KEY] = key;
+        if (this.model.entities.isSelected(filter)) {
+            view.attr("d", this.area(this.cached[key].filter(function (f) {return _this.height - _this.yScale(f.y) > 1 })));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
