@@ -1,18 +1,19 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
+import globals from 'base/globals';
 
 import { bubbleopacity } from 'components/_index'
 
 /*!
- * VIZABI FIND CONTROL
- * Reusable find dialog
+ * VIZABI SHOW CONTROL
+ * Reusable show dialog
  */
 
 var Show = Dialog.extend({
 
   init: function(config, parent) {
-    this.name = 'find';
+    this.name = 'show';
     var _this = this;
 
     this.components = [{
@@ -41,9 +42,9 @@ var Show = Dialog.extend({
    */
   readyOnce: function() {
     this.element = d3.select(this.element);
-    this.list = this.element.select(".vzb-find-list");
-    this.input_search = this.element.select("#vzb-find-search");
-    this.deselect_all = this.element.select("#vzb-find-deselect");
+    this.list = this.element.select(".vzb-show-list");
+    this.input_search = this.element.select("#vzb-show-search");
+    this.deselect_all = this.element.select("#vzb-show-deselect");
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.KEY = this.model.state.entities.getDimension();
@@ -79,27 +80,14 @@ var Show = Dialog.extend({
     var TIMEDIM = this.model.state.time.getDimension();
     var selected = this.model.state.entities.getSelected();
     var marker = this.model.state.marker;
+    var show = this.model.state.entities.show.getObject();
     var filter = {};
     filter[TIMEDIM] = this.model.state.time.value;
 
     var values = marker.getValues(filter, [KEY])
 
-    var data = marker.getKeys().map(function(d) {
-      var pointer = {};
-      pointer[KEY] = d[KEY];
-      pointer.name = values.label[d[KEY]];
-      return pointer;
-    }).filter(function(d) {
-      var include = true;
-      utils.forEach(values, function(hook) {
-        if(!hook[d[KEY]]) {
-          include = false;
-          return false;
-        }
-      });
-      return include;
-    })
-
+    var data = globals.metadata.entities;
+      
     //sort data alphabetically
     data.sort(function(a, b) {
       return(a.name < b.name) ? -1 : 1;
@@ -107,20 +95,20 @@ var Show = Dialog.extend({
 
     this.list.html("");
 
-    var items = this.list.selectAll(".vzb-find-item")
+    var items = this.list.selectAll(".vzb-show-item")
       .data(data)
       .enter()
       .append("div")
-      .attr("class", "vzb-find-item vzb-dialog-checkbox")
+      .attr("class", "vzb-show-item vzb-dialog-checkbox")
 
     items.append("input")
       .attr("type", "checkbox")
-      .attr("class", "vzb-find-item")
+      .attr("class", "vzb-show-item")
       .attr("id", function(d) {
-        return "-find-" + d[KEY];
+        return "-show-" + d[KEY];
       })
       .property("checked", function(d) {
-        return(selected.indexOf(d[KEY]) !== -1);
+        return show[KEY].indexOf(d[KEY]) > -1 || show[KEY][0] === "*";
       })
       .on("change", function(d) {
         _this.model.state.entities.selectEntity(d);
@@ -128,7 +116,7 @@ var Show = Dialog.extend({
 
     items.append("label")
       .attr("for", function(d) {
-        return "-find-" + d[KEY];
+        return "-show-" + d[KEY];
       })
       .text(function(d) {
         return d.name;
@@ -149,7 +137,7 @@ var Show = Dialog.extend({
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
 
-    this.list.selectAll(".vzb-find-item")
+    this.list.selectAll(".vzb-show-item")
       .classed("vzb-hidden", function(d) {
         var lower = d.name.toLowerCase();
         return(lower.indexOf(search) === -1);
@@ -174,4 +162,4 @@ var Show = Dialog.extend({
 
 });
 
-export default Find;
+export default Show;

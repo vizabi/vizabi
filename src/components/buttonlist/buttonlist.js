@@ -52,7 +52,7 @@ var ButtonList = Component.extend({
       },
       'show': {
         title: "buttons/show",
-        icon: "star",
+        icon: "asterisk",
         dialog: dialogs.show,
         ispin: false,
       },
