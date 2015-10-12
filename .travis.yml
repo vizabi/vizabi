@@ -7,10 +7,13 @@ addons:
     packages:
     - s3cmd
     - ruby
-before_script:
+install:
   - gem install sass
   - gem install scss_lint
+before_script:
+  - npm install -g gulp
   - npm install -g bower
+  - npm install
   - bower install
 script:
   - gulp build

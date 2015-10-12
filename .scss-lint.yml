@@ -20,3 +20,7 @@ linters:
     allow_element_with_attribute: true
   SelectorDepth:
     enabled: false
+  TrailingWhitespace:
+    enabled: false
+  SpaceAroundOperator:
+    enabled: false
