@@ -151,11 +151,11 @@ var ColorLegend = Component.extend({
           var color = palette[view.attr("id")];
           view.style("fill", color);
         })
-        .style("opacity", 0.8)
+        .style("opacity", .8)
         .on("mouseover", function() {
           var view = d3.select(this);
           var region = view.attr("id");
-          regions.style("opacity", 0.5);
+          regions.style("opacity", .5);
           view.style("opacity", 1);
 
           var filtered = _this.model.color.getNestedItems([KEY]);
@@ -176,7 +176,7 @@ var ColorLegend = Component.extend({
           _this.model.entities.setHighlighted(highlight);
         })
         .on("mouseout", function() {
-          regions.style("opacity", 0.8);
+          regions.style("opacity", .8);
           _this.model.entities.clearHighlighted();
         })
         .on("click", function(d) {

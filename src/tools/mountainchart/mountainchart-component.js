@@ -381,7 +381,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.select("svg")
             .attr("width", warnBB.height)
             .attr("height", warnBB.height)
-            .attr("x", warnBB.height * 0.1)
+            .attr("x", warnBB.height * .1)
             .attr("y", -warnBB.height * 1.0 + 1)
 
         this.dataWarningEl
@@ -397,8 +397,8 @@ var MountainChartComponent = Component.extend({
             .attr("width", infoElHeight)
             .attr("height", infoElHeight)
         this.infoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
         }
 
         this.eventAreaEl
@@ -693,7 +693,7 @@ var MountainChartComponent = Component.extend({
         //if(!duration)duration = 0;
 
         var OPACITY_HIGHLT = 1.0;
-        var OPACITY_HIGHLT_DIM = 0.3;
+        var OPACITY_HIGHLT_DIM = .3;
         var OPACITY_SELECT = 1.0;
         var OPACITY_REGULAR = this.model.entities.opacityRegular;
         var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
@@ -720,7 +720,7 @@ var MountainChartComponent = Component.extend({
             return _this.model.entities.isSelected(d)
         });
 
-        var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+        var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
         // when pointer events need update...
         if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
@@ -730,7 +730,7 @@ var MountainChartComponent = Component.extend({
             });
         }
 
-        this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+        this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
     },
 
     updateTime: function (time) {
@@ -1007,7 +1007,7 @@ var MountainChartComponent = Component.extend({
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")
-            .style("stroke-opacity", 0.5);
+            .style("stroke-opacity", .5);
 
         if (this.model.time.record) this._export.write({
             type: "path",
@@ -1033,8 +1033,8 @@ var MountainChartComponent = Component.extend({
                 .attr("height", contentBBox.height + 8)
                 .attr("x", -contentBBox.width - 4)
                 .attr("y", -contentBBox.height - 1)
-                .attr("rx", contentBBox.height * 0.2)
-                .attr("ry", contentBBox.height * 0.2);
+                .attr("rx", contentBBox.height * .2)
+                .attr("ry", contentBBox.height * .2);
 
         } else {
 

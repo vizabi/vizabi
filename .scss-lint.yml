@@ -1,0 +1,14 @@
+linters:
+  PropertySortOrder:
+    enabled: false
+  EmptyLineBetweenBlocks:
+    enabled: false
+  ImportantRule:
+    enabled: false
+  NestingDepth:
+    enabled: false
+  SelectorDepth:
+    enabled: false
+  QualifyingElement:
+    enabled: true
+    allow_element_with_attribute: true

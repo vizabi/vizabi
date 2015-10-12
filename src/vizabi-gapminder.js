@@ -100,7 +100,7 @@ MountainChart.define('datawarning_content', {
   title: "Income data has large uncertainty!",
   body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
   doubtDomain: [1800, 1950, 2015],
-  doubtRange: [1.0, 0.8, 0.6]
+  doubtRange: [1.0, .8, .6]
 });
 
 MountainChart.define('default_options', {
@@ -116,8 +116,8 @@ MountainChart.define('default_options', {
       yMaxMethod: "latest",
       probeX: 1.82,
       tailFatX: 1.82,
-      tailCutX: 0.2,
-      tailFade: 0.7,
+      tailCutX: .2,
+      tailFade: .7,
       xScaleFactor: 1.039781626,
       //0.9971005335,
       xScaleShift: -1.127066411,
@@ -126,8 +126,8 @@ MountainChart.define('default_options', {
     },
     entities: {
       dim: "geo",
-      opacitySelectDim: 0.3,
-      opacityRegular: 0.6,
+      opacitySelectDim: .3,
+      opacityRegular: .6,
       show: {
         _defs_: {
           "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
@@ -151,7 +151,7 @@ MountainChart.define('default_options', {
         //which: "mean",
         which: "gdp_per_cap",
         scaleType: 'log',
-        min: 0.11, //0
+        min: .11, //0
         max: 500 //100
       },
       size: {
@@ -276,7 +276,7 @@ BubbleChart.define('datawarning_content', {
   title: "",
   body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
   doubtDomain: [1800, 1950, 2015],
-  doubtRange: [1.0, 0.3, 0.2]
+  doubtRange: [1.0, .3, .2]
 });
 
 BubbleChart.define('default_options', {
@@ -339,8 +339,8 @@ BubbleChart.define('default_options', {
         allow: {
           scales: ["linear", "log"]
         },
-        min: 0.04,
-        max: 0.90
+        min: .04,
+        max: .90
       }
     }
   },

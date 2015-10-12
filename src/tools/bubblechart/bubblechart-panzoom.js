@@ -221,7 +221,7 @@ export default Class.extend({
             y2: _this.yScale(mmmY.max) - radiusMax
         };
 
-        var TOLERANCE = 0.0;
+        var TOLERANCE = .0;
 
         if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {

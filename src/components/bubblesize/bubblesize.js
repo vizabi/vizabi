@@ -16,7 +16,7 @@ var OPTIONS = {
 }
 
 
-var min = 0.1,
+var min = .1,
   max = 100;
 
 var BubbleSize = Component.extend({
@@ -161,7 +161,7 @@ var BubbleSize = Component.extend({
     }
 
     function updateLabels(s) {
-      _this.sliderThumbs.select("text.vzb-bs-slider-thumb-label").data(s)
+      _this.sliderThumbs.select(".vzb-bs-slider-thumb-label").data(s)
         .attr("transform", function (d, i) {
           var dX = textMargin.left,
             dY = textMargin.top * (i ? -1.0 : 1.0);
@@ -200,7 +200,7 @@ var BubbleSize = Component.extend({
 
     this.profiles = {
       "small": {
-        minRadius: 0.5,
+        minRadius: .5,
         maxRadius: 40
       },
       "medium": {

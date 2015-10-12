@@ -72,14 +72,14 @@ export default Class.extend({
       .style("border-radius", "10px")
       .style("font-size", "14px")
       .style("line-height", "20px")
-      .style("opacity", 0.8)
+      .style("opacity", .8)
       .style("cursor", "pointer")
       .on("mouseover", function() {
         d3.select(this).style("opacity", 1).text("▼");
         _this.counterEl.text("Download");
       })
       .on("mouseout", function() {
-        d3.select(this).style("opacity", 0.8).text("");
+        d3.select(this).style("opacity", .8).text("");
         _this.counterEl.text(_this.label);
       })
       .on("click", function() {
@@ -92,7 +92,7 @@ export default Class.extend({
       .style("top", "20px")
       .style("right", "45px")
       .style("color", "red")
-      .style("opacity", 0.8)
+      .style("opacity", .8)
       .style("line-height", "20px")
       .style("font-size", "14px")
       .style("text-align", "center")
@@ -141,7 +141,7 @@ export default Class.extend({
     }
 
     // put a marker into the group
-    if(me.opacity == null) me.opacity = 0.5;
+    if(me.opacity == null) me.opacity = .5;
     if(me.fill == null) me.fill = "#ff80dd";
 
     var marker = this.root.select("#g_" + me[groupBy])
@@ -165,7 +165,7 @@ export default Class.extend({
     }
 
     this.counter++;
-    this.redBall.style("opacity", this.counter % 10 / 12 + 0.2);
+    this.redBall.style("opacity", this.counter % 10 / 12 + .2);
     this.label = me.type + " shapes: " + this.counter;
     this.counterEl.text(this.label);
   },

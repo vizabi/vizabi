@@ -1,187 +1,223 @@
 .vzb-tool-mountainchart {
-    visibility: visible !important;
-    $vzb-mc-margin: 10px;
-    $vzb-mc-margin-axis: 60px;
-    $vzb-mc-year-size: 15em;
+  visibility: visible !important;
+  $vzb-mc-margin: 10px;
+  $vzb-mc-margin-axis: 60px;
+  $vzb-mc-year-size: 15em;
+
+  .vzb-mountainchart {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-mountainchart-svg {
+      @extend %vzb-chart-svg;
+    
+      .vzb-mc-eventarea {
+        fill: none;
+        pointer-events: all;
+      }
+    
+      .vzb-mc-mountain {
+        stroke: $vzb-color-white;
+        stroke-opacity: .5;
+        stroke-width: 1px;
+        cursor: pointer;
+        &.vzb-selected {
+          stroke: #000;
+        }
+      }
+    
+      .vzb-mc-probe text {
+        dominant-baseline: hanging;
+        fill: $vzb-color-primary;
+        pointer-events: none;
+        &.vzb-mc-probe-extremepoverty {
+          font-variant: small-caps;
+          letter-spacing: .15em;
+          opacity: .7;
+        }
+      }
+    
+      .vzb-mc-probe .vzb-mc-probe-valueUL,
+      .vzb-mc-probe .vzb-mc-probe-valueDL {
+        text-anchor: end;
+      }
+    
+      .vzb-mc-probe .vzb-mc-probe-valueUR,
+      .vzb-mc-probe .vzb-mc-probe-valueDR {
+        text-anchor: start;
+      }
+
+      .vzb-mc-probe .vzb-shadow {
+        @extend %vzb-chart-label-shadow;
+      }
+
+      .vzb-mc-probe line {
+        stroke: $vzb-color-grey;
+        stroke-dasharray: 5 5;
+        pointer-events: none;
+      }
+
+      .vzb-mc-mountains-labels text,
+      .vzb-mc-mountains-labels circle {
+        cursor: pointer;
+        fill: $vzb-color-primary;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label-shadow {
+        @extend %vzb-chart-label-shadow;
+      }
+
+      .vzb-mc-mountains-labels .vzb-highlight .vzb-mc-label-shadow {
+        stroke: yellow;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
+        @include transition(opacity 200ms linear);
+        fill: $vzb-color-white;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+        font-size: .9em;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
+        @include transition(opacity 200ms linear);
+        cursor: pointer;
+        fill: $vzb-color-primary;
+        stroke: $vzb-color-white;
+        stroke-width: 2px;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
+        @include transition(opacity 200ms linear);
+        cursor: pointer;
+        fill: $vzb-color-primary;
+        stroke: $vzb-color-white;
+        stroke-width: 2px;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x.vzb-revert-color {
+        fill: $vzb-color-white;
+        stroke: $vzb-color-primary;
+      }
+
+      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x.vzb-revert-color {
+        fill: $vzb-color-primary;
+      }
+
+      .vzb-mc-axis-x,
+      .vzb-mc-axis-y {
+        @extend %vzb-chart-axis;
+        pointer-events: none;
+      }
+
+      .vzb-mc-axis-y-title {
+        @extend %vzb-chart-axis-title;
+        pointer-events: none;
+      }
+
+      .vzb-mc-axis-x-title {
+        @extend %vzb-chart-axis-title;
+        text-anchor: end;
+        pointer-events: none;
+      }
+
+      .vzb-mc-axis-info {
+        @extend %vzb-chart-info;
+      }
+
+      .vzb-mc-line {
+        fill: none;
+        stroke: $vzb-color-grey;
+        stroke-width: 1px;
+      }
+
+      .vzb-mc-year {
+        @include opacity(.1);
+        fill: $vzb-color-primary;
+        text-anchor: end;
+        dominant-baseline: hanging;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .vzb-mc-tooltip {
+        @extend %vzb-chart-tooltip;
+      }
+    }
+  }
+  &.vzb-large {
+
     .vzb-mountainchart {
-        @extend %vzb-chart-wrapper;
-        .vzb-mountainchart-svg {
-            @extend %vzb-chart-svg;
-            .vzb-mc-eventarea {
-                fill: none;
-                pointer-events: all;
-            }
-            .vzb-mc-mountain {
-                stroke: $vzb-color-white;
-                stroke-opacity: 0.5;
-                stroke-width: 1px;
-                cursor: pointer;
-                &.vzb-selected{
-                    stroke: #000;
-                }
-            }
-            .vzb-mc-probe text {
-                dominant-baseline: hanging;
-                fill: $vzb-color-primary;
-                pointer-events: none;
-                &.vzb-mc-probe-extremepoverty{
-                    font-variant: small-caps;
-                    letter-spacing: 0.15em;
-                    opacity: 0.7;
-                }
-            }
-            .vzb-mc-probe text.vzb-mc-probe-valueUL,
-            .vzb-mc-probe text.vzb-mc-probe-valueDL {
-                text-anchor: end;
-            }
-            .vzb-mc-probe text.vzb-mc-probe-valueUR,
-            .vzb-mc-probe text.vzb-mc-probe-valueDR {
-                text-anchor: start;
-            }
-            .vzb-mc-probe text.vzb-shadow {
-                @extend %vzb-chart-label-shadow;
-            }
-            .vzb-mc-probe line {
-                stroke: $vzb-color-grey;
-                stroke-dasharray: 5 5;
-                pointer-events: none;
-            }
-            .vzb-mc-mountains-labels text,
-            .vzb-mc-mountains-labels circle {
-                cursor: pointer;
-                fill: $vzb-color-primary;
-            }
-            .vzb-mc-mountains-labels text.vzb-mc-label-shadow {
-                @extend %vzb-chart-label-shadow;
-            }
-            .vzb-mc-mountains-labels .vzb-highlight text.vzb-mc-label-shadow {
-                stroke: yellow;
-            }
-          .vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-x {
-              @include transition(opacity 200ms linear);
-              fill: white;
-              text-anchor: middle;
-              dominant-baseline: middle;
-              pointer-events: none;
-              font-size: 0.9em;
-            }
-          .vzb-mc-mountains-labels .vzb-mc-label circle.vzb-mc-label-x {
-            @include transition(opacity 200ms linear);
-            cursor: pointer;
-            fill: $vzb-color-primary;
-            stroke: white;
-            stroke-width: 2px;
-          }
-          .vzb-mc-mountains-labels .vzb-mc-label rect.vzb-mc-label-x {
-              @include transition(opacity 200ms linear);
-              cursor: pointer;
-              fill: $vzb-color-primary;
-              stroke: white;
-              stroke-width: 2px;
-            }
-            .vzb-mc-mountains-labels .vzb-mc-label rect.vzb-mc-label-x.vzb-revert-color {
-              fill: white;
-              stroke: $vzb-color-primary;
-            }
-            .vzb-mc-mountains-labels .vzb-mc-label text.vzb-mc-label-x.vzb-revert-color {
-              fill: $vzb-color-primary;
-            }
 
-            .vzb-mc-axis-x,
-            .vzb-mc-axis-y {
-                @extend %vzb-chart-axis;
-                pointer-events: none;
-            }
-            .vzb-mc-axis-y-title {
-                @extend %vzb-chart-axis-title;
-                pointer-events: none;
-            }
-            .vzb-mc-axis-x-title {
-                @extend %vzb-chart-axis-title;
-                text-anchor: end;
-                pointer-events: none;
-            }
-            .vzb-mc-axis-info {
-                @extend %vzb-chart-info;
-            }
-            .vzb-mc-line {
-                fill: none;
-                stroke: $vzb-color-grey;
-                stroke-width: 1px;
-            }
-            .vzb-mc-year {
-                @include opacity(0.1);
-                fill: $vzb-color-primary;
-                text-anchor: end;
-                dominant-baseline: hanging;
-                -webkit-touch-callout: none;
-                -webkit-user-select: none;
-                -khtml-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-                pointer-events: none;
-            }
+      .vzb-mc-axis-x-title,
+      .vzb-mc-axis-y-title {
+        @extend %vzb-chart-axis-title-large;
+      }
 
+      .vzb-shadow,
+      .vzb-mc-label-shadow {
+        @extend %vzb-chart-label-shadow-large;
+      }
 
-            .vzb-mc-tooltip {
-                @extend %vzb-chart-tooltip
-            }
-
-
-
-
-        }
+      .vzb-mc-axis-x,
+      .vzb-mc-mountains-labels,
+      .vzb-mc-probe,
+      .vzb-mc-tooltip,
+      .vzb-mc-axis-info {
+        @extend %vzb-chart-ticks-large;
+      }
     }
-    &.vzb-large {
-        .vzb-mountainchart {
-            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
-                @extend %vzb-chart-axis-title-large;
-            }
-            .vzb-shadow, .vzb-mc-label-shadow{
-                @extend %vzb-chart-label-shadow-large;
-            }
-            .vzb-mc-axis-x,
-            .vzb-mc-mountains-labels,
-            .vzb-mc-probe,
-            .vzb-mc-tooltip,
-            .vzb-mc-axis-info {
-                @extend %vzb-chart-ticks-large;
-            }
-        }
+  }
+
+  &.vzb-medium {
+
+    .vzb-mountainchart {
+
+      .vzb-mc-axis-x-title,
+      .vzb-mc-axis-y-title {
+        @extend %vzb-chart-axis-title-medium;
+      }
+
+      .vzb-shadow,
+      .vzb-mc-label-shadow {
+        @extend %vzb-chart-label-shadow-medium;
+      }
+
+      .vzb-mc-axis-x,
+      .vzb-mc-mountains-labels,
+      .vzb-mc-probe,
+      .vzb-mc-tooltip,
+      .vzb-mc-axis-info {
+        @extend %vzb-chart-ticks-medium;
+      }
     }
-    &.vzb-medium {
-        .vzb-mountainchart {
-            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
-                @extend %vzb-chart-axis-title-medium;
-            }
-            .vzb-shadow, .vzb-mc-label-shadow{
-                @extend %vzb-chart-label-shadow-medium;
-            }
-            .vzb-mc-axis-x,
-            .vzb-mc-mountains-labels,
-            .vzb-mc-probe,
-            .vzb-mc-tooltip,
-            .vzb-mc-axis-info  {
-                @extend %vzb-chart-ticks-medium;
-            }
-        }
+  }
+  &.vzb-small {
+
+    .vzb-mountainchart {
+
+      .vzb-mc-axis-x-title,
+      .vzb-mc-axis-y-title {
+        @extend %vzb-chart-axis-title-small;
+      }
+
+      .vzb-shadow,
+      .vzb-mc-label-shadow {
+        @extend %vzb-chart-label-shadow-small;
+      }
+      
+      .vzb-mc-axis-x,
+      .vzb-mc-mountains-labels,
+      .vzb-mc-probe,
+      .vzb-mc-tooltip,
+      .vzb-mc-axis-info {
+        @extend %vzb-chart-ticks-small;
+      }
     }
-    &.vzb-small {
-        .vzb-mountainchart {
-            .vzb-mc-axis-x-title, .vzb-mc-axis-y-title {
-                @extend %vzb-chart-axis-title-small;
-            }
-            .vzb-shadow, .vzb-mc-label-shadow{
-                @extend %vzb-chart-label-shadow-small;
-            }
-            .vzb-mc-axis-x,
-            .vzb-mc-mountains-labels,
-            .vzb-mc-probe,
-            .vzb-mc-tooltip,
-            .vzb-mc-axis-info  {
-                @extend %vzb-chart-ticks-small;
-            }
-        }
-    }
+  }
 }

@@ -202,7 +202,7 @@ var LCComponent = Component.extend({
 
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.speed * 0.9 : 0;
+    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.speed * .9 : 0;
 
     var timeDim = this.model.time.getDimension();
     var filter = {};
@@ -786,7 +786,7 @@ var LCComponent = Component.extend({
   //
   //                    // resume the simulation, fast-forward it, stop when done
   //                    _this.forceLayout.resume();
-  //                    while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+  //                    while(_this.forceLayout.alpha() > .01)_this.forceLayout.tick();
   //                    _this.forceLayout.stop();
   //            },  500)
   //        },
@@ -812,7 +812,7 @@ var LCComponent = Component.extend({
   //
   //            this.forceLayout = d3.layout.force()
   //                .size([1000, 400])
-  //                .gravity(0.05)
+  //                .gravity(.05)
   //                .charge(function(d){
   //                        switch (d.role){
   //                            case _this.ROLE_BOUNDARY: return -1000;
@@ -823,8 +823,8 @@ var LCComponent = Component.extend({
   //                .linkDistance(10)
   //                //.linkStrength(1)
   //                .chargeDistance(30)
-  //                .friction(0.2)
-  //                //.theta(0.8)
+  //                .friction(.2)
+  //                //.theta(.8)
   //                .nodes(this.dataForceLayout.nodes)
   //                .links(this.dataForceLayout.links)
   //                .on("tick", function(){

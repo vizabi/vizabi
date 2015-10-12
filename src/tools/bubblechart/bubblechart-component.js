@@ -714,7 +714,7 @@ var BubbleChartComp = Component.extend({
           bottom: 45
         },
         padding: 2,
-        minRadius: 0.5,
+        minRadius: .5,
         maxRadius: 40,
         infoElHeight: 16
       },
@@ -893,8 +893,8 @@ var BubbleChartComp = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
@@ -905,8 +905,8 @@ var BubbleChartComp = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
       this.xInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
    }
 
   },
@@ -1131,7 +1131,7 @@ var BubbleChartComp = Component.extend({
           }
           var labelGroup = d3.select(this);
 
-          var text = labelGroup.selectAll("text.vzb-bc-label-content")
+          var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
           lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
@@ -1142,32 +1142,32 @@ var BubbleChartComp = Component.extend({
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
 
-            labelGroup.select("text.vzb-bc-label-x")
-              .attr("x", /*contentBBox.height * 0.0 + */ 4)
+            labelGroup.select(".vzb-bc-label-x")
+              .attr("x", /*contentBBox.height * .0 + */ 4)
               .attr("y", contentBBox.height * -1);
 
             labelGroup.select("circle")
-              .attr("cx", /*contentBBox.height * 0.0 + */ 4)
+              .attr("cx", /*contentBBox.height * .0 + */ 4)
               .attr("cy", contentBBox.height * -1)
-              .attr("r", contentBBox.height * 0.5);
+              .attr("r", contentBBox.height * .5);
 
             rect.attr("width", contentBBox.width + 8)
               .attr("height", contentBBox.height * 1.2)
               .attr("x", -contentBBox.width - 4)
-              .attr("y", -contentBBox.height * 0.85)
-              .attr("rx", contentBBox.height * 0.2)
-              .attr("ry", contentBBox.height * 0.2);
+              .attr("y", -contentBBox.height * .85)
+              .attr("rx", contentBBox.height * .2)
+              .attr("ry", contentBBox.height * .2);
           }
 
           limitedX0 = _this.xScale(cached.labelX0);
           limitedY0 = _this.yScale(cached.labelY0);
 
-          cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * 0.75 - 5) / _this.width;
-          cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * 0.75 - 11) / _this.height;
+          cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
+          cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
 
           limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           if(limitedX - cached.contentBBox.width <= 0) { //check left
-            cached.labelX_ = (cached.scaledS0 * 0.75 + cached.contentBBox.width + 10) / _this.width;
+            cached.labelX_ = (cached.scaledS0 * .75 + cached.contentBBox.width + 10) / _this.width;
             limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           } else if(limitedX + 15 > _this.width) { //check right
             cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0)) / _this.width;
@@ -1175,7 +1175,7 @@ var BubbleChartComp = Component.extend({
           }
           limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           if(limitedY - cached.contentBBox.height <= 0) { // check top
-            cached.labelY_ = (cached.scaledS0 * 0.75 + cached.contentBBox.height) / _this.height;
+            cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
             cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0)) / _this.height;
@@ -1365,8 +1365,8 @@ var BubbleChartComp = Component.extend({
         yOffset = 0;
 
       if(offset) {
-        xOffset = offset * 0.71; // 0.71 - sin and cos for 315
-        yOffset = offset * 0.71;
+        xOffset = offset * .71; // .71 - sin and cos for 315
+        yOffset = offset * .71;
       }
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
@@ -1391,7 +1391,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign;
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       } else {
-        xPos = x + xOffset * xSign; // 0.71 - sin and cos for 315
+        xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
@@ -1400,9 +1400,9 @@ var BubbleChartComp = Component.extend({
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * 0.85)
-        .attr("rx", contentBBox.height * 0.2)
-        .attr("ry", contentBBox.height * 0.2);
+        .attr("y", -contentBBox.height * .85)
+        .attr("rx", contentBBox.height * .2)
+        .attr("ry", contentBBox.height * .2);
 
     } else {
       this.tooltip.classed("vzb-hidden", true);
@@ -1487,7 +1487,7 @@ var BubbleChartComp = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = 0.3;
+    var OPACITY_HIGHLT_DIM = .3;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
@@ -1512,7 +1512,7 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
     // when pointer events need update...
     if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
@@ -1522,7 +1522,7 @@ var BubbleChartComp = Component.extend({
       });
     }
 
-    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
   },
 
   /*

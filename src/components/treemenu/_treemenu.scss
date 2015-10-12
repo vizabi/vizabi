@@ -6,7 +6,7 @@
     
     .vzb-treemenu-background {
         background-color: $vzb-color-grey-lightest;
-        opacity: 0.4;
+        opacity: .4;
         width: 100%;
         height: 100%;        
         
@@ -16,11 +16,11 @@
 .vzb-treemenu-wrap {
     position: absolute;
     
-      @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, 0.24));
+      @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
       @include transition(all 300ms ease-in-out);
       border-top: 1px solid #f7f7f7;
       background-color: #fff;
-      padding: 0px 25px 10px 25px;
+      padding: 0 25px 10px;
     
     
 
@@ -30,19 +30,19 @@
 		-webkit-box-sizing: border-box;
 	}
 
-    .vzb-treemenu-close{
+    .vzb-treemenu-close {
         fill: $vzb-color-primary;
-        fill-opacity: 0.7;
+        fill-opacity: .7;
         position: absolute;
         right: 10px;
         top: 10px;
         width: 25px; height: 25px;
         cursor: pointer;
 
-        &:hover{fill-opacity: 1;}
+        &:hover {fill-opacity: 1;}
     }    
     
-    .vzb-treemenu-title{
+    .vzb-treemenu-title {
         color: $vzb-color-primary;
         font-size: $vzb-font-size-medium;
         padding: 25px 25px 10px 5px;
@@ -79,7 +79,8 @@
 		}
 	}
 
-	.vzb-treemenu-list, .vzb-treemenu-list_top {
+	.vzb-treemenu-list,
+    .vzb-treemenu-list_top {
 		list-style: none;
 		padding: 0;
 		margin: 0;
@@ -89,7 +90,7 @@
 	.vzb-treemenu-list {
 		position: absolute;
 		border-left: 1px solid $vzb-color-grey-light;
-        @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, 0.2));
+        @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
 		background-color: #fff;
         border-top: 1px solid #f7f7f7;
 		display: none;
@@ -97,17 +98,18 @@
 		&.active {
 			display: block;
 			top: -1px;
-			bottom: 0px;
+			bottom: 0;
 		}
 	}
 
-	.vzb-treemenu-list.active, .vzb-treemenu-list_top {
+	.vzb-treemenu-list.active,
+    .vzb-treemenu-list_top {
 		//overflow-y: scroll;
 	}
 
 	.vzb-treemenu-list_item {
 		padding: 5px 0;
-		background-color: #ffffff;
+		background-color: $vzb-color-white;
 		overflow: hidden;
 		white-space: nowrap;
 
@@ -116,7 +118,7 @@
 		}
 
 		&.marquee {
-			& > .vzb-treemenu-list_item_label {
+			> .vzb-treemenu-list_item_label {
 				text-overflow: inherit;
 				overflow: visible;
 				animation: marquee 10s linear infinite;
@@ -142,7 +144,7 @@
 	}
 
 	.vzb-treemenu-list_item--children {
-		& > .vzb-treemenu-list_item_label:before {
+		> .vzb-treemenu-list_item_label:before {
 			content: '';
 			display: block;
 			position: absolute;
@@ -164,21 +166,21 @@
 //marquee animation
 @keyframes marquee {
     0%  {
-        transform:translateX(0);
+        transform: translateX(0);
     }
     35% {
-        transform:translateX(-100%);
+        transform: translateX(-100%);
     }
     75% {
-        transform:translateX(75%);
+        transform: translateX(75%);
     }
     100% {
-    	transform:translateX(0);
+    	transform: translateX(0);
     }
 }
 
-&.vzb-small{
-    .vzb-treemenu-wrap{
+&.vzb-small {
+    .vzb-treemenu-wrap {
         margin-bottom: $size-button-list;
         width: 80%;
         height: auto;
@@ -206,25 +208,25 @@
                 
     }
 }
-&.vzb-medium{
-    .vzb-treemenu-wrap{
+&.vzb-medium {
+    .vzb-treemenu-wrap {
         margin-right: $size-button-list;
         margin-bottom: $size-timeslider;
-        &.vzb-alignY-top{top: 40px}
-        &.vzb-alignY-bottom{bottom: 55px}
+        &.vzb-alignY-top {top: 40px; }
+        &.vzb-alignY-bottom {bottom: 55px; }
         
-        &.vzb-alignX-left{left: 60px}
-        &.vzb-alignX-right{right: 15px}
+        &.vzb-alignX-left {left: 60px; }
+        &.vzb-alignX-right {right: 15px; }
     }
 }
-&.vzb-large{
-    .vzb-treemenu-wrap{
+&.vzb-large {
+    .vzb-treemenu-wrap {
         margin-right: $size-button-list;
         margin-bottom: $size-timeslider;
-        &.vzb-alignY-top{top: 50px}
-        &.vzb-alignY-bottom{bottom: 60px}
+        &.vzb-alignY-top {top: 50px; }
+        &.vzb-alignY-bottom {bottom: 60px; }
         
-        &.vzb-alignX-left{left: 60px}
-        &.vzb-alignX-right{right: 20px} 
+        &.vzb-alignX-left {left: 60px; }
+        &.vzb-alignX-right {right: 20px; } 
     }
 }

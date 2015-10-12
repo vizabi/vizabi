@@ -67,7 +67,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
             "geo.cat": ["country"]
           }
         },
-        opacitySelectDim: 0.3,
+        opacitySelectDim: .3,
         opacityRegular: 1,
       },
       marker: {

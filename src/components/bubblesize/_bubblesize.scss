@@ -18,25 +18,25 @@
     }
         
     .vzb-bs-slider-extent {
-      fill-opacity: 0.125;
+      fill-opacity: .125;
     }
   
     .vzb-bs-slider-thumb-label {
       pointer-events: none; 	
     }
   
-    .vzb-bs-slider-thumb-badge{
+    .vzb-bs-slider-thumb-badge {
       fill: rgba($vzb-color-primary, 1);
-      stroke: white;
+      stroke: $vzb-color-white;
       stroke-width: 4px;
       stroke-opacity: 1;
     }
     
     .background {
-      fill-opacity: 0.1;
+      fill-opacity: .1;
       shape-rendering: crispEdges;
-      visibility: visible!important;
-      cursor: pointer!important;
+      visibility: visible !important;
+      cursor: pointer !important;
     }
   }
 }

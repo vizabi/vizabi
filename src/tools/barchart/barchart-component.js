@@ -272,7 +272,7 @@ var BarComponent = Component.extend({
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis);
 
-    this.xScale.rangeRoundBands([0, this.width], 0.1, 0.2);
+    this.xScale.rangeRoundBands([0, this.width], .1, .2);
 
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
