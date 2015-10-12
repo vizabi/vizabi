@@ -16,6 +16,10 @@ var time_formats = {
   "second": "%Y-%m-%d %H:%M:%S"
 };
 
+//constant speed thresholds
+var speedThresholdA = 300;
+var speedThresholdB = 100;
+
 var time_units = Object.keys(time_formats);
 var formatters = utils.values(time_formats);
 
@@ -36,6 +40,7 @@ var TimeModel = Model.extend({
     speed: 300,
     speedStart: 1000,
     speedEnd: 200,
+    speedSet: false,
     unit: "year",
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
@@ -275,7 +280,9 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
     var interval = this.speed;
-      
+
+    _this._verifySpeedThresholds();
+
         //we don't create intervals directly
     this._intervals.setInterval('playInterval_' + this._id, function() {
       if(time >= _this.end) {
@@ -289,14 +296,14 @@ var TimeModel = Model.extend({
       } else {
         time = d3.time[_this.unit].offset(time, _this.step);
         _this.value = time;
-          
+
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
       }
     }, interval);
 
 },
-    
+
   /**
    * Stops playing the time, clearing the interval
    */
@@ -305,6 +312,39 @@ var TimeModel = Model.extend({
     this._intervals.clearInterval('playInterval_' + this._id);
     this.snap();
     this.trigger("pause");
+  },
+
+  /**
+   * Verify speed thresholds, setting both speed and step accordingly
+   */
+  _verifySpeedThresholds: function() {
+    var _this = this;
+
+    console.log(_this.speed);
+    console.log(_this.step);
+    console.log(_this.speedSet);
+
+    if ((_this.speed < speedThresholdA) && (_this.step == 1)){
+      _this.speed *= 2;
+      _this.step = 2;
+      console.log(_this.speed);
+      console.log(_this.step);
+    } else if(_this.speedSet) {
+      //if the speed is 300 or higher, and it was setted by the user,
+      // reset the step to 1
+      _this.step = 1;
+    }
+    _this.speedSet = false;
+
+    if ((_this.speed < speedThresholdB) && (_this.step <= 2)){
+      _this.speed *= 4;
+      _this.step = 4;
+    } else if(_this.speedSet) {
+      //if the speed is 100 or higher, and it was setted by the user,
+      // reset the step to 1
+      _this.step = 1;
+    }
+    _this.speedSet = false;
   }
 
 });
