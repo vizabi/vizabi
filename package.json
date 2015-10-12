@@ -9,7 +9,6 @@
   "scripts": {
     "prepublish": "gulp build"
   },
-  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/Gapminder/vizabi"
@@ -20,6 +19,7 @@
     "url": "https://github.com/Gapminder/vizabi/issues"
   },
   "homepage": "http://vizabi.org",
+  "dependencies": {},
   "devDependencies": {
     "babel-eslint": "4.1.3",
     "chalk": "1.1.1",
