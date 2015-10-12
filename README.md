@@ -52,6 +52,9 @@ npm run dev
 # open http://localhost:8080/tools/bubbles
 ```
 
+Troubleshooting:
+If an error for redis is displayed, make sure it's running: `redis-cli`
+
 ## Update vizabi
 ```bash
 npm i vizabi@latest -S
