@@ -16,6 +16,10 @@
         fill: none;
         stroke: $vzb-color-grey;
       }
+      .vzb-bc-eventarea {
+        pointer-events: all;  
+        fill: none;
+      }
 
       .vzb-bc-trails .vzb-bc-entity {
         stroke: $vzb-color-white;

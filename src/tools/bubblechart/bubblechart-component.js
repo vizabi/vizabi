@@ -332,6 +332,7 @@ var BubbleChartComp = Component.extend({
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
     this.linesContainer = this.graph.select('.vzb-bc-lines');
     this.zoomRect = this.element.select('.vzb-bc-zoom-rect');
+    this.eventArea = this.element.select('.vzb-bc-eventarea');
 
     this.entityBubbles = null;
     this.entityLabels = null;
@@ -356,7 +357,7 @@ var BubbleChartComp = Component.extend({
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
-    this.element
+    this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
       .on("mouseup", function() {
@@ -779,6 +780,10 @@ var BubbleChartComp = Component.extend({
     this.yearEl
       .attr("x", box.x)
       .style("text-anchor", "start");
+      
+    this.eventArea
+        .attr("width", this.width)
+        .attr("height", this.height);
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {

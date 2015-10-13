@@ -34,8 +34,8 @@ export default Class.extend({
 
                 this.ctrlKeyLock = true;
                 this.origin = {
-                    x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-                    y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    x: d3.mouse(this)[0],
+                    y: d3.mouse(this)[1]
                 };
                 _this.zoomRect.classed("vzb-invisible", false);
 
@@ -45,8 +45,8 @@ export default Class.extend({
                 if(!this.ctrlKeyLock) return;
                 var origin = this.origin;
                 var mouse = {
-                    x: d3.event.x - _this.activeProfile.margin.left,
-                    y: d3.event.y - _this.activeProfile.margin.top
+                    x: d3.event.x,
+                    y: d3.event.y
                 };
 
                 _this.zoomRect
@@ -66,8 +66,8 @@ export default Class.extend({
                     .classed("vzb-invisible", true);
 
                 this.target = {
-                    x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-                    y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    x: d3.mouse(this)[0],
+                    y: d3.mouse(this)[1]
                 };
 
                 self._zoomOnRectangle(
@@ -94,6 +94,7 @@ export default Class.extend({
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
 
+                console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
                 if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
 
