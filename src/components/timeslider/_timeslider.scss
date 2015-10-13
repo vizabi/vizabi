@@ -223,13 +223,13 @@ $vzb-ts-value-width: 40px;
 }
 
 .vzb-ts-delay-slider {
-  @include position(absolute, $vzb-ts-btn-area/2 0 0 0);
+  @include position(absolute, $vzb-ts-btn-area*.7 0 0 5%);
   font-size: $vzb-font-size-small;
   overflow: visible;
   color: $vzb-ts-slider-color;
-  width: 100%;
-  height: 100%;
-  opacity: .2;
+  width: 20%;
+  height: 20%;
+  opacity: .1;
   &:hover {
     opacity: 1;
     .vzb-ts-delay-slider-handle {

@@ -16,10 +16,6 @@ var time_formats = {
   "second": "%Y-%m-%d %H:%M:%S"
 };
 
-//constant delay thresholds
-var delayThresholdX2 = 300;
-var delayThresholdX4 = 150;
-
 var time_units = Object.keys(time_formats);
 var formatters = utils.values(time_formats);
 
@@ -41,6 +37,8 @@ var TimeModel = Model.extend({
     delayAnimations: 300,
     delayStart: 1000,
     delayEnd: 75,
+    delayThresholdX2: 300,
+    delayThresholdX4: 150,
     delaySet: false,
     unit: "year",
     step: 1, //step must be integer
@@ -281,8 +279,8 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
     this.delayAnimations = this.delay;
-    if(this.delay < delayThresholdX2) this.delayAnimations*=2;
-    if(this.delay < delayThresholdX4) this.delayAnimations*=2;
+    if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
+    if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 
     this._intervals.setInterval('playInterval_' + this._id, function() {
       if(time >= _this.end) {
@@ -295,8 +293,8 @@ var TimeModel = Model.extend({
         return;
       } else {
         var step = _this.step;
-        if(_this.delay < delayThresholdX2) step*=2;
-        if(_this.delay < delayThresholdX4) step*=2;          
+        if(_this.delay < _this.delayThresholdX2) step*=2;
+        if(_this.delay < _this.delayThresholdX4) step*=2;          
         time = d3.time[_this.unit].offset(time, step);
         _this.value = time;
 

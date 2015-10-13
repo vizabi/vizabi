@@ -470,8 +470,6 @@ var TimeSlider = Component.extend({
 
         //set handle position
         _this.delay_handle.attr("cx", posX);
-        _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(Math.round(value).toFixed(2));
       }
       //set time according to dragged position
       if (value - _this.model.time.delay.value !== 0) {
@@ -516,7 +514,6 @@ var TimeSlider = Component.extend({
         .ease("linear")
         .attr("cx", new_pos);
     } else {
-      // issues: 445 & 456
       this.handle
         .attr("cx", new_pos);
     }
