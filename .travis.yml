@@ -10,7 +10,6 @@ addons:
 install:
   - gem install sass
   - gem install scss_lint
-  - npm install -g bower
   - npm install -g gulp
 before_script:
   - npm install

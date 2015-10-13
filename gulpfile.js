@@ -55,7 +55,7 @@ var config = {
   destPreview: './build/preview',
   destDownload: './build/download',
   destDocs: './build/docs',
-  bower: './lib'
+  modules: './node_modules'
 };
 
 // ----------------------------------------------------------------------------
@@ -354,11 +354,11 @@ gulp.task('preview:js', ['clean:preview:js'], function() {
 });
 
 gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
-  gulp.src(path.join(config.bower, 'font-awesome/css/font-awesome.min.css'))
+  gulp.src(path.join(config.modules, 'font-awesome/css/font-awesome.min.css'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
-  gulp.src(path.join(config.bower, 'font-awesome/fonts/*'))
+  gulp.src(path.join(config.modules, 'font-awesome/fonts/*'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
-  gulp.src(path.join(config.bower, 'd3/d3.min.js'))
+  gulp.src(path.join(config.modules, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
 });
 
