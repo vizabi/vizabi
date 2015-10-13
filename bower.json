@@ -16,9 +16,5 @@
     "spec"
   ],
   "main": "dist/lib/vizabi.min.js",
-  "devDependencies": {
-    "d3": "~3.4.6",
-    "font-awesome": "~4.3.0"
-  },
   "dependencies": {}
 }
