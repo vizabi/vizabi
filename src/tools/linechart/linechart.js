@@ -50,7 +50,6 @@ var LineChart = Tool.extend('LineChart', {
         end: 2012,
         value: 2012,
         step: 1,
-        speed: 300,
         formatInput: "%Y"
       },
       //entities we want to show

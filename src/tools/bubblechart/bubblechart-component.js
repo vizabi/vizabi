@@ -692,7 +692,7 @@ var BubbleChartComp = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
+    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
 
     this.yearEl.text(this.timeFormatter(this.time));
   },
@@ -1014,7 +1014,7 @@ var BubbleChartComp = Component.extend({
       // place label layout simulation into a queue
       _this.collisionTimeout = setTimeout(function() {
         //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-      }, _this.model.time.speed * 1.2)
+      }, _this.model.time.delayAnimations * 1.2)
     }
 
   },

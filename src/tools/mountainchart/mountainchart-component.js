@@ -926,7 +926,6 @@ var MountainChartComponent = Component.extend({
         var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
         var stackMode = _this.model.marker.stack.which;
 
-        //var speed = this.model.time.speed;
         this._adjustMaxY();
 
         this.mountainsMergeStacked.each(function (d) {

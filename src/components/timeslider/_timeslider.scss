@@ -222,7 +222,7 @@ $vzb-ts-value-width: 40px;
   }
 }
 
-.vzb-ts-speed-slider {
+.vzb-ts-delay-slider {
   @include position(absolute, $vzb-ts-btn-area/2 0 0 0);
   font-size: $vzb-font-size-small;
   overflow: visible;
@@ -232,14 +232,14 @@ $vzb-ts-value-width: 40px;
   opacity: .2;
   &:hover {
     opacity: 1;
-    .vzb-ts-speed-slider-handle {
+    .vzb-ts-delay-slider-handle {
       opacity: 1;
     }
   }
   .background {
     cursor: pointer !important;
   }
-  .vzb-ts-speed-slider-axis {
+  .vzb-ts-delay-slider-axis {
     @include user-select(none);
     fill: $vzb-ts-slider-color;
     @include opacity(.6);
@@ -254,14 +254,14 @@ $vzb-ts-value-width: 40px;
       stroke-linecap: round;
     }
   }
-  .vzb-ts-speed-slider-handle {
+  .vzb-ts-delay-slider-handle {
     fill: $vzb-ts-slider-color;
     stroke: #fff;
     stroke-width: 4px;
     cursor: pointer;
     opacity: .3;
   }
-  .vzb-ts-speed-slider-value {
+  .vzb-ts-delay-slider-value {
     display: none;
     @include user-select(none);
     fill: $vzb-ts-slider-color;

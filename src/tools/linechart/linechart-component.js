@@ -202,7 +202,7 @@ var LCComponent = Component.extend({
 
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.speed * .9 : 0;
+    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations * .9 : 0;
 
     var timeDim = this.model.time.getDimension();
     var filter = {};
@@ -610,7 +610,7 @@ var LCComponent = Component.extend({
     clearTimeout(_this.collisionTimeout);
     _this.collisionTimeout = setTimeout(function() {
       _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-    }, _this.model.time.speed * 1.5);
+    }, _this.model.time.delayAnimations * 1.5);
 
   },
 

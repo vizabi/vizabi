@@ -43,7 +43,6 @@ BarChart.define('default_options', {
       end: "2012",
       value: "2000",
       step: 1,
-      speed: 300,
       formatInput: "%Y"
     },
     entities: {
@@ -110,7 +109,6 @@ MountainChart.define('default_options', {
       end: 2015,
       value: 2015,
       step: 1,
-      speed: 100,
       formatInput: "%Y",
       xLogStops: [1, 2, 5],
       yMaxMethod: "latest",
@@ -194,7 +192,6 @@ LineChart.define('default_options', {
       end: 2012,
       value: 2012,
       step: 1,
-      speed: 300,
       formatInput: "%Y"
     },
     //entities we want to show
@@ -287,7 +284,6 @@ BubbleChart.define('default_options', {
       end: "2015",
       value: "2015",
       step: 1,
-      speed: 300,
       formatInput: "%Y",
       round: "ceil",
       trails: true,
