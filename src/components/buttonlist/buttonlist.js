@@ -158,6 +158,16 @@ var ButtonList = Component.extend({
       this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
 
+    var button_list = [].concat(button_expand);
+
+    this.model.ui.buttons.forEach(function(button) {
+      if (button_list.indexOf(button) === -1) {
+        button_list.push(button);
+      }
+    });
+
+    this.model.ui.buttons = button_list;
+
     //add buttons and render components
     if(this.model.ui.buttons) {
       this._addButtons();
