@@ -329,7 +329,14 @@ BubbleChart.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        palette: {
+          "asi": "#FF5872",
+          "eur": "#FFE700",
+          "ame": "#7FEB00",
+          "afr": "#00D5E9",
+          "_default": "#ffb600"
+        }
       },
       size: {
         use: "indicator",

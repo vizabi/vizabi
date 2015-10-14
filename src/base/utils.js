@@ -773,7 +773,9 @@ export var diffObject = function(obj2, obj1) {
     else if(value !== obj1[key]) {
       if(isPlainObject(value) && isPlainObject(obj1[key])) {
         var d = diffObject(value, obj1[key]);
-        if(Object.keys(d).length > 0) diff[key] = d;
+        if(Object.keys(d).length > 0) {
+          diff[key] = d;
+        }
       }
       else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
         diff[key] = value;
@@ -781,6 +783,27 @@ export var diffObject = function(obj2, obj1) {
     }
   });
   return diff;
+};
+
+/*
+ * Returns the resulting object without _defs_ leveling
+ * @param {Object} obj
+ * @returns {Object}
+ */
+export var flattenDefaults = function(obj) {
+  var flattened = {};
+  forEach(obj, function(value, key) {
+    if(isPlainObject(value) && value._defs_) {
+      flattened[key] = value._defs_;
+    }
+    else if(isPlainObject(value)) {
+      flattened[key] = flattenDefaults(value);
+    }
+    else {
+      flattened[key] = value;
+    }
+  });
+  return flattened;
 };
 
 /*
