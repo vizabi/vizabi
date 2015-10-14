@@ -1,0 +1,26 @@
+.vzb-tool-bubblemapchart {
+    .vzb-bubblemapchart {
+        @extend %vzb-chart-svg;
+        .vzb-bc-bar {
+            stroke: none;
+        }
+        .graticule {
+          fill: none;
+          stroke: #777;
+          stroke-width: .5px;
+          stroke-opacity: .5;
+        }
+
+        .land {
+          fill: #222;
+        }
+
+        .boundary {
+          fill: none;
+          stroke: #fff;
+          stroke-width: .5px;
+        }
+
+        circle { opacity: 0.5;}
+    }
+}
