@@ -49,7 +49,7 @@ var BubbleOpacity = Component.extend({
       this.slider
         .attr('min', 0)
         .attr('max', 1)
-        .attr('step', 0.1)
+        .attr('step', .1)
         .on('input', function () {
           _this._setModel();
         });

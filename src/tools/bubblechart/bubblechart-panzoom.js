@@ -34,8 +34,8 @@ export default Class.extend({
 
                 this.ctrlKeyLock = true;
                 this.origin = {
-                    x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-                    y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    x: d3.mouse(this)[0],
+                    y: d3.mouse(this)[1]
                 };
                 _this.zoomRect.classed("vzb-invisible", false);
 
@@ -45,8 +45,8 @@ export default Class.extend({
                 if(!this.ctrlKeyLock) return;
                 var origin = this.origin;
                 var mouse = {
-                    x: d3.event.x - _this.activeProfile.margin.left,
-                    y: d3.event.y - _this.activeProfile.margin.top
+                    x: d3.event.x,
+                    y: d3.event.y
                 };
 
                 _this.zoomRect
@@ -66,8 +66,8 @@ export default Class.extend({
                     .classed("vzb-invisible", true);
 
                 this.target = {
-                    x: d3.mouse(this)[0] - _this.activeProfile.margin.left,
-                    y: d3.mouse(this)[1] - _this.activeProfile.margin.top
+                    x: d3.mouse(this)[0],
+                    y: d3.mouse(this)[1]
                 };
 
                 self._zoomOnRectangle(
@@ -94,6 +94,7 @@ export default Class.extend({
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
 
+                console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
                 if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
 
@@ -153,7 +154,7 @@ export default Class.extend({
 
                 var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
                 var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
-
+                
                 xRange = _this._rangeBump(xRange);
                 yRange = _this._rangeBump(yRange);
 
@@ -169,6 +170,15 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
+                var xRangeFake = _this._rangeBump([0, _this.width]);
+                var yRangeFake = _this._rangeBump([_this.height, 0]);
+                
+                var formatter = d3.format(".2r");
+                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeFake[0]));
+                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));                
+                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeFake[0]));
+                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeFake[1]));
+                
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
@@ -212,7 +222,7 @@ export default Class.extend({
             y2: _this.yScale(mmmY.max) - radiusMax
         };
 
-        var TOLERANCE = 0.0;
+        var TOLERANCE = .0;
 
         if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
@@ -227,6 +237,15 @@ export default Class.extend({
     },
 
 
+    zoomToMaxMin: function(minX, maxX, minY, maxY, duration){
+        var _this = this.context;
+        
+        var xRange = _this._rangeBump([_this.xScale(minX), _this.xScale(maxX)], "undo");
+        var yRange = _this._rangeBump([_this.yScale(minY), _this.yScale(maxY)], "undo");
+
+        this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
+
+    },
 
 
     _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {

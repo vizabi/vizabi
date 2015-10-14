@@ -15,7 +15,7 @@ from 'components/_index';
  * More options dialog
  */
 
-var MO = Dialog.extend({
+export default Dialog.extend({
 
   /**
    * Initializes the dialog component
@@ -30,14 +30,16 @@ var MO = Dialog.extend({
       placeholder: '.vzb-xaxis-container',
       model: ["state.marker.axis_x", "language"],
       ui: {
-        selectMinMax: true
+        selectMinMax: false,
+        selectFakeMinMax: true
       }
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
       model: ["state.marker.axis_y", "language"],
       ui: {
-        selectMinMax: true
+        selectMinMax: false,
+        selectFakeMinMax: true
       }
     }, {
       component: simplecheckbox,
@@ -47,14 +49,8 @@ var MO = Dialog.extend({
       checkbox: 'adaptMinMaxZoom'
     }, {
       component: bubblesize,
-      placeholder: '.vzb-dialog-bubblesize-min',
-      model: ["state.marker.size"],
-      field: 'min'
-    }, {
-      component: bubblesize,
-      placeholder: '.vzb-dialog-bubblesize-max',
-      model: ["state.marker.size"],
-      field: 'max'
+      placeholder: '.vzb-dialog-bubblesize',
+      model: ["state.marker.size"]
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
@@ -96,4 +92,3 @@ var MO = Dialog.extend({
   }
 });
 
-export default MO;

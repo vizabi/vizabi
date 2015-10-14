@@ -73,6 +73,9 @@ var Data = Class.extend({
       reader
     ]);
     var readerClass = Reader.get(reader_name);
+    if (!readerClass) {
+      throw new Error('Unknown reader: ' + reader_name);
+    }
     var r = new readerClass(reader);
     r.read(query, lang).then(function() {
         //success reading

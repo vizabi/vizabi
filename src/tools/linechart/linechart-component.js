@@ -202,7 +202,7 @@ var LCComponent = Component.extend({
 
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.speed * 0.9 : 0;
+    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations * .9 : 0;
 
     var timeDim = this.model.time.getDimension();
     var filter = {};
@@ -314,7 +314,7 @@ var LCComponent = Component.extend({
 
     lineLabelsView
       .enter().append("text")
-      .attr("class", "samplingView vzb-lc-labelName")
+      .attr("class", "samplingView vzb-lc-labelname")
       .style("opacity", 0)
       .text(function(d) {
         return(d.length < 13) ? d : d.substring(0, 10) + '...';
@@ -457,12 +457,12 @@ var LCComponent = Component.extend({
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
         labelGroup.append("text")
-          .attr("class", "vzb-lc-labelName")
+          .attr("class", "vzb-lc-labelname")
           .style("fill", colorShadow)
           .attr("dy", ".35em");
 
         labelGroup.append("text")
-          .attr("class", "vzb-lc-labelValue")
+          .attr("class", "vzb-lc-label-value")
           .style("fill", colorShadow)
           .attr("dy", "1.6em");
       });
@@ -563,11 +563,11 @@ var LCComponent = Component.extend({
         var name = label.length < 13 ? label : label.substring(0, 10) + '...';
         var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
 
-        var t = entity.select(".vzb-lc-labelName")
+        var t = entity.select(".vzb-lc-labelname")
           .attr("dx", _this.activeProfile.text_padding)
           .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
-        entity.select(".vzb-lc-labelValue")
+        entity.select(".vzb-lc-label-value")
           .attr("dx", _this.activeProfile.text_padding)
           .text("");
 
@@ -577,8 +577,8 @@ var LCComponent = Component.extend({
           var width = _this.width + _this.margin.right;
 
           if(size > width) {
-            entity.select(".vzb-lc-labelName").text(name);
-            entity.select(".vzb-lc-labelValue").text(value);
+            entity.select(".vzb-lc-labelname").text(name);
+            entity.select(".vzb-lc-label-value").text(value);
           }
         }
       });
@@ -610,7 +610,7 @@ var LCComponent = Component.extend({
     clearTimeout(_this.collisionTimeout);
     _this.collisionTimeout = setTimeout(function() {
       _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-    }, _this.model.time.speed * 1.5);
+    }, _this.model.time.delayAnimations * 1.5);
 
   },
 
@@ -786,7 +786,7 @@ var LCComponent = Component.extend({
   //
   //                    // resume the simulation, fast-forward it, stop when done
   //                    _this.forceLayout.resume();
-  //                    while(_this.forceLayout.alpha() > 0.01)_this.forceLayout.tick();
+  //                    while(_this.forceLayout.alpha() > .01)_this.forceLayout.tick();
   //                    _this.forceLayout.stop();
   //            },  500)
   //        },
@@ -812,7 +812,7 @@ var LCComponent = Component.extend({
   //
   //            this.forceLayout = d3.layout.force()
   //                .size([1000, 400])
-  //                .gravity(0.05)
+  //                .gravity(.05)
   //                .charge(function(d){
   //                        switch (d.role){
   //                            case _this.ROLE_BOUNDARY: return -1000;
@@ -823,8 +823,8 @@ var LCComponent = Component.extend({
   //                .linkDistance(10)
   //                //.linkStrength(1)
   //                .chargeDistance(30)
-  //                .friction(0.2)
-  //                //.theta(0.8)
+  //                .friction(.2)
+  //                //.theta(.8)
   //                .nodes(this.dataForceLayout.nodes)
   //                .links(this.dataForceLayout.links)
   //                .on("tick", function(){

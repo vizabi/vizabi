@@ -21,7 +21,8 @@ var LanguageModel = Model.extend({
 
     this._type = "language";
     //default values for state model
-    values = utils.extend(this._defaults, values);
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
 
     //same constructor, with same arguments
     this._super(values, parent, bind);

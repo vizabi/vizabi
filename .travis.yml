@@ -7,10 +7,12 @@ addons:
     packages:
     - s3cmd
     - ruby
-before_script:
+install:
   - gem install sass
-  - npm install -g bower
-  - bower install
+  - gem install scss_lint
+  - npm install -g gulp
+before_script:
+  - npm install
 script:
   - gulp build
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || false'

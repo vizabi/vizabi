@@ -51,15 +51,16 @@ function formatDate(date, unit) {
 
 function formatDates(state) {
   // Format date objects according to the unit
-  if(state && state.time && state.time.unit) {
+  if(state && state.time) {
+    var unit = state.time.unit || "year";
     if(typeof state.time.value === 'object') {
-      state.time.value = formatDate(state.time.value, state.time.unit);
+      state.time.value = formatDate(state.time.value, unit);
     }
     if(typeof state.time.start === 'object') {
-      state.time.start = formatDate(state.time.start, state.time.unit);
+      state.time.start = formatDate(state.time.start, unit);
     }
     if(typeof state.time.end === 'object') {
-      state.time.end = formatDate(state.time.end, state.time.unit);
+      state.time.end = formatDate(state.time.end, unit);
     }
   }
 }

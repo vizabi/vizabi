@@ -88,7 +88,7 @@ var BarComponent = Component.extend({
   updateIndicators: function() {
     var _this = this;
     this.translator = this.model.language.getTFunction();
-    this.duration = this.model.time.speed;
+    this.duration = this.model.time.delayAnimations;
 
     var titleStringY = this.translator("indicator/" + this.model.marker.axis_y.which);
     var titleStringX = this.translator("indicator/" + this.model.marker.axis_x.which);
@@ -141,7 +141,7 @@ var BarComponent = Component.extend({
     var time = this.model.time;
     var timeDim = time.getDimension();
     var entityDim = this.model.entities.getDimension();
-    var duration = (time.playing) ? time.speed : 0;
+    var duration = (time.playing) ? time.delayAnimations : 0;
     var filter = {};
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
@@ -272,7 +272,7 @@ var BarComponent = Component.extend({
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis);
 
-    this.xScale.rangeRoundBands([0, this.width], 0.1, 0.2);
+    this.xScale.rangeRoundBands([0, this.width], .1, .2);
 
     this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);

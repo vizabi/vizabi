@@ -93,7 +93,7 @@ var Layout = Events.extend({
   },
 
   clear: function() {
-    root.removeEventListener('resize', this.resizeHandler);
+    window.removeEventListener('resize', this.resizeHandler);
   }
 
 });

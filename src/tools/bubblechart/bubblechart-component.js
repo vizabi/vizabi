@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
+import globals from 'base/globals';
 
 import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
@@ -83,6 +84,20 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
+        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+          if(_this.draggingNow)return;
+            _this._panZoom.zoomToMaxMin(
+              _this.model.marker.axis_x.fakeMin,
+              _this.model.marker.axis_x.fakeMax,
+              _this.model.marker.axis_y.fakeMin,
+              _this.model.marker.axis_y.fakeMax,
+              500
+          )
+          return;
+        }
+
+        if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
+
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
@@ -182,7 +197,7 @@ var BubbleChartComp = Component.extend({
     this._export = new Exporter(this);
     this._export
       .prefix("vzb-bc-")
-      .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoomRect",
+      .deleteClasses(["vzb-bc-bubbles-crop", "vzb-hidden", "vzb-bc-year", "vzb-bc-zoom-rect",
         "vzb-bc-projection-x", "vzb-bc-projection-y", "vzb-bc-axis-c-title"
       ]);
 
@@ -240,21 +255,22 @@ var BubbleChartComp = Component.extend({
 
 
 
-  _rangeBump: function(arg) {
+  _rangeBump: function(arg, undo) {
     var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
       var z2 = arg[arg.length - 1];
 
       //the sign of bump depends on the direction of the scale
       if(z1 < z2) {
-        z1 += bump;
-        z2 -= bump;
+        z1 += bump * undo;
+        z2 -= bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 > z2) z1 = z2 = (z1 + z2) / 2;
       } else if(z1 > z2) {
-        z1 -= bump;
-        z2 += bump;
+        z1 -= bump * undo;
+        z2 += bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 < z2) z1 = z2 = (z1 + z2) / 2;
       } else {
@@ -318,7 +334,8 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainer = this.graph.select('.vzb-bc-bubbles');
     this.labelsContainer = this.graph.select('.vzb-bc-labels');
     this.linesContainer = this.graph.select('.vzb-bc-lines');
-    this.zoomRect = this.element.select('.vzb-bc-zoomRect');
+    this.zoomRect = this.element.select('.vzb-bc-zoom-rect');
+    this.eventArea = this.element.select('.vzb-bc-eventarea');
 
     this.entityBubbles = null;
     this.entityLabels = null;
@@ -343,7 +360,7 @@ var BubbleChartComp = Component.extend({
         if(!d3.event.metaKey && !d3.event.ctrlKey) _this.element.select("svg").classed("vzb-zoomin", false);
       });
 
-    this.element
+    this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
       .on("mouseup", function() {
@@ -400,6 +417,13 @@ var BubbleChartComp = Component.extend({
     this._panZoom.reset();
     this._trails.run(["recolor", "reveal"]);
 
+    this._panZoom.zoomToMaxMin(
+       this.model.marker.axis_x.fakeMin,
+       this.model.marker.axis_x.fakeMax,
+       this.model.marker.axis_y.fakeMin,
+       this.model.marker.axis_y.fakeMax
+    )
+
   },
 
   /*
@@ -442,7 +466,7 @@ var BubbleChartComp = Component.extend({
 
     this.translator = this.model.language.getTFunction();
     this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
-    var indicatorsDB = Vizabi._globals.metadata.indicatorsDB;
+    var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
       title: {
@@ -672,7 +696,7 @@ var BubbleChartComp = Component.extend({
 
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.speed : 0;
+    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
     //this.yearEl.text(this.timeFormatter(this.time));
   },
@@ -739,6 +763,10 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4), margin.top, margin.left);
+
+    this.eventArea
+      .attr("width", this.width)
+      .attr("height", this.height);
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -853,8 +881,8 @@ var BubbleChartComp = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
       this.yInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
@@ -865,8 +893,8 @@ var BubbleChartComp = Component.extend({
         .attr("width", infoElHeight)
         .attr("height", infoElHeight)
       this.xInfoEl.attr('transform', 'translate('
-        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * 0.4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * 0.3) + ')');
+        + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
    }
 
   },
@@ -974,7 +1002,7 @@ var BubbleChartComp = Component.extend({
       // place label layout simulation into a queue
       _this.collisionTimeout = setTimeout(function() {
         //  _this.entityLabels.call(_this.collisionResolver.data(_this.cached));
-      }, _this.model.time.speed * 1.2)
+      }, _this.model.time.delayAnimations * 1.2)
     }
 
   },
@@ -1091,7 +1119,7 @@ var BubbleChartComp = Component.extend({
           }
           var labelGroup = d3.select(this);
 
-          var text = labelGroup.selectAll("text.vzb-bc-label-content")
+          var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
           lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
@@ -1102,32 +1130,32 @@ var BubbleChartComp = Component.extend({
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
 
-            labelGroup.select("text.vzb-bc-label-x")
-              .attr("x", /*contentBBox.height * 0.0 + */ 4)
+            labelGroup.select(".vzb-bc-label-x")
+              .attr("x", /*contentBBox.height * .0 + */ 4)
               .attr("y", contentBBox.height * -1);
 
             labelGroup.select("circle")
-              .attr("cx", /*contentBBox.height * 0.0 + */ 4)
+              .attr("cx", /*contentBBox.height * .0 + */ 4)
               .attr("cy", contentBBox.height * -1)
-              .attr("r", contentBBox.height * 0.5);
+              .attr("r", contentBBox.height * .5);
 
             rect.attr("width", contentBBox.width + 8)
               .attr("height", contentBBox.height * 1.2)
               .attr("x", -contentBBox.width - 4)
-              .attr("y", -contentBBox.height * 0.85)
-              .attr("rx", contentBBox.height * 0.2)
-              .attr("ry", contentBBox.height * 0.2);
+              .attr("y", -contentBBox.height * .85)
+              .attr("rx", contentBBox.height * .2)
+              .attr("ry", contentBBox.height * .2);
           }
 
           limitedX0 = _this.xScale(cached.labelX0);
           limitedY0 = _this.yScale(cached.labelY0);
 
-          cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * 0.75 - 5) / _this.width;
-          cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * 0.75 - 11) / _this.height;
+          cached.labelX_ = select.labelOffset[0] || (-cached.scaledS0 * .75 - 5) / _this.width;
+          cached.labelY_ = select.labelOffset[1] || (-cached.scaledS0 * .75 - 11) / _this.height;
 
           limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           if(limitedX - cached.contentBBox.width <= 0) { //check left
-            cached.labelX_ = (cached.scaledS0 * 0.75 + cached.contentBBox.width + 10) / _this.width;
+            cached.labelX_ = (cached.scaledS0 * .75 + cached.contentBBox.width + 10) / _this.width;
             limitedX = _this.xScale(cached.labelX0) + cached.labelX_ * _this.width;
           } else if(limitedX + 15 > _this.width) { //check right
             cached.labelX_ = (_this.width - 15 - _this.xScale(cached.labelX0)) / _this.width;
@@ -1135,7 +1163,7 @@ var BubbleChartComp = Component.extend({
           }
           limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           if(limitedY - cached.contentBBox.height <= 0) { // check top
-            cached.labelY_ = (cached.scaledS0 * 0.75 + cached.contentBBox.height) / _this.height;
+            cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = _this.yScale(cached.labelY0) + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
             cached.labelY_ = (_this.height - 10 - _this.yScale(cached.labelY0)) / _this.height;
@@ -1325,8 +1353,8 @@ var BubbleChartComp = Component.extend({
         yOffset = 0;
 
       if(offset) {
-        xOffset = offset * 0.71; // 0.71 - sin and cos for 315
-        yOffset = offset * 0.71;
+        xOffset = offset * .71; // .71 - sin and cos for 315
+        yOffset = offset * .71;
       }
       //position tooltip
       this.tooltip.classed("vzb-hidden", false)
@@ -1351,7 +1379,7 @@ var BubbleChartComp = Component.extend({
         xPos = x + xOffset * xSign;
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       } else {
-        xPos = x + xOffset * xSign; // 0.71 - sin and cos for 315
+        xPos = x + xOffset * xSign; // .71 - sin and cos for 315
         yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
       }
       this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
@@ -1360,9 +1388,9 @@ var BubbleChartComp = Component.extend({
       this.tooltip.select('rect').attr("width", contentBBox.width + 8)
         .attr("height", contentBBox.height * 1.2)
         .attr("x", -contentBBox.width - 4)
-        .attr("y", -contentBBox.height * 0.85)
-        .attr("rx", contentBBox.height * 0.2)
-        .attr("ry", contentBBox.height * 0.2);
+        .attr("y", -contentBBox.height * .85)
+        .attr("rx", contentBBox.height * .2)
+        .attr("ry", contentBBox.height * .2);
 
     } else {
       this.tooltip.classed("vzb-hidden", true);
@@ -1447,7 +1475,7 @@ var BubbleChartComp = Component.extend({
     //if(!duration)duration = 0;
 
     var OPACITY_HIGHLT = 1.0;
-    var OPACITY_HIGHLT_DIM = 0.3;
+    var OPACITY_HIGHLT_DIM = .3;
     var OPACITY_SELECT = this.model.entities.opacityRegular;
     var OPACITY_REGULAR = this.model.entities.opacityRegular;
     var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
@@ -1472,7 +1500,7 @@ var BubbleChartComp = Component.extend({
       });
 
 
-    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
 
     // when pointer events need update...
     if(someSelectedAndOpacityZero != this.someSelectedAndOpacityZero_1) {
@@ -1482,7 +1510,7 @@ var BubbleChartComp = Component.extend({
       });
     }
 
-    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < 0.01;
+    this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
   },
 
   /*

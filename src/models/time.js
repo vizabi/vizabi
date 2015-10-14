@@ -33,9 +33,13 @@ var TimeModel = Model.extend({
     playing: false,
     loop: false,
     round: 'floor',
-    speed: 300,
-    speedStart: 1000,
-    speedEnd: 200,
+    delay: 300,
+    delayAnimations: 300,
+    delayStart: 1000,
+    delayEnd: 75,
+    delayThresholdX2: 300,
+    delayThresholdX4: 150,
+    delaySet: false,
     unit: "year",
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
@@ -63,7 +67,8 @@ var TimeModel = Model.extend({
 
     this._type = "time";
     //default values for time model
-    values = utils.extend(this._defaults, values);
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
 
     values.formatOutput = values.formatOutput || values.formatInput;
 
@@ -273,9 +278,10 @@ var TimeModel = Model.extend({
   playInterval: function(){
     var _this = this;
     var time = this.value;
-    var interval = this.speed;
-      
-        //we don't create intervals directly
+    this.delayAnimations = this.delay;
+    if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
+    if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
+
     this._intervals.setInterval('playInterval_' + this._id, function() {
       if(time >= _this.end) {
         if(_this.loop) {
@@ -286,16 +292,19 @@ var TimeModel = Model.extend({
         }
         return;
       } else {
-        time = d3.time[_this.unit].offset(time, _this.step);
+        var step = _this.step;
+        if(_this.delay < _this.delayThresholdX2) step*=2;
+        if(_this.delay < _this.delayThresholdX4) step*=2;          
+        time = d3.time[_this.unit].offset(time, step);
         _this.value = time;
-          
+
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
       }
-    }, interval);
+    }, this.delayAnimations);
 
-},
-    
+  },
+
   /**
    * Stops playing the time, clearing the interval
    */

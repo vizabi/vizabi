@@ -1,0 +1,26 @@
+<div class='vzb-dialog-modal'>
+  <span class="thumb-tack-class thumb-tack-class-ico-pin fa" data-dialogtype="show" data-click="pinDialog"></span>
+  <span class="thumb-tack-class thumb-tack-class-ico-drag fa" data-dialogtype="show" data-click="dragDialog"></span>
+  <div class="vzb-dialog-title">
+    <%=t ( "buttons/show") %>
+  </div>
+  <div class="vzb-dialog-content vzb-show-filter">
+    <input id="vzb-show-search" class="vzb-dialog-input" type="text" placeholder="Search..."/>
+  </div>
+  <div class="vzb-dialog-content vzb-dialog-content-fixed">
+    <div class="vzb-show-list">
+      <!-- list will be placed here -->
+    </div>
+  </div>
+
+  <div class="vzb-dialog-buttons">
+    <div id="vzb-show-deselect" class="vzb-dialog-button">
+      <%=t ( "buttons/showall") %>
+    </div>
+
+    <div data-click="closeDialog" class="vzb-dialog-button vzb-label-primary">
+      <%=t ( "buttons/ok") %>
+    </div>
+  </div>
+
+</div>

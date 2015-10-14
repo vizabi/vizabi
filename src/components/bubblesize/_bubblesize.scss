@@ -1,61 +1,51 @@
 //general styles
 .vzb-bs-holder {
 
-  $vzb-bs-width: 200px;
+  $vzb-bs-width: 240px;
 
   width: $vzb-bs-width;
-  height: 40px;
   margin: 0 auto;
   position: relative;
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    margin-top: -9px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 8px $vzb-bs-width 8px 0;
-    border-color: transparent rgba($vzb-color-primary, 0.3) transparent transparent;
-    @include border-radius(0 50px 50px 0);
+  //height: 116px;
+  
+  .vzb-bs-svg {
+    margin: 0 auto;
+    display: block;
+    position: relative;
   }
 
-  .vzb-bs-slider {
-    position: absolute;
-    left: 6px;
-    top: 50%;
-    margin-top: -3px;
-    height: 3px;
-    width: $vzb-bs-width;
-    -webkit-appearance: none;
-    background: transparent;
-    outline: none !important;
-    border: 0;
-    @include border-radius(2px);
+  .vzb-bs-slider { 
 
-    // Slider Handle
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      cursor: pointer;
-      @include border-radius(20px);
-      @include transition(left 0.1s ease-in-out);
-      background-color: $vzb-color-primary;
-      top: -12px;
-      width: 24px;
-      height: 24px;
-      border: 4px solid white;
+    .vzb-bs-slider-thumb-arc {
+      fill: none;
+      pointer-events: none; 
+      stroke: rgba($vzb-color-primary, 1);
+      stroke-width: 2px;
+      stroke-linejoin: round;
     }
-    &::-moz-range-thumb {
-      cursor: pointer;
-      @include border-radius(20px);
-      @include transition(left 0.1s ease-in-out);
-      background: $vzb-color-primary;
-      top: -12px;
-      width: 16px;
-      height: 16px;
-      border: 4px solid white;
+        
+    .vzb-bs-slider-extent {
+      fill-opacity: .125;
+      cursor: col-resize !important;
+    }
+  
+    .vzb-bs-slider-thumb-label {
+      pointer-events: none; 	
+    }
+  
+    .vzb-bs-slider-thumb-badge {
+      fill: rgba($vzb-color-primary, 1);
+      stroke: $vzb-color-white;
+      stroke-width: 2px;
+      stroke-linejoin: round;
+      stroke-opacity: 1;
+    }
+    
+    .background {
+      fill-opacity: .1;
+      shape-rendering: crispEdges;
+      visibility: visible !important;
+      cursor: pointer !important;
     }
   }
 }
@@ -64,6 +54,7 @@
 &.vzb-large {
   .vzb-bs-holder {
     //...
+    height: 150px;
   }
 }
 
@@ -71,6 +62,7 @@
 &.vzb-medium {
   .vzb-bs-holder {
     //...
+    height: 120px;
   }
 }
 
@@ -78,5 +70,6 @@
 &.vzb-small {
   .vzb-bs-holder {
     //...
+    height: 90px;
   }
 }

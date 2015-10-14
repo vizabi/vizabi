@@ -26,7 +26,9 @@ var SizeModel = Model.extend({
   init: function(values, parent, bind) {
 
     this._type = "size";
-    values = utils.extend(this._defaults, values);
+    //TODO: add defaults extend to super
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
     this._super(values, parent, bind);
   },
 
