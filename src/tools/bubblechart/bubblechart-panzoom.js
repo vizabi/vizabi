@@ -93,6 +93,8 @@ export default Class.extend({
 
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
+
+                //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
                 if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
 
