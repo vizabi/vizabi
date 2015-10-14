@@ -98,11 +98,11 @@ export var isPlainObject = function(obj) {
  * @returns {Boolean}
  */
 export var arrayEquals = function(a, b) {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (a.length != b.length) return false;
-  for (var i = 0; i < a.length; ++i) {
-    if (a[i] !== b[i]) return false;
+  if(a === b) return true;
+  if(a == null || b == null) return false;
+  if(a.length != b.length) return false;
+  for(var i = 0; i < a.length; ++i) {
+    if(a[i] !== b[i]) return false;
   }
   return true;
 };
@@ -769,20 +769,42 @@ export var diffObject = function(obj2, obj1) {
   forEach(obj2, function(value, key) {
     if(!obj1.hasOwnProperty(key)) {
       diff[key] = value;
-    }
-    else if(value !== obj1[key]) {
+    } else if(value !== obj1[key]) {
       if(isPlainObject(value) && isPlainObject(obj1[key])) {
         var d = diffObject(value, obj1[key]);
         if(Object.keys(d).length > 0) {
           diff[key] = d;
         }
-      }
-      else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
+      } else if(!isArray(value) || !isArray(obj1[key]) || !arrayEquals(value, obj1[key])) {
         diff[key] = value;
       }
     }
   });
   return diff;
+};
+
+/*
+ * Time formats
+ */
+var timeFormats = {
+  "year": d3.time.format("%Y"),
+  "month": d3.time.format("%Y-%m"),
+  "week": d3.time.format("%Y-W%W"),
+  "day": d3.time.format("%Y-%m-%d"),
+  "hour": d3.time.format("%Y-%m-%d %H"),
+  "minute": d3.time.format("%Y-%m-%d %H:%M"),
+  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+};
+
+/*
+ * Formats a Date Object to string format
+ * @param {Date} date
+ * @param {String} unit
+ * @returns {String}
+ */
+export var formatDate = function(date, unit) {
+  if(!d3) return date;
+  return timeFormats[unit](date);
 };
 
 /*
@@ -792,19 +814,47 @@ export var diffObject = function(obj2, obj1) {
  */
 export var flattenDefaults = function(obj) {
   var flattened = {};
-  forEach(obj, function(value, key) {
-    if(isPlainObject(value) && value._defs_) {
-      flattened[key] = value._defs_;
-    }
-    else if(isPlainObject(value)) {
-      flattened[key] = flattenDefaults(value);
-    }
-    else {
-      flattened[key] = value;
+  forEach(obj, function(val, key) {
+    if(isPlainObject(val) && val._defs_) {
+      flattened[key] = val._defs_;
+    } else if(isPlainObject(val)) {
+      flattened[key] = flattenDefaults(val);
+    } else {
+      flattened[key] = val;
     }
   });
   return flattened;
 };
+
+/*
+ * Returns the resulting object without date objects for time
+ * @param {Object} obj
+ * @returns {Object}
+ */
+export var flattenDates = function(obj) {
+  var flattened = {};
+  forEach(obj, function(val, key) {
+    //todo: hack to flatten time unit objects to strings
+    if(key === 'time') {
+      var unit = val.unit || "year";
+      if(typeof val.value === 'object') {
+        val.value = formatDate(val.value, unit);
+      }
+      if(typeof val.start === 'object') {
+        val.start = formatDate(val.start, unit);
+      }
+      if(typeof val.end === 'object') {
+        val.end = formatDate(val.end, unit);
+      }
+    }
+    if(isPlainObject(val)) {
+      flattened[key] = flattenDates(val);
+    } else {
+      flattened[key] = val;
+    }
+  });
+  return flattened;
+}
 
 /*
  * Defers a function

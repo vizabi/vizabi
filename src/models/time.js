@@ -26,9 +26,9 @@ var TimeModel = Model.extend({
    */
   _defaults: {
     dim: "time",
-    value: "1800",
+    value: "2015",
     start: "1800",
-    end: "2014",
+    end: "2015",
     playable: true,
     playing: false,
     loop: false,
