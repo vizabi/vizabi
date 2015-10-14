@@ -4,10 +4,12 @@ module.exports = function (app) {
 
       $routeProvider
         .when('/:slug', {
-          controller: 'gapminderToolsCtrl'
+          controller: 'gapminderToolsCtrl',
+          reloadOnSearch: false
         })
         .otherwise({
-          redirectTo: '/bubbles'
+          redirectTo: '/bubbles',
+          reloadOnSearch: false
         });
 
       $locationProvider.html5Mode({
