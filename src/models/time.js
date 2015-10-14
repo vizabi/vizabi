@@ -44,6 +44,7 @@ var TimeModel = Model.extend({
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
     formatInput: "%Y", //defaults to year format
+    formatOutput: "%Y", //defaults to year format
     xLogStops: [], //TODO: remove from here. only for mountain chart
     yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
     record: false,
@@ -69,8 +70,6 @@ var TimeModel = Model.extend({
     //default values for time model
     var defaults = utils.deepClone(this._defaults);
     values = utils.extend(defaults, values);
-
-    values.formatOutput = values.formatOutput || values.formatInput;
 
     //same constructor
     this._super(values, parent, bind);
