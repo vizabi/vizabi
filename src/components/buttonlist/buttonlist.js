@@ -159,11 +159,13 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-      var element = d3.select('div.vzb-large');
-      var classes = element.attr('class');
-
-      classes += ' vzb-button-expand-true';
-      element.attr('class', classes);
+//      var element = d3.select('div.vzb-large');
+//      var classes = element.attr('class');
+//
+//      classes += ' vzb-button-expand-true';
+//      element.attr('class', classes);
+        d3.select('div.vzb-large')
+            .classed("vzb-button-expand-true", true);
     }
 
     var button_list = [].concat(button_expand);
