@@ -11,7 +11,7 @@ import globals from 'base/globals';
 var OPTIONS = {
   DOMAIN_MIN: 0,
   DOMAIN_MAX: 1,
-  TEXT_PARAMS: { TOP: 18, LEFT: 12, MAX_WIDTH: 30, MAX_HEIGHT: 10 },
+  TEXT_PARAMS: { TOP: 18, LEFT: 8, MAX_WIDTH: 42, MAX_HEIGHT: 10 },
   BAR_WIDTH: 6,
   THUMB_RADIUS: 10,
   THUMB_STROKE_WIDTH: 4,
