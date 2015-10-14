@@ -130,7 +130,7 @@ var PopByAge = Component.extend({
    */
   _updateIndicators: function() {
     var _this = this;
-    this.duration = this.model.time.speed;
+    this.duration = this.model.time.delayAnimations;
 
     this.yScale = this.model.marker.axis_y.getScale({
       max: true
@@ -152,7 +152,7 @@ var PopByAge = Component.extend({
     var timeFormatter = d3.time.format(this.model.time.formatInput);
     var ageDim = this.AGEDIM;
     var timeDim = this.TIMEDIM;
-    var duration = (time.playing) ? time.speed : 0;
+    var duration = (time.playing) ? time.delayAnimations : 0;
     var filter = {};
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);

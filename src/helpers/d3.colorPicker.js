@@ -9,23 +9,23 @@ export default function colorPicker() {
     // which hue do we start from: 0 to 1 instead of 0 to 365
     var nCellsL = 4;
     // number of cells by lightness (radial)
-    var minL = 0.5;
-    // which lightness to start from: 0 to 1. Recommended 0.3...0.5
-    var satConstant = 0.7;
-    // constant saturation for color wheel: 0 to 1. Recommended 0.7...0.8
-    var outerL_display = 0.4;
+    var minL = .5;
+    // which lightness to start from: 0 to 1. Recommended .3...0.5
+    var satConstant = .7;
+    // constant saturation for color wheel: 0 to 1. Recommended .7...0.8
+    var outerL_display = .4;
     // ecxeptional saturation of the outer circle. the one displayed 0 to 1
-    var outerL_meaning = 0.3;
+    var outerL_meaning = .3;
     // ecxeptional saturation of the outer circle. the one actually ment 0 to 1
     var firstAngleSat = 0;
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
     var minRadius = 15;
     //radius of the central hole in color wheel: px
     var margin = {
-      top: 0.1,
-      bottom: 0.1,
-      left: 0.1,
-      right: 0.1
+      top: .1,
+      bottom: .1,
+      left: .1,
+      right: .1
     };
     //margins in % of container's width and height
     var colorOld = '#000';
@@ -118,7 +118,7 @@ export default function colorPicker() {
             return p + (q - p) * (2 / 3 - t) * 6;
           return p;
         };
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var q = l < .5 ? l * (1 + s) : l + s - l * s;
         var p = 2 * l - q;
         r = _hue2rgb(p, q, h + 1 / 3);
         g = _hue2rgb(p, q, h);
@@ -152,7 +152,7 @@ export default function colorPicker() {
         'text-anchor', 'start').attr('class', css.COLOR_SAMPLE);
       sampleText = svg.append('text').attr('x', width * (1 - margin.right)).attr('y', height * margin.top / 2).attr(
         'dy', '0.5em').style('text-anchor', 'end').attr('class', css.COLOR_SAMPLE);
-      svg.append('text').attr('x', width * 0.1).attr('y', height * (1 - margin.bottom)).attr('dy', '0.3em').style(
+      svg.append('text').attr('x', width * .1).attr('y', height * (1 - margin.bottom)).attr('dy', '0.3em').style(
         'text-anchor', 'start').text('default');
       svg.append('circle').attr('class', css.COLOR_DEFAULT + ' ' + css.COLOR_BUTTON).attr('r', width * margin.left /
         2).attr('cx', width * margin.left * 1.5).attr('cy', height * (1 - margin.bottom * 1.5)).on('mouseover',
@@ -162,11 +162,11 @@ export default function colorPicker() {
         }).on('mouseout', function() {
         d3.select(this).style('stroke', 'none');
       });
-      circles.append('circle').attr('r', minRadius - 1).attr('fill', '#FFF').attr('class', css.COLOR_BUTTON).on(
+      circles.append('circle').attr('r', minRadius - 1).attr('fill', '#fff').attr('class', css.COLOR_BUTTON).on(
         'mouseover',
         function() {
           d3.select(this).style('stroke', '#444');
-          _cellHover('#FFF');
+          _cellHover('#fff');
         }).on('mouseout', function() {
         d3.select(this).style('stroke', 'none');
       });

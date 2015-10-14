@@ -56,14 +56,14 @@ var MCMath = Class.extend({
         pdf: {
             normal: function(x, mu, sigma){
                 return Math.exp(
-                    - 0.5 * Math.log(2 * Math.PI)
+                    - .5 * Math.log(2 * Math.PI)
                     - Math.log(sigma)
                     - Math.pow(x - mu, 2) / (2 * sigma * sigma)
                     );
             },
             lognormal: function(x, mu, sigma){
                 return Math.exp(
-                    - 0.5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
+                    - .5 * Math.log(2 * Math.PI) //should not be different for the two scales- (scaleType=="linear"?Math.log(x):0)
                     - Math.log(sigma)
                     - Math.pow(Math.log(x) - mu, 2) / (2 * sigma * sigma)
                 );
@@ -102,7 +102,7 @@ var MCMath = Class.extend({
             var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
 
             // Define break-points.
-            var plow = 0.02425;
+            var plow = .02425;
             var phigh = 1 - plow;
 
             // Rational approximation for lower region:
@@ -120,7 +120,7 @@ var MCMath = Class.extend({
             }
 
             // Rational approximation for central region:
-            var q = p - 0.5;
+            var q = p - .5;
             var r = q * q;
             return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
                 (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);

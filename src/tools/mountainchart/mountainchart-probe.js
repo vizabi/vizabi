@@ -41,7 +41,7 @@ var MCProbe = Class.extend({
 
             var formatter1 = d3.format(".3r");
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
-            _this.heightOfLabels = _this.heightOfLabels || (0.66 * this.height);
+            _this.heightOfLabels = _this.heightOfLabels || (.66 * this.height);
 
             _this.probeTextEl.each(function (d, i) {
                 if (i !== 8) return;

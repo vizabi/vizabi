@@ -4,13 +4,12 @@ You can contribute to the development of tools or the framework. Read the manual
 
 ## Cloning the repository
 
-Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Bower](https://github.com/bower/bower) and [Sass](http://sass-lang.com/install).
+Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Sass](http://sass-lang.com/install), and [SCSS Lint](https://github.com/brigade/scss-lint) `gem install scss_lint`.
 
 Clone this repo and run the following commands:
 
 ```shell
 npm install
-bower install
 ```
 
 If you are still puzzled what it is or it just doesn't work, read a [more detailed instruction](https://github.com/Gapminder/vizabi/wiki/Quickstart-for-Windows) 

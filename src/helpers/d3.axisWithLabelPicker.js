@@ -355,7 +355,7 @@ export default function axisSmart() {
       if(options.isPivotAuto == null) options.isPivotAuto = orient == VERTICAL;
 
       if(options.cssFontSize == null) options.cssFontSize = "13px";
-      if(options.widthToFontsizeRatio == null) options.widthToFontsizeRatio = 0.75;
+      if(options.widthToFontsizeRatio == null) options.widthToFontsizeRatio = .75;
       if(options.heightToFontsizeRatio == null) options.heightToFontsizeRatio = 1.20;
       if(options.widthOfOneDigit == null) options.widthOfOneDigit =
         parseInt(options.cssFontSize) * options.widthToFontsizeRatio;
@@ -910,7 +910,7 @@ export default function axisSmart() {
 
         -(dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == "x") *
           options.widthOfOneDigit / 2 * options.formatter(tickValues[tickValues.length - 1]).length - (dimension ==
-            "y") * options.heightOfOneDigit * 0.7; //TODO remove magic constant - relation of actual font height to BBox-measured height
+            "y") * options.heightOfOneDigit * .7; //TODO remove magic constant - relation of actual font height to BBox-measured height
 
         // compute the influence of the tail-side outer label
         var repositionTail =
@@ -921,7 +921,7 @@ export default function axisSmart() {
 
         -(dimension == "x") * options.widthOfOneDigit / 2 * options.formatter(d).length - (dimension == "x") *
           options.widthOfOneDigit / 2 * options.formatter(tickValues[0]).length - (dimension == "y") * options.heightOfOneDigit *
-          0.7; //TODO remove magic constant - relation of actual font height to BBox-measured height
+          .7; //TODO remove magic constant - relation of actual font height to BBox-measured height
 
         // apply limits in order to cancel repositioning of labels that are good
         if(repositionHead > 0) repositionHead = 0;

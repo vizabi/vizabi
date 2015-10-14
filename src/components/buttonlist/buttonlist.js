@@ -50,6 +50,12 @@ var ButtonList = Component.extend({
         dialog: dialogs.find,
         ispin: false,
       },
+      'show': {
+        title: "buttons/show",
+        icon: "asterisk",
+        dialog: dialogs.show,
+        ispin: false,
+      },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",
@@ -142,15 +148,35 @@ var ButtonList = Component.extend({
     var button_expand = this.model.ui.buttons_expand;
 
     this.element = d3.select(this.element);
-    this.buttonContainerEl = this.element.append("div")
-      .attr("class", "vzb-buttonlist-container-buttons");
     this.dialogContainerEl = this.element.append("div")
       .attr("class", "vzb-buttonlist-container-dialogs");
+    this.buttonContainerEl = this.element.append("div")
+      .attr("class", "vzb-buttonlist-container-buttons");
 
     // if button_expand has been passed in with boolean param or array must check and covert to array
     if (button_expand){
       this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
+
+    if (button_expand.length !== 0) {
+//      var element = d3.select('div.vzb-large');
+//      var classes = element.attr('class');
+//
+//      classes += ' vzb-button-expand-true';
+//      element.attr('class', classes);
+        d3.select('div.vzb-large')
+            .classed("vzb-button-expand-true", true);
+    }
+
+    var button_list = [].concat(button_expand);
+
+    this.model.ui.buttons.forEach(function(button) {
+      if (button_list.indexOf(button) === -1) {
+        button_list.push(button);
+      }
+    });
+
+    this.model.ui.buttons = button_list;
 
     //add buttons and render components
     if(this.model.ui.buttons) {
@@ -274,7 +300,7 @@ var ButtonList = Component.extend({
     };
 
     var t = this.getTranslationFunction(true);
-    var _this = this;
+
     this.buttonContainerEl.selectAll('button').data(details_btns)
       .enter().append("button")
       .attr('class', function (d) {

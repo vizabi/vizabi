@@ -1,5 +1,6 @@
 import * as utils from 'base/utils';
 import Model from 'base/model';
+import globals from 'base/globals';
 
 /*!
  * VIZABI Entities Model
@@ -14,7 +15,7 @@ var EntitiesModel = Model.extend({
     show: {},
     select: [],
     highlight: [],
-    opacitySelectDim: 0.3,
+    opacitySelectDim: .3,
     opacityRegular: 1,
     needUpdate: {}
   },
@@ -130,6 +131,26 @@ var EntitiesModel = Model.extend({
       this.select = (this._multiple) ? this.select.concat(added) : [added];
     }
   },
+    
+  /**
+   * Shows or unshows an entity from the set
+   */
+  showEntity: function(d) {
+    var dimension = this.getDimension();
+    var value = d[dimension];
+    var show = this.show[dimension].concat([]);
+      
+    if(show[0] === "*") show = [];
+      
+    if(this.isShown(d)) {
+      show = show.filter(function(d) { return d !== value; });
+    } else {
+      show = show.concat(value);
+    }
+      
+    if(show.length === 0) show = ["*"];
+    this.show[dimension] = show.concat([]);
+  },
 
   setLabelOffset: function(d, xy) {
     var dimension = this.getDimension();
@@ -151,11 +172,18 @@ var EntitiesModel = Model.extend({
     var dimension = this.getDimension();
     var value = d[this.getDimension()];
 
-    var select_array = this.select.map(function(d) {
-      return d[dimension];
-    });
-
-    return select_array.indexOf(value) !== -1;
+    return this.select
+        .map(function(d) {return d[dimension];})
+        .indexOf(value) !== -1;
+  },
+    
+  /**
+   * Selects an entity from the set
+   * @returns {Boolean} whether the item is shown or not
+   */
+  isShown: function(d) {
+    var dimension = this.getDimension();
+    return this.show[dimension].indexOf(d[dimension]) !== -1;
   },
 
   /**
@@ -163,6 +191,13 @@ var EntitiesModel = Model.extend({
    */
   clearSelected: function() {
     this.select = [];
+  },
+  /**
+   * Clears showing of items
+   */
+  clearShow: function() {
+    var dimension = this.getDimension();
+    this.show[dimension] = ["*"];
   },
 
 

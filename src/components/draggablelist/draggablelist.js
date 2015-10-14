@@ -37,7 +37,7 @@ var DraggableList = Component.extend({
     this.element
       .selectAll('div')
       .on('dragstart', function() {
-        d3.select(this).style('opacity', 0.4);
+        d3.select(this).style('opacity', .4);
 
         _this.dragElem = this;
         d3.event.dataTransfer.setData('text/html', this.innerHTML);

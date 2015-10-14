@@ -49,14 +49,8 @@ export default Dialog.extend({
       checkbox: 'adaptMinMaxZoom'
     }, {
       component: bubblesize,
-      placeholder: '.vzb-dialog-bubblesize-min',
-      model: ["state.marker.size"],
-      field: 'min'
-    }, {
-      component: bubblesize,
-      placeholder: '.vzb-dialog-bubblesize-max',
-      model: ["state.marker.size"],
-      field: 'max'
+      placeholder: '.vzb-dialog-bubblesize',
+      model: ["state.marker.size"]
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',

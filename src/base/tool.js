@@ -119,7 +119,11 @@ var Tool = Component.extend({
   minState: function() {
     var state = this.model.state.getObject();
     var d_state = this.default_options.state;
-    var d = utils.diffObject(state, d_state);
+    //flattens _defs_ object
+    d_state = utils.flattenDefaults(d_state);
+    //compares with chart default options
+    var d = utils.flattenDates(utils.diffObject(state, d_state));
+    //compares with model's defaults
     return utils.diffObject(d, this.model.state.getDefaults());
   },
 

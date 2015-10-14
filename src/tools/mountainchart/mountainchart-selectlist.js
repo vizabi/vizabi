@@ -98,7 +98,7 @@ var MCSelectList = Class.extend({
 
         var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
 
-        var text = view.selectAll("text.vzb-mc-label-text")
+        var text = view.selectAll(".vzb-mc-label-text")
           .attr("x", fontHeight)
           .attr("y", fontHeight)
           .text(string)
@@ -107,35 +107,35 @@ var MCSelectList = Class.extend({
         var contentBBox = text[0][0].getBBox();
 
         if (utils.isTouchDevice()) {
-          var label = view.selectAll("text.vzb-mc-label-x");
+          var label = view.selectAll(".vzb-mc-label-x");
           var labelBBox = label[0][0].getBBox();
-          view.select("text.vzb-mc-label-x")
+          view.select(".vzb-mc-label-x")
             .classed("vzb-revert-color", true)
             .attr("x", contentBBox.width + contentBBox.height * 1.12 + labelBBox.width/2)
-            .attr("y", contentBBox.height * 0.55);
+            .attr("y", contentBBox.height * .55);
 
-          view.select("rect.vzb-mc-label-x")
+          view.select(".vzb-mc-label-x")
             .classed("vzb-revert-color", true)
-            .attr("width", labelBBox.width + contentBBox.height * 0.6)
+            .attr("width", labelBBox.width + contentBBox.height * .6)
             .attr("height", contentBBox.height)
-            .attr("x", contentBBox.width + contentBBox.height * 0.9)
+            .attr("x", contentBBox.width + contentBBox.height * .9)
             .attr("y", 0)
-            .attr("r", contentBBox.height * 0.25);
+            .attr("r", contentBBox.height * .25);
         } else {
-          view.select("text.vzb-mc-label-x")
+          view.select(".vzb-mc-label-x")
             .attr("x", contentBBox.width + contentBBox.height * 1.1)
             .attr("y", contentBBox.height / 3)
             .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
 
-          view.select("circle.vzb-mc-label-x")
+          view.select(".vzb-mc-label-x")
             .attr("r", contentBBox.height / 2.5)
             .attr("cx", contentBBox.width + contentBBox.height * 1.1)
             .attr("cy", contentBBox.height / 3);
         }
 
-        view.select("circle.vzb-mc-label-legend")
+        view.select(".vzb-mc-label-legend")
           .attr("r", fontHeight / 3)
-          .attr("cx", fontHeight * 0.4)
+          .attr("cx", fontHeight * .4)
           .attr("cy", fontHeight / 1.5)
           .style("fill", _this.cScale(_this.values.color[d.KEY()]));
 

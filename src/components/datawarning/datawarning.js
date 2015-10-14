@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import globals from 'base/globals';
 
-import {warn as iconWarn} from 'base/iconset';
+import {warn as iconWarn, close as iconClose} from 'base/iconset';
 
 var hidden = true;
 
@@ -54,11 +54,14 @@ var DataWarning = Component.extend({
       .attr("class", "vzb-data-warning-box");
 
     container.append("div")
-      .attr("class", "vzb-data-warning-close")
-      .html("X")
+      .html(iconClose)
       .on("click", function() {
         _this.toggle()
-      });
+      })
+      .select("svg")
+      .attr("width", "0px")
+      .attr("height", "0px")
+      .attr("class", "vzb-data-warning-close");
 
     var icon = container.append("div")
       .attr("class", "vzb-data-warning-link")
