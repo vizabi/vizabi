@@ -1,4 +1,6 @@
+var d3 = require('d3');
 var Vizabi = require('vizabi');
+var urlon = require('URLON');
 
 module.exports = function (app) {
   var bases = document.getElementsByTagName('base');
@@ -7,9 +9,38 @@ module.exports = function (app) {
     baseHref = bases[0].href;
   }
 
+  function formatDate(date, unit) {
+    var timeFormats = {
+      "year": d3.time.format("%Y"),
+      "month": d3.time.format("%Y-%m"),
+      "week": d3.time.format("%Y-W%W"),
+      "day": d3.time.format("%Y-%m-%d"),
+      "hour": d3.time.format("%Y-%m-%d %H"),
+      "minute": d3.time.format("%Y-%m-%d %H:%M"),
+      "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+    };
+    return timeFormats[unit](date);
+  }
+
+  function formatDates(state) {
+    // Format date objects according to the unit
+    if(state && state.time) {
+      var unit = state.time.unit || "year";
+      if(typeof state.time.value === 'object') {
+        state.time.value = formatDate(state.time.value, unit);
+      }
+      if(typeof state.time.start === 'object') {
+        state.time.start = formatDate(state.time.start, unit);
+      }
+      if(typeof state.time.end === 'object') {
+        state.time.end = formatDate(state.time.end, unit);
+      }
+    }
+  }
+
   app
     .factory("vizabiFactory", [
-      '$rootScope', '$timeout', function ($rootScope, $timeout) {
+      function () {
         return {
           /**
            * Render Vizabi
@@ -18,21 +49,25 @@ module.exports = function (app) {
            * @return {Object}
            */
           render: function (tool, placeholder, options) {
+            var loc = window.location.toString();
+            var hash = null;
+            if (loc.indexOf('#') >= 0) {
+              hash = loc.substring(loc.indexOf('#') + 1);
+            }
 
-            var hash = window.location.hash;
             if (hash) {
-              var state = JSON.parse(location.hash.substr(1), function (key, value) {
-                  if (key == 'value' || key == 'end' || key == 'start') {
-                    var date = new Date(value);
-                    return date.getFullYear().toString();
-                  }
-                  return value;
-                }
-              );
-
+              var str = encodeURI(decodeURIComponent(hash));
+              var state = urlon.parse(str);
               options.language = {};
-              options.language.id = state.id;
-              options.state = state.state;
+              options.language.id = state.id || 'en';
+              options.state = state;
+            }
+
+            options.bind = options.bind || {};
+            options.bind.historyUpdate = onHistoryUpdate;
+            function onHistoryUpdate(eventName, state) {
+              formatDates(state);
+              window.location.hash = urlon.stringify(state);
             }
 
             return Vizabi(tool, placeholder, options);
