@@ -158,6 +158,14 @@ var ButtonList = Component.extend({
       this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
 
+    if (button_expand.length !== 0) {
+      var element = d3.select('div.vzb-large');
+      var classes = element.attr('class');
+
+      classes += ' vzb-button-expand-true';
+      element.attr('class', classes);
+    }
+
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {

@@ -176,84 +176,86 @@ $vzb-button-color-border: #cce6ed;
 }
 
 &.vzb-large {
-  .vzb-tool-stage {
-    right: 290px;
-  }
-
-  .vzb-tool-buttonlist {
-    width: 290px;
-
-    .vzb-buttonlist-container-dialogs {
-      min-height: 85%;
-      overflow: hidden;
+  &.vzb-button-expand-true {
+    .vzb-tool-stage {
+      right: 290px;
     }
 
-    .vzb-buttonlist-container-buttons {
-      position: relative;
-      padding: 10px 0;
-      margin-right: -10px;
-    }
+    .vzb-tool-buttonlist {
+      width: 290px;
 
-    .vzb-buttonlist-btn {
-      margin-right: 0;
-      &.vzb-dialog-side-btn {
-        display: none;
+      .vzb-buttonlist-container-dialogs {
+        min-height: 85%;
+        overflow: hidden;
       }
-    }
 
-    .vzb-buttonlist-dialog {
-      &.vzb-dialog-side {
-        visibility: visible;
-        display: block;
-        margin: 5px;
-        position: static;
-        box-shadow: none;
-        background-color: $vzb-color-primary-lightest;
-        border-bottom: 1px solid rgba(200, 200, 200, .4);
+      .vzb-buttonlist-container-buttons {
+        position: relative;
+        padding: 10px 0;
+        margin-right: -10px;
+      }
 
-        .vzb-dialog-buttons {
+      .vzb-buttonlist-btn {
+        margin-right: 0;
+        &.vzb-dialog-side-btn {
           display: none;
         }
       }
 
-      .vzb-dialog-title {
-        padding: 5px 25px;
-      }
+      .vzb-buttonlist-dialog {
+        &.vzb-dialog-side {
+          visibility: visible;
+          display: block;
+          margin: 5px;
+          position: static;
+          box-shadow: none;
+          background-color: $vzb-color-primary-lightest;
+          border-bottom: 1px solid rgba(200, 200, 200, .4);
 
-      .vzb-dialog-button {
-        position: relative;
-      }
-
-      .vzb-dialog-buttons {
-        padding: 5px 25px;
-      }
-
-      &[data-btn="find"] {
-        height: 400px;
-        @import 'dialogs/find/find';
-      }
-    
-      &[data-btn="show"] {
-        height: 400px;
-        @import 'dialogs/show/show';
-      }
-
-      &[data-btn="colors"] {
-        @import 'dialogs/colors/colors';
-      }
-
-      &[data-btn="size"] {
-        @import 'dialogs/size/size';
-      }
-
-      .vzb-dialog-modal {
-        .thumb-tack-class {
-
-          &.thumb-tack-class-ico-pin,
-          &.thumb-tack-class-ico-drag {
+          .vzb-dialog-buttons {
             display: none;
           }
+        }
 
+        .vzb-dialog-title {
+          padding: 5px 25px;
+        }
+
+        .vzb-dialog-button {
+          position: relative;
+        }
+
+        .vzb-dialog-buttons {
+          padding: 5px 25px;
+        }
+
+        &[data-btn="find"] {
+          height: 400px;
+          @import 'dialogs/find/find';
+        }
+
+        &[data-btn="show"] {
+          height: 400px;
+          @import 'dialogs/show/show';
+        }
+
+        &[data-btn="colors"] {
+          @import 'dialogs/colors/colors';
+        }
+
+        &[data-btn="size"] {
+          @import 'dialogs/size/size';
+        }
+
+        .vzb-dialog-modal {
+          .thumb-tack-class {
+
+            &.thumb-tack-class-ico-pin,
+            &.thumb-tack-class-ico-drag {
+              display: none;
+            }
+
+          }
         }
       }
     }
