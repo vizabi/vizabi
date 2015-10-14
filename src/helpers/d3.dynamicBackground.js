@@ -48,8 +48,6 @@ export default Class.extend({
     this.context.selectAll("text").each(function (d, i) {
         d3.select(this).text(d);
     });
-    console.log(this.width);
-    console.log(this.height);
     if (resize) {
       this.__resizeText();
     }
