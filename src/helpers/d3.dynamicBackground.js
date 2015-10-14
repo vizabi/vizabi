@@ -57,11 +57,12 @@ export default Class.extend({
 
   __resizeText: function() {
     var _this = this;
-    var sample = this.context.append("g").append("text").text("0").style("font-size", this.fontSize + "px");
+    var sample = this.context.append("text").text("0").style("font-size", this.fontSize + "px");
     var fontWidth = sample[0][0].getBBox().width;
-    var fontHeight = sample[0][0].getBBox().height;
-    d3.select(sample[0][0].parentNode).remove();
-    this.context.attr("transform", "translate(" + (this.leftOffset + this.width / 2 - fontWidth/2 - fontWidth*this.symbols.length/2) + "," + fontHeight + ")")
+    var fontHeight = this.fontSize*0.72;
+    var translateY = fontHeight + (this.height - fontHeight)/2;
+    d3.select(sample[0][0]).remove();
+    this.context.attr("transform", "translate(" + (fontWidth/2 + (this.width - fontWidth*this.symbols.length)/2) + "," + translateY + ")");
     this.context.selectAll("text").each(function(d, i) {
         d3.select(this)
           .attr("x", fontWidth * i)
