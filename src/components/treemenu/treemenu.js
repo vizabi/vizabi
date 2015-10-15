@@ -499,7 +499,7 @@ var TreeMenu = Component.extend({
         remain += this.activeProfile.col_width
       };
 
-      for(var i = ulArr.length - 1; i >= 0; i--) {
+      for(var i = ulArr.length - 1; i > 0; i--) {
         var ulSelectNested = d3.select(ulArr[i]);
 
         if(fullColNumber > 0) {
