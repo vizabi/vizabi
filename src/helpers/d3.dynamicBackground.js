@@ -107,7 +107,7 @@ export default Class.extend({
     }
   },
   __getTopOffset: function() {
-    console.log(this.topOffset);
+    //console.log(this.topOffset);
     switch (this.yAlign) {
       case 'top':
         return this.fontHeight + this.topOffset;
