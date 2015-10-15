@@ -412,7 +412,7 @@ var TreeMenu = Component.extend({
               if(key.indexOf('indicator/') == 0 &&
                 _this.langStrings()[language][key].toLowerCase().indexOf(
                   value.toLowerCase()) >= 0) {
-                return key;
+                return key.replace(/indicator\//g,"");
               };
             };
           };
@@ -422,8 +422,7 @@ var TreeMenu = Component.extend({
       var matching = function(data) {
         for(var i = 0; i < data.length; i++) {
           var match = false;
-          match = match || (data[i][OPTIONS.SEARCH_PROPERTY].toLowerCase().indexOf(
-              value.toLowerCase()) >= 0) ||
+          match = match ||
             data[i][OPTIONS.SEARCH_PROPERTY] == translation(value, data, i);
           if(match) {
             matches.children.push(data[i]);
