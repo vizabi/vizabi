@@ -33,7 +33,8 @@ var css = {
   alignYt: 'vzb-align-y-top',
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
-  alignXr: 'vzb-align-x-right'
+  alignXr: 'vzb-align-x-right',
+  alignXc: 'vzb-align-x-center'
 };
 
 //options and globals
@@ -726,7 +727,8 @@ var TreeMenu = Component.extend({
     this.wrapper.classed(css.alignYb, alignY === "bottom");
     this.wrapper.classed(css.alignXl, alignX === "left");
     this.wrapper.classed(css.alignXr, alignX === "right");
-
+    this.wrapper.classed(css.alignXc, alignX === "center");
+    this.wrapper.style("margin-left",alignX === "center"? "-" + this.activeProfile.col_width/2 + "px" : null);
     var strings = langStrings ? langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
 

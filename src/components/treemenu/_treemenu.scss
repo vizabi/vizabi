@@ -155,6 +155,9 @@
     height: auto;
     min-height: 60%;
     max-height: 80%;
+    &.vzb-align-x-center {
+      left: 50%;
+    }
     @include position(absolute, 10% null null 10%);
     .active {
       display: block;
@@ -193,6 +196,10 @@
     &.vzb-align-x-right {
       right: 15px;
     }
+    &.vzb-align-x-center {
+      left: 50%;
+   }
+
   }
 }
 
@@ -211,6 +218,9 @@
     }
     &.vzb-align-x-right {
       right: 20px;
+    }
+    &.vzb-align-x-center {
+      left: 50%;
     }
   }
 }

@@ -105,6 +105,8 @@ var BarComponent = Component.extend({
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_y")
+          .alignX("left")
+          .alignY("top")
           .updateView()
           .toggle();
       });
@@ -120,6 +122,8 @@ var BarComponent = Component.extend({
         _this.parent
           .findChildByName("gapminder-treemenu")
           .markerID("axis_x")
+          .alignY("bottom")
+          .alignX("center")
           .updateView()
           .toggle();
       });
