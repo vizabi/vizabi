@@ -6,6 +6,7 @@ import Trail from './bubblechart-trail';
 import PanZoom from './bubblechart-panzoom';
 import Exporter from 'helpers/svgexport';
 import axisSmart from 'helpers/d3.axisWithLabelPicker';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 import {
   warn as iconWarn,
@@ -86,17 +87,17 @@ var BubbleChartComp = Component.extend({
         if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
           if(_this.draggingNow)return;
             _this._panZoom.zoomToMaxMin(
-              _this.model.marker.axis_x.fakeMin,  
-              _this.model.marker.axis_x.fakeMax, 
+              _this.model.marker.axis_x.fakeMin,
+              _this.model.marker.axis_x.fakeMax,
               _this.model.marker.axis_y.fakeMin,
               _this.model.marker.axis_y.fakeMax,
               500
           )
           return;
         }
-        
+
         if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
-          
+
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
@@ -319,6 +320,8 @@ var BubbleChartComp = Component.extend({
     this.cTitleEl = this.graph.select('.vzb-bc-axis-c-title');
     this.yearEl = this.graph.select('.vzb-bc-year');
 
+    this.year = new DynamicBackground(this.yearEl);
+
     this.yInfoEl = this.graph.select('.vzb-bc-axis-y-info');
     this.xInfoEl = this.graph.select('.vzb-bc-axis-x-info');
     this.dataWarningEl = this.graph.select('.vzb-data-warning');
@@ -413,10 +416,10 @@ var BubbleChartComp = Component.extend({
     this._trails.run("findVisible");
     this._panZoom.reset();
     this._trails.run(["recolor", "reveal"]);
-      
+
     this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.fakeMin, 
-       this.model.marker.axis_x.fakeMax, 
+       this.model.marker.axis_x.fakeMin,
+       this.model.marker.axis_x.fakeMax,
        this.model.marker.axis_y.fakeMin,
        this.model.marker.axis_y.fakeMax
     )
@@ -694,8 +697,8 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-
-    this.yearEl.text(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormatter(this.time));
+    //this.yearEl.text(this.timeFormatter(this.time));
   },
 
   /*
@@ -715,6 +718,8 @@ var BubbleChartComp = Component.extend({
           bottom: 45
         },
         padding: 2,
+        minRadius: 0.5,
+        maxRadius: 40,
         infoElHeight: 16
       },
       "medium": {
@@ -725,6 +730,8 @@ var BubbleChartComp = Component.extend({
           bottom: 55
         },
         padding: 2,
+        minRadius: 1,
+        maxRadius: 55,
         infoElHeight: 20
       },
       "large": {
@@ -735,21 +742,13 @@ var BubbleChartComp = Component.extend({
           bottom: 60
         },
         padding: 2,
+        minRadius: 1,
+        maxRadius: 70,
         infoElHeight: 22
       }
     };
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    
-    var minMaxBubbleRadius = this.parent
-      .findChildByName('gapminder-buttonlist')
-      .findChildByName('size')
-      .findChildByName('bubblesize')
-      .getMinMaxBubbleRadius();
-      
-    this.activeProfile.minRadius = minMaxBubbleRadius.min;
-    this.activeProfile.maxRadius = minMaxBubbleRadius.max;
-    
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
 
@@ -763,21 +762,11 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.yearEl.style("text-anchor", null);
+    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4), margin.top, margin.left);
 
-    this.yearEl
-      .attr("x", this.width / 2)
-      .attr("y", this.height / 3 * 2)
-      .style("font-size", Math.max(this.height / 4, this.width / 4) + "px");
-
-    var box = this.yearEl.node().getBBox();
-    this.yearEl
-      .attr("x", box.x)
-      .style("text-anchor", "start");
-      
     this.eventArea
-        .attr("width", this.width)
-        .attr("height", this.height);
+      .attr("width", this.width)
+      .attr("height", this.height);
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
