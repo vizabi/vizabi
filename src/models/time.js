@@ -35,7 +35,7 @@ var TimeModel = Model.extend({
     round: 'floor',
     delay: 300,
     delayAnimations: 300,
-    delayStart: 1000,
+    delayStart: 1200,
     delayEnd: 75,
     delayThresholdX2: 300,
     delayThresholdX4: 150,
@@ -293,7 +293,7 @@ var TimeModel = Model.extend({
       } else {
         var step = _this.step;
         if(_this.delay < _this.delayThresholdX2) step*=2;
-        if(_this.delay < _this.delayThresholdX4) step*=2;          
+        if(_this.delay < _this.delayThresholdX4) step*=2;
         time = d3.time[_this.unit].offset(time, step);
         _this.value = time;
 
