@@ -1,0 +1,263 @@
+$vzb-button-width: 60px;
+$vzb-button-size: 26px;
+$vzb-button-radius: $vzb-button-size + 10;
+$vzb-button-bg: $vzb-color-white;
+$vzb-button-more-bg: $vzb-color-grey-lightest;
+$vzb-button-color: $vzb-color-primary-dark;
+$vzb-button-color-title: $vzb-color-primary-light;
+$vzb-button-color-title-active: $vzb-button-color;
+$vzb-button-color-border: #cce6ed;
+
+.vzb-buttonlist {
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../bubbleopacity/bubbleopacity';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
+  @include position(absolute, 0);
+  overflow: visible;
+  text-align: center;
+
+  input,
+  textarea,
+  keygen,
+  select,
+  button {
+    font-family: $vzb-font-family;
+  }
+
+  .vzb-buttonlist-container-buttons {
+    @include position(absolute, 0);
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .vzb-buttonlist-btn {
+    outline: none;
+    background: none;
+    border: 0;
+    text-align: center;
+    display: inline-block;
+    padding: 5px;
+    cursor: pointer;
+    width: $vzb-button-width;
+
+    > .vzb-buttonlist-btn-icon {
+
+      @include transition(all 100ms ease-in);
+      @include border-radius($vzb-button-radius);
+      background-color: $vzb-button-bg;
+      border: 1px solid $vzb-button-color-border;
+      color: $vzb-button-color;
+      display: inline-block;
+      font-size: $vzb-font-size-medium;
+      height: $vzb-button-size;
+      line-height: 12px;
+      padding: 5px;
+      text-align: center;
+      width: $vzb-button-size;
+
+      // border: 1px solid $vzb-button-color-border;
+      .vzb-icon {
+        height: 14px;
+        width: 14px;
+        vertical-align: top;
+        path {
+          fill: $vzb-button-color;
+        }
+      }
+    }
+    > .vzb-buttonlist-btn-title {
+      color: $vzb-button-color-title;
+      display: block;
+      font-size: $vzb-font-size-tiny;
+      padding-top: 1px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    &.vzb-buttonlist-btn-more > .btn-icon {
+      background-color: $vzb-button-more-bg;
+    }
+    &.vzb-active,
+    &.vzb-active-locked {
+      > .vzb-buttonlist-btn-icon {
+        background-color: $vzb-button-color;
+        border: 1px solid $vzb-button-color;
+        color: $vzb-button-bg;
+
+        .vzb-icon path {
+          fill: $vzb-button-bg;
+        }
+      }
+      > .vzb-buttonlist-btn-title {
+        color: $vzb-button-color-title-active;
+      }
+    }
+    &.vzb-unavailable {
+      > .vzb-buttonlist-btn-icon {
+        border: 1px solid $vzb-button-color-border;
+        opacity: .4;
+      }
+      > .vzb-buttonlist-btn-title {
+        opacity: .4;
+      }
+    }
+  }
+
+  @import 'dialogs/dialog';
+
+}
+
+//responsiveness
+&.vzb-landscape,
+&.vzb-large,
+&.vzb-medium {
+  .vzb-buttonlist {
+    .vzb-buttonlist-dialog {
+      @include position(absolute, -2000px 40px auto -130px);
+      &.vzb-active {
+        @include position(absolute, 20px 40px auto -130px);
+      }
+    }
+  }
+}
+
+&.vzb-small.vzb-portrait {
+  .vzb-buttonlist {
+    .vzb-buttonlist-btn {
+      margin-bottom: 20px;
+      width: $vzb-button-width;
+    }
+  }
+}
+
+&.vzb-landscape,
+&.vzb-medium,
+&.vzb-large {
+  .vzb-buttonlist {
+    .vzb-buttonlist-btn {
+      margin-right: 20px;
+      width: $vzb-button-width;
+      > .vzb-btn-icon {
+        // @include font-size(23px);
+        font-size: $vzb-font-size-medium;
+        height: $vzb-button-size + 10;
+        padding: 9px;
+        width: $vzb-button-size + 10;
+      }
+      > .vzb-buttonlist-btn-title {
+        font-size: $vzb-font-size-tiny;
+        padding-top: 2px;
+      }
+    }
+  }
+}
+
+&.vzb-landscape,
+&.vzb-medium,
+&.vzb-large {
+  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+    margin-right: -20px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    white-space: normal;
+  }
+}
+
+&.vzb-small.vzb-portrait {
+  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+    margin-bottom: -20px;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    white-space: nowrap;
+  }
+}
+
+&.vzb-large {
+  &.vzb-button-expand-true {
+    .vzb-tool-stage {
+      right: 290px;
+    }
+
+    .vzb-tool-buttonlist {
+      width: 290px;
+
+      .vzb-buttonlist-container-dialogs {
+        min-height: 85%;
+        overflow: hidden;
+      }
+
+      .vzb-buttonlist-container-buttons {
+        position: relative;
+        padding: 10px 0;
+        margin-right: -10px;
+      }
+
+      .vzb-buttonlist-btn {
+        margin-right: 0;
+        &.vzb-dialog-side-btn {
+          display: none;
+        }
+      }
+
+      .vzb-buttonlist-dialog {
+        &.vzb-dialog-side {
+          visibility: visible;
+          display: block;
+          margin: 5px;
+          position: static;
+          box-shadow: none;
+          background-color: $vzb-color-primary-lightest;
+          border-bottom: 1px solid rgba(200, 200, 200, .4);
+
+          .vzb-dialog-buttons {
+            display: none;
+          }
+        }
+
+        .vzb-dialog-title {
+          padding: 5px 25px;
+        }
+
+        .vzb-dialog-button {
+          position: relative;
+        }
+
+        .vzb-dialog-buttons {
+          padding: 5px 25px;
+        }
+
+        &[data-btn="find"] {
+          height: 400px;
+          @import 'dialogs/find/find';
+        }
+
+        &[data-btn="show"] {
+          height: 400px;
+          @import 'dialogs/show/show';
+        }
+
+        &[data-btn="colors"] {
+          @import 'dialogs/colors/colors';
+        }
+
+        &[data-btn="size"] {
+          @import 'dialogs/size/size';
+        }
+
+        .vzb-dialog-modal {
+          .thumb-tack-class {
+
+            &.thumb-tack-class-ico-pin,
+            &.thumb-tack-class-ico-drag {
+              display: none;
+            }
+
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,10 +10,11 @@ function updateURL(optimize) {
 
     var state, lang, options;
     if(typeof VIZ !== 'undefined') {
-      state = VIZ.getOptions().state;
+      state = VIZ.minState();
       options = VIZ.getOptions();
     }
     formatDates(state);
+
     if(options) {
       lang = options.language.id || document.getElementById('vzbp-btn-lang').getAttribute('data-next_lang');
     }
@@ -53,11 +54,6 @@ function updateURL(optimize) {
 
   //optimize for timeslider
   throttle(update, 1000);
-  // if(optimize) {
-  // }
-  // else {
-  //     update();
-  // }
 
 }
 

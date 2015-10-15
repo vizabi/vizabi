@@ -1,57 +1,55 @@
+import * as utils from 'base/utils';
+import Model from 'base/model';
 /*
  * VIZABI Data Model (options.data)
  */
 
-(function () {
+var GroupModel = Model.extend({
 
-    "use strict";
+  /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "property",
+    which: undefined,
+    merge: false,
+    manualSorting: null
+  },
 
-    var root = this;
-    var Vizabi = root.Vizabi;
-    var utils = Vizabi.utils;
+  /**
+   * Initializes the group hook
+   * @param {Object} values The initial values of this model
+   * @param parent A reference to the parent model
+   * @param {Object} bind Initial events to bind
+   */
+  init: function(values, parent, bind) {
 
-    //warn client if d3 is not defined
-    if (!Vizabi._require('d3')) return;
-    
-    Vizabi.Model.extend('group', {
+    this._type = "model";
+    //TODO: add defaults extend to super
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
+    this._super(values, parent, bind);
+  },
 
-        /**
-         * Initializes the group hook
-         * @param {Object} values The initial values of this model
-         * @param parent A reference to the parent model
-         * @param {Object} bind Initial events to bind
-         */
-        init: function (values, parent, bind) {
+  /**
+   * Validates a color hook
+   */
+  validate: function() {
+    //there must be no scale
+    if(this.scale) this.scale = null;
 
-            this._type = "model";
-            values = utils.extend({
-                use: "property",
-                which: undefined,
-                merge: false,
-                manualSorting: null
-            }, values);
-            this._super(values, parent, bind);
-        },
+    //use must be "property" 
+    if(this.use != "property") {
+      utils.warn("group model: use must not be 'property'. Resetting...")
+      this.use = "property";
+    }
+  },
 
-        /**
-         * Validates a color hook
-         */
-        validate: function () {
-            //there must be no scale
-            if (this.scale) this.scale = null;
+  /**
+   * There must be no scale
+   */
+  buildScale: function() {}
 
-            //use must be "property" 
-            if (this.use != "property") {
-                utils.warn("group model: use must not be 'property'. Resetting...")
-                this.use = "property";
-            }
-        },
+});
 
-        /**
-         * There must be no scale
-         */
-        buildScale: function () {}
-
-    });
-
-}).call(this);
+export default GroupModel;

@@ -1,0 +1,29 @@
+.vzb-dialog-content {
+  max-height: 190px;
+  min-height: 120px;
+}
+
+.vzb-dialog-title {
+  display: inline-block;
+}
+
+.vzb-cl-outer {
+  .vzb-cl-holder {
+    max-height: 160px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 0 15px;
+  }
+
+  .vzb-cl-colorlist {
+    overflow: visible;
+  }
+}
+
+.vzb-caxis-container {
+  .vzb-ip-holder {
+    .vzb-ip-indicator {
+      float: right;
+    }
+  }
+}

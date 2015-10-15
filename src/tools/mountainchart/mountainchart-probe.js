@@ -1,9 +1,7 @@
-(function () {
+import * as utils from 'base/utils';
+import Class from 'base/class';
 
-    var Vizabi = this.Vizabi;
-    var utils = Vizabi.utils;
-
-    Vizabi.Helper.extend("gapminder-mountainchart-probe", {
+var MCProbe = Class.extend({
 
         init: function (context) {
             this.context = context;
@@ -43,7 +41,7 @@
 
             var formatter1 = d3.format(".3r");
             var formatter2 = _this.model.marker.axis_y.tickFormatter;
-            _this.heightOfLabels = _this.heightOfLabels || (0.66 * this.height);
+            _this.heightOfLabels = _this.heightOfLabels || (.66 * this.height);
 
             _this.probeTextEl.each(function (d, i) {
                 if (i !== 8) return;
@@ -97,5 +95,4 @@
 
     });
 
-
-}).call(this);
+export default MCProbe;

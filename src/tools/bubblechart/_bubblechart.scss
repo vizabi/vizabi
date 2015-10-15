@@ -12,61 +12,76 @@
     .vzb-bubblechart-svg {
       @extend %vzb-chart-svg;
 
-      .vzb-bc-zoomRect {
+      .vzb-bc-zoom-rect {
         fill: none;
         stroke: $vzb-color-grey;
       }
+      .vzb-bc-eventarea {
+        pointer-events: all;  
+        fill: none;
+      }
+
       .vzb-bc-trails .vzb-bc-entity {
-        stroke: white;
+        stroke: $vzb-color-white;
         cursor: pointer;
         line {
           pointer-events: none;
         }
       }
+
       .vzb-bc-bubbles {
         .vzb-bc-entity {
-          stroke: black;
-          stroke-opacity: 0.7;
+          stroke: $vzb-color-black;
+          stroke-opacity: .7;
           cursor: pointer;
           pointer-events: visible;
         }
       }
-        .vzb-bc-labels{
+
+      .vzb-bc-labels {
         @extend %vzb-chart-tooltip;
-            rect{pointer-events: visible}
-        } 
+        rect {
+          pointer-events: visible;
+        }
+      } 
         
-        .vzb-bc-tooltip  {
+      .vzb-bc-tooltip {
         @extend %vzb-chart-tooltip;
       }
-        .vzb-bc-label-shadow,
-        .vzb-bc-tooltip-shadow {
-        @extend %vzb-chart-label-shadow
-        }
-      .vzb-bc-labels .vzb-bc-entity text.vzb-bc-label-x {
+      
+      .vzb-bc-label-shadow,
+      .vzb-bc-tooltip-shadow {
+        @extend %vzb-chart-label-shadow;
+      }
+
+      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
         @include transition(opacity 200ms linear);
-        fill: white;
+        fill: $vzb-color-white;
         text-anchor: middle;
         dominant-baseline: middle;
         pointer-events: none;
-        font-size: 0.9em;
+        font-size: .9em;
       }
-      .vzb-bc-labels .vzb-bc-entity circle.vzb-bc-label-x {
+
+      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
         @include transition(opacity 200ms linear);
         cursor: pointer;
         fill: $vzb-color-primary;
-        stroke: white;
+        stroke: $vzb-color-white;
         stroke-width: 2px;
       }
+
       .vzb-bc-labels .vzb-bc-entity.vzb-highlighted rect {
         fill: rgb(255, 252, 185);
       }
+      
       .vzb-bc-labels .vzb-bc-entity text:hover {
-        opacity: 1.0;
+        opacity: 1;
       }
+      
       .vzb-bc-lines .vzb-bc-entity line {
         stroke: $vzb-color-grey-dark;
-        opacity: 0.8;
+        opacity: .8;
       }
 
       .vzb-bc-axis-x,
@@ -81,7 +96,7 @@
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title;
-        opacity: 0.3;
+        opacity: .3;
       }
     
       .vzb-bc-axis-x-info, 
@@ -92,7 +107,7 @@
       .vzb-bc-projection-x,
       .vzb-bc-projection-y {
         stroke-dasharray: 2 4;
-        stroke: #999999;
+        stroke: $vzb-color-grey;
         opacity: 0;
       }
       .vzb-bc-line {
@@ -101,17 +116,12 @@
         stroke-width: 1px;
       }
       .vzb-bc-year {
-        @include opacity(0.1);
+        @include opacity(.1);
         font-size: $vzb-bc-year-size;
         fill: $vzb-color-grey;
         text-anchor: middle;
         -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
         user-select: none;
-        filter: url(#vzb-bc-blur-effect);
       }
       .vzb-axis-value text {
         fill: $vzb-color-primary;
@@ -119,20 +129,25 @@
     }
   }
   &.vzb-large {
+
     .vzb-bubblechart-svg {
+    
       .vzb-bc-bubbles .vzb-bc-entity {
-        stroke-opacity: 1.0;
+        stroke-opacity: 1;
       }
+    
       .vzb-bc-label-shadow, 
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-large;
       }
+    
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title,
       .vzb-bc-axis-s-title,
-      .vzb-bc-axis-c-title  {
+      .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-large;
       }
+    
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,
@@ -145,20 +160,25 @@
     }
   }
   &.vzb-medium {
+
     .vzb-bubblechart-svg {
+
       .vzb-bc-bubbles .vzb-bc-entity {
-        stroke-opacity: 0.8;
+        stroke-opacity: .8;
       }
+
       .vzb-bc-label-shadow, 
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-medium;
       }
+
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title,
       .vzb-bc-axis-s-title,
       .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-medium;
       }
+
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,
@@ -170,21 +190,27 @@
       }
     }
   }
+
   &.vzb-small {
+
     .vzb-bubblechart-svg {
+
       .vzb-bc-bubbles .vzb-bc-entity {
-        stroke-opacity: 0.7;
+        stroke-opacity: .7;
       }
+
       .vzb-bc-label-shadow, 
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow-small;
       }
+
       .vzb-bc-axis-x-title,
       .vzb-bc-axis-y-title,
       .vzb-bc-axis-s-title,
-      .vzb-bc-axis-c-title{
+      .vzb-bc-axis-c-title {
         @extend %vzb-chart-axis-title-small;
       }
+
       .vzb-bc-labels,
       .vzb-bc-tooltip,
       .vzb-axis-value,

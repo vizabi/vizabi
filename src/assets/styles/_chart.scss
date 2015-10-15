@@ -3,19 +3,18 @@
 //   Common styles used in various charts
 //
 // ****************************************************************************
-
 %vzb-chart-wrapper {
-  @include position(absolute, 0px);
+  @include position(absolute, 0);
   overflow: hidden;
 }
 
 %vzb-chart-svg {
-  @include position(absolute, 0px);
+  @include position(absolute, 0);
   color: $vzb-color-grey-dark;
-  width: 100%;
   height: 100%;
-  overflow: hidden;
   margin: 0;
+  overflow: hidden;
+  width: 100%;
 }
 
 %vzb-chart-ticks-small {
@@ -38,11 +37,12 @@
 
 %vzb-chart-axis-title {
   color: $vzb-color-primary-darkest;
-  fill: currentColor;
   cursor: pointer;
-    &:hover{
-        text-decoration: underline;
-    }
+  fill: currentColor;
+  
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 %vzb-chart-axis-title-small {
@@ -58,66 +58,73 @@
 }
 
 %vzb-chart-axis {
+  color: $vzb-color-grey;
   fill: none;
   stroke: $vzb-color-grey;
-  color: $vzb-color-grey;
-  path, line {
+
+  path,
+  line {
     fill: none;
-    stroke: $vzb-color-grey;
     shape-rendering: crispEdges;
+    stroke: $vzb-color-grey;
   }
+  
   text {
     @extend %vzb-chart-ticks;
   }
 }
 
-
 %vzb-chart-info {
-  opacity: 0.3;    
-  text {
+  cursor: pointer;
+  opacity: .3;
+  pointer-events: visible;
+
+  path {
     fill: $vzb-color-primary;
-    pointer-events: none;
-    dominant-baseline: middle;
-    text-anchor: middle;
-  } 
+    stroke: none;
+  }
+  
   circle {
     fill: none;
-    pointer-events: visible;
     stroke: $vzb-color-primary;
-    stroke-width: 2;
-    cursor: pointer;
   }
-  &:hover{ 
+  
+  &:hover {
     opacity: 1;
-    text {fill: $vzb-color-primary;}
-    circle {
-        fill: $vzb-color-grey-light; 
-        stroke: $vzb-color-primary;
-    }
   }
 }
 
-%vzb-chart-tooltip{
-    text{
-        pointer-events: none;
-        text-anchor: end;
-        fill: $vzb-color-black;
-    }
-    rect{
-        @include transition(opacity 200ms linear);
-        cursor: pointer;
-        pointer-events: none;
-        fill: white;
-        stroke: $vzb-color-black;
-        stroke-width: 1.5px;
-    }
+%vzb-chart-tooltip {
+  text {
+    fill: $vzb-color-black;
+    pointer-events: none;
+    text-anchor: end;
+  }
+  
+  rect {
+    @include transition(opacity 200ms linear);
+    cursor: pointer;
+    fill: $vzb-color-white;
+    pointer-events: none;
+    stroke: $vzb-color-black;
+    stroke-width: 1.5px;
+  }
 }
 
-%vzb-chart-label-shadow{
-    fill: white;
-    @include opacity(0.7);
-    stroke: white;
+%vzb-chart-label-shadow {
+  @include opacity(.7);
+  fill: $vzb-color-white;
+  stroke: $vzb-color-white;
 }
-%vzb-chart-label-shadow-small{stroke-width: 2px}
-%vzb-chart-label-shadow-medium{stroke-width: 3px}
-%vzb-chart-label-shadow-large{stroke-width: 3px}
+
+%vzb-chart-label-shadow-small {
+  stroke-width: 2px;
+}
+
+%vzb-chart-label-shadow-medium {
+  stroke-width: 3px;
+}
+
+%vzb-chart-label-shadow-large {
+  stroke-width: 3px;
+}

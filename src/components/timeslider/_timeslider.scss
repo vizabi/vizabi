@@ -1,0 +1,270 @@
+$vzb-ts-btn-area: 50px;
+$vzb-ts-btn-width: 40px;
+$vzb-ts-btn-bg: $vzb-color-primary;
+$vzb-ts-btn-bg-active: #2f7687;
+$vzb-ts-slider-color: $vzb-color-primary;
+$vzb-ts-value-width: 40px;
+.vzb-timeslider {
+  min-height: $vzb-ts-btn-area;
+  position: relative;
+  .vzb-ts-btns {
+    @include position(absolute, 0 null 0 5px);
+    width: $vzb-ts-btn-area;
+    .vzb-ts-btn {
+      @include border-radius($vzb-ts-btn-width);
+      font-size: $vzb-font-size-regular;
+      width: $vzb-ts-btn-width;
+      height: $vzb-ts-btn-width;
+      background: $vzb-ts-btn-bg;
+      display: block;
+      border: 0;
+      .vzb-icon {
+        path {
+          fill: $vzb-color-white;
+        }
+      }
+      padding: 12px 14px;
+      margin: 5px;
+      cursor: pointer;
+      &.vzb-ts-btn-pause {
+        display: none;
+        padding: 10px;
+      }
+      &:active,
+      &:focus {
+        outline: none;
+        background: $vzb-ts-btn-bg-active;
+      }
+    }
+  }
+  .vzb-ts-slider-wrapper {
+    @include position(absolute, 5px 9px 5px $vzb-ts-btn-area+5);
+    // margin: 17px 7px;
+    // Slider
+    .vzb-ts-slider {
+      @include position(absolute, 0);
+      font-size: $vzb-font-size-small;
+      overflow: visible;
+      color: $vzb-ts-slider-color;
+      width: 100%;
+      height: 100%;
+      .background {
+        cursor: pointer !important;
+      }
+      .vzb-ts-slider-axis {
+        @include user-select(none);
+        fill: $vzb-ts-slider-color;
+        @include opacity(.6);
+        font-weight: bold;
+        cursor: pointer;
+        .domain {
+          fill: none;
+          @include opacity(1);
+          stroke: $vzb-ts-slider-color;
+          stroke-opacity: .3;
+          stroke-width: 5px;
+          stroke-linecap: round;
+        }
+      }
+      .vzb-ts-slider-handle {
+        fill: $vzb-ts-slider-color;
+        stroke: #fff;
+        stroke-width: 4px;
+        cursor: pointer;
+      }
+      .vzb-ts-slider-value {
+        display: none;
+        @include user-select(none);
+        fill: $vzb-ts-slider-color;
+        font-weight: bold;
+      }
+    }
+  }
+  //show pause instead if it's playing
+  &.vzb-playing {
+    .vzb-ts-btns {
+      .vzb-ts-btn-play {
+        @extend .vzb-hidden;
+      }
+      .vzb-ts-btn-pause {
+        display: block;
+      }
+      &:hover .vzb-ts-btn-pause-tooltip {
+        @include opacity(1);
+      }
+      &:hover .vzb-ts-btn-play-tooltip {
+        @include opacity(0);
+      }
+    }
+  }
+  .vzb-ts-btn-loading {
+    position: relative;
+    display: none !important;
+    .vzb-loader {
+      @extend %vzb-loader;
+      border-color: rgba($vzb-color-white, .2);
+      border-top-color: rgba($vzb-color-white, .7);
+      @include size(28px);
+      margin: -1 * 28px/2;
+    }
+  }
+  &.vzb-ts-loading {
+    @include opacity(.3);
+    .vzb-ts-btn-play,
+    .vzb-ts-btn-pause {
+      @extend .vzb-hidden;
+    }
+    .vzb-ts-btn-loading {
+      display: block !important;
+    }
+  }
+  &.vzb-ts-hide-play-button {
+    .vzb-ts-btns {
+      @extend .vzb-hidden;
+    }
+    .vzb-ts-slider-wrapper {
+      @include position(absolute, 5px 9px 5px 5px);
+    }
+  }
+  &.vzb-ts-show-value {
+    .vzb-ts-slider-value {
+      display: block !important;
+    }
+  }
+  &.vzb-playing.vzb-ts-show-value-when-drag-play {
+    .vzb-ts-slider-value {
+      display: block !important;
+    }
+  }
+  &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
+    .vzb-ts-slider-value {
+      display: block !important;
+    }
+  }
+}
+
+&.vzb-small {
+  .vzb-timeslider.vzb-ts-axis-aligned {
+    .vzb-ts-btns {
+      width: $vzb-ts-btn-area - 20;
+      @include position(absolute, 0 0 5px 5px);
+      .vzb-ts-btn {
+        width: $vzb-ts-btn-width - 14;
+        height: $vzb-ts-btn-width - 14;
+        margin: 0;
+        padding: 7px 10px;
+        .vzb-icon {
+          width: 12px;
+          height: 12px;
+        }
+        &.vzb-ts-btn-play {
+          padding: 7px 8px;
+        }
+        &.vzb-ts-btn-pause {
+          padding: 7px 6px;
+        }
+      }
+    }
+    .vzb-ts-slider-wrapper {
+      $pos-left: $vzb-ts-btn-area - 20 + 10;
+      @include position(absolute, 0 0 5px $pos-left);
+    }
+    min-height: $vzb-ts-btn-area - 20;
+  }
+}
+
+&.vzb-medium {
+  .vzb-timeslider.vzb-ts-axis-aligned {
+    .vzb-ts-btns {
+      @include position(absolute, 0 0 5px 5px);
+    }
+    .vzb-ts-slider-wrapper {
+      $pos-left: $vzb-ts-btn-area + 10;
+      @include position(absolute, 0 0 5px $pos-left);
+    }
+  }
+  .vzb-timeslider {
+    min-height: $vzb-ts-btn-area + 5;
+    .vzb-ts-slider-wrapper {
+      .vzb-ts-slider-axis .domain {
+        stroke-width: 7px;
+      }
+      .vzb-ts-slider-handle {
+        stroke-width: 5px;
+      }
+    }
+  }
+}
+
+&.vzb-large {
+  .vzb-timeslider.vzb-ts-axis-aligned {
+    .vzb-ts-btns {
+      @include position(absolute, 0 0 5px 5px);
+    }
+    .vzb-ts-slider-wrapper {
+      $pos-left: $vzb-ts-btn-area + 10;
+      @include position(absolute, 0 0 5px $pos-left);
+    }
+  }
+  .vzb-timeslider {
+    min-height: $vzb-ts-btn-area + 10;
+    .vzb-ts-slider-wrapper {
+      .vzb-ts-slider {
+        font-size: $vzb-font-size-regular;
+      }
+      .vzb-ts-slider-axis .domain {
+        stroke-width: 9px;
+      }
+      .vzb-ts-slider-handle {
+        stroke-width: 6px;
+      }
+    }
+  }
+}
+
+.vzb-ts-delay-slider {
+  @include position(absolute, $vzb-ts-btn-area*.7 0 0 5%);
+  font-size: $vzb-font-size-small;
+  overflow: visible;
+  color: $vzb-ts-slider-color;
+  width: 20%;
+  height: 20%;
+  opacity: .1;
+  &:hover {
+    opacity: 1;
+    .vzb-ts-delay-slider-handle {
+      opacity: 1;
+    }
+  }
+  .background {
+    cursor: pointer !important;
+  }
+  .vzb-ts-delay-slider-axis {
+    @include user-select(none);
+    fill: $vzb-ts-slider-color;
+    @include opacity(.6);
+    font-weight: bold;
+    cursor: pointer;
+    .domain {
+      fill: none;
+      @include opacity(1);
+      stroke: $vzb-ts-slider-color;
+      stroke-opacity: .3;
+      stroke-width: 5px;
+      stroke-linecap: round;
+    }
+  }
+  .vzb-ts-delay-slider-handle {
+    fill: $vzb-ts-slider-color;
+    stroke: #fff;
+    stroke-width: 4px;
+    cursor: pointer;
+    opacity: .3;
+  }
+  .vzb-ts-delay-slider-value {
+    display: none;
+    @include user-select(none);
+    fill: $vzb-ts-slider-color;
+    font-weight: bold;
+  }
+}

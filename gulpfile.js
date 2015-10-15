@@ -3,6 +3,7 @@
 var path = require('path');
 var gulp = require('gulp');
 var del = require('del')
+var slash = require('slash')
 var gutil = require('gulp-util');
 var chalk = require('chalk')
 var gulpif = require('gulp-if');
@@ -15,6 +16,13 @@ var cache = require('gulp-cached');
 var mem_cache = require('gulp-memory-cache');
 var prefix = require('gulp-autoprefixer')
 
+//useful for ES6 module loader
+var rollup = require('rollup');
+var uglify = require("gulp-uglify");
+var glob = require('glob');
+var fs = require('fs');
+var q = require('q');
+
 //useful for ES5 build
 var concat = require('gulp-concat');
 var insert = require('gulp-insert');
@@ -22,7 +30,6 @@ var foreach = require('gulp-foreach');
 var es = require('event-stream');
 
 var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var wrapper = require('gulp-wrapper');
 
@@ -48,7 +55,7 @@ var config = {
   destPreview: './build/preview',
   destDownload: './build/download',
   destDocs: './build/docs',
-  bower: './lib'
+  modules: './node_modules'
 };
 
 // ----------------------------------------------------------------------------
@@ -68,6 +75,10 @@ gulp.task('clean:js', function() {
     path.join(config.destLib, '**/*.js'),
     path.join(config.destLib, '**/*.js.map')
   ]);
+});
+
+gulp.task('clean:indexes', function() {
+  return del([path.join(config.src, '**/_index.js')]);
 });
 
 gulp.task('clean:preview', function() {
@@ -99,12 +110,15 @@ gulp.task('clean:preview:data', function() {
 //   Styles
 // ----------------------------------------------------------------------------
 
-// TODO: Add SCSS Linting (later, because there are too many errors to fix now)
-// gulp.task('scss-lint', function() {
-//   return gulp.src(path.join(config.src, '**/*.scss'))
-//     .pipe(cache('scsslint'))
-//     .pipe(scsslint());
-// });
+gulp.task('scss-lint', function() {
+  return gulp.src(path.join(config.src, '**/*.scss'))
+    .pipe(cache('scsslint'))
+    .pipe(scsslint())
+    .pipe(scsslint.failReporter())
+    .on('end', function() {
+      gutil.log(chalk.green("Linting SCSS... DONE!"));
+    });;
+});
 
 function compileSass(src, dest) {
   return sass(src, {
@@ -116,7 +130,7 @@ function compileSass(src, dest) {
     .pipe(gulp.dest(dest));
 }
 
-gulp.task('styles', ['clean:css'], function() {
+gulp.task('styles', ['scss-lint', 'clean:css'], function() {
   gutil.log(chalk.yellow("Building CSS..."));
   return compileSass(path.join(config.src, 'assets/styles/vizabi.scss'), config.destLib)
     .on('end', function() {
@@ -128,43 +142,49 @@ gulp.task('styles', ['clean:css'], function() {
 //   Javascript
 // ----------------------------------------------------------------------------
 
-function getConcatFiles() {
-  var custom = gutil.env.custom || "gapminder";
-
-  var FILES = {
-    base: ['./src/vizabi.js',
-      './src/base/utils.js',
-      './src/base/promise.js',
-      './src/base/class.js',
-      './src/base/data.js',
-      './src/base/events.js',
-      './src/base/intervals.js',
-      './src/base/layout.js',
-      './src/base/model.js',
-      './src/base/component.js',
-      './src/base/tool.js',
-      './src/base/iconset.js'
-    ],
-    components: ['./src/components/**/*.js'],
-    models: ['./src/models/**/*.js'],
-    tools: ['./src/tools/**/*.js'],
-    readers: ['./src/readers/**/*.js'],
-    plugins: ['./src/plugins/**/*.js'],
-    templates: ['./src/**/*.html'],
-    custom: ['./src/vizabi_custom/' + custom + '.js']
+function strToFile(string, name) {
+  var src = require('stream').Readable({
+    objectMode: true
+  });
+  src._read = function() {
+    this.push(new gutil.File({
+      cwd: "",
+      base: "",
+      path: name,
+      contents: new Buffer(string)
+    }));
+    this.push(null);
   }
-  var BUILD_FILES = ([]).concat(FILES.base)
-    .concat(FILES.components)
-    .concat(FILES.models)
-    .concat(FILES.readers)
-    .concat(FILES.tools)
-    .concat(FILES.plugins);
+  return src;
+}
 
-  if(custom) {
-    BUILD_FILES = BUILD_FILES.concat(FILES.custom);
-  }
+//TODO: better way to create index?
+function buildImportIndex(folder, subfolder) {
+  var deferred = q.defer();
+  var search = (subfolder) ? '*/*.js' : '*.js';
+  var header = '//file automatically generated during build process\n';
+  //delete if exists
+  del(path.join(folder, '_index.js'));
 
-  return gulp.src(BUILD_FILES).pipe(mem_cache('jsfiles'));
+  glob(path.join(folder, search), {}, function(err, matches) {
+    var str_top = [],
+      str_middle = [],
+      str_btm = [];
+    for(var i = 0; i < matches.length; i++) {
+      var name = path.basename(matches[i], '.js');
+      var rel_path = slash(path.relative(folder, matches[i]));
+      str_top.push('import ' + name + ' from \'./' + rel_path + '\';');
+      str_middle.push(name + ',');
+      str_btm.push(name + ' : ' + name + ',');
+    }
+    str_top = str_top.join('\n');
+    str_middle = '\nexport {\n' + str_middle.join('\n') + '\n};';
+    str_btm = '\nexport default {\n' + str_btm.join('\n') + '\n};';
+    var contents = header + str_top + str_middle + str_btm;
+    fs.writeFileSync(path.join(folder, '_index.js'), contents);
+    deferred.resolve();
+  });
+  return deferred.promise;
 }
 
 function formatTemplateFile(str, filename) {
@@ -172,7 +192,7 @@ function formatTemplateFile(str, filename) {
     .replace(/(\r\n|\n|\r)/gm, " ")
     .replace(/\s+/g, " ")
     .replace(/<!--[\s\S]*?-->/g, "");
-  content = "(function() {" +
+  return "(function() {" +
     "var root = this;" +
     "var s = root.document.createElement('script');" +
     "s.type = 'text/template';" +
@@ -180,71 +200,124 @@ function formatTemplateFile(str, filename) {
     "s.innerHTML = '" + content + "';" +
     "root.document.body.appendChild(s);" +
     "}).call(this);";
-
-  var src = require('stream').Readable({ objectMode: true });
-  src._read = function () {
-    this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(content) }));
-    this.push(null);
-  }
-  return src;
 }
 
-function getTemplates() {
-  return gulp.src('./src/**/*.html')
-    .pipe(foreach(function(stream, file) {
-      return formatTemplateFile(file.contents.toString('utf8'), path.basename(file.path)).pipe(uglify());
-    })).pipe(mem_cache('templateFiles'));
+function getTemplates(cb) {
+  glob(path.join(config.src, '**/*.html'), {}, function(err, matches) {
+    var contents = [];
+    for(var i = 0; i < matches.length; i++) {
+      var data = fs.readFileSync(matches[i]).toString();
+      contents.push(formatTemplateFile(data, path.basename(matches[i])));
+    }
+    cb(contents.join(''));
+  });
+}
+
+//resolve path when finding modules
+function resolvePath(id, importer, options) {
+  //if starts with ".", follow strict path
+  if(/^\./.test(id)) return path.resolve(path.dirname(importer), id).replace(/\.js$/, "") + ".js";
+  //else, try to find it
+  var importee = id.replace(/\.js$/, "");
+  var pat = path.join(config.src,'/**/',importee.replace(/\//g, '/**/')+'.js');
+  var match = glob.sync(pat);
+  if(match.length > 0) return path.resolve('./', match[0]);
+  else return id;
 }
 
 //build JS with banner and/or sourcemaps
-function buildJS(dev) {
+//TODO: improve code quality
+function buildJS(dev, cb) {
+  getTemplates(function(templates) {
+    var banner_str = ['/**',
+      ' * ' + pkg.name + ' - ' + pkg.description,
+      ' * @version v' + pkg.version,
+      ' * @link ' + pkg.homepage,
+      ' * @license ' + pkg.license,
+      ' */',
+      ''
+    ].join('\n');
 
-  var banner_str = ['/**',
-  ' * '+ pkg.name +' - '+ pkg.description,
-  ' * @version v'+ pkg.version,
-  ' * @link '+ pkg.homepage,
-  ' * @license '+ pkg.license,
-  ' */',
-  ''].join('\n');
+    //var version = '; Vizabi._version = "' + pkg.version + '";';
+    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
 
-  var version_str = '; Vizabi._version = "'+pkg.version+'";';
+    var options = {
+      format: 'umd',
+      banner: banner_str,
+      footer: version + templates,
+      moduleName: 'Vizabi',
+      dest: path.join(config.destLib, 'vizabi.js')
+    };
 
-  gutil.log(chalk.yellow("Bundling JS..."));
+    gutil.log(chalk.yellow("Bundling JS..."));
 
-  var src = es.merge(getConcatFiles(), getTemplates());
+    var entryFile = gutil.env.custom || 'gapminder';
+    entryFile = (entryFile != 'false') ? 'vizabi-' + entryFile + '.js' : 'vizabi.js';
 
-  if(dev) {
-    src = src.pipe(sourcemaps.init())
-             .pipe(concat('vizabi.js'))
-             .pipe(wrapper({ footer: version_str}))
-             .pipe(sourcemaps.write('.'))
-             .pipe(gulp.dest(config.destLib));
-  }
-  else {
-    src = src.pipe(concat('vizabi.js'))
-             .pipe(wrapper({ footer: version_str}))
-             .pipe(wrapper({ header: banner_str}))
-             .pipe(gulp.dest(config.destLib))
-             .pipe(rename('vizabi.min.js'))
-             .pipe(uglify())
-             .pipe(wrapper({ header: banner_str}))
-             .pipe(gulp.dest(config.destLib));
-  }
+    gutil.log(chalk.yellow(" > entry file: " + entryFile));
 
-  return src.on('end', function() {
-            gutil.log(chalk.green("Bundling JS... DONE!"))
-         });
+    rollup.rollup({
+      entry: './' + path.join(config.src, entryFile),
+      resolveId: resolvePath
+    }).then(function(bundle) {
+      if(dev) {
+        generateSourceMap(bundle, success);
+      } else {
+        generateMinified(bundle, success);
+      }
+    }, function(err) {
+      gutil.log(chalk.red("Bundling JS... ERROR!"));
+      gutil.log(chalk.red(err));
+      cb(false);
+    });
 
+    function generateSourceMap(bundle, cb) {
+      options.sourceMap = true;
+      bundle.write(options).then(cb);
+    }
+
+    function generateMinified(bundle, cb) {
+      var generated = bundle.generate(options);
+      strToFile(generated.code, 'vizabi.js')
+        .pipe(gulp.dest(config.destLib))
+        .pipe(uglify({
+          preserveComments: 'license'
+        }))
+        .pipe(rename('vizabi.min.js'))
+        .on('error', function(err) {
+          gutil.log(chalk.red("Bundling JS... ERROR!"));
+          gutil.log(err);
+        })
+        .pipe(gulp.dest(config.destLib))
+        .on('end', function() {
+          cb();
+        });
+    }
+
+    function success() {
+      gutil.log(chalk.green("Bundling JS... DONE!"));
+      cb();
+    }
+  });
 }
 
+gulp.task('buildIndexes', ['clean:indexes'], function() {
+  return q.all([
+    buildImportIndex(path.join(config.src, '/components/'), true),
+    buildImportIndex(path.join(config.src, '/components/buttonlist/dialogs'), true),
+    buildImportIndex(path.join(config.src, '/models/')),
+    buildImportIndex(path.join(config.src, '/readers/'))
+  ]);
+});
+
 //with source maps
-gulp.task('javascript', ['clean:js'], function() {
-  return buildJS(true);
+gulp.task('bundle', ['clean:js', 'buildIndexes'], function(cb) {
+  buildJS(true, cb);
 });
 
 //without source maps and with banner
-gulp.task('javascript:build', ['clean:js'], function() {
-  return buildJS();
+gulp.task('bundle:build', ['clean:js', 'buildIndexes'], function(cb) {
+  buildJS(false, cb);
 });
 
 
@@ -281,11 +354,11 @@ gulp.task('preview:js', ['clean:preview:js'], function() {
 });
 
 gulp.task('preview:vendor', ['clean:preview:vendor'], function() {
-  gulp.src(path.join(config.bower, 'font-awesome/css/font-awesome.min.css'))
+  gulp.src(path.join(config.modules, 'font-awesome/css/font-awesome.min.css'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/css')));
-  gulp.src(path.join(config.bower, 'font-awesome/fonts/*'))
+  gulp.src(path.join(config.modules, 'font-awesome/fonts/*'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/fonts')));
-  gulp.src(path.join(config.bower, 'd3/d3.min.js'))
+  gulp.src(path.join(config.modules, 'd3/d3.min.js'))
     .pipe(gulp.dest(path.join(config.destPreview, 'assets/vendor/js')));
 });
 
@@ -299,7 +372,8 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(cb) {
+gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(
+  cb) {
   return cb();
 });
 
@@ -309,9 +383,12 @@ gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'prev
 
 //reload only once every 3000ms
 var reloadLock = false;
+
 function notLocked() {
   if(!reloadLock) {
-    setTimeout(function() { reloadLock = false; }, 3000);
+    setTimeout(function() {
+      reloadLock = false;
+    }, 3000);
     reloadLock = true;
   }
   return reloadLock;
@@ -328,8 +405,8 @@ gulp.task('watch', function() {
   gulp.watch(path.join(config.srcPreview, '**/*.scss'), ['preview:styles']);
   gulp.watch(path.join(config.srcPreview, '**/*.js'), ['preview:js']);
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
-  gulp.watch(path.join(config.src, '**/*.js'), ['javascript']);
-  gulp.watch(path.join(config.src, '**/*.html'), ['javascript']);
+  gulp.watch([path.join(config.src, '**/*.js'), '!' + path.join(config.src, '**/_index.js')], ['bundle']);
+  gulp.watch(path.join(config.src, '**/*.html'), ['bundle']);
   //reloading the browser
   reloadOnChange(path.join(config.destPreview, '**/*.js'));
   reloadOnChange(path.join(config.destPreview, '**/*.html'));
@@ -346,7 +423,7 @@ gulp.task('watch-lint', function() {
 //   Web Server
 // ----------------------------------------------------------------------------
 
-gulp.task('connect', ['preview'], function() {
+gulp.task('connect', ['styles', 'bundle', 'preview'], function() {
   var webserver = {
     port: 9000,
     root: config.dest,
@@ -367,24 +444,28 @@ gulp.task('connect', ['preview'], function() {
 //   Compressed file (for download)
 // ----------------------------------------------------------------------------
 
-gulp.task('compress', ['styles', 'javascript:build', 'preview'], function () {
-    return gulp.src(path.join(config.destLib, '**/*'))
-        .pipe(zip('vizabi.zip'))
-        .pipe(gulp.dest(config.destDownload));
+gulp.task('compress', ['styles', 'bundle:build', 'preview'], function() {
+  return gulp.src(path.join(config.destLib, '**/*'))
+    .pipe(zip('vizabi.zip'))
+    .pipe(gulp.dest(config.destDownload));
 });
 
 // ----------------------------------------------------------------------------
 //   Bump version
 // ----------------------------------------------------------------------------
 
-gulp.task('bump', function(){
+gulp.task('bump', function() {
   var src = gulp.src(['./bower.json', './package.json']);
   var version = gutil.env.version;
   var type = gutil.env.type;
 
   if(!version && !type) type = 'patch';
-  if(version) src = src.pipe(bump({version:version}));
-  else if(type) src = src.pipe(bump({type:type}));
+  if(version) src = src.pipe(bump({
+    version: version
+  }));
+  else if(type) src = src.pipe(bump({
+    type: type
+  }));
 
   return src.pipe(gulp.dest('./'));
 });
@@ -397,7 +478,7 @@ gulp.task('bump', function(){
 gulp.task('build', ['compress']);
 
 //Developer task without linting
-gulp.task('dev', ['styles', 'javascript', 'watch', 'connect']);
+gulp.task('dev', ['watch', 'connect']);
 
 //Serve = build + connect
 gulp.task('serve', ['build', 'connect']);

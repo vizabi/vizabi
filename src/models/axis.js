@@ -1,136 +1,143 @@
+import * as utils from 'base/utils';
+import Model from 'base/model';
+import globals from 'base/globals';
+
 /*!
  * VIZABI Axis Model (hook)
  */
 
-(function () {
-
-  "use strict";
-
-  var root = this;
-  var Vizabi = root.Vizabi;
-  var utils = Vizabi.utils;
-
-  //warn client if d3 is not defined
-  if (!Vizabi._require('d3')) {
-    return;
-  }
-
-  //constant time formats
-  var time_formats = {
-    "year": d3.time.format("%Y"),
-    "month": d3.time.format("%Y-%m"),
-    "week": d3.time.format("%Y-W%W"),
-    "day": d3.time.format("%Y-%m-%d"),
-    "hour": d3.time.format("%Y-%m-%d %H"),
-    "minute": d3.time.format("%Y-%m-%d %H:%M"),
-    "second": d3.time.format("%Y-%m-%d %H:%M:%S")
-  };
-
-  Vizabi.Model.extend('axis', {
-    /**
-     * Initializes the color hook
-     * @param {Object} values The initial values of this model
-     * @param parent A reference to the parent model
-     * @param {Object} bind Initial events to bind
-     */
-    init: function (values, parent, bind) {
-
-      this._type = "axis";
-      values = utils.extend({
-        use: "value",
-        which: undefined,
-        min: null,
-        max: null
-      }, values);
-      this._super(values, parent, bind);
-    },
-
-    /**
-     * Validates a color hook
-     */
-    validate: function () {
-
-      var possibleScales = ["log", "genericLog", "linear", "time", "pow"];
-      if (!this.scaleType || (this.use === "indicator" && possibleScales.indexOf(this.scaleType) === -1)) {
-        this.scaleType = 'linear';
-      }
-
-      if (this.use !== "indicator" && this.scaleType !== "ordinal") {
-        this.scaleType = "ordinal";
-      }
-
-      //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-      if (this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
-      this.which_1 = this.which;
-      this.scaleType_1 = this.scaleType;
-
-      if(this.scale && this._readyOnce && this.use=="indicator"){
-          if(this.min==null) this.min = this.scale.domain()[0];
-          if(this.max==null) this.max = this.scale.domain()[1];
-
-          if(this.min<=0 && this.scaleType=="log") this.min = 0.01;
-          if(this.max<=0 && this.scaleType=="log") this.max = 10;
-
-          // Max may be less than min
-          // if(this.min>=this.max) this.min = this.max/2;
-
-          if(this.min!=this.scale.domain()[0] || this.max!=this.scale.domain()[1])
-              this.scale.domain([this.min, this.max]);
-      }
-    },
+//constant time formats
+var time_formats = {
+  "year": d3.time.format("%Y"),
+  "month": d3.time.format("%Y-%m"),
+  "week": d3.time.format("%Y-W%W"),
+  "day": d3.time.format("%Y-%m-%d"),
+  "hour": d3.time.format("%Y-%m-%d %H"),
+  "minute": d3.time.format("%Y-%m-%d %H:%M"),
+  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+};
 
 
-    /**
-     * Gets the domain for this hook
-     * @returns {Array} domain
-     */
-    buildScale: function (margins) {
-      var domain;
-      var scaleType = this.scaleType || "linear";
-      if (margins === undefined)
-        margins = true;
+var allowTypes = {
+    "indicator": ["linear", "log", "genericLog", "time", "pow"],
+    "property": ["ordinal"],
+    "value": ["ordinal"]
+};
 
-      if (typeof margins === 'boolean') {
-        var res = margins;
-        margins = {};
-        margins.min = res;
-        margins.max = res;
-      }
+var AxisModel = Model.extend({
 
-      if (this.scaleType == "time") {
-        var limits = this.getLimits(this.which);
-        this.scale = d3.time.scale().domain([limits.min, limits.max]);
-        return;
-      }
+  /**
+   * Default values for this model
+   */
+  _defaults: {
+    use: "value",
+    which: undefined,
+    min: null,
+    max: null,
+    fakeMin: null,
+    fakeMax: null
+  },
 
-      switch (this.use) {
-        case "indicator":
-          var limits = this.getLimits(this.which),
-            margin = (limits.max - limits.min) / 20;
+  /**
+   * Initializes the color hook
+   * @param {Object} values The initial values of this model
+   * @param parent A reference to the parent model
+   * @param {Object} bind Initial events to bind
+   */
+  init: function(values, parent, bind) {
 
-          domain = [(limits.min - (margins.min && margin ? margin : 0)), (limits.max + (margins.max && margin ? margin : 0))];
-          if (scaleType == "log") {
-            domain = [(limits.min - limits.min / 4), (limits.max + limits.max / 4)];
-          }
+    this._type = "axis";
+    //TODO: add defaults extend to super
+    var defaults = utils.deepClone(this._defaults);
+    values = utils.extend(defaults, values);
+    this._super(values, parent, bind);
+  },
 
-          break;
-        case "property":
-          domain = this.getUnique(this.which);
-          break;
-        case "value":
-        default:
-          domain = [this.which];
-          break;
-      }
+  /**
+   * Validates a color hook
+   */
+  validate: function() {
 
+    //only some scaleTypes are allowed depending on use. reset to default if inappropriate
+    if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
-      if (this.min!=null && this.max!=null && scaleType !== 'ordinal') {
-        domain = [this.min, this.max];
-        this.min = domain[0];
-        this.max = domain[1]; 
-      }
-        
-      this.scale = d3.scale[scaleType]().domain(domain);
+    //kill the scale if indicator or scale type have changed
+    //the scale will be rebuild upon getScale request in model.js
+    if(this.which_1 != this.which || this.scaleType_1 != this.scaleType) this.scale = null;
+    this.which_1 = this.which;
+    this.scaleType_1 = this.scaleType;
+
+    //here the modified min and max may change the domain, if the scale is defined
+    if(this.scale && this._readyOnce && this.use === "indicator") {
+
+      //min and max nonsense protection
+      if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
+      if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
+
+      //fakemin and fakemax nonsense protection    
+      if(this.fakeMin == null || this.fakeMin <= 0 && this.scaleType === "log") this.fakeMin = this.scale.domain()[0];
+      if(this.fakeMax == null || this.fakeMax <= 0 && this.scaleType === "log") this.fakeMax = this.scale.domain()[1];
+
+      this.scale.domain([this.min, this.max]);
     }
-  });
-}).call(this);
+  },
+
+//  _getBroadest: function(a1, a2){
+//      if(!a1 || !a2 || !a1.length && !a2.length) return utils.warn("_getBroadest: bad input");
+//      if(!a1.length) return a2;
+//      if(!a2.length) return a1;
+//      return Math.abs(a1[0]-a1[a1.length-1]) > Math.abs(a2[0]-a2[a2.length-1])? a1 : a2;
+//  },
+//
+//
+//  _getNarrowest: function(a1, a2){
+//      if(!a1 || !a2 || !a1.length && !a2.length) return utils.warn("_getNarrowest: bad input");
+//      if(!a1.length) return a2;
+//      if(!a2.length) return a1;
+//      return Math.abs(a1[0]-a1[a1.length-1]) > Math.abs(a2[0]-a2[a2.length-1])? a2 : a1;
+//  },
+
+  /**
+   * Gets the domain for this hook
+   * @returns {Array} domain
+   */
+  buildScale: function(margins) {
+    var domain;
+    var scaleType = this.scaleType || "linear";
+    var indicatorsDB = globals.metadata.indicatorsDB;
+
+    if(this.scaleType == "time") {
+      var limits = this.getLimits(this.which);
+      this.scale = d3.time.scale().domain([limits.min, limits.max]);
+      return;
+    }
+
+    switch(this.use) {
+      case "indicator":
+        var limits = this.getLimits(this.which);
+        //default domain is based on limits
+        domain = [limits.min, limits.max];
+        //domain from metadata can override it if defined
+        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+        //min and max can override the domain if defined
+        domain = this.min!=null && this.max!=null ? [+this.min, +this.max] : domain;
+        break;
+      case "property":
+        domain = this.getUnique(this.which);
+        break;
+      case "value":
+      default:
+        domain = [this.which];
+        break;
+    }
+
+//    //sync the min and max in the state
+      // evokes unintended updates in tools because they listen to the model
+//    this.min = domain[0];
+//    this.max = domain[1];
+
+    this.scale = d3.scale[scaleType]().domain(domain);
+  }
+});
+
+export default AxisModel;

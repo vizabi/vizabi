@@ -1,0 +1,26 @@
+linters:
+  ColorVariable:
+    enabled: false
+  DeclarationOrder:
+    enabled: false
+  EmptyLineBetweenBlocks:
+    enabled: false
+  ImportantRule:
+    enabled: false
+  MergeableSelector:
+    enabled: false
+  NestingDepth:
+    enabled: false
+  PlaceholderInExtend:
+    enabled: false
+  PropertySortOrder:
+    enabled: false
+  QualifyingElement:
+    enabled: true
+    allow_element_with_attribute: true
+  SelectorDepth:
+    enabled: false
+  TrailingWhitespace:
+    enabled: false
+  SpaceAroundOperator:
+    enabled: false
