@@ -147,7 +147,7 @@ var TreeMenu = Component.extend({
     //this.element contains the view where you can append the menu
     this.element = d3.select(this.placeholder);
 
-    //menu class private 
+    //menu class private
     var _this = this;
 
     this.element.selectAll("div").remove();
@@ -172,7 +172,7 @@ var TreeMenu = Component.extend({
       .select("svg")
       .attr("width", "0px")
       .attr("height", "0px")
-      .attr("class", css.close)      
+      .attr("class", css.close)
 
     this.wrapper.append('div')
       .classed(css.title, true)
@@ -397,15 +397,20 @@ var TreeMenu = Component.extend({
 
     //it forms the array of possible queries
     var getMatches = function(value) {
-      var matches = [];
+      var matches = {
+        _id: 'root',
+        children: []
+      };
 
       //translation integration
       var translation = function(value, data, i) {
+
         var arr = [];
         if(_this.langStrings()) {
           for(var language in _this.langStrings()) {
             for(var key in _this.langStrings()[language]) {
-              if(_this.langStrings()[language][key].toLowerCase().indexOf(
+              if(key.indexOf('indicator/') == 0 &&
+                _this.langStrings()[language][key].toLowerCase().indexOf(
                   value.toLowerCase()) >= 0) {
                 return key;
               };
@@ -420,19 +425,15 @@ var TreeMenu = Component.extend({
           match = match || (data[i][OPTIONS.SEARCH_PROPERTY].toLowerCase().indexOf(
               value.toLowerCase()) >= 0) ||
             data[i][OPTIONS.SEARCH_PROPERTY] == translation(value, data, i);
-
           if(match) {
-            matches.push(data[i]);
+            matches.children.push(data[i]);
           }
-
           if(data[i][OPTIONS.SUBMENUS]) {
             matching(data[i][OPTIONS.SUBMENUS]);
           }
         }
       };
-
-      matching(tree);
-
+      matching(tree.children);
       return matches;
     };
 
@@ -638,7 +639,6 @@ var TreeMenu = Component.extend({
       .text(this.translator("buttons/" + markerID));
 
     if(data == null) data = tree;
-
     this.wrapper.select('ul').remove();
 
     var indicatorsDB = globals.metadata.indicatorsDB;
@@ -658,7 +658,7 @@ var TreeMenu = Component.extend({
     })
 
     var dataFiltered = pruneTree(data, function(f) {
-      return allowedIDs.indexOf(f.id) > -1
+     return allowedIDs.indexOf(f.id) > -1
     });
 
 

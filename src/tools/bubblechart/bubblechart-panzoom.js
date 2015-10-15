@@ -13,17 +13,17 @@ export default Class.extend({
             .on("dragstart", this.drag().start)
             .on("drag", this.drag().go)
             .on("dragend", this.drag().stop);
-        
+
         this.zoomer
             .scaleExtent([1, 100])
             .on("zoom", this.zoom().go)
             .on('zoomend', this.zoom().stop);
-        
+
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
     },
 
-    
+
     drag: function(){
         var _this = this.context;
         var self = this;
@@ -71,10 +71,10 @@ export default Class.extend({
                 };
 
                 self._zoomOnRectangle(
-                    d3.select(this), 
-                    this.origin.x, 
-                    this.origin.y, 
-                    this.target.x, 
+                    d3.select(this),
+                    this.origin.x,
+                    this.origin.y,
+                    this.target.x,
                     this.target.y,
                     true, 500
                 );
@@ -86,10 +86,10 @@ export default Class.extend({
     zoom: function() {
         var _this = this.context;
         var zoomer = this.zoomer;
-        
+
         return {
             go: function() {
-        
+
 
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
@@ -154,7 +154,7 @@ export default Class.extend({
 
                 var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
                 var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
-                
+
                 xRange = _this._rangeBump(xRange);
                 yRange = _this._rangeBump(yRange);
 
@@ -172,13 +172,13 @@ export default Class.extend({
 
                 var xRangeFake = _this._rangeBump([0, _this.width]);
                 var yRangeFake = _this._rangeBump([_this.height, 0]);
-                
+
                 var formatter = d3.format(".2r");
                 _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeFake[0]));
-                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));                
+                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));
                 _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeFake[0]));
                 _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeFake[1]));
-                
+
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
@@ -196,7 +196,7 @@ export default Class.extend({
 
                 zoomer.duration = 0;
             },
-            
+
             stop: function(){
                 _this.draggingNow = false;
             }
@@ -239,7 +239,7 @@ export default Class.extend({
 
     zoomToMaxMin: function(minX, maxX, minY, maxY, duration){
         var _this = this.context;
-        
+
         var xRange = _this._rangeBump([_this.xScale(minX), _this.xScale(maxX)], "undo");
         var yRange = _this._rangeBump([_this.yScale(minY), _this.yScale(maxY)], "undo");
 
@@ -272,7 +272,7 @@ export default Class.extend({
         }
 
         var pan = [
-            (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX, 
+            (zoomer.translate()[0] - Math.min(x1, x2)) / zoomer.scale() / zoomer.ratioX * zoom * ratioX,
             (zoomer.translate()[1] - Math.min(y1, y2)) / zoomer.scale() / zoomer.ratioY * zoom * ratioY
         ];
 
