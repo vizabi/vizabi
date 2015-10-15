@@ -460,6 +460,14 @@ var TreeMenu = Component.extend({
 
     if(toggle) {
       if(label.node().scrollWidth > node.offsetWidth) {
+        //cloning span for animation
+        if(!selection.classed("vzb-treemenu-doubled")) {
+          selection.classed("vzb-treemenu-doubled", true);
+          var childNode = node.children[0];
+          var cloneLabel = d3.select(childNode.parentNode.insertBefore(childNode.cloneNode(true), childNode.nextSibling));
+          cloneLabel.classed(css.list_item_label + '-clone', true);
+        }
+
         selection.classed('marquee', true);
       }
     } else {
@@ -492,7 +500,7 @@ var TreeMenu = Component.extend({
         remain += this.activeProfile.col_width
       };
 
-      for(var i = ulArr.length - 1; i >= 0; i--) {
+      for(var i = ulArr.length - 1; i > 0; i--) {
         var ulSelectNested = d3.select(ulArr[i]);
 
         if(fullColNumber > 0) {
