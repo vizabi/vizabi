@@ -13,6 +13,7 @@ import BubbleChart from 'tools/bubblechart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
+import BubbleMapChart from 'tools/bubblemapchart';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
@@ -43,6 +44,66 @@ BarChart.define('default_options', {
       end: "2012",
       value: "2000",
       step: 1,
+      formatInput: "%Y"
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "lex",
+        scaleType: "linear",
+        min: 0,
+        max: 90,
+        allow: {
+          scales: ["linear", "log"]
+        }
+      },
+      axis_x: {
+        use: "property",
+        which: "geo.name",
+        allow: {
+          scales: ["ordinal"]
+        }
+      },
+      color: {
+        use: "property",
+        which: "geo.region",
+        scaleType: "ordinal"
+      }
+    }
+  },
+  data: {
+    reader: "waffle",
+    splash: true
+  },
+  language: language,
+  ui: {
+    buttons: [],
+    buttons_expand: []
+  }
+});
+
+BubbleMapChart.define('default_options', {
+  state: {
+    time: {
+      start: "1952",
+      end: "2012",
+      value: "2000",
+      step: 1,
+      speed: 300,
       formatInput: "%Y"
     },
     entities: {
