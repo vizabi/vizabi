@@ -1,9 +1,10 @@
+var Vizabi = require('vizabi');
+
 module.exports = function (app) {
   app
     .controller('gapminderToolsCtrl', [
       '$scope', '$route', '$routeParams', '$location', 'vizabiItems', 'vizabiFactory', '$window',
       function ($scope, $route, $routeParams, $location, vizabiItems, vizabiFactory, $window) {
-
         var placeholder = document.getElementById('vizabi-placeholder');
 
         $scope.loadingError = false;
@@ -18,8 +19,35 @@ module.exports = function (app) {
           updateGraph();
         });
 
-
-        $scope.$on('$routeChangeSuccess', updateGraph);
+        var prevSlug = null;
+        $scope.$root.$on('$routeChangeStart', function(event, state){
+          var newSlug = state.params.slug;
+          if (!prevSlug) {
+            prevSlug = newSlug;
+            return;
+          }
+          if (prevSlug !== newSlug) {
+            prevSlug = newSlug;
+            // and here we go, one more hack
+            window.location.reload();
+            return;
+          }
+          console.log(window.location.hash);
+        });
+        $scope.$root.$on('$routeUpdate', function(event, state){
+          var newSlug = state.params.slug;
+          if (!prevSlug) {
+            prevSlug = newSlug;
+            return;
+          }
+          if (prevSlug !== newSlug) {
+            prevSlug = newSlug;
+            // and here we go, one more hack
+            window.location.reload();
+            return;
+          }
+          console.log(window.location.hash);
+        });
         function updateGraph() {
           var validTools = $scope.validTools;
           if (validTools.length === 0) return;
@@ -33,10 +61,6 @@ module.exports = function (app) {
             $scope.activeTool = $routeParams.slug;
             // do not put data in $scope
             var tool = angular.copy($scope.tools[$scope.activeTool]);
-            tool.opts.data = {
-              path: '/tools/api/indicators/stub',
-              reader: 'ws-json'
-            };
 
             Vizabi.clearInstances();
 

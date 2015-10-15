@@ -38,6 +38,16 @@ module.exports = function (app) {
           $scope.createIconUrl = function (url) {
             return ASSET_URL + url;
           };
+
+          $scope.toggleSubmenu= [];
+          $scope.showSubmenu = function (index) {
+            for(var i = 0; i < $scope.toggleSubmenu.length; i++) {
+              if (i !== index) {
+                $scope.toggleSubmenu[i] = false;
+              }
+            }
+            $scope.toggleSubmenu[index] = !$scope.toggleSubmenu[index];
+          };
         }],
 
         template: require('./menu.html')

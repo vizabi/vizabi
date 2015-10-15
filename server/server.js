@@ -2,7 +2,7 @@
 var express = require('express');
 var app = express();                 // create our app w/ express
 var mongoose = require('mongoose');           // mongoose for mongodb
-var port = process.env.PORT || 8080;         // set the port
+var port = process.env.PORT || 3001;         // set the port
 var database = require('./config/database');       // load the database config
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -31,5 +31,5 @@ app.use(gzipStatic(path.join(__dirname, '../client/dist')));
 require('./app/routes.js')(app);
 
 // listen (start app with node server.js) ======================================
-app.listen(port);
+app.listen(port, '0.0.0.0');
 console.log("App listening on port " + port);

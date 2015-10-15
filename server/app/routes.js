@@ -1,6 +1,8 @@
 var _ = require('lodash');
 var path = require('path');
-var cache = require('express-redis-cache')();
+var cache = require('express-redis-cache')({
+  client: require('../config/redis-client')
+});
 var express = require('express');
 var mongoose = require('mongoose');
 var compression = require('compression');
@@ -196,6 +198,10 @@ module.exports = function (app) {
   var base = path.join(BASEURL, 'api');
   app.use(base, router);
 
+  // one day
+  app.use('/api/static/local_data', compression(), cache.route({expire: 86400}), express.static(path.join(__dirname, '/fixtures')));
+
+  app.use('/api/static/data', compression(), cache.route({expire: 86400}), express.static(path.join(__dirname, '/fixtures')));
   /* APP Routes */
   app.get('/', function (req, res) {
     return res.sendfile('./client/dist' + BASEURL + 'redirect.html');

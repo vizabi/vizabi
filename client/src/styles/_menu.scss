@@ -41,9 +41,12 @@
       background-color: white;
       color: $brand-primary;
     }
-    &:hover + .nav-expanded,
-    & + .nav-expanded:hover {
-      display: block;
+    @include breakpoint(not-small) {
+      &:hover + .nav-expanded,
+      & + .nav-expanded:hover {
+        z-index: 55;
+        display: block !important;
+      }
     }
   }
   .nav-expanded {
@@ -52,11 +55,11 @@
     border-right: $navbar-border-size solid $navbar-border-color;
     border-bottom: $navbar-border-size solid $navbar-border-color;
     box-sizing: border-box;
-    display: none;
+    //display: none;
     padding: 30px 25px;
     padding-bottom: 10px;
     position: absolute;
-    left: 0px;
+    left: 0;
     width: 700px;
     //&:after
     //  content: ""
@@ -67,7 +70,10 @@
     //  z-index: -1
     //  bottom: 0
     //  height: 100%
-    @include  breakpoint(medium) {
+    @include breakpoint(not-small) {
+      display: none;
+    }
+      @include  breakpoint(medium) {
       left: 0;
       width: 400px;
     }

@@ -18,8 +18,11 @@
       GAPMINDER TOOLS
     </a>
 
-    <div class="menu-mobile"></div>
-    <ul class="nav navbar-nav navbar-nav-left" nav-expandable="" items="expandedItems"></ul>
+    <div class="menu-mobile" ng-click="navCollapsed = !navCollapsed"  ng-class="navCollapsed ? 'open' : '' ">
+      <div class="icon"></div>
+    </div>
+    <ul class="nav navbar-nav navbar-nav-left desktop" nav-expandable="" items="expandedItems"></ul>
+    <ul class="nav navbar-nav navbar-nav-left mobile" ng-if="navCollapsed" nav-expandable="" items="expandedItems"></ul>
   </div>
 
   <!--Content-->
