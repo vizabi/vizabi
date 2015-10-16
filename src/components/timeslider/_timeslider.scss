@@ -171,8 +171,8 @@ $vzb-ts-value-width: 40px;
       }
     }
     .vzb-ts-slider-wrapper {
-      @include position(absolute, 0 0 5px $pos-left);
       $pos-left: $vzb-ts-btn-area - 20 + 10;
+      @include position(absolute, 0 0 5px $pos-left);
     }
   }
 }
