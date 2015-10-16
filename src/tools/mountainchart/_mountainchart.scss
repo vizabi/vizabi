@@ -72,36 +72,19 @@
 
       .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
         @include transition(opacity 200ms linear);
-        fill: $vzb-color-white;
+        cursor: pointer;
+        fill: $vzb-color-primary;
         text-anchor: middle;
         dominant-baseline: middle;
         pointer-events: none;
         font-size: .9em;
-      }
-
-      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
-        @include transition(opacity 200ms linear);
-        cursor: pointer;
-        fill: $vzb-color-primary;
         stroke: $vzb-color-white;
         stroke-width: 2px;
-      }
 
-      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
-        @include transition(opacity 200ms linear);
-        cursor: pointer;
-        fill: $vzb-color-primary;
-        stroke: $vzb-color-white;
-        stroke-width: 2px;
-      }
-
-      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x.vzb-revert-color {
-        fill: $vzb-color-white;
-        stroke: $vzb-color-primary;
-      }
-
-      .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x.vzb-revert-color {
-        fill: $vzb-color-primary;
+        &.vzb-revert-color {
+          stroke: $vzb-color-primary;
+          fill: $vzb-color-primary;
+        }
       }
 
       .vzb-mc-axis-x,

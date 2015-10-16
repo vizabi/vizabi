@@ -43,6 +43,26 @@
         rect {
           pointer-events: visible;
         }
+        .vzb-bc-entity {
+          .vzb-bc-label-x {
+            @include transition(opacity 200ms linear);
+            fill: $vzb-color-primary;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+            font-size: .9em;
+            cursor: pointer;
+            stroke: $vzb-color-white;
+            stroke-width: 2px;
+
+            &.vzb-highlighted rect {
+              fill: rgb(255, 252, 185);
+            }
+            text:hover {
+              opacity: 1;
+            }
+          }
+        }
       } 
         
       .vzb-bc-tooltip {
@@ -52,31 +72,6 @@
       .vzb-bc-label-shadow,
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow;
-      }
-
-      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
-        @include transition(opacity 200ms linear);
-        fill: $vzb-color-white;
-        text-anchor: middle;
-        dominant-baseline: middle;
-        pointer-events: none;
-        font-size: .9em;
-      }
-
-      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
-        @include transition(opacity 200ms linear);
-        cursor: pointer;
-        fill: $vzb-color-primary;
-        stroke: $vzb-color-white;
-        stroke-width: 2px;
-      }
-
-      .vzb-bc-labels .vzb-bc-entity.vzb-highlighted rect {
-        fill: rgb(255, 252, 185);
-      }
-      
-      .vzb-bc-labels .vzb-bc-entity text:hover {
-        opacity: 1;
       }
       
       .vzb-bc-lines .vzb-bc-entity line {

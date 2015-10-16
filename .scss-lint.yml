@@ -8,7 +8,7 @@ linters:
   ImportantRule:
     enabled: false
   MergeableSelector:
-    enabled: false
+    enabled: true
   NestingDepth:
     enabled: false
   PlaceholderInExtend:

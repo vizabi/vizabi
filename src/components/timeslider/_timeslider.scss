@@ -82,6 +82,11 @@ $vzb-ts-value-width: 40px;
   }
   //show pause instead if it's playing
   &.vzb-playing {
+    &.vzb-ts-show-value-when-drag-play {
+      .vzb-ts-slider-value {
+        display: block !important;
+      }
+    }
     .vzb-ts-btns {
       .vzb-ts-btn-play {
         @extend .vzb-hidden;
@@ -131,11 +136,6 @@ $vzb-ts-value-width: 40px;
       display: block !important;
     }
   }
-  &.vzb-playing.vzb-ts-show-value-when-drag-play {
-    .vzb-ts-slider-value {
-      display: block !important;
-    }
-  }
   &.vzb-ts-dragging.vzb-ts-show-value-when-drag-play {
     .vzb-ts-slider-value {
       display: block !important;
@@ -174,15 +174,6 @@ $vzb-ts-value-width: 40px;
 }
 
 &.vzb-medium {
-  .vzb-timeslider.vzb-ts-axis-aligned {
-    .vzb-ts-btns {
-      @include position(absolute, 0 0 5px 5px);
-    }
-    .vzb-ts-slider-wrapper {
-      $pos-left: $vzb-ts-btn-area + 10;
-      @include position(absolute, 0 0 5px $pos-left);
-    }
-  }
   .vzb-timeslider {
     min-height: $vzb-ts-btn-area + 5;
     .vzb-ts-slider-wrapper {
@@ -193,19 +184,19 @@ $vzb-ts-value-width: 40px;
         stroke-width: 5px;
       }
     }
+    &.vzb-ts-axis-aligned {
+      .vzb-ts-btns {
+        @include position(absolute, 0 0 5px 5px);
+      }
+      .vzb-ts-slider-wrapper {
+        $pos-left: $vzb-ts-btn-area + 10;
+        @include position(absolute, 0 0 5px $pos-left);
+      }
+    }
   }
 }
 
 &.vzb-large {
-  .vzb-timeslider.vzb-ts-axis-aligned {
-    .vzb-ts-btns {
-      @include position(absolute, 0 0 5px 5px);
-    }
-    .vzb-ts-slider-wrapper {
-      $pos-left: $vzb-ts-btn-area + 10;
-      @include position(absolute, 0 0 5px $pos-left);
-    }
-  }
   .vzb-timeslider {
     min-height: $vzb-ts-btn-area + 10;
     .vzb-ts-slider-wrapper {
@@ -217,6 +208,15 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-handle {
         stroke-width: 6px;
+      }
+    }
+    &.vzb-ts-axis-aligned {
+      .vzb-ts-btns {
+        @include position(absolute, 0 0 5px 5px);
+      }
+      .vzb-ts-slider-wrapper {
+        $pos-left: $vzb-ts-btn-area + 10;
+        @include position(absolute, 0 0 5px $pos-left);
       }
     }
   }

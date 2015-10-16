@@ -285,21 +285,21 @@
     color: $vzb-color-primary;
     font-weight: bold;
   }
-}
 
-.vzb-buttonlist-dialog.pinned {
-  .thumb-tack-class {
-    background-color: $vzb-color-primary-strong;
-    border: 1px solid $vzb-color-primary-strong;
+  &.pinned {
+    .thumb-tack-class {
+      background-color: $vzb-color-primary-strong;
+      border: 1px solid $vzb-color-primary-strong;
 
-    path {
-      fill: $vzb-color-white;
+      path {
+        fill: $vzb-color-white;
+      }
     }
-  }
 
-  .thumb-tack-class-ico:before {
-    color: #fff !important;
+    .thumb-tack-class-ico:before {
+      color: #fff !important;
 
+    }
   }
 }
 
