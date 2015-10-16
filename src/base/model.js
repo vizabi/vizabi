@@ -88,6 +88,7 @@ var Model = Events.extend({
    * Sets an attribute or multiple for this model (inspired by Backbone)
    * @param attr property name
    * @param val property value (object or value)
+   * @param {Boolean} force force setting of property to value and triggers set event 
    * @returns defer defer that will be resolved when set is done
    */
   set: function(attr, val, force) {
@@ -103,29 +104,20 @@ var Model = Events.extend({
       attrs = attr;
       force = val;
     }
-    //if it's the first time we are setting this, check previous
-    if(!setting) {
-      this._prevData = utils.clone(this._data);
-      this._changedData = {};
-    }
-    this._setting = true;
+    
     //we are currently setting the model
-    //compute each change
+    this._setting = true;
+    
+    //compute each change  
     for(var a in attrs) {
       val = attrs[a];
       var curr = this._data[a];
-      var prev = this._prevData[a];
       //if its a regular value
       if(!utils.isPlainObject(val) || utils.isArray(val)) {
         //change if it's not the same value
         if(curr !== val || force || JSON.stringify(curr) !== JSON.stringify(val)) {
           var p = typeof curr === 'undefined' ? 'init' : 'change';
           events.push(p + ':' + a);
-        }
-        if(prev !== val || force || JSON.stringify(prev) !== JSON.stringify(val)) {
-          this._changedData[a] = val;
-        } else {
-          this._changedData[a] = void 0;
         }
         this._data[a] = val;
       } //if it's an object, it's a submodel
