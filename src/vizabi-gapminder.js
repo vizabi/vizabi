@@ -349,7 +349,6 @@ BubbleChart.define('default_options', {
       value: "2015",
       step: 1,
       formatInput: "%Y",
-      round: "ceil",
       trails: true,
       lockNonSelected: 0,
       adaptMinMaxZoom: false
