@@ -53,6 +53,16 @@ var profiles = {
     },
     radius: 11,
     label_spacing: 14
+  },
+  presentation: {
+    margin: {
+      top: 9,
+      right: 15,
+      bottom: 10,
+      left: 15
+    },
+    radius: 11,
+    label_spacing: 14
   }
 };
 

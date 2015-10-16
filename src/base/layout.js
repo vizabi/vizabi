@@ -3,7 +3,7 @@ import Events from 'events';
 
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';
-var class_presentation = 'vzb-presentation';
+var class_presentation = 'presentation';
 var class_portrait = 'vzb-portrait';
 var class_lansdcape = 'vzb-landscape';
 
@@ -54,18 +54,22 @@ var Layout = Events.extend({
       return;
     }
 
-    utils.forEach(this.screen_profiles, function(range, size) {
-      //remove class
-      utils.removeClass(_this._container, class_prefix + size);
-      //find best fit
-      if(width >= range.min_width && height >= range.min_height) {
-        _this._curr_profile = size;
-      }
-    });
-      
-    // update presentation class
+    // presentation mode overrides any size profile
     if (this.ui.presentation) {
-        utils.addClass(this._container, class_presentation);
+        
+        this._curr_profile = class_presentation;
+    
+    } else {
+        
+        // choose profile depending on size
+        utils.forEach(this.screen_profiles, function(range, size) {
+          //remove class
+          utils.removeClass(_this._container, class_prefix + size);
+          //find best fit
+          if(width >= range.min_width && height >= range.min_height) {
+            _this._curr_profile = size;
+          }
+        });
     }
       
     //update size class

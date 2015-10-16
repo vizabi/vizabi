@@ -196,7 +196,8 @@
   }
 }
 
-&.vzb-large {
+&.vzb-large,
+&.vzb-presentation {
   .vzb-treemenu-wrap {
     margin-right: $size-button-list;
     margin-bottom: $size-timeslider;

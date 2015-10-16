@@ -745,6 +745,18 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 70,
         infoElHeight: 22
+      },
+      "presentation": {
+        margin: {
+          top: 50,
+          right: 20,
+          left: 60,
+          bottom: 60
+        },
+        padding: 2,
+        minRadius: 1,
+        maxRadius: 70,
+        infoElHeight: 22
       }
     };
 
