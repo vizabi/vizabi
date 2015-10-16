@@ -434,7 +434,8 @@ BubbleChart.define('default_options', {
       }
     },
    buttons: [],
-   buttons_expand: []
+   buttons_expand: [],
+   presentation: true
   }
 });
 

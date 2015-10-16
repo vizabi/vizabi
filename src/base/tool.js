@@ -96,6 +96,8 @@ var Tool = Component.extend({
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
     this.ui = this.model.ui || {};
+    console.log(this.ui);
+    this.layout = new Layout(this.ui);
     //splash
     this.ui.splash = this.model && this.model.data && this.model.data.splash;
     this._super({
@@ -106,6 +108,7 @@ var Tool = Component.extend({
     this.render();
     this._setUIOptions();
   },
+    
   /**
    * Binds events in model to outside world
    */

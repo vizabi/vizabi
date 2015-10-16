@@ -103,7 +103,7 @@ var TimeSlider = Component.extend({
         }
       }
     };
-
+      
     this.ui = utils.extend({
       show_limits: false,
       show_value: false,

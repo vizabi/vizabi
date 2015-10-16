@@ -3,6 +3,7 @@ import Events from 'events';
 
 //classes are vzb-portrait, vzb-landscape...
 var class_prefix = 'vzb-';
+var class_presentation = 'vzb-presentation';
 var class_portrait = 'vzb-portrait';
 var class_lansdcape = 'vzb-landscape';
 
@@ -26,7 +27,9 @@ var Layout = Events.extend({
   /**
    * Initializes the layout manager
    */
-  init: function() {
+  init: function(ui_options) {
+    this.ui = ui_options || {};
+      
     this._container = null;
     //dom element
     this._curr_profile = null;
@@ -59,7 +62,12 @@ var Layout = Events.extend({
         _this._curr_profile = size;
       }
     });
-
+      
+    // update presentation class
+    if (this.ui.presentation) {
+        utils.addClass(this._container, class_presentation);
+    }
+      
     //update size class
     utils.addClass(this._container, class_prefix + this._curr_profile);
     //toggle, untoggle classes based on orientation

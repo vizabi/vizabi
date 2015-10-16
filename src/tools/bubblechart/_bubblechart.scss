@@ -222,4 +222,12 @@
       }
     }
   }
+  &.vzb-presentation .vzb-bubblechart-svg {
+    .vzb-bc-axis-x,
+    .vzb-bc-axis-y {
+      text {
+        font-size: $vzb-font-size-larger;
+      }
+    }
+  }
 }

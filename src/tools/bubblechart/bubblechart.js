@@ -99,6 +99,9 @@ var BubbleChart = Tool.extend('BubbleChart', {
       //reader: "waffle",
       reader: "csv",
       path: "data/waffles/basic-indicators.csv"
+    },
+    ui: {
+      presentation: true 
     }
   }
 });
