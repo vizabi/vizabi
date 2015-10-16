@@ -153,17 +153,17 @@
     width: auto;
     cursor: pointer;
     padding: 8px;
+    color: $vzb-color-grey;
+    font-family: $vzb-font-family;
+    text-align: center;
+    text-transform: uppercase;
+
     &:first-child {
       padding-left: 0;
     }
     &:last-child {
       padding-right: 0;
     }
-    color: $vzb-color-grey;
-    font-family: $vzb-font-family;
-    text-align: center;
-    text-transform: uppercase;
-
     &.vzb-label-primary {
       color: $vzb-color-primary;
       font-weight: bold;
@@ -241,6 +241,7 @@
     margin: 6px 0;
     position: relative;
     text-indent: 23px;
+
     input[type=checkbox] {
       @extend .vzb-hidden;
     }
@@ -253,6 +254,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
+
       &:after {
         @include position(absolute, 4px null null 4px);
         @include opacity(0);

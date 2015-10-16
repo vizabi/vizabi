@@ -2,7 +2,7 @@ linters:
   ColorVariable:
     enabled: false
   DeclarationOrder:
-    enabled: false
+    enabled: true
   EmptyLineBetweenBlocks:
     enabled: false
   ImportantRule:

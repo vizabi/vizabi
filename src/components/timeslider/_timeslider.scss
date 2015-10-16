@@ -18,14 +18,15 @@ $vzb-ts-value-width: 40px;
       background: $vzb-ts-btn-bg;
       display: block;
       border: 0;
+      padding: 12px 14px;
+      margin: 5px;
+      cursor: pointer;
+
       .vzb-icon {
         path {
           fill: $vzb-color-white;
         }
       }
-      padding: 12px 14px;
-      margin: 5px;
-      cursor: pointer;
       &.vzb-ts-btn-pause {
         display: none;
         padding: 10px;
@@ -53,13 +54,14 @@ $vzb-ts-value-width: 40px;
       }
       .vzb-ts-slider-axis {
         @include user-select(none);
-        fill: $vzb-ts-slider-color;
         @include opacity(.6);
+        fill: $vzb-ts-slider-color;
         font-weight: bold;
         cursor: pointer;
+
         .domain {
-          fill: none;
           @include opacity(1);
+          fill: none;
           stroke: $vzb-ts-slider-color;
           stroke-opacity: .3;
           stroke-width: 5px;
@@ -73,8 +75,8 @@ $vzb-ts-value-width: 40px;
         cursor: pointer;
       }
       .vzb-ts-slider-value {
-        display: none;
         @include user-select(none);
+        display: none;
         fill: $vzb-ts-slider-color;
         font-weight: bold;
       }
@@ -107,9 +109,9 @@ $vzb-ts-value-width: 40px;
     display: none !important;
     .vzb-loader {
       @extend %vzb-loader;
+      @include size(28px);
       border-color: rgba($vzb-color-white, .2);
       border-top-color: rgba($vzb-color-white, .7);
-      @include size(28px);
       margin: -1 * 28px/2;
     }
   }
@@ -146,13 +148,16 @@ $vzb-ts-value-width: 40px;
 &.vzb-small {
   .vzb-timeslider.vzb-ts-axis-aligned {
     .vzb-ts-btns {
-      width: $vzb-ts-btn-area - 20;
       @include position(absolute, 0 0 5px 5px);
+      width: $vzb-ts-btn-area - 20;
+      min-height: $vzb-ts-btn-area - 20;
+
       .vzb-ts-btn {
         width: $vzb-ts-btn-width - 14;
         height: $vzb-ts-btn-width - 14;
         margin: 0;
         padding: 7px 10px;
+
         .vzb-icon {
           width: 12px;
           height: 12px;
@@ -166,10 +171,9 @@ $vzb-ts-value-width: 40px;
       }
     }
     .vzb-ts-slider-wrapper {
-      $pos-left: $vzb-ts-btn-area - 20 + 10;
       @include position(absolute, 0 0 5px $pos-left);
+      $pos-left: $vzb-ts-btn-area - 20 + 10;
     }
-    min-height: $vzb-ts-btn-area - 20;
   }
 }
 
@@ -240,14 +244,15 @@ $vzb-ts-value-width: 40px;
     cursor: pointer !important;
   }
   .vzb-ts-delay-slider-axis {
+    @include opacity(.6);
     @include user-select(none);
     fill: $vzb-ts-slider-color;
-    @include opacity(.6);
     font-weight: bold;
     cursor: pointer;
+
     .domain {
-      fill: none;
       @include opacity(1);
+      fill: none;
       stroke: $vzb-ts-slider-color;
       stroke-opacity: .3;
       stroke-width: 5px;
@@ -262,8 +267,8 @@ $vzb-ts-value-width: 40px;
     opacity: .3;
   }
   .vzb-ts-delay-slider-value {
-    display: none;
     @include user-select(none);
+    display: none;
     fill: $vzb-ts-slider-color;
     font-weight: bold;
   }
