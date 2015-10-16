@@ -24,7 +24,7 @@
     "hints/mount/logXstops": "Log X-axel stoppas vid:",
     "hints/mount/howtostack": "Välj hur ska berg stackas:",
     "hints/mount/xlimits": "X-axel gränser:",
-    "hints/mount/probe": "Probe line:",
+    "hints/mount/probe": "Mätlinje (extrem fattighet är på 1.85):",
     "hints/min": "min",
     "hints/max": "max",
     "hints/dataWarning": "Data tvivel",
