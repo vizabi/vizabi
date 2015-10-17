@@ -97,9 +97,7 @@ var TimeSlider = Component.extend({
           }
           _this._optionClasses();
           //only set handle position if change is external
-          if(!_this._dragging) {
-            _this._setHandle(_this.model.time.playing);
-          }
+          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       }
     };
@@ -115,7 +113,6 @@ var TimeSlider = Component.extend({
     // Same constructor as the superclass
     this._super(config, context);
 
-    this._dragging = false;
     //defaults
     this.width = 0;
     this.height = 0;
@@ -214,17 +211,12 @@ var TimeSlider = Component.extend({
     var delay = this.model.time.delay;
 
     play.on('click', function () {
-      _this._dragging = false;
       _this.model.time.play();
     });
 
     pause.on('click', function () {
-      _this._dragging = true;
-      _this.handle.transition()
-        .duration(0);
-      _this.model.time.pause();
-      _this._dragging = false;
-    });//format
+      _this.model.time.pause("soft");
+    });
 
     var fmt = time.formatOutput || time_formats[time.unit];
     this.format = d3.time.format(fmt);
@@ -232,11 +224,7 @@ var TimeSlider = Component.extend({
     this.changeLimits();
     this.changeTime();
     this.resize();
-/*
-    this._setHandle(this.model.time.playing);
-    this._setDelayHandle(this.model.time.playing);
-*/
-    //this._toggleDelaySlider();
+
   },
 
   changeLimits: function() {
@@ -316,18 +304,14 @@ var TimeSlider = Component.extend({
     return function() {
       _this.model.time.pause();
 
-      if(!_this._blockUpdate) {
-        _this._optionClasses();
-        _this._blockUpdate = true;
-        _this.element.classed(class_dragging, true);
-      }
+      _this._optionClasses();
+      _this.element.classed(class_dragging, true);
 
       var value = _this.brush.extent()[0];
 
       //set brushed properties
 
       if(d3.event.sourceEvent) {
-        _this._dragging = true;
         _this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
@@ -360,14 +344,9 @@ var TimeSlider = Component.extend({
   _getBrushedEnd: function() {
     var _this = this;
     return function() {
-      _this._blockUpdate = false;
       _this.element.classed(class_dragging, false);
-      _this.model.time.pause();
       _this.model.time.dragStop();
-      _this._dragging = false;
-/*
-      //_this.model.time.snap();
-*/
+      _this.model.time.snap();
     };
   },
 

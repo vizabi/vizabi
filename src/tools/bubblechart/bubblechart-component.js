@@ -363,6 +363,7 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
+      .on('dblclick.zoom', null) 
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
@@ -809,10 +810,10 @@ var BubbleChartComp = Component.extend({
     this.xAxisElContainer
       .attr("width", this.width + 1)
       .attr("height", this.activeProfile.margin.bottom)
-      .attr("y", this.height)
+      .attr("y", this.height - 1)
       .attr("x", -1);
     this.xAxisEl
-      .attr("transform", "translate(" + 1 + ",0)");
+      .attr("transform", "translate(1,1)");
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
@@ -827,12 +828,18 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
+    this.dataWarningEl.select("text").text(
+      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
+    )
+    var dataWarningWidth = this.dataWarningEl.select("text").node().getBBox().width;
 
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
+      
+
 
     var sTitleText = this.sTitleEl.select("text")
       .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
@@ -842,7 +849,7 @@ var BubbleChartComp = Component.extend({
     var font = parseInt(probe.style("font-size")) * (this.height - 20) / probe.node().getBBox().width;
 
     if(probe.node().getBBox().width > this.height - 20) {
-      sTitleText.style("font-size", font);
+      sTitleText.style("font-size", font + "px");
     } else {
       sTitleText.style("font-size", null);
     }
@@ -860,10 +867,6 @@ var BubbleChartComp = Component.extend({
 
     this.dataWarningEl
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
-
-    this.dataWarningEl.select("text").text(
-      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
-    )
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
