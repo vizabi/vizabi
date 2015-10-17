@@ -54,13 +54,10 @@
         @extend %vzb-chart-label-shadow;
       }
 
-      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
+      .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x-icon {
         @include transition(opacity 200ms linear);
         fill: $vzb-color-white;
-        text-anchor: middle;
-        dominant-baseline: middle;
-        pointer-events: none;
-        font-size: .9em;
+        //pointer-events: none;
       }
 
       .vzb-bc-labels .vzb-bc-entity .vzb-bc-label-x {
