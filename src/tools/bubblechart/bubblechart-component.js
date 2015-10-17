@@ -363,6 +363,7 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
+      .on('dblclick.zoom', null) 
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
