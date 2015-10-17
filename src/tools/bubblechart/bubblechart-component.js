@@ -367,10 +367,23 @@ var BubbleChartComp = Component.extend({
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
+    
+    d3.select(this.parent.placeholder)
       .onTap(function() {
-        return;
-        _this._bubblesInteract().mouseout();
-        _this.tooltipMobile.classed('vzb-hidden', true);
+        _this._panZoom.enabled = true;
+//        _this._bubblesInteract().mouseout();
+//        _this.tooltipMobile.classed('vzb-hidden', true);
+      })
+      .on("mousedown", function(){
+        _this._panZoom.enabled = true;
+      })
+      .on("mouseleave", function(){
+        clearTimeout(_this.timeoutMouseEnter);
+        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 1000)
+      })
+      .on("mouseenter", function(){
+        clearTimeout(_this.timeoutMouseLeave);
+        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 3000)
       });
 
     this.KEY = this.model.entities.getDimension();

@@ -5,6 +5,8 @@ export default Class.extend({
 
     init: function(context) {
         this.context = context;
+        
+        this.enabled = false;
 
         this.dragRectangle = d3.behavior.drag();
         this.zoomer = d3.behavior.zoom();
@@ -86,6 +88,7 @@ export default Class.extend({
     zoom: function() {
         var _this = this.context;
         var zoomer = this.zoomer;
+        var self = this;
 
         return {
             go: function() {
@@ -96,16 +99,17 @@ export default Class.extend({
 
                 //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
-                if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
-
-                    if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-
-                    if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1) {
-                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-                        return;
-                    }
-                }
-
+//                if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
+//
+//                    if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+//
+//                    if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1) {
+//                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+//                        return;
+//                    }
+//                }
+                if(d3.event.sourceEvent != null && !self.enabled)return;
+ 
                 _this.model._data.entities.clearHighlighted();
                 _this._setTooltip();
 
