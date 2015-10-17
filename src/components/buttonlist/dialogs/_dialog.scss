@@ -325,6 +325,10 @@
     margin: 5px 10px 5px 0;
     position: relative;
     right: 23px;
+
+    &:disabled {
+      display: none !important;
+    }
   }
 }
 

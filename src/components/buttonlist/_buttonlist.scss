@@ -184,15 +184,22 @@ $vzb-button-color-border: #cce6ed;
     .vzb-tool-buttonlist {
       width: 290px;
 
+      .vzb-buttonlist {
+        display: flex;
+        flex-direction: column;
+      }
+
       .vzb-buttonlist-container-dialogs {
+        flex-grow: 1;
         min-height: 85%;
-        overflow: hidden;
+        overflow: auto;
       }
 
       .vzb-buttonlist-container-buttons {
         position: relative;
         padding: 10px 0;
         margin-right: -10px;
+        flex-grow: 0;
       }
 
       .vzb-buttonlist-btn {
