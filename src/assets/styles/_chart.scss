@@ -71,12 +71,7 @@
   
   text {
     @extend %vzb-chart-ticks;
-  }
-
-  .vzb-presentation & text {
-    font-size: $vzb-font-size-large;
-  }
-    
+  } 
 }
 
 %vzb-chart-info {

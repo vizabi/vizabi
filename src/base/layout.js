@@ -70,6 +70,7 @@ var Layout = Events.extend({
             _this._curr_profile = size;
           }
         });
+        
     }
       
     //update size class
