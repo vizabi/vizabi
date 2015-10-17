@@ -1382,10 +1382,10 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
   // the rest is for the continuous measurements
   // check if the desired value is out of range. 0-order extrapolation
   if(i === 0) {
-    return arr[0][which];
+    return +arr[0][which];
   }
   if(i === arr.length) {
-    return arr[arr.length - 1][which];
+    return +arr[arr.length - 1][which];
   }
   //return null if data is missing
   if(arr[i][which] === null || arr[i - 1][which] === null) {
