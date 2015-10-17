@@ -1458,10 +1458,10 @@ function interpolateValue(_filter, use, which, l, method) {
   // the rest is for the continuous measurements
   // check if the desired value is out of range. 0-order extrapolation
   if(indexNext === 0) {
-    return items[0][which];
+    return +items[0][which];
   }
   if(indexNext === items.length) {
-    return items[items.length - 1][which];
+    return +items[items.length - 1][which];
   }
   //return null if data is missing
   if(items[indexNext][which] === null || items[indexNext - 1][which] === null) {
