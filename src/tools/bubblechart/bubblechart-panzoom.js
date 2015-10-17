@@ -99,16 +99,20 @@ export default Class.extend({
 
                 //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
-//                if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
 //
-//                    if(d3.event.scale == 1) _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+//                    if(d3.event.scale == 1) 
 //
 //                    if(utils.getViewportPosition(_this.element.node()).y < 0 && d3.event.scale > 1) {
 //                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
 //                        return;
 //                    }
-//                }
-                if(d3.event.sourceEvent != null && !self.enabled)return;
+                if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
+                    if(d3.event.sourceEvent != null && !self.enabled){
+                        _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
+                        d3.event.scale = 1
+                        return;
+                    }
+                }
  
                 _this.model._data.entities.clearHighlighted();
                 _this._setTooltip();

@@ -32,12 +32,6 @@ var MCSelectList = Class.extend({
       .attr("class", "vzb-mc-label")
       .each(function (d, i) {
         var label = d3.select(this);
-        var deselectButtonOuter = "g";
-        var deselectButtonText = "";
-        if (utils.isTouchDevice()) {
-          deselectButtonOuter = "rect";
-          deselectButtonText = "Deselect";
-        }
         label.append("circle").attr('class', 'vzb-mc-label-legend');
         label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
         label.append("text").attr("class", "vzb-mc-label-text");
@@ -125,16 +119,16 @@ var MCSelectList = Class.extend({
         var closeGroup = view.select(".vzb-mc-label-x");
         
         if (utils.isTouchDevice()) {
-          var closeGroupBBox = closeGroup.node().getBBox();
+          var closeTextBBox = closeGroup.select("text").node().getBBox();
           closeGroup
             .classed("vzb-revert-color", true)
             .select(".vzb-mc-label-x-text")
             .classed("vzb-revert-color", true)
-            .attr("x", contentBBox.width + contentBBox.height * 1.12 + closeGroupBBox.width * .5)
+            .attr("x", contentBBox.width + contentBBox.height * 1.12 + closeTextBBox.width * .5)
             .attr("y", contentBBox.height * .55);
 
           closeGroup.select("rect")
-            .attr("width", closeGroupBBox.width + contentBBox.height * .6)
+            .attr("width", closeTextBBox.width + contentBBox.height * .6)
             .attr("height", contentBBox.height)
             .attr("x", contentBBox.width + contentBBox.height * .9)
             .attr("y", 0)
