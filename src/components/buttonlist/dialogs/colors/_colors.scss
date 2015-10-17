@@ -25,5 +25,13 @@
     .vzb-ip-indicator {
       float: right;
     }
+
+    .vzb-ip-scaletype {
+      right: 0px;
+
+      &:disabled {
+        display: none !important;
+      }
+    }
   }
 }
