@@ -810,10 +810,10 @@ var BubbleChartComp = Component.extend({
     this.xAxisElContainer
       .attr("width", this.width + 1)
       .attr("height", this.activeProfile.margin.bottom)
-      .attr("y", this.height)
+      .attr("y", this.height - 1)
       .attr("x", -1);
     this.xAxisEl
-      .attr("transform", "translate(" + 1 + ",0)");
+      .attr("transform", "translate(1,1)");
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
