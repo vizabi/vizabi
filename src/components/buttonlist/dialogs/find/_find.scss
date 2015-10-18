@@ -1,3 +1,15 @@
+&.vzb-buttonlist-dialog {
+  &.vzb-dialog-side {
+    .vzb-dialog-buttons {
+      display: block;
+    }
+
+    .vzb-dialog-button.vzb-label-primary {
+      visibility: hidden;
+    }
+  }
+}
+
 .vzb-dialog-content.vzb-dialog-content-fixed {
   height: 310px;
   max-height: 305px;
