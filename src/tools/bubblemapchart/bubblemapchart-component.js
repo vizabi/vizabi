@@ -5,7 +5,7 @@ import globals from 'base/globals'; // to get map data path
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 
-//BAR CHART COMPONENT
+//BUBBLE MAP CHART COMPONENT
 var BubbleMapChartComponent = Component.extend({
   /**
    * Initializes the component (Bubble Map Chart).
@@ -42,7 +42,6 @@ var BubbleMapChartComponent = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.xScale = null;
     this.yScale = null;
     this.cScale = d3.scale.category10();
 
@@ -66,8 +65,8 @@ var BubbleMapChartComponent = Component.extend({
 
     this.element = d3.select(this.element);
 
-    this.graph = this.element.select('.vzb-bc-graph');
-    this.bars = this.graph.select('.vzb-bc-bars');
+    this.graph = this.element.select('.vzb-bmc-graph');
+    this.bubbles = this.graph.select('.vzb-bmc-bubbles');
 
     var _this = this;
     this.on("resize", function () {
@@ -93,7 +92,6 @@ var BubbleMapChartComponent = Component.extend({
     this.duration = this.model.time.speed;
 
     this.yScale = this.model.marker.axis_y.getScale();
-    this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
 
@@ -124,15 +122,15 @@ var BubbleMapChartComponent = Component.extend({
       "ame": {lat: 48.2, lng: -100.2},
     };
 
-    this.entityBars = this.bars.selectAll('.vzb-bc-bar')
+    this.entityBubbles = this.bubbles.selectAll('.vzb-bmc-bubble')
       .data(items);
 
     //exit selection
-    this.entityBars.exit().remove();
+    this.entityBubbles.exit().remove();
 
     //enter selection -- init circles
-    this.entityBars.enter().append("circle")
-      .attr("class", "vzb-bc-bar")
+    this.entityBubbles.enter().append("circle")
+      .attr("class", "vzb-bmc-bubble")
       .on("mousemove", function (d, i) {
       })
       .on("mouseout", function (d, i) {
@@ -140,22 +138,19 @@ var BubbleMapChartComponent = Component.extend({
       .on("click", function (d, i) {
       });
 
-    //positioning and sizes of the bars
+    //positioning and sizes of the bubbles
 
-    var bars = this.bars.selectAll('.vzb-bc-bar');
-    var barWidth = this.xScale.rangeBand();
+    var bubbles = this.bubbles.selectAll('.vzb-bmc-bubble');
 
-    this.bars.selectAll('.vzb-bc-bar')
+    this.bubbles.selectAll('.vzb-bmc-bubble')
       .attr("fill", function (d) {
         return _this.cScale(values.color[d[entityDim]]);
       })
       .attr("cx", function (d) {
-        //return _this.xScale(values.axis_x[d[entityDim]]);
         return _this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat])[0];
       })
       .transition().duration(duration).ease("linear")
       .attr("cy", function (d) {
-        //return _this.yScale(values.axis_y[d[entityDim]]);
         return _this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat])[1];
       })
       .attr("r", function (d) {
@@ -226,12 +221,13 @@ var BubbleMapChartComponent = Component.extend({
       this.yScale.rangePoints([0, this.height / 4], _this.activeProfile.padding).range();
     }
 
-
-
+    // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
+    // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
     var world = this.world;
-    var projection = this.projection = d3.geo.patterson()
-        .scale(153 / 960 * width)
+    var projection = this.projection = d3.geo.robinson()
+        .clipExtent([[0, 0], [width, height]])
+        .scale(150 / 960 * width)
         .translate([width / 2, height / 2])
         .precision(.1);
 
@@ -240,7 +236,7 @@ var BubbleMapChartComponent = Component.extend({
 
     var graticule = d3.geo.graticule();
 
-    var svg = this.bgSvg = d3.select(".vzb-bc-bars-background")
+    var svg = this.bgSvg = d3.select(".vzb-bmc-map-background")
         .attr("width", width)
         .attr("height", height);
     svg.html('');

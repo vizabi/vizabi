@@ -1,7 +1,7 @@
 .vzb-tool-bubblemapchart {
   .vzb-bubblemapchart {
     @extend %vzb-chart-svg;
-    .vzb-bc-bar {
+    .vzb-bmc-bubble {
       stroke: none;
     }
     .graticule {
