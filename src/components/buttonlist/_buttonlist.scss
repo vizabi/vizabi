@@ -192,7 +192,8 @@ $vzb-button-color-border: #cce6ed;
       .vzb-buttonlist-container-dialogs {
         flex-grow: 1;
         min-height: 85%;
-        overflow: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
 
       .vzb-buttonlist-container-buttons {
@@ -237,12 +238,10 @@ $vzb-button-color-border: #cce6ed;
         }
 
         &[data-btn="find"] {
-          height: 400px;
           @import 'dialogs/find/find';
         }
 
         &[data-btn="show"] {
-          height: 400px;
           @import 'dialogs/show/show';
         }
 
