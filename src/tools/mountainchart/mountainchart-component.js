@@ -22,6 +22,7 @@ import axisSmart from 'helpers/d3.axisWithLabelPicker';
 import MountainChartMath from './mountainchart-math';
 import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 //MOUNTAIN CHART COMPONENT
 var MountainChartComponent = Component.extend({
@@ -175,7 +176,7 @@ var MountainChartComponent = Component.extend({
 
         this.xAxis = axisSmart();
 
-        
+
         this.rangeRatio = 1;
         this.rangeShift = 0;
         this.cached = {};
@@ -194,7 +195,10 @@ var MountainChartComponent = Component.extend({
         this.yTitleEl = this.graph.select(".vzb-mc-axis-y-title");
         this.infoEl = this.graph.select(".vzb-mc-axis-info");
         this.dataWarningEl = this.graph.select(".vzb-data-warning");
+
         this.yearEl = this.graph.select(".vzb-mc-year");
+        this.year = new DynamicBackground(this.yearEl, {xAlign:'right', yAlign:'top'});
+
         this.mountainMergeStackedContainer = this.graph.select(".vzb-mc-mountains-mergestacked");
         this.mountainMergeGroupedContainer = this.graph.select(".vzb-mc-mountains-mergegrouped");
         this.mountainAtomicContainer = this.graph.select(".vzb-mc-mountains");
@@ -330,22 +334,12 @@ var MountainChartComponent = Component.extend({
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         //year is centered and resized
-        this.yearEl.style("text-anchor", null);
-
-        this.yearEl
-            .attr("x", this.width)
-            .attr("y", this.height*0.15)
-            .style("font-size", Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)) + "px");
-
-        var box = this.yearEl.node().getBBox();
-        this.yearEl
-          .attr("x", box.x)
-          .style("text-anchor", "start");
+        this.year.setConditions({topOffset:margin.top * 2}).resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)));
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
         this.xScale.range([this.rangeShift, this.width * this.rangeRatio + this.rangeShift]);
-        
+
 
         //need to know scale type of X to move on
         var scaleType = this._readyOnce ? this.model.marker.axis_x.scaleType : "log";
@@ -408,24 +402,24 @@ var MountainChartComponent = Component.extend({
         this.mesh = this._math.generateMesh(meshLength, scaleType, this.xScale.domain());
     },
 
-    
+
     zoomToMaxMin: function(){
         var _this = this;
-        
+
         if(this.model.marker.axis_x.fakeMin==null || this.model.marker.axis_x.fakeMax==null) return;
-        
+
         var x1 = this.xScale(this.model.marker.axis_x.fakeMin);
         var x2 = this.xScale(this.model.marker.axis_x.fakeMax);
-        
+
         this.rangeRatio = this.width / (x2 - x1) * this.rangeRatio;
         this.rangeShift = (this.rangeShift - x1) / (x2 - x1) * this.width;
 
         this.xScale.range([this.rangeShift, this.width*this.rangeRatio + this.rangeShift]);
-        
+
         this.xAxisEl.call(this.xAxis);
     },
-    
-    
+
+
     updateUIStrings: function () {
         var _this = this;
 
@@ -737,7 +731,7 @@ var MountainChartComponent = Component.extend({
         this.time = this.model.time.value;
         if (time == null) time = this.time;
 
-        this.yearEl.text(time.getFullYear().toString());
+        this.year.setText(time.getFullYear().toString());
 
         var filter = {};
         filter[_this.TIMEDIM] = time;

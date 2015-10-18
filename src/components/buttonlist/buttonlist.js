@@ -372,6 +372,10 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
+    if (this.model.ui.buttons_expand.length !== 0) {
+        d3.select('div.vzb-large')
+            .classed("vzb-button-expand-true", true);
+    }
   },
 
   //TODO: make opening/closing a dialog via update and model
@@ -531,6 +535,8 @@ var ButtonList = Component.extend({
   },
   toggleFullScreen: function(id) {
 
+    if(!window) return;
+
     var component = this;
     var pholder = component.placeholder;
     var pholder_found = false;
@@ -566,10 +572,10 @@ var ButtonList = Component.extend({
 
     //force window resize event
     (function() {
-      event = root.document.createEvent("HTMLEvents");
+      event = window.document.createEvent("HTMLEvents");
       event.initEvent("resize", true, true);
       event.eventName = "resize";
-      root.dispatchEvent(event);
+      window.dispatchEvent(event);
     })();
 
   }
@@ -577,12 +583,13 @@ var ButtonList = Component.extend({
 });
 
 function isFullscreen() {
-  if(root.document.webkitIsFullScreen !== undefined)
-    return root.document.webkitIsFullScreen;
-  if(root.document.mozFullScreen !== undefined)
-    return root.document.mozFullScreen;
-  if(root.document.msFullscreenElement !== undefined)
-    return root.document.msFullscreenElement;
+  if(!window) return false;
+  if(window.document.webkitIsFullScreen !== undefined)
+    return window.document.webkitIsFullScreen;
+  if(window.document.mozFullScreen !== undefined)
+    return window.document.mozFullScreen;
+  if(window.document.msFullscreenElement !== undefined)
+    return window.document.msFullscreenElement;
 
   return false;
 }
@@ -594,7 +601,8 @@ function exitHandler(emulateClickFunc) {
 }
 
 function subscribeFullscreenChangeEvent(exitFunc) {
-  var doc = root.document;
+  if(!window) return;
+  var doc = window.document;
 
   this.exitFullscreenHandler = exitHandler.bind(this, exitFunc);
   doc.addEventListener('webkitfullscreenchange', this.exitFullscreenHandler, false);
@@ -604,7 +612,7 @@ function subscribeFullscreenChangeEvent(exitFunc) {
 }
 
 function removeFullscreenChangeEvent() {
-  var doc = root.document;
+  var doc = window.document;
 
   doc.removeEventListener('webkitfullscreenchange', this.exitFullscreenHandler);
   doc.removeEventListener('mozfullscreenchange', this.exitFullscreenHandler);

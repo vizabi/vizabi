@@ -319,9 +319,12 @@
   }
 
   .vzb-ip-scaletype {
+    display: block !important;
     float: right;
     width: 100px;
     margin: 5px 10px 5px 0;
+    position: relative;
+    right: 23px;
   }
 }
 

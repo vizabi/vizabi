@@ -32,10 +32,10 @@ var TimeModel = Model.extend({
     playable: true,
     playing: false,
     loop: false,
-    round: 'floor',
+    round: 'round',
     delay: 300,
     delayAnimations: 300,
-    delayStart: 1000,
+    delayStart: 1200,
     delayEnd: 75,
     delayThresholdX2: 300,
     delayThresholdX4: 150,
@@ -48,7 +48,6 @@ var TimeModel = Model.extend({
     xLogStops: [], //TODO: remove from here. only for mountain chart
     yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
     record: false,
-    dragging: false,
     probeX: 0, //TODO: remove from here. only for mountain chart
     tailFatX: 1, //TODO: remove from here. only for mountain chart
     tailCutX: 0, //TODO: remove from here. only for mountain chart
@@ -75,7 +74,8 @@ var TimeModel = Model.extend({
     this._super(values, parent, bind);
 
     var _this = this;
-    this._playing_now = false;
+    this.dragging = false;
+    this.postponePause = false;
 
     //bing play method to model change
     this.on({
@@ -166,8 +166,12 @@ var TimeModel = Model.extend({
   /**
    * Pauses time
    */
-  pause: function() {
-    this.playing = false;
+  pause: function(soft) {
+    if(soft){
+        this.postponePause = true;
+    }else{
+        this.playing = false;
+    }
   },
 
   /**
@@ -253,10 +257,8 @@ var TimeModel = Model.extend({
    * Starts playing the time, initializing the interval
    */
   _startPlaying: function() {
-    //don't play if it's not playable or if it's already playing
-    if(!this.playable || this._playing_now) return;
-
-    this._playing_now = true;
+    //don't play if it's not playable
+    if(!this.playable) return;
 
     var _this = this;
     var time = this.value;
@@ -275,6 +277,7 @@ var TimeModel = Model.extend({
   },
 
   playInterval: function(){
+    if(!this.playing) return;
     var _this = this;
     var time = this.value;
     this.delayAnimations = this.delay;
@@ -293,10 +296,15 @@ var TimeModel = Model.extend({
       } else {
         var step = _this.step;
         if(_this.delay < _this.delayThresholdX2) step*=2;
-        if(_this.delay < _this.delayThresholdX4) step*=2;          
+        if(_this.delay < _this.delayThresholdX4) step*=2;
         time = d3.time[_this.unit].offset(time, step);
-        _this.value = time;
 
+        if(_this.postponePause) {
+            _this.playing = false; 
+            _this.postponePause = false;
+        }
+          
+        _this.value = time;
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
       }
@@ -308,9 +316,8 @@ var TimeModel = Model.extend({
    * Stops playing the time, clearing the interval
    */
   _stopPlaying: function() {
-    this._playing_now = false;
     this._intervals.clearInterval('playInterval_' + this._id);
-    this.snap();
+    //this.snap();
     this.trigger("pause");
   }
 

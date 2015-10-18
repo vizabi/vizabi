@@ -97,9 +97,7 @@ var TimeSlider = Component.extend({
           }
           _this._optionClasses();
           //only set handle position if change is external
-          if(!_this._dragging) {
-            _this._setHandle(_this.model.time.playing);
-          }
+          if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
       }
     };
@@ -115,14 +113,12 @@ var TimeSlider = Component.extend({
     // Same constructor as the superclass
     this._super(config, context);
 
-    this._dragging = false;
     //defaults
     this.width = 0;
     this.height = 0;
 
     this.getValueWidth = utils.memoize(this.getValueWidth);
     this._setTime = utils.throttle(this._setTime, 50);
-    this._setDelay = utils.throttle(this._setDelay, 1000);
   },
 
   //template is ready
@@ -144,50 +140,32 @@ var TimeSlider = Component.extend({
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
 
-    //html elements for the delay_slider
-    this.delay_slider_outer = this.element.select(".vzb-ts-delay-slider");
-    this.delay_slider = this.delay_slider_outer.select("g");
-    this.delay_axis = this.element.select(".vzb-ts-delay-slider-axis");
-    this.delay_slide = this.element.select(".vzb-ts-delay-slider-slide");
-    this.delay_handle = this.delay_slide.select(".vzb-ts-delay-slider-handle");
-    this.delay_valueText = this.delay_slide.select('.vzb-delay-ts-slider-value');
-
-    /*var delayContainer = this.element.select(".vzb-ts-delay-slider-wrapper");
-    var icon_delay_slow = delayContainer.append("div")
-              .attr("class", "vzb-delay-slow vzb-delay")
-              .html(iconset['snail-slow']);
-
-    var iconDelayFast = delayContainer.append("div")
-              .attr("class", "vzb-delay-fast vzb-delay")
-              .html(iconset['cheetah-fast']);
-*/
-
+    //html elements for the delay_handle
+    this.delay_handle = this.element.select(".vzb-ts-btns");
     //Scale
     this.xScale = d3.time.scale()
       .clamp(true);
 
     //Delay Scale
-    this.xDelayScale = d3.scale.linear()
-      .clamp(true);
+    this.delayScale = d3.scale.linear()
+      .domain([0, 90])
+      .range([this.model.time.delayStart, this.model.time.delayEnd]);
 
     //Axis
     this.xAxis = d3.svg.axis()
       .orient("bottom")
       .tickSize(0);
-
-    //Delay Axis
-    this.xDelayAxis = d3.svg.axis()
-      .orient("bottom")
-      .tickSize(0);
-
     //Value
     this.valueText.attr("text-anchor", "middle").attr("dy", "-1em");
 
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
 
-    var delayBrushed = _this._getDelayBrushed(),
-      delayBrushedEnd = _this._getDelayBrushedEnd();
+    //drag the new delay handle
+    var drag = d3.behavior.drag()
+    .on("drag", function () {_this._dragDelay(this, _this);});
+
+    this.delay_handle.call(drag);
 
     //Brush for dragging
     this.brush = d3.svg.brush()
@@ -200,24 +178,9 @@ var TimeSlider = Component.extend({
         brushedEnd.call(this);
       });
 
-    //Delay Brush for dragging
-    this.delay_brush = d3.svg.brush()
-      .x(this.xDelayScale)
-      .extent([0, 0])
-      .on("brush", function () {
-        delayBrushed.call(this);
-      })
-      .on("brushend", function () {
-        delayBrushedEnd.call(this);
-      });
-
     //Slide
     this.slide.call(this.brush);
-    this.delay_slide.call(this.delay_brush);
     this.slide.selectAll(".extent,.resize")
-      .remove();
-
-    this.delay_slide.selectAll(".extent,.resize")
       .remove();
 
 
@@ -248,31 +211,20 @@ var TimeSlider = Component.extend({
     var delay = this.model.time.delay;
 
     play.on('click', function () {
-      _this._dragging = false;
       _this.model.time.play();
     });
 
     pause.on('click', function () {
-      _this._dragging = true;
-      _this.handle.transition()
-        .duration(0);
-      _this.model.time.pause();
-      _this._dragging = false;
-    });//format
+      _this.model.time.pause("soft");
+    });
 
     var fmt = time.formatOutput || time_formats[time.unit];
     this.format = d3.time.format(fmt);
 
     this.changeLimits();
-    this.changeDelayLimits();
     this.changeTime();
-    this.changeDelay();
     this.resize();
-/*
-    this._setHandle(this.model.time.playing);
-    this._setDelayHandle(this.model.time.playing);
-*/
-    //this._toggleDelaySlider();
+
   },
 
   changeLimits: function() {
@@ -285,16 +237,6 @@ var TimeSlider = Component.extend({
       .tickFormat(this.format);
   },
 
-  changeDelayLimits: function () {
-      var minValue = this.model.time.delayStart;
-      var maxValue = this.model.time.delayEnd;
-      //scale
-      this.xDelayScale.domain([minValue, maxValue]);
-      //axis
-      this.xDelayAxis.tickValues([minValue, maxValue])
-        .tickFormat(this.format);
-    },
-
   changeTime: function() {
     this.ui.format = this.model.time.unit;
     //time slider should always receive a time model
@@ -302,12 +244,6 @@ var TimeSlider = Component.extend({
     //special classes
     this._optionClasses();
   },
-
-  changeDelay: function () {
-    var delay = this.model.time.delay;
-    //special classes
-    this._optionClasses();
-    },
 
   /**
    * Executes everytime the container or vizabi is resized
@@ -328,42 +264,26 @@ var TimeSlider = Component.extend({
      //translate according to margins
      this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-     this.delay_slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top/2 + ")");
-
      //adjust scale width if it was not set manually before
      if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
-     if (this.xDelayScale.range()[1] = 1) this.xDelayScale.range([0, this.width/6]);
      //adjust axis with scale
      this.xAxis = this.xAxis.scale(this.xScale)
        .tickPadding(this.profile.label_spacing);
 
-     this.xDelayAxis = this.xDelayAxis.scale(this.xDelayScale)
-       .tickFormat("");
-
      this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
        .call(this.xAxis);
 
-     this.delay_axis.attr("transform", "translate(0," + this.height / 2 + ")")
-       .call(this.xDelayAxis);
-
      this.slide.select(".background")
-       .attr("height", this.height);
-
-     this.delay_slide.select(".background")
        .attr("height", this.height);
 
      //size of handle
      this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
        .attr("r", this.profile.radius);
 
-     this.delay_handle.attr("transform", "translate(0," + this.height / 2 + ")")
-       .attr("r", this.profile.radius - 2);
-
      this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
      this._setHandle();
-     this._setDelayHandle();
 
    },
 
@@ -384,18 +304,14 @@ var TimeSlider = Component.extend({
     return function() {
       _this.model.time.pause();
 
-      if(!_this._blockUpdate) {
-        _this._optionClasses();
-        _this._blockUpdate = true;
-        _this.element.classed(class_dragging, true);
-      }
+      _this._optionClasses();
+      _this.element.classed(class_dragging, true);
 
       var value = _this.brush.extent()[0];
 
       //set brushed properties
 
       if(d3.event.sourceEvent) {
-        _this._dragging = true;
         _this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
@@ -428,67 +344,10 @@ var TimeSlider = Component.extend({
   _getBrushedEnd: function() {
     var _this = this;
     return function() {
-      _this._blockUpdate = false;
       _this.element.classed(class_dragging, false);
-      _this.model.time.pause();
       _this.model.time.dragStop();
-      _this._dragging = false;
-/*
-      //_this.model.time.snap();
-*/
+      _this.model.time.snap();
     };
-  },
-
-  /**
-   * Gets brushed function to be executed when dragging
-   * @returns {Function} brushed function
-   */
-  _getDelayBrushed: function () {
-    var _this = this;
-    return function () {
-
-      if (!_this._blockUpdate) {
-        _this._optionClasses();
-        _this._blockUpdate = true;
-        _this.element.classed(class_dragging, true);
-      }
-
-      var value = _this.delay_brush.extent()[0];
-      //set brushed properties
-      if (d3.event.sourceEvent) {
-        //_this.model.time.dragStart();
-        var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
-        value = _this.xDelayScale.invert(posX);
-
-        var layoutProfile = _this.getLayoutProfile();
-        var textWidth = _this.getValueWidth(layoutProfile, value);
-        var maxPosX = _this.sliderWidth - textWidth / 2;
-        if (posX > maxPosX)
-          posX = maxPosX;
-        else if (posX < 0)
-          posX = 0;
-
-        //set handle position
-        _this.delay_handle.attr("cx", posX);
-      }
-      //set time according to dragged position
-      if (value - _this.model.time.delay.value !== 0) {
-        _this._setDelay(value);
-      }
-    };
-  },
-
-  /**
-   * Gets brushedEnd function to be executed when dragging ends
-   * @returns {Function} brushedEnd function
-   */
-  _getDelayBrushedEnd: function () {
-    var _this = this;
-    return function () {
-      _this._blockUpdate = false;
-      _this.element.classed(class_dragging, false);
-    };
-
   },
 
   /**
@@ -526,13 +385,57 @@ var TimeSlider = Component.extend({
   },
 
   /**
-   * Sets the handle to the correct position
-   * @param {Boolean} transition whether to use transition or not
+ * Drag the delay handle
+ * @param {DOM Object} HTML element, targeted by the event
+ * @param {Object} timeslider object
+ *
+ */
+  _dragDelay: function (target, timeslider) {
+    var elementLeftMargin = 5;
+    // origin point y=25px, x=30
+    var element = d3.select(target);
+    var elementWidth = element.node().getBoundingClientRect().width;
+    var elementHeight = element.node().getBoundingClientRect().height;
+    var ox = (elementWidth / 2) + elementLeftMargin;
+    var oy = elementHeight/2;
+    var mx = d3.event.x;
+    var my = d3.event.y;
+    var angle = timeslider._angleBetweenPoints([ox,oy], [mx,my]);
+    // the normal angle for the arrow is 45 degrees
+    var angle = timeslider._toDegrees(angle) + 45;
+    var delay = 0;
+
+    if (angle > 0 && angle < 90){
+      //change handler angle
+      element.selectAll(".vzb-ts-btn").style("transform","rotate("+angle+"deg)");
+      //correct icon angle
+      element.selectAll(".vzb-icon").style("transform","rotate("+ -angle +"deg)");
+      delay = timeslider.delayScale(angle);
+      timeslider._setDelay(delay);
+    }
+  },
+
+  /**
+   * Returns the angle in radians, given two points
+   * @param {Array} Array element containing the origin point
+   * @param {Array} Array element containing the target point
+   * @returns {number} Angle in radians
    */
-  _setDelayHandle: function (transition) {
-    var value = Math.round(this.model.time.delay).toFixed(2);
-    this.delay_slide.call(this.delay_brush.extent([value, value]));
-    this.delay_handle.attr("cx", this.xDelayScale(value));
+  _angleBetweenPoints: function (p1, p2) {
+    if (p1[0] == p2[0] && p1[1] == p2[1]){
+        return Math.PI / 2;
+    } else {
+        return Math.atan2(p2[1] - p1[1], p2[0] - p1[0] );
+      }
+  },
+
+  /**
+   * Returns the angle in degrees, given an angle in radians
+   * @param {number} angle in radians
+   * @returns {number} Angle in degrees
+   */
+  _toDegrees: function(rad) {
+    return rad * (180/Math.PI);
   },
 
   /**
@@ -585,24 +488,6 @@ var TimeSlider = Component.extend({
     this.element.classed(class_show_value, show_value);
     this.element.classed(class_show_value_when_drag_play, show_value_when_drag_play);
     this.element.classed(class_axis_aligned, axis_aligned);
-  },
-
-  /*
-   * Shows and hides Delay Slider
-   */
-  _toggleDelaySlider: function () {
-    //show/hide delay slider
-
-    var delay_slider_outer = this.element.select(".vzb-ts-delay-slider").select("g");
-    //default value
-    delay_slider_outer.style("opacity", 0);
-
-    delay_slider_outer.on("mouseover", function(){
-        delay_slider_outer.style("opacity", 1);
-    });
-    delay_slider_outer.on("mouseout", function(){
-        delay_slider_outer.style("opacity", 0);
-    });
   }
 });
 
