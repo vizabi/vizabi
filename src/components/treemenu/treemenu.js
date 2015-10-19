@@ -460,13 +460,8 @@ var TreeMenu = Component.extend({
 
     if(toggle) {
       if(label.node().scrollWidth > node.offsetWidth) {
-        //cloning span for animation
-        if(!selection.classed("vzb-treemenu-doubled")) {
-          selection.classed("vzb-treemenu-doubled", true);
-          var childNode = node.children[0];
-          var cloneLabel = d3.select(childNode.parentNode.insertBefore(childNode.cloneNode(true), childNode.nextSibling));
-          cloneLabel.classed(css.list_item_label + '-clone', true);
-        }
+        //add data for animation 
+        label.attr("data-content", label.text());
 
         selection.classed('marquee', true);
       }
