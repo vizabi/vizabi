@@ -2,13 +2,13 @@ linters:
   ColorVariable:
     enabled: false
   DeclarationOrder:
-    enabled: false
+    enabled: true
   EmptyLineBetweenBlocks:
     enabled: false
   ImportantRule:
     enabled: false
   MergeableSelector:
-    enabled: false
+    enabled: true
   NestingDepth:
     enabled: false
   PlaceholderInExtend:

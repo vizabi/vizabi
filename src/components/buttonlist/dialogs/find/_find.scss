@@ -1,3 +1,15 @@
+&.vzb-buttonlist-dialog {
+  &.vzb-dialog-side {
+    .vzb-dialog-buttons {
+      display: block;
+    }
+
+    .vzb-dialog-button.vzb-label-primary {
+      visibility: hidden;
+    }
+  }
+}
+
 .vzb-dialog-content.vzb-dialog-content-fixed {
   height: 310px;
   max-height: 305px;
@@ -8,6 +20,7 @@
   display: inline-block;
   padding: 15px 0 10px 20px;
   vertical-align: top;
+  margin-top: 0;
 }
 
 .vzb-find-filter {
@@ -15,4 +28,5 @@
   position: relative;
   padding: 10px;
   max-width: 210px;
+  top: 0;
 }

@@ -13,6 +13,7 @@ import BubbleChart from 'tools/bubblechart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
+import BubbleMapChart from 'tools/bubblemapchart';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
@@ -95,6 +96,66 @@ BarChart.define('default_options', {
   }
 });
 
+BubbleMapChart.define('default_options', {
+  state: {
+    time: {
+      start: "1952",
+      end: "2012",
+      value: "2000",
+      step: 1,
+      speed: 300,
+      formatInput: "%Y"
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["region"]
+        }
+      }
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_y: {
+        use: "indicator",
+        which: "lex",
+        scaleType: "linear",
+        min: 0,
+        max: 90,
+        allow: {
+          scales: ["linear", "log"]
+        }
+      },
+      axis_x: {
+        use: "property",
+        which: "geo.name",
+        allow: {
+          scales: ["ordinal"]
+        }
+      },
+      color: {
+        use: "property",
+        which: "geo.region",
+        scaleType: "ordinal"
+      }
+    }
+  },
+  data: {
+    reader: "waffle",
+    splash: true
+  },
+  language: language,
+  ui: {
+    buttons: [],
+    buttons_expand: []
+  }
+});
+
 MountainChart.define('datawarning_content', {
   title: "Income data has large uncertainty!",
   body: "There are many different ways to estimate and compare income. Different methods are used in different countries and years. Unfortunately no data source exists that would enable comparisons across all countries, not even for one single year. Gapminder has managed to adjust the picture for some differences in the data, but there are still large issues in comparing individual countries. The precise shape of a country should be taken with a large grain of salt.<br/><br/> Gapminder strongly agrees with <a href='https://twitter.com/brankomilan' target='_blank'>Branko Milanovic</a> about the urgent need for a comparable global income survey, especially for the purpose of monitoring the UN poverty-goal.<br/><br/> We are constantly improving our datasets and methods. Please expect revision of this graph within the coming months. <br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
@@ -115,8 +176,8 @@ MountainChart.define('default_options', {
       formatInput: "%Y",
       xLogStops: [1, 2, 5],
       yMaxMethod: "latest",
-      probeX: 1.82,
-      tailFatX: 1.82,
+      probeX: 1.85,
+      tailFatX: 1.85,
       tailCutX: .2,
       tailFade: .7,
       xScaleFactor: 1.039781626,
@@ -288,7 +349,6 @@ BubbleChart.define('default_options', {
       value: "2015",
       step: 1,
       formatInput: "%Y",
-      round: "ceil",
       trails: true,
       lockNonSelected: 0,
       adaptMinMaxZoom: false

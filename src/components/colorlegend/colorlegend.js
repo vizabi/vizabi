@@ -136,7 +136,7 @@ var ColorLegend = Component.extend({
       if(!isFinite(gradientHeight))
         gradientHeight = utils.keys(palette).length * 25 + 5;
       this.rainbowEl.classed("vzb-hidden", false)
-        .style("height", gradientHeight + "px")
+        .style("height", gradientHeight + 2 + "px")
         .style("background", "linear-gradient(" + utils.values(palette).join(", ") + ")");
     } else {
       this.rainbowEl.classed("vzb-hidden", true);

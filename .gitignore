@@ -10,3 +10,4 @@ test.html
 .idea/
 npm-debug.log
 **/*/_index.js
+.DS_Store
