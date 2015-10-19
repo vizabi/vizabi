@@ -379,11 +379,11 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseleave", function(){
         clearTimeout(_this.timeoutMouseEnter);
-        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 1000)
+        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 800)
       })
       .on("mouseenter", function(){
         clearTimeout(_this.timeoutMouseLeave);
-        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 3000)
+        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 2000)
       });
 
     this.KEY = this.model.entities.getDimension();
