@@ -21,6 +21,9 @@ var MCSelectList = Class.extend({
       .sort(function (a, b) {
         if (b.yMax && a.yMax) return b.yMax - a.yMax;
         return b.sortValue[0] - a.sortValue[0];
+      })
+      .sort(function (a, b) {
+        return b.aggrLevel - a.aggrLevel;
       });
 
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
@@ -87,7 +90,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height;
+    var fontHeight = sample[0][0].getBBox().height * 1.1;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
@@ -95,10 +98,16 @@ var MCSelectList = Class.extend({
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
     if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
-
+    
+    var currentAggrLevel = "null";
+    var aggrLevelSpacing = 0;
+      
     _this.selectList
       .attr("transform", function (d, i) {
-        return "translate(0," + (fontHeight * i + titleHeight * 3) + ")";
+        if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += titleHeight;
+        var spacing = fontHeight * i + titleHeight * 2 + aggrLevelSpacing;
+        currentAggrLevel = d.aggrLevel;
+        return "translate(0," + spacing + ")";
       })
       .each(function (d, i) {
 
