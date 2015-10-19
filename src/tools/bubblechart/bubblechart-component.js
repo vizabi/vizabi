@@ -1317,8 +1317,6 @@ var BubbleChartComp = Component.extend({
 
         view.append("rect")
           .on("click", function(d, i) {
-            //TODO: reintroduce zoom and return this
-            return;
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
 
