@@ -538,6 +538,7 @@ var TreeMenu = Component.extend({
 
     var possiblyActivate = function(event, it) {
 
+        
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
 
         closeAll(curSub);
@@ -609,11 +610,11 @@ var TreeMenu = Component.extend({
       .on('mouseleave', closeCurSub, false);
 
     view.on('mouseenter', function() {
-      possiblyActivate(event, this);
+      possiblyActivate(d3.event, this);
     });
 
     view.on('click', function() {
-      possiblyActivate(event, this);
+      possiblyActivate(d3.event, this);
     });
 
   },
