@@ -58,9 +58,6 @@
             &.vzb-highlighted rect {
               fill: rgb(255, 252, 185);
             }
-            text:hover {
-              opacity: 1;
-            }
           }
 
           .vzb-bc-label-x-icon {
@@ -69,9 +66,12 @@
             //pointer-events: none;
           }
 
-          line {
-            stroke: $vzb-color-grey-dark;
-            opacity: .8;
+          &.vzb-highlighted rect {
+            fill: rgb(255, 252, 185);
+          }
+
+          &:hover .vzb-bc-label-x {
+            opacity: 1;
           }
         }
       } 
@@ -83,6 +83,11 @@
       .vzb-bc-label-shadow,
       .vzb-bc-tooltip-shadow {
         @extend %vzb-chart-label-shadow;
+      }
+      
+      .vzb-bc-lines .vzb-bc-entity line {
+        stroke: $vzb-color-grey-dark;
+        opacity: .8;
       }
 
       .vzb-bc-axis-x,
