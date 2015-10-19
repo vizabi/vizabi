@@ -1368,7 +1368,6 @@ var BubbleChartComp = Component.extend({
         _this._trails.create(d);
       })
       .on("mouseover", function(d) {
-        console.log("hover")
         _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
