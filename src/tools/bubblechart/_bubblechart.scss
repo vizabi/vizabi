@@ -49,7 +49,7 @@
             fill: $vzb-color-primary;
             text-anchor: middle;
             dominant-baseline: middle;
-            pointer-events: none;
+            pointer-events: visible;
             font-size: .9em;
             cursor: pointer;
             stroke: $vzb-color-white;
@@ -68,10 +68,6 @@
 
           &.vzb-highlighted rect {
             fill: rgb(255, 252, 185);
-          }
-
-          &:hover .vzb-bc-label-x {
-            opacity: 1;
           }
         }
       } 
