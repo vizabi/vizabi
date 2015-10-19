@@ -92,7 +92,7 @@ export default Class.extend({
     this.context.selectAll("text").each(function(d, i) {
         d3.select(this)
           .attr("x", _this.fontWidth * i)
-          .style("font-size", _this.fontSize)
+          .style("font-size", _this.fontSize + 'px')
           .style("text-anchor", "middle");
       });
     return this;
