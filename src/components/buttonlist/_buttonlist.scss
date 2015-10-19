@@ -7,6 +7,7 @@ $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-color-title: $vzb-color-primary-light;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
+$vzb-dialog-content-height: 250px;
 
 .vzb-buttonlist {
   @import '../bubblesize/bubblesize';
@@ -135,6 +136,11 @@ $vzb-button-color-border: #cce6ed;
       overflow-y: hidden;
       overflow-x: scroll;
       white-space: nowrap;
+    }
+    .vzb-buttonlist-dialog {
+      .vzb-dialog-content.vzb-dialog-content-fixed {
+        max-height: $vzb-dialog-content-height - 50px;
+      }
     }
   }
 }

@@ -99,30 +99,16 @@
         background-color: $vzb-color-grey-light;
       }
       &.marquee {
-        > .vzb-treemenu-list-item-label,
-        > .vzb-treemenu-list-item-label-clone {
+        > .vzb-treemenu-list-item-label {
           text-overflow: inherit;
           overflow: visible;
-
+          animation: marquee 5s linear infinite;
+          &:after {
+            content: attr(data-content);
+            left: 153%;
+            position: absolute;            
+          }
         }
-
-        > .vzb-treemenu-list-item-label {
-          animation: marquee 10s linear infinite;
-        }
-
-        > .vzb-treemenu-list-item-label-clone {
-          animation: marquee-clone 10s linear infinite;
-        }
-      }
-
-      
-      .vzb-treemenu-list-item-label-clone {
-        display: block;
-        top: -20px;
-        left: 130%;
-        height: 0;
-        padding: 0;
-        margin: 0;
       }
       + .vzb-treemenu-list-item-special {
         margin-top: 15px;
@@ -169,37 +155,9 @@
 @keyframes marquee {
   0% {
     transform: translateX(0);
-    opacity: 1;
-  }
-  48% {
-    transform: translateX(-130%);
-    opacity: 1;
-  }
-  49% {
-    transform: translateX(-130%);
-    opacity: 0;
-  }
-  50% {
-    transform: translateX(130%);
-    opacity: 0;
-  }    
-  51% {
-    transform: translateX(130%);
-    opacity: 1;
   }
   100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-//marquee animation
-@keyframes marquee-clone {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-260%);
+    transform: translateX(-150%);
   }
 }
 
