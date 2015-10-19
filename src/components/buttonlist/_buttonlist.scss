@@ -176,15 +176,23 @@ $vzb-button-color-border: #cce6ed;
     .vzb-tool-buttonlist {
       width: 290px;
 
+      .vzb-buttonlist {
+        display: flex;
+        flex-direction: column;
+      }
+
       .vzb-buttonlist-container-dialogs {
+        flex-grow: 1;
         min-height: 85%;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
 
       .vzb-buttonlist-container-buttons {
         position: relative;
         padding: 10px 0;
         margin-right: -10px;
+        flex-grow: 0;
       }
 
       .vzb-buttonlist-btn {
@@ -222,12 +230,10 @@ $vzb-button-color-border: #cce6ed;
         }
 
         &[data-btn="find"] {
-          height: 400px;
           @import 'dialogs/find/find';
         }
 
         &[data-btn="show"] {
-          height: 400px;
           @import 'dialogs/show/show';
         }
 

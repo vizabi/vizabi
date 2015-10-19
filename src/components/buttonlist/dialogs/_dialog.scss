@@ -36,18 +36,6 @@
   }
 
   &[data-btn='find'] {
-
-    &.vzb-buttonlist-dialog {
-      &.vzb-dialog-side {
-        .vzb-dialog-buttons {
-          display: block;
-        }
-
-        .vzb-dialog-button.vzb-label-primary {
-          visibility: hidden;
-        }
-      }
-    }
     .vzb-dialog-title {
       display: inline-block;
       vertical-align: top;
@@ -57,7 +45,8 @@
     .vzb-find-filter {
       display: inline-block;
       position: relative;
-      padding: 45px 0 20px;
+      padding: 5px 0 20px;
+      top: 40px;
       max-width: 170px;
     }
   }
@@ -327,6 +316,10 @@
     margin: 5px 10px 5px 0;
     position: relative;
     right: 23px;
+
+    &:disabled {
+      display: none !important;
+    }
   }
 }
 
