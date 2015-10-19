@@ -130,6 +130,12 @@ $vzb-button-color-border: #cce6ed;
       margin-bottom: 20px;
       width: $vzb-button-width;
     }
+    .vzb-buttonlist-container-buttons {
+      margin-bottom: -20px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -153,25 +159,11 @@ $vzb-button-color-border: #cce6ed;
       }
     }
   }
-}
-
-&.vzb-landscape,
-&.vzb-medium,
-&.vzb-large {
-  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+  .vzb-buttonlist-container-buttons {
     margin-right: -20px;
     overflow-x: hidden;
     overflow-y: scroll;
     white-space: normal;
-  }
-}
-
-&.vzb-small.vzb-portrait {
-  .vzb-buttonlist .vzb-buttonlist-container-buttons {
-    margin-bottom: -20px;
-    overflow-y: hidden;
-    overflow-x: scroll;
-    white-space: nowrap;
   }
 }
 
