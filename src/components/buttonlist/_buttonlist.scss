@@ -138,7 +138,14 @@ $vzb-button-color-border: #cce6ed;
     }
   }
 }
-
+&.vzb-small.vzb-landscape {
+  .vzb-buttonlist-dialog {
+    @include position(absolute, -2000px 40px auto -130px);
+    &.vzb-active {
+      @include position(absolute, auto 40px 0 50%);
+    }
+  }
+}
 &.vzb-landscape,
 &.vzb-medium,
 &.vzb-large {

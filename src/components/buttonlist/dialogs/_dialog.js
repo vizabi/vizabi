@@ -82,6 +82,14 @@ var Dialog = Component.extend({
         this.leftPos = null;
         this.topPos = null;
         this.placeholderEl.attr('style', '');
+      } else {
+        var contentHeight = parseInt(this.rootEl.style('height'));
+        var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+        console.log(this.placeholderEl);
+        if (contentHeight < placeholderHeight) {
+          this.placeholderEl.style('bottom', 'auto');
+          this.placeholderEl.style('top', -contentHeight + 'px');
+        }
       }
 
       var profile = this.getLayoutProfile();
@@ -130,7 +138,7 @@ var Dialog = Component.extend({
   close: function() {
     if(this.isOpen || !this.rootEl.classed('vzb-portrait')) {
       this.leftPos = this.placeholderEl.style('left');
-      this.topPos = this.placeholderEl.style('top');
+      //this.topPos = this.placeholderEl.style('top');
     }
     if(!this.rootEl.classed('vzb-portrait')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
