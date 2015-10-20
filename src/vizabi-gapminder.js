@@ -176,8 +176,8 @@ MountainChart.define('default_options', {
       formatInput: "%Y",
       xLogStops: [1, 2, 5],
       yMaxMethod: "latest",
-      probeX: 1.82,
-      tailFatX: 1.82,
+      probeX: 1.85,
+      tailFatX: 1.85,
       tailCutX: .2,
       tailFade: .7,
       xScaleFactor: 1.039781626,
@@ -349,7 +349,6 @@ BubbleChart.define('default_options', {
       value: "2015",
       step: 1,
       formatInput: "%Y",
-      round: "ceil",
       trails: true,
       lockNonSelected: 0,
       adaptMinMaxZoom: false

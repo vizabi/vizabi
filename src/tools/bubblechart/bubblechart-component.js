@@ -10,9 +10,9 @@ import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 import {
   warn as iconWarn,
-  question as iconQuestion
-}
-from 'base/iconset';
+  question as iconQuestion,
+  close as iconClose
+} from 'base/iconset';
 
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
@@ -363,13 +363,27 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
+      .on('dblclick.zoom', null) 
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
+    
+    d3.select(this.parent.placeholder)
       .onTap(function() {
-        return;
-        _this._bubblesInteract().mouseout();
-        _this.tooltipMobile.classed('vzb-hidden', true);
+        _this._panZoom.enabled = true;
+//        _this._bubblesInteract().mouseout();
+//        _this.tooltipMobile.classed('vzb-hidden', true);
+      })
+      .on("mousedown", function(){
+        _this._panZoom.enabled = true;
+      })
+      .on("mouseleave", function(){
+        clearTimeout(_this.timeoutMouseEnter);
+        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 800)
+      })
+      .on("mouseenter", function(){
+        clearTimeout(_this.timeoutMouseLeave);
+        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 2000)
       });
 
     this.KEY = this.model.entities.getDimension();
@@ -661,6 +675,7 @@ var BubbleChartComp = Component.extend({
           text = _this.model.marker.label.getValue(d);
         }
 
+        //set tooltip and show axis projections
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer[TIMEDIM] = _this.time;
@@ -668,12 +683,25 @@ var BubbleChartComp = Component.extend({
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
         _this._setTooltip(text, x, y, s);
+          
+          
+        //show the little cross on the selected label  
+        _this.entityLabels
+            .filter(function(f){return f[KEY] == d[KEY]})
+            .select(".vzb-bc-label-x")
+            .classed("vzb-transparent", false);
       },
 
       mouseout: function(d, i) {
         _this.model.entities.clearHighlighted();
         _this._setTooltip();
         _this.entityLabels.classed("vzb-highlighted", false);
+          
+        //hide the little cross on the selected label  
+        _this.entityLabels
+            .filter(function(f){return f[KEY] == d[KEY]})
+            .select(".vzb-bc-label-x")
+            .classed("vzb-transparent", true); 
       },
 
       click: function(d, i) {
@@ -786,8 +814,7 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4), margin.top, margin.left);
-
+    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4));
     this.eventArea
       .attr("width", this.width)
       .attr("height", this.height);
@@ -834,10 +861,10 @@ var BubbleChartComp = Component.extend({
     this.xAxisElContainer
       .attr("width", this.width + 1)
       .attr("height", this.activeProfile.margin.bottom)
-      .attr("y", this.height)
+      .attr("y", this.height - 1)
       .attr("x", -1);
     this.xAxisEl
-      .attr("transform", "translate(" + 1 + ",0)");
+      .attr("transform", "translate(1,1)");
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
@@ -852,12 +879,18 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
+    this.dataWarningEl.select("text").text(
+      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
+    )
+    var dataWarningWidth = this.dataWarningEl.select("text").node().getBBox().width;
 
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
+      
+
 
     var sTitleText = this.sTitleEl.select("text")
       .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
@@ -867,7 +900,7 @@ var BubbleChartComp = Component.extend({
     var font = parseInt(probe.style("font-size")) * (this.height - 20) / probe.node().getBBox().width;
 
     if(probe.node().getBBox().width > this.height - 20) {
-      sTitleText.style("font-size", font);
+      sTitleText.style("font-size", font + "px");
     } else {
       sTitleText.style("font-size", null);
     }
@@ -885,10 +918,6 @@ var BubbleChartComp = Component.extend({
 
     this.dataWarningEl
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
-
-    this.dataWarningEl.select("text").text(
-      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
-    )
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -1154,14 +1183,20 @@ var BubbleChartComp = Component.extend({
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
 
-            labelGroup.select(".vzb-bc-label-x")
+            var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
               .attr("x", /*contentBBox.height * .0 + */ 4)
               .attr("y", contentBBox.height * -1);
 
-            labelGroup.select("circle")
+            labelCloseGroup.select("circle")
               .attr("cx", /*contentBBox.height * .0 + */ 4)
               .attr("cy", contentBBox.height * -1)
               .attr("r", contentBBox.height * .5);
+
+            labelCloseGroup.select("svg")
+              .attr("x", -contentBBox.height * .5 + 4)
+              .attr("y", contentBBox.height * -1.5)
+              .attr("width", contentBBox.height)
+              .attr("height", contentBBox.height)
 
             rect.attr("width", contentBBox.width + 8)
               .attr("height", contentBBox.height * 1.2)
@@ -1320,8 +1355,6 @@ var BubbleChartComp = Component.extend({
 
         view.append("rect")
           .on("click", function(d, i) {
-            //TODO: reintroduce zoom and return this
-            return;
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
 
@@ -1339,20 +1372,27 @@ var BubbleChartComp = Component.extend({
 
         view.append("text").attr("class", "vzb-bc-label-content");
 
-        view.append("circle").attr("class", "vzb-bc-label-x vzb-label-shadow vzb-transparent")
-          .on("click", function(d, i) {
-            _this.model.entities.clearHighlighted();
-            //default prevented is needed to distinguish click from drag
-            if(d3.event.defaultPrevented) return;
-            _this.model.entities.selectEntity(d);
-          });
-
-        view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
+        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
+          .html(iconClose)
+        
+        cross.insert("circle", "svg");
+          
+        cross.select("svg")
+          .attr("class", "vzb-bc-label-x-icon")
+          .attr("width", "0px")
+          .attr("height", "0px");        
+        
+        cross.on("click", function() {
+          _this.model.entities.clearHighlighted();
+          //default prevented is needed to distinguish click from drag
+          if(d3.event.defaultPrevented) return;
+          _this.model.entities.selectEntity(d);
+        });
 
         _this._trails.create(d);
       })
-      .on("mousemove", function() {
-        _this.model.entities.highlightEntity(this.__data__);
+      .on("mouseover", function(d) {
+        _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
       })

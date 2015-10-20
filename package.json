@@ -1,6 +1,6 @@
 {
   "name": "vizabi",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "Vizabi Framework, Interactive charts and visualization tools animated through time",
   "main": "build/dist/vizabi.js",
   "files": [
@@ -19,19 +19,18 @@
     "url": "https://github.com/Gapminder/vizabi/issues"
   },
   "homepage": "http://vizabi.org",
-  "dependencies": {
-    "d3": "^3.5.6",
-    "font-awesome": "^4.4.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-eslint": "4.1.3",
     "bourbon": "^4.2.5",
     "chalk": "1.1.1",
+    "d3": "^3.5.6",
     "del": "2.0.2",
     "eslint": "1.6.0",
     "eslint-config-airbnb": "0.1.0",
     "eslint-plugin-react": "3.5.1",
     "event-stream": "3.3.1",
+    "font-awesome": "^4.4.0",
     "glob": "5.0.15",
     "gulp": "3.9.0",
     "gulp-autoprefixer": "3.0.2",

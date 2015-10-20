@@ -33,7 +33,8 @@ var css = {
   alignYt: 'vzb-align-y-top',
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
-  alignXr: 'vzb-align-x-right'
+  alignXr: 'vzb-align-x-right',
+  alignXc: 'vzb-align-x-center'
 };
 
 //options and globals
@@ -112,7 +113,7 @@ var TreeMenu = Component.extend({
     this.name = 'gapminder-treemenu';
     this.model_expects = [{
       name: "marker"
-        //TODO: learn how to expect model "axis" or "size" or "color"
+      //TODO: learn how to expect model "axis" or "size" or "color"
     }, {
       name: "language",
       type: "language"
@@ -403,32 +404,31 @@ var TreeMenu = Component.extend({
       };
 
       //translation integration
-      var translation = function(value, data, i) {
-
+      var translationMatch = function(value, data, i) {
         var arr = [];
         if(_this.langStrings()) {
           for(var language in _this.langStrings()) {
             for(var key in _this.langStrings()[language]) {
               if(key.indexOf('indicator/') == 0 &&
+                key.replace(/indicator\//g,"") == data[i][OPTIONS.SEARCH_PROPERTY] &&
                 _this.langStrings()[language][key].toLowerCase().indexOf(
                   value.toLowerCase()) >= 0) {
-                return key;
+                return true;
               };
             };
           };
         };
+        return false;
       };
 
       var matching = function(data) {
         for(var i = 0; i < data.length; i++) {
           var match = false;
-          match = match || (data[i][OPTIONS.SEARCH_PROPERTY].toLowerCase().indexOf(
-              value.toLowerCase()) >= 0) ||
-            data[i][OPTIONS.SEARCH_PROPERTY] == translation(value, data, i);
+          match =  translationMatch(value, data, i);
           if(match) {
             matches.children.push(data[i]);
           }
-          if(data[i][OPTIONS.SUBMENUS]) {
+          if(!match && data[i][OPTIONS.SUBMENUS]) {
             matching(data[i][OPTIONS.SUBMENUS]);
           }
         }
@@ -460,6 +460,9 @@ var TreeMenu = Component.extend({
 
     if(toggle) {
       if(label.node().scrollWidth > node.offsetWidth) {
+        //add data for animation 
+        label.attr("data-content", label.text());
+
         selection.classed('marquee', true);
       }
     } else {
@@ -492,7 +495,7 @@ var TreeMenu = Component.extend({
         remain += this.activeProfile.col_width
       };
 
-      for(var i = ulArr.length - 1; i >= 0; i--) {
+      for(var i = ulArr.length - 1; i > 0; i--) {
         var ulSelectNested = d3.select(ulArr[i]);
 
         if(fullColNumber > 0) {
@@ -535,6 +538,7 @@ var TreeMenu = Component.extend({
 
     var possiblyActivate = function(event, it) {
 
+        
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
 
         closeAll(curSub);
@@ -606,11 +610,11 @@ var TreeMenu = Component.extend({
       .on('mouseleave', closeCurSub, false);
 
     view.on('mouseenter', function() {
-      possiblyActivate(event, this);
+      possiblyActivate(d3.event, this);
     });
 
     view.on('click', function() {
-      possiblyActivate(event, this);
+      possiblyActivate(d3.event, this);
     });
 
   },
@@ -658,7 +662,7 @@ var TreeMenu = Component.extend({
     })
 
     var dataFiltered = pruneTree(data, function(f) {
-     return allowedIDs.indexOf(f.id) > -1
+      return allowedIDs.indexOf(f.id) > -1
     });
 
 
@@ -727,7 +731,8 @@ var TreeMenu = Component.extend({
     this.wrapper.classed(css.alignYb, alignY === "bottom");
     this.wrapper.classed(css.alignXl, alignX === "left");
     this.wrapper.classed(css.alignXr, alignX === "right");
-
+    this.wrapper.classed(css.alignXc, alignX === "center");
+    this.wrapper.style("margin-left",alignX === "center"? "-" + this.activeProfile.col_width/2 + "px" : null);
     var strings = langStrings ? langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
 

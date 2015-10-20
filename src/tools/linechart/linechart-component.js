@@ -706,7 +706,7 @@ var LCComponent = Component.extend({
 
   entityMouseout: function(me, index, context) {
     var _this = context;
-    if(d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
+    if(d3.event.relatedTarget && d3.select(d3.event.relatedTarget).classed('vzb-tooltip')) return;
 
     // hide and show things like it was before hovering
     _this.unhoverTimeout = setTimeout(function() {

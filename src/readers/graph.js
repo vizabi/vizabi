@@ -6,7 +6,7 @@ var FILE_CACHED = {}; //caches files from this reader
 var FILE_REQUESTED = {}; //caches files from this reader
 // temporal hack for https problem
 
-var GraphReader = Reader.extend('graph', {
+var GraphReader = Reader.extend({
 
   /**
    * Initializes the reader.
