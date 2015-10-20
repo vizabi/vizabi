@@ -53,26 +53,17 @@ var Layout = Events.extend({
     if(this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
       return;
     }
+        
+    // choose profile depending on size
+    utils.forEach(this.screen_profiles, function(range, size) {
+      //remove class
+      utils.removeClass(_this._container, class_prefix + size);
+      //find best fit
+      if(width >= range.min_width && height >= range.min_height) {
+        _this._curr_profile = size;
+      }
+    });
 
-    // presentation mode overrides any size profile
-    if (this.ui.presentation) {
-        
-        this._curr_profile = class_presentation;
-    
-    } else {
-        
-        // choose profile depending on size
-        utils.forEach(this.screen_profiles, function(range, size) {
-          //remove class
-          utils.removeClass(_this._container, class_prefix + size);
-          //find best fit
-          if(width >= range.min_width && height >= range.min_height) {
-            _this._curr_profile = size;
-          }
-        });
-        
-    }
-      
     //update size class
     utils.addClass(this._container, class_prefix + this._curr_profile);
     //toggle, untoggle classes based on orientation
@@ -95,6 +86,24 @@ var Layout = Events.extend({
   setContainer: function(container) {
     this._container = container;
     this.setSize();
+    this.setPresentation(this.ui.presentation);
+  },
+
+  /**
+   * Sets the presentation mode for this layout
+   * @param {Bool} presentation mode on or off
+   */
+  setPresentation: function(presentation) {
+    this.ui.presentation = presentation
+    if (this.ui.presentation) {
+        utils.addClass(this._container, class_prefix + class_presentation);
+    } else {
+        utils.removeClass(this._container, class_prefix + class_presentation);
+    } 
+  },
+
+  getPresentationMode: function() {
+    return this.ui.presentation;
   },
 
   /**

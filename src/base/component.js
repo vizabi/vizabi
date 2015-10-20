@@ -239,6 +239,21 @@ var Component = Events.extend({
     this.trigger('resize');
   },
 
+  getActiveProfile: function(profiles, presentationProfileChanges) {
+    // get layout values
+    var layoutProfile = this.getLayoutProfile();
+    var presentationMode = this.getPresentationMode();
+    var activeProfile = utils.deepClone(profiles[layoutProfile]); // clone so it can be extended without changing the original profile
+
+    console.log(presentationMode);
+    // extend the profile with presentation mode values
+    if (presentationMode && presentationProfileChanges[layoutProfile]) {
+      utils.deepExtend(activeProfile, presentationProfileChanges[layoutProfile]);
+    }
+
+    return activeProfile;
+  },
+
   /*
    * Loads all subcomponents
    */
@@ -306,6 +321,19 @@ var Component = Events.extend({
       return this.layout.currentProfile();
     } else {
       return this.parent.getLayoutProfile();
+    }
+  },
+
+  /**
+   * Get if presentation mode is set of the current tool
+   * @returns {Bool} presentation mode
+   */
+  getPresentationMode: function() {
+    //get profile from parent if layout is not available
+    if(this.layout) {
+      return this.layout.getPresentationMode();
+    } else {
+      return this.parent.getPresentationMode();
     }
   },
 

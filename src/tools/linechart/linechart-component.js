@@ -236,7 +236,7 @@ var LCComponent = Component.extend({
     this.profiles = {
       "small": {
         margin: {
-          top: 30,
+          top: 30, 
           right: 20,
           left: 55,
           bottom: 30

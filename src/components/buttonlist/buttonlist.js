@@ -372,10 +372,14 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
+    if (this.model.ui.buttons_expand.length !== 0) {
+        d3.select('div.vzb-large')
+            .classed("vzb-button-expand-true", true);
+    }
   },
 
   //TODO: make opening/closing a dialog via update and model
-  /*
+  /* 
    * Activate a button dialog
    * @param {String} id button id
    */

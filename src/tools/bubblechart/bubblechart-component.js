@@ -256,7 +256,7 @@ var BubbleChartComp = Component.extend({
 
 
   _rangeBump: function(arg, undo) {
-    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    var bump = this.activeProfile.maxRadius;
     undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
@@ -709,8 +709,8 @@ var BubbleChartComp = Component.extend({
 
     var _this = this;
 
-    this.profiles = {
-      "small": {
+    var profiles = {
+      small: {
         margin: {
           top: 30,
           right: 10,
@@ -722,7 +722,7 @@ var BubbleChartComp = Component.extend({
         maxRadius: 40,
         infoElHeight: 16
       },
-      "medium": {
+      medium: {
         margin: {
           top: 40,
           right: 15,
@@ -734,19 +734,7 @@ var BubbleChartComp = Component.extend({
         maxRadius: 55,
         infoElHeight: 20
       },
-      "large": {
-        margin: {
-          top: 50,
-          right: 20,
-          left: 60,
-          bottom: 60
-        },
-        padding: 2,
-        minRadius: 1,
-        maxRadius: 70,
-        infoElHeight: 22
-      },
-      "presentation": {
+      large: {
         margin: {
           top: 50,
           right: 20,
@@ -760,7 +748,29 @@ var BubbleChartComp = Component.extend({
       }
     };
 
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
+    var presentationProfileChanges = {
+      "small": {
+        margin: {
+          bottom: 80,
+          left: 80
+        }
+      },
+      "medium": {
+        margin: {
+          bottom: 100,
+          left: 100
+        }
+      },
+      "large": {
+        margin: {
+          bottom: 10,
+          left: 100
+        }
+      }     
+    } 
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
 

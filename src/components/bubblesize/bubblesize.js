@@ -30,10 +30,6 @@ var profiles = {
     "large": {
       minRadius: 1,
       maxRadius: 70
-    },
-    "presentation": {
-      minRadius: 1,
-      maxRadius: 70
     }
 };
 
