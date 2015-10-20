@@ -278,7 +278,9 @@ LineChart.define('default_options', {
       axis_y: {
         use: "indicator",
         which: "gdp_per_cap",
-        scaleType: "log"
+        scaleType: "log",
+        min: 150000,
+        max: 1500000
       },
       axis_x: {
         use: "indicator",
@@ -287,25 +289,18 @@ LineChart.define('default_options', {
       },
       color: {
         use: "property",
-        which: "geo",
-        palette: {
-          "asi": "#FF5872",
-          "eur": "#FFE700",
-          "ame": "#7FEB00",
-          "afr": "#00D5E9",
-          "_default": "#ffb600"
-        }
+        which: "geo.region"
       },
       color_shadow: {
         use: "property",
-        which: "geo",
+        which: "geo.region",
         palette: {
-          "asi": "#FF5872",
-          "eur": "#FFE700",
-          "ame": "#7FEB00",
-          "afr": "#00D5E9",
-          "_default": "#ffb600"
-        }
+            "asi": "#c34357",
+            "eur": "#c6b40b",
+            "ame": "#67b111",
+            "afr": "#0eb8c7",
+            "_default": "#cb950f"
+        }          
       }
     }
   },
