@@ -16,11 +16,9 @@ var Show = Dialog.extend({
     this.name = 'show';
     var _this = this;
 
-    this.components = [];
-
     this.model_binds = {
       "change:state:entities:show": function(evt) {
-        _this.ready();
+        _this.redraw();
       }
     }
 
@@ -58,13 +56,13 @@ var Show = Dialog.extend({
     this.showHideSearch();
   },
 
-  /**
-   * Build the list everytime it updates
-   */
-  //TODO: split update in render and update methods
   ready: function() {
     this._super();
-
+    this.redraw();
+  },
+    
+  redraw: function(){
+  
     var _this = this;
     
     var filter = {};
@@ -111,6 +109,8 @@ var Show = Dialog.extend({
 
     this.showHideSearch();
     this.showHideDeselect();
+  
+  
   },
 
   showHideSearch: function() {
