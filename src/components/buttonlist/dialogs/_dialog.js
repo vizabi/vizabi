@@ -65,7 +65,7 @@ var Dialog = Component.extend({
     var profile = this.getLayoutProfile();
     this.dragHandler.classed("vzb-hidden", profile === 'small');
     this.pinIcon.classed("vzb-hidden", profile === 'small');
-
+    this.resize();
   },
 
   resize: function() {
@@ -85,10 +85,13 @@ var Dialog = Component.extend({
       } else {
         var contentHeight = parseInt(this.rootEl.style('height'));
         var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-        console.log(this.placeholderEl);
         if (contentHeight < placeholderHeight) {
+          this.topPos = (-contentHeight + 50) + 'px';
+          this.leftPos = false;
           this.placeholderEl.style('bottom', 'auto');
-          this.placeholderEl.style('top', -contentHeight + 'px');
+        } else {
+          this.topPos = false;
+          this.placeholderEl.style('bottom', false);
         }
       }
 
@@ -138,7 +141,7 @@ var Dialog = Component.extend({
   close: function() {
     if(this.isOpen || !this.rootEl.classed('vzb-portrait')) {
       this.leftPos = this.placeholderEl.style('left');
-      //this.topPos = this.placeholderEl.style('top');
+      this.topPos = this.placeholderEl.style('top');
     }
     if(!this.rootEl.classed('vzb-portrait')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
