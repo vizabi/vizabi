@@ -915,10 +915,17 @@ var MountainChartComponent = Component.extend({
 
     redrawDataPoints: function () {
         var _this = this;
-        var mergeGrouped = _this.model.marker.group.merge;
-        var mergeStacked = _this.model.marker.stack.merge;
-        var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
-        var stackMode = _this.model.marker.stack.which;
+        var mergeGrouped = this.model.marker.group.merge;
+        var mergeStacked = this.model.marker.stack.merge;
+        var stackMode = this.model.marker.stack.which;
+        //it's important to know if the chart is dragging or playing at the moment. 
+        //because if that is the case, the mountain chart will merge the stacked entities to save performance
+        var dragOrPlay = (this.model.time.dragging || this.model.time.playing) 
+            //never merge when no entities are stacked
+            && stackMode !== "none"
+            //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
+            //so the mountain chat is stuck in the merged state. this line prevents it:
+            && !(this.model.time.value - this.model.time.end==0 && !this.model.time.loop);
 
         this._adjustMaxY();
 
