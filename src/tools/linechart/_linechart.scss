@@ -51,18 +51,18 @@
 
     .vzb-lc-entity {
       opacity: .9;
-    }
 
-    .vzb-lc-entity.vzb-hovered {
-      opacity: .9;
-    }
+      &.vzb-hovered {
+        opacity: .9;
+      }
 
-    .vzb-lc-entity.vzb-dimmed {
-      opacity: .3;
-    }
+      &.vzb-dimmed {
+        opacity: .3;
+      }
 
-    .vzb-lc-entity.vzb-selected {
-      opacity: 1;
+      &.vzb-selected {
+        opacity: 1;
+      }
     }
   }
   &.vzb-large {

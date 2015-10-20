@@ -49,6 +49,8 @@
       font-size: $vzb-font-size-regular;
       padding: 10px 25px 10px 5px;
       color: $vzb-color-black;
+      white-space: normal;
+      line-height: 150%;
 
       a {
         color: $vzb-color-accent-orange;
@@ -59,8 +61,6 @@
       a:hover {
         text-decoration: underline;
       }
-      white-space: normal;
-      line-height: 150%;
     }
 
     .vzb-data-warning-close {

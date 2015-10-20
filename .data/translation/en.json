@@ -36,7 +36,7 @@
     "mount/stacking/region": "Region",
     "mount/stacking/world": "World",
     "mount/stacking/none": "None",
-    "mount/manualSorting": "Manual sorting of groups",
+    "mount/manualSorting": "Manual sorting of groups:",
     "mount/mergegrouped": "Merge grouped",
     "mount/mergestacked": "Merge stacked too",
     "mount/people": "people",

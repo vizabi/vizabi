@@ -10,9 +10,9 @@ import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 import {
   warn as iconWarn,
-  question as iconQuestion
-}
-from 'base/iconset';
+  question as iconQuestion,
+  close as iconClose
+} from 'base/iconset';
 
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
@@ -367,10 +367,23 @@ var BubbleChartComp = Component.extend({
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
+    
+    d3.select(this.parent.placeholder)
       .onTap(function() {
-        return;
-        _this._bubblesInteract().mouseout();
-        _this.tooltipMobile.classed('vzb-hidden', true);
+        _this._panZoom.enabled = true;
+//        _this._bubblesInteract().mouseout();
+//        _this.tooltipMobile.classed('vzb-hidden', true);
+      })
+      .on("mousedown", function(){
+        _this._panZoom.enabled = true;
+      })
+      .on("mouseleave", function(){
+        clearTimeout(_this.timeoutMouseEnter);
+        _this.timeoutMouseLeave = setTimeout(function(){_this._panZoom.enabled = false;}, 800)
+      })
+      .on("mouseenter", function(){
+        clearTimeout(_this.timeoutMouseLeave);
+        _this.timeoutMouseEnter = setTimeout(function(){_this._panZoom.enabled = true;}, 2000)
       });
 
     this.KEY = this.model.entities.getDimension();
@@ -662,6 +675,7 @@ var BubbleChartComp = Component.extend({
           text = _this.model.marker.label.getValue(d);
         }
 
+        //set tooltip and show axis projections
         var pointer = {};
         pointer[KEY] = d[KEY];
         pointer[TIMEDIM] = _this.time;
@@ -669,12 +683,25 @@ var BubbleChartComp = Component.extend({
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
         _this._setTooltip(text, x, y, s);
+          
+          
+        //show the little cross on the selected label  
+        _this.entityLabels
+            .filter(function(f){return f[KEY] == d[KEY]})
+            .select(".vzb-bc-label-x")
+            .classed("vzb-transparent", false);
       },
 
       mouseout: function(d, i) {
         _this.model.entities.clearHighlighted();
         _this._setTooltip();
         _this.entityLabels.classed("vzb-highlighted", false);
+          
+        //hide the little cross on the selected label  
+        _this.entityLabels
+            .filter(function(f){return f[KEY] == d[KEY]})
+            .select(".vzb-bc-label-x")
+            .classed("vzb-transparent", true); 
       },
 
       click: function(d, i) {
@@ -1132,14 +1159,20 @@ var BubbleChartComp = Component.extend({
           if(!cached.contentBBox || cached.contentBBox.width != contentBBox.width) {
             cached.contentBBox = contentBBox;
 
-            labelGroup.select(".vzb-bc-label-x")
+            var labelCloseGroup = labelGroup.select(".vzb-bc-label-x")
               .attr("x", /*contentBBox.height * .0 + */ 4)
               .attr("y", contentBBox.height * -1);
 
-            labelGroup.select("circle")
+            labelCloseGroup.select("circle")
               .attr("cx", /*contentBBox.height * .0 + */ 4)
               .attr("cy", contentBBox.height * -1)
               .attr("r", contentBBox.height * .5);
+
+            labelCloseGroup.select("svg")
+              .attr("x", -contentBBox.height * .5 + 4)
+              .attr("y", contentBBox.height * -1.5)
+              .attr("width", contentBBox.height)
+              .attr("height", contentBBox.height)
 
             rect.attr("width", contentBBox.width + 8)
               .attr("height", contentBBox.height * 1.2)
@@ -1298,8 +1331,6 @@ var BubbleChartComp = Component.extend({
 
         view.append("rect")
           .on("click", function(d, i) {
-            //TODO: reintroduce zoom and return this
-            return;
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
 
@@ -1317,20 +1348,27 @@ var BubbleChartComp = Component.extend({
 
         view.append("text").attr("class", "vzb-bc-label-content");
 
-        view.append("circle").attr("class", "vzb-bc-label-x vzb-label-shadow vzb-transparent")
-          .on("click", function(d, i) {
-            _this.model.entities.clearHighlighted();
-            //default prevented is needed to distinguish click from drag
-            if(d3.event.defaultPrevented) return;
-            _this.model.entities.selectEntity(d);
-          });
-
-        view.append("text").attr("class", "vzb-bc-label-x vzb-transparent").text("x");
+        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
+          .html(iconClose)
+        
+        cross.insert("circle", "svg");
+          
+        cross.select("svg")
+          .attr("class", "vzb-bc-label-x-icon")
+          .attr("width", "0px")
+          .attr("height", "0px");        
+        
+        cross.on("click", function() {
+          _this.model.entities.clearHighlighted();
+          //default prevented is needed to distinguish click from drag
+          if(d3.event.defaultPrevented) return;
+          _this.model.entities.selectEntity(d);
+        });
 
         _this._trails.create(d);
       })
-      .on("mousemove", function() {
-        _this.model.entities.highlightEntity(this.__data__);
+      .on("mouseover", function(d) {
+        _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
       })
