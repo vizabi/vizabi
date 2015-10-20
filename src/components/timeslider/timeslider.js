@@ -60,17 +60,15 @@ var profiles = {
 var presentationProfileChanges = {
   "small": {
     margin: {
-      left: 25
     }
   },
   "medium": {
     margin: {
-      left: 55
+      top: 9
     }
   },
   "large": {
     margin: {
-      left: 55
     }
   }     
 }

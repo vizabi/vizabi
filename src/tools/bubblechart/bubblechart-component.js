@@ -751,19 +751,21 @@ var BubbleChartComp = Component.extend({
     var presentationProfileChanges = {
       "small": {
         margin: {
-          bottom: 80,
+          bottom: 100,
           left: 80
         }
       },
       "medium": {
         margin: {
+          top: 80,
           bottom: 100,
           left: 100
         }
       },
       "large": {
         margin: {
-          bottom: 10,
+          top: 80,
+          bottom: 100,
           left: 100
         }
       }     

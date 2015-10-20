@@ -224,11 +224,20 @@
     }
   }
   &.vzb-presentation .vzb-bubblechart-svg {
+    .vzb-bc-axis-x-title,
+    .vzb-bc-axis-y-title {
+      font-size: $vzb-font-size-larger;
+    }
+
     .vzb-bc-axis-x,
     .vzb-bc-axis-y {
       text {
         font-size: $vzb-font-size-larger;
       }
+    }
+
+    .vzb-bc-labels {
+      font-size: $vzb-font-size-larger;
     }
   }
 }
