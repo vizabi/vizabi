@@ -130,8 +130,7 @@
       }
     }
   }
-  &.vzb-large,
-  &.vzb-presentation {
+  &.vzb-large {
 
     .vzb-bubblechart-svg {
     
@@ -225,21 +224,31 @@
       }
     }
   }
-  &.vzb-presentation .vzb-bubblechart-svg {
-    .vzb-bc-axis-x-title,
-    .vzb-bc-axis-y-title {
-      font-size: $vzb-font-size-larger;
-    }
+  &.vzb-presentation {
 
-    .vzb-bc-axis-x,
-    .vzb-bc-axis-y {
-      text {
+    .vzb-bubblechart-svg {
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        font-size: $vzb-font-size-larger;
+      }
+
+      .vzb-bc-axis-x,
+      .vzb-bc-axis-y {
+        text {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+
+      .vzb-bc-labels {
         font-size: $vzb-font-size-larger;
       }
     }
 
-    .vzb-bc-labels {
-      font-size: $vzb-font-size-larger;
+    &.vzb-small {
+      .vzb-bc-axis-x-title,
+      .vzb-bc-axis-y-title {
+        font-size: $vzb-font-size-medium;
+      }
     }
   }
 }

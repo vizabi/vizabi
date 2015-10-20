@@ -245,7 +245,6 @@ var Component = Events.extend({
     var presentationMode = this.getPresentationMode();
     var activeProfile = utils.deepClone(profiles[layoutProfile]); // clone so it can be extended without changing the original profile
 
-    console.log(presentationMode);
     // extend the profile with presentation mode values
     if (presentationMode && presentationProfileChanges[layoutProfile]) {
       utils.deepExtend(activeProfile, presentationProfileChanges[layoutProfile]);
