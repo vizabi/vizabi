@@ -530,9 +530,7 @@ var Model = Events.extend({
     this.on('change:which', function(evt) {
       //defer is necessary because other events might be queued.
       //load right after such events
-      utils.defer(function() {
-        _this.load();
-      });
+      _this.load();
     });
     //this is a hook, therefore it needs to reload when data changes
     this.on('hook_change', function() {
