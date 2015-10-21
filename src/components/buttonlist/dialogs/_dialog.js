@@ -65,7 +65,7 @@ var Dialog = Component.extend({
     var profile = this.getLayoutProfile();
     this.dragHandler.classed("vzb-hidden", profile === 'small');
     this.pinIcon.classed("vzb-hidden", profile === 'small');
-
+    this.resize();
   },
 
   resize: function() {
@@ -82,6 +82,17 @@ var Dialog = Component.extend({
         this.leftPos = null;
         this.topPos = null;
         this.placeholderEl.attr('style', '');
+      } else {
+        var contentHeight = parseInt(this.rootEl.style('height'));
+        var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+        if (contentHeight < placeholderHeight) {
+          this.topPos = (-contentHeight + 50) + 'px';
+          this.leftPos = false;
+          this.placeholderEl.style('bottom', 'auto');
+        } else {
+          this.topPos = false;
+          this.placeholderEl.style('bottom', false);
+        }
       }
 
       var profile = this.getLayoutProfile();

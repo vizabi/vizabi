@@ -7,6 +7,7 @@ $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-color-title: $vzb-color-primary-light;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
+$vzb-dialog-content-height: 250px;
 
 .vzb-buttonlist {
   @import '../bubblesize/bubblesize';
@@ -130,9 +131,27 @@ $vzb-button-color-border: #cce6ed;
       margin-bottom: 20px;
       width: $vzb-button-width;
     }
+    .vzb-buttonlist-container-buttons {
+      margin-bottom: -20px;
+      overflow-y: hidden;
+      overflow-x: scroll;
+      white-space: nowrap;
+    }
+    .vzb-buttonlist-dialog {
+      .vzb-dialog-content.vzb-dialog-content-fixed {
+        max-height: $vzb-dialog-content-height - 50px;
+      }
+    }
   }
 }
-
+&.vzb-small.vzb-landscape {
+  .vzb-buttonlist-dialog {
+    @include position(absolute, -2000px 40px auto -130px);
+    &.vzb-active {
+      @include position(absolute, auto 40px 0 50%);
+    }
+  }
+}
 &.vzb-landscape,
 &.vzb-medium,
 &.vzb-large {
@@ -153,25 +172,11 @@ $vzb-button-color-border: #cce6ed;
       }
     }
   }
-}
-
-&.vzb-landscape,
-&.vzb-medium,
-&.vzb-large {
-  .vzb-buttonlist .vzb-buttonlist-container-buttons {
+  .vzb-buttonlist-container-buttons {
     margin-right: -20px;
     overflow-x: hidden;
     overflow-y: scroll;
     white-space: normal;
-  }
-}
-
-&.vzb-small.vzb-portrait {
-  .vzb-buttonlist .vzb-buttonlist-container-buttons {
-    margin-bottom: -20px;
-    overflow-y: hidden;
-    overflow-x: scroll;
-    white-space: nowrap;
   }
 }
 
@@ -184,15 +189,23 @@ $vzb-button-color-border: #cce6ed;
     .vzb-tool-buttonlist {
       width: 290px;
 
+      .vzb-buttonlist {
+        display: flex;
+        flex-direction: column;
+      }
+
       .vzb-buttonlist-container-dialogs {
+        flex-grow: 1;
         min-height: 85%;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
 
       .vzb-buttonlist-container-buttons {
         position: relative;
         padding: 10px 0;
         margin-right: -10px;
+        flex-grow: 0;
       }
 
       .vzb-buttonlist-btn {
@@ -230,12 +243,10 @@ $vzb-button-color-border: #cce6ed;
         }
 
         &[data-btn="find"] {
-          height: 400px;
           @import 'dialogs/find/find';
         }
 
         &[data-btn="show"] {
-          height: 400px;
           @import 'dialogs/show/show';
         }
 

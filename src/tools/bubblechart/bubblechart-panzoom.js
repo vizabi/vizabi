@@ -109,7 +109,7 @@ export default Class.extend({
                 if(d3.event.sourceEvent != null && _this.scrollableAncestor) {
                     if(d3.event.sourceEvent != null && !self.enabled){
                         _this.scrollableAncestor.scrollTop += d3.event.sourceEvent.deltaY;
-                        d3.event.scale = 1
+                        zoomer.scale(1)
                         return;
                     }
                 }

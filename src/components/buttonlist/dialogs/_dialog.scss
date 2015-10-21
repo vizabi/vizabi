@@ -1,5 +1,4 @@
 .vzb-buttonlist-dialog {
-  $vzb-dialog-content-height: 250px;
   @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
   @include transition(all 300ms ease-in-out);
   @include position(absolute, null null -450px 50%);
@@ -36,18 +35,6 @@
   }
 
   &[data-btn='find'] {
-
-    &.vzb-buttonlist-dialog {
-      &.vzb-dialog-side {
-        .vzb-dialog-buttons {
-          display: block;
-        }
-
-        .vzb-dialog-button.vzb-label-primary {
-          visibility: hidden;
-        }
-      }
-    }
     .vzb-dialog-title {
       display: inline-block;
       vertical-align: top;
@@ -57,7 +44,8 @@
     .vzb-find-filter {
       display: inline-block;
       position: relative;
-      padding: 45px 0 20px;
+      padding: 5px 0 20px;
+      top: 40px;
       max-width: 170px;
     }
   }
@@ -153,17 +141,17 @@
     width: auto;
     cursor: pointer;
     padding: 8px;
+    color: $vzb-color-grey;
+    font-family: $vzb-font-family;
+    text-align: center;
+    text-transform: uppercase;
+
     &:first-child {
       padding-left: 0;
     }
     &:last-child {
       padding-right: 0;
     }
-    color: $vzb-color-grey;
-    font-family: $vzb-font-family;
-    text-align: center;
-    text-transform: uppercase;
-
     &.vzb-label-primary {
       color: $vzb-color-primary;
       font-weight: bold;
@@ -241,6 +229,7 @@
     margin: 6px 0;
     position: relative;
     text-indent: 23px;
+
     input[type=checkbox] {
       @extend .vzb-hidden;
     }
@@ -253,6 +242,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
+
       &:after {
         @include position(absolute, 4px null null 4px);
         @include opacity(0);
@@ -285,21 +275,21 @@
     color: $vzb-color-primary;
     font-weight: bold;
   }
-}
 
-.vzb-buttonlist-dialog.pinned {
-  .thumb-tack-class {
-    background-color: $vzb-color-primary-strong;
-    border: 1px solid $vzb-color-primary-strong;
+  &.pinned {
+    .thumb-tack-class {
+      background-color: $vzb-color-primary-strong;
+      border: 1px solid $vzb-color-primary-strong;
 
-    path {
-      fill: $vzb-color-white;
+      path {
+        fill: $vzb-color-white;
+      }
     }
-  }
 
-  .thumb-tack-class-ico:before {
-    color: #fff !important;
+    .thumb-tack-class-ico:before {
+      color: #fff !important;
 
+    }
   }
 }
 
@@ -325,6 +315,10 @@
     margin: 5px 10px 5px 0;
     position: relative;
     right: 23px;
+
+    &:disabled {
+      display: none !important;
+    }
   }
 }
 

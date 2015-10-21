@@ -197,7 +197,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
         this.yearEl = this.graph.select(".vzb-mc-year");
-        this.year = new DynamicBackground(this.yearEl, {xAlign:'right', yAlign:'top'});
+        this.year = new DynamicBackground(this.yearEl);
 
         this.mountainMergeStackedContainer = this.graph.select(".vzb-mc-mountains-mergestacked");
         this.mountainMergeGroupedContainer = this.graph.select(".vzb-mc-mountains-mergegrouped");
@@ -333,8 +333,18 @@ var MountainChartComponent = Component.extend({
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var yearLabelOptions = {
+            topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
+            xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
+            yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
+        };
+        
+        var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
+        
         //year is centered and resized
-        this.year.setConditions({topOffset:margin.top * 2}).resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)));
+        this.year
+            .setConditions(yearLabelOptions)
+            .resize(this.width, this.height, yearLabelFontSize);
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
@@ -915,10 +925,17 @@ var MountainChartComponent = Component.extend({
 
     redrawDataPoints: function () {
         var _this = this;
-        var mergeGrouped = _this.model.marker.group.merge;
-        var mergeStacked = _this.model.marker.stack.merge;
-        var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
-        var stackMode = _this.model.marker.stack.which;
+        var mergeGrouped = this.model.marker.group.merge;
+        var mergeStacked = this.model.marker.stack.merge;
+        var stackMode = this.model.marker.stack.which;
+        //it's important to know if the chart is dragging or playing at the moment. 
+        //because if that is the case, the mountain chart will merge the stacked entities to save performance
+        var dragOrPlay = (this.model.time.dragging || this.model.time.playing) 
+            //never merge when no entities are stacked
+            && stackMode !== "none"
+            //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
+            //so the mountain chat is stuck in the merged state. this line prevents it:
+            && !(this.model.time.value - this.model.time.end==0 && !this.model.time.loop);
 
         this._adjustMaxY();
 

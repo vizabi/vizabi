@@ -90,5 +90,6 @@ a {
   }
   #vzbp-main {
     @include position(absolute, 0 0 0 0);
+    @include transition(none);
   }
 }
