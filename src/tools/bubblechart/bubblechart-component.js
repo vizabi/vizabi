@@ -43,6 +43,9 @@ var BubbleChartComp = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     //starts as splash if this is the option

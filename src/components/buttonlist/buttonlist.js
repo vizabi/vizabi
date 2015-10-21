@@ -92,6 +92,12 @@ var ButtonList = Component.extend({
         dialog: false,
         func: this.toggleBubbleLock.bind(this)
       },
+      'presentation': {
+        title: "buttons/presentation",
+        icon: "presentation",
+        dialog: false,
+        func: this.togglePresentationMode.bind(this)
+      },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
@@ -167,7 +173,6 @@ var ButtonList = Component.extend({
         d3.select('div.vzb-large')
             .classed("vzb-button-expand-true", true);
     }
-
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -239,6 +244,7 @@ var ButtonList = Component.extend({
 
     this.setBubbleTrails();
     this.setBubbleLock();
+    this.setPresentationMode();
 
     d3.select(this.root.element).on("mousedown", function(e) {
       if(!this._active_comp) return; //don't do anything if nothing is open
@@ -532,6 +538,21 @@ var ButtonList = Component.extend({
 
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
+  },
+  togglePresentationMode: function() {
+    this.model.ui.presentation = !this.model.ui.presentation; 
+    this.setPresentationMode();
+  },
+  setPresentationMode: function() {
+    var id = 'presentation';
+    var translator = this.model.language.getTFunction();
+    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+
+    btn.select(".vzb-buttonlist-btn-icon")
+      .html(iconset[this.model.ui.presentation ? "desktop" : "presentation"]);
+    var text = this.model.ui.presentation ? translator("buttons/desktop") : translator("buttons/presentation")
+    btn.select(".vzb-buttonlist-btn-title").html(text);
+      
   },
   toggleFullScreen: function(id) {
 

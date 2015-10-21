@@ -27,8 +27,8 @@ var Layout = Events.extend({
   /**
    * Initializes the layout manager
    */
-  init: function(ui_options) {
-    this.ui = ui_options || {};
+  init: function(ui) {
+    this.ui = ui || {};
       
     this._container = null;
     //dom element
@@ -86,15 +86,14 @@ var Layout = Events.extend({
   setContainer: function(container) {
     this._container = container;
     this.setSize();
-    this.setPresentation(this.ui.presentation);
+    this.updatePresentation();
   },
 
   /**
    * Sets the presentation mode for this layout
    * @param {Bool} presentation mode on or off
    */
-  setPresentation: function(presentation) {
-    this.ui.presentation = presentation
+  updatePresentation: function() {
     if (this.ui.presentation) {
         utils.addClass(this._container, class_prefix + class_presentation);
     } else {

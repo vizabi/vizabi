@@ -51,7 +51,6 @@ var Tool = Component.extend({
    */
   init: function(placeholder, options) {
     this._id = utils.uniqueId('t');
-    this.layout = new Layout();
     this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
       '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
     this.model_binds = this.model_binds || {};
@@ -82,6 +81,10 @@ var Tool = Component.extend({
       },
       'load_start': function() {
         _this.beforeLoading();
+      },
+      "change:ui:presentation": function() {
+        _this.layout.updatePresentation();
+        _this.trigger('resize');
       },
       'ready': function(evt) {
         if(_this._ready) {

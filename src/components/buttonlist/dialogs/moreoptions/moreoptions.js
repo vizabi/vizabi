@@ -73,6 +73,11 @@ export default Dialog.extend({
       placeholder: '.vzb-dialog-bubbleopacity-selectdim',
       model: ["state.entities"],
       arg: "opacitySelectDim"
+    }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-presentationmode-switch',
+      model: ["ui", "language"],
+      checkbox: 'presentation'
     }];
 
     this._super(config, parent);

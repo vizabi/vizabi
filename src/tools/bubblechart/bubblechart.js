@@ -25,7 +25,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
     this.components = [{
       component: BubbleChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
