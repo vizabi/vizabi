@@ -363,11 +363,11 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
-      .on('dblclick.zoom', null) 
+      .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
-    
+
     d3.select(this.parent.placeholder)
       .onTap(function() {
         _this._panZoom.enabled = true;
@@ -533,8 +533,21 @@ var BubbleChartComp = Component.extend({
     sTitle.enter().append("text");
     sTitle
       .attr("text-anchor", "end");
-
-    this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    var parser = new DOMParser();
+    //----creates an xml document container---
+    var xmlDoc = parser.parseFromString(iconWarn, "text/xml");
+    //---access the element within the xml document container---
+    var elemXML=xmlDoc.documentElement
+    //---convert the xml element to an inline SVG element---
+    var elemSVG =document.adoptNode(elemXML);
+    //---append the svg group element<g>, with its 3 circles---
+    //---get id of the d3-generated container element--
+    var mydefs=document.getElementsByClassName("vzb-data-warning");
+    mydefs[0].innerHTML = '';
+    mydefs[0].appendChild(elemSVG);
+    console.log(this.dataWarningEl);
+    this.dataWarningEl = this.graph.select('.vzb-data-warning');
+    this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
@@ -683,9 +696,9 @@ var BubbleChartComp = Component.extend({
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
         _this._setTooltip(text, x, y, s);
-          
-          
-        //show the little cross on the selected label  
+
+
+        //show the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
@@ -696,12 +709,12 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.clearHighlighted();
         _this._setTooltip();
         _this.entityLabels.classed("vzb-highlighted", false);
-          
-        //hide the little cross on the selected label  
+
+        //hide the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
-            .classed("vzb-transparent", true); 
+            .classed("vzb-transparent", true);
       },
 
       click: function(d, i) {
@@ -865,7 +878,7 @@ var BubbleChartComp = Component.extend({
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
-      
+
 
 
     var sTitleText = this.sTitleEl.select("text")
@@ -1350,14 +1363,14 @@ var BubbleChartComp = Component.extend({
 
         var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
           .html(iconClose)
-        
+
         cross.insert("circle", "svg");
-          
+
         cross.select("svg")
           .attr("class", "vzb-bc-label-x-icon")
           .attr("width", "0px")
-          .attr("height", "0px");        
-        
+          .attr("height", "0px");
+
         cross.on("click", function() {
           _this.model.entities.clearHighlighted();
           //default prevented is needed to distinguish click from drag
