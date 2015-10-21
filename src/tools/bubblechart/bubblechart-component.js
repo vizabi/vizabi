@@ -533,6 +533,16 @@ var BubbleChartComp = Component.extend({
     sTitle.enter().append("text");
     sTitle
       .attr("text-anchor", "end");
+    var doc = new DOMParser().parseFromString(
+      iconWarn, 'application/xml');
+
+    var myNode=document.getElementsByClassName("vzb-data-warning")[0];
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+    }
+    myNode.appendChild(
+      myNode.ownerDocument.importNode(doc.documentElement, true));
+/*
     var parser = new DOMParser();
     //----creates an xml document container---
     var xmlDoc = parser.parseFromString(iconWarn, "text/xml");
@@ -542,11 +552,12 @@ var BubbleChartComp = Component.extend({
     var elemSVG =document.adoptNode(elemXML);
     //---append the svg group element<g>, with its 3 circles---
     //---get id of the d3-generated container element--
-    var mydefs=document.getElementsByClassName("vzb-data-warning");
-    mydefs[0].innerHTML = '';
-    mydefs[0].appendChild(elemSVG);
+    var myNode=document.getElementsByClassName("vzb-data-warning")[0];
+    myNode[0].innerHTML = '';
+    myNode[0].appendChild(elemSVG);
+*/
     console.log(this.dataWarningEl);
-    this.dataWarningEl = this.graph.select('.vzb-data-warning');
+    //this.dataWarningEl = this.graph.select('.vzb-data-warning');
     this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
