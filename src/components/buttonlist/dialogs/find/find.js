@@ -58,6 +58,12 @@ var Find = Dialog.extend({
     });
 
     this._super();
+
+    //make sure it refreshes when all is reloaded
+    var _this = this;
+    this.root.on('ready', function() {
+      _this.ready();
+    })
   },
 
   open: function() {
