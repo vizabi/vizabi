@@ -197,7 +197,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
         this.yearEl = this.graph.select(".vzb-mc-year");
-        this.year = new DynamicBackground(this.yearEl, {xAlign:'right', yAlign:'top'});
+        this.year = new DynamicBackground(this.yearEl);
 
         this.mountainMergeStackedContainer = this.graph.select(".vzb-mc-mountains-mergestacked");
         this.mountainMergeGroupedContainer = this.graph.select(".vzb-mc-mountains-mergegrouped");
@@ -333,8 +333,18 @@ var MountainChartComponent = Component.extend({
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var yearLabelOptions = {
+            topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
+            xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
+            yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
+        };
+        
+        var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
+        
         //year is centered and resized
-        this.year.setConditions({topOffset:margin.top * 2}).resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)));
+        this.year
+            .setConditions(yearLabelOptions)
+            .resize(this.width, this.height, yearLabelFontSize);
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
