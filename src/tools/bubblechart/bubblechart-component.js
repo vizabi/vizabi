@@ -790,7 +790,7 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4));
+    this.year.resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)));
     this.eventArea
       .attr("width", this.width)
       .attr("height", this.height);
