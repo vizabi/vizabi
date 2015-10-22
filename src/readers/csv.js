@@ -34,8 +34,12 @@ var CSVReader = Reader.extend({
     //this specific reader has support for the tag {{LANGUAGE}}
     var path = this._basepath.replace("{{LANGUAGE}}", language);
 
+    //if no year
+    if(!query.where.time) {
+      path = path.replace(".csv", "-properties.csv");
+    }
     //if only one year, files ending in "-YYYY.csv"
-    if(query.where.time[0].length === 1) {
+    else if(query.where.time && query.where.time[0].length === 1) {
       path = path.replace(".csv", "-" + query.where.time[0][0] + ".csv");
     }
 

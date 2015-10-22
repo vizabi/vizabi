@@ -460,8 +460,12 @@ var Model = Events.extend({
       utils.error('Error:', this._id, 'can\'t find the space');
       return true;
     }
-    dimensions = this._getAllDimensions();
-    filters = this._getAllFilters(splashScreen);
+
+    var prop = globals.metadata.indicatorsDB[this.which].use === "property";
+    var exceptions = (prop) ? { exceptType: 'time' } : {};
+
+    dimensions = this._getAllDimensions(exceptions);
+    filters = this._getAllFilters(exceptions, splashScreen);
 
     if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
@@ -1175,9 +1179,16 @@ var Model = Events.extend({
    * @param {Boolean} splashScreen get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters: function(splashScreen) {
+  _getAllFilters: function(opts, splashScreen) {
+    opts = opts || {};
     var filters = {};
     utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
     return filters;
