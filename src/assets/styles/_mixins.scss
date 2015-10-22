@@ -42,7 +42,7 @@
 }
 
 @mixin rotate($r) {
-  @include prefixer(transform, rotate($r), webkit moz ms o spec);
+  @include prefixer(transform, rotate($r), spec webkit moz ms o);
 }
 
 @mixin box-shadow($x, $y, $blur, $color, $inset: false) {
