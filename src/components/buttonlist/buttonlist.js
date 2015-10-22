@@ -548,11 +548,7 @@ var ButtonList = Component.extend({
     var translator = this.model.language.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
-    btn.select(".vzb-buttonlist-btn-icon")
-      .html(iconset[this.model.ui.presentation ? "desktop" : "presentation"]);
-    var text = this.model.ui.presentation ? translator("buttons/desktop") : translator("buttons/presentation")
-    btn.select(".vzb-buttonlist-btn-title").html(text);
-      
+    btn.classed(class_active_locked, this.model.ui.presentation);     
   },
   toggleFullScreen: function(id) {
 
