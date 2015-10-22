@@ -12,7 +12,7 @@ $vzb-ts-value-width: 40px;
     width: $vzb-ts-btn-area;
     .vzb-ts-btn {
       @include border-radius(40px 5px 40px 40px);
-      transform: rotate(45deg);
+      @include rotate(45deg);
       font-size: $vzb-font-size-regular;
       width: $vzb-ts-btn-width;
       height: $vzb-ts-btn-width;
@@ -24,7 +24,7 @@ $vzb-ts-value-width: 40px;
       cursor: pointer;
 
       .vzb-icon {
-        transform: rotate(-45deg);
+        @include rotate(-45deg);
         path {
           fill: $vzb-color-white;
         }
