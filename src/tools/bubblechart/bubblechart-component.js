@@ -537,26 +537,14 @@ var BubbleChartComp = Component.extend({
       iconWarn, 'application/xml');
 
     var myNode=document.getElementsByClassName("vzb-data-warning")[0];
+    console.log(myNode);
+    console.log(this.dataWarningEl[0].g.innerHTML);
     while (myNode.firstChild) {
       myNode.removeChild(myNode.firstChild);
     }
     myNode.appendChild(
       myNode.ownerDocument.importNode(doc.documentElement, true));
-/*
-    var parser = new DOMParser();
-    //----creates an xml document container---
-    var xmlDoc = parser.parseFromString(iconWarn, "text/xml");
-    //---access the element within the xml document container---
-    var elemXML=xmlDoc.documentElement
-    //---convert the xml element to an inline SVG element---
-    var elemSVG =document.adoptNode(elemXML);
-    //---append the svg group element<g>, with its 3 circles---
-    //---get id of the d3-generated container element--
-    var myNode=document.getElementsByClassName("vzb-data-warning")[0];
-    myNode[0].innerHTML = '';
-    myNode[0].appendChild(elemSVG);
-*/
-    console.log(this.dataWarningEl);
+
     //this.dataWarningEl = this.graph.select('.vzb-data-warning');
     this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
