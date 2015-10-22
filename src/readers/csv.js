@@ -97,8 +97,12 @@ var CSVReader = Reader.extend({
 
         //make category an array and fix missing regions
         res = res.map(function(row) {
-          row['geo.cat'] = [row['geo.cat']];
-          row['geo.region'] = row['geo.region'] || row['geo'];
+          if(row['geo.cat']) {
+            row['geo.cat'] = [row['geo.cat']];
+          }
+          if(row['geo.region'] || row['geo']) {
+            row['geo.region'] = row['geo.region'] || row['geo'];
+          }
           return row;
         });
 
