@@ -534,20 +534,18 @@ var BubbleChartComp = Component.extend({
     sTitle
       .attr("text-anchor", "end");
 
-    utils.setIcon(this.dataWarningEl, iconWarn);
-    this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
 
-    this.yInfoEl
-        .html(iconQuestion)
+    utils.setIcon(this.yInfoEl, iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.xInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.xInfoEl, iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
+
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {

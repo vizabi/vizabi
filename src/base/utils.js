@@ -1035,4 +1035,5 @@ export var setIcon = function(element, icon) {
       new DOMParser().parseFromString(
         icon, 'application/xml').documentElement, true)
   );
+  return element;
 }
