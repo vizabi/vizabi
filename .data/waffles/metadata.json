@@ -144,6 +144,14 @@
             "scales": ["linear", "log"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
+        "age": {
+            "allowCharts": ["*"],
+            "use": "indicator",
+            "unit": "year",
+            "scales": ["linear", "log"],
+            "sourceLink": "",
+            "domain": [0, 150]
+        },
         "_default": {
             "allowCharts": ["*"],
             "use": "value",
