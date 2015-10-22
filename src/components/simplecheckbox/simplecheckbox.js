@@ -38,6 +38,7 @@ export default Component.extend({
   },
 
   ready: function() {
+    this.parentModel = (this.submodel) ? this.model.mdl[this.submodel] : this.model.mdl;
     this.updateView();
   },
 
@@ -53,19 +54,13 @@ export default Component.extend({
   },
 
   updateView: function() {
-    console.log('hi');
     this.translator = this.model.language.getTFunction();
     this.labelEl.text(this.translator("check/" + this.checkbox));
-    var value = (this.submodel) ? this.model.mdl[this.submodel][this.checkbox] : this.model.mdl[this.checkbox];
-    this.checkEl.property("checked", !!value);
+    this.checkEl.property("checked", !!this.parentModel[this.checkbox]);
   },
 
   _setModel: function(value) {
-    if (this.submodel) {
-      this.model.mdl[this.submodel][this.checkbox] = value;
-    } else {
-      this.model.mdl[this.checkbox] = value;
-    }
+    this.parentModel[this.checkbox] = value;
   }
 
 });
