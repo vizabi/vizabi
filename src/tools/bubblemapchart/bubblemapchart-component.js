@@ -45,17 +45,21 @@ var BubbleMapChartComponent = Component.extend({
     this.yScale = null;
     this.cScale = d3.scale.category10();
 
+    this.defaultWidth = 960;
+    this.defaultHeight = 500;
+    this.boundBox = [[0.05, 0], [0.95, 0.85]]; // two points to set box bound on 960 * 500 image;
+
     d3_geo_projection();
   },
 
 
   afterPreload: function(){
-      var _this = this;
-      // TODO: add url to config or local
-      d3.json(globals.gapminder_paths.baseUrl + "data/world-50m.json", function(error, world) {
-        if (error) throw error;
-        _this.world = world;
-      });
+    var _this = this;
+    // TODO: add url to config or local
+    d3.json(globals.gapminder_paths.baseUrl + "data/world-50m.json", function(error, world) {
+      if (error) throw error;
+      _this.world = world;
+    });
   },
 
   /**
@@ -67,6 +71,45 @@ var BubbleMapChartComponent = Component.extend({
 
     this.graph = this.element.select('.vzb-bmc-graph');
     this.bubbles = this.graph.select('.vzb-bmc-bubbles');
+    this.mapSvg = this.element.select('.vzb-bmc-map-background');
+
+    // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
+    // http://bl.ocks.org/mbostock/3710566 robinson
+    // map background
+    var defaultWidth = this.defaultWidth;
+    var defaultHeight = this.defaultHeight;
+    var world = this.world;
+    var projection = this.projection = d3.geo.robinson()
+        .scale(150)
+        .translate([defaultWidth / 2, defaultHeight / 2])
+        .precision(.1);
+
+    var path = this.bgPath = d3.geo.path()
+        .projection(projection);
+
+    var graticule = d3.geo.graticule();
+
+    var svg = this.mapGraph = d3.select(".vzb-bmc-map-graph")
+        .attr("width", defaultWidth)
+        .attr("height", defaultHeight);
+    svg.html('');
+
+    svg.append("path")
+        .datum(graticule)
+        .attr("class", "graticule")
+        .attr("d", path);
+
+    svg.insert("path", ".graticule")
+        .datum(topojson.feature(world, world.objects.land))
+        .attr("class", "land")
+        .attr("d", path);
+
+    svg.insert("path", ".graticule")
+        .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
+        .attr("class", "boundary")
+        .attr("d", path);
+
+
 
     var _this = this;
     this.on("resize", function () {
@@ -139,19 +182,17 @@ var BubbleMapChartComponent = Component.extend({
       });
 
     //positioning and sizes of the bubbles
-
-    var bubbles = this.bubbles.selectAll('.vzb-bmc-bubble');
-
     this.bubbles.selectAll('.vzb-bmc-bubble')
       .attr("fill", function (d) {
         return _this.cScale(values.color[d[entityDim]]);
       })
       .attr("cx", function (d) {
-        return _this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat])[0];
+        d.cLoc = _this.skew(_this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat]));
+        return d.cLoc[0];
       })
       .transition().duration(duration).ease("linear")
       .attr("cy", function (d) {
-        return _this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat])[1];
+        return d.cLoc[1];
       })
       .attr("r", function (d) {
         return _this.yScale(values.axis_y[d[entityDim]]);
@@ -205,13 +246,24 @@ var BubbleMapChartComponent = Component.extend({
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     var margin = this.activeProfile.margin;
 
-
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
+    var boundBox = this.boundBox;
+    var viewBox = [ boundBox[0][0] * this.defaultWidth,
+                    boundBox[0][1] * this.defaultHeight,
+                    boundBox[1][0] * this.defaultWidth,
+                    boundBox[1][1] * this.defaultHeight];
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    this.mapSvg
+      .attr('width', width)
+      .attr('height', height)
+      .attr('viewBox', viewBox.join(' '))
+      .attr('preserveAspectRatio', 'none');
 
     //update scales to the new range
     // TODO: r ration should add to config
@@ -221,40 +273,21 @@ var BubbleMapChartComponent = Component.extend({
       this.yScale.rangePoints([0, this.height / 4], _this.activeProfile.padding).range();
     }
 
-    // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
-    // http://bl.ocks.org/mbostock/3710566 robinson
-    // map background
-    var world = this.world;
-    var projection = this.projection = d3.geo.robinson()
-        .clipExtent([[0, 0], [width, height]])
-        .scale(150 / 960 * width)
-        .translate([width / 2, height / 2])
-        .precision(.1);
 
-    var path = this.bgPath = d3.geo.path()
-        .projection(projection);
-
-    var graticule = d3.geo.graticule();
-
-    var svg = this.bgSvg = d3.select(".vzb-bmc-map-background")
-        .attr("width", width)
-        .attr("height", height);
-    svg.html('');
-
-    svg.append("path")
-        .datum(graticule)
-        .attr("class", "graticule")
-        .attr("d", path);
-
-    svg.insert("path", ".graticule")
-        .datum(topojson.feature(world, world.objects.land))
-        .attr("class", "land")
-        .attr("d", path);
-
-    svg.insert("path", ".graticule")
-        .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
-        .attr("class", "boundary")
-        .attr("d", path);
+    var skew = this.skew = (function () {
+      var vb = viewBox;
+      var w = width;
+      var h = height;
+      var vbCenter = [(vb[0] + vb[2]) / 2, (vb[1] + vb[3]) / 2];
+      var vbWidth = Math.abs(vb[2] - vb[0]) || 0.001;
+      var vbHeight = Math.abs(vb[3] - vb[1]) || 0.001;
+      //input pixel loc after projection, return pixel loc after skew;
+      return function (points) {
+        var x = (points[0] - vbCenter[0]) / vbWidth * width + width / 2;
+        var y = (points[1] - vbCenter[1]) / vbHeight * height + height / 2;
+        return [x, y];
+      }
+    }());
 
   }
 });

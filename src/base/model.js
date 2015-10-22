@@ -518,12 +518,18 @@ var Model = Events.extend({
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
         _this._space[name].on('change:show', function(evt) {
-          _this.load();
+          //defer is necessary because other events might be queued.
+          //load right after such events
+          utils.defer(function() {
+            _this.load();
+          });
         });
       }
     });
     //this is a hook, therefore it needs to reload when data changes
     this.on('change:which', function(evt) {
+      //defer is necessary because other events might be queued.
+      //load right after such events
       _this.load();
     });
     //this is a hook, therefore it needs to reload when data changes
