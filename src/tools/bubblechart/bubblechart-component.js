@@ -534,18 +534,13 @@ var BubbleChartComp = Component.extend({
     sTitle
       .attr("text-anchor", "end");
 
-
-    this.dataWarningEl.selectAll('*').remove() ;
-    this.dataWarningEl.node().appendChild(
-      this.dataWarningEl.node().ownerDocument.importNode(
-        new DOMParser().parseFromString(
-          iconWarn, 'application/xml').documentElement, true)
-    );
+    utils.setIcon(this.dataWarningEl, iconWarn);
     this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
+
     this.yInfoEl
         .html(iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");

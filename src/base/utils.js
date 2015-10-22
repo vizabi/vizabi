@@ -1026,4 +1026,13 @@ export var pruneTree = function(tree, filterCallback) {
     filteredTree["children"] = filteredChildrens;
   }
   return filteredTree;
+};
+
+export var setIcon = function(element, icon) {
+  element.selectAll('*').remove();
+  element.node().appendChild(
+    element.node().ownerDocument.importNode(
+      new DOMParser().parseFromString(
+        icon, 'application/xml').documentElement, true)
+  );
 }
