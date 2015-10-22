@@ -51,7 +51,8 @@
 }
 
 //large specific styles
-&.vzb-large {
+&.vzb-large,
+&.vzb-presentation {
   .vzb-bs-holder {
     //...
     height: 150px;

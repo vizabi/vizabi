@@ -14,6 +14,8 @@ import {
   close as iconClose
 } from 'base/iconset';
 
+
+
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
 
@@ -41,6 +43,9 @@ var BubbleChartComp = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     //starts as splash if this is the option
@@ -256,7 +261,7 @@ var BubbleChartComp = Component.extend({
 
 
   _rangeBump: function(arg, undo) {
-    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    var bump = this.activeProfile.maxRadius;
     undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
@@ -504,7 +509,7 @@ var BubbleChartComp = Component.extend({
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
-      .attr("y", "-6px")
+      //.attr("y", "-6px")
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -735,10 +740,9 @@ var BubbleChartComp = Component.extend({
    */
   updateSize: function() {
 
-    var _this = this;
 
-    this.profiles = {
-      "small": {
+    var profiles = {
+      small: {
         margin: {
           top: 30,
           right: 10,
@@ -748,9 +752,11 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 0.5,
         maxRadius: 40,
-        infoElHeight: 16
+        infoElHeight: 16,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       },
-      "medium": {
+      medium: {
         margin: {
           top: 40,
           right: 15,
@@ -760,9 +766,11 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
-        infoElHeight: 20
+        infoElHeight: 20,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       },
-      "large": {
+      large: {
         margin: {
           top: 50,
           right: 20,
@@ -772,11 +780,46 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
-        infoElHeight: 22
+        infoElHeight: 22,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       }
     };
 
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
+    var presentationProfileChanges = {
+      "small": {
+        margin: {
+          top: 40,
+          bottom: 70,
+          left: 70
+        },
+        yAxisLabelBottomMargin: 10,
+        xAxisLabelBottomMargin: 10
+      },
+      "medium": {
+        margin: {
+          top: 80,
+          bottom: 100,
+          left: 100
+        },
+        yAxisLabelBottomMargin: 20,
+        xAxisLabelBottomMargin: 20
+      },
+      "large": {
+        margin: {
+          top: 80,
+          bottom: 100,
+          left: 100
+        },
+        yAxisLabelBottomMargin: 20,
+        xAxisLabelBottomMargin: 20
+      }     
+    } 
+
+    var _this = this;
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
 
@@ -884,16 +927,16 @@ var BubbleChartComp = Component.extend({
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
-      .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
+      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
 
     this.xTitleEl
-      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
+      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
     this.dataWarningEl
-      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")

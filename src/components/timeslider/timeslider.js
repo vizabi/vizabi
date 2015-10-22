@@ -56,6 +56,23 @@ var profiles = {
   }
 };
 
+
+var presentationProfileChanges = {
+  "small": {
+    margin: {
+    }
+  },
+  "medium": {
+    margin: {
+      top: 9
+    }
+  },
+  "large": {
+    margin: {
+    }
+  }     
+}
+
 var TimeSlider = Component.extend({
   /**
    * Initializes the timeslider.
@@ -101,7 +118,7 @@ var TimeSlider = Component.extend({
         }
       }
     };
-
+      
     this.ui = utils.extend({
       show_limits: false,
       show_value: false,
@@ -253,7 +270,7 @@ var TimeSlider = Component.extend({
 
      this.model.time.pause();
 
-     this.profile = profiles[this.getLayoutProfile()];
+     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
      var slider_w = parseInt(this.slider_outer.style("width"), 10);
      var slider_h = parseInt(this.slider_outer.style("height"), 10);
@@ -315,7 +332,6 @@ var TimeSlider = Component.extend({
         _this.model.time.dragStart();
         var posX = utils.roundStep(Math.round(d3.mouse(this)[0]), precision);
         value = _this.xScale.invert(posX);
-        var layoutProfile = _this.getLayoutProfile();
         var maxPosX = _this.width;
 
         if(posX > maxPosX) {
