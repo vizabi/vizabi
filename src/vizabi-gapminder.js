@@ -476,7 +476,7 @@ PopByAge.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "population"
+        which: "pop"
       },
       color: {
         use: "value",

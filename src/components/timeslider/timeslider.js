@@ -101,6 +101,8 @@ var TimeSlider = Component.extend({
     //binds methods to this model
     this.model_binds = {
       'change:time': function(evt, original) {
+
+        //TODO: readyOnce CANNOT be run twice
         if(_this._splash !== _this.model.time.splash) {
           _this._splash = _this.model.time.splash;
           _this.readyOnce();
@@ -146,7 +148,8 @@ var TimeSlider = Component.extend({
     var _this = this;
 
     //DOM to d3
-    this.element = d3.select(this.element);
+    //TODO: remove this ugly hack
+    this.element = utils.isArray(this.element) ? this.element : d3.select(this.element);
     this.element.classed(class_loading, false);
 
     //html elements
