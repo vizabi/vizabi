@@ -1347,8 +1347,8 @@ var BubbleChartComp = Component.extend({
 
         view.append("text").attr("class", "vzb-bc-label-content");
 
-        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
-          .html(iconClose)
+        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent");
+        utils.setIcon(cross, iconClose);
 
         cross.insert("circle", "svg");
 
