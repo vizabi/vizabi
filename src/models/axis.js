@@ -103,7 +103,6 @@ var AxisModel = Model.extend({
    */
   buildScale: function(margins) {
     var domain;
-    var scaleType = this.scaleType || "linear";
     var indicatorsDB = globals.metadata.indicatorsDB;
 
     if(this.scaleType == "time") {
@@ -130,13 +129,9 @@ var AxisModel = Model.extend({
         domain = [this.which];
         break;
     }
-
-//    //sync the min and max in the state
-      // evokes unintended updates in tools because they listen to the model
-//    this.min = domain[0];
-//    this.max = domain[1];
-
-    this.scale = d3.scale[scaleType]().domain(domain);
+    
+    var scaletype = this.scaleType === "log"? "genericLog" : this.scaleType;;
+    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
   }
 });
 

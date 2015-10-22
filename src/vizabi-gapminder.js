@@ -371,7 +371,7 @@ BubbleChart.define('default_options', {
         which: "u5mr",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "genericLog"]
+          scales: ["linear", "log"]
         }
       },
       axis_x: {
@@ -379,7 +379,7 @@ BubbleChart.define('default_options', {
         which: "gdp_per_cap",
         scaleType: "log",
         allow: {
-          scales: ["linear", "log", "genericLog"]
+          scales: ["linear", "log"]
         }
       },
       color: {
@@ -399,7 +399,7 @@ BubbleChart.define('default_options', {
         which: "pop",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "genericLog"]
+          scales: ["linear", "log"]
         },
         min: .04,
         max: .90
