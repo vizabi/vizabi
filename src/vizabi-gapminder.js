@@ -210,7 +210,6 @@ MountainChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        //which: "mean",
         which: "gdp_per_cap",
         scaleType: 'log',
         min: .11, //0
@@ -218,7 +217,6 @@ MountainChart.define('default_options', {
       },
       size: {
         use: "indicator",
-        //which: "variance",
         which: "gini",
         scaleType: 'linear'
       },
@@ -398,7 +396,7 @@ BubbleChart.define('default_options', {
         which: "pop",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear", "log", "genericLog"]
         },
         min: .04,
         max: .90
