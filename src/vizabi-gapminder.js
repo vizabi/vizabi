@@ -243,6 +243,9 @@ MountainChart.define('default_options', {
     path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
       //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
+  },
+  ui: {
+    presentation: true
   }
 });
 
@@ -426,7 +429,8 @@ BubbleChart.define('default_options', {
       }
     },
    buttons: [],
-   buttons_expand: []
+   buttons_expand: [],
+   presentation: false
   }
 });
 
@@ -470,7 +474,7 @@ PopByAge.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "population"
+        which: "pop"
       },
       color: {
         use: "value",

@@ -15,4 +15,4 @@ before_script:
   - npm install
 script:
   - gulp build
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || false'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && sh deploy.sh || true'

@@ -227,6 +227,10 @@
   
   &.vzb-large .vzb-data-warning text {
     font-size: $vzb-font-size-small;
+  }  
+    
+  &.vzb-presentation .vzb-data-warning text {
+    font-size: $vzb-font-size-small;
   }
   
   //common tool components
