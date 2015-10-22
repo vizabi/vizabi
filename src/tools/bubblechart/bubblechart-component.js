@@ -533,25 +533,19 @@ var BubbleChartComp = Component.extend({
     sTitle.enter().append("text");
     sTitle
       .attr("text-anchor", "end");
-    var doc = new DOMParser().parseFromString(
-      iconWarn, 'application/xml');
 
-    var myNode=document.getElementsByClassName("vzb-data-warning")[0];
-    console.log(myNode);
-    console.log(this.dataWarningEl[0].g.innerHTML);
-    while (myNode.firstChild) {
-      myNode.removeChild(myNode.firstChild);
-    }
-    myNode.appendChild(
-      myNode.ownerDocument.importNode(doc.documentElement, true));
 
-    //this.dataWarningEl = this.graph.select('.vzb-data-warning');
+    this.dataWarningEl.selectAll('*').remove() ;
+    this.dataWarningEl.node().appendChild(
+      this.dataWarningEl.node().ownerDocument.importNode(
+        new DOMParser().parseFromString(
+          iconWarn, 'application/xml').documentElement, true)
+    );
     this.dataWarningEl.select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
-
     this.yInfoEl
         .html(iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
