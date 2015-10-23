@@ -114,9 +114,12 @@ var CSVReader = Reader.extend({
         //sort records by time
         var keys = Object.keys(_this._formatters);
         var order_by = keys[0];
-        res.sort(function(a, b) {
-          return a[order_by] - b[order_by];
-        });
+        //if it has time
+        if(res[0][order_by]) {
+          res.sort(function(a, b) {
+            return a[order_by] - b[order_by];
+          });
+        }
         //end of hack
 
         return res;
