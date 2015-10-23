@@ -143,12 +143,17 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function() {
+      'change:marker:size': function(evt) {
         //console.log("EVENT change:marker:size:max");
-        _this.updateMarkerSizeLimits();
-        _this._trails.run("findVisible");
-        _this.redrawDataPointsOnlySize();
-        _this._trails.run("resize");
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+            _this.updateMarkerSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPointsOnlySize();
+            _this._trails.run("resize");
+            return;
+        }
+        _this.ready();
       },
       'change:marker:color:palette': function() {
         //console.log("EVENT change:marker:color:palette");
