@@ -50,8 +50,8 @@ BarChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo": ["usa", "swe", "nor"],
+          "geo.cat": ["country"]
         }
       }
     },
@@ -63,10 +63,8 @@ BarChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "lex",
-        scaleType: "linear",
-        min: 0,
-        max: 90,
+        which: "pop",
+        scaleType: "log",
         allow: {
           scales: ["linear", "log"]
         }
@@ -86,8 +84,8 @@ BarChart.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    splash: true
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
   },
   language: language,
   ui: {
@@ -264,8 +262,8 @@ LineChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo": ["usa", "swe", "chn"],
+          "geo.cat": ["country"]
         }
       }
     },
@@ -279,9 +277,7 @@ LineChart.define('default_options', {
       axis_y: {
         use: "indicator",
         which: "gdp_per_cap",
-        scaleType: "log",
-        min: 150000,
-        max: 1500000
+        scaleType: "log"
       },
       axis_x: {
         use: "indicator",
@@ -307,7 +303,9 @@ LineChart.define('default_options', {
   },
 
   data: {
-    reader: "waffle"
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    splash: false
   },
   language: language,
   ui: {
