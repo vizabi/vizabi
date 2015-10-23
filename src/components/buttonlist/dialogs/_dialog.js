@@ -88,11 +88,13 @@ var Dialog = Component.extend({
         if (contentHeight < placeholderHeight) {
           this.topPos = (-contentHeight + 50) + 'px';
           this.leftPos = false;
+          this.placeholderEl.style('left', this.leftPos);
           this.placeholderEl.style('bottom', 'auto');
         } else {
           this.topPos = false;
           this.placeholderEl.style('bottom', false);
         }
+        this.placeholderEl.style('top', this.topPos);
       }
 
       var profile = this.getLayoutProfile();
