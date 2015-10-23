@@ -628,7 +628,6 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
-
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
@@ -671,8 +670,10 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-
         var text = "";
+        var pointer = {};
+        pointer[KEY] = d[KEY];
+        pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
           _this.entityLabels
@@ -681,13 +682,12 @@ var BubbleChartComp = Component.extend({
             })
             .classed("vzb-highlighted", true);
         } else {
+          if (_this.model.time.lockNonSelected) {
+            pointer[TIMEDIM] = _this.model.time.lockNonSelected;
+          }
           text = _this.model.marker.label.getValue(d);
         }
-
         //set tooltip and show axis projections
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer[TIMEDIM] = _this.time;
         var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
@@ -817,8 +817,8 @@ var BubbleChartComp = Component.extend({
         },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
-      }     
-    } 
+      }
+    }
 
     var _this = this;
 
@@ -1150,7 +1150,6 @@ var BubbleChartComp = Component.extend({
       return;
 
     var cached = _this.cached[d[KEY]];
-
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
