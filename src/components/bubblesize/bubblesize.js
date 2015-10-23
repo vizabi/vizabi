@@ -72,12 +72,11 @@ var BubbleSize = Component.extend({
         _this.sliderEl.call(_this.brush.event);
       },
       'ready': function (evt) {
-        if(_this.model.size.scale) {
-            _this.sizeScaleMinMax = _this.model.size.scale.domain();
-        }
-        if(_this._readyOnce) {
-           _this._setLabelsText();
-        }
+        utils.defer(function(){
+           _this.sizeScaleMinMax = _this.model.size.scale.domain();
+           _this._setLabelsText();          
+        });
+        
       }
     };
 
@@ -232,7 +231,7 @@ var BubbleSize = Component.extend({
       this._setLabelsText();
     }    
   },
-  
+ 
   getMinMaxBubbleRadius: function() {
     return { min: profiles[this.getLayoutProfile()].minRadius, max: profiles[this.getLayoutProfile()].maxRadius};    
   },

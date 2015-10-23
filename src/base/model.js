@@ -518,6 +518,10 @@ var Model = Events.extend({
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
         _this._space[name].on('change:show', function(evt) {
+          //hack for right size of bubbles 
+          if(_this._type === 'size' && _this.which === _this.which_1) { 
+            _this.which_1 = '';
+          };
           //defer is necessary because other events might be queued.
           //load right after such events
           utils.defer(function() {

@@ -1149,14 +1149,13 @@ var BubbleChartComp = Component.extend({
     if(d[KEY] == _this.druging)
       return;
 
+    if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
+
     var cached = _this.cached[d[KEY]];
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-      if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
