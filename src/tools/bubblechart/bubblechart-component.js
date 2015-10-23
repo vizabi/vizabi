@@ -840,7 +840,7 @@ var BubbleChartComp = Component.extend({
     this.year.resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)));
     this.eventArea
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -879,7 +879,7 @@ var BubbleChartComp = Component.extend({
 
     this.bubbleContainerCrop
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     this.xAxisElContainer
       .attr("width", this.width + 1)
@@ -891,7 +891,7 @@ var BubbleChartComp = Component.extend({
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
-      .attr("height", this.height)
+      .attr("height", Math.max(0, this.height))
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
       .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
