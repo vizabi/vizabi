@@ -441,6 +441,8 @@ var ButtonList = Component.extend({
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
 
+    this._active_comp = this.components[this._available_buttons[id].component];
+
     if(this._available_buttons[id].ispin)
       this.pinDialog(id);
 
