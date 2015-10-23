@@ -229,18 +229,16 @@ var Tool = Component.extend({
       return;
     };
 
-    var label = marker.label;
-
-    if(!label) {
-      utils.warn("tool validation aborted: marker label looks wrong: " + label);
+    if(!marker) {
+      utils.warn("tool validation aborted: marker looks wrong: " + label);
       return;
     };
 
     //don't validate anything if data hasn't been loaded
-    if(model.isLoading() || !label.getKeys() || label.getKeys().length < 1) return;
+    if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
 
-    var dateMin = label.getLimits(time.getDimension()).min;
-    var dateMax = label.getLimits(time.getDimension()).max;
+    var dateMin = marker.getLimits(time.getDimension()).min;
+    var dateMax = marker.getLimits(time.getDimension()).max;
 
     if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
     if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
