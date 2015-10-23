@@ -11,7 +11,7 @@ $vzb-ts-value-width: 40px;
     @include position(absolute, 0 null 0 5px);
     width: $vzb-ts-btn-area;
     .vzb-ts-btn {
-      @include border-radius(40px 5px 40px 40px);
+      @include border-radius(40px);
       @include rotate(45deg);
       font-size: $vzb-font-size-regular;
       width: $vzb-ts-btn-width;
