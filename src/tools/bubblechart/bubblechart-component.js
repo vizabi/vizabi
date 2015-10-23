@@ -623,7 +623,6 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
-
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
@@ -666,7 +665,8 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-
+        console.log(_this.model.time.lockNonSelected);
+        console.log(_this.time);
         var text = "";
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
@@ -678,7 +678,6 @@ var BubbleChartComp = Component.extend({
         } else {
           text = _this.model.marker.label.getValue(d);
         }
-
         //set tooltip and show axis projections
         var pointer = {};
         pointer[KEY] = d[KEY];
@@ -812,8 +811,8 @@ var BubbleChartComp = Component.extend({
         },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
-      }     
-    } 
+      }
+    }
 
     var _this = this;
 
@@ -1145,7 +1144,6 @@ var BubbleChartComp = Component.extend({
       return;
 
     var cached = _this.cached[d[KEY]];
-
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
