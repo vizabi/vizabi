@@ -391,7 +391,7 @@ var ButtonList = Component.extend({
    */
   openDialog: function(id) {
 
-    this.closeAllDialogs(true);
+    this.closeAllDialogs();
 
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
