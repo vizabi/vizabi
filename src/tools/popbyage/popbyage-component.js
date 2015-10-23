@@ -211,10 +211,11 @@ var PopByAge = Component.extend({
     } else {
       // if grouping is 1
       // domain in settings is inclusive: 0-80 also gets 80. However, 80 lies out of the chart (above the 80-tick), so should be removed.
-      utils.forEach(markers, function(val, key) {
+      for (var i = markers.length - 1; i >= 0; i--) {
+        var val = markers[i];
         if (val[ageDim] >= domain[1])
-          markers.splice(key,1); // remove the marker if its not inside the domain
-      });
+          markers.splice(i,1); // remove the marker if its not inside the domain
+      }
 
     }
 
