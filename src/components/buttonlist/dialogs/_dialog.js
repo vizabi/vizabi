@@ -51,12 +51,12 @@ var Dialog = Component.extend({
     var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
-        if(_this.rootEl.classed('vzb-portrait') || _this.isPin)
+        if(_this.rootEl.classed('vzb-portrait'))
           return;
         dg.dragStart(d3.event);
       })
       .on('drag', function D3dialogDrag() {
-        if(_this.rootEl.classed('vzb-portrait') || _this.isPin)
+        if(_this.rootEl.classed('vzb-portrait'))
           return;
         dg.drag(d3.event);
       });
