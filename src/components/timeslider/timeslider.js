@@ -70,7 +70,7 @@ var presentationProfileChanges = {
   "large": {
     margin: {
     }
-  }     
+  }
 }
 
 var TimeSlider = Component.extend({
@@ -120,7 +120,7 @@ var TimeSlider = Component.extend({
         }
       }
     };
-      
+
     this.ui = utils.extend({
       show_limits: false,
       show_value: false,
@@ -159,17 +159,9 @@ var TimeSlider = Component.extend({
     this.slide = this.element.select(".vzb-ts-slider-slide");
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
-
-    //html elements for the delay_handle
-    this.delay_handle = this.element.select(".vzb-ts-btns");
     //Scale
     this.xScale = d3.time.scale()
       .clamp(true);
-
-    //Delay Scale
-    this.delayScale = d3.scale.linear()
-      .domain([0, 90])
-      .range([this.model.time.delayStart, this.model.time.delayEnd]);
 
     //Axis
     this.xAxis = d3.svg.axis()
@@ -180,12 +172,6 @@ var TimeSlider = Component.extend({
 
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
-
-    //drag the new delay handle
-    var drag = d3.behavior.drag()
-    .on("drag", function () {_this._dragDelay(this, _this);});
-
-    this.delay_handle.call(drag);
 
     //Brush for dragging
     this.brush = d3.svg.brush()
@@ -401,60 +387,6 @@ var TimeSlider = Component.extend({
       .duration(delayAnimations)
       .ease("linear")
       .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
-  },
-
-  /**
- * Drag the delay handle
- * @param {DOM Object} HTML element, targeted by the event
- * @param {Object} timeslider object
- *
- */
-  _dragDelay: function (target, timeslider) {
-    var elementLeftMargin = 5;
-    // origin point y=25px, x=30
-    var element = d3.select(target);
-    var elementWidth = element.node().getBoundingClientRect().width;
-    var elementHeight = element.node().getBoundingClientRect().height;
-    var ox = (elementWidth / 2) + elementLeftMargin;
-    var oy = elementHeight/2;
-    var mx = d3.event.x;
-    var my = d3.event.y;
-    var angle = timeslider._angleBetweenPoints([ox,oy], [mx,my]);
-    // the normal angle for the arrow is 45 degrees
-    var angle = timeslider._toDegrees(angle) + 45;
-    var delay = 0;
-
-    if (angle > 0 && angle < 90){
-      //change handler angle
-      element.selectAll(".vzb-ts-btn").style("transform","rotate("+angle+"deg)");
-      //correct icon angle
-      element.selectAll(".vzb-icon").style("transform","rotate("+ -angle +"deg)");
-      delay = timeslider.delayScale(angle);
-      timeslider._setDelay(delay);
-    }
-  },
-
-  /**
-   * Returns the angle in radians, given two points
-   * @param {Array} Array element containing the origin point
-   * @param {Array} Array element containing the target point
-   * @returns {number} Angle in radians
-   */
-  _angleBetweenPoints: function (p1, p2) {
-    if (p1[0] == p2[0] && p1[1] == p2[1]){
-        return Math.PI / 2;
-    } else {
-        return Math.atan2(p2[1] - p1[1], p2[0] - p1[0] );
-      }
-  },
-
-  /**
-   * Returns the angle in degrees, given an angle in radians
-   * @param {number} angle in radians
-   * @returns {number} Angle in degrees
-   */
-  _toDegrees: function(rad) {
-    return rad * (180/Math.PI);
   },
 
   /**
