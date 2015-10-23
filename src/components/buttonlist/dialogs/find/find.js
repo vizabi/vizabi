@@ -51,6 +51,10 @@ var Find = Dialog.extend({
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
+    }).on("keypress", function(e) {
+      if (d3.event.which == 13) {
+        document.activeElement.blur();
+      }
     });
 
     this.deselect_all.on("click", function() {
@@ -151,7 +155,6 @@ var Find = Dialog.extend({
   },
 
   showHideSearch: function() {
-
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
 

@@ -143,12 +143,17 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function() {
+      'change:marker:size': function(evt) {
         //console.log("EVENT change:marker:size:max");
-        _this.updateMarkerSizeLimits();
-        _this._trails.run("findVisible");
-        _this.redrawDataPointsOnlySize();
-        _this._trails.run("resize");
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+            _this.updateMarkerSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPointsOnlySize();
+            _this._trails.run("resize");
+            return;
+        }
+        _this.ready();
       },
       'change:marker:color:palette': function() {
         //console.log("EVENT change:marker:color:palette");
@@ -368,11 +373,11 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
-      .on('dblclick.zoom', null) 
+      .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
-    
+
     d3.select(this.parent.placeholder)
       .onTap(function() {
         _this._panZoom.enabled = true;
@@ -539,19 +544,18 @@ var BubbleChartComp = Component.extend({
     sTitle
       .attr("text-anchor", "end");
 
-    this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
 
-    this.yInfoEl
-        .html(iconQuestion)
+    utils.setIcon(this.yInfoEl, iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.xInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.xInfoEl, iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
+
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
@@ -624,7 +628,6 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
-
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
@@ -667,8 +670,10 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-
         var text = "";
+        var pointer = {};
+        pointer[KEY] = d[KEY];
+        pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
           _this.entityLabels
@@ -677,20 +682,19 @@ var BubbleChartComp = Component.extend({
             })
             .classed("vzb-highlighted", true);
         } else {
+          if (_this.model.time.lockNonSelected) {
+            pointer[TIMEDIM] = _this.model.time.lockNonSelected;
+          }
           text = _this.model.marker.label.getValue(d);
         }
-
         //set tooltip and show axis projections
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer[TIMEDIM] = _this.time;
         var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
         _this._setTooltip(text, x, y, s);
-          
-          
-        //show the little cross on the selected label  
+
+
+        //show the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
@@ -701,12 +705,12 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.clearHighlighted();
         _this._setTooltip();
         _this.entityLabels.classed("vzb-highlighted", false);
-          
-        //hide the little cross on the selected label  
+
+        //hide the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
-            .classed("vzb-transparent", true); 
+            .classed("vzb-transparent", true);
       },
 
       click: function(d, i) {
@@ -813,8 +817,8 @@ var BubbleChartComp = Component.extend({
         },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
-      }     
-    } 
+      }
+    }
 
     var _this = this;
 
@@ -833,10 +837,10 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4));
+    this.year.resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)));
     this.eventArea
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -875,7 +879,7 @@ var BubbleChartComp = Component.extend({
 
     this.bubbleContainerCrop
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     this.xAxisElContainer
       .attr("width", this.width + 1)
@@ -887,7 +891,7 @@ var BubbleChartComp = Component.extend({
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
-      .attr("height", this.height)
+      .attr("height", Math.max(0, this.height))
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
       .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
@@ -908,7 +912,7 @@ var BubbleChartComp = Component.extend({
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
-      
+
 
 
     var sTitleText = this.sTitleEl.select("text")
@@ -1145,15 +1149,13 @@ var BubbleChartComp = Component.extend({
     if(d[KEY] == _this.druging)
       return;
 
-    var cached = _this.cached[d[KEY]];
+    if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
 
+    var cached = _this.cached[d[KEY]];
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-      if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -1391,16 +1393,16 @@ var BubbleChartComp = Component.extend({
 
         view.append("text").attr("class", "vzb-bc-label-content");
 
-        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
-          .html(iconClose)
-        
+        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent");
+        utils.setIcon(cross, iconClose);
+
         cross.insert("circle", "svg");
-          
+
         cross.select("svg")
           .attr("class", "vzb-bc-label-x-icon")
           .attr("width", "0px")
-          .attr("height", "0px");        
-        
+          .attr("height", "0px");
+
         cross.on("click", function() {
           _this.model.entities.clearHighlighted();
           //default prevented is needed to distinguish click from drag

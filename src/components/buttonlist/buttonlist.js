@@ -391,7 +391,7 @@ var ButtonList = Component.extend({
    */
   openDialog: function(id) {
 
-    this.closeAllDialogs(true);
+    this.closeAllDialogs();
 
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -440,6 +440,8 @@ var ButtonList = Component.extend({
   closeDialog: function(id) {
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+
+    this._active_comp = this.components[this._available_buttons[id].component];
 
     if(this._available_buttons[id].ispin)
       this.pinDialog(id);

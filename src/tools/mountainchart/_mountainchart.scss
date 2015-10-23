@@ -93,6 +93,7 @@
       .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
         @include transition(opacity 200ms linear);
         cursor: pointer;
+        pointer-events: all;
         fill: $vzb-color-primary;
         stroke: $vzb-color-white;
         stroke-width: 2px;
