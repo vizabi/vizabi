@@ -40,7 +40,7 @@ globals.gapminder_paths = {
 BarChart.define('default_options', {
   state: {
     time: {
-      start: "1952",
+      start: "1800",
       end: "2012",
       value: "2000",
       step: 1,
@@ -144,8 +144,9 @@ BubbleMapChart.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    splash: true
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
+    splash: false
   },
   language: language,
   ui: {
@@ -251,7 +252,7 @@ MountainChart.define('default_options', {
 LineChart.define('default_options', {
   state: {
     time: {
-      start: 1990,
+      start: 1800,
       end: 2012,
       value: 2012,
       step: 1,
