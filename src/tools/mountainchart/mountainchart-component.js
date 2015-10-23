@@ -640,6 +640,7 @@ var MountainChartComponent = Component.extend({
             .on("click", function (d, i) {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._click(d, i);
+                _this.highlightEntities();
             })
             .onTap(function (d, i) {
                 _this._interact()._click(d, i);

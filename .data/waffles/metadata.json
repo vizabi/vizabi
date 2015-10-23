@@ -81,7 +81,8 @@
             "use": "indicator",
             "unit": "",
             "scales": ["linear", "log"],
-            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
+            "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
+            "domain": [14000, 1400000000]
         },
         "lex": {
             "allowCharts": ["linechart", "barchart"],
@@ -145,7 +146,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "age": {
-            "allowCharts": ["*"],
+            "allowCharts": ["popbyage"],
             "use": "indicator",
             "unit": "year",
             "scales": ["linear", "log"],

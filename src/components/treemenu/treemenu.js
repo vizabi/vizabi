@@ -215,12 +215,16 @@ var TreeMenu = Component.extend({
         col_width: 200
       }
     };
-
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     this.width = _this.element.node().offsetWidth;
+    var containerWidth = this.wrapper.node().getBoundingClientRect().width;
+    if (containerWidth) {
+      this.wrapper.classed(css.alignXc, alignX === "center");
+      this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
+    }
 
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
-
+    return this;
   },
 
 
@@ -228,7 +232,6 @@ var TreeMenu = Component.extend({
   toggle: function() {
     var _this = this;
     var hidden = !this.element.classed(css.hidden);
-
     this.element.classed(css.hidden, hidden);
 
     if(hidden) {
@@ -237,7 +240,9 @@ var TreeMenu = Component.extend({
         .each(function() {
           _this._marqueeToggle(this, false);
         });
-    };
+    } else {
+      this.resize();
+    }
 
     this.parent.components.forEach(function(c) {
       if(c.element.classed) {
@@ -248,6 +253,7 @@ var TreeMenu = Component.extend({
     })
 
     this.width = _this.element.node().offsetWidth;
+
   },
 
 
@@ -460,7 +466,7 @@ var TreeMenu = Component.extend({
 
     if(toggle) {
       if(label.node().scrollWidth > node.offsetWidth) {
-        //add data for animation 
+        //add data for animation
         label.attr("data-content", label.text());
 
         selection.classed('marquee', true);
@@ -538,7 +544,7 @@ var TreeMenu = Component.extend({
 
     var possiblyActivate = function(event, it) {
 
-        
+
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
 
         closeAll(curSub);
@@ -638,7 +644,6 @@ var TreeMenu = Component.extend({
   //function is redrawing data and built structure
   redraw: function(data) {
     var _this = this;
-
     this.element.select('.' + css.title).select("span")
       .text(this.translator("buttons/" + markerID));
 
@@ -726,13 +731,11 @@ var TreeMenu = Component.extend({
 
     if(!markerID) return;
 
-
     this.wrapper.classed(css.alignYt, alignY === "top");
     this.wrapper.classed(css.alignYb, alignY === "bottom");
     this.wrapper.classed(css.alignXl, alignX === "left");
     this.wrapper.classed(css.alignXr, alignX === "right");
-    this.wrapper.classed(css.alignXc, alignX === "center");
-    this.wrapper.style("margin-left",alignX === "center"? "-" + this.activeProfile.col_width/2 + "px" : null);
+
     var strings = langStrings ? langStrings : {};
     strings[languageID] = _this.model.language.strings[languageID];
 
