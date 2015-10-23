@@ -247,7 +247,7 @@ MountainChart.define('default_options', {
       //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
   },
   ui: {
-    presentation: true
+    presentation: false
   }
 });
 
@@ -454,14 +454,15 @@ PopByAge.define('default_options', {
       show: {
         _defs_: {
           "age": [
-              [1, 100]
-            ] //show 1 through 100
+              [0, 150]
+            ] //show 0 through 100
         }
       }
     },
     marker: {
       space: ["entities", "entities_age", "time"],
       group_by: 1,
+      group_offset: 0,
       label: {
         use: "indicator",
         which: "age"

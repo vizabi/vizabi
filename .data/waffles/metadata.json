@@ -150,7 +150,7 @@
             "unit": "year",
             "scales": ["linear", "log"],
             "sourceLink": "",
-            "domain": [0, 150]
+            "domain": [0, 80]
         },
         "_default": {
             "allowCharts": ["*"],
