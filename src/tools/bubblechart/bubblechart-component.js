@@ -670,9 +670,10 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-        console.log(_this.model.time.lockNonSelected);
-        console.log(_this.time);
         var text = "";
+        var pointer = {};
+        pointer[KEY] = d[KEY];
+        pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
           _this.entityLabels
@@ -681,12 +682,12 @@ var BubbleChartComp = Component.extend({
             })
             .classed("vzb-highlighted", true);
         } else {
+          if (_this.model.time.lockNonSelected) {
+            pointer[TIMEDIM] = _this.model.time.lockNonSelected;
+          }
           text = _this.model.marker.label.getValue(d);
         }
         //set tooltip and show axis projections
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer[TIMEDIM] = _this.time;
         var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
