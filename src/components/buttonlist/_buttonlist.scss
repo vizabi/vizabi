@@ -228,6 +228,17 @@ $vzb-dialog-content-height: 250px;
           .vzb-dialog-buttons {
             display: none;
           }
+
+          .vzb-dialog-modal {
+            .thumb-tack-class {
+
+              &.thumb-tack-class-ico-pin,
+              &.thumb-tack-class-ico-drag {
+                display: none;
+              }
+
+            }
+          }
         }
 
         .vzb-dialog-title {
@@ -256,17 +267,6 @@ $vzb-dialog-content-height: 250px;
 
         &[data-btn="size"] {
           @import 'dialogs/size/size';
-        }
-
-        .vzb-dialog-modal {
-          .thumb-tack-class {
-
-            &.thumb-tack-class-ico-pin,
-            &.thumb-tack-class-ico-drag {
-              display: none;
-            }
-
-          }
         }
       }
     }

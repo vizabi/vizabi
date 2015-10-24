@@ -165,11 +165,6 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-//      var element = d3.select('div.vzb-large');
-//      var classes = element.attr('class');
-//
-//      classes += ' vzb-button-expand-true';
-//      element.attr('class', classes);
         d3.select('div.vzb-large')
             .classed("vzb-button-expand-true", true);
     }
@@ -385,7 +380,7 @@ var ButtonList = Component.extend({
   },
 
   //TODO: make opening/closing a dialog via update and model
-  /* 
+  /*
    * Activate a button dialog
    * @param {String} id button id
    */
@@ -542,7 +537,7 @@ var ButtonList = Component.extend({
       .html(iconset[locked ? "lock" : "unlock"]);
   },
   togglePresentationMode: function() {
-    this.model.ui.presentation = !this.model.ui.presentation; 
+    this.model.ui.presentation = !this.model.ui.presentation;
     this.setPresentationMode();
   },
   setPresentationMode: function() {
@@ -550,7 +545,7 @@ var ButtonList = Component.extend({
     var translator = this.model.language.getTFunction();
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
-    btn.classed(class_active_locked, this.model.ui.presentation);     
+    btn.classed(class_active_locked, this.model.ui.presentation);
   },
   toggleFullScreen: function(id) {
 
