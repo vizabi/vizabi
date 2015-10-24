@@ -1,6 +1,10 @@
 .vzb-dialog-content {
   max-height: 190px;
   min-height: 120px;
+
+  svg.vzb-colorPicker-colorPicker {
+    z-index: 10;
+  }
 }
 
 .vzb-dialog-title {
