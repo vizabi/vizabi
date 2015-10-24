@@ -9,6 +9,7 @@
 
 .vzb-dialog-title {
   display: inline-block;
+  flex-grow: 0;
 }
 
 .vzb-cl-outer {
@@ -25,6 +26,7 @@
 }
 
 .vzb-caxis-container {
+  flex-grow: 0;
   .vzb-ip-holder {
     .vzb-ip-indicator {
       float: right;

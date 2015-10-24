@@ -253,18 +253,26 @@ $vzb-dialog-content-height: 250px;
           }
 
           &[data-btn="find"] {
+            display: flex;
+            flex-direction: column;
             @import 'dialogs/find/find';
           }
 
           &[data-btn="show"] {
+            display: flex;
+            flex-direction: column;
             @import 'dialogs/show/show';
           }
 
           &[data-btn="colors"] {
+            display: flex;
+            flex-direction: column;
             @import 'dialogs/colors/colors';
           }
 
           &[data-btn="size"] {
+            display: flex;
+            flex-direction: column;
             @import 'dialogs/size/size';
           }
         }
