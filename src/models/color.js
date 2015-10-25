@@ -176,6 +176,11 @@ var ColorModel = Model.extend({
       var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
       domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
 
+      if(step === 0) {
+        domain.push(domain[0]);
+        range = [range[range.length - 1]];             
+      }
+      
       this.scale = d3.time.scale()
         .domain(domain)
         .range(range)

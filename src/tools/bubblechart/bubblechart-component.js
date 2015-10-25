@@ -59,6 +59,11 @@ var BubbleChartComp = Component.extend({
           //TODO: adjust X & Y axis here
         }
       },
+      'change:time:start': function(evt, original) {
+        if(_this.model.marker.color.scaleType === 'time') {
+          _this.model.marker.color.scale = null;
+        }
+      },
       "change:time:record": function() {
         //console.log("change time record");
         if(_this.model.time.record) {
@@ -165,6 +170,14 @@ var BubbleChartComp = Component.extend({
       },
       'change:entities:opacityRegular': function() {
         _this.updateBubbleOpacity();
+      },
+      'ready': function() {
+        // if(_this.model.marker.color.scaleType === 'time') {
+        //   _this.model.marker.color.scale = null;
+        //   utils.defer(function() {
+        //     _this.trigger('ready');
+        //   });         
+        // }
       }
     };
 
