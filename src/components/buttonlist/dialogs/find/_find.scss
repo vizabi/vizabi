@@ -10,6 +10,14 @@
   }
 }
 
+.vzb-dialog-content {
+  flex-grow: 1;
+}
+
+.vzb-dialog-title {
+  flex-grow: 0;
+}
+
 .vzb-dialog-content.vzb-dialog-content-fixed {
   height: 310px;
   max-height: 305px;

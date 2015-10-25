@@ -1,10 +1,15 @@
 .vzb-dialog-content {
   max-height: 190px;
   min-height: 120px;
+
+  svg.vzb-colorPicker-colorPicker {
+    z-index: 10;
+  }
 }
 
 .vzb-dialog-title {
   display: inline-block;
+  flex-grow: 0;
 }
 
 .vzb-cl-outer {
@@ -21,6 +26,7 @@
 }
 
 .vzb-caxis-container {
+  flex-grow: 0;
   .vzb-ip-holder {
     .vzb-ip-indicator {
       float: right;
