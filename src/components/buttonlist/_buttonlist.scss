@@ -227,6 +227,7 @@ $vzb-dialog-content-height: 250px;
 
           .vzb-dialog-buttons {
             display: none;
+            padding: 5px 25px;
           }
 
           .vzb-dialog-modal {
@@ -246,10 +247,6 @@ $vzb-dialog-content-height: 250px;
 
           .vzb-dialog-button {
             position: relative;
-          }
-
-          .vzb-dialog-buttons {
-            padding: 5px 25px;
           }
 
           &[data-btn="find"] {
