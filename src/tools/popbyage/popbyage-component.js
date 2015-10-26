@@ -313,9 +313,13 @@ var PopByAge = Component.extend({
 
     //update x axis again
     //TODO: remove this when grouping is done at data level
-    var x_domain = this.xScale.domain();
-    var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
-    if(x_domain_max > this.xScale.domain()[1]) this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
+    //var x_domain = this.xScale.domain();
+    //var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
+    //if(x_domain_max > this.xScale.domain()[1]) this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
+
+    var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
+    this.xScale = this.xScale.domain([limits.min, limits.max]);
+    
     this.resize();
 
   },
