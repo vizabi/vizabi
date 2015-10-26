@@ -342,11 +342,11 @@ var MountainChartComponent = Component.extend({
             margin: { top: 30, right: 30, left: 30, bottom: 35 },
             infoElHeight: 22
           }
-        };  
+        };
 
-        this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges); 
+        this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
         margin = this.activeProfile.margin;
-        infoElHeight = this.activeProfile.infoElHeight; 
+        infoElHeight = this.activeProfile.infoElHeight;
 
         //mesure width and height
         this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -360,9 +360,9 @@ var MountainChartComponent = Component.extend({
             xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
             yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
         };
-        
+
         var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
-        
+
         //year is centered and resized
         this.year
             .setConditions(yearLabelOptions)
@@ -465,7 +465,7 @@ var MountainChartComponent = Component.extend({
         this.yTitleEl.select("text")
             .text(this.translator("mount/title"));
 
-        this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+        utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
@@ -951,9 +951,9 @@ var MountainChartComponent = Component.extend({
         var mergeGrouped = this.model.marker.group.merge;
         var mergeStacked = this.model.marker.stack.merge;
         var stackMode = this.model.marker.stack.which;
-        //it's important to know if the chart is dragging or playing at the moment. 
+        //it's important to know if the chart is dragging or playing at the moment.
         //because if that is the case, the mountain chart will merge the stacked entities to save performance
-        var dragOrPlay = (this.model.time.dragging || this.model.time.playing) 
+        var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
             //never merge when no entities are stacked
             && stackMode !== "none"
             //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
