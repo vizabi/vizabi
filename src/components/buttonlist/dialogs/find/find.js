@@ -134,6 +134,10 @@ var Find = Dialog.extend({
       })
       .on("change", function(d) {
         _this.model.state.entities.selectEntity(d);
+        //clear highlighted entities for touch devices
+        if(utils.isTouchDevice()) {
+          _this.model.state.entities.clearHighlighted();
+        }
       });
 
     items.append("label")
