@@ -24,7 +24,13 @@ var MCSelectList = Class.extend({
           }
           return d3.descending(a.sortValue[1], b.sortValue[1]);
         } else {
-          return d3.descending(a.aggrLevel, b.aggrLevel);
+          if (a.aggrLevel != b.aggrLevel) {
+            return d3.descending(a.aggrLevel, b.aggrLevel);
+          } else if (a.aggrLevel && b.aggrLevel) {
+            return d3.descending(a.yMax, b.yMax);
+          } else {
+            return 0;
+          }
         }
       });
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
