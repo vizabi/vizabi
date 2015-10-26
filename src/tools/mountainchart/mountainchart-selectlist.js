@@ -18,10 +18,14 @@ var MCSelectList = Class.extend({
       .filter(function (f) {
         return _this.model.entities.isSelected(f);
       }).sort(function (a, b) {
-        if(a.sortValue[1] === b.sortValue[1]) {
-          return d3.descending(a.sortValue[0], b.sortValue[0]);
+        if (a.sortValue && b.sortValue) {
+          if(a.sortValue[1] === b.sortValue[1]) {
+            return d3.descending(a.sortValue[0], b.sortValue[0]);
+          }
+          return d3.descending(a.sortValue[1], b.sortValue[1]);
+        } else {
+          return d3.descending(a.aggrLevel, b.aggrLevel);
         }
-        return d3.descending(a.sortValue[1], b.sortValue[1]);
       });
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
       .data(utils.unique(listData, function (d) {
