@@ -111,7 +111,7 @@ BubbleMapChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo.region": ["afr"]
         }
       }
     },
@@ -123,10 +123,12 @@ BubbleMapChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "lex",
+        which: "pop",
         scaleType: "linear",
-        min: 0,
+        min: 1,
+        /*
         max: 90,
+        */
         allow: {
           scales: ["linear", "log"]
         }
@@ -138,6 +140,14 @@ BubbleMapChart.define('default_options', {
           scales: ["ordinal"]
         }
       },
+      lat: {
+        use: "property",
+        which: "lat"
+      },
+      lng: {
+        use: "property",
+        which: "lng"
+      },
       color: {
         use: "property",
         which: "geo.region",
@@ -146,7 +156,12 @@ BubbleMapChart.define('default_options', {
     }
   },
   data: {
+    /*
     reader: "waffle",
+    splash: true
+    */
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
     splash: true
   },
   language: language,
