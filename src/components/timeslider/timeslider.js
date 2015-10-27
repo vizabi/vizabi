@@ -1,6 +1,11 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 
+import {
+  simpleslider
+}
+from 'components/_index';
+
 var precision = 1;
 
 //constants
@@ -83,15 +88,25 @@ var TimeSlider = Component.extend({
   init: function(config, context) {
 
     this.name = "gapminder-timeslider";
+    this.components = [ {
+      component: simpleslider,
+      placeholder: '.vzb-ts-delay-slider',
+      model: ["time"],
+      arg: "delay",
+      thumb_size: "small",
+      properties: {min:1, max:5, step:1, scale: d3.scale.linear()
+        .domain([1,2,3,4,5])
+        .range([1200,900,450,200,75])
+      },
+
+    }];
 
     this.template = this.template || "timeslider.html";
 
     //define expected models/hooks for this component
     this.model_expects = [{
       name: "time",
-      type: "time",
-      delay: "delay"
-    }];
+      type: "time"}];
 
     var _this = this;
 
