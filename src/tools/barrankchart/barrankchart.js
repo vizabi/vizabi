@@ -16,7 +16,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this.components = [{
         component: BarRankChart, 
         placeholder: '.vzb-tool-viz', 
-        model: [] 
+        model: ["state.time", "state.entities", "state.marker", "state.language", "state.ui"] 
     }, {
         component: timeslider,
         placeholder: '.vzb-tool-timeslider',
@@ -26,7 +26,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     //constructor is the same as any tool
     this._super(config, options);
   }
-
+  
 });
 
 export default BarRankChart;
