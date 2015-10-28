@@ -33,7 +33,7 @@ var TimeModel = Model.extend({
     playing: false,
     loop: false,
     round: 'round',
-    delay: 300,
+    delay: 1200,
     delayAnimations: 300,
     delayStart: 1200,
     delayEnd: 75,
@@ -281,6 +281,7 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
     this.delayAnimations = this.delay;
+    console.log(this.delay);
     if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
     if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 
@@ -300,10 +301,10 @@ var TimeModel = Model.extend({
         time = d3.time[_this.unit].offset(time, step);
 
         if(_this.postponePause) {
-            _this.playing = false; 
+            _this.playing = false;
             _this.postponePause = false;
         }
-          
+
         _this.value = time;
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
