@@ -159,67 +159,15 @@ var PopByAge = Component.extend({
     var ageDim = this.AGEDIM;
     var timeDim = this.TIMEDIM;
     var duration = (time.playing) ? time.delayAnimations : 0;
+
+    var group_by = this.model.age.grouping || 1;
+    var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
+
     var filter = {};
     filter[timeDim] = time.value;
     var markers = this.model.marker.getKeys(filter);
     var values = this.model.marker.getValues(filter, [ageDim]);
     var domain = this.yScale.domain();
-
-    //TODO: this should be done at a data layer
-    //Year Grouping
-
-    var group_by = (this.model.marker.group_by && this.model.marker.group_by > 0) ? this.model.marker.group_by : 1;
-    var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
-
-    if(group_by > 1) {
-
-      var new_values = {};
-      var new_markers = {}
-
-      utils.forEach(values, function(hook, hook_name) {
-        new_values[hook_name] = {};
-        var hook_values = new_values[hook_name];
-        //var curr = false;
-        utils.forEach(hook, function(val, key) {
-          
-          var group_nr = Math.floor((key - group_offset)/group_by); // group number
-          var group_start = group_nr * group_by + group_offset; // number at which the group starts
-
-          // if the group falls outside the domain, drop the group
-          if (group_start < domain[0] || group_start + group_by > domain[1])
-            return;
-
-          //if it's a number and axis x, add the values (e.g. get total population for that age group)
-          if(!utils.isNaN(val) && hook_name === "axis_x") {
-            hook_values[group_start] = hook_values[group_start] ? parseFloat(hook_values[group_start]) + parseFloat(val) : parseFloat(val);
-          } else {
-            hook_values[group_start] = val;
-          }
-
-          // fill markers (list of markers)
-          if (!new_markers[group_start]) {
-            new_markers[group_start] = {};
-            new_markers[group_start][ageDim] = group_start;
-          }
-        });
-
-      });
-
-      values = new_values;
-      markers = utils.values(new_markers);
-
-    } else {
-      // if grouping is 1
-      // domain in settings is inclusive: 0-80 also gets 80. However, 80 lies out of the chart (above the 80-tick), so should be removed.
-      for (var i = markers.length - 1; i >= 0; i--) {
-        var val = markers[i];
-        if (val[ageDim] >= domain[1])
-          markers.splice(i,1); // remove the marker if its not inside the domain
-      }
-
-    }
-
-    //End Year Grouping
 
     this.model.age.setVisible(markers);
 
@@ -272,7 +220,7 @@ var PopByAge = Component.extend({
       .attr("x", 0)
       .transition().duration(duration).ease("linear")
       .attr("y", function(d, i) {
-        return first_bar_y_offset - (d[ageDim] - domain[0]) * one_bar_height;
+        return first_bar_y_offset - (i*10 - domain[0]) * one_bar_height;
       })
       .attr("height", bar_height)
       .attr("width", function(d) {
@@ -280,12 +228,12 @@ var PopByAge = Component.extend({
       });
 
     this.labels.selectAll('.vzb-bc-label > .vzb-bc-age')
-      .text(function(d) {
+      .text(function(d, i) {
         var formatter = _this.model.marker.axis_x.tickFormatter;
         var yearOldsIn = _this.translator("popbyage/yearOldsIn");
 
         //var age = parseInt(values.axis_y[d[ageDim]], 10);
-        var age = parseInt(d[ageDim], 10);
+        var age = parseInt(i*10, 10);
 
         if(group_by > 1) {
           age = age + "-to-" + (age + group_by - 1);
@@ -294,8 +242,8 @@ var PopByAge = Component.extend({
         return age + yearOldsIn + " " + timeFormatter(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
       })
       .attr("x", 7)
-      .attr("y", function(d) {
-        return first_bar_y_offset - (d[ageDim] - domain[0]) * one_bar_height - 10;
+      .attr("y", function(d, i) {
+        return first_bar_y_offset - (i*10 - domain[0]) * one_bar_height - 10;
       })
       .style("fill", function(d) {
         var color = _this.cScale(values.color[d[ageDim]]);
@@ -317,9 +265,15 @@ var PopByAge = Component.extend({
     //var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
     //if(x_domain_max > this.xScale.domain()[1]) this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
 
+    // should not be here 
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
-    this.xScale = this.xScale.domain([limits.min, limits.max]);
-    
+    if (group_by == 1) {
+      this.xScale = this.xScale.domain([limits.min, limits.max]);
+    } else {
+      var values = utils.values(values.axis_x);
+      values.push(limits.max);
+      this.xScale = this.xScale.domain([limits.min, Math.max.apply(Math, values)]);      
+    }
     this.resize();
 
   },
