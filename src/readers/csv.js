@@ -214,15 +214,12 @@ var CSVReader = Reader.extend({
 
           var group_nr = Math.floor((val[entity] - group_offset) / group_by); // group number
           var group_start = group_nr * group_by + group_offset; // number at which the group starts
-          var group_end = group_start + group_by - 1;
 
           // if the group falls outside the where filter, make the group smaller
           if (group_start < query.where[entity][0][0])
-            group_start = query.where[entity][0][0];
-          if (group_end > query.where[entity][0][1]) 
-            group_end = query.where[entity][0][1];       
+            group_start = query.where[entity][0][0];   
 
-          group_index = group_start+'-'+group_end;
+          group_index = group_start;
           val[entity] = group_index;
         }
 

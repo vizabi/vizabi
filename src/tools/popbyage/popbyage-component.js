@@ -220,7 +220,7 @@ var PopByAge = Component.extend({
       .attr("x", 0)
       .transition().duration(duration).ease("linear")
       .attr("y", function(d, i) {
-        return first_bar_y_offset - (i*10 - domain[0]) * one_bar_height;
+        return first_bar_y_offset - (d[ageDim] - domain[0]) * one_bar_height;
       })
       .attr("height", bar_height)
       .attr("width", function(d) {
@@ -232,8 +232,7 @@ var PopByAge = Component.extend({
         var formatter = _this.model.marker.axis_x.tickFormatter;
         var yearOldsIn = _this.translator("popbyage/yearOldsIn");
 
-        //var age = parseInt(values.axis_y[d[ageDim]], 10);
-        var age = parseInt(i*10, 10);
+        var age = parseInt(d[ageDim], 10);
 
         if(group_by > 1) {
           age = age + "-to-" + (age + group_by - 1);
@@ -243,7 +242,7 @@ var PopByAge = Component.extend({
       })
       .attr("x", 7)
       .attr("y", function(d, i) {
-        return first_bar_y_offset - (i*10 - domain[0]) * one_bar_height - 10;
+        return first_bar_y_offset - (d[ageDim] - domain[0]) * one_bar_height - 10;
       })
       .style("fill", function(d) {
         var color = _this.cScale(values.color[d[ageDim]]);
