@@ -36,7 +36,7 @@ var ToolModel = Model.extend({
     // change language
     if(values.language) {
       var _this = this;
-      this.on('change:language', function() {
+      this.on('change:language:id', function() {
         _this.trigger('translate');
       });
     }
@@ -76,6 +76,8 @@ var Tool = Component.extend({
             .then(function() {
               _this.model.validate();
               _this.translateStrings();
+              //for trigger change:language then new strings is loaded 
+              _this.model.language.set("id", _this.model.language.id, true);
             });
         }
       },

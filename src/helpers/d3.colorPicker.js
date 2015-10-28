@@ -33,14 +33,14 @@ export default function colorPicker() {
     // names of CSS classes
     var css = {
       INVISIBLE: 'vzb-invisible',
-      COLOR_POINTER: 'vzb-colorPicker-colorPointer',
-      COLOR_BUTTON: 'vzb-colorPicker-colorCell',
-      COLOR_DEFAULT: 'vzb-colorPicker-defaultColor',
-      COLOR_SAMPLE: 'vzb-colorPicker-colorSample',
-      COLOR_PICKER: 'vzb-colorPicker-colorPicker',
-      COLOR_CIRCLE: 'vzb-colorPicker-colorCircle',
-      COLOR_SEGMENT: 'vzb-colorPicker-colorSegment',
-      COLOR_BACKGR: 'vzb-colorPicker-background'
+      COLOR_POINTER: 'vzb-colorpicker-pointer',
+      COLOR_BUTTON: 'vzb-colorpicker-cell',
+      COLOR_DEFAULT: 'vzb-colorpicker-default',
+      COLOR_SAMPLE: 'vzb-colorpicker-sample',
+      COLOR_PICKER: 'vzb-colorpicker-svg',
+      COLOR_CIRCLE: 'vzb-colorpicker-circle',
+      COLOR_SEGMENT: 'vzb-colorpicker-segment',
+      COLOR_BACKGR: 'vzb-colorpicker-background'
     };
     var colorData = [];
     //here we store color data. formatted as follows:
@@ -296,7 +296,11 @@ export default function colorPicker() {
     colorPicker.colorDef = function(arg) {
       if(!arguments.length)
         return colorDef;
-      colorDef = arg;
+      if (typeof arg !== 'undefined') {
+        colorDef = arg;
+      }
+      console.log(arg);
+      console.log(colorDef);
       if(svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);

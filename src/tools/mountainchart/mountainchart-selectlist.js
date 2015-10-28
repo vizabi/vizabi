@@ -17,15 +17,22 @@ var MCSelectList = Class.extend({
       .concat(_this.stackedPointers)
       .filter(function (f) {
         return _this.model.entities.isSelected(f);
-      })
-      .sort(function (a, b) {
-        if (b.yMax && a.yMax) return b.yMax - a.yMax;
-        return b.sortValue[0] - a.sortValue[0];
-      })
-      .sort(function (a, b) {
-        return b.aggrLevel - a.aggrLevel;
+      }).sort(function (a, b) {
+        if (a.sortValue && b.sortValue) {
+          if(a.sortValue[1] === b.sortValue[1]) {
+            return d3.descending(a.sortValue[0], b.sortValue[0]);
+          }
+          return d3.descending(a.sortValue[1], b.sortValue[1]);
+        } else {
+          if (a.aggrLevel != b.aggrLevel) {
+            return d3.descending(a.aggrLevel, b.aggrLevel);
+          } else if (a.aggrLevel && b.aggrLevel) {
+            return d3.descending(a.yMax, b.yMax);
+          } else {
+            return 0;
+          }
+        }
       });
-
     _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
       .data(utils.unique(listData, function (d) {
         return d.KEY()
@@ -51,14 +58,14 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
-        var labelCloseGroup = label.select("g.vzb-mc-label-x") 
+        var labelCloseGroup = label.select("g.vzb-mc-label-x")
         if (!utils.isTouchDevice()){
           labelCloseGroup
             .html(iconClose)
             .select("svg")
             .attr("class", "vzb-mc-label-x-icon")
             .attr("width", "0px")
-            .attr("height", "0px");        
+            .attr("height", "0px");
 
           labelCloseGroup.insert("circle", "svg");
 
@@ -90,7 +97,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height * 1.1;
+    var fontHeight = sample[0][0].getBBox().height*0.7;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
@@ -98,10 +105,10 @@ var MCSelectList = Class.extend({
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
     if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
-    
+
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
-      
+
     _this.selectList
       .attr("transform", function (d, i) {
         if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += titleHeight;
@@ -126,7 +133,7 @@ var MCSelectList = Class.extend({
         var contentBBox = text[0][0].getBBox();
 
         var closeGroup = view.select(".vzb-mc-label-x");
-        
+
         if (utils.isTouchDevice()) {
           var closeTextBBox = closeGroup.select("text").node().getBBox();
           closeGroup
@@ -152,12 +159,12 @@ var MCSelectList = Class.extend({
             .attr("r", contentBBox.height * .4)
             .attr("cx", contentBBox.width + contentBBox.height * 1.1)
             .attr("cy", contentBBox.height / 3);
-          
+
           closeGroup.select("svg")
             .attr("x", contentBBox.width + contentBBox.height * (1.1 - .4))
             .attr("y", contentBBox.height * (1 / 3 - .4))
             .attr("width", contentBBox.height * .8)
-            .attr("height", contentBBox.height * .8);       
+            .attr("height", contentBBox.height * .8);
         }
 
         view.select(".vzb-mc-label-legend")
