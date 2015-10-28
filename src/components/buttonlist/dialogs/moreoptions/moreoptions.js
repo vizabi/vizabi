@@ -42,27 +42,9 @@ export default Dialog.extend({
         selectFakeMinMax: true
       }
     }, {
-      component: simplecheckbox,
-      placeholder: '.vzb-axes-options',
-      model: ["state", "language"],
-      submodel: 'time',
-      checkbox: 'adaptMinMaxZoom'
-    }, {
-      component: bubblesize,
-      placeholder: '.vzb-dialog-bubblesize',
-      model: ["state.marker.size"]
-    }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
       model: ["state.marker.size", "language"]
-    }, {
-      component: indicatorpicker,
-      placeholder: '.vzb-caxis-container',
-      model: ["state.marker.color", "language"]
-    }, {
-      component: colorlegend,
-      placeholder: '.vzb-clegend-container',
-      model: ["state.marker.color", "state.entities", "language"]
     }, {
       component: bubbleopacity,
       placeholder: '.vzb-dialog-bubbleopacity-regular',
@@ -73,6 +55,11 @@ export default Dialog.extend({
       placeholder: '.vzb-dialog-bubbleopacity-selectdim',
       model: ["state.entities"],
       arg: "opacitySelectDim"
+    }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-presentationmode-switch',
+      model: ["ui", "language"],
+      checkbox: 'presentation'
     }];
 
     this._super(config, parent);

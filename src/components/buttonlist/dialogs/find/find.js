@@ -51,6 +51,10 @@ var Find = Dialog.extend({
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
+    }).on("keypress", function(e) {
+      if (d3.event.which == 13) {
+        document.activeElement.blur();
+      }
     });
 
     this.deselect_all.on("click", function() {
@@ -58,6 +62,12 @@ var Find = Dialog.extend({
     });
 
     this._super();
+
+    //make sure it refreshes when all is reloaded
+    var _this = this;
+    this.root.on('ready', function() {
+      _this.ready();
+    })
   },
 
   open: function() {
@@ -124,6 +134,10 @@ var Find = Dialog.extend({
       })
       .on("change", function(d) {
         _this.model.state.entities.selectEntity(d);
+        //clear highlighted entities for touch devices
+        if(utils.isTouchDevice()) {
+          _this.model.state.entities.clearHighlighted();
+        }
       });
 
     items.append("label")
@@ -145,7 +159,6 @@ var Find = Dialog.extend({
   },
 
   showHideSearch: function() {
-
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
 

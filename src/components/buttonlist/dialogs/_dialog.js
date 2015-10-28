@@ -51,12 +51,12 @@ var Dialog = Component.extend({
     var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
-        if(_this.rootEl.classed('vzb-portrait') || _this.isPin)
+        if(_this.rootEl.classed('vzb-portrait'))
           return;
         dg.dragStart(d3.event);
       })
       .on('drag', function D3dialogDrag() {
-        if(_this.rootEl.classed('vzb-portrait') || _this.isPin)
+        if(_this.rootEl.classed('vzb-portrait'))
           return;
         dg.drag(d3.event);
       });
@@ -65,7 +65,7 @@ var Dialog = Component.extend({
     var profile = this.getLayoutProfile();
     this.dragHandler.classed("vzb-hidden", profile === 'small');
     this.pinIcon.classed("vzb-hidden", profile === 'small');
-
+    this.resize();
   },
 
   resize: function() {
@@ -82,6 +82,19 @@ var Dialog = Component.extend({
         this.leftPos = null;
         this.topPos = null;
         this.placeholderEl.attr('style', '');
+      } else {
+        var contentHeight = parseInt(this.rootEl.style('height'));
+        var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+        if (contentHeight < placeholderHeight) {
+          this.topPos = (-contentHeight + 50) + 'px';
+          this.leftPos = false;
+          this.placeholderEl.style('left', this.leftPos);
+          this.placeholderEl.style('bottom', 'auto');
+        } else {
+          this.topPos = false;
+          this.placeholderEl.style('bottom', false);
+        }
+        this.placeholderEl.style('top', this.topPos);
       }
 
       var profile = this.getLayoutProfile();

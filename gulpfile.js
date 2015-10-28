@@ -14,7 +14,7 @@ var minifycss = require('gulp-minify-css');
 var scsslint = require('gulp-scss-lint');
 var cache = require('gulp-cached');
 var mem_cache = require('gulp-memory-cache');
-var prefix = require('gulp-autoprefixer')
+var prefix = require('gulp-autoprefixer');
 
 //useful for ES6 module loader
 var rollup = require('rollup');
@@ -227,7 +227,9 @@ function resolvePath(id, importer, options) {
 
 //build JS with banner and/or sourcemaps
 //TODO: improve code quality
+var buildLock = false;
 function buildJS(dev, cb) {
+  buildLock = true;
   getTemplates(function(templates) {
     var banner_str = ['/**',
       ' * ' + pkg.name + ' - ' + pkg.description,
@@ -268,6 +270,7 @@ function buildJS(dev, cb) {
     }, function(err) {
       gutil.log(chalk.red("Bundling JS... ERROR!"));
       gutil.log(chalk.red(err));
+      buildLock = false;
       cb(false);
     });
 
@@ -287,15 +290,18 @@ function buildJS(dev, cb) {
         .on('error', function(err) {
           gutil.log(chalk.red("Bundling JS... ERROR!"));
           gutil.log(err);
+          buildLock = false;
         })
         .pipe(gulp.dest(config.destLib))
         .on('end', function() {
+          buildLock = false;
           cb();
         });
     }
 
     function success() {
       gutil.log(chalk.green("Bundling JS... DONE!"));
+      buildLock = false;
       cb();
     }
   });
@@ -313,6 +319,13 @@ gulp.task('buildIndexes', ['clean:indexes'], function() {
 //with source maps
 gulp.task('bundle', ['clean:js', 'buildIndexes'], function(cb) {
   buildJS(true, cb);
+});
+
+gulp.task('buildJS', function() {
+  if (!buildLock)
+    gulp.run('bundle');
+  else
+    gutil.log(chalk.yellow('NEXT BUILD DISCONTINUED: previous build process is still running.'));
 });
 
 //without source maps and with banner
@@ -372,8 +385,15 @@ gulp.task('preview:data', ['clean:preview:data'], function() {
 });
 
 
-gulp.task('preview', ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor', 'preview:data'], function(
-  cb) {
+var previewDeps = ['preview:templates', 'preview:styles', 'preview:js', 'preview:vendor'];
+if(!gutil.env.faster) {
+  previewDeps.push('preview:data');
+}
+else {
+  gutil.log(chalk.yellow("DATA NOT CLEANED."));
+}
+
+gulp.task('preview', previewDeps, function(cb) {
   return cb();
 });
 
@@ -405,8 +425,8 @@ gulp.task('watch', function() {
   gulp.watch(path.join(config.srcPreview, '**/*.scss'), ['preview:styles']);
   gulp.watch(path.join(config.srcPreview, '**/*.js'), ['preview:js']);
   gulp.watch(path.join(config.src, '**/*.scss'), ['styles']);
-  gulp.watch([path.join(config.src, '**/*.js'), '!' + path.join(config.src, '**/_index.js')], ['bundle']);
-  gulp.watch(path.join(config.src, '**/*.html'), ['bundle']);
+  gulp.watch([path.join(config.src, '**/*.js'), '!' + path.join(config.src, '**/_index.js')], ['buildJS']);
+  gulp.watch(path.join(config.src, '**/*.html'), ['buildJS']);
   //reloading the browser
   reloadOnChange(path.join(config.destPreview, '**/*.js'));
   reloadOnChange(path.join(config.destPreview, '**/*.html'));

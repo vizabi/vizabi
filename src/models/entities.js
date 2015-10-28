@@ -136,6 +136,9 @@ var EntitiesModel = Model.extend({
    * Shows or unshows an entity from the set
    */
   showEntity: function(d) {
+    //clear selected countries when showing something new
+    this.clearSelected();
+    
     var dimension = this.getDimension();
     var value = d[dimension];
     var show = this.show[dimension].concat([]);
@@ -150,6 +153,7 @@ var EntitiesModel = Model.extend({
       
     if(show.length === 0) show = ["*"];
     this.show[dimension] = show.concat([]);
+
   },
 
   setLabelOffset: function(d, xy) {

@@ -129,8 +129,10 @@ var Component = Events.extend({
             utils.delay(function() {
               //force loading because we're restoring time.
               _this.model.setLoading('restore_orig_time');
+              //restore because validation kills the original start/end
               timeMdl.start = temp.start;
               timeMdl.end = temp.end;
+              
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
@@ -239,6 +241,20 @@ var Component = Events.extend({
     this.trigger('resize');
   },
 
+  getActiveProfile: function(profiles, presentationProfileChanges) {
+    // get layout values
+    var layoutProfile = this.getLayoutProfile();
+    var presentationMode = this.getPresentationMode();
+    var activeProfile = utils.deepClone(profiles[layoutProfile]); // clone so it can be extended without changing the original profile
+
+    // extend the profile with presentation mode values
+    if (presentationMode && presentationProfileChanges[layoutProfile]) {
+      utils.deepExtend(activeProfile, presentationProfileChanges[layoutProfile]);
+    }
+
+    return activeProfile;
+  },
+
   /*
    * Loads all subcomponents
    */
@@ -306,6 +322,19 @@ var Component = Events.extend({
       return this.layout.currentProfile();
     } else {
       return this.parent.getLayoutProfile();
+    }
+  },
+
+  /**
+   * Get if presentation mode is set of the current tool
+   * @returns {Bool} presentation mode
+   */
+  getPresentationMode: function() {
+    //get profile from parent if layout is not available
+    if(this.layout) {
+      return this.layout.getPresentationMode();
+    } else {
+      return this.parent.getPresentationMode();
     }
   },
 
@@ -544,16 +573,28 @@ function preloader(comp) {
 // Based on Simple JavaScript Templating by John Resig
 //generic templating function
 function templateFunc(str, data) {
+
+  var func = function(obj) {
+    return str.replace(/<%=([^\%]*)%>/g, function(match) {
+      //match t("...")
+      var s = match.match(/t\s*\(([^)]+)\)/g);
+      //replace with translation 
+      if(s.length) {
+        s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(''));
+      }
+      //use object[name]
+      else {
+        s = match.match(/([a-z\-A-Z]+([a-z\-A-Z0-9]?[a-zA-Z0-9]?)?)/g)[0];
+        s = obj[s] || s;
+      }
+      return s;
+    });
+  }
   // Figure out if we're getting a template, or if we need to
   // load the template - and be sure to cache the result.
   var fn = !/<[a-z][\s\S]*>/i.test(str) ? templates[str] = templates[str] || templateFunc(document.getElementById(
-      str).innerHTML) : // Generate a reusable function that will serve as a template
-    // generator (and which will be cached).
-    new Function('obj', 'var p=[],print=function(){p.push.apply(p,arguments);};' + // Introduce the data as local variables using with(){}
-      'with(obj){p.push(\'' + // Convert the template into pure JavaScript
-      str.replace(/[\r\t\n]/g, ' ').split('<%').join('\t').replace(/((^|%>)[^\t]*)'/g, '$1\r').replace(/\t=(.*?)%>/g,
-        '\',$1,\'').split('\t').join('\');').split('%>').join('p.push(\'').split('\r').join('\\\'') +
-      '\');}return p.join(\'\');');
+      str).innerHTML) : func;
+
   // Provide some basic currying to the user
   return data ? fn(data) : fn;
 }

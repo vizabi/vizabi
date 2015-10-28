@@ -92,6 +92,12 @@ var ButtonList = Component.extend({
         dialog: false,
         func: this.toggleBubbleLock.bind(this)
       },
+      'presentation': {
+        title: "buttons/presentation",
+        icon: "presentation",
+        dialog: false,
+        func: this.togglePresentationMode.bind(this)
+      },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
@@ -159,15 +165,9 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-//      var element = d3.select('div.vzb-large');
-//      var classes = element.attr('class');
-//
-//      classes += ' vzb-button-expand-true';
-//      element.attr('class', classes);
         d3.select('div.vzb-large')
             .classed("vzb-button-expand-true", true);
     }
-
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -239,6 +239,7 @@ var ButtonList = Component.extend({
 
     this.setBubbleTrails();
     this.setBubbleLock();
+    this.setPresentationMode();
 
     d3.select(this.root.element).on("mousedown", function(e) {
       if(!this._active_comp) return; //don't do anything if nothing is open
@@ -385,7 +386,7 @@ var ButtonList = Component.extend({
    */
   openDialog: function(id) {
 
-    this.closeAllDialogs(true);
+    this.closeAllDialogs();
 
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
@@ -434,6 +435,8 @@ var ButtonList = Component.extend({
   closeDialog: function(id) {
     var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
       dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+
+    this._active_comp = this.components[this._available_buttons[id].component];
 
     if(this._available_buttons[id].ispin)
       this.pinDialog(id);
@@ -532,6 +535,17 @@ var ButtonList = Component.extend({
 
     btn.select(".vzb-buttonlist-btn-icon")
       .html(iconset[locked ? "lock" : "unlock"]);
+  },
+  togglePresentationMode: function() {
+    this.model.ui.presentation = !this.model.ui.presentation;
+    this.setPresentationMode();
+  },
+  setPresentationMode: function() {
+    var id = 'presentation';
+    var translator = this.model.language.getTFunction();
+    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
+
+    btn.classed(class_active_locked, this.model.ui.presentation);
   },
   toggleFullScreen: function(id) {
 

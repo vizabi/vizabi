@@ -51,14 +51,14 @@ var ColorModel = Model.extend({
       "_discrete": {
         "0": "#1f77b4",
         "1": "#aec7e8",
-        "3": "#ff7f0e",
-        "4": "#2ca02c",
-        "5": "#98df8a",
-        "6": "#ffbb78",
-        "7": "#d62728",
-        "8": "#ff9896",
-        "9": "#9467bd",
-        "10": "#c5b0d5"
+        "2": "#ff7f0e",
+        "3": "#2ca02c",
+        "4": "#98df8a",
+        "5": "#ffbb78",
+        "6": "#d62728",
+        "7": "#ff9896",
+        "8": "#9467bd",
+        "9": "#c5b0d5"
       },
       "_default": {
         "_default": "#fa5ed6"
@@ -176,6 +176,11 @@ var ColorModel = Model.extend({
       var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
       domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
 
+      if(step === 0) {
+        domain.push(domain[0]);
+        range = [range[range.length - 1]];             
+      }
+      
       this.scale = d3.time.scale()
         .domain(domain)
         .range(range)

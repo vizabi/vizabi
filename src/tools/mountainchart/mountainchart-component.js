@@ -197,7 +197,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
         this.yearEl = this.graph.select(".vzb-mc-year");
-        this.year = new DynamicBackground(this.yearEl, {xAlign:'right', yAlign:'top'});
+        this.year = new DynamicBackground(this.yearEl);
 
         this.mountainMergeStackedContainer = this.graph.select(".vzb-mc-mountains-mergestacked");
         this.mountainMergeGroupedContainer = this.graph.select(".vzb-mc-mountains-mergegrouped");
@@ -314,17 +314,39 @@ var MountainChartComponent = Component.extend({
         var margin, infoElHeight;
         var padding = 2;
 
-        switch (this.getLayoutProfile()) {
-            case "small":
-                margin = { top: 10, right: 10, left: 10, bottom: 25 }; infoElHeight = 16;
-                break;
-            case "medium":
-                margin = { top: 20, right: 20, left: 20, bottom: 30 }; infoElHeight = 20;
-                break;
-            case "large":
-                margin = { top: 30, right: 30, left: 30, bottom: 35 }; infoElHeight = 22;
-                break;
-        }
+        var profiles = {
+          small: {
+            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            infoElHeight: 16
+          },
+          medium: {
+            margin: { top: 20, right: 20, left: 20, bottom: 30 },
+            infoElHeight: 20
+          },
+          large: {
+            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            infoElHeight: 22
+          }
+        };
+
+        var presentationProfileChanges = {
+          small: {
+            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            infoElHeight: 16
+          },
+          medium: {
+            margin: { top: 20, right: 20, left: 20, bottom: 50 },
+            infoElHeight: 20
+          },
+          large: {
+            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            infoElHeight: 22
+          }
+        };
+
+        this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+        margin = this.activeProfile.margin;
+        infoElHeight = this.activeProfile.infoElHeight;
 
         //mesure width and height
         this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -333,8 +355,18 @@ var MountainChartComponent = Component.extend({
         //graph group is shifted according to margins (while svg element is at 100 by 100%)
         this.graph.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        var yearLabelOptions = {
+            topOffset: this.getLayoutProfile()==="large"? margin.top * 2 : 0,
+            xAlign: this.getLayoutProfile()==="large"? 'right' : 'center',
+            yAlign: this.getLayoutProfile()==="large"? 'top' : 'center',
+        };
+
+        var yearLabelFontSize = this.getLayoutProfile()==="large"? this.width / 6 : Math.max(this.height / 4, this.width / 4);
+
         //year is centered and resized
-        this.year.setConditions({topOffset:margin.top * 2}).resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 8)));
+        this.year
+            .setConditions(yearLabelOptions)
+            .resize(this.width, this.height, yearLabelFontSize);
 
         //update scales to the new range
         this.yScale.range([this.height, 0]);
@@ -433,7 +465,7 @@ var MountainChartComponent = Component.extend({
         this.yTitleEl.select("text")
             .text(this.translator("mount/title"));
 
-        this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+        utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
@@ -608,6 +640,7 @@ var MountainChartComponent = Component.extend({
             .on("click", function (d, i) {
                 if (utils.isTouchDevice()) return;
                 _this._interact()._click(d, i);
+                _this.highlightEntities();
             })
             .onTap(function (d, i) {
                 _this._interact()._click(d, i);
@@ -915,10 +948,17 @@ var MountainChartComponent = Component.extend({
 
     redrawDataPoints: function () {
         var _this = this;
-        var mergeGrouped = _this.model.marker.group.merge;
-        var mergeStacked = _this.model.marker.stack.merge;
-        var dragOrPlay = (_this.model.time.dragging || _this.model.time.playing) && this.model.marker.stack.which !== "none";
-        var stackMode = _this.model.marker.stack.which;
+        var mergeGrouped = this.model.marker.group.merge;
+        var mergeStacked = this.model.marker.stack.merge;
+        var stackMode = this.model.marker.stack.which;
+        //it's important to know if the chart is dragging or playing at the moment.
+        //because if that is the case, the mountain chart will merge the stacked entities to save performance
+        var dragOrPlay = (this.model.time.dragging || this.model.time.playing)
+            //never merge when no entities are stacked
+            && stackMode !== "none"
+            //when the time is playing and stops in the end, the time.playing is set to false after the slider is stopped
+            //so the mountain chat is stuck in the merged state. this line prevents it:
+            && !(this.model.time.value - this.model.time.end==0 && !this.model.time.loop);
 
         this._adjustMaxY();
 
@@ -1018,17 +1058,24 @@ var MountainChartComponent = Component.extend({
 
             //position tooltip
             this.tooltip.classed("vzb-hidden", false)
-                .attr("transform", "translate(" + (mouse[0] - 15) + "," + (mouse[1] - 15) + ")")
+                .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
                 .selectAll("text")
-                .text(tooltipText);
+                .attr("text-anchor", "middle")
+                .attr("alignment-baseline", "middle")
+                .text(tooltipText)
 
             var contentBBox = this.tooltip.select("text")[0][0].getBBox();
-            this.tooltip.select("rect").attr("width", contentBBox.width + 8)
+            this.tooltip.select("rect")
+                .attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
-                .attr("x", -contentBBox.width - 4)
-                .attr("y", -contentBBox.height - 1)
+                .attr("x", -contentBBox.width - 25)
+                .attr("y", -contentBBox.height - 25)
                 .attr("rx", contentBBox.height * .2)
                 .attr("ry", contentBBox.height * .2);
+
+            this.tooltip.selectAll("text")
+                .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
+                .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
 
         } else {
 
