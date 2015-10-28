@@ -53,12 +53,6 @@ var PopByAge = Component.extend({
       },
       "change:age:select": function(evt) {
         _this._selectBars();
-      },
-      "change:marker:group_by": function(evt) {
-        //_this._updateEntities();
-      },
-      "change:marker:group_offset": function(evt) {
-        //_this.ready();
       }
     };
 
