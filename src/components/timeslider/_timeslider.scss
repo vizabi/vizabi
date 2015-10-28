@@ -4,10 +4,7 @@ $vzb-ts-btn-bg: $vzb-color-primary;
 $vzb-ts-btn-bg-active: #2f7687;
 $vzb-ts-slider-color: $vzb-color-primary;
 $vzb-ts-value-width: 40px;
-
 .vzb-timeslider {
-  @import '../simpleslider/simpleslider';
-
   min-height: $vzb-ts-btn-area;
   position: relative;
   .vzb-ts-btns {
@@ -232,7 +229,7 @@ $vzb-ts-value-width: 40px;
 }
 
 .vzb-ts-delay-slider {
-  @include position(absolute, $vzb-ts-btn-area*.5 0 0 5%);
+  @include position(absolute, $vzb-ts-btn-area*.7 0 0 5%);
   font-size: $vzb-font-size-small;
   overflow: visible;
   color: $vzb-ts-slider-color;

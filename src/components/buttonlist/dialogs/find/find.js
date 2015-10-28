@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { simpleslider } from 'components/_index'
+import { bubbleopacity } from 'components/_index'
 
 /*!
  * VIZABI FIND CONTROL
@@ -16,7 +16,7 @@ var Find = Dialog.extend({
     var _this = this;
 
     this.components = [{
-      component: simpleslider,
+      component: bubbleopacity,
       placeholder: '.vzb-dialog-bubbleopacity',
       model: ["state.entities"],
       arg: "opacitySelectDim"

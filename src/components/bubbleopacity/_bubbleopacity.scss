@@ -1,5 +1,5 @@
 //general styles
-.vzb-ss-holder {
+.vzb-bo-holder {
 
   height: 20px;
   margin: 0 auto;
@@ -20,12 +20,12 @@
     &:before {
       background-color: rgba($vzb-color-grey, .2);
     }
-    .vzb-ss-slider {
+    .vzb-bo-slider {
       opacity: .5;
     }
   }
 
-  .vzb-ss-slider {
+  .vzb-bo-slider {
     position: absolute;
     top: 50%;
     margin-top: -3px;
@@ -58,38 +58,27 @@
       height: 20px;
       border: 3px solid $vzb-color-white;
     }
-  }
 
-  .vzb-ss-slider-small {
-    @extend .vzb-ss-slider;
-    &::-webkit-slider-thumb {
-      width: 15px;
-      height: 15px;
-    }
-    &::-moz-range-thumb {
-      width: 15px;
-      height: 15px;
-    }
   }
 }
 
 //large specific styles
 &.vzb-large {
-  .vzb-ss-holder {
+  .vzb-bo-holder {
     //...
   }
 }
 
 //medium specific styles
 &.vzb-medium {
-  .vzb-ss-holder {
+  .vzb-bo-holder {
     //...
   }
 }
 
 //small specific styles
 &.vzb-small {
-  .vzb-ss-holder {
+  .vzb-bo-holder {
     //...
   }
 }
