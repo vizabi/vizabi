@@ -1,7 +1,7 @@
 import * as utils from 'base/utils';
 import Tool from 'base/tool';
 
-import BarRankChart from './barrankchart-component';
+import BarRankChartComponent from './barrankchart-component';
 import {
   timeslider
 } from 'components/_index';
@@ -14,7 +14,7 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this.name = "barrankchart";
 
     this.components = [{
-        component: BarRankChart, 
+        component: BarRankChartComponent, 
         placeholder: '.vzb-tool-viz', 
         model: ["state.time", "state.entities", "state.marker", "language", "ui"] 
     }, {
