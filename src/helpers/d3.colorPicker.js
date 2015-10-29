@@ -296,7 +296,9 @@ export default function colorPicker() {
     colorPicker.colorDef = function(arg) {
       if(!arguments.length)
         return colorDef;
-      colorDef = arg;
+      if (typeof arg !== 'undefined') {
+        colorDef = arg;
+      }
       if(svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);

@@ -451,7 +451,7 @@ var Model = Events.extend({
    */
   getQuery: function(splashScreen) {
 
-    var dimensions, filters, select, q;
+    var dimensions, filters, select, grouping, q;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -466,14 +466,17 @@ var Model = Events.extend({
 
     dimensions = this._getAllDimensions(exceptions);
     filters = this._getAllFilters(exceptions, splashScreen);
+    grouping = this._getGrouping();
 
     if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
+
     //return query
     return {
       'select': select,
-      'where': filters
+      'where': filters,
+      'grouping': grouping,
     };
   },
 
@@ -671,6 +674,7 @@ var Model = Events.extend({
     else {
       utils.forEach(this._dataCube, function(hook, name) {
         filtered = hook.getNestedItems(group_by);
+
         response[name] = {};
         //find position from first hook
         u = hook.use;
@@ -817,11 +821,13 @@ var Model = Events.extend({
     items = this._dataId ? _DATAMANAGER.get(this._dataId) : this.getKeys();
     nest = d3.nest();
     for(var i = 0; i < order.length; i++) {
-      nest = nest.key((function(k) {
-        return function(d) {
-          return d[k];
-        };
-      })(order[i]));
+      nest = nest.key(
+        (function(k) {
+          return function(d) {
+            return d[k];
+          };
+        })(order[i])
+      );
     };
 
     function nestToObj(arr) {
@@ -1215,6 +1221,19 @@ var Model = Events.extend({
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
     return filters;
+  },
+
+  /**
+   * gets grouping for each of the used entities
+   * @param {Boolean} splashScreen get filters for first screen only
+   * @returns {Object} filters
+   */
+  _getGrouping: function() {
+    var groupings = {};
+    utils.forEach(this._space, function(h) {
+      groupings[h.dim] = h.grouping || undefined;
+    });
+    return groupings;
   },
 
   /**

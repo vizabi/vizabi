@@ -165,6 +165,9 @@ var CSVReader = Reader.extend({
           return utils.clone(row, query.select);
         });
 
+        // grouping
+        data = _this.groupData(data, query);
+
         _this._data = data;
         p.resolve();
       }
@@ -180,7 +183,94 @@ var CSVReader = Reader.extend({
    */
   getData: function() {
     return this._data;
+  },
+
+  groupData: function(data, query) {
+
+    // nested object which will be used to find the right group for each datarow. Each leaf will contain a reference to a data-object for aggregration.
+    var grouping_map = {}; 
+
+    // temporary: only pop is aggregrated
+
+    var filtered = data.filter(function(val, index) {
+
+      var keep = false;
+      var leaf = grouping_map; // start at the base
+
+      // find the grouping-index for each grouping property (i.e. entity)
+      var keys = Object.keys(query.grouping);
+      var n = keys.length;
+      for (var i = 0; i < n; i++) {
+        var grouping = query.grouping[keys[i]];
+        var entity = keys[i];
+
+        var group_index;
+
+        // only age is grouped together for now
+        if (entity == 'age') {
+
+          var group_by = grouping;
+          var group_offset = 0;
+
+          var group_nr = Math.floor((val[entity] - group_offset) / group_by); // group number
+          var group_start = group_nr * group_by + group_offset; // number at which the group starts
+
+          // if the group falls outside the where filter, make the group smaller
+          if (group_start < query.where[entity][0][0])
+            group_start = query.where[entity][0][0];   
+
+          group_index = group_start;
+          val[entity] = group_index;
+        }
+
+        // if this is not the last grouping property
+        if (i < (n-1)) {
+
+          // create if next grouping level doesn't exist yet
+          if (!leaf[val[entity]])
+            leaf[val[entity]] = {};
+          // set leaf to next level to enable recursion
+          leaf = leaf[val[entity]];
+
+        } else {
+
+          // if last grouping property: we are at the leaf and can aggegrate
+
+          if (!leaf[val[entity]]) {
+
+            // if the final leaf isn't set yet, start it by letting it refer to the current row in the data. We will keep this row in the data-set.
+            leaf[val[entity]] = val;
+            keep = true;
+
+          } else {
+
+            // if the final leaf was already set, aggregrate!
+            leaf = leaf[val[entity]];
+            // if the leaf already had values, apply the aggregrate functions for each property
+            utils.forEach(query.select, function(property, key) {
+              // replace with more generic grouping/aggregrate
+              if (property == 'pop') {
+                // aggregrate the un-grouped data (now only sum population)
+                leaf[property] = parseFloat(leaf[property]) + parseFloat(val['pop']);
+              }
+            });  
+            keep = false;
+
+          }
+
+        }
+
+      }
+
+      // if this row will function as place for aggregration, keep it, otherwise, discard it through the filter.
+      return keep;
+
+    });
+  
+    return filtered;
+
   }
+
 });
 
 export default CSVReader;

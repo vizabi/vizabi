@@ -464,12 +464,11 @@ PopByAge.define('default_options', {
               [0, 150]
             ] //show 0 through 100
         }
-      }
+      },
+      grouping: 5
     },
     marker: {
       space: ["entities", "entities_age", "time"],
-      group_by: 1,
-      group_offset: 0,
       label: {
         use: "indicator",
         which: "age"

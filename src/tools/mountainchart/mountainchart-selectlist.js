@@ -97,7 +97,7 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height * 1.1;
+    var fontHeight = sample[0][0].getBBox().height*0.7;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
