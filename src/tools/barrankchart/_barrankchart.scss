@@ -1,0 +1,20 @@
+.vzb-tool-barrankchart {
+  $vzb-br-year-size: 16em;
+
+  .vzb-barrankchart {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-barrankchart-svg {
+      @extend %vzb-chart-svg;
+
+      .vzb-br-year {
+        @include opacity(.1);
+        font-size: $vzb-br-year-size;
+        fill: $vzb-color-grey;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+    }
+  }
+}

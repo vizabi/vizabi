@@ -127,7 +127,8 @@ BarRankChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "pop"
+        which: "pop",
+        scaleType: "log",
       },
       color: {
         use: "property",
@@ -139,7 +140,7 @@ BarRankChart.define('default_options', {
   data: {
     //reader: "waffle",
     reader: "csv",
-    path: "data/waffles/basic-indicators.csv"
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {
     presentation: false 
