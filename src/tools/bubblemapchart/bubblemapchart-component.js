@@ -158,12 +158,14 @@ var BubbleMapChartComponent = Component.extend({
     //Europe 53.0000° N, 9.0000° E
     //Asia 49.8380° N, 105.8203° E
     //north American 48.1667° N and longitude 100.1667° W
+    /*
     var pos = {
       "afr": {lat: 9.1, lng: 18.3},
       "eur": {lat: 53.0, lng: 9.0},
       "asi": {lat: 49.8, lng: 105.8},
       "ame": {lat: 48.2, lng: -100.2},
     };
+    */
 
     this.entityBubbles = this.bubbles.selectAll('.vzb-bmc-bubble')
       .data(items);
@@ -187,7 +189,7 @@ var BubbleMapChartComponent = Component.extend({
         return _this.cScale(values.color[d[entityDim]]);
       })
       .attr("cx", function (d) {
-        d.cLoc = _this.skew(_this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat]));
+        d.cLoc = _this.skew(_this.projection([+values.lng[d[entityDim]], +values.lat[d[entityDim]]]));
         return d.cLoc[0];
       })
       .transition().duration(duration).ease("linear")
