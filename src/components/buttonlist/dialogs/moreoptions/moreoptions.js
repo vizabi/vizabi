@@ -3,7 +3,7 @@ import Component from 'base/component';
 import Dialog from '../_dialog';
 
 import {
-  bubbleopacity,
+  simpleslider,
   bubblesize,
   colorlegend,
   indicatorpicker,
@@ -46,16 +46,27 @@ export default Dialog.extend({
       placeholder: '.vzb-saxis-container',
       model: ["state.marker.size", "language"]
     }, {
-      component: bubbleopacity,
+      component: simpleslider,
       placeholder: '.vzb-dialog-bubbleopacity-regular',
       model: ["state.entities"],
       arg: "opacityRegular"
     }, {
-      component: bubbleopacity,
+      component: simpleslider,
       placeholder: '.vzb-dialog-bubbleopacity-selectdim',
       model: ["state.entities"],
       arg: "opacitySelectDim"
     }, {
+      component: simpleslider,
+      placeholder: '.vzb-dialog-delay-slider',
+      model: ["state.time"],
+      arg: "delay",
+      thumb_size: "small",
+      properties: {min:1, max:5, step:1, scale: d3.scale.linear()
+        .domain([1,2,3,4,5])
+        .range([1200,900,450,200,75])
+      }
+    },
+    {
       component: simplecheckbox,
       placeholder: '.vzb-presentationmode-switch',
       model: ["ui", "language"],
@@ -78,4 +89,3 @@ export default Dialog.extend({
     this._super();
   }
 });
-

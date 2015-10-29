@@ -83,7 +83,6 @@ var TimeSlider = Component.extend({
   init: function(config, context) {
 
     this.name = "gapminder-timeslider";
-
     this.template = this.template || "timeslider.html";
 
     //define expected models/hooks for this component
