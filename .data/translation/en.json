@@ -86,7 +86,7 @@
     "scaletype/ordinal": "Ordinal",
     "color/_default": "Single color",
     "check/adaptMinMaxZoom": "Follow bubbles with zoom",
-    "check/presentation": "Changes layout for presentations",
+    "check/presentation": "Increase text size for presentation",
     "region/ame": "America",
     "region/asi": "Asia",
     "region/afr": "Africa",
