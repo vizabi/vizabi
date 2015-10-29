@@ -194,9 +194,7 @@ var BarRankChart = Component.extend({
     // apply the current data to the chart
     var updatedBars = this.barContainer
       .selectAll('.vzb-br-bar')
-      .data(this.sorted_entities, function(d) { 
-        return d.entity;
-      })
+      .data(this.sorted_entities, getDataKey)
       .order();
 
     // update the shown bars for new data-set
@@ -204,13 +202,14 @@ var BarRankChart = Component.extend({
 
     // set position of the bars
     this.barContainer
-      .selectAll('.vzb-br-bar > rect')        
+      .selectAll('.vzb-br-bar > rect')
+      .data(this.sorted_entities, getDataKey)        
       .attr("x", 0)
       .attr("height", bar_height)
       .transition().duration(duration).ease("linear")
       .attr("width", function(d) {
         var width = _this.xScale(d.value);
-        return width;
+        return width > 0 ? width : 0;
       })
       .attr("y", function(d, i) {
         return (bar_height+5)*i;
@@ -218,12 +217,18 @@ var BarRankChart = Component.extend({
 
     // set position of all labels
     this.barContainer
-      .selectAll('.vzb-br-bar > text')      
+      .selectAll('.vzb-br-bar > text') 
+      .data(this.sorted_entities, getDataKey)       
       .attr("x", 0)
       .transition().duration(duration).ease("linear")
       .attr("y", function(d, i) {
         return (bar_height+5)*(i+1)-5;
       })
+
+
+    function getDataKey(d) {
+      return d.entity;
+    }
   },
 
   createDeleteBars: function(newBars) {

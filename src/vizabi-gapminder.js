@@ -128,7 +128,7 @@ BarRankChart.define('default_options', {
       axis_x: {
         use: "indicator",
         which: "pop",
-        scaleType: "log",
+        scaleType: "log"
       },
       color: {
         use: "property",
