@@ -4,7 +4,7 @@ import Component from 'base/component';
 var DraggableList = Component.extend({
 
   init: function(config, context) {
-    this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list"></ul></span>';
+    this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list vzb-dialog-scrollable"></ul></span>';
     var _this = this;
 
     this.dataArrFn = config.dataArrFn;

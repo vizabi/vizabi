@@ -192,3 +192,20 @@ $vzb-loader-bgcolor: $vzb-color-white;
     }
   }
 }
+
+.vzb-dialog-scrollable {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: lighten($vzb-color-primary, 20%);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  &::-webkit-scrollbar-track {
+    width: 2px;
+    background: $vzb-color-primary-lightest;
+    border-radius: 2px;
+    border: $vzb-color-white 2px solid;
+  }
+}
