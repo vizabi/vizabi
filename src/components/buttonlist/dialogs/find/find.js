@@ -134,10 +134,6 @@ var Find = Dialog.extend({
       })
       .on("change", function(d) {
         _this.model.state.entities.selectEntity(d);
-        //clear highlighted entities for touch devices
-        if(utils.isTouchDevice()) {
-          _this.model.state.entities.clearHighlighted();
-        }
       });
 
     items.append("label")
@@ -148,10 +144,10 @@ var Find = Dialog.extend({
         return d.name;
       })
       .on("mouseover", function(d) {
-        _this.model.state.entities.highlightEntity(d);
+        if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d);
       })
       .on("mouseout", function(d) {
-        _this.model.state.entities.clearHighlighted();
+        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
       });
 
     this.showHideSearch();
