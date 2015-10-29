@@ -40,7 +40,7 @@ globals.gapminder_paths = {
 BarChart.define('default_options', {
   state: {
     time: {
-      start: "1952",
+      start: "1800",
       end: "2012",
       value: "2000",
       step: 1,
@@ -50,8 +50,8 @@ BarChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo": ["usa", "swe", "nor"],
+          "geo.cat": ["country"]
         }
       }
     },
@@ -63,10 +63,8 @@ BarChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "lex",
-        scaleType: "linear",
-        min: 0,
-        max: 90,
+        which: "pop",
+        scaleType: "log",
         allow: {
           scales: ["linear", "log"]
         }
@@ -86,8 +84,8 @@ BarChart.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    splash: true
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv"
   },
   language: language,
   ui: {
@@ -111,7 +109,7 @@ BubbleMapChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.region": ["afr"]
+          //"geo.region": ["afr"]
         }
       }
     },
@@ -156,12 +154,8 @@ BubbleMapChart.define('default_options', {
     }
   },
   data: {
-    /*
-    reader: "waffle",
-    splash: true
-    */
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -225,7 +219,6 @@ MountainChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        //which: "mean",
         which: "gdp_per_cap",
         scaleType: 'log',
         min: .11, //0
@@ -233,7 +226,6 @@ MountainChart.define('default_options', {
       },
       size: {
         use: "indicator",
-        //which: "variance",
         which: "gini",
         scaleType: 'linear'
       },
@@ -260,6 +252,9 @@ MountainChart.define('default_options', {
     path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
       //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
+  },
+  ui: {
+    presentation: false
   }
 });
 
@@ -267,7 +262,7 @@ MountainChart.define('default_options', {
 LineChart.define('default_options', {
   state: {
     time: {
-      start: 1990,
+      start: 1800,
       end: 2012,
       value: 2012,
       step: 1,
@@ -278,8 +273,8 @@ LineChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
-          "geo.cat": ["region"]
+          "geo": ["usa", "swe", "chn"],
+          "geo.cat": ["country"]
         }
       }
     },
@@ -293,9 +288,7 @@ LineChart.define('default_options', {
       axis_y: {
         use: "indicator",
         which: "gdp_per_cap",
-        scaleType: "log",
-        min: 150000,
-        max: 1500000
+        scaleType: "log"
       },
       axis_x: {
         use: "indicator",
@@ -321,7 +314,9 @@ LineChart.define('default_options', {
   },
 
   data: {
-    reader: "waffle"
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    splash: false
   },
   language: language,
   ui: {
@@ -385,7 +380,7 @@ BubbleChart.define('default_options', {
         which: "u5mr",
         scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "genericLog"]
+          scales: ["linear", "log"]
         }
       },
       axis_x: {
@@ -393,7 +388,7 @@ BubbleChart.define('default_options', {
         which: "gdp_per_cap",
         scaleType: "log",
         allow: {
-          scales: ["linear", "log", "genericLog"]
+          scales: ["linear", "log"]
         }
       },
       color: {
@@ -443,7 +438,8 @@ BubbleChart.define('default_options', {
       }
     },
    buttons: [],
-   buttons_expand: []
+   buttons_expand: [],
+   presentation: false
   }
 });
 
@@ -465,14 +461,15 @@ PopByAge.define('default_options', {
       show: {
         _defs_: {
           "age": [
-              [1, 100]
-            ] //show 1 through 100
+              [0, 150]
+            ] //show 0 through 100
         }
       }
     },
     marker: {
       space: ["entities", "entities_age", "time"],
       group_by: 1,
+      group_offset: 0,
       label: {
         use: "indicator",
         which: "age"
@@ -487,7 +484,7 @@ PopByAge.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "population"
+        which: "pop"
       },
       color: {
         use: "value",

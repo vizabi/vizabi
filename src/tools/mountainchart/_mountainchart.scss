@@ -93,6 +93,7 @@
       .vzb-mc-mountains-labels .vzb-mc-label .vzb-mc-label-x {
         @include transition(opacity 200ms linear);
         cursor: pointer;
+        pointer-events: all;
         fill: $vzb-color-primary;
         stroke: $vzb-color-white;
         stroke-width: 2px;
@@ -141,6 +142,9 @@
 
       .vzb-mc-tooltip {
         @extend %vzb-chart-tooltip;
+        text {
+          text-anchor: middle;
+        }
       }
     }
   }
@@ -211,6 +215,36 @@
       .vzb-mc-tooltip,
       .vzb-mc-axis-info {
         @extend %vzb-chart-ticks-small;
+      }
+    }
+  }
+  &.vzb-presentation {
+
+    .vzb-mountainchart {
+      .vzb-mc-axis-x-title,
+      .vzb-mc-axis-y-title {
+        font-size: $vzb-font-size-largest;
+      }
+
+      .vzb-mc-axis-x,
+      .vzb-mc-axis-y,
+      .vzb-mc-probe,
+      .vzb-mc-mountains-labels,
+      .vzb-mc-tooltip, {
+        text {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+
+      .vzb-mc-labels {
+        font-size: $vzb-font-size-larger;
+      }
+    }
+
+    &.vzb-small {
+      .vzb-mc-axis-x-title,
+      .vzb-mc-axis-y-title {
+        font-size: $vzb-font-size-medium;
       }
     }
   }

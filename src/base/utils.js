@@ -199,6 +199,124 @@ export var extend = function(dest) {
   return dest;
 };
 
+// Deep extend and helper functions
+// https://github.com/unclechu/node-deep-extend/blob/master/lib/deep-extend.js
+
+function isSpecificValue(val) {
+  return (
+    val instanceof Date
+    || val instanceof RegExp
+  ) ? true : false;
+}
+
+function cloneSpecificValue(val) {
+  if (val instanceof Buffer) {
+    var x = new Buffer(val.length);
+    val.copy(x);
+    return x;
+  } else if (val instanceof Date) {
+    return new Date(val.getTime());
+  } else if (val instanceof RegExp) {
+    return new RegExp(val);
+  } else {
+    throw new Error('Unexpected situation');
+  }
+}
+
+/**
+ * Recursive cloning array.
+ */
+function deepCloneArray(arr) {
+  var clone = [];
+  forEach(arr, function (item, index) {
+    if (typeof item === 'object' && item !== null) {
+      if (isArray(item)) {
+        clone[index] = deepCloneArray(item);
+      } else if (isSpecificValue(item)) {
+        clone[index] = cloneSpecificValue(item);
+      } else {
+        clone[index] = deepExtend({}, item);
+      }
+    } else {
+      clone[index] = item;
+    }
+  });
+  return clone;
+}
+
+/**
+ * Extening object that entered in first argument.
+ *
+ * Returns extended object or false if have no target object or incorrect type.
+ *
+ * If you wish to clone source object (without modify it), just use empty new
+ * object as first argument, like this:
+ *   deepExtend({}, yourObj_1, [yourObj_N]);
+ */
+export var deepExtend = function(/*obj_1, [obj_2], [obj_N]*/) {
+  if (arguments.length < 1 || typeof arguments[0] !== 'object') {
+    return false;
+  }
+
+  if (arguments.length < 2) {
+    return arguments[0];
+  }
+
+  var target = arguments[0];
+
+  // convert arguments to array and cut off target object
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  var val, src, clone;
+
+  forEach(args, function (obj) {
+    // skip argument if it is array or isn't object
+    if (typeof obj !== 'object' || isArray(obj)) {
+      return;
+    }
+
+    forEach(Object.keys(obj), function (key) {
+      src = target[key]; // source value
+      val = obj[key]; // new value
+
+      // recursion prevention
+      if (val === target) {
+        return;
+
+      /**
+       * if new value isn't object then just overwrite by new value
+       * instead of extending.
+       */
+      } else if (typeof val !== 'object' || val === null) {
+        target[key] = val;
+        return;
+
+      // just clone arrays (and recursive clone objects inside)
+      } else if (isArray(val)) {
+        target[key] = deepCloneArray(val);
+        return;
+
+      // custom cloning and overwrite for specific objects
+      } else if (isSpecificValue(val)) {
+        target[key] = cloneSpecificValue(val);
+        return;
+
+      // overwrite by new value if source isn't object or array
+      } else if (typeof src !== 'object' || src === null || isArray(src)) {
+        target[key] = deepExtend({}, val);
+        return;
+
+      // source value and new value is objects both, extending...
+      } else {
+        target[key] = deepExtend(src, val);
+        return;
+      }
+    });
+  });
+
+  return target;
+}
+
 /*
  * merges objects instead of replacing
  * @param {Object} destination object
@@ -481,12 +599,14 @@ export var mapRows = function(original, formatters) {
     for(var i = 0; i < columns_s; i++) {
       var col = columns[i],
         new_val;
-      try {
-        new_val = mapRow(row[col], formatters[col]);
-      } catch(e) {
-        new_val = row[col];
+      if(row.hasOwnProperty(col)) {
+        try {
+          new_val = mapRow(row[col], formatters[col]);
+        } catch(e) {
+          new_val = row[col];
+        }
+        row[col] = new_val;
       }
-      row[col] = new_val;
     }
     return row;
   });
@@ -1026,4 +1146,14 @@ export var pruneTree = function(tree, filterCallback) {
     filteredTree["children"] = filteredChildrens;
   }
   return filteredTree;
+};
+
+export var setIcon = function(element, icon) {
+  element.selectAll('*').remove();
+  element.node().appendChild(
+    element.node().ownerDocument.importNode(
+      new DOMParser().parseFromString(
+        icon, 'application/xml').documentElement, true)
+  );
+  return element;
 }

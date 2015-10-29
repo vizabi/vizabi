@@ -14,6 +14,8 @@ import {
   close as iconClose
 } from 'base/iconset';
 
+
+
 //BUBBLE CHART COMPONENT
 var BubbleChartComp = Component.extend({
 
@@ -41,6 +43,9 @@ var BubbleChartComp = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     //starts as splash if this is the option
@@ -52,6 +57,11 @@ var BubbleChartComp = Component.extend({
           if(!_this._readyOnce) return;
           _this._splash = _this.model.time.splash;
           //TODO: adjust X & Y axis here
+        }
+      },
+      'change:time:start': function(evt, original) {
+        if(_this.model.marker.color.scaleType === 'time') {
+          _this.model.marker.color.scale = null;
         }
       },
       "change:time:record": function() {
@@ -138,12 +148,17 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function() {
+      'change:marker:size': function(evt) {
         //console.log("EVENT change:marker:size:max");
-        _this.updateMarkerSizeLimits();
-        _this._trails.run("findVisible");
-        _this.redrawDataPointsOnlySize();
-        _this._trails.run("resize");
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+            _this.updateMarkerSizeLimits();
+            _this._trails.run("findVisible");
+            _this.redrawDataPointsOnlySize();
+            _this._trails.run("resize");
+            return;
+        }
+        _this.ready();
       },
       'change:marker:color:palette': function() {
         //console.log("EVENT change:marker:color:palette");
@@ -155,6 +170,14 @@ var BubbleChartComp = Component.extend({
       },
       'change:entities:opacityRegular': function() {
         _this.updateBubbleOpacity();
+      },
+      'ready': function() {
+        // if(_this.model.marker.color.scaleType === 'time') {
+        //   _this.model.marker.color.scale = null;
+        //   utils.defer(function() {
+        //     _this.trigger('ready');
+        //   });         
+        // }
       }
     };
 
@@ -256,7 +279,7 @@ var BubbleChartComp = Component.extend({
 
 
   _rangeBump: function(arg, undo) {
-    var bump = this.profiles[this.getLayoutProfile()].maxRadius;
+    var bump = this.activeProfile.maxRadius;
     undo = undo?-1:1;
     if(utils.isArray(arg) && arg.length > 1) {
       var z1 = arg[0];
@@ -363,11 +386,11 @@ var BubbleChartComp = Component.extend({
     this.bubbleContainerCrop
       .call(this._panZoom.zoomer)
       .call(this._panZoom.dragRectangle)
-      .on('dblclick.zoom', null) 
+      .on('dblclick.zoom', null)
       .on("mouseup", function() {
         _this.draggingNow = false;
       })
-    
+
     d3.select(this.parent.placeholder)
       .onTap(function() {
         _this._panZoom.enabled = true;
@@ -504,7 +527,7 @@ var BubbleChartComp = Component.extend({
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
-      .attr("y", "-6px")
+      //.attr("y", "-6px")
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -534,19 +557,18 @@ var BubbleChartComp = Component.extend({
     sTitle
       .attr("text-anchor", "end");
 
-    this.dataWarningEl.html(iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
       .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
 
-    this.yInfoEl
-        .html(iconQuestion)
+    utils.setIcon(this.yInfoEl, iconQuestion)
         .select("svg").attr("width", "0px").attr("height", "0px");
 
-    this.xInfoEl
-        .html(iconQuestion)
-        .select("svg").attr("width", "0px").attr("height", "0px");
+    utils.setIcon(this.xInfoEl, iconQuestion)
+      .select("svg").attr("width", "0px").attr("height", "0px");
+
 
     //TODO: move away from UI strings, maybe to ready or ready once
     this.yInfoEl.on("click", function() {
@@ -619,7 +641,6 @@ var BubbleChartComp = Component.extend({
       })
       .on("mouseover", function(d, i) {
         if(utils.isTouchDevice()) return;
-
         _this._bubblesInteract().mouseover(d, i);
       })
       .on("mouseout", function(d, i) {
@@ -662,8 +683,10 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-
         var text = "";
+        var pointer = {};
+        pointer[KEY] = d[KEY];
+        pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
           _this.entityLabels
@@ -672,20 +695,19 @@ var BubbleChartComp = Component.extend({
             })
             .classed("vzb-highlighted", true);
         } else {
+          if (_this.model.time.lockNonSelected) {
+            pointer[TIMEDIM] = _this.model.time.lockNonSelected;
+          }
           text = _this.model.marker.label.getValue(d);
         }
-
         //set tooltip and show axis projections
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer[TIMEDIM] = _this.time;
         var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
         var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
         var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
         _this._setTooltip(text, x, y, s);
-          
-          
-        //show the little cross on the selected label  
+
+
+        //show the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
@@ -696,12 +718,12 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.clearHighlighted();
         _this._setTooltip();
         _this.entityLabels.classed("vzb-highlighted", false);
-          
-        //hide the little cross on the selected label  
+
+        //hide the little cross on the selected label
         _this.entityLabels
             .filter(function(f){return f[KEY] == d[KEY]})
             .select(".vzb-bc-label-x")
-            .classed("vzb-transparent", true); 
+            .classed("vzb-transparent", true);
       },
 
       click: function(d, i) {
@@ -735,10 +757,9 @@ var BubbleChartComp = Component.extend({
    */
   updateSize: function() {
 
-    var _this = this;
 
-    this.profiles = {
-      "small": {
+    var profiles = {
+      small: {
         margin: {
           top: 30,
           right: 10,
@@ -748,9 +769,11 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 0.5,
         maxRadius: 40,
-        infoElHeight: 16
+        infoElHeight: 16,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       },
-      "medium": {
+      medium: {
         margin: {
           top: 40,
           right: 15,
@@ -760,9 +783,11 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
-        infoElHeight: 20
+        infoElHeight: 20,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       },
-      "large": {
+      large: {
         margin: {
           top: 50,
           right: 20,
@@ -772,11 +797,46 @@ var BubbleChartComp = Component.extend({
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
-        infoElHeight: 22
+        infoElHeight: 22,
+        yAxisLabelBottomMargin: 6,
+        xAxisLabelBottomMargin: 0
       }
     };
 
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
+    var presentationProfileChanges = {
+      "small": {
+        margin: {
+          top: 40,
+          bottom: 70,
+          left: 70
+        },
+        yAxisLabelBottomMargin: 10,
+        xAxisLabelBottomMargin: 10
+      },
+      "medium": {
+        margin: {
+          top: 80,
+          bottom: 100,
+          left: 100
+        },
+        yAxisLabelBottomMargin: 20,
+        xAxisLabelBottomMargin: 20
+      },
+      "large": {
+        margin: {
+          top: 80,
+          bottom: 100,
+          left: 100
+        },
+        yAxisLabelBottomMargin: 20,
+        xAxisLabelBottomMargin: 20
+      }
+    }
+
+    var _this = this;
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+
     var margin = this.activeProfile.margin;
     var infoElHeight = this.activeProfile.infoElHeight;
 
@@ -790,10 +850,10 @@ var BubbleChartComp = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    this.year.resize(this.width, this.height, Math.max(this.height / 4, this.width / 4));
+    this.year.resize(this.width, this.height, Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)));
     this.eventArea
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     //update scales to the new range
     if(this.model.marker.axis_y.scaleType !== "ordinal") {
@@ -832,7 +892,7 @@ var BubbleChartComp = Component.extend({
 
     this.bubbleContainerCrop
       .attr("width", this.width)
-      .attr("height", this.height);
+      .attr("height", Math.max(0, this.height));
 
     this.xAxisElContainer
       .attr("width", this.width + 1)
@@ -844,7 +904,7 @@ var BubbleChartComp = Component.extend({
 
     this.yAxisElContainer
       .attr("width", this.activeProfile.margin.left)
-      .attr("height", this.height)
+      .attr("height", Math.max(0, this.height))
       .attr("x", -this.activeProfile.margin.left);
     this.yAxisEl
       .attr("transform", "translate(" + (this.activeProfile.margin.left - 1) + "," + 0 + ")");
@@ -865,7 +925,7 @@ var BubbleChartComp = Component.extend({
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
     if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
-      
+
 
 
     var sTitleText = this.sTitleEl.select("text")
@@ -884,16 +944,16 @@ var BubbleChartComp = Component.extend({
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
-      .attr("transform", "translate(" + (-yaxisWidth) + ",0)");
+      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
 
     this.xTitleEl
-      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom) + ")");
+      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
     this.dataWarningEl
-      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom) + ")");
+      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
@@ -1102,15 +1162,13 @@ var BubbleChartComp = Component.extend({
     if(d[KEY] == _this.druging)
       return;
 
-    var cached = _this.cached[d[KEY]];
+    if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
 
+    var cached = _this.cached[d[KEY]];
     if(duration == null) duration = _this.duration;
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-
-      if(_this.cached[d[KEY]] == null) _this.cached[d[KEY]] = {};
-
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -1348,16 +1406,16 @@ var BubbleChartComp = Component.extend({
 
         view.append("text").attr("class", "vzb-bc-label-content");
 
-        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent")
-          .html(iconClose)
-        
+        var cross = view.append("g").attr("class", "vzb-bc-label-x vzb-transparent");
+        utils.setIcon(cross, iconClose);
+
         cross.insert("circle", "svg");
-          
+
         cross.select("svg")
           .attr("class", "vzb-bc-label-x-icon")
           .attr("width", "0px")
-          .attr("height", "0px");        
-        
+          .attr("height", "0px");
+
         cross.on("click", function() {
           _this.model.entities.clearHighlighted();
           //default prevented is needed to distinguish click from drag

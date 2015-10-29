@@ -460,8 +460,12 @@ var Model = Events.extend({
       utils.error('Error:', this._id, 'can\'t find the space');
       return true;
     }
-    dimensions = this._getAllDimensions();
-    filters = this._getAllFilters(splashScreen);
+
+    var prop = globals.metadata.indicatorsDB[this.which] && globals.metadata.indicatorsDB[this.which].use === "property";
+    var exceptions = (prop) ? { exceptType: 'time' } : {};
+
+    dimensions = this._getAllDimensions(exceptions);
+    filters = this._getAllFilters(exceptions, splashScreen);
 
     if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
@@ -518,6 +522,10 @@ var Model = Events.extend({
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
         _this._space[name].on('change:show', function(evt) {
+          //hack for right size of bubbles 
+          if(_this._type === 'size' && _this.which === _this.which_1) { 
+            _this.which_1 = '';
+          };
           //defer is necessary because other events might be queued.
           //load right after such events
           utils.defer(function() {
@@ -632,10 +640,14 @@ var Model = Events.extend({
     //if there's a filter, interpolate only that
     if(f_keys.length) {
       utils.forEach(this._dataCube, function(hook, name) {
-        next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
         u = hook.use;
         w = hook.which;
-        method = globals.metadata.indicatorsDB[hook.which] ? globals.metadata.indicatorsDB[hook.which].interpolation ||
+
+        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
+          next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
+        }
+
+        method = globals.metadata.indicatorsDB[w] ? globals.metadata.indicatorsDB[w].interpolation ||
           "linear" : "linear";
         filtered = hook.getNestedItems(f_keys);
         utils.forEach(f_values, function(v) {
@@ -661,11 +673,17 @@ var Model = Events.extend({
         filtered = hook.getNestedItems(group_by);
         response[name] = {};
         //find position from first hook
-        next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         u = hook.use;
         w = hook.which;
+
+        if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
+          next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
+        }
+
         method = globals.metadata.indicatorsDB[hook.which] ? globals.metadata.indicatorsDB[hook.which].interpolation ||
           "linear" : "linear";
+
+
         utils.forEach(filtered, function(arr, id) {
           value = interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
@@ -680,7 +698,7 @@ var Model = Events.extend({
             response[name][id] = values;
           }
 
-        });
+        }); 
       });
     }
 
@@ -975,7 +993,16 @@ var Model = Events.extend({
    */
   getLimits: function(attr) {
     if(!this.isHook()) {
-      return;
+      //if there's subhooks, find the one which is an indicator
+      var limits = {};
+      utils.forEach(this.getSubhooks(), function(s) {
+        var prop = globals.metadata.indicatorsDB[s.which].use === "property";
+        if(!prop) {
+          limits = s.getLimits(attr);
+          return false;
+        } 
+      });
+      return limits;
     }
     //store limits so that we stop rechecking.
     var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
@@ -1175,9 +1202,16 @@ var Model = Events.extend({
    * @param {Boolean} splashScreen get filters for first screen only
    * @returns {Object} filters
    */
-  _getAllFilters: function(splashScreen) {
+  _getAllFilters: function(opts, splashScreen) {
+    opts = opts || {};
     var filters = {};
     utils.forEach(this._space, function(h) {
+      if(opts.exceptType && h.getType() === opts.exceptType) {
+        return true;
+      }
+      if(opts.onlyType && h.getType() !== opts.onlyType) {
+        return true;
+      }
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
     return filters;
@@ -1378,11 +1412,8 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     return which;
   }
   // zero-order interpolation for the use of properties
-  if(use === 'property' && i === 0) {
-    return arr[0][which];
-  }
   if(use === 'property') {
-    return arr[i - 1][which];
+    return arr[0][which];
   }
 
   // the rest is for the continuous measurements
@@ -1455,11 +1486,8 @@ function interpolateValue(_filter, use, which, l, method) {
   }
 
   // zero-order interpolation for the use of properties
-  if(use === 'property' && indexNext === 0) {
-    return items[0][which];
-  }
   if(use === 'property') {
-    return items[indexNext - 1][which];
+    return items[0][which];
   }
   // the rest is for the continuous measurements
   // check if the desired value is out of range. 0-order extrapolation

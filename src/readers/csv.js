@@ -34,8 +34,12 @@ var CSVReader = Reader.extend({
     //this specific reader has support for the tag {{LANGUAGE}}
     var path = this._basepath.replace("{{LANGUAGE}}", language);
 
+    //hack: for time and age
+    if(!query.where.time && !query.where.age) {
+      path = path.replace(".csv", "-properties.csv");
+    }
     //if only one year, files ending in "-YYYY.csv"
-    if(query.where.time[0].length === 1) {
+    else if(query.where.time && query.where.time[0].length === 1) {
       path = path.replace(".csv", "-" + query.where.time[0][0] + ".csv");
     }
 
@@ -93,8 +97,12 @@ var CSVReader = Reader.extend({
 
         //make category an array and fix missing regions
         res = res.map(function(row) {
-          row['geo.cat'] = [row['geo.cat']];
-          row['geo.region'] = row['geo.region'] || row['geo'];
+          if(row['geo.cat']) {
+            row['geo.cat'] = [row['geo.cat']];
+          }
+          if(row['geo.region'] || row['geo']) {
+            row['geo.region'] = row['geo.region'] || row['geo'];
+          }
           return row;
         });
 
@@ -106,9 +114,12 @@ var CSVReader = Reader.extend({
         //sort records by time
         var keys = Object.keys(_this._formatters);
         var order_by = keys[0];
-        res.sort(function(a, b) {
-          return a[order_by] - b[order_by];
-        });
+        //if it has time
+        if(res[0][order_by]) {
+          res.sort(function(a, b) {
+            return a[order_by] - b[order_by];
+          });
+        }
         //end of hack
 
         return res;

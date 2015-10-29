@@ -36,7 +36,7 @@ var ToolModel = Model.extend({
     // change language
     if(values.language) {
       var _this = this;
-      this.on('change:language', function() {
+      this.on('change:language:id', function() {
         _this.trigger('translate');
       });
     }
@@ -51,7 +51,6 @@ var Tool = Component.extend({
    */
   init: function(placeholder, options) {
     this._id = utils.uniqueId('t');
-    this.layout = new Layout();
     this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
       '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
     this.model_binds = this.model_binds || {};
@@ -77,11 +76,17 @@ var Tool = Component.extend({
             .then(function() {
               _this.model.validate();
               _this.translateStrings();
+              //for trigger change:language then new strings is loaded 
+              _this.model.language.set("id", _this.model.language.id, true);
             });
         }
       },
       'load_start': function() {
         _this.beforeLoading();
+      },
+      "change:ui:presentation": function() {
+        _this.layout.updatePresentation();
+        _this.trigger('resize');
       },
       'ready': function(evt) {
         if(_this._ready) {
@@ -96,6 +101,8 @@ var Tool = Component.extend({
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
     this.ui = this.model.ui || {};
+
+    this.layout = new Layout(this.ui);
     //splash
     this.ui.splash = this.model && this.model.data && this.model.data.splash;
     this._super({
@@ -106,6 +113,7 @@ var Tool = Component.extend({
     this.render();
     this._setUIOptions();
   },
+    
   /**
    * Binds events in model to outside world
    */
@@ -223,18 +231,16 @@ var Tool = Component.extend({
       return;
     };
 
-    var label = marker.label;
-
-    if(!label) {
-      utils.warn("tool validation aborted: marker label looks wrong: " + label);
+    if(!marker) {
+      utils.warn("tool validation aborted: marker looks wrong: " + label);
       return;
     };
 
     //don't validate anything if data hasn't been loaded
-    if(model.isLoading() || !label.getKeys() || label.getKeys().length < 1) return;
+    if(model.isLoading() || !marker.getKeys() || marker.getKeys().length < 1) return;
 
-    var dateMin = label.getLimits(time.getDimension()).min;
-    var dateMax = label.getLimits(time.getDimension()).max;
+    var dateMin = marker.getLimits(time.getDimension()).min;
+    var dateMax = marker.getLimits(time.getDimension()).max;
 
     if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
     if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
