@@ -214,12 +214,7 @@ var ButtonList = Component.extend({
 
     var close_buttons = this.element.selectAll("[data-click='closeDialog']");
     close_buttons.on('click', function(type, index) {
-      if (_this.getLayoutProfile() === 'large') {
-        _this.closeDialog(_this.model.ui.buttons[index]);
-      }
-      else {
-        _this.closeAllDialogs(true);
-      }
+      _this.closeDialog(_this.model.ui.buttons[index]);
     });
     var pinDialog = this.element.selectAll("[data-click='pinDialog']");
     pinDialog.on('click', function() {
