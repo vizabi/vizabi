@@ -85,7 +85,6 @@ var SimpleSlider = Component.extend({
     },
 
     updateView: function () {
-      console.log(this.model.submodel);
       var value = this.model.submodel[this.arg];
       var slider_properties = this.slider_properties;
       var scale;
