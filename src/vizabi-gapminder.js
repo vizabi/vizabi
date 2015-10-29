@@ -155,7 +155,7 @@ BubbleMapChart.define('default_options', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
     splash: true
   },
   language: language,
