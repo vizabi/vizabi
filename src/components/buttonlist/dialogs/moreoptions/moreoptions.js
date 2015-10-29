@@ -56,6 +56,17 @@ export default Dialog.extend({
       model: ["state.entities"],
       arg: "opacitySelectDim"
     }, {
+      component: simpleslider,
+      placeholder: '.vzb-dialog-delay-slider',
+      model: ["state.time"],
+      arg: "delay",
+      thumb_size: "small",
+      properties: {min:1, max:5, step:1, scale: d3.scale.linear()
+        .domain([1,2,3,4,5])
+        .range([1200,900,450,200,75])
+      }
+    },
+    {
       component: simplecheckbox,
       placeholder: '.vzb-presentationmode-switch',
       model: ["ui", "language"],

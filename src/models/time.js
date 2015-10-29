@@ -281,7 +281,6 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
     this.delayAnimations = this.delay;
-    console.log(this.delay);
     if(this.delay < this.delayThresholdX2) this.delayAnimations*=2;
     if(this.delay < this.delayThresholdX4) this.delayAnimations*=2;
 

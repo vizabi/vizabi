@@ -88,7 +88,7 @@ var TimeSlider = Component.extend({
   init: function(config, context) {
 
     this.name = "gapminder-timeslider";
-    this.components = [ {
+    /*this.components = [ {
       component: simpleslider,
       placeholder: '.vzb-ts-delay-slider',
       model: ["time"],
@@ -97,9 +97,8 @@ var TimeSlider = Component.extend({
       properties: {min:1, max:5, step:1, scale: d3.scale.linear()
         .domain([1,2,3,4,5])
         .range([1200,900,450,200,75])
-      },
-
-    }];
+      }
+    }];*/
 
     this.template = this.template || "timeslider.html";
 
