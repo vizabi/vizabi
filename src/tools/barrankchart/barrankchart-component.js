@@ -47,6 +47,9 @@ var BarRankChart = Component.extend({
     this.model_binds = {
       "change:time:value": function(evt) {
         _this.onTimeChange();
+      },
+      "change:entities:select": function(evt) {
+        _this.selectBars();
       }
     };
 
@@ -89,7 +92,6 @@ var BarRankChart = Component.extend({
     this.cScale = this.model.marker.color.getScale();
 
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
-
   },
 
   /*
@@ -114,7 +116,7 @@ var BarRankChart = Component.extend({
     this.values = this.model.marker.getValues(filter, [this.model.entities.dim]);
 
     // sort the data
-    this.sorted_entities = this.sortByIndicator(this.values.axis_x);
+    this.sortedEntities = this.sortByIndicator(this.values.axis_x);
   },
 
   /*
@@ -122,10 +124,11 @@ var BarRankChart = Component.extend({
   */
   draw: function() {
 
-    this.bar_height = 20;
+    // these should go in some style-config
+    this.barHeight = 20; 
     var margin = {top: 20, bottom: 40, left: 90, right: 20};
 
-    //stage
+    // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
@@ -163,12 +166,13 @@ var BarRankChart = Component.extend({
   drawData: function() {
 
     var _this = this;
-    var bar_margin = 2;
+    var bar_margin = 2; // should go in some config
     var duration = (this.model.time.playing) ? this.model.time.delayAnimations : 0;
 
+    // apply the current data to the bars (including ordering)
     var updatedBars = this.barContainer
       .selectAll('.vzb-br-bar')
-      .data(this.sorted_entities, getDataKey)
+      .data(this.sortedEntities, getDataKey)
       .order();
 
     // update the shown bars for new data-set
@@ -177,39 +181,41 @@ var BarRankChart = Component.extend({
     // set position of the bars
     this.barContainer
       .selectAll('.vzb-br-bar > rect')
-      .data(this.sorted_entities, getDataKey)     
+      .data(this.sortedEntities, getDataKey)     
       .transition().duration(duration).ease("linear")
       .attr("width", function(d) {
         var width = _this.xScale(d.value);
         return width > 0 ? width : 0;
       })
-      .attr("y", function(d, i) {
-        return (_this.bar_height+bar_margin)*i;
-      });
+      .attr("y", getBarPosition);
 
     // it would be nice if the two y-attribute setting below could be combined, but due to the .data you can't
-    // set position of all labels
+    // set position of all entity-labels
     this.barContainer
       .selectAll('.vzb-br-bar > text.vzb-br-label') 
-      .data(this.sorted_entities, getDataKey)      
+      .data(this.sortedEntities, getDataKey)      
       .transition().duration(duration).ease("linear")
-      .attr("y", text_y_position)
+      .attr("y", getTextPosition)
 
-    // end of the values
+    // set positions of the entity-values
     this.barContainer
       .selectAll('.vzb-br-bar > text.vzb-br-value') 
-      .data(this.sorted_entities, getDataKey)   
+      .data(this.sortedEntities, getDataKey)   
       .text(function(d, i) {
         return _this.model.marker.axis_x.tickFormatter(d.value);
       })
       .transition().duration(duration).ease("linear") 
-      .attr("y", text_y_position)  
+      .attr("y", getTextPosition)  
 
+    // helper functions
     function getDataKey(d) {          
       return d.entity;  
     }
-    function text_y_position(d, i) {  
-      return (_this.bar_height+bar_margin)*(i)+(_this.bar_height/2); 
+    function getBarPosition(d, i) {
+        return (_this.barHeight+bar_margin)*i;
+    }
+    function getTextPosition(d, i) {  
+      return getBarPosition(d, i)+(_this.barHeight/2); 
     }
 
   },
@@ -227,18 +233,21 @@ var BarRankChart = Component.extend({
         .attr("id", function(d) {
           return "vzb-br-bar-" + d.entity;
         })
-        .on("mousemove", this.highlightBar.bind(this))
-        .on("mouseout", this.unhighlightBar.bind(this))
-        .on("click", function(d, i) {
-          //_this.model[entityDim].selectEntity(d);
+        .on("mousemove", function(bar) { _this.setHover(bar, true)  })
+        .on("mouseout",  function(bar) { _this.setHover(bar, false) })
+        .on("click", function(d) {
+          _this.model.entities.selectEntity(d); // this will trigger a change in the model, which the tool listens to
         });
 
     // draw new bars per group
     newGroups.append('rect')
         .attr("x", 0)
-        .attr("rx", this.bar_height/4)
-        .attr("ry", this.bar_height/4)
-        .attr("height", this.bar_height)
+        .attr("rx", this.barHeight/4)
+        .attr("ry", this.barHeight/4)
+        .attr("stroke", "white")
+        .attr("stroke-opacity", 0)
+        .attr("stroke-width", 2)
+        .attr("height", this.barHeight)
         .attr("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color);
@@ -275,10 +284,14 @@ var BarRankChart = Component.extend({
   */  
 
   sortByIndicator: function(values) {
+    var _this = this;
     var data_array = [];
     // first put the data in an array (objects aren't sortable)
     utils.forEach(values, function(indicator_value, entity) {
-      data_array.push({ entity: entity, value: indicator_value });
+      var row = { entity: entity, value: indicator_value };
+      row[_this.model.entities.dim] = entity;
+      data_array.push(row);
+      //data_array.push({ entity: entity, value: indicator_value });
     });
     data_array.sort(function(a, b) {
       // if a is bigger, a comes first, i.e. descending sort
@@ -290,19 +303,36 @@ var BarRankChart = Component.extend({
   /**
   * UI METHODS
   */
-  highlightBar: function(d) {
-    this.barContainer.classed('vzb-dimmed', true);
-    var curr = this.barContainer.select("#vzb-bc-bar-" + d[this.AGEDIM]);
-    curr.classed('vzb-hovered', true);
-    //var label = this.labels.select("#vzb-bc-label-" + d[this.AGEDIM]);
-    //label.classed('vzb-hovered', true);
+
+  /**
+   * setting hover
+   */
+  setHover: function(bar, hover) {
+    this.barContainer.classed('vzb-dimmed', hover);
+    this.barContainer.select("#vzb-br-bar-" + bar.entity).classed('vzb-hovered', hover);
   },
 
-  unhighlightBar: function() {
-    this.barContainer.classed('vzb-dimmed', false);
-    //this.barContainer.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
-    //this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
-  }
+  /**
+   * Select Entities
+   */
+  selectBars: function() {
+    var _this = this;
+    var entityDim = this.model.entities.dim;
+    var selected = this.model.entities.select;
+
+    // unselect all bars
+    this.barContainer.classed('vzb-dimmed-selected', false);
+    this.barContainer.selectAll('.vzb-br-bar.vzb-selected').classed('vzb-selected', false);
+
+    // select the selected ones
+    if(selected.length) {
+      this.barContainer.classed('vzb-dimmed-selected', true);
+      utils.forEach(selected, function(selectedBar) {
+        _this.barContainer.select("#vzb-br-bar-" + selectedBar[entityDim]).classed('vzb-selected', true);
+      });
+    }
+
+  },
 
 });
 

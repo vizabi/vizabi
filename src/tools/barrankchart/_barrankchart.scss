@@ -23,6 +23,25 @@
       .vzb-br-value {
         font-size: $vzb-font-size-tiny;
       }
+      .vzb-dimmed {
+        > .vzb-br-bar {
+          opacity: .8;
+          &.vzb-hovered {
+            opacity: 1;
+          }
+        }
+      }
+      .vzb-dimmed-selected {
+        > .vzb-br-bar {
+          opacity: .5;
+          &.vzb-hovered {
+            opacity: .8;
+          }
+          &.vzb-selected {
+            opacity: 1;
+          }
+        }
+      }
     }
   }
 }
