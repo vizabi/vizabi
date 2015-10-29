@@ -60,8 +60,7 @@ export default Dialog.extend({
       placeholder: '.vzb-dialog-delay-slider',
       model: ["state.time"],
       arg: "delay",
-      thumb_size: "small",
-      properties: {min:1, max:5, step:1, scale: d3.scale.linear()
+      properties: {min:1, max:5, step:0.1, scale: d3.scale.linear()
         .domain([1,2,3,4,5])
         .range([1200,900,450,200,75])
       }
