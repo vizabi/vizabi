@@ -55,12 +55,10 @@ var BarRankChart = Component.extend({
 
     // set up the scales
     this.xScale = null;
-    this.yScale = null;
     this.cScale = d3.scale.category10();
 
     // set up the axes
     this.xAxis = axisWithLabelPicker();
-    this.yAxis = axisWithLabelPicker();
   },
 
   onTimeChange: function() {
@@ -81,20 +79,15 @@ var BarRankChart = Component.extend({
     this.yearEl = this.graph.select('.vzb-br-year');
     this.year = new DynamicBackground(this.yearEl);
     this.barContainer = this.graph.select('.vzb-br-bars');
-    this.yAxisEl = this.graph.select('.vzb-br-axis-y');
     this.xAxisEl = this.graph.select('.vzb-br-axis-x');
 
     // set up time formatter for time
     this.timeFormatter = d3.time.format(this.model.time.formatOutput);
 
     // set up scales and axes
-    this.yScale = this.model.marker.axis_y.getScale({
-      max: true
-    });
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
-    this.yAxis.tickFormat(this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
 
   },
@@ -122,15 +115,15 @@ var BarRankChart = Component.extend({
 
     // sort the data
     this.sorted_entities = this.sortByIndicator(this.values.axis_x);
-
   },
 
   /*
-  * draw the chart
+  * draw the chart/stage
   */
   draw: function() {
 
-    var margin = {top: 0, bottom: 0, left: 0, right: 0};
+    this.bar_height = 20;
+    var margin = {top: 20, bottom: 40, left: 90, right: 20};
 
     //stage
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -139,12 +132,6 @@ var BarRankChart = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    //update scales to the new range
-    if(this.model.marker.axis_y.scaleType !== "ordinal") {
-      this.yScale.range([this.height, 0]);
-    } else {
-      this.yScale.rangePoints([this.height, 0]).range();
-    }
     if(this.model.marker.axis_x.scaleType !== "ordinal") {
       this.xScale.range([0, this.width]);
     } else {
@@ -154,17 +141,6 @@ var BarRankChart = Component.extend({
     // redraw the limits
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
     this.xScale = this.xScale.domain([limits.min, limits.max]);
-
-    //apply scales to axes and redraw
-    this.yAxis.scale(this.yScale)
-      .orient("left")
-      .tickSize(6, 6)
-      .tickSizeMinor(3, 0)
-      .labelerOptions({
-        scaleType: this.model.marker.axis_y.scaleType,
-        toolMargin: margin,
-        limitMaxTickNumber: 6
-      });
 
     this.xAxis.scale(this.xScale)
       .orient("bottom")
@@ -179,7 +155,6 @@ var BarRankChart = Component.extend({
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis);
 
-    this.yAxisEl.call(this.yAxis);
     this.xAxisEl.call(this.xAxis);
 
     this.drawData();
@@ -188,57 +163,66 @@ var BarRankChart = Component.extend({
   drawData: function() {
 
     var _this = this;
-    var bar_height = 20;
-    var duration = this.model.time.delayAnimations; // (this.model.time.playing) ? this.model.time.delayAnimations : 0;
+    var bar_margin = 2;
+    var duration = (this.model.time.playing) ? this.model.time.delayAnimations : 0;
 
-    // apply the current data to the chart
     var updatedBars = this.barContainer
       .selectAll('.vzb-br-bar')
       .data(this.sorted_entities, getDataKey)
       .order();
 
     // update the shown bars for new data-set
-    this.createDeleteBars(updatedBars);
+    this.createAndDeleteBars(updatedBars);
 
     // set position of the bars
     this.barContainer
       .selectAll('.vzb-br-bar > rect')
-      .data(this.sorted_entities, getDataKey)        
-      .attr("x", 0)
-      .attr("height", bar_height)
+      .data(this.sorted_entities, getDataKey)     
       .transition().duration(duration).ease("linear")
       .attr("width", function(d) {
         var width = _this.xScale(d.value);
         return width > 0 ? width : 0;
       })
       .attr("y", function(d, i) {
-        return (bar_height+5)*i;
+        return (_this.bar_height+bar_margin)*i;
       });
 
+    // it would be nice if the two y-attribute setting below could be combined, but due to the .data you can't
     // set position of all labels
     this.barContainer
-      .selectAll('.vzb-br-bar > text') 
-      .data(this.sorted_entities, getDataKey)       
-      .attr("x", 0)
+      .selectAll('.vzb-br-bar > text.vzb-br-label') 
+      .data(this.sorted_entities, getDataKey)      
       .transition().duration(duration).ease("linear")
-      .attr("y", function(d, i) {
-        return (bar_height+5)*(i+1)-5;
+      .attr("y", text_y_position)
+
+    // end of the values
+    this.barContainer
+      .selectAll('.vzb-br-bar > text.vzb-br-value') 
+      .data(this.sorted_entities, getDataKey)   
+      .text(function(d, i) {
+        return _this.model.marker.axis_x.tickFormatter(d.value);
       })
+      .transition().duration(duration).ease("linear") 
+      .attr("y", text_y_position)  
 
-
-    function getDataKey(d) {
-      return d.entity;
+    function getDataKey(d) {          
+      return d.entity;  
     }
+    function text_y_position(d, i) {  
+      return (_this.bar_height+bar_margin)*(i)+(_this.bar_height/2); 
+    }
+
   },
 
-  createDeleteBars: function(newBars) {
+  createAndDeleteBars: function(updatedBars) {
 
     var _this = this;
 
-    //newBars.exit().remove();
+    // remove groups for entities that are gone
+    updatedBars.exit().remove();
 
     // make the groups for the entities which were not drawn yet (.data.enter() does this)
-    var newGroups = newBars.enter().append("g")
+    var newGroups = updatedBars.enter().append("g")
         .attr("class", 'vzb-br-bar')
         .attr("id", function(d) {
           return "vzb-br-bar-" + d.entity;
@@ -251,7 +235,10 @@ var BarRankChart = Component.extend({
 
     // draw new bars per group
     newGroups.append('rect')
-        .attr("shape-rendering", "crispEdges") // this makes sure there are no gaps between the bars, but also disables anti-aliasing
+        .attr("x", 0)
+        .attr("rx", this.bar_height/4)
+        .attr("ry", this.bar_height/4)
+        .attr("height", this.bar_height)
         .attr("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color);
@@ -259,10 +246,23 @@ var BarRankChart = Component.extend({
 
     // draw new labels per group
     newGroups.append('text')
-        .attr("class", "vzb-br-label")
+        .attr("class", "vzb-br-label") 
+        .attr("x", -5)
+        .attr("text-anchor", "end")
+        .attr("alignment-baseline", "middle")
         .text(function(d, i) {
           return _this.values.label[d.entity];
         })
+        .style("fill", function(d) {
+          var color = _this.cScale(_this.values.color[d.entity]);
+          return d3.rgb(color).darker(2);
+        });
+
+    // draw new values on each bar
+    newGroups.append('text')
+        .attr("class", "vzb-br-value") 
+        .attr("x", 5)
+        .attr("alignment-baseline", "middle")
         .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);

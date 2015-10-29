@@ -15,6 +15,14 @@
         -webkit-touch-callout: none;
         user-select: none;
       }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-tiny;
+      }
     }
   }
 }
