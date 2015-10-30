@@ -17,6 +17,10 @@
     @include position(absolute, null null 45px 50%);
     z-index: 20;
     visibility: visible;
+
+    &.ahead {
+      z-index: 30;
+    }
   }
 
   .vzb-dialog-title {
