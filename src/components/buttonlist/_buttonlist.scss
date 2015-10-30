@@ -12,7 +12,7 @@ $vzb-dialog-content-height: 250px;
 .vzb-buttonlist {
   @import '../bubblesize/bubblesize';
   @import '../indicatorpicker/indicatorpicker';
-  @import '../bubbleopacity/bubbleopacity';
+  @import '../simpleslider/simpleslider';
   @import '../colorlegend/colorlegend';
   @import '../simplecheckbox/simplecheckbox';
   @import '../draggablelist/draggablelist';
@@ -147,6 +147,21 @@ $vzb-dialog-content-height: 250px;
 &.vzb-small.vzb-landscape {
   .vzb-buttonlist-dialog {
     @include position(absolute, -2000px 40px auto -130px);
+    .vzb-dialog-content,
+    .vzb-dialog-content.vzb-dialog-content-fixed {
+      max-height: $vzb-dialog-content-height - 100px !important;
+    }
+    .vzb-dialog-buttons {
+      padding: 5px 25px 6px;
+    }
+    .vzb-dialog-title {
+      padding: 30px 25px 10px;
+    }
+    &[data-btn='find'] {
+      .vzb-find-filter {
+        top: 20px;
+      }
+    }
     &.vzb-active {
       @include position(absolute, auto 40px 0 50%);
     }
