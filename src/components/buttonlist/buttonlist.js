@@ -31,6 +31,7 @@ var ButtonList = Component.extend({
     var _this = this;
     this.name = 'gapminder-buttonlist';
     this.template = '<div class="vzb-buttonlist"></div>';
+    this._curr_dialog_index = 20;
 
     this.model_expects = [{
       name: "state",
@@ -214,12 +215,7 @@ var ButtonList = Component.extend({
 
     var close_buttons = this.element.selectAll("[data-click='closeDialog']");
     close_buttons.on('click', function(type, index) {
-      if (_this.getLayoutProfile() === 'large') {
-        _this.closeDialog(_this.model.ui.buttons[index]);
-      }
-      else {
-        _this.closeAllDialogs(true);
-      }
+      _this.closeDialog(_this.model.ui.buttons[index]);
     });
     var pinDialog = this.element.selectAll("[data-click='pinDialog']");
     pinDialog.on('click', function() {
@@ -348,6 +344,9 @@ var ButtonList = Component.extend({
       _this.on('resize', function() {
         subcomp.trigger('resize');
       });
+      subcomp.on('dragstart', function() {
+        _this.bringForward(subcomp.name);
+      });
     });
   },
 
@@ -397,6 +396,8 @@ var ButtonList = Component.extend({
     //add classes
     btn.classed(class_active, true);
     dialog.classed(class_active, true);
+
+    this.bringForward(id);
 
     if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
       btn.classed(class_hide_btn, true);
@@ -496,6 +497,12 @@ var ButtonList = Component.extend({
       if(availBtns[dialogName].ispin)
         this.pinDialog(dialogName);
     }.bind(this));
+  },
+
+  bringForward: function(id) {
+    var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
+    dialog.style('z-index', this._curr_dialog_index);
+    this._curr_dialog_index += 10;
   },
 
   toggleBubbleTrails: function() {

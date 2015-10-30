@@ -53,11 +53,13 @@ var Dialog = Component.extend({
       .on('dragstart', function D3dialogDragStart() {
         if(_this.rootEl.classed('vzb-portrait'))
           return;
+        _this.trigger('dragstart');
         dg.dragStart(d3.event);
       })
       .on('drag', function D3dialogDrag() {
         if(_this.rootEl.classed('vzb-portrait'))
           return;
+        _this.trigger('drag');
         dg.drag(d3.event);
       });
     this.dragHandler.call(dragBehavior);
