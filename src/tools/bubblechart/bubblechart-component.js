@@ -176,7 +176,7 @@ var BubbleChartComp = Component.extend({
         //   _this.model.marker.color.scale = null;
         //   utils.defer(function() {
         //     _this.trigger('ready');
-        //   });         
+        //   });
         // }
       }
     };
@@ -187,7 +187,7 @@ var BubbleChartComp = Component.extend({
     this.yScale = null;
     this.sScale = null;
     this.cScale = null;
-
+    this.xyProportion = 1;
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
 
@@ -287,11 +287,13 @@ var BubbleChartComp = Component.extend({
 
       //the sign of bump depends on the direction of the scale
       if(z1 < z2) {
+        if (this.xyProportion < 1) undo = undo * this.xyProportion;
         z1 += bump * undo;
         z2 -= bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
         if(z1 > z2) z1 = z2 = (z1 + z2) / 2;
       } else if(z1 > z2) {
+        if (this.xyProportion > 1) undo = undo / this.xyProportion;
         z1 -= bump * undo;
         z2 += bump * undo;
         // if the scale gets inverted because of bump, set it to avg between z1 and z2
@@ -843,7 +845,7 @@ var BubbleChartComp = Component.extend({
     //stage
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
-
+    this.xyProportion = this.width/this.height;
     //            this.collisionResolver.height(this.height);
 
     //graph group is shifted according to margins (while svg element is at 100 by 100%)
