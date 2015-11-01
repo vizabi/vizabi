@@ -45,7 +45,7 @@ utils.forEach(readers, function(reader, name) {
 
 import * as components from 'components/_index';
 
-//register available readers
+//register available components
 utils.forEach(components, function(component, name) {
   Component.register(name, component);
 });
