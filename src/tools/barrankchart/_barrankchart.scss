@@ -1,0 +1,47 @@
+.vzb-tool-barrankchart {
+  $vzb-br-year-size: 16em;
+
+  .vzb-barrankchart {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-barrankchart-svg {
+      @extend %vzb-chart-svg;
+
+      .vzb-br-year {
+        @include opacity(.1);
+        font-size: $vzb-br-year-size;
+        fill: $vzb-color-grey;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-tiny;
+      }
+      .vzb-dimmed {
+        > .vzb-br-bar {
+          opacity: .8;
+          &.vzb-hovered {
+            opacity: 1;
+          }
+        }
+      }
+      .vzb-dimmed-selected {
+        > .vzb-br-bar {
+          opacity: .5;
+          &.vzb-hovered {
+            opacity: .8;
+          }
+          &.vzb-selected {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}
