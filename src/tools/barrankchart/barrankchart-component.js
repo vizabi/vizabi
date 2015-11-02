@@ -84,14 +84,15 @@ var BarRankChart = Component.extend({
     this.barContainer = this.graph.select('.vzb-br-bars');
     this.xAxisEl = this.graph.select('.vzb-br-axis-x');
 
-    // set up time formatter for time
+
+    // set up formatters
     this.timeFormatter = d3.time.format(this.model.time.formatOutput);
+    this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
 
     // set up scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
-    this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
   },
 
   /*
@@ -101,7 +102,6 @@ var BarRankChart = Component.extend({
 
     this.loadData();
     this.draw();
-
   },
 
   resize: function() {
@@ -119,10 +119,16 @@ var BarRankChart = Component.extend({
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
   },
 
+  draw: function() {
+    this.drawAxes();
+    this.drawData();
+  },
+
   /*
   * draw the chart/stage
   */
-  draw: function() {
+  drawAxes: function() {
+
 
     // these should go in some style-config
     this.barHeight = 20; 
@@ -160,7 +166,6 @@ var BarRankChart = Component.extend({
 
     this.xAxisEl.call(this.xAxis);
 
-    this.drawData();
   },
 
   drawData: function() {
@@ -236,7 +241,12 @@ var BarRankChart = Component.extend({
         .on("mousemove", function(bar) { _this.setHover(bar, true)  })
         .on("mouseout",  function(bar) { _this.setHover(bar, false) })
         .on("click", function(d) {
-          _this.model.entities.selectEntity(d); // this will trigger a change in the model, which the tool listens to
+
+          utils.forEach(_this.model.marker.space, function(entity) {
+            if (_this.model[entity].getDimension() !== 'time')
+              _this.model[entity].selectEntity(d); // this will trigger a change in the model, which the tool listens to
+          });
+
         });
 
     // draw new bars per group
