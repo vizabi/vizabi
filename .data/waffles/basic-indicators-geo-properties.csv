@@ -1,0 +1,265 @@
+geo,geo.name,geo.cat,geo.region
+world,World,planet,world
+eur,Europe,region,eur
+asi,Asia,region,asi
+afr,Africa,region,afr
+ame,America,region,ame
+_abk,Abkhazia,country,eur
+afg,Afghanistan,country,asi
+and,Andorra,country,eur
+_akr,Akrotiri and Dhekelia,country,
+alb,Albania,country,eur
+dza,Algeria,country,afr
+asm,American Samoa,country,asi
+ago,Angola,country,afr
+aia,Anguilla,country,ame
+atg,Antigua and Barbuda,country,ame
+arg,Argentina,country,ame
+arm,Armenia,country,eur
+abw,Aruba,country,ame
+aus,Australia,country,asi
+aut,Austria,country,eur
+aze,Azerbaijan,country,eur
+bhs,Bahamas,country,ame
+bhr,Bahrain,country,asi
+bgd,Bangladesh,country,asi
+brb,Barbados,country,ame
+blr,Belarus,country,eur
+bel,Belgium,country,eur
+blz,Belize,country,ame
+ben,Benin,country,afr
+bmu,Bermuda,country,ame
+btn,Bhutan,country,asi
+bol,Bolivia,country,ame
+bih,Bosnia and Herzegovina,country,eur
+bwa,Botswana,country,afr
+bra,Brazil,country,ame
+vgb,British Virgin Islands,country,
+chn,China,country,asi
+brn,Brunei,country,asi
+bgr,Bulgaria,country,eur
+bfa,Burkina Faso,country,afr
+bdi,Burundi,country,afr
+khm,Cambodia,country,asi
+cmr,Cameroon,country,afr
+can,Canada,country,ame
+cpv,Cape Verde,country,afr
+cym,Cayman Islands,country,
+caf,Central African Republic,country,afr
+tcd,Chad,country,afr
+_cis,Channel Islands,country,
+chl,Chile,country,ame
+cxr,Christmas Island,country,asi
+cck,Cocos Island,country,asi
+col,Colombia,country,ame
+com,Comoros,country,afr
+cod,Dem. Rep. Congo,country,afr
+cog,Rep. Congo,country,afr
+cok,Cook Is,country,asi
+cri,Costa Rica,country,ame
+civ,Cote d'Ivoire,country,afr
+hrv,Croatia,country,eur
+cub,Cuba,country,ame
+cyp,Cyprus,country,eur
+cze,Czech Republic,country,eur
+_csk,Czechoslovakia,country,eur
+dnk,Denmark,country,eur
+dji,Djibouti,country,afr
+dma,Dominica,country,ame
+dom,Dominican Republic,country,ame
+_ddr,East Germany,country,eur
+ecu,Ecuador,country,ame
+egy,Egypt,country,afr
+slv,El Salvador,country,ame
+gnq,Equatorial Guinea,country,afr
+eri,Eritrea,country,afr
+_eae,Eritrea and Ethiopia,country,
+est,Estonia,country,eur
+eth,Ethiopia,country,afr
+fro,Faeroe Islands,country,
+flk,Falkland Is (Malvinas),country,
+fji,Fiji,country,asi
+fin,Finland,country,eur
+fra,France,country,eur
+guf,French Guiana,country,ame
+pyf,French Polynesia,country,asi
+gab,Gabon,country,afr
+gmb,Gambia,country,afr
+geo,Georgia,country,eur
+deu,Germany,country,eur
+gha,Ghana,country,afr
+gib,Gibraltar,country,eur
+grc,Greece,country,eur
+grl,Greenland,country,eur
+grd,Grenada,country,ame
+glp,Guadeloupe,country,ame
+gum,Guam,country,asi
+gtm,Guatemala,country,ame
+gbg,Guernsey,country,eur
+gin,Guinea,country,afr
+gnb,Guinea-Bissau,country,afr
+guy,Guyana,country,ame
+hti,Haiti,country,ame
+hos,Holy See,country,eur
+hnd,Honduras,country,ame
+hkg,Hong Kong,country,China
+hun,Hungary,country,eur
+isl,Iceland,country,eur
+ind,India,country,asi
+idn,Indonesia,country,asi
+irn,Iran,country,asi
+irq,Iraq,country,asi
+irl,Ireland,country,eur
+gbm,Isle of Man,country,eur
+isr,Israel,country,asi
+ita,Italy,country,eur
+jam,Jamaica,country,ame
+jpn,Japan,country,asi
+jey,Jersey,country,eur
+jor,Jordan,country,asi
+kaz,Kazakhstan,country,asi
+ken,Kenya,country,afr
+kir,Kiribati,country,asi
+prk,North Korea,country,asi
+kor,South Korea,country,asi
+_unk,Kosovo,country,eur
+kwt,Kuwait,country,asi
+kgz,Kyrgyz Republic,country,
+lao,Lao,country,asi
+lva,Latvia,country,eur
+lbn,Lebanon,country,asi
+lso,Lesotho,country,afr
+lbr,Liberia,country,afr
+lby,Libya,country,afr
+lie,Liechtenstein,country,eur
+ltu,Lithuania,country,eur
+lux,Luxembourg,country,eur
+mac,Macao,country,China
+mkd,Macedonia,country,eur
+mdg,Madagascar,country,afr
+mwi,Malawi,country,afr
+mys,Malaysia,country,asi
+mdv,Maldives,country,asi
+mli,Mali,country,afr
+mlt,Malta,country,eur
+mhl,Marshall Islands,country,
+mtq,Martinique,country,ame
+mrt,Mauritania,country,afr
+mus,Mauritius,country,afr
+myt,Mayotte,country,afr
+mex,Mexico,country,ame
+fsm,Micronesia,country,Fed. Sts.
+mda,Moldova,country,eur
+mco,Monaco,country,eur
+mng,Mongolia,country,asi
+mne,Montenegro,country,eur
+msr,Montserrat,country,ame
+mar,Morocco,country,afr
+moz,Mozambique,country,afr
+mmr,Myanmar,country,asi
+nam,Namibia,country,afr
+nru,Nauru,country,asi
+npl,Nepal,country,asi
+nld,Netherlands,country,eur
+ant,Netherlands Antilles,country,
+ncl,New Caledonia,country,asi
+nzl,New Zealand,country,asi
+nic,Nicaragua,country,ame
+ner,Niger,country,afr
+nga,Nigeria,country,afr
+niu,Niue,country,asi
+nfk,Norfolk Island,country,asi
+_ncy,Northern Cyprus,country,eur
+mnp,Northern Mariana Islands,country,
+nor,Norway,country,eur
+omn,Oman,country,asi
+pak,Pakistan,country,asi
+plw,Palau,country,asi
+pan,Panama,country,ame
+png,Papua New Guinea,country,asi
+pry,Paraguay,country,ame
+per,Peru,country,ame
+phl,Philippines,country,asi
+pcn,Pitcairn,country,asi
+pol,Poland,country,eur
+prt,Portugal,country,eur
+pri,Puerto Rico,country,ame
+qat,Qatar,country,asi
+reu,Reunion,country,afr
+rou,Romania,country,eur
+rus,Russia,country,eur
+rwa,Rwanda,country,afr
+_stb,St. Barth�lemy,country,ame
+shn,St. Helena,country,afr
+kna,St. Kitts and Nevis,country,
+lca,St. Lucia,country,ame
+_stm,St. Martin,country,ame
+vct,St. Vincent and the Grenadines,country,
+spm,St.-Pierre-et-Miquelon,country,
+wsm,Samoa,country,asi
+smr,San Marino,country,eur
+stp,Sao Tome and Principe,country,afr
+sau,Saudi Arabia,country,asi
+sen,Senegal,country,afr
+srb,Serbia,country,eur
+scg,Serbia and Montenegro,country,
+_srbek,Serbia excluding Kosovo,country,
+syc,Seychelles,country,afr
+sle,Sierra Leone,country,afr
+sgp,Singapore,country,asi
+svk,Slovak Republic,country,eur
+svn,Slovenia,country,eur
+slb,Solomon Islands,country,asi
+som,Somalia,country,afr
+_sol,Somaliland,country,afr
+zaf,South Africa,country,afr
+_sos,South Ossetia,country,eur
+sds,South Sudan,country,afr
+esp,Spain,country,eur
+lka,Sri Lanka,country,asi
+sdn,Sudan,country,afr
+sur,Suriname,country,ame
+sjm,Svalbard,country,eur
+swz,Swaziland,country,afr
+swe,Sweden,country,eur
+che,Switzerland,country,eur
+syr,Syria,country,asi
+twn,Taiwan,country,asi
+tjk,Tajikistan,country,asi
+tza,Tanzania,country,afr
+tha,Thailand,country,asi
+tls,Timor-Leste,country,asi
+tgo,Togo,country,afr
+tkl,Tokelau,country,asi
+ton,Tonga,country,asi
+_tra,Transnistria,country,eur
+tto,Trinidad and Tobago,country,ame
+tun,Tunisia,country,afr
+tur,Turkey,country,eur
+tkm,Turkmenistan,country,asi
+tca,Turks and Caicos Islands,country,
+tuv,Tuvalu,country,asi
+uga,Uganda,country,afr
+ukr,Ukraine,country,eur
+are,United Arab Emirates,country,asi
+gbr,United Kingdom,country,eur
+usa,United States,country,ame
+ury,Uruguay,country,ame
+_ussr,USSR,country,eur
+uzb,Uzbekistan,country,asi
+wlf,Wallis et Futuna,country,asi
+vut,Vanuatu,country,asi
+ven,Venezuela,country,ame
+pse,West Bank and Gaza,country,asi
+_brd,West Germany,country,eur
+esh,Western Sahara,country,afr
+vnm,Vietnam,country,asi
+vir,Virgin Islands (U.S.),country,
+_noy,North Yemen (former),country,asi
+_soy,South Yemen (former),country,asi
+yem,Yemen,country,asi
+_yug,Yugoslavia,country,eur
+zmb,Zambia,country,afr
+zwe,Zimbabwe,country,afr
+ala,Åland,country,eur
+_ngo,Ngorno-Karabakh,country,eur
