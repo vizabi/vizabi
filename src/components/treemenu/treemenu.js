@@ -147,7 +147,6 @@ var TreeMenu = Component.extend({
     //this function is only called once at start, when both DOM and this.model are ready
     //this.element contains the view where you can append the menu
     this.element = d3.select(this.placeholder);
-
     //menu class private
     var _this = this;
 
@@ -183,7 +182,6 @@ var TreeMenu = Component.extend({
       .classed(css.search_wrap, true)
       .append('input')
       .classed(css.search, true)
-      .attr("placeholder", "Search...")
       .attr('type', 'text')
       .attr('id', css.search);
 
@@ -646,6 +644,10 @@ var TreeMenu = Component.extend({
     var _this = this;
     this.element.select('.' + css.title).select("span")
       .text(this.translator("buttons/" + markerID));
+
+    this.element.select('.' + css.search)
+      .attr("placeholder", this.translator("placeholder/search") + "...");
+
 
     if(data == null) data = tree;
     this.wrapper.select('ul').remove();
