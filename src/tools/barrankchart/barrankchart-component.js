@@ -182,46 +182,45 @@ var BarRankChart = Component.extend({
 
     // update the shown bars for new data-set
     this.createAndDeleteBars(updatedBars);
-
-    // set position of the bars
+   
     this.barContainer
-      .selectAll('.vzb-br-bar > rect')
-      .data(this.sortedEntities, getDataKey)     
+      .selectAll('.vzb-br-bar') 
+      .data(this.sortedEntities, getDataKey)
+      .order()
       .transition().duration(duration).ease("linear")
-      .attr("width", function(d) {
-        var width = _this.xScale(d.value);
-        return width > 0 ? width : 0;
-      })
-      .attr("y", getBarPosition);
+      .attr("transform", getBarPosition)
+      .each(function (d, i) {
+        var bar = d3.select(this);
 
-    // it would be nice if the two y-attribute setting below could be combined, but due to the .data you can't
-    // set position of all entity-labels
-    this.barContainer
-      .selectAll('.vzb-br-bar > text.vzb-br-label') 
-      .data(this.sortedEntities, getDataKey)      
-      .transition().duration(duration).ease("linear")
-      .attr("y", getTextPosition)
+        // set width of the bars
+        bar.selectAll('rect')
+          .transition().duration(duration).ease("linear")
+          .attr("width", function() {
+            var width = _this.xScale(d.value);
+            return width > 0 ? width : 0;
+          })
 
-    // set positions of the entity-values
-    this.barContainer
-      .selectAll('.vzb-br-bar > text.vzb-br-value') 
-      .data(this.sortedEntities, getDataKey)   
-      .text(function(d, i) {
-        return _this.model.marker.axis_x.tickFormatter(d.value);
-      })
-      .transition().duration(duration).ease("linear") 
-      .attr("y", getTextPosition)  
+        // set positions of the bar-values
+        bar.selectAll('.vzb-br-value')
+          .text(function() {
+            return _this.model.marker.axis_x.tickFormatter(d.value);
+          })
 
-    // helper functions
-    function getDataKey(d) {          
-      return d.entity;  
-    }
-    function getBarPosition(d, i) {
-        return (_this.barHeight+bar_margin)*i;
-    }
-    function getTextPosition(d, i) {  
-      return getBarPosition(d, i)+(_this.barHeight/2); 
-    }
+        // set title (tooltip)
+        bar.selectAll('title')
+          .text(function() {
+            return _this.values.label[d.entity] + ' (' + _this.model.marker.axis_x.tickFormatter(d.value) + ')';
+          });
+
+      });
+
+      // helper functions
+      function getBarPosition(d, i) {
+          return 'translate(0,'+ (_this.barHeight+bar_margin)*i + ')';
+      }
+      function getDataKey(d) {          
+        return d.entity;  
+      }
 
   },
 
@@ -267,10 +266,12 @@ var BarRankChart = Component.extend({
     newGroups.append('text')
         .attr("class", "vzb-br-label") 
         .attr("x", -5)
+        .attr("y", this.barHeight/2)
         .attr("text-anchor", "end")
         .attr("alignment-baseline", "middle")
         .text(function(d, i) {
-          return _this.values.label[d.entity];
+          var label = _this.values.label[d.entity];
+          return label.length < 12 ? label : label.substring(0, 9) + '...';
         })
         .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
@@ -281,11 +282,14 @@ var BarRankChart = Component.extend({
     newGroups.append('text')
         .attr("class", "vzb-br-value") 
         .attr("x", 5)
+        .attr("y", this.barHeight/2)
         .attr("alignment-baseline", "middle")
         .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);
         });
+
+    newGroups.append('title');
   },
 
 
