@@ -26,6 +26,12 @@
     display: inline-block;
   }
 
+  &[data-btn="colors"] {
+    .vzb-dialog-content {
+      min-height: 140px;
+    }
+  }
+
   &[data-btn='axesmc'] {
     @import 'axesmc/axesmc';
   }
