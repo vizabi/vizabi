@@ -176,7 +176,7 @@ var BubbleChartComp = Component.extend({
         //   _this.model.marker.color.scale = null;
         //   utils.defer(function() {
         //     _this.trigger('ready');
-        //   });         
+        //   });
         // }
       }
     };
@@ -555,7 +555,7 @@ var BubbleChartComp = Component.extend({
     var sTitle = this.sTitleEl.selectAll("text").data([0]);
     sTitle.enter().append("text");
     sTitle
-      .attr("text-anchor", "end");
+      .attr("text-anchor", "start");
 
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
@@ -950,7 +950,7 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     this.sTitleEl
-      .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
+      .attr("transform", "translate(" + this.width + "," + (this.height-20) + ") rotate(-90)");
 
     this.dataWarningEl
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
