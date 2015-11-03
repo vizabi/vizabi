@@ -97,21 +97,22 @@ var MCSelectList = Class.extend({
     if (!_this.selectList || !_this.someSelected) return;
 
     var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
-    var fontHeight = sample[0][0].getBBox().height*0.7;
+    var fontHeight = sample[0][0].getBBox().height*1.2;
+    var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample[0][0].parentNode).remove();
     var formatter = _this.model.marker.axis_y.tickFormatter;
 
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
-    if (fontHeight > maxFontHeight) fontHeight = maxFontHeight;
+    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight; 
 
     var currentAggrLevel = "null";
     var aggrLevelSpacing = 0;
 
     _this.selectList
       .attr("transform", function (d, i) {
-        if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += titleHeight;
+        if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
         var spacing = fontHeight * i + titleHeight * 2 + aggrLevelSpacing;
         currentAggrLevel = d.aggrLevel;
         return "translate(0," + spacing + ")";
@@ -128,7 +129,7 @@ var MCSelectList = Class.extend({
           .attr("x", fontHeight)
           .attr("y", fontHeight)
           .text(string)
-          .style("font-size", fontHeight === maxFontHeight ? fontHeight : null);
+          .style("font-size", fontHeight === maxFontHeight ? (fontHeight * fontSizeToFontHeight + "px") : null);
 
         var contentBBox = text[0][0].getBBox();
 
