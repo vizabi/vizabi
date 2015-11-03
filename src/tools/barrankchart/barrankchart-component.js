@@ -12,8 +12,6 @@ import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
 //POP BY AGE CHART COMPONENT
 var BarRankChart = Component.extend({
 
-  values: {}, // values for all the hooks
-
   /**
    * Initializes the component (Bar Chart).
    * Executed once before any template is rendered.
@@ -50,6 +48,9 @@ var BarRankChart = Component.extend({
       },
       "change:entities:select": function(evt) {
         _this.selectBars();
+      },
+      "change:marker:axis_x:scaleType": function(evt) {
+        _this.draw();
       }
     };
 
@@ -94,12 +95,23 @@ var BarRankChart = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
+    this.ready();
+
+    this.selectBars();
+
   },
+
+  readyRuns: 0,
 
   /*
    * Both model and DOM are ready
    */
   ready: function() {
+
+    // hack: second run is right after readyOnce (in which ready() is also called)
+    // then it's not necessary to run ready()
+    // (without hack it's impossible to run things in readyOnce áfter ready has ran)
+    if (++this.readyRuns == 2) return;
 
     this.loadData();
     this.draw();
@@ -122,11 +134,13 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-        .text(translator("indicator/" + this.model.marker.axis_x.which))
+      .text(translator("indicator/" + this.model.marker.axis_x.which))
     this.header.select('.vzb-br-total')
       .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
 
   },
+
+
 
   draw: function() {
     this.drawAxes();
@@ -171,7 +185,7 @@ var BarRankChart = Component.extend({
       this.xScale.rangePoints([0, this.width]).range();
     }
 
-    // redraw the limits
+    // reset the limits
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
     this.xScale = this.xScale.domain([limits.min, limits.max]);
 
@@ -202,6 +216,9 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.tickFormatter(d.value);
+        
+        // save the current index in the bar datum
+        d.index = i;
 
         // set width of the bars
         bar.selectAll('rect')
@@ -218,17 +235,56 @@ var BarRankChart = Component.extend({
 
       })
       .transition().duration(duration).ease("linear")
-      .attr("transform", getBarPosition)
+      .attr("transform", function(d, i) {
+        return 'translate(0, '+ getBarPosition(d,i) + ')'
+      })
       .call(endAll, function() {
+        // when all the transitions have ended
+
+        // set the height of the svg so it resizes according to its children
         var height = _this.barContainer[0][0].getBoundingClientRect().height
         _this.barSvg.attr('height', height + "px");
+
+        // move along with a selection if playing
+        if (_this.model.time.playing) {
+          var follow = _this.barContainer.select('.vzb-selected');
+          if (follow.length > 0) {
+            var d = follow.datum();
+            var yPos = getBarPosition(d, d.index);
+
+            var currentTop = _this.barViewport[0][0].scrollTop;
+            var currentBottom = currentTop + _this.height;
+
+            var scrollTo = false;
+            if (yPos < currentTop)
+              scrollTo = yPos;
+            if ((yPos + _this.barHeight) > currentBottom)
+              scrollTo = yPos + _this.barHeight - _this.height;
+
+            if (scrollTo)
+              _this.barViewport.transition().duration(duration)
+                .tween('scrollfor' + d.entity, scrollTopTween(scrollTo));
+
+          }
+
+          function scrollTopTween(scrollTop) {
+            return function() {
+              var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+              return function(t) { this.scrollTop = i(t); };
+           };
+          }
+            /*.each(function(d, i) {
+              var yPos = getBarPosition(d, d.index);
+            });
+            */
+        }
+
       });
 
 
     // helper functions
     function getBarPosition(d, i) {
-        var barY = (_this.barHeight+bar_margin)*i;
-        return 'translate(0, '+ barY + ')';
+        return (_this.barHeight+bar_margin)*i;
     }
     function getDataKey(d) {          
       return d.entity;  
@@ -324,7 +380,6 @@ var BarRankChart = Component.extend({
 
     // first put the data in an array (objects aren't sortable)
     utils.forEach(values, function(indicator_value, entity) {
-      
       var row = { entity: entity, value: indicator_value };
       row[_this.model.entities.dim] = entity;
       data_array.push(row);
