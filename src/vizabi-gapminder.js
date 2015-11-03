@@ -172,23 +172,16 @@ BubbleMapChart.define('default_options', {
         use: "property",
         which: "geo.name"
       },
-      axis_y: {
+      size: {
         use: "indicator",
         which: "pop",
-        scaleType: "linear",
-        min: 1,
+        scaleType: "sqrt",
         /*
+        min: 1,
         max: 90,
         */
         allow: {
-          scales: ["linear", "log"]
-        }
-      },
-      axis_x: {
-        use: "property",
-        which: "geo.name",
-        allow: {
-          scales: ["ordinal"]
+          scales: ["linear", "log", "sqrt"]
         }
       },
       lat: {
