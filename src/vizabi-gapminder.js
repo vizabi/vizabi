@@ -126,6 +126,10 @@ BarRankChart.define('default_options', {
         which: "pop",
         scaleType: "log"
       },
+      axis_y: {
+        use: "property",
+        which: "geo.name"
+      },
       color: {
         use: "property",
         which: "geo.region"

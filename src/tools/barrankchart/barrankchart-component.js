@@ -140,8 +140,6 @@ var BarRankChart = Component.extend({
 
   },
 
-
-
   draw: function() {
     this.drawAxes();
     this.drawData();
@@ -185,7 +183,7 @@ var BarRankChart = Component.extend({
       this.xScale.rangePoints([0, this.width]).range();
     }
 
-    // reset the limits
+    // redraw the limits
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
     this.xScale = this.xScale.domain([limits.min, limits.max]);
 
