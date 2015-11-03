@@ -65,7 +65,7 @@ var BarRankChart = Component.extend({
   },
 
   onTimeChange: function() {
-    this.year.setText(this.timeFormatter(this.model.time.value));
+    //this.year.setText(this.timeFormatter(this.model.time.value));
 
     this.loadData();
     this.draw();
@@ -78,12 +78,13 @@ var BarRankChart = Component.extend({
     this.element = d3.select(this.element);
 
     // reference elements
-    this.graph = this.element.select('.vzb-br-graph');
-    this.yearEl = this.graph.select('.vzb-br-year');
-    this.year = new DynamicBackground(this.yearEl);
-    this.barContainer = this.graph.select('.vzb-br-bars');
-    this.xAxisEl = this.graph.select('.vzb-br-axis-x');
-
+    //this.graph = this.element.select('.vzb-br-graph');
+    //this.yearEl = this.element.select('.vzb-br-year');
+    //this.year = new DynamicBackground(this.yearEl);
+    this.header = this.element.select('.vzb-br-header');
+    this.barViewport = this.element.select('.barsviewport');
+    this.barSvg = this.element.select('.vzb-br-bars-svg');
+    this.barContainer = this.element.select('.vzb-br-bars');
 
     // set up formatters
     this.timeFormatter = d3.time.format(this.model.time.formatOutput);
@@ -115,8 +116,16 @@ var BarRankChart = Component.extend({
     filter[this.model.time.dim] = this.model.time.value;
     this.values = this.model.marker.getValues(filter, [this.model.entities.dim]);
 
-    // sort the data
+    // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
+
+    // change header titles for new data
+    var translator = this.model.language.getTFunction();
+    this.header.select('.vzb-br-title')
+        .text(translator("indicator/" + this.model.marker.axis_x.which))
+    this.header.select('.vzb-br-total')
+      .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
+
   },
 
   draw: function() {
@@ -129,18 +138,33 @@ var BarRankChart = Component.extend({
   */
   drawAxes: function() {
 
-
     // these should go in some style-config
     this.barHeight = 20; 
-    var margin = {top: 20, bottom: 40, left: 90, right: 20};
+    var margin = {top: 60, bottom: 40, left: 90, right: 20}; // need right margin for scroll bar
 
     // draw the stage - copied from popbyage, should figure out what it exactly does and what is necessary.
     this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
 
-    this.graph
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    this.barContainer.attr('transform', 'translate(' + margin.left + ', 0)');
+    this.barViewport.style('height', this.height + 'px');
 
+    // header
+    this.header
+      .attr('height', margin.top)
+      .select('.vzb-br-title')
+        .attr('dominant-baseline', 'middle')
+        .attr('y', margin.top/2)
+        .attr('x', margin.left);
+    this.header
+      .select('.vzb-br-total')
+        .attr('text-anchor', 'end')
+        .attr('dominant-baseline', 'middle')
+        .attr('y', margin.top/2)
+        .attr('x', this.width + margin.left);
+
+
+    // although axes are not drawn, need the xScale for bar width
     if(this.model.marker.axis_x.scaleType !== "ordinal") {
       this.xScale.range([0, this.width]);
     } else {
@@ -150,21 +174,6 @@ var BarRankChart = Component.extend({
     // redraw the limits
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
     this.xScale = this.xScale.domain([limits.min, limits.max]);
-
-    this.xAxis.scale(this.xScale)
-      .orient("bottom")
-      .tickSize(6, 0)
-      .tickSizeMinor(3, 0)
-      .labelerOptions({
-        scaleType: this.model.marker.axis_x.scaleType,
-        toolMargin: margin,
-        limitMaxTickNumber: 6
-      });
-
-    this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
-      .call(this.xAxis);
-
-    this.xAxisEl.call(this.xAxis);
 
   },
 
@@ -182,13 +191,12 @@ var BarRankChart = Component.extend({
 
     // update the shown bars for new data-set
     this.createAndDeleteBars(updatedBars);
+
    
     this.barContainer
       .selectAll('.vzb-br-bar') 
       .data(this.sortedEntities, getDataKey)
       .order()
-      .transition().duration(duration).ease("linear")
-      .attr("transform", getBarPosition)
       .each(function (d, i) {
 
         var bar = d3.select(this);
@@ -208,16 +216,31 @@ var BarRankChart = Component.extend({
         bar.selectAll('title')
           .text(_this.values.label[d.entity] + ' (' + xValue + ')');
 
+      })
+      .transition().duration(duration).ease("linear")
+      .attr("transform", getBarPosition)
+      .call(endAll, function() {
+        var height = _this.barContainer[0][0].getBoundingClientRect().height
+        _this.barSvg.attr('height', height + "px");
       });
 
-      // helper functions
-      function getBarPosition(d, i) {
-          var barY = (_this.barHeight+bar_margin)*i;
-          return 'translate(0, '+ barY + ')';
-      }
-      function getDataKey(d) {          
-        return d.entity;  
-      }
+
+    // helper functions
+    function getBarPosition(d, i) {
+        var barY = (_this.barHeight+bar_margin)*i;
+        return 'translate(0, '+ barY + ')';
+    }
+    function getDataKey(d) {          
+      return d.entity;  
+    } 
+    // http://stackoverflow.com/questions/10692100/invoke-a-callback-at-the-end-of-a-transition
+    function endAll(transition, callback) { 
+      if (transition.size() === 0) { callback() }
+      var n = 0; 
+      transition 
+          .each(function() { ++n; }) 
+          .each("end", function() { if (!--n) callback.apply(this, arguments); }); 
+    } 
 
   },
 
@@ -265,7 +288,7 @@ var BarRankChart = Component.extend({
         .attr("x", -5)
         .attr("y", this.barHeight/2)
         .attr("text-anchor", "end")
-        .attr("alignment-baseline", "middle")
+        .attr("dominant-baseline", "middle")
         .text(function(d, i) {
           var label = _this.values.label[d.entity];
           return label.length < 12 ? label : label.substring(0, 9) + '...';
@@ -281,7 +304,7 @@ var BarRankChart = Component.extend({
         .attr("class", "vzb-br-value") 
         .attr("x", 5)
         .attr("y", this.barHeight/2)
-        .attr("alignment-baseline", "middle")
+        .attr("dominant-baseline", "middle")
         .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);
@@ -294,14 +317,20 @@ var BarRankChart = Component.extend({
   */  
 
   sortByIndicator: function(values) {
+
     var _this = this;
     var data_array = [];
+    this.total = 0; // setting this.total for efficiency at the same time
+
     // first put the data in an array (objects aren't sortable)
     utils.forEach(values, function(indicator_value, entity) {
+      
       var row = { entity: entity, value: indicator_value };
       row[_this.model.entities.dim] = entity;
       data_array.push(row);
-      //data_array.push({ entity: entity, value: indicator_value });
+
+      // setting this.total for efficiency at the same time
+      _this.total += indicator_value; 
     });
     data_array.sort(function(a, b) {
       // if a is bigger, a comes first, i.e. descending sort
