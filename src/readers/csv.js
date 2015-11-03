@@ -219,7 +219,7 @@ var CSVReader = Reader.extend({
       // load properties for each column referring to property in the dataset
         
       // The below process O(n*m*o) but both n and o are typically small: n = number of property-sets, m = size of data-set, o = number of columns in property-set
-      // for each row column that properties were requested and found for
+      // for each requested property-set
       utils.forEach(propertiesByKey, function(properties, key) {
         properties[key] = true; // also retrieve the key-column
         propertiesPromises.push(loadProperties(properties, key));

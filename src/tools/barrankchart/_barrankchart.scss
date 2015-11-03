@@ -4,8 +4,23 @@
   .vzb-barrankchart {
     @extend %vzb-chart-wrapper;
 
-    .vzb-barrankchart-svg {
-      @extend %vzb-chart-svg;
+    .vzb-br-header {
+      width: 100%;
+      display: block; // svg is standard inline 
+
+      .vzb-br-title {
+        font-size: $vzb-font-size-large;
+        fill: $vzb-color-black;
+      }
+    }
+
+    .barsviewport {
+      overflow-y: scroll;
+      position: relative;
+    }
+
+    .vzb-br-bars-svg {
+      width: 100%;
 
       .vzb-br-year {
         @include opacity(.1);
