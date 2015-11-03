@@ -190,33 +190,30 @@ var BarRankChart = Component.extend({
       .transition().duration(duration).ease("linear")
       .attr("transform", getBarPosition)
       .each(function (d, i) {
+
         var bar = d3.select(this);
+        var barWidth = _this.xScale(d.value);
+        var xValue = _this.model.marker.axis_x.tickFormatter(d.value);
 
         // set width of the bars
         bar.selectAll('rect')
           .transition().duration(duration).ease("linear")
-          .attr("width", function() {
-            var width = _this.xScale(d.value);
-            return width > 0 ? width : 0;
-          })
+          .attr("width", (barWidth > 0) ? barWidth : 0)
 
         // set positions of the bar-values
         bar.selectAll('.vzb-br-value')
-          .text(function() {
-            return _this.model.marker.axis_x.tickFormatter(d.value);
-          })
+          .text(xValue)
 
         // set title (tooltip)
         bar.selectAll('title')
-          .text(function() {
-            return _this.values.label[d.entity] + ' (' + _this.model.marker.axis_x.tickFormatter(d.value) + ')';
-          });
+          .text(_this.values.label[d.entity] + ' (' + xValue + ')');
 
       });
 
       // helper functions
       function getBarPosition(d, i) {
-          return 'translate(0,'+ (_this.barHeight+bar_margin)*i + ')';
+          var barY = (_this.barHeight+bar_margin)*i;
+          return 'translate(0, '+ barY + ')';
       }
       function getDataKey(d) {          
         return d.entity;  
@@ -276,7 +273,8 @@ var BarRankChart = Component.extend({
         .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);
-        });
+        })
+        .append('title'); // watch out: might be overwritten if changing the labeltext later on
 
     // draw new values on each bar
     newGroups.append('text')
@@ -288,8 +286,6 @@ var BarRankChart = Component.extend({
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);
         });
-
-    newGroups.append('title');
   },
 
 
