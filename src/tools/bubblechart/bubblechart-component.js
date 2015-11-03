@@ -933,9 +933,9 @@ var BubbleChartComp = Component.extend({
         this.translator("buttons/colors") + ": " + this.strings.title.C);
 
     var probe = this.sTitleEl.append("text").text(sTitleText.text());
-    var font = parseInt(probe.style("font-size")) * (this.height - 20) / probe.node().getBBox().width;
+    var font = parseInt(probe.style("font-size")) * (this.height - 30) / probe.node().getBBox().width;
 
-    if(probe.node().getBBox().width > this.height - 20) {
+    if(probe.node().getBBox().width > this.height - 30) {
       sTitleText.style("font-size", font + "px");
     } else {
       sTitleText.style("font-size", null);
