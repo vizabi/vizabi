@@ -96,9 +96,11 @@ var BarComponent = Component.extend({
     var yTitle = this.yTitleEl.selectAll("text").data([0]);
     yTitle.enter().append("text");
     yTitle
-      .attr("y", "-6px")
+/*
+      .attr("y", "-16px")
       .attr("x", "-9px")
       .attr("dx", "-0.72em")
+ */
       .text(titleStringY)
       .on("click", function() {
         //TODO: Optimise updateView
@@ -197,7 +199,7 @@ var BarComponent = Component.extend({
     this.profiles = {
       "small": {
         margin: {
-          top: 30,
+          top: 40,
           right: 20,
           left: 40,
           bottom: 50
@@ -208,7 +210,7 @@ var BarComponent = Component.extend({
       },
       "medium": {
         margin: {
-          top: 30,
+          top: 40,
           right: 60,
           left: 60,
           bottom: 60
@@ -219,7 +221,7 @@ var BarComponent = Component.extend({
       },
       "large": {
         margin: {
-          top: 30,
+          top: 50,
           right: 60,
           left: 60,
           bottom: 80
@@ -286,6 +288,8 @@ var BarComponent = Component.extend({
     var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
     var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
     this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
+    this.yTitleEl.attr("transform", "translate(" + -(margin.left - 10) + "," + -(margin.top - 25) + ")"); // 10 - left padding, 25 - font-height
+
   }
 });
 
