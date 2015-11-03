@@ -121,10 +121,6 @@ BarRankChart.define('default_options', {
         use: "property",
         which: "geo.name"
       },
-      axis_y: {
-        use: "property",
-        which: "geo.name"
-      },
       axis_x: {
         use: "indicator",
         which: "pop",
@@ -143,6 +139,8 @@ BarRankChart.define('default_options', {
     path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {
+    buttons: [],
+    buttons_expand: [],
     presentation: false 
   }
 });

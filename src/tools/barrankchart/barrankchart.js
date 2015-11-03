@@ -3,7 +3,8 @@ import Tool from 'base/tool';
 
 import BarRankChartComponent from './barrankchart-component';
 import {
-  timeslider
+  timeslider,
+  buttonlist
 } from 'components/_index';
 
 var BarRankChart = Tool.extend('BarRankChart', {
@@ -14,13 +15,17 @@ var BarRankChart = Tool.extend('BarRankChart', {
     this.name = "barrankchart";
 
     this.components = [{
-        component: BarRankChartComponent, 
-        placeholder: '.vzb-tool-viz', 
-        model: ["state.time", "state.entities", "state.marker", "language", "ui"] 
+      component: BarRankChartComponent, 
+      placeholder: '.vzb-tool-viz', 
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] 
     }, {
-        component: timeslider,
-        placeholder: '.vzb-tool-timeslider',
-        model: ["state.time"]
+      component: timeslider,
+      placeholder: '.vzb-tool-timeslider',
+      model: ["state.time"]
+    }, {
+      component: buttonlist,
+      placeholder: '.vzb-tool-buttonlist',
+      model: ['state', 'ui', 'language']
     }];
 
     //constructor is the same as any tool
