@@ -32,19 +32,10 @@ var CSVReader = Reader.extend({
     var p = new Promise();
 
     //this specific reader has support for the tag {{LANGUAGE}}
-    var path = this._basepath.replace("{{LANGUAGE}}", language);
-
-    //hack: for time and age
-    if(!query.where.time && !query.where.age) {
-      path = path.replace(".csv", "-properties.csv");
-    }
-    //if only one year, files ending in "-YYYY.csv"
-    else if(query.where.time && query.where.time[0].length === 1) {
-      path = path.replace(".csv", "-" + query.where.time[0][0] + ".csv");
-    }
+    this.path = this._basepath.replace("{{LANGUAGE}}", language);
 
     //replace conditional tags {{<any conditional>}}
-    path = path.replace(/{{(.*?)}}/g, function(match, capture) {
+    this.path = this.path.replace(/{{(.*?)}}/g, function(match, capture) {
       capture = capture.toLowerCase();
       if(utils.isArray(query.where[capture])) {
         return query.where[capture].sort().join('-');
@@ -52,82 +43,26 @@ var CSVReader = Reader.extend({
       return query.where[capture];
     });
 
+    //if only one year, files ending in "-YYYY.csv"
+    var loadPath = this.path;
+    if(query.where.time && query.where.time[0].length === 1) {
+      loadPath = loadPath.replace(".csv", "-" + query.where.time[0][0] + ".csv");
+    }
+
     _this._data = [];
 
     (function(query, p) {
 
-      //if cached, retrieve and parse
-      if(FILE_CACHED.hasOwnProperty(path)) {
-        parse(FILE_CACHED[path]);
-      }
-      //if requested by another hook, wait for the response
-      else if(FILE_REQUESTED.hasOwnProperty(path)) {
-        FILE_REQUESTED[path].then(function() {
-          parse(FILE_CACHED[path]);
-        });
-      }
-      //if not, request and parse
-      else {
-        d3.csv(path, function(error, res) {
-
-          if(!res) {
-            utils.error("No permissions or empty file: " + path, error);
-            return;
-          }
-
-          if(error) {
-            utils.error("Error Happened While Loading CSV File: " + path, error);
-            return;
-          }
-
-          //fix CSV response
-          res = format(res);
-
-          //cache and resolve
-          FILE_CACHED[path] = res;
-          FILE_REQUESTED[path].resolve();
-          FILE_REQUESTED[path] = void 0;
-
-          parse(res);
-        });
-        FILE_REQUESTED[path] = new Promise();
-      }
-
-      function format(res) {
-
-        //make category an array and fix missing regions
-        res = res.map(function(row) {
-          if(row['geo.cat']) {
-            row['geo.cat'] = [row['geo.cat']];
-          }
-          if(row['geo.region'] || row['geo']) {
-            row['geo.region'] = row['geo.region'] || row['geo'];
-          }
-          return row;
-        });
-
-        //format data
-        res = utils.mapRows(res, _this._formatters);
-
-        //TODO: fix this hack with appropriate ORDER BY
-        //order by formatted
-        //sort records by time
-        var keys = Object.keys(_this._formatters);
-        var order_by = keys[0];
-        //if it has time
-        if(res[0][order_by]) {
-          res.sort(function(a, b) {
-            return a[order_by] - b[order_by];
-          });
-        }
-        //end of hack
-
-        return res;
-      }
+      // load and then read from the cache when loaded
+      var loadPromise = _this.load(loadPath, parse);
+      loadPromise.then(function() {
+        parse(FILE_CACHED[loadPath]);
+      })
 
       function parse(res) {
 
-        var data = res;
+        var data = res;   
+
         //rename geo.category to geo.cat
         var where = query.where;
         if(where['geo.category']) {
@@ -135,41 +70,51 @@ var CSVReader = Reader.extend({
           where['geo.category'] = void 0;
         }
 
-        //format values in the dataset and filters
-        where = utils.mapRows([where], _this._formatters)[0];
+        // load (join) any properties if necessary
+        var propertiesLoadPromise = _this.loadProperties(data, query);
 
-        //make sure conditions don't contain invalid conditions
-        var validConditions = [];
-        utils.forEach(where, function(v, p) {
-          for(var i = 0, s = data.length; i < s; i++) {
-            if(data[i].hasOwnProperty(p)) {
-              validConditions.push(p);
-              return true;
-            }
-          };
-        });
-        //only use valid conditions
-        where = utils.clone(where, validConditions);
+        // once done, continue parsing
+        propertiesLoadPromise.then(function() {
 
-        //filter any rows that match where condition
-        data = utils.filterAny(data, where);
+          //format values in the dataset and filters
+          where = utils.mapRows([where], _this._formatters)[0];
 
-        //warn if filtering returns empty array
-        if(data.length == 0) {
-          p.reject("data reader returns empty array, that's bad");
-          return;
-        }
+          //make sure conditions don't contain invalid conditions
+          var validConditions = [];
+          utils.forEach(where, function(v, p) {
+            for(var i = 0, s = data.length; i < s; i++) {
+              if(data[i].hasOwnProperty(p)) {
+                validConditions.push(p);
+                return true;
+              }
+            };
+          });
+          //only use valid conditions
+          where = utils.clone(where, validConditions);
 
-        //only selected items get returned
-        data = data.map(function(row) {
-          return utils.clone(row, query.select);
-        });
+          //filter any rows that match where condition
+          data = utils.filterAny(data, where);
 
-        // grouping
-        data = _this.groupData(data, query);
+          //warn if filtering returns empty array
+          if(data.length == 0) {
+            p.reject("data reader returns empty array, that's bad");
+            return;
+          }
 
-        _this._data = data;
-        p.resolve();
+          //only selected items get returned
+          data = data.map(function(row) {
+            return utils.clone(row, query.select);
+          });
+
+          // grouping
+          data = _this.groupData(data, query);
+
+          _this._data = data;
+          p.resolve();
+
+        })
+
+
       }
 
     })(query, p);
@@ -185,16 +130,167 @@ var CSVReader = Reader.extend({
     return this._data;
   },
 
+
+  format: function(res) {
+    var _this = this;
+
+    //make category an array and fix missing regions
+    res = res.map(function(row) {
+      if(row['geo.cat']) {
+        row['geo.cat'] = [row['geo.cat']];
+      }
+      if(row['geo.region'] || row['geo']) {
+        row['geo.region'] = row['geo.region'] || row['geo'];
+      }
+      return row;
+    });
+
+    //format data
+    res = utils.mapRows(res, _this._formatters);
+
+    //TODO: fix this hack with appropriate ORDER BY
+    //      plus do it AFTER parsing so you dont sort unneeded rows
+    //order by formatted
+    //sort records by time
+    var keys = Object.keys(_this._formatters);
+    var order_by = keys[0];
+    //if it has time
+    if(res[0][order_by]) {
+      res.sort(function(a, b) {
+        return a[order_by] - b[order_by];
+      });
+    }
+    //end of hack
+
+    return res;
+  },
+
+  load: function(path) {
+    var _this = this;
+
+    //if not yet cached or request, start a request
+    if(!FILE_CACHED.hasOwnProperty(path) && !FILE_REQUESTED.hasOwnProperty(path)) {
+      // load the csv
+      d3.csv(path, function(error, res) {
+
+        if(!res) {
+          utils.error("No permissions or empty file: " + path, error);
+          return;
+        }
+
+        if(error) {
+          utils.error("Error Happened While Loading CSV File: " + path, error);
+          return;
+        }
+
+        //fix CSV response
+        res = _this.format(res);
+
+        //cache and resolve
+        FILE_CACHED[path] = res;
+        FILE_REQUESTED[path].resolve();
+        // commented this out because the promise needs to stay for future requests, indicating it is already in the cache
+        // FILE_REQUESTED[path] = void 0; 
+
+      });
+      FILE_REQUESTED[path] = new Promise();
+    }    
+    // always return a promise, even if it is already in the cache
+    return FILE_REQUESTED[path];
+  },
+
+  loadProperties: function(data, query) {
+
+      var _this = this;
+
+      // see if there are any properties used in the query and load them
+      // At the moment properties are loaded and added to the data-set only when required but for every query. Maybe loading and adding them to the data-set once is better?
+      var propertiesPromises = [];
+      var propertiesByKey = {};
+
+      // check both select and where for columns that actually refer to properties
+      utils.forEach(query.select, function(column) {
+        checkForProperty(column);
+      });
+      utils.forEach(query.where, function(values, column) {
+        checkForProperty(column);
+      });
+
+      // load properties for each column referring to property in the dataset
+        
+      // The below process O(n*m*o) but both n and o are typically small: n = number of property-sets, m = size of data-set, o = number of columns in property-set
+      // for each requested property-set
+      utils.forEach(propertiesByKey, function(properties, key) {
+        properties[key] = true; // also retrieve the key-column
+        propertiesPromises.push(loadProperties(properties, key));
+      });
+
+      return propertiesPromises.length ? Promise.all(propertiesPromises) : new Promise.resolve();
+
+
+      function checkForProperty(column) {
+        var split = column.split('.');
+        if (split.length == 2) {
+          propertiesByKey[split[0]] = propertiesByKey[split[0]] || [];
+          propertiesByKey[split[0]].push(column);
+        }
+      }
+
+      function loadProperties(queriedProperties, keyColumn) {
+
+        /*
+         * Code below is for a path to a file when properties are shared between datasets
+         *
+
+        // parse the url of the original csv
+        var parser = document.createElement('a');
+        parser.href = path;
+
+        // construct the path of the file with properties of the key column
+        var newpathname = parser.pathname.substr(0, parser.pathname.lastIndexOf('/') + 1) + key + "-properties.csv";
+        var propertiesPath = parser.protocol + '//' + parser.host + newpathname + parser.search + parser.hash;
+        */
+
+        // get path of properties that are specific for the current data-set
+        var propertiesPath = _this.path.replace(".csv", "-" + keyColumn + "-properties.csv");
+
+        // load the file and return the promise for loading
+        var processedPromise = new Promise();
+        var loadPromise = _this.load(propertiesPath);
+        loadPromise.then(function() {
+
+          var properties = {};
+
+          // load all the properties in a map with the keyColumn-value as keyColumn (e.g. properties['swe']['geo.name'] = 'Sweden')
+          // this map is readable in O(1)
+          utils.forEach(FILE_CACHED[propertiesPath], function(object) {
+            properties[object[keyColumn]] = object;
+          }); 
+
+          // go through each row of data
+          utils.forEach(data, function(row, index) { // e.g. row = { geo: se, pop: 1000, gdp: 5 }
+            // copy each property that was queried to the matching data-row (matching = same keyColumn)
+            utils.forEach(queriedProperties, function(property) {
+              row[property] = properties[row[keyColumn]][property];
+            })
+          });
+
+          processedPromise.resolve();
+
+        });
+
+        return processedPromise;
+      }
+  },
+
   groupData: function(data, query) {
 
     // nested object which will be used to find the right group for each datarow. Each leaf will contain a reference to a data-object for aggregration.
     var grouping_map = {}; 
 
-    // temporary: only pop is aggregrated
-
     var filtered = data.filter(function(val, index) {
 
-      var keep = false;
+      var keep;
       var leaf = grouping_map; // start at the base
 
       // find the grouping-index for each grouping property (i.e. entity)
@@ -206,7 +302,7 @@ var CSVReader = Reader.extend({
 
         var group_index;
 
-        // only age is grouped together for now
+        // TO-DO: only age is grouped together for now, should be more generic
         if (entity == 'age') {
 
           var group_by = grouping;
@@ -248,7 +344,7 @@ var CSVReader = Reader.extend({
             leaf = leaf[val[entity]];
             // if the leaf already had values, apply the aggregrate functions for each property
             utils.forEach(query.select, function(property, key) {
-              // replace with more generic grouping/aggregrate
+              // TO-DO replace with more generic grouping/aggregrate
               if (property == 'pop') {
                 // aggregrate the un-grouped data (now only sum population)
                 leaf[property] = parseFloat(leaf[property]) + parseFloat(val['pop']);

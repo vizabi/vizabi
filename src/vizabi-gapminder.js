@@ -10,6 +10,7 @@ import Vzb from 'vizabi';
 
 //import tools
 import BubbleChart from 'tools/bubblechart';
+import BarRankChart from 'tools/barrankchart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
@@ -94,6 +95,60 @@ BarChart.define('default_options', {
   }
 });
 
+BarRankChart.define('default_options', {
+  state: {
+    time: {
+      start: "1800",
+      end: "2015",
+      value: "2000",
+      step: 1,
+      formatInput: "%Y"
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["country"]
+        }
+      },
+      opacitySelectDim: .3,
+      opacityRegular: 1
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_x: {
+        use: "indicator",
+        which: "pop",
+        scaleType: "log"
+      },
+      axis_y: {
+        use: "property",
+        which: "geo.name"
+      },
+      color: {
+        use: "property",
+        which: "geo.region"
+      }
+    }
+  },
+  language: language,
+  data: {
+    //reader: "waffle",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+  },
+  ui: {
+    buttons: [],
+    buttons_expand: [],
+    presentation: false 
+  }
+});
+
 BubbleMapChart.define('default_options', {
   state: {
     time: {
@@ -109,7 +164,7 @@ BubbleMapChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["region"]
+          //"geo.region": ["afr"]
         }
       }
     },
@@ -119,22 +174,25 @@ BubbleMapChart.define('default_options', {
         use: "property",
         which: "geo.name"
       },
-      axis_y: {
+      size: {
         use: "indicator",
-        which: "lex",
-        scaleType: "linear",
-        min: 0,
+        which: "pop",
+        scaleType: "sqrt",
+        /*
+        min: 1,
         max: 90,
+        */
         allow: {
-          scales: ["linear", "log"]
+          scales: ["linear", "log", "sqrt"]
         }
       },
-      axis_x: {
+      lat: {
         use: "property",
-        which: "geo.name",
-        allow: {
-          scales: ["ordinal"]
-        }
+        which: "lat"
+      },
+      lng: {
+        use: "property",
+        which: "lng"
       },
       color: {
         use: "property",
@@ -145,8 +203,8 @@ BubbleMapChart.define('default_options', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
-    splash: false
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
+    splash: true
   },
   language: language,
   ui: {

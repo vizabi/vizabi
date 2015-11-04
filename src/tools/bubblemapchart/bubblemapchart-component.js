@@ -42,7 +42,7 @@ var BubbleMapChartComponent = Component.extend({
     //contructor is the same as any component
     this._super(config, context);
 
-    this.yScale = null;
+    this.sScale = null;
     this.cScale = d3.scale.category10();
 
     this.defaultWidth = 960;
@@ -134,7 +134,7 @@ var BubbleMapChartComponent = Component.extend({
     this.translator = this.model.language.getTFunction();
     this.duration = this.model.time.speed;
 
-    this.yScale = this.model.marker.axis_y.getScale();
+    this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
 
@@ -158,28 +158,39 @@ var BubbleMapChartComponent = Component.extend({
     //Europe 53.0000° N, 9.0000° E
     //Asia 49.8380° N, 105.8203° E
     //north American 48.1667° N and longitude 100.1667° W
+    /*
     var pos = {
       "afr": {lat: 9.1, lng: 18.3},
       "eur": {lat: 53.0, lng: 9.0},
       "asi": {lat: 49.8, lng: 105.8},
       "ame": {lat: 48.2, lng: -100.2},
     };
+    */
+
+    items = items.sort(function (a, b) { // small circle to front
+      return values.size[b[entityDim]] - values.size[a[entityDim]];
+    });
 
     this.entityBubbles = this.bubbles.selectAll('.vzb-bmc-bubble')
       .data(items);
-
+    /*
     //exit selection
     this.entityBubbles.exit().remove();
+    */
 
-    //enter selection -- init circles
-    this.entityBubbles.enter().append("circle")
-      .attr("class", "vzb-bmc-bubble")
-      .on("mousemove", function (d, i) {
-      })
-      .on("mouseout", function (d, i) {
-      })
-      .on("click", function (d, i) {
-      });
+    if (!this.renderedOnce) {
+      //enter selection -- init circles
+      this.entityBubbles.enter().append("circle")
+        .attr("class", "vzb-bmc-bubble")
+        .on("mousemove", function (d, i) {
+          console.log(d[entityDim]);
+        })
+        .on("mouseout", function (d, i) {
+        })
+        .on("click", function (d, i) {
+        });
+      this.renderedOnce = true;
+    }
 
     //positioning and sizes of the bubbles
     this.bubbles.selectAll('.vzb-bmc-bubble')
@@ -187,15 +198,15 @@ var BubbleMapChartComponent = Component.extend({
         return _this.cScale(values.color[d[entityDim]]);
       })
       .attr("cx", function (d) {
-        d.cLoc = _this.skew(_this.projection([pos[d[entityDim]].lng, pos[d[entityDim]].lat]));
+        d.cLoc = _this.skew(_this.projection([+values.lng[d[entityDim]], +values.lat[d[entityDim]]]));
         return d.cLoc[0];
       })
-      .transition().duration(duration).ease("linear")
       .attr("cy", function (d) {
         return d.cLoc[1];
       })
+      .transition().duration(duration).ease("linear")
       .attr("r", function (d) {
-        return _this.yScale(values.axis_y[d[entityDim]]);
+        return _this.sScale(values.size[d[entityDim]]);
       });
   },
 
@@ -216,8 +227,8 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 50
         },
         padding: 2,
-        minRadius: 2,
-        maxRadius: 40
+        minsize: 2,
+        maxsize: 40
       },
       "medium": {
         margin: {
@@ -227,8 +238,8 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 60
         },
         padding: 2,
-        minRadius: 3,
-        maxRadius: 60
+        minsize: 3,
+        maxsize: 60
       },
       "large": {
         margin: {
@@ -238,8 +249,8 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 80
         },
         padding: 2,
-        minRadius: 4,
-        maxRadius: 80
+        minsize: 4,
+        maxsize: 80
       }
     };
 
@@ -258,7 +269,6 @@ var BubbleMapChartComponent = Component.extend({
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
     this.mapSvg
       .attr('width', width)
       .attr('height', height)
@@ -267,12 +277,7 @@ var BubbleMapChartComponent = Component.extend({
 
     //update scales to the new range
     // TODO: r ration should add to config
-    if (this.model.marker.axis_y.scaleType !== "ordinal") {
-      this.yScale.range([0, this.height / 4]);
-    } else {
-      this.yScale.rangePoints([0, this.height / 4], _this.activeProfile.padding).range();
-    }
-
+    this.sScale.range([0, this.height / 4]);
 
     var skew = this.skew = (function () {
       var vb = viewBox;

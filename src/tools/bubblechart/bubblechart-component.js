@@ -933,9 +933,9 @@ var BubbleChartComp = Component.extend({
         this.translator("buttons/colors") + ": " + this.strings.title.C);
 
     var probe = this.sTitleEl.append("text").text(sTitleText.text());
-    var font = parseInt(probe.style("font-size")) * (this.height - 20) / probe.node().getBBox().width;
+    var font = parseInt(probe.style("font-size")) * (this.height - 30) / probe.node().getBBox().width;
 
-    if(probe.node().getBBox().width > this.height - 20) {
+    if(probe.node().getBBox().width > this.height - 30) {
       sTitleText.style("font-size", font + "px");
     } else {
       sTitleText.style("font-size", null);
@@ -1387,20 +1387,24 @@ var BubbleChartComp = Component.extend({
       .each(function(d, index) {
         var view = d3.select(this);
 
-        view.append("rect")
-          .on("click", function(d, i) {
-            //default prevented is needed to distinguish click from drag
-            if(d3.event.defaultPrevented) return;
+// Ola: Clicking bubble label should not zoom to countries boundary #811
+// It's too easy to accidentally zoom
+// This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-            var maxmin = _this.cached[d[KEY]].maxMinValues;
-            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
-            _this._panZoom._zoomOnRectangle(_this.element,
-              _this.xScale(maxmin.valueXmin) - radius,
-              _this.yScale(maxmin.valueYmin) + radius,
-              _this.xScale(maxmin.valueXmax) + radius,
-              _this.yScale(maxmin.valueYmax) - radius,
-              false, 500);
-          });
+        view.append("rect");
+//          .on("click", function(d, i) {
+//            //default prevented is needed to distinguish click from drag
+//            if(d3.event.defaultPrevented) return;
+//
+//            var maxmin = _this.cached[d[KEY]].maxMinValues;
+//            var radius = utils.areaToRadius(_this.sScale(maxmin.valueSmax));
+//            _this._panZoom._zoomOnRectangle(_this.element,
+//              _this.xScale(maxmin.valueXmin) - radius,
+//              _this.yScale(maxmin.valueYmin) + radius,
+//              _this.xScale(maxmin.valueXmax) + radius,
+//              _this.yScale(maxmin.valueYmax) - radius,
+//              false, 500);
+//          });
 
         view.append("text").attr("class", "vzb-bc-label-content vzb-label-shadow");
 

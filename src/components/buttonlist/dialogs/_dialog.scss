@@ -26,6 +26,12 @@
     display: inline-block;
   }
 
+  &[data-btn="colors"] {
+    .vzb-dialog-content {
+      min-height: 140px;
+    }
+  }
+
   &[data-btn='axesmc'] {
     @import 'axesmc/axesmc';
   }
@@ -104,11 +110,10 @@
     color: $vzb-color-grey-dark;
     font-family: $vzb-font-family-alt;
     font-size: $vzb-font-size-small;
-    margin-right: -20px;
     max-height: $vzb-dialog-content-height;
     overflow: hidden;
     overflow-y: auto;
-    padding: 0 40px 5px 20px;
+    padding: 0 20px 5px;
 
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
@@ -207,14 +212,14 @@
   .thumb-tack-class-ico-drag {
     cursor: move;
     svg {
-      @include transform(translate(4px, 3.5px));
+      @include translate(4px, 3.5px);
       cursor: move;
     }
   }
 
   .thumb-tack-class-ico-pin {
     svg {
-      @include transform(translate(4px, 4px));
+      @include translate(4px, 4px);
     }
   }
 
@@ -320,8 +325,4 @@
       display: none !important;
     }
   }
-}
-
-.vzb-clegend-container {
-  padding: 0 15px;
 }

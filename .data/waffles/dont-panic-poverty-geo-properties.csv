@@ -1,0 +1,166 @@
+geo,geo.name,geo.cat,geo.region
+afg,Afghanistan,country,asi
+ago,Angola,country,afr
+alb,Albania,country,eur
+are,United Arab Emirates,country,asi
+arg,Argentina,country,ame
+arm,Armenia,country,eur
+aus,Australia,country,asi
+aut,Austria,country,eur
+aze,Azerbaijan,country,eur
+bdi,Burundi,country,afr
+bel,Belgium,country,eur
+ben,Benin,country,afr
+bfa,Burkina Faso,country,afr
+bgd,Bangladesh,country,asi
+bgr,Bulgaria,country,eur
+bhr,Bahrain,country,asi
+bih,Bosnia and Herzegovina,country,eur
+blr,Belarus,country,eur
+bol,Bolivia,country,ame
+bra,Brazil,country,ame
+btn,Bhutan,country,asi
+bwa,Botswana,country,afr
+caf,Central African Republic,country,afr
+can,Canada,country,ame
+che,Switzerland,country,eur
+chl,Chile,country,ame
+chn,China,country,asi
+civ,Cote d'Ivoire,country,afr
+cmr,Cameroon,country,afr
+cod,"Congo, Dem. Rep.",country,afr
+cog,"Congo, Rep.",country,afr
+col,Colombia,country,ame
+com,Comoros,country,afr
+cpv,Cape Verde,country,afr
+cri,Costa Rica,country,ame
+cub,Cuba,country,ame
+cyp,Cyprus,country,eur
+cze,Czech Republic,country,eur
+deu,Germany,country,eur
+dji,Djibouti,country,afr
+dnk,Denmark,country,eur
+dom,Dominican Republic,country,ame
+dza,Algeria,country,afr
+ecu,Ecuador,country,ame
+egy,Egypt,country,afr
+eri,Eritrea,country,afr
+esp,Spain,country,eur
+est,Estonia,country,eur
+eth,Ethiopia,country,afr
+fin,Finland,country,eur
+fji,Fiji,country,asi
+fra,France,country,eur
+gab,Gabon,country,afr
+gbr,United Kingdom,country,eur
+geo,Georgia,country,eur
+gha,Ghana,country,afr
+gin,Guinea,country,afr
+gmb,Gambia,country,afr
+gnb,Guinea-Bissau,country,afr
+gnq,Equatorial Guinea,country,afr
+grc,Greece,country,eur
+gtm,Guatemala,country,ame
+guy,Guyana,country,ame
+hnd,Honduras,country,ame
+hti,Haiti,country,ame
+hun,Hungary,country,eur
+idn,Indonesia,country,asi
+ind,India,country,asi
+irl,Ireland,country,eur
+irn,Iran,country,asi
+irq,Iraq,country,asi
+isr,Israel,country,asi
+ita,Italy,country,eur
+jam,Jamaica,country,ame
+jor,Jordan,country,asi
+jpn,Japan,country,asi
+kaz,Kazakhstan,country,asi
+ken,Kenya,country,afr
+kgz,Kyrgyz Republic,country,asi
+khm,Cambodia,country,asi
+kor,South Korea,country,asi
+kwt,Kuwait,country,asi
+lao,Lao,country,asi
+lbn,Lebanon,country,asi
+lbr,Liberia,country,afr
+lby,Libya,country,afr
+lka,Sri Lanka,country,asi
+lso,Lesotho,country,afr
+ltu,Lithuania,country,eur
+lux,Luxembourg,country,eur
+lva,Latvia,country,eur
+mar,Morocco,country,afr
+mda,Moldova,country,eur
+mdg,Madagascar,country,afr
+mex,Mexico,country,ame
+mkd,"Macedonia, FYR",country,eur
+mli,Mali,country,afr
+mmr,Myanmar,country,asi
+mne,Montenegro,country,eur
+mng,Mongolia,country,asi
+moz,Mozambique,country,afr
+mrt,Mauritania,country,afr
+mus,Mauritius,country,afr
+mwi,Malawi,country,afr
+mys,Malaysia,country,asi
+nam,Namibia,country,afr
+ner,Niger,country,afr
+nga,Nigeria,country,afr
+nic,Nicaragua,country,ame
+nld,Netherlands,country,eur
+nor,Norway,country,eur
+npl,Nepal,country,asi
+nzl,New Zealand,country,asi
+omn,Oman,country,asi
+pak,Pakistan,country,asi
+pan,Panama,country,ame
+per,Peru,country,ame
+phl,Philippines,country,asi
+png,Papua New Guinea,country,asi
+pol,Poland,country,eur
+prk,North Korea,country,asi
+prt,Portugal,country,eur
+pry,Paraguay,country,ame
+pse,West Bank and Gaza,country,asi
+qat,Qatar,country,asi
+rou,Romania,country,eur
+rus,Russia,country,eur
+rwa,Rwanda,country,afr
+sau,Saudi Arabia,country,asi
+sdn,Sudan,country,afr
+sds,South Sudan,country,afr
+sen,Senegal,country,afr
+sgp,Singapore,country,asi
+slb,Solomon Islands,country,asi
+sle,Sierra Leone,country,afr
+slv,El Salvador,country,ame
+som,Somalia,country,afr
+srb,Serbia,country,eur
+sur,Suriname,country,ame
+svk,Slovak Republic,country,eur
+svn,Slovenia,country,eur
+swe,Sweden,country,eur
+swz,Swaziland,country,afr
+syr,Syria,country,asi
+tcd,Chad,country,afr
+tgo,Togo,country,afr
+tha,Thailand,country,asi
+tjk,Tajikistan,country,asi
+tkm,Turkmenistan,country,asi
+tls,Timor-Leste,country,asi
+tto,Trinidad and Tobago,country,ame
+tun,Tunisia,country,afr
+tur,Turkey,country,eur
+tza,Tanzania,country,afr
+uga,Uganda,country,afr
+ukr,Ukraine,country,eur
+ury,Uruguay,country,ame
+usa,United States,country,ame
+uzb,Uzbekistan,country,asi
+ven,Venezuela,country,ame
+vnm,Vietnam,country,asi
+yem,Yemen,country,asi
+zaf,South Africa,country,afr
+zmb,Zambia,country,afr
+zwe,Zimbabwe,country,afr
