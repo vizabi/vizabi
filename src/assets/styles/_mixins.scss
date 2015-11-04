@@ -38,7 +38,7 @@
 }
 
 @mixin translate($x, $y) {
-  @include prefixer(transform, translate($x, $y), spec webkit moz ms o);
+  @include prefixer(transform, translate($x, $y), webkit moz ms o spec);
 }
 
 @mixin rotate($r) {

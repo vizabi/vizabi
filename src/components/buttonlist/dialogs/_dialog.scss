@@ -212,14 +212,14 @@
   .thumb-tack-class-ico-drag {
     cursor: move;
     svg {
-      @include translate(4px, 3.5px);
+      @include transform(translate(4px, 3.5px));
       cursor: move;
     }
   }
 
   .thumb-tack-class-ico-pin {
     svg {
-      @include translate(4px, 4px);
+      @include transform(translate(4px, 4px));
     }
   }
 
