@@ -85,6 +85,7 @@ var Find = Dialog.extend({
     this._super();
 
     var _this = this;
+    this.translator = this.model.language.getTFunction();
     var KEY = this.KEY;
     var TIMEDIM = this.model.state.time.getDimension();
     var selected = this.model.state.entities.getSelected();
@@ -150,6 +151,8 @@ var Find = Dialog.extend({
         if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
       });
 
+    this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
+      
     this.showHideSearch();
     this.showHideDeselect();
   },
