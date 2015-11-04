@@ -113,7 +113,7 @@ var MCSelectList = Class.extend({
     _this.selectList
       .attr("transform", function (d, i) {
         if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
-        var spacing = fontHeight * i + titleHeight * 2 + aggrLevelSpacing;
+        var spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
         currentAggrLevel = d.aggrLevel;
         return "translate(0," + spacing + ")";
       })
