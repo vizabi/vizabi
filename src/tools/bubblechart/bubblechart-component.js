@@ -1391,7 +1391,7 @@ var BubbleChartComp = Component.extend({
 // It's too easy to accidentally zoom
 // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-//        view.append("rect")
+        view.append("rect");
 //          .on("click", function(d, i) {
 //            //default prevented is needed to distinguish click from drag
 //            if(d3.event.defaultPrevented) return;
