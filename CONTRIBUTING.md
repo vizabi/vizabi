@@ -4,9 +4,16 @@ You can contribute to the development of tools or the framework. Read the manual
 
 ## Cloning the repository
 
-Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Sass](http://sass-lang.com/install), and [SCSS Lint](https://github.com/brigade/scss-lint) `gem install scss_lint`.
+Vizabi depends on [Git] (http://git-scm.com/), [Npm](https://github.com/npm/npm), [Gulp](http://gulpjs.com/) [Sass](http://sass-lang.com/install), and [SCSS Lint](https://github.com/brigade/scss-lint).
 
-Clone this repo and run the following commands:
+**For Mac Users**
+1. Install git http://git-scm.com/download/mac
+2. Install nodejs https://nodejs.org/en/
+3. Install Gulp `npm install --global gulp` (run with sudo if needed)
+4. Install sass `gem install sass` (run with sudo if needed)
+5. Install scss_lint `gem install scss_lint` (run with sudo if needed)
+
+Clone this repo and run the following commands in vizabi root folder:
 
 ```shell
 npm install
