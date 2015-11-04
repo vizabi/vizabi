@@ -265,7 +265,7 @@ var BarRankChart = Component.extend({
 
           }
 
-          function scrollTopTween(scrollTop) {
+          var scrollTopTween = function(scrollTop) {
             return function() {
               var i = d3.interpolateNumber(this.scrollTop, scrollTop);
               return function(t) { this.scrollTop = i(t); };
