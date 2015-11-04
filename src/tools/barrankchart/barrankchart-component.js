@@ -20,7 +20,7 @@ var BarRankChart = Component.extend({
    */
   init: function(config, context) {
 
-    this.name = 'barrankchart';
+    this.name = 'barrankchart-component';
     this.template = 'barrank.html';
 
     //define expected models for this component
@@ -46,12 +46,19 @@ var BarRankChart = Component.extend({
       "change:time:value": function(evt) {
         _this.onTimeChange();
       },
+      'change:color': function(evt) {
+        _this.drawColors();
+      },
       "change:entities:select": function(evt) {
         _this.selectBars();
       },
-      "change:marker:axis_x:scaleType": function(evt) {
+      "change:axis:scaleType": function(evt) {
         _this.draw();
-      }
+      },
+      'change:marker:color:palette': function() {
+        //console.log("EVENT change:marker:color:palette");
+        _this.drawColors();
+      },
     };
 
     //contructor is the same as any component
@@ -90,10 +97,6 @@ var BarRankChart = Component.extend({
     // set up formatters
     this.timeFormatter = d3.time.format(this.model.time.formatOutput);
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
-
-    // set up scales and axes
-    this.xScale = this.model.marker.axis_x.getScale(false);
-    this.cScale = this.model.marker.color.getScale();
 
     this.ready();
 
@@ -134,9 +137,13 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which))
+      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' in ' + this.timeFormatter(this.model.time.value))
     this.header.select('.vzb-br-total')
       .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
+
+    // new scales and axes
+    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.cScale = this.model.marker.color.getScale();
 
   },
 
@@ -240,17 +247,17 @@ var BarRankChart = Component.extend({
         // when all the transitions have ended
 
         // set the height of the svg so it resizes according to its children
-        var height = _this.barContainer[0][0].getBoundingClientRect().height
+        var height = _this.barContainer.node().getBoundingClientRect().height
         _this.barSvg.attr('height', height + "px");
 
         // move along with a selection if playing
         if (_this.model.time.playing) {
           var follow = _this.barContainer.select('.vzb-selected');
-          if (follow.length > 0) {
+          if (!follow.empty()) {
             var d = follow.datum();
             var yPos = getBarPosition(d, d.index);
 
-            var currentTop = _this.barViewport[0][0].scrollTop;
+            var currentTop = _this.barViewport.node().scrollTop;
             var currentBottom = currentTop + _this.height;
 
             var scrollTo = false;
@@ -331,7 +338,7 @@ var BarRankChart = Component.extend({
         .attr("stroke-opacity", 0)
         .attr("stroke-width", 2)
         .attr("height", this.barHeight)
-        .attr("fill", function(d) {
+        .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color);
         });
@@ -363,6 +370,21 @@ var BarRankChart = Component.extend({
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color).darker(2);
         });
+  },
+
+  drawcolors: function() {
+    this.barContainer.selectAll('.vzb-br-bar>rect')
+      .style("fill", getColor);
+    this.barContainer.selectAll('.vzb-br-bar>text')
+      .style("fill", getDarkerColor);
+
+    function getColor(d) {
+      var color = _this.cScale(_this.values.color[d.entity]);
+      return d3.rgb(color);
+    }
+    function getDarkerColor(d) {
+      return getColor(d).darker(2);
+    }
   },
 
 

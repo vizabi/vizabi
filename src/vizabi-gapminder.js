@@ -124,11 +124,22 @@ BarRankChart.define('default_options', {
       axis_x: {
         use: "indicator",
         which: "pop",
-        scaleType: "log"
+        scaleType: "log",
+        allow: {
+          scales: [
+            "linear",
+            "log"
+          ]
+        }
       },
       axis_y: {
         use: "property",
-        which: "geo.name"
+        which: "geo.name",
+        allow: {
+          scales: [
+            "ordinal"
+          ]
+        }
       },
       color: {
         use: "property",

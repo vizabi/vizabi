@@ -85,7 +85,7 @@
             "domain": [14000, 1400000000]
         },
         "lex": {
-            "allowCharts": ["linechart", "barchart"],
+            "allowCharts": ["linechart", "barchart","barrankchart"],
             "use": "indicator",
             "unit": "lex",
             "scales": ["linear"],
