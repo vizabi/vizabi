@@ -7,7 +7,6 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-
   }
 
   .vzb-cl-colorlist {
@@ -18,11 +17,13 @@
     margin-bottom: 5px;
     margin-top: 5px;
     cursor: pointer;
+    padding-left: 15px;
   }
 
   .vzb-cl-rainbow {
     width: 20px;
     position: absolute;
+    left: 15px;
   }
   .vzb-cl-worldmap {
     height: 145px;
