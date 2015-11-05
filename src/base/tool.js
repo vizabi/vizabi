@@ -102,8 +102,6 @@ var Tool = Component.extend({
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
 
-    console.log('TOOL MODEL CREATED');
-
     this.ui = this.model.ui || {};
 
     this.layout = new Layout(this.ui);
