@@ -72,6 +72,7 @@ var Dialog = Component.extend({
 
   resize: function() {
     if(this.placeholderEl) {
+      var profile = this.getLayoutProfile();
       var chartWidth = -parseInt(this.parent.parent.components[0].width, 10);
       var dialogLeft = parseInt(this.placeholderEl.style('left'), 10);
       if(utils.isNumber(dialogLeft) && dialogLeft < chartWidth) {
@@ -80,7 +81,7 @@ var Dialog = Component.extend({
           this.leftPos = chartWidth + 'px';
         }
       }
-      if(this.rootEl.classed('vzb-portrait')) {
+      if(this.rootEl.classed('vzb-portrait') || profile === 'small') {
         this.leftPos = null;
         this.topPos = null;
         this.placeholderEl.attr('style', '');
@@ -97,9 +98,11 @@ var Dialog = Component.extend({
           this.placeholderEl.style('bottom', false);
         }
         this.placeholderEl.style('top', this.topPos);
+        if(this.getLayoutProfile() === 'small') {
+          this.leftPos = false;
+        }
       }
 
-      var profile = this.getLayoutProfile();
       this.dragHandler.classed("vzb-hidden", profile === 'small');
       this.pinIcon.classed("vzb-hidden", profile === 'small');
 
@@ -143,9 +146,10 @@ var Dialog = Component.extend({
    * User has closed this dialog
    */
   close: function() {
-    if(this.isOpen || !this.rootEl.classed('vzb-portrait')) {
+    if(this.isOpen && !this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() !== 'small') {
       this.leftPos = this.placeholderEl.style('left');
-      this.topPos = this.placeholderEl.style('top');
+      var topPos = this.placeholderEl.style('top');
+      if( topPos.charAt(0) !== "-") this.topPos = topPos;
     }
     if(!this.rootEl.classed('vzb-portrait')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442

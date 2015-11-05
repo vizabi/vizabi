@@ -1,0 +1,62 @@
+.vzb-tool-barrankchart {
+  $vzb-br-year-size: 16em;
+
+  .vzb-barrankchart {
+    @extend %vzb-chart-wrapper;
+
+    .vzb-br-header {
+      width: 100%;
+      display: block; // svg is standard inline 
+
+      .vzb-br-title,
+      .vzb-br-total {
+        fill: $vzb-color-black;
+      }
+    }
+
+    .barsviewport {
+      overflow-y: scroll;
+      position: relative;
+    }
+
+    .vzb-br-bars-svg {
+      width: 100%;
+
+      .vzb-br-year {
+        @include opacity(.1);
+        font-size: $vzb-br-year-size;
+        fill: $vzb-color-grey;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+
+      .vzb-br-label {
+        font-size: $vzb-font-size-small;
+      }
+
+      .vzb-br-value {
+        font-size: $vzb-font-size-tiny;
+      }
+      .vzb-dimmed {
+        > .vzb-br-bar {
+          opacity: .8;
+          &.vzb-hovered {
+            opacity: 1;
+          }
+        }
+      }
+      .vzb-dimmed-selected {
+        > .vzb-br-bar {
+          opacity: .5;
+          &.vzb-hovered {
+            opacity: .8;
+          }
+          &.vzb-selected {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+}

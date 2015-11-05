@@ -47,6 +47,11 @@ var Show = Dialog.extend({
     });
 
     this._super();
+      
+    //make sure it refreshes when all is reloaded
+    this.root.on('ready', function() {
+      _this.redraw();
+    })
   },
 
   open: function() {
@@ -64,6 +69,7 @@ var Show = Dialog.extend({
   redraw: function(){
   
     var _this = this;
+    this.translator = this.model.language.getTFunction();
     
     var filter = {};
     filter[this.TIMEDIM] = this.model.state.time.value;
@@ -106,6 +112,8 @@ var Show = Dialog.extend({
       .text(function(d) {
         return d.name;
       });
+      
+    this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     this.showHideSearch();
     this.showHideDeselect();

@@ -260,7 +260,7 @@ var BarComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
-        toolMargin: margin,
+        toolMargin: {top: 5, right: margin.right, left: margin.left, bottom: margin.bottom},
         limitMaxTickNumber: 6
       });
 

@@ -10,6 +10,7 @@ import Vzb from 'vizabi';
 
 //import tools
 import BubbleChart from 'tools/bubblechart';
+import BarRankChart from 'tools/barrankchart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
@@ -94,6 +95,60 @@ BarChart.define('default_options', {
   }
 });
 
+BarRankChart.define('default_options', {
+  state: {
+    time: {
+      start: "1800",
+      end: "2015",
+      value: "2000",
+      step: 1,
+      formatInput: "%Y"
+    },
+    entities: {
+      dim: "geo",
+      show: {
+        _defs_: {
+          "geo": ["*"],
+          "geo.cat": ["country"]
+        }
+      },
+      opacitySelectDim: .3,
+      opacityRegular: 1
+    },
+    marker: {
+      space: ["entities", "time"],
+      label: {
+        use: "property",
+        which: "geo.name"
+      },
+      axis_x: {
+        use: "indicator",
+        which: "pop",
+        scaleType: "log"
+      },
+      axis_y: {
+        use: "property",
+        which: "geo.name"
+      },
+      color: {
+        use: "property",
+        which: "geo.region"
+      }
+    }
+  },
+  language: language,
+  data: {
+    //reader: "waffle",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
+  },
+  ui: {
+    buttons: [],
+    buttons_expand: [],
+    presentation: false 
+  }
+});
+
 BubbleMapChart.define('default_options', {
   state: {
     time: {
@@ -119,23 +174,16 @@ BubbleMapChart.define('default_options', {
         use: "property",
         which: "geo.name"
       },
-      axis_y: {
+      size: {
         use: "indicator",
         which: "pop",
-        scaleType: "linear",
-        min: 1,
+        scaleType: "sqrt",
         /*
+        min: 1,
         max: 90,
         */
         allow: {
-          scales: ["linear", "log"]
-        }
-      },
-      axis_x: {
-        use: "property",
-        which: "geo.name",
-        allow: {
-          scales: ["ordinal"]
+          scales: ["linear", "log", "sqrt"]
         }
       },
       lat: {

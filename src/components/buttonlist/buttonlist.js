@@ -584,9 +584,11 @@ var ButtonList = Component.extend({
     btn.classed(class_active_locked, fs);
 
     btn.select(".vzb-buttonlist-btn-icon").html(iconset[fs ? "unexpand" : "expand"]);
-    btn.select(".vzb-buttonlist-btn-title").text(
+
+    btn.select(".vzb-buttonlist-btn-title>span").text(
       translator("buttons/" + (fs ? "unexpand" : "expand"))
-    );
+    )
+    .attr("data-vzb-translate", "buttons/" + (fs ? "unexpand" : "expand"));
 
     //restore body overflow
     document.body.style.overflow = body_overflow;

@@ -933,9 +933,9 @@ var BubbleChartComp = Component.extend({
         this.translator("buttons/colors") + ": " + this.strings.title.C);
 
     var probe = this.sTitleEl.append("text").text(sTitleText.text());
-    var font = parseInt(probe.style("font-size")) * (this.height - 20) / probe.node().getBBox().width;
+    var font = parseInt(probe.style("font-size")) * (this.height - 30) / probe.node().getBBox().width;
 
-    if(probe.node().getBBox().width > this.height - 20) {
+    if(probe.node().getBBox().width > this.height - 30) {
       sTitleText.style("font-size", font + "px");
     } else {
       sTitleText.style("font-size", null);
@@ -1391,7 +1391,7 @@ var BubbleChartComp = Component.extend({
 // It's too easy to accidentally zoom
 // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-//        view.append("rect")
+        view.append("rect");
 //          .on("click", function(d, i) {
 //            //default prevented is needed to distinguish click from drag
 //            if(d3.event.defaultPrevented) return;
