@@ -4,6 +4,7 @@ import globals from 'base/globals'; // to get map data path
 
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
 
 //BUBBLE MAP CHART COMPONENT
 var BubbleMapChartComponent = Component.extend({
@@ -36,6 +37,7 @@ var BubbleMapChartComponent = Component.extend({
     this.model_binds = {
       "change:time:value": function (evt) {
         _this.updateEntities();
+        _this.updateTime();
       }
     };
 
@@ -73,6 +75,11 @@ var BubbleMapChartComponent = Component.extend({
     this.bubbles = this.graph.select('.vzb-bmc-bubbles');
     this.mapSvg = this.element.select('.vzb-bmc-map-background');
 
+    // year background
+    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.year = new DynamicBackground(this.yearEl);
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
+
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
@@ -93,6 +100,19 @@ var BubbleMapChartComponent = Component.extend({
         .attr("width", defaultWidth)
         .attr("height", defaultHeight);
     svg.html('');
+
+    svg.append("defs").append("path")
+        .datum({type: "Sphere"})
+        .attr("id", "sphere")
+        .attr("d", path);
+
+    svg.append("use")
+        .attr("class", "stroke")
+        .attr("xlink:href", "#sphere");
+
+    svg.append("use")
+        .attr("class", "fill")
+        .attr("xlink:href", "#sphere");
 
     svg.append("path")
         .datum(graticule)
@@ -115,6 +135,9 @@ var BubbleMapChartComponent = Component.extend({
     this.on("resize", function () {
       _this.updateEntities();
     });
+
+
+
   },
 
   /*
@@ -124,6 +147,7 @@ var BubbleMapChartComponent = Component.extend({
     this.updateIndicators();
     this.resize();
     this.updateEntities();
+    this.updateTime();
   },
 
   /**
@@ -132,6 +156,7 @@ var BubbleMapChartComponent = Component.extend({
   updateIndicators: function () {
     var _this = this;
     this.translator = this.model.language.getTFunction();
+    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
     this.duration = this.model.time.speed;
 
     this.sScale = this.model.marker.size.getScale();
@@ -173,10 +198,6 @@ var BubbleMapChartComponent = Component.extend({
 
     this.entityBubbles = this.bubbles.selectAll('.vzb-bmc-bubble')
       .data(items);
-    /*
-    //exit selection
-    this.entityBubbles.exit().remove();
-    */
 
     if (!this.renderedOnce) {
       //enter selection -- init circles
@@ -208,6 +229,20 @@ var BubbleMapChartComponent = Component.extend({
       .attr("r", function (d) {
         return _this.sScale(values.size[d[entityDim]]);
       });
+  },
+
+  /*
+   * UPDATE TIME:
+   * Ideally should only update when time or data changes
+   */
+  updateTime: function() {
+    var _this = this;
+
+    this.time_1 = this.time == null ? this.model.time.value : this.time;
+    this.time = this.model.time.value;
+    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    this.year.setText(this.timeFormatter(this.time));
+    //this.yearEl.text(this.timeFormatter(this.time));
   },
 
   /**
@@ -263,11 +298,14 @@ var BubbleMapChartComponent = Component.extend({
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,
                     boundBox[0][1] * this.defaultHeight,
-                    boundBox[1][0] * this.defaultWidth,
-                    boundBox[1][1] * this.defaultHeight];
+                    Math.abs(boundBox[1][0] - boundBox[0][0]) * this.defaultWidth,
+                    Math.abs(boundBox[1][1] - boundBox[0][1]) * this.defaultHeight];
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    this.year.resize(this.width, this.height,
+      Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
 
     this.mapSvg
       .attr('width', width)
@@ -283,9 +321,9 @@ var BubbleMapChartComponent = Component.extend({
       var vb = viewBox;
       var w = width;
       var h = height;
-      var vbCenter = [(vb[0] + vb[2]) / 2, (vb[1] + vb[3]) / 2];
-      var vbWidth = Math.abs(vb[2] - vb[0]) || 0.001;
-      var vbHeight = Math.abs(vb[3] - vb[1]) || 0.001;
+      var vbCenter = [vb[0] + vb[2] / 2, vb[1] + vb[3] / 2];
+      var vbWidth = vb[2] || 0.001;
+      var vbHeight = vb[3] || 0.001;
       //input pixel loc after projection, return pixel loc after skew;
       return function (points) {
         var x = (points[0] - vbCenter[0]) / vbWidth * width + width / 2;

@@ -102,6 +102,9 @@ export default Class.extend({
       case 'right':
         return this.width - this.fontWidth * this.symbols.length + this.fontWidth/2;
         break;
+      case 'left':
+        return this.fontWidth/2;
+        break;
       default :
         return this.fontWidth/2 + (this.width - this.fontWidth * this.symbols.length)/2;
     }
@@ -111,6 +114,9 @@ export default Class.extend({
     switch (this.yAlign) {
       case 'top':
         return this.fontHeight + this.topOffset;
+        break;
+      case 'bottom':
+        return this.height - this.bottomOffset;
         break;
       default :
         return this.fontHeight + (this.height - this.fontHeight)/2 + this.topOffset;

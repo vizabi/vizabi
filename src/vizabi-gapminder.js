@@ -188,13 +188,13 @@ BubbleMapChart.define('default_options', {
       size: {
         use: "indicator",
         which: "pop",
-        scaleType: "sqrt",
+        scaleType: "linear",
         /*
         min: 1,
         max: 90,
         */
         allow: {
-          scales: ["linear", "log", "sqrt"]
+          scales: ["linear", "log"]
         }
       },
       lat: {
