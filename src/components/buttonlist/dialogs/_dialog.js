@@ -82,24 +82,24 @@ var Dialog = Component.extend({
         }
       }
       if(this.rootEl.classed('vzb-portrait') || profile === 'small') {
-        this.leftPos = null;
-        this.topPos = null;
+        this.leftPos = '';
+        this.topPos = '';
         this.placeholderEl.attr('style', '');
       } else {
         var contentHeight = parseInt(this.rootEl.style('height'));
         var placeholderHeight = parseInt(this.placeholderEl.style('height'));
         if (contentHeight < placeholderHeight) {
           this.topPos = (-contentHeight + 50) + 'px';
-          this.leftPos = false;
+          this.leftPos = '';
           this.placeholderEl.style('left', this.leftPos);
           this.placeholderEl.style('bottom', 'auto');
         } else {
-          this.topPos = false;
-          this.placeholderEl.style('bottom', false);
+          this.topPos = '';
+          this.placeholderEl.style('bottom', '');
         }
         this.placeholderEl.style('top', this.topPos);
         if(this.getLayoutProfile() === 'small') {
-          this.leftPos = false;
+          this.leftPos = '';
         }
       }
 
@@ -121,7 +121,21 @@ var Dialog = Component.extend({
     }
     if(this.rootEl.classed('vzb-portrait')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
+    } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
+      var contentHeight = parseInt(this.rootEl.style('height'));
+      var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+      if (contentHeight < placeholderHeight) {
+        this.topPos = (-contentHeight + 50) + 'px';
+        this.leftPos = '';
+        this.placeholderEl.style('left', this.leftPos);
+        this.placeholderEl.style('bottom', 'auto');
+      } else {
+        this.topPos = '';
+        this.placeholderEl.style('bottom', '');
+      }
+      this.placeholderEl.style('top', this.topPos);
     }
+
   },
 
   /**
