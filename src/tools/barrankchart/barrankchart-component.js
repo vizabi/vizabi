@@ -52,8 +52,9 @@ var BarRankChart = Component.extend({
       "change:entities:select": function(evt) {
         _this.selectBars();
       },
-      "change:axis:scaleType": function(evt) {
+      "change:marker:axis_x:scaleType": function(evt) {
         _this.draw();
+        //if(evt.indexOf('scale'))
       },
       'change:marker:color:palette': function() {
         //console.log("EVENT change:marker:color:palette");

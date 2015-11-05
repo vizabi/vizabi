@@ -1305,13 +1305,14 @@ function bindSettersGetters(model) {
  * @returns {Object} model new submodel
  */
 function initSubmodel(attr, val, ctx) {
-  var name = attr.split('_')[0];
+  var name = attr; //attr.split('_')[0];
   var binds = {
     //the submodel has changed (multiple times)
     'change': function(evt, vals) {
       if(!ctx._ready) return; //block change propagation if model isnt ready
-      //evt = evt.replace('change', 'change:' + name);
-      ctx.triggerAll('change:' + name, ctx.getObject());
+      evt = evt.replace('change', 'change:' + name);
+      //if(name === 'axis') console.log("")
+      ctx.triggerAll('change:' + name, ctx.getObject(), evt);
     },
     //loading has started in this submodel (multiple times)
     'hook_change': function(evt, vals) {

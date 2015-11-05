@@ -156,7 +156,7 @@ var Events = Class.extend({
     var n;
     for(i = 0, size = name.length; i < size; i += 1) {
       n = name[i];
-      var original = n;
+      original = original || n;
       var parts = n.split(':');
       while(parts.length) {
         to_trigger.push([
