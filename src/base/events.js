@@ -46,12 +46,24 @@ var Events = Class.extend({
       }
       return;
     }
-    this._events[name] = this._events[name] || [];
-    if(typeof func === 'function') {
-      this._events[name].push(func);
+
+    var eventParts = name.split(':');
+    if (eventParts.length > 2) {
+      var child = eventParts.splice(1,1);
+      var newEventName = eventParts.join(':');
+      if (this[child])
+        this[child].on(newEventName, func);
+      else
+        utils.warn('Can\'t bind event \'' + name + '\'. Can\'t find child "' + child + '" of the model.');
     } else {
-      utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
+      this._events[name] = this._events[name] || [];
+      if(typeof func === 'function') {
+        this._events[name].push(func);
+      } else {
+        utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
+      }
     }
+
   },
 
   /**

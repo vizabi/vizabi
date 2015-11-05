@@ -161,6 +161,7 @@ var BubbleChartComp = Component.extend({
         _this.ready();
       },
       'change:marker:color:palette': function() {
+        if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");
@@ -1391,7 +1392,7 @@ var BubbleChartComp = Component.extend({
 // It's too easy to accidentally zoom
 // This feature will be activated later, by making the label into a "context menu" where users can click Split, or zoom,.. hide others etc....
 
-//        view.append("rect")
+        view.append("rect");
 //          .on("click", function(d, i) {
 //            //default prevented is needed to distinguish click from drag
 //            if(d3.event.defaultPrevented) return;

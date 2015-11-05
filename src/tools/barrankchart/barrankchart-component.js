@@ -12,8 +12,6 @@ import axisWithLabelPicker from 'helpers/d3.axisWithLabelPicker';
 //POP BY AGE CHART COMPONENT
 var BarRankChart = Component.extend({
 
-  values: {}, // values for all the hooks
-
   /**
    * Initializes the component (Bar Chart).
    * Executed once before any template is rendered.
@@ -22,7 +20,7 @@ var BarRankChart = Component.extend({
    */
   init: function(config, context) {
 
-    this.name = 'barrankchart';
+    this.name = 'barrankchart-component';
     this.template = 'barrank.html';
 
     //define expected models for this component
@@ -48,9 +46,19 @@ var BarRankChart = Component.extend({
       "change:time:value": function(evt) {
         _this.onTimeChange();
       },
+      'change:color': function(evt) {
+        //_this.drawColors();
+      },
       "change:entities:select": function(evt) {
         _this.selectBars();
-      }
+      },
+      "change:axis:scaleType": function(evt) {
+        _this.draw();
+      },
+      'change:marker:color:palette': function() {
+        //console.log("EVENT change:marker:color:palette");
+        //_this.drawColors();
+      },
     };
 
     //contructor is the same as any component
@@ -90,19 +98,27 @@ var BarRankChart = Component.extend({
     this.timeFormatter = d3.time.format(this.model.time.formatOutput);
     this.xAxis.tickFormat(this.model.marker.axis_x.tickFormatter);
 
-    // set up scales and axes
-    this.xScale = this.model.marker.axis_x.getScale(false);
-    this.cScale = this.model.marker.color.getScale();
+    this.ready();
+
+    this.selectBars();
 
   },
+
+  readyRuns: 0,
 
   /*
    * Both model and DOM are ready
    */
   ready: function() {
 
+    // hack: second run is right after readyOnce (in which ready() is also called)
+    // then it's not necessary to run ready()
+    // (without hack it's impossible to run things in readyOnce áfter ready has ran)
+    if (++this.readyRuns == 2) return;
+
     this.loadData();
     this.draw();
+    this.drawColors();
   },
 
   resize: function() {
@@ -122,9 +138,13 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-        .text(translator("indicator/" + this.model.marker.axis_x.which))
+      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' in ' + this.timeFormatter(this.model.time.value))
     this.header.select('.vzb-br-total')
       .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
+
+    // new scales and axes
+    this.xScale = this.model.marker.axis_x.getScale(false);
+    this.cScale = this.model.marker.color.getScale();
 
   },
 
@@ -202,6 +222,9 @@ var BarRankChart = Component.extend({
         var bar = d3.select(this);
         var barWidth = _this.xScale(d.value);
         var xValue = _this.model.marker.axis_x.tickFormatter(d.value);
+        
+        // save the current index in the bar datum
+        d.index = i;
 
         // set width of the bars
         bar.selectAll('rect')
@@ -218,17 +241,53 @@ var BarRankChart = Component.extend({
 
       })
       .transition().duration(duration).ease("linear")
-      .attr("transform", getBarPosition)
+      .attr("transform", function(d, i) {
+        return 'translate(0, '+ getBarPosition(d,i) + ')'
+      })
       .call(endAll, function() {
-        var height = _this.barContainer[0][0].getBoundingClientRect().height
+        // when all the transitions have ended
+
+        // set the height of the svg so it resizes according to its children
+        var height = _this.barContainer.node().getBoundingClientRect().height
         _this.barSvg.attr('height', height + "px");
+
+        // move along with a selection if playing
+        if (_this.model.time.playing) {
+          var follow = _this.barContainer.select('.vzb-selected');
+          if (!follow.empty()) {
+            var d = follow.datum();
+            var yPos = getBarPosition(d, d.index);
+
+            var currentTop = _this.barViewport.node().scrollTop;
+            var currentBottom = currentTop + _this.height;
+
+            var scrollTo = false;
+            if (yPos < currentTop)
+              scrollTo = yPos;
+            if ((yPos + _this.barHeight) > currentBottom)
+              scrollTo = yPos + _this.barHeight - _this.height;
+
+            if (scrollTo)
+              _this.barViewport.transition().duration(duration)
+                .tween('scrollfor' + d.entity, scrollTopTween(scrollTo));
+
+          }
+
+        }
+
+        function scrollTopTween(scrollTop) {
+          return function() {
+            var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+            return function(t) { this.scrollTop = i(t); };
+          };
+        }
+
       });
 
 
     // helper functions
     function getBarPosition(d, i) {
-        var barY = (_this.barHeight+bar_margin)*i;
-        return 'translate(0, '+ barY + ')';
+        return (_this.barHeight+bar_margin)*i;
     }
     function getDataKey(d) {          
       return d.entity;  
@@ -277,7 +336,7 @@ var BarRankChart = Component.extend({
         .attr("stroke-opacity", 0)
         .attr("stroke-width", 2)
         .attr("height", this.barHeight)
-        .attr("fill", function(d) {
+        .style("fill", function(d) {
           var color = _this.cScale(_this.values.color[d.entity]);
           return d3.rgb(color);
         });
@@ -311,6 +370,23 @@ var BarRankChart = Component.extend({
         });
   },
 
+  drawColors: function() {
+    var _this = this;
+
+    this.barContainer.selectAll('.vzb-br-bar>rect')
+      .style("fill", getColor);
+    this.barContainer.selectAll('.vzb-br-bar>text')
+      .style("fill", getDarkerColor);
+
+    function getColor(d) {
+      var color = _this.cScale(_this.values.color[d.entity]);
+      return d3.rgb(color);
+    }
+    function getDarkerColor(d) {
+      return getColor(d).darker(2);
+    }
+  },
+
 
   /**
   * DATA HELPER FUNCTIONS
@@ -324,7 +400,6 @@ var BarRankChart = Component.extend({
 
     // first put the data in an array (objects aren't sortable)
     utils.forEach(values, function(indicator_value, entity) {
-      
       var row = { entity: entity, value: indicator_value };
       row[_this.model.entities.dim] = entity;
       data_array.push(row);

@@ -98,8 +98,12 @@ var Tool = Component.extend({
 
     options = options || {};
     this.model = new ToolModel(options, this.default_options, callbacks, validate);
+
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
+
+    console.log('TOOL MODEL CREATED');
+
     this.ui = this.model.ui || {};
 
     this.layout = new Layout(this.ui);
@@ -121,7 +125,7 @@ var Tool = Component.extend({
     if(!this.model.bind) {
       return;
     }
-    this.on(this.model.bind.get());
+    this.model.on(this.model.bind.get());
   },
 
   minState: function() {

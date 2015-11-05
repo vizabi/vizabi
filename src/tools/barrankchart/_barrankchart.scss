@@ -8,14 +8,14 @@
       width: 100%;
       display: block; // svg is standard inline 
 
-      .vzb-br-title {
-        font-size: $vzb-font-size-large;
+      .vzb-br-title,
+      .vzb-br-total {
         fill: $vzb-color-black;
       }
     }
 
     .barsviewport {
-      overflow-y: scroll;
+      overflow-y: auto;
       position: relative;
     }
 

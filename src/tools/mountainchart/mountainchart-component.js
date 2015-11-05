@@ -24,6 +24,8 @@ import Selectlist from './mountainchart-selectlist';
 import Probe from './mountainchart-probe';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
 
+var THICKNESS_THRESHOLD = 0.001;
+
 //MOUNTAIN CHART COMPONENT
 var MountainChartComponent = Component.extend({
 
@@ -131,6 +133,7 @@ var MountainChartComponent = Component.extend({
                 _this.ready();
             },
             "change:marker:color:palette": function (evt) {
+                if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
             },
@@ -1031,7 +1034,7 @@ var MountainChartComponent = Component.extend({
         var filter = {};
         filter[this.KEY] = key;
         if (this.model.entities.isSelected(filter)) {
-            view.attr("d", this.area(this.cached[key].filter(function (f) {return _this.height - _this.yScale(f.y) > 1 })));
+            view.attr("d", this.area(this.cached[key].filter(function (f) {return f.y > _this.values.axis_y[key] * THICKNESS_THRESHOLD })));
         } else {
             view.attr("d", this.area(this.cached[key]));
         }
