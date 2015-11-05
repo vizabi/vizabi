@@ -47,7 +47,7 @@ var BarRankChart = Component.extend({
         _this.onTimeChange();
       },
       'change:color': function(evt) {
-        _this.drawColors();
+        //_this.drawColors();
       },
       "change:entities:select": function(evt) {
         _this.selectBars();
@@ -57,7 +57,7 @@ var BarRankChart = Component.extend({
       },
       'change:marker:color:palette': function() {
         //console.log("EVENT change:marker:color:palette");
-        _this.drawColors();
+        //_this.drawColors();
       },
     };
 
@@ -118,6 +118,7 @@ var BarRankChart = Component.extend({
 
     this.loadData();
     this.draw();
+    this.drawColors();
   },
 
   resize: function() {
@@ -272,16 +273,13 @@ var BarRankChart = Component.extend({
 
           }
 
-          function scrollTopTween(scrollTop) {
-            return function() {
-              var i = d3.interpolateNumber(this.scrollTop, scrollTop);
-              return function(t) { this.scrollTop = i(t); };
-           };
-          }
-            /*.each(function(d, i) {
-              var yPos = getBarPosition(d, d.index);
-            });
-            */
+        }
+
+        function scrollTopTween(scrollTop) {
+          return function() {
+            var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+            return function(t) { this.scrollTop = i(t); };
+          };
         }
 
       });
@@ -372,7 +370,9 @@ var BarRankChart = Component.extend({
         });
   },
 
-  drawcolors: function() {
+  drawColors: function() {
+    var _this = this;
+
     this.barContainer.selectAll('.vzb-br-bar>rect')
       .style("fill", getColor);
     this.barContainer.selectAll('.vzb-br-bar>text')

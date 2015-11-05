@@ -161,6 +161,7 @@ var BubbleChartComp = Component.extend({
         _this.ready();
       },
       'change:marker:color:palette': function() {
+        if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");

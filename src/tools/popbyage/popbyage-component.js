@@ -132,9 +132,7 @@ var PopByAge = Component.extend({
     var _this = this;
     this.duration = this.model.time.delayAnimations;
 
-    this.yScale = this.model.marker.axis_y.getScale({
-      max: true
-    });
+    this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale(false);
     this.cScale = this.model.marker.color.getScale();
 
@@ -155,7 +153,7 @@ var PopByAge = Component.extend({
     var duration = (time.playing) ? time.delayAnimations : 0;
 
     var group_by = this.model.age.grouping || 1;
-    var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
+    //var group_offset = this.model.marker.group_offset ? Math.abs(this.model.marker.group_offset % group_by) : 0;
 
     var filter = {};
     filter[timeDim] = time.value;
