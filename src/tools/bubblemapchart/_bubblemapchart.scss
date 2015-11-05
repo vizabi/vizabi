@@ -1,9 +1,36 @@
 .vzb-tool-bubblemapchart {
+  $vzb-bmc-year-size: 15em;
+
   .vzb-bubblemapchart {
     @extend %vzb-chart-svg;
+
+    .vzb-bmc-year {
+      @include opacity(.1);
+      font-size: $vzb-bmc-year-size;
+      fill: $vzb-color-grey;
+      text-anchor: middle;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+
+
+
+
     .vzb-bmc-bubble {
       stroke: none;
     }
+
+    .stroke {
+      fill: none;
+      stroke: #777;
+      stroke-width: .5px;
+      stroke-opacity: .5;
+    }
+
+    .fill {
+      fill: none;
+    }
+
     .graticule {
       fill: none;
       stroke: #777;
