@@ -17,6 +17,7 @@ var class_expand_dialog = "vzb-dialog-side";
 var class_hide_btn = "vzb-dialog-side-btn";
 var class_unavailable = "vzb-unavailable";
 var class_vzb_fullscreen = "vzb-force-fullscreen";
+var class_container_fullscreen = "vzb-container-fullscreen";
 
 //default values
 var button_size = 80;
@@ -649,8 +650,9 @@ var ButtonList = Component.extend({
     } else {
       exitFullscreen.call(this);
     }
-
     utils.classed(pholder, class_vzb_fullscreen, fs);
+    utils.classed(container, class_container_fullscreen, fs);
+
     this.model.ui.fullscreen = fs;
     var translator = this.model.language.getTFunction();
     btn.classed(class_active_locked, fs);
