@@ -230,7 +230,7 @@ var ButtonList = Component.extend({
 
     });
 
-    var close_buttons = this.element.selectAll("[data-click='closeDialog']");
+    var close_buttons = this.element.selectAll(".vzb-buttonlist-dialog").select("[data-click='closeDialog']");
     close_buttons.on('click', function(type, index) {
       _this.closeDialog(_this.model.ui.buttons[index]);
     });
