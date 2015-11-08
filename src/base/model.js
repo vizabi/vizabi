@@ -1305,13 +1305,14 @@ function bindSettersGetters(model) {
  * @returns {Object} model new submodel
  */
 function initSubmodel(attr, val, ctx) {
-  var name = attr.split('_')[0];
+
   var binds = {
     //the submodel has changed (multiple times)
     'change': function(evt, vals) {
       if(!ctx._ready) return; //block change propagation if model isnt ready
-      //evt = evt.replace('change', 'change:' + name);
-      ctx.triggerAll('change:' + name, ctx.getObject());
+      evt = evt.replace('change', 'change:' + attr);
+      //if(attr === 'axis') console.log("")
+      ctx.triggerAll('change:' + attr, ctx.getObject(), evt);
     },
     //loading has started in this submodel (multiple times)
     'hook_change': function(evt, vals) {
@@ -1319,19 +1320,19 @@ function initSubmodel(attr, val, ctx) {
     },
     //loading has started in this submodel (multiple times)
     'load_start': function(evt, vals) {
-      evt = evt.replace('load_start', 'load_start:' + name);
+      evt = evt.replace('load_start', 'load_start:' + attr);
       ctx.setReady(false);
-      ctx.triggerAll(evt, ctx.getObject());
+      ctx.triggerAll('load_start:' + attr, ctx.getObject(), evt);
     },
     //loading has failed in this submodel (multiple times)
     'load_error': function(evt, vals) {
-      evt = evt.replace('load_error', 'load_error:' + name);
-      ctx.triggerAll(evt, vals);
+      evt = evt.replace('load_error', 'load_error:' + attr);
+      ctx.triggerAll('load_error' + attr, vals, evt);
     },
     //loading has ended in this submodel (multiple times)
     'ready': function(evt, vals) {
       //trigger only for submodel
-      evt = evt.replace('ready', 'ready:' + name);
+      evt = evt.replace('ready', 'ready:' + attr);
       ctx.setReady(false);
       //wait to make sure it's not set false again in the next execution loop
       utils.defer(function() {
@@ -1345,7 +1346,8 @@ function initSubmodel(attr, val, ctx) {
     return val;
   } else {
     //special model
-    var Modl = Model.get(name, true) || models[name] || Model;
+    var modelType = attr.split('_')[0];
+    var Modl = Model.get(modelType, true) || models[modelType] || Model;
     return new Modl(val, ctx, binds, true);
   }
 }

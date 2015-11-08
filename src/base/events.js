@@ -23,7 +23,7 @@ var Events = Class.extend({
    * @param {String|Array} name name of event or array with names
    * @param {Function} func function to be linked with event
    */
-  on: function(name, func) {
+  on: function(name, func, origin) {
     var i;
     //bind multiple functions at the same time
     if(utils.isArray(func)) {
@@ -48,17 +48,21 @@ var Events = Class.extend({
     }
 
     var eventParts = name.split(':');
+    origin = origin || name;
     if (eventParts.length > 2) {
       var child = eventParts.splice(1,1);
       var newEventName = eventParts.join(':');
       if (this[child])
-        this[child].on(newEventName, func);
+        this[child].on(newEventName, func, origin);
       else
         utils.warn('Can\'t bind event \'' + name + '\'. Can\'t find child "' + child + '" of the model.');
     } else {
       this._events[name] = this._events[name] || [];
       if(typeof func === 'function') {
-        this._events[name].push(func);
+        this._events[name].push({
+          f: func,
+          origin: origin.split(':')
+        });
       } else {
         utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
       }
@@ -103,18 +107,28 @@ var Events = Class.extend({
         this.trigger(name[i], args);
       }
     } else {
+
       if(!this._events.hasOwnProperty(name)) {
         return;
       }
       for(i = 0; i < this._events[name].length; i += 1) {
-        var f = this._events[name][i];
+
+        var eventPath = original || name;
+
+        var f = this._events[name][i].f;
+        var origin = this._events[name][i].origin;
+
+        //Concatenate original name with eventPath
+        var eventPathParts = origin.concat(eventPath.split(':'));
+        eventPath = utils.unique(eventPathParts).join(':');
+
         //if not in buffer, add and execute
         var _this = this;
         var execute = function() {
-          var msg = 'Vizabi Event: ' + name + ' - ' + original;
+          var msg = 'Vizabi Event: ' + name + ' - ' + eventPath;
           utils.timeStamp(msg);
           f.apply(_this, [
-            original || name,
+            eventPath,
             args
           ]);
         };
@@ -156,7 +170,7 @@ var Events = Class.extend({
     var n;
     for(i = 0, size = name.length; i < size; i += 1) {
       n = name[i];
-      var original = n;
+      original = original || n;
       var parts = n.split(':');
       while(parts.length) {
         to_trigger.push([

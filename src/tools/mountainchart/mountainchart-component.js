@@ -120,7 +120,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker:group": function (evt) {
                 if (!_this._readyOnce) return;
-                if (evt === "change:marker:group:merge") return;
+                if (evt.indexOf("group:merge") > -1) return;
                 _this.ready();
             },
             "change:marker:group:merge": function (evt) {

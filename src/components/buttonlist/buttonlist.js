@@ -17,6 +17,10 @@ var class_expand_dialog = "vzb-dialog-side";
 var class_hide_btn = "vzb-dialog-side-btn";
 var class_unavailable = "vzb-unavailable";
 var class_vzb_fullscreen = "vzb-force-fullscreen";
+var class_container_fullscreen = "vzb-container-fullscreen";
+
+//default values
+var button_size = 80;
 
 var ButtonList = Component.extend({
 
@@ -50,77 +54,90 @@ var ButtonList = Component.extend({
         icon: "search",
         dialog: dialogs.find,
         ispin: false,
+        required: false
       },
       'show': {
         title: "buttons/show",
         icon: "asterisk",
         dialog: dialogs.show,
         ispin: false,
+        required: false
       },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",
         dialog: dialogs.moreoptions,
-        ispin: false
+        ispin: false,
+        required: true
       },
       'colors': {
         title: "buttons/colors",
         icon: "paintbrush",
         dialog: dialogs.colors,
-        ispin: false
+        ispin: false,
+        required: false
       },
       'size': {
         title: "buttons/size",
         icon: "circle",
         dialog: dialogs.size,
-        ispin: false
+        ispin: false,
+        required: false
       },
       'fullscreen': {
         title: "buttons/expand",
         icon: "expand",
         dialog: false,
-        func: this.toggleFullScreen.bind(this)
+        func: this.toggleFullScreen.bind(this),
+        required: true
       },
       'trails': {
         title: "buttons/trails",
         icon: "trails",
         dialog: false,
-        func: this.toggleBubbleTrails.bind(this)
+        func: this.toggleBubbleTrails.bind(this),
+        required: false
       },
       'lock': {
         title: "buttons/lock",
         icon: "lock",
         dialog: false,
-        func: this.toggleBubbleLock.bind(this)
+        func: this.toggleBubbleLock.bind(this),
+        required: false
       },
       'presentation': {
         title: "buttons/presentation",
         icon: "presentation",
         dialog: false,
-        func: this.togglePresentationMode.bind(this)
+        func: this.togglePresentationMode.bind(this),
+        required: false
       },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
         dialog: dialogs.axes,
-        ispin: false
+        ispin: false,
+        required: false
       },
       'axesmc': {
         title: "buttons/axesmc",
         icon: "axes",
         dialog: dialogs.axesmc,
-        ispin: false
+        ispin: false,
+        required: false
       },
       'stack': {
         title: "buttons/stack",
         icon: "stack",
         dialog: dialogs.stack,
-        ispin: false
+        ispin: false,
+        required: false
       },
       '_default': {
         title: "Button",
         icon: "asterisk",
-        dialog: false
+        dialog: false,
+        required: false
       }
     };
 
@@ -186,6 +203,7 @@ var ButtonList = Component.extend({
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
+    this._toggleButtons();
     //activate each dialog when clicking the button
     buttons.on('click', function() {
 
@@ -213,7 +231,7 @@ var ButtonList = Component.extend({
 
     });
 
-    var close_buttons = this.element.selectAll("[data-click='closeDialog']");
+    var close_buttons = this.element.selectAll(".vzb-buttonlist-dialog").select("[data-click='closeDialog']");
     close_buttons.on('click', function(type, index) {
       _this.closeDialog(_this.model.ui.buttons[index]);
     });
@@ -255,6 +273,59 @@ var ButtonList = Component.extend({
     });
   },
 
+  /*
+   * reset buttons show state
+   */
+  _showAllButtons: function() {
+    // show all existing buttons
+    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    buttons.each(function(d,i) {
+      var button = d3.select(this);
+      if (button.style("display") == "none"){
+        button.style("display", "inline-block");
+      }
+    });
+  },
+
+  /*
+   * determine which buttons are shown on the buttonlist
+   */
+  _toggleButtons: function() {
+    this._showAllButtons();
+
+    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+    var button_width = 80;
+    var container_width = this.element.node().getBoundingClientRect().width;
+    var not_required = [];
+    var required = [];
+    var buttons_width = 0;
+    //only if the container can contain more than one button
+    if(container_width > button_size){
+      buttons.each(function(d,i) {
+        var button = d3.select(this);
+        var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
+        button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
+        buttons_width += button_width;
+        var button_data = button.datum();
+        //sort buttons between required and not required buttons.
+        // Not required buttons will only be shown if there is space available
+        if(button_data.required){
+          required.push(button);
+        } else {
+          not_required.push(button);
+        }
+      });
+      var width_diff = buttons_width - container_width;
+      var number_of_buttons = Math.ceil(width_diff / button_width);
+      if(number_of_buttons > 0){
+        //change the display property of non required buttons, from right to
+        // left
+        for (var i = not_required.length-1 ; i >= not_required.length-number_of_buttons ; i--) {
+          not_required[i].style("display", "none");
+        }
+      }
+    }
+  },
 
   /*
    * adds buttons configuration to the components and template_data
@@ -376,6 +447,8 @@ var ButtonList = Component.extend({
         d3.select('div.vzb-large')
             .classed("vzb-button-expand-true", true);
     }
+
+    this._toggleButtons();
   },
 
   //TODO: make opening/closing a dialog via update and model
@@ -577,8 +650,9 @@ var ButtonList = Component.extend({
     } else {
       exitFullscreen.call(this);
     }
-
     utils.classed(pholder, class_vzb_fullscreen, fs);
+    utils.classed(container, class_container_fullscreen, fs);
+
     this.model.ui.fullscreen = fs;
     var translator = this.model.language.getTFunction();
     btn.classed(class_active_locked, fs);

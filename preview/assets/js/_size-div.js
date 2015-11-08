@@ -225,13 +225,13 @@ resizableDiv(placeholder, container, 300, 300, function() {
   updateSizePanel(placeholder);
 }, function() {
   removeClass(placeholder, "fullscreen");
-  updateURL();
+  updateURL(true);
 });
 
 function setFullscreen() {
   setDivSize(placeholder, container, container.offsetWidth, container.offsetHeight);
   addClass(placeholder, "fullscreen");
-  throttle(updateURL, 500);
+  updateURL(true);
 }
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
@@ -266,7 +266,6 @@ window.addEventListener('resize', function() {
   if(forcedResize) return;
   if(hasClass(placeholder, 'fullscreen')) {
     setFullscreen();
-  } else {
-    throttle(updateURL, 500);
   }
+  updateURL();
 });
