@@ -31,6 +31,9 @@ var BubbleMapChartComponent = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     var _this = this;

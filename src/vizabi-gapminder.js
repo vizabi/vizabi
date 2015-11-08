@@ -220,7 +220,8 @@ BubbleMapChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    buttons_expand: [],
+    presentation: false
   }
 });
 
