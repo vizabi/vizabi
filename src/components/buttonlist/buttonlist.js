@@ -183,9 +183,8 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-        d3.select('div.vzb-large')
-            .classed("vzb-button-expand-true", true);
-    }
+        d3.select(this.root.element).classed("vzb-button-expand-true", true);
+    } 
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -443,11 +442,6 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
-    if (this.model.ui.buttons_expand.length !== 0) {
-        d3.select('div.vzb-large')
-            .classed("vzb-button-expand-true", true);
-    }
-
     this._toggleButtons();
   },
 

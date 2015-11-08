@@ -1,4 +1,5 @@
 $vzb-button-width: 60px;
+$vzb-button-expand-width: 290px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: $vzb-color-white;
@@ -195,14 +196,13 @@ $vzb-dialog-content-height: 250px;
 }
 
 &.vzb-large {
-  .vzb-tool-stage {
-    right: 290px;
-  }
-  .vzb-tool-buttonlist {
-    width: 290px;
-  }
   &.vzb-button-expand-true {
+    .vzb-tool-stage {
+      right: $vzb-button-expand-width;
+    }
     .vzb-tool-buttonlist {
+      width: $vzb-button-expand-width;
+      
       .vzb-buttonlist {
         display: flex;
         flex-direction: column;
