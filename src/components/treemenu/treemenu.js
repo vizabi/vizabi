@@ -125,7 +125,7 @@ var TreeMenu = Component.extend({
       "change:axis": function(evt) {
         _this.updateView();
       },
-      "change:language": function(evt) {
+      "change:language:strings": function(evt) {
         _this.updateView();
       }
     }
