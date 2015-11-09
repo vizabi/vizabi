@@ -53,6 +53,10 @@ var PopByAge = Component.extend({
       },
       "change:age:select": function(evt) {
         _this._selectBars();
+      },
+      "change:marker:color:palette": function (evt) {
+        if (!_this._readyOnce) return;
+        _this._updateEntities();
       }
     };
 
@@ -164,7 +168,7 @@ var PopByAge = Component.extend({
     this.model.age.setVisible(markers);
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
-      .data(markers); 
+      .data(markers);
 
     this.entityLabels = this.labels.selectAll('.vzb-bc-label')
       .data(markers);
@@ -256,14 +260,14 @@ var PopByAge = Component.extend({
     //var x_domain_max = Math.max.apply(null, utils.values(values.axis_x));
     //if(x_domain_max > this.xScale.domain()[1]) this.xScale = this.xScale.domain([x_domain[0], x_domain_max]);
 
-    // should not be here 
+    // should not be here
     var limits = this.model.marker.axis_x.getLimits(this.model.marker.axis_x.which);
     if (group_by == 1) {
       this.xScale = this.xScale.domain([limits.min, limits.max]);
     } else {
       var values = utils.values(values.axis_x);
       values.push(limits.max);
-      this.xScale = this.xScale.domain([limits.min, Math.max.apply(Math, values)]);      
+      this.xScale = this.xScale.domain([limits.min, Math.max.apply(Math, values)]);
     }
     this.resize();
 
@@ -413,7 +417,7 @@ var PopByAge = Component.extend({
     this.title.attr('x', margin.right).attr('y', margin.top / 2);
 
     this.year.attr('x', this.width + margin.left).attr('y', margin.top / 2);
-    
+
   }
 });
 
