@@ -132,7 +132,7 @@ var Component = Events.extend({
               //restore because validation kills the original start/end
               timeMdl.start = temp.start;
               timeMdl.end = temp.end;
-              
+
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
@@ -578,7 +578,7 @@ function templateFunc(str, data) {
     return str.replace(/<%=([^\%]*)%>/g, function(match) {
       //match t("...")
       var s = match.match(/t\s*\(([^)]+)\)/g);
-      //replace with translation 
+      //replace with translation
       if(s.length) {
         s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(''));
       }
