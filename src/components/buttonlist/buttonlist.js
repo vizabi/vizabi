@@ -184,7 +184,7 @@ var ButtonList = Component.extend({
 
     if (button_expand.length !== 0) {
         d3.select(this.root.element).classed("vzb-button-expand-true", true);
-    } 
+    }
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -719,7 +719,11 @@ function launchIntoFullscreen(elem) {
   } else if(elem.mozRequestFullScreen) {
     elem.mozRequestFullScreen();
   } else if(elem.webkitRequestFullscreen) {
-    elem.webkitRequestFullscreen();
+    if (!(navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+    navigator.userAgent && !navigator.userAgent.match('CriOS'))) {
+      elem.webkitRequestFullscreen();
+    }
+
   }
 }
 
