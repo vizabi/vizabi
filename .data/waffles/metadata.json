@@ -80,6 +80,7 @@
             "allowCharts": ["*"],
             "use": "indicator",
             "unit": "",
+            "scaleType": "log",
             "scales": ["linear", "log"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
             "domain": [14000, 1400000000]
