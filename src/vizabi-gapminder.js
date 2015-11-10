@@ -547,7 +547,7 @@ PopByAge.define('default_options', {
       },
       color: {
         use: "value",
-        which: "#ffb600"
+        which: "_default"
       }
     }
   },
