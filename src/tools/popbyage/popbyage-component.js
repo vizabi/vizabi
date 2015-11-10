@@ -57,6 +57,10 @@ var PopByAge = Component.extend({
       "change:marker:color:palette": function (evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
+      },
+      "change:marker:color:scaleType":function (evt) {
+        if (!_this._readyOnce) return;
+        _this._updateEntities();
       }
     };
 
@@ -65,7 +69,7 @@ var PopByAge = Component.extend({
 
     this.xScale = null;
     this.yScale = null;
-    this.cScale = d3.scale.category10();
+    this.cScale = null;
 
     this.xAxis = axisSmart();
     this.yAxis = axisSmart();
@@ -135,11 +139,8 @@ var PopByAge = Component.extend({
   _updateIndicators: function() {
     var _this = this;
     this.duration = this.model.time.delayAnimations;
-
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale(false);
-    this.cScale = this.model.marker.color.getScale();
-
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
   },
@@ -165,6 +166,7 @@ var PopByAge = Component.extend({
     var values = this.model.marker.getValues(filter, [ageDim]);
     var domain = this.yScale.domain();
 
+    this.cScale = this.model.marker.color.getScale();
     this.model.age.setVisible(markers);
 
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
@@ -274,12 +276,7 @@ var PopByAge = Component.extend({
   },
 
   _temporaryBarsColorAdapter: function(values, d, ageDim) {
-    // I don't know how work color transformation, ( 160: var values = this.model.marker.getValues(filter, [ageDim]);)
-    // but if we use linear color scale then all colors equals null
-    // values.color is array of null
-
-    return this.model.marker.color.scaleType != 'time' ? this.cScale(d[ageDim]) : this.cScale(values.color[d[
-      ageDim]]);
+    return this.cScale(values.color[d[ageDim]]);
   },
 
   /**
@@ -407,12 +404,11 @@ var PopByAge = Component.extend({
         toolMargin: margin,
         limitMaxTickNumber: 6
       });
-
     this.xAxisEl.attr("transform", "translate(0," + this.height + ")")
       .call(this.xAxis);
 
     this.yAxisEl.call(this.yAxis);
-    this.xAxisEl.call(this.xAxis);
+    //this.xAxisEl.call(this.xAxis);
 
     this.title.attr('x', margin.right).attr('y', margin.top / 2);
 
