@@ -152,6 +152,7 @@ var ButtonList = Component.extend({
         }
         _this.setBubbleTrails();
         _this.setBubbleLock();
+        _this._toggleButtons();
 
 
         //scroll button list to end if bottons appeared or disappeared
@@ -275,62 +276,68 @@ var ButtonList = Component.extend({
   /*
    * reset buttons show state
    */
-  _showAllButtons: function() {
-    var _this = this;
-    // show all existing buttons
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-    buttons.each(function(d,i) {
-      var button = d3.select(this);
-      if (_this.getLayoutProfile() !== 'small') {
-        if (button.style("display") === "none"){
-          button.style("display", "inline-block");
-        }
-      } else {
-        button.style("display", '');
-      }
-    });
-  },
+   _showAllButtons: function() {
+     // show all existing buttons
+     var _this = this;
+     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+     buttons.each(function(d,i) {
+       var button = d3.select(this);
+       if (button.style("display") == "none"){
+         if(d.id != "trails" && d.id != "lock"){
+           button.style("display", "inline-block");
+         } else if ((_this.model.state.entities.select.length > 0)){
+           button.style("display", "inline-block");
+         }
+       }
+     });
+   },
 
   /*
    * determine which buttons are shown on the buttonlist
    */
-  _toggleButtons: function() {
-    this._showAllButtons();
-    if(this.getLayoutProfile() !== 'small') {
-      var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-      var button_width = 80;
-      var container_width = this.element.node().getBoundingClientRect().width;
-      var not_required = [];
-      var required = [];
-      var buttons_width = 0;
-      //only if the container can contain more than one button
-      if(container_width > button_size){
-        buttons.each(function(d,i) {
-          var button = d3.select(this);
-          var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
-          button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
-          buttons_width += button_width;
-          var button_data = button.datum();
-          //sort buttons between required and not required buttons.
-          // Not required buttons will only be shown if there is space available
-          if(button_data.required){
-            required.push(button);
-          } else {
-            not_required.push(button);
-          }
-        });
-        var width_diff = buttons_width - container_width;
-        var number_of_buttons = Math.ceil(width_diff / button_width);
-        if(number_of_buttons > 0){
-          //change the display property of non required buttons, from right to
-          // left
-          for (var i = not_required.length-1 ; i >= not_required.length-number_of_buttons ; i--) {
-            not_required[i].style("display", "none");
-          }
-        }
-      }
-    }
-  },
+   _toggleButtons: function() {
+     var _this = this;
+     _this._showAllButtons();
+
+     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+     var button_width = 80;
+     var container_width = this.element.node().getBoundingClientRect().width;
+     var not_required = [];
+     var required = [];
+     var buttons_width = 0;
+     //only if the container can contain more than one button
+     if(container_width > button_size){
+       buttons.each(function(d,i) {
+         var button_data = d;
+         var button = d3.select(this);
+         var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
+         button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
+         if((button_data.id != "trails" && button_data.id != "lock")){
+           buttons_width += button_width;
+         } else if (_this.model.state.entities.select.length > 0){
+           buttons_width += button_width;
+         }
+         //sort buttons between required and not required buttons.
+         // Not required buttons will only be shown if there is space available
+         if(button_data.required){
+           required.push(button);
+         } else {
+           not_required.push(button);
+         }
+       });
+       var width_diff = buttons_width - container_width;
+       var number_of_buttons = Math.floor(container_width / button_width) - required.length;
+       if(number_of_buttons < 0){
+         number_of_buttons = 0;
+       }
+       //change the display property of non required buttons, from right to
+       // left
+       not_required.reverse();
+       for (var i = 0 ; i < not_required.length-number_of_buttons ; i++) {
+           not_required[i].style("display", "none");
+       }
+     }
+   },
 
   /*
    * adds buttons configuration to the components and template_data
