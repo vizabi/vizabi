@@ -114,11 +114,10 @@ var Component = Events.extend({
       var splashScreen = this.model && this.model.data && this.model.data.splash;
 
       preloader(this).then(function() {
-
+        var timeMdl = _this.model.state.time;
         if(splashScreen) {
 
           //TODO: cleanup hardcoded splash screen
-          var timeMdl = _this.model.state.time;
           timeMdl.splash = true;
           var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
 
@@ -144,7 +143,11 @@ var Component = Events.extend({
             renderError();
           });
         } else {
-          _this.model.load().catch(function() {
+          _this.model.load().then(function() {
+            utils.delay(function() {
+              timeMdl.trigger('change');
+            }, 300);
+          }, function() {
             renderError();
           });
         }
