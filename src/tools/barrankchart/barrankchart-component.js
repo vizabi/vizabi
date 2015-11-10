@@ -47,7 +47,7 @@ var BarRankChart = Component.extend({
         _this.onTimeChange();
       },
       'change:color': function(evt) {
-        //_this.drawColors();
+        _this.drawColors();
       },
       "change:entities:select": function(evt) {
         _this.selectBars();
@@ -119,7 +119,6 @@ var BarRankChart = Component.extend({
 
     this.loadData();
     this.draw();
-    this.drawColors();
   },
 
   resize: function() {

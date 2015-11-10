@@ -132,15 +132,6 @@ BarRankChart.define('default_options', {
           ]
         }
       },
-      axis_y: {
-        use: "property",
-        which: "geo.name",
-        allow: {
-          scales: [
-            "ordinal"
-          ]
-        }
-      },
       color: {
         use: "property",
         which: "geo.region"
@@ -149,8 +140,8 @@ BarRankChart.define('default_options', {
   },
   language: language,
   data: {
-    //reader: "waffle",
-    reader: "csv",
+    reader: "waffle",
+    //reader: "csv",
     path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {

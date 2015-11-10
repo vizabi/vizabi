@@ -416,6 +416,10 @@ var Component = Events.extend({
         }
         values[new_name] = model_info.model;
       });
+
+      // fill the models that weren't passed with empty objects
+      // e.g. if expected = [ui, language, color] and passed/existing = [ui, language]
+      // it will fill values up to [ui, language, {}]
       var existing = model_config.length;
       var expected = model_expects.length;
       if(expected > existing) {
