@@ -29,6 +29,9 @@ $vzb-ts-value-width: 40px;
           fill: $vzb-ts-btn-bg;
         }
       }
+      &.vzb-ts-btn-loading {
+        background: $vzb-ts-btn-bg;
+      }
       &.vzb-ts-btn-pause {
         display: none;
       }
