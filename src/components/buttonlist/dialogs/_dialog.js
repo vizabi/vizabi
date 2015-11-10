@@ -47,24 +47,26 @@ var Dialog = Component.extend({
     this.dragHandler.html(iconDrag);
     this.pinIcon = this.placeholderEl.select("[data-click='pinDialog']");
     this.pinIcon.html(iconPin);
+    this.dragContainerEl = d3.select('.vzb-tool-stage');
+    var profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, d3.select('.vzb-tool-content'), 75);
+    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130); 
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
-        if(_this.rootEl.classed('vzb-portrait'))
-          return;
         _this.trigger('dragstart');
         dg.dragStart(d3.event);
       })
       .on('drag', function D3dialogDrag() {
-        if(_this.rootEl.classed('vzb-portrait'))
-          return;
         _this.trigger('drag');
         dg.drag(d3.event);
+      })
+      .on('dragend', function D3dialogDrag() {
+        _this.trigger('dragend');
+        _this.leftPos = _this.placeholderEl.style('left');
+        _this.topPos = _this.placeholderEl.style('top');
       });
     this.dragHandler.call(dragBehavior);
 
-    var profile = this.getLayoutProfile();
     this.dragHandler.classed("vzb-hidden", profile === 'small');
     this.pinIcon.classed("vzb-hidden", profile === 'small');
     this.resize();
@@ -73,34 +75,42 @@ var Dialog = Component.extend({
   resize: function() {
     if(this.placeholderEl) {
       var profile = this.getLayoutProfile();
-      var chartWidth = -parseInt(this.parent.parent.components[0].width, 10);
+      var chartWidth = -parseInt(this.dragContainerEl.style('width'), 10);
       var dialogLeft = parseInt(this.placeholderEl.style('left'), 10);
-      if(utils.isNumber(dialogLeft) && dialogLeft < chartWidth) {
-        this.placeholderEl.style('left', chartWidth + 'px');
+      var chartHeight = parseInt(this.rootEl.style('height'), 10);
+      var dialogTop = parseInt(this.placeholderEl.style('top'), 10);
+      var dialogWidth = parseInt(this.placeholderEl.style('width'), 10);
+      var dialogHeight = parseInt(this.placeholderEl.style('height'), 10);
+      if(utils.isNumber(dialogLeft) && dialogLeft < chartWidth + dialogWidth * .5) {
         if(this.leftPos) {
-          this.leftPos = chartWidth + 'px';
+          this.leftPos = (chartWidth + dialogWidth * .5) + 'px';
+          this.placeholderEl.style('left', this.leftPos);
         }
       }
-      if(this.rootEl.classed('vzb-portrait') || profile === 'small') {
+      if(utils.isNumber(dialogTop) && utils.isNumber(dialogHeight) && dialogTop >= 0 && dialogTop > chartHeight - dialogHeight) {
+        if(this.topPos) {
+          this.topPos = ((chartHeight - dialogHeight) > 0 ? (chartHeight - dialogHeight) : 0)  + 'px';
+        }
+      }
+      if(profile === 'small') {
         this.leftPos = '';
         this.topPos = '';
         this.placeholderEl.attr('style', '');
       } else {
-        var contentHeight = parseInt(this.rootEl.style('height'));
-        var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-        if (contentHeight < placeholderHeight) {
-          this.topPos = (-contentHeight + 50) + 'px';
-          this.leftPos = '';
-          this.placeholderEl.style('left', this.leftPos);
-          this.placeholderEl.style('bottom', 'auto');
-        } else {
-          this.topPos = '';
-          this.placeholderEl.style('bottom', '');
+        if(this.rootEl.classed('vzb-landscape')) {
+          var contentHeight = parseInt(this.rootEl.style('height'));
+          var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+          if (contentHeight < placeholderHeight) {
+            this.topPos = (-contentHeight + 50) + 'px';
+            this.leftPos = '';
+            this.placeholderEl.style('left', this.leftPos);
+            this.placeholderEl.style('bottom', 'auto');
+          } else {
+            //this.topPos = '';
+            this.placeholderEl.style('bottom', '');
+          }
         }
         this.placeholderEl.style('top', this.topPos);
-        if(this.getLayoutProfile() === 'small') {
-          this.leftPos = '';
-        }
       }
 
       this.dragHandler.classed("vzb-hidden", profile === 'small');
@@ -116,10 +126,10 @@ var Dialog = Component.extend({
     this.transitionEvents.forEach(function(event) {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
-    if(this.leftPos && !this.rootEl.classed('vzb-portrait')) {
+    if(this.leftPos && this.getLayoutProfile() !== 'small') {
       this.placeholderEl.style('left', this.leftPos);
     }
-    if(this.rootEl.classed('vzb-portrait')) {
+    if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
       var contentHeight = parseInt(this.rootEl.style('height'));
@@ -130,7 +140,7 @@ var Dialog = Component.extend({
         this.placeholderEl.style('left', this.leftPos);
         this.placeholderEl.style('bottom', 'auto');
       } else {
-        this.topPos = '';
+        //this.topPos = '';
         this.placeholderEl.style('bottom', '');
       }
       this.placeholderEl.style('top', this.topPos);
@@ -143,13 +153,13 @@ var Dialog = Component.extend({
    */
   open: function() {
     this.isOpen = true;
-    if(this.topPos && !this.rootEl.classed('vzb-portrait')) {
+    if(this.topPos && !(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
       this.placeholderEl.style('top', this.topPos);
     }
   },
 
   beforeClose: function() {
-    if(this.rootEl.classed('vzb-portrait')) {
+    if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
     }
     this.placeholderEl.classed('notransition', false);
@@ -160,12 +170,12 @@ var Dialog = Component.extend({
    * User has closed this dialog
    */
   close: function() {
-    if(this.isOpen && !this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() !== 'small') {
+    if(this.isOpen && !(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
       this.leftPos = this.placeholderEl.style('left');
       var topPos = this.placeholderEl.style('top');
       if( topPos.charAt(0) !== "-") this.topPos = topPos;
     }
-    if(!this.rootEl.classed('vzb-portrait')) {
+    if(!(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     }
     this.isOpen = false;
