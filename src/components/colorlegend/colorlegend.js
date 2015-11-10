@@ -34,7 +34,7 @@ var ColorLegend = Component.extend({
       "change:color": function(evt) {
         _this.updateView();
       },
-      "change:language": function(evt) {
+      "change:language:strings": function(evt) {
         _this.updateView();
       },
       "ready": function(evt) {

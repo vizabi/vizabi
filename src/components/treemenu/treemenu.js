@@ -125,7 +125,7 @@ var TreeMenu = Component.extend({
       "change:axis": function(evt) {
         _this.updateView();
       },
-      "change:language": function(evt) {
+      "change:language:strings": function(evt) {
         _this.updateView();
       }
     }
@@ -764,7 +764,7 @@ var TreeMenu = Component.extend({
 
     obj.which = value;
     obj.use = indicatorsDB[value].use;
-    obj.scaleType = indicatorsDB[value].scales[0];
+    obj.scaleType = indicatorsDB[value].scaleType ? indicatorsDB[value].scaleType : indicatorsDB[value].scales[0];
 
     if(mdl.getType() == 'axis') {
       obj.min = null;

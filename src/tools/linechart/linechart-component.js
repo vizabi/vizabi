@@ -392,6 +392,19 @@ var LCComponent = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0]);
     this.projectionY.attr("x2", _this.xScale.range()[0]);
 
+    if(utils.isTouchDevice()) {
+      _this.tooltip.classed("vzb-hidden", true);
+      _this.verticalNow.style("opacity", 1);
+      _this.projectionX.style("opacity", 0);
+      _this.projectionY.style("opacity", 0);
+      _this.xAxisEl.call(_this.xAxis.highlightValue(_this.time));
+      _this.yAxisEl.call(_this.yAxis.highlightValue("none"));
+      _this.graph.selectAll(".vzb-lc-entity").each(function() {
+        d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
+      });
+      
+      _this.hoveringNow = null;
+    }
 
     var opts = {
       rangeMax: this.xScale.range()[1],

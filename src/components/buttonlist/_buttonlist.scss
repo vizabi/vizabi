@@ -128,45 +128,52 @@ $vzb-dialog-content-height: 250px;
   }
 }
 
-&.vzb-small.vzb-portrait {
-  .vzb-buttonlist {
-    .vzb-buttonlist-btn {
-      margin-bottom: 20px;
-      width: $vzb-button-width;
+&.vzb-small {
+  .vzb-buttonlist-btn {
+    &[data-btn="presentation"] {
+      display: none;
     }
-    .vzb-buttonlist-container-buttons {
-      margin-bottom: -20px;
-      overflow-y: hidden;
-      overflow-x: scroll;
-      white-space: nowrap;
-    }
-    .vzb-buttonlist-dialog {
-      .vzb-dialog-content.vzb-dialog-content-fixed {
-        max-height: $vzb-dialog-content-height - 50px;
+  }  
+  &.vzb-portrait {
+    .vzb-buttonlist {
+      .vzb-buttonlist-btn {
+        margin-bottom: 20px;
+        width: $vzb-button-width;
+      }
+      .vzb-buttonlist-container-buttons {
+        margin-bottom: -20px;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        white-space: nowrap;
+      }
+      .vzb-buttonlist-dialog {
+        .vzb-dialog-content.vzb-dialog-content-fixed {
+          max-height: $vzb-dialog-content-height - 50px;
+        }
       }
     }
   }
-}
-&.vzb-small.vzb-landscape {
-  .vzb-buttonlist-dialog {
-    @include position(absolute, -2000px 40px auto -130px);
-    .vzb-dialog-content,
-    .vzb-dialog-content.vzb-dialog-content-fixed {
-      max-height: $vzb-dialog-content-height - 100px !important;
-    }
-    .vzb-dialog-buttons {
-      padding: 5px 25px 6px;
-    }
-    .vzb-dialog-title {
-      padding: 30px 25px 10px;
-    }
-    &[data-btn='find'] {
-      .vzb-find-filter {
-        top: 20px;
+  &.vzb-landscape {
+    .vzb-buttonlist-dialog {
+      @include position(absolute, -2000px 40px auto -130px);
+      .vzb-dialog-content,
+      .vzb-dialog-content.vzb-dialog-content-fixed {
+        max-height: $vzb-dialog-content-height - 100px !important;
       }
-    }
-    &.vzb-active {
-      @include position(absolute, auto 40px 0 50%);
+      .vzb-dialog-buttons {
+        padding: 5px 25px 6px;
+      }
+      .vzb-dialog-title {
+        padding: 30px 25px 10px;
+      }
+      &[data-btn='find'] {
+        .vzb-find-filter {
+          top: 20px;
+        }
+      }
+      &.vzb-active {
+        @include position(absolute, auto 40px 0 50%);
+      }
     }
   }
 }
