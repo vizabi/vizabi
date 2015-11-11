@@ -1447,7 +1447,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     return +arr[arr.length - 1][which];
   }
   //return null if data is missing
-  if(arr[i][which] === null || arr[i - 1][which] === null) {
+  if(arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
     return null;
   }
 
@@ -1461,6 +1461,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
 
   // cast to time object if we are interpolating time
   if(utils.isDate(arr[0][which])) result = new Date(result);
+  if(result.toString() === "NaN") result = null;
 
   return result;
 }
