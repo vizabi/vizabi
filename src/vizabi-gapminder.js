@@ -132,6 +132,17 @@ BarRankChart.define('default_options', {
           ]
         }
       },
+      // should not be here because axis-y is not geo.name but order of population
+      axis_y: {
+        use: "property",
+        which: "geo.name",
+        scaleType: "log",
+        allow: {
+          scales: [
+            "ordinal"
+          ]
+        }
+      },
       color: {
         use: "property",
         which: "geo.region"
@@ -140,8 +151,8 @@ BarRankChart.define('default_options', {
   },
   language: language,
   data: {
-    reader: "waffle",
-    //reader: "csv",
+    //reader: "waffle",
+    reader: "csv",
     path: globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv"
   },
   ui: {
@@ -211,8 +222,7 @@ BubbleMapChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: [],
-    presentation: false
+    buttons_expand: []
   }
 });
 
@@ -607,11 +617,10 @@ Tool.define("preloadLanguage", function() {
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
-      langModel.strings.set(langModel.id, langdata);
+      langModel.strings[langModel.id] = langdata;
       promise.resolve();
     });
   } else {
-    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 
