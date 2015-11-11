@@ -617,10 +617,11 @@ Tool.define("preloadLanguage", function() {
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
-      langModel.strings[langModel.id] = langdata;
+      langModel.strings.set(langModel.id, langdata);
       promise.resolve();
     });
   } else {
+    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 
