@@ -102,8 +102,11 @@ function resizableDiv(pane, container, minWidth, minHeight, cb, cbMouseUp) {
   }
 
   function animate() {
-
-    requestAnimationFrame(animate);
+    if (window.requestAnimationFrame) {
+      requestAnimationFrame(animate);
+    } else if (window.webkitRequestAnimationFrame) {
+      webkitRequestAnimationFrame(animate);
+    }
 
     if(!redraw) return;
 

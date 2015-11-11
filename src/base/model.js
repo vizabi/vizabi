@@ -53,7 +53,7 @@ var Model = Events.extend({
     this._limits = {};
     //stores limit values
     this._super();
-    
+
     if(freeze) {
       //do not dispatch events
       this.freeze();
@@ -89,7 +89,7 @@ var Model = Events.extend({
    * Sets an attribute or multiple for this model (inspired by Backbone)
    * @param attr property name
    * @param val property value (object or value)
-   * @param {Boolean} force force setting of property to value and triggers set event 
+   * @param {Boolean} force force setting of property to value and triggers set event
    * @returns defer defer that will be resolved when set is done
    */
   set: function(attr, val, force) {
@@ -105,11 +105,11 @@ var Model = Events.extend({
       attrs = attr;
       force = val;
     }
-    
+
     //we are currently setting the model
     this._setting = true;
-    
-    //compute each change  
+
+    //compute each change
     for(var a in attrs) {
       val = attrs[a];
       var curr = this._data[a];
@@ -526,8 +526,8 @@ var Model = Events.extend({
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
         _this._space[name].on('change:show', function(evt) {
-          //hack for right size of bubbles 
-          if(_this._type === 'size' && _this.which === _this.which_1) { 
+          //hack for right size of bubbles
+          if(_this._type === 'size' && _this.which === _this.which_1) {
             _this.which_1 = '';
           };
           //defer is necessary because other events might be queued.
@@ -703,7 +703,7 @@ var Model = Events.extend({
             response[name][id] = values;
           }
 
-        }); 
+        });
       });
     }
 
@@ -869,7 +869,8 @@ var Model = Events.extend({
     var prefix = "";
     if(formatterRemovePrefix) return d3.format("." + prec + format)(x);
 
-    switch(Math.floor(Math.log10(Math.abs(x)))) {
+//    switch(Math.floor(Math.log10(Math.abs(x)))) {
+    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10)) {
       case -13:
         x = x * 1000000000000;
         prefix = "p";
@@ -1007,7 +1008,7 @@ var Model = Events.extend({
         if(!prop) {
           limits = s.getLimits(attr);
           return false;
-        } 
+        }
       });
       return limits;
     }
