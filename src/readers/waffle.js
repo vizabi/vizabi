@@ -40,7 +40,9 @@ var WSReader = Reader.extend({
 
       (function (query, p) {
 
+/* probably legacy   
         var where = query.where;
+
 
         //format time query if existing
         if (where['time']) {
@@ -53,41 +55,46 @@ var WSReader = Reader.extend({
           where['geo.cat'] = utils.clone(where['geo.category']);
           where['geo.category'] = void 0;
         }
-
-        formatted = {
-          "SELECT": query.select,
-          "WHERE": where,
-          "FROM": "spreedsheet"
-        };
+*/
 
         var pars = {
-          query: [formatted],
+          query: query,
           lang: language
         };
 
         //request data
         utils.post(_this._basepath, JSON.stringify(pars), function (res) {
-          //fix response
-          res = format(res[0]);
-          //parse and save
-          parse(res);
+
+          // format the response (e.g. create Date objects, parseFloats etc)
+          // res = format(res); 
+          res = utils.mapRows(res, _this._formatters);
+
+
+          // validate and resolve
+          validate(res);
+          p.resolve();
 
         }, function () {
+
           console.log("Error loading from Waffle Server:", _this._basepath);
           p.reject('Could not read from waffle server');
+
         }, true);
 
         function format(res) {
           //make category an array and fix missing regions
+/* gapminder specific
           res = res.map(function (row) {
             row['geo.cat'] = [row['geo.cat']];
             row['geo.region'] = row['geo.region'] || row['geo'];
             return row;
           });
+*/
 
           //format data
           res = utils.mapRows(res, _this._formatters);
 
+/* ORDER BY should be done on waffle server
           //TODO: fix this hack with appropriate ORDER BY
           //order by formatted
           //sort records by time
@@ -97,18 +104,16 @@ var WSReader = Reader.extend({
             return a[order_by] - b[order_by];
           });
           //end of hack
-
+*/
           return res;
         }
 
-        function parse(res) {
+        function validate(res) {
           //just check for length, no need to parse from server
           if(res.length==0) {
             p.reject("data reader returns empty array, that's bad");
             return;
           }
-          _this._data = res;
-          p.resolve();
         }
 
       })(query, p);

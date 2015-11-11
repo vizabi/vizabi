@@ -791,15 +791,7 @@ var Model = Events.extend({
       utils.warn("No filter provided to getFilteredItems(<filter>)");
       return {};
     }
-    //cache optimization
-    var filter_id = JSON.stringify(filter);
-    var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
-    var found = filtered[filter_id];
-    if(filtered[filter_id]) {
-      return filtered[filter_id];
-    }
-    var items = _DATAMANAGER.get(this._dataId);
-    return filtered[filter_id] = utils.filter(items, filter);
+    return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
 
   /**
@@ -1011,39 +1003,8 @@ var Model = Events.extend({
       });
       return limits;
     }
-    //store limits so that we stop rechecking.
-    var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
-    if(cachedLimits[attr]) {
-      return cachedLimits[attr];
-    }
-    var map = function(n) {
-      return(utils.isDate(n)) ? n : parseFloat(n);
-    };
-    var items = _DATAMANAGER.get(this._dataId);
-    var filtered = items.reduce(function(filtered, d) {
-      var f = map(d[attr]);
-      if(!isNaN(f)) {
-        filtered.push(f);
-      }
-      //filter
-      return filtered;
-    }, []);
-    var min;
-    var max;
-    var limits = {};
-    for(var i = 0; i < filtered.length; i += 1) {
-      var c = filtered[i];
-      if(typeof min === 'undefined' || c < min) {
-        min = c;
-      }
-      if(typeof max === 'undefined' || c > max) {
-        max = c;
-      }
-    }
-    limits.min = min || 0;
-    limits.max = max || 100;
-    cachedLimits[attr] = limits;
-    return limits;
+
+    return _DATAMANAGER.get(this._dataId, 'limits', attr);
   },
 
   /**
@@ -1060,31 +1021,7 @@ var Model = Events.extend({
         type: "time"
       });
     }
-    var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique');
-    var uniq_id = JSON.stringify(attr);
-    var uniq;
-    if(uniqueItems[uniq_id]) {
-      return uniqueItems[uniq_id];
-    }
-    var items = _DATAMANAGER.get(this._dataId);
-    //if not in cache, compute
-    //if it's an array, it will return a list of unique combinations.
-    if(utils.isArray(attr)) {
-      var values = items.map(function(d) {
-        return utils.clone(d, attr); //pick attrs
-      });
-      uniq = utils.unique(values, function(n) {
-        return JSON.stringify(n);
-      });
-    } //if it's a string, it will return a list of values
-    else {
-      var values = items.map(function(d) {
-        return d[attr];
-      });
-      uniq = utils.unique(values);
-    }
-    uniqueItems[uniq_id] = uniq;
-    return uniq;
+    return _DATAMANAGER.get(this._dataId, 'unique', attr);
   },
 
   //TODO: Is this supposed to be here?
