@@ -53,7 +53,7 @@ var Model = Events.extend({
     this._limits = {};
     //stores limit values
     this._super();
-    
+
     if(freeze) {
       //do not dispatch events
       this.freeze();
@@ -89,7 +89,7 @@ var Model = Events.extend({
    * Sets an attribute or multiple for this model (inspired by Backbone)
    * @param attr property name
    * @param val property value (object or value)
-   * @param {Boolean} force force setting of property to value and triggers set event 
+   * @param {Boolean} force force setting of property to value and triggers set event
    * @returns defer defer that will be resolved when set is done
    */
   set: function(attr, val, force) {
@@ -105,11 +105,11 @@ var Model = Events.extend({
       attrs = attr;
       force = val;
     }
-    
+
     //we are currently setting the model
     this._setting = true;
-    
-    //compute each change  
+
+    //compute each change
     for(var a in attrs) {
       val = attrs[a];
       var curr = this._data[a];
@@ -526,8 +526,8 @@ var Model = Events.extend({
       //TODO: remove hardcoded 'show"
       if(_this._space[name].show) {
         _this._space[name].on('change:show', function(evt) {
-          //hack for right size of bubbles 
-          if(_this._type === 'size' && _this.which === _this.which_1) { 
+          //hack for right size of bubbles
+          if(_this._type === 'size' && _this.which === _this.which_1) {
             _this.which_1 = '';
           };
           //defer is necessary because other events might be queued.
@@ -703,7 +703,7 @@ var Model = Events.extend({
             response[name][id] = values;
           }
 
-        }); 
+        });
       });
     }
 
@@ -791,15 +791,7 @@ var Model = Events.extend({
       utils.warn("No filter provided to getFilteredItems(<filter>)");
       return {};
     }
-    //cache optimization
-    var filter_id = JSON.stringify(filter);
-    var filtered = _DATAMANAGER.get(this._dataId, 'filtered');
-    var found = filtered[filter_id];
-    if(filtered[filter_id]) {
-      return filtered[filter_id];
-    }
-    var items = _DATAMANAGER.get(this._dataId);
-    return filtered[filter_id] = utils.filter(items, filter);
+    return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
 
   /**
@@ -869,7 +861,8 @@ var Model = Events.extend({
     var prefix = "";
     if(formatterRemovePrefix) return d3.format("." + prec + format)(x);
 
-    switch(Math.floor(Math.log10(Math.abs(x)))) {
+//    switch(Math.floor(Math.log10(Math.abs(x)))) {
+    switch(Math.floor(Math.log(Math.abs(x))/Math.LN10)) {
       case -13:
         x = x * 1000000000000;
         prefix = "p";
@@ -1007,43 +1000,12 @@ var Model = Events.extend({
         if(!prop) {
           limits = s.getLimits(attr);
           return false;
-        } 
+        }
       });
       return limits;
     }
-    //store limits so that we stop rechecking.
-    var cachedLimits = _DATAMANAGER.get(this._dataId, 'limits');
-    if(cachedLimits[attr]) {
-      return cachedLimits[attr];
-    }
-    var map = function(n) {
-      return(utils.isDate(n)) ? n : parseFloat(n);
-    };
-    var items = _DATAMANAGER.get(this._dataId);
-    var filtered = items.reduce(function(filtered, d) {
-      var f = map(d[attr]);
-      if(!isNaN(f)) {
-        filtered.push(f);
-      }
-      //filter
-      return filtered;
-    }, []);
-    var min;
-    var max;
-    var limits = {};
-    for(var i = 0; i < filtered.length; i += 1) {
-      var c = filtered[i];
-      if(typeof min === 'undefined' || c < min) {
-        min = c;
-      }
-      if(typeof max === 'undefined' || c > max) {
-        max = c;
-      }
-    }
-    limits.min = min || 0;
-    limits.max = max || 100;
-    cachedLimits[attr] = limits;
-    return limits;
+
+    return _DATAMANAGER.get(this._dataId, 'limits', attr);
   },
 
   /**
@@ -1060,31 +1022,7 @@ var Model = Events.extend({
         type: "time"
       });
     }
-    var uniqueItems = _DATAMANAGER.get(this._dataId, 'unique');
-    var uniq_id = JSON.stringify(attr);
-    var uniq;
-    if(uniqueItems[uniq_id]) {
-      return uniqueItems[uniq_id];
-    }
-    var items = _DATAMANAGER.get(this._dataId);
-    //if not in cache, compute
-    //if it's an array, it will return a list of unique combinations.
-    if(utils.isArray(attr)) {
-      var values = items.map(function(d) {
-        return utils.clone(d, attr); //pick attrs
-      });
-      uniq = utils.unique(values, function(n) {
-        return JSON.stringify(n);
-      });
-    } //if it's a string, it will return a list of values
-    else {
-      var values = items.map(function(d) {
-        return d[attr];
-      });
-      uniq = utils.unique(values);
-    }
-    uniqueItems[uniq_id] = uniq;
-    return uniq;
+    return _DATAMANAGER.get(this._dataId, 'unique', attr);
   },
 
   //TODO: Is this supposed to be here?
