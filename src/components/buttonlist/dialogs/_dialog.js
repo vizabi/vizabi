@@ -203,8 +203,14 @@ function dialogDrag(element, container, xOffset) {
     },
 
     dragStart: function(evt) {
-      posX = evt.sourceEvent.clientX;
-      posY = evt.sourceEvent.clientY;
+      if(!utils.isTouchDevice()) { 
+        posX = evt.sourceEvent.clientX;
+        posY = evt.sourceEvent.clientY;      
+      } else {
+        var touchCoord = d3.touches(container.node());
+        posX = touchCoord[0][0];
+        posY = touchCoord[0][1];
+      }
       divTop = parseInt(element.style('top')) || 0;
       divLeft = parseInt(element.style('left')) || 0;
       eWi = parseInt(element.style('width'));
@@ -216,10 +222,16 @@ function dialogDrag(element, container, xOffset) {
     },
 
     drag: function(evt) {
-      var posX = evt.sourceEvent.clientX,
-        posY = evt.sourceEvent.clientY,
-        aX = posX - diffX,
-        aY = posY - diffY;
+      if(!utils.isTouchDevice()) { 
+        posX = evt.sourceEvent.clientX;
+        posY = evt.sourceEvent.clientY;      
+      } else {
+        var touchCoord = d3.touches(container.node());
+        posX = touchCoord[0][0];
+        posY = touchCoord[0][1];
+      }
+      var aX = posX - diffX,
+      aY = posY - diffY;
       if(aX > -xOffset) aX = -xOffset;
       if(aY < 0) aY = 0;
       if(-aX + eWi > cWi) aX = -cWi + eWi;
