@@ -124,11 +124,24 @@ BarRankChart.define('default_options', {
       axis_x: {
         use: "indicator",
         which: "pop",
-        scaleType: "log"
+        scaleType: "log",
+        allow: {
+          scales: [
+            "linear",
+            "log"
+          ]
+        }
       },
+      // should not be here because axis-y is not geo.name but order of population
       axis_y: {
         use: "property",
-        which: "geo.name"
+        which: "geo.name",
+        scaleType: "log",
+        allow: {
+          scales: [
+            "ordinal"
+          ]
+        }
       },
       color: {
         use: "property",
@@ -177,13 +190,13 @@ BubbleMapChart.define('default_options', {
       size: {
         use: "indicator",
         which: "pop",
-        scaleType: "sqrt",
+        scaleType: "linear",
         /*
         min: 1,
         max: 90,
         */
         allow: {
-          scales: ["linear", "log", "sqrt"]
+          scales: ["linear", "log"]
         }
       },
       lat: {
@@ -604,10 +617,11 @@ Tool.define("preloadLanguage", function() {
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
-      langModel.strings[langModel.id] = langdata;
+      langModel.strings.set(langModel.id, langdata);
       promise.resolve();
     });
   } else {
+    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 

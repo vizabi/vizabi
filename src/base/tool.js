@@ -76,8 +76,6 @@ var Tool = Component.extend({
             .then(function() {
               _this.model.validate();
               _this.translateStrings();
-              //for trigger change:language then new strings is loaded 
-              _this.model.language.set("id", _this.model.language.id, true);
             });
         }
       },
@@ -98,8 +96,10 @@ var Tool = Component.extend({
 
     options = options || {};
     this.model = new ToolModel(options, this.default_options, callbacks, validate);
+
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
+
     this.ui = this.model.ui || {};
 
     this.layout = new Layout(this.ui);
@@ -121,7 +121,7 @@ var Tool = Component.extend({
     if(!this.model.bind) {
       return;
     }
-    this.on(this.model.bind.get());
+    this.model.on(this.model.bind.get());
   },
 
   minState: function() {

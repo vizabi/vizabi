@@ -120,7 +120,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker:group": function (evt) {
                 if (!_this._readyOnce) return;
-                if (evt === "change:marker:group:merge") return;
+                if (evt.indexOf("group:merge") > -1) return;
                 _this.ready();
             },
             "change:marker:group:merge": function (evt) {
@@ -133,6 +133,7 @@ var MountainChartComponent = Component.extend({
                 _this.ready();
             },
             "change:marker:color:palette": function (evt) {
+                if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
             },
@@ -1067,6 +1068,7 @@ var MountainChartComponent = Component.extend({
                 .text(tooltipText)
 
             var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+
             this.tooltip.select("rect")
                 .attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
@@ -1078,7 +1080,11 @@ var MountainChartComponent = Component.extend({
             this.tooltip.selectAll("text")
                 .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
                 .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-
+            var translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
+            var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
+            this.tooltip
+                .attr("transform", "translate(" + translateX + "," + translateY + ")");
+            
         } else {
 
             this.tooltip.classed("vzb-hidden", true);
