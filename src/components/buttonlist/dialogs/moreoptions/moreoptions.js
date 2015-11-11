@@ -44,7 +44,26 @@ export default Dialog.extend({
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
-      model: ["state.marker.size", "language"]
+      model: ["state.marker.size", "language"],
+      ui: {
+        selectIndicator: true,
+        selectScaletype: false
+      }
+    }, {
+      component: bubblesize,
+      placeholder: '.vzb-dialog-bubblesize',
+      model: ["state.marker.size"],
+      ui: {
+        show_button: false
+      }
+    }, {
+      component: indicatorpicker,
+      placeholder: '.vzb-caxis-container',
+      model: ["state.marker.color", "language"]
+    }, {
+      component: colorlegend,
+      placeholder: '.vzb-clegend-container',
+      model: ["state.marker.color", "state.entities", "language"]
     }, {
       component: simpleslider,
       placeholder: '.vzb-dialog-bubbleopacity-regular',

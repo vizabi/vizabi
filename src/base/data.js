@@ -155,6 +155,7 @@ var Data = Class.extend({
           col.nested = {};
           col.unique = {};
           col.limits = {};
+          // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
           // returning the query-id/values of the merged query without splitting the result up again per query
           // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory. 
