@@ -658,7 +658,9 @@ var ButtonList = Component.extend({
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
-    utils.classed(container, class_container_fullscreen, fs);
+    if (container) {
+      utils.classed(container, class_container_fullscreen, fs);
+    }
 
     this.model.ui.fullscreen = fs;
     var translator = this.model.language.getTFunction();
