@@ -378,6 +378,8 @@ var TimeSlider = Component.extend({
         .attr("cx", new_pos);
     } else {
       this.handle
+        //cancel active transition
+        .interrupt()
         .attr("cx", new_pos);
     }
 

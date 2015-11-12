@@ -177,7 +177,7 @@ var BubbleChartComp = Component.extend({
         //   _this.model.marker.color.scale = null;
         //   utils.defer(function() {
         //     _this.trigger('ready');
-        //   });         
+        //   });
         // }
       }
     };
@@ -542,7 +542,6 @@ var BubbleChartComp = Component.extend({
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
-      .attr("y", "-0.32em")
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -772,7 +771,7 @@ var BubbleChartComp = Component.extend({
         maxRadius: 40,
         infoElHeight: 16,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 4
       },
       medium: {
         margin: {
@@ -786,7 +785,7 @@ var BubbleChartComp = Component.extend({
         maxRadius: 55,
         infoElHeight: 20,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 5
       },
       large: {
         margin: {
@@ -800,7 +799,7 @@ var BubbleChartComp = Component.extend({
         maxRadius: 70,
         infoElHeight: 22,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 5
       }
     };
 
@@ -945,9 +944,11 @@ var BubbleChartComp = Component.extend({
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
+      .style("font-size", infoElHeight)
       .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
 
     this.xTitleEl
+      .style("font-size", infoElHeight)
       .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     this.sTitleEl
@@ -972,7 +973,7 @@ var BubbleChartComp = Component.extend({
         .attr("height", infoElHeight)
       this.yInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+        + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
@@ -984,7 +985,7 @@ var BubbleChartComp = Component.extend({
         .attr("height", infoElHeight)
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+        + (translate[1] - infoElHeight * 0.8) + ')');
    }
 
   },
@@ -1431,11 +1432,13 @@ var BubbleChartComp = Component.extend({
         _this._trails.create(d);
       })
       .on("mouseover", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
       })
       .on("mouseout", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.clearHighlighted();
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", true);

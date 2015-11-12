@@ -1,9 +1,14 @@
+-
+  menuitems = [
+    ['bubblechart.html', 'Bubble Chart'],
+    ['mountainchart.html', 'Mountain Chart'],
+    ['linechart.html', 'Line Chart'],
+    ['popbyage.html', 'Pop By Age'],
+    ['barchart.html', 'Bar Chart'],
+    ['bubblemapchart.html', 'Bubble Map Chart'],
+    ['barrankchart.html', 'Bar Rank Chart']
+  ]
 #vzbp-nav
   .vzbp-nav-menu
-    a(href='bubblechart.html') Bubble Chart
-    a(href='mountainchart.html') Mountain Chart
-    a(href='linechart.html') Line Chart
-    a(href='popbyage.html') Pop By Age
-    a(href='barchart.html') Bar Chart
-    a(href='bubblemapchart.html') Bubble Map Chart
-    a(href='barrankchart.html') Bar Rank Chart
+    each item in menuitems
+      a(href=item[0] class={active: item[1] === title}) #{item[1]}

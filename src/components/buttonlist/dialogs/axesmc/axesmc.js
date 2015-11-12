@@ -64,10 +64,11 @@ var Axes = Dialog.extend({
     this.probeFieldEl = this.element.select(".vzb-probe-field")
       .on("change", function() {
         var result = parseFloat(this.value.replace(",", "."));
-        if(result <= _this.model.state.time.tailCutX) {
+        if(!result || result <= _this.model.state.time.tailCutX) {
           this.value = _this.model.state.time.probeX;
           return;
         }
+        this.value = result;
         _this.setModel("probeX", result);
       });
 

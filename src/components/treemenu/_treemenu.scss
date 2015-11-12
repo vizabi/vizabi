@@ -129,17 +129,31 @@
     
     .vzb-treemenu-list-top,
     .vzb-treemenu-list {
-      > .vzb-treemenu-list-item-children:before {
-        content: '';
-        display: block;
-        position: absolute;
-        right: 5px;
-        width: 0;
-        height: 0;
-        border: 6px solid transparent;
-        border-left: 6px solid $vzb-color-grey-dark;
-        margin-top: 9px;
-        z-index: 1;
+      > .vzb-treemenu-list-item-children {
+        &:before {
+          content: '';
+          display: block;
+          position: absolute;
+          right: 5px;
+          width: 0;
+          height: 0;
+          border: 6px solid transparent;
+          border-left: 6px solid $vzb-color-grey-dark;
+          margin-top: 9px;
+          z-index: 1;
+        }
+        &.marquee:hover > .vzb-treemenu-list-item-label-mask {
+          background-color: $vzb-color-grey-light;          
+        }
+        &.marquee > .vzb-treemenu-list-item-label-mask {
+          display: block;
+          position: absolute;
+          width: 23px;
+          height: 20px;
+          right: 0;
+          top: 10px;
+          background-color: $vzb-color-white;
+        }
       }
     }
     

@@ -21,11 +21,11 @@
         fill: none;
       }
 
-      .vzb-bc-trails .vzb-bc-entity {
-        stroke: $vzb-color-white;
+      .vzb-bc-entity .vzb-bc-trailsegment {
         cursor: pointer;
         line {
           pointer-events: none;
+          stroke-width: 2;
         }
       }
 
