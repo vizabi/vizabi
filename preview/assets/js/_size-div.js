@@ -269,7 +269,7 @@ window.addEventListener('resize', function() {
   if(forcedResize) return;
   if(hasClass(placeholder, 'fullscreen')) {
     setFullscreen();
-  } else if (container.offsetWidth < placeholder.offsetWidth || container.offsetHeight < placeholder.offsetHeight) {
+  } else if (!hasClass(container, 'vzb-container-fullscreen') && (container.offsetWidth < placeholder.offsetWidth || container.offsetHeight < placeholder.offsetHeight)) {
     setDivSize(placeholder, container, Math.min(container.offsetWidth, placeholder.offsetWidth), Math.min(container.offsetHeight, placeholder.offsetHeight));
   }
   updateURL();
