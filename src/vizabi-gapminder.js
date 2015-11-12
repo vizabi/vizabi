@@ -609,7 +609,7 @@ Tool.define("preload", function(promise) {
 });
 
 Tool.define("preloadLanguage", function() {
-
+  var _this = this;
   var promise = new Promise();
 
   var langModel = this.model.language;
@@ -617,7 +617,8 @@ Tool.define("preloadLanguage", function() {
 
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
-      langModel.strings.set(langModel.id, langdata);
+      langModel.strings[langModel.id] = langdata;
+      _this.model.language.strings.trigger("change");
       promise.resolve();
     });
   } else {
