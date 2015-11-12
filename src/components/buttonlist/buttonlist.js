@@ -658,7 +658,7 @@ var ButtonList = Component.extend({
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
-    if (container) {
+    if (typeof container != 'undefined') {
       utils.classed(container, class_container_fullscreen, fs);
     }
 
