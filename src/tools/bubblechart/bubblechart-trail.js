@@ -68,6 +68,7 @@ export default Class.extend({
       trail.enter().append("g")
         .attr("class", "trailSegment")
         .on("mousemove", function(segment, index) {
+          if(utils.isTouchDevice()) return;
           var _key = d3.select(this.parentNode).data()[0][KEY];
 
           var pointer = {};
@@ -83,6 +84,7 @@ export default Class.extend({
             .classed("vzb-highlighted", true);
         })
         .on("mouseout", function(segment, index) {
+          if(utils.isTouchDevice()) return;
           _this._axisProjections();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
