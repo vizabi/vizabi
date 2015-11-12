@@ -1431,11 +1431,13 @@ var BubbleChartComp = Component.extend({
         _this._trails.create(d);
       })
       .on("mouseover", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
       })
       .on("mouseout", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.clearHighlighted();
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", true);
