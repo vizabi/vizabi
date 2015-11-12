@@ -66,7 +66,7 @@ export default Class.extend({
       trail.exit().remove();
 
       trail.enter().append("g")
-        .attr("class", "trailSegment")
+        .attr("class", "vzb-bc-trailsegment")
         .on("mousemove", function(segment, index) {
           if(utils.isTouchDevice()) return;
           var _key = d3.select(this.parentNode).data()[0][KEY];
