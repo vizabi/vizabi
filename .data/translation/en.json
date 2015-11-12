@@ -28,7 +28,7 @@
     "hints/mount/logXstops": "X-axis logarithmic stops:",
     "hints/mount/howtostack": "Chose how to stack mountains:",
     "hints/mount/xlimits": "X-axis limits:",
-    "hints/mount/probe": "Probeline (extreme poverty is at 1.85):",
+    "hints/mount/probe": "Probeline (extreme poverty at 1.85):",
     "hints/min": "min",
     "hints/max": "max",
     "hints/dataWarning": "Data doubts",
