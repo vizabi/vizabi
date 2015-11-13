@@ -118,10 +118,17 @@
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
     }
+    input[disabled] {
+      opacity: .7;
+      + span {
+        color: $vzb-color-primary-light;
+        opacity: .7;
+      }
+    }
   }
 
   input {
-    font-size: 1em; //inherit from dialog content
+    font-size: 1em; //inherit from dialog content 
   }
 
   .vzb-dialog-buttons {
@@ -133,7 +140,6 @@
     display: table-cell;
     width: 100%;
     vertical-align: middle;
-    padding: 8px;
     &:first-child {
       padding-left: 0;
     }
@@ -279,8 +285,13 @@
   .vzb-dialog-sublabel {
     color: $vzb-color-primary;
     font-weight: bold;
+    margin-bottom: 10px;
   }
 
+  form { 
+    margin-bottom: 10px;
+  }
+    
   &.pinned {
     .thumb-tack-class-ico-pin {
       background-color: $vzb-color-primary-strong;
