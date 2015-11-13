@@ -118,11 +118,19 @@
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
     }
-    input[disabled] {
-      opacity: .7;
-      + span {
-        color: $vzb-color-primary-light;
+    input[type=radio] {
+      cursor: pointer;
+      +span {
+        cursor: pointer;
+      }
+      &[disabled=true] {
+        cursor: default;
         opacity: .7;
+        +span {
+          cursor: default;
+          color: $vzb-color-primary-light;
+          opacity: .7;
+        }
       }
     }
   }
