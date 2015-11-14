@@ -924,7 +924,7 @@ var BubbleChartComp = Component.extend({
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2.2) xTitleText.text(this.strings.title.X);
 
 
 
