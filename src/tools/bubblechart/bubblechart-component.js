@@ -1516,14 +1516,19 @@ var BubbleChartComp = Component.extend({
 
       if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX) {
+      if(this.ui.whenHovering.showProjectionLineX
+        && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
+        && (this.yScale(valueY) + radius) < this.height) {
         this.projectionX
           .style("opacity", 1)
           .attr("y2", this.yScale(valueY) + radius)
           .attr("x1", this.xScale(valueX))
           .attr("x2", this.xScale(valueX));
       }
-      if(this.ui.whenHovering.showProjectionLineY) {
+
+      if(this.ui.whenHovering.showProjectionLineY
+        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height 
+        && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
           .style("opacity", 1)
           .attr("y1", this.yScale(valueY))
