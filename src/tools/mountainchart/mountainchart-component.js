@@ -342,7 +342,7 @@ var MountainChartComponent = Component.extend({
             infoElHeight: 20
           },
           large: {
-            margin: { top: 30, right: 30, left: 30, bottom: 40 },
+            margin: { top: 30, right: 30, left: 30, bottom: 45 },
             infoElHeight: 22
           }
         };
