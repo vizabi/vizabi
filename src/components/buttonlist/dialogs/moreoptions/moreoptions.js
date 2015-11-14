@@ -42,6 +42,12 @@ export default Dialog.extend({
         selectFakeMinMax: true
       }
     }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-axes-options',
+      model: ["state", "language"],
+      submodel: 'time',
+      checkbox: 'adaptMinMaxZoom'
+    }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
       model: ["state.marker.size", "language"],
