@@ -334,7 +334,7 @@ var MountainChartComponent = Component.extend({
 
         var presentationProfileChanges = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 30 },
             infoElHeight: 16
           },
           medium: {
@@ -342,7 +342,7 @@ var MountainChartComponent = Component.extend({
             infoElHeight: 20
           },
           large: {
-            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            margin: { top: 30, right: 30, left: 30, bottom: 40 },
             infoElHeight: 22
           }
         };

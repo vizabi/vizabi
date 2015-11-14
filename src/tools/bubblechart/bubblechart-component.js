@@ -760,12 +760,7 @@ var BubbleChartComp = Component.extend({
 
     var profiles = {
       small: {
-        margin: {
-          top: 30,
-          right: 10,
-          left: 40,
-          bottom: 45
-        },
+        margin: { top: 30, right: 10, left: 40, bottom: 45 },
         padding: 2,
         minRadius: 0.5,
         maxRadius: 40,
@@ -774,12 +769,7 @@ var BubbleChartComp = Component.extend({
         xAxisLabelBottomMargin: 4
       },
       medium: {
-        margin: {
-          top: 40,
-          right: 15,
-          left: 60,
-          bottom: 55
-        },
+        margin: { top: 40, right: 15, left: 60, bottom: 55 },
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
@@ -788,12 +778,7 @@ var BubbleChartComp = Component.extend({
         xAxisLabelBottomMargin: 5
       },
       large: {
-        margin: {
-          top: 50,
-          right: 20,
-          left: 60,
-          bottom: 60
-        },
+        margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
@@ -805,29 +790,17 @@ var BubbleChartComp = Component.extend({
 
     var presentationProfileChanges = {
       "small": {
-        margin: {
-          top: 40,
-          bottom: 70,
-          left: 70
-        },
+        margin: { top: 40, bottom: 65, left: 70 },
         yAxisLabelBottomMargin: 10,
         xAxisLabelBottomMargin: 10
       },
       "medium": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 80, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       },
       "large": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 100, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       }
