@@ -85,9 +85,9 @@
 
       .stroke {
         fill: none;
-        stroke: #777;
+        stroke: $vzb-color-grey;
         stroke-width: .5px;
-        stroke-opacity: .5;
+        stroke-opacity: .3;
       }
 
       .fill {
@@ -96,13 +96,14 @@
 
       .graticule {
         fill: none;
-        stroke: #777;
+        stroke: $vzb-color-grey;
         stroke-width: .5px;
-        stroke-opacity: .5;
+        stroke-opacity: .3;
       }
 
       .land {
-        fill: #ddd;
+        fill: $vzb-color-grey;
+        opacity: .4;
       }
 
       .boundary {
