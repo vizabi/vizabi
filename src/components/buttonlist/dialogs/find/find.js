@@ -30,6 +30,10 @@ var Find = Dialog.extend({
         if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
           _this.ready();
         }
+      },
+      "change:language:strings": function() {
+        _this.translator = _this.model.language.getTFunction();
+        _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }
     }
 
@@ -47,7 +51,7 @@ var Find = Dialog.extend({
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.KEY = this.model.state.entities.getDimension();
-
+    
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
@@ -60,6 +64,9 @@ var Find = Dialog.extend({
     this.deselect_all.on("click", function() {
       _this.deselectEntities();
     });
+    
+    this.translator = this.model.language.getTFunction();
+    this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     this._super();
 
@@ -85,7 +92,6 @@ var Find = Dialog.extend({
     this._super();
 
     var _this = this;
-    this.translator = this.model.language.getTFunction();
     var KEY = this.KEY;
     var TIMEDIM = this.model.state.time.getDimension();
     var selected = this.model.state.entities.getSelected();
@@ -151,7 +157,6 @@ var Find = Dialog.extend({
         if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
       });
 
-    this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
       
     this.showHideSearch();
     this.showHideDeselect();
