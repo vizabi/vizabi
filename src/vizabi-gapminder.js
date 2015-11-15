@@ -132,9 +132,11 @@ BarRankChart.define('default_options', {
           ]
         }
       },
+      // should not be here because axis-y is not geo.name but order of population
       axis_y: {
         use: "property",
         which: "geo.name",
+        scaleType: "log",
         allow: {
           scales: [
             "ordinal"
@@ -225,8 +227,7 @@ BubbleMapChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: [],
-    presentation: false
+    buttons_expand: []
   }
 });
 
@@ -613,7 +614,7 @@ Tool.define("preload", function(promise) {
 });
 
 Tool.define("preloadLanguage", function() {
-
+  var _this = this;
   var promise = new Promise();
 
   var langModel = this.model.language;
@@ -622,9 +623,11 @@ Tool.define("preloadLanguage", function() {
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
       langModel.strings[langModel.id] = langdata;
+      _this.model.language.strings.trigger("change");
       promise.resolve();
     });
   } else {
+    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 

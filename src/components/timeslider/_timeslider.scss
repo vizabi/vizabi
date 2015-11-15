@@ -12,31 +12,35 @@ $vzb-ts-value-width: 40px;
     width: $vzb-ts-btn-area;
     .vzb-ts-btn {
       @include border-radius(40px);
-      @include rotate(45deg);
       font-size: $vzb-font-size-regular;
       width: $vzb-ts-btn-width;
       height: $vzb-ts-btn-width;
-      background: $vzb-ts-btn-bg;
+      background: $vzb-color-white;
       display: block;
       border: 0;
-      padding: 12px 14px;
+      padding: 0;
       margin: 5px;
       cursor: pointer;
 
       .vzb-icon {
-        @include rotate(-45deg);
+        width: $vzb-ts-btn-width;
+        height: $vzb-ts-btn-width;
         path {
-          fill: $vzb-color-white;
+          fill: $vzb-ts-btn-bg;
         }
+      }
+      &.vzb-ts-btn-loading {
+        background: $vzb-ts-btn-bg;
       }
       &.vzb-ts-btn-pause {
         display: none;
-        padding: 10px;
       }
       &:active,
       &:focus {
         outline: none;
-        background: $vzb-ts-btn-bg-active;
+        path {
+          fill: $vzb-ts-btn-bg;
+        }
       }
     }
   }
@@ -158,17 +162,16 @@ $vzb-ts-value-width: 40px;
         width: $vzb-ts-btn-width - 14;
         height: $vzb-ts-btn-width - 14;
         margin: 0;
-        padding: 7px 10px;
 
         .vzb-icon {
-          width: 12px;
-          height: 12px;
+          width: $vzb-ts-btn-width - 14;
+          height: $vzb-ts-btn-width - 14;
         }
         &.vzb-ts-btn-play {
-          padding: 7px 8px;
+          padding: 0;
         }
         &.vzb-ts-btn-pause {
-          padding: 7px 6px;
+          padding: 0;
         }
       }
     }

@@ -152,6 +152,7 @@ var ButtonList = Component.extend({
         }
         _this.setBubbleTrails();
         _this.setBubbleLock();
+        _this._toggleButtons();
 
 
         //scroll button list to end if bottons appeared or disappeared
@@ -183,8 +184,7 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-        d3.select('div.vzb-large')
-            .classed("vzb-button-expand-true", true);
+        d3.select(this.root.element).classed("vzb-button-expand-true", true);
     }
     var button_list = [].concat(button_expand);
 
@@ -276,56 +276,89 @@ var ButtonList = Component.extend({
   /*
    * reset buttons show state
    */
-  _showAllButtons: function() {
-    // show all existing buttons
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-    buttons.each(function(d,i) {
-      var button = d3.select(this);
-      if (button.style("display") == "none"){
-        button.style("display", "inline-block");
-      }
-    });
-  },
+   _showAllButtons: function() {
+     // show all existing buttons
+     var _this = this;
+     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+     buttons.each(function(d,i) {
+       var button = d3.select(this);
+       if (button.style("display") == "none"){
+         if(d.id != "trails" && d.id != "lock"){
+           button.style("display", "inline-block");
+         } else if ((_this.model.state.entities.select.length > 0)){
+           button.style("display", "inline-block");
+         }
+       }
+     });
+   },
 
   /*
    * determine which buttons are shown on the buttonlist
    */
-  _toggleButtons: function() {
-    this._showAllButtons();
+   _toggleButtons: function() {
+     var _this = this;
+     var button_expand = this.model.ui.buttons_expand;
+     _this._showAllButtons();
 
-    var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-    var button_width = 80;
-    var container_width = this.element.node().getBoundingClientRect().width;
-    var not_required = [];
-    var required = [];
-    var buttons_width = 0;
-    //only if the container can contain more than one button
-    if(container_width > button_size){
-      buttons.each(function(d,i) {
-        var button = d3.select(this);
-        var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
-        button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
-        buttons_width += button_width;
-        var button_data = button.datum();
-        //sort buttons between required and not required buttons.
-        // Not required buttons will only be shown if there is space available
-        if(button_data.required){
-          required.push(button);
-        } else {
-          not_required.push(button);
-        }
-      });
-      var width_diff = buttons_width - container_width;
-      var number_of_buttons = Math.ceil(width_diff / button_width);
-      if(number_of_buttons > 0){
-        //change the display property of non required buttons, from right to
-        // left
-        for (var i = not_required.length-1 ; i >= not_required.length-number_of_buttons ; i--) {
-          not_required[i].style("display", "none");
-        }
-      }
-    }
-  },
+     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
+     var button_width = 80;
+     var container = this.element.node().getBoundingClientRect();
+     var container_width = this.element.node().getBoundingClientRect().width;
+     var not_required = [];
+     var required = [];
+     var buttons_width = 0;
+     //only if the container can contain more than one button
+     if(container_width > button_size){
+       buttons.each(function(d,i) {
+         var button_data = d;
+         var button = d3.select(this);
+         var expandable = button_expand.indexOf(button_data.id) !== -1;
+         var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
+         button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
+
+         if(button_data.id != "trails" && button_data.id != "lock"){
+           if(!expandable || (_this.getLayoutProfile() !== 'large')){
+             buttons_width += button_width;
+             //sort buttons between required and not required buttons.
+             // Not required buttons will only be shown if there is space available
+             if(button_data.required){
+               required.push(button);
+             } else {
+               not_required.push(button);
+             }
+           } else {
+              button.style("display", "none");
+           }
+         } else if (_this.model.state.entities.select.length > 0){
+           buttons_width += button_width;
+           //sort buttons between required and not required buttons.
+           // Not required buttons will only be shown if there is space available
+           if(button_data.required){
+             required.push(button);
+           } else {
+             not_required.push(button);
+           }
+         }
+       });
+       var width_diff = buttons_width - container_width;
+
+       //check if the width_diff is small. If it is, add to the container
+       // width, to allow more buttons in a way that is still usable
+       if(width_diff > 0 && width_diff <=10){
+         container_width += width_diff;
+       }
+       var number_of_buttons = Math.floor(container_width / button_width) - required.length;
+       if(number_of_buttons < 0){
+         number_of_buttons = 0;
+       }
+       //change the display property of non required buttons, from right to
+       // left
+       not_required.reverse();
+       for (var i = 0 ; i < not_required.length-number_of_buttons ; i++) {
+           not_required[i].style("display", "none");
+       }
+     }
+   },
 
   /*
    * adds buttons configuration to the components and template_data
@@ -443,11 +476,6 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
-    if (this.model.ui.buttons_expand.length !== 0) {
-        d3.select('div.vzb-large')
-            .classed("vzb-button-expand-true", true);
-    }
-
     this._toggleButtons();
   },
 
@@ -651,7 +679,9 @@ var ButtonList = Component.extend({
       exitFullscreen.call(this);
     }
     utils.classed(pholder, class_vzb_fullscreen, fs);
-    utils.classed(container, class_container_fullscreen, fs);
+    if (typeof container != 'undefined') {
+      utils.classed(container, class_container_fullscreen, fs);
+    }
 
     this.model.ui.fullscreen = fs;
     var translator = this.model.language.getTFunction();
@@ -674,7 +704,6 @@ var ButtonList = Component.extend({
       event.eventName = "resize";
       window.dispatchEvent(event);
     })();
-
   }
 
 });
@@ -725,7 +754,11 @@ function launchIntoFullscreen(elem) {
   } else if(elem.mozRequestFullScreen) {
     elem.mozRequestFullScreen();
   } else if(elem.webkitRequestFullscreen) {
-    elem.webkitRequestFullscreen();
+    if (!(navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+    navigator.userAgent && !navigator.userAgent.match('CriOS'))) {
+      elem.webkitRequestFullscreen();
+    }
+
   }
 }
 

@@ -125,7 +125,7 @@ var TreeMenu = Component.extend({
       "change:axis": function(evt) {
         _this.updateView();
       },
-      "change:language": function(evt) {
+      "change:language:strings": function(evt) {
         _this.updateView();
       }
     }
@@ -466,7 +466,7 @@ var TreeMenu = Component.extend({
       if(label.node().scrollWidth > node.offsetWidth) {
         //add data for animation
         label.attr("data-content", label.text());
-
+        
         selection.classed('marquee', true);
       }
     } else {
@@ -700,6 +700,8 @@ var TreeMenu = Component.extend({
         .on('click', function(d) {
           _this._selectIndicator(d, this)
         });
+      li.append('div')
+        .classed(css.list_item_label + '-mask', true);
 
       li.classed(css.list_item, true)
         .classed(css.hasChild, function(d) {
@@ -764,7 +766,7 @@ var TreeMenu = Component.extend({
 
     obj.which = value;
     obj.use = indicatorsDB[value].use;
-    obj.scaleType = indicatorsDB[value].scales[0];
+    obj.scaleType = indicatorsDB[value].scaleType ? indicatorsDB[value].scaleType : indicatorsDB[value].scales[0];
 
     if(mdl.getType() == 'axis') {
       obj.min = null;

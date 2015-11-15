@@ -334,7 +334,7 @@ var MountainChartComponent = Component.extend({
 
         var presentationProfileChanges = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 30 },
             infoElHeight: 16
           },
           medium: {
@@ -342,7 +342,7 @@ var MountainChartComponent = Component.extend({
             infoElHeight: 20
           },
           large: {
-            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            margin: { top: 30, right: 30, left: 30, bottom: 45 },
             infoElHeight: 22
           }
         };
@@ -1068,6 +1068,7 @@ var MountainChartComponent = Component.extend({
                 .text(tooltipText)
 
             var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+
             this.tooltip.select("rect")
                 .attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
@@ -1079,7 +1080,11 @@ var MountainChartComponent = Component.extend({
             this.tooltip.selectAll("text")
                 .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
                 .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-
+            var translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
+            var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
+            this.tooltip
+                .attr("transform", "translate(" + translateX + "," + translateY + ")");
+            
         } else {
 
             this.tooltip.classed("vzb-hidden", true);

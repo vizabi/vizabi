@@ -177,7 +177,7 @@ var BubbleChartComp = Component.extend({
         //   _this.model.marker.color.scale = null;
         //   utils.defer(function() {
         //     _this.trigger('ready');
-        //   });         
+        //   });
         // }
       }
     };
@@ -542,7 +542,6 @@ var BubbleChartComp = Component.extend({
     var xTitle = this.xTitleEl.selectAll("text").data([0]);
     xTitle.enter().append("text");
     xTitle
-      .attr("y", "-0.32em")
       .on("click", function() {
         _this.parent
           .findChildByName("gapminder-treemenu")
@@ -761,74 +760,47 @@ var BubbleChartComp = Component.extend({
 
     var profiles = {
       small: {
-        margin: {
-          top: 30,
-          right: 10,
-          left: 40,
-          bottom: 45
-        },
+        margin: { top: 30, right: 10, left: 40, bottom: 45 },
         padding: 2,
         minRadius: 0.5,
         maxRadius: 40,
         infoElHeight: 16,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 4
       },
       medium: {
-        margin: {
-          top: 40,
-          right: 15,
-          left: 60,
-          bottom: 55
-        },
+        margin: { top: 40, right: 15, left: 60, bottom: 55 },
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
         infoElHeight: 20,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 5
       },
       large: {
-        margin: {
-          top: 50,
-          right: 20,
-          left: 60,
-          bottom: 60
-        },
+        margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
         infoElHeight: 22,
         yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 0
+        xAxisLabelBottomMargin: 5
       }
     };
 
     var presentationProfileChanges = {
       "small": {
-        margin: {
-          top: 40,
-          bottom: 70,
-          left: 70
-        },
+        margin: { top: 40, bottom: 65, left: 70 },
         yAxisLabelBottomMargin: 10,
         xAxisLabelBottomMargin: 10
       },
       "medium": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 80, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       },
       "large": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 100, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       }
@@ -925,7 +897,7 @@ var BubbleChartComp = Component.extend({
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2.2) xTitleText.text(this.strings.title.X);
 
 
 
@@ -945,9 +917,11 @@ var BubbleChartComp = Component.extend({
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
+      .style("font-size", infoElHeight)
       .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
 
     this.xTitleEl
+      .style("font-size", infoElHeight)
       .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     this.sTitleEl
@@ -972,7 +946,7 @@ var BubbleChartComp = Component.extend({
         .attr("height", infoElHeight)
       this.yInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+        + (translate[1] - infoElHeight * 0.8) + ')');
     }
 
     if(this.xInfoEl.select('svg').node()) {
@@ -984,7 +958,7 @@ var BubbleChartComp = Component.extend({
         .attr("height", infoElHeight)
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-        + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+        + (translate[1] - infoElHeight * 0.8) + ')');
    }
 
   },
@@ -1431,11 +1405,13 @@ var BubbleChartComp = Component.extend({
         _this._trails.create(d);
       })
       .on("mouseover", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.highlightEntity(d);
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", false);
       })
       .on("mouseout", function(d) {
+        if(utils.isTouchDevice()) return;
         _this.model.entities.clearHighlighted();
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", true);
@@ -1513,14 +1489,19 @@ var BubbleChartComp = Component.extend({
 
       if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX) {
+      if(this.ui.whenHovering.showProjectionLineX
+        && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
+        && (this.yScale(valueY) + radius) < this.height) {
         this.projectionX
           .style("opacity", 1)
           .attr("y2", this.yScale(valueY) + radius)
           .attr("x1", this.xScale(valueX))
           .attr("x2", this.xScale(valueX));
       }
-      if(this.ui.whenHovering.showProjectionLineY) {
+
+      if(this.ui.whenHovering.showProjectionLineY
+        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height 
+        && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
           .style("opacity", 1)
           .attr("y1", this.yScale(valueY))

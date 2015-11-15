@@ -27,12 +27,6 @@ var Axes = Dialog.extend({
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
       model: ["state.marker.axis_y", "language"]
-    }, {
-      component: simplecheckbox,
-      placeholder: '.vzb-axes-options',
-      model: ["state", "language"],
-      submodel: 'time',
-      checkbox: 'adaptMinMaxZoom'
     }];
 
     this._super(config, parent);
