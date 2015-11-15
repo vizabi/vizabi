@@ -1108,7 +1108,8 @@ var BubbleChartComp = Component.extend({
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
       } else {
-        view.attr("cy", _this.yScale(valueY))
+        view.interrupt()
+          .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
         // fix for #407 & #408

@@ -247,7 +247,6 @@
     height: 18px;
     margin: 6px 0;
     position: relative;
-    text-indent: 23px;
 
     input[type=checkbox] {
       @extend .vzb-hidden;
@@ -261,6 +260,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
+      text-indent: 23px;
 
       &:after {
         @include position(absolute, 4px null null 4px);
