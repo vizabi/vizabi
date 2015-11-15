@@ -8,7 +8,7 @@
       @extend %vzb-chart-svg;
 
       .vzb-bmc-year {
-        @include opacity(.1);
+        @include opacity(.5);
         font-size: $vzb-bmc-year-size;
         fill: $vzb-color-grey;
         text-anchor: middle;
@@ -80,7 +80,7 @@
       }
 
       .vzb-bmc-bubble {
-        stroke: none;
+        stroke: $vzb-color-black;
       }
 
       .stroke {
