@@ -59,6 +59,10 @@ var Find = Dialog.extend({
       if (d3.event.which == 13) {
         document.activeElement.blur();
       }
+    }).on('focus', function() {
+      _this.input_search.attr("placeholder", '');
+    }).on('blur', function() {
+      _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
     });
 
     this.deselect_all.on("click", function() {
