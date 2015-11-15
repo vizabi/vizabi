@@ -2,52 +2,199 @@
   $vzb-bmc-year-size: 15em;
 
   .vzb-bubblemapchart {
-    @extend %vzb-chart-svg;
+    @extend %vzb-chart-wrapper;
 
-    .vzb-bmc-year {
-      @include opacity(.1);
-      font-size: $vzb-bmc-year-size;
-      fill: $vzb-color-grey;
-      text-anchor: middle;
-      -webkit-touch-callout: none;
-      user-select: none;
+    .vzb-bubblemapchart-svg {
+      @extend %vzb-chart-svg;
+
+      .vzb-bmc-year {
+        @include opacity(.1);
+        font-size: $vzb-bmc-year-size;
+        fill: $vzb-color-grey;
+        text-anchor: middle;
+        -webkit-touch-callout: none;
+        user-select: none;
+      }
+
+      .vzb-bmc-bubble-labels text,
+      .vzb-bmc-bubble-labels circle {
+        cursor: pointer;
+        fill: $vzb-color-primary;
+      }
+
+      .vzb-bmc-bubble-labels .vzb-bmc-label-shadow {
+        @extend %vzb-chart-label-shadow;
+      }
+
+      .vzb-bmc-bubble-labels .vzb-highlight .vzb-bmc-label-shadow {
+        stroke: $vzb-color-accent-yellow;
+      }
+
+      .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x-text {
+        @include transition(opacity 200ms linear);
+        cursor: pointer;
+        fill: $vzb-color-primary;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+        font-size: .9em;
+        stroke: none;
+        &.vzb-revert-color {
+          fill: $vzb-color-primary;
+        }
+      }
+
+      .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x-icon {
+        @include transition(opacity 200ms linear);
+        fill: $vzb-color-white;
+        pointer-events: none;
+      }
+
+      .vzb-bmc-bubble-labels .vzb-bmc-label .vzb-bmc-label-x {
+        @include transition(opacity 200ms linear);
+        cursor: pointer;
+        pointer-events: all;
+        fill: $vzb-color-primary;
+        stroke: $vzb-color-white;
+        stroke-width: 2px;
+        &.vzb-revert-color {
+          fill: $vzb-color-white;
+          stroke: $vzb-color-primary;
+        }
+      }
+
+      .vzb-bmc-axis-y-title {
+        @extend %vzb-chart-axis-title;
+        pointer-events: none;
+      }
+
+      .vzb-bmc-axis-info {
+        @extend %vzb-chart-info;
+      }
+
+      .vzb-bmc-tooltip {
+        @extend %vzb-chart-tooltip;
+        text {
+          text-anchor: middle;
+        }
+      }
+
+      .vzb-bmc-bubble {
+        stroke: none;
+      }
+
+      .stroke {
+        fill: none;
+        stroke: #777;
+        stroke-width: .5px;
+        stroke-opacity: .5;
+      }
+
+      .fill {
+        fill: none;
+      }
+
+      .graticule {
+        fill: none;
+        stroke: #777;
+        stroke-width: .5px;
+        stroke-opacity: .5;
+      }
+
+      .land {
+        fill: #ddd;
+      }
+
+      .boundary {
+        fill: none;
+        stroke: #fff;
+        stroke-width: .5px;
+      }
+
+      circle {
+        opacity: .8;
+        &:hover {
+          opacity: 1;
+        }
+        &.vzb-selected {
+          opacity: 1;
+        }
+      }
+    }
+  }
+  &.vzb-large {
+    .vzb-bubblemapchart {
+      .vzb-bmc-axis-y-title {
+        @extend %vzb-chart-axis-title-large;
+      }
+
+      .vzb-shadow,
+      .vzb-bmc-label-shadow {
+        @extend %vzb-chart-label-shadow-large;
+      }
+
+      .vzb-bmc-bubble-labels,
+      .vzb-bmc-tooltip {
+        @extend %vzb-chart-ticks-large;
+      }
+    }
+  }
+  &.vzb-medium {
+    .vzb-bubblemapchart {
+      .vzb-bmc-axis-y-title {
+        @extend %vzb-chart-axis-title-medium;
+      }
+
+      .vzb-shadow,
+      .vzb-bmc-label-shadow {
+        @extend %vzb-chart-label-shadow-medium;
+      }
+
+      .vzb-bmc-bubble-labels,
+      .vzb-bmc-tooltip {
+        @extend %vzb-chart-ticks-medium;
+      }
+    }
+  }
+  &.vzb-small {
+    .vzb-bubblemapchart {
+      .vzb-bmc-axis-y-title {
+        @extend %vzb-chart-axis-title-small;
+      }
+
+      .vzb-shadow,
+      .vzb-bmc-label-shadow {
+        @extend %vzb-chart-label-shadow-small;
+      }
+
+      .vzb-bmc-bubble-labels,
+      .vzb-bmc-tooltip {
+        @extend %vzb-chart-ticks-small;
+      }
+    }
+  }
+  &.vzb-presentation {
+    .vzb-bubblemapchart {
+      .vzb-bmc-axis-y-title {
+        font-size: $vzb-font-size-largest;
+      }
+
+      .vzb-bmc-bubble-labels,
+      .vzb-bmc-tooltip {
+        text {
+          font-size: $vzb-font-size-larger;
+        }
+      }
+
+      .vzb-bmc-labels {
+        font-size: $vzb-font-size-larger;
+      }
     }
 
-
-
-
-    .vzb-bmc-bubble {
-      stroke: none;
+    &.vzb-small {
+      .vzb-bmc-axis-y-title {
+        font-size: $vzb-font-size-medium;
+      }
     }
-
-    .stroke {
-      fill: none;
-      stroke: #777;
-      stroke-width: .5px;
-      stroke-opacity: .5;
-    }
-
-    .fill {
-      fill: none;
-    }
-
-    .graticule {
-      fill: none;
-      stroke: #777;
-      stroke-width: .5px;
-      stroke-opacity: .5;
-    }
-
-    .land {
-      fill: #222;
-    }
-
-    .boundary {
-      fill: none;
-      stroke: #fff;
-      stroke-width: .5px;
-    }
-
-    circle { opacity: .5;}
   }
 }

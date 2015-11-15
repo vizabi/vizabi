@@ -417,15 +417,15 @@ var MountainChartComponent = Component.extend({
             .attr("dx", warnBB.height * 1.5);
 
         if(this.infoEl.select('svg').node()) {
-        var titleBBox = this.yTitleEl.node().getBBox();
-        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+            var titleBBox = this.yTitleEl.node().getBBox();
+            var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
-        this.infoEl.select('svg')
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight)
-        this.infoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+            this.infoEl.select('svg')
+                .attr("width", infoElHeight)
+                .attr("height", infoElHeight)
+            this.infoEl.attr('transform', 'translate('
+                + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+                + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
         }
 
         this.eventAreaEl
