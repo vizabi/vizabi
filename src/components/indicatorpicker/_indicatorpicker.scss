@@ -1,10 +1,20 @@
 //general styles
 .vzb-ip-holder {
-  select {
-    margin: 10px;
-    margin-left: 0;
-    width: auto;
-    max-width: 50%;
+  .vzb-ip-select {
+    display: inline-block;
+    margin: 0 10px 0 18px;
+    padding: 5px;
+    border: 1px solid $vzb-color-primary;
+    border-radius: 4px;
+    cursor: pointer;
+    &:after {
+      content: '▼';
+      margin-left: 5px;
+      font-size: $vzb-font-size-small;
+    }
+    &:hover {
+      background-color: $vzb-color-primary-lightest;
+    }
   }
   
   input {
