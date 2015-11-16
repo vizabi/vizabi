@@ -66,14 +66,6 @@
       }
     }
 
-    .vzb-caxis-container {
-      display: inline;
-
-      .vzb-ip-holder .vzb-ip-indicator {
-        float: none;
-      }
-    }
-
     .vzb-clegend-container {
       padding: 0;
       .vzb-cl-outer .vzb-cl-colorlist {
@@ -87,21 +79,6 @@
 
       &:after {
         clear: both;
-      }
-
-      .vzb-ip-holder {
-        .vzb-ip-indicator {
-          margin: 2px 10px 5px 18px;
-          float: right;
-          width: auto;
-          max-width: 70%;
-        }
-      }
-
-      .vzb-ip-scaletype {
-        float: right;
-        width: 100px;
-        margin: 5px 10px 5px 0;
       }
     }
   }
@@ -118,10 +95,25 @@
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
     }
+    input[type=radio] {
+      cursor: pointer;
+      +span {
+        cursor: pointer;
+      }
+      &[disabled=true] {
+        cursor: default;
+        opacity: .7;
+        +span {
+          cursor: default;
+          color: $vzb-color-primary-light;
+          opacity: .7;
+        }
+      }
+    }
   }
 
   input {
-    font-size: 1em; //inherit from dialog content
+    font-size: 1em; //inherit from dialog content 
   }
 
   .vzb-dialog-buttons {
@@ -133,7 +125,6 @@
     display: table-cell;
     width: 100%;
     vertical-align: middle;
-    padding: 8px;
     &:first-child {
       padding-left: 0;
     }
@@ -233,7 +224,6 @@
     height: 18px;
     margin: 6px 0;
     position: relative;
-    text-indent: 23px;
 
     input[type=checkbox] {
       @extend .vzb-hidden;
@@ -247,6 +237,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
+      text-indent: 23px;
 
       &:after {
         @include position(absolute, 4px null null 4px);
@@ -279,8 +270,13 @@
   .vzb-dialog-sublabel {
     color: $vzb-color-primary;
     font-weight: bold;
+    margin-bottom: 10px;
   }
 
+  form { 
+    margin-bottom: 10px;
+  }
+    
   &.pinned {
     .thumb-tack-class-ico-pin {
       background-color: $vzb-color-primary-strong;
@@ -301,28 +297,4 @@
 .vzb-saxis-container {
   display: inline-block;
   width: 100%;
-}
-
-
-.vzb-caxis-container {
-  .vzb-ip-holder {
-    .vzb-ip-indicator {
-      margin: 2px 10px 5px 18px;
-      width: auto;
-      max-width: 60%;
-    }
-  }
-
-  .vzb-ip-scaletype {
-    display: block !important;
-    float: right;
-    width: 100px;
-    margin: 5px 10px 5px 0;
-    position: relative;
-    right: 23px;
-
-    &:disabled {
-      display: none !important;
-    }
-  }
 }

@@ -760,12 +760,7 @@ var BubbleChartComp = Component.extend({
 
     var profiles = {
       small: {
-        margin: {
-          top: 30,
-          right: 10,
-          left: 40,
-          bottom: 45
-        },
+        margin: { top: 30, right: 10, left: 40, bottom: 45 },
         padding: 2,
         minRadius: 0.5,
         maxRadius: 40,
@@ -774,12 +769,7 @@ var BubbleChartComp = Component.extend({
         xAxisLabelBottomMargin: 4
       },
       medium: {
-        margin: {
-          top: 40,
-          right: 15,
-          left: 60,
-          bottom: 55
-        },
+        margin: { top: 40, right: 15, left: 60, bottom: 55 },
         padding: 2,
         minRadius: 1,
         maxRadius: 55,
@@ -788,12 +778,7 @@ var BubbleChartComp = Component.extend({
         xAxisLabelBottomMargin: 5
       },
       large: {
-        margin: {
-          top: 50,
-          right: 20,
-          left: 60,
-          bottom: 60
-        },
+        margin: { top: 50, right: 20, left: 60, bottom: 60 },
         padding: 2,
         minRadius: 1,
         maxRadius: 70,
@@ -805,29 +790,17 @@ var BubbleChartComp = Component.extend({
 
     var presentationProfileChanges = {
       "small": {
-        margin: {
-          top: 40,
-          bottom: 70,
-          left: 70
-        },
+        margin: { top: 40, bottom: 65, left: 70 },
         yAxisLabelBottomMargin: 10,
         xAxisLabelBottomMargin: 10
       },
       "medium": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 80, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       },
       "large": {
-        margin: {
-          top: 80,
-          bottom: 100,
-          left: 100
-        },
+        margin: { top: 80, bottom: 100, left: 100 },
         yAxisLabelBottomMargin: 20,
         xAxisLabelBottomMargin: 20
       }
@@ -924,7 +897,7 @@ var BubbleChartComp = Component.extend({
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2.2) xTitleText.text(this.strings.title.X);
 
 
 
@@ -1135,7 +1108,8 @@ var BubbleChartComp = Component.extend({
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
       } else {
-        view.attr("cy", _this.yScale(valueY))
+        view.interrupt()
+          .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
         // fix for #407 & #408
@@ -1516,14 +1490,19 @@ var BubbleChartComp = Component.extend({
 
       if(!valueY || !valueX || !valueS) return;
 
-      if(this.ui.whenHovering.showProjectionLineX) {
+      if(this.ui.whenHovering.showProjectionLineX
+        && this.xScale(valueX) > 0 && this.xScale(valueX) < this.width
+        && (this.yScale(valueY) + radius) < this.height) {
         this.projectionX
           .style("opacity", 1)
           .attr("y2", this.yScale(valueY) + radius)
           .attr("x1", this.xScale(valueX))
           .attr("x2", this.xScale(valueX));
       }
-      if(this.ui.whenHovering.showProjectionLineY) {
+
+      if(this.ui.whenHovering.showProjectionLineY
+        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height 
+        && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
           .style("opacity", 1)
           .attr("y1", this.yScale(valueY))

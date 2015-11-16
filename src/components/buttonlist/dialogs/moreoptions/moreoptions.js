@@ -28,7 +28,8 @@ export default Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: '.vzb-xaxis-container',
-      model: ["state.marker.axis_x", "language"],
+      model: ["state.marker", "language"],
+      markerID: "axis_x",
       ui: {
         selectMinMax: false,
         selectFakeMinMax: true
@@ -36,19 +37,23 @@ export default Dialog.extend({
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
-      model: ["state.marker.axis_y", "language"],
+      model: ["state.marker", "language"],
+      markerID: "axis_y",
       ui: {
         selectMinMax: false,
         selectFakeMinMax: true
       }
     }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-axes-options',
+      model: ["state", "language"],
+      submodel: 'time',
+      checkbox: 'adaptMinMaxZoom'
+    }, {
       component: indicatorpicker,
       placeholder: '.vzb-saxis-container',
-      model: ["state.marker.size", "language"],
-      ui: {
-        selectIndicator: true,
-        selectScaletype: false
-      }
+      model: ["state.marker", "language"],
+      markerID: "size"
     }, {
       component: bubblesize,
       placeholder: '.vzb-dialog-bubblesize',
@@ -59,7 +64,8 @@ export default Dialog.extend({
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-caxis-container',
-      model: ["state.marker.color", "language"]
+      model: ["state.marker", "language"],
+      markerID: "color"
     }, {
       component: colorlegend,
       placeholder: '.vzb-clegend-container',

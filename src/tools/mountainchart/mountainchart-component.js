@@ -334,7 +334,7 @@ var MountainChartComponent = Component.extend({
 
         var presentationProfileChanges = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 30 },
             infoElHeight: 16
           },
           medium: {
@@ -342,7 +342,7 @@ var MountainChartComponent = Component.extend({
             infoElHeight: 20
           },
           large: {
-            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            margin: { top: 30, right: 30, left: 30, bottom: 45 },
             infoElHeight: 22
           }
         };
@@ -417,15 +417,15 @@ var MountainChartComponent = Component.extend({
             .attr("dx", warnBB.height * 1.5);
 
         if(this.infoEl.select('svg').node()) {
-        var titleBBox = this.yTitleEl.node().getBBox();
-        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+            var titleBBox = this.yTitleEl.node().getBBox();
+            var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
-        this.infoEl.select('svg')
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight)
-        this.infoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+            this.infoEl.select('svg')
+                .attr("width", infoElHeight)
+                .attr("height", infoElHeight)
+            this.infoEl.attr('transform', 'translate('
+                + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+                + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
         }
 
         this.eventAreaEl

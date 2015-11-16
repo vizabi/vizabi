@@ -22,17 +22,13 @@ var Axes = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: '.vzb-xaxis-container',
-      model: ["state.marker.axis_x", "language"]
+      model: ["state.marker", "language"],
+      markerID: "axis_x"
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-container',
-      model: ["state.marker.axis_y", "language"]
-    }, {
-      component: simplecheckbox,
-      placeholder: '.vzb-axes-options',
-      model: ["state", "language"],
-      submodel: 'time',
-      checkbox: 'adaptMinMaxZoom'
+      model: ["state.marker", "language"],
+      markerID: "axis_y"
     }];
 
     this._super(config, parent);

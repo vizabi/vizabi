@@ -45,13 +45,13 @@ $vzb-dialog-content-height: 250px;
     text-align: center;
     display: inline-block;
     padding: 5px;
-    cursor: pointer;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
-
+        
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
+      cursor: pointer;
       background-color: $vzb-button-bg;
       border: 1px solid $vzb-button-color-border;
       color: $vzb-button-color;

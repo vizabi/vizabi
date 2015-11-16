@@ -80,6 +80,7 @@ var BubbleSize = Component.extend({
       }
     };
 
+    this._setValue = utils.throttle(this._setValue, 50);
     //contructor is the same as any component
     this._super(config, context);
   },
@@ -266,16 +267,16 @@ var BubbleSize = Component.extend({
    * @param {number} value
    */
   _setValue: function (value) {
-    var frameRate = 50;
+    var _this = this;
 
     //implement throttle
     //TODO: use utils.throttle
-    var now = new Date();
-    if (this._updTime != null && now - this._updTime < frameRate) return;
-    this._updTime = now;
-
-    this.model.size.min = value[0];
-    this.model.size.max = value[1];
+    //var frameRate = 50;
+    //var now = new Date();
+    //if (this._updTime != null && now - this._updTime < frameRate) return;
+    //this._updTime = now;
+    _this.model.size.min = value[0];
+    _this.model.size.max = value[1];
   }
 
 });
