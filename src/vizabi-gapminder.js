@@ -172,8 +172,8 @@ BubbleMapChart.define('datawarning_content', {
 BubbleMapChart.define('default_options', {
   state: {
     time: {
-      start: "1952",
-      end: "2012",
+      start: "1800",
+      end: "2015",
       value: "2000",
       step: 1,
       speed: 300,
