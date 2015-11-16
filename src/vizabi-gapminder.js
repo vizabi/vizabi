@@ -19,7 +19,10 @@ import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
 //waffle reader
-import { waffle as WaffleReader} from 'readers/_index';
+import {
+  waffle as WaffleReader
+}
+from 'readers/_index';
 
 var language = {
   id: "en",
@@ -158,7 +161,7 @@ BarRankChart.define('default_options', {
   ui: {
     buttons: [],
     buttons_expand: [],
-    presentation: false 
+    presentation: false
   }
 });
 
@@ -364,12 +367,12 @@ LineChart.define('default_options', {
         use: "property",
         which: "geo.region",
         palette: {
-            "asi": "#c34357",
-            "eur": "#c6b40b",
-            "ame": "#67b111",
-            "afr": "#0eb8c7",
-            "_default": "#cb950f"
-        }          
+          "asi": "#c34357",
+          "eur": "#c6b40b",
+          "ame": "#67b111",
+          "afr": "#0eb8c7",
+          "_default": "#cb950f"
+        }
       }
     }
   },
@@ -498,9 +501,9 @@ BubbleChart.define('default_options', {
         dragging: true
       }
     },
-   buttons: [],
-   buttons_expand: [],
-   presentation: false
+    buttons: [],
+    buttons_expand: [],
+    presentation: false
   }
 });
 
@@ -602,9 +605,42 @@ Tool.define("preload", function(promise) {
           return one.allowCharts.indexOf(_this.name) != -1 || one.allowCharts.indexOf("*") != -1;
         });
 
+      // TODO: REMOVE THIS HACK
+      // We are currently saving metadata info to default state manually in order
+      // to produce small URLs considering some of the info in metadata to be default
+      // we need a consistent way to add metadata to Vizabi
+      addMinMax("axis_x");
+      addMinMax("axis_y");
+      addPalettes("color");
+      
       promise.resolve();
+
     });
   });
+
+  // TODO: REMOVE THIS HACK (read above)
+  function addPalettes(hook) {
+    if(!_this.default_options.state || !_this.default_options.state.marker[hook] || !globals.metadata.color) {
+      return;
+    }
+    var color = _this.default_options.state.marker[hook];
+    var palette = globals.metadata.color.palettes['geo.region'];
+    color.palette = utils.extend({}, color.palette, palette);
+  }
+
+  function addMinMax(hook) {
+    if(!_this.default_options.state || !_this.default_options.state.marker[hook]) {
+      return;
+    }
+    var axis = _this.default_options.state.marker[hook];
+    if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
+      var domain = globals.metadata.indicatorsDB[axis.which].domain;
+      axis.min = axis.min || domain[0];
+      axis.max = axis.max || domain[1];
+      axis.fakeMin = axis.fakeMin || axis.min || domain[0];
+      axis.fakeMax = axis.fakeMax || axis.max || domain[1];
+    }
+  }
 
 });
 
