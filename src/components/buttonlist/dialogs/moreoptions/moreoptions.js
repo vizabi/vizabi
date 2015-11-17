@@ -7,7 +7,8 @@ import {
   bubblesize,
   colorlegend,
   indicatorpicker,
-  simplecheckbox
+  simplecheckbox,
+  minmaxinputs
 }
 from 'components/_index';
 
@@ -27,7 +28,12 @@ export default Dialog.extend({
 
     this.components = [{
       component: indicatorpicker,
-      placeholder: '.vzb-xaxis-container',
+      placeholder: '.vzb-xaxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "axis_x"
+    },{
+      component: minmaxinputs,
+      placeholder: '.vzb-xaxis-minmax',
       model: ["state.marker", "language"],
       markerID: "axis_x",
       ui: {
@@ -36,7 +42,12 @@ export default Dialog.extend({
       }
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-yaxis-container',
+      placeholder: '.vzb-yaxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "axis_y"
+    }, {
+      component: minmaxinputs,
+      placeholder: '.vzb-yaxis-minmax',
       model: ["state.marker", "language"],
       markerID: "axis_y",
       ui: {
@@ -51,7 +62,7 @@ export default Dialog.extend({
       checkbox: 'adaptMinMaxZoom'
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-saxis-container',
+      placeholder: '.vzb-saxis-selector',
       model: ["state.marker", "language"],
       markerID: "size"
     }, {
@@ -63,7 +74,7 @@ export default Dialog.extend({
       }
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-caxis-container',
+      placeholder: '.vzb-caxis-selector',
       model: ["state.marker", "language"],
       markerID: "color"
     }, {

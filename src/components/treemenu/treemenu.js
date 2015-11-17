@@ -654,6 +654,9 @@ var TreeMenu = Component.extend({
     var indicatorsDB = globals.metadata.indicatorsDB;
 
     var allowedIDs = globals.metadata.indicatorsArray.filter(function(f) {
+      //check if indicator is denied to show with allow->names->!indicator
+      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names 
+        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false; 
       //keep indicator if nothing is specified in tool properties
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       //keep indicator if any scale is allowed in tool properties

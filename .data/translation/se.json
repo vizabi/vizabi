@@ -52,7 +52,7 @@
     "indicator/gdp_per_cap": "BNP per invånare",
     "indicator/pop": "Befolkning",
     "indicator/geo.region": "Regionen",
-    "indicator/geo": "Geokod",
+    "indicator/geo": "Enskild",
     "indicator/time": "Tid",
     "indicator/size": "Stor eller liten",
     "indicator/geo.category": "Geo kategori",

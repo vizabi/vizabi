@@ -30,7 +30,7 @@ init: function(config, parent) {
   },
   {
     component: indicatorpicker,
-    placeholder: '.vzb-saxis-container',
+    placeholder: '.vzb-saxis-selector',
     model: ["state.marker", "language"],
     markerID: "size"
   }

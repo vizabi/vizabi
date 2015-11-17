@@ -76,7 +76,10 @@ export default Class.extend({
           pointer.time = segment.t;
 
           _this._axisProjections(pointer);
-          _this._setTooltip(_this.timeFormatter(segment.t));
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(_this.timeFormatter(segment.t), x, y, s);
           _this.entityLabels
             .filter(function(f) {
               return f[KEY] == _key

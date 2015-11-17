@@ -21,12 +21,12 @@ var Axes = Dialog.extend({
 
     this.components = [{
       component: indicatorpicker,
-      placeholder: '.vzb-xaxis-container',
+      placeholder: '.vzb-xaxis-selector',
       model: ["state.marker", "language"],
       markerID: "axis_x"
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-yaxis-container',
+      placeholder: '.vzb-yaxis-selector',
       model: ["state.marker", "language"],
       markerID: "axis_y"
     }];

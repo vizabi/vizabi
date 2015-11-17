@@ -7,7 +7,7 @@
     <div class="vzb-dialog-content">
         <div class="vzb-yaxis-container">
             <p class="vzb-dialog-sublabel"><%=t ( "hints/mount/maxYvalue") %></p>
-            <form>
+            <form class="vzb-dialog-paragraph">
                 <label><input type="radio" name="ymax" value="immediate"><%=t ( "mount/maxYmode/immediate") %></label>
                 <label><input type="radio" name="ymax" value="latest"><%=t ( "mount/maxYmode/latest") %></label>
             </form>
@@ -16,7 +16,7 @@
             <p class="vzb-dialog-sublabel">
                 <%=t ( "hints/mount/logXstops") %>
             </p>
-            <form>
+            <form class="vzb-dialog-paragraph">
                 <input type="checkbox" name="logstops" value="1">1
                 <input type="checkbox" name="logstops" value="2">2
                 <input type="checkbox" name="logstops" value="5">5
@@ -25,7 +25,7 @@
         <p class="vzb-dialog-sublabel">
             <%=t ( "hints/mount/xlimits") %>
         </p>
-        <span class="vzb-xlimits-container"></span>
+        <div class="vzb-xlimits-container vzb-dialog-paragraph"></div>
         <div class="vzb-probe-container">
             <p class="vzb-dialog-sublabel">
                 <%=t ( "hints/mount/probe") %>
