@@ -50,7 +50,7 @@ var Dialog = Component.extend({
     this.dragContainerEl = d3.select('.vzb-tool-stage');
     var profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130); 
+    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
         _this.trigger('dragstart');
@@ -140,7 +140,7 @@ var Dialog = Component.extend({
         this.placeholderEl.style('left', this.leftPos);
         this.placeholderEl.style('bottom', 'auto');
       } else {
-        //this.topPos = '';
+        this.topPos = '';
         this.placeholderEl.style('bottom', '');
       }
       this.placeholderEl.style('top', this.topPos);
@@ -203,9 +203,9 @@ function dialogDrag(element, container, xOffset) {
     },
 
     dragStart: function(evt) {
-      if(!utils.isTouchDevice()) { 
+      if(!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
-        posY = evt.sourceEvent.clientY;      
+        posY = evt.sourceEvent.clientY;
       } else {
         var touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
@@ -222,9 +222,9 @@ function dialogDrag(element, container, xOffset) {
     },
 
     drag: function(evt) {
-      if(!utils.isTouchDevice()) { 
+      if(!utils.isTouchDevice()) {
         posX = evt.sourceEvent.clientX;
-        posY = evt.sourceEvent.clientY;      
+        posY = evt.sourceEvent.clientY;
       } else {
         var touchCoord = d3.touches(container.node());
         posX = touchCoord[0][0];
