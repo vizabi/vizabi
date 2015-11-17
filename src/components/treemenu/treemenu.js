@@ -51,7 +51,7 @@ var OPTIONS = {
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
-  MIN_COL_WIDTH: 50 //minimal column size
+  MIN_COL_WIDTH: 100 //minimal column size
 };
 
 
@@ -204,10 +204,10 @@ var TreeMenu = Component.extend({
 
     this.profiles = {
       "small": {
-        col_width: 150
+        col_width: 200
       },
       "medium": {
-        col_width: 170
+        col_width: 200
       },
       "large": {
         col_width: 200
@@ -466,7 +466,7 @@ var TreeMenu = Component.extend({
       if(label.node().scrollWidth > node.offsetWidth) {
         //add data for animation
         label.attr("data-content", label.text());
-        
+
         selection.classed('marquee', true);
       }
     } else {
@@ -477,7 +477,6 @@ var TreeMenu = Component.extend({
 
   //resize function
   _resizeDropdown: function() {
-
     var _this = this;
 
     if(!OPTIONS.IS_MOBILE) {
@@ -535,13 +534,11 @@ var TreeMenu = Component.extend({
 
   //open submenu
   _toggleSub: function(view) {
-
     var _this = this;
 
     var curSub = view.node().parentNode;
 
     var possiblyActivate = function(event, it) {
-
 
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
 
@@ -583,7 +580,11 @@ var TreeMenu = Component.extend({
         d3.select(this)
           .selectAll('.' + css.list)
           .each(function() {
-            d3.select(this).classed('active', false);
+            var elem = d3.select(this);
+            elem.transition()
+              .duration(500)
+              .style('width', '');
+            elem.classed('active', false);
           });
       });
 
@@ -599,11 +600,9 @@ var TreeMenu = Component.extend({
     var closeCurSub = function() {
       if(!OPTIONS.IS_MOBILE) {
         var selectSub = d3.select(curSub);
-
-        selectSub
-          .classed('active', false)
-          .attr('style', '');
-      };
+        selectSub.attr('style', '')
+        .classed('active', '');
+      }
 
     };
 

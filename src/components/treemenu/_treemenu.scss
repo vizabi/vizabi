@@ -78,11 +78,13 @@
       background-color: #fff;
       border-top: 1px solid #f7f7f7;
       display: none;
+      width: 0;
 
       &.active {
-        display: block;
         top: -1px;
         bottom: 0;
+        display: block;
+        left: 100%;
       }
     }
     .vzb-treemenu-list.active,
@@ -106,7 +108,7 @@
           &:after {
             content: attr(data-content);
             left: 153%;
-            position: absolute;            
+            position: absolute;
           }
         }
       }
@@ -126,7 +128,7 @@
       font-size: $vzb-font-size-small;
       font-family: $vzb-font-family-alt;
     }
-    
+
     .vzb-treemenu-list-top,
     .vzb-treemenu-list {
       > .vzb-treemenu-list-item-children {
@@ -143,7 +145,7 @@
           z-index: 1;
         }
         &.marquee:hover > .vzb-treemenu-list-item-label-mask {
-          background-color: $vzb-color-grey-light;          
+          background-color: $vzb-color-grey-light;
         }
         &.marquee > .vzb-treemenu-list-item-label-mask {
           display: block;
@@ -156,7 +158,7 @@
         }
       }
     }
-    
+
     .vzb-treemenu-list-top {
       > .vzb-treemenu-list-item-children:before {
         right: 30px;
