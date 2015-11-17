@@ -34,10 +34,10 @@ var Axes = Dialog.extend({
     this.components = [{
       component: indicatorpicker,
       placeholder: '.vzb-xlimits-container',
-      model: ["state.marker.axis_x", "language"],
+      model: ["state.marker", "language"],
+      markerID: "axis_x",
       ui: {
         selectIndicator: false,
-        selectScaletype: false,
         selectMinMax: false,
         selectFakeMinMax: true 
       }

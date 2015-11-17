@@ -66,14 +66,6 @@
       }
     }
 
-    .vzb-caxis-container {
-      display: inline;
-
-      .vzb-ip-holder .vzb-ip-indicator {
-        float: none;
-      }
-    }
-
     .vzb-clegend-container {
       padding: 0;
       .vzb-cl-outer .vzb-cl-colorlist {
@@ -87,21 +79,6 @@
 
       &:after {
         clear: both;
-      }
-
-      .vzb-ip-holder {
-        .vzb-ip-indicator {
-          margin: 2px 10px 5px 18px;
-          float: right;
-          width: auto;
-          max-width: 70%;
-        }
-      }
-
-      .vzb-ip-scaletype {
-        float: right;
-        width: 100px;
-        margin: 5px 10px 5px 0;
       }
     }
   }
@@ -320,28 +297,4 @@
 .vzb-saxis-container {
   display: inline-block;
   width: 100%;
-}
-
-
-.vzb-caxis-container {
-  .vzb-ip-holder {
-    .vzb-ip-indicator {
-      margin: 2px 10px 5px 18px;
-      width: auto;
-      max-width: 60%;
-    }
-  }
-
-  .vzb-ip-scaletype {
-    display: block !important;
-    float: right;
-    width: 100px;
-    margin: 5px 10px 5px 0;
-    position: relative;
-    right: 23px;
-
-    &:disabled {
-      display: none !important;
-    }
-  }
 }
