@@ -106,7 +106,7 @@ var Dialog = Component.extend({
             this.placeholderEl.style('left', this.leftPos);
             this.placeholderEl.style('bottom', 'auto');
           } else {
-            this.topPos = '';
+            //this.topPos = '';
             this.placeholderEl.style('bottom', '');
           }
         }
