@@ -42,7 +42,7 @@ $vzb-dialog-content-height: 250px;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
-        
+
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
       cursor: pointer;
@@ -135,7 +135,7 @@ $vzb-dialog-content-height: 250px;
     &[data-btn="presentation"] {
       display: none;
     }
-  }  
+  }
   &.vzb-portrait {
     .vzb-buttonlist {
       .vzb-buttonlist-btn {
@@ -145,7 +145,7 @@ $vzb-dialog-content-height: 250px;
       .vzb-buttonlist-container-buttons {
         margin-bottom: -20px;
         overflow-y: hidden;
-        overflow-x: scroll;
+        overflow-x: hidden;
         white-space: nowrap;
       }
       .vzb-buttonlist-dialog {
@@ -176,6 +176,13 @@ $vzb-dialog-content-height: 250px;
       &.vzb-active {
         @include position(absolute, auto 40px 0 50%);
       }
+    }
+
+    .vzb-buttonlist-container-buttons {
+      margin-bottom: -20px;
+      overflow-y: hidden;
+      overflow-x: hidden;
+      white-space: nowrap;
     }
   }
 }
@@ -211,7 +218,7 @@ $vzb-dialog-content-height: 250px;
     }
     .vzb-tool-buttonlist {
       width: $vzb-button-expand-width;
-      
+
       .vzb-buttonlist {
         display: flex;
         flex-direction: column;
