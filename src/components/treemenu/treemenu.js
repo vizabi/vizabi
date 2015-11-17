@@ -187,10 +187,11 @@ var TreeMenu = Component.extend({
 
 
     //init functions
-    d3.select('body').on('mousemove', _this._mousemoveDocument)
-
+    d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
+/*
       _this._closeAllSub(this)
+*/
     });
 
     _this._enableSearch();
@@ -558,16 +559,18 @@ var TreeMenu = Component.extend({
         } else {
           open(it);
           closeAll(curSub);
-        };
-      };
+        }
+      }
 
 
     };
 
     var open = function(node) {
-      d3.select(node)
-        .select('.' + css.list)
-        .classed('active', true);
+      var elem = d3.select(node).select('.' + css.list);
+      elem.transition()
+        .duration(500)
+        .style('width', _this.activeProfile.col_width + "px");
+      elem.classed('active', true);
 
       _this._marqueeToggle(node, true);
     };
@@ -581,9 +584,7 @@ var TreeMenu = Component.extend({
           .selectAll('.' + css.list)
           .each(function() {
             var elem = d3.select(this);
-            elem.transition()
-              .duration(500)
-              .style('width', '');
+            elem.style('width', '');
             elem.classed('active', false);
           });
       });
@@ -599,13 +600,26 @@ var TreeMenu = Component.extend({
 
     var closeCurSub = function() {
       if(!OPTIONS.IS_MOBILE) {
+        var delay = _this._activationDelay(curSub);
+        if(delay) {
+          OPTIONS.TIMEOUT = setTimeout(function() {
+            closeCurSub();
+          }, delay);
+        } else {
+          closeAll(curSub);
+        }
+
+/*
         var selectSub = d3.select(curSub);
-        selectSub.attr('style', '')
-        .classed('active', '');
+          selectSub.attr('style', '')
+            .classed('active', '');
+
+*/
+        //event.stopPropagation();
+
       }
 
     };
-
 
 
     d3.select(curSub)
@@ -655,8 +669,8 @@ var TreeMenu = Component.extend({
 
     var allowedIDs = globals.metadata.indicatorsArray.filter(function(f) {
       //check if indicator is denied to show with allow->names->!indicator
-      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names 
-        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false; 
+      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
+        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
       //keep indicator if nothing is specified in tool properties
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       //keep indicator if any scale is allowed in tool properties
