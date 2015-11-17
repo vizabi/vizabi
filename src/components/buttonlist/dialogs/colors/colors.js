@@ -20,7 +20,7 @@ var Colors = Dialog.extend({
 
     this.components = [{
       component: indicatorpicker,
-      placeholder: '.vzb-caxis-container',
+      placeholder: '.vzb-caxis-selector',
       model: ["state.marker", "language"],
       markerID: "color"
     }, {

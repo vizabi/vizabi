@@ -12,12 +12,6 @@ $vzb-dialog-content-height: 250px;
 
 
 .vzb-buttonlist {
-  @import '../bubblesize/bubblesize';
-  @import '../indicatorpicker/indicatorpicker';
-  @import '../simpleslider/simpleslider';
-  @import '../colorlegend/colorlegend';
-  @import '../simplecheckbox/simplecheckbox';
-  @import '../draggablelist/draggablelist';
   @include position(absolute, 0);
   overflow: visible;
   text-align: center;
@@ -111,6 +105,14 @@ $vzb-dialog-content-height: 250px;
   }
 
   @import 'dialogs/dialog';
+    
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../minmaxinputs/minmaxinputs';
+  @import '../simpleslider/simpleslider';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
 
 }
 
@@ -289,17 +291,6 @@ $vzb-dialog-content-height: 250px;
               height: auto;
               margin-top: 10px;
             }
-
-            .vzb-dialog-title {
-              flex: none;
-              align-self: flex-start;
-            }
-
-            .vzb-find-filter {
-              flex: none;
-              margin-top: -55px;
-              align-self: flex-end;
-            }
           }
 
           &[data-btn="show"] {
@@ -329,7 +320,6 @@ $vzb-dialog-content-height: 250px;
 
           &[data-btn="stack"] {
             flex: none;
-            @import 'dialogs/stack/stack';
 
             .vzb-dl-holder .vzb-draggable {
               height: initial;
