@@ -465,6 +465,9 @@ BubbleChart.define('default_options', {
         use: "property",
         which: "geo.region",
         scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        },
         palette: {
           "asi": "#FF5872",
           "eur": "#FFE700",
