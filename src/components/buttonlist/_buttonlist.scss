@@ -142,12 +142,6 @@ $vzb-dialog-content-height: 250px;
         margin-bottom: 20px;
         width: $vzb-button-width;
       }
-      .vzb-buttonlist-container-buttons {
-        margin-bottom: -20px;
-        overflow-y: hidden;
-        overflow-x: hidden;
-        white-space: nowrap;
-      }
       .vzb-buttonlist-dialog {
         .vzb-dialog-content.vzb-dialog-content-fixed {
           max-height: $vzb-dialog-content-height - 50px;
@@ -176,13 +170,6 @@ $vzb-dialog-content-height: 250px;
       &.vzb-active {
         @include position(absolute, auto 40px 0 50%);
       }
-    }
-
-    .vzb-buttonlist-container-buttons {
-      margin-bottom: -20px;
-      overflow-y: hidden;
-      overflow-x: hidden;
-      white-space: nowrap;
     }
   }
 }
