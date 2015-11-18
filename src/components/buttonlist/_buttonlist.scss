@@ -167,9 +167,6 @@ $vzb-dialog-content-height: 250px;
           top: 20px;
         }
       }
-      &.vzb-active {
-        @include position(absolute, auto 40px 0 50%);
-      }
     }
   }
 }
