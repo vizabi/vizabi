@@ -123,7 +123,7 @@ var MCSelectList = Class.extend({
         var name = d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
         var number = _this.values.axis_y[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
+        var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
 
         var text = view.selectAll(".vzb-mc-label-text")
           .attr("x", fontHeight)
