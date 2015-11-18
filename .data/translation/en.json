@@ -53,7 +53,7 @@
     "indicator/gdp_per_cap": "GDP per capita",
     "indicator/pop": "Population",
     "indicator/geo.region": "Region",
-    "indicator/geo": "Geo code",
+    "indicator/geo": "Individual",
     "indicator/time": "Time",
     "indicator/geo.category": "Geo category",
     "indicator/geo.name": "Geo name",

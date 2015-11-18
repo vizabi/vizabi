@@ -123,8 +123,7 @@ var ColorLegend = Component.extend({
           })
           .show(true);
       })
-
-
+    
     if(this.model.color.use == "indicator") {
       var gradientHeight;
       var colorOptions = this.listColorsEl.selectAll('.vzb-cl-option');
@@ -196,7 +195,11 @@ var ColorLegend = Component.extend({
       colors.classed("vzb-hidden", true);
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
-      colors.classed("vzb-hidden", false);
+      if(this.model.color.use === "property" && whichPalette === "_default") {
+        colors.classed("vzb-hidden", true);
+      } else {
+        colors.classed("vzb-hidden", false);
+      }
     }
 
     colors.each(function(d, index) {
