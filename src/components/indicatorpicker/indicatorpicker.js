@@ -33,12 +33,17 @@ var IndPicker = Component.extend({
         this.markerID = config.markerID;
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
-        this.model_binds = {};
-        this.model_binds["change:language:strings"] = function(evt) {
-            _this.updateView();
-        };
-        this.model_binds["change:marker:" + this.markerID] = function(evt) {
-            _this.updateView();
+        this.model_binds = {
+            "change:language:strings": function(evt) {
+                _this.updateView();
+            },
+            "change:marker": function(evt) {
+                _this.updateView();
+            },
+            "ready": function(evt) {
+                if(!_this._readyOnce) return;
+                _this.updateView();
+            }
         };
 
 
