@@ -181,7 +181,7 @@ var TreeMenu = Component.extend({
     this.wrapper.append('div')
       .classed(css.title, true)
       .append('span');
-      
+
     this.wrapper.append('div')
       .classed(css.scaletypes, true)
       .append('span');
@@ -546,8 +546,9 @@ var TreeMenu = Component.extend({
   //open submenu
   _toggleSub: function(view) {
     var _this = this;
-    console.log(view);
-    var curSub = view.node().parentNode;
+    var curSub = view.select('.' + css.list);
+    console.log(view.select('ul'));
+    console.log(curSub);
     var possiblyActivate = function(event, it) {
       var element = d3.select(it).select('.' + css.list);
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
@@ -752,33 +753,33 @@ var TreeMenu = Component.extend({
         })
         .each(function(d) {
           var view = d3.select(this);
-          _this._toggleSub(view);
           createSubmeny(view, d);
+          _this._toggleSub(view);
         });
     };
 
     createSubmeny(this.wrapper, dataFiltered, true);
-      
-      
+
+
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
-    
+
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
       return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
     });
-      
+
     var scaleTypes = this.element.select('.' + css.scaletypes).selectAll("span")
         .data(scaleTypesData, function(d){return d});
-    
+
     scaleTypes.exit().remove();
-      
+
     scaleTypes.enter().append("span")
         .on("click", function(d){
             _this._setModel("scaleType", d, markerID)
         });
-      
+
     scaleTypes
         .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
         .classed(css.scaletypesActive, function(d){
@@ -840,14 +841,14 @@ var TreeMenu = Component.extend({
         obj.scaleType = indicatorsDB[value].scales[0];
       }
     }
-      
+
     if(mdl.getType() == 'axis') {
       obj.min = null;
       obj.max = null;
       obj.fakeMin = null;
       obj.fakeMax = null;
     }
-      
+
     mdl.set(obj);
 
   }
