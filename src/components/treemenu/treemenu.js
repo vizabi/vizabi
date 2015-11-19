@@ -459,19 +459,21 @@ var TreeMenu = Component.extend({
 
 
   //marquee animation
-  _marqueeToggle: function(node, toggle) {
-    var selection = d3.select(node),
-      label = selection.select('.' + css.list_item_label);
-
+  _marqueeToggle: function(element, toggle) {
+    if (!element.node()) return;
     if(toggle) {
-      if(label.node().scrollWidth > node.offsetWidth) {
-        //add data for animation
-        label.attr("data-content", label.text());
+      element.selectAll('.' + css.list_item).each(function() {
+        var li = d3.select(this);
+        var label = li.select('.' + css.list_item_label);
+        if(label.node().scrollWidth > li.node().offsetWidth) {
+          //add data for animation
+          label.attr("data-content", label.text());
 
-        selection.classed('marquee', true);
-      }
+          li.classed('marquee', true);
+        }
+      });
     } else {
-      selection.classed('marquee', false);
+      element.selectAll('.marquee').classed('marquee', false);
     }
   },
 
@@ -536,19 +538,16 @@ var TreeMenu = Component.extend({
   //open submenu
   _toggleSub: function(view) {
     var _this = this;
-
+    console.log(view);
     var curSub = view.node().parentNode;
-
     var possiblyActivate = function(event, it) {
-
+      var element = d3.select(it).select('.' + css.list);
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
 
         closeAll(curSub);
         if(!view.classed('active')) {
-          open(it);
-        };
-        return;
-
+          open(element);
+        }
       } else if(!OPTIONS.IS_MOBILE && event.type == 'mouseenter') {
         var delay = _this._activationDelay(curSub);
 
@@ -557,22 +556,35 @@ var TreeMenu = Component.extend({
             possiblyActivate(event, it);
           }, delay);
         } else {
-          open(it);
-          closeAll(curSub);
+          open(element);
         }
       }
-
-
     };
 
-    var open = function(node) {
+    var toggle = function() {
+      if(!view.classed('active')) {
+        close();
+      } else {
+        open();
+      }
+    };
+
+    var open = function() {
+      view.transition()
+        .duration(1000)
+        .style('width', _this.activeProfile.col_width + "px");
+      view.classed('active', true);
+      _this._marqueeToggle(true);
+    };
+
+    var close = function(node) {
       var elem = d3.select(node).select('.' + css.list);
       elem.transition()
-        .duration(500)
-        .style('width', _this.activeProfile.col_width + "px");
-      elem.classed('active', true);
+        .duration(1000)
+        .style('width', '');
+      elem.classed('active', false);
 
-      _this._marqueeToggle(node, true);
+      _this._marqueeToggle(node, false);
     };
 
     var closeAll = function(node) {
@@ -598,7 +610,7 @@ var TreeMenu = Component.extend({
 
     };
 
-    var closeCurSub = function() {
+    var closeCurSub = function(node) {
       if(!OPTIONS.IS_MOBILE) {
         var delay = _this._activationDelay(curSub);
         if(delay) {
@@ -622,18 +634,22 @@ var TreeMenu = Component.extend({
     };
 
 
+/*
     d3.select(curSub)
       .select('.' + css.list_item)
-      .on('mouseleave', closeCurSub, false);
+      .on('mouseleave', closeCurSub, false)
+*/
+
 
     view.on('mouseenter', function() {
-      possiblyActivate(d3.event, this);
+      open();
+    })
+    .on('mouseleave', function() {
+      close();
+    })
+    .on('click', function() {
+      toggle();
     });
-
-    view.on('click', function() {
-      possiblyActivate(d3.event, this);
-    });
-
   },
 
 
