@@ -473,6 +473,8 @@ var TreeMenu = Component.extend({
       element.selectAll('.' + css.list_item).each(function() {
         var li = d3.select(this);
         var label = li.select('.' + css.list_item_label);
+        console.log(li.node().offsetWidth);
+        console.log(label.node().scrollWidth);
         if(label.node().scrollWidth > li.node().offsetWidth) {
           //add data for animation
           label.attr("data-content", label.text());
@@ -547,8 +549,7 @@ var TreeMenu = Component.extend({
   _toggleSub: function(view) {
     var _this = this;
     var curSub = view.select('.' + css.list);
-    console.log(view.select('ul'));
-    console.log(curSub);
+
     var possiblyActivate = function(event, it) {
       var element = d3.select(it).select('.' + css.list);
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
@@ -571,7 +572,7 @@ var TreeMenu = Component.extend({
     };
 
     var toggle = function() {
-      if(!view.classed('active')) {
+      if(!curSub.classed('active')) {
         close();
       } else {
         open();
@@ -579,21 +580,23 @@ var TreeMenu = Component.extend({
     };
 
     var open = function() {
-      view.transition()
+      curSub.transition()
         .duration(1000)
-        .style('width', _this.activeProfile.col_width + "px");
-      view.classed('active', true);
-      _this._marqueeToggle(true);
+        .style('width', _this.activeProfile.col_width + "px")
+        .each('end', function() {
+          _this._marqueeToggle(curSub, true);
+        });
+      curSub.classed('active', true);
     };
 
-    var close = function(node) {
-      var elem = d3.select(node).select('.' + css.list);
-      elem.transition()
+    var close = function() {
+      curSub.transition()
         .duration(1000)
-        .style('width', '');
-      elem.classed('active', false);
-
-      _this._marqueeToggle(node, false);
+        .style('width', 0)
+        .each('end', function() {
+          curSub.classed('active', false);
+        });
+      _this._marqueeToggle(curSub, false);
     };
 
     var closeAll = function(node) {
