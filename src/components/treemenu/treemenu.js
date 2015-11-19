@@ -30,6 +30,9 @@ var css = {
   isSpecial: 'vzb-treemenu-list-item-special',
   hidden: 'vzb-hidden',
   title: 'vzb-treemenu-title',
+  scaletypes: 'vzb-treemenu-scaletypes',
+  scaletypesDisabled: 'vzb-treemenu-scaletypes-disabled',
+  scaletypesActive: 'vzb-treemenu-scaletypes-active',
   alignYt: 'vzb-align-y-top',
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
@@ -122,7 +125,8 @@ var TreeMenu = Component.extend({
     this.context = context;
 
     this.model_binds = {
-      "change:axis": function(evt) {
+      "change:marker": function(evt) {
+        if(evt.indexOf(markerID)==-1) return;
         _this.updateView();
       },
       "change:language:strings": function(evt) {
@@ -176,6 +180,10 @@ var TreeMenu = Component.extend({
 
     this.wrapper.append('div')
       .classed(css.title, true)
+      .append('span');
+      
+    this.wrapper.append('div')
+      .classed(css.scaletypes, true)
       .append('span');
 
     this.wrapper.append('div')
@@ -661,7 +669,7 @@ var TreeMenu = Component.extend({
 
     //only for leaf nodes
     if(view.attr("children")) return;
-    callback(view.attr("info"), markerID);
+    callback("which", view.attr("info"), markerID);
     this.toggle();
   },
 
@@ -750,11 +758,39 @@ var TreeMenu = Component.extend({
     };
 
     createSubmeny(this.wrapper, dataFiltered, true);
+      
+      
+    var pointer = "_default";
+    if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
+    
+    var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
+      if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
+      if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
+      return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
+    });
+      
+    var scaleTypes = this.element.select('.' + css.scaletypes).selectAll("span")
+        .data(scaleTypesData, function(d){return d});
+    
+    scaleTypes.exit().remove();
+      
+    scaleTypes.enter().append("span")
+        .on("click", function(d){
+            _this._setModel("scaleType", d, markerID)
+        });
+      
+    scaleTypes
+        .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
+        .classed(css.scaletypesActive, function(d){
+            return d == _this.model.marker[markerID].scaleType;
+        })
+        .text(function(d){
+            return _this.translator("scaletype/" + d);
+        });
 
 
     return this;
   },
-
 
 
 
@@ -787,27 +823,32 @@ var TreeMenu = Component.extend({
     return this;
   },
 
-  _setModel: function(value, markerID) {
+  _setModel: function(what, value, markerID) {
 
     var indicatorsDB = globals.metadata.indicatorsDB;
-
 
     var mdl = this.model.marker[markerID];
 
     var obj = {};
 
-    obj.which = value;
-    obj.use = indicatorsDB[value].use;
-    obj.scaleType = indicatorsDB[value].scaleType ? indicatorsDB[value].scaleType : indicatorsDB[value].scales[0];
+    obj[what] = value;
 
+    if(what == "which") {
+      obj.use = indicatorsDB[value].use;
+
+      if(indicatorsDB[value].scales.indexOf(mdl.scaleType) == -1) {
+        obj.scaleType = indicatorsDB[value].scales[0];
+      }
+    }
+      
     if(mdl.getType() == 'axis') {
       obj.min = null;
       obj.max = null;
+      obj.fakeMin = null;
+      obj.fakeMax = null;
     }
-
-
+      
     mdl.set(obj);
-
 
   }
 

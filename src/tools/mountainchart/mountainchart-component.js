@@ -319,7 +319,7 @@ var MountainChartComponent = Component.extend({
 
         var profiles = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 18 },
             infoElHeight: 16
           },
           medium: {
@@ -387,6 +387,7 @@ var MountainChartComponent = Component.extend({
             .labelerOptions({
                 scaleType: scaleType,
                 toolMargin: margin,
+                pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
                 stops: this._readyOnce ? this.model.time.xLogStops : [1]
             });
