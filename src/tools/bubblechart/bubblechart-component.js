@@ -930,11 +930,12 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    console.log(warnBB.height);
     this.dataWarningEl.select("svg")
-      .attr("width", warnBB.height)
-      .attr("height", warnBB.height)
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", - infoElHeight * 0.8);
+      .attr("y", - warnBB.height * 0.65);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
