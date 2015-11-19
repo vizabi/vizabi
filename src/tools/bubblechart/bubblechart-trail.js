@@ -66,8 +66,9 @@ export default Class.extend({
       trail.exit().remove();
 
       trail.enter().append("g")
-        .attr("class", "trailSegment")
+        .attr("class", "vzb-bc-trailsegment")
         .on("mousemove", function(segment, index) {
+          if(utils.isTouchDevice()) return;
           var _key = d3.select(this.parentNode).data()[0][KEY];
 
           var pointer = {};
@@ -75,7 +76,10 @@ export default Class.extend({
           pointer.time = segment.t;
 
           _this._axisProjections(pointer);
-          _this._setTooltip(_this.timeFormatter(segment.t));
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(_this.timeFormatter(segment.t), x, y, s);
           _this.entityLabels
             .filter(function(f) {
               return f[KEY] == _key
@@ -83,6 +87,7 @@ export default Class.extend({
             .classed("vzb-highlighted", true);
         })
         .on("mouseout", function(segment, index) {
+          if(utils.isTouchDevice()) return;
           _this._axisProjections();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);

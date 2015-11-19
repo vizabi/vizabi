@@ -114,11 +114,10 @@ var Component = Events.extend({
       var splashScreen = this.model && this.model.data && this.model.data.splash;
 
       preloader(this).then(function() {
-
+        var timeMdl = _this.model.state.time;
         if(splashScreen) {
 
           //TODO: cleanup hardcoded splash screen
-          var timeMdl = _this.model.state.time;
           timeMdl.splash = true;
           var temp = utils.clone(timeMdl.getObject(), ['start', 'end']);
 
@@ -132,7 +131,7 @@ var Component = Events.extend({
               //restore because validation kills the original start/end
               timeMdl.start = temp.start;
               timeMdl.end = temp.end;
-              
+
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
@@ -144,7 +143,11 @@ var Component = Events.extend({
             renderError();
           });
         } else {
-          _this.model.load().catch(function() {
+          _this.model.load().then(function() {
+            utils.delay(function() {
+              timeMdl.trigger('change');
+            }, 300);
+          }, function() {
             renderError();
           });
         }
@@ -413,6 +416,10 @@ var Component = Events.extend({
         }
         values[new_name] = model_info.model;
       });
+
+      // fill the models that weren't passed with empty objects
+      // e.g. if expected = [ui, language, color] and passed/existing = [ui, language]
+      // it will fill values up to [ui, language, {}]
       var existing = model_config.length;
       var expected = model_expects.length;
       if(expected > existing) {
@@ -578,7 +585,7 @@ function templateFunc(str, data) {
     return str.replace(/<%=([^\%]*)%>/g, function(match) {
       //match t("...")
       var s = match.match(/t\s*\(([^)]+)\)/g);
-      //replace with translation 
+      //replace with translation
       if(s.length) {
         s = obj.t(s[0].match(/\"([^"]+)\"/g)[0].split('"').join(''));
       }

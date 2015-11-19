@@ -181,7 +181,7 @@ export default Class.extend({
                 var xRangeFake = _this._rangeBump([0, _this.width]);
                 var yRangeFake = _this._rangeBump([_this.height, 0]);
 
-                var formatter = d3.format(".2r");
+                var formatter = function(n) { return d3.round(n, 2); };
                 _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeFake[0]));
                 _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));
                 _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeFake[0]));

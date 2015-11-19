@@ -1,9 +1,12 @@
 import * as utils from 'base/utils';
 import Component from 'base/component';
 import globals from 'base/globals'; // to get map data path
+import { warn as iconWarn, question as iconQuestion } from 'base/iconset';
 
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
+import DynamicBackground from 'helpers/d3.dynamicBackground';
+import Selectlist from './bubblemapchart-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
 var BubbleMapChartComponent = Component.extend({
@@ -30,14 +33,57 @@ var BubbleMapChartComponent = Component.extend({
     }, {
       name: "language",
       type: "language"
+    }, {
+      name: "ui",
+      type: "model"
     }];
 
     var _this = this;
     this.model_binds = {
       "change:time:value": function (evt) {
         _this.updateEntities();
-      }
+        _this.updateTime();
+        _this._selectlist.redraw();
+        _this.updateDoubtOpacity();
+      },
+      "change:entities:highlight": function (evt) {
+          if (!_this._readyOnce) return;
+          _this.highlightEntities();
+          //_this.updateOpacity();
+      },
+      "change:marker": function(evt) {
+        // bubble size change is processed separately
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("change:marker:size") !== -1) return;
+        if(evt.indexOf("change:marker:color:palette") > -1) return;
+        _this.ready();
+      },
+      'change:marker:size': function(evt) {
+        //console.log("EVENT change:marker:size:max");
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+          _this.ready();
+        }
+      },
+      "change:marker:color:palette": function (evt) {
+          if (!_this._readyOnce) return;
+          //_this.redrawDataPointsOnlyColors();
+          //_this._selectlist.redraw();
+          _this.ready();
+      },
+      "change:entities:select": function (evt) {
+          if (!_this._readyOnce) return;
+          _this.selectEntities();
+          _this._selectlist.redraw();
+          _this.updateDoubtOpacity();
+          _this.updateOpacity();
+          /*
+          _this.redrawDataPoints();
+          */
+      },
     };
+
+    this._selectlist = new Selectlist(this);
 
     //contructor is the same as any component
     this._super(config, context);
@@ -70,8 +116,25 @@ var BubbleMapChartComponent = Component.extend({
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bmc-graph');
-    this.bubbles = this.graph.select('.vzb-bmc-bubbles');
     this.mapSvg = this.element.select('.vzb-bmc-map-background');
+
+    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
+    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
+    this.labelsContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.dataWarningEl = this.graph.select(".vzb-data-warning");
+
+    this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
+    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
+
+    this.entityBubbles = null;
+    this.entityLabels = null;
+    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.entityLines = null;
+
+    // year background
+    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.year = new DynamicBackground(this.yearEl);
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
@@ -94,6 +157,19 @@ var BubbleMapChartComponent = Component.extend({
         .attr("height", defaultHeight);
     svg.html('');
 
+    svg.append("defs").append("path")
+        .datum({type: "Sphere"})
+        .attr("id", "sphere")
+        .attr("d", path);
+
+    svg.append("use")
+        .attr("class", "stroke")
+        .attr("xlink:href", "#sphere");
+
+    svg.append("use")
+        .attr("class", "fill")
+        .attr("xlink:href", "#sphere");
+
     svg.append("path")
         .datum(graticule)
         .attr("class", "graticule")
@@ -113,17 +189,83 @@ var BubbleMapChartComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
+      _this.updateSize();
+      _this.updateMarkerSizeLimits();
       _this.updateEntities();
+      _this._selectlist.redraw();
     });
+
+    this.KEY = this.model.entities.getDimension();
+    this.TIMEDIM = this.model.time.getDimension();
+
+    this.wScale = d3.scale.linear()
+        .domain(this.parent.datawarning_content.doubtDomain)
+        .range(this.parent.datawarning_content.doubtRange);
   },
 
   /*
    * Both model and DOM are ready
    */
   ready: function () {
+    this.updateUIStrings();
     this.updateIndicators();
-    this.resize();
+    this.updateSize();
+    this.updateMarkerSizeLimits();
     this.updateEntities();
+    this.updateOpacity();
+    this.updateTime();
+    this.highlightEntities();
+    this.selectEntities();
+    this._selectlist.redraw();
+    this.updateDoubtOpacity();
+  },
+
+  updateUIStrings: function () {
+      var _this = this;
+
+      this.translator = this.model.language.getTFunction();
+      var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
+
+      this.yTitleEl.select("text")
+          .text(_this.model.marker.size.which);
+
+      utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
+      this.dataWarningEl.append("text")
+          .text(this.translator("hints/dataWarning"));
+
+      this.infoEl
+          .html(iconQuestion)
+          .select("svg").attr("width", "0px").attr("height", "0px");
+
+      //TODO: move away from UI strings, maybe to ready or ready once
+      this.infoEl.on("click", function () {
+          window.open(sizeMetadata.sourceLink, "_blank").focus();
+      })
+
+      this.dataWarningEl
+          .on("click", function () {
+              _this.parent.findChildByName("gapminder-datawarning").toggle();
+          })
+          .on("mouseover", function () {
+              _this.updateDoubtOpacity(1);
+          })
+          .on("mouseout", function () {
+              _this.updateDoubtOpacity();
+          })
+  },
+
+  updateDoubtOpacity: function (opacity) {
+      if (opacity == null) opacity = this.wScale(+this.time.getFullYear().toString());
+      if (this.someSelected) opacity = 1;
+      this.dataWarningEl.style("opacity", opacity);
+  },
+
+  updateOpacity: function () {
+      var _this = this;
+
+      this.entityBubbles.classed("vzb-selected", function (d) {
+          return _this.model.entities.isSelected(d);
+      });
   },
 
   /**
@@ -132,6 +274,7 @@ var BubbleMapChartComponent = Component.extend({
   updateIndicators: function () {
     var _this = this;
     this.translator = this.model.language.getTFunction();
+    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
     this.duration = this.model.time.speed;
 
     this.sScale = this.model.marker.size.getScale();
@@ -152,6 +295,17 @@ var BubbleMapChartComponent = Component.extend({
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
     var values = this.model.marker.getValues(filter, [entityDim]);
+    _this.values = values;
+    // construct pointers
+    this.pointers = this.model.marker.getKeys()
+        .map(function (d) {
+            var pointer = {};
+            pointer[_this.KEY] = d[_this.KEY];
+            pointer.KEY = function () {
+                return this[_this.KEY];
+            };
+            return pointer;
+        });
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E 
@@ -171,29 +325,37 @@ var BubbleMapChartComponent = Component.extend({
       return values.size[b[entityDim]] - values.size[a[entityDim]];
     });
 
-    this.entityBubbles = this.bubbles.selectAll('.vzb-bmc-bubble')
+    this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .data(items);
-    /*
-    //exit selection
-    this.entityBubbles.exit().remove();
-    */
 
     if (!this.renderedOnce) {
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
         .on("mousemove", function (d, i) {
-          console.log(d[entityDim]);
+            if (utils.isTouchDevice()) return;
+            _this._interact()._mousemove(d, i);
         })
         .on("mouseout", function (d, i) {
+            if (utils.isTouchDevice()) return;
+            _this._interact()._mouseout(d, i);
         })
         .on("click", function (d, i) {
-        });
+            if (utils.isTouchDevice()) return;
+            _this._interact()._click(d, i);
+            _this.highlightEntities();
+        })
+        .onTap(function (d, i) {
+            _this._interact()._click(d, i);
+            d3.event.stopPropagation();
+        })
+        .onLongTap(function (d, i) {
+        })
       this.renderedOnce = true;
     }
 
     //positioning and sizes of the bubbles
-    this.bubbles.selectAll('.vzb-bmc-bubble')
+    this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .attr("fill", function (d) {
         return _this.cScale(values.color[d[entityDim]]);
       })
@@ -206,18 +368,79 @@ var BubbleMapChartComponent = Component.extend({
       })
       .transition().duration(duration).ease("linear")
       .attr("r", function (d) {
-        return _this.sScale(values.size[d[entityDim]]);
+        return utils.areaToRadius(_this.sScale(values.size[d[entityDim]]));
       });
+  },
+
+  /*
+   * UPDATE TIME:
+   * Ideally should only update when time or data changes
+   */
+  updateTime: function() {
+    var _this = this;
+
+    this.time_1 = this.time == null ? this.model.time.value : this.time;
+    this.time = this.model.time.value;
+    this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
+    this.year.setText(this.timeFormatter(this.time));
   },
 
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-  resize: function () {
+  updateSize: function () {
 
     var _this = this;
+    var margin, infoElHeight;
 
+    var profiles = {
+      small: {
+        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        infoElHeight: 16,
+        minRadius: 2,
+        maxRadius: 40
+      },
+      medium: {
+        margin: { top: 20, right: 20, left: 20, bottom: 30 },
+        infoElHeight: 20,
+        minRadius: 3,
+        maxRadius: 60
+      },
+      large: {
+        margin: { top: 30, right: 30, left: 30, bottom: 35 },
+        infoElHeight: 22,
+        minRadius: 4,
+        maxRadius: 80
+      }
+    };
+
+    var presentationProfileChanges = {
+      small: {
+        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        infoElHeight: 16,
+        minRadius: 2,
+        maxRadius: 40
+      },
+      medium: {
+        margin: { top: 20, right: 20, left: 20, bottom: 50 },
+        infoElHeight: 20,
+        minRadius: 3,
+        maxRadius: 60
+      },
+      large: {
+        margin: { top: 30, right: 30, left: 30, bottom: 35 },
+        infoElHeight: 22,
+        minRadius: 4,
+        maxRadius: 80
+      }
+    };
+
+    this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
+    margin = this.activeProfile.margin;
+    infoElHeight = this.activeProfile.infoElHeight;
+
+/*
     this.profiles = {
       "small": {
         margin: {
@@ -227,8 +450,6 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 50
         },
         padding: 2,
-        minsize: 2,
-        maxsize: 40
       },
       "medium": {
         margin: {
@@ -238,8 +459,8 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 60
         },
         padding: 2,
-        minsize: 3,
-        maxsize: 60
+        minRadius: 3,
+        maxRadius: 60
       },
       "large": {
         margin: {
@@ -249,13 +470,14 @@ var BubbleMapChartComponent = Component.extend({
           bottom: 80
         },
         padding: 2,
-        minsize: 4,
-        maxsize: 80
+        minRadius: 4,
+        maxRadius: 80
       }
     };
 
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     var margin = this.activeProfile.margin;
+*/
 
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -263,11 +485,14 @@ var BubbleMapChartComponent = Component.extend({
     var boundBox = this.boundBox;
     var viewBox = [ boundBox[0][0] * this.defaultWidth,
                     boundBox[0][1] * this.defaultHeight,
-                    boundBox[1][0] * this.defaultWidth,
-                    boundBox[1][1] * this.defaultHeight];
+                    Math.abs(boundBox[1][0] - boundBox[0][0]) * this.defaultWidth,
+                    Math.abs(boundBox[1][1] - boundBox[0][1]) * this.defaultHeight];
 
     this.graph
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    this.year.resize(this.width, this.height,
+      Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
 
     this.mapSvg
       .attr('width', width)
@@ -277,15 +502,16 @@ var BubbleMapChartComponent = Component.extend({
 
     //update scales to the new range
     // TODO: r ration should add to config
+    //this.updateMarkerSizeLimits();
     this.sScale.range([0, this.height / 4]);
 
     var skew = this.skew = (function () {
       var vb = viewBox;
       var w = width;
       var h = height;
-      var vbCenter = [(vb[0] + vb[2]) / 2, (vb[1] + vb[3]) / 2];
-      var vbWidth = Math.abs(vb[2] - vb[0]) || 0.001;
-      var vbHeight = Math.abs(vb[3] - vb[1]) || 0.001;
+      var vbCenter = [vb[0] + vb[2] / 2, vb[1] + vb[3] / 2];
+      var vbWidth = vb[2] || 0.001;
+      var vbHeight = vb[3] || 0.001;
       //input pixel loc after projection, return pixel loc after skew;
       return function (points) {
         var x = (points[0] - vbCenter[0]) / vbWidth * width + width / 2;
@@ -294,7 +520,140 @@ var BubbleMapChartComponent = Component.extend({
       }
     }());
 
+
+    this.yTitleEl.select("text")
+        .attr("transform", "translate(0," + margin.top + ")")
+
+    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    this.dataWarningEl.select("svg")
+        .attr("width", warnBB.height)
+        .attr("height", warnBB.height)
+        .attr("x", warnBB.height * .1)
+        .attr("y", -warnBB.height * 1.0 + 1)
+
+    this.dataWarningEl
+        .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
+        .select("text")
+        .attr("dx", warnBB.height * 1.5);
+
+    if(this.infoEl.select('svg').node()) {
+        var titleBBox = this.yTitleEl.node().getBBox();
+        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+
+        this.infoEl.select('svg')
+            .attr("width", infoElHeight)
+            .attr("height", infoElHeight)
+        this.infoEl.attr('transform', 'translate('
+            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+    }
+
+  },
+
+  updateMarkerSizeLimits: function() {
+    var _this = this;
+    var minRadius = this.activeProfile.minRadius;
+    var maxRadius = this.activeProfile.maxRadius;
+
+    this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
+    this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
+
+    console.log(utils.radiusToArea);
+
+    if(this.model.marker.size.scaleType !== "ordinal") {
+      this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);
+    } else {
+      this.sScale.rangePoints([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)], 0).range();
+    }
+
+  },
+
+  _interact: function () {
+      var _this = this;
+
+      return {
+          _mousemove: function (d, i) {
+              if (_this.model.time.dragging) return;
+
+              _this.model.entities.highlightEntity(d);
+
+              var mouse = d3.mouse(_this.graph.node()).map(function (d) {
+                  return parseInt(d);
+              });
+
+              //position tooltip
+              _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.model.marker.label.getValue(d));
+
+          },
+          _mouseout: function (d, i) {
+              if (_this.model.time.dragging) return;
+
+              _this._setTooltip("");
+              _this.model.entities.clearHighlighted();
+          },
+          _click: function (d, i) {
+              _this.model.entities.selectEntity(d);
+          }
+      };
+
+  },
+
+  highlightEntities: function () {
+      var _this = this;
+      this.someHighlighted = (this.model.entities.highlight.length > 0);
+
+      if (!this.selectList || !this.someSelected) return;
+      this.selectList.classed("vzb-highlight", function (d) {
+          return _this.model.entities.isHighlighted(d);
+      });
+      this.selectList.each(function (d, i) {
+        d3.select(this).selectAll(".vzb-bmc-label-x")
+          .classed("vzb-invisible", function(n) {
+            return !_this.model.entities.isHighlighted(d);
+          });
+
+      });
+
+  },
+
+  selectEntities: function () {
+      var _this = this;
+      this.someSelected = (this.model.entities.select.length > 0);
+
+      this._selectlist.rebuild();
+  },
+
+  _setTooltip: function (tooltipText) {
+      if (tooltipText) {
+          var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
+
+          //position tooltip
+          this.tooltip.classed("vzb-hidden", false)
+              .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
+              .selectAll("text")
+              .attr("text-anchor", "middle")
+              .attr("alignment-baseline", "middle")
+              .text(tooltipText)
+
+          var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+          this.tooltip.select("rect")
+              .attr("width", contentBBox.width + 8)
+              .attr("height", contentBBox.height + 8)
+              .attr("x", -contentBBox.width - 25)
+              .attr("y", -contentBBox.height - 25)
+              .attr("rx", contentBBox.height * .2)
+              .attr("ry", contentBBox.height * .2);
+
+          this.tooltip.selectAll("text")
+              .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
+              .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
+
+      } else {
+
+          this.tooltip.classed("vzb-hidden", true);
+      }
   }
+
 });
 
 

@@ -28,8 +28,8 @@ script.
   var playButton = document.getElementById("vzbp-btn-play");
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
-  VIZABI_OPTIONS.bind['change:state:time'] = function(evt, vals) {
-    if (vals.state.time.playing) {
+  VIZABI_OPTIONS.bind['change:state:time'] = function(evt, state) {
+    if (state.time.playing) {
       playButton.onclick = pause;
       playButton.setAttribute("data-tooltip", "Pause");
       removeClass(playButtonIcon, 'fa-play');
@@ -43,7 +43,7 @@ script.
 
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
-    if (vals.state.time.record) {
+    if (state.time.record) {
       recButton.onclick = recstop;
       recButton.setAttribute("data-tooltip", "Stop");
       removeClass(recButtonIcon, 'fa-bullseye');

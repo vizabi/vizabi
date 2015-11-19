@@ -244,8 +244,8 @@ export default function axisSmart() {
 
         var prefix = "";
         if(options.formatterRemovePrefix) return d3.format("." + prec + format)(d);
-
-        switch(Math.floor(Math.log10(Math.abs(d)))) {
+        //switch(Math.floor(Math.log10(Math.abs(d)))) {
+        switch(Math.floor(Math.log(Math.abs(d))/Math.LN10)) {
           case -13:
             d = d * 1000000000000;
             prefix = "p";
@@ -450,7 +450,7 @@ export default function axisSmart() {
           // log scales need to rescale labels, so that 9 takes more space than 2
           if(rescalingLabels == "log") {
             // sometimes only a fragment of axis is used. in this case we want to limit the scope to that fragment
-            // yes, this is hacky and experimental 
+            // yes, this is hacky and experimental
             lengthRange = Math.abs(axis.scale()(d3.max(tickValues)) - axis.scale()(d3.min(tickValues)));
 
             return lengthRange >
@@ -460,7 +460,7 @@ export default function axisSmart() {
                       d).length) + marginsLR
                   )
                   // this is a logarithmic rescaling of labels
-                  * (1 + Math.log10(d.toString().replace(/([0\.])/g, "")[0]))
+                  * (1 + Math.log(d.toString().replace(/([0\.])/g, "")[0])/Math.LN10)
               }))
 
           } else {
@@ -589,14 +589,14 @@ export default function axisSmart() {
           var tickValues_1 = tickValues;
           for(var j = 0; j < doublingLabels.length; j++) {
 
-            // compose an attempt to add more axis labels    
+            // compose an attempt to add more axis labels
             var trytofit = tickValues_1.concat(doublingLabels[j])
               .filter(function(d) {
                 return !collisionBetween(d, avoidCollidingWith);
               })
               .filter(onlyUnique)
 
-            // stop populating if labels don't fit 
+            // stop populating if labels don't fit
             if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
             // apply changes if no blocking instructions
@@ -624,7 +624,7 @@ export default function axisSmart() {
             if(i == 0) {
               for(var j = 0; j < spawn.length; j++) {
 
-                // compose an attempt to add more axis labels    
+                // compose an attempt to add more axis labels
                 var trytofit = tickValues
                   .concat(spawn[j].map(function(d) {
                     return d * stop
@@ -638,7 +638,7 @@ export default function axisSmart() {
                   })
                   .filter(onlyUnique);
 
-                // stop populating if labels don't fit 
+                // stop populating if labels don't fit
                 if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
                 // apply changes if no blocking instructions
@@ -707,14 +707,14 @@ export default function axisSmart() {
         var tickValues_1 = tickValues;
         for(var j = 0; j < addLabels.length; j++) {
 
-          // compose an attempt to add more axis labels    
+          // compose an attempt to add more axis labels
           var trytofit = tickValues_1.concat(addLabels[j])
             .filter(function(d) {
               return !collisionBetween(d, avoidCollidingWith);
             })
             .filter(onlyUnique);
 
-          // stop populating if labels don't fit 
+          // stop populating if labels don't fit
           if(!labelsFitIntoScale(trytofit, lengthRange, PESSIMISTIC, "none")) break;
 
           // apply changes if no blocking instructions
@@ -829,12 +829,12 @@ export default function axisSmart() {
     // Purpose: the outer labels can easily be so large, they stick out of the allotted area
     // Example:
     // Label is fine:    Label sticks out:    Label sticks out more:    Solution - label is shifted:
-    //      12345 |           1234|                123|5                   12345|          
-    // _______.   |      _______. |           _______.|                 _______.|          
-    // 
+    //      12345 |           1234|                123|5                   12345|
+    // _______.   |      _______. |           _______.|                 _______.|
+    //
     // this is what the function does on the first step (only outer labels)
     // on the second step it shifts the inner labels that start to overlap with the shifted outer labels
-    // 
+    //
     // requires tickValues array to be sorted from tail-first
     // tail means left or bottom, head means top or right
     //

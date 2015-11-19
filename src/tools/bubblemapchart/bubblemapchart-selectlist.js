@@ -12,6 +12,7 @@ var MCSelectList = Class.extend({
   rebuild: function (data) {
     var _this = this.context;
 
+    /*
     var listData = _this.mountainPointers
       .concat(_this.groupedPointers)
       .concat(_this.stackedPointers)
@@ -33,19 +34,24 @@ var MCSelectList = Class.extend({
           }
         }
       });
-    _this.selectList = _this.mountainLabelContainer.selectAll("g.vzb-mc-label")
+    */
+    var listData = _this.pointers
+      .filter(function (f) {
+        return _this.model.entities.isSelected(f);
+      });
+    _this.selectList = _this.labelsContainer.selectAll("g.vzb-bmc-label")
       .data(utils.unique(listData, function (d) {
-        return d.KEY()
+        return d.KEY();
       }));
     _this.selectList.exit().remove();
     _this.selectList.enter().append("g")
-      .attr("class", "vzb-mc-label")
+      .attr("class", "vzb-bmc-label")
       .each(function (d, i) {
         var label = d3.select(this);
-        label.append("circle").attr('class', 'vzb-mc-label-legend');
-        label.append("text").attr("class", "vzb-mc-label-shadow vzb-mc-label-text");
-        label.append("text").attr("class", "vzb-mc-label-text");
-        label.append("g").attr("class", "vzb-mc-label-x vzb-label-shadow vzb-invisible")
+        label.append("circle").attr('class', 'vzb-bmc-label-legend');
+        label.append("text").attr("class", "vzb-bmc-label-shadow vzb-bmc-label-text");
+        label.append("text").attr("class", "vzb-bmc-label-text");
+        label.append("g").attr("class", "vzb-bmc-label-x vzb-label-shadow vzb-invisible")
           .on("click", function (d, i) {
             if (utils.isTouchDevice()) return;
             d3.event.stopPropagation();
@@ -58,12 +64,12 @@ var MCSelectList = Class.extend({
             _this.model.entities.clearHighlighted();
             _this.model.entities.selectEntity(d);
           });
-        var labelCloseGroup = label.select("g.vzb-mc-label-x")
+        var labelCloseGroup = label.select("g.vzb-bmc-label-x")
         if (!utils.isTouchDevice()){
           labelCloseGroup
             .html(iconClose)
             .select("svg")
-            .attr("class", "vzb-mc-label-x-icon")
+            .attr("class", "vzb-bmc-label-x-icon")
             .attr("width", "0px")
             .attr("height", "0px");
 
@@ -72,7 +78,7 @@ var MCSelectList = Class.extend({
         } else {
           labelCloseGroup.append("rect");
           labelCloseGroup.append("text")
-            .attr("class", "vzb-mc-label-x-text")
+            .attr("class", "vzb-bmc-label-x-text")
             .text("Deselect");
         }
       })
@@ -96,36 +102,32 @@ var MCSelectList = Class.extend({
     var _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
-    var sample = _this.mountainLabelContainer.append("g").attr("class", "vzb-mc-label").append("text").text("0");
+    var sample = _this.labelsContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
     var fontHeight = sample[0][0].getBBox().height*1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample[0][0].parentNode).remove();
-    var formatter = _this.model.marker.axis_y.tickFormatter;
+    var formatter = _this.model.marker.size.tickFormatter;
 
     var titleHeight = _this.yTitleEl.select("text").node().getBBox().height || 0;
 
     var maxFontHeight = (_this.height - titleHeight * 3) / (_this.selectList.data().length + 2);
-    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight; 
-
-    var currentAggrLevel = "null";
-    var aggrLevelSpacing = 0;
+    if(fontHeight > maxFontHeight) fontHeight = maxFontHeight;
 
     _this.selectList
       .attr("transform", function (d, i) {
-        if(d.aggrLevel != currentAggrLevel) aggrLevelSpacing += fontHeight;
-        var spacing = fontHeight * i + titleHeight * 1.5 + aggrLevelSpacing;
-        currentAggrLevel = d.aggrLevel;
+        var spacing = fontHeight * i + titleHeight * 1.5 + fontHeight;
         return "translate(0," + spacing + ")";
       })
       .each(function (d, i) {
 
         var view = d3.select(this).attr("id", d.geo + '-label');
         var name = d.key ? _this.translator("region/" + d.key) : _this.values.label[d.KEY()];
-        var number = _this.values.axis_y[d.KEY()];
+        //var number = _this.values.axis_y[d.KEY()];
+        var number = _this.values.size[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " "+ _this.translator("mount/people") : "");
+        var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
 
-        var text = view.selectAll(".vzb-mc-label-text")
+        var text = view.selectAll(".vzb-bmc-label-text")
           .attr("x", fontHeight)
           .attr("y", fontHeight)
           .text(string)
@@ -133,13 +135,13 @@ var MCSelectList = Class.extend({
 
         var contentBBox = text[0][0].getBBox();
 
-        var closeGroup = view.select(".vzb-mc-label-x");
+        var closeGroup = view.select(".vzb-bmc-label-x");
 
         if (utils.isTouchDevice()) {
           var closeTextBBox = closeGroup.select("text").node().getBBox();
           closeGroup
             .classed("vzb-revert-color", true)
-            .select(".vzb-mc-label-x-text")
+            .select(".vzb-bmc-label-x-text")
             .classed("vzb-revert-color", true)
             .attr("x", contentBBox.width + contentBBox.height * 1.12 + closeTextBBox.width * .5)
             .attr("y", contentBBox.height * .55);
@@ -168,7 +170,7 @@ var MCSelectList = Class.extend({
             .attr("height", contentBBox.height * .8);
         }
 
-        view.select(".vzb-mc-label-legend")
+        view.select(".vzb-bmc-label-legend")
           .attr("r", fontHeight / 3)
           .attr("cx", fontHeight * .4)
           .attr("cy", fontHeight / 1.5)

@@ -120,7 +120,7 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker:group": function (evt) {
                 if (!_this._readyOnce) return;
-                if (evt === "change:marker:group:merge") return;
+                if (evt.indexOf("group:merge") > -1) return;
                 _this.ready();
             },
             "change:marker:group:merge": function (evt) {
@@ -133,6 +133,7 @@ var MountainChartComponent = Component.extend({
                 _this.ready();
             },
             "change:marker:color:palette": function (evt) {
+                if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
             },
@@ -318,7 +319,7 @@ var MountainChartComponent = Component.extend({
 
         var profiles = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 18 },
             infoElHeight: 16
           },
           medium: {
@@ -333,7 +334,7 @@ var MountainChartComponent = Component.extend({
 
         var presentationProfileChanges = {
           small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 25 },
+            margin: { top: 10, right: 10, left: 10, bottom: 30 },
             infoElHeight: 16
           },
           medium: {
@@ -341,7 +342,7 @@ var MountainChartComponent = Component.extend({
             infoElHeight: 20
           },
           large: {
-            margin: { top: 30, right: 30, left: 30, bottom: 35 },
+            margin: { top: 30, right: 30, left: 30, bottom: 50 },
             infoElHeight: 22
           }
         };
@@ -386,6 +387,7 @@ var MountainChartComponent = Component.extend({
             .labelerOptions({
                 scaleType: scaleType,
                 toolMargin: margin,
+                pivotingLimit: margin.bottom * 1.5,
                 method: this.xAxis.METHOD_REPEATING,
                 stops: this._readyOnce ? this.model.time.xLogStops : [1]
             });
@@ -416,15 +418,15 @@ var MountainChartComponent = Component.extend({
             .attr("dx", warnBB.height * 1.5);
 
         if(this.infoEl.select('svg').node()) {
-        var titleBBox = this.yTitleEl.node().getBBox();
-        var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
+            var titleBBox = this.yTitleEl.node().getBBox();
+            var translate = d3.transform(this.yTitleEl.attr('transform')).translate;
 
-        this.infoEl.select('svg')
-            .attr("width", infoElHeight)
-            .attr("height", infoElHeight)
-        this.infoEl.attr('transform', 'translate('
-            + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+            this.infoEl.select('svg')
+                .attr("width", infoElHeight)
+                .attr("height", infoElHeight)
+            this.infoEl.attr('transform', 'translate('
+                + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
+                + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
         }
 
         this.eventAreaEl
@@ -1067,6 +1069,7 @@ var MountainChartComponent = Component.extend({
                 .text(tooltipText)
 
             var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+
             this.tooltip.select("rect")
                 .attr("width", contentBBox.width + 8)
                 .attr("height", contentBBox.height + 8)
@@ -1078,7 +1081,11 @@ var MountainChartComponent = Component.extend({
             this.tooltip.selectAll("text")
                 .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
                 .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-
+            var translateX = (mouse[0] - contentBBox.width - 25) > 0 ? mouse[0] : (contentBBox.width + 25);
+            var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
+            this.tooltip
+                .attr("transform", "translate(" + translateX + "," + translateY + ")");
+            
         } else {
 
             this.tooltip.classed("vzb-hidden", true);

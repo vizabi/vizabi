@@ -4,7 +4,7 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL(optimize) {
+function updateURL(force) {
 
   function update() {
 
@@ -53,7 +53,11 @@ function updateURL(optimize) {
   }
 
   //optimize for timeslider
-  throttle(update, 1000);
+  if (force) {
+    update();
+  } else {
+    throttle(update, 1000);
+  }
 
 }
 

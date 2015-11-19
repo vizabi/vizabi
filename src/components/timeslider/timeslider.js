@@ -376,16 +376,24 @@ var TimeSlider = Component.extend({
         .duration(delayAnimations)
         .ease("linear")
         .attr("cx", new_pos);
+
+      this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
+        .transition()
+        .duration(delayAnimations)
+        .ease("linear")
+        .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     } else {
       this.handle
+        //cancel active transition
+        .interrupt()
         .attr("cx", new_pos);
+        
+      this.valueText
+        //cancel active transition
+        .interrupt()
+        .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     }
 
-    this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
-      .transition()
-      .duration(delayAnimations)
-      .ease("linear")
-      .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
   },
 
   /**

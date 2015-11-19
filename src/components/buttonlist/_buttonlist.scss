@@ -1,4 +1,5 @@
 $vzb-button-width: 60px;
+$vzb-button-expand-width: 290px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: $vzb-color-white;
@@ -9,13 +10,8 @@ $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
 $vzb-dialog-content-height: 250px;
 
+
 .vzb-buttonlist {
-  @import '../bubblesize/bubblesize';
-  @import '../indicatorpicker/indicatorpicker';
-  @import '../simpleslider/simpleslider';
-  @import '../colorlegend/colorlegend';
-  @import '../simplecheckbox/simplecheckbox';
-  @import '../draggablelist/draggablelist';
   @include position(absolute, 0);
   overflow: visible;
   text-align: center;
@@ -35,6 +31,7 @@ $vzb-dialog-content-height: 250px;
     }
   }
 
+
   .vzb-buttonlist-btn {
     outline: none;
     background: none;
@@ -42,13 +39,13 @@ $vzb-dialog-content-height: 250px;
     text-align: center;
     display: inline-block;
     padding: 5px;
-    cursor: pointer;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
 
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
+      cursor: pointer;
       background-color: $vzb-button-bg;
       border: 1px solid $vzb-button-color-border;
       color: $vzb-button-color;
@@ -108,6 +105,14 @@ $vzb-dialog-content-height: 250px;
   }
 
   @import 'dialogs/dialog';
+    
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../minmaxinputs/minmaxinputs';
+  @import '../simpleslider/simpleslider';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
 
 }
 
@@ -125,45 +130,43 @@ $vzb-dialog-content-height: 250px;
   }
 }
 
-&.vzb-small.vzb-portrait {
-  .vzb-buttonlist {
-    .vzb-buttonlist-btn {
-      margin-bottom: 20px;
-      width: $vzb-button-width;
+&.vzb-small {
+  .vzb-buttonlist-btn {
+    &[data-btn="presentation"] {
+      display: none;
     }
-    .vzb-buttonlist-container-buttons {
-      margin-bottom: -20px;
-      overflow-y: hidden;
-      overflow-x: scroll;
-      white-space: nowrap;
-    }
-    .vzb-buttonlist-dialog {
-      .vzb-dialog-content.vzb-dialog-content-fixed {
-        max-height: $vzb-dialog-content-height - 50px;
+  }
+  &.vzb-portrait {
+    .vzb-buttonlist {
+      .vzb-buttonlist-btn {
+        margin-bottom: 20px;
+        width: $vzb-button-width;
+      }
+      .vzb-buttonlist-dialog {
+        .vzb-dialog-content.vzb-dialog-content-fixed {
+          max-height: $vzb-dialog-content-height - 50px;
+        }
       }
     }
   }
-}
-&.vzb-small.vzb-landscape {
-  .vzb-buttonlist-dialog {
-    @include position(absolute, -2000px 40px auto -130px);
-    .vzb-dialog-content,
-    .vzb-dialog-content.vzb-dialog-content-fixed {
-      max-height: $vzb-dialog-content-height - 100px !important;
-    }
-    .vzb-dialog-buttons {
-      padding: 5px 25px 6px;
-    }
-    .vzb-dialog-title {
-      padding: 30px 25px 10px;
-    }
-    &[data-btn='find'] {
-      .vzb-find-filter {
-        top: 20px;
+  &.vzb-landscape {
+    .vzb-buttonlist-dialog {
+      @include position(absolute, -2000px 40px auto -130px);
+      .vzb-dialog-content,
+      .vzb-dialog-content.vzb-dialog-content-fixed {
+        max-height: $vzb-dialog-content-height - 100px !important;
       }
-    }
-    &.vzb-active {
-      @include position(absolute, auto 40px 0 50%);
+      .vzb-dialog-buttons {
+        padding: 5px 25px 6px;
+      }
+      .vzb-dialog-title {
+        padding: 30px 25px 10px;
+      }
+      &[data-btn='find'] {
+        .vzb-find-filter {
+          top: 20px;
+        }
+      }
     }
   }
 }
@@ -193,14 +196,13 @@ $vzb-dialog-content-height: 250px;
 }
 
 &.vzb-large {
-  .vzb-tool-stage {
-    right: 290px;
-  }
-  .vzb-tool-buttonlist {
-    width: 290px;
-  }
   &.vzb-button-expand-true {
+    .vzb-tool-stage {
+      right: $vzb-button-expand-width;
+    }
     .vzb-tool-buttonlist {
+      width: $vzb-button-expand-width;
+
       .vzb-buttonlist {
         display: flex;
         flex-direction: column;
@@ -208,7 +210,7 @@ $vzb-dialog-content-height: 250px;
 
       .vzb-buttonlist-container-dialogs {
         display: flex;
-        flex-direction: column;        
+        flex-direction: column;
         flex: auto;
         overflow-x: hidden;
         overflow-y: auto;
@@ -238,7 +240,7 @@ $vzb-dialog-content-height: 250px;
           background-color: $vzb-color-primary-lightest;
           border-bottom: 1px solid rgba(200, 200, 200, .4);
           z-index: initial;
-          
+
           .vzb-dialog-buttons {
             display: none;
             padding: 5px 25px;
@@ -246,10 +248,10 @@ $vzb-dialog-content-height: 250px;
 
           .vzb-dialog-modal {
             flex: auto;
-            display: flex; 
+            display: flex;
             flex-direction: column;
             overflow: hidden;
-            
+
             .thumb-tack-class {
 
               &.thumb-tack-class-ico-pin,
@@ -273,23 +275,12 @@ $vzb-dialog-content-height: 250px;
             flex-direction: column;
             flex: auto;
             @import 'dialogs/find/find';
-          
+
             .vzb-dialog-content-fixed {
               min-height: 0;
               max-height: initial;
               height: auto;
               margin-top: 10px;
-            }
-            
-            .vzb-dialog-title {
-              flex: none;
-              align-self: flex-start;
-            }
-
-            .vzb-find-filter {
-              flex: none;
-              margin-top: -55px;
-              align-self: flex-end;
             }
           }
 
@@ -320,8 +311,7 @@ $vzb-dialog-content-height: 250px;
 
           &[data-btn="stack"] {
             flex: none;
-            @import 'dialogs/stack/stack';
-            
+
             .vzb-dl-holder .vzb-draggable {
               height: initial;
             }

@@ -19,7 +19,10 @@ import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
 //waffle reader
-import { waffle as WaffleReader} from 'readers/_index';
+import {
+  waffle as WaffleReader
+}
+from 'readers/_index';
 
 var language = {
   id: "en",
@@ -124,11 +127,24 @@ BarRankChart.define('default_options', {
       axis_x: {
         use: "indicator",
         which: "pop",
-        scaleType: "log"
+        scaleType: "log",
+        allow: {
+          scales: [
+            "linear",
+            "log"
+          ]
+        }
       },
+      // should not be here because axis-y is not geo.name but order of population
       axis_y: {
         use: "property",
-        which: "geo.name"
+        which: "geo.name",
+        scaleType: "log",
+        allow: {
+          scales: [
+            "ordinal"
+          ]
+        }
       },
       color: {
         use: "property",
@@ -145,15 +161,22 @@ BarRankChart.define('default_options', {
   ui: {
     buttons: [],
     buttons_expand: [],
-    presentation: false 
+    presentation: false
   }
+});
+
+BubbleMapChart.define('datawarning_content', {
+  title: "",
+  body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
+  doubtDomain: [1800, 1950, 2015],
+  doubtRange: [1.0, .3, .2]
 });
 
 BubbleMapChart.define('default_options', {
   state: {
     time: {
-      start: "1952",
-      end: "2012",
+      start: "1800",
+      end: "2015",
       value: "2000",
       step: 1,
       speed: 300,
@@ -177,14 +200,12 @@ BubbleMapChart.define('default_options', {
       size: {
         use: "indicator",
         which: "pop",
-        scaleType: "sqrt",
-        /*
-        min: 1,
-        max: 90,
-        */
+        scaleType: "linear",
         allow: {
-          scales: ["linear", "log", "sqrt"]
-        }
+          scales: ["linear", "log"]
+        },
+        min: .04,
+        max: .90
       },
       lat: {
         use: "property",
@@ -209,7 +230,8 @@ BubbleMapChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    buttons_expand: [],
+    presentation: false
   }
 });
 
@@ -351,12 +373,12 @@ LineChart.define('default_options', {
         use: "property",
         which: "geo.region",
         palette: {
-            "asi": "#c34357",
-            "eur": "#c6b40b",
-            "ame": "#67b111",
-            "afr": "#0eb8c7",
-            "_default": "#cb950f"
-        }          
+          "asi": "#c34357",
+          "eur": "#c6b40b",
+          "ame": "#67b111",
+          "afr": "#0eb8c7",
+          "_default": "#cb950f"
+        }
       }
     }
   },
@@ -443,6 +465,9 @@ BubbleChart.define('default_options', {
         use: "property",
         which: "geo.region",
         scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        },
         palette: {
           "asi": "#FF5872",
           "eur": "#FFE700",
@@ -485,9 +510,9 @@ BubbleChart.define('default_options', {
         dragging: true
       }
     },
-   buttons: [],
-   buttons_expand: [],
-   presentation: false
+    buttons: [],
+    buttons_expand: [],
+    presentation: false
   }
 });
 
@@ -589,14 +614,47 @@ Tool.define("preload", function(promise) {
           return one.allowCharts.indexOf(_this.name) != -1 || one.allowCharts.indexOf("*") != -1;
         });
 
+      // TODO: REMOVE THIS HACK
+      // We are currently saving metadata info to default state manually in order
+      // to produce small URLs considering some of the info in metadata to be default
+      // we need a consistent way to add metadata to Vizabi
+      addMinMax("axis_x");
+      addMinMax("axis_y");
+      addPalettes("color");
+      
       promise.resolve();
+
     });
   });
+
+  // TODO: REMOVE THIS HACK (read above)
+  function addPalettes(hook) {
+    if(!_this.default_options.state || !_this.default_options.state.marker[hook] || !globals.metadata.color) {
+      return;
+    }
+    var color = _this.default_options.state.marker[hook];
+    var palette = globals.metadata.color.palettes['geo.region'];
+    color.palette = utils.extend({}, color.palette, palette);
+  }
+
+  function addMinMax(hook) {
+    if(!_this.default_options.state || !_this.default_options.state.marker[hook]) {
+      return;
+    }
+    var axis = _this.default_options.state.marker[hook];
+    if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
+      var domain = globals.metadata.indicatorsDB[axis.which].domain;
+      axis.min = axis.min || domain[0];
+      axis.max = axis.max || domain[1];
+      axis.fakeMin = axis.fakeMin || axis.min || domain[0];
+      axis.fakeMax = axis.fakeMax || axis.max || domain[1];
+    }
+  }
 
 });
 
 Tool.define("preloadLanguage", function() {
-
+  var _this = this;
   var promise = new Promise();
 
   var langModel = this.model.language;
@@ -605,9 +663,11 @@ Tool.define("preloadLanguage", function() {
   if(langModel && !langModel.strings[langModel.id]) {
     d3.json(translation_path, function(langdata) {
       langModel.strings[langModel.id] = langdata;
+      _this.model.language.strings.trigger("change");
       promise.resolve();
     });
   } else {
+    this.model.language.strings.trigger("change");
     promise = promise.resolve();
   }
 

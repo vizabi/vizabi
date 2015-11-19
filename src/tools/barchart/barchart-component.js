@@ -33,11 +33,14 @@ var BarComponent = Component.extend({
     }];
 
     var _this = this;
+
     this.model_binds = {
       "change:time:value": function(evt) {
+        if(!_this._readyOnce) return;
         _this.updateEntities();
       },
       'change:marker:color:palette': utils.debounce(function(evt) {
+        if(!_this._readyOnce) return;
         _this.updateEntities();
       }, 200)
     };
@@ -57,7 +60,6 @@ var BarComponent = Component.extend({
    * DOM is ready
    */
   readyOnce: function() {
-
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bc-graph');
@@ -86,6 +88,7 @@ var BarComponent = Component.extend({
    * Changes labels for indicators
    */
   updateIndicators: function() {
+
     var _this = this;
     this.translator = this.model.language.getTFunction();
     this.duration = this.model.time.delayAnimations;
@@ -150,7 +153,6 @@ var BarComponent = Component.extend({
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
     var values = this.model.marker.getValues(filter, [entityDim]);
-
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(items);
 

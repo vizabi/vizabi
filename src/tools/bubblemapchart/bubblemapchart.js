@@ -10,7 +10,8 @@ import BubbleMapChartComponent from './bubblemapchart-component';
 import {
   timeslider,
   buttonlist,
-  treemenu
+  treemenu,
+  datawarning
 }
 from 'components/_index';
 
@@ -32,21 +33,24 @@ var BubbleMapChart = Tool.extend('BubbleMapChart', {
     this.components = [{
       component: BubbleMapChartComponent,
       placeholder: '.vzb-tool-viz',
-      model: ["state.time", "state.entities", "state.marker", "language"] //pass models to component
+      model: ["state.time", "state.entities", "state.marker", "language", "ui"] //pass models to component
     }, {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
-    }
-    /*, {
+    }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
       model: ['state', 'ui', 'language']
-    }, {
+    }/*, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
       model: ['state.marker', 'language']
-    }*/
+    }*/, {
+      component: datawarning,
+      placeholder: '.vzb-tool-datawarning',
+      model: ['language']
+    }
     ];
 
     //constructor is the same as any tool
@@ -88,6 +92,9 @@ var BubbleMapChart = Tool.extend('BubbleMapChart', {
     data: {
       reader: "csv",
       path: "data/waffles/basic-indicators.csv"
+    },
+    ui: {
+      presentation: true
     }
   }
 });
