@@ -560,7 +560,6 @@ var BubbleChartComp = Component.extend({
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
-      .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
 
     utils.setIcon(this.yInfoEl, iconQuestion)
@@ -935,7 +934,7 @@ var BubbleChartComp = Component.extend({
       .attr("width", warnBB.height)
       .attr("height", warnBB.height)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", -warnBB.height * 1.2)
+      .attr("y", - infoElHeight * 0.8);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -1501,7 +1500,7 @@ var BubbleChartComp = Component.extend({
       }
 
       if(this.ui.whenHovering.showProjectionLineY
-        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height 
+        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
         && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
           .style("opacity", 1)
