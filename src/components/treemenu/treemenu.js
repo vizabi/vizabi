@@ -473,8 +473,6 @@ var TreeMenu = Component.extend({
       element.selectAll('.' + css.list_item).each(function() {
         var li = d3.select(this);
         var label = li.select('.' + css.list_item_label);
-        console.log(li.node().offsetWidth);
-        console.log(label.node().scrollWidth);
         if(label.node().scrollWidth > li.node().offsetWidth) {
           //add data for animation
           label.attr("data-content", label.text());
@@ -490,6 +488,7 @@ var TreeMenu = Component.extend({
 
   //resize function
   _resizeDropdown: function() {
+
     var _this = this;
 
     if(!OPTIONS.IS_MOBILE) {
@@ -536,20 +535,17 @@ var TreeMenu = Component.extend({
           };
         };
       };
-
       OPTIONS.CURRENT_PATH = ulArr;
-
     }
 
   },
-
-
 
   //open submenu
   _toggleSub: function(view) {
     var _this = this;
     var curSub = view.select('.' + css.list);
 
+/*
     var possiblyActivate = function(event, it) {
       var element = d3.select(it).select('.' + css.list);
       if((OPTIONS.IS_MOBILE && event.type == 'click')) {
@@ -570,37 +566,68 @@ var TreeMenu = Component.extend({
         }
       }
     };
+*/
+
+    var callActionWithDelay = function(callback) {
+      var delay = _this._activationDelay(view.node().parentNode);
+      if(delay) {
+        OPTIONS.TIMEOUT = setTimeout(function() {
+          console.log('recall');
+          callActionWithDelay(callback);
+        }, delay);
+      } else {
+        console.log('callback');
+        callback();
+      }
+    };
 
     var toggle = function() {
-      if(!curSub.classed('active')) {
-        close();
+      if(curSub.classed('active')) {
+        callActionWithDelay(close);
       } else {
-        open();
+        callActionWithDelay(open);
       }
     };
 
     var open = function() {
-      curSub.transition()
-        .duration(1000)
-        .style('width', _this.activeProfile.col_width + "px")
-        .each('end', function() {
-          _this._marqueeToggle(curSub, true);
+      if (!curSub.node()) return;
+      var li = d3.select(view.node().parentNode)
+        .selectAll('.active');
+        li.each(function() {
+          d3.select(this)
+            .selectAll('.' + css.list)
+            .each(function() {
+              var elem = d3.select(this);
+              elem.style('width', '');
+              elem.classed('active', false);
+            });
         });
-      curSub.classed('active', true);
+
+        li.filter('.marquee')
+          .each(function() {
+            _this._marqueeToggle(this, false);
+          });
+
+        curSub.transition()
+          .delay(0)
+          .duration(500)
+          .style('width', _this.activeProfile.col_width + "px")
+          .each('end', function() {
+            _this._marqueeToggle(curSub, true);
+          });
+        curSub.classed('active', true);
     };
 
     var close = function() {
-      curSub.transition()
-        .duration(1000)
-        .style('width', 0)
-        .each('end', function() {
-          curSub.classed('active', false);
-        });
+      if (!curSub.node()) return;
+      curSub
+        .classed('active', false)
+        .style('width', "");
       _this._marqueeToggle(curSub, false);
     };
 
-    var closeAll = function(node) {
-      var li = d3.select(node)
+    var closeAll = function() {
+      var li = d3.select(view.node().parentNode)
         .selectAll('.' + css.list_item + ':not(:hover)');
 
       li.each(function() {
@@ -654,10 +681,10 @@ var TreeMenu = Component.extend({
 
 
     view.on('mouseenter', function() {
-      open();
+      callActionWithDelay(open);
     })
     .on('mouseleave', function() {
-      close();
+      //callActionWithDelay(close);
     })
     .on('click', function() {
       toggle();

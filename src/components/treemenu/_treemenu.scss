@@ -44,7 +44,7 @@
       top: 30px;
       font-size: $vzb-font-size-small;
       font-family: $vzb-font-family-alt;
-        
+
       span {
         padding: 2px 5px;
         border: 1px solid $vzb-color-primary-light;
@@ -62,7 +62,7 @@
           border-radius: 0 4px 4px 0;
         }
       }
-        
+
       .vzb-treemenu-scaletypes-active {
         background-color: $vzb-color-grey-light;
         color: $vzb-color-primary-strong;
@@ -121,6 +121,7 @@
         bottom: 0;
         display: block;
         left: 100%;
+        clear: both;
       }
     }
     .vzb-treemenu-list.active,
