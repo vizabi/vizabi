@@ -17,6 +17,7 @@
     "buttons/axis_y": "Y axis",
     "buttons/stack": "Stack",
     "buttons/more_options": "Options",
+    "buttons/opacity": "Opacity",
     "buttons/opacityNonselect": "Opacity of non-selected",
     "buttons/opacityRegular": "Regular opacity",
     "buttons/presentation": "Present",

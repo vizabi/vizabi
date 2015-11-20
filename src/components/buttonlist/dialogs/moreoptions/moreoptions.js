@@ -112,8 +112,26 @@ export default Dialog.extend({
   },
 
   readyOnce: function() {
+    var _this = this;
     this.element = d3.select(this.element);
     this.resize();
+    
+    //accordion
+    this.accordionEl = this.element.select('.vzb-accordion');
+    if(this.accordionEl) {
+      this.accordionEl.selectAll('.vzb-accordion-section')
+        .select('.vzb-accordion-section-title')
+        .on('click', function() {
+          var sectionEl = d3.select(this.parentNode);
+          var activeEl = _this.accordionEl.select('.vzb-accordion-active');
+          if(activeEl) {
+            activeEl.classed('vzb-accordion-active', false);
+          }
+          if(sectionEl.node() !== activeEl.node()) {
+            sectionEl.classed('vzb-accordion-active', true);
+          }
+        })
+    }
   },
 
   resize: function() {
