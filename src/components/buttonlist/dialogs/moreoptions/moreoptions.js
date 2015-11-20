@@ -7,7 +7,8 @@ import {
   bubblesize,
   colorlegend,
   indicatorpicker,
-  simplecheckbox
+  simplecheckbox,
+  minmaxinputs
 }
 from 'components/_index';
 
@@ -27,28 +28,43 @@ export default Dialog.extend({
 
     this.components = [{
       component: indicatorpicker,
-      placeholder: '.vzb-xaxis-container',
-      model: ["state.marker.axis_x", "language"],
+      placeholder: '.vzb-xaxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "axis_x"
+    },{
+      component: minmaxinputs,
+      placeholder: '.vzb-xaxis-minmax',
+      model: ["state.marker", "language"],
+      markerID: "axis_x",
       ui: {
         selectMinMax: false,
         selectFakeMinMax: true
       }
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-yaxis-container',
-      model: ["state.marker.axis_y", "language"],
+      placeholder: '.vzb-yaxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "axis_y"
+    }, {
+      component: minmaxinputs,
+      placeholder: '.vzb-yaxis-minmax',
+      model: ["state.marker", "language"],
+      markerID: "axis_y",
       ui: {
         selectMinMax: false,
         selectFakeMinMax: true
       }
     }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-axes-options',
+      model: ["state", "language"],
+      submodel: 'time',
+      checkbox: 'adaptMinMaxZoom'
+    }, {
       component: indicatorpicker,
-      placeholder: '.vzb-saxis-container',
-      model: ["state.marker.size", "language"],
-      ui: {
-        selectIndicator: true,
-        selectScaletype: false
-      }
+      placeholder: '.vzb-saxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "size"
     }, {
       component: bubblesize,
       placeholder: '.vzb-dialog-bubblesize',
@@ -58,8 +74,9 @@ export default Dialog.extend({
       }
     }, {
       component: indicatorpicker,
-      placeholder: '.vzb-caxis-container',
-      model: ["state.marker.color", "language"]
+      placeholder: '.vzb-caxis-selector',
+      model: ["state.marker", "language"],
+      markerID: "color"
     }, {
       component: colorlegend,
       placeholder: '.vzb-clegend-container',

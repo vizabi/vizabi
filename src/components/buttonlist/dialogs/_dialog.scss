@@ -22,8 +22,12 @@
   .vzb-dialog-title {
     color: $vzb-color-primary;
     font-size: $vzb-font-size-medium;
-    padding: 45px 25px 20px;
+    padding: 45px 25px 16px;
     display: inline-block;
+    align-self: flex-start;
+    span {
+      vertical-align: middle;
+    }
   }
 
   &[data-btn="colors"] {
@@ -32,26 +36,11 @@
     }
   }
 
-  &[data-btn='axesmc'] {
-    @import 'axesmc/axesmc';
-  }
-
-  &[data-btn='stack'] {
-    @import 'stack/stack';
-  }
-
   &[data-btn='find'] {
-    .vzb-dialog-title {
-      display: inline-block;
-      vertical-align: top;
-      padding: 50px 25px 20px;
-    }
 
     .vzb-find-filter {
       display: inline-block;
       position: relative;
-      padding: 5px 0 20px;
-      top: 40px;
       max-width: 170px;
     }
   }
@@ -59,18 +48,9 @@
   &[data-btn='moreoptions'] {
     .vzb-dialog-sublabel {
       display: inline-block;
-      padding: 5px;
 
       &.saxis-label {
         float: left;
-      }
-    }
-
-    .vzb-caxis-container {
-      display: inline;
-
-      .vzb-ip-holder .vzb-ip-indicator {
-        float: none;
       }
     }
 
@@ -81,29 +61,7 @@
       }
     }
 
-    .vzb-saxis-container {
-      height: 70px;
-      display: block;
 
-      &:after {
-        clear: both;
-      }
-
-      .vzb-ip-holder {
-        .vzb-ip-indicator {
-          margin: 2px 10px 5px 18px;
-          float: right;
-          width: auto;
-          max-width: 70%;
-        }
-      }
-
-      .vzb-ip-scaletype {
-        float: right;
-        width: 100px;
-        margin: 5px 10px 5px 0;
-      }
-    }
   }
 
   .vzb-dialog-content {
@@ -118,10 +76,36 @@
     &.vzb-dialog-content-fixed {
       height: $vzb-dialog-content-height;
     }
+    input[type=radio] {
+      cursor: pointer;
+      +span {
+        cursor: pointer;
+      }
+      &[disabled=true] {
+        cursor: default;
+        opacity: .7;
+        +span {
+          cursor: default;
+          color: $vzb-color-primary-light;
+          opacity: .7;
+        }
+      }
+    }
   }
 
-  input {
-    font-size: 1em; //inherit from dialog content
+  input[type=text] {
+    @include border-radius(4px);
+    @include box-sizing(border-box);
+    font-size: 1em; //inherit from dialog content 
+    border: 1px solid rgba($vzb-color-grey, .4);
+    padding: 9px;
+    display: block;
+    width: 100%;
+    outline: none;
+    font-family: $vzb-font-family-alt;
+    &:focus {
+      border: 1px solid rgba($vzb-color-grey, .6);
+    }      
   }
 
   .vzb-dialog-buttons {
@@ -133,7 +117,6 @@
     display: table-cell;
     width: 100%;
     vertical-align: middle;
-    padding: 8px;
     &:first-child {
       padding-left: 0;
     }
@@ -165,25 +148,12 @@
       color: $vzb-color-primary-dark;
     }
   }
-  .vzb-dialog-input {
-    @include border-radius(4px);
-    @include box-sizing(border-box);
-    border: 1px solid rgba($vzb-color-grey, .4);
-    padding: 9px;
-    display: block;
-    width: 100%;
-    outline: none;
-    font-family: $vzb-font-family-alt;
-    &:focus {
-      border: 1px solid rgba($vzb-color-grey, .6);
-    }
-  }
 
   .vzb-dialog-br {
     border-top: 1px solid #ededed;
-    height: 36px;
     width: 100%;
-    margin-top: 36px;
+    height: 28px;
+    margin-top: 28px;
   }
 
   .thumb-tack-class {
@@ -233,7 +203,6 @@
     height: 18px;
     margin: 6px 0;
     position: relative;
-    text-indent: 23px;
 
     input[type=checkbox] {
       @extend .vzb-hidden;
@@ -247,6 +216,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
+      text-indent: 23px;
 
       &:after {
         @include position(absolute, 4px null null 4px);
@@ -279,8 +249,13 @@
   .vzb-dialog-sublabel {
     color: $vzb-color-primary;
     font-weight: bold;
+    margin-bottom: 16px;
   }
 
+  .vzb-dialog-paragraph {
+    margin-bottom: 20px;
+  }
+    
   &.pinned {
     .thumb-tack-class-ico-pin {
       background-color: $vzb-color-primary-strong;
@@ -296,33 +271,7 @@
 
     }
   }
+
+
 }
 
-.vzb-saxis-container {
-  display: inline-block;
-  width: 100%;
-}
-
-
-.vzb-caxis-container {
-  .vzb-ip-holder {
-    .vzb-ip-indicator {
-      margin: 2px 10px 5px 18px;
-      width: auto;
-      max-width: 60%;
-    }
-  }
-
-  .vzb-ip-scaletype {
-    display: block !important;
-    float: right;
-    width: 100px;
-    margin: 5px 10px 5px 0;
-    position: relative;
-    right: 23px;
-
-    &:disabled {
-      display: none !important;
-    }
-  }
-}

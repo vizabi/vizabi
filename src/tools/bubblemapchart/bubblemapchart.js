@@ -46,11 +46,11 @@ var BubbleMapChart = Tool.extend('BubbleMapChart', {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
       model: ['state.marker', 'language']
-    }, {
+    }*/, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
       model: ['language']
-    }*/
+    }
     ];
 
     //constructor is the same as any tool

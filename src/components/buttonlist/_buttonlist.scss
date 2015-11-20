@@ -12,12 +12,6 @@ $vzb-dialog-content-height: 250px;
 
 
 .vzb-buttonlist {
-  @import '../bubblesize/bubblesize';
-  @import '../indicatorpicker/indicatorpicker';
-  @import '../simpleslider/simpleslider';
-  @import '../colorlegend/colorlegend';
-  @import '../simplecheckbox/simplecheckbox';
-  @import '../draggablelist/draggablelist';
   @include position(absolute, 0);
   overflow: visible;
   text-align: center;
@@ -45,13 +39,13 @@ $vzb-dialog-content-height: 250px;
     text-align: center;
     display: inline-block;
     padding: 5px;
-    cursor: pointer;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
 
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
+      cursor: pointer;
       background-color: $vzb-button-bg;
       border: 1px solid $vzb-button-color-border;
       color: $vzb-button-color;
@@ -111,6 +105,14 @@ $vzb-dialog-content-height: 250px;
   }
 
   @import 'dialogs/dialog';
+    
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../minmaxinputs/minmaxinputs';
+  @import '../simpleslider/simpleslider';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
 
 }
 
@@ -133,18 +135,12 @@ $vzb-dialog-content-height: 250px;
     &[data-btn="presentation"] {
       display: none;
     }
-  }  
+  }
   &.vzb-portrait {
     .vzb-buttonlist {
       .vzb-buttonlist-btn {
         margin-bottom: 20px;
         width: $vzb-button-width;
-      }
-      .vzb-buttonlist-container-buttons {
-        margin-bottom: -20px;
-        overflow-y: hidden;
-        overflow-x: scroll;
-        white-space: nowrap;
       }
       .vzb-buttonlist-dialog {
         .vzb-dialog-content.vzb-dialog-content-fixed {
@@ -170,9 +166,6 @@ $vzb-dialog-content-height: 250px;
         .vzb-find-filter {
           top: 20px;
         }
-      }
-      &.vzb-active {
-        @include position(absolute, auto 40px 0 50%);
       }
     }
   }
@@ -209,7 +202,7 @@ $vzb-dialog-content-height: 250px;
     }
     .vzb-tool-buttonlist {
       width: $vzb-button-expand-width;
-      
+
       .vzb-buttonlist {
         display: flex;
         flex-direction: column;
@@ -289,17 +282,6 @@ $vzb-dialog-content-height: 250px;
               height: auto;
               margin-top: 10px;
             }
-
-            .vzb-dialog-title {
-              flex: none;
-              align-self: flex-start;
-            }
-
-            .vzb-find-filter {
-              flex: none;
-              margin-top: -55px;
-              align-self: flex-end;
-            }
           }
 
           &[data-btn="show"] {
@@ -329,7 +311,6 @@ $vzb-dialog-content-height: 250px;
 
           &[data-btn="stack"] {
             flex: none;
-            @import 'dialogs/stack/stack';
 
             .vzb-dl-holder .vzb-draggable {
               height: initial;

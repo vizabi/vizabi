@@ -38,6 +38,42 @@
       font-size: $vzb-font-size-medium;
       padding: 25px 25px 10px 5px;
     }
+    .vzb-treemenu-scaletypes {
+      position: absolute;
+      right: 40px;
+      top: 30px;
+      font-size: $vzb-font-size-small;
+      font-family: $vzb-font-family-alt;
+        
+      span {
+        padding: 2px 5px;
+        border: 1px solid $vzb-color-primary-light;
+        color: $vzb-color-primary-darkest;
+        margin-left: -1px;
+        cursor: pointer;
+        &:hover {
+          background-color: $vzb-color-grey-light;
+          color: $vzb-color-primary-strong;
+        }
+        &:first-child {
+          border-radius: 4px 0 0 4px;
+        }
+        &:last-child {
+          border-radius: 0 4px 4px 0;
+        }
+      }
+        
+      .vzb-treemenu-scaletypes-active {
+        background-color: $vzb-color-grey-light;
+        color: $vzb-color-primary-strong;
+        pointer-events: none;
+      }
+      .vzb-treemenu-scaletypes-disabled {
+        color: $vzb-color-grey-light;
+        border: 0;
+        pointer-events: none;
+      }
+    }
     .vzb-treemenu-list-wrapper {
       overflow-y: auto;
     }

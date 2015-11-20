@@ -20,16 +20,18 @@
                 "2": "#B4DE79"
             },
             "_discrete": {
-                "0": "#1f77b4",
-                "1": "#aec7e8",
-                "2": "#ff7f0e",
-                "3": "#2ca02c",
-                "4": "#98df8a",
-                "5": "#ffbb78",
-                "6": "#d62728",
-                "7": "#ff9896",
-                "8": "#9467bd",
-                "9": "#c5b0d5"
+                "0": "#bcfa83",
+                "1": "#4cd843",
+                "2": "#ff8684",
+                "3": "#e83739",
+                "4": "#ffb04b",
+                "5": "#ff7f00",
+                "6": "#f599f5",
+                "7": "#c027d4",
+                "8": "#f4f459",
+                "9": "#d66425",
+                "10": "#7fb5ed",
+                "11": "#0ab8d8"
             },
             "_default": {
                 "_default": "#fa5ed6"
@@ -93,7 +95,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "gini": {
-            "allowCharts": ["mountainchart", "bubblechart"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemapchart"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
@@ -132,7 +134,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "u5mr": {
-            "allowCharts": ["bubblechart"],
+            "allowCharts": ["bubblechart", "bubblemapchart"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],

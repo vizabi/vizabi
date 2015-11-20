@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { indicatorpicker } from 'components/_index'
+import { minmaxinputs } from 'components/_index'
 /*
  * Axes dialog
  */
@@ -32,12 +32,11 @@ var Axes = Dialog.extend({
     };
 
     this.components = [{
-      component: indicatorpicker,
+      component: minmaxinputs,
       placeholder: '.vzb-xlimits-container',
-      model: ["state.marker.axis_x", "language"],
+      model: ["state.marker", "language"],
+      markerID: "axis_x",
       ui: {
-        selectIndicator: false,
-        selectScaletype: false,
         selectMinMax: false,
         selectFakeMinMax: true 
       }

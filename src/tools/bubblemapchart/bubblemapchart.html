@@ -1,11 +1,32 @@
 <!-- Bubble Map Chart Component -->
-<svg class="vzb-bubblemapchart">
-  <g class="vzb-bmc-graph">
-    <g class="vzb-bmc-year"></g>
-    <svg class="vzb-bmc-map-background">
-      <g class="vzb-bmc-map-graph"></g>
-    </svg>
-    <g class="vzb-bmc-bubbles"></g>
-    <g class="vzb-bmc-bubble-labels"></g>
-  </g>
-</svg>
+<div class="vzb-bubblemapchart">
+  <svg class="vzb-bubblemapchart-svg">
+    <g class="vzb-bmc-graph">
+      <g class="vzb-bmc-year"></g>
+      <svg class="vzb-bmc-map-background">
+        <g class="vzb-bmc-map-graph"></g>
+      </svg>
+
+      <g class="vzb-bmc-bubbles"></g>
+      <g class="vzb-bmc-bubble-labels"></g>
+
+
+      <g class="vzb-bmc-axis-y-title">
+          <text></text>
+      </g>
+
+      <g class="vzb-bmc-axis-info">
+      </g>
+
+      <g class="vzb-data-warning">
+        <svg></svg>
+        <text></text>
+      </g>
+
+      <g class="vzb-bmc-tooltip vzb-hidden">
+          <rect class="vzb-bmc-tooltip-border"></rect>
+          <text class="vzb-bmc-tooltip-text"></text>
+      </g>
+    </g>
+  </svg>
+</div>
