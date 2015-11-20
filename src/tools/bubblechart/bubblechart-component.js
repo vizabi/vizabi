@@ -105,8 +105,8 @@ var BubbleChartComp = Component.extend({
           )
           return;
         }
-
-        if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
+        
+        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
 
         _this.ready();
         //console.log("EVENT change:marker", evt);
