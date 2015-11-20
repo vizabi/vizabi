@@ -115,8 +115,8 @@ var TreeMenu = Component.extend({
 
     this.name = 'gapminder-treemenu';
     this.model_expects = [{
-      name: "marker"
-      //TODO: learn how to expect model "axis" or "size" or "color"
+      name: "marker",
+      type: "model"
     }, {
       name: "language",
       type: "language"
@@ -813,7 +813,7 @@ var TreeMenu = Component.extend({
     scaleTypes
         .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
         .classed(css.scaletypesActive, function(d){
-            return d == _this.model.marker[markerID].scaleType;
+            return d == _this.model.marker[markerID].scaleType && scaleTypesData.length > 1;
         })
         .text(function(d){
             return _this.translator("scaletype/" + d);

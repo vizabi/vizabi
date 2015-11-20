@@ -105,8 +105,8 @@ var BubbleChartComp = Component.extend({
           )
           return;
         }
-
-        if(evt.indexOf("axis_x") > -1 || evt.indexOf("axis_y") > -1) return;
+        
+        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
 
         _this.ready();
         //console.log("EVENT change:marker", evt);
@@ -560,7 +560,6 @@ var BubbleChartComp = Component.extend({
     utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
     this.dataWarningEl.append("text")
       .attr("text-anchor", "end")
-      .attr("y", "-0.32em")
       .text(this.translator("hints/dataWarning"));
 
     utils.setIcon(this.yInfoEl, iconQuestion)
@@ -931,11 +930,12 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
+    console.log(warnBB.height);
     this.dataWarningEl.select("svg")
-      .attr("width", warnBB.height)
-      .attr("height", warnBB.height)
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
       .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", -warnBB.height * 1.2)
+      .attr("y", - warnBB.height * 0.65);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -1501,7 +1501,7 @@ var BubbleChartComp = Component.extend({
       }
 
       if(this.ui.whenHovering.showProjectionLineY
-        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height 
+        && this.yScale(valueY) > 0 && this.yScale(valueY) < this.height
         && (this.xScale(valueX) - radius) > 0) {
         this.projectionY
           .style("opacity", 1)
