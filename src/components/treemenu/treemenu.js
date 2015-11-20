@@ -1,5 +1,6 @@
 import { extend, pruneTree } from 'base/utils';
 import Component from 'base/component';
+import Class from 'class';
 import globals from 'base/globals';
 import {close as iconClose} from 'base/iconset';
 
@@ -56,6 +57,287 @@ var OPTIONS = {
   CURRENT_PATH: [], //current active path
   MIN_COL_WIDTH: 100 //minimal column size
 };
+
+var Menu = Class.extend({
+  init: function (parent, menu) {
+    this.parent = parent;
+    var _this = this;
+    this.entity = menu;
+    this.width = OPTIONS.MIN_COL_WIDTH;
+    this.menuItems = [];
+    menu.selectAll('.' + css.list_item)
+      .filter(function() {
+        return this.parentNode == _this.entity.node();
+      })
+      .each(function() {
+        _this.addSubmenu(d3.select(this));
+      });
+    return this;
+  },
+  setWidth: function(width, recursive) {
+    if (this.width != width) {
+      this.width = width;
+      if (this.entity.classed('active')) {
+        this.entity.transition()
+          .delay(0)
+          .duration(100)
+          .style('width', this.width + "px")
+      }
+      if (recursive) {
+        for (var i = 0; i < this.menuItems.length; i++) {
+          this.menuItems[i].setWidth(this.width, recursive);
+        }
+      }
+      return this;
+    }
+  },
+  addSubmenu: function(item) {
+      this.menuItems.push(new MenuItem(this, item))
+  },
+  open: function() {
+    var _this = this;
+    this.closeNeighbors(function() {
+      _this.entity.transition()
+        .delay(0)
+        .duration(500)
+        .style('width', _this.width + "px")
+        .each('end', function() {
+          _this._marqueeToggle(true);
+        });
+      _this.entity.classed('active', true);
+    });
+    return this;
+  },
+  closeAllChildren: function(cb) {
+    var callbacks = 0;
+    for (var i = 0; i < this.menuItems.length; i++) {
+      if (this.menuItems[i].isActive()) {
+        ++callbacks;
+        this.menuItems[i].submenu.close(function() {
+          if (--callbacks == 0) {
+            if (typeof cb === "function") cb();
+          }
+        });
+      }
+    }
+    if (callbacks == 0) {
+      if (typeof cb === "function") cb();
+    }
+  },
+  closeNeighbors: function(cb) {
+    if (this.parent) {
+      this.parent.closeNeighbors(cb);
+    } else {
+      cb();
+    }
+  },
+  close: function(cb) {
+    var _this = this;
+    this.closeAllChildren(function() {
+      _this.entity.transition()
+        .delay(0)
+        .duration(200)
+        .style('width', 0 + "px")
+        .each('end', function() {
+          _this._marqueeToggle(false);
+          _this.entity.classed('active', false);
+          if (typeof cb === "function") cb();
+        });
+    })
+  },
+  isActive: function() {
+    return this.entity.classed('active');
+  },
+
+  hasActiveSubmenu: function() {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      if (this.menuItems[i].isActive()) {
+        return true;
+      }
+    }
+    return false;
+  },
+  getHoveredEntity: function() {
+    return  this.entity.select('.' + css.list_item + ':hover');
+  },
+  _marqueeToggle: function(toggle) {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      this.menuItems[i].marqueeToggle(toggle);
+    }
+  }
+});
+
+var MenuItem = Class.extend({
+  init: function (parent, item) {
+    var _this = this;
+    this.parent = parent;
+    this.entity = item;
+    var submenu = item.select('.' + css.list);
+    if (submenu.node()) {
+      this.submenu = new Menu(this, submenu);
+    }
+    this.entity.on('mouseenter', function() {
+      if (_this.submenu) {
+        if (!_this.submenu.isActive()) {
+          _this.submenu.open();
+        }
+      } else {
+        _this.closeNeighbors();
+      }
+    })/*.on('mouseleave', function() {
+      if (_this.submenu && !_this._isHovered()) {
+        _this._activationDelay(function() {
+          _this.submenu.close();
+        });
+      }
+    })*/;
+    return this;
+  },
+/*
+  _isHovered: function() {
+    return this.parent.getHoveredEntity() == this.entity;
+  },
+*/
+  setWidth: function(width, recursive) {
+    if (this.submenu && recursive) {
+      this.submenu.setWidth(width, recursive);
+    }
+    return this;
+  },
+  closeNeighbors: function(cb) {
+    this.parent.closeAllChildren(cb);
+  },
+  isActive: function() {
+    return this.submenu && this.submenu.isActive();
+  },
+  marqueeToggle: function(toggle) {
+    if(toggle) {
+      var label = this.entity.select('.' + css.list_item_label);
+      if(label.node().scrollWidth > this.entity.node().offsetWidth) {
+        label.attr("data-content", label.text());
+        this.entity.classed('marquee', true);
+      }
+    } else {
+      this.entity.classed('marquee', false);
+    }
+  },
+  /**
+   * Return the amount of time that should be used as a delay before the
+   * currently hovered row is activated.
+   *
+   * Returns 0 if the activation should happen immediately. Otherwise,
+   * returns the number of milliseconds that should be delayed before
+   * checking again to see if the row should be activated.
+   */
+  _activationDelay: function(cb) {
+    var _this = this;
+    var tryAction = function(cb) {
+      var timeout = getDelay();
+      if(timeout) {
+        setTimeout(function() {
+          tryAction(cb);
+        }, timeout);
+      } else {
+        cb();
+      }
+    };
+
+    var getDelay = function() {
+      var $menu = _this.parent.entity.node();
+      var menuWrap = $menu.parentNode;
+
+      if(!_this.isActive()) {
+        //if current submenu has no opened submenus, open first immediately
+        return 0;
+      }
+
+      var upperLeft = {
+          x: $menu.offsetLeft + menuWrap.offsetLeft,
+          y: $menu.offsetTop + menuWrap.offsetTop - OPTIONS.TOLERANCE
+        },
+        upperRight = {
+          x: $menu.offsetLeft + menuWrap.offsetLeft + $menu.offsetWidth,
+          y: upperLeft.y
+        },
+        lowerLeft = {
+          x: $menu.offsetLeft + menuWrap.offsetLeft,
+          y: $menu.offsetTop + menuWrap.offsetTop + $menu.offsetHeight + OPTIONS.TOLERANCE
+        },
+        lowerRight = {
+          x: $menu.offsetLeft + menuWrap.offsetLeft + $menu.offsetWidth,
+          y: lowerLeft.y
+        },
+        loc = OPTIONS.MOUSE_LOCS[OPTIONS.MOUSE_LOCS.length - 1],
+        prevLoc = OPTIONS.MOUSE_LOCS[0];
+
+      if(!loc) {
+        return 0;
+      }
+
+      if(!prevLoc) {
+        prevLoc = loc;
+      }
+
+      if(prevLoc.x < $menu.offsetLeft ||
+        prevLoc.y < $menu.offsetTop || prevLoc.y > lowerRight.y) {
+        // If the previous mouse location was outside of the entire
+        // menu's bounds, immediately activate.
+        return 0;
+      }
+
+      if(OPTIONS.LAST_DELAY_LOC &&
+        loc.x == OPTIONS.LAST_DELAY_LOC.x && loc.y == OPTIONS.LAST_DELAY_LOC.y) {
+        // If the mouse hasn't moved since the last time we checked
+        // for activation status, immediately activate.
+        return 0;
+      }
+
+      // Detect if the user is moving towards the currently activated
+      // submenu.
+      //
+      // If the mouse is heading relatively clearly towards
+      // the submenu's content, we should wait and give the user more
+      // time before activating a new row. If the mouse is heading
+      // elsewhere, we can immediately activate a new row.
+      //
+      // We detect this by calculating the slope formed between the
+      // current mouse location and the upper/lower right points of
+      // the menu. We do the same for the previous mouse location.
+      // If the current mouse location's slopes are
+      // increasing/decreasing appropriately compared to the
+      // previous's, we know the user is moving toward the submenu.
+      //
+      // Note that since the y-axis increases as the cursor moves
+      // down the screen, we are looking for the slope between the
+      // cursor and the upper right corner to decrease over time, not
+      // increase (somewhat counterintuitively).
+      function slope(a, b) {
+        return(b.y - a.y) / (b.x - a.x);
+      };
+
+      var decreasingCorner = upperRight,
+        increasingCorner = lowerRight;
+
+      var decreasingSlope = slope(loc, decreasingCorner),
+        increasingSlope = slope(loc, increasingCorner),
+        prevDecreasingSlope = slope(prevLoc, decreasingCorner),
+        prevIncreasingSlope = slope(prevLoc, increasingCorner);
+
+      if(decreasingSlope < prevDecreasingSlope &&
+        increasingSlope > prevIncreasingSlope) {
+        // Mouse is moving from previous location towards the
+        // currently activated submenu. Delay before activating a
+        // new menu row, because user may be moving into submenu.
+        OPTIONS.LAST_DELAY_LOC = loc;
+        return OPTIONS.DELAY;
+      }
+
+      OPTIONS.LAST_DELAY_LOC = null;
+      return 0;
+    }
+    tryAction(cb);
+  }
+});
 
 
 //default callback
@@ -123,7 +405,8 @@ var TreeMenu = Component.extend({
     }];
 
     this.context = context;
-
+    // object for manipulation with menu representation level
+    this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt) {
         if(evt.indexOf(markerID)==-1) return;
@@ -132,7 +415,7 @@ var TreeMenu = Component.extend({
       "change:language:strings": function(evt) {
         _this.updateView();
       }
-    }
+    };
 
     //contructor is the same as any component
     this._super(config, context);
@@ -197,7 +480,8 @@ var TreeMenu = Component.extend({
     //init functions
     d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
-/*
+      _this.menuEntity.closeAllChildren();
+      /*
       _this._closeAllSub(this)
 */
     });
@@ -223,6 +507,9 @@ var TreeMenu = Component.extend({
       }
     };
     this.activeProfile = this.profiles[this.getLayoutProfile()];
+    if (this.menuEntity) {
+      this.menuEntity.setWidth(this.activeProfile.col_width, true);
+    }
     this.width = _this.element.node().offsetWidth;
     var containerWidth = this.wrapper.node().getBoundingClientRect().width;
     if (containerWidth) {
@@ -245,7 +532,7 @@ var TreeMenu = Component.extend({
       this.wrapper.selectAll('.' + css.list_item)
         .filter('.marquee')
         .each(function() {
-          _this._marqueeToggle(this, false);
+          _this._marqueeToggle(d3.select(this), false);
         });
     } else {
       this.resize();
@@ -463,9 +750,6 @@ var TreeMenu = Component.extend({
     input.on('keyup', searchIt);
   },
 
-
-
-
   //marquee animation
   _marqueeToggle: function(element, toggle) {
     if (!element.node()) return;
@@ -681,13 +965,13 @@ var TreeMenu = Component.extend({
 
 
     view.on('mouseenter', function() {
-      callActionWithDelay(open);
+//      callActionWithDelay(open);
     })
     .on('mouseleave', function() {
       //callActionWithDelay(close);
     })
     .on('click', function() {
-      toggle();
+      //toggle();
     });
   },
 
@@ -784,13 +1068,12 @@ var TreeMenu = Component.extend({
         .each(function(d) {
           var view = d3.select(this);
           createSubmeny(view, d);
-          _this._toggleSub(view);
         });
     };
 
     createSubmeny(this.wrapper, dataFiltered, true);
-
-
+    this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level));
+    this.menuEntity.setWidth(this.activeProfile.col_width, true);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
 
