@@ -150,7 +150,8 @@ $vzb-loader-bgcolor: $vzb-color-white;
     height: 15px;
     width: 15px;
 
-    path {
+    path,
+    rect {
       fill: $vzb-color-primary;
     }
   }
