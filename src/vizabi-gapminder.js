@@ -209,11 +209,11 @@ BubbleMapChart.define('default_options', {
       },
       lat: {
         use: "property",
-        which: "lat"
+        which: "geo.lat"
       },
       lng: {
         use: "property",
-        which: "lng"
+        which: "geo.lng"
       },
       color: {
         use: "property",
