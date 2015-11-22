@@ -39,7 +39,7 @@ var MCSelectList = Class.extend({
       .filter(function (f) {
         return _this.model.entities.isSelected(f);
       });
-    _this.selectList = _this.labelsContainer.selectAll("g.vzb-bmc-label")
+    _this.selectList = _this.labelListContainer.selectAll("g.vzb-bmc-label")
       .data(utils.unique(listData, function (d) {
         return d.KEY();
       }));
@@ -102,7 +102,7 @@ var MCSelectList = Class.extend({
     var _this = this.context;
     if (!_this.selectList || !_this.someSelected) return;
 
-    var sample = _this.labelsContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
+    var sample = _this.labelListContainer.append("g").attr("class", "vzb-bmc-label").append("text").text("0");
     var fontHeight = sample[0][0].getBBox().height*1.2;
     var fontSizeToFontHeight = parseFloat(sample.style("font-size")) / fontHeight;
     d3.select(sample[0][0].parentNode).remove();
