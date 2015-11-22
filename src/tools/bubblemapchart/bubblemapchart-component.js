@@ -157,6 +157,7 @@ var BubbleMapChartComponent = Component.extend({
         .attr("height", defaultHeight);
     svg.html('');
 
+    /* // no latlng line
     svg.append("defs").append("path")
         .datum({type: "Sphere"})
         .attr("id", "sphere")
@@ -174,6 +175,7 @@ var BubbleMapChartComponent = Component.extend({
         .datum(graticule)
         .attr("class", "graticule")
         .attr("d", path);
+    */
 
     svg.insert("path", ".graticule")
         .datum(topojson.feature(world, world.objects.land))
@@ -227,7 +229,7 @@ var BubbleMapChartComponent = Component.extend({
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.yTitleEl.select("text")
-          .text(_this.model.marker.size.which);
+          .text(this.translator("bubblemap/" + _this.model.marker.size.which));
 
       utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
       this.dataWarningEl.append("text")
@@ -273,7 +275,6 @@ var BubbleMapChartComponent = Component.extend({
    */
   updateIndicators: function () {
     var _this = this;
-    this.translator = this.model.language.getTFunction();
     this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
     this.duration = this.model.time.speed;
 
@@ -290,6 +291,9 @@ var BubbleMapChartComponent = Component.extend({
     var time = this.model.time;
     var timeDim = time.getDimension();
     var entityDim = this.model.entities.getDimension();
+    // var latDim = this.model.lat.getDimension();
+    // var lngDim = this.model.lng.getDimension();
+    // console.log(latDim, lngDim, 'ok');
     var duration = (time.playing) ? time.speed : 0;
     var filter = {};
     filter[timeDim] = time.value;
@@ -557,8 +561,6 @@ var BubbleMapChartComponent = Component.extend({
 
     this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
     this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
-
-    console.log(utils.radiusToArea);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);

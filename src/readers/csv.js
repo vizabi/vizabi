@@ -200,7 +200,6 @@ var CSVReader = Reader.extend({
   },
 
   loadProperties: function(data, query) {
-
       var _this = this;
 
       // see if there are any properties used in the query and load them
