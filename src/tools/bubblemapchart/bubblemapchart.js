@@ -42,11 +42,11 @@ var BubbleMapChart = Tool.extend('BubbleMapChart', {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
       model: ['state', 'ui', 'language']
-    }/*, {
+    }, {
       component: treemenu,
       placeholder: '.vzb-tool-treemenu',
       model: ['state.marker', 'language']
-    }*/, {
+    }, {
       component: datawarning,
       placeholder: '.vzb-tool-datawarning',
       model: ['language']

@@ -125,7 +125,7 @@ var MCSelectList = Class.extend({
         //var number = _this.values.axis_y[d.KEY()];
         var number = _this.values.size[d.KEY()];
 
-        var string = name + ": " + formatter(number) + (i === 0 ? " people" : "");
+        var string = name + ": " + formatter(number) + (i === 0 ? " " + _this.translator("unit/" + _this.model.marker.size.which) : "");
 
         var text = view.selectAll(".vzb-bmc-label-text")
           .attr("x", fontHeight)

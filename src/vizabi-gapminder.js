@@ -184,6 +184,8 @@ BubbleMapChart.define('default_options', {
     },
     entities: {
       dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: .8,
       show: {
         _defs_: {
           "geo": ["*"],
