@@ -12,7 +12,7 @@ export default Class.extend({
 
     if(arg) {
       _this._trails.create();
-      _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
+      _this._trails.run(["resize", "recolor", "opacityHandler", "findVisible", "reveal"]);
     } else {
       _this._trails.run("remove");
       _this.model.entities.select.forEach(function(d) {
@@ -194,6 +194,20 @@ export default Class.extend({
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .style("stroke", _this.cScale(segment.valueC));
+    });
+  },
+
+  _opacityHandler: function(trail, duration, d) {
+    var _this = this.context;
+    var OPACITY_SELECT = _this.model.entities.opacityRegular;
+
+    trail.each(function(segment, index) {
+
+      var view = d3.select(this);
+
+      view
+        //.transition().duration(duration).ease("linear")
+        .style("opacity", OPACITY_SELECT);
     });
   },
 
