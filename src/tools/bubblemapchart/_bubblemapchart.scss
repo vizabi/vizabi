@@ -79,10 +79,6 @@
         }
       }
 
-      .vzb-bmc-bubble {
-        stroke: $vzb-color-black;
-      }
-
       .stroke {
         fill: none;
         stroke: $vzb-color-grey;
@@ -112,14 +108,8 @@
         stroke-width: .5px;
       }
 
-      circle {
-        opacity: .8;
-        &:hover {
-          opacity: 1;
-        }
-        &.vzb-selected {
-          opacity: 1;
-        }
+      .vzb-bmc-bubble {
+        stroke: $vzb-color-black;
       }
     }
   }

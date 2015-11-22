@@ -49,7 +49,7 @@ var BubbleMapChartComponent = Component.extend({
       "change:entities:highlight": function (evt) {
           if (!_this._readyOnce) return;
           _this.highlightEntities();
-          //_this.updateOpacity();
+          _this.updateOpacity();
       },
       "change:marker": function(evt) {
         // bubble size change is processed separately
@@ -93,7 +93,7 @@ var BubbleMapChartComponent = Component.extend({
 
     this.defaultWidth = 960;
     this.defaultHeight = 500;
-    this.boundBox = [[0.05, 0], [0.95, 0.85]]; // two points to set box bound on 960 * 500 image;
+    this.boundBox = [[0.03, 0], [0.97, 0.85]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
   },
@@ -214,12 +214,12 @@ var BubbleMapChartComponent = Component.extend({
     this.updateSize();
     this.updateMarkerSizeLimits();
     this.updateEntities();
-    this.updateOpacity();
     this.updateTime();
     this.highlightEntities();
     this.selectEntities();
     this._selectlist.redraw();
     this.updateDoubtOpacity();
+    this.updateOpacity();
   },
 
   updateUIStrings: function () {
@@ -229,7 +229,7 @@ var BubbleMapChartComponent = Component.extend({
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.yTitleEl.select("text")
-          .text(this.translator("bubblemap/" + _this.model.marker.size.which));
+          .text(this.translator("indicator/" + _this.model.marker.size.which));
 
       utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
       this.dataWarningEl.append("text")
@@ -264,10 +264,51 @@ var BubbleMapChartComponent = Component.extend({
 
   updateOpacity: function () {
       var _this = this;
-
+      /*
       this.entityBubbles.classed("vzb-selected", function (d) {
           return _this.model.entities.isSelected(d);
       });
+      */
+
+      var OPACITY_HIGHLT = 1.0;
+      var OPACITY_HIGHLT_DIM = .3;
+      var OPACITY_SELECT = 1.0;
+      var OPACITY_REGULAR = this.model.entities.opacityRegular;
+      var OPACITY_SELECT_DIM = this.model.entities.opacitySelectDim;
+
+      this.entityBubbles.style("opacity", function (d) {
+
+          if (_this.someHighlighted) {
+              //highlight or non-highlight
+              if (_this.model.entities.isHighlighted(d)) return OPACITY_HIGHLT;
+          }
+
+          if (_this.someSelected) {
+              //selected or non-selected
+              return _this.model.entities.isSelected(d) ? OPACITY_SELECT : OPACITY_SELECT_DIM;
+          }
+
+          if (_this.someHighlighted) return OPACITY_HIGHLT_DIM;
+
+          return OPACITY_REGULAR;
+
+      });
+
+      this.entityBubbles.classed("vzb-selected", function (d) {
+          return _this.model.entities.isSelected(d)
+      });
+
+      var someSelectedAndOpacityZero = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
+
+      // when pointer events need update...
+      if (someSelectedAndOpacityZero !== this.someSelectedAndOpacityZero_1) {
+          this.entityBubbles.style("pointer-events", function (d) {
+              return (!someSelectedAndOpacityZero || _this.model.entities.isSelected(d)) ?
+                  "visible" : "none";
+          });
+      }
+
+      this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
   },
 
   /**
