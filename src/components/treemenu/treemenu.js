@@ -58,7 +58,7 @@ var OPTIONS = {
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
-  MIN_COL_WIDTH: 100, //minimal column size
+  MIN_COL_WIDTH: 50, //minimal column size
   MENU_DIRECTION: MENU_HORIZONTAL,
   MAX_MENU_WIDTH: 300
 };
@@ -155,7 +155,7 @@ var Menu = Class.extend({
       this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
           if (widthToReduce > 0) {
             _this.reduceWidth(widthToReduce, function(newWidth) {
-              cb(newWidth);
+              if (typeof cb === "function") cb(); // callback is not defined if it is emitted from this level
             });
           }
       });
@@ -200,16 +200,18 @@ var Menu = Class.extend({
     var _this = this;
     var currWidth = this.entity.node().offsetWidth;
 
-    if (currWidth == 0) {
+    if (currWidth <= OPTIONS.MIN_COL_WIDTH) {
       cb(width);
     } else {
-      var duration = 500/(_this.width / Math.min(width, _this.width));
+
+      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, (_this.width - width));
+      var duration = 500 / (_this.width / newElementWidth);
       this.entity.transition()
         .delay(0)
         .duration(duration)
-        .style('width', Math.min(width, _this.width) + "px")
+        .style('width', newElementWidth + "px")
         .each('end', function() {
-          cb(width - _this.width);
+          cb(width - _this.width + newElementWidth);
         });
     }
   },
@@ -288,7 +290,7 @@ var Menu = Class.extend({
     var _this = this;
     _this.entity.transition()
       .delay(0)
-      .duration(200)
+      .duration(100)
       .style('height', 0 + "px")
       .each('end', function() {
         _this.marqueeToggle(false);
@@ -544,12 +546,17 @@ var TreeMenu = Component.extend({
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     this.width = _this.element.node().offsetWidth;
     var containerWidth = this.wrapper.node().getBoundingClientRect().width;
+    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (containerWidth) {
       this.wrapper.classed(css.alignXc, alignX === "center");
       this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
+      if (alignX === "center") {
+        OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
+      } else {
+        OPTIONS.MAX_MENU_WIDTH = this.width - parseInt(_this.wrapper.style('left')) - containerWidth - 50; // 50 - padding around wrapper
+      }
     }
 
-    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (this.menuEntity) {
       this.menuEntity.setWidth(this.activeProfile.col_width, true);
       if (OPTIONS.IS_MOBILE) {
