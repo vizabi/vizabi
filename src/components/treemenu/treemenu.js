@@ -59,7 +59,8 @@ var OPTIONS = {
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
   MIN_COL_WIDTH: 100, //minimal column size
-  MENU_DIRECTION: MENU_HORIZONTAL
+  MENU_DIRECTION: MENU_HORIZONTAL,
+  MAX_MENU_WIDTH: 300
 };
 
 var Menu = Class.extend({
@@ -125,12 +126,71 @@ var Menu = Class.extend({
       this.closeNeighbors(function() {
         if (_this.direction == MENU_HORIZONTAL) {
           _this._openHorizontal();
+          _this.calculateMissingWidth(0);
         } else {
           _this._openVertical();
         }
       });
     }
     return this;
+  },
+
+  calculateMissingWidth: function(width, cb) {
+    var _this = this;
+    if (this.entity.classed(css.list_top_level)) {
+      if (width > OPTIONS.MAX_MENU_WIDTH) {
+        cb(width - OPTIONS.MAX_MENU_WIDTH);
+      }
+    } else {
+      this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
+          if (widthToReduce > 0) {
+            _this.reduceWidth(widthToReduce, function(newWidth) {
+              cb(newWidth);
+            });
+          }
+      });
+    }
+  },
+  restoreWidth: function(width, isClosedElement, cb) {
+    var _this = this;
+    if (isClosedElement) {
+      this.parent.parentMenu.restoreWidth(width, false, cb);
+    } else if (width <= 0) {
+      if (typeof cb === "function") cb();
+    } else if (!this.entity.classed(css.list_top_level)) {
+      var currentElementWidth = this.entity.node().offsetWidth;
+      if (currentElementWidth < _this.width) {
+        var duration = 500*(currentElementWidth / _this.width);
+        this.entity.transition()
+          .delay(0)
+          .duration(duration)
+          .style('width', _this.width + "px")
+          .each('end', function() {
+          });
+        _this.parent.parentMenu.restoreWidth(width - _this.width + currentElementWidth, false, cb);
+      } else {
+        this.parent.parentMenu.restoreWidth(width, false, cb);
+      }
+    } else {
+      if (typeof cb === "function") cb();
+    }
+  },
+  reduceWidth: function(width, cb) {
+    var _this = this;
+    var currWidth = this.entity.node().offsetWidth;
+
+    if (currWidth == 0) {
+      cb(width);
+    } else {
+      var duration = 500/(_this.width / Math.min(width, _this.width));
+      this.entity.transition()
+        .delay(0)
+        .duration(duration)
+        .style('width', Math.min(width, _this.width) + "px")
+        .each('end', function() {
+          cb(width - _this.width);
+        });
+    }
   },
   _openHorizontal: function() {
     var _this = this;
@@ -189,6 +249,7 @@ var Menu = Class.extend({
     })
   },
   _closeHorizontal: function(cb) {
+    var elementWidth = this.entity.node().offsetWidth;
     var _this = this;
     _this.entity.transition()
       .delay(0)
@@ -197,7 +258,9 @@ var Menu = Class.extend({
       .each('end', function() {
         _this.marqueeToggle(false);
         _this.entity.classed('active', false);
-        if (typeof cb === "function") cb();
+        _this.restoreWidth(elementWidth, true, function() {
+          if (typeof cb === "function") cb();
+        });
       });
   },
   _closeVertical: function(cb) {
@@ -225,7 +288,7 @@ var Menu = Class.extend({
 var MenuItem = Class.extend({
   init: function (parent, item) {
     var _this = this;
-    this.parent = parent;
+    this.parentMenu = parent;
     this.entity = item;
     var submenu = item.select('.' + css.list);
     if (submenu.node()) {
@@ -233,7 +296,7 @@ var MenuItem = Class.extend({
     }
     this.entity.on('mouseenter', function() {
       if(isTouchDevice()) return;
-      if (_this.parent.direction == MENU_HORIZONTAL) {
+      if (_this.parentMenu.direction == MENU_HORIZONTAL) {
         _this.openSubmenu();
       }
     }).on('click', function() {
@@ -275,7 +338,7 @@ var MenuItem = Class.extend({
     }
   },
   closeNeighbors: function(cb) {
-    this.parent.closeAllChildren(cb);
+    this.parentMenu.closeAllChildren(cb);
   },
   isActive: function() {
     return this.submenu && this.submenu.isActive();
@@ -663,7 +726,6 @@ var TreeMenu = Component.extend({
       .setDirection(OPTIONS.MENU_DIRECTION);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
-
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
