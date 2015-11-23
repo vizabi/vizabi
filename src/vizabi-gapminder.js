@@ -184,6 +184,8 @@ BubbleMapChart.define('default_options', {
     },
     entities: {
       dim: "geo",
+      opacitySelectDim: .3,
+      opacityRegular: .8,
       show: {
         _defs_: {
           "geo": ["*"],
@@ -209,11 +211,11 @@ BubbleMapChart.define('default_options', {
       },
       lat: {
         use: "property",
-        which: "lat"
+        which: "geo.lat"
       },
       lng: {
         use: "property",
-        which: "lng"
+        which: "geo.lng"
       },
       color: {
         use: "property",

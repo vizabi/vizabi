@@ -466,12 +466,12 @@ var Model = Events.extend({
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
     dimensions = this._getAllDimensions(exceptions);
+
     filters = this._getAllFilters(exceptions, splashScreen);
     grouping = this._getGrouping();
 
     if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
-
 
     //return query
     return {
@@ -1105,6 +1105,7 @@ var Model = Events.extend({
     });
 
     this._spaceDims[optsStr] = dims;
+
     return dims;
   },
 

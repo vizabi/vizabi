@@ -116,7 +116,7 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
         _this.redrawDataPoints();
-        _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
+        _this._trails.run(["resize", "recolor", "opacityHandler","findVisible", "reveal"]);
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
@@ -171,6 +171,7 @@ var BubbleChartComp = Component.extend({
       },
       'change:entities:opacityRegular': function() {
         _this.updateBubbleOpacity();
+        _this._trails.run("opacityHandler");        
       },
       'ready': function() {
         // if(_this.model.marker.color.scaleType === 'time') {
@@ -432,7 +433,7 @@ var BubbleChartComp = Component.extend({
     this._updateDoubtOpacity();
     this._trails.create();
     this._panZoom.reset(); // includes redraw data points and trail resize
-    this._trails.run(["recolor", "findVisible", "reveal"]);
+    this._trails.run(["recolor", "opacityHandler", "findVisible", "reveal"]);
     if(this.model.time.adaptMinMaxZoom) this._panZoom.expandCanvas();
   },
 
@@ -453,7 +454,7 @@ var BubbleChartComp = Component.extend({
     this._trails.create();
     this._trails.run("findVisible");
     this._panZoom.reset();
-    this._trails.run(["recolor", "reveal"]);
+    this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
     this._panZoom.zoomToMaxMin(
        this.model.marker.axis_x.fakeMin,
