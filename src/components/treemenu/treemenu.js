@@ -1,4 +1,4 @@
-import { extend, pruneTree } from 'base/utils';
+import { extend, pruneTree, isTouchDevice } from 'base/utils';
 import Component from 'base/component';
 import Class from 'class';
 import globals from 'base/globals';
@@ -14,7 +14,8 @@ var MIN = "min";
 var MAX = "max";
 var SCALETYPE = "scaleType";
 var MODELTYPE_COLOR = "color";
-
+var MENU_HORIZONTAL = 1;
+var MENU_VERTICAL = 2;
 
 //css custom classes
 var css = {
@@ -38,7 +39,9 @@ var css = {
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
   alignXr: 'vzb-align-x-right',
-  alignXc: 'vzb-align-x-center'
+  alignXc: 'vzb-align-x-center',
+  menuHorizontal: 'vzb-treemenu-horizontal',
+  menuVertical: 'vzb-treemenu-vertical'
 };
 
 //options and globals
@@ -55,7 +58,8 @@ var OPTIONS = {
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
-  MIN_COL_WIDTH: 100 //minimal column size
+  MIN_COL_WIDTH: 100, //minimal column size
+  MENU_DIRECTION: MENU_HORIZONTAL
 };
 
 var Menu = Class.extend({
@@ -64,6 +68,8 @@ var Menu = Class.extend({
     this.parent = parent;
     this.entity = menu;
     this.width = OPTIONS.MIN_COL_WIDTH;
+    this.direction = OPTIONS.MENU_DIRECTION;
+    this._setDirectionClass();
     this.menuItems = [];
     menu.selectAll('.' + css.list_item)
       .filter(function() {
@@ -91,6 +97,25 @@ var Menu = Class.extend({
       return this;
     }
   },
+  setDirection: function(direction, recursive) {
+    this.direction = direction;
+    if (recursive) {
+      for (var i = 0; i < this.menuItems.length; i++) {
+        this.menuItems[i].setDirection(this.direction, recursive);
+      }
+    }
+    this._setDirectionClass();
+    return this;
+  },
+  _setDirectionClass: function() {
+    if (this.direction == MENU_HORIZONTAL) {
+      this.entity.classed(css.menuVertical, false);
+      this.entity.classed(css.menuHorizontal, true);
+    } else {
+      this.entity.classed(css.menuHorizontal, false);
+      this.entity.classed(css.menuVertical, true);
+    }
+  },
   addSubmenu: function(item) {
       this.menuItems.push(new MenuItem(this, item))
   },
@@ -98,17 +123,37 @@ var Menu = Class.extend({
     var _this = this;
     if (!this.isActive()) {
       this.closeNeighbors(function() {
-        _this.entity.transition()
-          .delay(0)
-          .duration(500)
-          .style('width', _this.width + "px")
-          .each('end', function() {
-            _this._marqueeToggle(true);
-          });
-        _this.entity.classed('active', true);
+        if (_this.direction == MENU_HORIZONTAL) {
+          _this._openHorizontal();
+        } else {
+          _this._openVertical();
+        }
       });
     }
     return this;
+  },
+  _openHorizontal: function() {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(500)
+      .style('width', _this.width + "px")
+      .each('end', function() {
+        _this.marqueeToggle(true);
+      });
+    _this.entity.classed('active', true);
+  },
+  _openVertical: function() {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(500)
+      .style('height', (35*_this.menuItems.length) + "px")
+      .each('end', function() {
+        _this.entity.style('height', 'auto');
+        _this.marqueeToggle(true);
+      });
+    _this.entity.classed('active', true);
   },
   closeAllChildren: function(cb) {
     var callbacks = 0;
@@ -136,33 +181,41 @@ var Menu = Class.extend({
   close: function(cb) {
     var _this = this;
     this.closeAllChildren(function() {
-      _this.entity.transition()
-        .delay(0)
-        .duration(200)
-        .style('width', 0 + "px")
-        .each('end', function() {
-          _this._marqueeToggle(false);
-          _this.entity.classed('active', false);
-          if (typeof cb === "function") cb();
-        });
+      if (_this.direction == MENU_HORIZONTAL) {
+        _this._closeHorizontal(cb);
+      } else {
+        _this._closeVertical(cb);
+      }
     })
+  },
+  _closeHorizontal: function(cb) {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(200)
+      .style('width', 0 + "px")
+      .each('end', function() {
+        _this.marqueeToggle(false);
+        _this.entity.classed('active', false);
+        if (typeof cb === "function") cb();
+      });
+  },
+  _closeVertical: function(cb) {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(200)
+      .style('height', 0 + "px")
+      .each('end', function() {
+        _this.marqueeToggle(false);
+        _this.entity.classed('active', false);
+        if (typeof cb === "function") cb();
+      });
   },
   isActive: function() {
     return this.entity.classed('active');
   },
-
-  hasActiveSubmenu: function() {
-    for (var i = 0; i < this.menuItems.length; i++) {
-      if (this.menuItems[i].isActive()) {
-        return true;
-      }
-    }
-    return false;
-  },
-  getHoveredEntity: function() {
-    return  this.entity.select('.' + css.list_item + ':hover');
-  },
-  _marqueeToggle: function(toggle) {
+  marqueeToggle: function(toggle) {
     for (var i = 0; i < this.menuItems.length; i++) {
       this.menuItems[i].marqueeToggle(toggle);
     }
@@ -179,17 +232,29 @@ var MenuItem = Class.extend({
       this.submenu = new Menu(this, submenu);
     }
     this.entity.on('mouseenter', function() {
-      _this.openSubmenu();
-    });
-    this.entity.on('click', function() {
+      if(isTouchDevice()) return;
+      if (_this.parent.direction == MENU_HORIZONTAL) {
+        _this.openSubmenu();
+      }
+    }).on('click', function() {
+      if(isTouchDevice()) return;
       d3.event.stopPropagation();
       _this.toggleSubmenu();
+    }).onTap(function() {
+        d3.event.stopPropagation();
+        _this.toggleSubmenu();
     });
     return this;
   },
   setWidth: function(width, recursive) {
     if (this.submenu && recursive) {
       this.submenu.setWidth(width, recursive);
+    }
+    return this;
+  },
+  setDirection: function(direction, recursive) {
+    if (this.submenu && recursive) {
+      this.submenu.setDirection(direction, recursive);
     }
     return this;
   },
@@ -215,6 +280,7 @@ var MenuItem = Class.extend({
   isActive: function() {
     return this.submenu && this.submenu.isActive();
   },
+
   marqueeToggle: function(toggle) {
     if(toggle) {
       var label = this.entity.select('.' + css.list_item_label);
@@ -370,9 +436,6 @@ var TreeMenu = Component.extend({
     d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
       _this.menuEntity.closeAllChildren();
-      /*
-      _this._closeAllSub(this)
-*/
     });
 
     _this._enableSearch();
@@ -396,9 +459,6 @@ var TreeMenu = Component.extend({
       }
     };
     this.activeProfile = this.profiles[this.getLayoutProfile()];
-    if (this.menuEntity) {
-      this.menuEntity.setWidth(this.activeProfile.col_width, true);
-    }
     this.width = _this.element.node().offsetWidth;
     var containerWidth = this.wrapper.node().getBoundingClientRect().width;
     if (containerWidth) {
@@ -407,6 +467,18 @@ var TreeMenu = Component.extend({
     }
 
     OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
+    if (this.menuEntity) {
+      this.menuEntity.setWidth(this.activeProfile.col_width, true);
+      if (OPTIONS.IS_MOBILE) {
+        if (this.menuEntity.direction != MENU_VERTICAL) {
+          this.menuEntity.setDirection(MENU_VERTICAL, true);
+        }
+      } else {
+        if (this.menuEntity.direction != MENU_HORIZONTAL) {
+          this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+        }
+      }
+    }
     return this;
   },
 
@@ -416,11 +488,7 @@ var TreeMenu = Component.extend({
     this.element.classed(css.hidden, hidden);
 
     if(hidden) {
-      this.wrapper.selectAll('.' + css.list_item)
-        .filter('.marquee')
-        .each(function() {
-          _this._marqueeToggle(d3.select(this), false);
-        });
+      this.menuEntity.marqueeToggle(false);
     } else {
       this.resize();
     }
@@ -495,6 +563,7 @@ var TreeMenu = Component.extend({
 
     input.on('keyup', searchIt);
   },
+
 
   //this function process click on list item
   _selectIndicator: function(item, view) {
@@ -590,7 +659,8 @@ var TreeMenu = Component.extend({
 
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level))
-      .setWidth(this.activeProfile.col_width, true);
+      .setWidth(this.activeProfile.col_width, true)
+      .setDirection(OPTIONS.MENU_DIRECTION);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
 

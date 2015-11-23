@@ -110,18 +110,32 @@
     .vzb-treemenu-list {
       @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
       position: absolute;
-      border-left: 1px solid $vzb-color-grey-light;
       background-color: #fff;
-      border-top: 1px solid #f7f7f7;
       display: none;
-      width: 0;
-
-      &.active {
-        top: -1px;
-        bottom: 0;
-        display: block;
-        left: 100%;
-        clear: both;
+      &.vzb-treemenu-horizontal {
+        width: 0;
+        border-left: 1px solid $vzb-color-grey-light;
+        border-top: 1px solid #f7f7f7;
+        &.active {
+          top: -1px;
+          bottom: 0;
+          display: block;
+          clear: both;
+          left: 100%;
+        }
+      }
+      &.vzb-treemenu-vertical {
+        position: relative;
+        border: 0;
+        background-color: #fff;
+        left: 0;
+        padding-left: 15px;
+        height: 0;
+        &.active {
+          display: block;
+          top: inherit;
+          bottom: inherit;
+        }
       }
     }
     .vzb-treemenu-list.active,
@@ -228,19 +242,6 @@
     }
     .active {
       display: block;
-    }
-    .vzb-treemenu-list {
-      position: relative;
-      border: 0;
-      background-color: #fff;
-      left: 0;
-      padding-left: 15px;
-
-      &.active {
-        display: block;
-        top: inherit;
-        bottom: inherit;
-      }
     }
     .vzb-treemenu-list-item {
       padding-bottom: 0;
