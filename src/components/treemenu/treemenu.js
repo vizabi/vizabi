@@ -98,6 +98,12 @@ var Menu = Class.extend({
       return this;
     }
   },
+  /**
+   * configure menu type (horizontal or vertical)
+   * @param direction MENU_HORIZONTAL or MENU_VERTICAL
+   * @param recursive change direction over menu sublevels
+   * @returns {Menu}
+   */
   setDirection: function(direction, recursive) {
     this.direction = direction;
     if (recursive) {
@@ -134,7 +140,11 @@ var Menu = Class.extend({
     }
     return this;
   },
-
+  /**
+   * recursively calculate missed width for last menu level
+   * @param width
+   * @param cb
+   */
   calculateMissingWidth: function(width, cb) {
     var _this = this;
     if (this.entity.classed(css.list_top_level)) {
@@ -151,6 +161,12 @@ var Menu = Class.extend({
       });
     }
   },
+  /**
+   * restore width (if it was reduced before)
+   * @param width
+   * @param isClosedElement (parameter for check if curent element emit this action)
+   * @param cb
+   */
   restoreWidth: function(width, isClosedElement, cb) {
     var _this = this;
     if (isClosedElement) {
@@ -175,6 +191,11 @@ var Menu = Class.extend({
       if (typeof cb === "function") cb();
     }
   },
+  /**
+   * made element narrower to free space for other element
+   * @param width
+   * @param cb
+   */
   reduceWidth: function(width, cb) {
     var _this = this;
     var currWidth = this.entity.node().offsetWidth;
