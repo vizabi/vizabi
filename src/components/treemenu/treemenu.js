@@ -378,7 +378,6 @@ var MenuItem = Class.extend({
   }
 });
 
-
 //default callback
 var callback = function(indicator) {
   console.log("Indicator selector: stub callback fired. New indicator is ", indicator);
