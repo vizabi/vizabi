@@ -67,7 +67,7 @@ export default Class.extend({
 
       trail.enter().append("g")
         .attr("class", "vzb-bc-trailsegment")
-        .on("mousemove", function(segment, index) {
+        .on("mouseover", function(segment, index) {
           if(utils.isTouchDevice()) return;
           var _key = d3.select(this.parentNode).data()[0][KEY];
 
@@ -85,12 +85,15 @@ export default Class.extend({
               return f[KEY] == _key
             })
             .classed("vzb-highlighted", true);
+          //change opacity to OPACITY_HIGHLT = 1.0;
+          d3.select(this).style("opacity", 1.0);
         })
         .on("mouseout", function(segment, index) {
           if(utils.isTouchDevice()) return;
           _this._axisProjections();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
+          d3.select(this).style("opacity", _this.model.entities.opacityRegular);
         })
         .each(function(segment, index) {
           var view = d3.select(this);
@@ -199,7 +202,6 @@ export default Class.extend({
 
   _opacityHandler: function(trail, duration, d) {
     var _this = this.context;
-    var OPACITY_SELECT = _this.model.entities.opacityRegular;
 
     trail.each(function(segment, index) {
 
@@ -207,7 +209,7 @@ export default Class.extend({
 
       view
         //.transition().duration(duration).ease("linear")
-        .style("opacity", OPACITY_SELECT);
+        .style("opacity", d.opacity || _this.model.entities.opacityRegular);
     });
   },
 

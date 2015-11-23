@@ -1536,6 +1536,7 @@ var BubbleChartComp = Component.extend({
   highlightDataPoints: function() {
     var _this = this;
     var TIMEDIM = this.TIMEDIM;
+    var KEY = this.KEY;
 
     this.someHighlighted = (this.model.entities.highlight.length > 0);
 
@@ -1551,8 +1552,18 @@ var BubbleChartComp = Component.extend({
       }
 
       this._axisProjections(d);
+      var selectedData = utils.find(this.model.entities.select, function(f) {
+        return f[KEY] == d[KEY];
+      });
+      if(selectedData) {
+        var clonedSelectedData = utils.clone(selectedData);
+        //change opacity to OPACITY_HIGHLT = 1.0;
+        clonedSelectedData.opacity = 1.0;
+        this._trails.run(["opacityHandler"], clonedSelectedData);
+      }
     } else {
       this._axisProjections();
+      this._trails.run(["opacityHandler"]);      
     }
   },
 
