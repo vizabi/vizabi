@@ -169,6 +169,7 @@ var TimeSlider = Component.extend({
     //Value
     this.valueText.attr("text-anchor", "middle").attr("dy", "-0.8em");
 
+
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
 
