@@ -5,7 +5,7 @@
   border: 1px solid $vzb-color-primary;
   border-radius: 4px;
   cursor: pointer;
-  &:after {
+  &::after {
     content: '▼';
     margin-left: 5px;
     font-size: $vzb-font-size-small;

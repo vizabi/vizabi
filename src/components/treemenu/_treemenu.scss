@@ -156,7 +156,7 @@
           text-overflow: inherit;
           overflow: visible;
           animation: marquee 5s linear infinite;
-          &:after {
+          &::after {
             content: attr(data-content);
             left: 153%;
             position: absolute;
@@ -183,7 +183,7 @@
     .vzb-treemenu-list-top,
     .vzb-treemenu-list {
       > .vzb-treemenu-list-item-children {
-        &:before {
+        &::before {
           content: '';
           display: block;
           position: absolute;
@@ -211,7 +211,7 @@
     }
 
     .vzb-treemenu-list-top {
-      > .vzb-treemenu-list-item-children:before {
+      > .vzb-treemenu-list-item-children::before {
         right: 30px;
       }
     }
