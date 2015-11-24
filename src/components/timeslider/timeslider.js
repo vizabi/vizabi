@@ -167,7 +167,7 @@ var TimeSlider = Component.extend({
       .orient("bottom")
       .tickSize(0);
     //Value
-    this.valueText.attr("text-anchor", "middle").attr("dy", "-1em");
+    this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
@@ -387,7 +387,7 @@ var TimeSlider = Component.extend({
         //cancel active transition
         .interrupt()
         .attr("cx", new_pos);
-        
+
       this.valueText
         //cancel active transition
         .interrupt()
