@@ -14,7 +14,7 @@ import BarRankChart from 'tools/barrankchart';
 import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
-import BubbleMapChart from 'tools/bubblemapchart';
+import BubbleMap from 'tools/bubblemap';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
@@ -165,14 +165,14 @@ BarRankChart.define('default_options', {
   }
 });
 
-BubbleMapChart.define('datawarning_content', {
+BubbleMap.define('datawarning_content', {
   title: "",
   body: "Comparing the size of economy across countries and time is not trivial. The methods vary and the prices change. Gapminder has adjusted the picture for many such differences, but still we recommend you take these numbers with a large grain of salt.<br/><br/> Countries on a lower income levels have lower data quality in general, as less resources are available for compiling statistics. Historic estimates of GDP before 1950 are generally also more rough. <br/><br/> Data for child mortality is more reliable than GDP per capita, as the unit of comparison, dead children, is universally comparable across time and place. This is one of the reasons this indicator has become so useful to measure social progress. But the historic estimates of child mortality are still suffering from large uncertainties.<br/><br/> Learn more about the datasets and methods in this <a href='http://www.gapminder.org/news/data-sources-dont-panic-end-poverty' target='_blank'>blog post</a>",
   doubtDomain: [1800, 1950, 2015],
   doubtRange: [1.0, .3, .2]
 });
 
-BubbleMapChart.define('default_options', {
+BubbleMap.define('default_options', {
   state: {
     time: {
       start: "1800",

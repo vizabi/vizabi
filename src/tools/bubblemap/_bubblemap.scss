@@ -1,10 +1,10 @@
-.vzb-tool-bubblemapchart {
+.vzb-tool-bubblemap {
   $vzb-bmc-year-size: 15em;
 
-  .vzb-bubblemapchart {
+  .vzb-bubblemap {
     @extend %vzb-chart-wrapper;
 
-    .vzb-bubblemapchart-svg {
+    .vzb-bubblemap-svg {
       @extend %vzb-chart-svg;
 
       .vzb-bmc-year {
@@ -154,7 +154,7 @@
     }
   }
   &.vzb-large {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-large;
       }
@@ -171,7 +171,7 @@
     }
   }
   &.vzb-medium {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-medium;
       }
@@ -188,7 +188,7 @@
     }
   }
   &.vzb-small {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-small;
       }
@@ -205,7 +205,7 @@
     }
   }
   &.vzb-presentation {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         font-size: $vzb-font-size-largest;
       }
