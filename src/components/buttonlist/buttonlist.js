@@ -489,6 +489,12 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
+    
+    //toggle presentaion off is switch to 'small' profile
+    if(this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
+      this.togglePresentationMode();
+    }
+    
     this._toggleButtons();
   },
 
