@@ -184,7 +184,6 @@ var ButtonList = Component.extend({
 
     var _this = this;
     var button_expand = this.model.ui.buttons_expand;
-    console.log(button_expand);
 
     this.element = d3.select(this.element);
     this.dialogContainerEl = this.element.append("div")
