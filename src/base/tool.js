@@ -54,7 +54,9 @@ var Tool = Component.extend({
     this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
       '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
     this.model_binds = this.model_binds || {};
-    var binds = options.bind || {};
+    
+    options = options || {}; //options can be undefined
+    var binds = options.bind || {}; //bind functions can be undefined
 
     this.default_options = this.default_options || {};
     //bind the validation function with the tool
