@@ -19,8 +19,8 @@ var Layout = Events.extend({
       min_height: 400
     },
     large: {
-      min_width: 1000,
-      min_height: 700
+      min_width: 900,
+      min_height: 400
     }
   },
 
@@ -29,7 +29,7 @@ var Layout = Events.extend({
    */
   init: function(ui) {
     this.ui = ui || {};
-      
+
     this._container = null;
     //dom element
     this._curr_profile = null;
@@ -53,7 +53,7 @@ var Layout = Events.extend({
     if(this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
       return;
     }
-        
+
     // choose profile depending on size
     utils.forEach(this.screen_profiles, function(range, size) {
       //remove class
@@ -98,7 +98,7 @@ var Layout = Events.extend({
         utils.addClass(this._container, class_prefix + class_presentation);
     } else {
         utils.removeClass(this._container, class_prefix + class_presentation);
-    } 
+    }
   },
 
   getPresentationMode: function() {
