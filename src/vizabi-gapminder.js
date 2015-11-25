@@ -15,6 +15,7 @@ import MountainChart from 'tools/mountainchart';
 import MCComponent from 'tools/mountainchart-component';
 import BarChart from 'tools/barchart';
 import BubbleMap from 'tools/bubblemap';
+import BMComponent from 'tools/bubblemap-component';
 import LineChart from 'tools/linechart';
 import PopByAge from 'tools/popbyage';
 
@@ -226,7 +227,7 @@ BubbleMap.define('default_options', {
   },
   data: {
     reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty-withlatlng.csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -591,6 +592,18 @@ MCComponent.define("preload", function(done) {
     done.resolve();
   });
 });
+
+//preloading bubble map country shapes
+BMComponent.define("preload", function(done) {
+  var shape_path = globals.gapminder_paths.baseUrl + "data/world-50m.json";
+
+  d3.json(shape_path, function(error, json) {
+    if(error) return console.warn("Failed loading json " + shape_path + ". " + error);
+    BMComponent.define('world', json);
+    done.resolve();
+  });
+});
+
 
 //preloading metadata for all charts
 Tool.define("preload", function(promise) {

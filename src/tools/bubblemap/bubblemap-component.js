@@ -157,12 +157,7 @@ var BubbleMapComponent = Component.extend({
 
 
   afterPreload: function(){
-    var _this = this;
-    // TODO: add url to config or local
-    d3.json(globals.gapminder_paths.baseUrl + "data/world-50m.json", function(error, world) {
-      if (error) throw error;
-      _this.world = world;
-    });
+      if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);    
   },
 
   /**
