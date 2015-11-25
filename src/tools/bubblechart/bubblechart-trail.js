@@ -76,15 +76,19 @@ export default Class.extend({
           pointer.time = segment.t;
 
           _this._axisProjections(pointer);
-          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-          _this._setTooltip(_this.timeFormatter(segment.t), x, y, s);
-          _this.entityLabels
+          var text = _this.timeFormatter(segment.t);
+          var labelData = _this.entityLabels
             .filter(function(f) {
-              return f[KEY] == _key
+              return f[KEY] == pointer[KEY]
             })
-            .classed("vzb-highlighted", true);
+            .classed("vzb-highlighted", true)
+            .datum();
+          if(text !== labelData.trailStartTime) {
+            var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+            var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+            var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+            _this._setTooltip(text, x, y, s);
+          } 
           //change opacity to OPACITY_HIGHLT = 1.0;
           d3.select(this).style("opacity", 1.0);
         })

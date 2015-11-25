@@ -689,23 +689,26 @@ var BubbleChartComp = Component.extend({
         pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
-          _this.entityLabels
+          var labelData = _this.entityLabels
             .filter(function(f) {
               return f[KEY] == d[KEY]
             })
-            .classed("vzb-highlighted", true);
+            .classed("vzb-highlighted", true)
+            .datum();
+          text = text === labelData.trailStartTime ? '': text;
         } else {
           if (_this.model.time.lockNonSelected) {
             pointer[TIMEDIM] = _this.model.time.lockNonSelected;
           }
-          text = _this.model.marker.label.getValue(d);
+          text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
         }
         //set tooltip and show axis projections
-        var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-        var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-        var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-        _this._setTooltip(text, x, y, s);
-
+        if(text) {
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(text, x, y, s);
+        }
 
         //show the little cross on the selected label
         _this.entityLabels
@@ -1023,7 +1026,40 @@ var BubbleChartComp = Component.extend({
       var valueS = values.size[d[KEY]];
       if(valueS == null) return;
 
-      d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
+      var scaledS = utils.areaToRadius(_this.sScale(valueS));
+      d3.select(this).attr("r", scaledS);
+    
+      //update lines of labels
+      var cache = _this.cached[d[KEY]]; 
+      if(cache) {
+        
+        var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
+        var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
+    
+        var resolvedX0 = _this.xScale(cache.labelX0);
+        var resolvedY0 = _this.yScale(cache.labelY0);
+    
+        var lineGroup = _this.entityLines.filter(function(f) {
+          return f[KEY] == d[KEY];
+        });
+        
+        var select = utils.find(_this.model.entities.select, function(f) {
+          return f[KEY] == d[KEY]
+        });
+
+        var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+        
+        if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
+          cache.scaledS0 = scaledS;       
+        }
+
+        _this.entityLabels.filter(function(f) {
+          return f[KEY] == d[KEY]
+        })
+        .each(function(groupData) {
+          _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
+        });      
+      }
     });
   },
 
@@ -1185,8 +1221,6 @@ var BubbleChartComp = Component.extend({
           var text = labelGroup.selectAll(".vzb-bc-label-content")
             .text(valueL + (_this.model.time.trails ? " " + select.trailStartTime : ""));
 
-          lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
-
           var rect = labelGroup.select("rect");
 
           var contentBBox = text[0][0].getBBox();
@@ -1215,7 +1249,7 @@ var BubbleChartComp = Component.extend({
               .attr("rx", contentBBox.height * .2)
               .attr("ry", contentBBox.height * .2);
           }
-
+                    
           limitedX0 = _this.xScale(cached.labelX0);
           limitedY0 = _this.yScale(cached.labelY0);
 
@@ -1259,16 +1293,17 @@ var BubbleChartComp = Component.extend({
 
     var width = parseInt(labelGroup.select("rect").attr("width"));
     var height = parseInt(labelGroup.select("rect").attr("height"));
+    var heightDelta = labelGroup.node().getBBox().height - height; 
 
     if(resolvedX - width <= 0) { //check left
       cache.labelX_ = (width - this.xScale(cache.labelX0)) / this.width;
       resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
-    } else if(resolvedX + 20 > this.width) { //check right
-      cache.labelX_ = (this.width - 20 - this.xScale(cache.labelX0)) / this.width;
+    } else if(resolvedX + 23 > this.width) { //check right
+      cache.labelX_ = (this.width - 23 - this.xScale(cache.labelX0)) / this.width;
       resolvedX = this.xScale(cache.labelX0) + cache.labelX_ * this.width;
     }
-    if(resolvedY - height <= 0) { // check top
-      cache.labelY_ = (height - this.yScale(cache.labelY0)) / this.height;
+    if(resolvedY - height * .75 - heightDelta <= 0) { // check top
+      cache.labelY_ = (height * .75 + heightDelta - this.yScale(cache.labelY0)) / this.height;
       resolvedY = this.yScale(cache.labelY0) + cache.labelY_ * this.height;
     } else if(resolvedY + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - this.yScale(cache.labelY0)) / this.height;
@@ -1312,6 +1347,9 @@ var BubbleChartComp = Component.extend({
       diffX2 = width / 2;
       diffY2 = height / 2
     }
+
+    var longerSideCoeff = Math.abs(diffX1) > Math.abs(diffY1) ? Math.abs(diffX1) / this.width : Math.abs(diffY1) / this.height;
+    lineGroup.select("line").style("stroke-dasharray", "0 " + (cache.scaledS0 + 2) + " " + ~~(longerSideCoeff + 2) + "00%");
 
     lineGroup.selectAll("line")
       .attr("x1", diffX1)
