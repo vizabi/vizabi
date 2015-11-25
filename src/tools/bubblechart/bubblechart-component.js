@@ -689,23 +689,26 @@ var BubbleChartComp = Component.extend({
         pointer[TIMEDIM] = _this.time;
         if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
           text = _this.timeFormatter(_this.time);
-          _this.entityLabels
+          var labelData = _this.entityLabels
             .filter(function(f) {
               return f[KEY] == d[KEY]
             })
-            .classed("vzb-highlighted", true);
+            .classed("vzb-highlighted", true)
+            .datum();
+          text = text === labelData.trailStartTime ? '': text;
         } else {
           if (_this.model.time.lockNonSelected) {
             pointer[TIMEDIM] = _this.model.time.lockNonSelected;
           }
-          text = _this.model.marker.label.getValue(d);
+          text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
         }
         //set tooltip and show axis projections
-        var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-        var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-        var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-        _this._setTooltip(text, x, y, s);
-
+        if(text) {
+          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+          _this._setTooltip(text, x, y, s);
+        }
 
         //show the little cross on the selected label
         _this.entityLabels
