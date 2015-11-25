@@ -489,6 +489,7 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
+
     this._toggleButtons();
   },
 
