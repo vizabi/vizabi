@@ -10,7 +10,7 @@ import {
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
-import Selectlist from './bubblemap-selectlist';
+//import Selectlist from './bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
 var BubbleMapComponent = Component.extend({
@@ -48,7 +48,7 @@ var BubbleMapComponent = Component.extend({
         _this.updateEntities();
         _this.updateTime();
         _this.selectEntities();
-        _this._selectlist.redraw();
+        //_this._selectlist.redraw();
         _this.updateDoubtOpacity();
         _this.updateOpacity();
       },
@@ -89,7 +89,7 @@ var BubbleMapComponent = Component.extend({
       },
     };
 
-    this._selectlist = new Selectlist(this);
+    //this._selectlist = new Selectlist(this);
 
     //contructor is the same as any component
     this._super(config, context);
@@ -274,7 +274,7 @@ var BubbleMapComponent = Component.extend({
     this.updateTime();
     this.highlightEntities();
     this.selectEntities();
-    this._selectlist.redraw();
+//    this._selectlist.redraw();
     this.updateDoubtOpacity();
     this.updateOpacity();
   },
@@ -286,7 +286,16 @@ var BubbleMapComponent = Component.extend({
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.yTitleEl.select("text")
-          .text(this.translator("indicator/" + _this.model.marker.size.which));
+          .text(this.translator("indicator/" + _this.model.marker.size.which))
+          .on("click", function() {
+            _this.parent
+              .findChildByName("gapminder-treemenu")
+              .markerID("size")
+              .alignX("left")
+              .alignY("top")
+              .updateView()
+              .toggle();
+          });
 
       utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
       this.dataWarningEl.append("text")
@@ -706,17 +715,17 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
 
-      if (!this.selectList || !this.someSelected) return;
-      this.selectList.classed("vzb-highlight", function (d) {
-          return _this.model.entities.isHighlighted(d);
-      });
-      this.selectList.each(function (d, i) {
-        d3.select(this).selectAll(".vzb-bmc-label-x")
-          .classed("vzb-invisible", function(n) {
-            return !_this.model.entities.isHighlighted(d);
-          });
-
-      });
+//      if (!this.selectList || !this.someSelected) return;
+//      this.selectList.classed("vzb-highlight", function (d) {
+//          return _this.model.entities.isHighlighted(d);
+//      });
+//      this.selectList.each(function (d, i) {
+//        d3.select(this).selectAll(".vzb-bmc-label-x")
+//          .classed("vzb-invisible", function(n) {
+//            return !_this.model.entities.isHighlighted(d);
+//          });
+//
+//      });
 
   },
 
@@ -733,7 +742,7 @@ var BubbleMapComponent = Component.extend({
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-      console.log('not here');
+      //console.log('not here');
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -906,11 +915,11 @@ var BubbleMapComponent = Component.extend({
       var KEY = this.KEY;
       this.someSelected = (this.model.entities.select.length > 0);
 
-      this._selectlist.rebuild();
+//      this._selectlist.rebuild();
 
       this.entityLabels = this.labelsContainer.selectAll('.vzb-bmc-entity')
         .data(_this.model.entities.select, function(d) {
-          console.log(_this.model.entities.select);
+          //console.log(_this.model.entities.select);
           return(d[KEY]);
         });
       this.entityLines = this.linesContainer.selectAll('.vzb-bmc-entity')
