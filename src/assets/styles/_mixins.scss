@@ -124,7 +124,7 @@
   cursor: default;
   visibility: hidden;
 
-  &:after {
+  &::after {
     border-left: ($arrow-base / 2 - $border-width) solid transparent;
     border-right: ($arrow-base / 2 - $border-width) solid transparent;
     border-top: ($arrow-length - $border-width) solid $background-color;
@@ -140,7 +140,7 @@
   @if $border-width {
     border: $border-width solid $border-color;
 
-    &:before {
+    &::before {
       border-left: ($arrow-base / 2) solid transparent;
       border-right: ($arrow-base / 2) solid transparent;
       border-top: $arrow-length solid $border-color;

@@ -1,5 +1,6 @@
-import { extend, pruneTree } from 'base/utils';
+import { extend, pruneTree, isTouchDevice } from 'base/utils';
 import Component from 'base/component';
+import Class from 'class';
 import globals from 'base/globals';
 import {close as iconClose} from 'base/iconset';
 
@@ -13,7 +14,8 @@ var MIN = "min";
 var MAX = "max";
 var SCALETYPE = "scaleType";
 var MODELTYPE_COLOR = "color";
-
+var MENU_HORIZONTAL = 1;
+var MENU_VERTICAL = 2;
 
 //css custom classes
 var css = {
@@ -37,7 +39,9 @@ var css = {
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
   alignXr: 'vzb-align-x-right',
-  alignXc: 'vzb-align-x-center'
+  alignXc: 'vzb-align-x-center',
+  menuHorizontal: 'vzb-treemenu-horizontal',
+  menuVertical: 'vzb-treemenu-vertical'
 };
 
 //options and globals
@@ -54,9 +58,327 @@ var OPTIONS = {
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path
-  MIN_COL_WIDTH: 50 //minimal column size
+  MIN_COL_WIDTH: 50, //minimal column size
+  MENU_DIRECTION: MENU_HORIZONTAL,
+  MAX_MENU_WIDTH: 300
 };
 
+var Menu = Class.extend({
+  init: function (parent, menu) {
+    var _this = this;
+    this.parent = parent;
+    this.entity = menu;
+    this.width = OPTIONS.MIN_COL_WIDTH;
+    this.direction = OPTIONS.MENU_DIRECTION;
+    this._setDirectionClass();
+    this.menuItems = [];
+    menu.selectAll('.' + css.list_item)
+      .filter(function() {
+        return this.parentNode == _this.entity.node();
+      })
+      .each(function() {
+        _this.addSubmenu(d3.select(this));
+      });
+    return this;
+  },
+  setWidth: function(width, recursive) {
+    if (this.width != width) {
+      this.width = width;
+      if (this.entity.classed('active')) {
+        this.entity.transition()
+          .delay(0)
+          .duration(100)
+          .style('width', this.width + "px")
+      }
+      if (recursive) {
+        for (var i = 0; i < this.menuItems.length; i++) {
+          this.menuItems[i].setWidth(this.width, recursive);
+        }
+      }
+      return this;
+    }
+  },
+  /**
+   * configure menu type (horizontal or vertical)
+   * @param direction MENU_HORIZONTAL or MENU_VERTICAL
+   * @param recursive change direction over menu sublevels
+   * @returns {Menu}
+   */
+  setDirection: function(direction, recursive) {
+    this.direction = direction;
+    if (recursive) {
+      for (var i = 0; i < this.menuItems.length; i++) {
+        this.menuItems[i].setDirection(this.direction, recursive);
+      }
+    }
+    this._setDirectionClass();
+    return this;
+  },
+  _setDirectionClass: function() {
+    if (this.direction == MENU_HORIZONTAL) {
+      this.entity.classed(css.menuVertical, false);
+      this.entity.classed(css.menuHorizontal, true);
+    } else {
+      this.entity.classed(css.menuHorizontal, false);
+      this.entity.classed(css.menuVertical, true);
+    }
+  },
+  addSubmenu: function(item) {
+      this.menuItems.push(new MenuItem(this, item))
+  },
+  open: function() {
+    var _this = this;
+    if (!this.isActive()) {
+      this.closeNeighbors(function() {
+        if (_this.direction == MENU_HORIZONTAL) {
+          _this._openHorizontal();
+          _this.calculateMissingWidth(0);
+        } else {
+          _this._openVertical();
+        }
+      });
+    }
+    return this;
+  },
+  /**
+   * recursively calculate missed width for last menu level
+   * @param width
+   * @param cb
+   */
+  calculateMissingWidth: function(width, cb) {
+    var _this = this;
+    if (this.entity.classed(css.list_top_level)) {
+      if (width > OPTIONS.MAX_MENU_WIDTH) {
+        cb(width - OPTIONS.MAX_MENU_WIDTH);
+      }
+    } else {
+      this.parent.parentMenu.calculateMissingWidth(width + this.width, function(widthToReduce) {
+          if (widthToReduce > 0) {
+            _this.reduceWidth(widthToReduce, function(newWidth) {
+              if (typeof cb === "function") cb(); // callback is not defined if it is emitted from this level
+            });
+          }
+      });
+    }
+  },
+  /**
+   * restore width (if it was reduced before)
+   * @param width
+   * @param isClosedElement (parameter for check if curent element emit this action)
+   * @param cb
+   */
+  restoreWidth: function(width, isClosedElement, cb) {
+    var _this = this;
+    if (isClosedElement) {
+      this.parent.parentMenu.restoreWidth(width, false, cb);
+    } else if (width <= 0) {
+      if (typeof cb === "function") cb();
+    } else if (!this.entity.classed(css.list_top_level)) {
+      var currentElementWidth = this.entity.node().offsetWidth;
+      if (currentElementWidth < _this.width) {
+        var duration = 500*(currentElementWidth / _this.width);
+        this.entity.transition()
+          .delay(0)
+          .duration(duration)
+          .style('width', _this.width + "px")
+          .each('end', function() {
+          });
+        _this.parent.parentMenu.restoreWidth(width - _this.width + currentElementWidth, false, cb);
+      } else {
+        this.parent.parentMenu.restoreWidth(width, false, cb);
+      }
+    } else {
+      if (typeof cb === "function") cb();
+    }
+  },
+  /**
+   * made element narrower to free space for other element
+   * @param width
+   * @param cb
+   */
+  reduceWidth: function(width, cb) {
+    var _this = this;
+    var currWidth = this.entity.node().offsetWidth;
+
+    if (currWidth <= OPTIONS.MIN_COL_WIDTH) {
+      cb(width);
+    } else {
+
+      var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, (_this.width - width));
+      var duration = 500 / (_this.width / newElementWidth);
+      this.entity.transition()
+        .delay(0)
+        .duration(duration)
+        .style('width', newElementWidth + "px")
+        .each('end', function() {
+          cb(width - _this.width + newElementWidth);
+        });
+    }
+  },
+  _openHorizontal: function() {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(500)
+      .style('width', _this.width + "px")
+      .each('end', function() {
+        _this.marqueeToggle(true);
+      });
+    _this.entity.classed('active', true);
+  },
+  _openVertical: function() {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(500)
+      .style('height', (35*_this.menuItems.length) + "px")
+      .each('end', function() {
+        _this.entity.style('height', 'auto');
+        _this.marqueeToggle(true);
+      });
+    _this.entity.classed('active', true);
+  },
+  closeAllChildren: function(cb) {
+    var callbacks = 0;
+    for (var i = 0; i < this.menuItems.length; i++) {
+      if (this.menuItems[i].isActive()) {
+        ++callbacks;
+        this.menuItems[i].submenu.close(function() {
+          if (--callbacks == 0) {
+            if (typeof cb === "function") cb();
+          }
+        });
+      }
+    }
+    if (callbacks == 0) {
+      if (typeof cb === "function") cb();
+    }
+  },
+  closeNeighbors: function(cb) {
+    if (this.parent) {
+      this.parent.closeNeighbors(cb);
+    } else {
+      cb();
+    }
+  },
+  close: function(cb) {
+    var _this = this;
+    this.closeAllChildren(function() {
+      if (_this.direction == MENU_HORIZONTAL) {
+        _this._closeHorizontal(cb);
+      } else {
+        _this._closeVertical(cb);
+      }
+    })
+  },
+  _closeHorizontal: function(cb) {
+    var elementWidth = this.entity.node().offsetWidth;
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(200)
+      .style('width', 0 + "px")
+      .each('end', function() {
+        _this.marqueeToggle(false);
+        _this.entity.classed('active', false);
+        _this.restoreWidth(elementWidth, true, function() {
+          if (typeof cb === "function") cb();
+        });
+      });
+  },
+  _closeVertical: function(cb) {
+    var _this = this;
+    _this.entity.transition()
+      .delay(0)
+      .duration(100)
+      .style('height', 0 + "px")
+      .each('end', function() {
+        _this.marqueeToggle(false);
+        _this.entity.classed('active', false);
+        if (typeof cb === "function") cb();
+      });
+  },
+  isActive: function() {
+    return this.entity.classed('active');
+  },
+  marqueeToggle: function(toggle) {
+    for (var i = 0; i < this.menuItems.length; i++) {
+      this.menuItems[i].marqueeToggle(toggle);
+    }
+  }
+});
+
+var MenuItem = Class.extend({
+  init: function (parent, item) {
+    var _this = this;
+    this.parentMenu = parent;
+    this.entity = item;
+    var submenu = item.select('.' + css.list);
+    if (submenu.node()) {
+      this.submenu = new Menu(this, submenu);
+    }
+    this.entity.on('mouseenter', function() {
+      if(isTouchDevice()) return;
+      if (_this.parentMenu.direction == MENU_HORIZONTAL) {
+        _this.openSubmenu();
+      }
+    }).on('click', function() {
+      if(isTouchDevice()) return;
+      d3.event.stopPropagation();
+      _this.toggleSubmenu();
+    }).onTap(function() {
+        d3.event.stopPropagation();
+        _this.toggleSubmenu();
+    });
+    return this;
+  },
+  setWidth: function(width, recursive) {
+    if (this.submenu && recursive) {
+      this.submenu.setWidth(width, recursive);
+    }
+    return this;
+  },
+  setDirection: function(direction, recursive) {
+    if (this.submenu && recursive) {
+      this.submenu.setDirection(direction, recursive);
+    }
+    return this;
+  },
+  toggleSubmenu: function() {
+    if (this.submenu) {
+      if (this.submenu.isActive()) {
+        this.submenu.close();
+      } else {
+        this.submenu.open();
+      }
+    }
+  },
+  openSubmenu: function() {
+    if (this.submenu) {
+      this.submenu.open();
+    } else {
+      this.closeNeighbors();
+    }
+  },
+  closeNeighbors: function(cb) {
+    this.parentMenu.closeAllChildren(cb);
+  },
+  isActive: function() {
+    return this.submenu && this.submenu.isActive();
+  },
+
+  marqueeToggle: function(toggle) {
+    if(toggle) {
+      var label = this.entity.select('.' + css.list_item_label);
+      if(label.node().scrollWidth > this.entity.node().offsetWidth) {
+        label.attr("data-content", label.text());
+        this.entity.classed('marquee', true);
+      }
+    } else {
+      this.entity.classed('marquee', false);
+    }
+  }
+});
 
 //default callback
 var callback = function(indicator) {
@@ -123,7 +445,8 @@ var TreeMenu = Component.extend({
     }];
 
     this.context = context;
-
+    // object for manipulation with menu representation level
+    this.menuEntity = null;
     this.model_binds = {
       "change:marker": function(evt) {
         if(evt.indexOf(markerID)==-1) return;
@@ -132,7 +455,7 @@ var TreeMenu = Component.extend({
       "change:language:strings": function(evt) {
         _this.updateView();
       }
-    }
+    };
 
     //contructor is the same as any component
     this._super(config, context);
@@ -181,7 +504,7 @@ var TreeMenu = Component.extend({
     this.wrapper.append('div')
       .classed(css.title, true)
       .append('span');
-      
+
     this.wrapper.append('div')
       .classed(css.scaletypes, true)
       .append('span');
@@ -195,10 +518,9 @@ var TreeMenu = Component.extend({
 
 
     //init functions
-    d3.select('body').on('mousemove', _this._mousemoveDocument)
-
+    d3.select('body').on('mousemove', _this._mousemoveDocument);
     this.wrapper.on('mouseleave', function() {
-      _this._closeAllSub(this)
+      _this.menuEntity.closeAllChildren();
     });
 
     _this._enableSearch();
@@ -212,10 +534,10 @@ var TreeMenu = Component.extend({
 
     this.profiles = {
       "small": {
-        col_width: 150
+        col_width: 200
       },
       "medium": {
-        col_width: 170
+        col_width: 200
       },
       "large": {
         col_width: 200
@@ -224,16 +546,31 @@ var TreeMenu = Component.extend({
     this.activeProfile = this.profiles[this.getLayoutProfile()];
     this.width = _this.element.node().offsetWidth;
     var containerWidth = this.wrapper.node().getBoundingClientRect().width;
+    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
     if (containerWidth) {
       this.wrapper.classed(css.alignXc, alignX === "center");
       this.wrapper.style("margin-left",alignX === "center"? "-" + containerWidth/2 + "px" : null);
+      if (alignX === "center") {
+        OPTIONS.MAX_MENU_WIDTH = this.width/2 - containerWidth * 0.5;
+      } else {
+        OPTIONS.MAX_MENU_WIDTH = this.width - parseInt(_this.wrapper.style('left')) - containerWidth - 50; // 50 - padding around wrapper
+      }
     }
 
-    OPTIONS.IS_MOBILE = this.getLayoutProfile() === "small";
+    if (this.menuEntity) {
+      this.menuEntity.setWidth(this.activeProfile.col_width, true);
+      if (OPTIONS.IS_MOBILE) {
+        if (this.menuEntity.direction != MENU_VERTICAL) {
+          this.menuEntity.setDirection(MENU_VERTICAL, true);
+        }
+      } else {
+        if (this.menuEntity.direction != MENU_HORIZONTAL) {
+          this.menuEntity.setDirection(MENU_HORIZONTAL, true);
+        }
+      }
+    }
     return this;
   },
-
-
 
   toggle: function() {
     var _this = this;
@@ -241,11 +578,7 @@ var TreeMenu = Component.extend({
     this.element.classed(css.hidden, hidden);
 
     if(hidden) {
-      this.wrapper.selectAll('.' + css.list_item)
-        .filter('.marquee')
-        .each(function() {
-          _this._marqueeToggle(this, false);
-        });
+      this.menuEntity.marqueeToggle(false);
     } else {
       this.resize();
     }
@@ -256,151 +589,10 @@ var TreeMenu = Component.extend({
       } else {
         d3.select(c.element).classed("vzb-blur", c != _this && !hidden);
       }
-    })
-
-    this.width = _this.element.node().offsetWidth;
-
-  },
-
-
-
-
-  //if menu lost focus close all levels
-  _closeAllSub: function(view) {
-    view = d3.select(view);
-
-    view.selectAll('.active')
-      .classed('active', false);
-
-    view.selectAll('.marquee')
-      .classed('marquee', false);
-
-    this._resizeDropdown();
-  },
-
-
-
-
-  //Keep track of the last few locations of the mouse.
-  _mousemoveDocument: function() {
-    var coordinates = d3.mouse(this);
-    OPTIONS.MOUSE_LOCS.push({
-      x: coordinates[0],
-      y: coordinates[1]
     });
 
-    if(OPTIONS.MOUSE_LOCS.length > OPTIONS.MOUSE_LOCS_TRACKED) {
-      OPTIONS.MOUSE_LOCS.shift();
-    }
+    this.width = _this.element.node().offsetWidth;
   },
-
-
-
-  /**
-   * Return the amount of time that should be used as a delay before the
-   * currently hovered row is activated.
-   *
-   * Returns 0 if the activation should happen immediately. Otherwise,
-   * returns the number of milliseconds that should be delayed before
-   * checking again to see if the row should be activated.
-   */
-  _activationDelay: function(submenu) {
-    var $menu = d3.select(submenu).node();
-    var menuWrap = $menu.parentNode;
-
-    if($menu.getElementsByClassName('active').length == 0) {
-      //if current submenu has no opened submenus, open first immediately
-      return 0;
-    }
-
-    var upperLeft = {
-        x: $menu.offsetLeft + menuWrap.offsetLeft,
-        y: $menu.offsetTop + menuWrap.offsetTop - OPTIONS.TOLERANCE
-      },
-      upperRight = {
-        x: $menu.offsetLeft + menuWrap.offsetLeft + $menu.offsetWidth,
-        y: upperLeft.y
-      },
-      lowerLeft = {
-        x: $menu.offsetLeft + menuWrap.offsetLeft,
-        y: $menu.offsetTop + menuWrap.offsetTop + $menu.offsetHeight + OPTIONS.TOLERANCE
-      },
-      lowerRight = {
-        x: $menu.offsetLeft + menuWrap.offsetLeft + $menu.offsetWidth,
-        y: lowerLeft.y
-      },
-      loc = OPTIONS.MOUSE_LOCS[OPTIONS.MOUSE_LOCS.length - 1],
-      prevLoc = OPTIONS.MOUSE_LOCS[0];
-
-    if(!loc) {
-      return 0;
-    }
-
-    if(!prevLoc) {
-      prevLoc = loc;
-    }
-
-    if(prevLoc.x < $menu.offsetLeft ||
-      prevLoc.y < $menu.offsetTop || prevLoc.y > lowerRight.y) {
-      // If the previous mouse location was outside of the entire
-      // menu's bounds, immediately activate.
-      return 0;
-    }
-
-    if(OPTIONS.LAST_DELAY_LOC &&
-      loc.x == OPTIONS.LAST_DELAY_LOC.x && loc.y == OPTIONS.LAST_DELAY_LOC.y) {
-      // If the mouse hasn't moved since the last time we checked
-      // for activation status, immediately activate.
-      return 0;
-    }
-
-    // Detect if the user is moving towards the currently activated
-    // submenu.
-    //
-    // If the mouse is heading relatively clearly towards
-    // the submenu's content, we should wait and give the user more
-    // time before activating a new row. If the mouse is heading
-    // elsewhere, we can immediately activate a new row.
-    //
-    // We detect this by calculating the slope formed between the
-    // current mouse location and the upper/lower right points of
-    // the menu. We do the same for the previous mouse location.
-    // If the current mouse location's slopes are
-    // increasing/decreasing appropriately compared to the
-    // previous's, we know the user is moving toward the submenu.
-    //
-    // Note that since the y-axis increases as the cursor moves
-    // down the screen, we are looking for the slope between the
-    // cursor and the upper right corner to decrease over time, not
-    // increase (somewhat counterintuitively).
-    function slope(a, b) {
-      return(b.y - a.y) / (b.x - a.x);
-    };
-
-    var decreasingCorner = upperRight,
-      increasingCorner = lowerRight;
-
-    var decreasingSlope = slope(loc, decreasingCorner),
-      increasingSlope = slope(loc, increasingCorner),
-      prevDecreasingSlope = slope(prevLoc, decreasingCorner),
-      prevIncreasingSlope = slope(prevLoc, increasingCorner);
-
-    if(decreasingSlope < prevDecreasingSlope &&
-      increasingSlope > prevIncreasingSlope) {
-      // Mouse is moving from previous location towards the
-      // currently activated submenu. Delay before activating a
-      // new menu row, because user may be moving into submenu.
-      OPTIONS.LAST_DELAY_LOC = loc;
-      return OPTIONS.DELAY;
-    }
-
-    OPTIONS.LAST_DELAY_LOC = null;
-    return 0;
-  },
-
-
-
-
 
   //search listener
   _enableSearch: function() {
@@ -463,176 +655,6 @@ var TreeMenu = Component.extend({
   },
 
 
-
-
-  //marquee animation
-  _marqueeToggle: function(node, toggle) {
-    var selection = d3.select(node),
-      label = selection.select('.' + css.list_item_label);
-
-    if(toggle) {
-      if(label.node().scrollWidth > node.offsetWidth) {
-        //add data for animation
-        label.attr("data-content", label.text());
-        
-        selection.classed('marquee', true);
-      }
-    } else {
-      selection.classed('marquee', false);
-    }
-  },
-
-
-  //resize function
-  _resizeDropdown: function() {
-
-    var _this = this;
-
-    if(!OPTIONS.IS_MOBILE) {
-
-      var ulArr = [];
-      ulArr.push(this.wrapper.node());
-      _this.element
-        .selectAll('.' + css.list + '.active')
-        .each(function() {
-          ulArr.push(this);
-        });
-
-      var fullColNumber = Math.floor(this.width / this.activeProfile.col_width);
-
-      var remain = this.width - fullColNumber * this.activeProfile.col_width;
-
-      if(remain < OPTIONS.MIN_COL_WIDTH) {
-        fullColNumber -= 1;
-        remain += this.activeProfile.col_width
-      };
-
-      for(var i = ulArr.length - 1; i > 0; i--) {
-        var ulSelectNested = d3.select(ulArr[i]);
-
-        if(fullColNumber > 0) {
-          ulSelectNested
-            .transition()
-            .duration(200)
-            .style('width', this.activeProfile.col_width + "px");
-          fullColNumber--;
-        } else {
-          if(remain > OPTIONS.MIN_COL_WIDTH) {
-            ulSelectNested
-              .transition()
-              .duration(200)
-              .style('width', (remain / (i + 1)) + "px");
-            remain -= remain / (i + 1);
-          } else {
-            ulSelectNested
-              .transition()
-              .duration(200)
-              .style('width', remain + "px");
-            remain = 0;
-          };
-        };
-      };
-
-      OPTIONS.CURRENT_PATH = ulArr;
-
-    }
-
-  },
-
-
-
-  //open submenu
-  _toggleSub: function(view) {
-
-    var _this = this;
-
-    var curSub = view.node().parentNode;
-
-    var possiblyActivate = function(event, it) {
-
-
-      if((OPTIONS.IS_MOBILE && event.type == 'click')) {
-
-        closeAll(curSub);
-        if(!view.classed('active')) {
-          open(it);
-        };
-        return;
-
-      } else if(!OPTIONS.IS_MOBILE && event.type == 'mouseenter') {
-        var delay = _this._activationDelay(curSub);
-
-        if(delay) {
-          OPTIONS.TIMEOUT = setTimeout(function() {
-            possiblyActivate(event, it);
-          }, delay);
-        } else {
-          open(it);
-          closeAll(curSub);
-        };
-      };
-
-
-    };
-
-    var open = function(node) {
-      d3.select(node)
-        .select('.' + css.list)
-        .classed('active', true);
-
-      _this._marqueeToggle(node, true);
-    };
-
-    var closeAll = function(node) {
-      var li = d3.select(node)
-        .selectAll('.' + css.list_item + ':not(:hover)');
-
-      li.each(function() {
-        d3.select(this)
-          .selectAll('.' + css.list)
-          .each(function() {
-            d3.select(this).classed('active', false);
-          });
-      });
-
-      li.filter('.marquee')
-        .each(function() {
-          _this._marqueeToggle(this, false);
-        });
-
-      _this._resizeDropdown();
-
-    };
-
-    var closeCurSub = function() {
-      if(!OPTIONS.IS_MOBILE) {
-        var selectSub = d3.select(curSub);
-
-        selectSub
-          .classed('active', false)
-          .attr('style', '');
-      };
-
-    };
-
-
-
-    d3.select(curSub)
-      .select('.' + css.list_item)
-      .on('mouseleave', closeCurSub, false);
-
-    view.on('mouseenter', function() {
-      possiblyActivate(d3.event, this);
-    });
-
-    view.on('click', function() {
-      possiblyActivate(d3.event, this);
-    });
-
-  },
-
-
-
   //this function process click on list item
   _selectIndicator: function(item, view) {
 
@@ -664,8 +686,8 @@ var TreeMenu = Component.extend({
 
     var allowedIDs = globals.metadata.indicatorsArray.filter(function(f) {
       //check if indicator is denied to show with allow->names->!indicator
-      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names 
-        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false; 
+      if(_this.model.marker[markerID].allow && _this.model.marker[markerID].allow.names
+        && _this.model.marker[markerID].allow.names.indexOf('!' + f) != -1) return false;
       //keep indicator if nothing is specified in tool properties
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       //keep indicator if any scale is allowed in tool properties
@@ -682,8 +704,6 @@ var TreeMenu = Component.extend({
     var dataFiltered = pruneTree(data, function(f) {
       return allowedIDs.indexOf(f.id) > -1
     });
-
-
 
     var createSubmeny = function(select, data, toplevel) {
       if(!data.children) return;
@@ -723,33 +743,32 @@ var TreeMenu = Component.extend({
         })
         .each(function(d) {
           var view = d3.select(this);
-          _this._toggleSub(view);
           createSubmeny(view, d);
         });
     };
 
     createSubmeny(this.wrapper, dataFiltered, true);
-      
-      
+    this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level))
+      .setWidth(this.activeProfile.col_width, true)
+      .setDirection(OPTIONS.MENU_DIRECTION);
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
-    
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
       if(!_this.model.marker[markerID].allow || !_this.model.marker[markerID].allow.scales) return true;
       if(_this.model.marker[markerID].allow.scales[0] == "*") return true;
       return _this.model.marker[markerID].allow.scales.indexOf(f) > -1;
     });
-      
+
     var scaleTypes = this.element.select('.' + css.scaletypes).selectAll("span")
         .data(scaleTypesData, function(d){return d});
-    
+
     scaleTypes.exit().remove();
-      
+
     scaleTypes.enter().append("span")
         .on("click", function(d){
             _this._setModel("scaleType", d, markerID)
         });
-      
+
     scaleTypes
         .classed(css.scaletypesDisabled, scaleTypesData.length < 2)
         .classed(css.scaletypesActive, function(d){
@@ -811,14 +830,14 @@ var TreeMenu = Component.extend({
         obj.scaleType = indicatorsDB[value].scales[0];
       }
     }
-      
+
     if(mdl.getType() == 'axis') {
       obj.min = null;
       obj.max = null;
       obj.fakeMin = null;
       obj.fakeMax = null;
     }
-      
+
     mdl.set(obj);
 
   }

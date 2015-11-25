@@ -105,7 +105,7 @@ var BubbleChartComp = Component.extend({
           )
           return;
         }
-        
+
         if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
 
         _this.ready();
@@ -931,7 +931,6 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
-    console.log(warnBB.height);
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)

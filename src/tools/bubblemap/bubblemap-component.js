@@ -10,10 +10,10 @@ import {
 import topojson from 'helpers/topojson';
 import d3_geo_projection from 'helpers/d3.geo.projection';
 import DynamicBackground from 'helpers/d3.dynamicBackground';
-import Selectlist from './bubblemapchart-selectlist';
+import Selectlist from './bubblemap-selectlist';
 
 //BUBBLE MAP CHART COMPONENT
-var BubbleMapChartComponent = Component.extend({
+var BubbleMapComponent = Component.extend({
   /**
    * Initializes the component (Bubble Map Chart).
    * Executed once before any template is rendered.
@@ -21,8 +21,8 @@ var BubbleMapChartComponent = Component.extend({
    * @param {Object} context The component's parent
    */
   init: function (config, context) {
-    this.name = 'bubblemapchart';
-    this.template = 'bubblemapchart.html';
+    this.name = 'bubblemap';
+    this.template = 'bubblemap.html';
 
     //define expected models for this component
     this.model_expects = [{
@@ -1021,4 +1021,4 @@ var BubbleMapChartComponent = Component.extend({
 });
 
 
-export default BubbleMapChartComponent;
+export default BubbleMapComponent;

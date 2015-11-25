@@ -60,7 +60,7 @@
           &.vzb-accordion-active {
             max-height: 500px;
             transition: all .3s ease-in-out;
-            .vzb-accordion-section-title:after {
+            .vzb-accordion-section-title::after {
               @include rotate(135deg);
               content: '';
               position: absolute;
@@ -85,7 +85,7 @@
             font-size: 1.1em; 
             text-transform: uppercase;
 
-            &:after {
+            &::after {
               @include rotate(45deg);
               content: '';
               position: absolute;
@@ -246,7 +246,7 @@
     }
   }
 
-  .thumb-tack-class-ico:before {
+  .thumb-tack-class-ico::before {
     color: $vzb-color-primary-strong !important;
 
   }
@@ -271,7 +271,7 @@
       border: 1px solid rgba($vzb-color-primary, .2);
       text-indent: 23px;
 
-      &:after {
+      &::after {
         @include position(absolute, 4px null null 4px);
         @include opacity(0);
         @include rotate(-45deg);
@@ -290,7 +290,7 @@
     input[type=checkbox]:checked + label {
       border: 1px solid rgba($vzb-color-primary, .5);
     }
-    input[type=checkbox]:checked + label:after {
+    input[type=checkbox]:checked + label::after {
       @include opacity(1);
     }
   }
@@ -319,7 +319,7 @@
       }
     }
 
-    .thumb-tack-class-ico:before {
+    .thumb-tack-class-ico::before {
       color: #fff !important;
 
     }

@@ -5,7 +5,7 @@
   margin: 0 auto;
   position: relative;
 
-  &:before {
+  &::before {
     @include border-radius(5px 5px 5px 5px);
     content: '';
     position: absolute;
@@ -17,7 +17,7 @@
   }
 
   &.vzb-disabled {
-    &:before {
+    &::before {
       background-color: rgba($vzb-color-grey, .2);
     }
     .vzb-ss-slider {
@@ -37,7 +37,7 @@
     border: 0;
 
     // Slider Handle
-    &::-webkit-slider-thumb {
+    &:-webkit-slider-thumb {
       @include border-radius(20px);
       @include transition(left .1s ease-in-out);
       -webkit-appearance: none;
@@ -48,7 +48,7 @@
       height: 20px;
       border: 3px solid $vzb-color-white;
     }
-    &::-moz-range-thumb {
+    &:-moz-range-thumb {
       @include border-radius(20px);
       @include transition(left .1s ease-in-out);
       cursor: pointer;
@@ -62,11 +62,11 @@
 
   .vzb-ss-slider-small {
     @extend .vzb-ss-slider;
-    &::-webkit-slider-thumb {
+    &:-webkit-slider-thumb {
       width: 15px;
       height: 15px;
     }
-    &::-moz-range-thumb {
+    &:-moz-range-thumb {
       width: 15px;
       height: 15px;
     }

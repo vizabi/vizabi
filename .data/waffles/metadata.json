@@ -95,7 +95,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "gini": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemapchart"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap"],
             "use": "indicator",
             "unit": "gini",
             "scales": ["linear"],
@@ -134,7 +134,7 @@
             "sourceLink": "https://docs.google.com/spreadsheets/d/1KqOcaDdM1rWQD8TnAEZpYDDQRJqlxqU7t_KT55pgd4U/pub?gid=1"
         },
         "u5mr": {
-            "allowCharts": ["bubblechart", "bubblemapchart"],
+            "allowCharts": ["bubblechart", "bubblemap"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
