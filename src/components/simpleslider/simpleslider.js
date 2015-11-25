@@ -96,7 +96,8 @@ var SimpleSlider = Component.extend({
         value = scale.invert(value);
       }
 
-      this.slider.attr('value', value);
+      //this.slider.attr('value', value);
+      this.slider.node().value = value;
     },
 
     _setModel: function () {
