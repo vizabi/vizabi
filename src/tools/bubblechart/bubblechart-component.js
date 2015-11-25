@@ -105,7 +105,7 @@ var BubbleChartComp = Component.extend({
           )
           return;
         }
-        
+
         if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
 
         _this.ready();
@@ -171,7 +171,7 @@ var BubbleChartComp = Component.extend({
       },
       'change:entities:opacityRegular': function() {
         _this.updateBubbleOpacity();
-        _this._trails.run("opacityHandler");        
+        _this._trails.run("opacityHandler");
       },
       'ready': function() {
         // if(_this.model.marker.color.scaleType === 'time') {
@@ -931,7 +931,6 @@ var BubbleChartComp = Component.extend({
       .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
-    console.log(warnBB.height);
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -1563,7 +1562,7 @@ var BubbleChartComp = Component.extend({
       }
     } else {
       this._axisProjections();
-      this._trails.run(["opacityHandler"]);      
+      this._trails.run(["opacityHandler"]);
     }
   },
 
