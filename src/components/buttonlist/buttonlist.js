@@ -489,27 +489,6 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
-    if (this.getLayoutProfile() === 'large') {
-      this.element.selectAll('.vzb-buttonlist-dialog')
-        .each(function(d, i) {
-          var dialog = d3.select(this);
-          var z_index = dialog.style('z-index');
-          if (z_index) {
-            dialog.attr('data-z-index', z_index)
-              .style('z-index', '');
-          }
-        });
-    } else {
-      this.element.selectAll('.vzb-buttonlist-dialog')
-        .each(function(d, i) {
-          var dialog = d3.select(this);
-          var z_index = dialog.attr('data-z-index');
-          if (z_index) {
-            dialog.style('z-index', z_index)
-              .attr('data-z-index', false);
-          }
-        });
-    }
 
     this._toggleButtons();
   },

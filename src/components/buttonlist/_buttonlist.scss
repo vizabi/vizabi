@@ -40,7 +40,7 @@ $vzb-dialog-content-height: 250px;
     display: inline-block;
     padding: 5px;
     width: $vzb-button-width;
-    
+
     > .vzb-buttonlist-btn-icon {
 
       @include transition(all 100ms ease-in);
@@ -56,7 +56,7 @@ $vzb-dialog-content-height: 250px;
       padding: 5px;
       text-align: center;
       width: $vzb-button-size;
-      
+
       // border: 1px solid $vzb-button-color-border;
       .vzb-icon {
         height: 14px;
@@ -105,7 +105,7 @@ $vzb-dialog-content-height: 250px;
   }
 
   @import 'dialogs/dialog';
-    
+
   @import '../bubblesize/bubblesize';
   @import '../indicatorpicker/indicatorpicker';
   @import '../minmaxinputs/minmaxinputs';
@@ -141,7 +141,7 @@ $vzb-dialog-content-height: 250px;
       input[type=checkbox] + label:after {
         @include opacity(0);
       }
-    }    
+    }
   }
   .vzb-buttonlist-btn {
     &[data-btn="presentation"] {
@@ -314,6 +314,7 @@ $vzb-dialog-content-height: 250px;
           }
 
           &[data-btn="colors"] {
+            z-index: auto !important;
             flex: none;
             @import 'dialogs/colors/colors';
 
