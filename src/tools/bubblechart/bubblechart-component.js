@@ -171,7 +171,7 @@ var BubbleChartComp = Component.extend({
       },
       'change:entities:opacityRegular': function() {
         _this.updateBubbleOpacity();
-        _this._trails.run("opacityHandler");        
+        _this._trails.run("opacityHandler");
       },
       'ready': function() {
         // if(_this.model.marker.color.scaleType === 'time') {
@@ -1562,7 +1562,7 @@ var BubbleChartComp = Component.extend({
       }
     } else {
       this._axisProjections();
-      this._trails.run(["opacityHandler"]);      
+      this._trails.run(["opacityHandler"]);
     }
   },
 
