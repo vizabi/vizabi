@@ -106,6 +106,9 @@ var Menu = Class.extend({
    */
   setDirection: function(direction, recursive) {
     this.direction = direction;
+    this.entity
+      .style('width', '')
+      .style('height', '');
     if (recursive) {
       for (var i = 0; i < this.menuItems.length; i++) {
         this.menuItems[i].setDirection(this.direction, recursive);
@@ -176,7 +179,7 @@ var Menu = Class.extend({
     } else if (!this.entity.classed(css.list_top_level)) {
       var currentElementWidth = this.entity.node().offsetWidth;
       if (currentElementWidth < _this.width) {
-        var duration = 500*(currentElementWidth / _this.width);
+        var duration = 250*(currentElementWidth / _this.width);
         this.entity.transition()
           .delay(0)
           .duration(duration)
@@ -205,7 +208,7 @@ var Menu = Class.extend({
     } else {
 
       var newElementWidth = Math.max(OPTIONS.MIN_COL_WIDTH, (_this.width - width));
-      var duration = 500 / (_this.width / newElementWidth);
+      var duration = 250 / (_this.width / newElementWidth);
       this.entity.transition()
         .delay(0)
         .duration(duration)
@@ -219,7 +222,7 @@ var Menu = Class.extend({
     var _this = this;
     _this.entity.transition()
       .delay(0)
-      .duration(500)
+      .duration(250)
       .style('width', _this.width + "px")
       .each('end', function() {
         _this.marqueeToggle(true);
@@ -230,7 +233,7 @@ var Menu = Class.extend({
     var _this = this;
     _this.entity.transition()
       .delay(0)
-      .duration(500)
+      .duration(250)
       .style('height', (35*_this.menuItems.length) + "px")
       .each('end', function() {
         _this.entity.style('height', 'auto');
@@ -276,7 +279,7 @@ var Menu = Class.extend({
     var _this = this;
     _this.entity.transition()
       .delay(0)
-      .duration(200)
+      .duration(20)
       .style('width', 0 + "px")
       .each('end', function() {
         _this.marqueeToggle(false);
@@ -290,7 +293,7 @@ var Menu = Class.extend({
     var _this = this;
     _this.entity.transition()
       .delay(0)
-      .duration(100)
+      .duration(10)
       .style('height', 0 + "px")
       .each('end', function() {
         _this.marqueeToggle(false);
@@ -746,11 +749,14 @@ var TreeMenu = Component.extend({
           createSubmeny(view, d);
         });
     };
-
+    if (OPTIONS.IS_MOBILE) {
+      OPTIONS.MENU_DIRECTION = MENU_VERTICAL;
+    }
     createSubmeny(this.wrapper, dataFiltered, true);
     this.menuEntity = new Menu(null, this.wrapper.select('.' + css.list_top_level))
       .setWidth(this.activeProfile.col_width, true)
       .setDirection(OPTIONS.MENU_DIRECTION);
+
     var pointer = "_default";
     if(allowedIDs.indexOf(this.model.marker[markerID].which) > -1) pointer = this.model.marker[markerID].which;
     var scaleTypesData = indicatorsDB[pointer].scales.filter(function(f) {
