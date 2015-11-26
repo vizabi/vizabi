@@ -6,7 +6,15 @@
   border-radius: 4px;
   cursor: pointer;
   &::after {
-    content: '▼';
+    content: '';
+    display: inline-block;
+    right: 5px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-left: 6px solid $vzb-color-primary;
+    margin-top: 9px;
+    z-index: 1;      
     margin-left: 5px;
     font-size: $vzb-font-size-small;
   }
