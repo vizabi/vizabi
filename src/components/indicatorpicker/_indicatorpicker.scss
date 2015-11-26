@@ -8,15 +8,14 @@
   &::after {
     content: '';
     display: inline-block;
-    right: 5px;
     width: 0;
     height: 0;
     border: 6px solid transparent;
-    border-left: 6px solid $vzb-color-primary;
-    margin-top: 9px;
+    border-top: 12px solid $vzb-color-primary;
     z-index: 1;      
-    margin-left: 5px;
-    font-size: $vzb-font-size-small;
+    position: relative;
+    top: .32em;
+    margin-left: 8px;
   }
   &:hover {
     background-color: $vzb-color-primary-lightest;
