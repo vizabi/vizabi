@@ -19,3 +19,14 @@ $vzbp-font-family-editor: $monospace;
 @import "utils";
 @import "editor";
 @import "dropdown";
+
+body {
+  overflow-y: scroll;
+}
+#vzbp-main {
+  height: 2000px;
+}
+
+#vzbp-placeholder {
+  margin-top: 10px;
+}

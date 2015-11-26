@@ -242,15 +242,33 @@ export var getViewportPosition = function(element) {
   };
 };
 
-export var findScrollableAncestor = function(node) {
-  var no = d3.select(node).node();
+export var findScrolledAncestor = function(node) {
   var scrollable = ["scroll", "auto"];
 
-  while(no && no.tagName !== "HTML" && scrollable.indexOf(d3.select(no).style("overflow")) == -1) {
-    no = no.parentNode;
+  while(node = node.parentNode) {
+    if(!node.parentNode || node.tagName == "HTML") {
+      return;
+    }
+    var scrollHeight = node.parentNode.scrollHeight,
+      height = node.parentNode.clientHeight;
+    if (scrollHeight > height && scrollable.indexOf(d3.select(node.parentNode).style("overflow")) !== -1) {
+      return node;
+    }
   }
+  return null;
+};
 
-  return no;
+
+export var findScrollableAncestor = function(node) {
+  var scrollable = ["scroll", "auto"];
+  while(node = node.parentNode) {
+    var scrollHeight = node.scrollHeight,
+      height = node.clientHeight;
+      if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
+        return node;
+      }
+  }
+  return null;
 };
 
 export var roundStep = function(number, step) {

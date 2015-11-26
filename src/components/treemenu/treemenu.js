@@ -174,7 +174,7 @@ var Menu = Class.extend({
     } else if (width <= 0) {
       if (typeof cb === "function") cb();
     } else if (!this.entity.classed(css.list_top_level)) {
-      var currentElementWidth = this.entity.node().offsetWidth;
+      var currentElementWidth =  this.entity.node().offsetWidth;
       if (currentElementWidth < _this.width) {
         var duration = 500*(currentElementWidth / _this.width);
         this.entity.transition()

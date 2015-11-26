@@ -50,6 +50,40 @@ var Dialog = Component.extend({
     this.dragContainerEl = d3.select('.vzb-tool-stage');
     var profile = this.getLayoutProfile();
 
+    this.placeholderEl.selectAll('.vzb-dialog-scrollable')
+      .each(function() {
+        var _this = this, elem = d3.select(this);
+        var scrolling = false;
+        var scrolableAncestors = [];
+        var node = elem.node();
+        while (node = utils.findScrolledAncestor(node)) {
+          scrolableAncestors.push(node);
+        }
+        var unlockAncessors = utils.debounce(function() {
+          for (var n = 0; n < scrolableAncestors.length; n++) {
+            var node = d3.select(scrolableAncestors[n]);
+            var scrollTop = parseInt(node.style('top'));
+            d3.select(scrolableAncestors[n])
+              .style('position', '')
+              .style('top', '');
+            scrolableAncestors[n].scrollTop = scrollTop;
+          }
+          scrolling = false;
+        }, 1000);
+        elem.on('scroll', function (d, i) {
+          if (!scrolling) {
+            for (var n = 0; n < scrolableAncestors.length; n++) {
+              var top = scrolableAncestors[n].parentNode.scrollTop;
+              console.log(top);
+              d3.select(scrolableAncestors[n])
+                .style('top', -top + "px")
+                .style('position', 'fixed');
+            }
+            scrolling = true;
+          }
+          unlockAncessors();
+        });
+      });
     var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
