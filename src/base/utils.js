@@ -242,6 +242,7 @@ export var getViewportPosition = function(element) {
   };
 };
 
+
 export var findScrollableAncestor = function(node) {
   var scrollable = ["scroll", "auto"];
   while(node = node.parentNode) {
