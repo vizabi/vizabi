@@ -104,7 +104,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
       visibility: hidden;
     }
 
-    &:before {
+    &::before {
       background-color: $vzb-loader-bgcolor;
       bottom: 0;
       content: ' ';
@@ -116,13 +116,13 @@ $vzb-loader-bgcolor: $vzb-color-white;
       z-index: 9998;
     }
 
-    &:after {
+    &::after {
       @extend %vzb-loader;
     }
   }
   //loading data specifically
   &.vzb-loading-data {
-    &:before {
+    &::before {
       @include opacity(.9);
     }
   }
@@ -131,7 +131,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
     // * {
     //     visibility: hidden;
     // }
-    &:before {
+    &::before {
       @include opacity(.8);
     }
   }
@@ -186,23 +186,23 @@ $vzb-loader-bgcolor: $vzb-color-white;
       fill: $vzb-color-accent-orange;
     }
 
-    &:before,
-    &:after {
+    &::before,
+    &::after {
       display: none;
     }
   }
 }
 
 .vzb-dialog-scrollable {
-  &::-webkit-scrollbar {
+  &:-webkit-scrollbar {
     width: 6px;
   }
-  &::-webkit-scrollbar-thumb {
+  &:-webkit-scrollbar-thumb {
     background: lighten($vzb-color-primary, 20%);
     border-radius: 2px;
     cursor: pointer;
   }
-  &::-webkit-scrollbar-track {
+  &:-webkit-scrollbar-track {
     width: 2px;
     background: $vzb-color-primary-lightest;
     border-radius: 2px;

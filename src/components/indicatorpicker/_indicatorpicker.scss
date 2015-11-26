@@ -5,10 +5,17 @@
   border: 1px solid $vzb-color-primary;
   border-radius: 4px;
   cursor: pointer;
-  &:after {
-    content: '▼';
-    margin-left: 5px;
-    font-size: $vzb-font-size-small;
+  &::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-top: 12px solid $vzb-color-primary;
+    z-index: 1;      
+    position: relative;
+    top: .32em;
+    margin-left: 8px;
   }
   &:hover {
     background-color: $vzb-color-primary-lightest;

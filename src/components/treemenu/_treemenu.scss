@@ -44,7 +44,7 @@
       top: 30px;
       font-size: $vzb-font-size-small;
       font-family: $vzb-font-family-alt;
-        
+
       span {
         padding: 2px 5px;
         border: 1px solid $vzb-color-primary-light;
@@ -62,7 +62,7 @@
           border-radius: 0 4px 4px 0;
         }
       }
-        
+
       .vzb-treemenu-scaletypes-active {
         background-color: $vzb-color-grey-light;
         color: $vzb-color-primary-strong;
@@ -110,15 +110,32 @@
     .vzb-treemenu-list {
       @include box-shadow(4px, 8px, 15px, rgba(0, 0, 0, .2));
       position: absolute;
-      border-left: 1px solid $vzb-color-grey-light;
       background-color: #fff;
-      border-top: 1px solid #f7f7f7;
       display: none;
-
-      &.active {
-        display: block;
-        top: -1px;
-        bottom: 0;
+      &.vzb-treemenu-horizontal {
+        width: 0;
+        border-left: 1px solid $vzb-color-grey-light;
+        border-top: 1px solid #f7f7f7;
+        &.active {
+          top: -1px;
+          bottom: 0;
+          display: block;
+          clear: both;
+          left: 100%;
+        }
+      }
+      &.vzb-treemenu-vertical {
+        position: relative;
+        border: 0;
+        background-color: #fff;
+        left: 0;
+        padding-left: 15px;
+        height: 0;
+        &.active {
+          display: block;
+          top: inherit;
+          bottom: inherit;
+        }
       }
     }
     .vzb-treemenu-list.active,
@@ -139,10 +156,10 @@
           text-overflow: inherit;
           overflow: visible;
           animation: marquee 5s linear infinite;
-          &:after {
+          &::after {
             content: attr(data-content);
             left: 153%;
-            position: absolute;            
+            position: absolute;
           }
         }
       }
@@ -162,11 +179,11 @@
       font-size: $vzb-font-size-small;
       font-family: $vzb-font-family-alt;
     }
-    
+
     .vzb-treemenu-list-top,
     .vzb-treemenu-list {
       > .vzb-treemenu-list-item-children {
-        &:before {
+        &::before {
           content: '';
           display: block;
           position: absolute;
@@ -179,7 +196,7 @@
           z-index: 1;
         }
         &.marquee:hover > .vzb-treemenu-list-item-label-mask {
-          background-color: $vzb-color-grey-light;          
+          background-color: $vzb-color-grey-light;
         }
         &.marquee > .vzb-treemenu-list-item-label-mask {
           display: block;
@@ -192,9 +209,9 @@
         }
       }
     }
-    
+
     .vzb-treemenu-list-top {
-      > .vzb-treemenu-list-item-children:before {
+      > .vzb-treemenu-list-item-children::before {
         right: 30px;
       }
     }
@@ -225,19 +242,6 @@
     }
     .active {
       display: block;
-    }
-    .vzb-treemenu-list {
-      position: relative;
-      border: 0;
-      background-color: #fff;
-      left: 0;
-      padding-left: 15px;
-
-      &.active {
-        display: block;
-        top: inherit;
-        bottom: inherit;
-      }
     }
     .vzb-treemenu-list-item {
       padding-bottom: 0;

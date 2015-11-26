@@ -4,7 +4,8 @@ import Tool from 'base/tool';
 import BarRankChartComponent from './barrankchart-component';
 import {
   timeslider,
-  buttonlist
+  buttonlist,
+  treemenu
 } from 'components/_index';
 
 var BarRankChart = Tool.extend('BarRankChart', {
@@ -26,6 +27,10 @@ var BarRankChart = Tool.extend('BarRankChart', {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',
       model: ['state', 'ui', 'language']
+    }, {
+      component: treemenu,
+      placeholder: '.vzb-tool-treemenu',
+      model: ['state.marker', 'language']
     }];
 
     //constructor is the same as any tool

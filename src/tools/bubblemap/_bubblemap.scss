@@ -1,10 +1,10 @@
-.vzb-tool-bubblemapchart {
+.vzb-tool-bubblemap {
   $vzb-bmc-year-size: 15em;
 
-  .vzb-bubblemapchart {
+  .vzb-bubblemap {
     @extend %vzb-chart-wrapper;
 
-    .vzb-bubblemapchart-svg {
+    .vzb-bubblemap-svg {
       @extend %vzb-chart-svg;
 
       .vzb-bmc-year {
@@ -63,9 +63,48 @@
         }
       }
 
+
+      .vzb-bmc-labels {
+        @extend %vzb-chart-tooltip;
+        rect {
+          pointer-events: visible;
+        }
+        .vzb-bmc-entity {
+          .vzb-bmc-label-x {
+            @include transition(opacity 200ms linear);
+            fill: $vzb-color-primary;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: visible;
+            font-size: .9em;
+            cursor: pointer;
+            stroke: $vzb-color-white;
+            stroke-width: 2px;
+
+            &.vzb-highlighted rect {
+              fill: rgb(255, 252, 185);
+            }
+          }
+
+          .vzb-bmc-label-x-icon {
+            @include transition(opacity 200ms linear);
+            fill: $vzb-color-white;
+            //pointer-events: none;
+          }
+
+          &.vzb-highlighted rect {
+            fill: rgb(255, 252, 185);
+          }
+        }
+      } 
+      
+      .vzb-bmc-lines .vzb-bmc-entity line {
+        stroke: $vzb-color-grey-dark;
+        opacity: .8;
+      }
+
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title;
-        pointer-events: none;
       }
 
       .vzb-bmc-axis-info {
@@ -77,10 +116,6 @@
         text {
           text-anchor: middle;
         }
-      }
-
-      .vzb-bmc-bubble {
-        stroke: $vzb-color-black;
       }
 
       .stroke {
@@ -112,19 +147,13 @@
         stroke-width: .5px;
       }
 
-      circle {
-        opacity: .8;
-        &:hover {
-          opacity: 1;
-        }
-        &.vzb-selected {
-          opacity: 1;
-        }
+      .vzb-bmc-bubble {
+        stroke: $vzb-color-black;
       }
     }
   }
   &.vzb-large {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-large;
       }
@@ -141,7 +170,7 @@
     }
   }
   &.vzb-medium {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-medium;
       }
@@ -158,7 +187,7 @@
     }
   }
   &.vzb-small {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title-small;
       }
@@ -175,7 +204,7 @@
     }
   }
   &.vzb-presentation {
-    .vzb-bubblemapchart {
+    .vzb-bubblemap {
       .vzb-bmc-axis-y-title {
         font-size: $vzb-font-size-largest;
       }

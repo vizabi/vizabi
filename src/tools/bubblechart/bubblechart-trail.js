@@ -12,7 +12,7 @@ export default Class.extend({
 
     if(arg) {
       _this._trails.create();
-      _this._trails.run(["resize", "recolor", "findVisible", "reveal"]);
+      _this._trails.run(["resize", "recolor", "opacityHandler", "findVisible", "reveal"]);
     } else {
       _this._trails.run("remove");
       _this.model.entities.select.forEach(function(d) {
@@ -67,7 +67,7 @@ export default Class.extend({
 
       trail.enter().append("g")
         .attr("class", "vzb-bc-trailsegment")
-        .on("mousemove", function(segment, index) {
+        .on("mouseover", function(segment, index) {
           if(utils.isTouchDevice()) return;
           var _key = d3.select(this.parentNode).data()[0][KEY];
 
@@ -76,21 +76,28 @@ export default Class.extend({
           pointer.time = segment.t;
 
           _this._axisProjections(pointer);
-          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-          _this._setTooltip(_this.timeFormatter(segment.t), x, y, s);
-          _this.entityLabels
+          var text = _this.timeFormatter(segment.t);
+          var labelData = _this.entityLabels
             .filter(function(f) {
-              return f[KEY] == _key
+              return f[KEY] == pointer[KEY]
             })
-            .classed("vzb-highlighted", true);
+            .classed("vzb-highlighted", true)
+            .datum();
+          if(text !== labelData.trailStartTime) {
+            var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+            var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+            var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+            _this._setTooltip(text, x, y, s);
+          } 
+          //change opacity to OPACITY_HIGHLT = 1.0;
+          d3.select(this).style("opacity", 1.0);
         })
         .on("mouseout", function(segment, index) {
           if(utils.isTouchDevice()) return;
           _this._axisProjections();
           _this._setTooltip();
           _this.entityLabels.classed("vzb-highlighted", false);
+          d3.select(this).style("opacity", _this.model.entities.opacityRegular);
         })
         .each(function(segment, index) {
           var view = d3.select(this);
@@ -194,6 +201,19 @@ export default Class.extend({
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .style("stroke", _this.cScale(segment.valueC));
+    });
+  },
+
+  _opacityHandler: function(trail, duration, d) {
+    var _this = this.context;
+
+    trail.each(function(segment, index) {
+
+      var view = d3.select(this);
+
+      view
+        //.transition().duration(duration).ease("linear")
+        .style("opacity", d.opacity || _this.model.entities.opacityRegular);
     });
   },
 

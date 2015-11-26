@@ -54,90 +54,103 @@ var ButtonList = Component.extend({
         icon: "search",
         dialog: dialogs.find,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'show': {
         title: "buttons/show",
         icon: "asterisk",
         dialog: dialogs.show,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",
         dialog: dialogs.moreoptions,
         ispin: false,
-        required: true
+        required: true,
+        isgraph: false
       },
       'colors': {
         title: "buttons/colors",
         icon: "paintbrush",
         dialog: dialogs.colors,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'size': {
         title: "buttons/size",
         icon: "circle",
         dialog: dialogs.size,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'fullscreen': {
         title: "buttons/expand",
         icon: "expand",
         dialog: false,
         func: this.toggleFullScreen.bind(this),
-        required: true
+        required: true,
+        isgraph: false
       },
       'trails': {
         title: "buttons/trails",
         icon: "trails",
         dialog: false,
         func: this.toggleBubbleTrails.bind(this),
-        required: false
+        required: false,
+        isgraph: true
       },
       'lock': {
         title: "buttons/lock",
         icon: "lock",
         dialog: false,
         func: this.toggleBubbleLock.bind(this),
-        required: false
+        required: false,
+        isgraph: true
       },
       'presentation': {
         title: "buttons/presentation",
         icon: "presentation",
         dialog: false,
         func: this.togglePresentationMode.bind(this),
-        required: false
+        required: false,
+        isgraph: false
       },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
         dialog: dialogs.axes,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'axesmc': {
         title: "buttons/axesmc",
         icon: "axes",
         dialog: dialogs.axesmc,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       'stack': {
         title: "buttons/stack",
         icon: "stack",
         dialog: dialogs.stack,
         ispin: false,
-        required: false
+        required: false,
+        isgraph: false
       },
       '_default': {
         title: "Button",
         icon: "asterisk",
         dialog: false,
-        required: false
+        required: false,
+        isgraph: false
       }
     };
 
@@ -283,7 +296,7 @@ var ButtonList = Component.extend({
      buttons.each(function(d,i) {
        var button = d3.select(this);
        if (button.style("display") == "none"){
-         if(d.id != "trails" && d.id != "lock"){
+         if(!d.isgraph){
            button.style("display", "inline-block");
          } else if ((_this.model.state.entities.select.length > 0)){
            button.style("display", "inline-block");
@@ -316,7 +329,7 @@ var ButtonList = Component.extend({
          var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
          button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
 
-         if(button_data.id != "trails" && button_data.id != "lock"){
+         if(!button_data.isgraph){
            if(!expandable || (_this.getLayoutProfile() !== 'large')){
              buttons_width += button_width;
              //sort buttons between required and not required buttons.
@@ -476,6 +489,12 @@ var ButtonList = Component.extend({
    */
   resize: function() {
     //TODO: what to do when resizing?
+
+    //toggle presentaion off is switch to 'small' profile
+    if(this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
+      this.togglePresentationMode();
+    }
+    
     this._toggleButtons();
   },
 

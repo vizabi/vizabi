@@ -401,8 +401,9 @@ var MountainChartComponent = Component.extend({
             .attr("transform", "translate(" + this.width + "," + this.height + ")")
             .attr("dy", "-0.36em");
 
-        this.yTitleEl.select("text")
-            .attr("transform", "translate(0," + margin.top + ")")
+        this.yTitleEl
+          .style("font-size", infoElHeight)
+          .attr("transform", "translate(0," + margin.top + ")")
 
 
         var warnBB = this.dataWarningEl.select("text").node().getBBox();
@@ -426,7 +427,7 @@ var MountainChartComponent = Component.extend({
                 .attr("height", infoElHeight)
             this.infoEl.attr('transform', 'translate('
                 + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-                + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+                + (translate[1]-infoElHeight * .8) + ')');
         }
 
         this.eventAreaEl
@@ -473,9 +474,7 @@ var MountainChartComponent = Component.extend({
         this.dataWarningEl.append("text")
             .text(this.translator("hints/dataWarning"));
 
-        this.infoEl
-            .html(iconQuestion)
-            .select("svg").attr("width", "0px").attr("height", "0px");
+        utils.setIcon(this.infoEl, iconQuestion).select("svg").attr("width", "0px").attr("height", "0px");
 
         //TODO: move away from UI strings, maybe to ready or ready once
         this.infoEl.on("click", function () {
@@ -1085,7 +1084,7 @@ var MountainChartComponent = Component.extend({
             var translateY = (mouse[1] - contentBBox.height - 25) > 0 ? mouse[1] : (contentBBox.height + 25);
             this.tooltip
                 .attr("transform", "translate(" + translateX + "," + translateY + ")");
-            
+
         } else {
 
             this.tooltip.classed("vzb-hidden", true);

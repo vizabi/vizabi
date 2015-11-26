@@ -5,7 +5,7 @@
   margin: 0 auto;
   position: relative;
 
-  &:before {
+  &::before {
     @include border-radius(5px 5px 5px 5px);
     content: '';
     position: absolute;
@@ -17,7 +17,7 @@
   }
 
   &.vzb-disabled {
-    &:before {
+    &::before {
       background-color: rgba($vzb-color-grey, .2);
     }
     .vzb-ss-slider {

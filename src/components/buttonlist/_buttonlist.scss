@@ -26,7 +26,7 @@ $vzb-dialog-content-height: 250px;
 
   .vzb-buttonlist-container-buttons {
     @include position(absolute, 0);
-    &::-webkit-scrollbar {
+    &:-webkit-scrollbar {
       display: none;
     }
   }
@@ -105,7 +105,7 @@ $vzb-dialog-content-height: 250px;
   }
 
   @import 'dialogs/dialog';
-    
+
   @import '../bubblesize/bubblesize';
   @import '../indicatorpicker/indicatorpicker';
   @import '../minmaxinputs/minmaxinputs';
@@ -131,9 +131,33 @@ $vzb-dialog-content-height: 250px;
 }
 
 &.vzb-small {
+  .vzb-presentationmode-switch {
+    pointer-events: none;
+    .vzb-dialog-checkbox {
+      input[type=checkbox] + label {
+        background-color: $vzb-color-grey;
+        border: 1px solid rgba($vzb-color-grey-dark, .5);
+      }
+      input[type=checkbox] + label::after {
+        @include opacity(0);
+      }
+    }
+  }
   .vzb-buttonlist-btn {
     &[data-btn="presentation"] {
-      display: none;
+      pointer-events: none;
+      > .vzb-buttonlist-btn-icon {
+        border: 1px solid rgba($vzb-color-grey-dark, .5);
+        background-color: $vzb-color-grey;
+        .vzb-icon {
+          path {
+            fill: $vzb-color-grey-dark;
+          }
+        }
+      }
+      > .vzb-buttonlist-btn-title {
+        color: $vzb-color-grey;
+      }
     }
   }
   &.vzb-portrait {
@@ -290,6 +314,7 @@ $vzb-dialog-content-height: 250px;
           }
 
           &[data-btn="colors"] {
+            z-index: auto !important;
             flex: none;
             @import 'dialogs/colors/colors';
 
