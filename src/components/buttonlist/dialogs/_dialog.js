@@ -53,37 +53,9 @@ var Dialog = Component.extend({
     this.placeholderEl.selectAll('.vzb-dialog-scrollable')
       .each(function() {
         var _this = this, elem = d3.select(this);
-        var scrolling = false;
-        var scrolableAncestors = [];
-        var node = elem.node();
-        while (node = utils.findScrolledAncestor(node)) {
-          scrolableAncestors.push(node);
-        }
-        var unlockAncessors = utils.debounce(function() {
-          for (var n = 0; n < scrolableAncestors.length; n++) {
-            var node = d3.select(scrolableAncestors[n]);
-            var scrollTop = parseInt(node.style('top'));
-            d3.select(scrolableAncestors[n])
-              .style('position', '')
-              .style('top', '');
-            scrolableAncestors[n].scrollTop = scrollTop;
-          }
-          scrolling = false;
-        }, 1000);
-        elem.on('scroll', function (d, i) {
-          if (!scrolling) {
-            for (var n = 0; n < scrolableAncestors.length; n++) {
-              var top = scrolableAncestors[n].parentNode.scrollTop;
-              console.log(top);
-              d3.select(scrolableAncestors[n])
-                .style('top', -top + "px")
-                .style('position', 'fixed');
-            }
-            scrolling = true;
-          }
-          unlockAncessors();
-        });
+        preventAncestorScrolling(elem);
       });
+
     var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
@@ -226,6 +198,59 @@ var Dialog = Component.extend({
   }
 
 });
+
+function preventAncestorScrolling(element) {
+  var preventScrolling = false;
+  element.on('mousewheel', function(d, i) {
+      var scrollTop = this.scrollTop,
+      scrollHeight = this.scrollHeight,
+      height = element.node().offsetHeight,
+      delta = d3.event.wheelDelta,
+      up = delta > 0;
+    var prevent = function() {
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
+      d3.event.returnValue = false;
+      return false;
+    };
+    var scrollTopTween = function(scrollTop) {
+      return function () {
+        var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+        return function (t) {
+          this.scrollTop = i(t);
+        };
+      }
+    };
+    if (!up) {
+      // Scrolling down
+      if (-delta > scrollHeight - height - scrollTop && scrollHeight != height + scrollTop) {
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(scrollHeight));
+        //freeze scrolling on 2 seconds on bottom position
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollTop == 0) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    } else if (up) {
+      // Scrolling up
+      if (delta > scrollTop && scrollTop > 0) { //
+        //freeze scrolling on 2 seconds on top position
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(0));
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollHeight == height + scrollTop) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    }
+    if (preventScrolling) {
+      return prevent();
+    }
+  });
+}
 
 function dialogDrag(element, container, xOffset) {
   var posX, posY, divTop, divLeft, eWi, eHe, cWi, cHe, diffX, diffY;

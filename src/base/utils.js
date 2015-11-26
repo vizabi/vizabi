@@ -242,23 +242,6 @@ export var getViewportPosition = function(element) {
   };
 };
 
-export var findScrolledAncestor = function(node) {
-  var scrollable = ["scroll", "auto"];
-
-  while(node = node.parentNode) {
-    if(!node.parentNode || node.tagName == "HTML") {
-      return;
-    }
-    var scrollHeight = node.parentNode.scrollHeight,
-      height = node.parentNode.clientHeight;
-    if (scrollHeight > height && scrollable.indexOf(d3.select(node.parentNode).style("overflow")) !== -1) {
-      return node;
-    }
-  }
-  return null;
-};
-
-
 export var findScrollableAncestor = function(node) {
   var scrollable = ["scroll", "auto"];
   while(node = node.parentNode) {
