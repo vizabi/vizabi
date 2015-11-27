@@ -221,7 +221,10 @@ BubbleMap.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },
@@ -305,7 +308,10 @@ MountainChart.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       },
       stack: {
         use: "value",
