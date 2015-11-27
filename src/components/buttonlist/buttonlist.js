@@ -367,7 +367,7 @@ var ButtonList = Component.extend({
 
      //check if container is landscape or portrait
      // if landscape, use height
-     if(parent.classed("vzb-landscape")){
+     if(parent.classed("vzb-landscape") || (parent.classed("vzb-portrait") && parent.classed("vzb-medium"))){
        //check if the width_diff is small. If it is, add to the container
        // width, to allow more buttons in a way that is still usable
        if(height_diff > 0 && height_diff <=10){
