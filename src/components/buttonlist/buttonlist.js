@@ -310,7 +310,6 @@ var ButtonList = Component.extend({
      var parent = d3.select(this.parent.element);
 
      //HERE
-     console.log(parent.classed("vzb-landscape"));
      var button_expand = this.model.ui.buttons_expand;
      _this._showAllButtons();
 
