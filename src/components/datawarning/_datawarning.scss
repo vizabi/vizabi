@@ -15,8 +15,8 @@
     @include transition(all 300ms ease-in-out);
     background-color: #fff;
     border-top: 1px solid #f7f7f7;
-    padding: 0 25px 10px;
-    overflow: auto;
+    padding: 0 5px 10px 25px;
+    overflow: hidden;
 
     .vzb-data-warning-link {
       color: $vzb-color-accent-orange;
@@ -47,10 +47,12 @@
 
     .vzb-data-warning-body {
       font-size: $vzb-font-size-regular;
-      padding: 10px 25px 10px 5px;
+      padding: 10px 30px 10px 5px;
       color: $vzb-color-black;
       white-space: normal;
       line-height: 150%;
+      height: 80%;
+      overflow-y: scroll;
 
       a {
         color: $vzb-color-accent-orange;
