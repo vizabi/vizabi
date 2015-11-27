@@ -19,9 +19,6 @@ var class_unavailable = "vzb-unavailable";
 var class_vzb_fullscreen = "vzb-force-fullscreen";
 var class_container_fullscreen = "vzb-container-fullscreen";
 
-//default values
-var button_size = 80;
-
 var ButtonList = Component.extend({
 
   /**
@@ -310,40 +307,39 @@ var ButtonList = Component.extend({
    */
    _toggleButtons: function() {
      var _this = this;
+     var parent = d3.select(this.parent.element);
+
+     //HERE
+     console.log(parent.classed("vzb-landscape"));
      var button_expand = this.model.ui.buttons_expand;
      _this._showAllButtons();
 
      var buttons = this.element.selectAll(".vzb-buttonlist-btn");
-     var button_width = 80;
+
      var container = this.element.node().getBoundingClientRect();
-     var container_width = this.element.node().getBoundingClientRect().width;
+
      var not_required = [];
      var required = [];
-     var buttons_width = 0;
-     //only if the container can contain more than one button
-     if(container_width > button_size){
-       buttons.each(function(d,i) {
-         var button_data = d;
-         var button = d3.select(this);
-         var expandable = button_expand.indexOf(button_data.id) !== -1;
-         var button_margin = {right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left"))}
-         button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
 
-         if(!button_data.isgraph){
-           if(!expandable || (_this.getLayoutProfile() !== 'large')){
-             buttons_width += button_width;
-             //sort buttons between required and not required buttons.
-             // Not required buttons will only be shown if there is space available
-             if(button_data.required){
-               required.push(button);
-             } else {
-               not_required.push(button);
-             }
-           } else {
-              button.style("display", "none");
-           }
-         } else if (_this.model.state.entities.select.length > 0){
+     var button_width = 80;
+     var button_height = 80;
+     var container_width = this.element.node().getBoundingClientRect().width;
+     var container_height = this.element.node().getBoundingClientRect().height;
+     var buttons_width = 0;
+     var buttons_height = 0;
+
+     buttons.each(function(d,i) {
+       var button_data = d;
+       var button = d3.select(this);
+       var expandable = button_expand.indexOf(button_data.id) !== -1;
+       var button_margin = {top: parseInt(button.style("margin-top")), right: parseInt(button.style("margin-right")), left: parseInt(button.style("margin-left")), bottom: parseInt(button.style("margin-bottom"))};
+       button_width = button.node().getBoundingClientRect().width + button_margin.right + button_margin.left;
+       button_height = button.node().getBoundingClientRect().height + button_margin.top + button_margin.bottom;
+
+       if(!button_data.isgraph){
+         if(!expandable || (_this.getLayoutProfile() !== 'large')){
            buttons_width += button_width;
+           buttons_height += button_height;
            //sort buttons between required and not required buttons.
            // Not required buttons will only be shown if there is space available
            if(button_data.required){
@@ -351,25 +347,54 @@ var ButtonList = Component.extend({
            } else {
              not_required.push(button);
            }
+         } else {
+            button.style("display", "none");
          }
-       });
-       var width_diff = buttons_width - container_width;
+       } else if (_this.model.state.entities.select.length > 0){
+         buttons_width += button_width;
+         buttons_height += button_height;
+         //sort buttons between required and not required buttons.
+         // Not required buttons will only be shown if there is space available
+         if(button_data.required){
+           required.push(button);
+         } else {
+           not_required.push(button);
+         }
+       }
+     });
+     var width_diff = buttons_width - container_width;
+     var height_diff = buttons_height - container_height;
+     var number_of_buttons = 1;
 
+     //check if container is landscape or portrait
+     // if landscape, use height
+     if(parent.classed("vzb-landscape")){
+       //check if the width_diff is small. If it is, add to the container
+       // width, to allow more buttons in a way that is still usable
+       if(height_diff > 0 && height_diff <=10){
+         container_height += height_diff;
+       }
+       number_of_buttons = Math.floor(container_height / button_height) - required.length;
+       if(number_of_buttons < 0){
+         number_of_buttons = 0;
+       }
+    // if portrait, use width
+     } else {
        //check if the width_diff is small. If it is, add to the container
        // width, to allow more buttons in a way that is still usable
        if(width_diff > 0 && width_diff <=10){
          container_width += width_diff;
        }
-       var number_of_buttons = Math.floor(container_width / button_width) - required.length;
+       number_of_buttons = Math.floor(container_width / button_width) - required.length;
        if(number_of_buttons < 0){
          number_of_buttons = 0;
        }
-       //change the display property of non required buttons, from right to
-       // left
-       not_required.reverse();
-       for (var i = 0 ; i < not_required.length-number_of_buttons ; i++) {
-           not_required[i].style("display", "none");
-       }
+     }
+     //change the display property of non required buttons, from right to
+     // left
+     not_required.reverse();
+     for (var i = 0 ; i < not_required.length-number_of_buttons ; i++) {
+         not_required[i].style("display", "none");
      }
    },
 
@@ -494,7 +519,7 @@ var ButtonList = Component.extend({
     if(this.getLayoutProfile() === 'small' && this.model.ui.presentation) {
       this.togglePresentationMode();
     }
-    
+
     this._toggleButtons();
   },
 
