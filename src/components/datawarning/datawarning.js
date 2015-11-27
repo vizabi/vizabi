@@ -77,7 +77,7 @@ var DataWarning = Component.extend({
     }
 
     container.append("div")
-      .attr("class", "vzb-data-warning-body")
+      .attr("class", "vzb-data-warning-body vzb-dialog-scrollable")
       .html(this.parent.datawarning_content.body);
 
   },
