@@ -194,18 +194,20 @@ $vzb-loader-bgcolor: $vzb-color-white;
 }
 
 .vzb-dialog-scrollable {
-  &:-webkit-scrollbar {
+  &::-webkit-scrollbar {
     width: 6px;
+    -webkit-appearance: none;      
   }
-  &:-webkit-scrollbar-thumb {
-    background: lighten($vzb-color-primary, 20%);
+  &::-webkit-scrollbar-thumb {
+    background: lighten($vzb-color-primary, 30%);
     border-radius: 2px;
     cursor: pointer;
   }
-  &:-webkit-scrollbar-track {
-    width: 2px;
-    background: $vzb-color-primary-lightest;
+  &::-webkit-scrollbar-track {
+    width: 5px;
+    background: lighten($vzb-color-primary, 30%);
     border-radius: 2px;
-    border: $vzb-color-white 2px solid;
+    background-clip: content-box;
+    border: 2px solid transparent;
   }
 }
