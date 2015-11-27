@@ -147,16 +147,15 @@ $vzb-dialog-content-height: 250px;
     &[data-btn="presentation"] {
       pointer-events: none;
       > .vzb-buttonlist-btn-icon {
-        border: 1px solid rgba($vzb-color-grey-dark, .5);
-        background-color: $vzb-color-grey;
+        background-color: rgba($vzb-color-grey-lightest, .5);
         .vzb-icon {
           path {
-            fill: $vzb-color-grey-dark;
+            fill: rgba($vzb-color-primary-light, .4);
           }
         }
       }
       > .vzb-buttonlist-btn-title {
-        color: $vzb-color-grey;
+        color: rgba($vzb-color-primary-light, .4);
       }
     }
   }
