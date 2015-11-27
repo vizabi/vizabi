@@ -106,6 +106,11 @@
       .vzb-bmc-axis-y-title {
         @extend %vzb-chart-axis-title;
       }
+        
+      .vzb-bmc-axis-c-title {
+        @extend %vzb-chart-axis-title;
+        text-anchor: end;
+      }
 
       .vzb-bmc-axis-info {
         @extend %vzb-chart-info;
@@ -154,7 +159,8 @@
   }
   &.vzb-large {
     .vzb-bubblemap {
-      .vzb-bmc-axis-y-title {
+      .vzb-bmc-axis-y-title,
+      .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title-large;
       }
 
@@ -171,7 +177,8 @@
   }
   &.vzb-medium {
     .vzb-bubblemap {
-      .vzb-bmc-axis-y-title {
+      .vzb-bmc-axis-y-title,
+      .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title-medium;
       }
 
@@ -188,7 +195,8 @@
   }
   &.vzb-small {
     .vzb-bubblemap {
-      .vzb-bmc-axis-y-title {
+      .vzb-bmc-axis-y-title,
+      .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title-small;
       }
 
@@ -205,7 +213,8 @@
   }
   &.vzb-presentation {
     .vzb-bubblemap {
-      .vzb-bmc-axis-y-title {
+      .vzb-bmc-axis-y-title,
+      .vzb-bmc-axis-c-title {
         font-size: $vzb-font-size-largest;
       }
 
@@ -222,7 +231,8 @@
     }
 
     &.vzb-small {
-      .vzb-bmc-axis-y-title {
+      .vzb-bmc-axis-y-title,
+      .vzb-bmc-axis-c-title {
         font-size: $vzb-font-size-medium;
       }
     }

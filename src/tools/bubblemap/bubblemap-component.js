@@ -178,6 +178,7 @@ var BubbleMapComponent = Component.extend({
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
+    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
     this.infoEl = this.graph.select(".vzb-bmc-axis-info");
 
     this.entityBubbles = null;
@@ -285,12 +286,32 @@ var BubbleMapComponent = Component.extend({
       this.translator = this.model.language.getTFunction();
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
+      this.strings = {
+          title: {
+            S: this.translator("indicator/" + _this.model.marker.size.which),
+            C: this.translator("indicator/" + _this.model.marker.color.which)
+          }
+      };
+      
+      
       this.yTitleEl.select("text")
-          .text(this.translator("indicator/" + _this.model.marker.size.which))
+          .text(this.translator("buttons/size") + ": " + this.strings.title.S)
           .on("click", function() {
             _this.parent
               .findChildByName("gapminder-treemenu")
               .markerID("size")
+              .alignX("left")
+              .alignY("top")
+              .updateView()
+              .toggle();
+          });
+      
+      this.cTitleEl.select("text")
+          .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+          .on("click", function() {
+            _this.parent
+              .findChildByName("gapminder-treemenu")
+              .markerID("color")
               .alignX("left")
               .alignY("top")
               .updateView()
@@ -639,6 +660,10 @@ var BubbleMapComponent = Component.extend({
     this.yTitleEl.select("text")
         .attr("transform", "translate(0," + margin.top + ")")
 
+    this.cTitleEl.select("text")
+        .attr("transform", "translate(" + this.width + "," + margin.top + ")")
+        .classed("vzb-hidden", this.model.marker.color.which == "geo.region");
+
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
         .attr("width", warnBB.height)
@@ -662,7 +687,6 @@ var BubbleMapComponent = Component.extend({
             + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
             + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
     }
-
   },
 
   updateMarkerSizeLimits: function() {
