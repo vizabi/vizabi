@@ -44,7 +44,9 @@ var MinMaxInputs = Component.extend({
         this.model_binds["change:marker:" + this.markerID] = function(evt) {
             _this.updateView();
         };
-
+        this.model_binds["ready"] = function(evt) {
+            _this.updateView();
+        };
 
         //contructor is the same as any component
         this._super(config, context);
