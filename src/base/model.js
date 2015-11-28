@@ -680,7 +680,7 @@ var Model = Events.extend({
         //find position from first hook
         u = hook.use;
         w = hook.which;
-
+          
         if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         }
@@ -690,6 +690,8 @@ var Model = Events.extend({
 
 
         utils.forEach(filtered, function(arr, id) {
+          //TODO: this saves when geos have different data length. line can be optimised. 
+          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
           value = interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
@@ -1386,7 +1388,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     return +arr[arr.length - 1][which];
   }
   //return null if data is missing
-  if(arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
+  if(arr[i]===undefined || arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
     return null;
   }
 
@@ -1460,7 +1462,7 @@ function interpolateValue(_filter, use, which, l, method) {
     return +items[items.length - 1][which];
   }
   //return null if data is missing
-  if(items[indexNext][which] === null || items[indexNext - 1][which] === null) {
+  if(items[indexNext]===undefined || items[indexNext][which] === null || items[indexNext - 1][which] === null) {
     return null;
   }
 

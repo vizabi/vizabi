@@ -88,7 +88,7 @@ var SizeModel = Model.extend({
     }
     
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;;
-    this.scale = d3.scale[scaletype || "linear"]().domain(domain);
+    this.scale = d3.scale[scaletype || "linear"]().domain(domain).clamp(true);
   }
 
 });
