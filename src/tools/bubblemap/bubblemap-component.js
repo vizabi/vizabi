@@ -497,14 +497,14 @@ var BubbleMapComponent = Component.extend({
         var valueC = values.color[d[entityDim]];
         var valueL = values.label[d[_this.KEY]];
         
+        d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+        d.color = _this.cScale(valueC);
+        d.r = utils.areaToRadius(_this.sScale(valueS));
+        d.label = valueL;
         
         if(!valueS || !valueX || !valueY){
             view.classed("vzb-hidden", true);
         }else{
-            d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-            d.color = _this.cScale(valueC);
-            d.r = utils.areaToRadius(_this.sScale(valueS));
-            d.label = valueL;
             
             view.classed("vzb-hidden", false)
                 .attr("fill", d.color)
