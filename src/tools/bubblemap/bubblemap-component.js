@@ -488,23 +488,40 @@ var BubbleMapComponent = Component.extend({
 
     //positioning and sizes of the bubbles
     this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .attr("fill", function (d) {
-        return _this.cScale(values.color[d[entityDim]]);
-      })
-      .attr("cx", function (d) {
-        d.cLoc = _this.skew(_this.projection([+values.lng[d[entityDim]], +values.lat[d[entityDim]]]));
-        return d.cLoc[0];
-      })
-      .attr("cy", function (d) {
-        return d.cLoc[1];
-      })
-      .transition().duration(duration).ease("linear")
-      .attr("r", function (d, index) {
-        var r = utils.areaToRadius(_this.sScale(values.size[d[entityDim]]));
-        d.r = r;
-        d.label = values.label[d[_this.KEY]];
-        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
-        return r;
+      .each(function(d, index){
+        var view = d3.select(this);
+        
+        var valueX = +values.lng[d[entityDim]];
+        var valueY = +values.lat[d[entityDim]];
+        var valueS = +values.size[d[entityDim]];
+        var valueC = values.color[d[entityDim]];
+        var valueL = values.label[d[_this.KEY]];
+        
+        
+        if(!valueS || !valueX || !valueY){
+            view.classed("vzb-hidden", true);
+        }else{
+            d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+            d.color = _this.cScale(valueC);
+            d.r = utils.areaToRadius(_this.sScale(valueS));
+            d.label = valueL;
+            
+            view.classed("vzb-hidden", false)
+                .attr("fill", d.color)
+                .attr("cx", d.cLoc[0])
+                .attr("cy", d.cLoc[1])
+            
+            if(duration){
+                view.transition().duration(duration).ease("linear")
+                    .attr("r", d.r);
+            }else{
+                view.interrupt()
+                    .attr("r", d.r);
+            }
+            
+            _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+        }
+        
       });
   },
 
