@@ -45,6 +45,16 @@
     }
   }
 
+  &[data-btn='show'] {
+
+    .vzb-show-filter {
+      display: block;
+      position: relative;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
   &[data-btn='moreoptions'] {
     .vzb-dialog-content {
       &.vzb-accordion {
