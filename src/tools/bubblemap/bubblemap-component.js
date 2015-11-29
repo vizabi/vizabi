@@ -88,11 +88,9 @@ var BubbleMapComponent = Component.extend({
           _this.ready();
       },
       "change:entities:opacitySelectDim": function (evt) {
-          console.log('dim');
           _this.updateOpacity();
       },
       "change:entities:opacityRegular": function (evt) {
-          console.log('regular');
           _this.updateOpacity();
       },
     };
@@ -739,18 +737,18 @@ var BubbleMapComponent = Component.extend({
 
               _this.model.entities.highlightEntity(d);
 
-              var mouse = d3.mouse(_this.graph.node()).map(function (d) {
-                  return parseInt(d);
-              });
+              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
+                _this._setTooltip();
+                return;
+              }
 
               //position tooltip
-              _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.model.marker.label.getValue(d));
+              _this._setTooltip(d);
 
           },
           _mouseout: function (d, i) {
               if (_this.model.time.dragging) return;
-
-              _this._setTooltip("");
+              _this._setTooltip();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
@@ -1037,39 +1035,98 @@ var BubbleMapComponent = Component.extend({
           _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, _this.duration);
         });
 
+        // hide recent hover tooltip
+        _this._setTooltip();
 
   },
 
-  _setTooltip: function (tooltipText) {
-      if (tooltipText) {
-          var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
+  _setTooltip: function (d) {
+    var _this = this;
+    if (d) {
+      /*
+      var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
 
-          //position tooltip
-          this.tooltip.classed("vzb-hidden", false)
-              .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
-              .selectAll("text")
-              .attr("text-anchor", "middle")
-              .attr("alignment-baseline", "middle")
-              .text(tooltipText)
+      //position tooltip
+      this.tooltip.classed("vzb-hidden", false)
+          .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
+          .selectAll("text")
+          .attr("text-anchor", "middle")
+          .attr("alignment-baseline", "middle")
+          .text(tooltipText)
 
-          var contentBBox = this.tooltip.select("text")[0][0].getBBox();
-          this.tooltip.select("rect")
-              .attr("width", contentBBox.width + 8)
-              .attr("height", contentBBox.height + 8)
-              .attr("x", -contentBBox.width - 25)
-              .attr("y", -contentBBox.height - 25)
-              .attr("rx", contentBBox.height * .2)
-              .attr("ry", contentBBox.height * .2);
+      var contentBBox = this.tooltip.select("text")[0][0].getBBox();
+      this.tooltip.select("rect")
+          .attr("width", contentBBox.width + 8)
+          .attr("height", contentBBox.height + 8)
+          .attr("x", -contentBBox.width - 25)
+          .attr("y", -contentBBox.height - 25)
+          .attr("rx", contentBBox.height * .2)
+          .attr("ry", contentBBox.height * .2);
 
-          this.tooltip.selectAll("text")
-              .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
-              .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
+      this.tooltip.selectAll("text")
+          .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
+          .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
+      */
+      var tooltipText = d.label;
+      var x = d.cLoc[0];
+      var y = d.cLoc[1];
+      var offset = d.r;
+      var mouse = d3.mouse(this.graph.node()).map(function(d) {
+        return parseInt(d)
+      });
+      var xPos, yPos, xSign = -1,
+        ySign = -1,
+        xOffset = 0,
+        yOffset = 0;
 
-      } else {
-
-          this.tooltip.classed("vzb-hidden", true);
+      if(offset) {
+        xOffset = offset * .71; // .71 - sin and cos for 315
+        yOffset = offset * .71;
       }
+      //position tooltip
+      this.tooltip.classed("vzb-hidden", false)
+        //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+        .selectAll("text")
+        .text(tooltipText);
+
+      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      if(x - xOffset - contentBBox.width < 0) {
+        xSign = 1;
+        x += contentBBox.width + 5; // corrective to the block Radius and text padding
+      } else {
+        x -= 5; // corrective to the block Radius and text padding
+      }
+      if(y - yOffset - contentBBox.height < 0) {
+        ySign = 1;
+        y += contentBBox.height;
+      } else {
+        y -= 11; // corrective to the block Radius and text padding
+      }
+      if(offset) {
+        xPos = x + xOffset * xSign;
+        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+      } else {
+        xPos = x + xOffset * xSign; // .71 - sin and cos for 315
+        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+      }
+      this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
+        ")")
+
+      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+        .attr("height", contentBBox.height * 1.2)
+        .attr("x", -contentBBox.width - 4)
+        .attr("y", -contentBBox.height * .85)
+        .attr("rx", contentBBox.height * .2)
+        .attr("ry", contentBBox.height * .2);
+
+
+    } else {
+
+      this.tooltip.classed("vzb-hidden", true);
+    }
   }
+
+
 
 });
 
