@@ -470,7 +470,7 @@ var Model = Events.extend({
     filters = this._getAllFilters(exceptions, splashScreen);
     grouping = this._getGrouping();
 
-    if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
+    if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
     //return query
@@ -725,7 +725,7 @@ var Model = Events.extend({
       return;
     }
     var value;
-    if(this.use === 'value') {
+    if(this.use === 'constant') {
       value = this.which;
     } else if(this._space.hasOwnProperty(this.use)) {
       value = this._space[this.use][this.which];
@@ -1370,8 +1370,8 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     utils.warn('interpolatePoint returning NULL: array is empty');
     return null;
   }
-  // return constant for the use of "value"
-  if(use === 'value') {
+  // return constant for the use of "constant"
+  if(use === 'constant') {
     return which;
   }
   // zero-order interpolation for the use of properties
@@ -1430,8 +1430,8 @@ function interpolateValue(_filter, use, which, l, method) {
     return null;
   }
 
-  // return constant for the use of "value"
-  if(use === 'value') {
+  // return constant for the use of "constant"
+  if(use === 'constant') {
     return items[0][which];
   }
 

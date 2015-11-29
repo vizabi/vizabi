@@ -122,7 +122,7 @@ var Stack = Dialog.extend({
             if(value !== "all" && value !== "none"){
                 obj.stack.use = "property";
             } else {
-                obj.stack.use = "value";
+                obj.stack.use = "constant";
             }
         
             //validate possible merge values in group and stack hooks

@@ -16,7 +16,7 @@ var StackModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
+    use: "constant",
     which: undefined,
     merge: false
   },
@@ -44,13 +44,13 @@ var StackModel = Model.extend({
 
     //use must not be "indicator" 
     if(this.use === "indicator") {
-      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'value' and which to '" + palettes._default)
-      this.use = "value";
+      utils.warn("stack model: use must not be 'indicator'. Resetting use to 'constant' and which to '" + palettes._default)
+      this.use = "constant";
       this.which = palettes._default;
     }
 
-    //if use is "value"
-    if(this.use === "value" && utils.values(palettes).indexOf(this.which) == -1) {
+    //if use is "constant"
+    if(this.use === "constant" && utils.values(palettes).indexOf(this.which) == -1) {
       utils.warn("stack model: the requested value '" + this.which + "' is not allowed. resetting to '" +
         palettes._default)
       this.which == palettes._default;

@@ -157,7 +157,7 @@
         },
         "_default": {
             "allowCharts": ["*"],
-            "use": "value",
+            "use": "constant",
             "unit": "",
             "scales": ["ordinal"],
             "sourceLink": ""

@@ -12,7 +12,7 @@ var SizeModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
+    use: "constant",
     min: 0,
     max: 1,
     which: undefined
@@ -44,8 +44,8 @@ var SizeModel = Model.extend({
     if(this.max < this.min) this.set('min', this.max, true);
 
     //value must always be between min and max
-    if(this.use === "value" && this.which > this.max) this.which = this.max;
-    if(this.use === "value" && this.which < this.min) this.which = this.min;
+    if(this.use === "constant" && this.which > this.max) this.which = this.max;
+    if(this.use === "constant" && this.which < this.min) this.which = this.min;
     
     if(!this.scaleType) this.scaleType = 'linear';
     if(this.use === "property") this.scaleType = 'ordinal';
@@ -81,7 +81,7 @@ var SizeModel = Model.extend({
       case "property":
         domain = this.getUnique(this.which);
         break;
-      case "value":
+      case "constant":
       default:
         domain = [this.which];
         break;
