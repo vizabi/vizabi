@@ -763,10 +763,10 @@ var BubbleChartComp = Component.extend({
 
     var profiles = {
       small: {
-        margin: { top: 30, right: 10, left: 40, bottom: 45 },
+        margin: { top: 30, right: 10, left: 40, bottom: 35 },
         padding: 2,
         minRadius: 0.5,
-        maxRadius: 40,
+        maxRadius: 30,
         infoElHeight: 16,
         yAxisLabelBottomMargin: 6,
         xAxisLabelBottomMargin: 4
