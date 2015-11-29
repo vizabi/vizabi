@@ -39,6 +39,13 @@ var BarComponent = Component.extend({
         if(!_this._readyOnce) return;
         _this.updateEntities();
       },
+      'change:marker': function(evt) {
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("change:marker:color:palette") > -1) return;
+        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        
+        _this.ready();
+      },
       'change:marker:color:palette': utils.debounce(function(evt) {
         if(!_this._readyOnce) return;
         _this.updateEntities();
