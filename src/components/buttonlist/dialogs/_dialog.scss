@@ -28,6 +28,10 @@
     span {
       vertical-align: middle;
     }
+    .vzb-ip-select {
+      font-size: .8em;
+      line-height: 24px;
+    }
   }
 
   &[data-btn="colors"] {
@@ -279,7 +283,7 @@
       height: 18px;
       background: $vzb-color-primary-lightest;
       border: 1px solid rgba($vzb-color-primary, .2);
-      text-indent: 23px;
+      text-indent: 26px;
 
       &::after {
         @include position(absolute, 4px null null 4px);
