@@ -119,7 +119,7 @@
       .vzb-bmc-tooltip {
         @extend %vzb-chart-tooltip;
         text {
-          text-anchor: middle;
+          text-anchor: end;
         }
       }
 
