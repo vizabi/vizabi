@@ -12,7 +12,7 @@ var ColorModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
+    use: "constant",
     palette: null,
     which: undefined
   },
@@ -113,7 +113,7 @@ var ColorModel = Model.extend({
 
       if(palettes[this.which]) {
         this.palette = utils.clone(palettes[this.which]);
-      } else if(this.use === "value") {
+      } else if(this.use === "constant") {
         this.palette = {
           "_default": this.which
         };

@@ -314,7 +314,7 @@ MountainChart.define('default_options', {
         }
       },
       stack: {
-        use: "value",
+        use: "constant",
         which: "all" // set a property of data or values "all" or "none"
       },
       group: {
@@ -568,7 +568,7 @@ PopByAge.define('default_options', {
         which: "pop"
       },
       color: {
-        use: "value",
+        use: "constant",
         which: "#ffb600"
       }
     }
