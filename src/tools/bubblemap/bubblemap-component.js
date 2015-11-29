@@ -158,7 +158,7 @@ var BubbleMapComponent = Component.extend({
 
     this.defaultWidth = 960;
     this.defaultHeight = 500;
-    this.boundBox = [[0.03, 0], [0.97, 0.85]]; // two points to set box bound on 960 * 500 image;
+    this.boundBox = [[0.06, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
   },
