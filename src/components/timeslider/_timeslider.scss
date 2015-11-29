@@ -1,4 +1,4 @@
-$vzb-ts-btn-area: 50px;
+$vzb-ts-btn-area: 40px;
 $vzb-ts-btn-width: 40px;
 $vzb-ts-btn-bg: $vzb-color-primary;
 $vzb-ts-btn-bg-active: #2f7687;
@@ -152,34 +152,50 @@ $vzb-ts-value-width: 40px;
 }
 
 &.vzb-small {
-  .vzb-timeslider.vzb-ts-axis-aligned {
+  .vzb-timeslider {
     .vzb-ts-btns {
-      @include position(absolute, 0 0 5px 5px);
-      width: $vzb-ts-btn-area - 20;
-      min-height: $vzb-ts-btn-area - 20;
-
+      
       .vzb-ts-btn {
-        width: $vzb-ts-btn-width - 14;
-        height: $vzb-ts-btn-width - 14;
+        width: $vzb-ts-btn-width - 5;
+        height: $vzb-ts-btn-width - 5;
         margin: 0;
 
         .vzb-icon {
-          width: $vzb-ts-btn-width - 14;
-          height: $vzb-ts-btn-width - 14;
-        }
-        &.vzb-ts-btn-play {
-          padding: 0;
-        }
-        &.vzb-ts-btn-pause {
-          padding: 0;
+          width: $vzb-ts-btn-width - 5;
+          height: $vzb-ts-btn-width - 5;
         }
       }
     }
-    .vzb-ts-slider-wrapper {
-      $pos-left: $vzb-ts-btn-area - 20 + 10;
-      @include position(absolute, 0 0 5px $pos-left);
-    }
-  }
+      
+    &.vzb-ts-axis-aligned {
+      .vzb-ts-btns {
+        @include position(absolute, 0 0 5px 5px);
+        width: $vzb-ts-btn-area - 20;
+        min-height: $vzb-ts-btn-area - 20;
+  
+        .vzb-ts-btn {
+          width: $vzb-ts-btn-width - 14;
+          height: $vzb-ts-btn-width - 14;
+          margin: 0;
+  
+          .vzb-icon {
+            width: $vzb-ts-btn-width - 14;
+            height: $vzb-ts-btn-width - 14;
+          }
+          &.vzb-ts-btn-play {
+            padding: 0;
+          }
+          &.vzb-ts-btn-pause {
+            padding: 0;
+          }
+        }
+      }
+      .vzb-ts-slider-wrapper {
+        $pos-left: $vzb-ts-btn-area - 20 + 10;
+        @include position(absolute, 0 0 5px $pos-left);
+      }
+    }      
+  }    
 }
 
 &.vzb-medium {

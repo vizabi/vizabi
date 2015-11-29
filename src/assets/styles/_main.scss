@@ -8,7 +8,8 @@
   $size-button-list: 60px;
   $size-button-list-small: 50px;
   $size-timeslider: 80px;
-  $size-timeslider-small: 50px;
+  $size-timeslider-medium: 50px;
+  $size-timeslider-small: 40px;
   @include position(absolute, 0);
   @include user-select(none);
   font-family: $vzb-font-family;
@@ -160,6 +161,19 @@
       font-size: $vzb-font-size-tiny;
     }
   }
+  &.vzb-medium {
+    .vzb-tool-content {
+      .vzb-tool-stage {
+        .vzb-tool-viz {
+          @include position(absolute, 0 0 $size-timeslider-medium 0);
+        }
+
+        .vzb-tool-timeslider {
+          height: $size-timeslider-medium;
+        }
+      }
+    }
+  }    
   //tooltip
   .vzb-tooltip {
     @include border-radius(3px);
@@ -225,23 +239,12 @@
 
     text {
       text-transform: uppercase;
+      font-size: $vzb-font-size-small;
     }
 
     &:hover text {
       text-decoration: underline;
     }
-  }
-
-  &.vzb-medium .vzb-data-warning text {
-    font-size: $vzb-font-size-small;
-  }
-
-  &.vzb-large .vzb-data-warning text {
-    font-size: $vzb-font-size-small;
-  }
-
-  &.vzb-presentation .vzb-data-warning text {
-    font-size: $vzb-font-size-small;
   }
 
   //common tool components

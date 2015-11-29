@@ -195,7 +195,7 @@ var BubbleMapComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
@@ -555,21 +555,21 @@ var BubbleMapComponent = Component.extend({
 
     var profiles = {
       small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
-        minRadius: 2,
-        maxRadius: 40
+        minRadius: 0.5,
+        maxRadius: 30
       },
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 30 },
         infoElHeight: 20,
-        minRadius: 3,
+        minRadius: 1,
         maxRadius: 60
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
-        minRadius: 4,
+        minRadius: 2,
         maxRadius: 80
       }
     };
@@ -652,7 +652,7 @@ var BubbleMapComponent = Component.extend({
 
     this.year.resize(this.width, this.height,
       Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
-
+      
     this.mapSvg
       .attr('width', width)
       .attr('height', height)
