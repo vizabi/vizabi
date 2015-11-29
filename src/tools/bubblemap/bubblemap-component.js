@@ -87,6 +87,14 @@ var BubbleMapComponent = Component.extend({
           
           _this.ready();
       },
+      "change:entities:opacitySelectDim": function (evt) {
+          console.log('dim');
+          _this.updateOpacity();
+      },
+      "change:entities:opacityRegular": function (evt) {
+          console.log('regular');
+          _this.updateOpacity();
+      },
     };
 
     //this._selectlist = new Selectlist(this);
