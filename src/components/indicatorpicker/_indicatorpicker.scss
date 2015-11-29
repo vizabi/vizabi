@@ -1,21 +1,25 @@
 .vzb-ip-select {
   display: inline-block;
+  position: relative;
   margin: 0 10px 0 18px;
-  padding: 5px;
+  padding: 5px 21px 5px 5px;
   border: 1px solid $vzb-color-primary;
   border-radius: 4px;
   cursor: pointer;
+  max-width: 155px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  line-height: 20px;
   &::after {
     content: '';
-    display: inline-block;
+    position: absolute;
     width: 0;
     height: 0;
     border: 6px solid transparent;
     border-top: 12px solid $vzb-color-primary;
-    z-index: 1;      
-    position: relative;
-    top: .32em;
-    margin-left: 8px;
+    top: .7em;
+    right: 5px;
   }
   &:hover {
     background-color: $vzb-color-primary-lightest;
