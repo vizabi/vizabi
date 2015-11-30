@@ -366,9 +366,13 @@ var BubbleMapComponent = Component.extend({
             .text(_this.translator("buttons/size") + ": " + 
                   formatter(_this.model.marker.size.getValue(pointer)) + " " + 
                   _this.translator("unit/" + _this.model.marker.size.which));
+          
+          this.infoEl.classed("vzb-hidden", true);
       }else{
           this.yTitleEl.select("text")
               .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+          
+          this.infoEl.classed("vzb-hidden", false);
       }
   },
 
