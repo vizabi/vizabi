@@ -8,11 +8,11 @@
       cursor: move;
       background: $vzb-color-primary-lightest;
       border: 1px solid $vzb-color-primary-light;
-      height: 18px;
+      height: 12px;
       border-radius: 4px;
       list-style: none;
-      margin-bottom: 5px;
-      padding: 5px;
+      margin-bottom: 3px;
+      padding: 2px 8px 5px 6px;
       &:hover {
         background: $vzb-color-grey-light;
         border-color: $vzb-color-grey-dark;

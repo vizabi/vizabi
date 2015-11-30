@@ -547,7 +547,7 @@ var MountainChartComponent = Component.extend({
                 return m.sortValue[0];
             }));
 
-            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.indexOf(group.key);
+            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(group.key);
 
             group.values.forEach(function (d) {
                 d.sortValue[1] = groupSortValue;
