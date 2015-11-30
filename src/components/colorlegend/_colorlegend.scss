@@ -18,6 +18,29 @@
     margin-top: 5px;
     cursor: pointer;
     padding-left: 15px;
+      
+    .vzb-cl-color-sample {
+      @include transition(border-width 200ms ease-in-out);
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .vzb-cl-color-legend {
+      display: inline-block;
+      vertical-align: super;
+      cursor: pointer;
+    }
+      
+    &.vzb-cl-compact {
+      display: inline-block;
+      float: left;
+      .vzb-cl-color-legend {
+        display: none;
+      }
+    }
   }
 
   .vzb-cl-rainbow {
@@ -31,18 +54,5 @@
     svg {height: 100%;}
   }
 
-  .vzb-cl-color-sample {
-    @include transition(border-width 200ms ease-in-out);
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 10px;
-    margin-right: 10px;
-    cursor: pointer;
-  }
-  .vzb-cl-color-legend {
-    display: inline-block;
-    vertical-align: super;
-    cursor: pointer;
-  }
+
 }
