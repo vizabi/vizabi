@@ -51,7 +51,7 @@ var Find = Dialog.extend({
     this.opacity_nonselected = this.element.select(".vzb-dialog-bubbleopacity");
 
     this.KEY = this.model.state.entities.getDimension();
-    
+
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
@@ -68,17 +68,18 @@ var Find = Dialog.extend({
     this.deselect_all.on("click", function() {
       _this.deselectEntities();
     });
-    
+
     this.translator = this.model.language.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
-    this._super();
+    //this._super();
 
     //make sure it refreshes when all is reloaded
     var _this = this;
     this.root.on('ready', function() {
       _this.ready();
     })
+
   },
 
   open: function() {
@@ -160,8 +161,8 @@ var Find = Dialog.extend({
       .on("mouseout", function(d) {
         if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();
       });
+    utils.preventAncestorScrolling(_this.element.select('.vzb-dialog-scrollable'));
 
-      
     this.showHideSearch();
     this.showHideDeselect();
   },
