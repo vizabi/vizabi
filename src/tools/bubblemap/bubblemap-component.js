@@ -45,7 +45,6 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time:value": function (evt) {
-        _this.updateUIStrings();
         _this.updateEntities();
         _this.updateTime();
         _this.selectEntities();
@@ -299,13 +298,6 @@ var BubbleMapComponent = Component.extend({
             C: this.translator("indicator/" + _this.model.marker.color.which)
           }
       };
-
-      if (_this.hovered) {
-        var hovered = _this.hovered;
-        var formatter = _this.model.marker.size.tickFormatter;
-        var number = _this.values.size[hovered[_this.KEY]];
-        this.strings.title.S = formatter(number) + " " + _this.translator("unit/" + _this.model.marker.size.which);
-      }
       
       this.yTitleEl.select("text")
           .text(this.translator("buttons/size") + ": " + this.strings.title.S)
@@ -354,6 +346,27 @@ var BubbleMapComponent = Component.extend({
           .on("mouseout", function () {
               _this.updateDoubtOpacity();
           })
+  },
+
+  // show size number on title when hovered on a bubble
+  updateSizeTitle: function(){
+      var _this = this;
+
+      if(_this.hovered) {
+        var hovered = _this.hovered;
+        var formatter = _this.model.marker.size.tickFormatter;
+        var number = _this.values.size[hovered[_this.KEY]];
+
+        _this.yTitleEl.select("text")
+          .text(_this.translator("buttons/size") + ": " +
+                formatter(number) + " " +
+                _this.translator("unit/" + _this.model.marker.size.which));
+        this.infoEl.classed("vzb-hidden", true);
+      }else{
+        this.yTitleEl.select("text")
+            .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+        this.infoEl.classed("vzb-hidden", false);
+      }
   },
 
   updateDoubtOpacity: function (opacity) {
@@ -430,16 +443,14 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     var time = this.model.time;
-    var timeDim = time.getDimension();
-    var entityDim = this.model.entities.getDimension();
     // var latDim = this.model.lat.getDimension();
     // var lngDim = this.model.lng.getDimension();
     // console.log(latDim, lngDim, 'ok');
     var duration = (time.playing) ? time.speed : 0;
     var filter = {};
-    filter[timeDim] = time.value;
+    filter[_this.TIMEDIM] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getValues(filter, [entityDim]);
+    var values = this.model.marker.getValues(filter, [_this.KEY]);
     _this.values = values;
     // construct pointers
     this.pointers = this.model.marker.getKeys()
@@ -467,7 +478,7 @@ var BubbleMapComponent = Component.extend({
     */
 
     items = items.sort(function (a, b) { // small circle to front
-      return values.size[b[entityDim]] - values.size[a[entityDim]];
+      return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
     });
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
@@ -477,9 +488,9 @@ var BubbleMapComponent = Component.extend({
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
-        .on("mousemove", function (d, i) {
+        .on("mouseover", function (d, i) {
             if (utils.isTouchDevice()) return;
-            _this._interact()._mousemove(d, i);
+            _this._interact()._mouseover(d, i);
         })
         .on("mouseout", function (d, i) {
             if (utils.isTouchDevice()) return;
@@ -504,10 +515,10 @@ var BubbleMapComponent = Component.extend({
       .each(function(d, index){
         var view = d3.select(this);
         
-        var valueX = +values.lng[d[entityDim]];
-        var valueY = +values.lat[d[entityDim]];
-        var valueS = +values.size[d[entityDim]];
-        var valueC = values.color[d[entityDim]];
+        var valueX = +values.lng[d[_this.KEY]];
+        var valueY = +values.lat[d[_this.KEY]];
+        var valueS = +values.size[d[_this.KEY]];
+        var valueC = values.color[d[_this.KEY]];
         var valueL = values.label[d[_this.KEY]];
         
         d.cLoc = _this.skew(_this.projection([valueX, valueY]));
@@ -549,6 +560,9 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
+    
+    //possibly update the exact value in size title
+    this.updateSizeTitle();
   },
 
   /**
@@ -606,45 +620,6 @@ var BubbleMapComponent = Component.extend({
     margin = this.activeProfile.margin;
     infoElHeight = this.activeProfile.infoElHeight;
 
-/*
-    this.profiles = {
-      "small": {
-        margin: {
-          top: 30,
-          right: 20,
-          left: 40,
-          bottom: 50
-        },
-        padding: 2,
-      },
-      "medium": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 60
-        },
-        padding: 2,
-        minRadius: 3,
-        maxRadius: 60
-      },
-      "large": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 80
-        },
-        padding: 2,
-        minRadius: 4,
-        maxRadius: 80
-      }
-    };
-
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
-    var margin = this.activeProfile.margin;
-*/
-
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
@@ -667,7 +642,6 @@ var BubbleMapComponent = Component.extend({
       .attr('preserveAspectRatio', 'none');
 
     //update scales to the new range
-    // TODO: r ration should add to config
     //this.updateMarkerSizeLimits();
     this.sScale.range([0, this.height / 4]);
 
@@ -739,13 +713,14 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       return {
-          _mousemove: function (d, i) {
+          _mouseover: function (d, i) {
               if (_this.model.time.dragging) return;
 
               _this.model.entities.highlightEntity(d);
 
               _this.hovered = d;
-              _this.updateUIStrings();
+              //put the exact value in the size title
+              _this.updateSizeTitle();
 
               if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
                 _this._setTooltip();
@@ -758,7 +733,7 @@ var BubbleMapComponent = Component.extend({
               if (_this.model.time.dragging) return;
               _this._setTooltip();
               _this.hovered = null;
-              _this.updateUIStrings();
+              _this.updateSizeTitle();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
@@ -767,7 +742,8 @@ var BubbleMapComponent = Component.extend({
       };
 
   },
-
+    
+  
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);

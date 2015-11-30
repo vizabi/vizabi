@@ -376,17 +376,10 @@ LineChart.define('default_options', {
       },
       color: {
         use: "property",
-        which: "geo.region"
-      },
-      color_shadow: {
-        use: "property",
         which: "geo.region",
-        palette: {
-          "asi": "#c34357",
-          "eur": "#c6b40b",
-          "ame": "#67b111",
-          "afr": "#0eb8c7",
-          "_default": "#cb950f"
+        allow: {
+          scales: ["ordinal"],
+          names: ["!geo.name"]
         }
       }
     }
