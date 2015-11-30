@@ -1,18 +1,45 @@
-.vzb-dialog-content.vzb-dialog-content-fixed {
-  height: 310px;
-  max-height: 305px;
-  min-width: 140px;
+.vzb-buttonlist {
+  .vzb-buttonlist-dialog {
+    &[data-btn='show'] {
+  
+      .vzb-show-filter {
+        display: block;
+        position: relative;
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
 }
 
-.vzb-dialog-title {
-  display: inline-block;
-  padding: 15px 0 10px 20px;
-  vertical-align: top;
-}
+//responsiveness
+&.vzb-large {
+  &.vzb-button-expand-true {
+    .vzb-buttonlist-dialog {
+      &.vzb-dialog-side {
+        &[data-btn="show"] {
+          flex: auto;
 
-.vzb-show-filter {
-  display: inline-block;
-  position: relative;
-  padding: 10px;
-  max-width: 210px;
+          .vzb-dialog-content.vzb-dialog-content-fixed {
+            height: 310px;
+            max-height: 305px;
+            min-width: 140px;
+          }
+          
+          .vzb-dialog-title {
+            display: inline-block;
+            padding: 15px 0 10px 20px;
+            vertical-align: top;
+          }
+          
+          .vzb-show-filter {
+            display: inline-block;
+            position: relative;
+            padding: 10px;
+            max-width: 210px;
+          }
+        }
+      }
+    }
+  }
 }
