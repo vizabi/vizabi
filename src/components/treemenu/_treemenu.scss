@@ -234,8 +234,6 @@
     margin-bottom: $size-button-list;
     width: 80%;
     height: auto;
-    min-height: 60%;
-    max-height: 80%;
 
     &.vzb-align-x-center {
       left: 50%;
@@ -245,6 +243,9 @@
     }
     .vzb-treemenu-list-item {
       padding-bottom: 0;
+    }
+    &.vzb-align-y-top-color {
+      top: 3%;
     }
   }
 }

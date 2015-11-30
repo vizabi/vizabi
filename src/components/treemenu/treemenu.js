@@ -36,6 +36,7 @@ var css = {
   scaletypesDisabled: 'vzb-treemenu-scaletypes-disabled',
   scaletypesActive: 'vzb-treemenu-scaletypes-active',
   alignYt: 'vzb-align-y-top',
+  alignYtc: 'vzb-align-y-top-color',
   alignYb: 'vzb-align-y-bottom',
   alignXl: 'vzb-align-x-left',
   alignXr: 'vzb-align-x-right',
@@ -800,6 +801,7 @@ var TreeMenu = Component.extend({
     if(!markerID) return;
 
     this.wrapper.classed(css.alignYt, alignY === "top");
+    this.wrapper.classed(css.alignYtc, markerID === "color");
     this.wrapper.classed(css.alignYb, alignY === "bottom");
     this.wrapper.classed(css.alignXl, alignX === "left");
     this.wrapper.classed(css.alignXr, alignX === "right");
