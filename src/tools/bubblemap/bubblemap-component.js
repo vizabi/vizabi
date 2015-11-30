@@ -125,7 +125,7 @@ var BubbleMapComponent = Component.extend({
 
         var KEY = _this.KEY;
         if(!_this.ui.labels.dragging) return;
-        _this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
+        //_this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -299,7 +299,6 @@ var BubbleMapComponent = Component.extend({
           }
       };
       
-      
       this.yTitleEl.select("text")
           .text(this.translator("buttons/size") + ": " + this.strings.title.S)
           .on("click", function() {
@@ -348,31 +347,25 @@ var BubbleMapComponent = Component.extend({
               _this.updateDoubtOpacity();
           })
   },
-    
 
+  // show size number on title when hovered on a bubble
   updateSizeTitle: function(){
       var _this = this;
-      
-      if(this.model.entities.highlight.length == 1) {
-          
-          var d = this.model.entities.highlight[0];
 
-          var formatter = _this.model.marker.size.tickFormatter;
-          var pointer = {};
-          pointer[_this.KEY] = d[_this.KEY];
-          pointer[_this.TIMEDIM] = _this.model.time.value;
+      if(_this.hovered) {
+        var hovered = _this.hovered;
+        var formatter = _this.model.marker.size.tickFormatter;
+        var number = _this.values.size[hovered[_this.KEY]];
 
-          _this.yTitleEl.select("text")
-            .text(_this.translator("buttons/size") + ": " + 
-                  formatter(_this.model.marker.size.getValue(pointer)) + " " + 
-                  _this.translator("unit/" + _this.model.marker.size.which));
-          
-          this.infoEl.classed("vzb-hidden", true);
+        _this.yTitleEl.select("text")
+          .text(_this.translator("buttons/size") + ": " +
+                formatter(number) + " " +
+                _this.translator("unit/" + _this.model.marker.size.which));
+        this.infoEl.classed("vzb-hidden", true);
       }else{
-          this.yTitleEl.select("text")
-              .text(this.translator("buttons/size") + ": " + this.strings.title.S)
-          
-          this.infoEl.classed("vzb-hidden", false);
+        this.yTitleEl.select("text")
+            .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+        this.infoEl.classed("vzb-hidden", false);
       }
   },
 
@@ -627,45 +620,6 @@ var BubbleMapComponent = Component.extend({
     margin = this.activeProfile.margin;
     infoElHeight = this.activeProfile.infoElHeight;
 
-/*
-    this.profiles = {
-      "small": {
-        margin: {
-          top: 30,
-          right: 20,
-          left: 40,
-          bottom: 50
-        },
-        padding: 2,
-      },
-      "medium": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 60
-        },
-        padding: 2,
-        minRadius: 3,
-        maxRadius: 60
-      },
-      "large": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 80
-        },
-        padding: 2,
-        minRadius: 4,
-        maxRadius: 80
-      }
-    };
-
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
-    var margin = this.activeProfile.margin;
-*/
-
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
     var width = this.width = parseInt(this.element.style("width"), 10) - margin.left - margin.right;
@@ -688,7 +642,6 @@ var BubbleMapComponent = Component.extend({
       .attr('preserveAspectRatio', 'none');
 
     //update scales to the new range
-    // TODO: r ration should add to config
     //this.updateMarkerSizeLimits();
     this.sScale.range([0, this.height / 4]);
 
@@ -765,22 +718,23 @@ var BubbleMapComponent = Component.extend({
 
               _this.model.entities.highlightEntity(d);
 
-              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
-                _this._setTooltip();
-                return;
-              }
-
-              //position tooltip
-              _this._setTooltip(d);
-              
+              _this.hovered = d;
               //put the exact value in the size title
               _this.updateSizeTitle();
+
+              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
+                _this._setTooltip();
+              } else {
+                //position tooltip
+                _this._setTooltip(d);
+              }
           },
           _mouseout: function (d, i) {
               if (_this.model.time.dragging) return;
               _this._setTooltip();
-              _this.model.entities.clearHighlighted();
+              _this.hovered = null;
               _this.updateSizeTitle();
+              _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
               _this.model.entities.selectEntity(d);
@@ -850,7 +804,7 @@ var BubbleMapComponent = Component.extend({
           var text = labelGroup.selectAll(".vzb-bmc-label-content")
             .text(valueL);
 
-          lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+          lineGroup.select("line").style("stroke-dasharray", "0 " + scaledS + " 100%");
 
           var rect = labelGroup.select("rect");
 
@@ -1046,7 +1000,6 @@ var BubbleMapComponent = Component.extend({
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
             _this.model.entities.selectEntity(d);
-            console.log('a');
           });
         })
         .on("mouseover", function(d) {
@@ -1075,30 +1028,6 @@ var BubbleMapComponent = Component.extend({
   _setTooltip: function (d) {
     var _this = this;
     if (d) {
-      /*
-      var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
-
-      //position tooltip
-      this.tooltip.classed("vzb-hidden", false)
-          .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
-          .selectAll("text")
-          .attr("text-anchor", "middle")
-          .attr("alignment-baseline", "middle")
-          .text(tooltipText)
-
-      var contentBBox = this.tooltip.select("text")[0][0].getBBox();
-      this.tooltip.select("rect")
-          .attr("width", contentBBox.width + 8)
-          .attr("height", contentBBox.height + 8)
-          .attr("x", -contentBBox.width - 25)
-          .attr("y", -contentBBox.height - 25)
-          .attr("rx", contentBBox.height * .2)
-          .attr("ry", contentBBox.height * .2);
-
-      this.tooltip.selectAll("text")
-          .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
-          .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-      */
       var tooltipText = d.label;
       var x = d.cLoc[0];
       var y = d.cLoc[1];
