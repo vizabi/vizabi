@@ -37,6 +37,11 @@ var LCComponent = Component.extend({
         if(!_this._readyOnce) return;
         _this.updateTime();
         _this.redrawDataPoints();
+      },
+      'change:marker': function(evt) {
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        _this.ready();
       }
     };
 
@@ -166,7 +171,6 @@ var LCComponent = Component.extend({
     this.yScale = this.model.marker.axis_y.getScale();
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
-    this.cShadeScale = this.model.marker.color_shadow.getScale();
 
     this.yAxis.tickSize(6, 0)
       .tickFormat(this.model.marker.axis_y.tickFormatter);
@@ -440,17 +444,13 @@ var LCComponent = Component.extend({
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
 
         entity.append("path")
           .attr("class", "vzb-lc-line-shadow")
-          .style("stroke", colorShadow)
           .attr("transform", "translate(0,2)");
 
         entity.append("path")
-          .attr("class", "vzb-lc-line")
-          .style("stroke", color);
+          .attr("class", "vzb-lc-line");
 
       });
 
@@ -458,25 +458,20 @@ var LCComponent = Component.extend({
       .attr("class", "vzb-lc-entity")
       .each(function(d, index) {
         var entity = d3.select(this);
-        var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = _this.cShadeScale(values.color_shadow[d[KEY]]);
         var label = values.label[d[KEY]];
 
         entity.append("circle")
           .attr("class", "vzb-lc-circle")
-          .style("fill", color)
           .attr("cx", 0);
 
         var labelGroup = entity.append("g").attr("class", "vzb-lc-label");
 
         labelGroup.append("text")
           .attr("class", "vzb-lc-labelname")
-          .style("fill", colorShadow)
           .attr("dy", ".35em");
 
         labelGroup.append("text")
           .attr("class", "vzb-lc-label-value")
-          .style("fill", colorShadow)
           .attr("dy", "1.6em");
       });
 
@@ -486,6 +481,9 @@ var LCComponent = Component.extend({
       .each(function(d, index) {
         var entity = d3.select(this);
         var label = values.label[d[KEY]];
+
+        var color = _this.cScale(values.color[d[KEY]]);
+        var colorShadow = d3.rgb(color).darker(0.5).toString();
 
         //TODO: optimization is possible if getValues would return both x and time
         //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
@@ -500,14 +498,17 @@ var LCComponent = Component.extend({
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };
-
+        
+        
         // the following fixes the ugly line butts sticking out of the axis line
         //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
 
         var path1 = entity.select(".vzb-lc-line-shadow")
+          .style("stroke", colorShadow)
           .attr("d", _this.line(xy));
         var path2 = entity.select(".vzb-lc-line")
           //.style("filter", "none")
+          .style("stroke", color)
           .attr("d", _this.line(xy));
 
 
@@ -557,7 +558,12 @@ var LCComponent = Component.extend({
         var entity = d3.select(this);
         var label = values.label[d[KEY]];
 
+        var color = _this.cScale(values.color[d[KEY]]);
+        var colorShadow = d3.rgb(color).darker(0.5).toString();
+
+        
         entity.select(".vzb-lc-circle")
+          .style("fill", color)
           .transition()
           .duration(_this.duration)
           .ease("linear")
@@ -577,10 +583,12 @@ var LCComponent = Component.extend({
         var valueHideLimit = _this.ui.entity_labels.min_number_of_entities_when_values_hide;
 
         var t = entity.select(".vzb-lc-labelname")
+          .style("fill", colorShadow)
           .attr("dx", _this.activeProfile.text_padding)
           .text(name + " " + (_this.data.length < valueHideLimit ? value : ""));
 
         entity.select(".vzb-lc-label-value")
+          .style("fill", colorShadow)
           .attr("dx", _this.activeProfile.text_padding)
           .text("");
 
