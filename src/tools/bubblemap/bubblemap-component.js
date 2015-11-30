@@ -45,6 +45,7 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time:value": function (evt) {
+        _this.updateUIStrings();
         _this.updateEntities();
         _this.updateTime();
         _this.selectEntities();
@@ -125,7 +126,7 @@ var BubbleMapComponent = Component.extend({
 
         var KEY = _this.KEY;
         if(!_this.ui.labels.dragging) return;
-        _this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
+        //_this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -298,7 +299,13 @@ var BubbleMapComponent = Component.extend({
             C: this.translator("indicator/" + _this.model.marker.color.which)
           }
       };
-      
+
+      if (_this.hovered) {
+        var hovered = _this.hovered;
+        var formatter = _this.model.marker.size.tickFormatter;
+        var number = _this.values.size[hovered[_this.KEY]];
+        this.strings.title.S = formatter(number) + " " + _this.translator("unit/" + _this.model.marker.size.which);
+      }
       
       this.yTitleEl.select("text")
           .text(this.translator("buttons/size") + ": " + this.strings.title.S)
@@ -737,18 +744,21 @@ var BubbleMapComponent = Component.extend({
 
               _this.model.entities.highlightEntity(d);
 
+              _this.hovered = d;
+              _this.updateUIStrings();
+
               if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
                 _this._setTooltip();
-                return;
+              } else {
+                //position tooltip
+                _this._setTooltip(d);
               }
-
-              //position tooltip
-              _this._setTooltip(d);
-
           },
           _mouseout: function (d, i) {
               if (_this.model.time.dragging) return;
               _this._setTooltip();
+              _this.hovered = null;
+              _this.updateUIStrings();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
@@ -818,7 +828,7 @@ var BubbleMapComponent = Component.extend({
           var text = labelGroup.selectAll(".vzb-bmc-label-content")
             .text(valueL);
 
-          lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+          lineGroup.select("line").style("stroke-dasharray", "0 " + scaledS + " 100%");
 
           var rect = labelGroup.select("rect");
 
@@ -1014,7 +1024,6 @@ var BubbleMapComponent = Component.extend({
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
             _this.model.entities.selectEntity(d);
-            console.log('a');
           });
         })
         .on("mouseover", function(d) {
@@ -1043,30 +1052,6 @@ var BubbleMapComponent = Component.extend({
   _setTooltip: function (d) {
     var _this = this;
     if (d) {
-      /*
-      var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
-
-      //position tooltip
-      this.tooltip.classed("vzb-hidden", false)
-          .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
-          .selectAll("text")
-          .attr("text-anchor", "middle")
-          .attr("alignment-baseline", "middle")
-          .text(tooltipText)
-
-      var contentBBox = this.tooltip.select("text")[0][0].getBBox();
-      this.tooltip.select("rect")
-          .attr("width", contentBBox.width + 8)
-          .attr("height", contentBBox.height + 8)
-          .attr("x", -contentBBox.width - 25)
-          .attr("y", -contentBBox.height - 25)
-          .attr("rx", contentBBox.height * .2)
-          .attr("ry", contentBBox.height * .2);
-
-      this.tooltip.selectAll("text")
-          .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
-          .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-      */
       var tooltipText = d.label;
       var x = d.cLoc[0];
       var y = d.cLoc[1];
