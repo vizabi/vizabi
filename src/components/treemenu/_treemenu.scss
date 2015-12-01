@@ -15,6 +15,7 @@
     border-top: 1px solid #f7f7f7;
     background-color: #fff;
     padding: 0 25px 10px;
+    overflow: auto;
 
     * {
       box-sizing: border-box;
@@ -73,9 +74,6 @@
         border: 0;
         pointer-events: none;
       }
-    }
-    .vzb-treemenu-list-wrapper {
-      overflow-y: auto;
     }
     .vzb-treemenu-search-wrap {
       padding: 5px;
