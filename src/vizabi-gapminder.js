@@ -78,7 +78,8 @@ BarChart.define('default_options', {
         use: "property",
         which: "geo.name",
         allow: {
-          scales: ["ordinal"]
+          scales: ["ordinal"],
+          names: ["!geo", "!_default"]
         }
       },
       color: {
