@@ -1,6 +1,6 @@
 .vzb-buttonlist {
   .vzb-buttonlist-dialog {
-    .vzb-dialog-moreoptions {
+    &[data-btn='moreoptions'] {
       .vzb-dialog-content {
         &.vzb-accordion {
           padding: 0 0 5px;

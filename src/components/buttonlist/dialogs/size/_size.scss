@@ -3,7 +3,7 @@
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
       &.vzb-dialog-side {
-        .vzb-dialog-size {
+        &[data-btn="size"] {
           flex: none;
 
           .vzb-dialog-content {
