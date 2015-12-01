@@ -325,6 +325,7 @@ var BubbleMapComponent = Component.extend({
 
       utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
       this.dataWarningEl.append("text")
+          .attr("text-anchor", "end")
           .text(this.translator("hints/dataWarning"));
 
       this.infoEl
@@ -349,22 +350,31 @@ var BubbleMapComponent = Component.extend({
   },
 
   // show size number on title when hovered on a bubble
-  updateSizeTitle: function(){
+  updateTitleNumbers: function(){
       var _this = this;
 
       if(_this.hovered) {
         var hovered = _this.hovered;
-        var formatter = _this.model.marker.size.tickFormatter;
-        var number = _this.values.size[hovered[_this.KEY]];
+        var formatterS = _this.model.marker.size.tickFormatter;
+        var formatterC = _this.model.marker.color.tickFormatter;
 
         _this.yTitleEl.select("text")
           .text(_this.translator("buttons/size") + ": " +
-                formatter(number) + " " +
+                formatterS(_this.values.size[hovered[_this.KEY]]) + " " +
                 _this.translator("unit/" + _this.model.marker.size.which));
+          
+        _this.cTitleEl.select("text")
+          .text(_this.translator("buttons/color") + ": " +
+                formatterC(_this.values.color[hovered[_this.KEY]]) + " " +
+                _this.translator("unit/" + _this.model.marker.color.which));  
+        
         this.infoEl.classed("vzb-hidden", true);
       }else{
         this.yTitleEl.select("text")
-            .text(this.translator("buttons/size") + ": " + this.strings.title.S)
+            .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+        this.cTitleEl.select("text")
+            .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+        
         this.infoEl.classed("vzb-hidden", false);
       }
   },
@@ -562,7 +572,7 @@ var BubbleMapComponent = Component.extend({
     this.year.setText(this.timeFormatter(this.time));
     
     //possibly update the exact value in size title
-    this.updateSizeTitle();
+    this.updateTitleNumbers();
   },
 
   /**
@@ -664,21 +674,22 @@ var BubbleMapComponent = Component.extend({
     this.yTitleEl.select("text")
         .attr("transform", "translate(0," + margin.top + ")")
 
+    var yTitleBB = this.yTitleEl.select("text").node().getBBox();
+      
     this.cTitleEl.select("text")
-        .attr("transform", "translate(" + this.width + "," + margin.top + ")")
+        .attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
         .classed("vzb-hidden", this.model.marker.color.which == "geo.region");
 
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
-        .attr("width", warnBB.height)
-        .attr("height", warnBB.height)
-        .attr("x", warnBB.height * .1)
-        .attr("y", -warnBB.height * 1.0 + 1)
+        .attr("width", warnBB.height * 0.75)
+        .attr("height", warnBB.height * 0.75)
+        .attr("x", -warnBB.width - warnBB.height * 1.2)
+        .attr("y", -warnBB.height * 0.65)
 
     this.dataWarningEl
-        .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
-        .select("text")
-        .attr("dx", warnBB.height * 1.5);
+        .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
+        .select("text");
 
     if(this.infoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
@@ -720,7 +731,7 @@ var BubbleMapComponent = Component.extend({
 
               _this.hovered = d;
               //put the exact value in the size title
-              _this.updateSizeTitle();
+              _this.updateTitleNumbers();
 
               if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
                 _this._setTooltip();
@@ -733,7 +744,7 @@ var BubbleMapComponent = Component.extend({
               if (_this.model.time.dragging) return;
               _this._setTooltip();
               _this.hovered = null;
-              _this.updateSizeTitle();
+              _this.updateTitleNumbers();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
