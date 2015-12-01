@@ -188,11 +188,16 @@ var PopByAge = Component.extend({
       .attr("id", function(d) {
         return "vzb-bc-bar-" + d[ageDim];
       })
-      .on("mousemove", highlight)
+      .on("mouseover", highlight)
       .on("mouseout", unhighlight)
       .on("click", function(d, i) {
+        if(utils.isTouchDevice()) return;
         _this.model.age.selectEntity(d);
       })
+      .onTap(function(d) {
+        d3.event.stopPropagation();
+        _this.model.age.selectEntity(d);
+      })    
       .append('rect');
 
     this.entityLabels.enter().append("g")
@@ -200,8 +205,6 @@ var PopByAge = Component.extend({
       .attr("id", function(d) {
         return "vzb-bc-label-" + d[ageDim];
       })
-      .on("mousemove", highlight)
-      .on("mouseout", unhighlight)
       .append('text')
       .attr("class", "vzb-bc-age");
 
@@ -283,12 +286,16 @@ var PopByAge = Component.extend({
    * Highlight and unhighlight labels
    */
   _unhighlightBars: function() {
+    if(utils.isTouchDevice()) return;
+      
     this.bars.classed('vzb-dimmed', false);
     this.bars.selectAll('.vzb-bc-bar.vzb-hovered').classed('vzb-hovered', false);
     this.labels.selectAll('.vzb-hovered').classed('vzb-hovered', false);
   },
 
   _highlightBar: function(d) {
+    if(utils.isTouchDevice()) return;
+      
     this.bars.classed('vzb-dimmed', true);
     var curr = this.bars.select("#vzb-bc-bar-" + d[this.AGEDIM]);
     curr.classed('vzb-hovered', true);
