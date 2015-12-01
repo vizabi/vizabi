@@ -72,6 +72,7 @@ var BubbleSize = Component.extend({
         _this.sliderEl.call(_this.brush.event);
       },
       'ready': function (evt) {
+        //TODO: defer looks unnecessary. if no scale exists at this point in model.size, use model.size.getScale()
         utils.defer(function(){
            _this.sizeScaleMinMax = _this.model.size.scale.domain();
            _this._setLabelsText();          
