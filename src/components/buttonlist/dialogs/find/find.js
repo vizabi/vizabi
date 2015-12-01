@@ -166,7 +166,16 @@ var Find = Dialog.extend({
     this.showHideSearch();
     this.showHideDeselect();
   },
-
+  resize: function() {
+    if (this.getLayoutProfile() == 'small') {
+      var height = this.root.element.offsetHeight;
+      var titleHeight = this.element.select(".vzb-dialog-title").node().offsetHeight;
+      var buttonsHeight = this.element.select(".vzb-dialog-buttons").node().offsetHeight;
+      this.element.select(".vzb-dialog-content-fixed").style('max-height', height - 90 - titleHeight - buttonsHeight + 'px');
+    } else {
+      this.element.select(".vzb-dialog-content").style('max-height', '');
+    }
+  },
   showHideSearch: function() {
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();
