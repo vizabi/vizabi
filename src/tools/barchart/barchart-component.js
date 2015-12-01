@@ -142,8 +142,14 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
+    var xFormatter = this.model.marker.axis_x.which == "geo.region"? 
+        function(x){return _this.translator("region/" + x)}
+        :
+        _this.model.marker.axis_x.tickFormatter;
+      
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
-    this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+    this.xAxis.tickFormat(xFormatter);
+      
   },
 
   /**
