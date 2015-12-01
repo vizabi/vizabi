@@ -590,28 +590,28 @@ var BubbleMapComponent = Component.extend({
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
-        minRadius: 2,
+        minRadius: 1,
         maxRadius: 80
       }
     };
 
     var presentationProfileChanges = {
       small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
-        minRadius: 2,
-        maxRadius: 40
+        minRadius: 0.5,
+        maxRadius: 30
       },
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 50 },
         infoElHeight: 20,
-        minRadius: 3,
+        minRadius: 1,
         maxRadius: 60
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
-        minRadius: 4,
+        minRadius: 1,
         maxRadius: 80
       }
     };
