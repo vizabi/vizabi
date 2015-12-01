@@ -1,6 +1,6 @@
 .vzb-buttonlist {
   .vzb-buttonlist-dialog {
-    &[data-btn="colors"] {
+    .vzb-dialog-colors {
       .vzb-dialog-content {
         min-height: 140px;
       }
@@ -13,7 +13,7 @@
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
       &.vzb-dialog-side {
-        &[data-btn="colors"] {
+        .vzb-dialog-colors {
           z-index: auto !important;
           flex: none;
 

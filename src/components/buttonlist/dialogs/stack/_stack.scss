@@ -3,7 +3,7 @@
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
       &.vzb-dialog-side {
-        &[data-btn="stack"] {
+        .vzb-dialog-stack {
           flex: none;
 
           .vzb-dl-holder .vzb-draggable {

@@ -1,6 +1,6 @@
 .vzb-buttonlist {
   .vzb-buttonlist-dialog {
-    &[data-btn='show'] {
+    .vzb-dialog-show {
   
       .vzb-show-filter {
         display: block;
@@ -17,7 +17,7 @@
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
       &.vzb-dialog-side {
-        &[data-btn="show"] {
+        .vzb-dialog-show {
           flex: auto;
 
           .vzb-dialog-content.vzb-dialog-content-fixed {

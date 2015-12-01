@@ -1,6 +1,6 @@
 .vzb-buttonlist {
   .vzb-buttonlist-dialog {
-    &[data-btn='find'] {
+    .vzb-dialog-find {
       .vzb-find-filter {
         display: inline-block;
         position: relative;
@@ -14,7 +14,7 @@
 &.vzb-small {
   &.vzb-landscape {
     .vzb-buttonlist-dialog {
-      &[data-btn='find'] {
+      .vzb-dialog-find {
         .vzb-find-filter {
           top: 20px;
         }
@@ -27,7 +27,7 @@
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
       &.vzb-dialog-side { 
-        &[data-btn="find"] {
+        .vzb-dialog-find {
           display: flex;
           flex-direction: column;
           flex: auto;
