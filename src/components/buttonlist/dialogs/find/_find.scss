@@ -10,19 +10,7 @@
   }
 }
 
-//responsiveness
-&.vzb-small {
-  &.vzb-landscape {
-    .vzb-buttonlist-dialog {
-      .vzb-dialog-find {
-        .vzb-find-filter {
-          top: 20px;
-        }
-      }
-    }
-  }
-}
-      
+//responsiveness      
 &.vzb-large {
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
