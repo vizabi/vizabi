@@ -56,25 +56,26 @@ var Stack = Dialog.extend({
       } else {
         this.element.select(".vzb-dialog-content").style('max-height', '');
       }
+      this._super();
     },
 
     readyOnce: function() {
-        var _this = this;
-        this.element = d3.select(this.element);
-        this.group = this.model.state.marker.group;
-        this.stack = this.model.state.marker.stack;
+      this._super();
 
-        this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
-            .on("change", function() {
-                _this.setModel("stack", d3.select(this).node().value);
-            })
-        this.howToMergeEl = this.element.select('#vzb-howtomerge').selectAll("input")
-            .on("change", function() {
-                _this.setModel("merge", d3.select(this).node().value);
-            })
+      var _this = this;
+      this.group = this.model.state.marker.group;
+      this.stack = this.model.state.marker.stack;
 
-        this.updateView();
-        //this._super();
+      this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
+          .on("change", function() {
+              _this.setModel("stack", d3.select(this).node().value);
+          })
+      this.howToMergeEl = this.element.select('#vzb-howtomerge').selectAll("input")
+          .on("change", function() {
+              _this.setModel("merge", d3.select(this).node().value);
+          })
+
+      this.updateView();
     },
 
     updateView: function() {
