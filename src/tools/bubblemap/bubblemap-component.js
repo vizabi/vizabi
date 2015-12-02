@@ -49,8 +49,9 @@ var BubbleMapComponent = Component.extend({
         _this.updateTime();
         _this.selectEntities();
         //_this._selectlist.redraw();
-        _this.updateDoubtOpacity();
-        _this.updateOpacity();
+
+         _this.updateDoubtOpacity();
+        // _this.updateOpacity();
       },
       "change:entities:highlight": function (evt) {
           if (!_this._readyOnce) return;
@@ -267,12 +268,18 @@ var BubbleMapComponent = Component.extend({
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
+
+    this._calculateAllValues();
   },
 
   /*
    * Both model and DOM are ready
    */
   ready: function () {
+    //if (!this._valuesCalculated) {
+      this._calculateAllValues();
+    //}
+
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
@@ -460,8 +467,15 @@ var BubbleMapComponent = Component.extend({
     var filter = {};
     filter[_this.TIMEDIM] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getValues(filter, [_this.KEY]);
+    //var values = this.model.marker.getValues(filter, [_this.KEY]);
+    if (_this._valuesCalculated) {
+      var values = this._getValuesInterpolated(time.value);
+    } else {
+      var values = this.model.marker.getValues(filter, [_this.KEY]);
+    }
     _this.values = values;
+
+    /*
     // construct pointers
     this.pointers = this.model.marker.getKeys()
         .map(function (d) {
@@ -472,6 +486,7 @@ var BubbleMapComponent = Component.extend({
             };
             return pointer;
         });
+    */
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E 
@@ -491,10 +506,12 @@ var BubbleMapComponent = Component.extend({
       return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
     });
 
+
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .data(items);
 
     if (!this.renderedOnce) {
+
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
@@ -543,7 +560,7 @@ var BubbleMapComponent = Component.extend({
             view.classed("vzb-hidden", false)
                 .attr("fill", d.color)
                 .attr("cx", d.cLoc[0])
-                .attr("cy", d.cLoc[1])
+                .attr("cy", d.cLoc[1]);
             
             if(duration){
                 view.transition().duration(duration).ease("linear")
@@ -786,7 +803,6 @@ var BubbleMapComponent = Component.extend({
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-      //console.log('not here');
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -1096,6 +1112,63 @@ var BubbleMapComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
+  },
+
+  /*
+   * Calculates all values for this data configuration
+   */
+  _calculateAllValues: function() {
+    if (this._valuesCalculated) {
+      return;
+    }
+    this.STEPS = this.model.time.getAllSteps();
+    this.VALUES = {};
+    var f = {};
+    for(var i = 0; i < this.STEPS.length; i++) {
+      var t = this.STEPS[i];
+      f[this.TIMEDIM] = t;
+      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
+    }
+    if (this.STEPS.length > 1) {
+      //console.log('caculated');
+      this._valuesCalculated = true; //hack to avoid recalculation
+    }
+  },
+
+  /*
+   * Gets all values for any point in time
+   * @param {Date} t time value
+   */
+  _getValuesInterpolated: function(t) {
+
+    if(!this.VALUES) this._calculateAllValues();
+    if(this.VALUES[t]) return this.VALUES[t];
+
+    var next = d3.bisectLeft(this.STEPS, t);
+
+    //if first
+    if(next === 0) {
+      return this.VALUES[this.STEPS[0]];
+    }
+    if(next > this.STEPS.length) {
+      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
+    }
+
+    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
+
+    var pValues = this.VALUES[this.STEPS[next - 1]];
+    var nValues = this.VALUES[this.STEPS[next]];
+
+    var curr = {};
+    utils.forEach(pValues, function(values, hook) {
+      curr[hook] = {};
+      utils.forEach(values, function(val, id) {
+        var val2 = nValues[hook][id];
+        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+      });
+    });
+
+    return curr;
   }
 
 
