@@ -674,11 +674,6 @@ var Model = Events.extend({
     }
     //else, interpolate all with time
     else {
-      var regularNPoints =
-          + d3.time.format(this._parent.time.formatInput)(this._parent.time.end)
-          - d3.time.format(this._parent.time.formatInput)(this._parent.time.start)
-          + 1;
-    
       utils.forEach(this._dataCube, function(hook, name) {
         filtered = hook.getNestedItems(group_by);
 
@@ -697,10 +692,7 @@ var Model = Events.extend({
 
         utils.forEach(filtered, function(arr, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
-          if(arr.length != regularNPoints && arr.length>1) {
-              
-              next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
-          }
+          //next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
           value = interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
