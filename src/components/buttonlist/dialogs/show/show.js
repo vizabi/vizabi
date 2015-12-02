@@ -29,7 +29,7 @@ var Show = Dialog.extend({
    * Grab the list div
    */
   readyOnce: function() {
-    this.element = d3.select(this.element);
+    this._super();
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.element.select("#vzb-show-search");
     this.deselect_all = this.element.select("#vzb-show-deselect");
@@ -46,7 +46,6 @@ var Show = Dialog.extend({
       _this.deselectEntities();
     });
 
-    //this._super();
 
     //make sure it refreshes when all is reloaded
     this.root.on('ready', function() {
