@@ -44,7 +44,8 @@ var Find = Dialog.extend({
    * Grab the list div
    */
   readyOnce: function() {
-    this.element = d3.select(this.element);
+    this._super();
+
     this.list = this.element.select(".vzb-find-list");
     this.input_search = this.element.select("#vzb-find-search");
     this.deselect_all = this.element.select("#vzb-find-deselect");
@@ -71,8 +72,6 @@ var Find = Dialog.extend({
 
     this.translator = this.model.language.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
-
-    //this._super();
 
     //make sure it refreshes when all is reloaded
     var _this = this;
@@ -173,8 +172,9 @@ var Find = Dialog.extend({
       var buttonsHeight = this.element.select(".vzb-dialog-buttons").node().offsetHeight;
       this.element.select(".vzb-dialog-content-fixed").style('max-height', height - 90 - titleHeight - buttonsHeight + 'px');
     } else {
-      this.element.select(".vzb-dialog-content").style('max-height', '');
+      this.element.select(".vzb-dialog-content-fixed").style('max-height', '');
     }
+    this._super();
   },
   showHideSearch: function() {
     var search = this.input_search.node().value || "";
