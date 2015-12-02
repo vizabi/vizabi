@@ -17,6 +17,8 @@
     border-top: 1px solid #f7f7f7;
     padding: 0 15px 10px 25px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     .vzb-data-warning-link {
       color: $vzb-color-accent-orange;
@@ -41,7 +43,7 @@
     .vzb-data-warning-title {
       color: $vzb-color-primary;
       font-size: $vzb-font-size-medium;
-      margin: 25px 30px 10px 5px;
+      margin: 15px 30px 10px 5px;
       white-space: normal;
     }
 
