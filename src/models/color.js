@@ -168,6 +168,8 @@ var ColorModel = Model.extend({
   buildScale: function() {
     var _this = this;
 
+    var indicatorsDB = globals.metadata.indicatorsDB;
+
     var domain = Object.keys(_this.palette.getObject());
     var range = utils.values(_this.palette.getObject());
 
@@ -193,13 +195,21 @@ var ColorModel = Model.extend({
     switch(this.use) {
       case "indicator":
         var limits = this.getLimits(this.which);
-        var step = ((limits.max - limits.min) / (range.length - 1));
-        domain = d3.range(limits.min, limits.max, step).concat(limits.max);
+        //default domain is based on limits
+        domain = [limits.min, limits.max];
+        //domain from metadata can override it if defined
+        domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
+          
+        var limitMin = domain[0];
+        var limitMax = domain[1];
+        var step = (limitMax - limitMin) / (range.length - 1);
+        domain = d3.range(limitMin, limitMax, step).concat(limitMax);
+        if (domain.length > range.length) domain.pop();
         domain = domain.reverse();
         if(this.scaleType == "log") {
           var s = d3.scale.log()
-            .domain([limits.min === 0 ? 1 : limits.min, limits.max])
-            .range([limits.min, limits.max]);
+            .domain([limitMin === 0 ? 1 : limitMin, limitMax])
+            .range([limitMin, limitMax]);
           domain = domain.map(function(d) {
             return s.invert(d)
           });
