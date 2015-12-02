@@ -43,29 +43,41 @@ var Stack = Dialog.extend({
                 _this.updateView();
             }
         };
-            
+
         this._super(config, parent);
     },
 
-    readyOnce: function() {
-        var _this = this;
-        this.element = d3.select(this.element);
-        this.group = this.model.state.marker.group;
-        this.stack = this.model.state.marker.stack;
-
-        this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
-            .on("change", function() {
-                _this.setModel("stack", d3.select(this).node().value);
-            })
-        this.howToMergeEl = this.element.select('#vzb-howtomerge').selectAll("input")
-            .on("change", function() {
-                _this.setModel("merge", d3.select(this).node().value);
-            })
-        
-        this.updateView();
-        this._super();
+    resize: function() {
+      if (this.getLayoutProfile() == 'small') {
+        var height = this.root.element.offsetHeight;
+        var titleHeight = this.element.select(".vzb-dialog-title").node().offsetHeight;
+        var buttonsHeight = this.element.select(".vzb-dialog-buttons").node().offsetHeight;
+        this.element.select(".vzb-dialog-content.vzb-dialog-scrollable").style('max-height', height - 90 - titleHeight - buttonsHeight + 'px');
+      } else {
+        this.element.select(".vzb-dialog-content").style('max-height', '');
+      }
+      this._super();
     },
-    
+
+    readyOnce: function() {
+      this._super();
+
+      var _this = this;
+      this.group = this.model.state.marker.group;
+      this.stack = this.model.state.marker.stack;
+
+      this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
+          .on("change", function() {
+              _this.setModel("stack", d3.select(this).node().value);
+          })
+      this.howToMergeEl = this.element.select('#vzb-howtomerge').selectAll("input")
+          .on("change", function() {
+              _this.setModel("merge", d3.select(this).node().value);
+          })
+
+      this.updateView();
+    },
+
     updateView: function() {
         var _this = this;
 
@@ -73,7 +85,7 @@ var Stack = Dialog.extend({
             .property('checked', function() {
                 return d3.select(this).node().value === _this.stack.which;
             });
-        
+
         this.howToMergeEl
             .property('checked', function() {
                 if(d3.select(this).node().value === "none")  return !_this.group.merge && !_this.stack.merge;
@@ -85,8 +97,8 @@ var Stack = Dialog.extend({
                 if(d3.select(this).node().value === "grouped") return _this.stack.which === "none" ? true : null;
                 if(d3.select(this).node().value === "stacked") return _this.stack.which === "all" ? null : true;
             });
-        
-        
+
+
     },
 
     manualSorting: function(value) {
@@ -97,18 +109,18 @@ var Stack = Dialog.extend({
     setModel: function(what, value) {
 
         var obj = {stack: {}, group: {}};
-        
+
         if(what === "merge") {
             switch (value){
-                case "none": 
+                case "none":
                     obj.group.merge = false;
                     obj.stack.merge = false;
                     break;
-                case "grouped": 
+                case "grouped":
                     obj.group.merge = true;
                     obj.stack.merge = false;
                     break;
-                case "stacked": 
+                case "stacked":
                     obj.group.merge = false;
                     obj.stack.merge = true;
                     break;
@@ -117,19 +129,19 @@ var Stack = Dialog.extend({
         if(what === "stack") {
 
             obj.stack.which = value;
-            
+
             //validate use of stack hook
             if(value !== "all" && value !== "none"){
                 obj.stack.use = "property";
             } else {
-                obj.stack.use = "value";
+                obj.stack.use = "constant";
             }
-        
+
             //validate possible merge values in group and stack hooks
             if(value === "none" && this.group.merge) obj.group.merge = false;
             if(value !== "all" && this.stack.merge) obj.stack.merge = false;
         }
-        
+
         this.model.state.marker.set(obj);
     }
 });

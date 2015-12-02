@@ -39,6 +39,13 @@ var BarComponent = Component.extend({
         if(!_this._readyOnce) return;
         _this.updateEntities();
       },
+      'change:marker': function(evt) {
+        if(!_this._readyOnce) return;
+        if(evt.indexOf("change:marker:color:palette") > -1) return;
+        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        
+        _this.ready();
+      },
       'change:marker:color:palette': utils.debounce(function(evt) {
         if(!_this._readyOnce) return;
         _this.updateEntities();
@@ -135,8 +142,14 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
+    var xFormatter = this.model.marker.axis_x.which == "geo.region"? 
+        function(x){return _this.translator("region/" + x)}
+        :
+        _this.model.marker.axis_x.tickFormatter;
+      
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
-    this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
+    this.xAxis.tickFormat(xFormatter);
+      
   },
 
   /**

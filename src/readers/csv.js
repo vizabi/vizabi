@@ -266,13 +266,29 @@ var CSVReader = Reader.extend({
             properties[object[keyColumn]] = object;
           }); 
 
+          // collect missing lines here
+          var missingLines=[];
+            
           // go through each row of data
           utils.forEach(data, function(row, index) { // e.g. row = { geo: se, pop: 1000, gdp: 5 }
             // copy each property that was queried to the matching data-row (matching = same keyColumn)
             utils.forEach(queriedProperties, function(property) {
-              row[property] = properties[row[keyColumn]][property];
+                
+                // check if row exists in properties
+                if(properties[row[keyColumn]]){
+                    row[property] = properties[row[keyColumn]][property];
+                }else{
+                    // if not, then complain, but only once per unique line
+                    if(missingLines.indexOf(row["geo"]) == -1){
+                        missingLines.push(row["geo"]);
+                        utils.warn(row["geo"] +"," + row["geo.name"] +",country," + row["geo.region"] + "," +row["geo.lat"]+","+row["geo.lng"]);
+                    }
+                }
+              
             })
           });
+            
+          if(missingLines.length > 0) utils.warn("the above entries are missing from GEO-PROPERTIES.CSV")
 
           processedPromise.resolve();
 

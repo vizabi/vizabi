@@ -129,7 +129,7 @@ var Dialog = Component.extend({
     if(this.leftPos && this.getLayoutProfile() !== 'small') {
       this.placeholderEl.style('left', this.leftPos);
     }
-    if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
+    if(this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
       var contentHeight = parseInt(this.rootEl.style('height'));

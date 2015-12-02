@@ -9,7 +9,8 @@ import LCComponent from './linechart-component';
 
 import {
   timeslider,
-  buttonlist
+  buttonlist,
+  treemenu
 }
 from 'components/_index';
 
@@ -38,6 +39,10 @@ var LineChart = Tool.extend('LineChart', {
         component: buttonlist,
         placeholder: '.vzb-tool-buttonlist',
         model: ['state', 'ui', 'language']
+      }, {
+        component: treemenu,
+        placeholder: '.vzb-tool-treemenu',
+        model: ['state.marker', 'language']
       }];
 
       this._super(config, options);
@@ -80,10 +85,6 @@ var LineChart = Tool.extend('LineChart', {
           scaleType: "time"
         },
         color: {
-          use: "property",
-          which: "geo.region"
-        },
-        color_shadow: {
           use: "property",
           which: "geo.region"
         }

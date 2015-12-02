@@ -242,15 +242,17 @@ export var getViewportPosition = function(element) {
   };
 };
 
+
 export var findScrollableAncestor = function(node) {
-  var no = d3.select(node).node();
   var scrollable = ["scroll", "auto"];
-
-  while(no && no.tagName !== "HTML" && scrollable.indexOf(d3.select(no).style("overflow")) == -1) {
-    no = no.parentNode;
+  while(node = node.parentNode) {
+    var scrollHeight = node.scrollHeight,
+      height = node.clientHeight;
+      if (scrollHeight > height && scrollable.indexOf(d3.select(node).style("overflow")) !== -1) {
+        return node;
+      }
   }
-
-  return no;
+  return null;
 };
 
 export var roundStep = function(number, step) {
@@ -693,6 +695,65 @@ export var matchAny = function(values, compare, wildc) {
     }
   }
   return match;
+};
+
+/**
+ * prevent scrolling parent scrollable elements for 2 second when element scrolled to end
+ * @param node
+ */
+
+export var preventAncestorScrolling = function(element) {
+  var preventScrolling = false;
+  element.on('mousewheel', function(d, i) {
+    var scrollTop = this.scrollTop,
+      scrollHeight = this.scrollHeight,
+      height = element.node().offsetHeight,
+      delta = d3.event.wheelDelta,
+      up = delta > 0;
+    var prevent = function() {
+      d3.event.stopPropagation();
+      d3.event.preventDefault();
+      d3.event.returnValue = false;
+      return false;
+    };
+
+    var scrollTopTween = function(scrollTop) {
+      return function () {
+        var i = d3.interpolateNumber(this.scrollTop, scrollTop);
+        return function (t) {
+          this.scrollTop = i(t);
+        };
+      }
+    };
+    if (!up) {
+      // Scrolling down
+      if (-delta > scrollHeight - height - scrollTop && scrollHeight != height + scrollTop) {
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(scrollHeight));
+        //freeze scrolling on 2 seconds on bottom position
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollTop == 0) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    } else if (up) {
+      // Scrolling up
+      if (delta > scrollTop && scrollTop > 0) { //
+        //freeze scrolling on 2 seconds on top position
+        element.transition().delay(0).duration(0).tween("scrolltween", scrollTopTween(0));
+        preventScrolling = true;
+        setTimeout(function() {
+          preventScrolling = false;
+        }, 2000);
+      } else if (scrollHeight == height + scrollTop) { //unfreeze when direction changed
+        preventScrolling = false;
+      }
+    }
+    if (preventScrolling) {
+      return prevent();
+    }
+  });
 };
 
 /*

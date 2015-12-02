@@ -547,7 +547,7 @@ var MountainChartComponent = Component.extend({
                 return m.sortValue[0];
             }));
 
-            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.indexOf(group.key);
+            if (groupManualSort && groupManualSort.length > 1) groupSortValue = groupManualSort.length-1 - groupManualSort.indexOf(group.key);
 
             group.values.forEach(function (d) {
                 d.sortValue[1] = groupSortValue;
@@ -658,7 +658,7 @@ var MountainChartComponent = Component.extend({
 
         return {
             _mousemove: function (d, i) {
-                if (_this.model.time.dragging) return;
+                if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this.model.entities.highlightEntity(d);
 
@@ -671,12 +671,14 @@ var MountainChartComponent = Component.extend({
 
             },
             _mouseout: function (d, i) {
-                if (_this.model.time.dragging) return;
+                if (_this.model.time.dragging || _this.model.time.playing) return;
 
                 _this._setTooltip("");
                 _this.model.entities.clearHighlighted();
             },
             _click: function (d, i) {
+                if (_this.model.time.dragging || _this.model.time.playing) return;
+                
                 _this.model.entities.selectEntity(d);
             }
         };

@@ -470,7 +470,7 @@ var Model = Events.extend({
     filters = this._getAllFilters(exceptions, splashScreen);
     grouping = this._getGrouping();
 
-    if(this.use !== 'value') dimensions = dimensions.concat([this.which]);
+    if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
 
     //return query
@@ -621,6 +621,7 @@ var Model = Events.extend({
    * @returns an array of values
    */
   getValues: function(filter, group_by, previous) {
+    var _this = this;
 
     if(this.isHook()) {
       return [];
@@ -680,7 +681,7 @@ var Model = Events.extend({
         //find position from first hook
         u = hook.use;
         w = hook.which;
-
+          
         if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         }
@@ -690,6 +691,8 @@ var Model = Events.extend({
 
 
         utils.forEach(filtered, function(arr, id) {
+          //TODO: this saves when geos have different data length. line can be optimised. 
+          //next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
           value = interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
@@ -723,7 +726,7 @@ var Model = Events.extend({
       return;
     }
     var value;
-    if(this.use === 'value') {
+    if(this.use === 'constant') {
       value = this.which;
     } else if(this._space.hasOwnProperty(this.use)) {
       value = this._space[this.use][this.which];
@@ -1368,8 +1371,8 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     utils.warn('interpolatePoint returning NULL: array is empty');
     return null;
   }
-  // return constant for the use of "value"
-  if(use === 'value') {
+  // return constant for the use of "constant"
+  if(use === 'constant') {
     return which;
   }
   // zero-order interpolation for the use of properties
@@ -1386,7 +1389,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
     return +arr[arr.length - 1][which];
   }
   //return null if data is missing
-  if(arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
+  if(arr[i]===undefined || arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
     return null;
   }
 
@@ -1428,8 +1431,8 @@ function interpolateValue(_filter, use, which, l, method) {
     return null;
   }
 
-  // return constant for the use of "value"
-  if(use === 'value') {
+  // return constant for the use of "constant"
+  if(use === 'constant') {
     return items[0][which];
   }
 
@@ -1460,7 +1463,7 @@ function interpolateValue(_filter, use, which, l, method) {
     return +items[items.length - 1][which];
   }
   //return null if data is missing
-  if(items[indexNext][which] === null || items[indexNext - 1][which] === null) {
+  if(items[indexNext]===undefined || items[indexNext][which] === null || items[indexNext - 1][which] === null) {
     return null;
   }
 

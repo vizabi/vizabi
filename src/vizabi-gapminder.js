@@ -78,7 +78,8 @@ BarChart.define('default_options', {
         use: "property",
         which: "geo.name",
         allow: {
-          scales: ["ordinal"]
+          scales: ["ordinal"],
+          names: ["!geo", "!_default"]
         }
       },
       color: {
@@ -221,7 +222,10 @@ BubbleMap.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },
@@ -305,15 +309,18 @@ MountainChart.define('default_options', {
       color: {
         use: "property",
         which: "geo.region",
-        scaleType: "ordinal"
+        scaleType: "ordinal",
+        allow: {
+          names: ["!geo.name"]
+        }
       },
       stack: {
-        use: "value",
+        use: "constant",
         which: "all" // set a property of data or values "all" or "none"
       },
       group: {
         which: "geo.region", // set a property of data
-        manualSorting: ["eur", "ame", "afr", "asi"],
+        manualSorting: ["asi", "afr", "ame", "eur"],
         merge: false
       }
     }
@@ -370,17 +377,10 @@ LineChart.define('default_options', {
       },
       color: {
         use: "property",
-        which: "geo.region"
-      },
-      color_shadow: {
-        use: "property",
         which: "geo.region",
-        palette: {
-          "asi": "#c34357",
-          "eur": "#c6b40b",
-          "ame": "#67b111",
-          "afr": "#0eb8c7",
-          "_default": "#cb950f"
+        allow: {
+          scales: ["ordinal"],
+          names: ["!geo.name"]
         }
       }
     }
@@ -562,7 +562,7 @@ PopByAge.define('default_options', {
         which: "pop"
       },
       color: {
-        use: "value",
+        use: "constant",
         which: "#ffb600"
       }
     }

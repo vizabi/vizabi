@@ -1,5 +1,4 @@
-$vzb-button-width: 60px;
-$vzb-button-expand-width: 290px;
+$vzb-button-width: 58px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: $vzb-color-white;
@@ -26,11 +25,11 @@ $vzb-dialog-content-height: 250px;
 
   .vzb-buttonlist-container-buttons {
     @include position(absolute, 0);
+    
     &:-webkit-scrollbar {
       display: none;
     }
   }
-
 
   .vzb-buttonlist-btn {
     outline: none;
@@ -38,11 +37,10 @@ $vzb-dialog-content-height: 250px;
     border: 0;
     text-align: center;
     display: inline-block;
-    padding: 5px;
+    padding: 5px 4px;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {
-
       @include transition(all 100ms ease-in);
       @include border-radius($vzb-button-radius);
       cursor: pointer;
@@ -62,6 +60,7 @@ $vzb-dialog-content-height: 250px;
         height: 14px;
         width: 14px;
         vertical-align: top;
+
         path {
           fill: $vzb-button-color;
         }
@@ -75,9 +74,11 @@ $vzb-dialog-content-height: 250px;
       text-align: center;
       text-transform: uppercase;
     }
+
     &.vzb-buttonlist-btn-more > .btn-icon {
       background-color: $vzb-button-more-bg;
     }
+
     &.vzb-active,
     &.vzb-active-locked {
       > .vzb-buttonlist-btn-icon {
@@ -89,111 +90,64 @@ $vzb-dialog-content-height: 250px;
           fill: $vzb-button-bg;
         }
       }
+
       > .vzb-buttonlist-btn-title {
         color: $vzb-button-color-title-active;
       }
     }
+
     &.vzb-unavailable {
       > .vzb-buttonlist-btn-icon {
         border: 1px solid $vzb-button-color-border;
         opacity: .4;
       }
+
       > .vzb-buttonlist-btn-title {
         opacity: .4;
       }
     }
   }
-
-  @import 'dialogs/dialog';
-
-  @import '../bubblesize/bubblesize';
-  @import '../indicatorpicker/indicatorpicker';
-  @import '../minmaxinputs/minmaxinputs';
-  @import '../simpleslider/simpleslider';
-  @import '../colorlegend/colorlegend';
-  @import '../simplecheckbox/simplecheckbox';
-  @import '../draggablelist/draggablelist';
-
 }
+
+@import 'dialogs/dialog';
 
 //responsiveness
-&.vzb-landscape,
-&.vzb-large,
-&.vzb-medium {
-  .vzb-buttonlist {
-    .vzb-buttonlist-dialog {
-      @include position(absolute, -2000px 40px auto -130px);
-      &.vzb-active {
-        @include position(absolute, 20px 40px auto -130px);
-      }
-    }
-  }
-}
 
 &.vzb-small {
-  .vzb-presentationmode-switch {
-    pointer-events: none;
-    .vzb-dialog-checkbox {
-      input[type=checkbox] + label {
-        background-color: $vzb-color-grey;
-        border: 1px solid rgba($vzb-color-grey-dark, .5);
-      }
-      input[type=checkbox] + label::after {
-        @include opacity(0);
-      }
-    }
-  }
   .vzb-buttonlist-btn {
     &[data-btn="presentation"] {
       pointer-events: none;
+
       > .vzb-buttonlist-btn-icon {
-        border: 1px solid rgba($vzb-color-grey-dark, .5);
-        background-color: $vzb-color-grey;
+        background-color: rgba($vzb-color-grey-lightest, .5);
+
         .vzb-icon {
           path {
-            fill: $vzb-color-grey-dark;
+            fill: rgba($vzb-color-primary-light, .4);
           }
         }
       }
+
       > .vzb-buttonlist-btn-title {
-        color: $vzb-color-grey;
+        color: rgba($vzb-color-primary-light, .4);
       }
     }
   }
   &.vzb-portrait {
     .vzb-buttonlist {
+      .vzb-buttonlist-container-buttons {
+        white-space: nowrap;
+        margin-bottom: -20px;
+      }
+
       .vzb-buttonlist-btn {
         margin-bottom: 20px;
         width: $vzb-button-width;
       }
-      .vzb-buttonlist-dialog {
-        .vzb-dialog-content.vzb-dialog-content-fixed {
-          max-height: $vzb-dialog-content-height - 50px;
-        }
-      }
-    }
-  }
-  &.vzb-landscape {
-    .vzb-buttonlist-dialog {
-      @include position(absolute, -2000px 40px auto -130px);
-      .vzb-dialog-content,
-      .vzb-dialog-content.vzb-dialog-content-fixed {
-        max-height: $vzb-dialog-content-height - 100px !important;
-      }
-      .vzb-dialog-buttons {
-        padding: 5px 25px 6px;
-      }
-      .vzb-dialog-title {
-        padding: 30px 25px 10px;
-      }
-      &[data-btn='find'] {
-        .vzb-find-filter {
-          top: 20px;
-        }
-      }
     }
   }
 }
+
 &.vzb-landscape,
 &.vzb-medium,
 &.vzb-large {
@@ -214,6 +168,7 @@ $vzb-dialog-content-height: 250px;
       }
     }
   }
+
   .vzb-buttonlist-container-buttons {
     margin-right: -20px;
   }
@@ -221,127 +176,31 @@ $vzb-dialog-content-height: 250px;
 
 &.vzb-large {
   &.vzb-button-expand-true {
-    .vzb-tool-stage {
-      right: $vzb-button-expand-width;
+    .vzb-buttonlist {
+      display: flex;
+      flex-direction: column;
     }
-    .vzb-tool-buttonlist {
-      width: $vzb-button-expand-width;
 
-      .vzb-buttonlist {
-        display: flex;
-        flex-direction: column;
-      }
+    .vzb-buttonlist-container-dialogs {
+      display: flex;
+      flex-direction: column;
+      flex: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
 
-      .vzb-buttonlist-container-dialogs {
-        display: flex;
-        flex-direction: column;
-        flex: auto;
-        overflow-x: hidden;
-        overflow-y: auto;
-      }
+    .vzb-buttonlist-container-buttons {
+      position: relative;
+      padding: 10px 0;
+      margin-right: -10px;
+      flex: none;
+    }
 
-      .vzb-buttonlist-container-buttons {
-        position: relative;
-        padding: 10px 0;
-        margin-right: -10px;
-        flex: none;
-      }
+    .vzb-buttonlist-btn {
+      margin-right: 0;
 
-      .vzb-buttonlist-btn {
-        margin-right: 0;
-        &.vzb-dialog-side-btn {
-          display: none;
-        }
-      }
-
-      .vzb-buttonlist-dialog {
-        &.vzb-dialog-side {
-          visibility: visible;
-          display: block;
-          margin: 5px;
-          position: static;
-          box-shadow: none;
-          background-color: $vzb-color-primary-lightest;
-          border-bottom: 1px solid rgba(200, 200, 200, .4);
-          z-index: initial;
-
-          .vzb-dialog-buttons {
-            display: none;
-            padding: 5px 25px;
-          }
-
-          .vzb-dialog-modal {
-            flex: auto;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-
-            .thumb-tack-class {
-
-              &.thumb-tack-class-ico-pin,
-              &.thumb-tack-class-ico-drag {
-                display: none;
-              }
-
-            }
-          }
-
-          .vzb-dialog-title {
-            padding: 5px 25px;
-          }
-
-          .vzb-dialog-button {
-            position: relative;
-          }
-
-          &[data-btn="find"] {
-            display: flex;
-            flex-direction: column;
-            flex: auto;
-            @import 'dialogs/find/find';
-
-            .vzb-dialog-content-fixed {
-              min-height: 0;
-              max-height: initial;
-              height: auto;
-              margin-top: 10px;
-            }
-          }
-
-          &[data-btn="show"] {
-            flex: auto;
-            @import 'dialogs/show/show';
-          }
-
-          &[data-btn="colors"] {
-            z-index: auto !important;
-            flex: none;
-            @import 'dialogs/colors/colors';
-
-            .vzb-dialog-content {
-              max-height: initial;
-            }
-            .vzb-cl-outer {
-              .vzb-cl-holder {
-                max-height: initial;
-                overflow-y: hidden;
-              }
-            }
-          }
-
-          &[data-btn="size"] {
-            flex: none;
-            @import 'dialogs/size/size';
-          }
-
-          &[data-btn="stack"] {
-            flex: none;
-
-            .vzb-dl-holder .vzb-draggable {
-              height: initial;
-            }
-          }
-        }
+      &.vzb-dialog-side-btn {
+        display: none;
       }
     }
   }

@@ -30,7 +30,7 @@ var AxisModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "value",
+    use: "constant",
     which: undefined,
     min: null,
     max: null,
@@ -124,7 +124,7 @@ var AxisModel = Model.extend({
       case "property":
         domain = this.getUnique(this.which);
         break;
-      case "value":
+      case "constant":
       default:
         domain = [this.which];
         break;

@@ -29,14 +29,14 @@ var Show = Dialog.extend({
    * Grab the list div
    */
   readyOnce: function() {
-    this.element = d3.select(this.element);
+    this._super();
     this.list = this.element.select(".vzb-show-list");
     this.input_search = this.element.select("#vzb-show-search");
     this.deselect_all = this.element.select("#vzb-show-deselect");
 
     this.KEY = this.model.state.entities.getDimension();
-    this.TIMEDIM = this.model.state.time.getDimension(); 
-      
+    this.TIMEDIM = this.model.state.time.getDimension();
+
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
@@ -46,8 +46,7 @@ var Show = Dialog.extend({
       _this.deselectEntities();
     });
 
-    this._super();
-      
+
     //make sure it refreshes when all is reloaded
     this.root.on('ready', function() {
       _this.redraw();
@@ -64,20 +63,22 @@ var Show = Dialog.extend({
   ready: function() {
     this._super();
     this.redraw();
+    utils.preventAncestorScrolling(this.element.select('.vzb-dialog-scrollable'));
+
   },
-    
+
   redraw: function(){
-  
+
     var _this = this;
     this.translator = this.model.language.getTFunction();
-    
+
     var filter = {};
     filter[this.TIMEDIM] = this.model.state.time.value;
 
     var values = this.model.state.marker.getValues(filter, [this.KEY])
 
     var data = globals.metadata.entities;
-      
+
     //sort data alphabetically
     data.sort(function(a, b) {
       return(a.name < b.name) ? -1 : 1;
@@ -112,13 +113,13 @@ var Show = Dialog.extend({
       .text(function(d) {
         return d.name;
       });
-      
+
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
 
     this.showHideSearch();
     this.showHideDeselect();
-  
-  
+
+
   },
 
   showHideSearch: function() {

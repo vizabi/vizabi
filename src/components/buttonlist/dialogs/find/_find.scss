@@ -1,37 +1,73 @@
-&.vzb-buttonlist-dialog {
-  &.vzb-dialog-side {
-    .vzb-dialog-buttons {
-      display: block;
-    }
-
-    .vzb-dialog-button.vzb-label-primary {
-      visibility: hidden;
+.vzb-buttonlist {
+  .vzb-buttonlist-dialog {
+    &[data-btn='find'] {
+      .vzb-find-filter {
+        display: inline-block;
+        position: relative;
+        max-width: 170px;
+      }
     }
   }
 }
 
-.vzb-dialog-content {
-  flex-grow: 1;
-    
-  .vzb-dialog-content-fixed {
-    height: 310px;
-    max-height: 305px;
-    min-width: 140px;
+//responsiveness      
+&.vzb-large {
+  &.vzb-button-expand-true {
+    .vzb-buttonlist-dialog {
+      &.vzb-dialog-side { 
+        &[data-btn="find"] {
+          display: flex;
+          flex-direction: column;
+          flex: auto;
+
+          .vzb-dialog-buttons {
+            display: block;
+          }
+      
+          .vzb-dialog-button.vzb-label-primary {
+            visibility: hidden;
+          }
+
+          .vzb-dialog-content {
+            flex-grow: 1;
+              
+            .vzb-dialog-content-fixed {
+              height: 310px;
+              max-height: 305px;
+              min-width: 140px;
+            }
+          }
+          
+          .vzb-dialog-title {
+            flex-grow: 0;
+            display: inline-block;
+            padding: 15px 0 10px 20px;
+            vertical-align: top;
+            margin-top: 0;
+          }
+          
+          .vzb-find-filter {
+            display: inline-block;
+            position: relative;
+            padding: 10px;
+            max-width: 210px;
+            top: 0;
+          }
+
+          .vzb-dialog-content-fixed {
+            min-height: 0;
+            max-height: initial;
+            height: auto;
+            margin-top: 10px;
+          }
+        }
+      }
+    }
   }
 }
 
-.vzb-dialog-title {
-  flex-grow: 0;
-  display: inline-block;
-  padding: 15px 0 10px 20px;
-  vertical-align: top;
-  margin-top: 0;
-}
 
-.vzb-find-filter {
-  display: inline-block;
-  position: relative;
-  padding: 10px;
-  max-width: 210px;
-  top: 0;
-}
+
+
+
+

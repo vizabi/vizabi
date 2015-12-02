@@ -125,7 +125,9 @@ function compileSass(src, dest) {
       style: 'compact'
     })
     .on('error', sass.logError)
-    .pipe(prefix("last 1 version", "> 1%", "ie 8", "ie 7"))
+    .pipe(prefix({
+      browsers: ["last 1 version", "> 1%", "ie 8", "ie 7", "safari 8"]
+    }))
     .pipe(minifycss())
     .pipe(gulp.dest(dest));
 }

@@ -196,9 +196,9 @@ var ColorLegend = Component.extend({
     } else {
       this.worldmapEl.classed("vzb-hidden", true);
       if(this.model.color.use === "property" && whichPalette === "_default") {
-        colors.classed("vzb-hidden", true);
+        colors.classed("vzb-cl-compact", true);
       } else {
-        colors.classed("vzb-hidden", false);
+        colors.classed("vzb-cl-compact", false);
       }
     }
 

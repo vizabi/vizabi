@@ -49,8 +49,9 @@ var BubbleMapComponent = Component.extend({
         _this.updateTime();
         _this.selectEntities();
         //_this._selectlist.redraw();
-        _this.updateDoubtOpacity();
-        _this.updateOpacity();
+
+         _this.updateDoubtOpacity();
+        // _this.updateOpacity();
       },
       "change:entities:highlight": function (evt) {
           if (!_this._readyOnce) return;
@@ -87,6 +88,12 @@ var BubbleMapComponent = Component.extend({
           
           _this.ready();
       },
+      "change:entities:opacitySelectDim": function (evt) {
+          _this.updateOpacity();
+      },
+      "change:entities:opacityRegular": function (evt) {
+          _this.updateOpacity();
+      },
     };
 
     //this._selectlist = new Selectlist(this);
@@ -119,7 +126,7 @@ var BubbleMapComponent = Component.extend({
 
         var KEY = _this.KEY;
         if(!_this.ui.labels.dragging) return;
-        _this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
+        //_this.cached[d[KEY]].scaledS0 = 0; // to extend line when radius shorten
         var cache = _this.cached[d[KEY]];
         cache.labelFixed = true;
 
@@ -150,7 +157,7 @@ var BubbleMapComponent = Component.extend({
 
     this.defaultWidth = 960;
     this.defaultHeight = 500;
-    this.boundBox = [[0.03, 0], [0.97, 0.85]]; // two points to set box bound on 960 * 500 image;
+    this.boundBox = [[0.06, 0], [1.0, 0.85]]; // two points to set box bound on 960 * 500 image;
 
     d3_geo_projection();
   },
@@ -178,6 +185,7 @@ var BubbleMapComponent = Component.extend({
     this.dataWarningEl = this.graph.select(".vzb-data-warning");
 
     this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
+    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
     this.infoEl = this.graph.select(".vzb-bmc-axis-info");
 
     this.entityBubbles = null;
@@ -188,7 +196,7 @@ var BubbleMapComponent = Component.extend({
     // year background
     this.yearEl = this.graph.select('.vzb-bmc-year');
     this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom'});
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
 
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
@@ -260,12 +268,18 @@ var BubbleMapComponent = Component.extend({
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
+
+    this._calculateAllValues();
   },
 
   /*
    * Both model and DOM are ready
    */
   ready: function () {
+    //if (!this._valuesCalculated) {
+      this._calculateAllValues();
+    //}
+
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
@@ -285,8 +299,15 @@ var BubbleMapComponent = Component.extend({
       this.translator = this.model.language.getTFunction();
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
+      this.strings = {
+          title: {
+            S: this.translator("indicator/" + _this.model.marker.size.which),
+            C: this.translator("indicator/" + _this.model.marker.color.which)
+          }
+      };
+      
       this.yTitleEl.select("text")
-          .text(this.translator("indicator/" + _this.model.marker.size.which))
+          .text(this.translator("buttons/size") + ": " + this.strings.title.S)
           .on("click", function() {
             _this.parent
               .findChildByName("gapminder-treemenu")
@@ -296,9 +317,22 @@ var BubbleMapComponent = Component.extend({
               .updateView()
               .toggle();
           });
+      
+      this.cTitleEl.select("text")
+          .text(this.translator("buttons/color") + ": " + this.strings.title.C)
+          .on("click", function() {
+            _this.parent
+              .findChildByName("gapminder-treemenu")
+              .markerID("color")
+              .alignX("left")
+              .alignY("top")
+              .updateView()
+              .toggle();
+          });
 
       utils.setIcon(this.dataWarningEl, iconWarn).select("svg").attr("width", "0px").attr("height", "0px");
       this.dataWarningEl.append("text")
+          .attr("text-anchor", "end")
           .text(this.translator("hints/dataWarning"));
 
       this.infoEl
@@ -320,6 +354,36 @@ var BubbleMapComponent = Component.extend({
           .on("mouseout", function () {
               _this.updateDoubtOpacity();
           })
+  },
+
+  // show size number on title when hovered on a bubble
+  updateTitleNumbers: function(){
+      var _this = this;
+
+      if(_this.hovered) {
+        var hovered = _this.hovered;
+        var formatterS = _this.model.marker.size.tickFormatter;
+        var formatterC = _this.model.marker.color.tickFormatter;
+
+        _this.yTitleEl.select("text")
+          .text(_this.translator("buttons/size") + ": " +
+                formatterS(_this.values.size[hovered[_this.KEY]]) + " " +
+                _this.translator("unit/" + _this.model.marker.size.which));
+          
+        _this.cTitleEl.select("text")
+          .text(_this.translator("buttons/color") + ": " +
+                formatterC(_this.values.color[hovered[_this.KEY]]) + " " +
+                _this.translator("unit/" + _this.model.marker.color.which));  
+        
+        this.infoEl.classed("vzb-hidden", true);
+      }else{
+        this.yTitleEl.select("text")
+            .text(this.translator("buttons/size") + ": " + this.strings.title.S);
+        this.cTitleEl.select("text")
+            .text(this.translator("buttons/color") + ": " + this.strings.title.C);
+        
+        this.infoEl.classed("vzb-hidden", false);
+      }
   },
 
   updateDoubtOpacity: function (opacity) {
@@ -396,17 +460,22 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     var time = this.model.time;
-    var timeDim = time.getDimension();
-    var entityDim = this.model.entities.getDimension();
     // var latDim = this.model.lat.getDimension();
     // var lngDim = this.model.lng.getDimension();
     // console.log(latDim, lngDim, 'ok');
     var duration = (time.playing) ? time.speed : 0;
     var filter = {};
-    filter[timeDim] = time.value;
+    filter[_this.TIMEDIM] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getValues(filter, [entityDim]);
+    //var values = this.model.marker.getValues(filter, [_this.KEY]);
+    if (_this._valuesCalculated) {
+      var values = this._getValuesInterpolated(time.value);
+    } else {
+      var values = this.model.marker.getValues(filter, [_this.KEY]);
+    }
     _this.values = values;
+
+    /*
     // construct pointers
     this.pointers = this.model.marker.getKeys()
         .map(function (d) {
@@ -417,6 +486,7 @@ var BubbleMapComponent = Component.extend({
             };
             return pointer;
         });
+    */
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E 
@@ -433,19 +503,21 @@ var BubbleMapComponent = Component.extend({
     */
 
     items = items.sort(function (a, b) { // small circle to front
-      return values.size[b[entityDim]] - values.size[a[entityDim]];
+      return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
     });
+
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .data(items);
 
     if (!this.renderedOnce) {
+
       //enter selection -- init circles
       this.entityBubbles.enter().append("circle")
         .attr("class", "vzb-bmc-bubble")
-        .on("mousemove", function (d, i) {
+        .on("mouseover", function (d, i) {
             if (utils.isTouchDevice()) return;
-            _this._interact()._mousemove(d, i);
+            _this._interact()._mouseover(d, i);
         })
         .on("mouseout", function (d, i) {
             if (utils.isTouchDevice()) return;
@@ -467,23 +539,40 @@ var BubbleMapComponent = Component.extend({
 
     //positioning and sizes of the bubbles
     this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .attr("fill", function (d) {
-        return _this.cScale(values.color[d[entityDim]]);
-      })
-      .attr("cx", function (d) {
-        d.cLoc = _this.skew(_this.projection([+values.lng[d[entityDim]], +values.lat[d[entityDim]]]));
-        return d.cLoc[0];
-      })
-      .attr("cy", function (d) {
-        return d.cLoc[1];
-      })
-      .transition().duration(duration).ease("linear")
-      .attr("r", function (d, index) {
-        var r = utils.areaToRadius(_this.sScale(values.size[d[entityDim]]));
-        d.r = r;
-        d.label = values.label[d[_this.KEY]];
-        _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
-        return r;
+      .each(function(d, index){
+        var view = d3.select(this);
+        
+        var valueX = +values.lng[d[_this.KEY]];
+        var valueY = +values.lat[d[_this.KEY]];
+        var valueS = +values.size[d[_this.KEY]];
+        var valueC = values.color[d[_this.KEY]];
+        var valueL = values.label[d[_this.KEY]];
+        
+        d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+        d.color = _this.cScale(valueC);
+        d.r = utils.areaToRadius(_this.sScale(valueS));
+        d.label = valueL;
+        
+        if(!valueS || !valueX || !valueY){
+            view.classed("vzb-hidden", true);
+        }else{
+            
+            view.classed("vzb-hidden", false)
+                .attr("fill", d.color)
+                .attr("cx", d.cLoc[0])
+                .attr("cy", d.cLoc[1]);
+            
+            if(duration){
+                view.transition().duration(duration).ease("linear")
+                    .attr("r", d.r);
+            }else{
+                view.interrupt()
+                    .attr("r", d.r);
+            }
+            
+            _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+        }
+        
       });
   },
 
@@ -498,6 +587,9 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
+    
+    //possibly update the exact value in size title
+    this.updateTitleNumbers();
   },
 
   /**
@@ -511,42 +603,42 @@ var BubbleMapComponent = Component.extend({
 
     var profiles = {
       small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
-        minRadius: 2,
-        maxRadius: 40
+        minRadius: 0.5,
+        maxRadius: 30
       },
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 30 },
         infoElHeight: 20,
-        minRadius: 3,
+        minRadius: 1,
         maxRadius: 60
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
-        minRadius: 4,
+        minRadius: 1,
         maxRadius: 80
       }
     };
 
     var presentationProfileChanges = {
       small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 25 },
+        margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
-        minRadius: 2,
-        maxRadius: 40
+        minRadius: 0.5,
+        maxRadius: 30
       },
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 50 },
         infoElHeight: 20,
-        minRadius: 3,
+        minRadius: 1,
         maxRadius: 60
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
-        minRadius: 4,
+        minRadius: 1,
         maxRadius: 80
       }
     };
@@ -554,45 +646,6 @@ var BubbleMapComponent = Component.extend({
     this.activeProfile = this.getActiveProfile(profiles, presentationProfileChanges);
     margin = this.activeProfile.margin;
     infoElHeight = this.activeProfile.infoElHeight;
-
-/*
-    this.profiles = {
-      "small": {
-        margin: {
-          top: 30,
-          right: 20,
-          left: 40,
-          bottom: 50
-        },
-        padding: 2,
-      },
-      "medium": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 60
-        },
-        padding: 2,
-        minRadius: 3,
-        maxRadius: 60
-      },
-      "large": {
-        margin: {
-          top: 30,
-          right: 60,
-          left: 60,
-          bottom: 80
-        },
-        padding: 2,
-        minRadius: 4,
-        maxRadius: 80
-      }
-    };
-
-    this.activeProfile = this.profiles[this.getLayoutProfile()];
-    var margin = this.activeProfile.margin;
-*/
 
     //stage
     var height = this.height = parseInt(this.element.style("height"), 10) - margin.top - margin.bottom;
@@ -608,7 +661,7 @@ var BubbleMapComponent = Component.extend({
 
     this.year.resize(this.width, this.height,
       Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
-
+      
     this.mapSvg
       .attr('width', width)
       .attr('height', height)
@@ -616,7 +669,6 @@ var BubbleMapComponent = Component.extend({
       .attr('preserveAspectRatio', 'none');
 
     //update scales to the new range
-    // TODO: r ration should add to config
     //this.updateMarkerSizeLimits();
     this.sScale.range([0, this.height / 4]);
 
@@ -639,17 +691,22 @@ var BubbleMapComponent = Component.extend({
     this.yTitleEl.select("text")
         .attr("transform", "translate(0," + margin.top + ")")
 
+    var yTitleBB = this.yTitleEl.select("text").node().getBBox();
+      
+    this.cTitleEl.select("text")
+        .attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
+        .classed("vzb-hidden", this.model.marker.color.which == "geo.region");
+
     var warnBB = this.dataWarningEl.select("text").node().getBBox();
     this.dataWarningEl.select("svg")
-        .attr("width", warnBB.height)
-        .attr("height", warnBB.height)
-        .attr("x", warnBB.height * .1)
-        .attr("y", -warnBB.height * 1.0 + 1)
+        .attr("width", warnBB.height * 0.75)
+        .attr("height", warnBB.height * 0.75)
+        .attr("x", -warnBB.width - warnBB.height * 1.2)
+        .attr("y", -warnBB.height * 0.65)
 
     this.dataWarningEl
-        .attr("transform", "translate(" + (0) + "," + (margin.top + warnBB.height * 1.5) + ")")
-        .select("text")
-        .attr("dx", warnBB.height * 1.5);
+        .attr("transform", "translate(" + (this.width) + "," + (this.height - warnBB.height * 0.5) + ")")
+        .select("text");
 
     if(this.infoEl.select('svg').node()) {
         var titleBBox = this.yTitleEl.node().getBBox();
@@ -662,7 +719,6 @@ var BubbleMapComponent = Component.extend({
             + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
             + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
     }
-
   },
 
   updateMarkerSizeLimits: function() {
@@ -685,23 +741,27 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       return {
-          _mousemove: function (d, i) {
+          _mouseover: function (d, i) {
               if (_this.model.time.dragging) return;
 
               _this.model.entities.highlightEntity(d);
 
-              var mouse = d3.mouse(_this.graph.node()).map(function (d) {
-                  return parseInt(d);
-              });
+              _this.hovered = d;
+              //put the exact value in the size title
+              _this.updateTitleNumbers();
 
-              //position tooltip
-              _this._setTooltip(d.key ? _this.translator("region/" + d.key) : _this.model.marker.label.getValue(d));
-
+              if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
+                _this._setTooltip();
+              } else {
+                //position tooltip
+                _this._setTooltip(d);
+              }
           },
           _mouseout: function (d, i) {
               if (_this.model.time.dragging) return;
-
-              _this._setTooltip("");
+              _this._setTooltip();
+              _this.hovered = null;
+              _this.updateTitleNumbers();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
@@ -710,7 +770,8 @@ var BubbleMapComponent = Component.extend({
       };
 
   },
-
+    
+  
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
@@ -742,7 +803,6 @@ var BubbleMapComponent = Component.extend({
 
     // only for selected entities
     if(_this.model.entities.isSelected(d) && _this.entityLabels != null) {
-      //console.log('not here');
 
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
@@ -771,7 +831,7 @@ var BubbleMapComponent = Component.extend({
           var text = labelGroup.selectAll(".vzb-bmc-label-content")
             .text(valueL);
 
-          lineGroup.select("line").style("stroke-dasharray", "0 " + (cached.scaledS0 + 2) + " 100%");
+          lineGroup.select("line").style("stroke-dasharray", "0 " + scaledS + " 100%");
 
           var rect = labelGroup.select("rect");
 
@@ -967,7 +1027,6 @@ var BubbleMapComponent = Component.extend({
             //default prevented is needed to distinguish click from drag
             if(d3.event.defaultPrevented) return;
             _this.model.entities.selectEntity(d);
-            console.log('a');
           });
         })
         .on("mouseover", function(d) {
@@ -988,39 +1047,131 @@ var BubbleMapComponent = Component.extend({
           _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, _this.duration);
         });
 
+        // hide recent hover tooltip
+        _this._setTooltip();
 
   },
 
-  _setTooltip: function (tooltipText) {
-      if (tooltipText) {
-          var mouse = d3.mouse(this.graph.node()).map(function (d) { return parseInt(d); });
+  _setTooltip: function (d) {
+    var _this = this;
+    if (d) {
+      var tooltipText = d.label;
+      var x = d.cLoc[0];
+      var y = d.cLoc[1];
+      var offset = d.r;
+      var mouse = d3.mouse(this.graph.node()).map(function(d) {
+        return parseInt(d)
+      });
+      var xPos, yPos, xSign = -1,
+        ySign = -1,
+        xOffset = 0,
+        yOffset = 0;
 
-          //position tooltip
-          this.tooltip.classed("vzb-hidden", false)
-              .attr("transform", "translate(" + (mouse[0]) + "," + (mouse[1]) + ")")
-              .selectAll("text")
-              .attr("text-anchor", "middle")
-              .attr("alignment-baseline", "middle")
-              .text(tooltipText)
-
-          var contentBBox = this.tooltip.select("text")[0][0].getBBox();
-          this.tooltip.select("rect")
-              .attr("width", contentBBox.width + 8)
-              .attr("height", contentBBox.height + 8)
-              .attr("x", -contentBBox.width - 25)
-              .attr("y", -contentBBox.height - 25)
-              .attr("rx", contentBBox.height * .2)
-              .attr("ry", contentBBox.height * .2);
-
-          this.tooltip.selectAll("text")
-              .attr("x", -contentBBox.width - 25 + ((contentBBox.width + 8)/2))
-              .attr("y", -contentBBox.height - 25 + ((contentBBox.height + 11)/2)); // 11 is 8 for margin + 3 for strokes
-
-      } else {
-
-          this.tooltip.classed("vzb-hidden", true);
+      if(offset) {
+        xOffset = offset * .71; // .71 - sin and cos for 315
+        yOffset = offset * .71;
       }
+      //position tooltip
+      this.tooltip.classed("vzb-hidden", false)
+        //.attr("style", "left:" + (mouse[0] + 50) + "px;top:" + (mouse[1] + 50) + "px")
+        .selectAll("text")
+        .text(tooltipText);
+
+      var contentBBox = this.tooltip.select('text')[0][0].getBBox();
+      if(x - xOffset - contentBBox.width < 0) {
+        xSign = 1;
+        x += contentBBox.width + 5; // corrective to the block Radius and text padding
+      } else {
+        x -= 5; // corrective to the block Radius and text padding
+      }
+      if(y - yOffset - contentBBox.height < 0) {
+        ySign = 1;
+        y += contentBBox.height;
+      } else {
+        y -= 11; // corrective to the block Radius and text padding
+      }
+      if(offset) {
+        xPos = x + xOffset * xSign;
+        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+      } else {
+        xPos = x + xOffset * xSign; // .71 - sin and cos for 315
+        yPos = y + yOffset * ySign; // 5 and 11 - corrective to the block Radius and text padding
+      }
+      this.tooltip.attr("transform", "translate(" + (xPos ? xPos : mouse[0]) + "," + (yPos ? yPos : mouse[1]) +
+        ")")
+
+      this.tooltip.select('rect').attr("width", contentBBox.width + 8)
+        .attr("height", contentBBox.height * 1.2)
+        .attr("x", -contentBBox.width - 4)
+        .attr("y", -contentBBox.height * .85)
+        .attr("rx", contentBBox.height * .2)
+        .attr("ry", contentBBox.height * .2);
+
+
+    } else {
+
+      this.tooltip.classed("vzb-hidden", true);
+    }
+  },
+
+  /*
+   * Calculates all values for this data configuration
+   */
+  _calculateAllValues: function() {
+    if (this._valuesCalculated) {
+      return;
+    }
+    this.STEPS = this.model.time.getAllSteps();
+    this.VALUES = {};
+    var f = {};
+    for(var i = 0; i < this.STEPS.length; i++) {
+      var t = this.STEPS[i];
+      f[this.TIMEDIM] = t;
+      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
+    }
+    if (this.STEPS.length > 1) {
+      //console.log('caculated');
+      this._valuesCalculated = true; //hack to avoid recalculation
+    }
+  },
+
+  /*
+   * Gets all values for any point in time
+   * @param {Date} t time value
+   */
+  _getValuesInterpolated: function(t) {
+
+    if(!this.VALUES) this._calculateAllValues();
+    if(this.VALUES[t]) return this.VALUES[t];
+
+    var next = d3.bisectLeft(this.STEPS, t);
+
+    //if first
+    if(next === 0) {
+      return this.VALUES[this.STEPS[0]];
+    }
+    if(next > this.STEPS.length) {
+      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
+    }
+
+    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
+
+    var pValues = this.VALUES[this.STEPS[next - 1]];
+    var nValues = this.VALUES[this.STEPS[next]];
+
+    var curr = {};
+    utils.forEach(pValues, function(values, hook) {
+      curr[hook] = {};
+      utils.forEach(values, function(val, id) {
+        var val2 = nValues[hook][id];
+        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+      });
+    });
+
+    return curr;
   }
+
+
 
 });
 
