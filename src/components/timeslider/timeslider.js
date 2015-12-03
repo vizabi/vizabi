@@ -26,7 +26,7 @@ var time_formats = {
 var profiles = {
   small: {
     margin: {
-      top: 9,
+      top: 7,
       right: 15,
       bottom: 10,
       left: 15
@@ -36,7 +36,7 @@ var profiles = {
   },
   medium: {
     margin: {
-      top: 9,
+      top: 16,
       right: 15,
       bottom: 10,
       left: 15
@@ -46,7 +46,7 @@ var profiles = {
   },
   large: {
     margin: {
-      top: 9,
+      top: 14,
       right: 15,
       bottom: 10,
       left: 15
