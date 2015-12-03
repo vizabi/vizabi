@@ -4,7 +4,18 @@ import Class from 'class';
 var _freezeAllEvents = false;
 var _frozenEventInstances = [];
 var _freezeAllExceptions = {};
-var Events = Class.extend({
+
+var Event = Class.extend({
+
+  type: '',
+  source: '',
+
+  init: function() {
+  }
+
+});
+
+var EventEmitter = Class.extend({
 
   /**
    * Initializes the event class
@@ -20,53 +31,63 @@ var Events = Class.extend({
 
   /**
    * Binds a callback function to an event
-   * @param {String|Array} name name of event or array with names
+   * @param {String|Array} type type of event or array with types
    * @param {Function} func function to be linked with event
    */
-  on: function(name, func, origin) {
+  on: function(type, targetStr, func) {
     var i;
     //bind multiple functions at the same time
     if(utils.isArray(func)) {
       for(i = 0; i < func.length; i += 1) {
-        this.on(name, func[i]);
+        this.on(type, targetStr, func[i]);
       }
       return;
     }
-    //bind multiple at a time
-    if(utils.isArray(name)) {
-      for(i = 0; i < name.length; i += 1) {
-        this.on(name[i], func);
+    //bind multiple events at a time to one function
+    if(utils.isArray(targetStr)) {
+      for(i = 0; i < targetStr.length; i += 1) {
+        this.on(type, targetStr[i], func);
       }
       return;
     }
-    //multiple at a time with  object format
-    if(utils.isObject(name)) {
-      for(i in name) {
-        this.on(i, name[i]);
+    // multiple at a time with object format
+    if(utils.isObject(targetStr)) {
+      for(i in targetStr) {
+        this.on(type, i, targetStr[i]);
       }
+      return;
+    }
+    // if target is nested
+    var splitPos = targetStr.indexOf(':')
+    if(splitPos !== -1) {
+      var firstChild = targetStr.substr(0, splitPos);
+      var furtherChildren = targetStr.substr(splitPos);
+      if (this[firstChild])
+        this[firstChild].on(type, furtherChildren, func);
+      else 
+        utils.warn('Can\'t bind event \'' + type + ', ' + targetStr + '\'. Can\'t find child "' + firstChild + '" of the current model.');
       return;
     }
 
-    var eventParts = name.split(':');
-    origin = origin || name;
-    if (eventParts.length > 2) {
-      var child = eventParts.splice(1,1);
-      var newEventName = eventParts.join(':');
-      if (this[child])
-        this[child].on(newEventName, func, origin);
-      else
-        utils.warn('Can\'t bind event \'' + name + '\'. Can\'t find child "' + child + '" of the model.');
-    } else {
-      this._events[name] = this._events[name] || [];
-      if(typeof func === 'function') {
-        this._events[name].push({
-          f: func,
-          origin: origin.split(':')
-        });
-      } else {
-        utils.warn('Can\'t bind event \'' + name + '\'. It must be a function.');
+    /*
+    if(utils.isString(targetStr)) {
+      // target is deeper (i.e. in a submodel, for a change event)
+      targetParts = targetStr.split(':');
+      for (i = 0; i < (targetParts.length-1); i++) {
       }
+    // if target is not given
+    } else {
+      func = targetStr;
+    }*/
+    // on('change', 'marker:axis_x:min');
+
+    this._events[type] = this._events[type] || [];
+    if(typeof func === 'function') {
+      this._events[type].push(func);
+    } else {
+      utils.warn('Can\'t bind event \'' + type + '\'. It must be a function.');
     }
+
 
   },
 
@@ -229,8 +250,8 @@ var Events = Class.extend({
   }
 });
 
-Events.freezeAll = freezeAll;
-Events.unfreezeAll = unfreezeAll;
+EventEmitter.freezeAll = freezeAll;
+EventEmitter.unfreezeAll = unfreezeAll;
 
 //generic event functions
 /**
@@ -267,4 +288,4 @@ function unfreezeAll() {
   _frozenEventInstances = {};
 };
 
-export default Events;
+export default EventEmitter;

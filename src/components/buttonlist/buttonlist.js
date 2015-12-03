@@ -630,8 +630,6 @@ var ButtonList = Component.extend({
     }
     if(this._active_comp && !this._available_buttons[this._active_comp.name].ispin)
       this._active_comp = false;
-
-    this.model.state.entities.setNeedUpdate();
   },
 
   unpinAllDialogs: function() {

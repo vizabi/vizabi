@@ -16,8 +16,7 @@ var EntitiesModel = Model.extend({
     select: [],
     highlight: [],
     opacitySelectDim: .3,
-    opacityRegular: 1,
-    needUpdate: {}
+    opacityRegular: 1
   },
 
   /**
@@ -262,9 +261,7 @@ var EntitiesModel = Model.extend({
   clearHighlighted: function() {
     this.highlight = [];
   },
-  setNeedUpdate: function() {
-    this.needUpdate = new Date();
-  }
+
 });
 
 export default EntitiesModel;

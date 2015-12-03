@@ -67,9 +67,12 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.model.validate();
           _this.trigger(evt, val);
-          if(evt.indexOf("needUpdate") !== -1) {
+
+          console.log(evt);
+
+          // needs a fix
+          if (evt.indexOf('historyUpdate') !== -1)
             _this.model.trigger('historyUpdate', _this.minState());
-          }
         }
       },
       'translate': function(evt, val) {
