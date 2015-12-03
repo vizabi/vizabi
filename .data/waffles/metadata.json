@@ -108,7 +108,7 @@
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [300, 130000]
+            "domain": [300, 140000]
         },
         "gdppc_pday": {
             "allowCharts": ["none"],
