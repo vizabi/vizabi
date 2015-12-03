@@ -227,10 +227,6 @@
   &.vzb-presentation {
 
     .vzb-bubblechart-svg {
-      .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
-        font-size: $vzb-font-size-largest;
-      }
 
       .vzb-bc-axis-x,
       .vzb-bc-axis-y {
@@ -241,13 +237,6 @@
 
       .vzb-bc-labels {
         font-size: $vzb-font-size-larger;
-      }
-    }
-
-    &.vzb-small {
-      .vzb-bc-axis-x-title,
-      .vzb-bc-axis-y-title {
-        font-size: $vzb-font-size-medium;
       }
     }
   }

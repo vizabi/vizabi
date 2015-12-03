@@ -773,12 +773,14 @@ var BubbleChartComp = Component.extend({
       "medium": {
         margin: { top: 80, bottom: 80, left: 100 },
         yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20
+        xAxisLabelBottomMargin: 20,
+        infoElHeight: 26,
       },
       "large": {
         margin: { top: 80, bottom: 100, left: 100 },
         yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20
+        xAxisLabelBottomMargin: 20,
+        infoElHeight: 32,
       }
     }
 
