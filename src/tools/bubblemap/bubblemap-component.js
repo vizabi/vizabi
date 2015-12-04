@@ -539,7 +539,7 @@ var BubbleMapComponent = Component.extend({
     }
 
     //positioning and sizes of the bubbles
-    if (time.playing) {
+    if (time.playing && duration) {
       if (this.bubblesDrawing && this.bubblesDrawing > 0) return;
     }
 
@@ -573,8 +573,7 @@ var BubbleMapComponent = Component.extend({
                 view.transition().duration(duration).ease("linear")
                     .attr("r", d.r)
                     .each('end', function() {
-                      -- _this.bubblesDrawing;
-
+                      _this.bubblesDrawing > 0 ? -- _this.bubblesDrawing: null;
                     });
             }else{
                 view.interrupt()
