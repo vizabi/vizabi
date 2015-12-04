@@ -23,6 +23,7 @@ var BubbleMapComponent = Component.extend({
   init: function (config, context) {
     this.name = 'bubblemap';
     this.template = 'bubblemap.html';
+    this.bubblesDrawing = null;
 
     //define expected models for this component
     this.model_expects = [{
@@ -80,12 +81,12 @@ var BubbleMapComponent = Component.extend({
       },
       "change:entities:select": function (evt) {
           if (!_this._readyOnce) return;
-          
+
           // _this.selectEntities();
           // _this._selectlist.redraw();
           // _this.updateDoubtOpacity();
           // _this.updateOpacity();
-          
+
           _this.ready();
       },
       "change:entities:opacitySelectDim": function (evt) {
@@ -164,7 +165,7 @@ var BubbleMapComponent = Component.extend({
 
 
   afterPreload: function(){
-      if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);    
+      if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
   },
 
   /**
@@ -305,7 +306,7 @@ var BubbleMapComponent = Component.extend({
             C: this.translator("indicator/" + _this.model.marker.color.which)
           }
       };
-      
+
       this.yTitleEl.select("text")
           .text(this.translator("buttons/size") + ": " + this.strings.title.S)
           .on("click", function() {
@@ -317,7 +318,7 @@ var BubbleMapComponent = Component.extend({
               .updateView()
               .toggle();
           });
-      
+
       this.cTitleEl.select("text")
           .text(this.translator("buttons/color") + ": " + this.strings.title.C)
           .on("click", function() {
@@ -369,19 +370,19 @@ var BubbleMapComponent = Component.extend({
           .text(_this.translator("buttons/size") + ": " +
                 formatterS(_this.values.size[hovered[_this.KEY]]) + " " +
                 _this.translator("unit/" + _this.model.marker.size.which));
-          
+
         _this.cTitleEl.select("text")
           .text(_this.translator("buttons/color") + ": " +
                 formatterC(_this.values.color[hovered[_this.KEY]]) + " " +
-                _this.translator("unit/" + _this.model.marker.color.which));  
-        
+                _this.translator("unit/" + _this.model.marker.color.which));
+
         this.infoEl.classed("vzb-hidden", true);
       }else{
         this.yTitleEl.select("text")
             .text(this.translator("buttons/size") + ": " + this.strings.title.S);
         this.cTitleEl.select("text")
             .text(this.translator("buttons/color") + ": " + this.strings.title.C);
-        
+
         this.infoEl.classed("vzb-hidden", false);
       }
   },
@@ -489,7 +490,7 @@ var BubbleMapComponent = Component.extend({
     */
 
     // TODO: add to csv
-    //Africa 9.1021° N, 18.2812°E 
+    //Africa 9.1021° N, 18.2812°E
     //Europe 53.0000° N, 9.0000° E
     //Asia 49.8380° N, 105.8203° E
     //north American 48.1667° N and longitude 100.1667° W
@@ -538,41 +539,51 @@ var BubbleMapComponent = Component.extend({
     }
 
     //positioning and sizes of the bubbles
+    if (time.playing) {
+      if (this.bubblesDrawing && this.bubblesDrawing > 0) return;
+    }
+
+    this.bubblesDrawing = 0;
     this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .each(function(d, index){
         var view = d3.select(this);
-        
+
         var valueX = +values.lng[d[_this.KEY]];
         var valueY = +values.lat[d[_this.KEY]];
         var valueS = +values.size[d[_this.KEY]];
         var valueC = values.color[d[_this.KEY]];
         var valueL = values.label[d[_this.KEY]];
-        
+
         d.cLoc = _this.skew(_this.projection([valueX, valueY]));
         d.color = _this.cScale(valueC);
         d.r = utils.areaToRadius(_this.sScale(valueS));
         d.label = valueL;
-        
+
         if(!valueS || !valueX || !valueY){
             view.classed("vzb-hidden", true);
         }else{
-            
+
             view.classed("vzb-hidden", false)
                 .attr("fill", d.color)
                 .attr("cx", d.cLoc[0])
                 .attr("cy", d.cLoc[1]);
-            
+
             if(duration){
+                ++ _this.bubblesDrawing;
                 view.transition().duration(duration).ease("linear")
-                    .attr("r", d.r);
+                    .attr("r", d.r)
+                    .each('end', function() {
+                      -- _this.bubblesDrawing;
+
+                    });
             }else{
                 view.interrupt()
                     .attr("r", d.r);
             }
-            
+
             _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
         }
-        
+
       });
   },
 
@@ -587,7 +598,7 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
-    
+
     //possibly update the exact value in size title
     this.updateTitleNumbers();
   },
@@ -661,7 +672,7 @@ var BubbleMapComponent = Component.extend({
 
     this.year.resize(this.width, this.height,
       Math.min(this.width/2.5, Math.max(this.height / 4, this.width / 4)) / 2.5);
-      
+
     this.mapSvg
       .attr('width', width)
       .attr('height', height)
@@ -692,7 +703,7 @@ var BubbleMapComponent = Component.extend({
         .attr("transform", "translate(0," + margin.top + ")")
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
-      
+
     this.cTitleEl.select("text")
         .attr("transform", "translate(" + 0 + "," + (margin.top + yTitleBB.height) + ")")
         .classed("vzb-hidden", this.model.marker.color.which == "geo.region");
@@ -770,8 +781,8 @@ var BubbleMapComponent = Component.extend({
       };
 
   },
-    
-  
+
+
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
@@ -1041,7 +1052,7 @@ var BubbleMapComponent = Component.extend({
           d3.select(this).selectAll(".vzb-bmc-label-x")
             .classed("vzb-transparent", true);
         })
-        
+
         //positioning and sizes of the bubble Labels
         this.bubbleContainer.selectAll('.vzb-bmc-bubble').each(function (d, index) {
           _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, _this.duration);
