@@ -84,7 +84,7 @@ var TimeSlider = Component.extend({
 
     this.name = "gapminder-timeslider";
     this.template = this.template || "timeslider.html";
-
+    this.prevPosition = null;
     //define expected models/hooks for this component
     this.model_expects = [{
       name: "time",
@@ -359,25 +359,24 @@ var TimeSlider = Component.extend({
    * @param {Boolean} transition whether to use transition or not
    */
   _setHandle: function(transition) {
+    var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
 
     this.valueText.text(this.format(value));
 
-    var old_pos = this.handle.attr("cx");
+//    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);
-    if(old_pos == null) old_pos = new_pos;
-    var delayAnimations = new_pos > old_pos ? this.model.time.delayAnimations : 0;
-
-
+    if(_this.prevPosition == null) _this.prevPosition = new_pos;
+    var delayAnimations = new_pos > _this.prevPosition ? this.model.time.delayAnimations : 0;
     if(transition) {
-      this.handle.attr("cx", old_pos)
+      this.handle.attr("cx", _this.prevPosition)
         .transition()
         .duration(delayAnimations)
         .ease("linear")
         .attr("cx", new_pos);
 
-      this.valueText.attr("transform", "translate(" + old_pos + "," + (this.height / 2) + ")")
+      this.valueText.attr("transform", "translate(" + _this.prevPosition + "," + (this.height / 2) + ")")
         .transition()
         .duration(delayAnimations)
         .ease("linear")
@@ -393,6 +392,7 @@ var TimeSlider = Component.extend({
         .interrupt()
         .attr("transform", "translate(" + new_pos + "," + (this.height / 2) + ")");
     }
+    _this.prevPosition = new_pos;
 
   },
 
