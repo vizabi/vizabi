@@ -163,8 +163,37 @@ export default Class.extend({
                 var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
                 var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
 
-                xRange = _this._rangeBump(xRange);
-                yRange = _this._rangeBump(yRange);
+                var xRangeBumped = _this._rangeBump(xRange);
+                var yRangeBumped = _this._rangeBump(yRange);
+
+                /*
+                 * Shift xRange and yRange by the difference between the bumped
+                 * ranges, which is scaled by the zoom factor. This accounts for
+                 * the range bump, which controls a gutter around the
+                 * bubblechart, while correctly zooming.
+                 */
+                xRange[0] = xRange[0] + (xRangeBumped[0] - xRange[0]) * zoom * ratioX;
+                xRange[1] = xRange[1] + (xRangeBumped[1] - xRange[1]) * zoom * ratioX;
+
+                yRange[0] = yRange[0] + (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
+                yRange[1] = yRange[1] + (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
+
+                // Calculate the maximum xRange and yRange available.
+                var xRangeBounds = [0,  _this.width];
+                var yRangeBounds = [_this.height, 0];
+
+                var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+                var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+
+                /*
+                 * Clamp the xRange and yRange by the amount that the bounds
+                 * that are range bumped.
+                 */
+                if(xRange[0] > xRangeBoundsBumped[0]) xRange[0] = xRangeBoundsBumped[0];
+                if(xRange[1] < xRangeBoundsBumped[1]) xRange[1] = xRangeBoundsBumped[1];
+
+                if(yRange[0] < yRangeBoundsBumped[0]) yRange[0] = yRangeBoundsBumped[0];
+                if(yRange[1] > yRangeBoundsBumped[1]) yRange[1] = yRangeBoundsBumped[1];
 
                 if(_this.model.marker.axis_x.scaleType === 'ordinal'){
                     _this.xScale.rangeBands(xRange);
@@ -178,14 +207,11 @@ export default Class.extend({
                     _this.yScale.range(yRange);
                 }
 
-                var xRangeFake = _this._rangeBump([0, _this.width]);
-                var yRangeFake = _this._rangeBump([_this.height, 0]);
-
                 var formatter = function(n) { return d3.round(n, 2); };
-                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeFake[0]));
-                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeFake[1]));
-                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeFake[0]));
-                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeFake[1]));
+                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeBoundsBumped[0]));
+                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeBoundsBumped[1]));
+                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeBoundsBumped[0]));
+                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeBoundsBumped[1]));
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
