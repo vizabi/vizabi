@@ -51,13 +51,13 @@ var BubbleMapComponent = Component.extend({
         _this.selectEntities();
         //_this._selectlist.redraw();
 
-         _this.updateDoubtOpacity();
-        // _this.updateOpacity();
+        _this.updateOpacity();
+        _this.updateDoubtOpacity();
       },
       "change:entities:highlight": function (evt) {
-          if (!_this._readyOnce) return;
-          _this.highlightEntities();
-          _this.updateOpacity();
+        if (!_this._readyOnce) return;
+        _this.highlightEntities();
+        _this.updateOpacity();
       },
       "change:marker": function(evt) {
         // bubble size change is processed separately
@@ -270,7 +270,6 @@ var BubbleMapComponent = Component.extend({
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
 
-    this._calculateAllValues();
   },
 
   /*
@@ -468,12 +467,7 @@ var BubbleMapComponent = Component.extend({
     var filter = {};
     filter[_this.TIMEDIM] = time.value;
     var items = this.model.marker.getKeys(filter);
-    //var values = this.model.marker.getValues(filter, [_this.KEY]);
-    if (_this._valuesCalculated) {
-      var values = this._getValuesInterpolated(time.value);
-    } else {
-      var values = this.model.marker.getValues(filter, [_this.KEY]);
-    }
+    var values = this._getValuesInterpolated(time.value);
     _this.values = values;
 
     /*
@@ -506,7 +500,6 @@ var BubbleMapComponent = Component.extend({
     items = items.sort(function (a, b) { // small circle to front
       return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
     });
-
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
       .data(items);
@@ -555,14 +548,13 @@ var BubbleMapComponent = Component.extend({
         var valueL = values.label[d[_this.KEY]];
 
         d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-        d.color = _this.cScale(valueC);
         d.r = utils.areaToRadius(_this.sScale(valueS));
+        d.color = _this.cScale(valueC);
         d.label = valueL;
 
         if(!valueS || !valueX || !valueY){
             view.classed("vzb-hidden", true);
         }else{
-
             view.classed("vzb-hidden", false)
                 .attr("fill", d.color)
                 .attr("cx", d.cLoc[0])
@@ -680,7 +672,7 @@ var BubbleMapComponent = Component.extend({
 
     //update scales to the new range
     //this.updateMarkerSizeLimits();
-    this.sScale.range([0, this.height / 4]);
+    //this.sScale.range([0, this.height / 4]);
 
     var skew = this.skew = (function () {
       var vb = viewBox;
@@ -1128,9 +1120,9 @@ var BubbleMapComponent = Component.extend({
    * Calculates all values for this data configuration
    */
   _calculateAllValues: function() {
-    if (this._valuesCalculated) {
-      return;
-    }
+    // if (this._valuesCalculated) {
+    //   return;
+    // }
     this.STEPS = this.model.time.getAllSteps();
     this.VALUES = {};
     var f = {};
@@ -1139,10 +1131,10 @@ var BubbleMapComponent = Component.extend({
       f[this.TIMEDIM] = t;
       this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
     }
-    if (this.STEPS.length > 1) {
-      //console.log('caculated');
-      this._valuesCalculated = true; //hack to avoid recalculation
-    }
+    // if (this.STEPS.length > 1) {
+    //   //console.log('caculated');
+    //   this._valuesCalculated = true; //hack to avoid recalculation
+    // }
   },
 
   /*
