@@ -320,12 +320,15 @@ export default Class.extend({
     },
 
     reset: function(element) {
+        var _this = this.context;
+        _this.currentZoomFrameXY = null;
+
         this.zoomer.scale(1);
         this.zoomer.ratioY = 1;
         this.zoomer.ratioX = 1;
         this.zoomer.translate([0, 0]);
         this.zoomer.duration = 0;
-        this.zoomer.event(element || this.context.element);
+        this.zoomer.event(element || _this.element);
     }
 
 
