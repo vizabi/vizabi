@@ -249,11 +249,37 @@ export default Class.extend({
         var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max));
         var frame = _this.currentZoomFrameXY;
 
+        var pan = this.zoomer.translate();
+        var zoom = this.zoomer.scale();
+        var ratioX = this.zoomer.ratioX;
+        var ratioY = this.zoomer.ratioY;
+
+        if(pan[0] > 0) pan[0] = 0;
+        if(pan[1] > 0) pan[1] = 0;
+        if(pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
+        if(pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
+
+        var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
+        var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
+
+        // Calculate the range bump needed to properly expand the canvas.
+        var xRangeBumped = _this._rangeBump(xRange);
+        var yRangeBumped = _this._rangeBump(yRange);
+
+        var xScaleBumped = _this.xScale.copy()
+            .range(xRangeBumped);
+        var yScaleBumped = _this.yScale.copy()
+            .range(yRangeBumped);
+
+        /*
+         * Use a range bumped scale to correctly accommodate the range bump
+         * gutter.
+         */
         var suggestedFrame = {
-            x1: _this.xScale(mmmX.min) - radiusMax,
-            y1: _this.yScale(mmmY.min) + radiusMax,
-            x2: _this.xScale(mmmX.max) + radiusMax,
-            y2: _this.yScale(mmmY.max) - radiusMax
+            x1: xScaleBumped(mmmX.min) - radiusMax,
+            y1: yScaleBumped(mmmY.min) + radiusMax,
+            x2: xScaleBumped(mmmX.max) + radiusMax,
+            y2: yScaleBumped(mmmY.max) - radiusMax
         };
 
         var TOLERANCE = .0;
