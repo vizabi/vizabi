@@ -633,13 +633,13 @@ var BubbleMapComponent = Component.extend({
       },
       medium: {
         margin: { top: 20, right: 20, left: 20, bottom: 50 },
-        infoElHeight: 20,
+        infoElHeight: 26,
         minRadius: 1,
         maxRadius: 60
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
-        infoElHeight: 22,
+        infoElHeight: 32,
         minRadius: 1,
         maxRadius: 80
       }
@@ -691,6 +691,7 @@ var BubbleMapComponent = Component.extend({
 
 
     this.yTitleEl.select("text")
+        .style("font-size", infoElHeight)
         .attr("transform", "translate(0," + margin.top + ")")
 
     var yTitleBB = this.yTitleEl.select("text").node().getBBox();
