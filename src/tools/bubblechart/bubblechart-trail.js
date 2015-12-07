@@ -208,9 +208,9 @@ export default Class.extend({
       var view = d3.select(this);
         
       var strokeColor = _this.model.marker.color.which == "geo.region"?
-        _this.model.marker.color.getColorByPointer({
+        _this.model.marker.color.getColorShade({
           colorID: segment.valueC, 
-          pointer: "shade"
+          shadeID: "shade"
         })
         :
         _this.cScale(segment.valueC);

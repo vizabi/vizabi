@@ -484,9 +484,9 @@ var LCComponent = Component.extend({
 
         var color = _this.cScale(values.color[d[KEY]]);
         var colorShadow = _this.model.marker.color.which == "geo.region"?
-            _this.model.marker.color.getColorByPointer({
+            _this.model.marker.color.getColorShade({
               colorID: values.color[d[KEY]], 
-              pointer: "shade"
+              shadeID: "shade"
             })
             :
             d3.rgb(color).darker(0.5).toString();
@@ -566,9 +566,9 @@ var LCComponent = Component.extend({
 
         var color = _this.cScale(values.color[d[KEY]]);
         var colorShadow = _this.model.marker.color.which == "geo.region"?
-            _this.model.marker.color.getColorByPointer({
+            _this.model.marker.color.getColorShade({
               colorID: values.color[d[KEY]], 
-              pointer: "shade"
+              shadeID: "shade"
             })
             :
             d3.rgb(color).darker(0.5).toString();

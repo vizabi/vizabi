@@ -1,6 +1,6 @@
 {
     "color": {
-        "pointers": {
+        "shades": {
             "geo.region": {
                 "fill1": 0,
                 "fill2": 1,
@@ -8,6 +8,9 @@
                 "shade": 3,
                 "print_fill": 4,
                 "print_stroke": 5,
+                "_default": 0
+            },
+            "_default": {
                 "_default": 0
             }
         },

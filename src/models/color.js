@@ -38,15 +38,20 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = false;
   },
 
-  getColorByPointer: function(args){
-    if(!globals.metadata.color.palettes) return utils.warn("getColorByPointer() is missing globals.metadata.color.palettes");
-    if(!args) return utils.warn("getColorByPointer() is missing arguments");
+  getColorShade: function(args){
+    var palettes = globals.metadata.color.palettes;
+    var shades = globals.metadata.color.shades;
+      
+    if(!palettes) return utils.warn("getColorShade() is missing globals.metadata.color.palettes");
+    if(!shades) return utils.warn("getColorShade() is missing globals.metadata.color.shades");
+    if(!args) return utils.warn("getColorShade() is missing arguments");
+      
     if(!args.paletteID) args.paletteID = this.which;
-    if(!args.colorID) args.colorID = "_default";
-    if(!args.pointer) args.pointer = "_default";
+    if(!shades[args.paletteID] || !palettes[args.paletteID]) args.paletteID = "_default";
+    if(!args.shadeID || !shades[args.paletteID][args.shadeID]) args.shadeID = "_default";
+    if(!args.colorID || !palettes[args.paletteID][args.colorID]) args.colorID = "_default";
     
-    var resolvedPointer = globals.metadata.color.pointers[args.paletteID][args.pointer];
-    return globals.metadata.color.palettes[args.paletteID][args.colorID][resolvedPointer];
+    return palettes[args.paletteID][args.colorID][ shades[args.paletteID][args.shadeID] ];
   },
     
   /**
