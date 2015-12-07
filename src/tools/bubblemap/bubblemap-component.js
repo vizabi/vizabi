@@ -594,6 +594,33 @@ var BubbleMapComponent = Component.extend({
     this.updateTitleNumbers();
   },
 
+    
+  fitSizeOfTitles: function(){
+      
+    var yTitleText = this.yTitleEl.select("text")
+      .style("font-size", null);
+    var cTitleText = this.cTitleEl.select("text")
+      .style("font-size", null);
+
+    var yTitleBB = yTitleText.node().getBBox();
+    var cTitleBB = cTitleText.node().getBBox();
+
+    var font = 
+        Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
+        * this.width
+        / Math.max(yTitleBB.width, cTitleBB.width);
+      
+    if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
+      yTitleText.style("font-size", font + "px");
+      cTitleText.style("font-size", font + "px");
+    } else {
+      yTitleText.style("font-size", null);
+      cTitleText.style("font-size", null);
+    }
+      
+  },
+    
+    
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
@@ -752,6 +779,7 @@ var BubbleMapComponent = Component.extend({
               _this.hovered = d;
               //put the exact value in the size title
               _this.updateTitleNumbers();
+              _this.fitSizeOfTitles();
 
               if (_this.model.entities.isSelected(d)) { // if selected, not show hover tooltip
                 _this._setTooltip();
@@ -765,6 +793,7 @@ var BubbleMapComponent = Component.extend({
               _this._setTooltip();
               _this.hovered = null;
               _this.updateTitleNumbers();
+              _this.fitSizeOfTitles();
               _this.model.entities.clearHighlighted();
           },
           _click: function (d, i) {
