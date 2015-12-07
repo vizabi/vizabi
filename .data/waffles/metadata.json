@@ -93,7 +93,7 @@
             "sourceLink": ""
         },
         "pop": {
-            "allowCharts": ["*"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "",
             "scaleType": "log",
@@ -116,7 +116,7 @@
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_per_cap": {
-            "allowCharts": ["*"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "gdp_per_cap",
             "interpolation": "exp",

@@ -563,7 +563,10 @@ PopByAge.define('default_options', {
       },
       color: {
         use: "constant",
-        which: "#ffb600"
+        which: "#ffb600",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },
