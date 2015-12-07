@@ -148,7 +148,7 @@ var ColorLegend = Component.extend({
       regions.each(function() {
           var view = d3.select(this);
           var color = palette[view.attr("id")];
-          view.style("fill", color);
+          view.style("fill", utils.isArray(color)? color[0] : color);
         })
         .style("opacity", .8)
         .on("mouseover", function() {

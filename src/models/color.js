@@ -38,6 +38,17 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = false;
   },
 
+  getColorByPointer: function(args){
+    if(!globals.metadata.color.palettes) return utils.warn("getColorByPointer() is missing globals.metadata.color.palettes");
+    if(!args) return utils.warn("getColorByPointer() is missing arguments");
+    if(!args.paletteID) args.paletteID = this.which;
+    if(!args.colorID) args.colorID = "_default";
+    if(!args.pointer) args.pointer = "_default";
+    
+    var resolvedPointer = globals.metadata.color.pointers[args.paletteID][args.pointer];
+    return globals.metadata.color.palettes[args.paletteID][args.colorID][resolvedPointer];
+  },
+    
   /**
    * Get the above constants
    */
@@ -222,6 +233,8 @@ var ColorModel = Model.extend({
         return;
 
       default:
+        range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
+            
         this.scale = d3.scale["ordinal"]()
           .domain(domain)
           .range(range);
