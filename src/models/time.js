@@ -79,6 +79,7 @@ var TimeModel = Model.extend({
 
     //bing play method to model change
     this.on({
+/*
       "change:playing": function() {
         if(_this.playing === true) {
           _this._startPlaying();
@@ -86,12 +87,12 @@ var TimeModel = Model.extend({
           _this._stopPlaying();
         }
       },
+*/
       "set": function() {
         //auto play if playing is true by reseting variable
         if(_this.playing === true) {
           _this.set('playing', true, true); //3rd argumennt forces update
         }
-
         this.snap("start");
         this.snap("end");
         this.snap("value");
@@ -160,7 +161,7 @@ var TimeModel = Model.extend({
    * Plays time
    */
   play: function() {
-    this.playing = true;
+    this._startPlaying();
   },
 
   /**
@@ -249,7 +250,6 @@ var TimeModel = Model.extend({
     if(this.round === 'ceil') op = 'ceil';
     if(this.round === 'floor') op = 'floor';
     var time = d3.time[this.unit][op](this[what]);
-
     this.set(what, time, true); //3rd argumennt forces update
   },
 
@@ -263,14 +263,18 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
 
-    this.snap();
-
     //go to start if we start from end point
     if(_this.end - time <= 0) {
+      console.log('before change');
       time = this.start;
       _this.value = time;
+      console.log('after change');
+    } else {
+      this.snap();
     }
-
+    console.log('before playing change');
+    this.playing = true;
+    console.log('after playing change');
     this.playInterval();
 
     this.trigger("play");
@@ -300,10 +304,10 @@ var TimeModel = Model.extend({
         time = d3.time[_this.unit].offset(time, step);
 
         if(_this.postponePause) {
-            _this.playing = false; 
+            _this.playing = false;
             _this.postponePause = false;
         }
-          
+
         _this.value = time;
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
