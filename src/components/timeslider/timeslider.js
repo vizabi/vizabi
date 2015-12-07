@@ -114,6 +114,10 @@ var TimeSlider = Component.extend({
             _this.changeLimits();
           }
           _this._optionClasses();
+        }
+      },
+      'change:time:value': function(evt, original) {
+        if(!_this._splash) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
         }
@@ -216,6 +220,7 @@ var TimeSlider = Component.extend({
     var delay = this.model.time.delay;
 
     play.on('click', function () {
+
       _this.model.time.play();
     });
 
@@ -362,7 +367,6 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
-
     this.valueText.text(this.format(value));
 
 //    var old_pos = this.handle.attr("cx");
