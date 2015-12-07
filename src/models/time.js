@@ -265,16 +265,12 @@ var TimeModel = Model.extend({
 
     //go to start if we start from end point
     if(_this.end - time <= 0) {
-      console.log('before change');
       time = this.start;
       _this.value = time;
-      console.log('after change');
     } else {
       this.snap();
     }
-    console.log('before playing change');
     this.playing = true;
-    console.log('after playing change');
     this.playInterval();
 
     this.trigger("play");

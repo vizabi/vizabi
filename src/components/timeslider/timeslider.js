@@ -367,7 +367,6 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
-    console.log(value);
     this.valueText.text(this.format(value));
 
 //    var old_pos = this.handle.attr("cx");
