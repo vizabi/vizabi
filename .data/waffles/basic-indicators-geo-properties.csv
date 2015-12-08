@@ -4,10 +4,10 @@ eur,Europe,region,eur
 asi,Asia,region,asi
 afr,Africa,region,afr
 ame,America,region,ame
-_abk,Abkhazia,country,eur
+abkh,Abkhazia,country,eur
 afg,Afghanistan,country,asi
 and,Andorra,country,eur
-_akr,Akrotiri and Dhekelia,country,
+akr_a_dhe,Akrotiri and Dhekelia,country,eur
 alb,Albania,country,eur
 dza,Algeria,country,afr
 asm,American Samoa,country,asi
@@ -34,7 +34,7 @@ bol,Bolivia,country,ame
 bih,Bosnia and Herzegovina,country,eur
 bwa,Botswana,country,afr
 bra,Brazil,country,ame
-vgb,British Virgin Islands,country,
+vgb,British Virgin Islands,country,ame
 chn,China,country,asi
 brn,Brunei,country,asi
 bgr,Bulgaria,country,eur
@@ -44,17 +44,17 @@ khm,Cambodia,country,asi
 cmr,Cameroon,country,afr
 can,Canada,country,ame
 cpv,Cape Verde,country,afr
-cym,Cayman Islands,country,
+cym,Cayman Islands,country,ame
 caf,Central African Republic,country,afr
 tcd,Chad,country,afr
-_cis,Channel Islands,country,
+chanisl,Channel Islands,country,eur
 chl,Chile,country,ame
 cxr,Christmas Island,country,asi
 cck,Cocos Island,country,asi
 col,Colombia,country,ame
 com,Comoros,country,afr
-cod,Dem. Rep. Congo,country,afr
-cog,Rep. Congo,country,afr
+cod,"Congo, Dem. Rep.",country,afr
+cog,"Congo, Rep.",country,afr
 cok,Cook Is,country,asi
 cri,Costa Rica,country,ame
 civ,Cote d'Ivoire,country,afr
@@ -62,22 +62,22 @@ hrv,Croatia,country,eur
 cub,Cuba,country,ame
 cyp,Cyprus,country,eur
 cze,Czech Republic,country,eur
-_csk,Czechoslovakia,country,eur
+cheslo,Czechoslovakia,country,eur
 dnk,Denmark,country,eur
 dji,Djibouti,country,afr
 dma,Dominica,country,ame
 dom,Dominican Republic,country,ame
-_ddr,East Germany,country,eur
+deu_east,East Germany,country,eur
 ecu,Ecuador,country,ame
 egy,Egypt,country,afr
 slv,El Salvador,country,ame
 gnq,Equatorial Guinea,country,afr
 eri,Eritrea,country,afr
-_eae,Eritrea and Ethiopia,country,
+eri_a_eth,Eritrea and Ethiopia,country,afr
 est,Estonia,country,eur
 eth,Ethiopia,country,afr
-fro,Faeroe Islands,country,
-flk,Falkland Is (Malvinas),country,
+fro,Faeroe Islands,country,eur
+flk,Falkland Is (Malvinas),country,ame
 fji,Fiji,country,asi
 fin,Finland,country,eur
 fra,France,country,eur
@@ -102,7 +102,7 @@ guy,Guyana,country,ame
 hti,Haiti,country,ame
 hos,Holy See,country,eur
 hnd,Honduras,country,ame
-hkg,Hong Kong,country,China
+hkg,"Hong Kong, China",country,asi
 hun,Hungary,country,eur
 isl,Iceland,country,eur
 ind,India,country,asi
@@ -122,9 +122,9 @@ ken,Kenya,country,afr
 kir,Kiribati,country,asi
 prk,North Korea,country,asi
 kor,South Korea,country,asi
-_unk,Kosovo,country,eur
+kos,Kosovo,country,eur
 kwt,Kuwait,country,asi
-kgz,Kyrgyz Republic,country,
+kgz,Kyrgyz Republic,country,asi
 lao,Lao,country,asi
 lva,Latvia,country,eur
 lbn,Lebanon,country,asi
@@ -134,21 +134,21 @@ lby,Libya,country,afr
 lie,Liechtenstein,country,eur
 ltu,Lithuania,country,eur
 lux,Luxembourg,country,eur
-mac,Macao,country,China
-mkd,Macedonia,country,eur
+mac,"Macao, China",country,asi
+mkd,"Macedonia, FYR",country,eur
 mdg,Madagascar,country,afr
 mwi,Malawi,country,afr
 mys,Malaysia,country,asi
 mdv,Maldives,country,asi
 mli,Mali,country,afr
 mlt,Malta,country,eur
-mhl,Marshall Islands,country,
+mhl,Marshall Islands,country,asi
 mtq,Martinique,country,ame
 mrt,Mauritania,country,afr
 mus,Mauritius,country,afr
 myt,Mayotte,country,afr
 mex,Mexico,country,ame
-fsm,Micronesia,country,Fed. Sts.
+fsm,"Micronesia, Fed. Sts.",country,asi
 mda,Moldova,country,eur
 mco,Monaco,country,eur
 mng,Mongolia,country,asi
@@ -161,7 +161,7 @@ nam,Namibia,country,afr
 nru,Nauru,country,asi
 npl,Nepal,country,asi
 nld,Netherlands,country,eur
-ant,Netherlands Antilles,country,
+ant,Netherlands Antilles,country,ame
 ncl,New Caledonia,country,asi
 nzl,New Zealand,country,asi
 nic,Nicaragua,country,ame
@@ -169,8 +169,8 @@ ner,Niger,country,afr
 nga,Nigeria,country,afr
 niu,Niue,country,asi
 nfk,Norfolk Island,country,asi
-_ncy,Northern Cyprus,country,eur
-mnp,Northern Mariana Islands,country,
+cyp_nor,Northern Cyprus,country,eur
+mnp,Northern Mariana Islands,country,asi
 nor,Norway,country,eur
 omn,Oman,country,asi
 pak,Pakistan,country,asi
@@ -189,21 +189,21 @@ reu,Reunion,country,afr
 rou,Romania,country,eur
 rus,Russia,country,eur
 rwa,Rwanda,country,afr
-_stb,St. Barth�lemy,country,ame
+stbar,St. Barth�lemy,country,ame
 shn,St. Helena,country,afr
-kna,St. Kitts and Nevis,country,
+kna,St. Kitts and Nevis,country,ame
 lca,St. Lucia,country,ame
-_stm,St. Martin,country,ame
-vct,St. Vincent and the Grenadines,country,
-spm,St.-Pierre-et-Miquelon,country,
+stmar,St. Martin,country,ame
+vct,St. Vincent and the Grenadines,country,ame
+spm,St.-Pierre-et-Miquelon,country,ame
 wsm,Samoa,country,asi
 smr,San Marino,country,eur
 stp,Sao Tome and Principe,country,afr
 sau,Saudi Arabia,country,asi
 sen,Senegal,country,afr
 srb,Serbia,country,eur
-scg,Serbia and Montenegro,country,
-_srbek,Serbia excluding Kosovo,country,
+scg,Serbia and Montenegro,country,eur
+scg_ex_kos,Serbia excluding Kosovo,country,eur
 syc,Seychelles,country,afr
 sle,Sierra Leone,country,afr
 sgp,Singapore,country,asi
@@ -211,10 +211,10 @@ svk,Slovak Republic,country,eur
 svn,Slovenia,country,eur
 slb,Solomon Islands,country,asi
 som,Somalia,country,afr
-_sol,Somaliland,country,afr
+som_somland,Somaliland,country,afr
 zaf,South Africa,country,afr
-_sos,South Ossetia,country,eur
-sds,South Sudan,country,afr
+sosset,South Ossetia,country,eur
+ssd,South Sudan,country,afr
 esp,Spain,country,eur
 lka,Sri Lanka,country,asi
 sdn,Sudan,country,afr
@@ -232,12 +232,12 @@ tls,Timor-Leste,country,asi
 tgo,Togo,country,afr
 tkl,Tokelau,country,asi
 ton,Tonga,country,asi
-_tra,Transnistria,country,eur
+transn,Transnistria,country,eur
 tto,Trinidad and Tobago,country,ame
 tun,Tunisia,country,afr
 tur,Turkey,country,eur
 tkm,Turkmenistan,country,asi
-tca,Turks and Caicos Islands,country,
+tca,Turks and Caicos Islands,country,ame
 tuv,Tuvalu,country,asi
 uga,Uganda,country,afr
 ukr,Ukraine,country,eur
@@ -245,21 +245,21 @@ are,United Arab Emirates,country,asi
 gbr,United Kingdom,country,eur
 usa,United States,country,ame
 ury,Uruguay,country,ame
-_ussr,USSR,country,eur
+ussr,USSR,country,eur
 uzb,Uzbekistan,country,asi
 wlf,Wallis et Futuna,country,asi
 vut,Vanuatu,country,asi
 ven,Venezuela,country,ame
 pse,West Bank and Gaza,country,asi
-_brd,West Germany,country,eur
+deu_west,West Germany,country,eur
 esh,Western Sahara,country,afr
 vnm,Vietnam,country,asi
-vir,Virgin Islands (U.S.),country,
-_noy,North Yemen (former),country,asi
-_soy,South Yemen (former),country,asi
+vir,Virgin Islands (U.S.),country,ame
+yem_north,North Yemen (former),country,asi
+yem_south,South Yemen (former),country,asi
 yem,Yemen,country,asi
-_yug,Yugoslavia,country,eur
+yug,Yugoslavia,country,eur
 zmb,Zambia,country,afr
 zwe,Zimbabwe,country,afr
 ala,Åland,country,eur
-_ngo,Ngorno-Karabakh,country,eur
+ngokar,Ngorno-Karabakh,country,eur
