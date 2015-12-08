@@ -28,7 +28,8 @@ var Stack = Dialog.extend({
         this.components = [{
             component: draggablelist,
             placeholder: '.vzb-dialog-draggablelist',
-            model: ["language"],
+            model: ["state.marker.group", "language"],
+            groupID: "manualSorting",
             dataArrFn: _this.manualSorting.bind(_this),
             lang: 'region/'
         }];
