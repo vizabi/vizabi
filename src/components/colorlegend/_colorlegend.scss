@@ -32,6 +32,9 @@
       display: inline-block;
       vertical-align: super;
       cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
       
     &.vzb-cl-compact {
