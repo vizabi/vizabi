@@ -963,8 +963,12 @@ var BubbleMapComponent = Component.extend({
       lineGroup.transition().duration(duration).ease("linear")
         .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
     } else {
-      labelGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-      lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      labelGroup
+          .interrupt()
+          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      lineGroup
+          .interrupt()
+          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
     }
 
     var diffX1 = resolvedX0 - resolvedX;
