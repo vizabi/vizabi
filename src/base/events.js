@@ -30,64 +30,104 @@ var EventEmitter = Class.extend({
   },
 
   /**
-   * Binds a callback function to an event
-   * @param {String|Array} type type of event or array with types
-   * @param {Function} func function to be linked with event
+   * Binds a callback function to an event: part 1: split grouped parameters in seperate calls
+   * @param {String} type type of event
+   * @param {String|Array} target path to object the event should be bound to or array of target paths
+   * @param {Function|Array} func function to be bound with event or array with functions
    */
-  on: function(type, targetStr, func) {
+  on: function(type, path, func) {
+    
     var i;
-    //bind multiple functions at the same time
-    if(utils.isArray(func)) {
+
+    // multiple at a time, array format: [{type: '', path: '', func: ''}, {..}]
+    if(utils.isArray(type)) {
+      for(i = 0; i < type.length; i += 1) {
+        if (type[i].type && type[i].func)
+          this.on(type[i].type, type[i].path, type[i].func);
+        else
+          this.on(type[i], func);
+      }
+      return;
+    }
+
+    //multiple at a time, object format: {type: function, ... } or { 'type:path': function, ... }
+    if(utils.isObject(type)) {
+      for(i in type) {
+        this.on(i, type[i]);
+      }
+      return;
+    }
+
+    // type and path are both in type: on('type:path', func)
+    // or
+    // path undefined: on('type', func)
+    if(typeof path === 'function') {
+      func = path; // put callback function in func variable
+      // on('type:path', func)
+      if (type.indexOf(':') !== -1) {
+        var split = type.split(':');  
+        type = split[0];
+        path = split[1];
+      } 
+      // on(type, func)
+      else {
+        path = undefined;
+      }
+      this.on(type, path, func);
+      return;
+    }
+
+    // bind multiple paths at a time to one function: on(type, [path1, path2], func)
+    if(utils.isArray(path)) {
+      for(i = 0; i < path.length; i += 1) {
+        this.on(type, path[i], func);
+      }
+      return;
+    }
+
+    //bind multiple functions at the same time to one path: on(type, path, [func1, func2])
+    if(func && utils.isArray(func)) {
       for(i = 0; i < func.length; i += 1) {
-        this.on(type, targetStr, func[i]);
+        this.on(type, path, func[i]);
       }
-      return;
-    }
-    //bind multiple events at a time to one function
-    if(utils.isArray(targetStr)) {
-      for(i = 0; i < targetStr.length; i += 1) {
-        this.on(type, targetStr[i], func);
-      }
-      return;
-    }
-    // multiple at a time with object format
-    if(utils.isObject(targetStr)) {
-      for(i in targetStr) {
-        this.on(type, i, targetStr[i]);
-      }
-      return;
-    }
-    // if target is nested
-    var splitPos = targetStr.indexOf(':')
-    if(splitPos !== -1) {
-      var firstChild = targetStr.substr(0, splitPos);
-      var furtherChildren = targetStr.substr(splitPos);
-      if (this[firstChild])
-        this[firstChild].on(type, furtherChildren, func);
-      else 
-        utils.warn('Can\'t bind event \'' + type + ', ' + targetStr + '\'. Can\'t find child "' + firstChild + '" of the current model.');
       return;
     }
 
-    /*
-    if(utils.isString(targetStr)) {
-      // target is deeper (i.e. in a submodel, for a change event)
-      targetParts = targetStr.split(':');
-      for (i = 0; i < (targetParts.length-1); i++) {
-      }
-    // if target is not given
-    } else {
-      func = targetStr;
-    }*/
-    // on('change', 'marker:axis_x:min');
+    // if there's nothing to split up anymore, continue
+    this.onDescend(type, path, func);
 
+  },
+  /**
+   * Continuation of on(): traversing down to target and registering the event on target
+   * @param {String} type type of event or array with types
+   * @param {String|Array} target path to object the event should be bound to, in string or array form
+   * @param {Function} func callback function to be bound with event
+   */
+  onDescend: function(type, path, func) {
+
+    // prepare path to array
+    if (typeof path === 'string') {
+      path = path.split('.'); // reverse because pop is far more efficient than shift
+    }
+
+    // if there is a path given, descent path to target
+    if (utils.isArray(path) && path.length != 0) {
+      // descent to next child to find target object
+      var currentTarget = path.shift();
+      if (this[currentTarget] === undefined)
+        utils.warn('Can\'t bind event \'' + type + ', ' + currentTarget + '\'. Can\'t find child "' + currentTarget + '" of the current model.');
+      else
+        this.getActualObject(currentTarget).onDescend(type, path, func);
+      return;
+    }
+
+    // register the event to this object
     this._events[type] = this._events[type] || [];
     if(typeof func === 'function') {
       this._events[type].push(func);
     } else {
       utils.warn('Can\'t bind event \'' + type + '\'. It must be a function.');
     }
-
 
   },
 
@@ -120,59 +160,55 @@ var EventEmitter = Class.extend({
    * @param {String|Array} name name of event or array with names
    * @param args Optional arguments (values to be passed)
    */
-  trigger: function(name, args, original) {
+  trigger: function(eventType, args) {
     var i;
     var size;
-    if(utils.isArray(name)) {
-      for(i = 0, size = name.length; i < size; i += 1) {
-        this.trigger(name[i], args);
+
+    // split up eventType-paremeter for multiple event-triggers
+    if(utils.isArray(eventType)) {
+      for(i = 0, size = eventType.length; i < size; i += 1) {
+        this.trigger(eventType[i], args);
       }
-    } else {
+      return;
+    } 
 
-      if(!this._events.hasOwnProperty(name)) {
-        return;
-      }
-      for(i = 0; i < this._events[name].length; i += 1) {
-
-        var eventPath = original || name;
-
-        var f = this._events[name][i].f;
-        var origin = this._events[name][i].origin;
-
-        //Concatenate original name with eventPath
-        var eventPathParts = origin.concat(eventPath.split(':'));
-        eventPath = utils.unique(eventPathParts).join(':');
-
-        //if not in buffer, add and execute
-        var _this = this;
-        var execute = function() {
-          var msg = 'Vizabi Event: ' + name + ' - ' + eventPath;
-          utils.timeStamp(msg);
-          f.apply(_this, [
-            eventPath,
-            args
-          ]);
-        };
-        //TODO: improve readability of freezer code
-        //only execute if not frozen and exception doesnt exist
-        if(this._freeze || _freezeAllEvents) {
-          //if exception exists for freezing, execute
-          if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && this._freeze &&
-            this._freezeExceptions.hasOwnProperty(name)) {
-            execute();
-          } //otherwise, freeze it
-          else {
-            this._freezer.push(execute);
-            if(_freezeAllEvents && !_frozenEventInstances[this._id]) {
-              this.freeze();
-              _frozenEventInstances[this._id] = this;
-            }
-          }
-        } else {
-          execute();
-        }
-      }
+    // if this eventType has no events registered
+    if(!this._events.hasOwnProperty(eventType)) {
+      return;
     }
+    // for each function registered to this eventType
+    var _this = this;
+    utils.forEach(this._events[eventType], function(func) {
+
+      // prepare execution
+      var execute = function() {
+        var msg = 'Vizabi Event: ' + eventType; // + ' - ' + eventPath;
+        utils.timeStamp(msg);
+        func.apply(_this, [
+          eventType,
+          args
+        ]);
+      };
+
+      //TODO: improve readability of freezer code
+      //only execute if not frozen and exception doesnt exist
+      if(_this._freeze || _freezeAllEvents) {
+        //if exception exists for freezing, execute
+        if(_freezeAllEvents && _freezeAllExceptions.hasOwnProperty(name) || !_freezeAllEvents && _this._freeze &&
+          _this._freezeExceptions.hasOwnProperty(name)) {
+          execute();
+        } //otherwise, freeze it
+        else {
+          _this._freezer.push(execute);
+          if(_freezeAllEvents && !_frozenEventInstances[_this._id]) {
+            _this.freeze();
+            _frozenEventInstances[_this._id] = _this;
+          }
+        }
+      } else {
+        execute();
+      }
+    })    
   },
 
   /**
@@ -180,34 +216,24 @@ var EventEmitter = Class.extend({
    * @param {String|Array} name name of event or array with names
    * @param args Optional arguments (values to be passed)
    */
-  triggerAll: function(name, args, original) {
+  triggerAll: function(eventTypes, args, original) {
     var to_trigger = [];
     //default to array
-    if(!utils.isArray(name)) {
-      name = [name];
+    if(!utils.isArray(eventTypes)) {
+      eventTypes = [eventTypes];
     }
     var i;
-    var size;
-    var n;
-    for(i = 0, size = name.length; i < size; i += 1) {
-      n = name[i];
-      original = original || n;
-      var parts = n.split(':');
-      while(parts.length) {
-        to_trigger.push([
-          n,
-          args,
-          original
-        ]);
-        parts.pop();
-        n = parts.join(':');
-      }
+    for(i = 0; i < eventTypes.length; i++) {
+      to_trigger.push([
+        eventTypes[i],
+        args
+      ]);
     }
-    var once = utils.unique(to_trigger, function(d) {
+    to_trigger = utils.unique(to_trigger, function(d) {
       return d[0]; //name of the event
     });
-    for(i = 0; i < once.length; i += 1) {
-      this.trigger.apply(this, once[i]);
+    for(i = 0; i < to_trigger.length; i++) {
+      this.trigger.apply(this, to_trigger[i]);
     }
   },
 

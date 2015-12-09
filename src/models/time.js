@@ -78,15 +78,16 @@ var TimeModel = Model.extend({
     this.postponePause = false;
 
     //bing play method to model change
-    this.on({
-      "change:playing": function() {
+    this.on([{
+      'change:playing': function() {
         if(_this.playing === true) {
           _this._startPlaying();
         } else {
           _this._stopPlaying();
         }
-      },
-      "set": function() {
+      }
+    },{
+      'set': function() {
         //auto play if playing is true by reseting variable
         if(_this.playing === true) {
           _this.set('playing', true, true); //3rd argumennt forces update
@@ -96,7 +97,7 @@ var TimeModel = Model.extend({
         this.snap("end");
         this.snap("value");
       }
-    });
+    }]);
   },
 
   /**

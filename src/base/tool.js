@@ -36,7 +36,7 @@ var ToolModel = Model.extend({
     // change language
     if(values.language) {
       var _this = this;
-      this.on('change:language:id', function() {
+      this.on('change:language.id', function() {
         _this.trigger('translate');
       });
     }
@@ -53,51 +53,60 @@ var Tool = Component.extend({
     this._id = utils.uniqueId('t');
     this.template = this.template || '<div class="vzb-tool vzb-tool-' + this.name +
       '"><div class="vzb-tool-content"><div class="vzb-tool-stage"><div class="vzb-tool-viz"></div><div class="vzb-tool-timeslider"></div></div><div class="vzb-tool-buttonlist"></div><div class="vzb-tool-treemenu vzb-hidden"></div><div class="vzb-tool-datawarning vzb-hidden"></div></div></div>';
-    this.model_binds = this.model_binds || {};
+    this.model_binds = this.model_binds || [];
     
     options = options || {}; //options can be undefined
     var binds = options.bind || {}; //bind functions can be undefined
 
     this.default_options = this.default_options || {};
+    
     //bind the validation function with the tool
     var validate = this.validate.bind(this);
     var _this = this;
-    var callbacks = utils.merge({
-      'change': function(evt, val) {
-        if(_this._ready) {
-          _this.model.validate();
-          _this.trigger(evt, val);
 
-          console.log(evt);
+    // callbacks has to be an array so that it will not be turned into a submodel when the toolmodel is made.
+    var callbacks = [
+      {
+        'change': function(evt, val) {
+          if(_this._ready) {
+            _this.model.validate();
+            _this.trigger(evt, val);
 
-          // needs a fix
-          if (evt.indexOf('historyUpdate') !== -1)
+            // needs a fix
+            if (evt.indexOf('historyUpdate') !== -1)
+              _this.model.trigger('historyUpdate', _this.minState());
+          }
+        }
+      }, {
+        'change:ui.presentation': function() {
+          _this.layout.updatePresentation();
+          _this.trigger('resize');
+        }
+      }, {
+        'translate': function(evt, val) {
+          if(_this._ready) {
+            Promise.all([_this.preloadLanguage(), _this.model.load()])
+              .then(function() {
+                _this.model.validate();
+                _this.translateStrings();
+              });
+          }
+        }
+      }, {
+        'load_start': function() {
+          _this.beforeLoading();
+        }
+      }, {
+        'ready': function(evt) {
+          if(_this._ready) {
+            _this.afterLoading();
             _this.model.trigger('historyUpdate', _this.minState());
-        }
-      },
-      'translate': function(evt, val) {
-        if(_this._ready) {
-          Promise.all([_this.preloadLanguage(), _this.model.load()])
-            .then(function() {
-              _this.model.validate();
-              _this.translateStrings();
-            });
-        }
-      },
-      'load_start': function() {
-        _this.beforeLoading();
-      },
-      "change:ui:presentation": function() {
-        _this.layout.updatePresentation();
-        _this.trigger('resize');
-      },
-      'ready': function(evt) {
-        if(_this._ready) {
-          _this.afterLoading();
-          _this.model.trigger('historyUpdate', _this.minState());
+          }
         }
       }
-    }, this.model_binds, binds);
+    ];
+    Array.prototype.push.apply(callbacks, this.model_binds); 
+    Array.prototype.push.apply(callbacks, binds);
 
     options = options || {};
     this.model = new ToolModel(options, this.default_options, callbacks, validate);
@@ -126,7 +135,7 @@ var Tool = Component.extend({
     if(!this.model.bind) {
       return;
     }
-    this.model.on(this.model.bind.get());
+    this.model.on(this.model.bind);
   },
 
   minState: function() {

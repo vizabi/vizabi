@@ -18,6 +18,38 @@ var time_formats = {
 
 var _DATAMANAGER = new Data();
 
+var ModelLeaf = Events.extend({
+
+  _val: null,
+
+  init: function(value, parent, binds) {
+
+    // getter and setter for the value
+    Object.defineProperty(this, 'value', {
+      get: this.get,
+      set: this.set
+    });
+
+    this._super();
+
+    // after super so there is a .events object
+    this.parent = parent;
+    this.value = value;
+    this.on(binds);
+  },
+
+  get: function() {
+    return this._val;
+  },
+
+  set: function(val, force) {
+    if (this._val !== val || force || JSON.stringify(this._val) !== JSON.stringify(val)) {
+      this.trigger('change', val);
+    }
+    this._val = val;
+  }
+})
+
 var Model = Events.extend({
   /**
    * Initializes the model.
@@ -82,7 +114,10 @@ var Model = Events.extend({
     if(!attr) {
       return this._data;
     }
-    return this._data[attr];
+    if (isModel(this._data[attr]))
+      return this._data[attr];
+    else
+      return this._data[attr].value; // return leaf value
   },
 
   /**
@@ -98,6 +133,7 @@ var Model = Events.extend({
     var setting = this._setting;
     var _this = this;
     var attrs;
+    
     //expect object as default
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
@@ -109,33 +145,18 @@ var Model = Events.extend({
     //we are currently setting the model
     this._setting = true;
 
-    //compute each change
+    // init/set all given values
     for(var a in attrs) {
       val = attrs[a];
-      var curr = this._data[a];
-      //if its a regular value
-      if(!utils.isPlainObject(val) || utils.isArray(val)) {
-        //change if it's not the same value
-        if(curr !== val || force || JSON.stringify(curr) !== JSON.stringify(val)) {
-          var p = typeof curr === 'undefined' ? 'init' : 'change';
-          events.push(p + ':' + a);
-        }
-        this._data[a] = val;
-      } //if it's an object, it's a submodel
-      else {
-        if(curr && isModel(curr)) {
-          events.push('change:' + a);
-          this._data[a].set(val, force);
-        } //submodel doesnt exist, create it
-        else {
-          events.push('init:' + a);
-          this._data[a] = initSubmodel(a, val, this);
-          this._data[a].unfreeze();
-        }
+      if (this._data[a]) {
+        this._data[a].set(val, force);
+      } else {
+        this._data[a] = initSubmodel(a, val, this);
       }
     }
 
     bindSettersGetters(this);
+
     //for tool model when setting for the first time
     if(this.validate && !setting) {
       this.validate();
@@ -145,9 +166,7 @@ var Model = Events.extend({
       if(!this._set) {
         this._set = true;
         events.push('set');
-      } else if(events.length) {
-        events.push('change');
-      }
+      } 
       _this._setting = false;
       _this.triggerAll(events, _this.getObject());
       if(!this.isHook()) {
@@ -186,8 +205,9 @@ var Model = Events.extend({
     var fn = fn || function() {
       return true;
     };
+    var _this = this;
     utils.forEach(this._data, function(s, name) {
-      if(s && typeof s._id !== 'undefined' && fn(s)) {
+      if(s && typeof s._id !== 'undefined' && isModel(s) && fn(s)) {
         if(object) {
           submodels[name] = s;
         } else {
@@ -200,7 +220,7 @@ var Model = Events.extend({
 
   /**
    * Gets the current model and submodel values as a JS object
-   * @returns {Object} All model as JS object
+   * @returns {Object} All model as JS object, leafs will return their values
    */
   getObject: function() {
     var obj = {};
@@ -209,10 +229,19 @@ var Model = Events.extend({
       if(this._data[i] && typeof this._data[i].getObject === 'function') {
         obj[i] = this._data[i].getObject();
       } else {
-        obj[i] = this._data[i];
+        obj[i] = this._data[i].value;
       }
     }
     return obj;
+  },
+
+
+  /**
+   * Gets the requested object, including the leaf-object, not the value
+   * @returns {Object} Model or ModelLeaf object.
+   */
+  getActualObject: function(name) {
+    return this._data[name];
   },
 
   /**
@@ -533,7 +562,11 @@ var Model = Events.extend({
           //defer is necessary because other events might be queued.
           //load right after such events
           utils.defer(function() {
-            _this.load();
+            _this.load().then(function() {
+
+            }, function(err) {
+              utils.warn(err);
+            });
           });
         });
       }
@@ -1211,9 +1244,10 @@ var Model = Events.extend({
 
 /**
  * Checks whether an object is a model or not
+ * if includeLeaf is true, a leaf is also seen as a model
  */
-function isModel(model) {
-  return model.hasOwnProperty('_data');
+function isModel(model, includeLeaf) {
+  return model && (model.hasOwnProperty('_data') || (includeLeaf &&  model.hasOwnProperty('_val')));
 }
 
 /**
@@ -1247,49 +1281,82 @@ function bindSettersGetters(model) {
  */
 function initSubmodel(attr, val, ctx) {
 
-  var binds = {
-    //the submodel has changed (multiple times)
-    'change': function(evt, vals) {
-      if(!ctx._ready) return; //block change propagation if model isnt ready
-      evt = evt.replace('change', 'change:' + attr);
-      //if(attr === 'axis') console.log("")
-      ctx.triggerAll('change:' + attr, ctx.getObject(), evt);
-    },
-    //loading has started in this submodel (multiple times)
-    'hook_change': function(evt, vals) {
-      ctx.trigger(evt, ctx.getObject());
-    },
-    //loading has started in this submodel (multiple times)
-    'load_start': function(evt, vals) {
-      evt = evt.replace('load_start', 'load_start:' + attr);
-      ctx.setReady(false);
-      ctx.triggerAll('load_start:' + attr, ctx.getObject(), evt);
-    },
-    //loading has failed in this submodel (multiple times)
-    'load_error': function(evt, vals) {
-      evt = evt.replace('load_error', 'load_error:' + attr);
-      ctx.triggerAll('load_error' + attr, vals, evt);
-    },
-    //loading has ended in this submodel (multiple times)
-    'ready': function(evt, vals) {
-      //trigger only for submodel
-      evt = evt.replace('ready', 'ready:' + attr);
-      ctx.setReady(false);
-      //wait to make sure it's not set false again in the next execution loop
-      utils.defer(function() {
-        ctx.setReady();
-      });
-      //ctx.trigger(evt, vals);
+  var submodel;
+
+  // if value is a value -> leaf
+  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+
+    var binds = {
+      //the submodel has changed (multiple times)
+      'change': onChange
     }
-  };
-  if(isModel(val)) {
-    val.on(binds);
-    return val;
-  } else {
-    //special model
-    var modelType = attr.split('_')[0];
-    var Modl = Model.get(modelType, true) || models[modelType] || Model;
-    return new Modl(val, ctx, binds, true);
+    submodel = new ModelLeaf(val, ctx, binds);
+  }
+
+  // if value is an object -> model
+  else {
+
+    var binds = {
+      //the submodel has changed (multiple times)
+      'change': onChange,
+      //loading has started in this submodel (multiple times)
+      'hook_change': onHookChange,
+      //loading has started in this submodel (multiple times)
+      'load_start': onLoadStart,
+      //loading has failed in this submodel (multiple times)
+      'load_error': onLoadError,
+        //loading has ended in this submodel (multiple times)
+      'ready': onReady
+    };
+
+    // if the value is an already instantiated submodel (Model or ModelLeaf)
+    // this is the case for example when a new componentmodel is made (in Component._modelMapping)
+    // it takes the submodels from the toolmodel and creates a new model for the component which refers 
+    // to the instantiated submodels (by passing them as model values, and thus they reach here)
+    if (isModel(val, true)) {
+      submodel = val;
+      submodel.on(binds);
+    } 
+    // if it's just a plain object, create a new model
+    else {
+      // construct model
+      var modelType = attr.split('_')[0];
+      var Modl = Model.get(modelType, true) || models[modelType] || Model;
+      submodel = new Modl(val, ctx, binds, true);
+      submodel.unfreeze(); // unfreeze after loading it TODO: should this not be in the model itself?
+    }
+  }
+
+  return submodel;
+
+  // Default event handlers for models
+  function onChange(evt, vals) {
+    if(!ctx._ready) return; //block change propagation if model isnt ready
+    //evt = evt.replace('change', 'change:' + attr);
+    //if(attr === 'axis') console.log("")
+    ctx.triggerAll('change', ctx.getObject(), evt);    
+  }
+  function onHookChange(evt, vals) {
+    ctx.trigger(evt, ctx.getObject());
+  }
+  function onLoadStart(evt, vals) {
+    evt = evt.replace('load_start', 'load_start:' + attr);
+    ctx.setReady(false);
+    ctx.triggerAll('load_start:' + attr, ctx.getObject(), evt);
+  }
+  function onLoadError(evt, vals) {
+    evt = evt.replace('load_error', 'load_error:' + attr);
+    ctx.triggerAll('load_error' + attr, vals, evt);
+  }
+  function onReady(evt, vals) {
+    //trigger only for submodel
+    evt = evt.replace('ready', 'ready:' + attr);
+    ctx.setReady(false);
+    //wait to make sure it's not set false again in the next execution loop
+    utils.defer(function() {
+      ctx.setReady();
+    });
+    //ctx.trigger(evt, vals);
   }
 }
 

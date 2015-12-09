@@ -135,7 +135,7 @@ var Component = Events.extend({
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
-                timeMdl.trigger('change');
+                timeMdl.trigger('change', timeMdl.getObject());
               });
             }, 300);
 

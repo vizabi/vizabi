@@ -59,12 +59,12 @@ var BubbleChartComp = Component.extend({
           //TODO: adjust X & Y axis here
         }
       },
-      'change:time:start': function(evt, original) {
+      'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
       },
-      "change:time:record": function() {
+      "change:time.record": function() {
         //console.log("change time record");
         if(_this.model.time.record) {
           _this._export.open(this.element, this.name);
@@ -72,12 +72,12 @@ var BubbleChartComp = Component.extend({
           _this._export.reset();
         }
       },
-      "change:time:trails": function(evt) {
+      "change:time.trails": function(evt) {
         //console.log("EVENT change:time:trails");
         _this._trails.toggle(_this.model.time.trails);
         _this.redrawDataPoints();
       },
-      "change:time:lockNonSelected": function(evt) {
+      "change:time.lockNonSelected": function(evt) {
         //console.log("EVENT change:time:lockNonSelected");
         _this.redrawDataPoints(500);
       },
@@ -111,7 +111,7 @@ var BubbleChartComp = Component.extend({
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities:select": function() {
+      "change:entities.select": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
@@ -120,12 +120,12 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities:highlight": function() {
+      "change:entities.highlight": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
-      'change:time:value': function() {
+      'change:time.value': function() {
         //console.log("EVENT change:time:value");
         _this.updateTime();
         _this._updateDoubtOpacity();
@@ -140,7 +140,7 @@ var BubbleChartComp = Component.extend({
         _this.tooltipMobile.classed('vzb-hidden', true);
         //_this._bubblesInteract().mouseout();
       },
-      'change:time:adaptMinMaxZoom': function() {
+      'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
           _this._panZoom.expandCanvas();
@@ -148,7 +148,7 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function(evt) {
+      'change:marker.size': function(evt) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
@@ -160,16 +160,16 @@ var BubbleChartComp = Component.extend({
         }
         _this.ready();
       },
-      'change:marker:color:palette': function() {
+      'change:marker.color.palette': function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");
       },
-      'change:entities:opacitySelectDim': function() {
+      'change:entities.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
-      'change:entities:opacityRegular': function() {
+      'change:entities.opacityRegular': function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
