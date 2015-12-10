@@ -78,7 +78,8 @@ BarChart.define('default_options', {
         use: "property",
         which: "geo.name",
         allow: {
-          scales: ["ordinal"]
+          scales: ["ordinal"],
+          names: ["!geo", "!_default"]
         }
       },
       color: {
@@ -562,7 +563,10 @@ PopByAge.define('default_options', {
       },
       color: {
         use: "constant",
-        which: "#ffb600"
+        which: "#ffb600",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },

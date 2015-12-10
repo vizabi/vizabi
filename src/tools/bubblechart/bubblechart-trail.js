@@ -183,13 +183,20 @@ export default Class.extend({
       var next = this.parentNode.childNodes[(index + 1)];
       if(next == null) return;
       next = next.__data__;
+        
+      var lineLength = Math.sqrt(
+          Math.pow(_this.xScale(segment.valueX) - _this.xScale(next.valueX),2) +
+          Math.pow(_this.yScale(segment.valueY) - _this.yScale(next.valueY),2)
+          )
 
       view.select("line")
         //.transition().duration(duration).ease("linear")
         .attr("x1", _this.xScale(next.valueX))
         .attr("y1", _this.yScale(next.valueY))
         .attr("x2", _this.xScale(segment.valueX))
-        .attr("y2", _this.yScale(segment.valueY));
+        .attr("y2", _this.yScale(segment.valueY))
+        .style("stroke-dasharray", lineLength)
+        .style("stroke-dashoffset", utils.areaToRadius(_this.sScale(segment.valueS)));
     });
   },
 
@@ -199,13 +206,21 @@ export default Class.extend({
     trail.each(function(segment, index) {
 
       var view = d3.select(this);
-
+        
+      var strokeColor = _this.model.marker.color.which == "geo.region"?
+        _this.model.marker.color.getColorShade({
+          colorID: segment.valueC, 
+          shadeID: "shade"
+        })
+        :
+        _this.cScale(segment.valueC);
+      
       view.select("circle")
         //.transition().duration(duration).ease("linear")
         .style("fill", _this.cScale(segment.valueC));
       view.select("line")
         //.transition().duration(duration).ease("linear")
-        .style("stroke", _this.cScale(segment.valueC));
+        .style("stroke", strokeColor);
     });
   },
 

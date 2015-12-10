@@ -1,6 +1,6 @@
 .vzb-buttonlist {
   .vzb-buttonlist-dialog {
-    .vzb-dialog-find {
+    &[data-btn='find'] {
       .vzb-find-filter {
         display: inline-block;
         position: relative;
@@ -11,57 +11,46 @@
 }
 
 //responsiveness
-&.vzb-small {
-  &.vzb-landscape {
-    .vzb-buttonlist-dialog {
-      .vzb-dialog-find {
-        .vzb-find-filter {
-          top: 20px;
-        }
-      }
-    }
-  }
-}
-      
 &.vzb-large {
   &.vzb-button-expand-true {
     .vzb-buttonlist-dialog {
-      &.vzb-dialog-side { 
-        .vzb-dialog-find {
+      &.vzb-dialog-side {
+        &[data-btn="find"] {
           display: flex;
           flex-direction: column;
           flex: auto;
 
           .vzb-dialog-buttons {
             display: block;
+            flex: none;
           }
-      
+
           .vzb-dialog-button.vzb-label-primary {
-            visibility: hidden;
+            display: none;
           }
 
           .vzb-dialog-content {
             flex-grow: 1;
-              
+
             .vzb-dialog-content-fixed {
               height: 310px;
               max-height: 305px;
               min-width: 140px;
             }
           }
-          
+
           .vzb-dialog-title {
-            flex-grow: 0;
             display: inline-block;
-            padding: 15px 0 10px 20px;
+            padding: 0 0 0 20px;
             vertical-align: top;
             margin-top: 0;
+            flex: none;
           }
-          
+
           .vzb-find-filter {
             display: inline-block;
             position: relative;
-            padding: 10px;
+            padding: 0 10px;
             max-width: 210px;
             top: 0;
           }

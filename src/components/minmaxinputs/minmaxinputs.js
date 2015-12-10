@@ -93,6 +93,11 @@ var MinMaxInputs = Component.extend({
         _this.el_fake_fieldMax.on("change", function() {
             _this._setModel(FAKEMAX, this.value)
         });
+        
+        this.element.selectAll("input")
+            .on("keypress", function(e) {
+                if(d3.event.which == 13) document.activeElement.blur();
+            });
     },
 
     updateView: function() {

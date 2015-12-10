@@ -1,4 +1,4 @@
-$vzb-button-width: 60px;
+$vzb-button-width: 58px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: $vzb-color-white;
@@ -37,7 +37,7 @@ $vzb-dialog-content-height: 250px;
     border: 0;
     text-align: center;
     display: inline-block;
-    padding: 5px;
+    padding: 5px 4px;
     width: $vzb-button-width;
 
     > .vzb-buttonlist-btn-icon {

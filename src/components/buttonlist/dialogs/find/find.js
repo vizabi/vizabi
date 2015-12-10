@@ -44,7 +44,8 @@ var Find = Dialog.extend({
    * Grab the list div
    */
   readyOnce: function() {
-    this.element = d3.select(this.element);
+    this._super();
+
     this.list = this.element.select(".vzb-find-list");
     this.input_search = this.element.select("#vzb-find-search");
     this.deselect_all = this.element.select("#vzb-find-deselect");
@@ -55,14 +56,6 @@ var Find = Dialog.extend({
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
-    }).on("keypress", function(e) {
-      if (d3.event.which == 13) {
-        document.activeElement.blur();
-      }
-    }).on('focus', function() {
-      _this.input_search.attr("placeholder", '');
-    }).on('blur', function() {
-      _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
     });
 
     this.deselect_all.on("click", function() {
@@ -71,8 +64,6 @@ var Find = Dialog.extend({
 
     this.translator = this.model.language.getTFunction();
     this.input_search.attr("placeholder", this.translator("placeholder/search") + "...");
-
-    //this._super();
 
     //make sure it refreshes when all is reloaded
     var _this = this;
@@ -145,7 +136,10 @@ var Find = Dialog.extend({
         return(selected.indexOf(d[KEY]) !== -1);
       })
       .on("change", function(d) {
+        var isSelected = _this.model.state.entities.isSelected(d);
+        _this.model.state.entities.clearHighlighted();
         _this.model.state.entities.selectEntity(d);
+        if(isSelected) _this.model.state.entities.highlightEntity(d); 
       });
 
     items.append("label")
@@ -166,7 +160,17 @@ var Find = Dialog.extend({
     this.showHideSearch();
     this.showHideDeselect();
   },
-
+  resize: function() {
+    if (this.getLayoutProfile() == 'small') {
+      var height = this.root.element.offsetHeight;
+      var titleHeight = this.element.select(".vzb-dialog-title").node().offsetHeight;
+      var buttonsHeight = this.element.select(".vzb-dialog-buttons").node().offsetHeight;
+      this.element.select(".vzb-dialog-content-fixed").style('max-height', height - 90 - titleHeight - buttonsHeight + 'px');
+    } else {
+      this.element.select(".vzb-dialog-content-fixed").style('max-height', '');
+    }
+    this._super();
+  },
   showHideSearch: function() {
     var search = this.input_search.node().value || "";
     search = search.toLowerCase();

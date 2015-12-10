@@ -1,12 +1,26 @@
 {
     "color": {
+        "shades": {
+            "geo.region": {
+                "fill1": 0,
+                "fill2": 1,
+                "fill3": 2,
+                "shade": 3,
+                "print_fill": 4,
+                "print_stroke": 5,
+                "_default": 0
+            },
+            "_default": {
+                "_default": 0
+            }
+        },
         "palettes": {
             "geo.region": {
-                "asi": "#FF5872",
-                "eur": "#FFE700",
-                "ame": "#7FEB00",
-                "afr": "#00D5E9",
-                "_default": "#ffb600"
+                "asi": ["#ff5872", "#ff5178", "#ff658a", "#da0025", "#fa4e73", "#b2043a"], 
+                "eur": ["#ffe700", "#fbdd00", "#fff400", "#fbaf09", "#ffe700", "#b17f4a"], 
+                "ame": ["#7feb00", "#5de200", "#81f201", "#00b900", "#b5ea32", "#008d36"], 
+                "afr": ["#00d5e9", "#00c8ec", "#00e1ec", "#0098df", "#77dff7", "#0586c6"], 
+                "_default": ["#ffb600", "#ffaa14", "#ffc500", "#fb6d19", "#ffb600", "#9b4838"] 
             },
             "gdp_per_cap": {
                 "0": "#62CCE3",
@@ -79,7 +93,7 @@
             "sourceLink": ""
         },
         "pop": {
-            "allowCharts": ["*"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "",
             "scaleType": "log",
@@ -102,13 +116,13 @@
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty"
         },
         "gdp_per_cap": {
-            "allowCharts": ["*"],
+            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "gdp_per_cap",
             "interpolation": "exp",
             "scales": ["log", "linear"],
             "sourceLink": "http://www.gapminder.org/news/data-sources-dont-panic-end-poverty",
-            "domain": [300, 130000]
+            "domain": [300, 140000]
         },
         "gdppc_pday": {
             "allowCharts": ["none"],

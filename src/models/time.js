@@ -63,7 +63,7 @@ var TimeModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "time";
     //default values for time model
@@ -71,33 +71,34 @@ var TimeModel = Model.extend({
     values = utils.extend(defaults, values);
 
     //same constructor
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
 
     var _this = this;
     this.dragging = false;
     this.postponePause = false;
 
     //bing play method to model change
-    this.on([{
-      'change:playing': function() {
+    this.on({
+/*
+      "change:playing": function() {
         if(_this.playing === true) {
           _this._startPlaying();
         } else {
           _this._stopPlaying();
         }
-      }
-    },{
-      'set': function() {
+
+      },
+*/
+      "set": function() {
         //auto play if playing is true by reseting variable
         if(_this.playing === true) {
           _this.set('playing', true, true); //3rd argumennt forces update
         }
-
         this.snap("start");
         this.snap("end");
         this.snap("value");
       }
-    }]);
+    });
   },
 
   /**
@@ -161,7 +162,7 @@ var TimeModel = Model.extend({
    * Plays time
    */
   play: function() {
-    this.playing = true;
+    this._startPlaying();
   },
 
   /**
@@ -250,7 +251,6 @@ var TimeModel = Model.extend({
     if(this.round === 'ceil') op = 'ceil';
     if(this.round === 'floor') op = 'floor';
     var time = d3.time[this.unit][op](this[what]);
-
     this.set(what, time, true); //3rd argumennt forces update
   },
 
@@ -264,14 +264,14 @@ var TimeModel = Model.extend({
     var _this = this;
     var time = this.value;
 
-    this.snap();
-
     //go to start if we start from end point
     if(_this.end - time <= 0) {
       time = this.start;
       _this.value = time;
+    } else {
+      this.snap();
     }
-
+    this.playing = true;
     this.playInterval();
 
     this.trigger("play");
@@ -301,10 +301,10 @@ var TimeModel = Model.extend({
         time = d3.time[_this.unit].offset(time, step);
 
         if(_this.postponePause) {
-            _this.playing = false; 
+            _this.playing = false;
             _this.postponePause = false;
         }
-          
+
         _this.value = time;
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();

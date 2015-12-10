@@ -109,7 +109,6 @@
         
       .vzb-bmc-axis-c-title {
         @extend %vzb-chart-axis-title;
-        text-anchor: end;
       }
 
       .vzb-bmc-axis-info {
@@ -170,7 +169,8 @@
       }
 
       .vzb-bmc-bubble-labels,
-      .vzb-bmc-tooltip {
+      .vzb-bmc-tooltip,
+      .vzb-bmc-axis-info {
         @extend %vzb-chart-ticks-large;
       }
     }
@@ -188,7 +188,8 @@
       }
 
       .vzb-bmc-bubble-labels,
-      .vzb-bmc-tooltip {
+      .vzb-bmc-tooltip,
+      .vzb-bmc-axis-info {
         @extend %vzb-chart-ticks-medium;
       }
     }
@@ -206,7 +207,8 @@
       }
 
       .vzb-bmc-bubble-labels,
-      .vzb-bmc-tooltip {
+      .vzb-bmc-tooltip,
+      .vzb-bmc-axis-info {
         @extend %vzb-chart-ticks-small;
       }
     }

@@ -54,7 +54,7 @@ var OPTIONS = {
   TIMEOUT: null, //timeout id
   SEARCH_PROPERTY: 'id', //property in input data we we'll search by
   SUBMENUS: 'children', //property for submenus (used by search)
-  SEARCH_MIN_STR: 2, //minimal length of query string to start searching
+  SEARCH_MIN_STR: 1, //minimal length of query string to start searching
   RESIZE_TIMEOUT: null, //container resize timeout
   MOBILE_BREAKPOINT: 400, //mobile breakpoint
   CURRENT_PATH: [], //current active path

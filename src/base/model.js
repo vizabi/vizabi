@@ -654,6 +654,7 @@ var Model = Events.extend({
    * @returns an array of values
    */
   getValues: function(filter, group_by, previous) {
+    var _this = this;
 
     if(this.isHook()) {
       return [];
@@ -724,7 +725,7 @@ var Model = Events.extend({
 
         utils.forEach(filtered, function(arr, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
-          next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
+          //next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
           value = interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
