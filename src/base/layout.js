@@ -50,18 +50,24 @@ var Layout = Events.extend({
     var _this = this;
     var width = this._container.clientWidth;
     var height = this._container.clientHeight;
+
+    /**
+     * issue #1118
+     * check if device is iPhone then add top margin for searchbar if it visible
+     */
     if (this._container.clientWidth > this._container.clientHeight
-      && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-      && navigator.userAgent.match(/iPhone/i)
-      && this._container.clientWidth < 700) {
+      && /^((?!chrome|android).)*safari/i.test(navigator.userAgent) // browser is safari
+      && navigator.userAgent.match(/iPhone/i) // checking device
+      && this._container.clientWidth < 700) {  // small device
 
       var bodyHeight = this._container.clientHeight;
       var windowHeight = window.innerHeight;
 
 
-      if (2 < (bodyHeight - windowHeight) && (bodyHeight - windowHeight) <= 45) {
+      if (2 < (bodyHeight - windowHeight) && (bodyHeight - windowHeight) <= 45) { // check searchbar is visible
         this._container.style.top =  44 + "px";
-        document.body.scrollTop = 44;
+        document.body.scrollTop = 44; // scrolling empty space
+        document.body.style.overflow = "hidden";
       } else {
         this._container.style.top =  0;
       }
