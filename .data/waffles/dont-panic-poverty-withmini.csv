@@ -1,4 +1,4 @@
-geo,geo.name,geo.cat,geo.region,time,pop,gdp_per_cap,gini,u5mr,size
+geo,geo.name,geo.cat,geo.region,time,pop,gdp_pc,gini,u5mr,size
 afg,Afghanistan,country,asi,1800,3280000,603,30.5,468.58,big
 ago,Angola,country,afr,1800,1567028,618,48.9,485.68,big
 alb,Albania,country,eur,1800,410445,667,41.2,375.2,big
