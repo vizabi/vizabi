@@ -15,13 +15,13 @@
 $vzb-font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-family-alt: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 $vzb-font-size-base: 16px;
-$vzb-font-size-regular: 1em; 
-$vzb-font-size-tiny: .625em; 
-$vzb-font-size-small: .8em;  
-$vzb-font-size-medium: 1.24em; 
-$vzb-font-size-large: 1.38em;  
-$vzb-font-size-larger: 1.6em; 
-$vzb-font-size-largest: 2.1em;     
+$vzb-font-size-regular: 1em;
+$vzb-font-size-tiny: .625em;
+$vzb-font-size-small: .8em;
+$vzb-font-size-medium: 1.24em;
+$vzb-font-size-large: 1.38em;
+$vzb-font-size-larger: 1.6em;
+$vzb-font-size-largest: 2.1em;
 
 // ----------------------------------------------------------------------------
 //   Colors
@@ -30,8 +30,8 @@ $vzb-font-size-largest: 2.1em;
 // ----------------------------------------------------------------------------
 // Primary = Low saturated Blue
 $vzb-color-primary: #607889;
-$vzb-color-primary-darkest: #425663; 
-$vzb-color-primary-dark: #4b98aa; 
+$vzb-color-primary-darkest: #425663;
+$vzb-color-primary-dark: #4b98aa;
 $vzb-color-primary-strong: #4b98aa;
 $vzb-color-primary-light: #9fbbc1;
 $vzb-color-primary-lightest: #f2fafc;
@@ -50,8 +50,8 @@ $vzb-color-green: #b4de79;
 $vzb-color-blue: #62cce3;
 $vzb-gapminder-main: #ffca34;
 // Accents
-$vzb-color-accent-orange: #fc6b38; 
-$vzb-color-accent-yellow: #ff0; 
+$vzb-color-accent-orange: #fc6b38;
+$vzb-color-accent-yellow: #ff0;
 // ----------------------------------------------------------------------------
 //   Loader (spinner)
 // ----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
   position: relative;
 
   &.vzb-loading-first {
-    
+
     > div {
       visibility: hidden;
     }
@@ -140,9 +140,9 @@ $vzb-loader-bgcolor: $vzb-color-white;
   &.vzb-force-fullscreen {
     @include position(fixed, 0 0 0 0);
     display: inline-table;
-    height: 100% !important;
+    height: auto !important;
     margin: 0;
-    width: 100% !important;
+    width: auto !important;
     z-index: 9997;
   }
 
@@ -196,7 +196,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 .vzb-dialog-scrollable {
   &::-webkit-scrollbar {
     width: 6px;
-    -webkit-appearance: none;      
+    -webkit-appearance: none;
   }
   &::-webkit-scrollbar-thumb {
     background: lighten($vzb-color-primary, 30%);
