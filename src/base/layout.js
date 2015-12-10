@@ -67,7 +67,6 @@ var Layout = Events.extend({
       if (2 < (bodyHeight - windowHeight) && (bodyHeight - windowHeight) <= 45) { // check searchbar is visible
         this._container.style.top =  44 + "px";
         document.body.scrollTop = 44; // scrolling empty space
-        document.body.style.overflow = "hidden";
       } else {
         this._container.style.top =  0;
       }
