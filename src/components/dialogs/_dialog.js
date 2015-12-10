@@ -50,7 +50,7 @@ var Dialog = Component.extend({
     this.dragContainerEl = d3.select('.vzb-tool-stage');
     var profile = this.getLayoutProfile();
 
-    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 130);
+    var dg = dialogDrag(this.placeholderEl, this.dragContainerEl, 10);
     var dragBehavior = d3.behavior.drag()
       .on('dragstart', function D3dialogDragStart() {
         _this.trigger('dragstart');
@@ -62,7 +62,7 @@ var Dialog = Component.extend({
       })
       .on('dragend', function D3dialogDrag() {
         _this.trigger('dragend');
-        _this.leftPos = _this.placeholderEl.style('left');
+        _this.rightPos = _this.placeholderEl.style('right');
         _this.topPos = _this.placeholderEl.style('top');
       });
     this.dragHandler.call(dragBehavior);
@@ -75,16 +75,16 @@ var Dialog = Component.extend({
   resize: function() {
     if(this.placeholderEl) {
       var profile = this.getLayoutProfile();
-      var chartWidth = -parseInt(this.dragContainerEl.style('width'), 10);
-      var dialogLeft = parseInt(this.placeholderEl.style('left'), 10);
+      var chartWidth = parseInt(this.dragContainerEl.style('width'), 10);
+      var dialogRight = parseInt(this.placeholderEl.style('right'), 10);
       var chartHeight = parseInt(this.rootEl.style('height'), 10);
       var dialogTop = parseInt(this.placeholderEl.style('top'), 10);
       var dialogWidth = parseInt(this.placeholderEl.style('width'), 10);
       var dialogHeight = parseInt(this.placeholderEl.style('height'), 10);
-      if(utils.isNumber(dialogLeft) && dialogLeft < chartWidth + dialogWidth * .5) {
-        if(this.leftPos) {
-          this.leftPos = (chartWidth + dialogWidth * .5) + 'px';
-          this.placeholderEl.style('left', this.leftPos);
+      if(utils.isNumber(dialogRight) && dialogRight > chartWidth - dialogWidth) {
+        if(this.rightPos) {
+          this.rightPos = (chartWidth - dialogWidth) + 'px';
+          this.placeholderEl.style('right', this.rightPos);
         }
       }
       if(utils.isNumber(dialogTop) && utils.isNumber(dialogHeight) && dialogTop >= 0 && dialogTop > chartHeight - dialogHeight) {
@@ -93,22 +93,22 @@ var Dialog = Component.extend({
         }
       }
       if(profile === 'small') {
-        this.leftPos = '';
+        this.rightPos = '';
         this.topPos = '';
         this.placeholderEl.attr('style', '');
       } else {
         if(this.rootEl.classed('vzb-landscape')) {
-          var contentHeight = parseInt(this.rootEl.style('height'));
-          var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-          if (contentHeight < placeholderHeight) {
-            this.topPos = (-contentHeight + 50) + 'px';
-            this.leftPos = '';
-            this.placeholderEl.style('left', this.leftPos);
-            this.placeholderEl.style('bottom', 'auto');
-          } else {
-            //this.topPos = '';
-            this.placeholderEl.style('bottom', '');
-          }
+          // var contentHeight = parseInt(this.rootEl.style('height'));
+          // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+          // if (contentHeight < placeholderHeight) {
+          //   this.topPos = (-contentHeight + 50) + 'px';
+          //   this.rightPos = '';
+          //   this.placeholderEl.style('right', this.rightPos);
+          //   this.placeholderEl.style('bottom', 'auto');
+          // } else {
+          //   //this.topPos = '';
+          //   this.placeholderEl.style('bottom', '');
+          // }
         }
         this.placeholderEl.style('top', this.topPos);
       }
@@ -121,28 +121,28 @@ var Dialog = Component.extend({
 
   beforeOpen: function() {
     var _this = this;
-
+    
     this.transitionEvents = ['webkitTransitionEnd', 'transitionend', 'msTransitionEnd', 'oTransitionEnd'];
     this.transitionEvents.forEach(function(event) {
       _this.placeholderEl.on(event, _this.transitionEnd.bind(_this, event));
     });
-    if(this.leftPos && this.getLayoutProfile() !== 'small') {
-      this.placeholderEl.style('left', this.leftPos);
+    if(this.rightPos && this.getLayoutProfile() !== 'small') {
+      this.placeholderEl.style('right', this.rightPos);
     }
     if(this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     } else if(this.rootEl.classed('vzb-landscape')) { // need to recalculate popup position (Safari 8 bug)
-      var contentHeight = parseInt(this.rootEl.style('height'));
-      var placeholderHeight = parseInt(this.placeholderEl.style('height'));
-      if (contentHeight < placeholderHeight) {
-        this.topPos = (-contentHeight + 50) + 'px';
-        this.leftPos = '';
-        this.placeholderEl.style('left', this.leftPos);
-        this.placeholderEl.style('bottom', 'auto');
-      } else {
-        this.topPos = '';
-        this.placeholderEl.style('bottom', '');
-      }
+      // var contentHeight = parseInt(this.rootEl.style('height'));
+      // var placeholderHeight = parseInt(this.placeholderEl.style('height'));
+      // if (contentHeight < placeholderHeight) {
+      //   this.topPos = (-contentHeight + 50) + 'px';
+      //   this.rightPos = '';
+      //   this.placeholderEl.style('right', this.rightPos);
+      //   this.placeholderEl.style('bottom', 'auto');
+      // } else {
+      //   this.topPos = '';
+      //   this.placeholderEl.style('bottom', '');
+      // }
       this.placeholderEl.style('top', this.topPos);
     }
 
@@ -159,6 +159,7 @@ var Dialog = Component.extend({
   },
 
   beforeClose: function() {
+//issues: 369 & 442
     if(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small') {
       this.placeholderEl.style('top', 'auto'); // issues: 369 & 442
     }
@@ -171,14 +172,18 @@ var Dialog = Component.extend({
    */
   close: function() {
     if(this.isOpen && !(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
-      this.leftPos = this.placeholderEl.style('left');
+      this.rightPos = this.placeholderEl.style('right');
       var topPos = this.placeholderEl.style('top');
       if( topPos.charAt(0) !== "-") this.topPos = topPos;
     }
+
+
+//issues: 369 & 442
     if(!(this.rootEl.classed('vzb-portrait') && this.getLayoutProfile() === 'small')) {
       this.placeholderEl.style('top', ''); // issues: 369 & 442
     }
     this.isOpen = false;
+    this.trigger('close');
   },
 
 
@@ -188,17 +193,17 @@ var Dialog = Component.extend({
     this.transitionEvents.forEach(function(event) {
       _this.placeholderEl.on(event, null);
     });
-    this.placeholderEl.classed('notransition', true);
+    if(this.isOpen) this.placeholderEl.classed('notransition', true);
   }
 
 });
 
 function dialogDrag(element, container, xOffset) {
-  var posX, posY, divTop, divLeft, eWi, eHe, cWi, cHe, diffX, diffY;
+  var posX, posY, divTop, divRight, eWi, eHe, cWi, cHe, diffX, diffY;
 
   return {
     move: function(x, y) {
-      element.style('left', x + 'px');
+      element.style('right', x + 'px');
       element.style('top', y + 'px');
     },
 
@@ -212,12 +217,12 @@ function dialogDrag(element, container, xOffset) {
         posY = touchCoord[0][1];
       }
       divTop = parseInt(element.style('top')) || 0;
-      divLeft = parseInt(element.style('left')) || 0;
+      divRight = parseInt(element.style('right')) || 0;
       eWi = parseInt(element.style('width'));
       eHe = parseInt(element.style('height'));
-      cWi = parseInt(container.style('width')) + xOffset;
+      cWi = parseInt(container.style('width'));
       cHe = parseInt(container.style('height'));
-      diffX = posX - divLeft;
+      diffX = posX + divRight;
       diffY = posY - divTop;
     },
 
@@ -230,12 +235,12 @@ function dialogDrag(element, container, xOffset) {
         posX = touchCoord[0][0];
         posY = touchCoord[0][1];
       }
-      var aX = posX - diffX,
-      aY = posY - diffY;
-      if(aX > -xOffset) aX = -xOffset;
+      var aX = -posX + diffX,
+        aY = posY - diffY;
+      if(aX < -xOffset) aX = -xOffset;
       if(aY < 0) aY = 0;
-      if(-aX + eWi > cWi) aX = -cWi + eWi;
-      if(eHe + aY > cHe) aY = cHe - eHe;
+      if(aX + eWi > cWi) aX = cWi - eWi;
+      if(aY + eHe > cHe) aY = cHe - eHe;
 
       this.move(aX, aY);
     }

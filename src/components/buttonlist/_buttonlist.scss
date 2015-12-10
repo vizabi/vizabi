@@ -1,4 +1,5 @@
-$vzb-button-width: 58px;
+$vzb-button-width: 60px;
+$vzb-button-width-expand: 58px;
 $vzb-button-size: 26px;
 $vzb-button-radius: $vzb-button-size + 10;
 $vzb-button-bg: $vzb-color-white;
@@ -7,30 +8,9 @@ $vzb-button-color: $vzb-color-primary-dark;
 $vzb-button-color-title: $vzb-color-primary-light;
 $vzb-button-color-title-active: $vzb-button-color;
 $vzb-button-color-border: #cce6ed;
-$vzb-dialog-content-height: 250px;
 
 
-.vzb-buttonlist {
-  @include position(absolute, 0);
-  overflow: visible;
-  text-align: center;
-
-  input,
-  textarea,
-  keygen,
-  select,
-  button {
-    font-family: $vzb-font-family;
-  }
-
-  .vzb-buttonlist-container-buttons {
-    @include position(absolute, 0);
-    
-    &:-webkit-scrollbar {
-      display: none;
-    }
-  }
-
+.vzb-tool-buttonlist {
   .vzb-buttonlist-btn {
     outline: none;
     background: none;
@@ -109,8 +89,6 @@ $vzb-dialog-content-height: 250px;
   }
 }
 
-@import 'dialogs/dialog';
-
 //responsiveness
 
 &.vzb-small {
@@ -134,12 +112,7 @@ $vzb-dialog-content-height: 250px;
     }
   }
   &.vzb-portrait {
-    .vzb-buttonlist {
-      .vzb-buttonlist-container-buttons {
-        white-space: nowrap;
-        margin-bottom: -20px;
-      }
-
+    .vzb-tool-buttonlist {
       .vzb-buttonlist-btn {
         margin-bottom: 20px;
         width: $vzb-button-width;
@@ -151,7 +124,7 @@ $vzb-dialog-content-height: 250px;
 &.vzb-landscape,
 &.vzb-medium,
 &.vzb-large {
-  .vzb-buttonlist {
+  .vzb-tool-buttonlist {
     .vzb-buttonlist-btn {
       margin-right: 20px;
       width: $vzb-button-width;
@@ -168,39 +141,17 @@ $vzb-dialog-content-height: 250px;
       }
     }
   }
-
-  .vzb-buttonlist-container-buttons {
-    margin-right: -20px;
-  }
 }
 
 &.vzb-large {
-  &.vzb-button-expand-true {
-    .vzb-buttonlist {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .vzb-buttonlist-container-dialogs {
-      display: flex;
-      flex-direction: column;
-      flex: auto;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    .vzb-buttonlist-container-buttons {
-      position: relative;
-      padding: 10px 0;
-      margin-right: -10px;
-      flex: none;
-    }
-
-    .vzb-buttonlist-btn {
-      margin-right: 0;
-
-      &.vzb-dialog-side-btn {
-        display: none;
+  &.vzb-dialog-expand-true {
+    .vzb-tool-buttonlist {
+      .vzb-buttonlist-btn {
+        margin-right: 0;
+        width: $vzb-button-width-expand;
+        &.vzb-dialog-side-btn {
+          display: none;
+        }
       }
     }
   }

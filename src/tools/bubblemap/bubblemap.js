@@ -9,6 +9,7 @@ import BubbleMapComponent from './bubblemap-component';
 
 import {
   timeslider,
+  dialogs,
   buttonlist,
   treemenu,
   datawarning
@@ -38,6 +39,10 @@ var BubbleMap = Tool.extend('BubbleMap', {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
+    }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',

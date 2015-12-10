@@ -1,11 +1,14 @@
-.vzb-buttonlist {
-  .vzb-buttonlist-dialog {
+$vzb-dialog-content-height: 250px;
+
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
     @include transition(all 300ms ease-in-out);
-    @include position(absolute, null null -450px 50%);
+    @include position(absolute, null 0 -450px 0);
     border-top: 1px solid #f7f7f7;
     width: 280px;
-    margin-left: -140px;
+    margin: 0;
+    //margin-left: -140px;
     z-index: -2;
     vertical-align: top;
     background-color: #fff;
@@ -15,7 +18,7 @@
     overflow: hidden;
   
     &.vzb-active {
-      @include position(absolute, null null 45px 50%);
+      @include position(absolute, null 0 45px 0);
       z-index: 20;
       visibility: visible;
     }
@@ -263,25 +266,25 @@
     }
   }
 
-  @import '../../bubblesize/bubblesize';
-  @import '../../indicatorpicker/indicatorpicker';
-  @import '../../minmaxinputs/minmaxinputs';
-  @import '../../simpleslider/simpleslider';
-  @import '../../colorlegend/colorlegend';
-  @import '../../simplecheckbox/simplecheckbox';
-  @import '../../draggablelist/draggablelist';
+  @import '../bubblesize/bubblesize';
+  @import '../indicatorpicker/indicatorpicker';
+  @import '../minmaxinputs/minmaxinputs';
+  @import '../simpleslider/simpleslider';
+  @import '../colorlegend/colorlegend';
+  @import '../simplecheckbox/simplecheckbox';
+  @import '../draggablelist/draggablelist';
 }
 
 //responsiveness
 &.vzb-landscape,
 &.vzb-large,
 &.vzb-medium {
-  .vzb-buttonlist {
-    .vzb-buttonlist-dialog {
-      @include position(absolute, -2000px 40px auto -130px);
-
+  .vzb-tool-dialogs {
+    .vzb-dialogs-dialog {
+      @include position(absolute, -2000px -10px auto auto);
+      margin-right: $size-button-list;
       &.vzb-active {
-        @include position(absolute, 20px 40px auto -130px);
+        @include position(absolute, 20px -10px auto auto);
       }
     }
   }
@@ -289,8 +292,8 @@
 
 &.vzb-small {
   // issues: 369 & 442
-  .vzb-buttonlist {
-    .vzb-buttonlist-dialog {
+  .vzb-tool-dialogs {
+    .vzb-dialogs-dialog {
       &.vzb-active {
         top: auto;
       }
@@ -313,8 +316,9 @@
   }
 
   &.vzb-portrait {
-    .vzb-buttonlist {
-      .vzb-buttonlist-dialog {
+    .vzb-tool-dialogs {
+      .vzb-dialogs-dialog {
+        margin: auto;
         .vzb-dialog-content.vzb-dialog-content-fixed {
           max-height: $vzb-dialog-content-height - 50px;
         }
@@ -322,9 +326,7 @@
     }
   }
   &.vzb-landscape {
-    .vzb-buttonlist-dialog {
-      @include position(absolute, -2000px 40px auto -130px);
-
+    .vzb-dialogs-dialog {
       .vzb-dialog-content,
       .vzb-dialog-content.vzb-dialog-content-fixed {
         max-height: $vzb-dialog-content-height - 100px !important;
@@ -342,9 +344,10 @@
 }
 
 &.vzb-large {
-  &.vzb-button-expand-true {
-    .vzb-buttonlist {
-      .vzb-buttonlist-dialog {
+  &.vzb-dialog-expand-true {
+    .vzb-tool-dialogs {
+      .vzb-dialogs-dialog {
+        margin-right: $vzb-button-expand-width;
         &.vzb-dialog-side {
           visibility: visible;
           display: block;

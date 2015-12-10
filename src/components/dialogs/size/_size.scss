@@ -1,7 +1,7 @@
 //responsiveness
 &.vzb-large {
-  &.vzb-button-expand-true {
-    .vzb-buttonlist-dialog {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
       &.vzb-dialog-side {
         &[data-btn="size"] {
           flex: none;
