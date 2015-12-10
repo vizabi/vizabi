@@ -50,6 +50,25 @@ var Layout = Events.extend({
     var _this = this;
     var width = this._container.clientWidth;
     var height = this._container.clientHeight;
+    if (this._container.clientWidth > this._container.clientHeight
+      && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      && navigator.userAgent.match(/iPhone/i)
+      && this._container.clientWidth < 700) {
+
+      var bodyHeight = this._container.clientHeight;
+      var windowHeight = window.innerHeight;
+
+
+      if (2 < (bodyHeight - windowHeight) && (bodyHeight - windowHeight) <= 45) {
+        this._container.style.top =  44 + "px";
+        document.body.scrollTop = 44;
+      } else {
+        this._container.style.top =  0;
+      }
+    } else {
+      this._container.style.top =  0;
+    }
+
     if(this._prev_size && this._prev_size.width === width && this._prev_size.height === height) {
       return;
     }
