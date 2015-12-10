@@ -34,7 +34,7 @@ var IndPicker = Component.extend({
         if(!config.markerID) utils.warn("indicatorpicker.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {
-            "change:language:strings": function(evt) {
+            "change:language.strings": function(evt) {
                 _this.updateView();
             },
             "change:marker": function(evt) {

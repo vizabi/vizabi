@@ -352,7 +352,7 @@ var Component = Events.extend({
   _uiMapping: function(id, ui) {
     //if overwritting UI
     if(ui) {
-      return new Model(ui);
+      return new Model('ui', ui);
     }
     if(id && this.ui) {
       id = id.replace('.', '');
@@ -435,7 +435,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(values, null, model_binds, true);
+    return new Model(subcomponent, values, null, model_binds, true);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"

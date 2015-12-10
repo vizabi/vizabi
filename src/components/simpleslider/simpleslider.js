@@ -14,17 +14,18 @@ var SimpleSlider = Component.extend({
       }];
 
       var _this = this;
+      this.name = 'gapminder-simpleSlider';
 
       this.arg = config.arg;
       this.thumb_size = config.thumb_size;
       this.slider_properties = config.properties;
 
       this.model_binds = {
-        "change:submodel:select": function (evt) {
+        "change:submodel.select": function (evt) {
           _this.updateView();
         }
       }
-      this.model_binds["change:submodel:" + this.arg] = function (evt) {
+      this.model_binds["change:submodel." + this.arg] = function (evt) {
         _this.updateView();
       }
 

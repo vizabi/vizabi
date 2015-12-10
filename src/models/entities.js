@@ -25,7 +25,7 @@ var EntitiesModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "entities";
     //TODO: add defaults extend to super
@@ -35,7 +35,7 @@ var EntitiesModel = Model.extend({
     this._visible = [];
     this._multiple = true;
 
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**

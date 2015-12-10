@@ -14,6 +14,7 @@ var ColorModel = Model.extend({
   _defaults: {
     use: "constant",
     palette: null,
+    scaleType: '',
     which: undefined
   },
 
@@ -23,7 +24,7 @@ var ColorModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "color";
     //TODO: add defaults extend to super
@@ -32,7 +33,7 @@ var ColorModel = Model.extend({
 
     this._original_palette = values.palette;
 
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
 
     this._firstLoad = true;
     this._hasDefaultColor = false;

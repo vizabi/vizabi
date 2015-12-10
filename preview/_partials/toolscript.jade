@@ -33,8 +33,9 @@ script.
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
   VIZABI_OPTIONS.bind.push({
-    'change:state.time': function(evt, time) {
-      if (time.playing) {
+    'change:state.time.playing': function(evt, path) {
+      var playing = evt.target;
+      if (playing) {
         playButton.onclick = pause;
         playButton.setAttribute("data-tooltip", "Pause");
         removeClass(playButtonIcon, 'fa-play');
@@ -45,7 +46,8 @@ script.
         removeClass(playButtonIcon, 'fa-pause');
         addClass(playButtonIcon, 'fa-play');
       }
-
+    },
+    'change:state.time.record': function(evt, path) {
       var recButton = document.getElementById("vzbp-btn-record");
       var recButtonIcon = recButton.querySelectorAll("i")[0];
       if (time.record) {
@@ -65,7 +67,8 @@ script.
   var langButton = document.getElementById("vzbp-btn-lang");
 
   VIZABI_OPTIONS.bind.push({
-    'change:language': function(evt, language) {
+    'change:language': function(evt, path) {
+      var language = evt.target;
       if (language.id === "en") {
         langButton.onclick = function() { language('se'); };
         langButton.setAttribute("data-tooltip", "Set Lang: SE");

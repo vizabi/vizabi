@@ -81,12 +81,12 @@ var BubbleChartComp = Component.extend({
         //console.log("EVENT change:time:lockNonSelected");
         _this.redrawDataPoints(500);
       },
-      "change:marker": function(evt) {
+      "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(evt.indexOf("change:marker:size") !== -1) return;
-        if(evt.indexOf("change:marker:color:palette") > -1) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("marker.size") !== -1) return;
+        if(path.indexOf("marker.color.palette") > -1) return;
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
@@ -94,7 +94,7 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
-        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+        if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
           if(_this.draggingNow)return;
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.fakeMin,
@@ -106,7 +106,7 @@ var BubbleChartComp = Component.extend({
           return;
         }
 
-        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
 
         _this.ready();
         //console.log("EVENT change:marker", evt);
@@ -151,7 +151,7 @@ var BubbleChartComp = Component.extend({
       'change:marker.size': function(evt) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
             _this.updateMarkerSizeLimits();
             _this._trails.run("findVisible");
             _this.redrawDataPointsOnlySize();

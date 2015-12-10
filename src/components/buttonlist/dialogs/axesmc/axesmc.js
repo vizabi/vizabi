@@ -20,13 +20,13 @@ var Axes = Dialog.extend({
     var _this = this;
 
     this.model_binds = {
-      'change:state:time:xLogStops': function() {
+      'change:state.time.xLogStops': function() {
         _this.updateView();
       },
-      'change:state:time:yMaxMethod': function() {
+      'change:state.time.yMaxMethod': function() {
         _this.updateView();
       },
-      'change:state:time:probe': function() {
+      'change:state.time.probe': function() {
         _this.updateView();
       }
     };

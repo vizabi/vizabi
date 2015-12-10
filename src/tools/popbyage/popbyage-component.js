@@ -42,23 +42,23 @@ var PopByAge = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function(evt) {
+      "change:time.value": function(evt) {
         _this._updateEntities();
       },
-      "change:entities:needUpdate": function(evt) {
+      "change:entities.needUpdate": function(evt) {
         _this._updateEntities();
       },
-      "change:entities:show": function(evt) {
+      "change:entities.show": function(evt) {
         console.log('Trying to change show');
       },
-      "change:age:select": function(evt) {
+      "change:age.select": function(evt) {
         _this._selectBars();
       },
-      "change:marker:color:palette": function (evt) {
+      "change:marker.color.palette": function (evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       },
-      "change:marker:color:scaleType":function (evt) {
+      "change:marker.color.scaleType":function (evt) {
         if (!_this._readyOnce) return;
         _this._updateEntities();
       }

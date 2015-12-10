@@ -20,9 +20,11 @@ var _DATAMANAGER = new Data();
 
 var ModelLeaf = Events.extend({
 
+  _name: '',
+  _parent: null,
   _val: null,
 
-  init: function(value, parent, binds) {
+  init: function(name, value, parent, binds) {
 
     // getter and setter for the value
     Object.defineProperty(this, 'value', {
@@ -33,7 +35,8 @@ var ModelLeaf = Events.extend({
     this._super();
 
     // after super so there is a .events object
-    this.parent = parent;
+    this._name = name;
+    this._parent = parent;
     this.value = value;
     this.on(binds);
   },
@@ -44,7 +47,7 @@ var ModelLeaf = Events.extend({
 
   set: function(val, force) {
     if (this._val !== val || force || JSON.stringify(this._val) !== JSON.stringify(val)) {
-      this.trigger('change', val);
+      this.trigger('change', this._name);
     }
     this._val = val;
   }
@@ -58,12 +61,13 @@ var Model = Events.extend({
    * @param {Object} bind Initial events to bind
    * @param {Boolean} freeze block events from being dispatched
    */
-  init: function(values, parent, bind, freeze) {
+  init: function(name, values, parent, bind, freeze) {
     this._type = this._type || 'model';
     this._id = this._id || utils.uniqueId('m');
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
+    this._name = name;
     this._set = false;
     this._ready = false;
     this._readyOnce = false;
@@ -128,10 +132,8 @@ var Model = Events.extend({
    * @returns defer defer that will be resolved when set is done
    */
   set: function(attr, val, force) {
-    var events = [];
     var changes = [];
     var setting = this._setting;
-    var _this = this;
     var attrs;
     
     //expect object as default
@@ -146,16 +148,25 @@ var Model = Events.extend({
     this._setting = true;
 
     // init/set all given values
+    var newSubmodels = false;
     for(var a in attrs) {
       val = attrs[a];
-      if (this._data[a]) {
+
+      var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
+      var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
+      
+      if (this._data[a] && (bothModel || bothModelLeaf)) {
+        // data type does not change (model or leaf and can be set through set-function)
         this._data[a].set(val, force);
       } else {
+        // data type has changed or is new, so initializing the model/leaf
         this._data[a] = initSubmodel(a, val, this);
+        newSubmodels = true;
       }
     }
 
-    bindSettersGetters(this);
+    if (newSubmodels)
+      bindSettersGetters(this);
 
     //for tool model when setting for the first time
     if(this.validate && !setting) {
@@ -165,10 +176,9 @@ var Model = Events.extend({
       //trigger set if not set
       if(!this._set) {
         this._set = true;
-        events.push('set');
+        this.trigger('set');
       } 
-      _this._setting = false;
-      _this.triggerAll(events, _this.getObject());
+      this._setting = false;
       if(!this.isHook()) {
         this.setReady();
       }
@@ -224,14 +234,14 @@ var Model = Events.extend({
    */
   getObject: function() {
     var obj = {};
-    for(var i in this._data) {
+    utils.forEach(this._data, function(dataItem, i) {
       //if it's a submodel
-      if(this._data[i] && typeof this._data[i].getObject === 'function') {
-        obj[i] = this._data[i].getObject();
+      if(dataItem && typeof dataItem.getObject === 'function') {
+        obj[i] = dataItem.getObject();
       } else {
-        obj[i] = this._data[i].value;
+        obj[i] = dataItem.value;
       }
-    }
+    });
     return obj;
   },
 
@@ -254,7 +264,7 @@ var Model = Events.extend({
     }
     this._spaceDims = {};
     this.setReady(false);
-    this.unbindAll();
+    this.off();
     this._intervals.clearAllIntervals();
     this._data = {};
   },
@@ -1291,7 +1301,7 @@ function initSubmodel(attr, val, ctx) {
       //the submodel has changed (multiple times)
       'change': onChange
     }
-    submodel = new ModelLeaf(val, ctx, binds);
+    submodel = new ModelLeaf(attr, val, ctx, binds);
   }
 
   // if value is an object -> model
@@ -1323,7 +1333,7 @@ function initSubmodel(attr, val, ctx) {
       // construct model
       var modelType = attr.split('_')[0];
       var Modl = Model.get(modelType, true) || models[modelType] || Model;
-      submodel = new Modl(val, ctx, binds, true);
+      submodel = new Modl(attr, val, ctx, binds, true);
       submodel.unfreeze(); // unfreeze after loading it TODO: should this not be in the model itself?
     }
   }
@@ -1331,27 +1341,23 @@ function initSubmodel(attr, val, ctx) {
   return submodel;
 
   // Default event handlers for models
-  function onChange(evt, vals) {
+  function onChange(evt, path) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
-    //evt = evt.replace('change', 'change:' + attr);
-    //if(attr === 'axis') console.log("")
-    ctx.triggerAll('change', ctx.getObject(), evt);    
+    path = ctx._name + '.' + path
+    ctx.trigger(evt, path);    
   }
   function onHookChange(evt, vals) {
-    ctx.trigger(evt, ctx.getObject());
+    ctx.trigger(evt, vals);
   }
   function onLoadStart(evt, vals) {
-    evt = evt.replace('load_start', 'load_start:' + attr);
     ctx.setReady(false);
-    ctx.triggerAll('load_start:' + attr, ctx.getObject(), evt);
+    ctx.trigger(evt, vals);
   }
   function onLoadError(evt, vals) {
-    evt = evt.replace('load_error', 'load_error:' + attr);
-    ctx.triggerAll('load_error' + attr, vals, evt);
+    ctx.trigger(evt, vals);
   }
   function onReady(evt, vals) {
     //trigger only for submodel
-    evt = evt.replace('ready', 'ready:' + attr);
     ctx.setReady(false);
     //wait to make sure it's not set false again in the next execution loop
     utils.defer(function() {

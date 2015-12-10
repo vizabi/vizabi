@@ -89,7 +89,7 @@ var TimeSlider = Component.extend({
     this.model_expects = [{
       name: "time",
       type: "time",
-      delay: "delay"
+      delay: "delay"  
     }];
 
     var _this = this;
@@ -99,7 +99,7 @@ var TimeSlider = Component.extend({
 
     //binds methods to this model
     this.model_binds = {
-      'change:time': function(evt, original) {
+      'change:time': function(evt, path) {
 
         //TODO: readyOnce CANNOT be run twice
         if(_this._splash !== _this.model.time.splash) {
@@ -110,13 +110,13 @@ var TimeSlider = Component.extend({
 
         if(!_this._splash) {
 
-          if((['change:time:start', 'change:time:end']).indexOf(evt) !== -1) {
+          if((['time.start', 'time.end']).indexOf(path) !== -1) {
             _this.changeLimits();
           }
           _this._optionClasses();
         }
       },
-      'change:time:value': function(evt, original) {
+      'change:time.value': function(evt, path) {
         if(!_this._splash) {
           //only set handle position if change is external
           if(!_this.model.time.dragging) _this._setHandle(_this.model.time.playing);
@@ -356,7 +356,6 @@ var TimeSlider = Component.extend({
       _this.element.classed(class_dragging, false);
       _this.model.time.dragStop();
       _this.model.time.snap();
-      _this.model.time.triggerAll("change:historyUpdate");
     };
   },
 

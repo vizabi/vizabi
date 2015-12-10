@@ -22,7 +22,7 @@ var ToolModel = Model.extend({
    * @param {Object} binds contains initial bindings for the model
    * @param {Function|Array} validade validate rules
    */
-  init: function(values, defaults, binds, validate) {
+  init: function(name, values, defaults, binds, validate) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
     //generate validation function
@@ -32,7 +32,7 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultOptions(values, defaults);
     //constructor is similar to model
-    this._super(values, null, binds, true);
+    this._super(name, values, null, binds, true);
     // change language
     if(values.language) {
       var _this = this;
@@ -67,14 +67,17 @@ var Tool = Component.extend({
     // callbacks has to be an array so that it will not be turned into a submodel when the toolmodel is made.
     var callbacks = [
       {
-        'change': function(evt, val) {
+        'change': function(evt, path) {
           if(_this._ready) {
             _this.model.validate();
-            _this.trigger(evt, val);
+            _this.trigger(evt, path);
 
+            if (evt.persistent)
+              _this.trigger('persistentChange', _this.minState());
             // needs a fix
-            if (evt.indexOf('historyUpdate') !== -1)
+            /*if (evt.indexOf('historyUpdate') !== -1)
               _this.model.trigger('historyUpdate', _this.minState());
+            */
           }
         }
       }, {
@@ -109,7 +112,7 @@ var Tool = Component.extend({
     Array.prototype.push.apply(callbacks, binds);
 
     options = options || {};
-    this.model = new ToolModel(options, this.default_options, callbacks, validate);
+    this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
 
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
