@@ -1,4 +1,4 @@
-geo,time,pop,gdp_per_cap,gini,u5mr
+geo,time,pop,gdp_pc,gini,u5mr
 afg,2010,27962207,1637,27.8,105
 ago,2010,21219954,7047,42.7,182.5
 alb,2010,2901883,9374,43.7,16.6

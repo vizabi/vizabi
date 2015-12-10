@@ -35,6 +35,7 @@
     background: transparent;
     outline: none !important;
     border: 0;
+    padding: 0;
 
     // Slider Handle
     &::-webkit-slider-thumb {
@@ -49,13 +50,13 @@
       border: 3px solid $vzb-color-white;
     }
     &::-moz-range-thumb {
-      @include border-radius(20px);
+      @include border-radius(14px);
       @include transition(left .1s ease-in-out);
       cursor: pointer;
       background: $vzb-color-primary;
       top: -12px;
-      width: 20px;
-      height: 20px;
+      width: 14px;
+      height: 14px;
       border: 3px solid $vzb-color-white;
     }
   }
@@ -67,8 +68,8 @@
       height: 15px;
     }
     &::-moz-range-thumb {
-      width: 15px;
-      height: 15px;
+      width: 9px;
+      height: 9px;
     }
   }
 }

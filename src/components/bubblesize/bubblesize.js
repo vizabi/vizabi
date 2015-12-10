@@ -72,11 +72,8 @@ var BubbleSize = Component.extend({
         _this.sliderEl.call(_this.brush.event);
       },
       'ready': function (evt) {
-        utils.defer(function(){
-           _this.sizeScaleMinMax = _this.model.size.scale.domain();
-           _this._setLabelsText();          
-        });
-        
+        _this.sizeScaleMinMax = _this.model.size.getScale().domain();
+        _this._setLabelsText();
       }
     };
 

@@ -131,7 +131,7 @@ var ColorLegend = Component.extend({
       if(colorOptions && colorOptions[0]) {
         var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
         var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
-        gradientHeight = (lastOptionSize.top + lastOptionSize.height) - firstOptionSize.top;
+        gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
       }
       if(!isFinite(gradientHeight))
         gradientHeight = utils.keys(palette).length * 25 + 5;
