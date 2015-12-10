@@ -76,7 +76,7 @@ var LineChart = Tool.extend('LineChart', {
         },
         axis_y: {
           use: "indicator",
-          which: "gdp_per_cap",
+          which: "gdp_pc",
           scaleType: "log"
         },
         axis_x: {

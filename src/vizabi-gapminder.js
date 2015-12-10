@@ -296,7 +296,7 @@ MountainChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_pc",
         scaleType: 'log',
         min: .11, //0
         max: 500 //100
@@ -367,7 +367,7 @@ LineChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_pc",
         scaleType: "log"
       },
       axis_x: {
@@ -458,7 +458,7 @@ BubbleChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_per_cap",
+        which: "gdp_pc",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -563,7 +563,10 @@ PopByAge.define('default_options', {
       },
       color: {
         use: "constant",
-        which: "#ffb600"
+        which: "#ffb600",
+        allow: {
+          names: ["!geo.name"]
+        }
       }
     }
   },

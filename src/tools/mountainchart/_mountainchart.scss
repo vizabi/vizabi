@@ -220,10 +220,6 @@
   &.vzb-presentation {
 
     .vzb-mountainchart {
-      .vzb-mc-axis-x-title,
-      .vzb-mc-axis-y-title {
-        font-size: $vzb-font-size-largest;
-      }
 
       .vzb-mc-axis-x,
       .vzb-mc-axis-y,
@@ -243,18 +239,6 @@
     &.vzb-medium {
       .vzb-mc-probe text {
         font-size: $vzb-font-size-medium;
-      }
-    }
-    &.vzb-small {
-      .vzb-mc-axis-x-title,
-      .vzb-mc-axis-y-title {
-        font-size: $vzb-font-size-medium;
-      }
-      .vzb-mc-probe text {
-        font-size: $vzb-font-size-medium;
-        &.vzb-mc-probe-extremepoverty {
-          letter-spacing: .08em;
-        }
       }
     }
   }

@@ -130,7 +130,7 @@ var ColorLegend = Component.extend({
       if(colorOptions && colorOptions[0]) {
         var firstOptionSize = colorOptions[0][0].getBoundingClientRect();
         var lastOptionSize = colorOptions[0][colorOptions[0].length - 1].getBoundingClientRect();
-        gradientHeight = (lastOptionSize.top + lastOptionSize.height) - firstOptionSize.top;
+        gradientHeight = lastOptionSize.bottom - firstOptionSize.top;
       }
       if(!isFinite(gradientHeight))
         gradientHeight = utils.keys(palette).length * 25 + 5;
@@ -148,7 +148,7 @@ var ColorLegend = Component.extend({
       regions.each(function() {
           var view = d3.select(this);
           var color = palette[view.attr("id")];
-          view.style("fill", color);
+          view.style("fill", utils.isArray(color)? color[0] : color);
         })
         .style("opacity", .8)
         .on("mouseover", function() {

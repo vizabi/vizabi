@@ -56,14 +56,6 @@ var Find = Dialog.extend({
     var _this = this;
     this.input_search.on("input", function() {
       _this.showHideSearch();
-    }).on("keypress", function(e) {
-      if (d3.event.which == 13) {
-        document.activeElement.blur();
-      }
-    }).on('focus', function() {
-      _this.input_search.attr("placeholder", '');
-    }).on('blur', function() {
-      _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
     });
 
     this.deselect_all.on("click", function() {
@@ -144,7 +136,10 @@ var Find = Dialog.extend({
         return(selected.indexOf(d[KEY]) !== -1);
       })
       .on("change", function(d) {
+        var isSelected = _this.model.state.entities.isSelected(d);
+        _this.model.state.entities.clearHighlighted();
         _this.model.state.entities.selectEntity(d);
+        if(isSelected) _this.model.state.entities.highlightEntity(d); 
       });
 
     items.append("label")

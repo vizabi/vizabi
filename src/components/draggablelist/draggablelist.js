@@ -11,9 +11,15 @@ var DraggableList = Component.extend({
     this.lang = config.lang;
 
     this.model_expects = [{
+      name: "group",
+      type: "model"
+    }, {
       name: "language",
       type: "language"
     }];
+    
+    this.groupID = config.groupID;
+    if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
       "change:axis": function(evt) {
@@ -23,10 +29,67 @@ var DraggableList = Component.extend({
         _this.updateView();
       }
     };
+    
+    this.model_binds["change:group:" + this.groupID] = function(evt) {
+        _this.updateView();
+    };
+    
 
     this._super(config, context);
 
     this.updateData = utils.debounce(this.updateData, 1000);
+    
+    this.itemDragger = d3.behavior.drag()
+      .on('dragstart', function(draggedData, i) {
+        if(_this.dataUpdateFlag) return;
+        d3.event.sourceEvent.stopPropagation();
+        _this.parentBoundRect = _this.element.node().getBoundingClientRect();
+        _this.element
+          .selectAll('div')
+          .each(function(d, i) {
+            var boundRect = this.getBoundingClientRect();
+            d._y = boundRect.top;
+            d._top = 0; 
+            if(draggedData.data === d.data) {
+              d._height = boundRect.height;
+              _this.selectedNode = this;
+            }
+          })
+        d3.select(_this.selectedNode)
+          .classed('dragged', true)
+      })
+      
+      .on('drag', function(draggedData, draggedIndex) {
+        if(_this.dataUpdateFlag) return;
+        draggedData._top += d3.event.dy;
+        var newDraggedY = draggedData._y + draggedData._top;
+        if(newDraggedY > _this.parentBoundRect.top 
+          && newDraggedY + draggedData._height < _this.parentBoundRect.top + _this.parentBoundRect.height)
+        {
+          _this.itemsEl
+            .style('top', function(d, i) {
+              var top = 0;
+              
+              if (i < draggedIndex && d._y + draggedData._height * .5 > newDraggedY) {
+                top = draggedData._height;
+              }
+              else if(i > draggedIndex && d._y - draggedData._height * .5 < newDraggedY) {
+                top = -draggedData._height;
+              }
+              
+              if (i != draggedIndex) d._top = top;
+              return d._top + "px";
+           })
+        }
+      })
+      
+      .on('dragend', function(d, i) {
+        if(_this.dataUpdateFlag) return;
+                
+        _this.dataUpdateFlag = true;
+        _this.updateData();
+      })
+      
   },
 
   ready: function() {
@@ -34,80 +97,68 @@ var DraggableList = Component.extend({
 
     this.updateView();
 
-    this.element
+    this.itemsEl = this.element
       .selectAll('div')
-      .on('dragstart', function() {
-        d3.select(this).style('opacity', .4);
-
-        _this.dragElem = this;
-        d3.event.dataTransfer.setData('text/html', this.innerHTML);
-        d3.event.dataTransfer.effectAllowed = 'move';
+    
+    this.itemsEl
+      .call(_this.itemDragger);
+      
+    var test = this.itemsEl.select('li')
+      .on('mouseover', function() {
+        d3.select(this).classed('hover', true);
       })
-      .on('dragover', function() {
-        if(d3.event.preventDefault)
-          d3.event.preventDefault();
-
-        d3.event.dataTransfer.dropEffect = 'move';
-
-        return false;
+      .on('mouseout', function() {
+        d3.select(this).classed('hover', false);        
       })
-      .on('dragenter', function() {
-        d3.select(this).select('li').classed('over', true);
-
-        return false;
+      .on('touchstart', function() {
+        d3.event.preventDefault();
       })
-      .on('dragleave', function() {
-        d3.select(this).select('li').classed('over', false);
-      })
-      .on('drop', function() {
-        if(d3.event.stopPropagation)
-          d3.event.stopPropagation();
-
-        if(_this.dragElem) {
-          _this.dragElem.innerHTML = this.innerHTML;
-          this.innerHTML = d3.event.dataTransfer.getData('text/html');
-        }
-
-        return false;
-      })
-      .on('dragend', function() {
-        d3.select(this).style('opacity', '');
-        _this.element
-          .selectAll('li')
-          .classed('over', false);
-        _this.updateData();
-      })
+      
   },
 
   updateView: function() {
     var _this = this;
     this.translator = this.model.language.getTFunction();
-    this.element.selectAll('li').remove();
 
-    this.data = this.element.selectAll('li').data(this.dataArrFn());
-    this.data.enter()
-      .insert('div')
+    this.items = this.element.selectAll('div').data(function() {
+      return _this.dataArrFn().map( function(d) { return {data:d};})});
+    this.items.enter()
+      .append('div')
       .attr('draggable', true)
-      .insert('li')
-      .each(function(val, index) {
-        d3.select(this).attr('data', val).text(_this.translator(_this.lang + val));
+      .append('li');
+    this.items.select('li').classed('hover', false).each(function(val, index) {
+        d3.select(this).attr('data', val['data']).text(_this.translator(_this.lang + val['data']));
       });
+    this.items.exit().remove();
+    this.element.selectAll('div')
+      .style('top', '')
+      .classed('dragged', false);
+    this.dataUpdateFlag = false;
+     
   },
 
   updateData: function() {
     var dataArr = [];
-    this.element
-      .selectAll('li')
-      .each(function() {
-        dataArr.push(d3.select(this).attr('data'));
-      });
+    var data = this.element
+      .selectAll('div').data();
+
+    dataArr = data
+      .sort(function(a, b) {
+        return (a._y + a._top) - (b._y + b._top);
+      })
+      .map(function(d) {
+        return d.data        
+      })
+    
     this.dataArrFn(dataArr);
+    
   },
 
   readyOnce: function() {
     var _this = this;
 
     this.element = d3.select(this.element).select('.list');
+    
   }
 
 });

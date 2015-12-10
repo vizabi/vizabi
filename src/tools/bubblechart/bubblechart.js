@@ -83,7 +83,7 @@ var BubbleChart = Tool.extend('BubbleChart', {
         },
         axis_x: {
           use: "indicator",
-          which: "gdp_per_cap"
+          which: "gdp_pc"
         },
         color: {
           use: "property",

@@ -38,6 +38,22 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = false;
   },
 
+  getColorShade: function(args){
+    var palettes = globals.metadata.color.palettes;
+    var shades = globals.metadata.color.shades;
+      
+    if(!palettes) return utils.warn("getColorShade() is missing globals.metadata.color.palettes");
+    if(!shades) return utils.warn("getColorShade() is missing globals.metadata.color.shades");
+    if(!args) return utils.warn("getColorShade() is missing arguments");
+      
+    if(!args.paletteID) args.paletteID = this.which;
+    if(!shades[args.paletteID] || !palettes[args.paletteID]) args.paletteID = "_default";
+    if(!args.shadeID || !shades[args.paletteID][args.shadeID]) args.shadeID = "_default";
+    if(!args.colorID || !palettes[args.paletteID][args.colorID]) args.colorID = "_default";
+    
+    return palettes[args.paletteID][args.colorID][ shades[args.paletteID][args.shadeID] ];
+  },
+    
   /**
    * Get the above constants
    */
@@ -176,7 +192,13 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 
     if(this.scaleType == "time") {
-      var limits = this.getLimits(this.which);
+      
+      var timeMdl = this._parent._parent.time;
+      var limits = timeMdl.beyondSplash ? 
+          {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
+          :
+          {min: timeMdl.start, max: timeMdl.end};
+        
       var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
       domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
 
@@ -222,6 +244,8 @@ var ColorModel = Model.extend({
         return;
 
       default:
+        range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
+            
         this.scale = d3.scale["ordinal"]()
           .domain(domain)
           .range(range);

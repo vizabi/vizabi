@@ -483,7 +483,13 @@ var LCComponent = Component.extend({
         var label = values.label[d[KEY]];
 
         var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = d3.rgb(color).darker(0.5).toString();
+        var colorShadow = _this.model.marker.color.which == "geo.region"?
+            _this.model.marker.color.getColorShade({
+              colorID: values.color[d[KEY]], 
+              shadeID: "shade"
+            })
+            :
+            d3.rgb(color).darker(0.5).toString();
 
         //TODO: optimization is possible if getValues would return both x and time
         //TODO: optimization is possible if getValues would return a limited number of points, say 1 point per screen pixel
@@ -559,7 +565,13 @@ var LCComponent = Component.extend({
         var label = values.label[d[KEY]];
 
         var color = _this.cScale(values.color[d[KEY]]);
-        var colorShadow = d3.rgb(color).darker(0.5).toString();
+        var colorShadow = _this.model.marker.color.which == "geo.region"?
+            _this.model.marker.color.getColorShade({
+              colorID: values.color[d[KEY]], 
+              shadeID: "shade"
+            })
+            :
+            d3.rgb(color).darker(0.5).toString();
 
         
         entity.select(".vzb-lc-circle")

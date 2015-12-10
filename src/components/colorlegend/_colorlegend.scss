@@ -14,8 +14,8 @@
   }
 
   .vzb-cl-option {
-    margin-bottom: 5px;
-    margin-top: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
     cursor: pointer;
     padding-left: 15px;
       
@@ -32,6 +32,9 @@
       display: inline-block;
       vertical-align: super;
       cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
       
     &.vzb-cl-compact {

@@ -683,32 +683,6 @@ var BubbleChartComp = Component.extend({
     return {
       mouseover: function(d, i) {
         _this.model.entities.highlightEntity(d);
-        var text = "";
-        var pointer = {};
-        pointer[KEY] = d[KEY];
-        pointer[TIMEDIM] = _this.time;
-        if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-          text = _this.timeFormatter(_this.time);
-          var labelData = _this.entityLabels
-            .filter(function(f) {
-              return f[KEY] == d[KEY]
-            })
-            .classed("vzb-highlighted", true)
-            .datum();
-          text = text === labelData.trailStartTime ? '': text;
-        } else {
-          if (_this.model.time.lockNonSelected) {
-            pointer[TIMEDIM] = _this.model.time.lockNonSelected;
-          }
-          text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
-        }
-        //set tooltip and show axis projections
-        if(text) {
-          var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-          var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-          var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
-          _this._setTooltip(text, x, y, s);
-        }
 
         //show the little cross on the selected label
         _this.entityLabels
@@ -719,8 +693,6 @@ var BubbleChartComp = Component.extend({
 
       mouseout: function(d, i) {
         _this.model.entities.clearHighlighted();
-        _this._setTooltip();
-        _this.entityLabels.classed("vzb-highlighted", false);
 
         //hide the little cross on the selected label
         _this.entityLabels
@@ -731,8 +703,9 @@ var BubbleChartComp = Component.extend({
 
       click: function(d, i) {
         if(_this.draggingNow) return;
-        _this._setTooltip();
-        _this.model.entities.selectEntity(d, TIMEDIM, _this.timeFormatter);
+        var isSelected = _this.model.entities.isSelected(d);
+        _this.model.entities.selectEntity(d);
+        if(isSelected) _this.highlightDataPoints(); 
       }
     }
   },
@@ -800,12 +773,14 @@ var BubbleChartComp = Component.extend({
       "medium": {
         margin: { top: 80, bottom: 80, left: 100 },
         yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20
+        xAxisLabelBottomMargin: 20,
+        infoElHeight: 26,
       },
       "large": {
         margin: { top: 80, bottom: 100, left: 100 },
         yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20
+        xAxisLabelBottomMargin: 20,
+        infoElHeight: 32,
       }
     }
 
@@ -1317,8 +1292,12 @@ var BubbleChartComp = Component.extend({
       lineGroup.transition().duration(duration).ease("linear")
         .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
     } else {
-      labelGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
-      lineGroup.attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      labelGroup
+          .interrupt()
+          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
+      lineGroup
+          .interrupt()
+          .attr("transform", "translate(" + resolvedX + "," + resolvedY + ")");
     }
 
     var diffX1 = resolvedX0 - resolvedX;
@@ -1363,6 +1342,10 @@ var BubbleChartComp = Component.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
+    
+    //hide tooltip
+    _this._setTooltip();
+
 
     _this.someSelected = (_this.model.entities.select.length > 0);
 
@@ -1585,10 +1568,39 @@ var BubbleChartComp = Component.extend({
       if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
       } else {
-        d[TIMEDIM] = d.trailStartTime || _this.time;
+        d[TIMEDIM] = d.trailStartTime || _this.timeFormatter(_this.time);
       }
 
       this._axisProjections(d);
+      
+      //show tooltip
+      var text = "";
+      var pointer = {};
+      pointer[KEY] = d[KEY];
+      pointer[TIMEDIM] = _this.time;
+      if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
+        text = _this.timeFormatter(_this.time);
+        var labelData = _this.entityLabels
+          .filter(function(f) {
+            return f[KEY] == d[KEY]
+          })
+          .classed("vzb-highlighted", true)
+          .datum();
+        text = text !== labelData.trailStartTime && text === d[TIMEDIM] ? text : '';
+      } else {
+        if (_this.model.time.lockNonSelected) {
+          pointer[TIMEDIM] = _this.model.time.lockNonSelected;
+        }
+        text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
+      }
+      //set tooltip and show axis projections
+      if(text) {
+        var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
+        var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
+        var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+        _this._setTooltip(text, x, y, s);
+      }      
+      
       var selectedData = utils.find(this.model.entities.select, function(f) {
         return f[KEY] == d[KEY];
       });
@@ -1601,6 +1613,9 @@ var BubbleChartComp = Component.extend({
     } else {
       this._axisProjections();
       this._trails.run(["opacityHandler"]);
+      //hide tooltip
+      _this._setTooltip();
+      _this.entityLabels.classed("vzb-highlighted", false);
     }
   },
 

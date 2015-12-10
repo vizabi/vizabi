@@ -1,4 +1,4 @@
-geo,time,gdp_per_cap,lex,pop
+geo,time,gdp_pc,lex,pop
 world,1990,8780.9,65.76,5858793283
 world,1991,8669.31,65.93,5951704654
 world,1992,8410.78,66.08,6041808630
