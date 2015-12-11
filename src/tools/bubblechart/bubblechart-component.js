@@ -866,33 +866,25 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
-    var dataWarningText = this.dataWarningEl.select("text").text(
-      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
-    )
-
-
-    var dataWarningWidth = this.dataWarningEl.select("text").node().getBBox().width;
-
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
 
-    if(xTitleText.node().getBBox().width > this.width/1.5) xTitleText.text(this.strings.title.X);
+    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
+    // reset font size to remove jumpy measurement
     var sTitleText = this.sTitleEl.select("text")
+      .style("font-size", null)
       .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
         this.translator("buttons/colors") + ": " + this.strings.title.C);
 
-    var probe = this.sTitleEl.append("text").text(sTitleText.text());
-    var font = parseInt(probe.style("font-size")) * (this.height - 30) / probe.node().getBBox().width;
-
-    if(probe.node().getBBox().width > this.height - 30) {
-      sTitleText.style("font-size", font + "px");
-    } else {
-      sTitleText.style("font-size", null);
-    }
-    probe.remove();
+    // reduce font size if the caption doesn't fit
+    var sTitleWidth = sTitleText.node().getBBox().width;
+    var remainigHeight = this.height - 30;
+    var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
+    sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
+    
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
@@ -906,12 +898,6 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-    this.dataWarningEl
-      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
-
-    this.resizeWarningIcon(); //define default size based on default font size
-    this.resizeWarningFont(dataWarningText);
-    this.resizeWarningIcon(); //define new size based on new font size
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -935,12 +921,29 @@ var BubbleChartComp = Component.extend({
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
-   }
+    } 
 
+    this._resizeDataWarning();
   },
 
-  resizeWarningIcon: function(){
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
+  _resizeDataWarning: function(){
+    this.dataWarningEl
+      .attr("transform", "translate(" 
+        + (this.width) + "," 
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisLabelBottomMargin) 
+        + ")");
+
+    // reset font size to remove jumpy measurement
+    var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
+      
+    // reduce font size if the caption doesn't fit
+    var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
+    var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
+    var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
+    dataWarningText.style("font-size", dataWarningWidth > remainingWidth? font + "px" : null);
+    
+    // position the warning icon
+    var warnBB = dataWarningText.node().getBBox();
     this.dataWarningEl.select("svg")
       .attr("width", warnBB.height * 0.75)
       .attr("height", warnBB.height * 0.75)
@@ -948,17 +951,7 @@ var BubbleChartComp = Component.extend({
       .attr("y", - warnBB.height * 0.65);
   },
 
-  resizeWarningFont: function(dataWarningText){
-    var probe = this.dataWarningEl.append("text").text(dataWarningText.text());
-    var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - 30;
-    var font = parseInt(probe.style("font-size")) * (remainingWidth) / this.dataWarningEl.node().getBBox().width;
-    if(this.dataWarningEl.node().getBBox().width > remainingWidth) {
-      dataWarningText.style("font-size", font + "px");
-    } else {
-      dataWarningText.style("font-size", null);
-    }
-    probe.remove();
-  },
+
 
 
   updateMarkerSizeLimits: function() {
