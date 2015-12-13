@@ -607,8 +607,7 @@ var BubbleMapComponent = Component.extend({
 
     var font = 
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
-        * this.width
-        / Math.max(yTitleBB.width, cTitleBB.width);
+        * this.width / Math.max(yTitleBB.width, cTitleBB.width);
       
     if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
@@ -807,6 +806,7 @@ var BubbleMapComponent = Component.extend({
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
+
 
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
@@ -1084,7 +1084,9 @@ var BubbleMapComponent = Component.extend({
         });
 
         // hide recent hover tooltip
-        _this._setTooltip();
+        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+          _this._setTooltip();
+        }
 
   },
 
