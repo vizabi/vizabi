@@ -909,7 +909,7 @@ var BubbleMapComponent = Component.extend({
             limitedX = limitedX0 + cached.labelX_ * _this.width;
           }
           limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top
+          if(limitedY - cached.contentBBox.height <= 0) { // check top 
             cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = limitedY0 + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
@@ -948,8 +948,8 @@ var BubbleMapComponent = Component.extend({
       cache.labelX_ = (this.width - 20 - labelX0) / this.width;
       resolvedX = labelX0 + cache.labelX_ * this.width;
     }
-    if(resolvedY - height <= 0) { // check top
-      cache.labelY_ = (height - labelY0) / this.height;
+    if(resolvedY - (height + 30) <= 0) { // check top // not conflict with color label, 25
+      cache.labelY_ = (height + 30 - labelY0) / this.height;
       resolvedY = labelY0 + cache.labelY_ * this.height;
     } else if(resolvedY + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - labelY0) / this.height;
