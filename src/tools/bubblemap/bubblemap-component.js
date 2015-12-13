@@ -607,8 +607,7 @@ var BubbleMapComponent = Component.extend({
 
     var font = 
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
-        * this.width
-        / Math.max(yTitleBB.width, cTitleBB.width);
+        * this.width / Math.max(yTitleBB.width, cTitleBB.width);
       
     if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
@@ -808,6 +807,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
 
+
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
 //          return _this.model.entities.isHighlighted(d);
@@ -909,7 +909,7 @@ var BubbleMapComponent = Component.extend({
             limitedX = limitedX0 + cached.labelX_ * _this.width;
           }
           limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top
+          if(limitedY - cached.contentBBox.height <= 0) { // check top 
             cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = limitedY0 + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
@@ -948,8 +948,8 @@ var BubbleMapComponent = Component.extend({
       cache.labelX_ = (this.width - 20 - labelX0) / this.width;
       resolvedX = labelX0 + cache.labelX_ * this.width;
     }
-    if(resolvedY - height <= 0) { // check top
-      cache.labelY_ = (height - labelY0) / this.height;
+    if(resolvedY - (height + 30) <= 0) { // check top // not conflict with color label, 25
+      cache.labelY_ = (height + 30 - labelY0) / this.height;
       resolvedY = labelY0 + cache.labelY_ * this.height;
     } else if(resolvedY + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - labelY0) / this.height;
@@ -1084,7 +1084,9 @@ var BubbleMapComponent = Component.extend({
         });
 
         // hide recent hover tooltip
-        _this._setTooltip();
+        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+          _this._setTooltip();
+        }
 
   },
 
