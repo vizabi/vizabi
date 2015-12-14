@@ -47,9 +47,9 @@ var ModelLeaf = EventSource.extend({
 
   set: function(val, force, persistent) {
     if (force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val))) {
+      this._val = val;
       this.trigger(new ChangeEvent(this, persistent), this._name);
     }
-    this._val = val;
   }
 })
 

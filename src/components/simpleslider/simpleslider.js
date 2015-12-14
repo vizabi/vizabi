@@ -77,10 +77,10 @@ var SimpleSlider = Component.extend({
         .attr('step', step)
         .attr('value', value)
         .on('input', function () {
-          _this._setModel();
+          _this._setModel(false, false); // on drag - non-persistent changes while dragging
         })
         .on('change', function() {
-          _this._setModel(true);
+          _this._setModel(true); // on drag end - value is probably same as last 'input'-event, so force change
         });
 
       this.updateView();
@@ -102,7 +102,7 @@ var SimpleSlider = Component.extend({
       this.slider.node().value = value;
     },
 
-    _setModel: function (persistent) {
+    _setModel: function (force, persistent) {
       var slider_properties = this.slider_properties;
       var scale;
       var value = +d3.event.target.value;
@@ -114,7 +114,7 @@ var SimpleSlider = Component.extend({
       if (scale){
         value = scale(value);
       }
-      this.model.submodel.getActualObject(this.arg).set(value, false, persistent);
+      this.model.submodel.getActualObject(this.arg).set(value, force, persistent);
     }
 
   });

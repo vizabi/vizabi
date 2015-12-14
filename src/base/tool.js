@@ -56,7 +56,7 @@ var Tool = Component.extend({
     this.model_binds = this.model_binds || [];
     
     options = options || {}; //options can be undefined
-    var binds = options.bind || {}; //bind functions can be undefined
+    options.bind = options.bind || {}; //bind functions can be undefined
 
     this.default_options = this.default_options || {};
     
@@ -65,53 +65,42 @@ var Tool = Component.extend({
     var _this = this;
 
     // callbacks has to be an array so that it will not be turned into a submodel when the toolmodel is made.
-    var callbacks = [
-      {
-        'change': function(evt, path) {
-          if(_this._ready) {
-            _this.model.validate();
-            _this.trigger(evt, path);
+    var callbacks = {
+      'change': function(evt, path) {
+        if(_this._ready) {
+          _this.model.validate();
+          _this.trigger(evt, path);
 
-            if (evt.persistent)
-              _this.trigger('persistentChange', _this.minState());
-            // needs a fix
-            /*if (evt.indexOf('historyUpdate') !== -1)
-              _this.model.trigger('historyUpdate', _this.minState());
-            */
-          }
+          //if (evt.persistent)
+            //_this.trigger('persistentChange', _this.minState());
         }
-      }, {
-        'change:ui.presentation': function() {
-          _this.layout.updatePresentation();
-          _this.trigger('resize');
+      },
+      'change:ui.presentation': function() {
+        _this.layout.updatePresentation();
+        _this.trigger('resize');
+      },
+      'translate': function(evt, val) {
+        if(_this._ready) {
+          Promise.all([_this.preloadLanguage(), _this.model.load()])
+            .then(function() {
+              _this.model.validate();
+              _this.translateStrings();
+            });
         }
-      }, {
-        'translate': function(evt, val) {
-          if(_this._ready) {
-            Promise.all([_this.preloadLanguage(), _this.model.load()])
-              .then(function() {
-                _this.model.validate();
-                _this.translateStrings();
-              });
-          }
-        }
-      }, {
-        'load_start': function() {
-          _this.beforeLoading();
-        }
-      }, {
-        'ready': function(evt) {
-          if(_this._ready) {
-            _this.afterLoading();
-            _this.model.trigger('historyUpdate', _this.minState());
-          }
+      },
+      'load_start': function() {
+        _this.beforeLoading();
+      },
+      'ready': function(evt) {
+        if(_this._ready) {
+          _this.afterLoading();
+          _this.model.trigger('historyUpdate', _this.minState());
         }
       }
-    ];
-    Array.prototype.push.apply(callbacks, this.model_binds); 
-    Array.prototype.push.apply(callbacks, binds);
+    };
+    utils.extend(callbacks, this.model_binds, options.bind);
+    delete options.bind;
 
-    options = options || {};
     this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
 
     //ToolModel starts in frozen state. unfreeze;
@@ -126,19 +115,8 @@ var Tool = Component.extend({
       name: this.name || this._id,
       placeholder: placeholder
     }, this);
-    this._bindEvents();
     this.render();
     this._setUIOptions();
-  },
-    
-  /**
-   * Binds events in model to outside world
-   */
-  _bindEvents: function() {
-    if(!this.model.bind) {
-      return;
-    }
-    this.model.on(this.model.bind);
   },
 
   minState: function() {
