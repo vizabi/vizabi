@@ -60,17 +60,6 @@ var BubbleSize = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      'change:size': function (evt, path) {
-        var size = _this.brush.extent();
-        if (path.indexOf(_this.fields.min) > -1) {
-          size[0] = _this.model.size[_this.fields.min];
-        }
-        if (path.indexOf(_this.fields.max) > -1) {
-          size[1] = _this.model.size[_this.fields.max];
-        }
-        _this.sliderEl.call(_this.brush.extent(size));
-        _this.sliderEl.call(_this.brush.event);
-      },
       'ready': function (evt) {
         _this.sizeScaleMinMax = _this.model.size.getScale().domain();
         _this._setLabelsText();
@@ -122,16 +111,22 @@ var BubbleSize = Component.extend({
       .x(this.xScale)
       .extent([OPTIONS.DOMAIN_MIN, OPTIONS.DOMAIN_MIN])
       .on("brush", function () {
-        var s = _this.brush.extent();
 
+        var s = _this.brush.extent();
         updateArcs(s);
         updateLabels(s);
+        _this._setValue(s, false, false); // non persistent change
 
-        _this._setValue(s);
       })
       .on("brushend", function () {
          _this.sliderEl.selectAll(".resize")
           .style("display", null)
+
+        var s = _this.brush.extent();
+        updateArcs(s);
+        updateLabels(s);
+        _this._setValue(s, true); // force a persistent change
+
       });
 
     this.sliderEl
@@ -241,13 +236,11 @@ var BubbleSize = Component.extend({
    * Executed whenever the container is resized
    */
   _updateSize: function() {
-    var _this = this;
-
-      _this.sliderSvg
-        .attr("height", _this.getMinMaxBubbleRadius().max + _this.padding.top + _this.padding.bottom)
-        .attr("width", _this.getMinMaxBubbleRadius().max * 2 + _this.padding.left + _this.padding.right)
-      _this.sliderWrap
-        .attr("transform", "translate(" + _this.padding.left + "," + (_this.getMinMaxBubbleRadius().max + _this.padding.top) + ")")
+    this.sliderSvg
+      .attr("height", this.getMinMaxBubbleRadius().max + this.padding.top + this.padding.bottom)
+      .attr("width", this.getMinMaxBubbleRadius().max * 2 + this.padding.left + this.padding.right)
+    this.sliderWrap
+      .attr("transform", "translate(" + this.padding.left + "," + (this.getMinMaxBubbleRadius().max + this.padding.top) + ")")
   },
 
   //slideHandler: function () {
@@ -265,17 +258,10 @@ var BubbleSize = Component.extend({
    * Sets the current value in model. avoid updating more than once in framerate
    * @param {number} value
    */
-  _setValue: function (value) {
+  _setValue: function (value, force, persistent) {
     var _this = this;
-
-    //implement throttle
-    //TODO: use utils.throttle
-    //var frameRate = 50;
-    //var now = new Date();
-    //if (this._updTime != null && now - this._updTime < frameRate) return;
-    //this._updTime = now;
-    _this.model.size.min = value[0];
-    _this.model.size.max = value[1];
+    _this.model.size.getActualObject('min').set(value[0], force, persistent);
+    _this.model.size.getActualObject('max').set(value[1], force, persistent);
   }
 
 });

@@ -25,9 +25,6 @@ var Axes = Dialog.extend({
       },
       'change:state.time.yMaxMethod': function() {
         _this.updateView();
-      },
-      'change:state.time.probe': function() {
-        _this.updateView();
       }
     };
 

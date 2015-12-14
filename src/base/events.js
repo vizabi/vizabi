@@ -7,11 +7,12 @@ var _freezeAllExceptions = {};
 
 export var DefaultEvent = Class.extend({
 
-  target: '',
+  source: '',
   type: 'default',
 
-  init: function(target) {
-    this.target = target;
+  init: function(source, type) {
+    this.source = source;
+    if (type) this.type = type;
   }
 
 });
@@ -21,8 +22,8 @@ export var ChangeEvent = DefaultEvent.extend('change', {
   persistent: true,
   type: 'change',
 
-  init: function(target, persistent) {
-    this._super(target);
+  init: function(source, persistent) {
+    this._super(source);
     this.persistent = (typeof persistent === 'undefined') ? true : persistent;
   }
 })
@@ -227,8 +228,7 @@ var EventSource = Class.extend({
       if(eventClass) {
         evt = new eventClass(this);
       } else {
-        evt = new DefaultEvent(this);
-        evt.type = evtType;
+        evt = new DefaultEvent(this, evtType);
       }
     } 
 

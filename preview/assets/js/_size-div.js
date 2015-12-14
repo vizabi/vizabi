@@ -228,27 +228,22 @@ resizableDiv(placeholder, container, 300, 300, function() {
   updateSizePanel(placeholder);
 }, function() {
   removeClass(placeholder, "fullscreen");
-  updateURL(true);
 });
 
 function setFullscreen() {
   setDivSize(placeholder, container, container.offsetWidth, container.offsetHeight);
   addClass(placeholder, "fullscreen");
-  updateURL(true);
 }
 
 document.getElementById('vzbp-btn-portrait').onclick = function() {
   setDivSize(placeholder, container, 320, 568);
-  updateURL();
 };
 document.getElementById('vzbp-btn-landscape').onclick = function() {
   setDivSize(placeholder, container, 568, 320);
-  updateURL();
 };
 document.getElementById('vzbp-btn-desktop').onclick = setFullscreen;
 document.getElementById('vzbp-btn-random').onclick = function() {
   setDivRandomSize(placeholder, container);
-  updateURL();
 };
 
 //change sizes manually
@@ -259,7 +254,6 @@ function changeSizes() {
   var width = parseInt(inputWidth.value, 10);
   var height = parseInt(inputHeight.value, 10);
   setDivSize(placeholder, container, width, height);
-  updateURL();
 }
 
 inputWidth.onchange = changeSizes;
@@ -272,5 +266,4 @@ window.addEventListener('resize', function() {
   } else if (!hasClass(container, 'vzb-container-fullscreen') && (container.offsetWidth < placeholder.offsetWidth || container.offsetHeight < placeholder.offsetHeight)) {
     setDivSize(placeholder, container, Math.min(container.offsetWidth, placeholder.offsetWidth), Math.min(container.offsetHeight, placeholder.offsetHeight));
   }
-  updateURL();
 });

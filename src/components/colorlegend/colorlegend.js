@@ -173,7 +173,7 @@ var ColorLegend = Component.extend({
               return utils.clone(d, [KEY])
             });
 
-          _this.model.entities.setHighlighted(highlight);
+          _this.model.entities.setHighlight(highlight);
         })
         .on("mouseout", function() {
           regions.style("opacity", .8);

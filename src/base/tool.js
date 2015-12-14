@@ -2,6 +2,7 @@ import * as utils from 'utils'
 import Model from 'model'
 import Component from 'component'
 import Layout from 'layout'
+import { DefaultEvent } from 'events'
 import { warn as warnIcon } from 'iconset'
 import Promise from 'base/promise';
 
@@ -69,10 +70,9 @@ var Tool = Component.extend({
       'change': function(evt, path) {
         if(_this._ready) {
           _this.model.validate();
-          _this.trigger(evt, path);
 
-          //if (evt.persistent)
-            //_this.trigger('persistentChange', _this.minState());
+          if (evt.persistent)
+            _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'));
         }
       },
       'change:ui.presentation': function() {

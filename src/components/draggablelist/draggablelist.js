@@ -23,9 +23,6 @@ var DraggableList = Component.extend({
     if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
-      "change:axis": function(evt) {
-        _this.updateView();
-      },
       "change:language.strings": function(evt) {
         _this.updateView();
       }

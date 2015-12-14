@@ -10,8 +10,8 @@ script.
         updateURL();
         updateStateEditor(VIZ.getOptions().state);
       },
-      'persistentChange': function(evt, state) {
-        updateURL();
+      'persistentChange': function(evt) {
+        updateURL(true); // force update
       }
     },
     ui: {
@@ -28,7 +28,7 @@ script.
   var playButtonIcon = playButton.querySelectorAll("i")[0];
 
   VIZABI_OPTIONS.bind['change:state.time.playing'] = function(evt, path) {
-    var playing = evt.target;
+    var playing = evt.source;
     if (playing) {
       playButton.onclick = pause;
       playButton.setAttribute("data-tooltip", "Pause");
@@ -61,7 +61,7 @@ script.
   var langButton = document.getElementById("vzbp-btn-lang");
 
   VIZABI_OPTIONS.bind['change:language'] = function(evt, path) {
-    var language = evt.target;
+    var language = evt.source;
     if (language.id === "en") {
       langButton.onclick = function() { language('se'); };
       langButton.setAttribute("data-tooltip", "Set Lang: SE");

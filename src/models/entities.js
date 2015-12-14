@@ -53,9 +53,9 @@ var EntitiesModel = Model.extend({
       this.select = this.select.filter(function(f) {
         return visible_array.indexOf(f[dimension]) !== -1;
       });
-      this.highlight = this.highlight.filter(function(f) {
+      this.setHighlight(this.highlight.filter(function(f) {
         return visible_array.indexOf(f[dimension]) !== -1;
-      });
+      }));
     }
   },
 
@@ -204,8 +204,10 @@ var EntitiesModel = Model.extend({
   },
 
 
-  setHighlighted: function(arg) {
-    this.highlight = [].concat(arg);
+  setHighlight: function(arg) {
+    if (!utils.isArray(arg))
+      this.setHighlight([].concat(arg));
+    this.getActualObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 
   //TODO: join the following 3 methods with the previous 3
@@ -223,7 +225,7 @@ var EntitiesModel = Model.extend({
       if(timeDim && timeFormatter) {
         added["trailStartTime"] = timeFormatter(d[timeDim]);
       }
-      this.highlight = this.highlight.concat(added);
+      this.setHighlight(this.highlight.concat(added));
     }
   },
 
@@ -234,9 +236,9 @@ var EntitiesModel = Model.extend({
     var dimension = this.getDimension();
     var value = d[dimension];
     if(this.isHighlighted(d)) {
-      this.highlight = this.highlight.filter(function(d) {
+      this.setHighlight(this.highlight.filter(function(d) {
         return d[dimension] !== value;
-      });
+      }));
     }
   },
 
@@ -259,7 +261,7 @@ var EntitiesModel = Model.extend({
    * Clears selection of items
    */
   clearHighlighted: function() {
-    this.highlight = [];
+    this.setHighlight([]);
   },
 
 });

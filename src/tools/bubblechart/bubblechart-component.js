@@ -148,7 +148,7 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker.size': function(evt) {
+      'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
