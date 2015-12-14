@@ -174,6 +174,7 @@ var TimeModel = Model.extend({
     }else{
         this.playing = false;
     }
+    this.getActualObject('value').set(this.value, true);
   },
 
   /**
@@ -305,7 +306,7 @@ var TimeModel = Model.extend({
             _this.postponePause = false;
         }
 
-        _this.value = time;
+        _this.getActualObject('value').set(time, false, false);
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
       }

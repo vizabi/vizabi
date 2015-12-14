@@ -46,8 +46,6 @@ var SimpleSlider = Component.extend({
       var step = 0.1;
       var value = min;
 
-
-
       //selecting elements
       var _this = this;
       this.element = d3.select(this.element);
@@ -80,6 +78,9 @@ var SimpleSlider = Component.extend({
         .attr('value', value)
         .on('input', function () {
           _this._setModel();
+        })
+        .on('change', function() {
+          _this._setModel(true);
         });
 
       this.updateView();
@@ -101,7 +102,7 @@ var SimpleSlider = Component.extend({
       this.slider.node().value = value;
     },
 
-    _setModel: function () {
+    _setModel: function (persistent) {
       var slider_properties = this.slider_properties;
       var scale;
       var value = +d3.event.target.value;
@@ -113,7 +114,7 @@ var SimpleSlider = Component.extend({
       if (scale){
         value = scale(value);
       }
-      this.model.submodel[this.arg] = value;
+      this.model.submodel.getActualObject(this.arg).set(value, false, persistent);
     }
 
   });

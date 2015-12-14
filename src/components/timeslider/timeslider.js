@@ -259,43 +259,43 @@ var TimeSlider = Component.extend({
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
    */
-   resize: function () {
+  resize: function () {
 
-     this.model.time.pause();
+    this.model.time.pause();
 
-     this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
+    this.profile = this.getActiveProfile(profiles, presentationProfileChanges);
 
-     var slider_w = parseInt(this.slider_outer.style("width"), 10);
-     var slider_h = parseInt(this.slider_outer.style("height"), 10);
-     this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
-     this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
-     var _this = this;
+    var slider_w = parseInt(this.slider_outer.style("width"), 10);
+    var slider_h = parseInt(this.slider_outer.style("height"), 10);
+    this.width = slider_w - this.profile.margin.left - this.profile.margin.right;
+    this.height = slider_h - this.profile.margin.bottom - this.profile.margin.top;
+    var _this = this;
 
-     //translate according to margins
-     this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
+    //translate according to margins
+    this.slider.attr("transform", "translate(" + this.profile.margin.left + "," + this.profile.margin.top + ")");
 
-     //adjust scale width if it was not set manually before
-     if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
+    //adjust scale width if it was not set manually before
+    if (this.xScale.range()[1] = 1) this.xScale.range([0, this.width]);
 
-     //adjust axis with scale
-     this.xAxis = this.xAxis.scale(this.xScale)
-       .tickPadding(this.profile.label_spacing);
+    //adjust axis with scale
+    this.xAxis = this.xAxis.scale(this.xScale)
+      .tickPadding(this.profile.label_spacing);
 
-     this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
-       .call(this.xAxis);
+    this.axis.attr("transform", "translate(0," + this.height / 2 + ")")
+      .call(this.xAxis);
 
-     this.slide.select(".background")
-       .attr("height", this.height);
+    this.slide.select(".background")
+      .attr("height", this.height);
 
-     //size of handle
-     this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
-       .attr("r", this.profile.radius);
+    //size of handle
+    this.handle.attr("transform", "translate(0," + this.height / 2 + ")")
+      .attr("r", this.profile.radius);
 
-     this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
+    this.sliderWidth = _this.slider.node().getBoundingClientRect().width;
 
-     this._setHandle();
+    this._setHandle();
 
-   },
+  },
 
   /**
    * Returns width of slider text value.
@@ -312,7 +312,9 @@ var TimeSlider = Component.extend({
   _getBrushed: function() {
     var _this = this;
     return function() {
-      _this.model.time.pause();
+
+      if (_this.model.time.playing)
+        _this.model.time.pause();
 
       _this._optionClasses();
       _this.element.classed(class_dragging, true);
@@ -413,8 +415,8 @@ var TimeSlider = Component.extend({
     //var now = new Date();
     //if (this._updTime != null && now - this._updTime < frameRate) return;
     //this._updTime = now;
-
-    _this.model.time.value = time;
+    var persistent = !this.model.time.dragging && !this.model.time.playing;
+    _this.model.time.getActualObject('value').set(time, false, persistent); // non persistent
   },
 
     /**

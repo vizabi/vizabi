@@ -5,19 +5,29 @@ var _freezeAllEvents = false;
 var _frozenEventInstances = [];
 var _freezeAllExceptions = {};
 
-var Event = Class.extend({
+export var DefaultEvent = Class.extend({
 
-  type: '',
   target: '',
+  type: 'default',
 
-  init: function(type, target) {
-    this.type = type;
+  init: function(target) {
     this.target = target;
   }
 
 });
 
-var EventEmitter = Class.extend({
+export var ChangeEvent = DefaultEvent.extend('change', {
+
+  persistent: true,
+  type: 'change',
+
+  init: function(target, persistent) {
+    this._super(target);
+    this.persistent = (typeof persistent === 'undefined') ? true : persistent;
+  }
+})
+
+var EventSource = Class.extend({
 
   /**
    * Initializes the event class
@@ -196,21 +206,30 @@ var EventEmitter = Class.extend({
    * @param {String|Array} name name of event or array with names
    * @param args Optional arguments (values to be passed)
    */
-  trigger: function(evt, args) {
+  trigger: function(evtType, args) {
     var i;
     var size;
 
     // split up eventType-paremeter for multiple event-triggers
-    if(utils.isArray(evt)) {
-      for(i = 0, size = evt.length; i < size; i += 1) {
-        this.trigger(evt[i], args);
+    if(utils.isArray(evtType)) {
+      for(i = 0, size = evtType.length; i < size; i += 1) {
+        this.trigger(evtType[i], args);
       }
       return;
     }
 
-    // event is string, make an event-object out of it
-    if (!(evt instanceof Event)) {
-      evt = new Event(evt, this);
+    // create an event-object if necessary
+    var evt;
+    if ((evtType instanceof DefaultEvent)) {
+      evt = evtType;
+    } else {
+      var eventClass = DefaultEvent.get(evtType, true); // silent
+      if(eventClass) {
+        evt = new eventClass(this);
+      } else {
+        evt = new DefaultEvent(this);
+        evt.type = evtType;
+      }
     } 
 
     // if this eventType has no events registered
@@ -292,8 +311,8 @@ var EventEmitter = Class.extend({
   }
 });
 
-EventEmitter.freezeAll = freezeAll;
-EventEmitter.unfreezeAll = unfreezeAll;
+EventSource.freezeAll = freezeAll;
+EventSource.unfreezeAll = unfreezeAll;
 
 //generic event functions
 /**
@@ -330,4 +349,4 @@ function unfreezeAll() {
   _frozenEventInstances = {};
 };
 
-export default EventEmitter;
+export default EventSource;

@@ -1,7 +1,7 @@
 import * as utils from 'utils';
 import Promise from 'promise';
 import Data from 'data';
-import Events from 'events';
+import EventSource, {DefaultEvent, ChangeEvent} from 'events';
 import Intervals from 'intervals';
 import globals from 'globals';
 import * as models from 'models/_index';
@@ -18,7 +18,7 @@ var time_formats = {
 
 var _DATAMANAGER = new Data();
 
-var ModelLeaf = Events.extend({
+var ModelLeaf = EventSource.extend({
 
   _name: '',
   _parent: null,
@@ -45,15 +45,15 @@ var ModelLeaf = Events.extend({
     return this._val;
   },
 
-  set: function(val, force) {
-    if (this._val !== val || force || JSON.stringify(this._val) !== JSON.stringify(val)) {
-      this.trigger('change', this._name);
+  set: function(val, force, persistent) {
+    if (force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val))) {
+      this.trigger(new ChangeEvent(this, persistent), this._name);
     }
     this._val = val;
   }
 })
 
-var Model = Events.extend({
+var Model = EventSource.extend({
   /**
    * Initializes the model.
    * @param {Object} values The initial values of this model
@@ -131,7 +131,7 @@ var Model = Events.extend({
    * @param {Boolean} force force setting of property to value and triggers set event
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force) {
+  set: function(attr, val, force, persistent) {
     var changes = [];
     var setting = this._setting;
     var attrs;
@@ -141,6 +141,7 @@ var Model = Events.extend({
       (attrs = {})[attr] = val;
     } else {
       attrs = attr;
+      persistent = force;
       force = val;
     }
 
@@ -157,7 +158,7 @@ var Model = Events.extend({
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[a].set(val, force);
+        this._data[a].set(val, force, persistent);
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[a] = initSubmodel(a, val, this);
@@ -397,7 +398,7 @@ var Model = Events.extend({
       var evts = {
         'load_start': function() {
           _this.setLoading('_hook_data');
-          Events.freezeAll([
+          EventSource.freezeAll([
             'load_start',
             'resize',
             'dom_ready'
@@ -465,7 +466,7 @@ var Model = Events.extend({
    * executes after data has actually been loaded
    */
   afterLoad: function() {
-    Events.unfreezeAll();
+    EventSource.unfreezeAll();
     this.setLoadingDone('_hook_data');
     interpIndexes = {};
   },
