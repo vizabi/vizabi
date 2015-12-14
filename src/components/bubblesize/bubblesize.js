@@ -61,13 +61,11 @@ var BubbleSize = Component.extend({
     var _this = this;
     this.model_binds = {
       'change:size': function (evt) {
-        var size = _this.brush.extent();
-        if (evt.indexOf(_this.fields.min) > -1) {
-          size[0] = _this.model.size[_this.fields.min];
-        }
-        if (evt.indexOf(_this.fields.max) > -1) {
-          size[1] = _this.model.size[_this.fields.max];
-        }
+        if(evt.indexOf(_this.fields.min) == -1 && evt.indexOf(_this.fields.max) == -1) return;
+        var size = [
+            _this.model.size[_this.fields.min],
+            _this.model.size[_this.fields.max]
+        ];
         _this.sliderEl.call(_this.brush.extent(size));
         _this.sliderEl.call(_this.brush.event);
       },
