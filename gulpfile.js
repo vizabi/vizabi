@@ -312,7 +312,7 @@ function buildJS(dev, cb) {
 gulp.task('buildIndexes', ['clean:indexes'], function() {
   return q.all([
     buildImportIndex(path.join(config.src, '/components/'), true),
-    buildImportIndex(path.join(config.src, '/components/buttonlist/dialogs'), true),
+    buildImportIndex(path.join(config.src, '/components/dialogs'), true),
     buildImportIndex(path.join(config.src, '/models/')),
     buildImportIndex(path.join(config.src, '/readers/'))
   ]);

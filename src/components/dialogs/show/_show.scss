@@ -1,5 +1,5 @@
-.vzb-buttonlist {
-  .vzb-buttonlist-dialog {
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
     &[data-btn='show'] {
   
       .vzb-show-filter {
@@ -14,8 +14,8 @@
 
 //responsiveness
 &.vzb-large {
-  &.vzb-button-expand-true {
-    .vzb-buttonlist-dialog {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
       &.vzb-dialog-side {
         &[data-btn="show"] {
           flex: auto;

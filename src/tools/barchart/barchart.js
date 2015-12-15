@@ -9,6 +9,7 @@ import BarChartComponent from './barchart-component';
 
 import {
   timeslider,
+  dialogs,
   buttonlist,
   treemenu
 }
@@ -38,6 +39,10 @@ var BarChart = Tool.extend('BarChart', {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
+    }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',

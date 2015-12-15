@@ -2,9 +2,6 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import * as iconset from 'base/iconset';
 
-//dialogs
-import * as dialogs from 'dialogs/_index';
-
 /*!
  * VIZABI BUTTONLIST
  * Reusable buttonlist component
@@ -31,8 +28,7 @@ var ButtonList = Component.extend({
     //set properties
     var _this = this;
     this.name = 'gapminder-buttonlist';
-    this.template = '<div class="vzb-buttonlist"></div>';
-    this._curr_dialog_index = 20;
+//    this.template = '<div class="vzb-buttonlist"></div>';
 
     this.model_expects = [{
       name: "state",
@@ -49,47 +45,36 @@ var ButtonList = Component.extend({
       'find': {
         title: "buttons/find",
         icon: "search",
-        dialog: dialogs.find,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'show': {
         title: "buttons/show",
         icon: "asterisk",
-        dialog: dialogs.show,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'moreoptions': {
         title: "buttons/more_options",
         icon: "gear",
-        dialog: dialogs.moreoptions,
-        ispin: false,
         required: true,
         isgraph: false
       },
       'colors': {
         title: "buttons/colors",
         icon: "paintbrush",
-        dialog: dialogs.colors,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'size': {
         title: "buttons/size",
         icon: "circle",
-        dialog: dialogs.size,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'fullscreen': {
         title: "buttons/expand",
         icon: "expand",
-        dialog: false,
         func: this.toggleFullScreen.bind(this),
         required: true,
         isgraph: false
@@ -97,7 +82,6 @@ var ButtonList = Component.extend({
       'trails': {
         title: "buttons/trails",
         icon: "trails",
-        dialog: false,
         func: this.toggleBubbleTrails.bind(this),
         required: false,
         isgraph: true
@@ -105,7 +89,6 @@ var ButtonList = Component.extend({
       'lock': {
         title: "buttons/lock",
         icon: "lock",
-        dialog: false,
         func: this.toggleBubbleLock.bind(this),
         required: false,
         isgraph: true
@@ -113,7 +96,6 @@ var ButtonList = Component.extend({
       'presentation': {
         title: "buttons/presentation",
         icon: "presentation",
-        dialog: false,
         func: this.togglePresentationMode.bind(this),
         required: false,
         isgraph: false
@@ -121,31 +103,24 @@ var ButtonList = Component.extend({
       'axes': {
         title: "buttons/axes",
         icon: "axes",
-        dialog: dialogs.axes,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'axesmc': {
         title: "buttons/axesmc",
         icon: "axes",
-        dialog: dialogs.axesmc,
-        ispin: false,
         required: false,
         isgraph: false
       },
       'stack': {
         title: "buttons/stack",
         icon: "stack",
-        dialog: dialogs.stack,
-        ispin: false,
         required: false,
         isgraph: false
       },
       '_default': {
         title: "Button",
         icon: "asterisk",
-        dialog: false,
         required: false,
         isgraph: false
       }
@@ -182,11 +157,9 @@ var ButtonList = Component.extend({
     var _this = this;
     var button_expand = this.model.ui.buttons_expand;
 
-    this.element = d3.select(this.element);
-    this.dialogContainerEl = this.element.append("div")
-      .attr("class", "vzb-buttonlist-container-dialogs");
-    this.buttonContainerEl = this.element.append("div")
-      .attr("class", "vzb-buttonlist-container-buttons");
+    this.element = d3.select(this.placeholder);
+
+    this.element.selectAll("div").remove();
 
     // if button_expand has been passed in with boolean param or array must check and covert to array
     if (button_expand){
@@ -194,8 +167,9 @@ var ButtonList = Component.extend({
     }
 
     if (button_expand.length !== 0) {
-        d3.select(this.root.element).classed("vzb-button-expand-true", true);
+        d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     }
+    
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -214,7 +188,7 @@ var ButtonList = Component.extend({
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
     this._toggleButtons();
-    //activate each dialog when clicking the button
+    //clicking the button
     buttons.on('click', function() {
 
       d3.event.preventDefault();
@@ -224,38 +198,18 @@ var ButtonList = Component.extend({
         classes = btn.attr("class"),
         btn_config = _this._available_buttons[id];
 
-      //if it's a dialog, open
-      if(btn_config && btn_config.dialog) {
 
-        //close if it's open
-        if(classes.indexOf(class_active) !== -1) {
-          _this.closeDialog(id);
-        } else {
-          _this.openDialog(id);
-        }
-      }
-      //otherwise, execute function
-      else if(btn_config.func) {
+      if(btn_config && btn_config.func) {
         btn_config.func(id);
+      } else {
+        var btn_active = classes.indexOf(class_active) === -1;
+  
+        btn.classed(class_active, btn_active);
+        var evt = {};
+        evt['id'] = id;
+        evt['active'] = btn_active;
+        _this.trigger('click', evt);
       }
-
-    });
-
-    var close_buttons = this.element.selectAll(".vzb-buttonlist-dialog").select("[data-click='closeDialog']");
-    close_buttons.on('click', function(type, index) {
-      _this.closeDialog(_this.model.ui.buttons[index]);
-    });
-    var pinDialog = this.element.selectAll("[data-click='pinDialog']");
-    pinDialog.on('click', function() {
-      _this.pinDialog(this);
-    });
-
-    d3.selectAll(".vzb-buttonlist-container-dialogs").on('click', function() {
-      d3.event.stopPropagation();
-    });
-
-    this.root.element.addEventListener('click', function() {
-      _this.closeAllDialogs();
     });
 
     //store body overflow
@@ -264,23 +218,7 @@ var ButtonList = Component.extend({
     this.setBubbleTrails();
     this.setBubbleLock();
     this.setPresentationMode();
-
-    d3.select(this.root.element).on("mousedown", function(e) {
-      if(!this._active_comp) return; //don't do anything if nothing is open
-
-      var target = d3.event.target;
-      var closeDialog = true;
-      while(target) {
-        if(target.classList.contains("vzb-dialog-modal")) {
-          closeDialog = false;
-          break;
-        }
-        target = target.parentElement;
-      }
-      if(closeDialog) {
-        _this.closeAllDialogs();
-      }
-    });
+    
   },
 
   /*
@@ -366,25 +304,26 @@ var ButtonList = Component.extend({
      var number_of_buttons = 1;
 
      //check if container is landscape or portrait
-     // if landscape, use height
-     if(parent.classed("vzb-landscape") || (parent.classed("vzb-portrait") && parent.classed("vzb-medium"))){
-       //check if the width_diff is small. If it is, add to the container
-       // width, to allow more buttons in a way that is still usable
-       if(height_diff > 0 && height_diff <=10){
-         container_height += height_diff;
-       }
-       number_of_buttons = Math.floor(container_height / button_height) - required.length;
-       if(number_of_buttons < 0){
-         number_of_buttons = 0;
-       }
-    // if portrait, use width
-     } else {
+    // if portrait small or large with expand, use width
+     if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true") 
+      || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
        //check if the width_diff is small. If it is, add to the container
        // width, to allow more buttons in a way that is still usable
        if(width_diff > 0 && width_diff <=10){
          container_width += width_diff;
        }
        number_of_buttons = Math.floor(container_width / button_width) - required.length;
+       if(number_of_buttons < 0){
+         number_of_buttons = 0;
+       }
+     // else, use height
+     } else {
+       //check if the width_diff is small. If it is, add to the container
+       // width, to allow more buttons in a way that is still usable
+       if(height_diff > 0 && height_diff <=10){
+         container_height += height_diff;
+       }
+       number_of_buttons = Math.floor(container_height / button_height) - required.length;
        if(number_of_buttons < 0){
          number_of_buttons = 0;
        }
@@ -414,20 +353,6 @@ var ButtonList = Component.extend({
       var btn = button_list[i];
       var btn_config = this._available_buttons[btn];
 
-      //if it's a dialog, add component
-      if(btn_config && btn_config.dialog) {
-        var comps = this._components_config;
-
-        //add corresponding component
-        comps.push({
-          component: btn_config.dialog,
-          placeholder: '.vzb-buttonlist-dialog[data-btn="' + btn + '"]',
-          model: ["state", "ui", "language"]
-        });
-
-        btn_config.component = comps.length - 1;
-      }
-
       //add template data
       var d = (btn_config) ? btn : "_default";
       var details_btn = this._available_buttons[d];
@@ -439,7 +364,7 @@ var ButtonList = Component.extend({
 
     var t = this.getTranslationFunction(true);
 
-    this.buttonContainerEl.selectAll('button').data(details_btns)
+    this.element.selectAll('button').data(details_btns)
       .enter().append("button")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-btn';
@@ -460,48 +385,19 @@ var ButtonList = Component.extend({
           t(btn.title) + "</span>";
       });
 
-    this.dialogContainerEl.selectAll('div').data(details_btns)
-      .enter().append("div")
-      .attr('class', function (d) {
-        var cls = 'vzb-buttonlist-dialog';
-        if (button_expand && button_expand.length > 0) {
-          if (button_expand.indexOf(d.id) > -1) {
-            cls += ' vzb-dialog-side';
-          }
-        }
-
-        return cls;
-      })
-      .attr('data-btn', function(d) {
-        return d.id;
-      });
-
-    this.loadComponents();
-
-    var _this = this;
-    //render each subcomponent
-    utils.forEach(this.components, function(subcomp) {
-      subcomp.render();
-      _this.on('resize', function() {
-        subcomp.trigger('resize');
-      });
-      subcomp.on('dragstart', function() {
-        _this.bringForward(subcomp.name);
-      });
-    });
   },
-
+  
 
   scrollToEnd: function() {
     var target = 0;
     var parent = d3.select(".vzb-tool");
 
     if(parent.classed("vzb-portrait") && parent.classed("vzb-small")) {
-      if(this.model.state.entities.select.length > 0) target = this.buttonContainerEl[0][0].scrollWidth
-      this.buttonContainerEl[0][0].scrollLeft = target;
+      if(this.model.state.entities.select.length > 0) target = this.element[0][0].scrollWidth
+      this.element[0][0].scrollLeft = target;
     } else {
-      if(this.model.state.entities.select.length > 0) target = this.buttonContainerEl[0][0].scrollHeight
-      this.buttonContainerEl[0][0].scrollTop = target;
+      if(this.model.state.entities.select.length > 0) target = this.element[0][0].scrollHeight
+      this.element[0][0].scrollTop = target;
     }
   },
 
@@ -522,129 +418,10 @@ var ButtonList = Component.extend({
     this._toggleButtons();
   },
 
-  //TODO: make opening/closing a dialog via update and model
-  /*
-   * Activate a button dialog
-   * @param {String} id button id
-   */
-  openDialog: function(id) {
+  setButtonActive: function(id, boolActive) {
+    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']");
 
-    this.closeAllDialogs();
-
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-      dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-
-    this._active_comp = this.components[this._available_buttons[id].component];
-
-    this._active_comp.beforeOpen();
-    //add classes
-    btn.classed(class_active, true);
-    dialog.classed(class_active, true);
-
-    this.bringForward(id);
-
-    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
-      btn.classed(class_hide_btn, true);
-      dialog.classed(class_expand_dialog, true);
-    }
-
-    //call component function
-    this._active_comp.open();
-  },
-
-
-  pinDialog: function(button) {
-    var id = typeof button === 'string' ? button : button.getAttribute('data-dialogtype');
-    var btn = this.element.select(".vzb-buttonlist-btn[data-btn='" + id + "']");
-    var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-    if(this._available_buttons[id].ispin) {
-      // button.textContent = '';
-      btn.classed('pinned', false);
-      this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']").classed('pinned', false);
-      this._available_buttons[id].ispin = false;
-      this._active_comp.isPin = false;
-    } else {
-      //  button.textContent = '';
-      btn.classed('pinned', true);
-      dialog.classed('pinned', true);
-      this._available_buttons[id].ispin = true;
-      this._active_comp.isPin = true;
-    }
-  },
-
-
-  /*
-   * Closes a button dialog
-   * @param {String} id button id
-   */
-  closeDialog: function(id) {
-    var btn = this.element.selectAll(".vzb-buttonlist-btn[data-btn='" + id + "']"),
-      dialog = this.element.selectAll(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-
-    this._active_comp = this.components[this._available_buttons[id].component];
-
-    if(this._available_buttons[id].ispin)
-      this.pinDialog(id);
-
-    if(this._active_comp) {
-      this._active_comp.beforeClose();
-    }
-    //remove classes
-    btn.classed(class_active, false);
-    dialog.classed(class_active, false);
-
-    if (this.getLayoutProfile() === 'large' && this.model.ui.buttons_expand.indexOf(id) !== -1) {
-      btn.classed(class_hide_btn, false);
-      dialog.classed(class_expand_dialog, false);
-    }
-
-    //call component close function
-    if(this._active_comp) {
-      this._active_comp.close();
-    }
-    this._active_comp = false;
-  },
-
-  /*
-   * Close all dialogs
-   */
-  closeAllDialogs: function(forceclose) {
-    //remove classes
-    var btnClass = forceclose ? ".vzb-buttonlist-btn" : ".vzb-buttonlist-btn:not(.pinned)";
-    var dialogClass = forceclose ? ".vzb-buttonlist-dialog" : ".vzb-buttonlist-dialog:not(.pinned)";
-    var all_btns = this.element.selectAll(btnClass),
-      all_dialogs = this.element.selectAll(dialogClass);
-    if(forceclose)
-      this.unpinAllDialogs();
-
-    if(this._active_comp && (forceclose || !this._available_buttons[this._active_comp.name].ispin)) {
-      this._active_comp.beforeClose();
-    }
-
-    all_btns.classed(class_active, false);
-    all_dialogs.classed(class_active, false);
-
-    //call component close function
-    if(this._active_comp && (forceclose || !this._available_buttons[this._active_comp.name].ispin)) {
-      this._active_comp.close();
-    }
-    if(this._active_comp && !this._available_buttons[this._active_comp.name].ispin)
-      this._active_comp = false;
-  },
-
-  unpinAllDialogs: function() {
-    var availBtns = this._available_buttons;
-    var keys = Object.keys(availBtns);
-    keys.forEach(function(dialogName) {
-      if(availBtns[dialogName].ispin)
-        this.pinDialog(dialogName);
-    }.bind(this));
-  },
-
-  bringForward: function(id) {
-    var dialog = this.element.select(".vzb-buttonlist-dialog[data-btn='" + id + "']");
-    dialog.style('z-index', this._curr_dialog_index);
-    this._curr_dialog_index += 10;
+    btn.classed(class_active, boolActive);
   },
 
   toggleBubbleTrails: function() {
@@ -738,13 +515,15 @@ var ButtonList = Component.extend({
     //restore body overflow
     document.body.style.overflow = body_overflow;
 
+    this.root.layout.resizeHandler();
+
     //force window resize event
-    (function() {
-      event = window.document.createEvent("HTMLEvents");
-      event.initEvent("resize", true, true);
-      event.eventName = "resize";
-      window.dispatchEvent(event);
-    })();
+    // utils.defer(function() {
+    //   event = window.document.createEvent("HTMLEvents");
+    //   event.initEvent("resize", true, true);
+    //   event.eventName = "resize";
+    //   window.dispatchEvent(event);
+    // });
   }
 
 });
