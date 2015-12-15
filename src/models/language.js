@@ -17,7 +17,7 @@ var LanguageModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "language";
     //default values for state model
@@ -25,7 +25,7 @@ var LanguageModel = Model.extend({
     values = utils.extend(defaults, values);
 
     //same constructor, with same arguments
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**

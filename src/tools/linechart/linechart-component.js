@@ -33,14 +33,14 @@ var LCComponent = Component.extend({
 
 
     this.model_binds = {
-      'change:time:value': function() {
+      'change:time.value': function() {
         if(!_this._readyOnce) return;
         _this.updateTime();
         _this.redrawDataPoints();
       },
-      'change:marker': function(evt) {
+      'change:marker': function(evt, path) {
         if(!_this._readyOnce) return;
-        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
         _this.ready();
       }
     };

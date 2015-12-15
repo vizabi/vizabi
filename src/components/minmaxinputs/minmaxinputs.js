@@ -38,10 +38,10 @@ var MinMaxInputs = Component.extend({
         if(!config.markerID) utils.warn("minmaxinputs.js complains on 'markerID' property: " + config.markerID);
 
         this.model_binds = {};
-        this.model_binds["change:language:strings"] = function(evt) {
+        this.model_binds["change:language.strings"] = function(evt) {
             _this.updateView();
         };
-        this.model_binds["change:marker:" + this.markerID] = function(evt) {
+        this.model_binds["change:marker." + this.markerID] = function(evt) {
             _this.updateView();
         };
         this.model_binds["ready"] = function(evt) {
@@ -54,7 +54,7 @@ var MinMaxInputs = Component.extend({
         this.ui = utils.extend({
             selectMinMax: false,
             selectFakeMinMax: false
-        }, this.ui.getObject());
+        }, this.ui.getPlainObject());
 
     },
 

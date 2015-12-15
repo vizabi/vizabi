@@ -59,12 +59,12 @@ var BubbleChartComp = Component.extend({
           //TODO: adjust X & Y axis here
         }
       },
-      'change:time:start': function(evt, original) {
+      'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
       },
-      "change:time:record": function() {
+      "change:time.record": function() {
         //console.log("change time record");
         if(_this.model.time.record) {
           _this._export.open(this.element, this.name);
@@ -72,21 +72,21 @@ var BubbleChartComp = Component.extend({
           _this._export.reset();
         }
       },
-      "change:time:trails": function(evt) {
+      "change:time.trails": function(evt) {
         //console.log("EVENT change:time:trails");
         _this._trails.toggle(_this.model.time.trails);
         _this.redrawDataPoints();
       },
-      "change:time:lockNonSelected": function(evt) {
+      "change:time.lockNonSelected": function(evt) {
         //console.log("EVENT change:time:lockNonSelected");
         _this.redrawDataPoints(500);
       },
-      "change:marker": function(evt) {
+      "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(evt.indexOf("change:marker:size") !== -1) return;
-        if(evt.indexOf("change:marker:color:palette") > -1) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("marker.size") !== -1) return;
+        if(path.indexOf("marker.color.palette") > -1) return;
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
@@ -94,7 +94,7 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
-        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+        if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
           if(_this.draggingNow)return;
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.fakeMin,
@@ -106,12 +106,12 @@ var BubbleChartComp = Component.extend({
           return;
         }
 
-        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
+        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
 
         _this.ready();
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities:select": function() {
+      "change:entities.select": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
@@ -120,12 +120,12 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities:highlight": function() {
+      "change:entities.highlight": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
-      'change:time:value': function() {
+      'change:time.value': function() {
         //console.log("EVENT change:time:value");
         _this.updateTime();
         _this._updateDoubtOpacity();
@@ -140,7 +140,7 @@ var BubbleChartComp = Component.extend({
         _this.tooltipMobile.classed('vzb-hidden', true);
         //_this._bubblesInteract().mouseout();
       },
-      'change:time:adaptMinMaxZoom': function() {
+      'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
           _this._panZoom.expandCanvas();
@@ -148,10 +148,10 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function(evt) {
+      'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
             _this.updateMarkerSizeLimits();
             _this._trails.run("findVisible");
             _this.redrawDataPointsOnlySize();
@@ -160,16 +160,18 @@ var BubbleChartComp = Component.extend({
         }
         _this.ready();
       },
-      'change:marker:color:palette': function() {
+      'change:marker.color': function(evt, path) {
+        // can't register to marker.color.palette because palette tends to change object (Model/ModelLeaf) which causes all previous eventHandlers to be discarded
+        if (path.indexOf('palette') === -1) return; 
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");
       },
-      'change:entities:opacitySelectDim': function() {
+      'change:entities.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
-      'change:entities:opacityRegular': function() {
+      'change:entities.opacityRegular': function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
@@ -950,9 +952,6 @@ var BubbleChartComp = Component.extend({
       .attr("x", -warnBB.width - warnBB.height * 1.2)
       .attr("y", - warnBB.height * 0.65);
   },
-
-
-
 
   updateMarkerSizeLimits: function() {
     var _this = this;

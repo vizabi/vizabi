@@ -23,15 +23,15 @@ var Find = Dialog.extend({
     }];
 
     this.model_binds = {
-      "change:state:entities:select": function(evt) {
+      "change:state.entities.select": function(evt) {
         _this.ready();
       },
-      "change:state:time:value": function(evt) {
+      "change:state.time.value": function(evt) {
         if(!_this.model.state.time.playing && !_this.model.state.time.dragging) {
           _this.ready();
         }
       },
-      "change:language:strings": function() {
+      "change:language.strings": function() {
         _this.translator = _this.model.language.getTFunction();
         _this.input_search.attr("placeholder", _this.translator("placeholder/search") + "...");
       }

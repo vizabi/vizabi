@@ -154,7 +154,7 @@ var ButtonList = Component.extend({
     this._active_comp = false;
 
     this.model_binds = {
-      "change:state:entities:select": function() {
+      "change:state.entities.select": function() {
         if(!_this._readyOnce) return;
 
         if(_this.model.state.entities.select.length === 0) {
@@ -630,8 +630,6 @@ var ButtonList = Component.extend({
     }
     if(this._active_comp && !this._available_buttons[this._active_comp.name].ispin)
       this._active_comp = false;
-
-    this.model.state.entities.setNeedUpdate();
   },
 
   unpinAllDialogs: function() {

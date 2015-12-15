@@ -43,20 +43,16 @@ var BarRankChart = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function(evt) {
+      "change:time.value": function(evt) {
         _this.onTimeChange();
       },
-      'change:color': function(evt) {
-        _this.drawColors();
-      },
-      "change:entities:select": function(evt) {
+      "change:entities.select": function(evt) {
         _this.selectBars();
       },
-      "change:marker:axis_x:scaleType": function(evt) {
+      "change:marker.axis_x.scaleType": function(evt) {
         _this.draw();
-        //if(evt.indexOf('scale'))
       },
-      'change:marker:color:palette': function() {
+      'change:marker.color.palette': function() {
         //console.log("EVENT change:marker:color:palette");
         //_this.drawColors();
       },

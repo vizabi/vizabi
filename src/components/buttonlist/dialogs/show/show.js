@@ -17,7 +17,7 @@ var Show = Dialog.extend({
     var _this = this;
 
     this.model_binds = {
-      "change:state:entities:show": function(evt) {
+      "change:state.entities.show": function(evt) {
         _this.redraw();
       }
     }

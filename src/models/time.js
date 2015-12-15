@@ -63,7 +63,7 @@ var TimeModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "time";
     //default values for time model
@@ -71,7 +71,7 @@ var TimeModel = Model.extend({
     values = utils.extend(defaults, values);
 
     //same constructor
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
 
     var _this = this;
     this.dragging = false;
@@ -86,6 +86,7 @@ var TimeModel = Model.extend({
         } else {
           _this._stopPlaying();
         }
+
       },
 */
       "set": function() {
@@ -173,6 +174,7 @@ var TimeModel = Model.extend({
     }else{
         this.playing = false;
     }
+    this.getModelObject('value').set(this.value, true);
   },
 
   /**
@@ -304,7 +306,7 @@ var TimeModel = Model.extend({
             _this.postponePause = false;
         }
 
-        _this.value = time;
+        _this.getModelObject('value').set(time, false, false);
         _this._intervals.clearInterval('playInterval_' + _this._id);
         _this.playInterval();
       }

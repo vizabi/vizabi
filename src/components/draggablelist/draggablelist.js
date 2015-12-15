@@ -6,6 +6,7 @@ var DraggableList = Component.extend({
   init: function(config, context) {
     this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list vzb-dialog-scrollable"></ul></span>';
     var _this = this;
+    this.name = 'draggableList';
 
     this.dataArrFn = config.dataArrFn;
     this.lang = config.lang;
@@ -22,15 +23,12 @@ var DraggableList = Component.extend({
     if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
-      "change:axis": function(evt) {
-        _this.updateView();
-      },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       }
     };
     
-    this.model_binds["change:group:" + this.groupID] = function(evt) {
+    this.model_binds["change:group." + this.groupID] = function(evt) {
         _this.updateView();
     };
     

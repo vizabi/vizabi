@@ -45,7 +45,7 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function (evt) {
+      "change:time.value": function (evt) {
         _this.updateEntities();
         _this.updateTime();
         _this.selectEntities();
@@ -54,32 +54,32 @@ var BubbleMapComponent = Component.extend({
         _this.updateOpacity();
         _this.updateDoubtOpacity();
       },
-      "change:entities:highlight": function (evt) {
+      "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
         _this.highlightEntities();
         _this.updateOpacity();
       },
-      "change:marker": function(evt) {
+      "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(evt.indexOf("change:marker:size") !== -1) return;
-        if(evt.indexOf("change:marker:color:palette") > -1) return;
+        if(path.indexOf("marker.size") !== -1) return;
+        if(path.indexOf("marker.color.palette") > -1) return;
         _this.ready();
       },
-      'change:marker:size': function(evt) {
+      'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.ready();
         }
       },
-      "change:marker:color:palette": function (evt) {
+      "change:marker.color.palette": function (evt) {
           if (!_this._readyOnce) return;
           //_this.redrawDataPointsOnlyColors();
           //_this._selectlist.redraw();
           _this.ready();
       },
-      "change:entities:select": function (evt) {
+      "change:entities.select": function (evt) {
           if (!_this._readyOnce) return;
 
           // _this.selectEntities();
@@ -89,10 +89,10 @@ var BubbleMapComponent = Component.extend({
 
           _this.ready();
       },
-      "change:entities:opacitySelectDim": function (evt) {
+      "change:entities.opacitySelectDim": function (evt) {
           _this.updateOpacity();
       },
-      "change:entities:opacityRegular": function (evt) {
+      "change:entities.opacityRegular": function (evt) {
           _this.updateOpacity();
       },
     };

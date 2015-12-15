@@ -14,6 +14,7 @@ var ColorLegend = Component.extend({
   init: function(config, context) {
     var _this = this;
     this.template = '<div class="vzb-cl-outer"></div>';
+    this.name = 'colorlegend';
 
     this.model_expects = [{
       name: "color",
@@ -34,7 +35,7 @@ var ColorLegend = Component.extend({
       "change:color": function(evt) {
         _this.updateView();
       },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       },
       "ready": function(evt) {
@@ -71,7 +72,8 @@ var ColorLegend = Component.extend({
     this.translator = this.model.language.getTFunction();
     var KEY = this.model.entities.getDimension();
 
-    var palette = this.model.color.palette._data;
+
+    var palette = this.model.color.palette.getPlainObject();
 
 
     var whichPalette = "_default";
@@ -172,7 +174,7 @@ var ColorLegend = Component.extend({
               return utils.clone(d, [KEY])
             });
 
-          _this.model.entities.setHighlighted(highlight);
+          _this.model.entities.setHighlight(highlight);
         })
         .on("mouseout", function() {
           regions.style("opacity", .8);

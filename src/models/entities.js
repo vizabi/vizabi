@@ -16,8 +16,7 @@ var EntitiesModel = Model.extend({
     select: [],
     highlight: [],
     opacitySelectDim: .3,
-    opacityRegular: 1,
-    needUpdate: {}
+    opacityRegular: 1
   },
 
   /**
@@ -26,7 +25,7 @@ var EntitiesModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "entities";
     //TODO: add defaults extend to super
@@ -36,7 +35,7 @@ var EntitiesModel = Model.extend({
     this._visible = [];
     this._multiple = true;
 
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
   },
 
   /**
@@ -54,9 +53,9 @@ var EntitiesModel = Model.extend({
       this.select = this.select.filter(function(f) {
         return visible_array.indexOf(f[dimension]) !== -1;
       });
-      this.highlight = this.highlight.filter(function(f) {
+      this.setHighlight(this.highlight.filter(function(f) {
         return visible_array.indexOf(f[dimension]) !== -1;
-      });
+      }));
     }
   },
 
@@ -97,7 +96,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show.getObject();
+    return this.show.getPlainObject();
   },
 
   /**
@@ -205,8 +204,10 @@ var EntitiesModel = Model.extend({
   },
 
 
-  setHighlighted: function(arg) {
-    this.highlight = [].concat(arg);
+  setHighlight: function(arg) {
+    if (!utils.isArray(arg))
+      this.setHighlight([].concat(arg));
+    this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 
   //TODO: join the following 3 methods with the previous 3
@@ -224,7 +225,7 @@ var EntitiesModel = Model.extend({
       if(timeDim && timeFormatter) {
         added["trailStartTime"] = timeFormatter(d[timeDim]);
       }
-      this.highlight = this.highlight.concat(added);
+      this.setHighlight(this.highlight.concat(added));
     }
   },
 
@@ -235,9 +236,9 @@ var EntitiesModel = Model.extend({
     var dimension = this.getDimension();
     var value = d[dimension];
     if(this.isHighlighted(d)) {
-      this.highlight = this.highlight.filter(function(d) {
+      this.setHighlight(this.highlight.filter(function(d) {
         return d[dimension] !== value;
-      });
+      }));
     }
   },
 
@@ -260,11 +261,9 @@ var EntitiesModel = Model.extend({
    * Clears selection of items
    */
   clearHighlighted: function() {
-    this.highlight = [];
+    this.setHighlight([]);
   },
-  setNeedUpdate: function() {
-    this.needUpdate = new Date();
-  }
+
 });
 
 export default EntitiesModel;
