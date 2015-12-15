@@ -20,14 +20,10 @@ var SimpleSlider = Component.extend({
       this.thumb_size = config.thumb_size;
       this.slider_properties = config.properties;
 
-      this.model_binds = {
-        "change:submodel.select": function (evt) {
-          _this.updateView();
-        }
-      }
+      this.model_binds = {};
       this.model_binds["change:submodel." + this.arg] = function (evt) {
         _this.updateView();
-      }
+      };
 
       //contructor is the same as any component
       this._super(config, context);

@@ -326,8 +326,6 @@ var Dialogs = Component.extend({
       all_dialogs.each(function(d) {
         _this.closeDialog(d.id)
       });
-    
-    this.model.state.entities.setNeedUpdate();
   }
   
 });
