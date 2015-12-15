@@ -160,7 +160,9 @@ var BubbleChartComp = Component.extend({
         }
         _this.ready();
       },
-      'change:marker.color.palette': function() {
+      'change:marker.color': function(evt, path) {
+        // can't register to marker.color.palette because palette tends to change object (Model/ModelLeaf) which causes all previous eventHandlers to be discarded
+        if (path.indexOf('palette') === -1) return; 
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
@@ -950,9 +952,6 @@ var BubbleChartComp = Component.extend({
       .attr("x", -warnBB.width - warnBB.height * 1.2)
       .attr("y", - warnBB.height * 0.65);
   },
-
-
-
 
   updateMarkerSizeLimits: function() {
     var _this = this;

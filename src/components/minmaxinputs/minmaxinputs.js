@@ -54,7 +54,7 @@ var MinMaxInputs = Component.extend({
         this.ui = utils.extend({
             selectMinMax: false,
             selectFakeMinMax: false
-        }, this.ui.getObject());
+        }, this.ui.getPlainObject());
 
     },
 

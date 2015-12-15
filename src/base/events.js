@@ -199,7 +199,7 @@ var EventSource = Class.extend({
     if (this[currentTarget] === undefined)
       utils.warn('Can\'t find child "' + currentTarget + '" of the model ' + this._name + '.');
     else
-      return this.getActualObject(currentTarget).traversePath(path);
+      return this.getModelObject(currentTarget).traversePath(path);
   },
 
   /**

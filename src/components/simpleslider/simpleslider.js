@@ -114,7 +114,7 @@ var SimpleSlider = Component.extend({
       if (scale){
         value = scale(value);
       }
-      this.model.submodel.getActualObject(this.arg).set(value, force, persistent);
+      this.model.submodel.getModelObject(this.arg).set(value, force, persistent);
     }
 
   });

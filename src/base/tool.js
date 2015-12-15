@@ -120,7 +120,7 @@ var Tool = Component.extend({
   },
 
   minState: function() {
-    var state = this.model.state.getObject();
+    var state = this.model.state.getPlainObject();
     var d_state = this.default_options.state;
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);
@@ -171,7 +171,7 @@ var Tool = Component.extend({
    * @return {Object} JSON object with options
    */
   getOptions: function() {
-    return this.model.getObject() || {};
+    return this.model.getPlainObject() || {};
   },
   /**
    * Displays loading class
@@ -275,7 +275,7 @@ function generateValidate(m, validate) {
   var max = 10;
 
   function validate_func() {
-    var model = JSON.stringify(m.getObject());
+    var model = JSON.stringify(m.getPlainObject());
     var c = arguments[0] || 0;
     //TODO: remove validation hotfix
     //while setting this.model is not available
@@ -284,7 +284,7 @@ function generateValidate(m, validate) {
     } else {
       validate();
     }
-    var model2 = JSON.stringify(m.getObject());
+    var model2 = JSON.stringify(m.getPlainObject());
     if(c >= max) {
       utils.error('Max validation loop.');
     } else if(model !== model2) {

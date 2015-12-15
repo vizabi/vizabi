@@ -72,7 +72,8 @@ var ColorLegend = Component.extend({
     this.translator = this.model.language.getTFunction();
     var KEY = this.model.entities.getDimension();
 
-    var palette = this.model.color.palette._data;
+
+    var palette = this.model.color.palette.getPlainObject();
 
 
     var whichPalette = "_default";

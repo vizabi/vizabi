@@ -233,12 +233,12 @@ var Model = EventSource.extend({
    * Gets the current model and submodel values as a JS object
    * @returns {Object} All model as JS object, leafs will return their values
    */
-  getObject: function() {
+  getPlainObject: function() {
     var obj = {};
     utils.forEach(this._data, function(dataItem, i) {
       //if it's a submodel
-      if(dataItem && typeof dataItem.getObject === 'function') {
-        obj[i] = dataItem.getObject();
+      if(dataItem instanceof Model) {
+        obj[i] = dataItem.getPlainObject();
       } else {
         obj[i] = dataItem.value;
       }
@@ -251,7 +251,7 @@ var Model = EventSource.extend({
    * Gets the requested object, including the leaf-object, not the value
    * @returns {Object} Model or ModelLeaf object.
    */
-  getActualObject: function(name) {
+  getModelObject: function(name) {
     return this._data[name];
   },
 
@@ -390,7 +390,7 @@ var Model = EventSource.extend({
       //hook changes, regardless of actual data loading
       this.trigger('hook_change');
       //get reader info
-      var reader = data_hook.getObject();
+      var reader = data_hook.getPlainObject();
       reader.formatters = formatters;
 
       var lang = language_hook ? language_hook.id : 'en';

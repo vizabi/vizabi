@@ -119,7 +119,7 @@ var Component = Events.extend({
 
           //TODO: cleanup hardcoded splash screen
           timeMdl.splash = true;
-          timeMdl.beyondSplash = utils.clone(timeMdl.getObject(), ['start', 'end']);
+          timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
 
           _this.model.load({
             splashScreen: true
@@ -136,7 +136,7 @@ var Component = Events.extend({
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
-                timeMdl.trigger('change', timeMdl.getObject());
+                timeMdl.trigger('change', timeMdl.getPlainObject());
               });
             }, 300);
 

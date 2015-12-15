@@ -157,7 +157,7 @@ var ColorModel = Model.extend({
    * set color
    */
   setColor: function(value, pointer) {
-    var temp = this.palette.getObject();
+    var temp = this.palette.getPlainObject();
     temp[pointer] = value;
     this.scale.range(utils.values(temp));
     this.palette[pointer] = value;
@@ -187,8 +187,9 @@ var ColorModel = Model.extend({
 
     var indicatorsDB = globals.metadata.indicatorsDB;
 
-    var domain = Object.keys(_this.palette.getObject());
-    var range = utils.values(_this.palette.getObject());
+    var paletteObject = _this.palette.getPlainObject();
+    var domain = Object.keys(paletteObject);
+    var range = utils.values(paletteObject);
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 

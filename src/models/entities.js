@@ -96,7 +96,7 @@ var EntitiesModel = Model.extend({
    * @returns {Array} Array of unique values
    */
   getFilter: function() {
-    return this.show.getObject();
+    return this.show.getPlainObject();
   },
 
   /**
@@ -207,7 +207,7 @@ var EntitiesModel = Model.extend({
   setHighlight: function(arg) {
     if (!utils.isArray(arg))
       this.setHighlight([].concat(arg));
-    this.getActualObject('highlight').set(arg, false, false); // highlights are always non persistent changes
+    this.getModelObject('highlight').set(arg, false, false); // highlights are always non persistent changes
   },
 
   //TODO: join the following 3 methods with the previous 3
