@@ -169,12 +169,11 @@ var TimeModel = Model.extend({
    * Pauses time
    */
   pause: function(soft) {
-    if(soft){
-        this.postponePause = true;
-    }else{
-        this.playing = false;
+    if(soft) {
+      this.postponePause = true;
+    } else {
+      this.playing = false;
     }
-    this.getModelObject('value').set(this.value, true);
   },
 
   /**
@@ -296,19 +295,20 @@ var TimeModel = Model.extend({
         }
         return;
       } else {
-        var step = _this.step;
-        if(_this.delay < _this.delayThresholdX2) step*=2;
-        if(_this.delay < _this.delayThresholdX4) step*=2;
-        time = d3.time[_this.unit].offset(time, step);
 
-        if(_this.postponePause) {
-            _this.playing = false;
-            _this.postponePause = false;
-        }
-
-        _this.getModelObject('value').set(time, false, false);
         _this._intervals.clearInterval('playInterval_' + _this._id);
-        _this.playInterval();
+
+        if(_this.postponePause || !_this.playing) {
+          _this.playing = false;
+          _this.postponePause = false;
+        } else {
+          var step = _this.step;
+          if(_this.delay < _this.delayThresholdX2) step*=2;
+          if(_this.delay < _this.delayThresholdX4) step*=2;
+          time = d3.time[_this.unit].offset(time, step);
+          _this.getModelObject('value').set(time, false, false);
+          _this.playInterval();
+        }
       }
     }, this.delayAnimations);
 
