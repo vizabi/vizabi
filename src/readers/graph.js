@@ -184,10 +184,20 @@ var GraphReader = Reader.extend({
               return;
             }
 
+            var i, j, l;
+            var _geoHash = {};
+            for (i = 0, l = _resp.data.rows.length; i < l; i++) {
+              _geoHash[_resp.data.rows[i][0]] = _resp.data.rows[i];
+            }
+
+            for (i = 0, l = data.length; i < l; i++) {
+              for (j = 1; j < _resp.data.headers.length; j++) {
+                data[i][_resp.data.headers[j]] = _geoHash[data[i].geo][j];
+              }
+            }
+
             _this._data = data;
 
-            // data for merging will be here
-            // console.log(_this._data, _resp);
             p.resolve();
           }
         })
