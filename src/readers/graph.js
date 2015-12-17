@@ -58,31 +58,31 @@ var GraphReader = Reader.extend({
 
     (function (query, p) {
       //if cached, retrieve and parse
-      if (FILE_CACHED.hasOwnProperty(path)) {
-        parse(FILE_CACHED[path]);
+      if (FILE_CACHED$1.hasOwnProperty(path)) {
+        parse(FILE_CACHED$1[path]);
         return p;
       }
       //if requested by another hook, wait for the response
-      if (FILE_REQUESTED.hasOwnProperty(path)) {
-        FILE_REQUESTED[path].then(function () {
-          parse(FILE_CACHED[path]);
+      if (FILE_REQUESTED$1.hasOwnProperty(path)) {
+        FILE_REQUESTED$1[path].then(function () {
+          parse(FILE_CACHED$1[path]);
         });
         return p;
       }
       //if not, request and parse
-      FILE_REQUESTED[path] = new Promise();
-      utils.get(path, [], onSuccess, console.error.bind(console), true);
+      FILE_REQUESTED$1[path] = new Promise();
+      get(path, [], onSuccess, console.error.bind(console), true);
       function onSuccess(resp) {
         if (!resp) {
-          utils.error("Empty json: " + path, error);
+          error$1("Empty json: " + path, error);
           return;
         }
 
         resp = format(uzip(resp.data));
         //cache and resolve
-        FILE_CACHED[path] = resp;
-        FILE_REQUESTED[path].resolve();
-        FILE_REQUESTED[path] = void 0;
+        FILE_CACHED$1[path] = resp;
+        FILE_REQUESTED$1[path].resolve();
+        FILE_REQUESTED$1[path] = void 0;
 
         parse(resp);
       }
@@ -108,7 +108,7 @@ var GraphReader = Reader.extend({
 
       function format(res) {
         //format data
-        res = utils.mapRows(res, _this._formatters);
+        res = mapRows(res, _this._formatters);
 
         //TODO: fix this hack with appropriate ORDER BY
         //order by formatted
@@ -129,7 +129,7 @@ var GraphReader = Reader.extend({
         //rename geo.category to geo.cat
         var where = query.where;
         if (where['geo.category']) {
-          where['geo.cat'] = utils.clone(where['geo.category']);
+          where['geo.cat'] = clone(where['geo.category']);
           where['geo.category'] = void 0;
         }
 
@@ -139,14 +139,14 @@ var GraphReader = Reader.extend({
         var propertiesLoadPromise = _this.loadProperties(geoHardCode, data, query);
 
         // once done, continue parsing
-        propertiesLoadPromise.then(function() {
+        propertiesLoadPromise.then(function () {
 
           //format values in the dataset and filters
-          where = utils.mapRows([where], _this._formatters)[0];
+          where = mapRows([where], _this._formatters)[0];
 
           //make sure conditions don't contain invalid conditions
           var validConditions = [];
-          utils.forEach(where, function (v, p) {
+          forEach(where, function (v, p) {
             for (var i = 0, s = data.length; i < s; i++) {
               if (data[i].hasOwnProperty(p)) {
                 validConditions.push(p);
@@ -155,27 +155,40 @@ var GraphReader = Reader.extend({
             }
           });
           //only use valid conditions
-          where = utils.clone(where, validConditions);
+          where = clone(where, validConditions);
 
           //filter any rows that match where condition
-          data = utils.filterAny(data, where);
+          data = filterAny(data, where);
 
           //warn if filtering returns empty array
-          if(data.length == 0) {
+          if (data.length == 0) {
             p.reject("data reader returns empty array, that's bad");
             return;
           }
 
           //only selected items get returned
           data = data.map(function (row) {
-            return utils.clone(row, query.select);
+            return clone(row, query.select);
           });
 
           // grouping
           data = _this.groupData(data, query);
 
-          _this._data = data;
-          p.resolve();
+          var geoPath = _this._basepath + '?select=geo,geo.name,geo.region';
+
+          get(geoPath, [], onSuccessGeo, console.error.bind(console), true);
+          function onSuccessGeo(_resp) {
+            if (!_resp) {
+              error$1("Empty json: " + path, error);
+              return;
+            }
+
+            _this._data = data;
+
+            // data for merging will be here
+            // console.log(_this._data, _resp);
+            p.resolve();
+          }
         })
       }
 
