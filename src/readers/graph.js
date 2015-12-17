@@ -180,7 +180,7 @@ var GraphReader = Reader.extend({
 
           var geoPath = _this._basepath + '?select=geo,geo.name,geo.region';
 
-          get(geoPath, [], onSuccessGeo, console.error.bind(console), true);
+          utils.get(geoPath, [], onSuccessGeo, console.error.bind(console), true);
 
           function onSuccessGeo(_resp) {
             if (!_resp) {
