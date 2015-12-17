@@ -46,6 +46,10 @@ var GraphReader = Reader.extend({
       path += '&time=' + t;
     }
 
+    if (query.where['geo.cat'] && query.where['geo.cat'].length && query.where['geo.cat'][0] !== '*') {
+      path += '&geo.cat=' + encodeURI(query.where['geo.cat']);
+    }
+
     function getYear(time) {
       if (typeof time === 'string') {
         return time;
