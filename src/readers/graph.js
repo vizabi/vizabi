@@ -174,8 +174,22 @@ var GraphReader = Reader.extend({
           // grouping
           data = _this.groupData(data, query);
 
-          _this._data = data;
-          p.resolve();
+          var geoPath = _this._basepath + '?select=geo,geo.name,geo.region';
+
+          get(geoPath, [], onSuccessGeo, console.error.bind(console), true);
+
+          function onSuccessGeo(_resp) {
+            if (!_resp) {
+              utils.error("Empty json: " + path, error);
+              return;
+            }
+
+            _this._data = data;
+
+            // data for merging will be here
+            // console.log(_this._data, _resp);
+            p.resolve();
+          }
         })
       }
 
