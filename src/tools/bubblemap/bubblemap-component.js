@@ -502,7 +502,7 @@ var BubbleMapComponent = Component.extend({
     });
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(items);
+      .data(items, function (d) { return d[_this.KEY]; });
 
     if (!this.renderedOnce) {
 
