@@ -125,7 +125,7 @@ var ColorLegend = Component.extend({
           })
           .show(true);
       })
-    
+
     if(this.model.color.use == "indicator") {
       var gradientHeight;
       var colorOptions = this.listColorsEl.selectAll('.vzb-cl-option');
@@ -219,6 +219,11 @@ var ColorLegend = Component.extend({
           .text(_this.translator("color/" + d));
       }
     });
+  },
+
+  resize: function() {
+    console.log("colorlegend resize");
+    this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
   }
 
 });
