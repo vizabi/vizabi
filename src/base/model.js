@@ -252,7 +252,10 @@ var Model = EventSource.extend({
    * @returns {Object} Model or ModelLeaf object.
    */
   getModelObject: function(name) {
-    return this._data[name];
+    if (name)
+      return this._data[name];
+    else
+      return this;
   },
 
   /**
