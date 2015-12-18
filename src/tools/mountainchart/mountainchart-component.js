@@ -286,10 +286,17 @@ var MountainChartComponent = Component.extend({
         this.wScale = d3.scale.linear()
             .domain(this.parent.datawarning_content.doubtDomain)
             .range(this.parent.datawarning_content.doubtRange);
+        
+        this._calculateAllValues();
+        this._valuesCalculated = true; //hack to avoid recalculation
+
     },
 
     ready: function () {
         //console.log("ready")
+        
+        if(!this._valuesCalculated) this._calculateAllValues();
+        else this._valuesCalculated = false;
 
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
@@ -512,13 +519,16 @@ var MountainChartComponent = Component.extend({
     updateEntities: function () {
         var _this = this;
 
-        var filter = {};
-        filter[_this.TIMEDIM] = this.model.time.end;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this._getValuesInterpolated(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
-            .map(function (d) {
+            .filter(function(d) { return 1
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.size[d[_this.KEY]];
+            })
+            .map(function(d) {
                 var pointer = {};
                 pointer[_this.KEY] = d[_this.KEY];
                 pointer.KEY = function () {
@@ -771,9 +781,7 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getFullYear().toString());
 
-        var filter = {};
-        filter[_this.TIMEDIM] = time;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this._getValuesInterpolated(time);
         this.yMax = 0;
 
 
@@ -863,6 +871,8 @@ var MountainChartComponent = Component.extend({
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
+        
+        if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
             first: first,
@@ -1091,8 +1101,62 @@ var MountainChartComponent = Component.extend({
 
             this.tooltip.classed("vzb-hidden", true);
         }
+    },
+
+    
+    
+    
+      /*
+   * Calculates all values for this data configuration
+   */
+  _calculateAllValues: function() {
+    this.STEPS = this.model.time.getAllSteps();
+    this.VALUES = {};
+    var f = {};
+    for(var i = 0; i < this.STEPS.length; i++) {
+      var t = this.STEPS[i];
+      f[this.TIMEDIM] = t;
+      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
+    }
+  },
+    
+    
+    
+      /*
+   * Gets all values for any point in time
+   * @param {Date} t time value
+   */
+  _getValuesInterpolated: function(t) {
+
+    if(!this.VALUES) this._calculateAllValues();
+    if(this.VALUES[t]) return this.VALUES[t];
+
+    var next = d3.bisectLeft(this.STEPS, t);
+
+    //if first
+    if(next === 0) {
+      return this.VALUES[this.STEPS[0]];
+    }
+    if(next > this.STEPS.length) {
+      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
     }
 
+    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
+
+    var pValues = this.VALUES[this.STEPS[next - 1]];
+    var nValues = this.VALUES[this.STEPS[next]];
+
+    var curr = {};
+    utils.forEach(pValues, function(values, hook) {
+      curr[hook] = {};
+      utils.forEach(values, function(val, id) {
+        var val2 = nValues[hook][id];
+        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+      });
+    });
+
+    return curr;
+  }
 
 });
 
