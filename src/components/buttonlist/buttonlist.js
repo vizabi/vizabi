@@ -166,10 +166,10 @@ var ButtonList = Component.extend({
       this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
     }
 
-    if (button_expand.length !== 0) {
+    if (button_expand && button_expand.length !== 0) {
         d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
     }
-    
+
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -203,7 +203,7 @@ var ButtonList = Component.extend({
         btn_config.func(id);
       } else {
         var btn_active = classes.indexOf(class_active) === -1;
-  
+
         btn.classed(class_active, btn_active);
         var evt = {};
         evt['id'] = id;
@@ -218,7 +218,7 @@ var ButtonList = Component.extend({
     this.setBubbleTrails();
     this.setBubbleLock();
     this.setPresentationMode();
-    
+
   },
 
   /*
@@ -305,7 +305,7 @@ var ButtonList = Component.extend({
 
      //check if container is landscape or portrait
     // if portrait small or large with expand, use width
-     if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true") 
+     if(parent.classed("vzb-large") && parent.classed("vzb-dialog-expand-true")
       || parent.classed("vzb-small") && parent.classed("vzb-portrait")) {
        //check if the width_diff is small. If it is, add to the container
        // width, to allow more buttons in a way that is still usable
@@ -386,7 +386,7 @@ var ButtonList = Component.extend({
       });
 
   },
-  
+
 
   scrollToEnd: function() {
     var target = 0;
