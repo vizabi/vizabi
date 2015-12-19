@@ -2,8 +2,8 @@
 &.vzb-large {
   &.vzb-dialog-expand-true {
     .vzb-dialogs-dialog {
-      &.vzb-dialog-side {
-        &[data-btn="stack"] {
+      &.vzb-sidebar {
+        &[data-dlg="stack"] {
           flex: none;
 
           .vzb-dl-holder .vzb-draggable {

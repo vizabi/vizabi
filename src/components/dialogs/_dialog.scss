@@ -4,23 +4,22 @@ $vzb-dialog-content-height: 250px;
   .vzb-dialogs-dialog {
     @include box-shadow(0, 8px, 15px, rgba(0, 0, 0, .24));
     @include transition(all 300ms ease-in-out);
-    @include position(absolute, null 0 -450px 0);
     border-top: 1px solid #f7f7f7;
     width: 280px;
     margin: 0;
     //margin-left: -140px;
-    z-index: -2;
     vertical-align: top;
     background-color: #fff;
     text-align: left;
     display: block;
-    visibility: hidden;
     overflow: hidden;
-  
-    &.vzb-active {
-      @include position(absolute, null 0 45px 0);
-      z-index: 20;
-      visibility: visible;
+    &.vzb-popup {
+      z-index: -2;  
+      visibility: hidden;
+      &.vzb-active {
+        z-index: 20;
+        visibility: visible;
+      }
     }
   
     .vzb-dialog-title {
@@ -264,6 +263,42 @@ $vzb-dialog-content-height: 250px;
   
       }
     }
+
+  }
+      
+  .vzb-moreoptions {
+    box-shadow: none;
+    .vzb-dialog-modal {
+      >.thumb-tack-class {
+        &.thumb-tack-class-ico-pin,
+        &.thumb-tack-class-ico-drag {
+          display: none;
+        }
+      }
+      >.vzb-dialog-title {
+        display: block;
+        position: relative;
+        margin: 0 0 20px;
+        padding: 0;            
+        .vzb-ip-select {
+          margin-top: 25px;
+          margin-left: 38px;
+          line-height: 20px;
+          font-weight: 700;
+        }
+      }
+      >.vzb-dialog-content {
+        font-size: $vzb-font-size-regular;
+        padding-bottom: 10px;
+      }
+      >.vzb-dialog-buttons {
+        padding-top: 0;
+        padding-bottom: 0;
+        [data-click=closeDialog] {
+          display: none;
+        }
+      }
+    }
   }
 
   @import '../bubblesize/bubblesize';
@@ -281,10 +316,12 @@ $vzb-dialog-content-height: 250px;
 &.vzb-medium {
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
-      @include position(absolute, -2000px -10px auto auto);
-      margin-right: $size-button-list;
-      &.vzb-active {
-        @include position(absolute, 20px -10px auto auto);
+      &.vzb-popup {
+        @include position(absolute, -2000px -10px auto auto);
+        margin-right: $size-button-list;
+        &.vzb-active {
+          @include position(absolute, 20px -10px auto auto);
+        }
       }
     }
   }
@@ -294,7 +331,7 @@ $vzb-dialog-content-height: 250px;
   // issues: 369 & 442
   .vzb-tool-dialogs {
     .vzb-dialogs-dialog {
-      &.vzb-active {
+      &.vzb-popup.vzb-active {
         top: auto;
       }
     }
@@ -318,7 +355,13 @@ $vzb-dialog-content-height: 250px;
   &.vzb-portrait {
     .vzb-tool-dialogs {
       .vzb-dialogs-dialog {
-        margin: auto;
+        &.vzb-popup {
+          @include position(absolute, null 0 -450px 0);
+          margin: auto;
+          &.vzb-active {
+            @include position(absolute, null 0 45px 0);
+          }
+        }
         .vzb-dialog-content.vzb-dialog-content-fixed {
           max-height: $vzb-dialog-content-height - 50px;
         }
@@ -346,9 +389,9 @@ $vzb-dialog-content-height: 250px;
 &.vzb-large {
   &.vzb-dialog-expand-true {
     .vzb-tool-dialogs {
-      .vzb-dialogs-dialog {
+      >.vzb-dialogs-dialog {
         margin-right: $vzb-button-expand-width;
-        &.vzb-dialog-side {
+        &.vzb-sidebar {
           visibility: visible;
           display: block;
           margin: 5px;
@@ -391,6 +434,7 @@ $vzb-dialog-content-height: 250px;
 }
 
 @import 'colors/colors';
+@import 'axes/axes';
 @import 'find/find';
 @import 'show/show';
 @import 'size/size';

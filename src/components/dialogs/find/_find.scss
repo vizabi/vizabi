@@ -1,10 +1,22 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
-    &[data-btn='find'] {
+    &[data-dlg='find'] {
       .vzb-find-filter {
         display: inline-block;
         position: relative;
         max-width: 170px;
+      }
+      &.vzb-moreoptions {
+        .vzb-dialog-title {
+          .vzb-find-filter {
+            padding-top: 20px;
+            margin-bottom: 0; 
+          }
+        }
+        .vzb-dialog-content {
+          padding-bottom: 0;
+          margin-bottom: 15px;
+        }
       }
     }
   }
@@ -14,8 +26,8 @@
 &.vzb-large {
   &.vzb-dialog-expand-true {
     .vzb-dialogs-dialog {
-      &.vzb-dialog-side {
-        &[data-btn="find"] {
+      &.vzb-sidebar {
+        &[data-dlg="find"] {
           display: flex;
           flex-direction: column;
           flex: auto;

@@ -1,6 +1,6 @@
 .vzb-tool-dialogs {
   .vzb-dialogs-dialog {
-    &[data-btn='show'] {
+    &[data-dlg='show'] {
   
       .vzb-show-filter {
         display: block;
@@ -16,8 +16,8 @@
 &.vzb-large {
   &.vzb-dialog-expand-true {
     .vzb-dialogs-dialog {
-      &.vzb-dialog-side {
-        &[data-btn="show"] {
+      &.vzb-sidebar {
+        &[data-dlg="show"] {
           flex: auto;
 
           .vzb-dialog-content.vzb-dialog-content-fixed {
