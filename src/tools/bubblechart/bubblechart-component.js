@@ -416,9 +416,6 @@ var BubbleChartComp = Component.extend({
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
-    this._calculateAllValues();
-    this._valuesCalculated = true; //hack to avoid recalculation
-
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
@@ -440,9 +437,6 @@ var BubbleChartComp = Component.extend({
   },
 
   ready: function() {
-
-    if(!this._valuesCalculated) this._calculateAllValues();
-    else this._valuesCalculated = false;
 
     this.updateUIStrings();
 
@@ -625,7 +619,7 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var values = this._getValuesInterpolated(endTime);
+    var values = this.model.marker.getFrame(endTime);
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -1003,9 +997,9 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-      values = this._getValuesInterpolated(tLocked);
+      values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this._getValuesInterpolated(this.time);
+      values = this.model.marker.getFrame(this.time);
     }
 
     this.entityBubbles.each(function(d, index) {
@@ -1067,10 +1061,10 @@ var BubbleChartComp = Component.extend({
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-      valuesLocked = this._getValuesInterpolated(tLocked);
+      valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
-    values = this._getValuesInterpolated(this.time);
+    values = this.model.marker.getFrame(this.time);
 
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
@@ -1672,56 +1666,6 @@ var BubbleChartComp = Component.extend({
     }
 
     this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
-  },
-
-  /*
-   * Calculates all values for this data configuration
-   */
-  _calculateAllValues: function() {
-    this.STEPS = this.model.time.getAllSteps();
-    this.VALUES = {};
-    var f = {};
-    for(var i = 0; i < this.STEPS.length; i++) {
-      var t = this.STEPS[i];
-      f[this.TIMEDIM] = t;
-      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
-    }
-  },
-
-  /*
-   * Gets all values for any point in time
-   * @param {Date} t time value
-   */
-  _getValuesInterpolated: function(t) {
-
-    if(!this.VALUES) this._calculateAllValues();
-    if(this.VALUES[t]) return this.VALUES[t];
-
-    var next = d3.bisectLeft(this.STEPS, t);
-
-    //if first
-    if(next === 0) {
-      return this.VALUES[this.STEPS[0]];
-    }
-    if(next > this.STEPS.length) {
-      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
-    }
-
-    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
-
-    var pValues = this.VALUES[this.STEPS[next - 1]];
-    var nValues = this.VALUES[this.STEPS[next]];
-
-    var curr = {};
-    utils.forEach(pValues, function(values, hook) {
-      curr[hook] = {};
-      utils.forEach(values, function(val, id) {
-        var val2 = nValues[hook][id];
-        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-      });
-    });
-
-    return curr;
   }
 
 });

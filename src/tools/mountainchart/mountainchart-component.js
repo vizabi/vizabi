@@ -286,18 +286,11 @@ var MountainChartComponent = Component.extend({
         this.wScale = d3.scale.linear()
             .domain(this.parent.datawarning_content.doubtDomain)
             .range(this.parent.datawarning_content.doubtRange);
-        
-        this._calculateAllValues();
-        this._valuesCalculated = true; //hack to avoid recalculation
-
     },
 
     ready: function () {
         //console.log("ready")
         
-        if(!this._valuesCalculated) this._calculateAllValues();
-        else this._valuesCalculated = false;
-
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -519,7 +512,7 @@ var MountainChartComponent = Component.extend({
     updateEntities: function () {
         var _this = this;
 
-        this.values = this._getValuesInterpolated(this.model.time.end);
+        this.values = this.model.marker.getFrame(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
@@ -781,7 +774,7 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getFullYear().toString());
 
-        this.values = this._getValuesInterpolated(time);
+        this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
 
 
@@ -1101,62 +1094,7 @@ var MountainChartComponent = Component.extend({
 
             this.tooltip.classed("vzb-hidden", true);
         }
-    },
-
-    
-    
-    
-      /*
-   * Calculates all values for this data configuration
-   */
-  _calculateAllValues: function() {
-    this.STEPS = this.model.time.getAllSteps();
-    this.VALUES = {};
-    var f = {};
-    for(var i = 0; i < this.STEPS.length; i++) {
-      var t = this.STEPS[i];
-      f[this.TIMEDIM] = t;
-      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
     }
-  },
-    
-    
-    
-      /*
-   * Gets all values for any point in time
-   * @param {Date} t time value
-   */
-  _getValuesInterpolated: function(t) {
-
-    if(!this.VALUES) this._calculateAllValues();
-    if(this.VALUES[t]) return this.VALUES[t];
-
-    var next = d3.bisectLeft(this.STEPS, t);
-
-    //if first
-    if(next === 0) {
-      return this.VALUES[this.STEPS[0]];
-    }
-    if(next > this.STEPS.length) {
-      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
-    }
-
-    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
-
-    var pValues = this.VALUES[this.STEPS[next - 1]];
-    var nValues = this.VALUES[this.STEPS[next]];
-
-    var curr = {};
-    utils.forEach(pValues, function(values, hook) {
-      curr[hook] = {};
-      utils.forEach(values, function(val, id) {
-        var val2 = nValues[hook][id];
-        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-      });
-    });
-
-    return curr;
-  }
 
 });
 

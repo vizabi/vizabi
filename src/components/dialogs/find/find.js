@@ -92,10 +92,9 @@ var Find = Dialog.extend({
     var TIMEDIM = this.model.state.time.getDimension();
     var selected = this.model.state.entities.getSelected();
     var marker = this.model.state.marker;
-    var filter = {};
-    filter[TIMEDIM] = this.model.state.time.value;
+    var time = this.model.state.time.value;
 
-    var values = marker.getValues(filter, [KEY])
+    var values = marker.getFrame(time);
 
     var data = marker.getKeys().map(function(d) {
       var pointer = {};

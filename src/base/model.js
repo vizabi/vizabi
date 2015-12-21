@@ -699,13 +699,12 @@ var Model = EventSource.extend({
           next = next || d3.bisectLeft(hook.getUnique(dimTime), time);
         }
 
-        method = globals.metadata.indicatorsDB[w] ? globals.metadata.indicatorsDB[w].interpolation ||
-          "linear" : "linear";
-        filtered = hook.getNestedItems(f_keys);
+        method = globals.metadata.indicatorsDB[w].interpolation;
+        filtered = _DATAMANAGER.get(hook._dataId, 'nested', f_keys);
         utils.forEach(f_values, function(v) {
           filtered = filtered[v]; //get precise array (leaf)
         });
-        value = interpolatePoint(filtered, u, w, next, dimTime, time, method);
+        value = utils.interpolatePoint(filtered, u, w, next, dimTime, time, method);
         response[name] = hook.mapValue(value);
 
         //concat previous data points
@@ -722,8 +721,9 @@ var Model = EventSource.extend({
     //else, interpolate all with time
     else {
       utils.forEach(this._dataCube, function(hook, name) {
-        filtered = hook.getNestedItems(group_by);
-
+          
+        filtered = _DATAMANAGER.get(hook._dataId, 'nested', group_by);
+            
         response[name] = {};
         //find position from first hook
         u = hook.use;
@@ -733,14 +733,14 @@ var Model = EventSource.extend({
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         }
 
-        method = globals.metadata.indicatorsDB[hook.which] ? globals.metadata.indicatorsDB[hook.which].interpolation ||
-          "linear" : "linear";
+        method = globals.metadata.indicatorsDB[w]?globals.metadata.indicatorsDB[w].interpolation:null;
 
 
         utils.forEach(filtered, function(arr, id) {
           //TODO: this saves when geos have different data length. line can be optimised. 
           next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
-          value = interpolatePoint(arr, u, w, next, dimTime, time, method);
+            
+          value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
           //concat previous data points
@@ -759,6 +759,96 @@ var Model = EventSource.extend({
 
     return response;
   },
+    
+getFrame: function(time){
+    var _this = this;
+    var steps = this._parent.time.getAllSteps();
+    
+    var cachePath = "";
+    utils.forEach(this._dataCube, function(hook, name) {
+        cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
+        });     
+    if(!this.cachedFrames || !this.cachedFrames[cachePath]) this.getFrames();
+    
+    if(this.cachedFrames[cachePath][time]) return this.cachedFrames[cachePath][time];
+    
+    var next = d3.bisectLeft(steps, time);
+
+    if(next === 0) {
+      return this.cachedFrames[cachePath][steps[0]];
+    }
+    if(next > steps.length) {
+      return this.cachedFrames[cachePath][steps[steps.length - 1]];
+    }
+
+    var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
+
+    var pValues = this.cachedFrames[cachePath][steps[next - 1]];
+    var nValues = this.cachedFrames[cachePath][steps[next]];
+
+    var curr = {};
+    utils.forEach(pValues, function(values, hook) {
+      curr[hook] = {};
+      utils.forEach(values, function(val, id) {
+        var val2 = nValues[hook][id];
+        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
+      });
+    });
+
+    return curr;
+},
+    
+    getFrames: function(){
+        var _this = this;
+        
+        var cachePath = "";
+        utils.forEach(this._dataCube, function(hook, name) {
+            cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
+        });        
+        
+        if(!this.cachedFrames) this.cachedFrames = {};
+        if(this.cachedFrames[cachePath]) return this.cachedFrames[cachePath];
+        
+        var steps = this._parent.time.getAllSteps();
+        
+        this._dataCube = this._dataCube || this.getSubhooks(true)
+        
+        var result = {};
+        var resultKeys = [];
+        
+        utils.forEach(this._dataCube, function(hook, name) {
+            var nested = _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]);
+            var keys = Object.keys(nested);
+            if(resultKeys.length==0){
+                resultKeys = keys;
+            }else{
+                resultKeys.forEach(function(d){
+                    if(keys.indexOf(d)==-1)d = null;
+                })
+            }
+        });
+        
+        resultKeys = resultKeys.filter(function(f){return f});
+        
+        utils.forEach(this._dataCube, function(hook, name) {
+            var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata);
+            utils.forEach(frames, function(d, t){ 
+                if(!result[t])result[t] = {};
+                result[t][name] = d[hook.which];
+                if(hook.use === "constant") {
+                    result[t][name] = {};
+                    resultKeys.forEach(function(d){
+                        result[t][name][d] = hook.which;
+                    });
+                }
+            });
+        });
+    
+        this.cachedFrames[cachePath] = result;
+        return result;
+    },
+    
+
 
   /**
    * gets the value of the hook point
@@ -779,9 +869,8 @@ var Model = EventSource.extend({
       value = this._space[this.use][this.which];
     } else {
       //TODO: get meta info about translatable data
-      var l = (this.use !== 'property') ? null : this._languageModel.id;
-      var method = globals.metadata.indicatorsDB[this.which].interpolation || "linear";
-      value = interpolateValue.call(this, filter, this.use, this.which, l, method);
+      var method = globals.metadata.indicatorsDB[this.which].interpolation;
+      value = interpolateValue.call(this, filter, this.use, this.which, method);
     }
     return this.mapValue(value);
   },
@@ -837,53 +926,20 @@ var Model = EventSource.extend({
    * @returns {Object} filtered items object
    */
   getFilteredItems: function(filter) {
-    if(!filter) {
-      utils.warn("No filter provided to getFilteredItems(<filter>)");
-      return {};
-    }
+    if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
     return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
-
+    
   /**
    * gets nested dataset
-   * @param {Array} order
-   * @returns {Object} nest items object
+   * @param {Array} keys define how to nest the set
+   * @returns {Object} hash-map of key-value pairs
    */
-  getNestedItems: function(order) {
-    if(!order) {
-      utils.warn("No order array provided to getNestedItems(<order>). E.g.: getNestedItems(['geo'])");
-      return {};
-    }
-    //cache optimization
-    var order_id, nested, items, nest;
-    order_id = order.join("-");
-    nested = this._dataId ? _DATAMANAGER.get(this._dataId, 'nested') : false;
-    if(nested && order_id in nested) {
-      return nested[order_id];
-    }
-    items = this._dataId ? _DATAMANAGER.get(this._dataId) : this.getKeys();
-    nest = d3.nest();
-    for(var i = 0; i < order.length; i++) {
-      nest = nest.key(
-        (function(k) {
-          return function(d) {
-            return d[k];
-          };
-        })(order[i])
-      );
-    };
-
-    function nestToObj(arr) {
-      if(!arr || !arr.length || !arr[0].key) return arr;
-      var res = {};
-      for(var i = 0; i < arr.length; i++) {
-        res[arr[i].key] = nestToObj(arr[i].values);
-      };
-      return res;
-    }
-
-    return nested[order_id] = nestToObj(nest.entries(items));
+  getNestedItems: function(keys) {
+    if(!keys) return utils.warn("No keys provided to getNestedItems(<keys>)");
+    return _DATAMANAGER.get(this._dataId, 'nested', keys);
   },
+
 
   /**
    * Gets formatter for this model
@@ -1433,57 +1489,7 @@ function getSpace(model) {
 //TODO: what if there are 2 visualizations with 2 data sources?
 var interpIndexes = {};
 
-/**
- * interpolates the specific value missing
- * @param {Array} list
- * @param {String} use
- * @param {String} which
- * @param {Number} i the next item in the array
- * @param {String} method
- * @returns interpolated value
- */
-function interpolatePoint(arr, use, which, i, dimTime, time, method) {
 
-  if(arr === null || arr.length === 0) {
-    utils.warn('interpolatePoint returning NULL: array is empty');
-    return null;
-  }
-  // return constant for the use of "constant"
-  if(use === 'constant') {
-    return which;
-  }
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return arr[0][which];
-  }
-
-  // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(i === 0) {
-    return +arr[0][which];
-  }
-  if(i === arr.length) {
-    return +arr[arr.length - 1][which];
-  }
-  //return null if data is missing
-  if(arr[i]===undefined || arr[i][which] === null || arr[i - 1][which] === null || arr[i][which] === "") {
-    return null;
-  }
-
-  var result = _interpolator()[method](
-    arr[i - 1][dimTime],
-    arr[i][dimTime],
-    arr[i - 1][which],
-    arr[i][which],
-    time
-  );
-
-  // cast to time object if we are interpolating time
-  if(utils.isDate(arr[0][which])) result = new Date(result);
-  if(result.toString() === "NaN") result = null;
-
-  return result;
-}
 
 /**
  * interpolates the specific value if missing
@@ -1491,7 +1497,7 @@ function interpolatePoint(arr, use, which, i, dimTime, time, method) {
  * filter SHOULD contain time property
  * @returns interpolated value
  */
-function interpolateValue(_filter, use, which, l, method) {
+function interpolateValue(_filter, use, which, method) {
 
   var dimTime, time, filter, items, space_id, indexNext, result;
 
@@ -1539,36 +1545,9 @@ function interpolateValue(_filter, use, which, l, method) {
   if(indexNext === items.length) {
     return +items[items.length - 1][which];
   }
-  //return null if data is missing
-  if(items[indexNext]===undefined || items[indexNext][which] === null || items[indexNext - 1][which] === null) {
-    return null;
-  }
 
-  result = _interpolator()[method](
-    items[indexNext - 1][dimTime],
-    items[indexNext][dimTime],
-    items[indexNext - 1][which],
-    items[indexNext][which],
-    time
-  );
-
-  // cast to time object if we are interpolating time
-  if(Object.prototype.toString.call(items[0][which]) === '[object Date]') {
-    result = new Date(result);
-  }
-  return result;
 };
 
-function _interpolator() {
 
-  return {
-    linear: function(x1, x2, y1, y2, x) {
-      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
-    },
-    exp: function(x1, x2, y1, y2, x) {
-      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
-    },
-  }
-}
 
 export default Model;
