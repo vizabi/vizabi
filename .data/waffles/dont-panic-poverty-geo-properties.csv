@@ -1,166 +1,276 @@
-geo,geo.name,geo.cat,geo.region,geo.lat,geo.lng
-afg,Afghanistan,country,asi,33,66
-ago,Angola,country,afr,-12.5,18.5
-alb,Albania,country,eur,41,20
-are,United Arab Emirates,country,asi,23.75,54.5
-arg,Argentina,country,ame,-34,-64
-arm,Armenia,country,eur,40.25,45
-aus,Australia,country,asi,-25,135
-aut,Austria,country,eur,47.33333,13.33333
-aze,Azerbaijan,country,eur,40.5,47.5
-bdi,Burundi,country,afr,-3.5,30
-bel,Belgium,country,eur,50.75,4.5
-ben,Benin,country,afr,9.5,2.25
-bfa,Burkina Faso,country,afr,12.5,-1.66667
-bgd,Bangladesh,country,asi,24,90
-bgr,Bulgaria,country,eur,42.66667,25.25
-bhr,Bahrain,country,asi,26.03333,50.55
-bih,Bosnia and Herzegovina,country,eur,44.25,17.83333
-blr,Belarus,country,eur,53,28
-bol,Bolivia,country,ame,-17,-65
-bra,Brazil,country,ame,-10,-55
-btn,Bhutan,country,asi,27.5,90.5
-bwa,Botswana,country,afr,-22,24
-caf,Central African Republic,country,afr,7,21
-can,Canada,country,ame,60.10867,-113.64258
-che,Switzerland,country,eur,47.00016,8.01427
-chl,Chile,country,ame,-33.45694,-70.64827
-chn,China,country,asi,35,105
-civ,Cote d'Ivoire,country,afr,8,-5.5
-cmr,Cameroon,country,afr,6,12.5
-cod,"Congo, Dem. Rep.",country,afr,-2.5,23.5
-cog,"Congo, Rep.",country,afr,-1,15.5
-col,Colombia,country,ame,4,-73.25
-com,Comoros,country,afr,-12.23333,44.44553
-cpv,Cape Verde,country,afr,16,-24
-cri,Costa Rica,country,ame,10,-84
-cub,Cuba,country,ame,22,-79.5
-cyp,Cyprus,country,eur,35,33
-cze,Czech Republic,country,eur,49.75,15
-deu,Germany,country,eur,51.5,10.5
-dji,Djibouti,country,afr,11.58901,43.14503
-dnk,Denmark,country,eur,56,10
-dom,Dominican Republic,country,ame,19,-70.66667
-dza,Algeria,country,afr,28,3
-ecu,Ecuador,country,ame,-1.25,-78.25
-egy,Egypt,country,afr,27,30
-eri,Eritrea,country,afr,15,39
-esp,Spain,country,eur,40,-4
-est,Estonia,country,eur,59,26
-eth,Ethiopia,country,afr,9,39.5
-fin,Finland,country,eur,64,26
-fji,Fiji,country,asi,-18,178
-fra,France,country,eur,46,2
-gab,Gabon,country,afr,-1,11.75
-gbr,United Kingdom,country,eur,54.75844,-2.69531
-geo,Georgia,country,eur,41.99998,43.4999
-gha,Ghana,country,afr,8.1,-1.2
-gin,Guinea,country,afr,10.83333,-10.66667
-gmb,Gambia,country,afr,13.5,-15.5
-gnb,Guinea-Bissau,country,afr,12,-15
-gnq,Equatorial Guinea,country,afr,1.7,10.5
-grc,Greece,country,eur,39,22
-gtm,Guatemala,country,ame,14.64072,-90.51327
-guy,Guyana,country,ame,5,-59
-hnd,Honduras,country,ame,15,-86.5
-hti,Haiti,country,ame,19,-72.41667
-hun,Hungary,country,eur,47,20
-idn,Indonesia,country,asi,-5,120
-ind,India,country,asi,22,79
-irl,Ireland,country,eur,53,-8
-irn,Iran,country,asi,32,53
-irq,Iraq,country,asi,33,44
-isr,Israel,country,asi,31.5,34.75
-ita,Italy,country,eur,42.83333,12.83333
-jam,Jamaica,country,ame,18.16667,-77.25
-jor,Jordan,country,asi,31,36
-jpn,Japan,country,asi,35.68536,139.75309
-kaz,Kazakhstan,country,asi,48,68
-ken,Kenya,country,afr,1,38
-kgz,Kyrgyz Republic,country,asi,41.5,75
-khm,Cambodia,country,asi,13,105
-kor,South Korea,country,asi,36.5,127.75
-kwt,Kuwait,country,asi,29.36972,47.97833
-lao,Lao,country,asi,18,105
-lbn,Lebanon,country,asi,33.83333,35.83333
-lbr,Liberia,country,afr,6.5,-9.5
-lby,Libya,country,afr,28,17
-lka,Sri Lanka,country,asi,7.75,80.75
-lso,Lesotho,country,afr,-29.5,28.25
-ltu,Lithuania,country,eur,55.41667,24
-lux,Luxembourg,country,eur,49.61167,6.13
-lva,Latvia,country,eur,57,25
-mar,Morocco,country,afr,32,-6
-mda,Moldova,country,eur,47.25,28.58333
-mdg,Madagascar,country,afr,-20,47
-mex,Mexico,country,ame,19.42847,-99.12766
-mkd,"Macedonia, FYR",country,eur,41.66667,21.75
-mli,Mali,country,afr,18,-2
-mmr,Myanmar,country,asi,21,96
-mne,Montenegro,country,eur,42.75,19.25
-mng,Mongolia,country,asi,46,105
-moz,Mozambique,country,afr,-18.25,35
-mrt,Mauritania,country,afr,20.25,-10.5
-mus,Mauritius,country,afr,-20.3,57.58333
-mwi,Malawi,country,afr,-13.5,34
-mys,Malaysia,country,asi,2.5,112.5
-nam,Namibia,country,afr,-22,17
-ner,Niger,country,afr,18,9
-nga,Nigeria,country,afr,10,8
-nic,Nicaragua,country,ame,13,-85
-nld,Netherlands,country,eur,52.25,5.75
-nor,Norway,country,eur,62,10
-npl,Nepal,country,asi,28,84
-nzl,New Zealand,country,asi,-42,174
-omn,Oman,country,asi,21,57
-pak,Pakistan,country,asi,30,70
-pan,Panama,country,ame,8.9936,-79.51973
-per,Peru,country,ame,-10,-75.25
-phl,Philippines,country,asi,13,122
-png,Papua New Guinea,country,asi,-6,147
-pol,Poland,country,eur,52,20
-prk,North Korea,country,asi,40,127
-prt,Portugal,country,eur,39.6945,-8.13057
-pry,Paraguay,country,ame,-23.33333,-58
-pse,West Bank and Gaza,country,asi,31.5,34.46667
-qat,Qatar,country,asi,25.27932,51.52245
-rou,Romania,country,eur,46,25
-rus,Russia,country,eur,60,100
-rwa,Rwanda,country,afr,-2,30
-sau,Saudi Arabia,country,asi,25,45
-sdn,Sudan,country,afr,16,30
-sds,South Sudan,country,afr,7.5,30
-sen,Senegal,country,afr,14.5,-14.25
-sgp,Singapore,country,asi,1.28967,103.85007
-slb,Solomon Islands,country,asi,-8,159
-sle,Sierra Leone,country,afr,8.5,-11.5
-slv,El Salvador,country,ame,13.83333,-88.91667
-som,Somalia,country,afr,6,48
-srb,Serbia,country,eur,44.81892,20.45998
-sur,Suriname,country,ame,4,-56
-svk,Slovak Republic,country,eur,48.66667,19.5
-svn,Slovenia,country,eur,46.08333,15
-swe,Sweden,country,eur,62,15
-swz,Swaziland,country,afr,-26.5,31.5
-syr,Syria,country,asi,35,38
-tcd,Chad,country,afr,15,19
-tgo,Togo,country,afr,8.66667,1.08333
-tha,Thailand,country,asi,15.5,101
-tjk,Tajikistan,country,asi,39,71
-tkm,Turkmenistan,country,asi,39.75,59.66667
-tls,Timor-Leste,country,asi,-8.83333,125.75
-tto,Trinidad and Tobago,country,ame,11,-61
-tun,Tunisia,country,afr,34,9
-tur,Turkey,country,eur,39,35
-tza,Tanzania,country,afr,-6,35
-uga,Uganda,country,afr,1.25,32.5
-ukr,Ukraine,country,eur,49,32
-ury,Uruguay,country,ame,-33,-56
-usa,United States,country,ame,39.76,-98.5
-uzb,Uzbekistan,country,asi,41.66667,63.83333
-ven,Venezuela,country,ame,8,-66
-vnm,Vietnam,country,asi,16.16667,107.83333
-yem,Yemen,country,asi,15.5,47.5
-zaf,South Africa,country,afr,-29,24
-zmb,Zambia,country,afr,-14.33333,28.5
-zwe,Zimbabwe,country,afr,-19,29.75
+"geo","geo.name","geo.cat","geo.region","geo.lat","geo.lng"
+"abkh","Abkhazia","country","eur",,
+"abw","Aruba","country","ame",12.5,-69.96667
+"afg","Afghanistan","country","asi",33,66
+"ago","Angola","country","afr",-12.5,18.5
+"aia","Anguilla","country","ame",18.21667,-63.05
+"akr_a_dhe","Akrotiri and Dhekelia","country","eur",,
+"ala","�land","country","eur",60.25,20
+"alb","Albania","country","eur",41,20
+"and","Andorra","country","eur",42.50779,1.52109
+"ant","Netherlands Antilles","country","ame",,
+"are","United Arab Emirates","country","asi",23.75,54.5
+"arg","Argentina","country","ame",-34,-64
+"arm","Armenia","country","eur",40.25,45
+"asm","American Samoa","country","asi",-11.056,-171.082
+"ata","Antarctica","country","eur",-90,
+"atg","Antigua and Barbuda","country","ame",17.05,-61.8
+"aus","Australia","country","asi",-25,135
+"aut","Austria","country","eur",47.33333,13.33333
+"aze","Azerbaijan","country","eur",40.5,47.5
+"bdi","Burundi","country","afr",-3.5,30
+"bel","Belgium","country","eur",50.75,4.5
+"ben","Benin","country","afr",9.5,2.25
+"bfa","Burkina Faso","country","afr",12.5,-1.66667
+"bgd","Bangladesh","country","asi",24,90
+"bgr","Bulgaria","country","eur",42.66667,25.25
+"bhr","Bahrain","country","asi",26.03333,50.55
+"bhs","Bahamas","country","ame",25.04082,-77.37122
+"bih","Bosnia and Herzegovina","country","eur",44.25,17.83333
+"blr","Belarus","country","eur",53,28
+"blz","Belize","country","ame",17.49952,-88.19756
+"bmu","Bermuda","country","ame",32.2949,-64.78303
+"bol","Bolivia","country","ame",-17,-65
+"bouisl","Bouvet Island","country","afr",,
+"bra","Brazil","country","ame",-10,-55
+"brb","Barbados","country","ame",13.16667,-59.53333
+"brn","Brunei","country","asi",4.5,114.66667
+"btn","Bhutan","country","asi",27.5,90.5
+"bwa","Botswana","country","afr",-22,24
+"caf","Central African Republic","country","afr",7,21
+"can","Canada","country","ame",60.10867,-113.64258
+"cck","Cocos Island","country","asi",-12.1642,96.87332
+"chanisl","Channel Islands","country","eur",,
+"che","Switzerland","country","eur",47.00016,8.01427
+"cheslo","Czechoslovakia","country","eur",,
+"chl","Chile","country","ame",-33.45694,-70.64827
+"chn","China","country","asi",35,105
+"civ","Cote d'Ivoire","country","afr",8,-5.5
+"cmr","Cameroon","country","afr",6,12.5
+"cod","Congo, Dem. Rep.","country","afr",-2.5,23.5
+"cog","Congo, Rep.","country","afr",-1,15.5
+"cok","Cook Is","country","asi",-21.24842,-159.78516
+"col","Colombia","country","ame",4,-73.25
+"com","Comoros","country","afr",-12.23333,44.44553
+"cpv","Cape Verde","country","afr",16,-24
+"cri","Costa Rica","country","ame",10,-84
+"cub","Cuba","country","ame",22,-79.5
+"cxr","Christmas Island","country","asi",-10.5,105.66667
+"cym","Cayman Islands","country","ame",19.5,-80.66667
+"cyp","Cyprus","country","eur",35,33
+"cyp_nor","Northern Cyprus","country","eur",,
+"cze","Czech Republic","country","eur",49.75,15
+"deu","Germany","country","eur",51.5,10.5
+"deu_east","East Germany","country","eur",,
+"deu_west","West Germany","country","eur",,
+"dji","Djibouti","country","afr",11.58901,43.14503
+"dma","Dominica","country","ame",15.5,-61.33333
+"dnk","Denmark","country","eur",56,10
+"dom","Dominican Republic","country","ame",19,-70.66667
+"dza","Algeria","country","afr",28,3
+"ecu","Ecuador","country","ame",-1.25,-78.25
+"egy","Egypt","country","afr",27,30
+"eri","Eritrea","country","afr",15,39
+"eri_a_eth","Eritrea and Ethiopia","country","afr",,
+"esh","Western Sahara","country","afr",24.49215,-12.65625
+"esp","Spain","country","eur",40,-4
+"est","Estonia","country","eur",59,26
+"eth","Ethiopia","country","afr",9,39.5
+"fin","Finland","country","eur",64,26
+"fji","Fiji","country","asi",-18,178
+"flk","Falkland Is (Malvinas)","country","ame",-51.75,-59.16667
+"fra","France","country","eur",46,2
+"fra_antarc","French Southern and Antarctic Lands","country","fra_antarc",,
+"fra_clipperton","Clipperton","country","fra_clipperton",,
+"fro","Faeroe Islands","country","eur",62,-7
+"fsm","Micronesia, Fed. Sts.","country","asi",6.924,158.162
+"gab","Gabon","country","afr",-1,11.75
+"gbg","Guernsey","country","eur",49.45474,-2.57629
+"gbm","Isle of Man","country","eur",54.15,-4.48333
+"gbr","United Kingdom","country","eur",54.75844,-2.69531
+"geo","Georgia","country","eur",41.99998,43.4999
+"gha","Ghana","country","afr",8.1,-1.2
+"gib","Gibraltar","country","eur",36.14474,-5.35257
+"gin","Guinea","country","afr",10.83333,-10.66667
+"glp","Guadeloupe","country","ame",16.25,-61.58333
+"gmb","Gambia","country","afr",13.5,-15.5
+"gnb","Guinea-Bissau","country","afr",12,-15
+"gnq","Equatorial Guinea","country","afr",1.7,10.5
+"grc","Greece","country","eur",39,22
+"grd","Grenada","country","ame",12.11667,-61.66667
+"grl","Greenland","country","eur",72,-40
+"gtm","Guatemala","country","ame",14.64072,-90.51327
+"guf","French Guiana","country","ame",4,-53
+"gum","Guam","country","asi",13.47861,144.81834
+"guy","Guyana","country","ame",5,-59
+"heard_a_mcd","Heard and McDonald Islands","country","heard_a_mcd",,
+"hkg","Hong Kong, China","country","asi",22.28552,114.15769
+"hnd","Honduras","country","ame",15,-86.5
+"hos","Holy See","country","eur",41.90236,12.45332
+"hrv","Croatia","country","eur",45.16667,15.5
+"hti","Haiti","country","ame",19,-72.41667
+"hun","Hungary","country","eur",47,20
+"idn","Indonesia","country","asi",-5,120
+"ind","India","country","asi",22,79
+"iot","British Indian Ocean Territory","country","asi",-6,72
+"irl","Ireland","country","eur",53,-8
+"irn","Iran","country","asi",32,53
+"irq","Iraq","country","asi",33,44
+"isl","Iceland","country","eur",65,-18
+"isr","Israel","country","asi",31.5,34.75
+"ita","Italy","country","eur",42.83333,12.83333
+"jam","Jamaica","country","ame",18.16667,-77.25
+"jey","Jersey","country","eur",49.21667,-2.11667
+"jor","Jordan","country","asi",31,36
+"jpn","Japan","country","asi",35.68536,139.75309
+"kaz","Kazakhstan","country","asi",48,68
+"ken","Kenya","country","afr",1,38
+"kgz","Kyrgyz Republic","country","asi",41.5,75
+"khm","Cambodia","country","asi",13,105
+"kir","Kiribati","country","asi",1.421,172.984
+"kna","St. Kitts and Nevis","country","ame",17.33333,-62.75
+"kor","South Korea","country","asi",36.5,127.75
+"korea_union","United Korea (former)","country","asi",,
+"kos","Kosovo","country","eur",,
+"kwt","Kuwait","country","asi",29.36972,47.97833
+"lao","Lao","country","asi",18,105
+"lbn","Lebanon","country","asi",33.83333,35.83333
+"lbr","Liberia","country","afr",6.5,-9.5
+"lby","Libya","country","afr",28,17
+"lca","St. Lucia","country","ame",13.88333,-60.96667
+"lie","Liechtenstein","country","eur",47.16667,9.53333
+"lka","Sri Lanka","country","asi",7.75,80.75
+"lso","Lesotho","country","afr",-29.5,28.25
+"ltu","Lithuania","country","eur",55.41667,24
+"lux","Luxembourg","country","eur",49.61167,6.13
+"lva","Latvia","country","eur",57,25
+"mac","Macao, China","country","asi",22.20056,113.54611
+"maf","St. Martin (French part)","country","ame",,
+"mar","Morocco","country","afr",32,-6
+"mco","Monaco","country","eur",43.73333,7.41667
+"mda","Moldova","country","eur",47.25,28.58333
+"mdg","Madagascar","country","afr",-20,47
+"mdv","Maldives","country","asi",3.2,73
+"mex","Mexico","country","ame",19.42847,-99.12766
+"mhl","Marshall Islands","country","asi",7.113,171.236
+"mkd","Macedonia, FYR","country","eur",41.66667,21.75
+"mli","Mali","country","afr",18,-2
+"mlt","Malta","country","eur",35.91667,14.43333
+"mmr","Myanmar","country","asi",21,96
+"mne","Montenegro","country","eur",42.75,19.25
+"mng","Mongolia","country","asi",46,105
+"mnp","Northern Mariana Islands","country","asi",15.214,145.756
+"moz","Mozambique","country","afr",-18.25,35
+"mrt","Mauritania","country","afr",20.25,-10.5
+"msr","Montserrat","country","ame",16.75,-62.2
+"mtq","Martinique","country","ame",14.66667,-61
+"mus","Mauritius","country","afr",-20.3,57.58333
+"mwi","Malawi","country","afr",-13.5,34
+"mys","Malaysia","country","asi",2.5,112.5
+"myt","Mayotte","country","afr",-12.83333,45.16667
+"nam","Namibia","country","afr",-22,17
+"ncl","New Caledonia","country","asi",-21.5,165.5
+"ner","Niger","country","afr",18,9
+"nfk","Norfolk Island","country","asi",-29.03333,167.95
+"nga","Nigeria","country","afr",10,8
+"ngokar","Ngorno-Karabakh","country","eur",,
+"nic","Nicaragua","country","ame",13,-85
+"niu","Niue","country","asi",-19.03333,-169.86667
+"nld","Netherlands","country","eur",52.25,5.75
+"nld_curacao","Cura�ao","country","ame",12.16667,-68.96667
+"nor","Norway","country","eur",62,10
+"north_mar","Northern Marianas","country","asi",,
+"npl","Nepal","country","asi",28,84
+"nru","Nauru","country","asi",-0.517,166.933
+"nzl","New Zealand","country","asi",-42,174
+"omn","Oman","country","asi",21,57
+"pak","Pakistan","country","asi",30,70
+"pan","Panama","country","ame",8.9936,-79.51973
+"pcn","Pitcairn","country","asi",-25.06667,-130.1
+"per","Peru","country","ame",-10,-75.25
+"phl","Philippines","country","asi",13,122
+"plw","Palau","country","asi",7.503,134.621
+"png","Papua New Guinea","country","asi",-6,147
+"pol","Poland","country","eur",52,20
+"pri","Puerto Rico","country","ame",18.46633,-66.10572
+"prk","North Korea","country","asi",40,127
+"prt","Portugal","country","eur",39.6945,-8.13057
+"pry","Paraguay","country","ame",-23.33333,-58
+"pse","West Bank and Gaza","country","asi",31.92157,35.20329
+"pse_gaza","Gaza Strip","country","asi",,
+"pse_west_bank","West Bank","country","asi",,
+"pyf","French Polynesia","country","asi",-15,-140
+"qat","Qatar","country","asi",25.27932,51.52245
+"reu","Reunion","country","afr",-20.88231,55.4504
+"rou","Romania","country","eur",46,25
+"rus","Russia","country","eur",60,100
+"rwa","Rwanda","country","afr",-2,30
+"sau","Saudi Arabia","country","asi",25,45
+"scg","Serbia and Montenegro","country","eur",,
+"scg_ex_kos","Serbia excluding Kosovo","country","eur",,
+"sdn","Sudan","country","afr",16,30
+"sen","Senegal","country","afr",14.5,-14.25
+"sgero_a_ssandw","South Georgia and the South Sandwich Islands","country","ame",,
+"sgp","Singapore","country","asi",1.28967,103.85007
+"shn","St. Helena","country","afr",-15.95,-5.7
+"sjm","Svalbard","country","eur",78,20
+"slb","Solomon Islands","country","asi",-8,159
+"sle","Sierra Leone","country","afr",8.5,-11.5
+"slv","El Salvador","country","ame",13.83333,-88.91667
+"smr","San Marino","country","eur",43.93667,12.44639
+"som","Somalia","country","afr",6,48
+"som_somland","Somaliland","country","afr",,
+"sosset","South Ossetia","country","eur",,
+"spm","St.-Pierre-et-Miquelon","country","ame",46.83333,-56.33333
+"srb","Serbia","country","eur",44.81892,20.45998
+"ssd","South Sudan","country","afr",7.5,30
+"stbar","St. Barth�lemy","country","ame",,
+"stmar","St. Martin","country","ame",,
+"stp","Sao Tome and Principe","country","afr",1,7
+"sur","Suriname","country","ame",4,-56
+"svk","Slovak Republic","country","eur",48.66667,19.5
+"svn","Slovenia","country","eur",46.08333,15
+"swe","Sweden","country","eur",62,15
+"swz","Swaziland","country","afr",-26.5,31.5
+"sxm","Sint Maarten (Dutch part)","country","ame",18.04167,-63.06667
+"syc","Seychelles","country","afr",-4.58333,55.66667
+"syr","Syria","country","asi",35,38
+"tca","Turks and Caicos Islands","country","ame",21.73333,-71.58333
+"tcd","Chad","country","afr",15,19
+"tgo","Togo","country","afr",8.66667,1.08333
+"tha","Thailand","country","asi",15.5,101
+"tjk","Tajikistan","country","asi",39,71
+"tkl","Tokelau","country","asi",-9.167,-171.83
+"tkm","Turkmenistan","country","asi",39.75,59.66667
+"tls","Timor-Leste","country","asi",-8.83333,125.75
+"ton","Tonga","country","asi",-20,-175
+"transn","Transnistria","country","eur",,
+"tto","Trinidad and Tobago","country","ame",11,-61
+"tun","Tunisia","country","afr",34,9
+"tur","Turkey","country","eur",39,35
+"tuv","Tuvalu","country","asi",-8.51719,179.14478
+"twn","Taiwan","country","asi",24,121
+"tza","Tanzania","country","afr",-6,35
+"uga","Uganda","country","afr",1.25,32.5
+"ukr","Ukraine","country","eur",49,32
+"ury","Uruguay","country","ame",-33,-56
+"usa","United States","country","ame",39.76,-98.5
+"usa_minor_out_isl","US Minor Outlying Islands","country","ame",,
+"ussr","USSR","country","eur",,
+"uzb","Uzbekistan","country","asi",41.66667,63.83333
+"vct","St. Vincent and the Grenadines","country","ame",13.08333,-61.2
+"ven","Venezuela","country","ame",8,-66
+"vgb","British Virgin Islands","country","ame",18.5,-64.5
+"vir","Virgin Islands (U.S.)","country","ame",18.34829,-64.98348
+"virg_isl","Virgin Islands","country","ame",,
+"vnm","Vietnam","country","asi",16.16667,107.83333
+"vut","Vanuatu","country","asi",-16,167
+"wlf","Wallis et Futuna","country","asi",-13.3,-176.2
+"wsm","Samoa","country","asi",-13.8,-172.13333
+"yem","Yemen","country","asi",15.5,47.5
+"yem_north","North Yemen (former)","country","asi",,
+"yem_south","South Yemen (former)","country","asi",,
+"yug","Yugoslavia","country","eur",,
+"zaf","South Africa","country","afr",-29,24
+"zmb","Zambia","country","afr",-14.33333,28.5
+"zwe","Zimbabwe","country","afr",-19,29.75
