@@ -32,15 +32,25 @@ var GraphReader = Reader.extend({
     var _this = this;
     var p = new Promise();
     var path = this._basepath;
-    //format time query if existing
+
+    var a = [];
+    if (!query.where.time && query.where.geo && query.where.geo.indexOf('*') >= 0) {
+      a.push('select=geo,geo.name,geo.cat,geo.region,geo.lat,geo.lng');
+      a.push('real=true')
+    }
+
     if (query.where.time) {
       var time = query.where.time[0];
       var t = typeof time.join !== 'undefined' && time.length === 2 ?
         // {from: time, to: time}
         JSON.stringify({from: getYear(time[0]), to: getYear(time[1])}) :
         getYear(time[0]);
-      path += '?time=' + t;
+      var _s = query.select.join(',');
+      _s = _s.replace(/,geo.lat/, '').replace(/,geo.lng/, '');
+      a.push('time=' + t + '&select=' + _s);
     }
+
+    path += '?' + a.join('&');
 
     function getYear(time) {
       if (typeof time === 'string') {
