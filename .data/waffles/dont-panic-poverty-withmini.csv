@@ -141,7 +141,7 @@ rus,Russia,country,eur,1800,31088398,1430,57.9,418.74,big
 rwa,Rwanda,country,afr,1800,928368,431,59,420.04,big
 sau,Saudi Arabia,country,asi,1800,2091000,846,45,416.16,big
 sdn,Sudan,country,afr,1800,3994154,518,33.8,425.25,big
-sds,South Sudan,country,afr,1800,1027378,507,33.78,490.08,big
+ssd,South Sudan,country,afr,1800,1027378,507,33.78,490.08,big
 sen,Senegal,country,afr,1800,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1800,30000,1021,41,456.05,big
 slb,Solomon Islands,country,asi,1800,56998,363,45,504.87,big
@@ -324,7 +324,7 @@ rus,Russia,country,eur,1801,31088398,1432,57.9,418.74,big
 rwa,Rwanda,country,afr,1801,928368,432,59,420.04,big
 sau,Saudi Arabia,country,asi,1801,2091000,846,45,416.16,big
 sdn,Sudan,country,afr,1801,3999435,518,33.8,425.25,big
-sds,South Sudan,country,afr,1801,1028736,507,33.78,490.08,big
+ssd,South Sudan,country,afr,1801,1028736,507,33.78,490.08,big
 sen,Senegal,country,afr,1801,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1801,30000,1021,41,456.05,big
 slb,Solomon Islands,country,asi,1801,56998,363,45.1,504.87,big
@@ -507,7 +507,7 @@ rus,Russia,country,eur,1802,31088398,1433,57.9,418.74,big
 rwa,Rwanda,country,afr,1802,928368,432,59,420.04,big
 sau,Saudi Arabia,country,asi,1802,2091000,847,45,416.16,big
 sdn,Sudan,country,afr,1802,4004723,518,33.8,425.25,big
-sds,South Sudan,country,afr,1802,1030097,507,33.78,490.08,big
+ssd,South Sudan,country,afr,1802,1030097,507,33.78,490.08,big
 sen,Senegal,country,afr,1802,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1802,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1802,56998,363,45.1,504.87,big
@@ -690,7 +690,7 @@ rus,Russia,country,eur,1803,31088398,1435,57.9,418.74,big
 rwa,Rwanda,country,afr,1803,928368,433,59,420.04,big
 sau,Saudi Arabia,country,asi,1803,2091000,847,45,416.16,big
 sdn,Sudan,country,afr,1803,4010018,518,33.8,425.25,big
-sds,South Sudan,country,afr,1803,1031459,507,33.78,490.08,big
+ssd,South Sudan,country,afr,1803,1031459,507,33.78,490.08,big
 sen,Senegal,country,afr,1803,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1803,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1803,56998,363,45.2,504.87,big
@@ -873,7 +873,7 @@ rus,Russia,country,eur,1804,31088398,1437,57.9,418.74,big
 rwa,Rwanda,country,afr,1804,928368,433,59,420.04,big
 sau,Saudi Arabia,country,asi,1804,2091000,848,45.1,416.16,big
 sdn,Sudan,country,afr,1804,4015320,519,33.8,425.25,big
-sds,South Sudan,country,afr,1804,1032822,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1804,1032822,508,33.78,490.08,big
 sen,Senegal,country,afr,1804,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1804,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1804,56998,363,45.3,504.87,big
@@ -1056,7 +1056,7 @@ rus,Russia,country,eur,1805,31088398,1439,57.9,418.74,big
 rwa,Rwanda,country,afr,1805,928368,434,59,420.04,big
 sau,Saudi Arabia,country,asi,1805,2091000,848,45.1,416.16,big
 sdn,Sudan,country,afr,1805,4020629,519,33.8,425.25,big
-sds,South Sudan,country,afr,1805,1034188,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1805,1034188,508,33.78,490.08,big
 sen,Senegal,country,afr,1805,1009886,497,45.9,512.4,big
 sgp,Singapore,country,asi,1805,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1805,56998,363,45.3,504.87,big
@@ -1239,7 +1239,7 @@ rus,Russia,country,eur,1806,31088398,1440,57.9,418.74,big
 rwa,Rwanda,country,afr,1806,928368,434,59,420.04,big
 sau,Saudi Arabia,country,asi,1806,2091000,849,45.1,416.16,big
 sdn,Sudan,country,afr,1806,4025945,519,33.8,425.25,big
-sds,South Sudan,country,afr,1806,1035555,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1806,1035555,508,33.78,490.08,big
 sen,Senegal,country,afr,1806,1009886,498,45.9,512.4,big
 sgp,Singapore,country,asi,1806,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1806,56998,363,45.4,504.87,big
@@ -1422,7 +1422,7 @@ rus,Russia,country,eur,1807,31088398,1442,57.9,418.74,big
 rwa,Rwanda,country,afr,1807,928368,435,59,420.04,big
 sau,Saudi Arabia,country,asi,1807,2091000,850,45.1,416.16,big
 sdn,Sudan,country,afr,1807,4031268,519,33.8,425.25,big
-sds,South Sudan,country,afr,1807,1036925,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1807,1036925,508,33.78,490.08,big
 sen,Senegal,country,afr,1807,1009886,498,45.9,512.4,big
 sgp,Singapore,country,asi,1807,30000,1022,41,456.05,big
 slb,Solomon Islands,country,asi,1807,56998,363,45.4,504.87,big
@@ -1605,7 +1605,7 @@ rus,Russia,country,eur,1808,31088398,1444,57.9,418.74,big
 rwa,Rwanda,country,afr,1808,928368,435,59,420.04,big
 sau,Saudi Arabia,country,asi,1808,2091000,850,45.1,416.16,big
 sdn,Sudan,country,afr,1808,4036598,519,33.8,425.25,big
-sds,South Sudan,country,afr,1808,1038296,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1808,1038296,508,33.78,490.08,big
 sen,Senegal,country,afr,1808,1009886,498,45.9,512.4,big
 sgp,Singapore,country,asi,1808,30000,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1808,56998,363,45.5,504.87,big
@@ -1788,7 +1788,7 @@ rus,Russia,country,eur,1809,31088398,1445,57.9,418.74,big
 rwa,Rwanda,country,afr,1809,928368,436,59,420.04,big
 sau,Saudi Arabia,country,asi,1809,2091000,851,45.1,416.16,big
 sdn,Sudan,country,afr,1809,4041935,519,33.8,425.25,big
-sds,South Sudan,country,afr,1809,1039668,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1809,1039668,508,33.78,490.08,big
 sen,Senegal,country,afr,1809,1009886,498,45.9,512.4,big
 sgp,Singapore,country,asi,1809,30000,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1809,56998,363,45.6,504.87,big
@@ -1971,7 +1971,7 @@ rus,Russia,country,eur,1810,31088398,1447,57.9,418.74,big
 rwa,Rwanda,country,afr,1810,928368,437,59,420.04,big
 sau,Saudi Arabia,country,asi,1810,2091000,852,45.2,416.16,big
 sdn,Sudan,country,afr,1810,4047408,519,33.8,425.25,big
-sds,South Sudan,country,afr,1810,1041076,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1810,1041076,508,33.78,490.08,big
 sen,Senegal,country,afr,1810,1009886,498,45.9,512.4,big
 sgp,Singapore,country,asi,1810,30000,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1810,56998,364,45.6,504.87,big
@@ -2154,7 +2154,7 @@ rus,Russia,country,eur,1811,31102069,1449,57.9,418.74,big
 rwa,Rwanda,country,afr,1811,928642,437,59,420.04,big
 sau,Saudi Arabia,country,asi,1811,2091223,852,45.2,416.16,big
 sdn,Sudan,country,afr,1811,4053372,519,33.8,425.25,big
-sds,South Sudan,country,afr,1811,1042610,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1811,1042610,508,33.78,490.08,big
 sen,Senegal,country,afr,1811,1010210,498,45.9,512.4,big
 sgp,Singapore,country,asi,1811,30030,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1811,57010,364,45.7,504.87,big
@@ -2337,7 +2337,7 @@ rus,Russia,country,eur,1812,31129537,1451,57.9,418.74,big
 rwa,Rwanda,country,afr,1812,929191,438,59,420.04,big
 sau,Saudi Arabia,country,asi,1812,2091668,853,45.2,416.16,big
 sdn,Sudan,country,afr,1812,4059957,519,33.8,425.25,big
-sds,South Sudan,country,afr,1812,1044304,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1812,1044304,508,33.78,490.08,big
 sen,Senegal,country,afr,1812,1010860,498,45.9,512.4,big
 sgp,Singapore,country,asi,1812,30091,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1812,57035,364,45.8,504.87,big
@@ -2520,7 +2520,7 @@ rus,Russia,country,eur,1813,31170930,1452,57.9,418.74,big
 rwa,Rwanda,country,afr,1813,930018,438,59,420.04,big
 sau,Saudi Arabia,country,asi,1813,2092338,853,45.2,416.16,big
 sdn,Sudan,country,afr,1813,4067169,519,33.8,425.25,big
-sds,South Sudan,country,afr,1813,1046160,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1813,1046160,508,33.78,490.08,big
 sen,Senegal,country,afr,1813,1011838,498,45.9,512.4,big
 sgp,Singapore,country,asi,1813,30183,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1813,57072,364,45.8,504.87,big
@@ -2703,7 +2703,7 @@ rus,Russia,country,eur,1814,31226377,1454,57.9,418.74,big
 rwa,Rwanda,country,afr,1814,931124,439,59,420.04,big
 sau,Saudi Arabia,country,asi,1814,2093231,854,45.2,416.16,big
 sdn,Sudan,country,afr,1814,4075011,519,33.8,425.25,big
-sds,South Sudan,country,afr,1814,1048177,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1814,1048177,508,33.78,490.08,big
 sen,Senegal,country,afr,1814,1013146,498,45.9,512.4,big
 sgp,Singapore,country,asi,1814,30307,1023,41,456.05,big
 slb,Solomon Islands,country,asi,1814,57121,364,45.9,504.87,big
@@ -2886,7 +2886,7 @@ rus,Russia,country,eur,1815,31296006,1456,57.9,418.74,big
 rwa,Rwanda,country,afr,1815,932510,439,59,420.04,big
 sau,Saudi Arabia,country,asi,1815,2094349,855,45.2,416.16,big
 sdn,Sudan,country,afr,1815,4083486,519,33.8,425.25,big
-sds,South Sudan,country,afr,1815,1050357,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1815,1050357,508,33.78,490.08,big
 sen,Senegal,country,afr,1815,1014787,498,45.9,512.4,big
 sgp,Singapore,country,asi,1815,30463,1024,41,456.05,big
 slb,Solomon Islands,country,asi,1815,57183,364,46,504.87,big
@@ -3069,7 +3069,7 @@ rus,Russia,country,eur,1816,31379950,1457,57.9,418.74,big
 rwa,Rwanda,country,afr,1816,934180,440,59,420.04,big
 sau,Saudi Arabia,country,asi,1816,2095692,855,45.2,416.16,big
 sdn,Sudan,country,afr,1816,4092598,520,33.8,425.25,big
-sds,South Sudan,country,afr,1816,1052700,508,33.78,490.08,big
+ssd,South Sudan,country,afr,1816,1052700,508,33.78,490.08,big
 sen,Senegal,country,afr,1816,1016763,498,45.9,512.4,big
 sgp,Singapore,country,asi,1816,30653,1024,41,456.05,big
 slb,Solomon Islands,country,asi,1816,57257,364,46,504.87,big
@@ -3252,7 +3252,7 @@ rus,Russia,country,eur,1817,31478339,1459,57.9,418.74,big
 rwa,Rwanda,country,afr,1817,936133,440,59,420.04,big
 sau,Saudi Arabia,country,asi,1817,2097261,856,45.3,416.16,big
 sdn,Sudan,country,afr,1817,4102350,520,33.8,425.25,big
-sds,South Sudan,country,afr,1817,1055209,509,33.78,490.08,big
+ssd,South Sudan,country,afr,1817,1055209,509,33.78,490.08,big
 sen,Senegal,country,afr,1817,1019076,498,45.9,512.4,big
 sgp,Singapore,country,asi,1817,30877,1024,41,456.05,big
 slb,Solomon Islands,country,asi,1817,57344,364,46.1,504.87,big
@@ -3435,7 +3435,7 @@ rus,Russia,country,eur,1818,31591309,1461,57.9,418.74,big
 rwa,Rwanda,country,afr,1818,938372,441,59,420.04,big
 sau,Saudi Arabia,country,asi,1818,2099055,856,45.3,416.16,big
 sdn,Sudan,country,afr,1818,4112747,520,33.8,425.25,big
-sds,South Sudan,country,afr,1818,1057883,509,33.78,490.08,big
+ssd,South Sudan,country,afr,1818,1057883,509,33.78,490.08,big
 sen,Senegal,country,afr,1818,1021728,498,45.9,512.4,big
 sgp,Singapore,country,asi,1818,31136,1024,41,456.05,big
 slb,Solomon Islands,country,asi,1818,57444,364,46.2,504.87,big
@@ -3618,7 +3618,7 @@ rus,Russia,country,eur,1819,31718992,1463,57.9,418.74,big
 rwa,Rwanda,country,afr,1819,940899,442,59,420.04,big
 sau,Saudi Arabia,country,asi,1819,2101077,857,45.3,416.16,big
 sdn,Sudan,country,afr,1819,4123791,520,33.8,425.25,big
-sds,South Sudan,country,afr,1819,1060724,509,33.78,490.08,big
+ssd,South Sudan,country,afr,1819,1060724,509,33.78,490.08,big
 sen,Senegal,country,afr,1819,1024722,499,45.9,512.4,big
 sgp,Singapore,country,asi,1819,31430,1024,41,456.05,big
 slb,Solomon Islands,country,asi,1819,57556,364,46.2,504.87,big
@@ -3801,7 +3801,7 @@ rus,Russia,country,eur,1820,31861526,1464,57.9,418.74,big
 rwa,Rwanda,country,afr,1820,943716,442,59,420.04,big
 sau,Saudi Arabia,country,asi,1820,2103325,858,45.3,416.16,big
 sdn,Sudan,country,afr,1820,4135488,520,33.8,425.25,big
-sds,South Sudan,country,afr,1820,1063732,509,33.78,490.08,big
+ssd,South Sudan,country,afr,1820,1063732,509,33.78,490.08,big
 sen,Senegal,country,afr,1820,1028060,499,45.9,512.4,big
 sgp,Singapore,country,asi,1820,31761,1024,41,442.46,big
 slb,Solomon Islands,country,asi,1820,57682,364,46.3,504.87,big
@@ -3984,7 +3984,7 @@ rus,Russia,country,eur,1821,32019047,1474,57.7,418.74,big
 rwa,Rwanda,country,afr,1821,946823,443,59,420.04,big
 sau,Saudi Arabia,country,asi,1821,2105802,859,45.3,416.16,big
 sdn,Sudan,country,afr,1821,4147839,522,33.8,425.25,big
-sds,South Sudan,country,afr,1821,1066910,511,33.78,490.08,big
+ssd,South Sudan,country,afr,1821,1066910,511,33.78,490.08,big
 sen,Senegal,country,afr,1821,1031744,501,45.9,512.4,big
 sgp,Singapore,country,asi,1821,32128,1027,41,429.16,big
 slb,Solomon Islands,country,asi,1821,57820,365,46.3,504.87,big
@@ -4167,7 +4167,7 @@ rus,Russia,country,eur,1822,32191694,1483,57.6,418.74,big
 rwa,Rwanda,country,afr,1822,950225,443,59,420.04,big
 sau,Saudi Arabia,country,asi,1822,2108506,860,45.3,416.16,big
 sdn,Sudan,country,afr,1822,4160849,525,33.8,425.25,big
-sds,South Sudan,country,afr,1822,1070256,514,33.78,490.08,big
+ssd,South Sudan,country,afr,1822,1070256,514,33.78,490.08,big
 sen,Senegal,country,afr,1822,1035777,503,45.8,512.4,big
 sgp,Singapore,country,asi,1822,32533,1029,41,417.44,big
 slb,Solomon Islands,country,asi,1822,57970,367,46.4,504.87,big
@@ -4350,7 +4350,7 @@ rus,Russia,country,eur,1823,32379606,1493,57.5,418.74,big
 rwa,Rwanda,country,afr,1823,953921,444,59,420.04,big
 sau,Saudi Arabia,country,asi,1823,2111439,861,45.4,416.16,big
 sdn,Sudan,country,afr,1823,4174522,527,33.8,425.25,big
-sds,South Sudan,country,afr,1823,1073773,516,33.78,490.08,big
+ssd,South Sudan,country,afr,1823,1073773,516,33.78,490.08,big
 sen,Senegal,country,afr,1823,1040160,506,45.8,512.4,big
 sgp,Singapore,country,asi,1823,32977,1031,41.1,404.69,big
 slb,Solomon Islands,country,asi,1823,58134,368,46.5,504.87,big
@@ -4533,7 +4533,7 @@ rus,Russia,country,eur,1824,32582925,1503,57.3,418.74,big
 rwa,Rwanda,country,afr,1824,957913,444,59,420.04,big
 sau,Saudi Arabia,country,asi,1824,2114601,862,45.4,416.16,big
 sdn,Sudan,country,afr,1824,4188861,530,33.8,425.25,big
-sds,South Sudan,country,afr,1824,1077461,519,33.78,490.08,big
+ssd,South Sudan,country,afr,1824,1077461,519,33.78,490.08,big
 sen,Senegal,country,afr,1824,1044897,508,45.7,512.4,big
 sgp,Singapore,country,asi,1824,33460,1034,41.1,392.21,big
 slb,Solomon Islands,country,asi,1824,58311,369,46.5,504.87,big
@@ -4716,7 +4716,7 @@ rus,Russia,country,eur,1825,32801792,1513,57.2,418.74,big
 rwa,Rwanda,country,afr,1825,962205,445,59,420.04,big
 sau,Saudi Arabia,country,asi,1825,2117993,863,45.4,416.16,big
 sdn,Sudan,country,afr,1825,4203871,533,33.8,425.25,big
-sds,South Sudan,country,afr,1825,1081322,521,33.78,490.08,big
+ssd,South Sudan,country,afr,1825,1081322,521,33.78,490.08,big
 sen,Senegal,country,afr,1825,1049990,511,45.6,512.4,big
 sgp,Singapore,country,asi,1825,33983,1036,41.1,392.21,big
 slb,Solomon Islands,country,asi,1825,58501,371,46.6,504.87,big
@@ -4899,7 +4899,7 @@ rus,Russia,country,eur,1826,33036351,1522,57.1,418.74,big
 rwa,Rwanda,country,afr,1826,966797,445,59,420.04,big
 sau,Saudi Arabia,country,asi,1826,2121614,864,45.4,416.16,big
 sdn,Sudan,country,afr,1826,4219554,535,33.8,425.25,big
-sds,South Sudan,country,afr,1826,1085356,524,33.78,490.08,big
+ssd,South Sudan,country,afr,1826,1085356,524,33.78,490.08,big
 sen,Senegal,country,afr,1826,1055441,513,45.6,512.4,big
 sgp,Singapore,country,asi,1826,34547,1038,41.1,392.21,big
 slb,Solomon Islands,country,asi,1826,58704,372,46.7,504.87,big
@@ -5082,7 +5082,7 @@ rus,Russia,country,eur,1827,33286748,1532,57,418.74,big
 rwa,Rwanda,country,afr,1827,971691,446,59,420.04,big
 sau,Saudi Arabia,country,asi,1827,2125467,865,45.4,416.16,big
 sdn,Sudan,country,afr,1827,4235916,538,33.8,425.25,big
-sds,South Sudan,country,afr,1827,1089565,526,33.78,490.08,big
+ssd,South Sudan,country,afr,1827,1089565,526,33.78,490.08,big
 sen,Senegal,country,afr,1827,1061252,516,45.5,512.4,big
 sgp,Singapore,country,asi,1827,35153,1040,41.2,392.21,big
 slb,Solomon Islands,country,asi,1827,58920,373,46.7,504.87,big
@@ -5265,7 +5265,7 @@ rus,Russia,country,eur,1828,33553128,1542,56.8,418.74,big
 rwa,Rwanda,country,afr,1828,976889,447,59,420.04,big
 sau,Saudi Arabia,country,asi,1828,2129551,866,45.4,416.16,big
 sdn,Sudan,country,afr,1828,4252958,540,33.8,425.25,big
-sds,South Sudan,country,afr,1828,1093949,529,33.78,490.08,big
+ssd,South Sudan,country,afr,1828,1093949,529,33.78,490.08,big
 sen,Senegal,country,afr,1828,1067426,518,45.5,512.4,big
 sgp,Singapore,country,asi,1828,35802,1043,41.2,392.21,big
 slb,Solomon Islands,country,asi,1828,59149,374,46.8,504.87,big
@@ -5448,7 +5448,7 @@ rus,Russia,country,eur,1829,33835639,1552,56.7,418.74,big
 rwa,Rwanda,country,afr,1829,982394,447,59,420.04,big
 sau,Saudi Arabia,country,asi,1829,2133866,867,45.4,416.16,big
 sdn,Sudan,country,afr,1829,4270687,543,33.8,425.25,big
-sds,South Sudan,country,afr,1829,1098509,531,33.78,490.08,big
+ssd,South Sudan,country,afr,1829,1098509,531,33.78,490.08,big
 sen,Senegal,country,afr,1829,1073966,521,45.4,512.4,big
 sgp,Singapore,country,asi,1829,36495,1045,41.2,392.21,big
 slb,Solomon Islands,country,asi,1829,59392,376,46.9,504.87,big
@@ -5631,7 +5631,7 @@ rus,Russia,country,eur,1830,34134430,1562,56.6,418.74,big
 rwa,Rwanda,country,afr,1830,988207,448,59,420.04,big
 sau,Saudi Arabia,country,asi,1830,2138414,868,45.5,416.16,big
 sdn,Sudan,country,afr,1830,4289105,546,33.8,425.25,big
-sds,South Sudan,country,afr,1830,1103246,534,33.78,490.08,big
+ssd,South Sudan,country,afr,1830,1103246,534,33.78,490.08,big
 sen,Senegal,country,afr,1830,1080873,523,45.4,512.4,big
 sgp,Singapore,country,asi,1830,37232,1047,41.2,392.21,big
 slb,Solomon Islands,country,asi,1830,59648,377,46.9,504.87,big
@@ -5814,7 +5814,7 @@ rus,Russia,country,eur,1831,34449651,1572,56.4,418.74,big
 rwa,Rwanda,country,afr,1831,994329,448,59,420.04,big
 sau,Saudi Arabia,country,asi,1831,2143195,869,45.5,416.16,big
 sdn,Sudan,country,afr,1831,4308216,548,33.8,425.25,big
-sds,South Sudan,country,afr,1831,1108162,536,33.78,490.08,big
+ssd,South Sudan,country,afr,1831,1108162,536,33.78,490.08,big
 sen,Senegal,country,afr,1831,1088151,526,45.3,512.4,big
 sgp,Singapore,country,asi,1831,38015,1050,41.3,392.21,big
 slb,Solomon Islands,country,asi,1831,59917,378,47,504.87,big
@@ -5997,7 +5997,7 @@ rus,Russia,country,eur,1832,34767783,1583,56.3,418.74,big
 rwa,Rwanda,country,afr,1832,1000489,449,59,420.04,big
 sau,Saudi Arabia,country,asi,1832,2147986,870,45.5,416.16,big
 sdn,Sudan,country,afr,1832,4327412,551,33.8,425.25,big
-sds,South Sudan,country,afr,1832,1113099,539,33.78,490.08,big
+ssd,South Sudan,country,afr,1832,1113099,539,33.78,490.08,big
 sen,Senegal,country,afr,1832,1095478,528,45.3,512.4,big
 sgp,Singapore,country,asi,1832,38814,1052,41.3,392.21,big
 slb,Solomon Islands,country,asi,1832,60188,380,47.1,504.87,big
@@ -6180,7 +6180,7 @@ rus,Russia,country,eur,1833,35088853,1593,56.2,418.74,big
 rwa,Rwanda,country,afr,1833,1006688,449,59,420.04,big
 sau,Saudi Arabia,country,asi,1833,2152788,871,45.5,416.16,big
 sdn,Sudan,country,afr,1833,4346693,553,33.8,425.25,big
-sds,South Sudan,country,afr,1833,1118059,542,33.78,490.08,big
+ssd,South Sudan,country,afr,1833,1118059,542,33.78,490.08,big
 sen,Senegal,country,afr,1833,1102854,531,45.2,512.4,big
 sgp,Singapore,country,asi,1833,39630,1054,41.3,392.21,big
 slb,Solomon Islands,country,asi,1833,60460,381,47.1,504.87,big
@@ -6363,7 +6363,7 @@ rus,Russia,country,eur,1834,35412888,1603,56.1,418.74,big
 rwa,Rwanda,country,afr,1834,1012925,450,59,420.04,big
 sau,Saudi Arabia,country,asi,1834,2157601,872,45.5,416.16,big
 sdn,Sudan,country,afr,1834,4366061,556,33.8,425.25,big
-sds,South Sudan,country,afr,1834,1123041,544,33.78,490.08,big
+ssd,South Sudan,country,afr,1834,1123041,544,33.78,490.08,big
 sen,Senegal,country,afr,1834,1110280,533,45.2,512.4,big
 sgp,Singapore,country,asi,1834,40463,1057,41.3,392.21,big
 slb,Solomon Islands,country,asi,1834,60733,382,47.2,504.87,big
@@ -6546,7 +6546,7 @@ rus,Russia,country,eur,1835,35739915,1613,55.9,418.74,big
 rwa,Rwanda,country,afr,1835,1019201,451,59,420.04,big
 sau,Saudi Arabia,country,asi,1835,2162424,874,45.5,416.16,big
 sdn,Sudan,country,afr,1835,4385515,559,33.8,425.25,big
-sds,South Sudan,country,afr,1835,1128045,547,33.78,490.08,big
+ssd,South Sudan,country,afr,1835,1128045,547,33.78,490.08,big
 sen,Senegal,country,afr,1835,1117756,536,45.1,512.4,big
 sgp,Singapore,country,asi,1835,41314,1059,41.4,392.21,big
 slb,Solomon Islands,country,asi,1835,61007,384,47.2,504.87,big
@@ -6729,7 +6729,7 @@ rus,Russia,country,eur,1836,36069962,1624,55.8,418.74,big
 rwa,Rwanda,country,afr,1836,1025515,451,59,420.04,big
 sau,Saudi Arabia,country,asi,1836,2167258,875,45.6,416.16,big
 sdn,Sudan,country,afr,1836,4405055,562,33.8,425.25,big
-sds,South Sudan,country,afr,1836,1133071,550,33.78,490.08,big
+ssd,South Sudan,country,afr,1836,1133071,550,33.78,490.08,big
 sen,Senegal,country,afr,1836,1125282,539,45.1,512.4,big
 sgp,Singapore,country,asi,1836,42182,1061,41.4,392.21,big
 slb,Solomon Islands,country,asi,1836,61283,385,47.3,504.87,big
@@ -6912,7 +6912,7 @@ rus,Russia,country,eur,1837,36403057,1634,55.7,418.74,big
 rwa,Rwanda,country,afr,1837,1031869,452,59,420.04,big
 sau,Saudi Arabia,country,asi,1837,2172103,876,45.6,416.16,big
 sdn,Sudan,country,afr,1837,4424683,564,33.8,425.25,big
-sds,South Sudan,country,afr,1837,1138120,552,33.78,490.08,big
+ssd,South Sudan,country,afr,1837,1138120,552,33.78,490.08,big
 sen,Senegal,country,afr,1837,1132858,541,45,512.4,big
 sgp,Singapore,country,asi,1837,43069,1064,41.4,392.21,big
 slb,Solomon Islands,country,asi,1837,61560,387,47.4,504.87,big
@@ -7095,7 +7095,7 @@ rus,Russia,country,eur,1838,36739229,1645,55.5,418.74,big
 rwa,Rwanda,country,afr,1838,1038262,452,59,420.04,big
 sau,Saudi Arabia,country,asi,1838,2176959,877,45.6,416.16,big
 sdn,Sudan,country,afr,1838,4444398,567,33.8,425.25,big
-sds,South Sudan,country,afr,1838,1143191,555,33.78,490.08,big
+ssd,South Sudan,country,afr,1838,1143191,555,33.78,490.08,big
 sen,Senegal,country,afr,1838,1140486,544,45,512.4,big
 sgp,Singapore,country,asi,1838,43975,1066,41.4,392.21,big
 slb,Solomon Islands,country,asi,1838,61838,388,47.4,504.87,big
@@ -7278,7 +7278,7 @@ rus,Russia,country,eur,1839,37078504,1656,55.4,418.74,big
 rwa,Rwanda,country,afr,1839,1044694,453,59,420.04,big
 sau,Saudi Arabia,country,asi,1839,2181826,878,45.6,416.16,big
 sdn,Sudan,country,afr,1839,4464201,570,33.8,425.25,big
-sds,South Sudan,country,afr,1839,1148284,558,33.78,490.08,big
+ssd,South Sudan,country,afr,1839,1148284,558,33.78,490.08,big
 sen,Senegal,country,afr,1839,1148165,546,44.9,512.4,big
 sgp,Singapore,country,asi,1839,44899,1069,41.5,392.21,big
 slb,Solomon Islands,country,asi,1839,62117,389,47.5,504.87,big
@@ -7461,7 +7461,7 @@ rus,Russia,country,eur,1840,37420913,1666,55.3,418.74,big
 rwa,Rwanda,country,afr,1840,1051167,453,59,420.04,big
 sau,Saudi Arabia,country,asi,1840,2186704,879,45.6,416.16,big
 sdn,Sudan,country,afr,1840,4484092,573,33.8,425.25,big
-sds,South Sudan,country,afr,1840,1153401,560,33.78,490.08,big
+ssd,South Sudan,country,afr,1840,1153401,560,33.78,490.08,big
 sen,Senegal,country,afr,1840,1155896,549,44.9,512.4,big
 sgp,Singapore,country,asi,1840,45843,1071,41.5,392.21,big
 slb,Solomon Islands,country,asi,1840,62398,391,47.6,504.87,big
@@ -7644,7 +7644,7 @@ rus,Russia,country,eur,1841,37766484,1677,55.2,418.74,big
 rwa,Rwanda,country,afr,1841,1057679,454,59,420.04,big
 sau,Saudi Arabia,country,asi,1841,2191592,880,45.6,416.16,big
 sdn,Sudan,country,afr,1841,4504072,575,33.8,425.25,big
-sds,South Sudan,country,afr,1841,1158540,563,33.78,490.08,big
+ssd,South Sudan,country,afr,1841,1158540,563,33.78,490.08,big
 sen,Senegal,country,afr,1841,1163679,552,44.8,512.4,big
 sgp,Singapore,country,asi,1841,46805,1073,41.5,392.21,big
 slb,Solomon Islands,country,asi,1841,62680,392,47.6,504.87,big
@@ -7827,7 +7827,7 @@ rus,Russia,country,eur,1842,38115246,1688,55,418.74,big
 rwa,Rwanda,country,afr,1842,1064232,455,59,420.04,big
 sau,Saudi Arabia,country,asi,1842,2196492,881,45.6,416.16,big
 sdn,Sudan,country,afr,1842,4524140,578,33.8,425.25,big
-sds,South Sudan,country,afr,1842,1163702,566,33.78,490.08,big
+ssd,South Sudan,country,afr,1842,1163702,566,33.78,490.08,big
 sen,Senegal,country,afr,1842,1171514,554,44.8,512.4,big
 sgp,Singapore,country,asi,1842,47786,1076,41.5,392.21,big
 slb,Solomon Islands,country,asi,1842,62963,393,47.7,504.87,big
@@ -8010,7 +8010,7 @@ rus,Russia,country,eur,1843,38467229,1699,54.9,418.74,big
 rwa,Rwanda,country,afr,1843,1070826,455,59,420.04,big
 sau,Saudi Arabia,country,asi,1843,2201402,882,45.7,416.16,big
 sdn,Sudan,country,afr,1843,4544299,581,33.8,425.25,big
-sds,South Sudan,country,afr,1843,1168887,568,33.78,490.08,big
+ssd,South Sudan,country,afr,1843,1168887,568,33.78,490.08,big
 sen,Senegal,country,afr,1843,1179403,557,44.7,512.4,big
 sgp,Singapore,country,asi,1843,48787,1078,41.6,392.21,big
 slb,Solomon Islands,country,asi,1843,63247,395,47.8,504.87,big
@@ -8193,7 +8193,7 @@ rus,Russia,country,eur,1844,38822462,1710,54.8,418.74,big
 rwa,Rwanda,country,afr,1844,1077460,456,59,420.04,big
 sau,Saudi Arabia,country,asi,1844,2206323,883,45.7,416.16,big
 sdn,Sudan,country,afr,1844,4564547,584,33.8,425.25,big
-sds,South Sudan,country,afr,1844,1174095,571,33.78,490.08,big
+ssd,South Sudan,country,afr,1844,1174095,571,33.78,490.08,big
 sen,Senegal,country,afr,1844,1187344,560,44.7,512.4,big
 sgp,Singapore,country,asi,1844,49806,1080,41.6,392.21,big
 slb,Solomon Islands,country,asi,1844,63533,396,47.8,504.87,big
@@ -8376,7 +8376,7 @@ rus,Russia,country,eur,1845,39180976,1721,54.6,418.74,big
 rwa,Rwanda,country,afr,1845,1084135,456,59,420.04,big
 sau,Saudi Arabia,country,asi,1845,2211256,884,45.7,416.16,big
 sdn,Sudan,country,afr,1845,4584885,586,33.8,425.25,big
-sds,South Sudan,country,afr,1845,1179327,574,33.78,490.08,big
+ssd,South Sudan,country,afr,1845,1179327,574,33.78,490.08,big
 sen,Senegal,country,afr,1845,1195338,563,44.6,512.4,big
 sgp,Singapore,country,asi,1845,50846,1083,41.6,392.21,big
 slb,Solomon Islands,country,asi,1845,63820,398,47.9,504.87,big
@@ -8559,7 +8559,7 @@ rus,Russia,country,eur,1846,39542800,1732,54.5,418.74,big
 rwa,Rwanda,country,afr,1846,1090852,457,59,420.04,big
 sau,Saudi Arabia,country,asi,1846,2216199,885,45.7,416.16,big
 sdn,Sudan,country,afr,1846,4605314,589,33.8,425.25,big
-sds,South Sudan,country,afr,1846,1184581,577,33.78,490.08,big
+ssd,South Sudan,country,afr,1846,1184581,577,33.78,490.08,big
 sen,Senegal,country,afr,1846,1203387,565,44.6,512.4,big
 sgp,Singapore,country,asi,1846,51906,1085,41.6,392.21,big
 slb,Solomon Islands,country,asi,1846,64108,399,48,504.87,big
@@ -8742,7 +8742,7 @@ rus,Russia,country,eur,1847,39907966,1744,54.4,418.74,big
 rwa,Rwanda,country,afr,1847,1097611,457,59,420.04,big
 sau,Saudi Arabia,country,asi,1847,2221154,887,45.7,416.16,big
 sdn,Sudan,country,afr,1847,4625834,592,33.8,425.25,big
-sds,South Sudan,country,afr,1847,1189860,580,33.78,490.08,big
+ssd,South Sudan,country,afr,1847,1189860,580,33.78,490.08,big
 sen,Senegal,country,afr,1847,1211489,568,44.5,512.4,big
 sgp,Singapore,country,asi,1847,52986,1088,41.7,392.21,big
 slb,Solomon Islands,country,asi,1847,64398,400,48,504.87,big
@@ -8925,7 +8925,7 @@ rus,Russia,country,eur,1848,40276504,1755,54.3,418.74,big
 rwa,Rwanda,country,afr,1848,1104411,458,59,420.04,big
 sau,Saudi Arabia,country,asi,1848,2226119,888,45.7,416.16,big
 sdn,Sudan,country,afr,1848,4646445,595,33.8,425.25,big
-sds,South Sudan,country,afr,1848,1195161,582,33.78,490.08,big
+ssd,South Sudan,country,afr,1848,1195161,582,33.78,490.08,big
 sen,Senegal,country,afr,1848,1219647,571,44.5,512.4,big
 sgp,Singapore,country,asi,1848,54088,1090,41.7,392.21,big
 slb,Solomon Islands,country,asi,1848,64689,402,48.1,504.87,big
@@ -9108,7 +9108,7 @@ rus,Russia,country,eur,1849,40648445,1766,54.1,418.74,big
 rwa,Rwanda,country,afr,1849,1111253,459,59,420.04,big
 sau,Saudi Arabia,country,asi,1849,2231096,889,45.8,416.16,big
 sdn,Sudan,country,afr,1849,4667148,598,33.8,425.25,big
-sds,South Sudan,country,afr,1849,1200486,585,33.78,490.08,big
+ssd,South Sudan,country,afr,1849,1200486,585,33.78,490.08,big
 sen,Senegal,country,afr,1849,1227859,574,44.4,512.4,big
 sgp,Singapore,country,asi,1849,55210,1093,41.7,392.21,big
 slb,Solomon Islands,country,asi,1849,64981,403,48.1,504.87,big
@@ -9291,7 +9291,7 @@ rus,Russia,country,eur,1850,41023821,1778,54,418.74,big
 rwa,Rwanda,country,afr,1850,1118138,459,59,420.04,big
 sau,Saudi Arabia,country,asi,1850,2236084,890,45.8,416.16,big
 sdn,Sudan,country,afr,1850,4687944,601,33.8,425.25,big
-sds,South Sudan,country,afr,1850,1205835,588,33.78,490.08,big
+ssd,South Sudan,country,afr,1850,1205835,588,33.78,490.08,big
 sen,Senegal,country,afr,1850,1236126,576,44.4,512.4,big
 sgp,Singapore,country,asi,1850,56355,1095,41.7,392.21,big
 slb,Solomon Islands,country,asi,1850,65274,405,48.2,504.87,big
@@ -9474,7 +9474,7 @@ rus,Russia,country,eur,1851,41402026,1789,53.8,418.74,big
 rwa,Rwanda,country,afr,1851,1125872,460,59,420.04,big
 sau,Saudi Arabia,country,asi,1851,2240867,891,45.8,416.16,big
 sdn,Sudan,country,afr,1851,4693302,604,33.8,425.25,big
-sds,South Sudan,country,afr,1851,1217862,591,33.78,490.08,big
+ssd,South Sudan,country,afr,1851,1217862,591,33.78,490.08,big
 sen,Senegal,country,afr,1851,1244833,579,44.3,512.4,big
 sgp,Singapore,country,asi,1851,57522,1097,41.8,392.21,big
 slb,Solomon Islands,country,asi,1851,65412,406,48.3,504.87,big
@@ -9657,7 +9657,7 @@ rus,Russia,country,eur,1852,41783717,1801,53.6,418.74,big
 rwa,Rwanda,country,afr,1852,1133658,460,59,420.04,big
 sau,Saudi Arabia,country,asi,1852,2245661,892,45.8,416.16,big
 sdn,Sudan,country,afr,1852,4698615,607,33.8,425.25,big
-sds,South Sudan,country,afr,1852,1229972,594,33.78,490.08,big
+ssd,South Sudan,country,afr,1852,1229972,594,33.78,490.08,big
 sen,Senegal,country,afr,1852,1253601,582,44.3,512.4,big
 sgp,Singapore,country,asi,1852,58711,1100,41.8,392.21,big
 slb,Solomon Islands,country,asi,1852,65550,407,48.3,504.87,big
@@ -9840,7 +9840,7 @@ rus,Russia,country,eur,1853,42168926,1812,53.4,418.74,big
 rwa,Rwanda,country,afr,1853,1141497,461,59,420.04,big
 sau,Saudi Arabia,country,asi,1853,2250466,893,45.8,416.16,big
 sdn,Sudan,country,afr,1853,4703882,610,33.8,425.25,big
-sds,South Sudan,country,afr,1853,1242165,597,33.78,490.08,big
+ssd,South Sudan,country,afr,1853,1242165,597,33.78,490.08,big
 sen,Senegal,country,afr,1853,1262431,585,44.2,512.4,big
 sgp,Singapore,country,asi,1853,59923,1102,41.8,392.21,big
 slb,Solomon Islands,country,asi,1853,65688,409,48.4,504.87,big
@@ -10023,7 +10023,7 @@ rus,Russia,country,eur,1854,42557687,1824,53.2,418.74,big
 rwa,Rwanda,country,afr,1854,1149391,462,59,420.04,big
 sau,Saudi Arabia,country,asi,1854,2255280,894,45.8,416.16,big
 sdn,Sudan,country,afr,1854,4709102,613,33.8,425.25,big
-sds,South Sudan,country,afr,1854,1254443,599,33.78,490.08,big
+ssd,South Sudan,country,afr,1854,1254443,599,33.78,490.08,big
 sen,Senegal,country,afr,1854,1271323,588,44.2,512.4,big
 sgp,Singapore,country,asi,1854,61158,1105,41.8,392.21,big
 slb,Solomon Islands,country,asi,1854,65825,410,48.5,504.87,big
@@ -10206,7 +10206,7 @@ rus,Russia,country,eur,1855,42950032,1836,53,418.74,big
 rwa,Rwanda,country,afr,1855,1157338,462,59,420.04,big
 sau,Saudi Arabia,country,asi,1855,2260105,895,45.8,416.16,big
 sdn,Sudan,country,afr,1855,4714276,615,33.8,425.25,big
-sds,South Sudan,country,afr,1855,1266805,602,33.78,490.08,big
+ssd,South Sudan,country,afr,1855,1266805,602,33.78,490.08,big
 sen,Senegal,country,afr,1855,1280277,590,44.1,512.4,big
 sgp,Singapore,country,asi,1855,62418,1107,41.9,392.21,big
 slb,Solomon Islands,country,asi,1855,65962,412,48.5,504.87,big
@@ -10389,7 +10389,7 @@ rus,Russia,country,eur,1856,43345995,1848,52.8,418.74,big
 rwa,Rwanda,country,afr,1856,1165339,463,59,420.04,big
 sau,Saudi Arabia,country,asi,1856,2264940,896,45.9,416.16,big
 sdn,Sudan,country,afr,1856,4719403,618,33.8,425.25,big
-sds,South Sudan,country,afr,1856,1279253,605,33.78,490.08,big
+ssd,South Sudan,country,afr,1856,1279253,605,33.78,490.08,big
 sen,Senegal,country,afr,1856,1289294,593,44.1,512.4,big
 sgp,Singapore,country,asi,1856,63703,1110,41.9,392.21,big
 slb,Solomon Islands,country,asi,1856,66100,413,48.6,504.87,big
@@ -10572,7 +10572,7 @@ rus,Russia,country,eur,1857,43745607,1860,52.6,418.74,big
 rwa,Rwanda,country,afr,1857,1173395,463,59,420.04,big
 sau,Saudi Arabia,country,asi,1857,2269786,897,45.9,416.16,big
 sdn,Sudan,country,afr,1857,4724481,621,33.8,425.25,big
-sds,South Sudan,country,afr,1857,1291786,608,33.78,490.08,big
+ssd,South Sudan,country,afr,1857,1291786,608,33.78,490.08,big
 sen,Senegal,country,afr,1857,1298375,596,44,512.4,big
 sgp,Singapore,country,asi,1857,65012,1112,41.9,392.21,big
 slb,Solomon Islands,country,asi,1857,66237,415,48.7,504.87,big
@@ -10755,7 +10755,7 @@ rus,Russia,country,eur,1858,44148904,1872,52.4,416.28,big
 rwa,Rwanda,country,afr,1858,1181507,464,59,420.04,big
 sau,Saudi Arabia,country,asi,1858,2274641,899,45.9,416.16,big
 sdn,Sudan,country,afr,1858,4729512,624,33.8,425.25,big
-sds,South Sudan,country,afr,1858,1304406,611,33.78,490.08,big
+ssd,South Sudan,country,afr,1858,1304406,611,33.78,490.08,big
 sen,Senegal,country,afr,1858,1307519,599,44,512.4,big
 sgp,Singapore,country,asi,1858,66347,1115,41.9,392.21,big
 slb,Solomon Islands,country,asi,1858,66374,416,48.7,504.87,big
@@ -10938,7 +10938,7 @@ rus,Russia,country,eur,1859,44555919,1884,52.2,413.84,big
 rwa,Rwanda,country,afr,1859,1189673,465,59,420.04,big
 sau,Saudi Arabia,country,asi,1859,2279508,900,45.9,416.16,big
 sdn,Sudan,country,afr,1859,4734493,627,33.8,425.25,big
-sds,South Sudan,country,afr,1859,1317112,614,33.78,490.08,big
+ssd,South Sudan,country,afr,1859,1317112,614,33.78,490.08,big
 sen,Senegal,country,afr,1859,1316728,602,43.9,512.4,big
 sgp,Singapore,country,asi,1859,67707,1117,42,392.21,big
 slb,Solomon Islands,country,asi,1859,66511,418,48.8,504.87,big
@@ -11121,7 +11121,7 @@ rus,Russia,country,eur,1860,44966686,1896,52,411.41,big
 rwa,Rwanda,country,afr,1860,1197896,465,59,420.04,big
 sau,Saudi Arabia,country,asi,1860,2284384,901,45.9,416.16,big
 sdn,Sudan,country,afr,1860,4739424,631,33.8,425.25,big
-sds,South Sudan,country,afr,1860,1329906,617,33.78,490.08,big
+ssd,South Sudan,country,afr,1860,1329906,617,33.78,490.08,big
 sen,Senegal,country,afr,1860,1326001,605,43.9,512.4,big
 sgp,Singapore,country,asi,1860,69094,1120,42,392.21,big
 slb,Solomon Islands,country,asi,1860,66648,419,48.9,504.87,big
@@ -11304,7 +11304,7 @@ rus,Russia,country,eur,1861,45381240,1909,51.8,408.99,big
 rwa,Rwanda,country,afr,1861,1206175,466,59,420.04,big
 sau,Saudi Arabia,country,asi,1861,2289372,902,45.9,416.16,big
 sdn,Sudan,country,afr,1861,4744306,634,33.8,425.25,big
-sds,South Sudan,country,afr,1861,1342788,620,33.78,490.08,big
+ssd,South Sudan,country,afr,1861,1342788,620,33.78,490.08,big
 sen,Senegal,country,afr,1861,1335340,608,43.8,512.4,big
 sgp,Singapore,country,asi,1861,70554,1122,42,392.21,big
 slb,Solomon Islands,country,asi,1861,66785,421,48.9,504.87,big
@@ -11487,7 +11487,7 @@ rus,Russia,country,eur,1862,45799615,1921,51.6,406.59,big
 rwa,Rwanda,country,afr,1862,1214510,466,59,420.04,big
 sau,Saudi Arabia,country,asi,1862,2294472,903,46,416.16,big
 sdn,Sudan,country,afr,1862,4749137,637,33.8,425.25,big
-sds,South Sudan,country,afr,1862,1355758,623,33.78,490.08,big
+ssd,South Sudan,country,afr,1862,1355758,623,33.78,490.08,big
 sen,Senegal,country,afr,1862,1344744,611,43.8,512.4,big
 sgp,Singapore,country,asi,1862,72089,1125,42,392.21,big
 slb,Solomon Islands,country,asi,1862,66921,422,49,504.87,big
@@ -11670,7 +11670,7 @@ rus,Russia,country,eur,1863,46221848,1933,51.4,404.21,big
 rwa,Rwanda,country,afr,1863,1222903,467,59,420.04,big
 sau,Saudi Arabia,country,asi,1863,2299685,904,46,416.16,big
 sdn,Sudan,country,afr,1863,4753917,640,33.8,425.25,big
-sds,South Sudan,country,afr,1863,1368817,626,33.78,490.08,big
+ssd,South Sudan,country,afr,1863,1368817,626,33.78,490.08,big
 sen,Senegal,country,afr,1863,1354214,614,43.7,512.4,big
 sgp,Singapore,country,asi,1863,73704,1127,42,392.21,big
 slb,Solomon Islands,country,asi,1863,67058,424,49,504.87,big
@@ -11853,7 +11853,7 @@ rus,Russia,country,eur,1864,46647973,1946,51.2,401.83,big
 rwa,Rwanda,country,afr,1864,1231353,467,59,420.04,big
 sau,Saudi Arabia,country,asi,1864,2305011,905,46,416.16,big
 sdn,Sudan,country,afr,1864,4758645,643,33.8,425.25,big
-sds,South Sudan,country,afr,1864,1381965,629,33.78,490.08,big
+ssd,South Sudan,country,afr,1864,1381965,629,33.78,490.08,big
 sen,Senegal,country,afr,1864,1363751,617,43.7,512.4,big
 sgp,Singapore,country,asi,1864,75402,1130,42.1,392.21,big
 slb,Solomon Islands,country,asi,1864,67194,425,49.1,504.87,big
@@ -12036,7 +12036,7 @@ rus,Russia,country,eur,1865,47078027,1959,51,399.48,big
 rwa,Rwanda,country,afr,1865,1239860,468,59,420.04,big
 sau,Saudi Arabia,country,asi,1865,2310451,906,46,416.16,big
 sdn,Sudan,country,afr,1865,4763321,646,33.8,425.25,big
-sds,South Sudan,country,afr,1865,1395204,632,33.78,490.08,big
+ssd,South Sudan,country,afr,1865,1395204,632,33.78,490.08,big
 sen,Senegal,country,afr,1865,1373355,620,43.6,512.4,big
 sgp,Singapore,country,asi,1865,77186,1132,42.1,392.21,big
 slb,Solomon Islands,country,asi,1865,67331,427,49.2,504.87,big
@@ -12219,7 +12219,7 @@ rus,Russia,country,eur,1866,47512046,1971,50.8,397.13,big
 rwa,Rwanda,country,afr,1866,1248426,469,59,420.04,big
 sau,Saudi Arabia,country,asi,1866,2316005,907,46,416.16,big
 sdn,Sudan,country,afr,1866,4767944,649,33.8,425.25,big
-sds,South Sudan,country,afr,1866,1408533,635,33.78,490.08,big
+ssd,South Sudan,country,afr,1866,1408533,635,33.78,490.08,big
 sen,Senegal,country,afr,1866,1383027,623,43.6,512.4,big
 sgp,Singapore,country,asi,1866,79059,1135,42.1,392.21,big
 slb,Solomon Islands,country,asi,1866,67467,428,49.2,504.87,big
@@ -12402,7 +12402,7 @@ rus,Russia,country,eur,1867,47950066,1984,50.6,394.8,big
 rwa,Rwanda,country,afr,1867,1257050,469,59,420.04,big
 sau,Saudi Arabia,country,asi,1867,2321674,909,46,416.16,big
 sdn,Sudan,country,afr,1867,4772514,652,33.8,425.25,big
-sds,South Sudan,country,afr,1867,1421953,638,33.78,490.08,big
+ssd,South Sudan,country,afr,1867,1421953,638,33.78,490.08,big
 sen,Senegal,country,afr,1867,1392766,626,43.5,512.4,big
 sgp,Singapore,country,asi,1867,81024,1137,42.1,392.21,big
 slb,Solomon Islands,country,asi,1867,67603,430,49.3,504.87,big
@@ -12585,7 +12585,7 @@ rus,Russia,country,eur,1868,48392124,1997,50.4,485.57,big
 rwa,Rwanda,country,afr,1868,1265733,470,59,420.04,big
 sau,Saudi Arabia,country,asi,1868,2327458,910,46,416.16,big
 sdn,Sudan,country,afr,1868,4777030,655,33.8,425.25,big
-sds,South Sudan,country,afr,1868,1435465,641,33.78,490.08,big
+ssd,South Sudan,country,afr,1868,1435465,641,33.78,490.08,big
 sen,Senegal,country,afr,1868,1402574,629,43.5,512.4,big
 sgp,Singapore,country,asi,1868,83087,1140,42.2,392.21,big
 slb,Solomon Islands,country,asi,1868,67739,431,49.4,504.87,big
@@ -12768,7 +12768,7 @@ rus,Russia,country,eur,1869,48838257,2010,50.2,446.6,big
 rwa,Rwanda,country,afr,1869,1274476,470,59,420.04,big
 sau,Saudi Arabia,country,asi,1869,2333358,911,46.1,416.16,big
 sdn,Sudan,country,afr,1869,4781491,659,33.8,425.25,big
-sds,South Sudan,country,afr,1869,1449069,644,33.78,490.08,big
+ssd,South Sudan,country,afr,1869,1449069,644,33.78,490.08,big
 sen,Senegal,country,afr,1869,1412451,632,43.4,512.4,big
 sgp,Singapore,country,asi,1869,85249,1142,42.2,392.21,big
 slb,Solomon Islands,country,asi,1869,67874,433,49.4,504.87,big
@@ -12951,7 +12951,7 @@ rus,Russia,country,eur,1870,49288504,2023,50,402.88,big
 rwa,Rwanda,country,afr,1870,1283278,471,59,420.04,big
 sau,Saudi Arabia,country,asi,1870,2339375,912,46.1,416.16,big
 sdn,Sudan,country,afr,1870,4785897,662,33.8,425.25,big
-sds,South Sudan,country,afr,1870,1462765,648,33.78,490.08,big
+ssd,South Sudan,country,afr,1870,1462765,648,33.78,490.08,big
 sen,Senegal,country,afr,1870,1422397,635,43.3,512.4,big
 sgp,Singapore,country,asi,1870,87515,1145,42.2,392.21,big
 slb,Solomon Islands,country,asi,1870,68010,434,49.5,504.87,big
@@ -13134,7 +13134,7 @@ rus,Russia,country,eur,1871,49742901,2036,50,444.97,big
 rwa,Rwanda,country,afr,1871,1292141,472,58.5,420.04,big
 sau,Saudi Arabia,country,asi,1871,2345509,914,46.1,416.16,big
 sdn,Sudan,country,afr,1871,4790248,665,33.8,425.25,big
-sds,South Sudan,country,afr,1871,1476555,651,33.78,490.08,big
+ssd,South Sudan,country,afr,1871,1476555,651,33.78,490.08,big
 sen,Senegal,country,afr,1871,1432413,638,43.3,512.4,big
 sgp,Singapore,country,asi,1871,89890,1177,42.2,392.21,big
 slb,Solomon Islands,country,asi,1871,68145,436,49.6,504.87,big
@@ -13317,7 +13317,7 @@ rus,Russia,country,eur,1872,50201487,2049,50,479.08,big
 rwa,Rwanda,country,afr,1872,1301064,472,58,420.04,big
 sau,Saudi Arabia,country,asi,1872,2351760,916,46.1,416.16,big
 sdn,Sudan,country,afr,1872,4794542,668,33.8,425.25,big
-sds,South Sudan,country,afr,1872,1490439,654,33.78,490.08,big
+ssd,South Sudan,country,afr,1872,1490439,654,33.78,490.08,big
 sen,Senegal,country,afr,1872,1442500,641,43.2,512.4,big
 sgp,Singapore,country,asi,1872,92376,1210,42.3,392.21,big
 slb,Solomon Islands,country,asi,1872,68280,437,49.6,504.87,big
@@ -13500,7 +13500,7 @@ rus,Russia,country,eur,1873,50650041,2062,50,425.48,big
 rwa,Rwanda,country,afr,1873,1309881,473,57.4,420.04,big
 sau,Saudi Arabia,country,asi,1873,2357580,919,46.1,416.16,big
 sdn,Sudan,country,afr,1873,4798464,671,33.8,425.25,big
-sds,South Sudan,country,afr,1873,1504318,657,33.78,490.08,big
+ssd,South Sudan,country,afr,1873,1504318,657,33.78,490.08,big
 sen,Senegal,country,afr,1873,1452439,644,43.2,512.4,big
 sgp,Singapore,country,asi,1873,94506,1244,42.3,392.21,big
 slb,Solomon Islands,country,asi,1873,68411,439,49.7,504.87,big
@@ -13683,7 +13683,7 @@ rus,Russia,country,eur,1874,51116990,2076,50,425.48,big
 rwa,Rwanda,country,afr,1874,1318925,473,56.9,420.04,big
 sau,Saudi Arabia,country,asi,1874,2364102,921,46.1,416.16,big
 sdn,Sudan,country,afr,1874,4802644,675,33.8,425.25,big
-sds,South Sudan,country,afr,1874,1518390,660,33.78,490.08,big
+ssd,South Sudan,country,afr,1874,1518390,660,33.78,490.08,big
 sen,Senegal,country,afr,1874,1462667,647,43.1,512.4,big
 sgp,Singapore,country,asi,1874,97227,1279,42.3,392.21,big
 slb,Solomon Islands,country,asi,1874,68545,440,49.8,504.87,big
@@ -13866,7 +13866,7 @@ rus,Russia,country,eur,1875,51588245,2089,50,431.98,big
 rwa,Rwanda,country,afr,1875,1328031,474,56.4,420.04,big
 sau,Saudi Arabia,country,asi,1875,2370755,923,46.2,416.16,big
 sdn,Sudan,country,afr,1875,4806765,678,33.8,425.25,big
-sds,South Sudan,country,afr,1875,1532558,663,33.78,490.08,big
+ssd,South Sudan,country,afr,1875,1532558,663,33.78,490.08,big
 sen,Senegal,country,afr,1875,1472966,650,43.1,512.4,big
 sgp,Singapore,country,asi,1875,100080,1314,42.3,392.21,big
 slb,Solomon Islands,country,asi,1875,68680,442,49.8,504.87,big
@@ -14049,7 +14049,7 @@ rus,Russia,country,eur,1876,52063844,2103,50,451.47,big
 rwa,Rwanda,country,afr,1876,1337199,475,55.9,420.04,big
 sau,Saudi Arabia,country,asi,1876,2377539,926,46.2,416.16,big
 sdn,Sudan,country,afr,1876,4810829,681,33.8,425.25,big
-sds,South Sudan,country,afr,1876,1546822,667,33.78,490.08,big
+ssd,South Sudan,country,afr,1876,1546822,667,33.78,490.08,big
 sen,Senegal,country,afr,1876,1483337,653,43,512.4,big
 sgp,Singapore,country,asi,1876,103068,1351,42.4,392.21,big
 slb,Solomon Islands,country,asi,1876,68815,443,49.9,504.87,big
@@ -14232,7 +14232,7 @@ rus,Russia,country,eur,1877,52530515,2116,50,422.24,big
 rwa,Rwanda,country,afr,1877,1346276,475,55.3,420.04,big
 sau,Saudi Arabia,country,asi,1877,2384174,928,46.2,416.16,big
 sdn,Sudan,country,afr,1877,4814547,684,33.8,425.25,big
-sds,South Sudan,country,afr,1877,1561090,670,33.78,490.08,big
+ssd,South Sudan,country,afr,1877,1561090,670,33.78,490.08,big
 sen,Senegal,country,afr,1877,1493580,656,43,512.4,big
 sgp,Singapore,country,asi,1877,105801,1389,42.4,392.21,big
 slb,Solomon Islands,country,asi,1877,68945,445,49.9,504.87,big
@@ -14415,7 +14415,7 @@ rus,Russia,country,eur,1878,53014801,2130,50,487.2,big
 rwa,Rwanda,country,afr,1878,1355569,476,54.8,420.04,big
 sau,Saudi Arabia,country,asi,1878,2391318,930,46.2,416.16,big
 sdn,Sudan,country,afr,1878,4818491,688,33.8,425.25,big
-sds,South Sudan,country,afr,1878,1575547,673,33.78,490.08,big
+ssd,South Sudan,country,afr,1878,1575547,673,33.78,490.08,big
 sen,Senegal,country,afr,1878,1504096,660,42.9,512.4,big
 sgp,Singapore,country,asi,1878,109106,1428,42.4,392.21,big
 slb,Solomon Islands,country,asi,1878,69079,447,50,504.87,big
@@ -14598,7 +14598,7 @@ rus,Russia,country,eur,1879,53503551,2144,50,409.33,big
 rwa,Rwanda,country,afr,1879,1364925,476,54.3,420.04,big
 sau,Saudi Arabia,country,asi,1879,2398608,933,46.2,416.16,big
 sdn,Sudan,country,afr,1879,4822374,691,33.8,425.25,big
-sds,South Sudan,country,afr,1879,1590102,676,33.78,490.08,big
+ssd,South Sudan,country,afr,1879,1590102,676,33.78,490.08,big
 sen,Senegal,country,afr,1879,1514687,663,42.9,512.4,big
 sgp,Singapore,country,asi,1879,112570,1468,42.4,392.21,big
 slb,Solomon Islands,country,asi,1879,69213,448,50.1,504.87,big
@@ -14781,7 +14781,7 @@ rus,Russia,country,eur,1880,53996807,2158,50,464.46,big
 rwa,Rwanda,country,afr,1880,1374345,477,53.8,420.04,big
 sau,Saudi Arabia,country,asi,1880,2405921,935,46.2,416.16,big
 sdn,Sudan,country,afr,1880,4826197,694,33.8,425.25,big
-sds,South Sudan,country,afr,1880,1604755,680,33.78,490.08,big
+ssd,South Sudan,country,afr,1880,1604755,680,33.78,490.08,big
 sen,Senegal,country,afr,1880,1525351,666,42.8,512.4,big
 sgp,Singapore,country,asi,1880,116144,1509,42.5,392.21,big
 slb,Solomon Islands,country,asi,1880,69346,450,50.1,504.87,big
@@ -14964,7 +14964,7 @@ rus,Russia,country,eur,1881,54482337,2172,50,409.33,big
 rwa,Rwanda,country,afr,1881,1383689,478,53.2,420.04,big
 sau,Saudi Arabia,country,asi,1881,2413192,937,46.2,416.16,big
 sdn,Sudan,country,afr,1881,4829703,698,33.8,425.25,big
-sds,South Sudan,country,afr,1881,1619422,683,33.78,490.08,big
+ssd,South Sudan,country,afr,1881,1619422,683,33.78,490.08,big
 sen,Senegal,country,afr,1881,1535907,669,42.8,512.4,big
 sgp,Singapore,country,asi,1881,119521,1552,42.5,392.21,big
 slb,Solomon Islands,country,asi,1881,69476,451,50.2,504.87,big
@@ -15147,7 +15147,7 @@ rus,Russia,country,eur,1882,54984617,2186,50,488.82,big
 rwa,Rwanda,country,afr,1882,1393238,478,52.7,420.04,big
 sau,Saudi Arabia,country,asi,1882,2420548,939,46.3,416.16,big
 sdn,Sudan,country,afr,1882,4833401,701,33.8,425.25,big
-sds,South Sudan,country,afr,1882,1634273,686,33.78,490.08,big
+ssd,South Sudan,country,afr,1882,1634273,686,33.78,490.08,big
 sen,Senegal,country,afr,1882,1546721,673,42.7,512.4,big
 sgp,Singapore,country,asi,1882,123316,1595,42.5,392.21,big
 slb,Solomon Islands,country,asi,1882,69609,453,50.3,504.87,big
@@ -15330,7 +15330,7 @@ rus,Russia,country,eur,1883,55491527,2200,50,461.21,big
 rwa,Rwanda,country,afr,1883,1402851,479,52.2,420.04,big
 sau,Saudi Arabia,country,asi,1883,2427928,942,46.3,416.16,big
 sdn,Sudan,country,afr,1883,4837037,705,33.8,425.25,big
-sds,South Sudan,country,afr,1883,1649224,690,33.78,490.08,big
+ssd,South Sudan,country,afr,1883,1649224,690,33.78,490.08,big
 sen,Senegal,country,afr,1883,1557610,676,42.7,512.4,big
 sgp,Singapore,country,asi,1883,127232,1640,42.5,392.21,big
 slb,Solomon Islands,country,asi,1883,69742,454,50.3,504.87,big
@@ -15513,7 +15513,7 @@ rus,Russia,country,eur,1884,55992073,2214,50,412.55,big
 rwa,Rwanda,country,afr,1884,1412405,479,51.7,420.04,big
 sau,Saudi Arabia,country,asi,1884,2435273,944,46.3,416.16,big
 sdn,Sudan,country,afr,1884,4840385,708,33.8,425.25,big
-sds,South Sudan,country,afr,1884,1664199,693,33.78,490.08,big
+ssd,South Sudan,country,afr,1884,1664199,693,33.78,490.08,big
 sen,Senegal,country,afr,1884,1568412,679,42.6,512.4,big
 sgp,Singapore,country,asi,1884,130973,1686,42.6,392.21,big
 slb,Solomon Islands,country,asi,1884,69872,456,50.4,504.87,big
@@ -15696,7 +15696,7 @@ rus,Russia,country,eur,1885,56508271,2229,50,438.48,big
 rwa,Rwanda,country,afr,1885,1422149,480,51.1,420.04,big
 sau,Saudi Arabia,country,asi,1885,2442697,946,46.3,416.16,big
 sdn,Sudan,country,afr,1885,4843892,711,33.8,425.25,big
-sds,South Sudan,country,afr,1885,1679352,696,33.78,490.08,big
+ssd,South Sudan,country,afr,1885,1679352,696,33.78,490.08,big
 sen,Senegal,country,afr,1885,1579454,682,42.6,512.4,big
 sgp,Singapore,country,asi,1885,135134,1733,42.6,392.21,big
 slb,Solomon Islands,country,asi,1885,70005,458,50.5,504.87,big
@@ -15879,7 +15879,7 @@ rus,Russia,country,eur,1886,57029228,2143,50,402.88,big
 rwa,Rwanda,country,afr,1886,1431960,481,50.6,420.04,big
 sau,Saudi Arabia,country,asi,1886,2450144,949,46.3,416.16,big
 sdn,Sudan,country,afr,1886,4847335,715,33.8,425.25,big
-sds,South Sudan,country,afr,1886,1694607,700,33.78,490.08,big
+ssd,South Sudan,country,afr,1886,1694607,700,33.78,490.08,big
 sen,Senegal,country,afr,1886,1590574,686,42.5,512.4,big
 sgp,Singapore,country,asi,1886,139429,1782,42.6,392.21,big
 slb,Solomon Islands,country,asi,1886,70137,459,50.5,504.87,big
@@ -16062,7 +16062,7 @@ rus,Russia,country,eur,1887,57545264,2506,50,415.74,big
 rwa,Rwanda,country,afr,1887,1441728,481,50.1,420.04,big
 sau,Saudi Arabia,country,asi,1887,2457565,951,46.3,416.16,big
 sdn,Sudan,country,afr,1887,4850520,718,33.8,425.25,big
-sds,South Sudan,country,afr,1887,1709897,703,33.78,490.08,big
+ssd,South Sudan,country,afr,1887,1709897,703,33.78,490.08,big
 sen,Senegal,country,afr,1887,1601628,689,42.5,512.4,big
 sgp,Singapore,country,asi,1887,143576,1832,42.6,392.21,big
 slb,Solomon Islands,country,asi,1887,70266,461,50.6,504.87,big
@@ -16245,7 +16245,7 @@ rus,Russia,country,eur,1888,58075781,2411,50,406.11,big
 rwa,Rwanda,country,afr,1888,1451672,482,49.6,420.04,big
 sau,Saudi Arabia,country,asi,1888,2465056,954,46.4,416.16,big
 sdn,Sudan,country,afr,1888,4853831,722,33.8,425.25,big
-sds,South Sudan,country,afr,1888,1725357,706,33.78,490.08,big
+ssd,South Sudan,country,afr,1888,1725357,706,33.78,490.08,big
 sen,Senegal,country,afr,1888,1612904,692,42.4,512.4,big
 sgp,Singapore,country,asi,1888,148143,1883,42.7,392.21,big
 slb,Solomon Islands,country,asi,1888,70398,463,50.7,504.87,big
@@ -16428,7 +16428,7 @@ rus,Russia,country,eur,1889,58611190,2242,50,446.6,big
 rwa,Rwanda,country,afr,1889,1461685,482,49,420.04,big
 sau,Saudi Arabia,country,asi,1889,2472571,956,46.4,416.16,big
 sdn,Sudan,country,afr,1889,4857075,725,33.8,425.25,big
-sds,South Sudan,country,afr,1889,1740920,710,33.78,490.08,big
+ssd,South Sudan,country,afr,1889,1740920,710,33.78,490.08,big
 sen,Senegal,country,afr,1889,1624259,696,42.4,512.4,big
 sgp,Singapore,country,asi,1889,152857,1936,42.7,392.21,big
 slb,Solomon Islands,country,asi,1889,70530,464,50.7,504.87,big
@@ -16611,7 +16611,7 @@ rus,Russia,country,eur,1890,59151534,2233,50,474.2,big
 rwa,Rwanda,country,afr,1890,1471766,483,48.5,420.04,big
 sau,Saudi Arabia,country,asi,1890,2480109,958,46.4,416.16,big
 sdn,Sudan,country,afr,1890,4860252,729,33.8,425.25,big
-sds,South Sudan,country,afr,1890,1756589,713,33.78,490.08,big
+ssd,South Sudan,country,afr,1890,1756589,713,33.78,490.08,big
 sen,Senegal,country,afr,1890,1635693,699,42.3,512.4,big
 sgp,Singapore,country,asi,1890,157724,1990,42.7,392.21,big
 slb,Solomon Islands,country,asi,1890,70661,466,50.8,504.87,big
@@ -16794,7 +16794,7 @@ rus,Russia,country,eur,1891,59696859,2046,50,441.72,big
 rwa,Rwanda,country,afr,1891,1481915,484,48,420.04,big
 sau,Saudi Arabia,country,asi,1891,2487669,961,46.3,416.16,big
 sdn,Sudan,country,afr,1891,4863360,732,33.8,425.25,big
-sds,South Sudan,country,afr,1891,1772362,717,33.78,490.08,big
+ssd,South Sudan,country,afr,1891,1772362,717,33.78,490.08,big
 sen,Senegal,country,afr,1891,1647208,702,42.3,512.4,big
 sgp,Singapore,country,asi,1891,162748,2046,42.7,392.21,big
 slb,Solomon Islands,country,asi,1891,70792,467,50.7,504.87,big
@@ -16977,7 +16977,7 @@ rus,Russia,country,eur,1892,60247212,2240,50,498.56,big
 rwa,Rwanda,country,afr,1892,1492134,484,47.5,420.04,big
 sau,Saudi Arabia,country,asi,1892,2495253,963,46.3,416.16,big
 sdn,Sudan,country,afr,1892,4866400,736,33.8,425.25,big
-sds,South Sudan,country,afr,1892,1788241,720,33.78,490.08,big
+ssd,South Sudan,country,afr,1892,1788241,720,33.78,490.08,big
 sen,Senegal,country,afr,1892,1658804,706,42.2,512.4,big
 sgp,Singapore,country,asi,1892,167934,2103,42.6,392.21,big
 slb,Solomon Islands,country,asi,1892,70923,469,50.6,504.87,big
@@ -17160,7 +17160,7 @@ rus,Russia,country,eur,1893,60802639,2539,50,409.33,big
 rwa,Rwanda,country,afr,1893,1502423,485,47,420.04,big
 sau,Saudi Arabia,country,asi,1893,2502859,965,46.2,416.16,big
 sdn,Sudan,country,afr,1893,4869370,739,33.8,425.25,big
-sds,South Sudan,country,afr,1893,1804226,724,33.78,490.08,big
+ssd,South Sudan,country,afr,1893,1804226,724,33.78,490.08,big
 sen,Senegal,country,afr,1893,1670482,709,42.2,512.4,big
 sgp,Singapore,country,asi,1893,173288,2162,42.6,392.21,big
 slb,Solomon Islands,country,asi,1893,71054,471,50.6,504.87,big
@@ -17343,7 +17343,7 @@ rus,Russia,country,eur,1894,61363186,2887,50,430.36,big
 rwa,Rwanda,country,afr,1894,1512781,486,46.4,420.03,big
 sau,Saudi Arabia,country,asi,1894,2510489,968,46.1,416.15,big
 sdn,Sudan,country,afr,1894,4872270,743,33.8,425.24,big
-sds,South Sudan,country,afr,1894,1820318,727,33.78,490.07,big
+ssd,South Sudan,country,afr,1894,1820318,727,33.78,490.07,big
 sen,Senegal,country,afr,1894,1682241,713,42.1,512.39,big
 sgp,Singapore,country,asi,1894,178816,2223,42.6,392.2,big
 slb,Solomon Islands,country,asi,1894,71184,472,50.5,504.86,big
@@ -17526,7 +17526,7 @@ rus,Russia,country,eur,1895,61928901,2672,50,453.09,big
 rwa,Rwanda,country,afr,1895,1523211,486,45.9,420,big
 sau,Saudi Arabia,country,asi,1895,2518142,970,46.1,416.12,big
 sdn,Sudan,country,afr,1895,4875099,747,33.8,425.21,big
-sds,South Sudan,country,afr,1895,1836518,731,33.78,490.03,big
+ssd,South Sudan,country,afr,1895,1836518,731,33.78,490.03,big
 sen,Senegal,country,afr,1895,1694083,716,42.1,512.35,big
 sgp,Singapore,country,asi,1895,184522,2285,42.6,392.17,big
 slb,Solomon Islands,country,asi,1895,71314,474,50.4,504.82,big
@@ -17709,7 +17709,7 @@ rus,Russia,country,eur,1896,62499831,2944,50,444.97,big
 rwa,Rwanda,country,afr,1896,1533712,487,45.4,419.93,big
 sau,Saudi Arabia,country,asi,1896,2525819,973,46,416.05,big
 sdn,Sudan,country,afr,1896,4877856,750,33.8,425.14,big
-sds,South Sudan,country,afr,1896,1852826,734,33.78,489.95,big
+ssd,South Sudan,country,afr,1896,1852826,734,33.78,489.95,big
 sen,Senegal,country,afr,1896,1706009,720,42,512.27,big
 sgp,Singapore,country,asi,1896,190410,2349,42.5,392.11,big
 slb,Solomon Islands,country,asi,1896,71444,476,50.4,504.74,big
@@ -17892,7 +17892,7 @@ rus,Russia,country,eur,1897,63076025,2895,50,422.24,big
 rwa,Rwanda,country,afr,1897,1544284,487,44.9,419.82,big
 sau,Saudi Arabia,country,asi,1897,2533518,975,45.9,415.94,big
 sdn,Sudan,country,afr,1897,4880542,754,33.8,425.03,big
-sds,South Sudan,country,afr,1897,1869243,738,33.78,489.82,big
+ssd,South Sudan,country,afr,1897,1869243,738,33.78,489.82,big
 sen,Senegal,country,afr,1897,1718018,723,42,512.14,big
 sgp,Singapore,country,asi,1897,196484,2415,42.5,392,big
 slb,Solomon Islands,country,asi,1897,71574,477,50.3,504.61,big
@@ -18075,7 +18075,7 @@ rus,Russia,country,eur,1898,63657531,2972,50,453.09,big
 rwa,Rwanda,country,afr,1898,1554928,488,44.3,419.66,big
 sau,Saudi Arabia,country,asi,1898,2541241,977,45.9,415.78,big
 sdn,Sudan,country,afr,1898,4883154,757,33.8,424.86,big
-sds,South Sudan,country,afr,1898,1885769,741,33.78,489.63,big
+ssd,South Sudan,country,afr,1898,1885769,741,33.78,489.63,big
 sen,Senegal,country,afr,1898,1730111,727,41.9,511.94,big
 sgp,Singapore,country,asi,1898,202748,2482,42.5,391.85,big
 slb,Solomon Islands,country,asi,1898,71703,479,50.2,504.41,big
@@ -18258,7 +18258,7 @@ rus,Russia,country,eur,1899,64244398,3154,50,389.96,big
 rwa,Rwanda,country,afr,1899,1565645,489,43.8,419.43,big
 sau,Saudi Arabia,country,asi,1899,2548988,980,45.8,415.55,big
 sdn,Sudan,country,afr,1899,4885693,761,33.8,424.63,big
-sds,South Sudan,country,afr,1899,1902406,745,33.78,489.36,big
+ssd,South Sudan,country,afr,1899,1902406,745,33.78,489.36,big
 sen,Senegal,country,afr,1899,1742290,730,41.9,511.66,big
 sgp,Singapore,country,asi,1899,209210,2552,42.4,391.64,big
 slb,Solomon Islands,country,asi,1899,71832,481,50.1,504.13,big
@@ -18441,7 +18441,7 @@ rus,Russia,country,eur,1900,64836675,3087,50,409.33,big
 rwa,Rwanda,country,afr,1900,1576436,489,43.3,419.13,big
 sau,Saudi Arabia,country,asi,1900,2556758,982,45.7,415.26,big
 sdn,Sudan,country,afr,1900,4888158,765,33.8,424.33,big
-sds,South Sudan,country,afr,1900,1919153,748,33.78,489.02,big
+ssd,South Sudan,country,afr,1900,1919153,748,33.78,489.02,big
 sen,Senegal,country,afr,1900,1754554,734,41.8,511.3,big
 sgp,Singapore,country,asi,1900,215875,2624,42.4,391.36,big
 slb,Solomon Islands,country,asi,1900,71961,482,50.1,503.78,big
@@ -18624,7 +18624,7 @@ rus,Russia,country,eur,1901,65434412,3165,50,441.72,big
 rwa,Rwanda,country,afr,1901,1587299,490,42.8,418.77,big
 sau,Saudi Arabia,country,asi,1901,2564552,985,45.7,414.9,big
 sdn,Sudan,country,afr,1901,4890547,768,33.8,423.96,big
-sds,South Sudan,country,afr,1901,1936012,752,33.78,486.61,big
+ssd,South Sudan,country,afr,1901,1936012,752,33.78,486.61,big
 sen,Senegal,country,afr,1901,1766904,737,41.8,510.85,big
 sgp,Singapore,country,asi,1901,222749,2890,42.4,391.02,big
 slb,Solomon Islands,country,asi,1901,72089,484,50,503.34,big
@@ -18807,7 +18807,7 @@ rus,Russia,country,eur,1902,66028362,3439,50,418.99,big
 rwa,Rwanda,country,afr,1902,1598136,490,42.2,418.34,big
 sau,Saudi Arabia,country,asi,1902,2572328,987,45.6,414.48,big
 sdn,Sudan,country,afr,1902,4892700,772,33.8,423.53,big
-sds,South Sudan,country,afr,1902,1952919,756,33.78,484.21,big
+ssd,South Sudan,country,afr,1902,1952919,756,33.78,484.21,big
 sen,Senegal,country,afr,1902,1779207,741,41.7,510.33,big
 sgp,Singapore,country,asi,1902,229471,2732,42.3,390.62,big
 slb,Solomon Islands,country,asi,1902,72215,486,49.9,502.83,big
@@ -18990,7 +18990,7 @@ rus,Russia,country,eur,1903,66637086,3203,50,406.11,big
 rwa,Rwanda,country,afr,1903,1609147,491,41.7,417.85,big
 sau,Saudi Arabia,country,asi,1903,2580169,990,45.5,413.99,big
 sdn,Sudan,country,afr,1903,4894937,776,33.8,423.03,big
-sds,South Sudan,country,afr,1903,1970002,759,33.78,481.82,big
+ssd,South Sudan,country,afr,1903,1970002,759,33.78,481.82,big
 sen,Senegal,country,afr,1903,1791731,744,41.7,509.73,big
 sgp,Singapore,country,asi,1903,236772,2351,42.3,390.16,big
 slb,Solomon Islands,country,asi,1903,72343,488,49.9,502.24,big
@@ -19173,7 +19173,7 @@ rus,Russia,country,eur,1904,67251421,3542,50,377.02,big
 rwa,Rwanda,country,afr,1904,1620234,492,41.2,417.29,big
 sau,Saudi Arabia,country,asi,1904,2588034,992,45.5,413.44,big
 sdn,Sudan,country,afr,1904,4897097,780,33.8,422.47,big
-sds,South Sudan,country,afr,1904,1987199,763,33.78,479.45,big
+ssd,South Sudan,country,afr,1904,1987199,763,33.78,479.45,big
 sen,Senegal,country,afr,1904,1804342,748,41.6,509.05,big
 sgp,Singapore,country,asi,1904,244302,2272,42.3,389.64,big
 slb,Solomon Islands,country,asi,1904,72470,489,49.8,501.56,big
@@ -19356,7 +19356,7 @@ rus,Russia,country,eur,1905,67871420,3136,50,441.72,big
 rwa,Rwanda,country,afr,1905,1631397,492,40.7,416.67,big
 sau,Saudi Arabia,country,asi,1905,2595923,994,45.4,412.82,big
 sdn,Sudan,country,afr,1905,4899180,783,33.8,421.84,big
-sds,South Sudan,country,afr,1905,2004509,767,33.78,477.09,big
+ssd,South Sudan,country,afr,1905,2004509,767,33.78,477.09,big
 sen,Senegal,country,afr,1905,1817042,751,41.6,508.29,big
 sgp,Singapore,country,asi,1905,252069,2516,42.3,389.06,big
 slb,Solomon Islands,country,asi,1905,72597,491,49.7,500.81,big
@@ -19539,7 +19539,7 @@ rus,Russia,country,eur,1906,68497135,2997,50,402.88,big
 rwa,Rwanda,country,afr,1906,1642635,493,40.1,415.98,big
 sau,Saudi Arabia,country,asi,1906,2603837,997,45.3,412.14,big
 sdn,Sudan,country,afr,1906,4901183,787,33.8,421.14,big
-sds,South Sudan,country,afr,1906,2021935,770,33.78,474.74,big
+ssd,South Sudan,country,afr,1906,2021935,770,33.78,474.74,big
 sen,Senegal,country,afr,1906,1829831,755,41.5,507.45,big
 sgp,Singapore,country,asi,1906,260082,2828,42.2,388.42,big
 slb,Solomon Islands,country,asi,1906,72724,493,49.6,499.99,big
@@ -19722,7 +19722,7 @@ rus,Russia,country,eur,1907,69114992,2881,50,365.73,big
 rwa,Rwanda,country,afr,1907,1653803,494,39.6,415.22,big
 sau,Saudi Arabia,country,asi,1907,2611714,999,45.3,411.39,big
 sdn,Sudan,country,afr,1907,4902881,791,33.8,420.37,big
-sds,South Sudan,country,afr,1907,2039382,774,33.78,472.4,big
+ssd,South Sudan,country,afr,1907,2039382,774,33.78,472.4,big
 sen,Senegal,country,afr,1907,1842517,759,41.5,506.53,big
 sgp,Singapore,country,asi,1907,267738,2579,42.2,387.71,big
 slb,Solomon Islands,country,asi,1907,72847,494,49.6,499.08,big
@@ -19905,7 +19905,7 @@ rus,Russia,country,eur,1908,69752171,3146,50,396.42,big
 rwa,Rwanda,country,afr,1908,1665195,494,39.1,414.4,big
 sau,Saudi Arabia,country,asi,1908,2619675,1002,45.2,410.57,big
 sdn,Sudan,country,afr,1908,4904725,795,33.8,419.54,big
-sds,South Sudan,country,afr,1908,2057039,778,33.78,470.07,big
+ssd,South Sudan,country,afr,1908,2057039,778,33.78,470.07,big
 sen,Senegal,country,afr,1908,1855485,762,41.4,505.52,big
 sgp,Singapore,country,asi,1908,276249,2963,42.2,386.94,big
 slb,Solomon Islands,country,asi,1908,72973,496,49.5,498.09,big
@@ -20088,7 +20088,7 @@ rus,Russia,country,eur,1909,70395225,3267,50,402.88,big
 rwa,Rwanda,country,afr,1909,1676664,495,38.6,413.52,big
 sau,Saudi Arabia,country,asi,1909,2627661,1004,45.1,409.7,big
 sdn,Sudan,country,afr,1909,4906488,799,33.8,418.65,big
-sds,South Sudan,country,afr,1909,2074812,782,33.78,467.75,big
+ssd,South Sudan,country,afr,1909,2074812,782,33.78,467.75,big
 sen,Senegal,country,afr,1909,1868544,766,41.4,504.46,big
 sgp,Singapore,country,asi,1909,285031,2996,42.1,386.12,big
 slb,Solomon Islands,country,asi,1909,73099,498,49.4,497.04,big
@@ -20271,7 +20271,7 @@ rus,Russia,country,eur,1910,71044207,3487,50,440.1,big
 rwa,Rwanda,country,afr,1910,1688211,495,38,412.6,big
 sau,Saudi Arabia,country,asi,1910,2635671,1007,45.1,408.79,big
 sdn,Sudan,country,afr,1910,4908169,803,33.8,417.72,big
-sds,South Sudan,country,afr,1910,2092703,785,33.78,465.44,big
+ssd,South Sudan,country,afr,1910,2092703,785,33.78,465.44,big
 sen,Senegal,country,afr,1910,1881695,770,41.3,503.33,big
 sgp,Singapore,country,asi,1910,294092,3255,42.1,385.27,big
 slb,Solomon Islands,country,asi,1910,73224,500,49.3,495.93,big
@@ -20454,7 +20454,7 @@ rus,Russia,country,eur,1911,71695134,3222,48.7,385.13,big
 rwa,Rwanda,country,afr,1911,1699794,496,38.6,411.65,big
 sau,Saudi Arabia,country,asi,1911,2643687,1009,45,407.85,big
 sdn,Sudan,country,afr,1911,4909703,806,34.4,416.76,big
-sds,South Sudan,country,afr,1911,2110684,789,34.43,463.15,big
+ssd,South Sudan,country,afr,1911,2110684,789,34.43,463.15,big
 sen,Senegal,country,afr,1911,1894881,774,41.4,502.19,big
 sgp,Singapore,country,asi,1911,303243,2926,42.1,384.38,big
 slb,Solomon Islands,country,asi,1911,73348,501,49.3,494.79,big
@@ -20637,7 +20637,7 @@ rus,Russia,country,eur,1912,72356100,3481,47.4,370.94,big
 rwa,Rwanda,country,afr,1912,1711499,497,39.1,410.68,big
 sau,Saudi Arabia,country,asi,1912,2651746,1012,44.9,406.88,big
 sdn,Sudan,country,afr,1912,4911218,810,35.1,415.77,big
-sds,South Sudan,country,afr,1912,2128812,793,35.09,460.87,big
+ssd,South Sudan,country,afr,1912,2128812,793,35.09,460.87,big
 sen,Senegal,country,afr,1912,1908217,777,41.5,501.02,big
 sgp,Singapore,country,asi,1912,312883,2512,42,383.47,big
 slb,Solomon Islands,country,asi,1912,73473,503,49.2,493.61,big
@@ -20820,7 +20820,7 @@ rus,Russia,country,eur,1913,73023160,3658,46.1,357.27,big
 rwa,Rwanda,country,afr,1913,1723284,497,39.6,409.69,big
 sau,Saudi Arabia,country,asi,1913,2660737,1014,44.9,405.91,big
 sdn,Sudan,country,afr,1913,4912650,814,35.7,414.77,big
-sds,South Sudan,country,afr,1913,2147059,797,35.74,458.6,big
+ssd,South Sudan,country,afr,1913,2147059,797,35.74,458.6,big
 sen,Senegal,country,afr,1913,1921647,781,41.5,499.85,big
 sgp,Singapore,country,asi,1913,322073,2182,42,382.55,big
 slb,Solomon Islands,country,asi,1913,73597,505,49.1,492.43,big
@@ -21003,7 +21003,7 @@ rus,Russia,country,eur,1914,73696369,3494,44.7,344.1,big
 rwa,Rwanda,country,afr,1914,1735149,498,40.1,408.71,big
 sau,Saudi Arabia,country,asi,1914,2670667,1017,44.8,404.93,big
 sdn,Sudan,country,afr,1914,4913997,831,36.4,413.82,big
-sds,South Sudan,country,afr,1914,2165427,813,36.39,456.34,big
+ssd,South Sudan,country,afr,1914,2165427,813,36.39,456.34,big
 sen,Senegal,country,afr,1914,1935171,798,41.6,498.67,big
 sgp,Singapore,country,asi,1914,331379,2617,42,381.62,big
 slb,Solomon Islands,country,asi,1914,73721,514,49.1,491.24,big
@@ -21186,7 +21186,7 @@ rus,Russia,country,eur,1915,74375785,3596,43.4,331.42,big
 rwa,Rwanda,country,afr,1915,1747095,499,40.6,407.72,big
 sau,Saudi Arabia,country,asi,1915,2681543,1021,44.7,403.95,big
 sdn,Sudan,country,afr,1915,4915258,847,37,412.88,big
-sds,South Sudan,country,afr,1915,2183916,829,37.04,454.12,big
+ssd,South Sudan,country,afr,1915,2183916,829,37.04,454.12,big
 sen,Senegal,country,afr,1915,1948790,814,41.7,497.48,big
 sgp,Singapore,country,asi,1915,340700,2678,42,380.7,big
 slb,Solomon Islands,country,asi,1915,73844,522,49,490.06,big
@@ -21369,7 +21369,7 @@ rus,Russia,country,eur,1916,75061464,3198,42.1,319.21,big
 rwa,Rwanda,country,afr,1916,1759122,499,41.1,406.73,big
 sau,Saudi Arabia,country,asi,1916,2692463,1024,44.7,402.98,big
 sdn,Sudan,country,afr,1916,4916433,864,37.7,411.93,big
-sds,South Sudan,country,afr,1916,2202527,846,37.69,451.92,big
+ssd,South Sudan,country,afr,1916,2202527,846,37.69,451.92,big
 sen,Senegal,country,afr,1916,1962505,832,41.8,496.3,big
 sgp,Singapore,country,asi,1916,350353,2222,41.9,379.78,big
 slb,Solomon Islands,country,asi,1916,73968,531,48.9,488.88,big
@@ -21552,7 +21552,7 @@ rus,Russia,country,eur,1917,75753465,2808,40.8,307.45,big
 rwa,Rwanda,country,afr,1917,1771231,500,41.7,406.03,big
 sau,Saudi Arabia,country,asi,1917,2703427,1027,44.6,402,big
 sdn,Sudan,country,afr,1917,4917521,882,38.3,410.98,big
-sds,South Sudan,country,afr,1917,2221260,863,38.34,449.72,big
+ssd,South Sudan,country,afr,1917,2221260,863,38.34,449.72,big
 sen,Senegal,country,afr,1917,1976316,849,41.9,495.12,big
 sgp,Singapore,country,asi,1917,360006,3090,41.9,378.86,big
 slb,Solomon Islands,country,asi,1917,74090,540,48.8,487.69,big
@@ -21735,7 +21735,7 @@ rus,Russia,country,eur,1918,76453419,1719,39.5,296.12,big
 rwa,Rwanda,country,afr,1918,1781799,501,42.2,405.31,big
 sau,Saudi Arabia,country,asi,1918,2714785,1030,44.5,401.02,big
 sdn,Sudan,country,afr,1918,4946403,899,39,410.03,big
-sds,South Sudan,country,afr,1918,2228171,880,39,447.54,big
+ssd,South Sudan,country,afr,1918,2228171,880,39,447.54,big
 sen,Senegal,country,afr,1918,1989422,867,42,493.94,big
 sgp,Singapore,country,asi,1918,369666,2424,41.9,377.94,big
 slb,Solomon Islands,country,asi,1918,74496,549,48.8,486.51,big
@@ -21918,7 +21918,7 @@ rus,Russia,country,eur,1919,77159443,1482,38.2,285.21,big
 rwa,Rwanda,country,afr,1919,1792838,501,42.7,404.6,big
 sau,Saudi Arabia,country,asi,1919,2726104,1033,44.5,400.05,big
 sdn,Sudan,country,afr,1919,4968442,917,39.6,409.09,big
-sds,South Sudan,country,afr,1919,2238099,898,39.65,445.36,big
+ssd,South Sudan,country,afr,1919,2238099,898,39.65,445.36,big
 sen,Senegal,country,afr,1919,2002818,885,42,492.75,big
 sgp,Singapore,country,asi,1919,379990,2760,41.8,377.02,big
 slb,Solomon Islands,country,asi,1919,74832,559,48.7,485.32,big
@@ -22101,7 +22101,7 @@ rus,Russia,country,eur,1920,77871987,1489,36.8,274.7,big
 rwa,Rwanda,country,afr,1920,1803946,502,43.2,403.89,big
 sau,Saudi Arabia,country,asi,1920,2737469,1036,44.4,399.07,big
 sdn,Sudan,country,afr,1920,4990580,936,40.3,408.14,big
-sds,South Sudan,country,afr,1920,2248071,916,40.3,443.2,big
+ssd,South Sudan,country,afr,1920,2248071,916,40.3,443.2,big
 sen,Senegal,country,afr,1920,2016303,904,42.1,491.57,big
 sgp,Singapore,country,asi,1920,395975,2385,41.8,376.1,big
 slb,Solomon Islands,country,asi,1920,75170,568,48.6,484.14,big
@@ -22284,7 +22284,7 @@ rus,Russia,country,eur,1921,78591111,1364,35.5,264.57,big
 rwa,Rwanda,country,afr,1921,1815122,503,43.7,403.18,big
 sau,Saudi Arabia,country,asi,1921,2748882,1040,44.3,398.09,big
 sdn,Sudan,country,afr,1921,5012817,956,40.9,407.19,big
-sds,South Sudan,country,afr,1921,2258088,939,40.95,441.05,big
+ssd,South Sudan,country,afr,1921,2258088,939,40.95,441.05,big
 sen,Senegal,country,afr,1921,2029879,924,42.2,490.39,big
 sgp,Singapore,country,asi,1921,414625,2710,41.8,373.19,big
 slb,Solomon Islands,country,asi,1921,75510,578,48.6,482.92,big
@@ -22467,7 +22467,7 @@ rus,Russia,country,eur,1922,79316876,1584,34.2,254.82,big
 rwa,Rwanda,country,afr,1922,1826368,503,44.2,402.46,big
 sau,Saudi Arabia,country,asi,1922,2760343,1044,44.3,397.12,big
 sdn,Sudan,country,afr,1922,5035152,978,41.6,406.24,big
-sds,South Sudan,country,afr,1922,2268149,962,41.6,438.91,big
+ssd,South Sudan,country,afr,1922,2268149,962,41.6,438.91,big
 sen,Senegal,country,afr,1922,2043547,945,42.3,489.21,big
 sgp,Singapore,country,asi,1922,436938,3602,41.7,370.3,big
 slb,Solomon Islands,country,asi,1922,75851,588,48.5,481.71,big
@@ -22650,7 +22650,7 @@ rus,Russia,country,eur,1923,80049344,1826,32.9,245.43,big
 rwa,Rwanda,country,afr,1923,1837683,504,44.8,401.73,big
 sau,Saudi Arabia,country,asi,1923,2771851,1048,44.2,396.14,big
 sdn,Sudan,country,afr,1923,5057587,999,42.3,405.29,big
-sds,South Sudan,country,afr,1923,2278255,986,42.25,436.78,big
+ssd,South Sudan,country,afr,1923,2278255,986,42.25,436.78,big
 sen,Senegal,country,afr,1923,2057307,966,42.4,492.38,big
 sgp,Singapore,country,asi,1923,453923,3710,41.7,367.43,big
 slb,Solomon Islands,country,asi,1923,76194,598,48.4,480.49,big
@@ -22833,7 +22833,7 @@ rus,Russia,country,eur,1924,80788575,2315,31.6,236.39,big
 rwa,Rwanda,country,afr,1924,1849069,505,45.3,401.02,big
 sau,Saudi Arabia,country,asi,1924,2783407,1052,44.1,395.16,big
 sdn,Sudan,country,afr,1924,5080122,1021,42.9,404.35,big
-sds,South Sudan,country,afr,1924,2288407,1011,42.9,434.66,big
+ssd,South Sudan,country,afr,1924,2288407,1011,42.9,434.66,big
 sen,Senegal,country,afr,1924,2071159,988,42.4,494.12,big
 sgp,Singapore,country,asi,1924,472573,3650,41.7,364.58,big
 slb,Solomon Islands,country,asi,1924,76538,608,48.3,479.28,big
@@ -23016,7 +23016,7 @@ rus,Russia,country,eur,1925,81534633,2895,30.3,227.68,big
 rwa,Rwanda,country,afr,1925,1860525,506,45.8,400.3,big
 sau,Saudi Arabia,country,asi,1925,2795012,1056,44.1,394.19,big
 sdn,Sudan,country,afr,1925,5102758,1044,43.6,403.4,big
-sds,South Sudan,country,afr,1925,2298603,1036,43.56,432.55,big
+ssd,South Sudan,country,afr,1925,2298603,1036,43.56,432.55,big
 sen,Senegal,country,afr,1925,2085104,1010,42.5,497.31,big
 sgp,Singapore,country,asi,1925,490223,4135,41.7,361.76,big
 slb,Solomon Islands,country,asi,1925,76883,618,48.3,478.06,big
@@ -23199,7 +23199,7 @@ rus,Russia,country,eur,1926,82287581,3253,28.9,219.29,big
 rwa,Rwanda,country,afr,1926,1872052,506,46.3,399.58,big
 sau,Saudi Arabia,country,asi,1926,2806665,1060,44,393.21,big
 sdn,Sudan,country,afr,1926,5125494,1067,44.2,402.45,big
-sds,South Sudan,country,afr,1926,2308845,1062,44.21,430.44,big
+ssd,South Sudan,country,afr,1926,2308845,1062,44.21,430.44,big
 sen,Senegal,country,afr,1926,2099144,1032,42.6,499.03,big
 sgp,Singapore,country,asi,1926,511205,3432,41.6,358.96,big
 slb,Solomon Islands,country,asi,1926,77231,629,48.2,476.85,big
@@ -23382,7 +23382,7 @@ rus,Russia,country,eur,1927,83047482,3391,27.6,211.21,big
 rwa,Rwanda,country,afr,1927,1883650,507,46.8,398.85,big
 sau,Saudi Arabia,country,asi,1927,2818366,1064,43.9,392.24,big
 sdn,Sudan,country,afr,1927,5148332,1091,44.9,401.49,big
-sds,South Sudan,country,afr,1927,2319132,1088,44.86,428.35,big
+ssd,South Sudan,country,afr,1927,2319132,1088,44.86,428.35,big
 sen,Senegal,country,afr,1927,2113278,1055,42.7,502.23,big
 sgp,Singapore,country,asi,1927,531519,2551,41.6,356.18,big
 slb,Solomon Islands,country,asi,1927,77580,639,48.1,475.63,big
@@ -23565,7 +23565,7 @@ rus,Russia,country,eur,1928,83814400,3569,26.3,203.42,big
 rwa,Rwanda,country,afr,1928,1895320,508,47.4,398.13,big
 sau,Saudi Arabia,country,asi,1928,2830116,1067,43.9,391.26,big
 sdn,Sudan,country,afr,1928,5171271,1115,45.5,400.54,big
-sds,South Sudan,country,afr,1928,2329466,1115,45.51,426.27,big
+ssd,South Sudan,country,afr,1928,2329466,1115,45.51,426.27,big
 sen,Senegal,country,afr,1928,2127507,1079,42.8,496.6,big
 sgp,Singapore,country,asi,1928,552834,3048,41.6,353.42,big
 slb,Solomon Islands,country,asi,1928,77930,650,48.1,474.42,big
@@ -23748,7 +23748,7 @@ rus,Russia,country,eur,1929,84588401,3613,25,195.93,big
 rwa,Rwanda,country,afr,1929,1907063,509,47.9,397.4,big
 sau,Saudi Arabia,country,asi,1929,2841915,1071,43.8,390.28,big
 sdn,Sudan,country,afr,1929,5194313,1139,46.2,399.6,big
-sds,South Sudan,country,afr,1929,2339845,1143,46.16,424.2,big
+ssd,South Sudan,country,afr,1929,2339845,1143,46.16,424.2,big
 sen,Senegal,country,afr,1929,2141832,1103,42.9,492.48,big
 sgp,Singapore,country,asi,1929,574148,4313,41.5,350.69,big
 slb,Solomon Islands,country,asi,1929,78282,661,48,473.2,big
@@ -23931,7 +23931,7 @@ rus,Russia,country,eur,1930,85369549,3779,25.4,188.71,big
 rwa,Rwanda,country,afr,1930,1918878,509,47.7,396.67,big
 sau,Saudi Arabia,country,asi,1930,2853764,1034,43.7,389.31,big
 sdn,Sudan,country,afr,1930,5217457,1164,45.9,398.65,big
-sds,South Sudan,country,afr,1930,2350271,1171,45.93,422.15,big
+ssd,South Sudan,country,afr,1930,2350271,1171,45.93,422.15,big
 sen,Senegal,country,afr,1930,2156254,1127,42.6,486.92,big
 sgp,Singapore,country,asi,1930,577478,3977,41.5,347.97,big
 slb,Solomon Islands,country,asi,1930,78636,672,47.9,471.99,big
@@ -24114,7 +24114,7 @@ rus,Russia,country,eur,1931,86157911,3816,25.9,181.7,big
 rwa,Rwanda,country,afr,1931,1930767,510,47.5,391.09,big
 sau,Saudi Arabia,country,asi,1931,2865662,997,43.7,388.33,big
 sdn,Sudan,country,afr,1931,5240705,1190,45.7,397.69,big
-sds,South Sudan,country,afr,1931,2360743,1200,45.69,420.1,big
+ssd,South Sudan,country,afr,1931,2360743,1200,45.69,420.1,big
 sen,Senegal,country,afr,1931,2170772,1153,42.4,482.83,big
 sgp,Singapore,country,asi,1931,579143,2943,41.5,321.99,big
 slb,Solomon Islands,country,asi,1931,79048,684,47.8,470.77,big
@@ -24297,7 +24297,7 @@ rus,Russia,country,eur,1932,86953553,3760,26.3,174.96,big
 rwa,Rwanda,country,afr,1932,1942729,511,47.3,385.57,big
 sau,Saudi Arabia,country,asi,1932,2877609,962,43.6,387.35,big
 sdn,Sudan,country,afr,1932,5264056,1216,45.5,396.74,big
-sds,South Sudan,country,afr,1932,2371262,1230,45.46,418.06,big
+ssd,South Sudan,country,afr,1932,2371262,1230,45.46,418.06,big
 sen,Senegal,country,afr,1932,2185388,1178,42.2,477.39,big
 sgp,Singapore,country,asi,1932,552167,2574,41.4,287.67,big
 slb,Solomon Islands,country,asi,1932,79518,696,47.8,469.56,big
@@ -24480,7 +24480,7 @@ rus,Russia,country,eur,1933,87756543,3904,26.7,168.46,big
 rwa,Rwanda,country,afr,1933,1954765,512,47.2,381.27,big
 sau,Saudi Arabia,country,asi,1933,2889606,928,43.5,386.35,big
 sdn,Sudan,country,afr,1933,5287511,1243,45.2,395.79,big
-sds,South Sudan,country,afr,1933,2381827,1260,45.23,416.03,big
+ssd,South Sudan,country,afr,1933,2381827,1260,45.23,416.03,big
 sen,Senegal,country,afr,1933,2200103,1205,42,473.4,big
 sgp,Singapore,country,asi,1933,539512,3658,41.4,273.18,big
 slb,Solomon Islands,country,asi,1933,80048,707,47.7,468.34,big
@@ -24663,7 +24663,7 @@ rus,Russia,country,eur,1934,88566948,4265,27.1,162.21,big
 rwa,Rwanda,country,afr,1934,1966876,513,47,375.86,big
 sau,Saudi Arabia,country,asi,1934,2901653,930,43.5,385.34,big
 sdn,Sudan,country,afr,1934,5311070,1271,45,394.84,big
-sds,South Sudan,country,afr,1934,2392440,1291,44.99,414.01,big
+ssd,South Sudan,country,afr,1934,2392440,1291,44.99,414.01,big
 sen,Senegal,country,afr,1934,2214917,1231,41.8,468.04,big
 sgp,Singapore,country,asi,1934,536848,4335,41.4,274.71,big
 slb,Solomon Islands,country,asi,1934,80582,719,47.6,467.13,big
@@ -24846,7 +24846,7 @@ rus,Russia,country,eur,1935,89384837,4880,27.6,156.19,big
 rwa,Rwanda,country,afr,1935,1979062,513,46.8,370.49,big
 sau,Saudi Arabia,country,asi,1935,2913751,931,43.4,384.33,big
 sdn,Sudan,country,afr,1935,5334735,1299,44.8,393.89,big
-sds,South Sudan,country,afr,1935,2403100,1323,44.76,411.99,big
+ssd,South Sudan,country,afr,1935,2403100,1323,44.76,411.99,big
 sen,Senegal,country,afr,1935,2229830,1259,41.5,464.08,big
 sgp,Singapore,country,asi,1935,566155,4905,41.4,258.46,big
 slb,Solomon Islands,country,asi,1935,81119,732,47.6,465.92,big
@@ -25029,7 +25029,7 @@ rus,Russia,country,eur,1936,90210279,5216,28,150.39,big
 rwa,Rwanda,country,afr,1936,1991323,514,46.6,365.15,big
 sau,Saudi Arabia,country,asi,1936,2925899,933,43.3,383.33,big
 sdn,Sudan,country,afr,1936,5358505,1327,44.5,392.94,big
-sds,South Sudan,country,afr,1936,2413807,1356,44.53,409.99,big
+ssd,South Sudan,country,afr,1936,2413807,1356,44.53,409.99,big
 sen,Senegal,country,afr,1936,2244844,1287,41.3,458.83,big
 sgp,Singapore,country,asi,1936,608117,4894,41.3,279.42,big
 slb,Solomon Islands,country,asi,1936,81660,744,47.5,464.71,big
@@ -25212,7 +25212,7 @@ rus,Russia,country,eur,1937,91043344,5652,28.4,144.81,big
 rwa,Rwanda,country,afr,1937,2003660,515,46.5,359.91,big
 sau,Saudi Arabia,country,asi,1937,2938097,934,43.3,382.32,big
 sdn,Sudan,country,afr,1937,5382381,1356,44.3,391.98,big
-sds,South Sudan,country,afr,1937,2424562,1389,44.29,408,big
+ssd,South Sudan,country,afr,1937,2424562,1389,44.29,408,big
 sen,Senegal,country,afr,1937,2259959,1315,41.1,454.98,big
 sgp,Singapore,country,asi,1937,654075,5338,41.3,251.47,big
 slb,Solomon Islands,country,asi,1937,82204,757,47.4,463.5,big
@@ -25395,7 +25395,7 @@ rus,Russia,country,eur,1938,91884101,5640,28.9,139.43,big
 rwa,Rwanda,country,afr,1938,2016074,516,46.3,355.83,big
 sau,Saudi Arabia,country,asi,1938,2950347,936,43.2,381.31,big
 sdn,Sudan,country,afr,1938,5406363,1386,44.1,391.04,big
-sds,South Sudan,country,afr,1938,2435366,1423,44.06,406.02,big
+ssd,South Sudan,country,afr,1938,2435366,1423,44.06,406.02,big
 sen,Senegal,country,afr,1938,2275176,1345,40.9,449.8,big
 sgp,Singapore,country,asi,1938,695704,4544,41.3,258.46,big
 slb,Solomon Islands,country,asi,1938,82752,769,47.3,462.28,big
@@ -25578,7 +25578,7 @@ rus,Russia,country,eur,1939,92732623,5873,29.3,134.26,big
 rwa,Rwanda,country,afr,1939,2028565,516,46.1,350.66,big
 sau,Saudi Arabia,country,asi,1939,2962647,937,43.1,380.31,big
 sdn,Sudan,country,afr,1939,5430452,1417,43.8,390.08,big
-sds,South Sudan,country,afr,1939,2446217,1458,43.83,404.05,big
+ssd,South Sudan,country,afr,1939,2446217,1458,43.83,404.05,big
 sen,Senegal,country,afr,1939,2290495,1375,40.7,444.64,big
 sgp,Singapore,country,asi,1939,729008,5307,41.2,207.23,big
 slb,Solomon Islands,country,asi,1939,83303,782,47.3,461.07,big
@@ -25761,7 +25761,7 @@ rus,Russia,country,eur,1940,93588981,5632,29.7,129.27,big
 rwa,Rwanda,country,afr,1940,2041133,517,45.9,345.55,big
 sau,Saudi Arabia,country,asi,1940,2974999,969,43.1,379.3,big
 sdn,Sudan,country,afr,1940,5454648,1448,43.6,389.13,big
-sds,South Sudan,country,afr,1940,2457116,1494,43.59,402.09,big
+ssd,South Sudan,country,afr,1940,2457116,1494,43.59,402.09,big
 sen,Senegal,country,afr,1940,2305918,1405,40.5,439.6,big
 sgp,Singapore,country,asi,1940,748657,5284,41.2,229.61,big
 slb,Solomon Islands,country,asi,1940,83859,796,47.2,459.85,big
@@ -25944,7 +25944,7 @@ rus,Russia,country,eur,1941,94453247,5530,30.1,124.48,big
 rwa,Rwanda,country,afr,1941,2053779,518,45.7,340.46,big
 sau,Saudi Arabia,country,asi,1941,2987402,1002,43,378.3,big
 sdn,Sudan,country,afr,1941,5478953,1480,43.4,374.06,big
-sds,South Sudan,country,afr,1941,2468065,1531,43.36,400.14,big
+ssd,South Sudan,country,afr,1941,2468065,1531,43.36,400.14,big
 sen,Senegal,country,afr,1941,2321444,1436,40.2,429.23,big
 sgp,Singapore,country,asi,1941,770932,5260,41.2,255.27,big
 slb,Solomon Islands,country,asi,1941,84418,809,47.1,458.65,big
@@ -26127,7 +26127,7 @@ rus,Russia,country,eur,1942,95325494,5430,30.6,119.85,big
 rwa,Rwanda,country,afr,1942,2066503,519,45.6,335.47,big
 sau,Saudi Arabia,country,asi,1942,2999857,1036,42.9,377.3,big
 sdn,Sudan,country,afr,1942,5503365,1512,43.1,359.41,big
-sds,South Sudan,country,afr,1942,2479062,1568,43.12,398.19,big
+ssd,South Sudan,country,afr,1942,2479062,1568,43.12,398.19,big
 sen,Senegal,country,afr,1942,2337075,1468,40,419.1,big
 sgp,Singapore,country,asi,1942,794460,5235,41.1,283.79,big
 slb,Solomon Islands,country,asi,1942,84980,823,47.1,457.43,big
@@ -26310,7 +26310,7 @@ rus,Russia,country,eur,1943,96205796,5331,31,115.41,big
 rwa,Rwanda,country,afr,1943,2079306,519,45.4,331.58,big
 sau,Saudi Arabia,country,asi,1943,3012364,1071,42.9,376.29,big
 sdn,Sudan,country,afr,1943,5527887,1546,42.9,345.16,big
-sds,South Sudan,country,afr,1943,2490107,1607,42.89,396.26,big
+ssd,South Sudan,country,afr,1943,2490107,1607,42.89,396.26,big
 sen,Senegal,country,afr,1943,2352811,1501,39.8,409.2,big
 sgp,Singapore,country,asi,1943,821205,5211,41.1,315.5,big
 slb,Solomon Islands,country,asi,1943,85547,837,47,456.22,big
@@ -26493,7 +26493,7 @@ rus,Russia,country,eur,1944,97094227,5235,31.4,111.12,big
 rwa,Rwanda,country,afr,1944,2092189,520,45.2,326.64,big
 sau,Saudi Arabia,country,asi,1944,3024923,1107,42.8,375.28,big
 sdn,Sudan,country,afr,1944,5552517,1579,42.7,327.3,big
-sds,South Sudan,country,afr,1944,2501203,1646,42.66,394.34,big
+ssd,South Sudan,country,afr,1944,2501203,1646,42.66,394.34,big
 sen,Senegal,country,afr,1944,2368653,1534,39.6,382.8,big
 sgp,Singapore,country,asi,1944,848850,5186,41.1,462.84,big
 slb,Solomon Islands,country,asi,1944,86117,851,46.9,455,big
@@ -26676,7 +26676,7 @@ rus,Russia,country,eur,1945,97990863,5140,31.9,107,big
 rwa,Rwanda,country,afr,1945,2105151,521,45,318.85,big
 sau,Saudi Arabia,country,asi,1945,3037535,1145,42.7,374.28,big
 sdn,Sudan,country,afr,1945,5577257,1614,42.4,310.36,big
-sds,South Sudan,country,afr,1945,2512347,1686,42.42,392.42,big
+ssd,South Sudan,country,afr,1945,2512347,1686,42.42,392.42,big
 sen,Senegal,country,afr,1945,2384602,1568,39.4,376.1,big
 sgp,Singapore,country,asi,1945,877426,5160,41.1,351.19,big
 slb,Solomon Islands,country,asi,1945,86691,865,46.8,413.65,big
@@ -26859,7 +26859,7 @@ rus,Russia,country,eur,1946,98895779,5047,32.3,103.03,big
 rwa,Rwanda,country,afr,1946,2118193,522,44.9,311.24,big
 sau,Saudi Arabia,country,asi,1946,3050199,1184,42.7,352.91,big
 sdn,Sudan,country,afr,1946,5602108,1650,42.2,294.3,big
-sds,South Sudan,country,afr,1946,2523541,1727,42.19,390.52,big
+ssd,South Sudan,country,afr,1946,2523541,1727,42.19,390.52,big
 sen,Senegal,country,afr,1946,2400658,1603,39.1,369.8,big
 sgp,Singapore,country,asi,1946,906963,5134,41,131.19,big
 slb,Solomon Islands,country,asi,1946,87269,880,46.8,375.37,big
@@ -27042,7 +27042,7 @@ rus,Russia,country,eur,1947,99809052,5611,32.7,99.2,big
 rwa,Rwanda,country,afr,1947,2131317,522,44.7,303.82,big
 sau,Saudi Arabia,country,asi,1947,3062915,1371,42.6,333.49,big
 sdn,Sudan,country,afr,1947,5627069,1686,42,279.08,big
-sds,South Sudan,country,afr,1947,2534786,1769,41.96,388.62,big
+ssd,South Sudan,country,afr,1947,2534786,1769,41.96,388.62,big
 sen,Senegal,country,afr,1947,2416822,1639,38.9,363.5,big
 sgp,Singapore,country,asi,1947,934639,5108,41,125.89,big
 slb,Solomon Islands,country,asi,1947,87851,895,46.7,339.73,big
@@ -27225,7 +27225,7 @@ rus,Russia,country,eur,1948,100730758,6343,33.1,95.52,big
 rwa,Rwanda,country,afr,1948,2144521,523,44.5,296.57,big
 sau,Saudi Arabia,country,asi,1948,3075685,1587,42.5,313.74,big
 sdn,Sudan,country,afr,1948,5652142,1723,41.7,264.64,big
-sds,South Sudan,country,afr,1948,2546080,1812,41.72,386.73,big
+ssd,South Sudan,country,afr,1948,2546080,1812,41.72,386.73,big
 sen,Senegal,country,afr,1948,2433095,1675,38.7,357.7,big
 sgp,Singapore,country,asi,1948,958467,5081,41,115.43,big
 slb,Solomon Islands,country,asi,1948,88436,910,46.6,305.39,big
@@ -27408,7 +27408,7 @@ rus,Russia,country,eur,1949,101660976,6932,33.6,91.97,big
 rwa,Rwanda,country,afr,1949,2157808,524,44.3,289.49,big
 sau,Saudi Arabia,country,asi,1949,3088508,1838,42.5,294.72,big
 sdn,Sudan,country,afr,1949,5677326,1760,41.5,250.94,big
-sds,South Sudan,country,afr,1949,2557424,1856,41.49,384.85,big
+ssd,South Sudan,country,afr,1949,2557424,1856,41.49,384.85,big
 sen,Senegal,country,afr,1949,2449477,1712,38.5,351.7,big
 sgp,Singapore,country,asi,1949,986474,5055,40,100.18,big
 slb,Solomon Islands,country,asi,1949,89026,926,46.6,274.16,big
@@ -27591,7 +27591,7 @@ rus,Russia,country,eur,1950,102798657,7514,34,88.56,big
 rwa,Rwanda,country,afr,1950,2186187,525,44.1,282.59,big
 sau,Saudi Arabia,country,asi,1950,3121336,2128,42.4,276.41,big
 sdn,Sudan,country,afr,1950,5733944,1799,41.3,237.96,big
-sds,South Sudan,country,afr,1950,2582929,1901,41.25,382.98,big
+ssd,South Sudan,country,afr,1950,2582929,1901,41.25,382.98,big
 sen,Senegal,country,afr,1950,2476638,1750,38.3,346.2,big
 sgp,Singapore,country,asi,1950,1022098,5027,45,117.16,big
 slb,Solomon Islands,country,asi,1950,89793,941,46.5,244.79,big
@@ -27774,7 +27774,7 @@ rus,Russia,country,eur,1951,104306354,7424,33.4,85.27,big
 rwa,Rwanda,country,afr,1951,2250675,544,45,275.84,big
 sau,Saudi Arabia,country,asi,1951,3198551,2465,42.4,272.76,big
 sdn,Sudan,country,afr,1951,5883670,1838,41,225.65,big
-sds,South Sudan,country,afr,1951,2601308,1947,41.02,381.13,big
+ssd,South Sudan,country,afr,1951,2601308,1947,41.02,381.13,big
 sen,Senegal,country,afr,1951,2529699,1784,40.3,340.8,big
 sgp,Singapore,country,asi,1951,1067964,4753,50,105.2,big
 slb,Solomon Islands,country,asi,1951,91808,957,46.5,239.4,big
@@ -27957,7 +27957,7 @@ rus,Russia,country,eur,1952,105969442,7775,32.8,82.11,big
 rwa,Rwanda,country,afr,1952,2313306,551,45.8,269.26,big
 sau,Saudi Arabia,country,asi,1952,3283299,2854,42.4,269.15,big
 sdn,Sudan,country,afr,1952,6039086,1881,40.8,213.97,big
-sds,South Sudan,country,afr,1952,2624563,1997,40.79,379.27,big
+ssd,South Sudan,country,afr,1952,2624563,1997,40.79,379.27,big
 sen,Senegal,country,afr,1952,2586817,1816,42.4,335.2,big
 sgp,Singapore,country,asi,1952,1120277,3312,47.5,96.88,big
 slb,Solomon Islands,country,asi,1952,94079,973,46.5,234.12,big
@@ -28140,7 +28140,7 @@ rus,Russia,country,eur,1953,107729541,7981,32.2,79.06,big
 rwa,Rwanda,country,afr,1953,2378442,560,46.6,262.84,big
 sau,Saudi Arabia,country,asi,1953,3372617,3305,42.4,265.59,big
 sdn,Sudan,country,afr,1953,6200492,1920,40.6,202.9,big
-sds,South Sudan,country,afr,1953,2652415,2043,40.55,377.43,big
+ssd,South Sudan,country,afr,1953,2652415,2043,40.55,377.43,big
 sen,Senegal,country,afr,1953,2647955,1848,44.5,329.6,big
 sgp,Singapore,country,asi,1953,1178074,3963,45,84.8,big
 slb,Solomon Islands,country,asi,1953,96561,990,46.5,228.96,big
@@ -28323,7 +28323,7 @@ rus,Russia,country,eur,1954,109537868,8234,31.6,76.12,big
 rwa,Rwanda,country,afr,1954,2448814,580,47.4,256.56,big
 sau,Saudi Arabia,country,asi,1954,3464554,3827,42.4,262.08,big
 sdn,Sudan,country,afr,1954,6368211,1963,40.3,199.4,big
-sds,South Sudan,country,afr,1954,2684597,2094,40.32,375.6,big
+ssd,South Sudan,country,afr,1954,2684597,2094,40.32,375.6,big
 sen,Senegal,country,afr,1954,2713038,1880,46.6,324,big
 sgp,Singapore,country,asi,1954,1240283,4553,44.4,78.1,big
 slb,Solomon Islands,country,asi,1954,99221,1006,46.5,223.92,big
@@ -28506,7 +28506,7 @@ rus,Russia,country,eur,1955,111355224,8787,31,73.3,big
 rwa,Rwanda,country,afr,1955,2525524,586,48.3,250.99,big
 sau,Saudi Arabia,country,asi,1955,3558164,4432,42.4,258.61,big
 sdn,Sudan,country,afr,1955,6542583,2007,40.1,195.8,big
-sds,South Sudan,country,afr,1955,2720852,2146,40.09,372.3,big
+ssd,South Sudan,country,afr,1955,2720852,2146,40.09,372.3,big
 sen,Senegal,country,afr,1955,2781955,1912,48.6,318.8,big
 sgp,Singapore,country,asi,1955,1305731,4198,43.9,72,big
 slb,Solomon Islands,country,asi,1955,102027,1023,46.5,218.99,big
@@ -28689,7 +28689,7 @@ rus,Russia,country,eur,1956,113152347,9465,30.4,70.58,big
 rwa,Rwanda,country,afr,1956,2607945,595,49.1,245.4,big
 sau,Saudi Arabia,country,asi,1956,3653563,5132,42.4,255.19,big
 sdn,Sudan,country,afr,1956,6723968,2164,39.9,192.1,big
-sds,South Sudan,country,afr,1956,2760933,2318,39.85,369.5,big
+ssd,South Sudan,country,afr,1956,2760933,2318,39.85,369.5,big
 sen,Senegal,country,afr,1956,2854549,1943,50.7,314,big
 sgp,Singapore,country,asi,1956,1373121,4629,43.3,66.5,big
 slb,Solomon Islands,country,asi,1956,104962,1041,46.5,214.16,big
@@ -28872,7 +28872,7 @@ rus,Russia,country,eur,1957,114909562,9496,29.8,67.96,big
 rwa,Rwanda,country,afr,1957,2693819,604,49.9,237,big
 sau,Saudi Arabia,country,asi,1957,3751876,5942,42.4,251.82,big
 sdn,Sudan,country,afr,1957,6912742,2081,39.6,188.5,big
-sds,South Sudan,country,afr,1957,2804604,2234,39.62,367.6,big
+ssd,South Sudan,country,afr,1957,2804604,2234,39.62,367.6,big
 sen,Senegal,country,afr,1957,2930627,1975,52.8,310.1,big
 sgp,Singapore,country,asi,1957,1441052,4116,42.7,61.5,big
 slb,Solomon Islands,country,asi,1957,108015,1058,46.5,209.44,big
@@ -29055,7 +29055,7 @@ rus,Russia,country,eur,1958,116615781,10037,29.2,65.43,big
 rwa,Rwanda,country,afr,1958,2779550,607,50.7,229.6,big
 sau,Saudi Arabia,country,asi,1958,3855089,6881,42.4,248.48,big
 sdn,Sudan,country,afr,1958,7109305,2112,39.4,185.1,big
-sds,South Sudan,country,afr,1958,2851644,2273,39.38,365.1,big
+ssd,South Sudan,country,afr,1958,2851644,2273,39.38,365.1,big
 sen,Senegal,country,afr,1958,3009966,2005,54.8,306.9,big
 sgp,Singapore,country,asi,1958,1508061,4134,42.1,56.9,big
 slb,Solomon Islands,country,asi,1958,111181,1076,46.5,204.83,big
@@ -29238,7 +29238,7 @@ rus,Russia,country,eur,1959,118266807,9755,28.6,63,big
 rwa,Rwanda,country,afr,1959,2860694,627,51.5,222.6,big
 sau,Saudi Arabia,country,asi,1959,3965811,7968,42.4,245.2,big
 sdn,Sudan,country,afr,1959,7314066,2303,39.2,181.7,big
-sds,South Sudan,country,afr,1959,2901847,2484,39.15,362.2,big
+ssd,South Sudan,country,afr,1959,2901847,2484,39.15,362.2,big
 sen,Senegal,country,afr,1959,3092338,2035,56.9,304.5,big
 sgp,Singapore,country,asi,1959,1572694,4656,41.6,52.3,big
 slb,Solomon Islands,country,asi,1959,114463,1094,46.5,200.31,big
@@ -29421,7 +29421,7 @@ rus,Russia,country,eur,1960,119860289,10496,28,55.81,big
 rwa,Rwanda,country,afr,1960,2933424,631,52.4,216.1,big
 sau,Saudi Arabia,country,asi,1960,4086539,9226,42.4,241.95,big
 sdn,Sudan,country,afr,1960,7527450,2287,38.9,178.4,big
-sds,South Sudan,country,afr,1960,2955044,2472,38.92,359.8,big
+ssd,South Sudan,country,afr,1960,2955044,2472,38.92,359.8,big
 sen,Senegal,country,afr,1960,3177560,2032,59,303.3,big
 sgp,Singapore,country,asi,1960,1633718,4990,41,47.8,big
 slb,Solomon Islands,country,asi,1960,117869,1113,46.5,195.9,big
@@ -29604,7 +29604,7 @@ rus,Russia,country,eur,1961,121390327,10908,27.5,49.45,big
 rwa,Rwanda,country,afr,1961,2996091,601,51.4,211.2,big
 sau,Saudi Arabia,country,asi,1961,4218879,10684,42.4,235.2,big
 sdn,Sudan,country,afr,1961,7749884,2230,38.7,175.2,big
-sds,South Sudan,country,afr,1961,3011112,2416,38.68,357.1,big
+ssd,South Sudan,country,afr,1961,3011112,2416,38.68,357.1,big
 sen,Senegal,country,afr,1961,3265558,2076,55.8,302.5,big
 sgp,Singapore,country,asi,1961,1690353,5520,41,43.8,big
 slb,Solomon Islands,country,asi,1961,121403,1132,46.5,185.6,big
@@ -29787,7 +29787,7 @@ rus,Russia,country,eur,1962,122842753,11027,27,47.77,big
 rwa,Rwanda,country,afr,1962,3050596,669,50.4,207.8,big
 sau,Saudi Arabia,country,asi,1962,4362863,12371,42.4,228.63,big
 sdn,Sudan,country,afr,1962,7981797,2325,38.5,172.2,big
-sds,South Sudan,country,afr,1962,3069990,2524,38.45,354,big
+ssd,South Sudan,country,afr,1962,3069990,2524,38.45,354,big
 sen,Senegal,country,afr,1962,3356421,2096,52.6,302.4,big
 sgp,Singapore,country,asi,1962,1742472,5372,41,40.5,big
 slb,Solomon Islands,country,asi,1962,125068,1151,46.5,175.9,big
@@ -29970,7 +29970,7 @@ rus,Russia,country,eur,1963,124193114,10620,26.5,45.26,big
 rwa,Rwanda,country,afr,1963,3102968,588,49.4,205.8,big
 sau,Saudi Arabia,country,asi,1963,4516663,14325,42.4,222.24,big
 sdn,Sudan,country,afr,1963,8223613,2202,38.2,169.3,big
-sds,South Sudan,country,afr,1963,3131686,2396,38.22,350.7,big
+ssd,South Sudan,country,afr,1963,3131686,2396,38.22,350.7,big
 sen,Senegal,country,afr,1963,3450418,2127,49.5,302.3,big
 sgp,Singapore,country,asi,1963,1790682,5722,41,38.2,big
 slb,Solomon Islands,country,asi,1963,128863,1170,46.5,166.7,big
@@ -30153,7 +30153,7 @@ rus,Russia,country,eur,1964,125412397,11836,26,41.18,big
 rwa,Rwanda,country,afr,1964,3161719,506,48.4,205.1,big
 sau,Saudi Arabia,country,asi,1964,4677409,16587,42.4,216.04,big
 sdn,Sudan,country,afr,1964,8475765,2126,38,166.5,big
-sds,South Sudan,country,afr,1964,3196258,2318,37.98,348.1,big
+ssd,South Sudan,country,afr,1964,3196258,2318,37.98,348.1,big
 sen,Senegal,country,afr,1964,3547939,2118,46.3,302.2,big
 sgp,Singapore,country,asi,1964,1836087,5613,41,36.5,big
 slb,Solomon Islands,country,asi,1964,132787,1190,46.5,157.9,big
@@ -30336,7 +30336,7 @@ rus,Russia,country,eur,1965,126483874,12363,25.5,38.77,big
 rwa,Rwanda,country,afr,1965,3232937,528,47.4,205.6,big
 sau,Saudi Arabia,country,asi,1965,4843635,19207,42.4,210,big
 sdn,Sudan,country,afr,1965,8738703,2220,37.7,164,big
-sds,South Sudan,country,afr,1965,3263767,2426,37.75,345.6,big
+ssd,South Sudan,country,afr,1965,3263767,2426,37.75,345.6,big
 sen,Senegal,country,afr,1965,3649308,2137,43.1,301.6,big
 sgp,Singapore,country,asi,1965,1879571,6141,41,35,big
 slb,Solomon Islands,country,asi,1965,136847,1210,46.5,149.7,big
@@ -30519,7 +30519,7 @@ rus,Russia,country,eur,1966,127396324,12823,25,37.33,big
 rwa,Rwanda,country,afr,1966,3319077,549,47.4,207,big
 sau,Saudi Arabia,country,asi,1966,5015672,22240,42.4,204.14,big
 sdn,Sudan,country,afr,1966,9013112,2140,37.5,161.7,big
-sds,South Sudan,country,afr,1966,3334254,2343,37.52,342.4,big
+ssd,South Sudan,country,afr,1966,3334254,2343,37.52,342.4,big
 sen,Senegal,country,afr,1966,3754268,2135,42.6,300.4,big
 sgp,Singapore,country,asi,1966,1921099,6659,41,33.6,big
 slb,Solomon Islands,country,asi,1966,141027,1230,46.5,141.4,big
@@ -30702,7 +30702,7 @@ rus,Russia,country,eur,1967,128165823,13256,24.5,36.85,big
 rwa,Rwanda,country,afr,1967,3418313,572,47.4,209,big
 sau,Saudi Arabia,country,asi,1967,5196349,25752,42.4,198.44,big
 sdn,Sudan,country,afr,1967,9299545,2022,37.3,159.6,big
-sds,South Sudan,country,afr,1967,3407754,2218,37.28,339.2,big
+ssd,South Sudan,country,afr,1967,3407754,2218,37.28,339.2,big
 sen,Senegal,country,afr,1967,3862783,2054,42.1,299,big
 sgp,Singapore,country,asi,1967,1960547,7331,41,32,big
 slb,Solomon Islands,country,asi,1967,145354,1251,46.5,132.8,big
@@ -30885,7 +30885,7 @@ rus,Russia,country,eur,1968,128837792,13902,24,37.12,big
 rwa,Rwanda,country,afr,1968,3527260,596,47.4,211.6,big
 sau,Saudi Arabia,country,asi,1968,5389848,29819,42.4,192.9,big
 sdn,Sudan,country,afr,1968,9598196,2093,37,157.7,big
-sds,South Sudan,country,afr,1968,3484335,2301,37.05,335.9,big
+ssd,South Sudan,country,afr,1968,3484335,2301,37.05,335.9,big
 sen,Senegal,country,afr,1968,3975614,2127,41.6,297,big
 sgp,Singapore,country,asi,1968,1998637,8209,41,30.3,big
 slb,Solomon Islands,country,asi,1968,149926,1270,46.5,124.1,big
@@ -31068,7 +31068,7 @@ rus,Russia,country,eur,1969,129475269,13972,23.5,36.04,big
 rwa,Rwanda,country,afr,1969,3640591,642,47.3,214.7,big
 sau,Saudi Arabia,country,asi,1969,5601649,34527,42.4,187.51,big
 sdn,Sudan,country,afr,1969,9909152,2167,36.8,156,big
-sds,South Sudan,country,afr,1969,3564079,2388,36.81,332.9,big
+ssd,South Sudan,country,afr,1969,3564079,2388,36.81,332.9,big
 sen,Senegal,country,afr,1969,4093763,1934,41.1,294.4,big
 sgp,Singapore,country,asi,1969,2036270,9207,41,28.7,big
 slb,Solomon Islands,country,asi,1969,154876,1195,46.5,115.6,big
@@ -31251,7 +31251,7 @@ rus,Russia,country,eur,1970,130126383,14915,23,44.2,big
 rwa,Rwanda,country,afr,1970,3754546,691,47.3,218.2,big
 sau,Saudi Arabia,country,asi,1970,5836394,39979,42.4,182.27,big
 sdn,Sudan,country,afr,1970,10232758,2022,36.6,154.6,big
-sds,South Sudan,country,afr,1970,3647097,2233,36.58,329.6,big
+ssd,South Sudan,country,afr,1970,3647097,2233,36.58,329.6,big
 sen,Senegal,country,afr,1970,4217754,2041,40.6,290.5,big
 sgp,Singapore,country,asi,1970,2074071,10336,41,27.4,big
 slb,Solomon Islands,country,asi,1970,160292,1215,46.5,107.2,big
@@ -31434,7 +31434,7 @@ rus,Russia,country,eur,1971,130808492,15170,23.2,42.4,big
 rwa,Rwanda,country,afr,1971,3868345,679,47.3,222.1,big
 sau,Saudi Arabia,country,asi,1971,6096106,47016,42.4,170.68,big
 sdn,Sudan,country,afr,1971,10568788,2106,36.5,153.3,big
-sds,South Sudan,country,afr,1971,3733547,2329,36.55,326.4,big
+ssd,South Sudan,country,afr,1971,3733547,2329,36.55,326.4,big
 sen,Senegal,country,afr,1971,4348499,1979,41.6,285.4,big
 sgp,Singapore,country,asi,1971,2112873,11389,40.4,26.1,big
 slb,Solomon Islands,country,asi,1971,166214,1200,46.5,99.2,big
@@ -31617,7 +31617,7 @@ rus,Russia,country,eur,1972,131517584,15113,23.5,40.7,big
 rwa,Rwanda,country,afr,1972,3983707,662,47.3,226.5,big
 sau,Saudi Arabia,country,asi,1972,6382106,52961,42.4,161,big
 sdn,Sudan,country,afr,1972,10918137,2006,36.5,152.1,big
-sds,South Sudan,country,afr,1972,3823605,2224,36.51,322.8,big
+ssd,South Sudan,country,afr,1972,3823605,2224,36.51,322.8,big
 sen,Senegal,country,afr,1972,4485342,2046,42.6,278.9,big
 sgp,Singapore,country,asi,1972,2152603,12711,39.8,24.3,big
 slb,Solomon Islands,country,asi,1972,172599,829,46.5,91.9,big
@@ -31800,7 +31800,7 @@ rus,Russia,country,eur,1973,132254362,16236,23.7,39.2,big
 rwa,Rwanda,country,afr,1973,4102336,663,47.4,231.9,big
 sau,Saudi Arabia,country,asi,1973,6697486,56842,42.4,150.9,big
 sdn,Sudan,country,afr,1973,11283574,1785,36.5,150.8,big
-sds,South Sudan,country,afr,1973,3917450,1983,36.48,319.2,big
+ssd,South Sudan,country,afr,1973,3917450,1983,36.48,319.2,big
 sen,Senegal,country,afr,1973,4625377,1876,43.6,271.1,big
 sgp,Singapore,country,asi,1973,2191924,13889,39.1,22,big
 slb,Solomon Islands,country,asi,1973,179354,892,46.5,85.2,big
@@ -31983,7 +31983,7 @@ rus,Russia,country,eur,1974,133012558,16594,23.9,37.7,big
 rwa,Rwanda,country,afr,1974,4226836,675,47.4,238.4,big
 sau,Saudi Arabia,country,asi,1974,7045477,89417,42.4,141.9,big
 sdn,Sudan,country,afr,1974,11668674,1910,36.4,149.6,big
-sds,South Sudan,country,afr,1974,4015271,2126,36.45,315.8,big
+ssd,South Sudan,country,afr,1974,4015271,2126,36.45,315.8,big
 sen,Senegal,country,afr,1974,4764623,1899,44.6,262.2,big
 sgp,Singapore,country,asi,1974,2228896,14499,38.5,19.7,big
 slb,Solomon Islands,country,asi,1974,186338,1086,46.5,79.1,big
@@ -32166,7 +32166,7 @@ rus,Russia,country,eur,1975,133788113,16530,24.1,36.6,big
 rwa,Rwanda,country,afr,1975,4359166,777,47.4,244.4,big
 sau,Saudi Arabia,country,asi,1975,7428705,68111,42.4,133.4,big
 sdn,Sudan,country,afr,1975,12075841,2091,36.4,148.3,big
-sds,South Sudan,country,afr,1975,4117299,2332,36.42,312.5,big
+ssd,South Sudan,country,afr,1975,4117299,2332,36.42,312.5,big
 sen,Senegal,country,afr,1975,4900491,1996,45.6,252.4,big
 sgp,Singapore,country,asi,1975,2262393,14743,37.9,17.6,big
 slb,Solomon Islands,country,asi,1975,193447,923,46.5,73.5,big
@@ -32349,7 +32349,7 @@ rus,Russia,country,eur,1976,134583945,17192,24.4,35.6,big
 rwa,Rwanda,country,afr,1976,4499720,740,45.9,248.5,big
 sau,Saudi Arabia,country,asi,1976,7845300,80328,42.4,125.6,big
 sdn,Sudan,country,afr,1976,12506035,2403,36.4,147,big
-sds,South Sudan,country,afr,1976,4222056,2686,36.38,309.1,big
+ssd,South Sudan,country,afr,1976,4222056,2686,36.38,309.1,big
 sen,Senegal,country,afr,1976,5031849,2129,46.6,241.8,big
 sgp,Singapore,country,asi,1976,2291621,15590,38.3,16,big
 slb,Solomon Islands,country,asi,1976,200642,1014,46.5,68.4,big
@@ -32532,7 +32532,7 @@ rus,Russia,country,eur,1977,135406786,17487,24.6,34.8,big
 rwa,Rwanda,country,afr,1977,4648070,752,44.5,248.9,big
 sau,Saudi Arabia,country,asi,1977,8295384,77548,42.4,118,big
 sdn,Sudan,country,afr,1977,12958110,2687,36.3,145.6,big
-sds,South Sudan,country,afr,1977,4329467,3009,36.35,305.7,big
+ssd,South Sudan,country,afr,1977,4329467,3009,36.35,305.7,big
 sen,Senegal,country,afr,1977,5160313,2011,47.6,231.3,big
 sgp,Singapore,country,asi,1977,2317796,16589,38.8,15.2,big
 slb,Solomon Islands,country,asi,1977,207942,1122,46.5,63.9,big
@@ -32715,7 +32715,7 @@ rus,Russia,country,eur,1978,136259517,17818,24.8,34.2,big
 rwa,Rwanda,country,afr,1978,4804375,798,43.1,243.7,big
 sau,Saudi Arabia,country,asi,1978,8785326,71169,42.4,111.1,big
 sdn,Sudan,country,afr,1978,13429688,2559,36.3,144.3,big
-sds,South Sudan,country,afr,1978,4442665,2871,36.32,301.9,big
+ssd,South Sudan,country,afr,1978,4442665,2871,36.32,301.9,big
 sen,Senegal,country,afr,1978,5289445,1874,48.6,221.6,big
 sgp,Singapore,country,asi,1978,2344224,17799,39.2,15.1,big
 slb,Solomon Islands,country,asi,1978,215353,1181,46.5,59.9,big
@@ -32898,7 +32898,7 @@ rus,Russia,country,eur,1979,137144808,17632,25,33.6,big
 rwa,Rwanda,country,afr,1979,4968628,846,41.6,232.5,big
 sau,Saudi Arabia,country,asi,1979,9323290,69720,42.4,104.4,big
 sdn,Sudan,country,afr,1979,13917268,2213,36.3,143.2,big
-sds,South Sudan,country,afr,1979,4565912,2488,36.28,298.2,big
+ssd,South Sudan,country,afr,1979,4565912,2488,36.28,298.2,big
 sen,Senegal,country,afr,1979,5424299,1946,49.6,212.8,big
 sgp,Singapore,country,asi,1979,2375417,19252,39.7,15.2,big
 slb,Solomon Islands,country,asi,1979,222905,1424,46.5,56.4,big
@@ -33081,7 +33081,7 @@ rus,Russia,country,eur,1980,138063062,17557,25.3,33,big
 rwa,Rwanda,country,afr,1980,5140786,920,40.2,217.4,big
 sau,Saudi Arabia,country,asi,1980,9912917,72465,42.4,98,big
 sdn,Sudan,country,afr,1980,14418063,2159,36.2,142.1,big
-sds,South Sudan,country,afr,1980,4701360,2432,36.25,294.7,big
+ssd,South Sudan,country,afr,1980,4701360,2432,36.25,294.7,big
 sen,Senegal,country,afr,1980,5568651,1826,50.6,205.2,big
 sgp,Singapore,country,asi,1980,2414524,20882,40.1,14.8,big
 slb,Solomon Islands,country,asi,1980,230614,1293,46.5,53.5,big
@@ -33264,7 +33264,7 @@ rus,Russia,country,eur,1981,139006739,17619,25.5,32.5,big
 rwa,Rwanda,country,afr,1981,5313908,948,40.2,201.1,big
 sau,Saudi Arabia,country,asi,1981,10556936,67447,42.4,91.9,big
 sdn,Sudan,country,afr,1981,14935471,2137,36.2,140.9,big
-sds,South Sudan,country,afr,1981,4849708,2411,36.22,291.3,big
+ssd,South Sudan,country,afr,1981,4849708,2411,36.22,291.3,big
 sen,Senegal,country,afr,1981,5723541,1758,51.6,198.6,big
 sgp,Singapore,country,asi,1981,2463245,21889,34.1,14.1,big
 slb,Solomon Islands,country,asi,1981,238488,1416,46.5,51.1,big
@@ -33447,7 +33447,7 @@ rus,Russia,country,eur,1982,139969243,17951,25.7,31.9,big
 rwa,Rwanda,country,afr,1982,5486431,990,40.2,185.9,big
 sau,Saudi Arabia,country,asi,1982,11247085,55569,42.4,86,big
 sdn,Sudan,country,afr,1982,15470415,2332,36.2,139.9,big
-sds,South Sudan,country,afr,1982,5007145,2637,36.18,288.5,big
+ssd,South Sudan,country,afr,1982,5007145,2637,36.18,288.5,big
 sen,Senegal,country,afr,1982,5888261,1965,52.6,192.5,big
 sgp,Singapore,country,asi,1982,2520494,22467,36.3,13.2,big
 slb,Solomon Islands,country,asi,1982,246502,1407,46.5,49,big
@@ -33630,7 +33630,7 @@ rus,Russia,country,eur,1983,140951400,18417,25.9,31.3,big
 rwa,Rwanda,country,afr,1983,5669251,1014,40.2,173.7,big
 sau,Saudi Arabia,country,asi,1983,11962244,49634,42.4,80.3,big
 sdn,Sudan,country,afr,1983,16015120,2233,36.2,138.8,big
-sds,South Sudan,country,afr,1983,5165623,2530,36.15,284.7,big
+ssd,South Sudan,country,afr,1983,5165623,2530,36.15,284.7,big
 sen,Senegal,country,afr,1983,6062682,1955,53.6,186.5,big
 sgp,Singapore,country,asi,1983,2583241,24095,38.6,12.3,big
 slb,Solomon Islands,country,asi,1983,254602,1547,46.5,47.3,big
@@ -33813,7 +33813,7 @@ rus,Russia,country,eur,1984,141955200,18527,26.2,30.7,big
 rwa,Rwanda,country,afr,1984,5877556,945,40.2,165.2,big
 sau,Saudi Arabia,country,asi,1984,12674089,44693,42.4,74.7,big
 sdn,Sudan,country,afr,1984,16559205,2050,36.1,137.5,big
-sds,South Sudan,country,afr,1984,5314358,2327,36.12,280.4,big
+ssd,South Sudan,country,afr,1984,5314358,2327,36.12,280.4,big
 sen,Senegal,country,afr,1984,6246140,1810,54.6,179.9,big
 sgp,Singapore,country,asi,1984,2646981,25649,40.9,11.6,big
 slb,Solomon Islands,country,asi,1984,262719,1514,46.5,45.8,big
@@ -33996,7 +33996,7 @@ rus,Russia,country,eur,1985,142975753,18576,26.4,30,big
 rwa,Rwanda,country,afr,1985,6117966,962,40.2,159.2,big
 sau,Saudi Arabia,country,asi,1985,13361284,36344,42.4,69.1,big
 sdn,Sudan,country,afr,1985,17097619,1850,36.1,136,big
-sds,South Sudan,country,afr,1985,5444907,2104,36.08,276.5,big
+ssd,South Sudan,country,afr,1985,5444907,2104,36.08,276.5,big
 sen,Senegal,country,afr,1985,6438024,1823,48.1,172.6,big
 sgp,Singapore,country,asi,1985,2708634,25245,43.2,10.9,big
 slb,Solomon Islands,country,asi,1985,270809,1479,46.5,44.5,big
@@ -34179,7 +34179,7 @@ rus,Russia,country,eur,1986,144016095,19221,50,29.1,big
 rwa,Rwanda,country,afr,1986,6410594,989,40.8,154.1,big
 sau,Saudi Arabia,country,asi,1986,14016569,35239,42.4,63.7,big
 sdn,Sudan,country,afr,1986,17618852,1869,36.1,134.5,big
-sds,South Sudan,country,afr,1986,5559804,2130,36.05,271.8,big
+ssd,South Sudan,country,afr,1986,5559804,2130,36.05,271.8,big
 sen,Senegal,country,afr,1986,6638186,1855,41.7,164.5,big
 sgp,Singapore,country,asi,1986,2766755,25812,37.9,10.4,big
 slb,Solomon Islands,country,asi,1986,278846,1718,46.5,43.3,big
@@ -34362,7 +34362,7 @@ rus,Russia,country,eur,1987,145056221,19355,43.9,28.1,big
 rwa,Rwanda,country,afr,1987,6742390,953,41.4,150.1,big
 sau,Saudi Arabia,country,asi,1987,14642354,32136,42.4,58.4,big
 sdn,Sudan,country,afr,1987,18130501,1871,36,132.8,big
-sds,South Sudan,country,afr,1987,5660153,2137,36.02,267.3,big
+ssd,South Sudan,country,afr,1987,5660153,2137,36.02,267.3,big
 sen,Senegal,country,afr,1987,6846556,1875,35.3,156.6,big
 sgp,Singapore,country,asi,1987,2822828,27957,38.1,9.8,big
 slb,Solomon Islands,country,asi,1987,286868,1710,46.5,42.3,big
@@ -34545,7 +34545,7 @@ rus,Russia,country,eur,1988,146040116,19660,23.8,27.2,big
 rwa,Rwanda,country,afr,1988,7048075,892,42,147.6,big
 sau,Saudi Arabia,country,asi,1988,15239174,32091,42.4,53.3,big
 sdn,Sudan,country,afr,1988,18669146,1858,36,131.1,big
-sds,South Sudan,country,afr,1988,5735170,2125,35.98,262.7,big
+ssd,South Sudan,country,afr,1988,5735170,2125,35.98,262.7,big
 sen,Senegal,country,afr,1988,7062540,1914,39,149.6,big
 sgp,Singapore,country,asi,1988,2880188,30453,38.4,9.2,big
 slb,Solomon Islands,country,asi,1988,294962,1723,46.5,41.4,big
@@ -34728,7 +34728,7 @@ rus,Russia,country,eur,1989,146895053,19906,49.1,26.4,big
 rwa,Rwanda,country,afr,1989,7239097,884,42.6,147,big
 sau,Saudi Arabia,country,asi,1989,15810980,32281,42.4,48.6,big
 sdn,Sudan,country,afr,1989,19284633,1961,36,129.3,big
-sds,South Sudan,country,afr,1989,5771305,2247,35.95,257.8,big
+ssd,South Sudan,country,afr,1989,5771305,2247,35.95,257.8,big
 sen,Senegal,country,afr,1989,7285378,1828,42.7,144.1,big
 sgp,Singapore,country,asi,1989,2943633,32597,38.7,8.4,big
 slb,Solomon Islands,country,asi,1989,303258,1812,46.5,40.6,big
@@ -34911,7 +34911,7 @@ rus,Russia,country,eur,1990,147568552,19349,25.9,26,big
 rwa,Rwanda,country,afr,1990,7259740,856,43.2,148.9,big
 sau,Saudi Arabia,country,asi,1990,16361453,35681,42.4,44.3,big
 sdn,Sudan,country,afr,1990,20008804,1753,35.9,127.5,big
-sds,South Sudan,country,afr,1990,5762190,2013,35.92,253.2,big
+ssd,South Sudan,country,afr,1990,5762190,2013,35.92,253.2,big
 sen,Senegal,country,afr,1990,7514201,1856,46.4,140.4,big
 sgp,Singapore,country,asi,1990,3016400,34316,39,7.7,big
 slb,Solomon Islands,country,asi,1990,311849,1793,46.5,39.7,big
@@ -35094,7 +35094,7 @@ rus,Russia,country,eur,1991,148040354,18332,42.6,25.9,big
 rwa,Rwanda,country,afr,1991,7071393,863,43.9,154,big
 sau,Saudi Arabia,country,asi,1991,16890555,37688,42.4,40.5,big
 sdn,Sudan,country,afr,1991,20861117,1830,35.9,125.7,big
-sds,South Sudan,country,afr,1991,5698998,2089,35.89,248.1,big
+ssd,South Sudan,country,afr,1991,5698998,2089,35.89,248.1,big
 sen,Senegal,country,afr,1991,7749559,1846,54.1,138.7,big
 sgp,Singapore,country,asi,1991,3100091,35583,39.6,6.9,big
 slb,Solomon Islands,country,asi,1991,320764,1847,46.5,38.9,big
@@ -35277,7 +35277,7 @@ rus,Russia,country,eur,1992,148322473,15661,45.5,26.1,big
 rwa,Rwanda,country,afr,1992,6712924,973,44.5,161.9,big
 sau,Saudi Arabia,country,asi,1992,17398523,38237,42.4,37.1,big
 sdn,Sudan,country,afr,1992,21820588,1892,35.9,123.9,big
-sds,South Sudan,country,afr,1992,5593347,2137,35.85,242.5,big
+ssd,South Sudan,country,afr,1992,5593347,2137,35.85,242.5,big
 sen,Senegal,country,afr,1992,7990736,1813,49.9,138.5,big
 sgp,Singapore,country,asi,1992,3193042,36978,40.3,6.3,big
 slb,Solomon Islands,country,asi,1992,329984,2024,46.5,37.9,big
@@ -35460,7 +35460,7 @@ rus,Russia,country,eur,1993,148435811,14320,48.4,26.3,big
 rwa,Rwanda,country,afr,1993,6300358,965,45.1,180.7,big
 sau,Saudi Arabia,country,asi,1993,17890529,37182,42.4,34.2,big
 sdn,Sudan,country,afr,1993,22829227,1918,35.8,122.1,big
-sds,South Sudan,country,afr,1993,5484372,2141,35.82,236.6,big
+ssd,South Sudan,country,afr,1993,5484372,2141,35.82,236.6,big
 sen,Senegal,country,afr,1993,8234147,1782,45.7,139.3,big
 sgp,Singapore,country,asi,1993,3291280,40213,40.9,5.8,big
 slb,Solomon Islands,country,asi,1993,339490,2045,46.5,37,big
@@ -35643,7 +35643,7 @@ rus,Russia,country,eur,1994,148416292,12535,42.2,26.4,big
 rwa,Rwanda,country,afr,1994,5995987,509,46,293.8,big
 sau,Saudi Arabia,country,asi,1994,18373412,36526,42.4,31.8,big
 sdn,Sudan,country,afr,1994,23805536,1879,35.8,120.2,big
-sds,South Sudan,country,afr,1994,5425099,2125,35.79,230.3,big
+ssd,South Sudan,country,afr,1994,5425099,2125,35.79,230.3,big
 sen,Senegal,country,afr,1994,8475136,1731,41.4,140.6,big
 sgp,Singapore,country,asi,1994,3389119,43231,41.5,5.4,big
 slb,Solomon Islands,country,asi,1994,349250,2171,46.5,36.2,big
@@ -35826,7 +35826,7 @@ rus,Russia,country,eur,1995,148293265,12013,40.8,26.4,big
 rwa,Rwanda,country,afr,1995,5912755,695,46.9,261.5,big
 sau,Saudi Arabia,country,asi,1995,18853670,35870,42.4,29.7,big
 sdn,Sudan,country,afr,1995,24691970,1934,35.8,118.2,big
-sds,South Sudan,country,afr,1995,5452771,2132,35.75,223.5,big
+ssd,South Sudan,country,afr,1995,5452771,2132,35.75,223.5,big
 sen,Senegal,country,afr,1995,8710746,1774,45.1,142.1,big
 sgp,Singapore,country,asi,1995,3482635,44884,42.2,5.2,big
 slb,Solomon Islands,country,asi,1995,359236,2284,46.5,35.4,big
@@ -36009,7 +36009,7 @@ rus,Russia,country,eur,1996,148078355,11597,46.1,26,big
 rwa,Rwanda,country,afr,1996,6097688,749,47.8,196,big
 sau,Saudi Arabia,country,asi,1996,19331311,36531,42.4,27.8,big
 sdn,Sudan,country,afr,1996,25466387,1992,35.7,116.1,big
-sds,South Sudan,country,afr,1996,5584223,2183,35.72,216.1,big
+ssd,South Sudan,country,afr,1996,5584223,2183,35.72,216.1,big
 sen,Senegal,country,afr,1996,8939438,1764,44.5,143.2,big
 sgp,Singapore,country,asi,1996,3570080,46342,42.9,5,big
 slb,Solomon Islands,country,asi,1996,369438,2257,46.5,34.8,big
@@ -36192,7 +36192,7 @@ rus,Russia,country,eur,1997,147772805,11779,40.3,25.6,big
 rwa,Rwanda,country,afr,1997,6506118,781,48.8,215.9,big
 sau,Saudi Arabia,country,asi,1997,19809633,37060,42.4,26.3,big
 sdn,Sudan,country,afr,1997,26149124,2142,35.7,113.9,big
-sds,South Sudan,country,afr,1997,5806951,2338,35.69,208.5,big
+ssd,South Sudan,country,afr,1997,5806951,2338,35.69,208.5,big
 sen,Senegal,country,afr,1997,9163184,1774,43.8,143.4,big
 sgp,Singapore,country,asi,1997,3653151,48528,43.6,4.8,big
 slb,Solomon Islands,country,asi,1997,379859,2163,46.5,34.3,big
@@ -36375,7 +36375,7 @@ rus,Russia,country,eur,1998,147385440,11173,39.6,25,big
 rwa,Rwanda,country,afr,1998,7047196,768,49.7,227.5,big
 sau,Saudi Arabia,country,asi,1998,20302193,37671,42.4,25,big
 sdn,Sudan,country,afr,1998,26777059,2175,35.7,111.4,big
-sds,South Sudan,country,afr,1998,6092688,2407,35.65,200.3,big
+ssd,South Sudan,country,afr,1998,6092688,2407,35.65,200.3,big
 sen,Senegal,country,afr,1998,9386923,1834,43.2,142.4,big
 sgp,Singapore,country,asi,1998,3735531,45863,44.3,4.6,big
 slb,Solomon Islands,country,asi,1998,390489,2142,46.5,33.9,big
@@ -36558,7 +36558,7 @@ rus,Russia,country,eur,1999,146924174,11925,38.8,24.2,big
 rwa,Rwanda,country,afr,1999,7585143,754,50.6,194.9,big
 sau,Saudi Arabia,country,asi,1999,20825955,36746,42.4,23.8,big
 sdn,Sudan,country,afr,1999,27406808,2183,35.6,108.8,big
-sds,South Sudan,country,afr,1999,6398416,2518,35.62,191.4,big
+ssd,South Sudan,country,afr,1999,6398416,2518,35.62,191.4,big
 sen,Senegal,country,afr,1999,9617641,1904,42.5,139.7,big
 sgp,Singapore,country,asi,1999,3822619,48271,45,4.3,big
 slb,Solomon Islands,country,asi,1999,401319,2074,46.5,33.5,big
@@ -36741,7 +36741,7 @@ rus,Russia,country,eur,2000,146400951,13173,40,23.2,big
 rwa,Rwanda,country,afr,2000,8021875,764,51.5,179,big
 sau,Saudi Arabia,country,asi,2000,21392273,37531,42.4,22.9,big
 sdn,Sudan,country,afr,2000,28079664,2258,35.6,105.9,big
-sds,South Sudan,country,afr,2000,6692999,2684,35.59,182.3,big
+ssd,South Sudan,country,afr,2000,6692999,2684,35.59,182.3,big
 sen,Senegal,country,afr,2000,9860578,1916,41.9,134.9,big
 sgp,Singapore,country,asi,2000,3918183,51663,45.8,4,big
 slb,Solomon Islands,country,asi,2000,412336,1731,46.5,33.1,big
@@ -36924,7 +36924,7 @@ rus,Russia,country,eur,2001,145818121,13902,39.6,22,big
 rwa,Rwanda,country,afr,2001,8329113,796,50.9,166.3,big
 sau,Saudi Arabia,country,asi,2001,22007937,36387,42.4,22,big
 sdn,Sudan,country,afr,2001,28805142,2338,35.6,103.1,big
-sds,South Sudan,country,afr,2001,6967817,2769,35.55,173,big
+ssd,South Sudan,country,afr,2001,6967817,2769,35.55,173,big
 sen,Senegal,country,afr,2001,10118078,1953,41.3,128.4,big
 sgp,Singapore,country,asi,2001,4023237,49809,45.8,3.7,big
 slb,Solomon Islands,country,asi,2001,423535,1550,46.5,32.9,big
@@ -37107,7 +37107,7 @@ rus,Russia,country,eur,2002,145195521,14629,35,20.7,big
 rwa,Rwanda,country,afr,2002,8539029,880,50.3,151.8,big
 sau,Saudi Arabia,country,asi,2002,22668102,34875,42.4,21.3,big
 sdn,Sudan,country,afr,2002,29569978,2419,35.5,100.2,big
-sds,South Sudan,country,afr,2002,7233237,2855,35.52,163.8,big
+ssd,South Sudan,country,afr,2002,7233237,2855,35.52,163.8,big
 sen,Senegal,country,afr,2002,10389457,1915,40.7,120.7,big
 sgp,Singapore,country,asi,2002,4136102,51435,45.8,3.4,big
 slb,Solomon Islands,country,asi,2002,434893,1468,46.5,32.8,big
@@ -37290,7 +37290,7 @@ rus,Russia,country,eur,2003,144583147,15768,38.3,19.3,big
 rwa,Rwanda,country,afr,2003,8686469,879,49.6,137.1,big
 sau,Saudi Arabia,country,asi,2003,23357887,35859,42.4,20.7,big
 sdn,Sudan,country,afr,2003,30365586,2533,35.5,97.3,big
-sds,South Sudan,country,afr,2003,7499695,2976,35.49,155.2,big
+ssd,South Sudan,country,afr,2003,7499695,2976,35.49,155.2,big
 sen,Senegal,country,afr,2003,10673320,1988,40.2,112.5,big
 sgp,Singapore,country,asi,2003,4254553,54515,45.8,3.2,big
 slb,Solomon Islands,country,asi,2003,446352,1523,46.5,32.9,big
@@ -37473,7 +37473,7 @@ rus,Russia,country,eur,2004,144043914,16967,40.8,18,big
 rwa,Rwanda,country,afr,2004,8828956,928,49,122.7,big
 sau,Saudi Arabia,country,asi,2004,24055573,37556,42.4,20.1,big
 sdn,Sudan,country,afr,2004,31176209,2557,35.5,94.5,big
-sds,South Sudan,country,afr,2004,7784488,3045,35.46,147,big
+ssd,South Sudan,country,afr,2004,7784488,3045,35.46,147,big
 sen,Senegal,country,afr,2004,10967016,2049,39.7,104.2,big
 sgp,Singapore,country,asi,2004,4375230,58977,45.8,3,big
 slb,Solomon Islands,country,asi,2004,457841,1557,46.5,33.1,big
@@ -37656,7 +37656,7 @@ rus,Russia,country,eur,2005,143622566,18118,33.8,16.7,big
 rwa,Rwanda,country,afr,2005,9008230,973,51,109.6,big
 sau,Saudi Arabia,country,asi,2005,24745230,38892,42.4,19.7,big
 sdn,Sudan,country,afr,2005,31990003,2672,35.4,91.9,big
-sds,South Sudan,country,afr,2005,8099908,3221,35.42,139.3,big
+ssd,South Sudan,country,afr,2005,8099908,3221,35.42,139.3,big
 sen,Senegal,country,afr,2005,11268994,2106,39.2,96.2,big
 sgp,Singapore,country,asi,2005,4495531,61921,45.8,2.9,big
 slb,Solomon Islands,country,asi,2005,469306,1602,46.5,33.2,big
@@ -37839,7 +37839,7 @@ rus,Russia,country,eur,2006,143338407,19660,38.7,15.5,big
 rwa,Rwanda,country,afr,2006,9231041,1038,53.1,97.9,big
 sau,Saudi Arabia,country,asi,2006,25419994,39958,42.4,19.2,big
 sdn,Sudan,country,afr,2006,32809056,2858,35.4,89.3,big
-sds,South Sudan,country,afr,2006,8445659,3455,35.39,132.1,big
+ssd,South Sudan,country,afr,2006,8445659,3455,35.39,132.1,big
 sen,Senegal,country,afr,2006,11578430,2099,40,88.8,big
 sgp,Singapore,country,asi,2006,4614637,65331,45.8,2.9,big
 slb,Solomon Islands,country,asi,2006,480716,1672,46.5,33.4,big
@@ -38022,7 +38022,7 @@ rus,Russia,country,eur,2007,143180249,21374,39.3,14.4,big
 rwa,Rwanda,country,afr,2007,9481083,1087,52.6,87.5,big
 sau,Saudi Arabia,country,asi,2007,26083522,41464,42.4,18.7,big
 sdn,Sudan,country,afr,2007,33637960,3097,35.4,87,big
-sds,South Sudan,country,afr,2007,8815495,3756,35.36,125.7,big
+ssd,South Sudan,country,afr,2007,8815495,3756,35.36,125.7,big
 sen,Senegal,country,afr,2007,11897230,2143,40.7,82,big
 sgp,Singapore,country,asi,2007,4732785,68375,45.8,2.9,big
 slb,Solomon Islands,country,asi,2007,492075,1753,46.5,33.3,big
@@ -38205,7 +38205,7 @@ rus,Russia,country,eur,2008,143123163,22506,42.8,13.5,big
 rwa,Rwanda,country,afr,2008,9750314,1173,52.2,78.3,big
 sau,Saudi Arabia,country,asi,2008,26742842,44189,42.4,18.1,big
 sdn,Sudan,country,afr,2008,34470138,3246,35.3,84.7,big
-sds,South Sudan,country,afr,2008,9208598,3776,35.32,120,big
+ssd,South Sudan,country,afr,2008,9208598,3776,35.32,120,big
 sen,Senegal,country,afr,2008,12229703,2162,41.5,75.8,big
 sgp,Singapore,country,asi,2008,4849641,65991,45.8,2.8,big
 slb,Solomon Islands,country,asi,2008,503410,1835,46.5,33.1,big
@@ -38388,7 +38388,7 @@ rus,Russia,country,eur,2009,143126660,20739,39.7,12.7,big
 rwa,Rwanda,country,afr,2009,10024594,1210,51.7,70.7,big
 sau,Saudi Arabia,country,asi,2009,27409491,44276,42.4,17.6,big
 sdn,Sudan,country,afr,2009,35297298,3259,35.3,82.4,big
-sds,South Sudan,country,afr,2009,9623176,3799,35.29,115.2,big
+ssd,South Sudan,country,afr,2009,9623176,3799,35.29,115.2,big
 sen,Senegal,country,afr,2009,12581624,2153,42.3,70.1,big
 sgp,Singapore,country,asi,2009,4965105,63644,45.8,2.8,big
 slb,Solomon Islands,country,asi,2009,514767,1709,46.5,32.6,big
@@ -38571,7 +38571,7 @@ rus,Russia,country,eur,2010,143158099,21664,39.6,12,big
 rwa,Rwanda,country,afr,2010,10293669,1262,51.3,64.2,big
 sau,Saudi Arabia,country,asi,2010,28090647,45598,42.4,17,big
 sdn,Sudan,country,afr,2010,36114885,3282,35.3,80.2,big
-sds,South Sudan,country,afr,2010,10056475,3838,35.29,110.9,big
+ssd,South Sudan,country,afr,2010,10056475,3838,35.29,110.9,big
 sen,Senegal,country,afr,2010,12956791,2182,43.1,64.8,big
 sgp,Singapore,country,asi,2010,5078961,72056,45.8,2.8,big
 slb,Solomon Islands,country,asi,2010,526177,1787,46.5,32.1,big
@@ -38754,7 +38754,7 @@ rus,Russia,country,eur,2011,143211476,22570,39.6,11.4,big
 rwa,Rwanda,country,afr,2011,10556429,1324,50.8,57.8,big
 sau,Saudi Arabia,country,asi,2011,28788438,49230,42.4,16.5,big
 sdn,Sudan,country,afr,2011,36918193,3524,35.3,78.2,big
-sds,South Sudan,country,afr,2011,10510122,3505,35.29,106.7,big
+ssd,South Sudan,country,afr,2011,10510122,3505,35.29,106.7,big
 sen,Senegal,country,afr,2011,13357003,2163,40.3,60,big
 sgp,Singapore,country,asi,2011,5190666,74949,45.8,2.8,big
 slb,Solomon Islands,country,asi,2011,537648,1975,46.5,31.4,big
@@ -38937,7 +38937,7 @@ rus,Russia,country,eur,2012,143287536,23299,39.6,10.8,big
 rwa,Rwanda,country,afr,2012,10817350,1400,50.8,52.3,big
 sau,Saudi Arabia,country,asi,2012,29496047,50916,42.4,16,big
 sdn,Sudan,country,afr,2012,37712420,3856,35.3,76.3,big
-sds,South Sudan,country,afr,2012,10980623,1810,35.29,102.8,big
+ssd,South Sudan,country,afr,2012,10980623,1810,35.29,102.8,big
 sen,Senegal,country,afr,2012,13780108,2174,40.3,55.9,big
 sgp,Singapore,country,asi,2012,5299524,75630,45.8,2.8,big
 slb,Solomon Islands,country,asi,2012,549162,2024,46.5,30.7,big
@@ -39120,7 +39120,7 @@ rus,Russia,country,eur,2013,143367341,23561,39.6,10.4,big
 rwa,Rwanda,country,afr,2013,11078095,1426,50.8,48.2,big
 sau,Saudi Arabia,country,asi,2013,30201051,51294,42.4,15.5,big
 sdn,Sudan,country,afr,2013,38515095,3903,35.3,74.2,big
-sds,South Sudan,country,afr,2013,11453810,1965,35.29,99.2,big
+ssd,South Sudan,country,afr,2013,11453810,1965,35.29,99.2,big
 sen,Senegal,country,afr,2013,14221041,2185,40.3,52.5,big
 sgp,Singapore,country,asi,2013,5405009,77721,45.8,2.8,big
 slb,Solomon Islands,country,asi,2013,560685,2041,46.5,29.9,big
@@ -39303,7 +39303,7 @@ rus,Russia,country,eur,2014,143429435,23293,39.6,9.9,big
 rwa,Rwanda,country,afr,2014,11341544,1485,50.8,44.8,big
 sau,Saudi Arabia,country,asi,2014,30886545,52096,42.4,15,big
 sdn,Sudan,country,afr,2014,39350274,3940,35.3,72.2,big
-sds,South Sudan,country,afr,2014,11911184,2574,35.29,95.6,big
+ssd,South Sudan,country,afr,2014,11911184,2574,35.29,95.6,big
 sen,Senegal,country,afr,2014,14672557,2206,40.3,49.7,big
 sgp,Singapore,country,asi,2014,5506586,78958,45.8,2.8,big
 slb,Solomon Islands,country,asi,2014,572171,2030,46.5,28.9,big
@@ -39486,7 +39486,7 @@ rus,Russia,country,eur,2015,143456918,23038,39.6,9.6,big
 rwa,Rwanda,country,afr,2015,11609666,1549,50.8,42,big
 sau,Saudi Arabia,country,asi,2015,31540372,52469,42.4,14.5,big
 sdn,Sudan,country,afr,2015,40234882,3975,35.3,70.1,big
-sds,South Sudan,country,afr,2015,12339812,3047,35.29,92.6,big
+ssd,South Sudan,country,afr,2015,12339812,3047,35.29,92.6,big
 sen,Senegal,country,afr,2015,15129273,2251,40.3,47.2,big
 sgp,Singapore,country,asi,2015,5603740,80794,45.8,2.7,big
 slb,Solomon Islands,country,asi,2015,583591,2047,46.5,28.1,big
@@ -39669,7 +39669,7 @@ rus,Russia,country,eur,2016,143439832,23268,39.6,9.3,big
 rwa,Rwanda,country,afr,2016,11882766,1624,50.8,64.28,big
 sau,Saudi Arabia,country,asi,2016,32157974,53038,42.4,15.3,big
 sdn,Sudan,country,afr,2016,41175541,4047,35.3,75.88,big
-sds,South Sudan,country,afr,2016,12733427,3138,35.29,111.5,big
+ssd,South Sudan,country,afr,2016,12733427,3138,35.29,111.5,big
 sen,Senegal,country,afr,2016,15589485,2309,40.3,43.21,big
 sgp,Singapore,country,asi,2016,5696506,82826,45,1.96,big
 slb,Solomon Islands,country,asi,2016,594934,2073,46.5,42.16,big
@@ -39852,7 +39852,7 @@ rus,Russia,country,eur,2017,143375006,23617,39.6,9.15,big
 rwa,Rwanda,country,afr,2017,12159586,1702,50.8,62.29,big
 sau,Saudi Arabia,country,asi,2017,32742664,53630,42.4,14.86,big
 sdn,Sudan,country,afr,2017,42166323,4119,35.3,74.39,big
-sds,South Sudan,country,afr,2017,13096190,3115,35.29,108.91,big
+ssd,South Sudan,country,afr,2017,13096190,3115,35.29,108.91,big
 sen,Senegal,country,afr,2017,16054275,2381,40.3,41.05,big
 sgp,Singapore,country,asi,2017,5784538,84938,45,1.9,big
 slb,Solomon Islands,country,asi,2017,606215,2097,46.5,40.24,big
@@ -40035,7 +40035,7 @@ rus,Russia,country,eur,2018,143261490,23971,39.6,9.01,big
 rwa,Rwanda,country,afr,2018,12438723,1784,50.8,60.33,big
 sau,Saudi Arabia,country,asi,2018,33299935,54242,42.4,14.45,big
 sdn,Sudan,country,afr,2018,43196092,4224,35.3,72.91,big
-sds,South Sudan,country,afr,2018,13438609,3071,35.29,106.43,big
+ssd,South Sudan,country,afr,2018,13438609,3071,35.29,106.43,big
 sen,Senegal,country,afr,2018,16524429,2475,40.3,39.06,big
 sgp,Singapore,country,asi,2018,5866547,87051,45,1.84,big
 slb,Solomon Islands,country,asi,2018,617467,2123,46.5,38.41,big
@@ -40218,7 +40218,7 @@ rus,Russia,country,eur,2019,143101836,24331,39.6,8.87,big
 rwa,Rwanda,country,afr,2019,12718198,1870,50.8,58.39,big
 sau,Saudi Arabia,country,asi,2019,33838827,54921,42.4,14.04,big
 sdn,Sudan,country,afr,2019,44247721,4326,35.3,71.43,big
-sds,South Sudan,country,afr,2019,13776683,3102,35.29,104.02,big
+ssd,South Sudan,country,afr,2019,13776683,3102,35.29,104.02,big
 sen,Senegal,country,afr,2019,17001706,2574,40.3,37.15,big
 sgp,Singapore,country,asi,2019,5940925,89303,45,1.79,big
 slb,Solomon Islands,country,asi,2019,628733,2148,46.5,36.66,big
@@ -40401,7 +40401,7 @@ rus,Russia,country,eur,2020,142898124,24545,39.6,8.74,big
 rwa,Rwanda,country,afr,2020,12996594,1959,50.8,56.46,big
 sau,Saudi Arabia,country,asi,2020,34366240,55504,42.4,13.67,big
 sdn,Sudan,country,afr,2020,45308399,4407,35.3,69.92,big
-sds,South Sudan,country,afr,2020,14122222,3228,35.29,101.68,big
+ssd,South Sudan,country,afr,2020,14122222,3228,35.29,101.68,big
 sen,Senegal,country,afr,2020,17487409,2655,40.3,35.27,big
 sgp,Singapore,country,asi,2020,6006710,91529,45,1.74,big
 slb,Solomon Islands,country,asi,2020,640045,2172,46.5,34.99,big
@@ -40584,7 +40584,7 @@ rus,Russia,country,eur,2021,142648374,24761,39.6,8.6,big
 rwa,Rwanda,country,afr,2021,13273410,2051,50.8,54.59,big
 sau,Saudi Arabia,country,asi,2021,34883285,56093,42.4,13.31,big
 sdn,Sudan,country,afr,2021,46374862,4490,35.3,68.41,big
-sds,South Sudan,country,afr,2021,14478328,3358,35.29,99.42,big
+ssd,South Sudan,country,afr,2021,14478328,3358,35.29,99.42,big
 sen,Senegal,country,afr,2021,17981447,2738,40.3,33.41,big
 sgp,Singapore,country,asi,2021,6063251,93810,45,1.7,big
 slb,Solomon Islands,country,asi,2021,651414,2197,46.5,33.39,big
@@ -40767,7 +40767,7 @@ rus,Russia,country,eur,2022,142350640,25089,39.6,8.46,big
 rwa,Rwanda,country,afr,2022,13549089,2148,50.8,52.79,big
 sau,Saudi Arabia,country,asi,2022,35388505,56757,42.4,12.97,big
 sdn,Sudan,country,afr,2022,47450046,4585,35.3,66.9,big
-sds,South Sudan,country,afr,2022,14841821,3400,35.29,97.23,big
+ssd,South Sudan,country,afr,2022,14841821,3400,35.29,97.23,big
 sen,Senegal,country,afr,2022,18483176,2829,40.3,31.59,big
 sgp,Singapore,country,asi,2022,6111355,96178,45,1.66,big
 slb,Solomon Islands,country,asi,2022,662836,2224,46.5,31.86,big
@@ -40950,7 +40950,7 @@ rus,Russia,country,eur,2023,142007915,25445,39.6,8.33,big
 rwa,Rwanda,country,afr,2023,13824302,2246,50.8,51.09,big
 sau,Saudi Arabia,country,asi,2023,35883352,57463,42.4,12.64,big
 sdn,Sudan,country,afr,2023,48534609,4684,35.3,65.42,big
-sds,South Sudan,country,afr,2023,15210786,3432,35.29,95.12,big
+ssd,South Sudan,country,afr,2023,15210786,3432,35.29,95.12,big
 sen,Senegal,country,afr,2023,18992803,2926,40.3,29.87,big
 sgp,Singapore,country,asi,2023,6153344,98603,45,1.62,big
 slb,Solomon Islands,country,asi,2023,674321,2253,46.5,30.38,big
@@ -41133,7 +41133,7 @@ rus,Russia,country,eur,2024,141624738,25810,39.6,8.2,big
 rwa,Rwanda,country,afr,2024,14100133,2348,50.8,49.5,big
 sau,Saudi Arabia,country,asi,2024,36369092,58210,42.4,12.32,big
 sdn,Sudan,country,afr,2024,49630882,4789,35.3,63.97,big
-sds,South Sudan,country,afr,2024,15581340,3476,35.29,93.07,big
+ssd,South Sudan,country,afr,2024,15581340,3476,35.29,93.07,big
 sen,Senegal,country,afr,2024,19510576,3027,40.3,28.23,big
 sgp,Singapore,country,asi,2024,6192455,101081,45,1.58,big
 slb,Solomon Islands,country,asi,2024,685878,2283,46.5,28.96,big
@@ -41316,7 +41316,7 @@ rus,Russia,country,eur,2025,141205239,26183,39.6,8.08,big
 rwa,Rwanda,country,afr,2025,14377389,2451,50.8,48,big
 sau,Saudi Arabia,country,asi,2025,36846750,58997,42.4,12.01,big
 sdn,Sudan,country,afr,2025,50740339,4894,35.3,62.53,big
-sds,South Sudan,country,afr,2025,15950768,3538,35.29,91.08,big
+ssd,South Sudan,country,afr,2025,15950768,3538,35.29,91.08,big
 sen,Senegal,country,afr,2025,20036744,3128,40.3,26.69,big
 sgp,Singapore,country,asi,2025,6231082,103625,45,1.54,big
 slb,Solomon Islands,country,asi,2025,697512,2314,46.5,27.6,big
@@ -41499,7 +41499,7 @@ rus,Russia,country,eur,2026,140751966,26564,39.6,7.96,big
 rwa,Rwanda,country,afr,2026,14656084,2557,50.8,46.58,big
 sau,Saudi Arabia,country,asi,2026,37317367,59816,42.4,11.72,big
 sdn,Sudan,country,afr,2026,51861956,5000,35.3,61.1,big
-sds,South Sudan,country,afr,2026,16319176,3605,35.29,89.11,big
+ssd,South Sudan,country,afr,2026,16319176,3605,35.29,89.11,big
 sen,Senegal,country,afr,2026,20571425,3229,40.3,25.25,big
 sgp,Singapore,country,asi,2026,6270091,106221,45,1.51,big
 slb,Solomon Islands,country,asi,2026,709226,2348,46.5,26.3,big
@@ -41682,7 +41682,7 @@ rus,Russia,country,eur,2027,140266843,26977,39.6,7.85,big
 rwa,Rwanda,country,afr,2027,14935963,2665,50.8,45.22,big
 sau,Saudi Arabia,country,asi,2027,37781522,60683,42.4,11.45,big
 sdn,Sudan,country,afr,2027,52993671,5111,35.3,59.68,big
-sds,South Sudan,country,afr,2027,16688356,3662,35.29,87.16,big
+ssd,South Sudan,country,afr,2027,16688356,3662,35.29,87.16,big
 sen,Senegal,country,afr,2027,21114815,3333,40.3,23.94,big
 sgp,Singapore,country,asi,2027,6309033,108882,45,1.48,big
 slb,Solomon Islands,country,asi,2027,721019,2382,46.5,25.06,big
@@ -41865,7 +41865,7 @@ rus,Russia,country,eur,2028,139752961,27409,39.6,7.74,big
 rwa,Rwanda,country,afr,2028,15217228,2775,50.8,43.9,big
 sau,Saudi Arabia,country,asi,2028,38239076,61595,42.4,11.2,big
 sdn,Sudan,country,afr,2028,54134837,5225,35.3,58.24,big
-sds,South Sudan,country,afr,2028,17059138,3722,35.29,85.21,big
+ssd,South Sudan,country,afr,2028,17059138,3722,35.29,85.21,big
 sen,Senegal,country,afr,2028,21667332,3440,40.3,22.74,big
 sgp,Singapore,country,asi,2028,6347387,111606,45,1.45,big
 slb,Solomon Islands,country,asi,2028,732892,2419,46.5,23.88,big
@@ -42048,7 +42048,7 @@ rus,Russia,country,eur,2029,139213623,27858,39.6,7.63,big
 rwa,Rwanda,country,afr,2029,15500083,2887,50.8,42.61,big
 sau,Saudi Arabia,country,asi,2029,38689494,62552,42.4,10.97,big
 sdn,Sudan,country,afr,2029,55284830,5342,35.3,56.81,big
-sds,South Sudan,country,afr,2029,17432673,3788,35.29,83.28,big
+ssd,South Sudan,country,afr,2029,17432673,3788,35.29,83.28,big
 sen,Senegal,country,afr,2029,22229477,3549,40.3,21.67,big
 sgp,Singapore,country,asi,2029,6384119,114394,45,1.42,big
 slb,Solomon Islands,country,asi,2029,744841,2457,46.5,22.76,big
@@ -42231,7 +42231,7 @@ rus,Russia,country,eur,2030,138652480,28326,39.6,7.53,big
 rwa,Rwanda,country,afr,2030,15784601,3001,50.8,41.35,big
 sau,Saudi Arabia,country,asi,2030,39132369,63556,42.4,10.76,big
 sdn,Sudan,country,afr,2030,56442993,5462,35.3,55.36,big
-sds,South Sudan,country,afr,2030,17809791,3857,35.29,81.37,big
+ssd,South Sudan,country,afr,2030,17809791,3857,35.29,81.37,big
 sen,Senegal,country,afr,2030,22801643,3659,40.3,20.7,big
 sgp,Singapore,country,asi,2030,6418472,117247,45,1.39,big
 slb,Solomon Islands,country,asi,2030,756861,2497,46.5,21.69,big

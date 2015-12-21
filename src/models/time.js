@@ -76,6 +76,7 @@ var TimeModel = Model.extend({
     var _this = this;
     this.dragging = false;
     this.postponePause = false;
+    this.allSteps = {};
 
     //bing play method to model change
     this.on({
@@ -231,13 +232,18 @@ var TimeModel = Model.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
-    var arr = [];
+    var hash = "" + this.start + this.end + this.step;
+    
+    //return if cached
+    if(this.allSteps[hash]) return this.allSteps[hash];
+      
+    this.allSteps[hash] = [];
     var curr = this.start;
     while(curr <= this.end) {
-      arr.push(curr);
+      this.allSteps[hash].push(curr);
       curr = d3.time[this.unit].offset(curr, this.step);
     }
-    return arr;
+    return this.allSteps[hash];
   },
 
   /**

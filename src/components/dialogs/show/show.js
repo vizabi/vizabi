@@ -71,11 +71,8 @@ var Show = Dialog.extend({
 
     var _this = this;
     this.translator = this.model.language.getTFunction();
+      
 
-    var filter = {};
-    filter[this.TIMEDIM] = this.model.state.time.value;
-
-    var values = this.model.state.marker.getValues(filter, [this.KEY])
 
     var data = globals.metadata.entities;
 

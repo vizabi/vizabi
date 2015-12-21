@@ -155,6 +155,8 @@ var Data = Class.extend({
           col.nested = {};
           col.unique = {};
           col.limits = {};
+          col.frames = {};
+          col.query = q;
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
 
           // returning the query-id/values of the merged query without splitting the result up again per query
@@ -180,18 +182,16 @@ var Data = Class.extend({
   /**
    * get data
    */
-  get: function(queryId, what, whatId) {
+  get: function(queryId, what, whatId, args) {
     // if not specified data from what query, return nothing
-    if(!queryId) {
-      return;
-    }
+    if(!queryId) return utils.warn("Data.js 'get' method doesn't like the queryId you gave it: " + queryId);
 
     // if they want data, return the data
     if(!what || what == 'data') {
       return this._collection[queryId]['data'];
     }
 
-    // if they didn't give an ID, give them the whole thing
+    // if they didn't give an instruction, give them the whole thing
     // it's probably old code which modifies the data outside this class
     // TODO: move these methods inside (e.g. model.getNestedItems())
     if (!whatId) {
@@ -215,9 +215,120 @@ var Data = Class.extend({
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
         break;
+      case 'frames':
+        this._collection[queryId][what][id] = this._getFrames(queryId, whatId, args);
+        break;
+      case 'nested':     
+        this._collection[queryId][what][id] = this._getNested(queryId, whatId);
+        break;
     }
     return this._collection[queryId][what][id];
   },
+    
+  _getFrames: function(queryId, framesArray, args) {
+      if(!args || !args.indicatorsDB) utils.warn("_getFrames in data.js is missing args.indicatorsDB")
+      
+      var _this = this;
+      
+      var KEY = "geo";
+      var TIME = "time";
+      var result = {};
+      var nested = this.get(queryId, 'nested', [KEY, TIME]);
+      var keys = Object.keys(nested);
+      var query = this._collection[queryId].query;
+      var columns = query.select.filter(function(f){return f != KEY && f != TIME});
+      var filtered = {};
+      
+      if(!query.where.time){
+          
+          framesArray.forEach(function(t){
+              result[t] = {};
+              columns.forEach(function(column){ result[t][column] = {}; });
+              
+              _this._collection[queryId].data.forEach(function(d){
+              
+                  columns.forEach(function(column){
+                      result[t][column][d[KEY]] = d[column];
+                  });
+              });
+            
+          })
+          
+              
+          
+          return result
+      }
+      
+      
+      //if time is restricted to a single point
+      if(query.where.time[0].length === 1) framesArray = query.where.time[0];
+      
+      keys.forEach(function(key){
+          filtered[key] = {};
+          
+          columns.forEach(function(column){
+            filtered[key][column] = null;
+          });
+      });
+      
+
+      framesArray.forEach(function(t){
+        result[t] = {};
+        columns.forEach(function(column){
+            result[t][column] = {};
+        });
+          
+        keys.forEach(function(key){
+            columns.forEach(function(column){
+                
+            
+                //TODO: add support for zeros
+                if(nested[key] && nested[key][t] && nested[key][t][0][column]){
+                    result[t][column][key] = +nested[key][t][0][column];
+                    
+
+                }else{
+                    if(filtered[key][column] == null){
+                        filtered[key][column] = [];
+                        
+                        utils.forEach(nested[key], function(frame) {
+                            //TODO: add support for zeros
+                            if(frame[0][column]) filtered[key][column].push(frame[0]);
+                        });
+                    }
+                    
+                    var method = args.indicatorsDB[column] ? args.indicatorsDB[column]["interpolation"] : null;
+                    var use = args.indicatorsDB[column] ? args.indicatorsDB[column]["use"] : "indicator";
+                    var next = null;
+                    
+                    if(filtered[key][column].length > 0) result[t][column][key] =
+                        utils.interpolatePoint(filtered[key][column], use, column, next, TIME, t, method);
+                }
+            });
+        });
+      });
+      
+      
+      return result;
+  },
+
+
+  _getNested: function(queryId, order) {
+
+    var nest = d3.nest();
+    for(var i = 0; i < order.length; i++) {
+      nest = nest.key(
+        (function(k) {
+          return function(d) {
+            return d[k];
+          };
+        })(order[i])
+      );
+    };
+
+    return utils.nestArrayToObj(nest.entries(this._collection[queryId]['data']));
+  },
+    
 
   _getUnique: function(queryId, attr) {
     var uniq;

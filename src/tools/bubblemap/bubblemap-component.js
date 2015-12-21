@@ -285,10 +285,6 @@ var BubbleMapComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready: function () {
-    //if (!this._valuesCalculated) {
-      this._calculateAllValues();
-    //}
-
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
@@ -481,7 +477,7 @@ var BubbleMapComponent = Component.extend({
     var filter = {};
     filter[_this.TIMEDIM] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this._getValuesInterpolated(time.value);
+    var values = this.model.marker.getFrame(time.value);
     _this.values = values;
 
     /*
@@ -555,9 +551,9 @@ var BubbleMapComponent = Component.extend({
       .each(function(d, index){
         var view = d3.select(this);
 
-        var valueX = +values.lng[d[_this.KEY]];
-        var valueY = +values.lat[d[_this.KEY]];
-        var valueS = +values.size[d[_this.KEY]];
+        var valueX = +values.lng[d[_this.KEY]]||0;
+        var valueY = +values.lat[d[_this.KEY]]||0;
+        var valueS = +values.size[d[_this.KEY]]||0;
         var valueC = values.color[d[_this.KEY]];
         var valueL = values.label[d[_this.KEY]];
 
@@ -1171,66 +1167,7 @@ var BubbleMapComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
-  },
-
-  /*
-   * Calculates all values for this data configuration
-   */
-  _calculateAllValues: function() {
-    // if (this._valuesCalculated) {
-    //   return;
-    // }
-    this.STEPS = this.model.time.getAllSteps();
-    this.VALUES = {};
-    var f = {};
-    for(var i = 0; i < this.STEPS.length; i++) {
-      var t = this.STEPS[i];
-      f[this.TIMEDIM] = t;
-      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
-    }
-    // if (this.STEPS.length > 1) {
-    //   //console.log('caculated');
-    //   this._valuesCalculated = true; //hack to avoid recalculation
-    // }
-  },
-
-  /*
-   * Gets all values for any point in time
-   * @param {Date} t time value
-   */
-  _getValuesInterpolated: function(t) {
-
-    if(!this.VALUES) this._calculateAllValues();
-    if(this.VALUES[t]) return this.VALUES[t];
-
-    var next = d3.bisectLeft(this.STEPS, t);
-
-    //if first
-    if(next === 0) {
-      return this.VALUES[this.STEPS[0]];
-    }
-    if(next > this.STEPS.length) {
-      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
-    }
-
-    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
-
-    var pValues = this.VALUES[this.STEPS[next - 1]];
-    var nValues = this.VALUES[this.STEPS[next]];
-
-    var curr = {};
-    utils.forEach(pValues, function(values, hook) {
-      curr[hook] = {};
-      utils.forEach(values, function(val, id) {
-        var val2 = nValues[hook][id];
-        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-      });
-    });
-
-    return curr;
   }
-
-
 
 });
 
