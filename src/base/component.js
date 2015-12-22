@@ -185,8 +185,8 @@ var Component = Events.extend({
 
   setReady: function(value) {
     if(!this._readyOnce) {
-      this.trigger('readyOnce');
       this._readyOnce = true;
+      this.trigger('readyOnce');
     }
 
     this._ready = true;

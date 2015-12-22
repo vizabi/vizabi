@@ -2,8 +2,8 @@
 &.vzb-large {
   &.vzb-dialog-expand-true {
     .vzb-dialogs-dialog {
-      &.vzb-dialog-side {
-        &[data-btn="size"] {
+      &[data-dlg="size"] {
+        &.vzb-sidebar {
           flex: none;
 
           .vzb-dialog-content {

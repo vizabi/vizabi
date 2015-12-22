@@ -2,7 +2,7 @@ import * as utils from 'base/utils';
 import Component from 'base/component';
 import Dialog from '../_dialog';
 
-import { indicatorpicker,simplecheckbox } from 'components/_index';
+import { indicatorpicker, minmaxinputs, simplecheckbox } from 'components/_index';
 
 /*
  * Axes dialog
@@ -24,11 +24,35 @@ var Axes = Dialog.extend({
       placeholder: '.vzb-xaxis-selector',
       model: ["state.marker", "language"],
       markerID: "axis_x"
+    },{
+      component: minmaxinputs,
+      placeholder: '.vzb-xaxis-minmax',
+      model: ["state.marker", "language"],
+      markerID: "axis_x",
+      ui: {
+        selectMinMax: false,
+        selectFakeMinMax: true
+      }
     }, {
       component: indicatorpicker,
       placeholder: '.vzb-yaxis-selector',
       model: ["state.marker", "language"],
       markerID: "axis_y"
+    }, {
+      component: minmaxinputs,
+      placeholder: '.vzb-yaxis-minmax',
+      model: ["state.marker", "language"],
+      markerID: "axis_y",
+      ui: {
+        selectMinMax: false,
+        selectFakeMinMax: true
+      }
+    }, {
+      component: simplecheckbox,
+      placeholder: '.vzb-axes-options',
+      model: ["state", "language"],
+      submodel: 'time',
+      checkbox: 'adaptMinMaxZoom'
     }];
 
     this._super(config, parent);

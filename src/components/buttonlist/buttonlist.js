@@ -155,21 +155,21 @@ var ButtonList = Component.extend({
   readyOnce: function() {
 
     var _this = this;
-    var button_expand = this.model.ui.buttons_expand;
+    var button_expand = this.model.ui.dialogs.sidebar || [];
 
     this.element = d3.select(this.placeholder);
 
     this.element.selectAll("div").remove();
 
-    // if button_expand has been passed in with boolean param or array must check and covert to array
-    if (button_expand){
-      this.model.ui.buttons_expand = (button_expand === true) ? this.model.ui.buttons : button_expand;
-    }
+    // // if button_expand has been passed in with boolean param or array must check and covert to array
+    // if (button_expand){
+    //   this.model.ui.dialogs.sidebar = (button_expand === true) ? this.model.ui.buttons : button_expand;
+    // }
 
-    if (button_expand && button_expand.length !== 0) {
-        d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
-    }
-
+    // if (button_expand && button_expand.length !== 0) {
+    //     d3.select(this.root.element).classed("vzb-dialog-expand-true", true);
+    // }
+    
     var button_list = [].concat(button_expand);
 
     this.model.ui.buttons.forEach(function(button) {
@@ -248,7 +248,7 @@ var ButtonList = Component.extend({
      var parent = d3.select(this.parent.element);
 
      //HERE
-     var button_expand = this.model.ui.buttons_expand;
+     var button_expand = this.model.ui.dialogs.sidebar || [];
      _this._showAllButtons();
 
      var buttons = this.element.selectAll(".vzb-buttonlist-btn");
@@ -345,7 +345,7 @@ var ButtonList = Component.extend({
     this._components_config = [];
     var button_list = this.model.ui.buttons;
     var details_btns = [],
-        button_expand = this.model.ui.buttons_expand;
+        button_expand = this.model.ui.dialogs.sidebar || [];
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
@@ -368,7 +368,7 @@ var ButtonList = Component.extend({
       .enter().append("button")
       .attr('class', function (d) {
         var cls = 'vzb-buttonlist-btn';
-        if (button_expand && button_expand.length > 0) {
+        if (button_expand.length > 0) {
           if (button_expand.indexOf(d.id) > -1) {
             cls += ' vzb-dialog-side-btn';
           }
