@@ -140,9 +140,11 @@ var EntitiesModel = Model.extend({
     
     var dimension = this.getDimension();
     var value = d[dimension];
-    var show = this.show[dimension].concat([]);
+    var show = this.show[dimension];
       
-    if(show[0] === "*") show = [];
+    if(!show || show[0] === "*") show = [];
+      
+    show = show.concat([]); //clone array
       
     if(this.isShown(d)) {
       show = show.filter(function(d) { return d !== value; });
@@ -186,7 +188,7 @@ var EntitiesModel = Model.extend({
    */
   isShown: function(d) {
     var dimension = this.getDimension();
-    return this.show[dimension].indexOf(d[dimension]) !== -1;
+    return this.show[dimension] && this.show[dimension].indexOf(d[dimension]) !== -1;
   },
 
   /**

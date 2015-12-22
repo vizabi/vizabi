@@ -113,7 +113,6 @@ BarRankChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
           "geo.cat": ["country"]
         }
       },
@@ -190,10 +189,9 @@ BubbleMap.define('default_options', {
       opacityRegular: .8,
       show: {
         _defs_: {
-          "geo": ["*"],
-          //"geo.region": ["afr"]
+          "geo.cat": ["country"]
         }
-      }
+      },
     },
     marker: {
       space: ["entities", "time"],
@@ -280,7 +278,7 @@ MountainChart.define('default_options', {
       opacityRegular: .6,
       show: {
         _defs_: {
-          "geo": ['*'], //['swe', 'nor', 'fin', 'bra', 'usa', 'chn', 'jpn', 'zaf', 'ind', 'ago'],
+          "geo": ["*"],
           "geo.cat": ["country"]
         }
       }
@@ -437,7 +435,6 @@ BubbleChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo": ["*"],
           "geo.cat": ["country"]
         }
       }
