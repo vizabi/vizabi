@@ -335,21 +335,17 @@ var Data = Class.extend({
                             items = [];
 
                             utils.forEach(nested[key], function(frame) {
-                                if(frame[0][column] || frame[0][column] === 0) items.concat(frame);
+                                if(frame[0][column] || frame[0][column] === 0) items.push(frame[0]);
                             });
                         }
 
 
                         // Now we are left with a fewer frames in the filtered array. Let's check its length. 
+                        //If the array is empty, then the entire column is missing for the key
+                        //So we let the key have missing values in this column for all frames
                         if(items.length > 0) {
-
                             next = null;
                             result[t][column][key] = utils.interpolatePoint(items, use, column, next, TIME, t, method);
-
-                        }else{
-                            //If the array is empty, then the entire column is missing for the key
-                            //So we let the key have null in this column for all frames
-                            result[t][column][key] = null;
                         }
 
                     }
