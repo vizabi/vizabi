@@ -831,7 +831,7 @@ getFrame: function(time){
         resultKeys = resultKeys.filter(function(f){return f});
         
         utils.forEach(this._dataCube, function(hook, name) {
-            var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata);
+            var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
             utils.forEach(frames, function(d, t){ 
                 if(!result[t])result[t] = {};
                 result[t][name] = d[hook.which];

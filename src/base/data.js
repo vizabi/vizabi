@@ -224,22 +224,49 @@ var Data = Class.extend({
     }
     return this._collection[queryId][what][id];
   },
+
     
-  _getFrames: function(queryId, framesArray, args) {
-      if(!args || !args.indicatorsDB) utils.warn("_getFrames in data.js is missing args.indicatorsDB")
-      
+    
+  
+  /**
+   * Get regularised dataset (where gaps are filled)
+   * @param {Number} queryId hash code for query
+   * @param {Array} framesArray -- array of keyframes across animatable
+   * @param {Object} indicatorsDB -- indicators DB from globals.metadata
+   * @returns {Object} regularised dataset, nested by [animatable, column, key]
+   */
+  _getFrames: function(queryId, framesArray, indicatorsDB) {
       var _this = this;
       
+      if(!indicatorsDB) utils.warn("_getFrames in data.js is missing indicatorsDB, it's needed for gap filling")
+      if(!framesArray) utils.warn("_getFrames in data.js is missing framesArray, it's needed so much")
+            
+      //TODO: thses should come from state or from outside somehow
       var KEY = "geo";
       var TIME = "time";
       var result = {};
+      var filtered = {};
+      var items, method, use, next;
+      
+      // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
+      // See the _getNested function for more details
       var nested = this.get(queryId, 'nested', [KEY, TIME]);
       var keys = Object.keys(nested);
+      
+      // Get the list of columns that are in the dataset, exclude key column and animatable column
+      // Example: [“lex”, “gdp”, “u5mr"]
       var query = this._collection[queryId].query;
       var columns = query.select.filter(function(f){return f != KEY && f != TIME});
-      var filtered = {};
       
-      if(!query.where.time){
+      // FramesArray in the input contains the array of keyframes in animatable dimension. 
+      // Example: array of years like [1800, 1801 … 2100]
+      // these will be the points where we need data 
+      // (some of which might already exist in the set. in regular datasets all the points would exist!)
+      
+      // Check if query.where clause is missing a time field
+      if(!query.where.time){          
+          // The query.where clause doesn't have time field for properties: 
+          // we populate the regular set with a single value (unpack properties into constant time series)
           
           framesArray.forEach(function(t){
               result[t] = {};
@@ -254,66 +281,112 @@ var Data = Class.extend({
             
           })
           
-              
           
-          return result
-      }
-      
-      
-      //if time is restricted to a single point
-      if(query.where.time[0].length === 1) framesArray = query.where.time[0];
-      
-      keys.forEach(function(key){
-          filtered[key] = {};
+      }else{
+          // If there is a time field in query.where clause, then we are dealing with indicators in this request
+
+          // If time is restricted to a single point then override the input with that single point
+          if(query.where.time[0].length === 1) framesArray = query.where.time[0];
           
-          columns.forEach(function(column){
-            filtered[key][column] = null;
+          // Put together a template for cached filtered sets (see below what's needed)
+          keys.forEach(function(key){
+              filtered[key] = {};
+
+              columns.forEach(function(column){
+                filtered[key][column] = null;
+              });
           });
-      });
-      
 
-      framesArray.forEach(function(t){
-        result[t] = {};
-        columns.forEach(function(column){
-            result[t][column] = {};
-        });
-          
-        keys.forEach(function(key){
+          // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
+          framesArray.forEach(function(t){
+            result[t] = {};
             columns.forEach(function(column){
-                
-            
-                //TODO: add support for zeros
-                if(nested[key] && nested[key][t] && nested[key][t][0][column]){
-                    result[t][column][key] = +nested[key][t][0][column];
+                result[t][column] = {};
+            });
+
+            keys.forEach(function(key){
+                columns.forEach(function(column){
+                    
+                    //If there are some points in the array with valid numbers, then
+                    //interpolate the missing point and save it to the “clean regular set” 
+                    method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
+                    use = indicatorsDB[column] ? indicatorsDB[column].use : "indicator";
                     
 
-                }else{
-                    if(filtered[key][column] == null){
-                        filtered[key][column] = [];
+                    // Inside of this 3-level loop is the following: 
+                    if(nested[key] && nested[key][t] && (nested[key][t][0][column] || nested[key][t][0][column] === 0)){
+
+                        // Check if the piece of data for [this key][this frame][this column] exists 
+                        // and is valid. If so, then save it into a “clean regular set”
+                        result[t][column][key] = nested[key][t][0][column];
                         
-                        utils.forEach(nested[key], function(frame) {
-                            //TODO: add support for zeros
-                            if(frame[0][column]) filtered[key][column].push(frame[0]);
-                        });
+                    }else{
+                        // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
+
+                        // Let’s take a slice of the nested set, corresponding to the current key nested[key] 
+                        // As you remember it has the data nested further by frames. 
+                        // At every frame the data in the current column might or might not exist. 
+                        // Thus, let’s filter out all the frames which don’t have the data for the current column. 
+                        // Let’s cache it because we will most likely encounter another gap in the same column for the same key
+
+                        items = filtered[key][column];
+
+                        if(items == null){
+                            items = [];
+
+                            utils.forEach(nested[key], function(frame) {
+                                if(frame[0][column] || frame[0][column] === 0) items.concat(frame);
+                            });
+                        }
+
+
+                        // Now we are left with a fewer frames in the filtered array. Let's check its length. 
+                        if(items.length > 0) {
+
+                            next = null;
+                            result[t][column][key] = utils.interpolatePoint(items, use, column, next, TIME, t, method);
+
+                        }else{
+                            //If the array is empty, then the entire column is missing for the key
+                            //So we let the key have null in this column for all frames
+                            result[t][column][key] = null;
+                        }
+
                     }
-                    
-                    var method = args.indicatorsDB[column] ? args.indicatorsDB[column]["interpolation"] : null;
-                    var use = args.indicatorsDB[column] ? args.indicatorsDB[column]["use"] : "indicator";
-                    var next = null;
-                    
-                    if(filtered[key][column].length > 0) result[t][column][key] =
-                        utils.interpolatePoint(filtered[key][column], use, column, next, TIME, t, method);
-                }
+                        
+
+                });
             });
-        });
-      });
-      
+          });
+      }
       
       return result;
   },
 
 
   _getNested: function(queryId, order) {
+    // Nests are objects of key-value pairs
+    // Example: 
+    // 
+    // order = ["geo", "time"];
+    // 
+    // original_data = [
+    //   { geo: "afg", time: 1800, gdp: 23424, lex: 23}
+    //   { geo: "afg", time: 1801, gdp: 23424, lex: null}
+    //   { geo: "chn", time: 1800, gdp: 23587424, lex: 46}
+    //   { geo: "chn", time: 1801, gdp: null, lex: null}
+    // ];
+    //  
+    // nested_data = {
+    //   afg: {
+    //     1800: {gdp: 23424, lex: 23},
+    //     1801: {gdp: 23424, lex: null}
+    //   }
+    //   chn: {
+    //     1800: {gdp: 23587424, lex: 46 },
+    //     1801: {gdp: null, lex: null }
+    //   }
+    // };
 
     var nest = d3.nest();
     for(var i = 0; i < order.length; i++) {

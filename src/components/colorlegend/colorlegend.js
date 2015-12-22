@@ -222,7 +222,6 @@ var ColorLegend = Component.extend({
   },
 
   resize: function() {
-    console.log("colorlegend resize");
     this.colorPicker.resize(d3.select('.vzb-colorpicker-svg'));
   }
 

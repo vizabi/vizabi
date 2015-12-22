@@ -776,19 +776,28 @@ export var mapRows = function(original, formatters) {
     }
   }
 
-  var columns = Object.keys(formatters);
-  var columns_s = columns.length;
+  
+  
   original = original.map(function(row) {
-    for(var i = 0; i < columns_s; i++) {
-      var col = columns[i],
-        new_val;
-      if(row.hasOwnProperty(col)) {
+    var columns = Object.keys(row);
+      
+    for(var i = columns.length; i >= 0; i--) {
+      var col = columns[i], new_val;
+      if(formatters.hasOwnProperty(col)) { 
         try {
           new_val = mapRow(row[col], formatters[col]);
         } catch(e) {
           new_val = row[col];
         }
         row[col] = new_val;
+      }else{
+        //if it's a number
+        if(row[col] === ""){
+            row[col] = null;
+        }else{
+            new_val = parseFloat(row[col]);
+            if(new_val || new_val === 0) row[col] = new_val;
+        }
       }
     }
     return row;
