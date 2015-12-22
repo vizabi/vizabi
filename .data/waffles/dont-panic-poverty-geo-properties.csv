@@ -13,7 +13,7 @@
 "arg","Argentina","country","ame",-34,-64
 "arm","Armenia","country","eur",40.25,45
 "asm","American Samoa","country","asi",-11.056,-171.082
-"ata","Antarctica","country","eur",-90,
+"ata","Antarctica","country","eur",-90,0
 "atg","Antigua and Barbuda","country","ame",17.05,-61.8
 "aus","Australia","country","asi",-25,135
 "aut","Austria","country","eur",47.33333,13.33333
