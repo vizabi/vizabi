@@ -78,6 +78,20 @@
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
+        "geo.lat": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
+        "geo.lng": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
         "geo.region": {
             "allowCharts": ["*"],
             "use": "property",

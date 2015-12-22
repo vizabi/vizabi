@@ -232,6 +232,7 @@ BubbleMap.define('default_options', {
   data: {
     reader: "waffle",
     path: "http://ws.gapminderdev.org:3000/api/graphs/stats/vizabi-tools",  
+    //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
@@ -333,7 +334,6 @@ MountainChart.define('default_options', {
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
-      //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/inc_mount_data_2015test/mountains-pop-gdp-gini-1800-2030.csv"
   },
   ui: {
     presentation: false
@@ -497,10 +497,8 @@ BubbleChart.define('default_options', {
     reader: "waffle",
     path: "http://ws.gapminderdev.org:3000/api/graphs/stats/vizabi-tools", 
     //reader: "csv",
-    //path: Vzb._globals.gapminder_paths.baseUrl + "data/waffles/basic-indicators.csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
-    //path: "https://dl.dropboxusercontent.com/u/21736853/data/process/childsurv_2015test/bub_data_u5mr_inc_etc_20150823.csv"
   },
   language: language,
   ui: {
