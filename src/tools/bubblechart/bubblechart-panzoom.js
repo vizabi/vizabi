@@ -93,9 +93,7 @@ export default Class.extend({
         return {
             go: function() {
 
-
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
-
 
                 //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
@@ -122,7 +120,6 @@ export default Class.extend({
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
 
-
                 // console.log(d3.event.scale, zoomer.ratioY, zoomer.ratioX)
 
                 _this.draggingNow = true;
@@ -141,7 +138,6 @@ export default Class.extend({
 
                 if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = zoomer.translate();
                 if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
-
 
                 // limit the zooming, so that it never goes below 1 for any of the axes
                 if(zoom * ratioY < 1) {
