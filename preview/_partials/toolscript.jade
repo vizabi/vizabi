@@ -10,8 +10,8 @@ script.
         updateURL();
         updateStateEditor(VIZ.getOptions().state);
       },
-      'persistentChange': function(evt) {
-        updateURL(true); // force update
+      'persistentChange': function(evt, minState) {
+        updateURL(true, minState); // force update
       }
     },
     ui: {

@@ -4,13 +4,13 @@ var URLON={stringify:function(a){function b(a){return encodeURI(a.replace(/([=:&
 var URL = {};
 
 //grabs width, height, tabs open, and updates the url
-function updateURL(force) {
+function updateURL(force, minState) {
 
   function update() {
 
     var state, lang, options;
     if(typeof VIZ !== 'undefined') {
-      state = VIZ.minState();
+      state = minState || VIZ.getMinState();
       options = VIZ.getOptions();
     }
     formatDates(state);
