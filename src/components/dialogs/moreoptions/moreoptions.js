@@ -34,13 +34,13 @@ var MoreOptions = Dialog.extend({
     this.element = d3.select(this.element);
     this.contentEl = this.element.select('.vzb-dialog-content');
     
-    var dialog_popup = this.model.ui.dialogs.popup || [];
-    var dialog_moreoptions = this.model.ui.dialogs['moreoptions'] || [];
+    var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
+    var dialog_moreoptions = (this.model.ui.dialogs||{}).moreoptions || [];
     
     // if dialog_moreoptions has been passed in with boolean param or array must check and covert to array
     if (dialog_moreoptions === true) {
       dialog_moreoptions = dialog_popup;
-      this.model.ui.dialogs['moreoptions'] = dialog_moreoptions;
+      (this.model.ui.dialogs||{}).moreoptions = dialog_moreoptions;
     }
     
     this._addDialogs(dialog_moreoptions);

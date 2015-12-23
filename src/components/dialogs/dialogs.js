@@ -83,8 +83,8 @@ var Dialogs = Component.extend({
   readyOnce: function() {
 
     var _this = this;
-    var dialog_popup = this.model.ui.dialogs.popup || [];
-    var dialog_sidebar = this.model.ui.dialogs.sidebar || [];
+    var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
+    var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
 
     this.element = d3.select(this.placeholder);
 
@@ -93,7 +93,7 @@ var Dialogs = Component.extend({
     // if dialog_sidebar has been passed in with boolean param or array must check and covert to array
     if (dialog_sidebar === true) {
       dialog_sidebar = dialog_popup;
-      this.model.ui.dialogs.sidebar = dialog_sidebar;
+      (this.model.ui.dialogs||{}).sidebar = dialog_sidebar;
     }
     
     if (dialog_sidebar.length !== 0) {
@@ -102,7 +102,7 @@ var Dialogs = Component.extend({
     
     this._addDialogs(dialog_popup, dialog_sidebar);
 
-    if(this.model.ui.dialogs.popup) {
+    if((this.model.ui.dialogs||{}).popup) {
       this.root.findChildByName("gapminder-buttonlist")
         .on("click", function(evt, button) {
           if(!_this._available_dialogs[button.id]) return;

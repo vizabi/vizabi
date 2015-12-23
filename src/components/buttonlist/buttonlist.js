@@ -155,7 +155,7 @@ var ButtonList = Component.extend({
   readyOnce: function() {
 
     var _this = this;
-    var button_expand = this.model.ui.dialogs.sidebar || [];
+    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
 
     this.element = d3.select(this.placeholder);
 
@@ -172,7 +172,7 @@ var ButtonList = Component.extend({
     
     var button_list = [].concat(button_expand);
 
-    this.model.ui.buttons.forEach(function(button) {
+    (this.model.ui.buttons||[]).forEach(function(button) {
       if (button_list.indexOf(button) === -1) {
         button_list.push(button);
       }
@@ -181,9 +181,7 @@ var ButtonList = Component.extend({
     this.model.ui.buttons = button_list;
 
     //add buttons and render components
-    if(this.model.ui.buttons) {
-      this._addButtons();
-    }
+    this._addButtons();
 
     var buttons = this.element.selectAll(".vzb-buttonlist-btn");
 
@@ -248,7 +246,7 @@ var ButtonList = Component.extend({
      var parent = d3.select(this.parent.element);
 
      //HERE
-     var button_expand = this.model.ui.dialogs.sidebar || [];
+     var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
      _this._showAllButtons();
 
      var buttons = this.element.selectAll(".vzb-buttonlist-btn");
@@ -343,9 +341,9 @@ var ButtonList = Component.extend({
   _addButtons: function() {
 
     this._components_config = [];
-    var button_list = this.model.ui.buttons;
-    var details_btns = [],
-        button_expand = this.model.ui.dialogs.sidebar || [];
+    var button_list = this.model.ui.buttons||[];
+    var details_btns = [];
+    var button_expand = (this.model.ui.dialogs||{}).sidebar || [];
     if(!button_list.length) return;
     //add a component for each button
     for(var i = 0; i < button_list.length; i++) {
