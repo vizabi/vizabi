@@ -832,14 +832,26 @@ getFrame: function(time){
         
         utils.forEach(this._dataCube, function(hook, name) {
             var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
-            utils.forEach(frames, function(d, t){ 
+            utils.forEach(frames, function(frame, t){ 
                 if(!result[t])result[t] = {};
-                result[t][name] = d[hook.which];
+                
                 if(hook.use === "constant") {
                     result[t][name] = {};
-                    resultKeys.forEach(function(d){
-                        result[t][name][d] = hook.which;
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = hook.which;
                     });
+                }else if(hook.which==="geo"){
+                    result[t][name] = {};
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = key;
+                    });
+                }else if(hook.which==="time"){
+                    result[t][name] = {};
+                    resultKeys.forEach(function(key){
+                        result[t][name][key] = t;
+                    });
+                }else{
+                    result[t][name] = frame[hook.which];
                 }
             });
         });
