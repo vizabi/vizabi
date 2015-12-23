@@ -93,9 +93,7 @@ export default Class.extend({
         return {
             go: function() {
 
-
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
-
 
                 //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
@@ -122,7 +120,6 @@ export default Class.extend({
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
 
-
                 // console.log(d3.event.scale, zoomer.ratioY, zoomer.ratioX)
 
                 _this.draggingNow = true;
@@ -141,7 +138,6 @@ export default Class.extend({
 
                 if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = zoomer.translate();
                 if(isNaN(pan[0]) || isNaN(pan[1]) || pan[0] == null || pan[1] == null) pan = [0, 0];
-
 
                 // limit the zooming, so that it never goes below 1 for any of the axes
                 if(zoom * ratioY < 1) {
@@ -172,11 +168,17 @@ export default Class.extend({
                  * the range bump, which controls a gutter around the
                  * bubblechart, while correctly zooming.
                  */
-                xRange[0] = xRange[0] + (xRangeBumped[0] - xRange[0]) * zoom * ratioX;
-                xRange[1] = xRange[1] + (xRangeBumped[1] - xRange[1]) * zoom * ratioX;
+                var xRangeMinOffset = (xRangeBumped[0] - xRange[0]) * zoom * ratioX;
+                var xRangeMaxOffset = (xRangeBumped[1] - xRange[1]) * zoom * ratioX;
 
-                yRange[0] = yRange[0] + (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
-                yRange[1] = yRange[1] + (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
+                var yRangeMinOffset = (yRangeBumped[0] - yRange[0]) * zoom * ratioY;
+                var yRangeMaxOffset = (yRangeBumped[1] - yRange[1]) * zoom * ratioY;
+
+                xRange[0] = xRange[0] + xRangeMinOffset;
+                xRange[1] = xRange[1] + xRangeMaxOffset;
+
+                yRange[0] = yRange[0] + yRangeMinOffset;
+                yRange[1] = yRange[1] + yRangeMaxOffset;
 
                 // Calculate the maximum xRange and yRange available.
                 var xRangeBounds = [0,  _this.width];
@@ -208,10 +210,23 @@ export default Class.extend({
                 }
 
                 var formatter = function(n) { return d3.round(n, 2); };
-                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(xRangeBoundsBumped[0]));
-                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(xRangeBoundsBumped[1]));
-                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(yRangeBoundsBumped[0]));
-                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(yRangeBoundsBumped[1]));
+
+                var fakeXRange = xRangeBoundsBumped;
+                var fakeYRange = yRangeBoundsBumped;
+
+                /*
+                 * Set the fake min/max to the correct value depending on if the
+                 * min/max values lie within the range bound regions.
+                 */
+                fakeXRange[0] = xRangeBounds[0] > xRange[0] ? xRangeBounds[0] : xRange[0];
+                fakeXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
+                fakeYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
+                fakeYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
+
+                _this.model.marker.axis_x.fakeMin = formatter(_this.xScale.invert(fakeXRange[0]));
+                _this.model.marker.axis_x.fakeMax = formatter(_this.xScale.invert(fakeXRange[1]));
+                _this.model.marker.axis_y.fakeMin = formatter(_this.yScale.invert(fakeYRange[0]));
+                _this.model.marker.axis_y.fakeMax = formatter(_this.yScale.invert(fakeYRange[1]));
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
@@ -297,11 +312,98 @@ export default Class.extend({
     },
 
 
-    zoomToMaxMin: function(minX, maxX, minY, maxY, duration){
+    zoomToMaxMin: function(fakeMinX, fakeMaxX, fakeMinY, fakeMaxY, duration){
         var _this = this.context;
+        var minX = fakeMinX;
+        var maxX = fakeMaxX;
+        var minY = fakeMinY;
+        var maxY = fakeMaxY;
 
-        var xRange = _this._rangeBump([_this.xScale(minX), _this.xScale(maxX)], "undo");
-        var yRange = _this._rangeBump([_this.yScale(minY), _this.yScale(maxY)], "undo");
+        var xRangeBounds = [0, _this.width];
+        var yRangeBounds = [_this.height, 0];
+
+        var xRangeBoundsBumped = _this._rangeBump(xRangeBounds);
+        var yRangeBoundsBumped = _this._rangeBump(yRangeBounds);
+
+        /*
+         * Define TOLERANCE value as Number.EPSILON if exists, otherwise use
+         * ES6 standard value.
+         */
+        var TOLERANCE = Number.EPSILON ? Number.EPSILON : 2.220446049250313e-16;
+
+        /*
+         * Check if the range bump region is currently displayed, i.e. for the
+         * minX range bump region, check:
+         * _this.xScale.invert(xRangeBounds[0]) < _this.xScale.domain()[0]
+         *
+         * Also check if the given min/max values equal the domain edges.
+         * If so, then set the min/max values according to their range bumped
+         * values. These values are used to calculate the correct rectangle
+         * points for zooming.
+         */
+        if (_this.xScale.invert(xRangeBounds[0]) < _this.xScale.domain()[0]
+            && Math.abs(minX - _this.xScale.domain()[0]) < TOLERANCE) {
+            minX = _this.xScale.invert(xRangeBounds[0]);
+        }
+
+        if (_this.xScale.invert(xRangeBounds[1]) > _this.xScale.domain()[1]
+            && Math.abs(maxX - _this.xScale.domain()[1]) < TOLERANCE) {
+            maxX = _this.xScale.invert(xRangeBounds[1]);
+        }
+
+        if (_this.yScale.invert(yRangeBounds[0]) < _this.yScale.domain()[0]
+            && Math.abs(minY - _this.yScale.domain()[0]) < TOLERANCE) {
+            minY = _this.yScale.invert(yRangeBounds[0]);
+        }
+
+        if (_this.yScale.invert(yRangeBounds[1]) > _this.yScale.domain()[1]
+            && Math.abs(maxY - _this.yScale.domain()[1]) < TOLERANCE) {
+            maxY = _this.yScale.invert(yRangeBounds[1]);
+        }
+
+        var xRange = [_this.xScale(minX), _this.xScale(maxX)];
+        var yRange = [_this.yScale(minY), _this.yScale(maxY)];
+
+        /*
+         * If the min or max of one axis lies in the range bump region, then
+         * changing the opposite end of that axis must correctly scale and
+         * maintain the range bump region.
+         */
+        if (minX < _this.xScale.domain()[0]) {
+            var xScaleMax = _this.xScale(maxX);
+            var xScaleDifference = xRangeBounds[1] - xScaleMax;
+            var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[0] - xRangeBounds[1]);
+            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]);
+
+            xRange[0] = _this.xScale(xDifferenceInverted);
+        }
+
+        if (maxX > _this.xScale.domain()[1]) {
+            var xScaleMin = _this.xScale(minX);
+            var xScaleDifference = xScaleMin - xRangeBounds[0];
+            var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[1] - xRangeBounds[0]);
+            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]);
+
+            xRange[1] = _this.xScale(xDifferenceInverted);
+        }
+
+        if (minY < _this.yScale.domain()[0]) {
+            var yScaleMax = _this.yScale(maxY);
+            var yScaleDifference = yScaleMax - yRangeBounds[1];
+            var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[0] - yRangeBounds[1]);
+            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]);
+
+            yRange[0] = _this.yScale(yDifferenceInverted);
+        }
+
+        if (maxY > _this.yScale.domain()[1]) {
+            var yScaleMin = _this.yScale(minY);
+            var yScaleDifference = yRangeBounds[0] - yScaleMin;
+            var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[1] - yRangeBounds[0]);
+            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]);
+
+            yRange[1] = _this.yScale(yDifferenceInverted);
+        }
 
         this._zoomOnRectangle(_this.element, xRange[0], yRange[0], xRange[1], yRange[1], false, duration);
 
