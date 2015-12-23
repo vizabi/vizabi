@@ -120,6 +120,7 @@
             "use": "indicator",
             "unit": "lex",
             "scales": ["linear"],
+            "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "tfr": {
