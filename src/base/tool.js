@@ -23,7 +23,7 @@ var ToolModel = Model.extend({
    * @param {Object} binds contains initial bindings for the model
    * @param {Function|Array} validade validate rules
    */
-  init: function(name, values, parent, defaults, binds, validate) {
+  init: function(name, values, defaults, binds, validate) {
     this._id = utils.uniqueId('tm');
     this._type = 'tool';
     //generate validation function
@@ -33,7 +33,7 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultOptions(values, defaults);
     //constructor is similar to model
-    this._super(name, values, parent, binds, true);
+    this._super(name, values, null, binds, true);
     // change language
     if(values.language) {
       var _this = this;
@@ -117,7 +117,7 @@ var Tool = Component.extend({
     utils.extend(callbacks, this.model_binds, options.bind);
     delete options.bind;
 
-    this.model = new ToolModel(this.name, options, this, this.default_options, callbacks, validate);
+    this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
 
     //ToolModel starts in frozen state. unfreeze;
     this.model.unfreeze();
