@@ -163,7 +163,10 @@ var Data = Class.extend({
           // this is okay because the collection-object above will only be passed by reference to the cache and this will not take up more memory. 
           // On the contrary: it uses less because there is no need to duplicate the key-columns.
           utils.forEach(mergedQueries, function(mergedQuery) {
-            mergedQuery.promise.resolve(queryId);
+            // set the cache-location for each seperate query to the combined query's cache
+            _this._collection[mergedQuery.queryId] = _this._collection[queryId]; 
+            // resolve the query
+            mergedQuery.promise.resolve(mergedQuery.queryId);
           });
           //promise.resolve(queryId);
         }, //error reading
