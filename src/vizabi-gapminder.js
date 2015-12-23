@@ -96,7 +96,7 @@ BarChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []}
   }
 });
 
@@ -161,7 +161,7 @@ BarRankChart.define('default_options', {
   },
   ui: {
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -237,7 +237,7 @@ BubbleMap.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -407,7 +407,7 @@ LineChart.define('default_options', {
       }
     },
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []}
   }
 });
 
@@ -512,7 +512,7 @@ BubbleChart.define('default_options', {
       }
     },
     buttons: [],
-    buttons_expand: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -576,7 +576,7 @@ PopByAge.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    buttons_expand: []
+    dialogs: {popup: [], sidebar: [], moreoptions: []}
   }
 });
 

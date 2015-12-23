@@ -816,19 +816,20 @@ getFrame: function(time){
         var result = {};
         var resultKeys = [];
         
+        // Assemble the list of keys as an intersection of keys in all queries of all hooks
         utils.forEach(this._dataCube, function(hook, name) {
+            // Get keys in data of this hook
             var nested = _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]);
             var keys = Object.keys(nested);
+            
             if(resultKeys.length==0){
+                // If ain't got nothing yet, set the list of keys to result
                 resultKeys = keys;
             }else{
-                resultKeys.forEach(function(d){
-                    if(keys.indexOf(d)==-1)d = null;
-                })
+                // If there is result accumulated aleready, remove the keys from it that are not in this hook
+                resultKeys = resultKeys.filter(function(f){ return keys.indexOf(f)>-1;})
             }
         });
-        
-        resultKeys = resultKeys.filter(function(f){return f});
         
         utils.forEach(this._dataCube, function(hook, name) {
             var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
