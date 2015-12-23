@@ -334,6 +334,8 @@ MountainChart.define('default_options', {
     splash: true
   },
   ui: {
+    buttons: [],
+    dialogs: {popup: [], sidebar: [], moreoptions: []},      
     presentation: false
   }
 });
