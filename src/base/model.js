@@ -849,7 +849,7 @@ getFrame: function(time){
                 }else if(hook.which==="time"){
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
-                        result[t][name][key] = t;
+                        result[t][name][key] = new Date(t);
                     });
                 }else{
                     result[t][name] = frame[hook.which];
