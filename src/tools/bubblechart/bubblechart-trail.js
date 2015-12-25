@@ -84,9 +84,10 @@ export default Class.extend({
             .classed("vzb-highlighted", true)
             .datum();
           if(text !== labelData.trailStartTime) {
-            var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-            var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-            var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+            var values = _this.model.marker.getFrame(pointer.time);
+            var x = _this.xScale(values.axis_x[pointer[KEY]]);
+            var y = _this.yScale(values.axis_y[pointer[KEY]]);
+            var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
             _this._setTooltip(text, x, y, s);
           } 
           //change opacity to OPACITY_HIGHLT = 1.0;

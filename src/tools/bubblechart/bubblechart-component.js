@@ -965,15 +965,20 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
+    var values;
     var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    if(this.model.time.lockNonSelected && this.someSelected) {
+      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      values = this.model.marker.getFrame(tLocked);
+    } else {
+      values = this.model.marker.getFrame(this.time);
+    }
 
     this.entityBubbles.style("fill", function(d) {
-      var pointer = {};
-      pointer[KEY] = d[KEY];
-      pointer[TIMEDIM] = _this.time;
 
-      var valueC = _this.model.marker.color.getValue(pointer);
+      var valueC = values.color[d[KEY]];
+      if(valueC == null) return;
+   
       return _this.cScale(valueC);
     });
   },
@@ -1508,11 +1513,15 @@ var BubbleChartComp = Component.extend({
    * Shows and hides axis projections
    */
   _axisProjections: function(d) {
-    if(d != null) {
+    var TIMEDIM = this.TIMEDIM;
+    var KEY = this.KEY;
 
-      var valueY = this.model.marker.axis_y.getValue(d);
-      var valueX = this.model.marker.axis_x.getValue(d);
-      var valueS = this.model.marker.size.getValue(d);
+    if(d != null) {
+  
+      var values = this.model.marker.getFrame(d[TIMEDIM]);
+      var valueY = values.axis_y[d[KEY]];
+      var valueX = values.axis_x[d[KEY]];
+      var valueS = values.size[d[KEY]];
       var radius = utils.areaToRadius(this.sScale(valueS));
 
       if(!valueY || !valueX || !valueS) return;
@@ -1574,16 +1583,15 @@ var BubbleChartComp = Component.extend({
       if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
       } else {
-        d[TIMEDIM] = d.trailStartTime || _this.timeFormatter(_this.time);
+        d[TIMEDIM] = _this.timeFormatter.parse("" + d.trailStartTime) || _this.time;
       }
 
       this._axisProjections(d);
 
+      var values = _this.model.marker.getFrame(d[TIMEDIM]);
+
       //show tooltip
       var text = "";
-      var pointer = {};
-      pointer[KEY] = d[KEY];
-      pointer[TIMEDIM] = _this.time;
       if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
         text = _this.timeFormatter(_this.time);
         var labelData = _this.entityLabels
@@ -1592,18 +1600,15 @@ var BubbleChartComp = Component.extend({
           })
           .classed("vzb-highlighted", true)
           .datum();
-        text = text !== labelData.trailStartTime && text === d[TIMEDIM] ? text : '';
+        text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
       } else {
-        if (_this.model.time.lockNonSelected) {
-          pointer[TIMEDIM] = _this.model.time.lockNonSelected;
-        }
-        text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
+        text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
       }
       //set tooltip and show axis projections
       if(text) {
-        var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-        var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-        var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+        var x = _this.xScale(values.axis_x[d[KEY]]);
+        var y = _this.yScale(values.axis_y[d[KEY]]);
+        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
         _this._setTooltip(text, x, y, s);
       }
 
