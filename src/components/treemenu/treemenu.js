@@ -831,10 +831,7 @@ var TreeMenu = Component.extend({
 
     if(what == "which") {
       obj.use = indicatorsDB[value].use;
-
-      if(indicatorsDB[value].scales.indexOf(mdl.scaleType) == -1) {
-        obj.scaleType = indicatorsDB[value].scales[0];
-      }
+      obj.scaleType = indicatorsDB[value].scales[0];
     }
 
     if(mdl.getType() == 'axis') {
