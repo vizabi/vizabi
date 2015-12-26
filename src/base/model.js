@@ -818,6 +818,11 @@ getFrame: function(time){
         
         // Assemble the list of keys as an intersection of keys in all queries of all hooks
         utils.forEach(this._dataCube, function(hook, name) {
+            
+            // If hook use is constant, then we can provide no additional info about keys
+            // We can just hope that we have something else than constants =) 
+            if(hook.use==="constant")return;
+            
             // Get keys in data of this hook
             var nested = _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]);
             var keys = Object.keys(nested);
@@ -831,30 +836,42 @@ getFrame: function(time){
             }
         });
         
+        steps.forEach(function(t){ 
+            result[t] = {};
+        });
+        
         utils.forEach(this._dataCube, function(hook, name) {
-            var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
-            utils.forEach(frames, function(frame, t){ 
-                if(!result[t])result[t] = {};
-                
-                if(hook.use === "constant") {
+            
+            if(hook.use === "constant") {
+                steps.forEach(function(t){ 
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = hook.which;
                     });
-                }else if(hook.which==="geo"){
+                });
+                
+            }else if(hook.which==="geo"){
+                steps.forEach(function(t){ 
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = key;
                     });
-                }else if(hook.which==="time"){
+                });
+                
+            }else if(hook.which==="time"){
+                steps.forEach(function(t){ 
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = new Date(t);
                     });
-                }else{
+                });
+                
+            }else{
+                var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
+                utils.forEach(frames, function(frame, t){ 
                     result[t][name] = frame[hook.which];
-                }
-            });
+                });    
+            }
         });
     
         this.cachedFrames[cachePath] = result;
