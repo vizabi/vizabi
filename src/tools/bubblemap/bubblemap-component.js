@@ -618,7 +618,7 @@ var BubbleMapComponent = Component.extend({
     var cTitleText = this.cTitleEl.select("text");
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = cTitleText.node().getBBox();
+    var cTitleBB = cTitleText.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
 
     var font = 
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
