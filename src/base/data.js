@@ -263,7 +263,7 @@ var Data = Class.extend({
       // Get the list of columns that are in the dataset, exclude key column and animatable column
       // Example: [“lex”, “gdp”, “u5mr"]
       var query = this._collection[queryId].query;
-      var columns = query.select.filter(function(f){return f != KEY && f != TIME});
+      var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
       
       // FramesArray in the input contains the array of keyframes in animatable dimension. 
       // Example: array of years like [1800, 1801 … 2100]
@@ -432,23 +432,24 @@ var Data = Class.extend({
   },
     
     
-  _getLimitsPerFrame: function(queryId, framesArray, indicatorsDB) {
+  _getLimitsPerFrame: function(queryId, args, indicatorsDB) {
     var result = {};
     var values = [];
       
-    var frames = this.get(queryId, 'frames', framesArray, indicatorsDB);
+    var frames = this.get(queryId, 'frames', args.framesArray, indicatorsDB);
       
     utils.forEach(frames, function(frame, t){
         result[t] = {};
         
-        utils.forEach(frame, function(column, c){
-            values = utils.values(column);
-            result[t][c] = {
-                max: d3.max(values),
-                min: d3.min(values)
-            }
-        });
+        values = utils.values(frame[args.which]);
+        
+        result[t] = !values || !values.length ? {max: 0, min: 0} : {
+            max: d3.max(values), 
+            min: d3.min(values)
+        }
     });    
+    
+    return result;
   },
     
   _getLimits: function(queryId, attr) {

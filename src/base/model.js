@@ -1166,7 +1166,6 @@ getFrame: function(time){
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
   gerLimitsPerFrame: function() {
-    var _this = this;
       
     if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property"); 
     if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
@@ -1196,10 +1195,8 @@ getFrame: function(time){
         });
 
     }else{
-        var limitsPerFrame = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', steps, globals.metadata.indicatorsDB);   
-        utils.forEach(limitsPerFrame, function(frame, t){ 
-            result[t] = frame[_this.which];
-        });
+        var args = {framesArray: steps, which: this.which};
+        result = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);   
     }
       
     return result;
