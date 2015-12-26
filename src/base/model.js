@@ -1161,44 +1161,47 @@ getFrame: function(time){
     return _DATAMANAGER.get(this._dataId, 'unique', attr);
   },
 
-  //TODO: Is this supposed to be here?
+  //TODO: this should go down to datamanager, hook should only provide interface
   /**
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
-  getMaxMinMean: function(options) {
+  gerLimitsPerFrame: function() {
     var _this = this;
+      
+    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property"); 
+    if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
+      
     var result = {};
-    //TODO: d3 is global?
-    //Can we do this without d3?
-    //yes if we copy d3 nest to out utils https://github.com/mbostock/d3/blob/master/src/arrays/nest.js
-    var dim = this._getFirstDimension({
-      type: 'time'
-    });
+    var values = [];
+    var value = null;
+      
+    var steps = this._parent._parent.time.getAllSteps();
+      
+    if(this.use === "constant") {
+        steps.forEach(function(t){ 
+            value = this.which;
+            result[t] = {
+                min: value,
+                max: value
+            }
+        });
 
-    d3.nest()
-      .key(function(d) {
-        return options.timeFormatter(d[dim]);
-      })
-      .entries(_DATAMANAGER.get(this._dataId))
-      .forEach(function(d) {
-        var values = d.values
-          .filter(function(f) {
-            return f[_this.which] !== null;
-          })
-          .map(function(m) {
-            return +m[_this.which];
-          });
+    }else if(this.which==="time"){
+        steps.forEach(function(t){ 
+            value = new Date(t);
+            result[t] = {
+                min: value,
+                max: value
+            }
+        });
 
-        if(options.skipZeros) values = values.filter(function(f) {
-          return f != 0
-        })
-
-        result[d.key] = {
-          max: d3.max(values),
-          min: d3.min(values),
-          mean: d3.mean(values)
-        };
-      });
+    }else{
+        var limitsPerFrame = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', steps, globals.metadata.indicatorsDB);   
+        utils.forEach(limitsPerFrame, function(frame, t){ 
+            result[t] = frame[_this.which];
+        });
+    }
+      
     return result;
   },
 

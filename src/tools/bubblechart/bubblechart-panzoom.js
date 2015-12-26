@@ -259,9 +259,9 @@ export default Class.extend({
     expandCanvas: function() {
         var _this = this.context;
 
-        var mmmX = _this.xyMaxMinMean.x[_this.timeFormatter(_this.time)];
-        var mmmY = _this.xyMaxMinMean.y[_this.timeFormatter(_this.time)];
-        var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[_this.timeFormatter(_this.time)].max));
+        var mmmX = _this.xyMaxMinMean.x[_this.time];
+        var mmmY = _this.xyMaxMinMean.y[_this.time];
+        var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[_this.time].max));
         var frame = _this.currentZoomFrameXY;
 
         var pan = this.zoomer.translate();

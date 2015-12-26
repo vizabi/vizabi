@@ -155,6 +155,7 @@ var Data = Class.extend({
           col.nested = {};
           col.unique = {};
           col.limits = {};
+          col.limitsPerFrame = {};
           col.frames = {};
           col.query = q;
           // col.sorted = {}; // TODO: implement this for sorted data-sets, or is this for the server/(or file reader) to handle?
@@ -217,6 +218,9 @@ var Data = Class.extend({
         break;
       case 'limits':
         this._collection[queryId][what][id] = this._getLimits(queryId, whatId);
+        break;
+      case 'limitsPerFrame':
+        this._collection[queryId][what][id] = this._getLimitsPerFrame(queryId, whatId, args);
         break;
       case 'frames':
         this._collection[queryId][what][id] = this._getFrames(queryId, whatId, args);
@@ -426,7 +430,27 @@ var Data = Class.extend({
   _getFiltered: function(queryId, filter) {
     return utils.filter(this._collection[queryId].data, filter);
   },
-
+    
+    
+  _getLimitsPerFrame: function(queryId, framesArray, indicatorsDB) {
+    var result = {};
+    var values = [];
+      
+    var frames = this.get(queryId, 'frames', framesArray, indicatorsDB);
+      
+    utils.forEach(frames, function(frame, t){
+        result[t] = {};
+        
+        utils.forEach(frame, function(column, c){
+            values = utils.values(column);
+            result[t][c] = {
+                max: d3.max(values),
+                min: d3.min(values)
+            }
+        });
+    });    
+  },
+    
   _getLimits: function(queryId, attr) {
 
     var items = this._collection[queryId].data;

@@ -480,18 +480,9 @@ var BubbleChartComp = Component.extend({
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
 
     this.xyMaxMinMean = {
-      x: this.model.marker.axis_x.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      }),
-      y: this.model.marker.axis_y.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      }),
-      s: this.model.marker.size.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      })
+      x: this.model.marker.axis_x.gerLimitsPerFrame(),
+      y: this.model.marker.axis_y.gerLimitsPerFrame(),
+      s: this.model.marker.size.gerLimitsPerFrame()
     };
   },
 
