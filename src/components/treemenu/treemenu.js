@@ -839,10 +839,9 @@ var TreeMenu = Component.extend({
       obj.max = null;
       obj.fakeMin = null;
       obj.fakeMax = null;
+      mdl.scale = null;
     }
-
     mdl.set(obj);
-
   }
 
 
