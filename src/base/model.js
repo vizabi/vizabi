@@ -50,7 +50,17 @@ var ModelLeaf = EventSource.extend({
       this._val = val;
       this.trigger(new ChangeEvent(this, persistent), this._name);
     }
+  },
+
+  // duplicate from Model. Should be in a shared parent class.
+  setTreeFreezer: function(freezerStatus) {
+    if (freezerStatus) {
+      this.freeze();
+    } else {
+      this.unfreeze();
+    }
   }
+
 })
 
 var Model = EventSource.extend({
@@ -129,10 +139,11 @@ var Model = EventSource.extend({
    * @param attr property name
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
+   * @param {Boolean} persistent true if the change is a persistent change
+   * @param {Boolean} recursiveCall true if the call is a recursivecall. Undefined for the first call. Used to determine when to trigger events.
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force, persistent) {
-    var changes = [];
+  set: function(attr, val, force, persistent, recursiveCall) {
     var setting = this._setting;
     var attrs;
     
@@ -140,13 +151,20 @@ var Model = EventSource.extend({
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
     } else {
+      // move all arguments one place
       attrs = attr;
+      recursiveCall = persistent;
       persistent = force;
       force = val;
     }
 
     //we are currently setting the model
     this._setting = true;
+
+    // Freeze the whole model tree if first call, so no events are fired while setting
+    if (!recursiveCall) {
+      this.setTreeFreezer(true);
+    }
 
     // init/set all given values
     var newSubmodels = false;
@@ -158,7 +176,7 @@ var Model = EventSource.extend({
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[a].set(val, force, persistent);
+        this._data[a].set(val, force, persistent, true);
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[a] = initSubmodel(a, val, this);
@@ -166,6 +184,12 @@ var Model = EventSource.extend({
       }
     }
 
+    // Unfreeze the whole model tree if first call, now all set events are fired
+    if (!recursiveCall) {
+      this.setTreeFreezer(false);
+    }
+
+    // only if there's new submodels, we have to set new getters/setters
     if (newSubmodels)
       bindSettersGetters(this);
 
@@ -184,6 +208,18 @@ var Model = EventSource.extend({
         this.setReady();
       }
     }
+  },
+
+  setTreeFreezer: function(freezerStatus) {
+    if (freezerStatus) {
+      this.freeze();
+    } else {
+      this.unfreeze();
+    }
+
+    utils.forEach(this._data, function(submodel) {
+      submodel.setTreeFreezer(freezerStatus);
+    });
   },
 
   /**
@@ -1424,7 +1460,7 @@ function initSubmodel(attr, val, ctx) {
       var modelType = attr.split('_')[0];
       var Modl = Model.get(modelType, true) || models[modelType] || Model;
       submodel = new Modl(attr, val, ctx, binds, true);
-      submodel.unfreeze(); // unfreeze after loading it TODO: should this not be in the model itself?
+      // model is still frozen but will be unfrozen at end of original .set()
     }
   }
 
