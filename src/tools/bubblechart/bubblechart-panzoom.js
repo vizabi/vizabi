@@ -123,8 +123,19 @@ export default Class.extend({
                 if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
                 if(isNaN(zoom) || zoom == null) zoom = 1;
 
+                var sourceEvent = d3.event.sourceEvent;
+
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-                if(zoom == 1) {
+                /*
+                 * Mouse wheel and touchmove events set the zoom value
+                 * independently of axis ratios. If the zoom event was triggered
+                 * by a mouse wheel event scrolling down or touchmove event with
+                 * more than 1 contact that sets zoom to 1, then set the axis
+                 * ratios to 1 as well, which will fully zoom out.
+                 */
+                if(zoom === 1 && sourceEvent !== null &&
+                    (sourceEvent.type === "wheel" && sourceEvent.deltaY > 0 ||
+                     sourceEvent.type === "touchmove" && sourceEvent.touches.length > 1)) {
                     zoomer.ratioX = 1;
                     ratioX = 1;
                     zoomer.ratioY = 1;
