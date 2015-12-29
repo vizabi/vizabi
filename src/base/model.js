@@ -210,16 +210,21 @@ var Model = EventSource.extend({
     }
   },
 
+
   setTreeFreezer: function(freezerStatus) {
+
+    // first traverse down
+    // this ensures deepest events are triggered first
+    utils.forEach(this._data, function(submodel) {
+      submodel.setTreeFreezer(freezerStatus);
+    });
+
+    // then freeze/unfreeze
     if (freezerStatus) {
       this.freeze();
     } else {
       this.unfreeze();
     }
-
-    utils.forEach(this._data, function(submodel) {
-      submodel.setTreeFreezer(freezerStatus);
-    });
   },
 
   /**
