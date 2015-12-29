@@ -25,7 +25,6 @@ export default Class.extend({
         this.zoomer.ratioY = 1;
     },
 
-
     drag: function(){
         var _this = this.context;
         var self = this;
@@ -84,7 +83,6 @@ export default Class.extend({
         };
     },
 
-
     zoom: function() {
         var _this = this.context;
         var zoomer = this.zoomer;
@@ -95,7 +93,6 @@ export default Class.extend({
 
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-                //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
 //
 //                    if(d3.event.scale == 1)
@@ -119,8 +116,6 @@ export default Class.extend({
                 var pan = d3.event.translate;
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
-
-                // console.log(d3.event.scale, zoomer.ratioY, zoomer.ratioX)
 
                 _this.draggingNow = true;
 
@@ -252,10 +247,6 @@ export default Class.extend({
         };
     },
 
-
-
-
-
     expandCanvas: function() {
         var _this = this.context;
 
@@ -310,7 +301,6 @@ export default Class.extend({
             //console.log("no rezoom")
         }
     },
-
 
     zoomToMaxMin: function(fakeMinX, fakeMaxX, fakeMinY, fakeMaxY, duration){
         var _this = this.context;
@@ -409,7 +399,6 @@ export default Class.extend({
 
     },
 
-
     _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
         var _this = this.context;
         var zoomer = this.zoomer;
@@ -458,7 +447,4 @@ export default Class.extend({
         this.zoomer.duration = 0;
         this.zoomer.event(element || _this.element);
     }
-
-
-
 });
