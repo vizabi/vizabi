@@ -25,7 +25,6 @@ export default Class.extend({
         this.zoomer.ratioY = 1;
     },
 
-
     drag: function(){
         var _this = this.context;
         var self = this;
@@ -84,7 +83,6 @@ export default Class.extend({
         };
     },
 
-
     zoom: function() {
         var _this = this.context;
         var zoomer = this.zoomer;
@@ -95,7 +93,6 @@ export default Class.extend({
 
                 if(d3.event.sourceEvent != null && (d3.event.sourceEvent.ctrlKey || d3.event.sourceEvent.metaKey)) return;
 
-                //console.log("zoom")
                 //send the event to the page if fully zoomed our or page not scrolled into view
 //
 //                    if(d3.event.scale == 1)
@@ -120,16 +117,20 @@ export default Class.extend({
                 var ratioY = zoomer.ratioY;
                 var ratioX = zoomer.ratioX;
 
-                // console.log(d3.event.scale, zoomer.ratioY, zoomer.ratioX)
-
                 _this.draggingNow = true;
 
                 //value protections and fallbacks
                 if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
                 if(isNaN(zoom) || zoom == null) zoom = 1;
 
+                var sourceEvent = d3.event.sourceEvent;
+
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-                if(zoom == 1) {
+                /*
+                 * If zoom is 1 and scrolling down with the mousewheel to zoom
+                 * out, then reset the X and Y ratios to 1.
+                 */
+                if(zoom === 1 && sourceEvent !== null && sourceEvent.type === "wheel" && sourceEvent.deltaY > 0) {
                     zoomer.ratioX = 1;
                     ratioX = 1;
                     zoomer.ratioY = 1;
@@ -252,10 +253,6 @@ export default Class.extend({
         };
     },
 
-
-
-
-
     expandCanvas: function() {
         var _this = this.context;
 
@@ -310,7 +307,6 @@ export default Class.extend({
             //console.log("no rezoom")
         }
     },
-
 
     zoomToMaxMin: function(fakeMinX, fakeMaxX, fakeMinY, fakeMaxY, duration){
         var _this = this.context;
@@ -409,7 +405,6 @@ export default Class.extend({
 
     },
 
-
     _zoomOnRectangle: function(element, x1, y1, x2, y2, compensateDragging, duration) {
         var _this = this.context;
         var zoomer = this.zoomer;
@@ -458,7 +453,4 @@ export default Class.extend({
         this.zoomer.duration = 0;
         this.zoomer.event(element || _this.element);
     }
-
-
-
 });
