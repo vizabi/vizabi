@@ -83,9 +83,7 @@ var DraggableList = Component.extend({
       
       .on('dragend', function(d, i) {
         if(_this.dataUpdateFlag) return;
-                
-        _this.dataUpdateFlag = true;
-        _this.updateData();
+        _this.getData();     
       })
       
   },
@@ -134,8 +132,8 @@ var DraggableList = Component.extend({
     this.dataUpdateFlag = false;
      
   },
-
-  updateData: function() {
+  
+  getData: function() {
     var dataArr = [];
     var data = this.element
       .selectAll('div').data();
@@ -147,9 +145,16 @@ var DraggableList = Component.extend({
       .map(function(d) {
         return d.data        
       })
-    
-    this.dataArrFn(dataArr);
-    
+    if(utils.arrayEquals(this.dataArrFn(), dataArr)) {
+      this.updateView();
+    } else {
+      this.dataUpdateFlag = true;
+      this.updateData(dataArr);
+    }
+  },
+  
+  updateData: function(dataArr) {
+    this.dataArrFn(dataArr);    
   },
 
   readyOnce: function() {
