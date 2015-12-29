@@ -123,8 +123,14 @@ export default Class.extend({
                 if(isNaN(zoom) || zoom == null) zoom = zoomer.scale();
                 if(isNaN(zoom) || zoom == null) zoom = 1;
 
+                var sourceEvent = d3.event.sourceEvent;
+
                 //TODO: this is a patch to fix #221. A proper code review of zoom and zoomOnRectangle logic is needed
-                if(zoom == 1) {
+                /*
+                 * If zoom is 1 and scrolling down with the mousewheel to zoom
+                 * out, then reset the X and Y ratios to 1.
+                 */
+                if(zoom === 1 && sourceEvent !== null && sourceEvent.type === "wheel" && sourceEvent.deltaY > 0) {
                     zoomer.ratioX = 1;
                     ratioX = 1;
                     zoomer.ratioY = 1;
