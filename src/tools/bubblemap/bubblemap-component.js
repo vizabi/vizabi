@@ -556,19 +556,23 @@ var BubbleMapComponent = Component.extend({
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
 
-      d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-      d.r = utils.areaToRadius(_this.sScale(valueS));
-      d.label = valueL;
+      d.hidden_1 = d.hidden;
+      d.hidden = !valueS || !valueX || !valueY;
 
-      if(!valueS || !valueX || !valueY){
-          view.classed("vzb-hidden", true);
-      }else{
+      if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
+        
+      if(!d.hidden){
+          
+          d.r = utils.areaToRadius(_this.sScale(valueS));
+          d.label = valueL;
+          
           view.classed("vzb-hidden", false)
               .attr("fill", _this.cScale(valueC))
           
           if(reposition){
-              view
-                  .attr("cx", d.cLoc[0])
+              d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+              
+              view.attr("cx", d.cLoc[0])
                   .attr("cy", d.cLoc[1]);
           }
 
@@ -1093,11 +1097,6 @@ var BubbleMapComponent = Component.extend({
           d3.select(this).selectAll(".vzb-bmc-label-x")
             .classed("vzb-transparent", true);
         })
-
-        //positioning and sizes of the bubble Labels
-        this.bubbleContainer.selectAll('.vzb-bmc-bubble').each(function (d, index) {
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, _this.duration);
-        });
 
         // hide recent hover tooltip
         if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
