@@ -516,11 +516,6 @@ var Data = Class.extend({
       language,
       reader
     ]);
-    var q1 = JSON.stringify([
-      query,
-      language,
-      reader
-    ]);
     //simply check if we have this in internal data
     if(Object.keys(this._collection).indexOf(q) !== -1) {
       return q;
