@@ -55,13 +55,9 @@ var BubbleMapComponent = Component.extend({
     var _this = this;
     this.model_binds = {
       "change:time.value": function (evt) {
-        _this.updateEntities();
         _this.updateTime();
-        _this.selectEntities();
-        //_this._selectlist.redraw();
-
-        _this.updateOpacity();
         _this.updateDoubtOpacity();
+        _this.redrawDataPoints(null, false);
       },
       "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
@@ -73,30 +69,33 @@ var BubbleMapComponent = Component.extend({
         if(!_this._readyOnce) return;
         if(path.indexOf("marker.size") !== -1) return;
         if(path.indexOf("marker.color.palette") > -1) return;
+        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
+
         _this.ready();
       },
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
         if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
-          _this.ready();
+          _this.updateMarkerSizeLimits();
+          _this.redrawDataPoints(null, false);
+          return;
         }
+        _this.ready();
       },
-      "change:marker.color.palette": function (evt) {
+      "change:marker.color": function (evt, path) {
+          // can't register to marker.color.palette because palette tends to change object (Model/ModelLeaf) which causes all previous eventHandlers to be discarded
+          if (path.indexOf('palette') === -1) return; 
           if (!_this._readyOnce) return;
-          //_this.redrawDataPointsOnlyColors();
-          //_this._selectlist.redraw();
-          _this.ready();
+          _this.redrawDataPoints(null, false);
       },
       "change:entities.select": function (evt) {
           if (!_this._readyOnce) return;
-
-          // _this.selectEntities();
-          // _this._selectlist.redraw();
-          // _this.updateDoubtOpacity();
-          // _this.updateOpacity();
-
-          _this.ready();
+          _this.selectEntities();
+          _this.redrawDataPoints(null, false);
+          _this.updateOpacity();
+          _this.updateDoubtOpacity();
+          
       },
       "change:entities.opacitySelectDim": function (evt) {
           _this.updateOpacity();
@@ -263,21 +262,25 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-      /*
+      
       _this.updateSize();
       _this.updateMarkerSizeLimits();
-      _this.updateEntities();
-      _this._selectlist.redraw();
-      */
-      _this.ready();
+      _this.redrawDataPoints();
+      //_this._selectlist.redraw();
+      
     });
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
+      
+      
+    this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
+      
+      
 
   },
 
@@ -291,6 +294,7 @@ var BubbleMapComponent = Component.extend({
     this.updateMarkerSizeLimits();
     this.updateEntities();
     this.updateTime();
+    this.redrawDataPoints();
     this.highlightEntities();
     this.selectEntities();
 //    this._selectlist.redraw();
@@ -302,6 +306,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();
+      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);      
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -455,10 +460,6 @@ var BubbleMapComponent = Component.extend({
    * Changes labels for indicators
    */
   updateIndicators: function () {
-    var _this = this;
-    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
-    this.duration = this.model.time.speed;
-
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -469,29 +470,31 @@ var BubbleMapComponent = Component.extend({
   updateEntities: function () {
 
     var _this = this;
-    var time = this.model.time;
-    // var latDim = this.model.lat.getDimension();
-    // var lngDim = this.model.lng.getDimension();
-    // console.log(latDim, lngDim, 'ok');
-    var duration = (time.playing) ? time.speed : 0;
-    var filter = {};
-    filter[_this.TIMEDIM] = time.value;
-    var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getFrame(time.value);
-    _this.values = values;
+    var KEY = this.KEY;
+    var TIMEDIM = this.TIMEDIM;
 
-    /*
-    // construct pointers
-    this.pointers = this.model.marker.getKeys()
-        .map(function (d) {
-            var pointer = {};
-            pointer[_this.KEY] = d[_this.KEY];
-            pointer.KEY = function () {
-                return this[_this.KEY];
-            };
-            return pointer;
-        });
-    */
+    var getKeys = function(prefix) {
+      prefix = prefix || "";
+      return this.model.marker.getKeys()
+        .map(function(d) {
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = endTime;
+          pointer.sortValue = _this.values.size[d[KEY]];
+          pointer[KEY] = prefix + d[KEY];
+          return pointer;
+        })
+        .sort(function(a, b) {
+          return b.sortValue - a.sortValue;
+        })
+    };
+      
+    // get array of GEOs, sorted by the size hook
+    // that makes larger bubbles go behind the smaller ones
+    var endTime = this.model.time.end;
+    _this.values = this.model.marker.getFrame(endTime);
+    this.model.entities.setVisible(getKeys.call(this));
+
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E
@@ -507,82 +510,77 @@ var BubbleMapComponent = Component.extend({
     };
     */
 
-    items = items.sort(function (a, b) { // small circle to front
-      return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
-    });
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(items, function (d) { return d[_this.KEY]; });
+      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; });
 
-    if (!this.renderedOnce) {
+    //exit selection
+    this.entityBubbles.exit().remove();
 
-      //enter selection -- init circles
-      this.entityBubbles.enter().append("circle")
-        .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._mouseout(d, i);
-        })
-        .on("click", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._click(d, i);
-            _this.highlightEntities();
-        })
-        .onTap(function (d, i) {
-            _this._interact()._click(d, i);
-            d3.event.stopPropagation();
-        })
-        .onLongTap(function (d, i) {
-        })
-      this.renderedOnce = true;
-    }
+    //enter selection -- init circles
+    this.entityBubbles.enter().append("circle")
+      .attr("class", "vzb-bmc-bubble")
+      .on("mouseover", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseover(d, i);
+      })
+      .on("mouseout", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseout(d, i);
+      })
+      .on("click", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+          _this.highlightEntities();
+      })
+      .onTap(function (d, i) {
+          _this._interact()._click(d, i);
+          d3.event.stopPropagation();
+      })
+      .onLongTap(function (d, i) {
+      })
 
-    //positioning and sizes of the bubbles
-    if (time.playing && duration) {
-      if (this.bubblesDrawing && this.bubblesDrawing > 0) return;
-    }
+  },
+    
+  redrawDataPoints: function(duration, reposition){
+    var _this = this;  
+    if(!duration) duration = this.duration;
+    if(!reposition) reposition = true;
+      
+    this.entityBubbles.each(function(d, index){
+      var view = d3.select(this);
 
-    this.bubblesDrawing = 0;
-    this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .each(function(d, index){
-        var view = d3.select(this);
+      var valueX = _this.values.lng[d[_this.KEY]]||0;
+      var valueY = _this.values.lat[d[_this.KEY]]||0;
+      var valueS = _this.values.size[d[_this.KEY]]||0;
+      var valueC = _this.values.color[d[_this.KEY]];
+      var valueL = _this.values.label[d[_this.KEY]];
 
-        var valueX = +values.lng[d[_this.KEY]]||0;
-        var valueY = +values.lat[d[_this.KEY]]||0;
-        var valueS = +values.size[d[_this.KEY]]||0;
-        var valueC = values.color[d[_this.KEY]];
-        var valueL = values.label[d[_this.KEY]];
+      d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+      d.r = utils.areaToRadius(_this.sScale(valueS));
+      d.label = valueL;
 
-        d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-        d.r = utils.areaToRadius(_this.sScale(valueS));
-        d.color = _this.cScale(valueC);
-        d.label = valueL;
+      if(!valueS || !valueX || !valueY){
+          view.classed("vzb-hidden", true);
+      }else{
+          view.classed("vzb-hidden", false)
+              .attr("fill", _this.cScale(valueC))
+          
+          if(reposition){
+              view
+                  .attr("cx", d.cLoc[0])
+                  .attr("cy", d.cLoc[1]);
+          }
 
-        if(!valueS || !valueX || !valueY){
-            view.classed("vzb-hidden", true);
-        }else{
-            view.classed("vzb-hidden", false)
-                .attr("fill", d.color)
-                .attr("cx", d.cLoc[0])
-                .attr("cy", d.cLoc[1]);
+          if(duration){
+              view.transition().duration(duration).ease("linear")
+                  .attr("r", d.r);
+          }else{
+              view.interrupt()
+                  .attr("r", d.r);
+          }
 
-            if(duration){
-                ++ _this.bubblesDrawing;
-                view.transition().duration(duration).ease("linear")
-                    .attr("r", d.r)
-                    .each('end', function() {
-                      _this.bubblesDrawing > 0 ? -- _this.bubblesDrawing: null;
-                    });
-            }else{
-                view.interrupt()
-                    .attr("r", d.r);
-            }
-
-            _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
         }
 
       });
@@ -599,6 +597,7 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
+    this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();
