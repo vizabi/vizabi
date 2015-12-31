@@ -91,7 +91,7 @@ var ColorModel = Model.extend({
     this._resetPalette = true;
     this._super();
   },
-
+  
   /**
    * Get the above constants
    */
@@ -126,7 +126,9 @@ var ColorModel = Model.extend({
 
 
       //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-      this.set("palette", null, false);
+      if(this.palette) {
+        this.palette._data = {};
+      }
 
       if(palettes[this.which]) {
         this.palette = utils.clone(palettes[this.which]);

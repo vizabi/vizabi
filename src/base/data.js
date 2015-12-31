@@ -123,6 +123,19 @@ var Data = Class.extend({
       // remove double columns from select (resulting from merging)
       query.select = utils.unique(query.select);
 
+      //create hash for dimensions only query
+      var dim, dimQ, dimQId = 0; 
+      dimQ = utils.clone(query);
+      dim = utils.keys(dimQ.grouping);
+      if (utils.arrayEquals(dimQ.select.slice(0, dim.length), dim)) {
+        dimQ.select = dim;
+        dimQId = utils.hashCode([
+          dimQ,
+          lang,
+          reader
+        ]);
+      }
+
       // Create a new reader for this query
       var readerClass = Reader.get(reader_name);
       if (!readerClass) {
@@ -169,6 +182,11 @@ var Data = Class.extend({
             // resolve the query
             mergedQuery.promise.resolve(mergedQuery.queryId);
           });
+  
+          //create cache record for dimension only query
+          if(dimQId !== 0) {
+            _this._collection[dimQId] = _this._collection[queryId];              
+          }
           //promise.resolve(queryId);
         }, //error reading
         function(err) { 
@@ -494,6 +512,11 @@ var Data = Class.extend({
   isCached: function(query, language, reader) {
     //encode in hashCode
     var q = utils.hashCode([
+      query,
+      language,
+      reader
+    ]);
+    var q1 = JSON.stringify([
       query,
       language,
       reader

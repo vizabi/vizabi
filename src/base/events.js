@@ -76,7 +76,7 @@ var EventSource = Class.extend({
 
     // if no arguments, unbind all
     if (arguments.length == 0) {
-      this_events = {};
+      this._events = {};
       return;
     }
 
