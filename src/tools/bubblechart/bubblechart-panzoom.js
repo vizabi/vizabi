@@ -260,7 +260,7 @@ export default Class.extend({
 
     expandCanvas: function() {
         var _this = this.context;
-        
+
         var timeRounded = _this.timeFormatter.parse( _this.timeFormatter(_this.time) );
 
         var mmmX = _this.xyMaxMinMean.x[timeRounded];
@@ -308,10 +308,8 @@ export default Class.extend({
             _this.currentZoomFrameXY = utils.clone(suggestedFrame);
             var frame = _this.currentZoomFrameXY;
             this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
-            //console.log("rezoom")
         } else {
             _this.redrawDataPoints(_this.duration);
-            //console.log("no rezoom")
         }
     },
 
