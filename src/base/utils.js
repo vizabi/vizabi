@@ -983,6 +983,56 @@ export var throttle = function(func, ms) {
 };
 
 /*
+ * Throttles a function
+ * @param {Function} func
+ * @param {Number} ms duration
+ * 
+ * @return {Function throttle,   - throttle func
+ *          Function recallLast} - immediate recall func with last saved arguments,
+ *                        else recallLast will be called automaticly after ms duration
+ *                      
+ * 
+ */
+export var throttle2 = function(func, ms) {
+
+  var throttled = false,
+    savedArgs,
+    savedThis,
+    nextTime,
+    wrapper = function() {
+      
+      if(nextTime > Date.now()) {
+        throttled = true;        
+        savedArgs = arguments;
+        savedThis = this;
+        return;
+      }
+
+      nextTime = Date.now() + ms;
+      throttled = false;
+      
+      func.apply(this, arguments);
+
+      setTimeout(function() {
+        recallLast();          
+      }, ms);
+
+    }.bind(this),
+    
+    recallLast = function() {
+      if(throttled) {
+        throttled = false;
+        func.apply(savedThis, savedArgs);
+      }     
+    }.bind(this);
+
+  return {
+      'throttle' : wrapper,
+      'recallLast' : recallLast
+    };
+};
+
+/*
  * Returns keys of an object as array
  * @param {Object} arg
  * @returns {Array} keys
