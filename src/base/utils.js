@@ -952,48 +952,12 @@ export var hasClass = function(el, className) {
  * Throttles a function
  * @param {Function} func
  * @param {Number} ms duration
+ * @return {Function}
+ * Function recallLast was added to prototype of returned function.
+ * Call Function.recallLast() - immediate recall func with last saved arguments,
+ *                              else func will be called automaticly after ms duration
  */
 export var throttle = function(func, ms) {
-
-  var isThrottled = false,
-    savedArgs,
-    savedThis,
-    wrapper = function() {
-
-      if(isThrottled) {
-        savedArgs = arguments;
-        savedThis = this;
-        return;
-      }
-
-      func.apply(this, arguments);
-
-      isThrottled = true;
-
-      setTimeout(function() {
-        isThrottled = false;
-        if(savedArgs) {
-          wrapper.apply(savedThis, savedArgs);
-          savedArgs = savedThis = null;
-        }
-      }, ms);
-    }
-
-  return wrapper;
-};
-
-/*
- * Throttles a function
- * @param {Function} func
- * @param {Number} ms duration
- * 
- * @return {Function throttle,   - throttle func
- *          Function recallLast} - immediate recall func with last saved arguments,
- *                        else recallLast will be called automaticly after ms duration
- *                      
- * 
- */
-export var throttle2 = function(func, ms) {
 
   var throttled = false,
     savedArgs,
@@ -1014,23 +978,23 @@ export var throttle2 = function(func, ms) {
       func.apply(this, arguments);
 
       setTimeout(function() {
-        recallLast();          
+        __recallLast();          
       }, ms);
 
-    }.bind(this),
+    },
     
-    recallLast = function() {
+    __recallLast = function() {
       if(throttled) {
         throttled = false;
         func.apply(savedThis, savedArgs);
       }     
-    }.bind(this);
-
-  return {
-      'throttle' : wrapper,
-      'recallLast' : recallLast
     };
+
+  wrapper.recallLast = __recallLast; 
+
+  return wrapper;
 };
+
 
 /*
  * Returns keys of an object as array
