@@ -140,7 +140,7 @@ var TimeSlider = Component.extend({
     this.height = 0;
 
     this.getValueWidth = utils.memoize(this.getValueWidth);
-    this._setTime = utils.throttle2.call(this, this._setTime, 50);
+    this._setTime = utils.throttle(this._setTime, 50);
   },
 
   //template is ready
@@ -343,7 +343,7 @@ var TimeSlider = Component.extend({
 
       //set time according to dragged position
       if(value - _this.model.time.value !== 0) {
-        _this._setTime.throttle(value);
+        _this._setTime(value);
       }
     };
   },
