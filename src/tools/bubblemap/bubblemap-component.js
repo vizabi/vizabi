@@ -724,7 +724,7 @@ var BubbleMapComponent = Component.extend({
     }());
 
 
-    this.yTitleEl.select("text")
+    this.yTitleEl
         .style("font-size", infoElHeight)
         .attr("transform", "translate(0," + margin.top + ")")
 
@@ -754,7 +754,7 @@ var BubbleMapComponent = Component.extend({
             .attr("height", infoElHeight)
         this.infoEl.attr('transform', 'translate('
             + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+            + (translate[1] - infoElHeight * 0.8) + ')');
     }
   },
 
