@@ -610,12 +610,11 @@ var BubbleMapComponent = Component.extend({
     
   fitSizeOfTitles: function(){
       
-    /*
+    //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
     var cTitleText = this.cTitleEl.select("text")
-      .style("font-size", null);
-    */
+      .style("font-size", null);    
 
     var yTitleText = this.yTitleEl.select("text");
     var cTitleText = this.cTitleEl.select("text");
@@ -631,10 +630,10 @@ var BubbleMapComponent = Component.extend({
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
-      /*
+      
+      // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
       cTitleText.style("font-size", null);
-      */
     }
       
   },
