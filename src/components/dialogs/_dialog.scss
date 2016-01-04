@@ -361,26 +361,32 @@ $vzb-dialog-content-height: 250px;
           &.vzb-active {
             @include position(absolute, null 0 45px 0);
           }
-        }
-        .vzb-dialog-content.vzb-dialog-content-fixed {
-          max-height: $vzb-dialog-content-height - 50px;
+          >.vzb-dialog-modal {
+            >.vzb-dialog-content.vzb-dialog-content-fixed {
+              max-height: $vzb-dialog-content-height - 50px;
+            }
+          }
         }
       }
     }
   }
   &.vzb-landscape {
     .vzb-dialogs-dialog {
-      .vzb-dialog-content,
-      .vzb-dialog-content.vzb-dialog-content-fixed {
-        max-height: $vzb-dialog-content-height - 100px !important;
-      }
-
-      .vzb-dialog-buttons {
-        padding: 5px 25px 6px;
-      }
-
-      .vzb-dialog-title {
-        padding: 30px 25px 10px;
+      &.vzb-popup {
+        >.vzb-dialog-modal {
+          >.vzb-dialog-content,
+          >.vzb-dialog-content.vzb-dialog-content-fixed {
+            max-height: $vzb-dialog-content-height - 100px !important;
+          }
+    
+          >.vzb-dialog-buttons {
+            padding: 5px 25px 6px;
+          }
+    
+          >.vzb-dialog-title {
+            padding: 30px 25px 10px;
+          }
+        }
       }
     }
   }
