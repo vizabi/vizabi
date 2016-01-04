@@ -112,10 +112,15 @@ var MountainChartComponent = Component.extend({
             },
             "change:marker": function (evt, path) {
                 if (!_this._readyOnce) return;
+                if(path.indexOf("scaleType") > -1) {
+                    _this.ready();
+                    return;
+                }
                 if (path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
                     _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
+                    return;
                 }
             },
             "change:marker.group": function (evt, path) {

@@ -67,11 +67,8 @@ var BubbleMapComponent = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(path.indexOf("marker.size") !== -1) return;
-        if(path.indexOf("marker.color.palette") > -1) return;
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
-
-        _this.ready();
+          
+        if(path.indexOf("scaleType") > -1) _this.ready();
       },
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
@@ -81,11 +78,8 @@ var BubbleMapComponent = Component.extend({
           _this.redrawDataPoints(null, false);
           return;
         }
-        _this.ready();
       },
-      "change:marker.color": function (evt, path) {
-          // can't register to marker.color.palette because palette tends to change object (Model/ModelLeaf) which causes all previous eventHandlers to be discarded
-          if (path.indexOf('palette') === -1) return; 
+      "change:marker.color.palette": function (evt, path) {
           if (!_this._readyOnce) return;
           _this.redrawDataPoints(null, false);
       },

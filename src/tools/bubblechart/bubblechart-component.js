@@ -84,8 +84,14 @@ var BubbleChartComp = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
+        
+        if(path.indexOf("scaleType") > -1) {
+          _this.ready();
+          return;
+        }
+          
         if(path.indexOf("marker.size") !== -1) return;
-        if(path.indexOf("marker.color.palette") > -1) return;
+          
         if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
@@ -106,9 +112,6 @@ var BubbleChartComp = Component.extend({
           return;
         }
 
-        if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
-
-        _this.ready();
         //console.log("EVENT change:marker", evt);
       },
       "change:entities.select": function() {
@@ -158,11 +161,8 @@ var BubbleChartComp = Component.extend({
             _this._trails.run("resize");
             return;
         }
-        _this.ready();
       },
-      'change:marker.color': function(evt, path) {
-        // can't register to marker.color.palette because palette tends to change object (Model/ModelLeaf) which causes all previous eventHandlers to be discarded
-        if (path.indexOf('palette') === -1) return; 
+      'change:marker.color.palette': function(evt, path) {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
