@@ -260,7 +260,7 @@ export default Class.extend({
 
     expandCanvas: function() {
         var _this = this.context;
-        
+
         var timeRounded = _this.timeFormatter.parse( _this.timeFormatter(_this.time) );
 
         var mmmX = _this.xyMaxMinMean.x[timeRounded];
@@ -301,17 +301,63 @@ export default Class.extend({
             y2: yScaleBumped(mmmY.max) - radiusMax
         };
 
+        /*
+         * Calculate bounds and bumped scale for calculating the data boundaries
+         * to which the suggested frame points need to be clamped.
+         */
+        var xBounds = [0, _this.width];
+        var yBounds = [_this.height, 0];
+
+        var xBoundsBumped = _this._rangeBump(xBounds);
+        var yBoundsBumped = _this._rangeBump(yBounds);
+
+        var xScaleBoundsBumped = _this.xScale.copy()
+            .range(xBoundsBumped);
+        var yScaleBoundsBumped = _this.yScale.copy()
+            .range(yBoundsBumped);
+
         var TOLERANCE = .0;
 
+        /*
+         * If there is no current zoom frame, or if any of the suggested frame
+         * points extend outside of the current zoom frame, then expand the
+         * canvas.
+         */
         if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
+            /*
+             * If there is already a zoom frame, then clamp the suggested frame
+             * points to only zoom out and expand the canvas.
+             *
+             * If any of x1, x2, y1, or y2 is within the current frame
+             * boundaries, then clamp them to the frame boundaries. If any of
+             * the above values will translate into a data value that is outside
+             * of the possible data range, then clamp them to the frame
+             * boundaries to prevent impossible zoom attempts.
+             */
+            if (frame) {
+                if (suggestedFrame.x1 > 0 ||
+                    xScaleBumped.invert(suggestedFrame.x1) < xScaleBoundsBumped.invert(xBounds[0]))
+                    suggestedFrame.x1 = 0;
+
+                if (suggestedFrame.x2 < _this.width ||
+                    xScaleBumped.invert(suggestedFrame.x2) > xScaleBoundsBumped.invert(xBounds[1]))
+                    suggestedFrame.x2 = _this.width;
+
+                if (suggestedFrame.y1 < _this.height ||
+                    yScaleBumped.invert(suggestedFrame.y1) < yScaleBoundsBumped.invert(yBounds[0]))
+                    suggestedFrame.y1 = _this.height;
+
+                if (suggestedFrame.y2 > 0 ||
+                    yScaleBumped.invert(suggestedFrame.y2) > yScaleBoundsBumped.invert(yBounds[1]))
+                    suggestedFrame.y2 = 0;
+            }
+
             _this.currentZoomFrameXY = utils.clone(suggestedFrame);
             var frame = _this.currentZoomFrameXY;
             this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
-            //console.log("rezoom")
         } else {
             _this.redrawDataPoints(_this.duration);
-            //console.log("no rezoom")
         }
     },
 
