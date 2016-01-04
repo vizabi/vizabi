@@ -728,8 +728,8 @@ var BubbleChartComp = Component.extend({
         minRadius: 0.5,
         maxRadius: 30,
         infoElHeight: 16,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 4
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 4
       },
       medium: {
         margin: { top: 40, right: 15, left: 60, bottom: 55 },
@@ -737,8 +737,8 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 55,
         infoElHeight: 20,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 5
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 5
       },
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
@@ -746,27 +746,22 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 70,
         infoElHeight: 22,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 5
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 5
       }
     };
 
     var presentationProfileChanges = {
-      "small": {
-        margin: { top: 40, bottom: 65, left: 70 },
-        yAxisLabelBottomMargin: 10,
-        xAxisLabelBottomMargin: 10
-      },
       "medium": {
         margin: { top: 80, bottom: 80, left: 100 },
-        yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20,
+        yAxisTitleBottomMargin: 20,
+        xAxisTitleBottomMargin: 20,
         infoElHeight: 26,
       },
       "large": {
         margin: { top: 80, bottom: 100, left: 100 },
-        yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20,
+        yAxisTitleBottomMargin: 20,
+        xAxisTitleBottomMargin: 20,
         infoElHeight: 32,
       }
     }
@@ -876,11 +871,11 @@ var BubbleChartComp = Component.extend({
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
       .style("font-size", infoElHeight)
-      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
+      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
       .style("font-size", infoElHeight)
-      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
+      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
@@ -917,7 +912,7 @@ var BubbleChartComp = Component.extend({
     this.dataWarningEl
       .attr("transform", "translate(" 
         + (this.width) + "," 
-        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisLabelBottomMargin) 
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin) 
         + ")");
 
     // reset font size to remove jumpy measurement

@@ -58,10 +58,6 @@ var profiles = {
 
 
 var presentationProfileChanges = {
-  "small": {
-    margin: {
-    }
-  },
   "medium": {
     margin: {
       top: 9
