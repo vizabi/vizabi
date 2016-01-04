@@ -186,7 +186,7 @@ BubbleMap.define('default_options', {
     entities: {
       dim: "geo",
       opacitySelectDim: .3,
-      opacityRegular: .8,
+      opacityRegular: 1,
       show: {
         _defs_: {
           "geo.cat": ["country"]
