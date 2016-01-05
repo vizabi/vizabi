@@ -146,7 +146,7 @@ var Model = EventSource.extend({
   set: function(attr, val, force, persistent, recursiveCall) {
     var setting = this._setting;
     var attrs;
-    
+
     //expect object as default
     if(!utils.isPlainObject(attr)) {
       (attrs = {})[attr] = val;
@@ -173,7 +173,7 @@ var Model = EventSource.extend({
 
       var bothModel = utils.isPlainObject(val) && this._data[a] instanceof Model;
       var bothModelLeaf = !utils.isPlainObject(val) && this._data[a] instanceof ModelLeaf;
-      
+
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
         this._data[a].set(val, force, persistent, true);
@@ -185,24 +185,26 @@ var Model = EventSource.extend({
     }
 
     // Unfreeze the whole model tree if first call, now all set events are fired
+    //for tool model when setting for the first time
+    if (newSubmodels)
+      bindSettersGetters(this);
+
+    if(this.validate && !setting) {
+      this.validate();
+    }
+
     if (!recursiveCall) {
       this.setTreeFreezer(false);
     }
 
     // only if there's new submodels, we have to set new getters/setters
-    if (newSubmodels)
-      bindSettersGetters(this);
 
-    //for tool model when setting for the first time
-    if(this.validate && !setting) {
-      this.validate();
-    }
     if(!setting || force) {
       //trigger set if not set
       if(!this._set) {
         this._set = true;
         this.trigger('set');
-      } 
+      }
       this._setting = false;
       if(!this.isHook()) {
         this.setReady();
@@ -762,14 +764,14 @@ var Model = EventSource.extend({
     //else, interpolate all with time
     else {
       utils.forEach(this._dataCube, function(hook, name) {
-          
+
         filtered = _DATAMANAGER.get(hook._dataId, 'nested', group_by);
-            
+
         response[name] = {};
         //find position from first hook
         u = hook.use;
         w = hook.which;
-          
+
         if(!globals.metadata.indicatorsDB[w] || globals.metadata.indicatorsDB[w].use !== "property") {
           next = (typeof next === 'undefined') ? d3.bisectLeft(hook.getUnique(dimTime), time) : next;
         }
@@ -778,9 +780,9 @@ var Model = EventSource.extend({
 
 
         utils.forEach(filtered, function(arr, id) {
-          //TODO: this saves when geos have different data length. line can be optimised. 
+          //TODO: this saves when geos have different data length. line can be optimised.
           next = d3.bisectLeft(arr.map(function(m){return m.time}), time);
-            
+
           value = utils.interpolatePoint(arr, u, w, next, dimTime, time, method);
           response[name][id] = hook.mapValue(value);
 
@@ -800,19 +802,19 @@ var Model = EventSource.extend({
 
     return response;
   },
-    
+
 getFrame: function(time){
     var _this = this;
     var steps = this._parent.time.getAllSteps();
-    
+
     var cachePath = "";
     utils.forEach(this._dataCube, function(hook, name) {
         cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
-        });     
+        });
     if(!this.cachedFrames || !this.cachedFrames[cachePath]) this.getFrames();
-    
+
     if(this.cachedFrames[cachePath][time]) return this.cachedFrames[cachePath][time];
-    
+
     var next = d3.bisectLeft(steps, time);
 
     if(next === 0) {
@@ -838,36 +840,36 @@ getFrame: function(time){
 
     return curr;
 },
-    
+
     getFrames: function(){
         var _this = this;
-        
+
         var cachePath = "";
         utils.forEach(this._dataCube, function(hook, name) {
             cachePath = cachePath + "," + name + ":" + hook.which + " " + _this._parent.time.start +" " + _this._parent.time.end;
-        });        
-        
+        });
+
         if(!this.cachedFrames) this.cachedFrames = {};
         if(this.cachedFrames[cachePath]) return this.cachedFrames[cachePath];
-        
+
         var steps = this._parent.time.getAllSteps();
-        
+
         this._dataCube = this._dataCube || this.getSubhooks(true)
-        
+
         var result = {};
         var resultKeys = [];
-        
+
         // Assemble the list of keys as an intersection of keys in all queries of all hooks
         utils.forEach(this._dataCube, function(hook, name) {
-            
+
             // If hook use is constant, then we can provide no additional info about keys
-            // We can just hope that we have something else than constants =) 
+            // We can just hope that we have something else than constants =)
             if(hook.use==="constant")return;
-            
+
             // Get keys in data of this hook
             var nested = _DATAMANAGER.get(hook._dataId, 'nested', ["geo", "time"]);
             var keys = Object.keys(nested);
-            
+
             if(resultKeys.length==0){
                 // If ain't got nothing yet, set the list of keys to result
                 resultKeys = keys;
@@ -876,49 +878,49 @@ getFrame: function(time){
                 resultKeys = resultKeys.filter(function(f){ return keys.indexOf(f)>-1;})
             }
         });
-        
-        steps.forEach(function(t){ 
+
+        steps.forEach(function(t){
             result[t] = {};
         });
-        
+
         utils.forEach(this._dataCube, function(hook, name) {
-            
+
             if(hook.use === "constant") {
-                steps.forEach(function(t){ 
+                steps.forEach(function(t){
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = hook.which;
                     });
                 });
-                
+
             }else if(hook.which==="geo"){
-                steps.forEach(function(t){ 
+                steps.forEach(function(t){
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = key;
                     });
                 });
-                
+
             }else if(hook.which==="time"){
-                steps.forEach(function(t){ 
+                steps.forEach(function(t){
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
                         result[t][name][key] = new Date(t);
                     });
                 });
-                
+
             }else{
                 var frames = _DATAMANAGER.get(hook._dataId, 'frames', steps, globals.metadata.indicatorsDB);
-                utils.forEach(frames, function(frame, t){ 
+                utils.forEach(frames, function(frame, t){
                     result[t][name] = frame[hook.which];
-                });    
+                });
             }
         });
-    
+
         this.cachedFrames[cachePath] = result;
         return result;
     },
-    
+
 
 
   /**
@@ -1000,7 +1002,7 @@ getFrame: function(time){
     if(!filter) return utils.warn("No filter provided to getFilteredItems(<filter>)");
     return _DATAMANAGER.get(this._dataId, 'filtered', filter);
   },
-    
+
   /**
    * gets nested dataset
    * @param {Array} keys define how to nest the set
@@ -1207,18 +1209,18 @@ getFrame: function(time){
    * gets maximum, minimum and mean values from the dataset of this certain hook
    */
   gerLimitsPerFrame: function() {
-      
-    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property"); 
+
+    if(this.use === "property") return utils.warn("getMaxMinMean: strange that you ask min max mean of a property");
     if(!this.isHook) return utils.warn("getMaxMinMean: only works for hooks");
-      
+
     var result = {};
     var values = [];
     var value = null;
-      
+
     var steps = this._parent._parent.time.getAllSteps();
-      
+
     if(this.use === "constant") {
-        steps.forEach(function(t){ 
+        steps.forEach(function(t){
             value = this.which;
             result[t] = {
                 min: value,
@@ -1227,7 +1229,7 @@ getFrame: function(time){
         });
 
     }else if(this.which==="time"){
-        steps.forEach(function(t){ 
+        steps.forEach(function(t){
             value = new Date(t);
             result[t] = {
                 min: value,
@@ -1237,9 +1239,9 @@ getFrame: function(time){
 
     }else{
         var args = {framesArray: steps, which: this.which};
-        result = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);   
+        result = _DATAMANAGER.get(this._dataId, 'limitsPerFrame', args, globals.metadata.indicatorsDB);
     }
-      
+
     return result;
   },
 
@@ -1426,7 +1428,7 @@ function initSubmodel(attr, val, ctx) {
   var submodel;
 
   // if value is a value -> leaf
-  if(!utils.isPlainObject(val) || utils.isArray(val)) {  
+  if(!utils.isPlainObject(val) || utils.isArray(val)) {
 
     var binds = {
       //the submodel has changed (multiple times)
@@ -1453,12 +1455,12 @@ function initSubmodel(attr, val, ctx) {
 
     // if the value is an already instantiated submodel (Model or ModelLeaf)
     // this is the case for example when a new componentmodel is made (in Component._modelMapping)
-    // it takes the submodels from the toolmodel and creates a new model for the component which refers 
+    // it takes the submodels from the toolmodel and creates a new model for the component which refers
     // to the instantiated submodels (by passing them as model values, and thus they reach here)
     if (isModel(val, true)) {
       submodel = val;
       submodel.on(binds);
-    } 
+    }
     // if it's just a plain object, create a new model
     else {
       // construct model
@@ -1475,7 +1477,7 @@ function initSubmodel(attr, val, ctx) {
   function onChange(evt, path) {
     if(!ctx._ready) return; //block change propagation if model isnt ready
     path = ctx._name + '.' + path
-    ctx.trigger(evt, path);    
+    ctx.trigger(evt, path);
   }
   function onHookChange(evt, vals) {
     ctx.trigger(evt, vals);

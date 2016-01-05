@@ -837,8 +837,6 @@ var TreeMenu = Component.extend({
     if(mdl.getType() == 'axis') {
       obj.min = null;
       obj.max = null;
-      obj.fakeMin = null;
-      obj.fakeMax = null;
     }
 
     mdl.set(obj);
