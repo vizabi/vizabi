@@ -57,7 +57,6 @@ var AxisModel = Model.extend({
    * Validates a color hook
    */
   validate: function() {
-
     //only some scaleTypes are allowed depending on use. reset to default if inappropriate
     if(allowTypes[this.use].indexOf(this.scaleType) === -1) this.scaleType = allowTypes[this.use][0];
 
@@ -74,11 +73,12 @@ var AxisModel = Model.extend({
       if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
       if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
 
-      //fakemin and fakemax nonsense protection    
+      //fakemin and fakemax nonsense protection
       if(this.fakeMin == null || this.fakeMin <= 0 && this.scaleType === "log") this.fakeMin = this.scale.domain()[0];
       if(this.fakeMax == null || this.fakeMax <= 0 && this.scaleType === "log") this.fakeMax = this.scale.domain()[1];
 
       this.scale.domain([this.min, this.max]);
+      this.buildScale();
     }
   },
 
@@ -129,7 +129,7 @@ var AxisModel = Model.extend({
         domain = [this.which];
         break;
     }
-    
+
     var scaletype = (d3.min(domain)<=0 && d3.max(domain)>=0 && this.scaleType === "log")? "genericLog" : this.scaleType;;
     this.scale = d3.scale[scaletype || "linear"]().domain(domain);
   }

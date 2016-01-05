@@ -9,16 +9,6 @@ import Model from 'base/model';
 var ColorModel = Model.extend({
 
   /**
-   * Default values for this model
-   */
-  _defaults: {
-    use: "constant",
-    palette: null,
-    scaleType: '',
-    which: undefined
-  },
-
-  /**
    * Initializes the color hook
    * @param {Object} values The initial values of this model
    * @param parent A reference to the parent model
@@ -42,19 +32,19 @@ var ColorModel = Model.extend({
   getColorShade: function(args){
     var palettes = globals.metadata.color.palettes;
     var shades = globals.metadata.color.shades;
-      
+
     if(!palettes) return utils.warn("getColorShade() is missing globals.metadata.color.palettes");
     if(!shades) return utils.warn("getColorShade() is missing globals.metadata.color.shades");
     if(!args) return utils.warn("getColorShade() is missing arguments");
-      
+
     if(!args.paletteID) args.paletteID = this.which;
     if(!shades[args.paletteID] || !palettes[args.paletteID]) args.paletteID = "_default";
     if(!args.shadeID || !shades[args.paletteID][args.shadeID]) args.shadeID = "_default";
     if(!args.colorID || !palettes[args.paletteID][args.colorID]) args.colorID = "_default";
-    
+
     return palettes[args.paletteID][args.colorID][ shades[args.paletteID][args.shadeID] ];
   },
-    
+
   /**
    * Get the above constants
    */
@@ -91,7 +81,7 @@ var ColorModel = Model.extend({
     this._resetPalette = true;
     this._super();
   },
-  
+
   /**
    * Get the above constants
    */
@@ -196,21 +186,21 @@ var ColorModel = Model.extend({
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 
     if(this.scaleType == "time") {
-      
+
       var timeMdl = this._parent._parent.time;
-      var limits = timeMdl.beyondSplash ? 
+      var limits = timeMdl.beyondSplash ?
           {min: timeMdl.beyondSplash.start, max: timeMdl.beyondSplash.end}
           :
           {min: timeMdl.start, max: timeMdl.end};
-        
+
       var step = ((limits.max.valueOf() - limits.min.valueOf()) / (range.length - 1));
       domain = d3.range(limits.min.valueOf(), limits.max.valueOf(), step).concat(limits.max.valueOf());
 
       if(step === 0) {
         domain.push(domain[0]);
-        range = [range[range.length - 1]];             
+        range = [range[range.length - 1]];
       }
-      
+
       this.scale = d3.time.scale()
         .domain(domain)
         .range(range)
@@ -225,7 +215,7 @@ var ColorModel = Model.extend({
         domain = [limits.min, limits.max];
         //domain from metadata can override it if defined
         domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
-          
+
         var limitMin = domain[0];
         var limitMax = domain[1];
         var step = (limitMax - limitMin) / (range.length - 1);
@@ -249,7 +239,7 @@ var ColorModel = Model.extend({
 
       default:
         range = range.map(function(m){ return utils.isArray(m)? m[0] : m; });
-            
+
         this.scale = d3.scale["ordinal"]()
           .domain(domain)
           .range(range);
