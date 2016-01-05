@@ -14,3 +14,18 @@
     }
   }
 }
+
+//hiding elements when in popup mode
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="stack"] {
+      &.vzb-popup {
+        .vzb-howtomerge,
+        .vzb-manual-sorting {
+          display: none;
+        }
+  	  }
+	  }
+  }
+}
+
