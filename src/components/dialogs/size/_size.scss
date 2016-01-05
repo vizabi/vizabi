@@ -5,11 +5,6 @@
       &[data-dlg="size"] {
         &.vzb-sidebar {
           flex: none;
-
-          .vzb-dialog-content {
-            max-height: 190px;
-            min-height: 120px;
-          }
           
           .vzb-dialog-title {
             display: inline-block;
@@ -17,10 +12,23 @@
           
           .vzb-saxis-selector {
             display: inline-block;
-            margin: 0 0 5px 10px;
           }
         }
       }
     }
   }
 }
+
+//hiding elements when in popup mode
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="size"] {
+      &.vzb-sidebar {
+        .vzb-dialog-bubblesize {
+          display: none;
+        }
+  	  }
+	  }
+  }
+}
+

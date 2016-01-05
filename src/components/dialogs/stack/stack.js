@@ -67,11 +67,11 @@ var Stack = Dialog.extend({
       this.group = this.model.state.marker.group;
       this.stack = this.model.state.marker.stack;
 
-      this.howToStackEl = this.element.select('#vzb-howtostack').selectAll("input")
+      this.howToStackEl = this.element.select('.vzb-howtostack').selectAll("input")
           .on("change", function() {
               _this.setModel("stack", d3.select(this).node().value);
           })
-      this.howToMergeEl = this.element.select('#vzb-howtomerge').selectAll("input")
+      this.howToMergeEl = this.element.select('.vzb-howtomerge').selectAll("input")
           .on("change", function() {
               _this.setModel("merge", d3.select(this).node().value);
           })
