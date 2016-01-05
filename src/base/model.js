@@ -185,18 +185,19 @@ var Model = EventSource.extend({
     }
 
     // Unfreeze the whole model tree if first call, now all set events are fired
+    if (newSubmodels)
+      bindSettersGetters(this);
+
+    if(this.validate && !setting) {
+      this.validate();
+    }
+      
     if (!recursiveCall) {
       this.setTreeFreezer(false);
     }
 
     // only if there's new submodels, we have to set new getters/setters
-    if (newSubmodels)
-      bindSettersGetters(this);
-
-    //for tool model when setting for the first time
-    if(this.validate && !setting) {
-      this.validate();
-    }
+      
     if(!setting || force) {
       //trigger set if not set
       if(!this._set) {
