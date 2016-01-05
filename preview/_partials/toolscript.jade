@@ -30,7 +30,7 @@ script.
 
   VIZABI_OPTIONS.bind['change:state.time.playing'] = function(evt, path) {
     var playing = evt.source;
-    if (playing) {
+    if (playing.value) {
       playButton.onclick = pause;
       playButton.setAttribute("data-tooltip", "Pause");
       removeClass(playButtonIcon, 'fa-play');
@@ -46,7 +46,8 @@ script.
   VIZABI_OPTIONS.bind['change:state.time.record'] = function(evt, path) {
     var recButton = document.getElementById("vzbp-btn-record");
     var recButtonIcon = recButton.querySelectorAll("i")[0];
-    if (time.record) {
+    var record = evt.source;
+    if (record.value) {
       recButton.onclick = recstop;
       recButton.setAttribute("data-tooltip", "Stop");
       removeClass(recButtonIcon, 'fa-bullseye');
@@ -61,9 +62,9 @@ script.
 
   var langButton = document.getElementById("vzbp-btn-lang");
 
-  VIZABI_OPTIONS.bind['change:language'] = function(evt, path) {
-    var language = evt.source;
-    if (language.id === "en") {
+  VIZABI_OPTIONS.bind['change:language.id'] = function(evt, path) {
+    var lang = evt.source;
+    if (lang.value === "en") {
       langButton.onclick = function() { language('se'); };
       langButton.setAttribute("data-tooltip", "Set Lang: SE");
       langButton.setAttribute("data-next_lang", 'se');
