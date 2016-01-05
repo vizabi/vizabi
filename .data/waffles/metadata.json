@@ -154,13 +154,6 @@
             "scales": ["log", "linear"],
             "sourceLink": "https://gapminder.org"
         },
-        "gni_pc_u_usd_cu": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
-            "use": "indicator",
-            "unit": "gni_pc_u_usd_cu",
-            "scales": ["linear", "log"],
-            "sourceLink": "https://gapminder.org"
-        },
         "u5mr": {
             "allowCharts": ["bubblechart", "bubblemap"],
             "use": "indicator",
@@ -197,8 +190,7 @@
                 "children": [
                     {"id": "inequality", "children": [{"id":"gini"}]}, 
                     {"id": "gdp_pc"},
-                    {"id": "gdp"},
-                    {"id": "gni_pc_u_usd_cu"}
+                    {"id": "gdp"}
                 ]
             }, {
                 "id": "health",
