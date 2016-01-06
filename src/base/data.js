@@ -361,13 +361,26 @@ var Data = Class.extend({
                         items = filtered[key][column];
 
                         if(items == null){
-                            var length = nested[key].length || Object.keys(nested[key]) || 0;
+
+                            // set length (and keys if object)
+                            var keys, length;
+                            if (nested[key].length) {
+                              length = nested[key].length;
+                            } else {
+                              keys = Object.keys(nested[key]);
+                              length = keys.length || 0;
+                            }
+
+                            // static array length is faster than changing it with each iteration
                             items = new Array(length);
                             itemsIndex = 0;
 
-                            for(var z = 0; z < length; z++) {
-                                if(frame[0][column] || frame[0][column] === 0) items[itemsIndex++] = frame[0];
-                            }
+                            for (var z = 0; z < length; z++) {
+                              var frame = (keys) ? nested[key][keys[z]] : nested[key][z];
+                              if(frame[0][column] || frame[0][column] === 0) {
+                                items[itemsIndex++] = frame[0];
+                              }
+                            });
                             
                             //trim the length of the array
                             items.length = itemsIndex;
