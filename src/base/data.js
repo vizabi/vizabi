@@ -14,7 +14,7 @@ var Data = Class.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
-   * @param {String} path Where data is located
+   * @param {*} evts ?
    */
   load: function (query, language, reader, evts) {
     var _this = this;
@@ -310,30 +310,35 @@ var Data = Class.extend({
 
 
     } else {
+      // vars for 3 depth loops
+      var i, j, k;
       // If there is a time field in query.where clause, then we are dealing with indicators in this request
 
       // If time is restricted to a single point then override the input with that single point
       if (query.where.time[0].length === 1) framesArray = query.where.time[0];
 
       // Put together a template for cached filtered sets (see below what's needed)
-      keys.forEach(function (key) {
+      for (i = 0; i < keys.length; i++) {
         filtered[key] = {};
-
-        columns.forEach(function (column) {
+        for (j = 0; j < columns.length; j++) {
           filtered[key][column] = null;
-        });
-      });
+        }
+      }
 
       // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-      framesArray.forEach(function (t) {
+      // to avoid refactor of variable usage in loops
+      var t, key, column;
+      for (i = 0; i < framesArray.length; i++) {
+        t = framesArray[i];
         result[t] = {};
-        columns.forEach(function (column) {
-          result[t][column] = {};
-        });
+        for (j = 0; j < columns.length; j++) {
+          result[t][columns[j]] = {};
+        }
 
-        keys.forEach(function (key) {
-          columns.forEach(function (column) {
-
+        for (j = 0; j < keys.length; j++) {
+          key = keys[j];
+          for (k = 0; k < columns.length; k++) {
+            column = columns[k];
             //If there are some points in the array with valid numbers, then
             //interpolate the missing point and save it to the “clean regular set”
             method = indicatorsDB[column] ? indicatorsDB[column].interpolation : null;
@@ -359,11 +364,17 @@ var Data = Class.extend({
               items = filtered[key][column];
 
               if (items == null) {
-                items = [];
+                var index = 0;
+                var length = nested[key].length || Object.keys(nested[key]) || 0;
+                items = new Array(length);
 
-                utils.forEach(nested[key], function (frame) {
-                  if (frame[0][column] || frame[0][column] === 0) items.push(frame[0]);
-                });
+                for (var z = 0; z < length; z ++){
+                  if (frame[0][column] || frame[0][column] === 0) {
+                    //items.push(frame[0]);
+                    items[index++] = frame[0];
+                  }
+                }
+                items.length = index;
               }
 
 
@@ -376,11 +387,12 @@ var Data = Class.extend({
               }
 
             }
-
-
-          });
-        });
-      });
+            // for var k in columns
+          }
+          // for var j in keys
+        }
+        // for var i in framesArray
+      }
     }
 
     return result;
