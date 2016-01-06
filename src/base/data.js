@@ -283,6 +283,11 @@ var Data = Class.extend({
       var query = this._collection[queryId].query;
       var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
       
+      var fLength = framesArray.length;
+      var kLength = keys.length;
+      var cLength = columns.length;
+      var frame, f, key, k, column, c;
+      
       // FramesArray in the input contains the array of keyframes in animatable dimension. 
       // Example: array of years like [1800, 1801 … 2100]
       // these will be the points where we need data 
@@ -292,19 +297,19 @@ var Data = Class.extend({
       if(!query.where.time){          
           // The query.where clause doesn't have time field for properties: 
           // we populate the regular set with a single value (unpack properties into constant time series)
+          var dataset = _this._collection[queryId].data;
           
-          framesArray.forEach(function(t){
-              result[t] = {};
-              columns.forEach(function(column){ result[t][column] = {}; });
+          for(f=0; f<fLength; f++){
+              frame = framesArray[f];
               
-              _this._collection[queryId].data.forEach(function(d){
+              result[frame] = {};
+              for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
               
-                  columns.forEach(function(column){
-                      result[t][column][d[KEY]] = d[column];
-                  });
-              });
-            
-          })
+              for(var i=0; i<dataset.length; i++){   
+                  var d = dataset[i];
+                  for(c=0; c<cLength; c++) result[frame][columns[c]][d[KEY]] = d[columns[c]];
+              };
+          };
           
           
       }else{
@@ -314,23 +319,22 @@ var Data = Class.extend({
           if(query.where.time[0].length === 1) framesArray = query.where.time[0];
           
           // Put together a template for cached filtered sets (see below what's needed)
-          utils.forEach(keys, function(key){
-              filtered[key] = {};
-
-              utils.forEach(columns, function(column){
-                filtered[key][column] = null;
-              });
-          });
+          for(k=0; k<kLength; k++){
+              filtered[keys[k]] = {};
+              for(c=0; c<cLength; c++) filtered[keys[k]][columns[c]] = null;
+          };
 
           // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-          utils.forEach(framesArray, function(t){
-            result[t] = {};
-            utils.forEach(columns, function(column){
-                result[t][column] = {};
-            });
+          for(f=0; f<fLength; f++){
+            frame = framesArray[f];
+            result[frame] = {};
+            for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
 
-            utils.forEach(keys, function(key){
-                utils.forEach(columns, function(column){
+            for(k=0; k<kLength; k++){
+                key = keys[k];
+                
+                for(c=0; c<cLength; c++){
+                    column = columns[c];       
                     
                     //If there are some points in the array with valid numbers, then
                     //interpolate the missing point and save it to the “clean regular set” 
@@ -339,11 +343,11 @@ var Data = Class.extend({
                     
 
                     // Inside of this 3-level loop is the following: 
-                    if(nested[key] && nested[key][t] && (nested[key][t][0][column] || nested[key][t][0][column] === 0)){
+                    if(nested[key] && nested[key][frame] && (nested[key][frame][0][column] || nested[key][frame][0][column] === 0)){
 
                         // Check if the piece of data for [this key][this frame][this column] exists 
                         // and is valid. If so, then save it into a “clean regular set”
-                        result[t][column][key] = nested[key][t][0][column];
+                        result[frame][column][key] = nested[key][frame][0][column];
                         
                     }else{
                         // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
@@ -357,12 +361,16 @@ var Data = Class.extend({
                         items = filtered[key][column];
 
                         if(items == null){
-                            items = [];
+                            var length = nested[key].length || Object.keys(nested[key]) || 0;
+                            items = new Array(length);
                             itemsIndex = 0;
 
-                            utils.forEach(nested[key], function(frame) {
+                            for(var z = 0; z < length; z++) {
                                 if(frame[0][column] || frame[0][column] === 0) items[itemsIndex++] = frame[0];
-                            });
+                            }
+                            
+                            //trim the length of the array
+                            items.length = itemsIndex;
                         }
 
 
@@ -371,15 +379,15 @@ var Data = Class.extend({
                         //So we let the key have missing values in this column for all frames
                         if(items.length > 0) {
                             next = null;
-                            result[t][column][key] = utils.interpolatePoint(items, use, column, next, TIME, t, method);
+                            result[frame][column][key] = utils.interpolatePoint(items, use, column, next, TIME, frame, method);
                         }
 
                     }
                         
 
-                });
-            });
-          });
+                }; //loop across columns
+            }; //loop across keys
+          }; //loop across frameArray
       }
       
       return result;
