@@ -271,7 +271,7 @@ var Data = Class.extend({
       var TIME = "time";
       var result = {};
       var filtered = {};
-      var items, itemsIndex, method, use, next;
+      var items, itemsIndex, givenFrames, oneFrame, method, use, next;
       
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
@@ -361,26 +361,15 @@ var Data = Class.extend({
                         items = filtered[key][column];
 
                         if(items == null){
-
-                            // set length (and keys if object)
-                            var keys, length;
-                            if (nested[key].length) {
-                              length = nested[key].length;
-                            } else {
-                              keys = Object.keys(nested[key]);
-                              length = keys.length || 0;
-                            }
-
-                            // static array length is faster than changing it with each iteration
-                            items = new Array(length);
+                            
+                            givenFrames = Object.keys(nested[key]);
+                            items = new Array(givenFrames.length);
                             itemsIndex = 0;
 
-                            for (var z = 0; z < length; z++) {
-                              var frame = (keys) ? nested[key][keys[z]] : nested[key][z];
-                              if(frame[0][column] || frame[0][column] === 0) {
-                                items[itemsIndex++] = frame[0];
-                              }
-                            });
+                            for(var z = 0, length = givenFrames.length; z<length; z++){
+                                oneFrame = nested[key][givenFrames[z]];
+                                if(oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                            };
                             
                             //trim the length of the array
                             items.length = itemsIndex;
