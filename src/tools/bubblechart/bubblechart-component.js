@@ -59,12 +59,12 @@ var BubbleChartComp = Component.extend({
           //TODO: adjust X & Y axis here
         }
       },
-      'change:time:start': function(evt, original) {
+      'change:time.start': function(evt, original) {
         if(_this.model.marker.color.scaleType === 'time') {
           _this.model.marker.color.scale = null;
         }
       },
-      "change:time:record": function() {
+      "change:time.record": function() {
         //console.log("change time record");
         if(_this.model.time.record) {
           _this._export.open(this.element, this.name);
@@ -72,21 +72,27 @@ var BubbleChartComp = Component.extend({
           _this._export.reset();
         }
       },
-      "change:time:trails": function(evt) {
+      "change:time.trails": function(evt) {
         //console.log("EVENT change:time:trails");
         _this._trails.toggle(_this.model.time.trails);
         _this.redrawDataPoints();
       },
-      "change:time:lockNonSelected": function(evt) {
+      "change:time.lockNonSelected": function(evt) {
         //console.log("EVENT change:time:lockNonSelected");
         _this.redrawDataPoints(500);
       },
-      "change:marker": function(evt) {
+      "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(evt.indexOf("change:marker:size") !== -1) return;
-        if(evt.indexOf("change:marker:color:palette") > -1) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        
+        if(path.indexOf("scaleType") > -1) {
+          _this.ready();
+          return;
+        }
+          
+        if(path.indexOf("marker.size") !== -1) return;
+          
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
           _this._trails.run("findVisible");
@@ -94,7 +100,7 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
-        if(evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+        if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
           if(_this.draggingNow)return;
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.fakeMin,
@@ -106,12 +112,9 @@ var BubbleChartComp = Component.extend({
           return;
         }
 
-        if(evt.indexOf("which") > -1 || evt.indexOf("use") > -1) return;
-
-        _this.ready();
         //console.log("EVENT change:marker", evt);
       },
-      "change:entities:select": function() {
+      "change:entities.select": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:select");
         _this.selectDataPoints();
@@ -120,12 +123,12 @@ var BubbleChartComp = Component.extend({
         _this.updateBubbleOpacity();
         _this._updateDoubtOpacity();
       },
-      "change:entities:highlight": function() {
+      "change:entities.highlight": function() {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:entities:highlight");
         _this.highlightDataPoints();
       },
-      'change:time:value': function() {
+      'change:time.value': function() {
         //console.log("EVENT change:time:value");
         _this.updateTime();
         _this._updateDoubtOpacity();
@@ -140,7 +143,7 @@ var BubbleChartComp = Component.extend({
         _this.tooltipMobile.classed('vzb-hidden', true);
         //_this._bubblesInteract().mouseout();
       },
-      'change:time:adaptMinMaxZoom': function() {
+      'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
           _this._panZoom.expandCanvas();
@@ -148,28 +151,27 @@ var BubbleChartComp = Component.extend({
           _this._panZoom.reset();
         }
       },
-      'change:marker:size': function(evt) {
+      'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
             _this.updateMarkerSizeLimits();
             _this._trails.run("findVisible");
             _this.redrawDataPointsOnlySize();
             _this._trails.run("resize");
             return;
         }
-        _this.ready();
       },
-      'change:marker:color:palette': function() {
+      'change:marker.color.palette': function(evt, path) {
         if(!_this._readyOnce) return;
         //console.log("EVENT change:marker:color:palette");
         _this.redrawDataPointsOnlyColors();
         _this._trails.run("recolor");
       },
-      'change:entities:opacitySelectDim': function() {
+      'change:entities.opacitySelectDim': function() {
         _this.updateBubbleOpacity();
       },
-      'change:entities:opacityRegular': function() {
+      'change:entities.opacityRegular': function() {
         _this.updateBubbleOpacity();
         _this._trails.run("opacityHandler");
       },
@@ -414,9 +416,6 @@ var BubbleChartComp = Component.extend({
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
 
-    this._calculateAllValues();
-    this._valuesCalculated = true; //hack to avoid recalculation
-
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
@@ -439,13 +438,9 @@ var BubbleChartComp = Component.extend({
 
   ready: function() {
 
-    if(!this._valuesCalculated) this._calculateAllValues();
-    else this._valuesCalculated = false;
-
     this.updateUIStrings();
 
     this.updateEntities();
-    this.redrawDataPoints();
     this.updateBubbleOpacity();
     this.updateIndicators();
     this.updateSize();
@@ -453,7 +448,7 @@ var BubbleChartComp = Component.extend({
     this.updateMarkerSizeLimits();
     this._trails.create();
     this._trails.run("findVisible");
-    this._panZoom.reset();
+    this._panZoom.reset(); // includes redraw data points and trail resize
     this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
     this._panZoom.zoomToMaxMin(
@@ -484,18 +479,9 @@ var BubbleChartComp = Component.extend({
     this.xAxis.tickFormat(_this.model.marker.axis_x.tickFormatter);
 
     this.xyMaxMinMean = {
-      x: this.model.marker.axis_x.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      }),
-      y: this.model.marker.axis_y.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      }),
-      s: this.model.marker.size.getMaxMinMean({
-        timeFormatter: this.timeFormatter,
-        skipZeros: true
-      })
+      x: this.model.marker.axis_x.gerLimitsPerFrame(),
+      y: this.model.marker.axis_y.gerLimitsPerFrame(),
+      s: this.model.marker.size.gerLimitsPerFrame()
     };
   },
 
@@ -623,7 +609,7 @@ var BubbleChartComp = Component.extend({
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
-    var values = this._getValuesInterpolated(endTime);
+    var values = this.model.marker.getFrame(endTime);
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
@@ -705,7 +691,7 @@ var BubbleChartComp = Component.extend({
         if(_this.draggingNow) return;
         var isSelected = _this.model.entities.isSelected(d);
         _this.model.entities.selectEntity(d);
-        if(isSelected) _this.highlightDataPoints(); 
+        if(isSelected) _this.highlightDataPoints();
       }
     }
   },
@@ -741,8 +727,8 @@ var BubbleChartComp = Component.extend({
         minRadius: 0.5,
         maxRadius: 30,
         infoElHeight: 16,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 4
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 4
       },
       medium: {
         margin: { top: 40, right: 15, left: 60, bottom: 55 },
@@ -750,8 +736,8 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 55,
         infoElHeight: 20,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 5
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 5
       },
       large: {
         margin: { top: 50, right: 20, left: 60, bottom: 60 },
@@ -759,27 +745,22 @@ var BubbleChartComp = Component.extend({
         minRadius: 1,
         maxRadius: 70,
         infoElHeight: 22,
-        yAxisLabelBottomMargin: 6,
-        xAxisLabelBottomMargin: 5
+        yAxisTitleBottomMargin: 6,
+        xAxisTitleBottomMargin: 5
       }
     };
 
     var presentationProfileChanges = {
-      "small": {
-        margin: { top: 40, bottom: 65, left: 70 },
-        yAxisLabelBottomMargin: 10,
-        xAxisLabelBottomMargin: 10
-      },
       "medium": {
         margin: { top: 80, bottom: 80, left: 100 },
-        yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20,
+        yAxisTitleBottomMargin: 20,
+        xAxisTitleBottomMargin: 20,
         infoElHeight: 26,
       },
       "large": {
         margin: { top: 80, bottom: 100, left: 100 },
-        yAxisLabelBottomMargin: 20,
-        xAxisLabelBottomMargin: 20,
+        yAxisTitleBottomMargin: 20,
+        xAxisTitleBottomMargin: 20,
         infoElHeight: 32,
       }
     }
@@ -866,54 +847,38 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
-    this.dataWarningEl.select("text").text(
-      this.translator("hints/dataWarning" + (this.getLayoutProfile() === 'small' ? "-little" : ""))
-    )
-    var dataWarningWidth = this.dataWarningEl.select("text").node().getBBox().width;
-
     var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
     if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
     var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-    if(xTitleText.node().getBBox().width > this.width - dataWarningWidth * 2.2) xTitleText.text(this.strings.title.X);
 
+    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
-
+    // reset font size to remove jumpy measurement
     var sTitleText = this.sTitleEl.select("text")
+      .style("font-size", null)
       .text(this.translator("buttons/size") + ": " + this.strings.title.S + ", " +
         this.translator("buttons/colors") + ": " + this.strings.title.C);
 
-    var probe = this.sTitleEl.append("text").text(sTitleText.text());
-    var font = parseInt(probe.style("font-size")) * (this.height - 30) / probe.node().getBBox().width;
-
-    if(probe.node().getBBox().width > this.height - 30) {
-      sTitleText.style("font-size", font + "px");
-    } else {
-      sTitleText.style("font-size", null);
-    }
-    probe.remove();
+    // reduce font size if the caption doesn't fit
+    var sTitleWidth = sTitleText.node().getBBox().width;
+    var remainigHeight = this.height - 30;
+    var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
+    sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
+    
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
       .style("font-size", infoElHeight)
-      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisLabelBottomMargin + ")");
+      .attr("transform", "translate(" + (-yaxisWidth) + ", -" + this.activeProfile.yAxisTitleBottomMargin + ")");
 
     this.xTitleEl
       .style("font-size", infoElHeight)
-      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
+      .attr("transform", "translate(" + (0) + "," + (this.height + margin.bottom - this.activeProfile.xAxisTitleBottomMargin) + ")");
 
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
-    this.dataWarningEl
-      .attr("transform", "translate(" + (this.width) + "," + (this.height + margin.bottom - this.activeProfile.xAxisLabelBottomMargin) + ")");
-
-    var warnBB = this.dataWarningEl.select("text").node().getBBox();
-    this.dataWarningEl.select("svg")
-      .attr("width", warnBB.height * 0.75)
-      .attr("height", warnBB.height * 0.75)
-      .attr("x", -warnBB.width - warnBB.height * 1.2)
-      .attr("y", - warnBB.height * 0.65);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
@@ -937,8 +902,34 @@ var BubbleChartComp = Component.extend({
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
-   }
+    } 
 
+    this._resizeDataWarning();
+  },
+
+  _resizeDataWarning: function(){
+    this.dataWarningEl
+      .attr("transform", "translate(" 
+        + (this.width) + "," 
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin) 
+        + ")");
+
+    // reset font size to remove jumpy measurement
+    var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
+      
+    // reduce font size if the caption doesn't fit
+    var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
+    var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
+    var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
+    dataWarningText.style("font-size", dataWarningWidth > remainingWidth? font + "px" : null);
+    
+    // position the warning icon
+    var warnBB = dataWarningText.node().getBBox();
+    this.dataWarningEl.select("svg")
+      .attr("width", warnBB.height * 0.75)
+      .attr("height", warnBB.height * 0.75)
+      .attr("x", -warnBB.width - warnBB.height * 1.2)
+      .attr("y", - warnBB.height * 0.65);
   },
 
   updateMarkerSizeLimits: function() {
@@ -959,15 +950,20 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
+    var values;
     var KEY = this.KEY;
-    var TIMEDIM = this.TIMEDIM;
+    if(this.model.time.lockNonSelected && this.someSelected) {
+      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      values = this.model.marker.getFrame(tLocked);
+    } else {
+      values = this.model.marker.getFrame(this.time);
+    }
 
     this.entityBubbles.style("fill", function(d) {
-      var pointer = {};
-      pointer[KEY] = d[KEY];
-      pointer[TIMEDIM] = _this.time;
 
-      var valueC = _this.model.marker.color.getValue(pointer);
+      var valueC = values.color[d[KEY]];
+      if(valueC == null) return;
+   
       return _this.cScale(valueC);
     });
   },
@@ -991,9 +987,9 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-      values = this._getValuesInterpolated(tLocked);
+      values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this._getValuesInterpolated(this.time);
+      values = this.model.marker.getFrame(this.time);
     }
 
     this.entityBubbles.each(function(d, index) {
@@ -1003,29 +999,29 @@ var BubbleChartComp = Component.extend({
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
       d3.select(this).attr("r", scaledS);
-    
+
       //update lines of labels
-      var cache = _this.cached[d[KEY]]; 
+      var cache = _this.cached[d[KEY]];
       if(cache) {
-        
+
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
         var resolvedY = _this.yScale(cache.labelY0) + cache.labelY_ * _this.height;
-    
+
         var resolvedX0 = _this.xScale(cache.labelX0);
         var resolvedY0 = _this.yScale(cache.labelY0);
-    
+
         var lineGroup = _this.entityLines.filter(function(f) {
           return f[KEY] == d[KEY];
         });
-        
+
         var select = utils.find(_this.model.entities.select, function(f) {
           return f[KEY] == d[KEY]
         });
 
         var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
-        
+
         if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
-          cache.scaledS0 = scaledS;       
+          cache.scaledS0 = scaledS;
         }
 
         _this.entityLabels.filter(function(f) {
@@ -1033,7 +1029,7 @@ var BubbleChartComp = Component.extend({
         })
         .each(function(groupData) {
           _this._repositionLabels(d, index, this, resolvedX, resolvedY, resolvedX0, resolvedY0, 0, lineGroup);
-        });      
+        });
       }
     });
   },
@@ -1055,10 +1051,10 @@ var BubbleChartComp = Component.extend({
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
-      valuesLocked = this._getValuesInterpolated(tLocked);
+      valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
-    values = this._getValuesInterpolated(this.time);
+    values = this.model.marker.getFrame(this.time);
 
     this.entityBubbles.each(function(d, index) {
       var view = d3.select(this);
@@ -1224,7 +1220,7 @@ var BubbleChartComp = Component.extend({
               .attr("rx", contentBBox.height * .2)
               .attr("ry", contentBBox.height * .2);
           }
-                    
+
           limitedX0 = _this.xScale(cached.labelX0);
           limitedY0 = _this.yScale(cached.labelY0);
 
@@ -1268,7 +1264,7 @@ var BubbleChartComp = Component.extend({
 
     var width = parseInt(labelGroup.select("rect").attr("width"));
     var height = parseInt(labelGroup.select("rect").attr("height"));
-    var heightDelta = labelGroup.node().getBBox().height - height; 
+    var heightDelta = labelGroup.node().getBBox().height - height;
 
     if(resolvedX - width <= 0) { //check left
       cache.labelX_ = (width - this.xScale(cache.labelX0)) / this.width;
@@ -1342,7 +1338,7 @@ var BubbleChartComp = Component.extend({
   selectDataPoints: function() {
     var _this = this;
     var KEY = this.KEY;
-    
+
     //hide tooltip
     _this._setTooltip();
 
@@ -1502,11 +1498,15 @@ var BubbleChartComp = Component.extend({
    * Shows and hides axis projections
    */
   _axisProjections: function(d) {
-    if(d != null) {
+    var TIMEDIM = this.TIMEDIM;
+    var KEY = this.KEY;
 
-      var valueY = this.model.marker.axis_y.getValue(d);
-      var valueX = this.model.marker.axis_x.getValue(d);
-      var valueS = this.model.marker.size.getValue(d);
+    if(d != null) {
+  
+      var values = this.model.marker.getFrame(d[TIMEDIM]);
+      var valueY = values.axis_y[d[KEY]];
+      var valueX = values.axis_x[d[KEY]];
+      var valueS = values.size[d[KEY]];
       var radius = utils.areaToRadius(this.sScale(valueS));
 
       if(!valueY || !valueX || !valueS) return;
@@ -1568,16 +1568,15 @@ var BubbleChartComp = Component.extend({
       if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
         d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
       } else {
-        d[TIMEDIM] = d.trailStartTime || _this.timeFormatter(_this.time);
+        d[TIMEDIM] = _this.timeFormatter.parse("" + d.trailStartTime) || _this.time;
       }
 
       this._axisProjections(d);
-      
+
+      var values = _this.model.marker.getFrame(d[TIMEDIM]);
+
       //show tooltip
       var text = "";
-      var pointer = {};
-      pointer[KEY] = d[KEY];
-      pointer[TIMEDIM] = _this.time;
       if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
         text = _this.timeFormatter(_this.time);
         var labelData = _this.entityLabels
@@ -1586,21 +1585,18 @@ var BubbleChartComp = Component.extend({
           })
           .classed("vzb-highlighted", true)
           .datum();
-        text = text !== labelData.trailStartTime && text === d[TIMEDIM] ? text : '';
+        text = text !== labelData.trailStartTime && _this.time === d[TIMEDIM] ? text : '';
       } else {
-        if (_this.model.time.lockNonSelected) {
-          pointer[TIMEDIM] = _this.model.time.lockNonSelected;
-        }
-        text = _this.model.entities.isSelected(d) ? '': _this.model.marker.label.getValue(d);
+        text = _this.model.entities.isSelected(d) ? '': values.label[d[KEY]];
       }
       //set tooltip and show axis projections
       if(text) {
-        var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-        var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-        var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+        var x = _this.xScale(values.axis_x[d[KEY]]);
+        var y = _this.yScale(values.axis_y[d[KEY]]);
+        var s = utils.areaToRadius(_this.sScale(values.size[d[KEY]]));
         _this._setTooltip(text, x, y, s);
-      }      
-      
+      }
+
       var selectedData = utils.find(this.model.entities.select, function(f) {
         return f[KEY] == d[KEY];
       });
@@ -1660,56 +1656,6 @@ var BubbleChartComp = Component.extend({
     }
 
     this.someSelectedAndOpacityZero_1 = _this.someSelected && _this.model.entities.opacitySelectDim < .01;
-  },
-
-  /*
-   * Calculates all values for this data configuration
-   */
-  _calculateAllValues: function() {
-    this.STEPS = this.model.time.getAllSteps();
-    this.VALUES = {};
-    var f = {};
-    for(var i = 0; i < this.STEPS.length; i++) {
-      var t = this.STEPS[i];
-      f[this.TIMEDIM] = t;
-      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
-    }
-  },
-
-  /*
-   * Gets all values for any point in time
-   * @param {Date} t time value
-   */
-  _getValuesInterpolated: function(t) {
-
-    if(!this.VALUES) this._calculateAllValues();
-    if(this.VALUES[t]) return this.VALUES[t];
-
-    var next = d3.bisectLeft(this.STEPS, t);
-
-    //if first
-    if(next === 0) {
-      return this.VALUES[this.STEPS[0]];
-    }
-    if(next > this.STEPS.length) {
-      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
-    }
-
-    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
-
-    var pValues = this.VALUES[this.STEPS[next - 1]];
-    var nValues = this.VALUES[this.STEPS[next]];
-
-    var curr = {};
-    utils.forEach(pValues, function(values, hook) {
-      curr[hook] = {};
-      utils.forEach(values, function(val, id) {
-        var val2 = nValues[hook][id];
-        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-      });
-    });
-
-    return curr;
   }
 
 });

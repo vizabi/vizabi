@@ -78,6 +78,20 @@
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
+        "geo.lat": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
+        "geo.lng": {
+            "allowCharts": ["*"],
+            "use": "property",
+            "unit": "",
+            "scales": ["linear"],
+            "sourceLink": "https://gapminder.org"
+        },
         "geo.region": {
             "allowCharts": ["*"],
             "use": "property",
@@ -106,6 +120,7 @@
             "use": "indicator",
             "unit": "lex",
             "scales": ["linear"],
+            "domain": [10, 83],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1H3nzTwbn8z4lJ5gJ_WfDgCeGEXK3PVGcNjQ_U5og8eo/pub?gid=1"
         },
         "tfr": {
@@ -137,13 +152,6 @@
             "unit": "gdp",
             "interpolation": "exp",
             "scales": ["log", "linear"],
-            "sourceLink": "https://gapminder.org"
-        },
-        "gni_pc_u_usd_cu": {
-            "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
-            "use": "indicator",
-            "unit": "gni_pc_u_usd_cu",
-            "scales": ["linear", "log"],
             "sourceLink": "https://gapminder.org"
         },
         "u5mr": {
@@ -182,8 +190,7 @@
                 "children": [
                     {"id": "inequality", "children": [{"id":"gini"}]}, 
                     {"id": "gdp_pc"},
-                    {"id": "gdp"},
-                    {"id": "gni_pc_u_usd_cu"}
+                    {"id": "gdp"}
                 ]
             }, {
                 "id": "health",
@@ -602,7 +609,7 @@
             "geo": "kor",
             "name": "South Korea"
         }, {
-            "geo": "sds",
+            "geo": "ssd",
             "name": "South Sudan"
         }, {
             "geo": "esp",

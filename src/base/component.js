@@ -119,7 +119,7 @@ var Component = Events.extend({
 
           //TODO: cleanup hardcoded splash screen
           timeMdl.splash = true;
-          timeMdl.beyondSplash = utils.clone(timeMdl.getObject(), ['start', 'end']);
+          timeMdl.beyondSplash = utils.clone(timeMdl.getPlainObject(), ['start', 'end']);
 
           _this.model.load({
             splashScreen: true
@@ -136,7 +136,7 @@ var Component = Events.extend({
               _this.model.load().then(function() {
                 _this.model.setLoadingDone('restore_orig_time');
                 timeMdl.splash = false;
-                timeMdl.trigger('change');
+                timeMdl.trigger('change', timeMdl.getPlainObject());
               });
             }, 300);
 
@@ -185,8 +185,8 @@ var Component = Events.extend({
 
   setReady: function(value) {
     if(!this._readyOnce) {
-      this.trigger('readyOnce');
       this._readyOnce = true;
+      this.trigger('readyOnce');
     }
 
     this._ready = true;
@@ -352,7 +352,7 @@ var Component = Events.extend({
   _uiMapping: function(id, ui) {
     //if overwritting UI
     if(ui) {
-      return new Model(ui);
+      return new Model('ui', ui);
     }
     if(id && this.ui) {
       id = id.replace('.', '');
@@ -435,7 +435,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(values, null, model_binds, true);
+    return new Model(subcomponent, values, null, model_binds, true);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"

@@ -1,0 +1,31 @@
+//responsiveness
+&.vzb-large {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &.vzb-sidebar {
+        &[data-dlg="stack"] {
+          flex: none;
+
+          .vzb-dl-holder .vzb-draggable {
+            height: initial;
+          }
+        }
+      }
+    }
+  }
+}
+
+//hiding elements when in popup mode
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="stack"] {
+      &.vzb-sidebar {
+        .vzb-howtomerge,
+        .vzb-manual-sorting {
+          display: none;
+        }
+  	  }
+	  }
+  }
+}
+

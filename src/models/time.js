@@ -63,7 +63,7 @@ var TimeModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "time";
     //default values for time model
@@ -71,11 +71,12 @@ var TimeModel = Model.extend({
     values = utils.extend(defaults, values);
 
     //same constructor
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
 
     var _this = this;
     this.dragging = false;
     this.postponePause = false;
+    this.allSteps = {};
 
     //bing play method to model change
     this.on({
@@ -86,6 +87,7 @@ var TimeModel = Model.extend({
         } else {
           _this._stopPlaying();
         }
+
       },
 */
       "set": function() {
@@ -168,10 +170,10 @@ var TimeModel = Model.extend({
    * Pauses time
    */
   pause: function(soft) {
-    if(soft){
-        this.postponePause = true;
-    }else{
-        this.playing = false;
+    if(soft) {
+      this.postponePause = true;
+    } else {
+      this.playing = false;
     }
   },
 
@@ -230,13 +232,18 @@ var TimeModel = Model.extend({
    * @returns {Array} time array
    */
   getAllSteps: function() {
-    var arr = [];
+    var hash = "" + this.start + this.end + this.step;
+    
+    //return if cached
+    if(this.allSteps[hash]) return this.allSteps[hash];
+      
+    this.allSteps[hash] = [];
     var curr = this.start;
     while(curr <= this.end) {
-      arr.push(curr);
+      this.allSteps[hash].push(curr);
       curr = d3.time[this.unit].offset(curr, this.step);
     }
-    return arr;
+    return this.allSteps[hash];
   },
 
   /**
@@ -294,19 +301,20 @@ var TimeModel = Model.extend({
         }
         return;
       } else {
-        var step = _this.step;
-        if(_this.delay < _this.delayThresholdX2) step*=2;
-        if(_this.delay < _this.delayThresholdX4) step*=2;
-        time = d3.time[_this.unit].offset(time, step);
 
-        if(_this.postponePause) {
-            _this.playing = false;
-            _this.postponePause = false;
-        }
-
-        _this.value = time;
         _this._intervals.clearInterval('playInterval_' + _this._id);
-        _this.playInterval();
+
+        if(_this.postponePause || !_this.playing) {
+          _this.playing = false;
+          _this.postponePause = false;
+        } else {
+          var step = _this.step;
+          if(_this.delay < _this.delayThresholdX2) step*=2;
+          if(_this.delay < _this.delayThresholdX4) step*=2;
+          time = d3.time[_this.unit].offset(time, step);
+          _this.getModelObject('value').set(time, false, false);
+          _this.playInterval();
+        }
       }
     }, this.delayAnimations);
 

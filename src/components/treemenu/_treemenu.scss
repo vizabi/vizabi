@@ -1,4 +1,5 @@
 .vzb-tool-treemenu {
+  @include position(absolute, 0 0 null null);
   width: 100%;
   height: 100%;
 

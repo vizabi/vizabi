@@ -9,6 +9,7 @@ import LCComponent from './linechart-component';
 
 import {
   timeslider,
+  dialogs,
   buttonlist,
   treemenu
 }
@@ -35,6 +36,10 @@ var LineChart = Tool.extend('LineChart', {
         placeholder: '.vzb-tool-timeslider',
         model: ["state.time"],
         ui: {show_value_when_drag_play: false, axis_aligned: true}
+      }, {
+        component: dialogs,
+        placeholder: '.vzb-tool-dialogs',
+        model: ['state', 'ui', 'language']
       }, {
         component: buttonlist,
         placeholder: '.vzb-tool-buttonlist',

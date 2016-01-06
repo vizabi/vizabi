@@ -6,6 +6,7 @@ export default Component.extend({
     this.template =
       '<span class="vzb-sc-holder vzb-dialog-checkbox"><input type="checkbox"><label></label></span>';
     var _this = this;
+    this.name = 'gapminder-simplecheckbox';
 
     this.checkbox = config.checkbox;
     this.submodel = config.submodel;
@@ -23,13 +24,13 @@ export default Component.extend({
       "change:mdl": function(evt) {
         _this.updateView();
       },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       }
     };
 
     var submodel = (this.submodel) ? this.submodel + ':' : '';
-    this.model_binds["change:mdl:" + submodel + this.checkbox] = function() {
+    this.model_binds["change:mdl." + submodel + this.checkbox] = function() {
       _this.updateView();
     };
 

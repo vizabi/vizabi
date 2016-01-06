@@ -14,6 +14,7 @@ var ColorModel = Model.extend({
   _defaults: {
     use: "constant",
     palette: null,
+    scaleType: '',
     which: undefined
   },
 
@@ -23,7 +24,7 @@ var ColorModel = Model.extend({
    * @param parent A reference to the parent model
    * @param {Object} bind Initial events to bind
    */
-  init: function(values, parent, bind) {
+  init: function(name, values, parent, bind) {
 
     this._type = "color";
     //TODO: add defaults extend to super
@@ -32,7 +33,7 @@ var ColorModel = Model.extend({
 
     this._original_palette = values.palette;
 
-    this._super(values, parent, bind);
+    this._super(name, values, parent, bind);
 
     this._firstLoad = true;
     this._hasDefaultColor = false;
@@ -90,7 +91,7 @@ var ColorModel = Model.extend({
     this._resetPalette = true;
     this._super();
   },
-
+  
   /**
    * Get the above constants
    */
@@ -125,7 +126,9 @@ var ColorModel = Model.extend({
 
 
       //TODO a hack that kills the scale, it will be rebuild upon getScale request in model.js
-      this.set("palette", null, false);
+      if(this.palette) {
+        this.palette._data = {};
+      }
 
       if(palettes[this.which]) {
         this.palette = utils.clone(palettes[this.which]);
@@ -156,7 +159,7 @@ var ColorModel = Model.extend({
    * set color
    */
   setColor: function(value, pointer) {
-    var temp = this.palette.getObject();
+    var temp = this.palette.getPlainObject();
     temp[pointer] = value;
     this.scale.range(utils.values(temp));
     this.palette[pointer] = value;
@@ -186,8 +189,9 @@ var ColorModel = Model.extend({
 
     var indicatorsDB = globals.metadata.indicatorsDB;
 
-    var domain = Object.keys(_this.palette.getObject());
-    var range = utils.values(_this.palette.getObject());
+    var paletteObject = _this.palette.getPlainObject();
+    var domain = Object.keys(paletteObject);
+    var range = utils.values(paletteObject);
 
     this._hasDefaultColor = domain.indexOf("_default") > -1;
 

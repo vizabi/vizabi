@@ -451,11 +451,11 @@ var TreeMenu = Component.extend({
     // object for manipulation with menu representation level
     this.menuEntity = null;
     this.model_binds = {
-      "change:marker": function(evt) {
-        if(evt.indexOf(markerID)==-1) return;
+      "change:marker": function(evt, path) {
+        if(path.indexOf(markerID)==-1) return;
         _this.updateView();
       },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       }
     };
@@ -831,10 +831,7 @@ var TreeMenu = Component.extend({
 
     if(what == "which") {
       obj.use = indicatorsDB[value].use;
-
-      if(indicatorsDB[value].scales.indexOf(mdl.scaleType) == -1) {
-        obj.scaleType = indicatorsDB[value].scales[0];
-      }
+      obj.scaleType = indicatorsDB[value].scales[0];
     }
 
     if(mdl.getType() == 'axis') {

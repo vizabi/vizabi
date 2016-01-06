@@ -6,6 +6,7 @@ var DraggableList = Component.extend({
   init: function(config, context) {
     this.template = '<span class="vzb-dl-holder"><ul class="vzb-draggable list vzb-dialog-scrollable"></ul></span>';
     var _this = this;
+    this.name = 'draggableList';
 
     this.dataArrFn = config.dataArrFn;
     this.lang = config.lang;
@@ -22,15 +23,12 @@ var DraggableList = Component.extend({
     if(!config.groupID) utils.warn("draggablelist.js complains on 'groupID' property: " + config.groupID);
 
     this.model_binds = {
-      "change:axis": function(evt) {
-        _this.updateView();
-      },
-      "change:language:strings": function(evt) {
+      "change:language.strings": function(evt) {
         _this.updateView();
       }
     };
     
-    this.model_binds["change:group:" + this.groupID] = function(evt) {
+    this.model_binds["change:group." + this.groupID] = function(evt) {
         _this.updateView();
     };
     
@@ -85,9 +83,7 @@ var DraggableList = Component.extend({
       
       .on('dragend', function(d, i) {
         if(_this.dataUpdateFlag) return;
-                
-        _this.dataUpdateFlag = true;
-        _this.updateData();
+        _this.getData();     
       })
       
   },
@@ -136,8 +132,8 @@ var DraggableList = Component.extend({
     this.dataUpdateFlag = false;
      
   },
-
-  updateData: function() {
+  
+  getData: function() {
     var dataArr = [];
     var data = this.element
       .selectAll('div').data();
@@ -149,9 +145,16 @@ var DraggableList = Component.extend({
       .map(function(d) {
         return d.data        
       })
-    
-    this.dataArrFn(dataArr);
-    
+    if(utils.arrayEquals(this.dataArrFn(), dataArr)) {
+      this.updateView();
+    } else {
+      this.dataUpdateFlag = true;
+      this.updateData(dataArr);
+    }
+  },
+  
+  updateData: function(dataArr) {
+    this.dataArrFn(dataArr);    
   },
 
   readyOnce: function() {

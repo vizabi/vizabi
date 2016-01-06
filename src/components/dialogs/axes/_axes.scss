@@ -1,0 +1,13 @@
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="axes"] {
+      &.vzb-popup {
+        .vzb-xaxis-minmax,
+        .vzb-yaxis-minmax,
+        .vzb-axes-options {
+          display: none;
+        }
+  	  }
+	  }
+  }
+}

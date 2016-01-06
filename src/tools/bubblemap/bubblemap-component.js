@@ -25,6 +25,15 @@ var BubbleMapComponent = Component.extend({
     this.template = 'bubblemap.html';
     this.bubblesDrawing = null;
 
+
+    //http://stackoverflow.com/questions/11381673/detecting-a-mobile-browser
+    var mobileAndTabletcheck = function() {
+      var check = false;
+      (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
+      return check;
+    };
+    this.isMobile = mobileAndTabletcheck();
+
     //define expected models for this component
     this.model_expects = [{
       name: "time",
@@ -45,54 +54,47 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.model_binds = {
-      "change:time:value": function (evt) {
-        _this.updateEntities();
+      "change:time.value": function (evt) {
         _this.updateTime();
-        _this.selectEntities();
-        //_this._selectlist.redraw();
-
-        _this.updateOpacity();
         _this.updateDoubtOpacity();
+        _this.redrawDataPoints(null, false);
       },
-      "change:entities:highlight": function (evt) {
+      "change:entities.highlight": function (evt) {
         if (!_this._readyOnce) return;
         _this.highlightEntities();
         _this.updateOpacity();
       },
-      "change:marker": function(evt) {
+      "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        if(evt.indexOf("change:marker:size") !== -1) return;
-        if(evt.indexOf("change:marker:color:palette") > -1) return;
-        _this.ready();
+          
+        if(path.indexOf("scaleType") > -1) _this.ready();
       },
-      'change:marker:size': function(evt) {
+      'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(evt.indexOf("min") > -1 || evt.indexOf("max") > -1) {
-          _this.ready();
+        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
+          _this.updateMarkerSizeLimits();
+          _this.redrawDataPoints(null, false);
+          return;
         }
       },
-      "change:marker:color:palette": function (evt) {
+      "change:marker.color.palette": function (evt, path) {
           if (!_this._readyOnce) return;
-          //_this.redrawDataPointsOnlyColors();
-          //_this._selectlist.redraw();
-          _this.ready();
+          _this.redrawDataPoints(null, false);
       },
-      "change:entities:select": function (evt) {
+      "change:entities.select": function (evt) {
           if (!_this._readyOnce) return;
-
-          // _this.selectEntities();
-          // _this._selectlist.redraw();
-          // _this.updateDoubtOpacity();
-          // _this.updateOpacity();
-
-          _this.ready();
+          _this.selectEntities();
+          _this.redrawDataPoints(null, false);
+          _this.updateOpacity();
+          _this.updateDoubtOpacity();
+          
       },
-      "change:entities:opacitySelectDim": function (evt) {
+      "change:entities.opacitySelectDim": function (evt) {
           _this.updateOpacity();
       },
-      "change:entities:opacityRegular": function (evt) {
+      "change:entities.opacityRegular": function (evt) {
           _this.updateOpacity();
       },
     };
@@ -254,21 +256,25 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-      /*
+      
       _this.updateSize();
       _this.updateMarkerSizeLimits();
-      _this.updateEntities();
-      _this._selectlist.redraw();
-      */
-      _this.ready();
+      _this.redrawDataPoints();
+      //_this._selectlist.redraw();
+      
     });
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
+      
+      
+    this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
+      
+      
 
   },
 
@@ -276,16 +282,13 @@ var BubbleMapComponent = Component.extend({
    * Both model and DOM are ready
    */
   ready: function () {
-    //if (!this._valuesCalculated) {
-      this._calculateAllValues();
-    //}
-
     this.updateUIStrings();
     this.updateIndicators();
     this.updateSize();
     this.updateMarkerSizeLimits();
     this.updateEntities();
     this.updateTime();
+    this.redrawDataPoints();
     this.highlightEntities();
     this.selectEntities();
 //    this._selectlist.redraw();
@@ -297,6 +300,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();
+      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);      
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -360,8 +364,13 @@ var BubbleMapComponent = Component.extend({
   updateTitleNumbers: function(){
       var _this = this;
 
-      if(_this.hovered) {
-        var hovered = _this.hovered;
+      var mobile; // if is mobile device and only one bubble is selected, update the ytitle for the bubble
+      if (_this.isMobile && _this.model.entities.select && _this.model.entities.select.length === 1) {
+        mobile = _this.model.entities.select[0];
+      }
+
+      if(_this.hovered || mobile) {
+        var hovered = _this.hovered || mobile;
         var formatterS = _this.model.marker.size.tickFormatter;
         var formatterC = _this.model.marker.color.tickFormatter;
 
@@ -445,10 +454,6 @@ var BubbleMapComponent = Component.extend({
    * Changes labels for indicators
    */
   updateIndicators: function () {
-    var _this = this;
-    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
-    this.duration = this.model.time.speed;
-
     this.sScale = this.model.marker.size.getScale();
     this.cScale = this.model.marker.color.getScale();
   },
@@ -459,29 +464,31 @@ var BubbleMapComponent = Component.extend({
   updateEntities: function () {
 
     var _this = this;
-    var time = this.model.time;
-    // var latDim = this.model.lat.getDimension();
-    // var lngDim = this.model.lng.getDimension();
-    // console.log(latDim, lngDim, 'ok');
-    var duration = (time.playing) ? time.speed : 0;
-    var filter = {};
-    filter[_this.TIMEDIM] = time.value;
-    var items = this.model.marker.getKeys(filter);
-    var values = this._getValuesInterpolated(time.value);
-    _this.values = values;
+    var KEY = this.KEY;
+    var TIMEDIM = this.TIMEDIM;
 
-    /*
-    // construct pointers
-    this.pointers = this.model.marker.getKeys()
-        .map(function (d) {
-            var pointer = {};
-            pointer[_this.KEY] = d[_this.KEY];
-            pointer.KEY = function () {
-                return this[_this.KEY];
-            };
-            return pointer;
-        });
-    */
+    var getKeys = function(prefix) {
+      prefix = prefix || "";
+      return this.model.marker.getKeys()
+        .map(function(d) {
+          var pointer = {};
+          pointer[KEY] = d[KEY];
+          pointer[TIMEDIM] = endTime;
+          pointer.sortValue = _this.values.size[d[KEY]];
+          pointer[KEY] = prefix + d[KEY];
+          return pointer;
+        })
+        .sort(function(a, b) {
+          return b.sortValue - a.sortValue;
+        })
+    };
+      
+    // get array of GEOs, sorted by the size hook
+    // that makes larger bubbles go behind the smaller ones
+    var endTime = this.model.time.end;
+    _this.values = this.model.marker.getFrame(endTime);
+    this.model.entities.setVisible(getKeys.call(this));
+
 
     // TODO: add to csv
     //Africa 9.1021° N, 18.2812°E
@@ -497,82 +504,81 @@ var BubbleMapComponent = Component.extend({
     };
     */
 
-    items = items.sort(function (a, b) { // small circle to front
-      return values.size[b[_this.KEY]] - values.size[a[_this.KEY]];
-    });
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(items);
+      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; });
 
-    if (!this.renderedOnce) {
+    //exit selection
+    this.entityBubbles.exit().remove();
 
-      //enter selection -- init circles
-      this.entityBubbles.enter().append("circle")
-        .attr("class", "vzb-bmc-bubble")
-        .on("mouseover", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._mouseover(d, i);
-        })
-        .on("mouseout", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._mouseout(d, i);
-        })
-        .on("click", function (d, i) {
-            if (utils.isTouchDevice()) return;
-            _this._interact()._click(d, i);
-            _this.highlightEntities();
-        })
-        .onTap(function (d, i) {
-            _this._interact()._click(d, i);
-            d3.event.stopPropagation();
-        })
-        .onLongTap(function (d, i) {
-        })
-      this.renderedOnce = true;
-    }
+    //enter selection -- init circles
+    this.entityBubbles.enter().append("circle")
+      .attr("class", "vzb-bmc-bubble")
+      .on("mouseover", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseover(d, i);
+      })
+      .on("mouseout", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._mouseout(d, i);
+      })
+      .on("click", function (d, i) {
+          if (utils.isTouchDevice()) return;
+          _this._interact()._click(d, i);
+          _this.highlightEntities();
+      })
+      .onTap(function (d, i) {
+          _this._interact()._click(d, i);
+          d3.event.stopPropagation();
+      })
+      .onLongTap(function (d, i) {
+      })
 
-    //positioning and sizes of the bubbles
-    if (time.playing && duration) {
-      if (this.bubblesDrawing && this.bubblesDrawing > 0) return;
-    }
+  },
+    
+  redrawDataPoints: function(duration, reposition){
+    var _this = this;  
+    if(!duration) duration = this.duration;
+    if(!reposition) reposition = true;
+      
+    this.entityBubbles.each(function(d, index){
+      var view = d3.select(this);
 
-    this.bubblesDrawing = 0;
-    this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .each(function(d, index){
-        var view = d3.select(this);
+      var valueX = _this.values.lng[d[_this.KEY]]||0;
+      var valueY = _this.values.lat[d[_this.KEY]]||0;
+      var valueS = _this.values.size[d[_this.KEY]]||0;
+      var valueC = _this.values.color[d[_this.KEY]];
+      var valueL = _this.values.label[d[_this.KEY]];
 
-        var valueX = +values.lng[d[_this.KEY]];
-        var valueY = +values.lat[d[_this.KEY]];
-        var valueS = +values.size[d[_this.KEY]];
-        var valueC = values.color[d[_this.KEY]];
-        var valueL = values.label[d[_this.KEY]];
+      d.hidden_1 = d.hidden;
+      d.hidden = !valueS || !valueX || !valueY;
 
-        d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-        d.r = utils.areaToRadius(_this.sScale(valueS));
-        d.color = _this.cScale(valueC);
-        d.label = valueL;
+      if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
+        
+      if(!d.hidden){
+          
+          d.r = utils.areaToRadius(_this.sScale(valueS));
+          d.label = valueL;
+          
+          view.classed("vzb-hidden", false)
+              .attr("fill", _this.cScale(valueC))
+          
+          if(reposition){
+              d.cLoc = _this.skew(_this.projection([valueX, valueY]));
+              
+              view.attr("cx", d.cLoc[0])
+                  .attr("cy", d.cLoc[1]);
+          }
 
-        if(!valueS || !valueX || !valueY){
-            view.classed("vzb-hidden", true);
-        }else{
-            view.classed("vzb-hidden", false)
-                .attr("fill", d.color)
-                .attr("cx", d.cLoc[0])
-                .attr("cy", d.cLoc[1]);
+          if(duration){
+              view.transition().duration(duration).ease("linear")
+                  .attr("r", d.r);
+          }else{
+              view.interrupt()
+                  .attr("r", d.r);
+          }
 
-            if(duration){
-                ++ _this.bubblesDrawing;
-                view.transition().duration(duration).ease("linear")
-                    .attr("r", d.r)
-                    .each('end', function() {
-                      _this.bubblesDrawing > 0 ? -- _this.bubblesDrawing: null;
-                    });
-            }else{
-                view.interrupt()
-                    .attr("r", d.r);
-            }
-
-            _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
+          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, duration);
         }
 
       });
@@ -589,6 +595,7 @@ var BubbleMapComponent = Component.extend({
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
     this.year.setText(this.timeFormatter(this.time));
+    this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title
     this.updateTitleNumbers();
@@ -597,23 +604,28 @@ var BubbleMapComponent = Component.extend({
     
   fitSizeOfTitles: function(){
       
+    //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
     var cTitleText = this.cTitleEl.select("text")
-      .style("font-size", null);
+      .style("font-size", null);    
+
+    var yTitleText = this.yTitleEl.select("text");
+    var cTitleText = this.cTitleEl.select("text");
 
     var yTitleBB = yTitleText.node().getBBox();
-    var cTitleBB = cTitleText.node().getBBox();
+    var cTitleBB = cTitleText.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
 
     var font = 
         Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
-        * this.width
-        / Math.max(yTitleBB.width, cTitleBB.width);
+        * this.width / Math.max(yTitleBB.width, cTitleBB.width);
       
     if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
+      
+      // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
       cTitleText.style("font-size", null);
     }
@@ -641,34 +653,22 @@ var BubbleMapComponent = Component.extend({
         margin: { top: 20, right: 20, left: 20, bottom: 30 },
         infoElHeight: 20,
         minRadius: 1,
-        maxRadius: 60
+        maxRadius: 55
       },
       large: {
         margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
         minRadius: 1,
-        maxRadius: 80
+        maxRadius: 70
       }
     };
 
     var presentationProfileChanges = {
-      small: {
-        margin: { top: 10, right: 10, left: 10, bottom: 0 },
-        infoElHeight: 16,
-        minRadius: 0.5,
-        maxRadius: 30
-      },
       medium: {
-        margin: { top: 20, right: 20, left: 20, bottom: 50 },
-        infoElHeight: 26,
-        minRadius: 1,
-        maxRadius: 60
+        infoElHeight: 26
       },
       large: {
-        margin: { top: 30, right: 30, left: 30, bottom: 35 },
-        infoElHeight: 32,
-        minRadius: 1,
-        maxRadius: 80
+        infoElHeight: 32
       }
     };
 
@@ -717,7 +717,7 @@ var BubbleMapComponent = Component.extend({
     }());
 
 
-    this.yTitleEl.select("text")
+    this.yTitleEl
         .style("font-size", infoElHeight)
         .attr("transform", "translate(0," + margin.top + ")")
 
@@ -747,7 +747,7 @@ var BubbleMapComponent = Component.extend({
             .attr("height", infoElHeight)
         this.infoEl.attr('transform', 'translate('
             + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
-            + (titleBBox.y + translate[1] + infoElHeight * .3) + ')');
+            + (translate[1] - infoElHeight * 0.8) + ')');
     }
   },
 
@@ -807,6 +807,7 @@ var BubbleMapComponent = Component.extend({
   highlightEntities: function () {
       var _this = this;
       this.someHighlighted = (this.model.entities.highlight.length > 0);
+
 
 //      if (!this.selectList || !this.someSelected) return;
 //      this.selectList.classed("vzb-highlight", function (d) {
@@ -909,7 +910,7 @@ var BubbleMapComponent = Component.extend({
             limitedX = limitedX0 + cached.labelX_ * _this.width;
           }
           limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top
+          if(limitedY - cached.contentBBox.height <= 0) { // check top 
             cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = limitedY0 + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
@@ -948,8 +949,8 @@ var BubbleMapComponent = Component.extend({
       cache.labelX_ = (this.width - 20 - labelX0) / this.width;
       resolvedX = labelX0 + cache.labelX_ * this.width;
     }
-    if(resolvedY - height <= 0) { // check top
-      cache.labelY_ = (height - labelY0) / this.height;
+    if(resolvedY - (height + 30) <= 0) { // check top // not conflict with color label, 25
+      cache.labelY_ = (height + 30 - labelY0) / this.height;
       resolvedY = labelY0 + cache.labelY_ * this.height;
     } else if(resolvedY + 13 > this.height) { //check bottom
       cache.labelY_ = (this.height - 13 - labelY0) / this.height;
@@ -1078,13 +1079,10 @@ var BubbleMapComponent = Component.extend({
             .classed("vzb-transparent", true);
         })
 
-        //positioning and sizes of the bubble Labels
-        this.bubbleContainer.selectAll('.vzb-bmc-bubble').each(function (d, index) {
-          _this._updateLabel(d, index, d.cLoc[0], d.cLoc[1], d.r, d.label, _this.duration);
-        });
-
         // hide recent hover tooltip
-        _this._setTooltip();
+        if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
+          _this._setTooltip();
+        }
 
   },
 
@@ -1148,66 +1146,7 @@ var BubbleMapComponent = Component.extend({
 
       this.tooltip.classed("vzb-hidden", true);
     }
-  },
-
-  /*
-   * Calculates all values for this data configuration
-   */
-  _calculateAllValues: function() {
-    // if (this._valuesCalculated) {
-    //   return;
-    // }
-    this.STEPS = this.model.time.getAllSteps();
-    this.VALUES = {};
-    var f = {};
-    for(var i = 0; i < this.STEPS.length; i++) {
-      var t = this.STEPS[i];
-      f[this.TIMEDIM] = t;
-      this.VALUES[t] = this.model.marker.getValues(f, [this.KEY]);
-    }
-    // if (this.STEPS.length > 1) {
-    //   //console.log('caculated');
-    //   this._valuesCalculated = true; //hack to avoid recalculation
-    // }
-  },
-
-  /*
-   * Gets all values for any point in time
-   * @param {Date} t time value
-   */
-  _getValuesInterpolated: function(t) {
-
-    if(!this.VALUES) this._calculateAllValues();
-    if(this.VALUES[t]) return this.VALUES[t];
-
-    var next = d3.bisectLeft(this.STEPS, t);
-
-    //if first
-    if(next === 0) {
-      return this.VALUES[this.STEPS[0]];
-    }
-    if(next > this.STEPS.length) {
-      return this.VALUES[this.STEPS[this.STEPS.length - 1]];
-    }
-
-    var fraction = (t - this.STEPS[next - 1]) / (this.STEPS[next] - this.STEPS[next - 1]);
-
-    var pValues = this.VALUES[this.STEPS[next - 1]];
-    var nValues = this.VALUES[this.STEPS[next]];
-
-    var curr = {};
-    utils.forEach(pValues, function(values, hook) {
-      curr[hook] = {};
-      utils.forEach(values, function(val, id) {
-        var val2 = nValues[hook][id];
-        curr[hook][id] = (!utils.isNumber(val)) ? val : val + ((val2 - val) * fraction);
-      });
-    });
-
-    return curr;
   }
-
-
 
 });
 

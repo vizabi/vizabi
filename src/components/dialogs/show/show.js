@@ -17,7 +17,7 @@ var Show = Dialog.extend({
     var _this = this;
 
     this.model_binds = {
-      "change:state:entities:show": function(evt) {
+      "change:state.entities.show": function(evt) {
         _this.redraw();
       }
     }
@@ -71,11 +71,8 @@ var Show = Dialog.extend({
 
     var _this = this;
     this.translator = this.model.language.getTFunction();
+      
 
-    var filter = {};
-    filter[this.TIMEDIM] = this.model.state.time.value;
-
-    var values = this.model.state.marker.getValues(filter, [this.KEY])
 
     var data = globals.metadata.entities;
 
@@ -136,7 +133,7 @@ var Show = Dialog.extend({
 
   showHideDeselect: function() {
     var show = this.model.state.entities.show[this.KEY];
-    this.deselect_all.classed('vzb-hidden', show[0]==="*");
+    this.deselect_all.classed('vzb-hidden', !show || show[0]==="*");
   },
 
   deselectEntities: function() {

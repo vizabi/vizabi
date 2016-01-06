@@ -1,6 +1,6 @@
-.vzb-buttonlist {
-  .vzb-buttonlist-dialog {
-    &[data-btn="colors"] {
+.vzb-tool-dialogs {
+  .vzb-dialogs-dialog {
+    &[data-dlg="colors"] {
       .vzb-dialog-content {
         min-height: 140px;
       }
@@ -10,10 +10,10 @@
   
 //responsiveness
 &.vzb-large {
-  &.vzb-button-expand-true {
-    .vzb-buttonlist-dialog {
-      &.vzb-dialog-side {
-        &[data-btn="colors"] {
+  &.vzb-dialog-expand-true {
+    .vzb-dialogs-dialog {
+      &.vzb-sidebar {
+        &[data-dlg="colors"] {
           z-index: auto !important;
           flex: none;
 

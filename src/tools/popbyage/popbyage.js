@@ -9,6 +9,7 @@ import PopByAgeComponent from './popbyage-component';
 
 import {
   timeslider,
+  dialogs,
   buttonlist,
   treemenu
 }
@@ -36,6 +37,10 @@ var PopByAge = Tool.extend('PopByAge', {
       component: timeslider,
       placeholder: '.vzb-tool-timeslider',
       model: ["state.time"]
+    }, {
+      component: dialogs,
+      placeholder: '.vzb-tool-dialogs',
+      model: ['state', 'ui', 'language']
     }, {
       component: buttonlist,
       placeholder: '.vzb-tool-buttonlist',

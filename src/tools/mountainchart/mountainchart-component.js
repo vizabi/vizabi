@@ -51,7 +51,7 @@ var MountainChartComponent = Component.extend({
 
         //attach event listeners to the model items
         this.model_binds = {
-            "change:time:value": function (evt) {
+            "change:time.value": function (evt) {
                 //console.log("MONT: " + evt);
                 _this.updateTime();
                 _this.redrawDataPoints();
@@ -59,44 +59,44 @@ var MountainChartComponent = Component.extend({
                 _this._probe.redraw();
                 _this.updateDoubtOpacity();
             },
-            "change:time:xScaleFactor": function () {
+            "change:time.xScaleFactor": function () {
                 _this.ready();
             },
-            "change:time:xScaleShift": function () {
+            "change:time.xScaleShift": function () {
                 _this.ready();
             },
-            "change:time:tailCutX": function () {
+            "change:time.tailCutX": function () {
                 _this.ready();
             },
-            "change:time:tailFade": function () {
+            "change:time.tailFade": function () {
                 _this.ready();
             },
-            "change:time:probeX": function () {
+            "change:time.probeX": function () {
                 _this.ready();
             },
-            "change:time:xPoints": function () {
+            "change:time.xPoints": function () {
                 _this.ready();
             },
-            "change:time:xLogStops": function () {
+            "change:time.xLogStops": function () {
                 _this.updateSize();
             },
-            "change:time:yMaxMethod": function () {
+            "change:time.yMaxMethod": function () {
                 _this._adjustMaxY({ force: true });
                 _this.redrawDataPoints();
             },
-            "change:time:record": function (evt) {
+            "change:time.record": function (evt) {
                 if (_this.model.time.record) {
                     _this._export.open(this.element, this.name);
                 } else {
                     _this._export.reset();
                 }
             },
-            "change:entities:highlight": function (evt) {
+            "change:entities.highlight": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.highlightEntities();
                 _this.updateOpacity();
             },
-            "change:entities:select": function (evt) {
+            "change:entities.select": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.selectEntities();
                 _this._selectlist.redraw();
@@ -104,35 +104,40 @@ var MountainChartComponent = Component.extend({
                 _this.updateDoubtOpacity();
                 _this.redrawDataPoints();
             },
-            "change:entities:opacitySelectDim": function (evt) {
+            "change:entities.opacitySelectDim": function (evt) {
                 _this.updateOpacity();
             },
-            "change:entities:opacityRegular": function (evt) {
+            "change:entities.opacityRegular": function (evt) {
                 _this.updateOpacity();
             },
-            "change:marker": function (evt) {
+            "change:marker": function (evt, path) {
                 if (!_this._readyOnce) return;
-                if (evt.indexOf("fakeMin") > -1 || evt.indexOf("fakeMax") > -1) {
+                if(path.indexOf("scaleType") > -1) {
+                    _this.ready();
+                    return;
+                }
+                if (path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
                     _this.zoomToMaxMin();
                     _this.redrawDataPoints();
                     _this._probe.redraw();
+                    return;
                 }
             },
-            "change:marker:group": function (evt) {
+            "change:marker.group": function (evt, path) {
                 if (!_this._readyOnce) return;
-                if (evt.indexOf("group:merge") > -1) return;
+                if (path.indexOf("group.merge") > -1) return;
                 _this.ready();
             },
-            "change:marker:group:merge": function (evt) {
+            "change:marker.group.merge": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.updateTime();
                 _this.redrawDataPoints();
             },
-            "change:marker:stack": function (evt) {
+            "change:marker.stack": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.ready();
             },
-            "change:marker:color:palette": function (evt) {
+            "change:marker.color.palette": function (evt) {
                 if (!_this._readyOnce) return;
                 _this.redrawDataPointsOnlyColors();
                 _this._selectlist.redraw();
@@ -290,7 +295,7 @@ var MountainChartComponent = Component.extend({
 
     ready: function () {
         //console.log("ready")
-
+        
         this._math.xScaleFactor = this.model.time.xScaleFactor;
         this._math.xScaleShift = this.model.time.xScaleShift;
 
@@ -333,10 +338,6 @@ var MountainChartComponent = Component.extend({
         };
 
         var presentationProfileChanges = {
-          small: {
-            margin: { top: 10, right: 10, left: 10, bottom: 30 },
-            infoElHeight: 16
-          },
           medium: {
             margin: { top: 20, right: 20, left: 20, bottom: 50 },
             infoElHeight: 26
@@ -512,13 +513,16 @@ var MountainChartComponent = Component.extend({
     updateEntities: function () {
         var _this = this;
 
-        var filter = {};
-        filter[_this.TIMEDIM] = this.model.time.end;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this.model.marker.getFrame(this.model.time.end);
 
         // construct pointers
         this.mountainPointers = this.model.marker.getKeys()
-            .map(function (d) {
+            .filter(function(d) { return 1
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.axis_y[d[_this.KEY]]
+                && _this.values.size[d[_this.KEY]];
+            })
+            .map(function(d) {
                 var pointer = {};
                 pointer[_this.KEY] = d[_this.KEY];
                 pointer.KEY = function () {
@@ -771,9 +775,7 @@ var MountainChartComponent = Component.extend({
 
         this.year.setText(time.getFullYear().toString());
 
-        var filter = {};
-        filter[_this.TIMEDIM] = time;
-        this.values = this.model.marker.getValues(filter, [_this.KEY]);
+        this.values = this.model.marker.getFrame(time);
         this.yMax = 0;
 
 
@@ -863,6 +865,8 @@ var MountainChartComponent = Component.extend({
             var first = visible[0];
             var last = visible[visible.length - 1];
         }
+        
+        if (!visible.length || (visible2 && !visible2.length)) utils.warn('mountain chart failed to generate shapes. check the incoming data');
 
         return {
             first: first,
@@ -1092,7 +1096,6 @@ var MountainChartComponent = Component.extend({
             this.tooltip.classed("vzb-hidden", true);
         }
     }
-
 
 });
 

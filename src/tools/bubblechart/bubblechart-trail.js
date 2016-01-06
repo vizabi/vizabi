@@ -84,9 +84,10 @@ export default Class.extend({
             .classed("vzb-highlighted", true)
             .datum();
           if(text !== labelData.trailStartTime) {
-            var x = _this.xScale(_this.model.marker.axis_x.getValue(pointer));
-            var y = _this.yScale(_this.model.marker.axis_y.getValue(pointer));
-            var s = utils.areaToRadius(_this.sScale(_this.model.marker.size.getValue(pointer)));
+            var values = _this.model.marker.getFrame(pointer.time);
+            var x = _this.xScale(values.axis_x[pointer[KEY]]);
+            var y = _this.yScale(values.axis_y[pointer[KEY]]);
+            var s = utils.areaToRadius(_this.sScale(values.size[pointer[KEY]]));
             _this._setTooltip(text, x, y, s);
           } 
           //change opacity to OPACITY_HIGHLT = 1.0;
@@ -108,19 +109,11 @@ export default Class.extend({
 
       trail.each(function(segment, index) {
         //update segment data (maybe for new indicators)
-//        var pointer = {};
-//        pointer[KEY] = d[KEY];
-//        pointer.time = segment.t;
-//
-//        segment.valueY = _this.model.marker.axis_y.getValue(pointer);
-//        segment.valueX = _this.model.marker.axis_x.getValue(pointer);
-//        segment.valueS = _this.model.marker.size.getValue(pointer);
-//        segment.valueC = _this.model.marker.color.getValue(pointer);
-          
-        segment.valueY = _this.VALUES[segment.t].axis_y[d[KEY]];
-        segment.valueX = _this.VALUES[segment.t].axis_x[d[KEY]];
-        segment.valueS = _this.VALUES[segment.t].size[d[KEY]];
-        segment.valueC = _this.VALUES[segment.t].color[d[KEY]];
+        
+        segment.valueY = _this.model.marker.getFrame(segment.t).axis_y[d[KEY]];
+        segment.valueX = _this.model.marker.getFrame(segment.t).axis_x[d[KEY]];
+        segment.valueS = _this.model.marker.getFrame(segment.t).size[d[KEY]];
+        segment.valueC = _this.model.marker.getFrame(segment.t).color[d[KEY]];
 
         //update min max frame: needed to zoom in on the trail
         if(segment.valueX > maxmin.valueXmax || maxmin.valueXmax == null) maxmin.valueXmax = segment.valueX;

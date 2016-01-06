@@ -776,19 +776,28 @@ export var mapRows = function(original, formatters) {
     }
   }
 
-  var columns = Object.keys(formatters);
-  var columns_s = columns.length;
+  
+  
   original = original.map(function(row) {
-    for(var i = 0; i < columns_s; i++) {
-      var col = columns[i],
-        new_val;
-      if(row.hasOwnProperty(col)) {
+    var columns = Object.keys(row);
+      
+    for(var i = columns.length; i >= 0; i--) {
+      var col = columns[i], new_val;
+      if(formatters.hasOwnProperty(col)) { 
         try {
           new_val = mapRow(row[col], formatters[col]);
         } catch(e) {
           new_val = row[col];
         }
         row[col] = new_val;
+      }else{
+        //if it's a number
+        if(row[col] === ""){
+            row[col] = null;
+        }else{
+            new_val = parseFloat(row[col]);
+            if(new_val || new_val === 0) row[col] = new_val;
+        }
       }
     }
     return row;
@@ -943,35 +952,49 @@ export var hasClass = function(el, className) {
  * Throttles a function
  * @param {Function} func
  * @param {Number} ms duration
+ * @return {Function}
+ * Function recallLast was added to prototype of returned function.
+ * Call Function.recallLast() - immediate recall func with last saved arguments,
+ *                              else func will be called automaticly after ms duration
  */
 export var throttle = function(func, ms) {
 
-  var isThrottled = false,
+  var throttled = false,
     savedArgs,
     savedThis,
+    nextTime,
     wrapper = function() {
-
-      if(isThrottled) {
+      
+      if(nextTime > Date.now()) {
+        throttled = true;        
         savedArgs = arguments;
         savedThis = this;
         return;
       }
 
+      nextTime = Date.now() + ms;
+      throttled = false;
+      
       func.apply(this, arguments);
 
-      isThrottled = true;
-
       setTimeout(function() {
-        isThrottled = false;
-        if(savedArgs) {
-          wrapper.apply(savedThis, savedArgs);
-          savedArgs = savedThis = null;
-        }
+        __recallLast();          
       }, ms);
-    }
+
+    },
+    
+    __recallLast = function() {
+      if(throttled) {
+        throttled = false;
+        func.apply(savedThis, savedArgs);
+      }     
+    };
+
+  wrapper.recallLast = __recallLast; 
 
   return wrapper;
 };
+
 
 /*
  * Returns keys of an object as array
@@ -1197,6 +1220,103 @@ export var hashCode = function(str) {
   }
   return hash.toString();
 };
+
+
+/*
+ * Converts D3 nest array into the object with key-value pairs, recursively
+ * @param {Array} arr - array like this [{key: k, values: [a, b, ...]}, {...} ... {...}]
+ * @return {Object} object like this {k: [a, b, ...], ...}
+ */
+//
+export var nestArrayToObj = function(arr) {
+  if(!arr || !arr.length || !arr[0].key) return arr;
+  var res = {};
+  for(var i = 0; i < arr.length; i++) {
+    res[arr[i].key] = nestArrayToObj(arr[i].values);
+  };
+  return res;
+}
+
+
+/*
+ * A collection of interpolators
+ * @param {Number} x1, x2, y1, y2 - boundary points
+ * @param {Number} x - point of interpolation
+ * @return {Number} y - interpolated value
+ */
+//
+export var interpolator = {
+    linear: function(x1, x2, y1, y2, x) {
+      return +y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+    },
+    exp: function(x1, x2, y1, y2, x) {
+      return Math.exp((Math.log(y1) * (x2 - x) - Math.log(y2) * (x1 - x)) / (x2 - x1));
+    }
+}
+
+
+export var interpolateVector = function(){
+    
+}
+
+/**
+ * interpolates the specific value 
+ * @param {Array} items -- an array of items, sorted by "dimTime", filtered so that no item[which] is null
+ * @param {String} use -- a use of hook that wants to interpolate. can be "indicator" or "property" or "constant"
+ * @param {String} which -- a hook pointer to indicator or property, e.g. "lex"
+ * @param {Number} next -- an index of next item in "items" array after the value to be interpolated. if omitted, then calculated here, but it's expensive
+ * @param {String} dimTime -- a pointer to time dimension, usually "time"
+ * @param {Date} time -- reference point for interpolation. here the valus is to be found
+ * @param {String} method refers to which formula to use. "linear" or "exp". Falls back to "linear" if undefined
+ * @returns {Number} interpolated value
+ */
+export var interpolatePoint = function(items, use, which, next, dimTime, time, method){
+
+    
+  if(!items || items.length === 0) {
+    warn('interpolatePoint failed because incoming array is empty');
+    return null;
+  }
+  // return constant for the use of "constant"
+  if(use === 'constant') return which;
+    
+  // zero-order interpolation for the use of properties
+  if(use === 'property') return items[0][which];
+
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+
+  // the rest is for the continuous measurements
+  // check if the desired value is out of range. 0-order extrapolation
+  if(next === 0) return +items[0][which];    
+  if(next === items.length) return +items[items.length - 1][which];
+    
+  //return null if data is missing
+  if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
+    warn('interpolatePoint failed because next/previous points are bad');
+    return null;
+  }
+    
+
+  //do the math to calculate a value between the two points
+  var result = interpolator[method||"linear"](
+    items[next - 1][dimTime],
+    items[next][dimTime],
+    items[next - 1][which],
+    items[next][which],
+    time
+  );
+
+  // cast to time object if we are interpolating time
+  if(which === dimTime) result = new Date(result);
+  if(isNaN(result)) {
+      warn('interpolatePoint failed because result is NaN');
+      result = null;
+  }
+    
+  return result;
+
+}
+
 
 /*
  * Performs an ajax request

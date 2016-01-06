@@ -14,19 +14,16 @@ var SimpleSlider = Component.extend({
       }];
 
       var _this = this;
+      this.name = 'gapminder-simpleSlider';
 
       this.arg = config.arg;
       this.thumb_size = config.thumb_size;
       this.slider_properties = config.properties;
 
-      this.model_binds = {
-        "change:submodel:select": function (evt) {
-          _this.updateView();
-        }
-      }
-      this.model_binds["change:submodel:" + this.arg] = function (evt) {
+      this.model_binds = {};
+      this.model_binds["change:submodel." + this.arg] = function (evt) {
         _this.updateView();
-      }
+      };
 
       //contructor is the same as any component
       this._super(config, context);
@@ -44,8 +41,6 @@ var SimpleSlider = Component.extend({
       var max = 1;
       var step = 0.1;
       var value = min;
-
-
 
       //selecting elements
       var _this = this;
@@ -78,7 +73,10 @@ var SimpleSlider = Component.extend({
         .attr('step', step)
         .attr('value', value)
         .on('input', function () {
-          _this._setModel();
+          _this._setModel(false, false); // on drag - non-persistent changes while dragging
+        })
+        .on('change', function() {
+          _this._setModel(true); // on drag end - value is probably same as last 'input'-event, so force change
         });
 
       this.updateView();
@@ -100,7 +98,7 @@ var SimpleSlider = Component.extend({
       this.slider.node().value = value;
     },
 
-    _setModel: function () {
+    _setModel: function (force, persistent) {
       var slider_properties = this.slider_properties;
       var scale;
       var value = +d3.event.target.value;
@@ -112,7 +110,7 @@ var SimpleSlider = Component.extend({
       if (scale){
         value = scale(value);
       }
-      this.model.submodel[this.arg] = value;
+      this.model.submodel.getModelObject(this.arg).set(value, force, persistent);
     }
 
   });
