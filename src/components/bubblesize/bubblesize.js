@@ -133,8 +133,6 @@ var BubbleSize = Component.extend({
         _this._setFromExtent(false, false); // non persistent change
       })
       .on("brushend", function () {
-        console.log("brushend");
-        console.log(_this.sliderEl.selectAll(".resize"));
          _this.sliderEl.selectAll(".resize")
           .style("display", null);
 
