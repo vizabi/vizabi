@@ -271,7 +271,7 @@ var Data = Class.extend({
       var TIME = "time";
       var result = {};
       var filtered = {};
-      var items, itemsIndex, givenFrames, oneFrame, method, use, next;
+      var items, itemsIndex, oneFrame, method, use, next;
       
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
@@ -360,10 +360,8 @@ var Data = Class.extend({
 
                         items = filtered[key][column];
 
-                        if(items == null){
-<<<<<<< HEAD
-                            
-                            givenFrames = Object.keys(nested[key]);
+                        if(items == null){                            
+                            var givenFrames = Object.keys(nested[key]);
                             items = new Array(givenFrames.length);
                             itemsIndex = 0;
 
@@ -371,15 +369,6 @@ var Data = Class.extend({
                                 oneFrame = nested[key][givenFrames[z]];
                                 if(oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
                             };
-=======
-                            var length = nested[key].length || Object.keys(nested[key]) || 0;
-                            items = new Array(length);
-                            itemsIndex = 0;
-
-                            for(var z = 0; z < length; z++) {
-                                if(frame[0][column] || frame[0][column] === 0) items[itemsIndex++] = frame[0];
-                            }
->>>>>>> origin/develop
                             
                             //trim the length of the array
                             items.length = itemsIndex;
