@@ -319,6 +319,7 @@ MountainChart.define('default_options', {
         which: "all" // set a property of data or values "all" or "none"
       },
       group: {
+        use: "property",
         which: "geo.region", // set a property of data
         manualSorting: ["asi", "afr", "ame", "eur"],
         merge: false

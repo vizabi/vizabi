@@ -30,8 +30,8 @@ var AxisModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "constant",
-    which: undefined,
+    use: null,
+    which: null,
     min: null,
     max: null,
     fakeMin: null,
