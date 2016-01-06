@@ -441,7 +441,6 @@ var BubbleChartComp = Component.extend({
     this.updateUIStrings();
 
     this.updateEntities();
-    this.redrawDataPoints();
     this.updateBubbleOpacity();
     this.updateIndicators();
     this.updateSize();
@@ -449,7 +448,7 @@ var BubbleChartComp = Component.extend({
     this.updateMarkerSizeLimits();
     this._trails.create();
     this._trails.run("findVisible");
-    this._panZoom.reset();
+    this._panZoom.reset(); // includes redraw data points and trail resize
     this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
     this._panZoom.zoomToMaxMin(
