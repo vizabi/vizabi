@@ -66,13 +66,19 @@ var BubbleSize = Component.extend({
     };
 
     function changeMinMaxHandler(evt, path) {
-        var size = [
-            _this.model.size[_this.fields.min],
-            _this.model.size[_this.fields.max]
-        ];
-        _this._updateArcs(size);
-        _this._updateLabels(size);
-        _this.sliderEl.call(_this.brush.extent(size));
+      var min = _this.model.size[_this.fields.min];
+      var max = _this.model.size[_this.fields.max];
+      var size = [
+          min,
+          max
+      ];
+      _this._updateArcs(size);
+      _this._updateLabels(size);
+      _this.sliderEl.call(_this.brush.extent(size));
+      if(min == max){
+        _this.sliderEl.selectAll(".resize")
+          .style("display", "block");
+      }
     }
     function readyHandler(evt) {
         _this.sizeScaleMinMax = _this.model.size.getScale().domain();
@@ -127,8 +133,10 @@ var BubbleSize = Component.extend({
         _this._setFromExtent(false, false); // non persistent change
       })
       .on("brushend", function () {
+        console.log("brushend");
+        console.log(_this.sliderEl.selectAll(".resize"));
          _this.sliderEl.selectAll(".resize")
-          .style("display", null)
+          .style("display", null);
 
         _this._setFromExtent(true); // force a persistent change
       });
@@ -234,12 +242,12 @@ var BubbleSize = Component.extend({
 
     this.sliderThumbs.select('.vzb-bs-slider-thumb-arc').data(s)
       .attr("d", valueArc)
-      .attr("transform", function (d) { return "translate(" + (-_this.xScale(d) * 0.5) + ",0)"; })
+      .attr("transform", function (d) {return "translate(" + (-_this.xScale(d) * 0.5) + ",0)"; })
   },
 
   _updateLabels: function(s) {
     var _this = this;
-    var arcLabelTransform = function(d, i) {      
+    var arcLabelTransform = function(d, i) {
       var textMargin = { v: OPTIONS.TEXT_PARAMS.TOP, h: OPTIONS.TEXT_PARAMS.LEFT },
           dX = textMargin.h * (i ? .5 : -1.0) + _this.xScale(d),
           dY = i ? -textMargin.v : 0;
