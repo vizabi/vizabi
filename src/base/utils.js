@@ -277,9 +277,10 @@ export var forEach = function(obj, callback, ctx) {
   if(!obj) {
     return;
   }
-  var i;
+  var i, size;
   if(isArray(obj)) {
-    for(i = 0; i < obj.length; i += 1) {
+    size = obj.length;
+    for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[i],
           i
@@ -289,7 +290,7 @@ export var forEach = function(obj, callback, ctx) {
     }
   } else {
     var keys = Object.keys(obj);
-    var size = keys.length;
+    size = keys.length;
     for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[keys[i]],

@@ -14,7 +14,7 @@ var Data = Class.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
-   * @param {String} path Where data is located
+   * @param {*} evts ?
    */
   load: function(query, language, reader, evts) {
     var _this = this;
@@ -271,7 +271,7 @@ var Data = Class.extend({
       var TIME = "time";
       var result = {};
       var filtered = {};
-      var items, method, use, next;
+      var items, itemsIndex, method, use, next;
       
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
@@ -314,23 +314,23 @@ var Data = Class.extend({
           if(query.where.time[0].length === 1) framesArray = query.where.time[0];
           
           // Put together a template for cached filtered sets (see below what's needed)
-          keys.forEach(function(key){
+          utils.forEach(keys, function(key){
               filtered[key] = {};
 
-              columns.forEach(function(column){
+              utils.forEach(columns, function(column){
                 filtered[key][column] = null;
               });
           });
 
           // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-          framesArray.forEach(function(t){
+          utils.forEach(framesArray, function(t){
             result[t] = {};
-            columns.forEach(function(column){
+            utils.forEach(columns, function(column){
                 result[t][column] = {};
             });
 
-            keys.forEach(function(key){
-                columns.forEach(function(column){
+            utils.forEach(keys, function(key){
+                utils.forEach(columns, function(column){
                     
                     //If there are some points in the array with valid numbers, then
                     //interpolate the missing point and save it to the “clean regular set” 
@@ -358,9 +358,10 @@ var Data = Class.extend({
 
                         if(items == null){
                             items = [];
+                            itemsIndex = 0;
 
                             utils.forEach(nested[key], function(frame) {
-                                if(frame[0][column] || frame[0][column] === 0) items.push(frame[0]);
+                                if(frame[0][column] || frame[0][column] === 0) items[itemsIndex++] = frame[0];
                             });
                         }
 
