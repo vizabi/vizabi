@@ -506,5 +506,10 @@ export default Class.extend({
         this.zoomer.translate([0, 0]);
         this.zoomer.duration = 0;
         this.zoomer.event(element || _this.element);
+    },
+    
+    rerun: function(element) {
+        var _this = this.context;
+        this.zoomer.event(element || _this.element);
     }
 });

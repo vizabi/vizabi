@@ -375,7 +375,7 @@ var BubbleChartComp = Component.extend({
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this._trails.run("findVisible");
-      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
 
     //keyboard listeners
