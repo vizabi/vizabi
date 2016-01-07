@@ -12,7 +12,7 @@ export default Class.extend({
     this.topOffset = 0;
     this.leftOffset = 0;
     this.bottomOffset = 0;
-    this.rifgtOffset = 0;
+    this.rightOffset = 0;
     this.fontSize = 0;
     this.fontWidth = 0;
     this.fontHeight = 0;

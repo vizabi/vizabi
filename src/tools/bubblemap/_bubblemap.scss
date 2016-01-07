@@ -4,6 +4,38 @@
   .vzb-bubblemap {
     @extend %vzb-chart-wrapper;
 
+    .vzb-bmc-map-background {
+
+      .stroke {
+        fill: none;
+        stroke: $vzb-color-grey;
+        stroke-width: .5px;
+        stroke-opacity: .3;
+      }
+  
+      .fill {
+        fill: none;
+      }
+  
+      .graticule {
+        fill: none;
+        stroke: $vzb-color-grey;
+        stroke-width: .5px;
+        stroke-opacity: .3;
+      }
+  
+      .land {
+        fill: $vzb-color-grey;
+        opacity: .4;
+      }
+  
+      .boundary {
+        fill: none;
+        stroke: #fff;
+        stroke-width: .5px;
+      }
+    }
+    
     .vzb-bubblemap-svg {
       @extend %vzb-chart-svg;
 
@@ -120,35 +152,6 @@
         text {
           text-anchor: end;
         }
-      }
-
-      .stroke {
-        fill: none;
-        stroke: $vzb-color-grey;
-        stroke-width: .5px;
-        stroke-opacity: .3;
-      }
-
-      .fill {
-        fill: none;
-      }
-
-      .graticule {
-        fill: none;
-        stroke: $vzb-color-grey;
-        stroke-width: .5px;
-        stroke-opacity: .3;
-      }
-
-      .land {
-        fill: $vzb-color-grey;
-        opacity: .4;
-      }
-
-      .boundary {
-        fill: none;
-        stroke: #fff;
-        stroke-width: .5px;
       }
 
       .vzb-bmc-bubble {
