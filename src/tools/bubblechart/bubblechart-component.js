@@ -146,7 +146,7 @@ var BubbleChartComp = Component.extend({
       'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
-          _this._panZoom.expandCanvas();
+          _this._panZoom.expandCanvas(500);
         } else {
           _this._panZoom.reset();
         }

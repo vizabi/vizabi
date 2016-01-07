@@ -258,8 +258,9 @@ export default Class.extend({
         };
     },
 
-    expandCanvas: function() {
+    expandCanvas: function(duration) {
         var _this = this.context;
+        if (!duration) duration = _this.duration;
 
         var timeRounded = _this.timeFormatter.parse( _this.timeFormatter(_this.time) );
 
@@ -355,9 +356,9 @@ export default Class.extend({
 
             _this.currentZoomFrameXY = utils.clone(suggestedFrame);
             var frame = _this.currentZoomFrameXY;
-            this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, _this.duration);
+            this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, duration);
         } else {
-            _this.redrawDataPoints(_this.duration);
+            _this.redrawDataPoints(duration);
         }
     },
 
