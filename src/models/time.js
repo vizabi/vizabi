@@ -312,8 +312,7 @@ var TimeModel = Model.extend({
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
           time = d3.time[_this.unit].offset(time, step);
-          if(time > _this.end) time = _this.end; 
-          _this.getModelObject('value').set(time, false, false);
+          _this.value = time;
           _this.playInterval();
         }
       }
