@@ -96,7 +96,8 @@ BarChart.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []}
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
@@ -410,7 +411,8 @@ LineChart.define('default_options', {
       }
     },
     buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []}
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
@@ -579,7 +581,8 @@ PopByAge.define('default_options', {
   language: language,
   ui: {
     buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []}
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
+    presentation: false
   }
 });
 
