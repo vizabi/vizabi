@@ -124,9 +124,7 @@ var BarRankChart = Component.extend({
   loadData: function() {
 
     // get data, for the active year. Nest them using the entity of the graph
-    var filter = {};
-    filter[this.model.time.dim] = this.model.time.value;
-    this.values = this.model.marker.getValues(filter, [this.model.entities.dim]);
+    this.values = this.model.marker.getFrame(this.model.time.value);
 
     // sort the data (also sets this.total)
     this.sortedEntities = this.sortByIndicator(this.values.axis_x);
