@@ -70,7 +70,7 @@ var Component = Events.extend({
         }
       }
     });
-    this.triggerResize = utils.throttle(this.triggerResize);
+    this.triggerResize = utils.throttle(this.triggerResize, 100);
   },
 
   /**

@@ -950,18 +950,23 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
-    var values;
+    var values, valuesNow;
     var KEY = this.KEY;
+
+    valuesNow = this.model.marker.getFrame(this.time);
+
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this.model.marker.getFrame(this.time);
+      values = valuesNow;
     }
 
     this.entityBubbles.style("fill", function(d) {
 
-      var valueC = values.color[d[KEY]];
+      var cache = _this.cached[d[KEY]];
+      
+      var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
       if(valueC == null) return;
    
       return _this.cScale(valueC);
@@ -983,25 +988,29 @@ var BubbleChartComp = Component.extend({
     //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
     //   });
     // }
-    var values;
+    var values, valuesNow;
     var KEY = this.KEY;
+
+    valuesNow = this.model.marker.getFrame(this.time);
+
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this.model.marker.getFrame(this.time);
+      values = valuesNow;
     }
 
     this.entityBubbles.each(function(d, index) {
 
-      var valueS = values.size[d[KEY]];
+      var cache = _this.cached[d[KEY]];
+      
+      var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
       if(valueS == null) return;
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
       d3.select(this).attr("r", scaledS);
 
       //update lines of labels
-      var cache = _this.cached[d[KEY]];
       if(cache) {
 
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;

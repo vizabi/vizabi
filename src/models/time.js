@@ -80,7 +80,7 @@ var TimeModel = Model.extend({
 
     //bing play method to model change
     this.on({
-/*
+
       "change:playing": function() {
         if(_this.playing === true) {
           _this._startPlaying();
@@ -89,7 +89,7 @@ var TimeModel = Model.extend({
         }
 
       },
-*/
+
       "set": function() {
         //auto play if playing is true by reseting variable
         if(_this.playing === true) {
@@ -312,6 +312,7 @@ var TimeModel = Model.extend({
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
           time = d3.time[_this.unit].offset(time, step);
+          if(time > _this.end) time = _this.end; 
           _this.getModelObject('value').set(time, false, false);
           _this.playInterval();
         }
