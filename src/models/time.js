@@ -80,7 +80,7 @@ var TimeModel = Model.extend({
 
     //bing play method to model change
     this.on({
-/*
+
       "change:playing": function() {
         if(_this.playing === true) {
           _this._startPlaying();
@@ -89,7 +89,7 @@ var TimeModel = Model.extend({
         }
 
       },
-*/
+
       "set": function() {
         //auto play if playing is true by reseting variable
         if(_this.playing === true) {
