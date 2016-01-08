@@ -1275,7 +1275,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
     
   if(!items || items.length === 0) {
-    warn('interpolatePoint failed because incoming array is empty');
+    warn('interpolatePoint failed because incoming array is empty. It was ' + which);
     return null;
   }
   // return constant for the use of "constant"
@@ -1293,7 +1293,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
     
   //return null if data is missing
   if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
-    warn('interpolatePoint failed because next/previous points are bad');
+    warn('interpolatePoint failed because next/previous points are bad in ' + which);
     return null;
   }
     
@@ -1310,7 +1310,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // cast to time object if we are interpolating time
   if(which === dimTime) result = new Date(result);
   if(isNaN(result)) {
-      warn('interpolatePoint failed because result is NaN');
+      warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;
   }
     
