@@ -99,7 +99,8 @@ var ButtonList = Component.extend({
         func: this.togglePresentationMode.bind(this),
         required: false,
         isgraph: false,
-        statebind: "ui.presentation"
+        statebind: "ui.presentation",
+        statebindfunc: this.setPresentationMode.bind(this)
       },
       'axes': {
         title: "buttons/axes",
@@ -150,10 +151,10 @@ var ButtonList = Component.extend({
     }
     
     Object.keys(this._available_buttons).forEach(function(buttonId) {
-      var stateBind = _this._available_buttons[buttonId].statebind;
-      if(stateBind) {
-        _this.model_binds['change:' + stateBind] = function(evt) {
-          _this.setButtonActive(buttonId, evt.source.value);
+      var button = _this._available_buttons[buttonId];
+      if(button.statebind) {
+        _this.model_binds['change:' + button.statebind] = function(evt) {
+          button.statebindfunc(buttonId, evt.source.value);
         }
       }
     });
