@@ -98,7 +98,8 @@ var ButtonList = Component.extend({
         icon: "presentation",
         func: this.togglePresentationMode.bind(this),
         required: false,
-        isgraph: false
+        isgraph: false,
+        statebind: "ui.presentation"
       },
       'axes': {
         title: "buttons/axes",
@@ -145,8 +146,17 @@ var ButtonList = Component.extend({
           _this.scrollToEnd();
         }
         _this.entitiesSelected_1 = _this.model.state.entities.select.length > 0;
-      }
+      }      
     }
+    
+    Object.keys(this._available_buttons).forEach(function(buttonId) {
+      var stateBind = _this._available_buttons[buttonId].statebind;
+      if(stateBind) {
+        _this.model_binds['change:' + stateBind] = function(evt) {
+          _this.setButtonActive(buttonId, evt.source.value);
+        }
+      }
+    });
 
     this._super(config, context);
 
