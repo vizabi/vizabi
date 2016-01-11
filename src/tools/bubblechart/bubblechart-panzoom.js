@@ -423,7 +423,9 @@ export default Class.extend({
             var xScaleMax = _this.xScale(maxX);
             var xScaleDifference = xRangeBounds[1] - xScaleMax;
             var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[0] - xRangeBounds[1]);
-            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]);
+            var xDifferenceInverted = _this.xScale.invert(
+                (xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]
+            );
 
             xRange[0] = _this.xScale(xDifferenceInverted);
         }
@@ -432,7 +434,9 @@ export default Class.extend({
             var xScaleMin = _this.xScale(minX);
             var xScaleDifference = xScaleMin - xRangeBounds[0];
             var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[1] - xRangeBounds[0]);
-            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]);
+            var xDifferenceInverted = _this.xScale.invert(
+                (xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]
+            );
 
             xRange[1] = _this.xScale(xDifferenceInverted);
         }
@@ -441,7 +445,9 @@ export default Class.extend({
             var yScaleMax = _this.yScale(maxY);
             var yScaleDifference = yScaleMax - yRangeBounds[1];
             var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[0] - yRangeBounds[1]);
-            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]);
+            var yDifferenceInverted = _this.yScale.invert(
+                (yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]
+            );
 
             yRange[0] = _this.yScale(yDifferenceInverted);
         }
@@ -450,7 +456,9 @@ export default Class.extend({
             var yScaleMin = _this.yScale(minY);
             var yScaleDifference = yRangeBounds[0] - yScaleMin;
             var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[1] - yRangeBounds[0]);
-            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]);
+            var yDifferenceInverted = _this.yScale.invert(
+                (yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]
+            );
 
             yRange[1] = _this.yScale(yDifferenceInverted);
         }
@@ -507,7 +515,7 @@ export default Class.extend({
         this.zoomer.duration = 0;
         this.zoomer.event(element || _this.element);
     },
-    
+
     rerun: function(element) {
         var _this = this.context;
         this.zoomer.event(element || _this.element);
