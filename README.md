@@ -6,6 +6,8 @@
 
 ## What is Vizabi?
 
+[![Join the chat at https://gitter.im/Gapminder/vizabi](https://badges.gitter.im/Gapminder/vizabi.svg)](https://gitter.im/Gapminder/vizabi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Gapminder Vizabi is a framework for developing visual exploration tools.
 
 The main features are:
