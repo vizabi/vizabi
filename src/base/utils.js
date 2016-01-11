@@ -776,8 +776,6 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
-
-  
   
   original = original.map(function(row) {
     var columns = Object.keys(row);
@@ -791,13 +789,15 @@ export var mapRows = function(original, formatters) {
           new_val = row[col];
         }
         row[col] = new_val;
-      }else{
+      } else {
         //if it's a number
-        if(row[col] === ""){
-            row[col] = null;
-        }else{
-            new_val = parseFloat(row[col]);
-            if(new_val || new_val === 0) row[col] = new_val;
+        if (isNumber(row[col])) {
+          if(row[col] === ""){
+              row[col] = null;
+          }else{
+              new_val = parseFloat(row[col]);
+              if(new_val || new_val === 0) row[col] = new_val;
+          }
         }
       }
     }
