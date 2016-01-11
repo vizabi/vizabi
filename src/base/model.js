@@ -78,7 +78,6 @@ var Model = EventSource.extend({
     //holds attributes of this model
     this._parent = parent;
     this._name = name;
-    this._set = false;
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -195,11 +194,6 @@ var Model = EventSource.extend({
     }
 
     if(!setting || force) {
-      //trigger set if not set
-      if(!this._set) {
-        this._set = true;
-        this.trigger('set');
-      } 
       this._setting = false;
       if(!this.isHook()) {
         this.setReady();

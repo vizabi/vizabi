@@ -87,18 +87,8 @@ var TimeModel = Model.extend({
         } else {
           _this._stopPlaying();
         }
-
       },
 
-      "set": function() {
-        //auto play if playing is true by reseting variable
-        if(_this.playing === true) {
-          _this.set('playing', true, true); //3rd argumennt forces update
-        }
-        this.snap("start");
-        this.snap("end");
-        this.snap("value");
-      }
     });
   },
 
