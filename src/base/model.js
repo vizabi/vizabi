@@ -71,7 +71,7 @@ var Model = EventSource.extend({
    * @param {Object} bind Initial events to bind
    * @param {Boolean} freeze block events from being dispatched
    */
-  init: function(name, values, parent, bind, freeze) {
+  init: function(name, values, parent, bind) {
     this._type = this._type || 'model';
     this._id = this._id || utils.uniqueId('m');
     this._data = {};
@@ -100,15 +100,12 @@ var Model = EventSource.extend({
     //stores limit values
     this._super();
 
-    if(freeze) {
-      //do not dispatch events
-      this.freeze();
-    }
     //initial values
     if(values) {
       this.set(values);
     }
-    //bind initial events
+    // bind initial events
+    // bind after setting, so no events are fired by setting initial values
     if(bind) {
       this.on(bind);
     }
@@ -140,12 +137,12 @@ var Model = EventSource.extend({
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
    * @param {Boolean} persistent true if the change is a persistent change
-   * @param {Boolean} recursiveCall true if the call is a recursivecall. Undefined for the first call. Used to determine when to trigger events.
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force, persistent, recursiveCall) {
+  set: function(attr, val, force, persistent) {
     var setting = this._setting;
     var attrs;
+    var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
     
     //expect object as default
     if(!utils.isPlainObject(attr)) {
@@ -153,7 +150,6 @@ var Model = EventSource.extend({
     } else {
       // move all arguments one place
       attrs = attr;
-      recursiveCall = persistent;
       persistent = force;
       force = val;
     }
@@ -161,8 +157,9 @@ var Model = EventSource.extend({
     //we are currently setting the model
     this._setting = true;
 
-    // Freeze the whole model tree if first call, so no events are fired while setting
-    if (!recursiveCall) {
+    // Freeze the whole model tree if not frozen yet, so no events are fired while setting
+    if (!this._freeze) {
+      freezeCall = true;
       this.setTreeFreezer(true);
     }
 
@@ -176,7 +173,7 @@ var Model = EventSource.extend({
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[a].set(val, force, persistent, true);
+        this._data[a].set(val, force, persistent);
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[a] = initSubmodel(a, val, this);
@@ -184,20 +181,19 @@ var Model = EventSource.extend({
       }
     }
 
-    // Unfreeze the whole model tree if first call, now all set events are fired
+    // only if there's new submodels, we have to set new getters/setters
     if (newSubmodels)
       bindSettersGetters(this);
 
     if(this.validate && !setting) {
       this.validate();
     }
-      
-    if (!recursiveCall) {
+
+    // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
+    if (freezeCall) {
       this.setTreeFreezer(false);
     }
 
-    // only if there's new submodels, we have to set new getters/setters
-      
     if(!setting || force) {
       //trigger set if not set
       if(!this._set) {
@@ -213,7 +209,6 @@ var Model = EventSource.extend({
 
 
   setTreeFreezer: function(freezerStatus) {
-
     // first traverse down
     // this ensures deepest events are triggered first
     utils.forEach(this._data, function(submodel) {
@@ -1465,7 +1460,7 @@ function initSubmodel(attr, val, ctx) {
       // construct model
       var modelType = attr.split('_')[0];
       var Modl = Model.get(modelType, true) || models[modelType] || Model;
-      submodel = new Modl(attr, val, ctx, binds, true);
+      submodel = new Modl(attr, val, ctx, binds);
       // model is still frozen but will be unfrozen at end of original .set()
     }
   }
