@@ -1,8 +1,14 @@
 ![Gapminder Vizabi](http://static.gapminder.org/vizabi/vizabi.jpg)
 
 **(Please note that Vizabi is work in progress and don't expect too much! Vizabi 1.0.0 will be the public Alpha release of the framework, and we're not there yet).**
+
+[![npm version](https://badge.fury.io/js/vizabi.svg)](http://badge.fury.io/js/vizabi)
 [![Build Status](https://secure.travis-ci.org/Gapminder/vizabi.png?branch=develop)](https://travis-ci.org/Gapminder/vizabi)
-<!--[![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)-->
+[![Code Climate](https://codeclimate.com/github/Gapminder/vizabi/badges/gpa.svg)](https://codeclimate.com/github/Gapminder/vizabi)
+[![Stories in Progress](https://badge.waffle.io/Gapminder/vizabi.svg?label=state%3A%20in%20progress&title=In%20Progress)](http://waffle.io/Gapminder/vizabi)
+[![Join the chat at https://gitter.im/Gapminder/vizabi](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Gapminder/vizabi?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Dependency Status](https://david-dm.org/Gapminder/vizabi.svg)](https://david-dm.org/Gapminder/vizabi)
+[![devDependency Status](https://david-dm.org/Gapminder/vizabi/dev-status.svg)](https://david-dm.orgGapminder/vizabi#info=devDependencies)
 
 ## What is Vizabi?
 
