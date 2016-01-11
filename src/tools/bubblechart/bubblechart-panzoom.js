@@ -267,7 +267,6 @@ export default Class.extend({
         var mmmX = _this.xyMaxMinMean.x[timeRounded];
         var mmmY = _this.xyMaxMinMean.y[timeRounded];
         var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[timeRounded].max));
-        var frame = _this.currentZoomFrameXY;
 
         var pan = this.zoomer.translate();
         var zoom = this.zoomer.scale();
@@ -317,6 +316,14 @@ export default Class.extend({
         var yScaleBoundsBumped = _this.yScale.copy()
             .range(yBoundsBumped);
 
+        // Get the current zoom frame based on the current dimensions.
+        var frame = {
+            x1: xBounds[0],
+            x2: xBounds[1],
+            y1: yBounds[0],
+            y2: yBounds[1]
+        };
+
         var TOLERANCE = .0;
 
         /*
@@ -324,7 +331,7 @@ export default Class.extend({
          * points extend outside of the current zoom frame, then expand the
          * canvas.
          */
-        if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
+        if(!_this.isCanvasPreviouslyExpanded || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
             /*
              * If there is already a zoom frame, then clamp the suggested frame
@@ -336,7 +343,7 @@ export default Class.extend({
              * of the possible data range, then clamp them to the frame
              * boundaries to prevent impossible zoom attempts.
              */
-            if (frame) {
+            if (_this.isCanvasPreviouslyExpanded) {
                 if (suggestedFrame.x1 > 0 ||
                     xScaleBumped.invert(suggestedFrame.x1) < xScaleBoundsBumped.invert(xBounds[0]))
                     suggestedFrame.x1 = 0;
@@ -354,9 +361,9 @@ export default Class.extend({
                     suggestedFrame.y2 = 0;
             }
 
-            _this.currentZoomFrameXY = utils.clone(suggestedFrame);
-            var frame = _this.currentZoomFrameXY;
-            this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, duration);
+            _this.isCanvasPreviouslyExpanded = true;
+            this._zoomOnRectangle(_this.element, suggestedFrame.x1, suggestedFrame.y1,
+                suggestedFrame.x2, suggestedFrame.y2, false, duration);
         } else {
             _this.redrawDataPoints(duration);
         }
@@ -506,7 +513,7 @@ export default Class.extend({
 
     reset: function(element) {
         var _this = this.context;
-        _this.currentZoomFrameXY = null;
+        _this.isCanvasPreviouslyExpanded = false;
 
         this.zoomer.scale(1);
         this.zoomer.ratioY = 1;
