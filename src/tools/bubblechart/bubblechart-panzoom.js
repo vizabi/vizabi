@@ -267,55 +267,28 @@ export default Class.extend({
         var mmmX = _this.xyMaxMinMean.x[timeRounded];
         var mmmY = _this.xyMaxMinMean.y[timeRounded];
         var radiusMax = utils.areaToRadius(_this.sScale(_this.xyMaxMinMean.s[timeRounded].max));
-        var frame = _this.currentZoomFrameXY;
-
-        var pan = this.zoomer.translate();
-        var zoom = this.zoomer.scale();
-        var ratioX = this.zoomer.ratioX;
-        var ratioY = this.zoomer.ratioY;
-
-        if(pan[0] > 0) pan[0] = 0;
-        if(pan[1] > 0) pan[1] = 0;
-        if(pan[0] < (1 - zoom * ratioX) * _this.width) pan[0] = (1 - zoom * ratioX) * _this.width;
-        if(pan[1] < (1 - zoom * ratioY) * _this.height) pan[1] = (1 - zoom * ratioY) * _this.height;
-
-        var xRange = [0 * zoom * ratioX + pan[0], _this.width * zoom * ratioX + pan[0]];
-        var yRange = [_this.height * zoom * ratioY + pan[1], 0 * zoom * ratioY + pan[1]];
-
-        // Calculate the range bump needed to properly expand the canvas.
-        var xRangeBumped = _this._rangeBump(xRange);
-        var yRangeBumped = _this._rangeBump(yRange);
-
-        var xScaleBumped = _this.xScale.copy()
-            .range(xRangeBumped);
-        var yScaleBumped = _this.yScale.copy()
-            .range(yRangeBumped);
 
         /*
          * Use a range bumped scale to correctly accommodate the range bump
          * gutter.
          */
         var suggestedFrame = {
-            x1: xScaleBumped(mmmX.min) - radiusMax,
-            y1: yScaleBumped(mmmY.min) + radiusMax,
-            x2: xScaleBumped(mmmX.max) + radiusMax,
-            y2: yScaleBumped(mmmY.max) - radiusMax
+            x1: _this.xScale(mmmX.min) - radiusMax,
+            y1: _this.yScale(mmmY.min) + radiusMax,
+            x2: _this.xScale(mmmX.max) + radiusMax,
+            y2: _this.yScale(mmmY.max) - radiusMax
         };
 
-        /*
-         * Calculate bounds and bumped scale for calculating the data boundaries
-         * to which the suggested frame points need to be clamped.
-         */
         var xBounds = [0, _this.width];
         var yBounds = [_this.height, 0];
 
-        var xBoundsBumped = _this._rangeBump(xBounds);
-        var yBoundsBumped = _this._rangeBump(yBounds);
-
-        var xScaleBoundsBumped = _this.xScale.copy()
-            .range(xBoundsBumped);
-        var yScaleBoundsBumped = _this.yScale.copy()
-            .range(yBoundsBumped);
+        // Get the current zoom frame based on the current dimensions.
+        var frame = {
+            x1: xBounds[0],
+            x2: xBounds[1],
+            y1: yBounds[0],
+            y2: yBounds[1]
+        };
 
         var TOLERANCE = .0;
 
@@ -324,7 +297,8 @@ export default Class.extend({
          * points extend outside of the current zoom frame, then expand the
          * canvas.
          */
-        if(!frame || suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
+        if(!_this.isCanvasPreviouslyExpanded ||
+            suggestedFrame.x1 < frame.x1 * (1 - TOLERANCE) || suggestedFrame.x2 > frame.x2 * (1 + TOLERANCE) ||
             suggestedFrame.y2 < frame.y2 * (1 - TOLERANCE) || suggestedFrame.y1 > frame.y1 * (1 + TOLERANCE)) {
             /*
              * If there is already a zoom frame, then clamp the suggested frame
@@ -334,29 +308,49 @@ export default Class.extend({
              * boundaries, then clamp them to the frame boundaries. If any of
              * the above values will translate into a data value that is outside
              * of the possible data range, then clamp them to the frame
-             * boundaries to prevent impossible zoom attempts.
+             * coordinate that corresponds to the maximum data value that can
+             * be displayed.
              */
-            if (frame) {
-                if (suggestedFrame.x1 > 0 ||
-                    xScaleBumped.invert(suggestedFrame.x1) < xScaleBoundsBumped.invert(xBounds[0]))
+            if (_this.isCanvasPreviouslyExpanded) {
+                /*
+                 * Calculate bounds and bumped scale for calculating the data boundaries
+                 * to which the suggested frame points need to be clamped.
+                 */
+                var xBoundsBumped = _this._rangeBump(xBounds);
+                var yBoundsBumped = _this._rangeBump(yBounds);
+
+                var xScaleBoundsBumped = _this.xScale.copy()
+                    .range(xBoundsBumped);
+                var yScaleBoundsBumped = _this.yScale.copy()
+                    .range(yBoundsBumped);
+
+                var xDataBounds = [xScaleBoundsBumped.invert(xBounds[0]), xScaleBoundsBumped.invert(xBounds[1])];
+                var yDataBounds = [yScaleBoundsBumped.invert(yBounds[0]), yScaleBoundsBumped.invert(yBounds[1])];
+
+                if (suggestedFrame.x1 > 0)
                     suggestedFrame.x1 = 0;
+                else if (_this.xScale.invert(suggestedFrame.x1) < xDataBounds[0])
+                    suggestedFrame.x1 = _this.xScale(xDataBounds[0]);
 
-                if (suggestedFrame.x2 < _this.width ||
-                    xScaleBumped.invert(suggestedFrame.x2) > xScaleBoundsBumped.invert(xBounds[1]))
+                if (suggestedFrame.x2 < _this.width)
                     suggestedFrame.x2 = _this.width;
+                else if (_this.xScale.invert(suggestedFrame.x2) > xDataBounds[1])
+                    suggestedFrame.x2 = _this.xScale(xDataBounds[1]);
 
-                if (suggestedFrame.y1 < _this.height ||
-                    yScaleBumped.invert(suggestedFrame.y1) < yScaleBoundsBumped.invert(yBounds[0]))
+                if (suggestedFrame.y1 < _this.height)
                     suggestedFrame.y1 = _this.height;
+                else if (_this.yScale.invert(suggestedFrame.y1) < yDataBounds[0])
+                    suggestedFrame.y1 = _this.yScale(yDataBounds[0]);
 
-                if (suggestedFrame.y2 > 0 ||
-                    yScaleBumped.invert(suggestedFrame.y2) > yScaleBoundsBumped.invert(yBounds[1]))
+                if (suggestedFrame.y2 > 0)
                     suggestedFrame.y2 = 0;
+                else if (_this.yScale.invert(suggestedFrame.y2) > yDataBounds[1])
+                    suggestedFrame.y2 = _this.yScale(yDataBounds[1]);
             }
 
-            _this.currentZoomFrameXY = utils.clone(suggestedFrame);
-            var frame = _this.currentZoomFrameXY;
-            this._zoomOnRectangle(_this.element, frame.x1, frame.y1, frame.x2, frame.y2, false, duration);
+            _this.isCanvasPreviouslyExpanded = true;
+            this._zoomOnRectangle(_this.element, suggestedFrame.x1, suggestedFrame.y1,
+                suggestedFrame.x2, suggestedFrame.y2, false, duration);
         } else {
             _this.redrawDataPoints(duration);
         }
@@ -423,7 +417,9 @@ export default Class.extend({
             var xScaleMax = _this.xScale(maxX);
             var xScaleDifference = xRangeBounds[1] - xScaleMax;
             var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[0] - xRangeBounds[1]);
-            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]);
+            var xDifferenceInverted = _this.xScale.invert(
+                (xRangeBounds[0] - xRangeBoundsBumped[0]) * (1 - xScalar) + xRangeBoundsBumped[0]
+            );
 
             xRange[0] = _this.xScale(xDifferenceInverted);
         }
@@ -432,7 +428,9 @@ export default Class.extend({
             var xScaleMin = _this.xScale(minX);
             var xScaleDifference = xScaleMin - xRangeBounds[0];
             var xScalar = xScaleDifference / Math.abs(xRangeBoundsBumped[1] - xRangeBounds[0]);
-            var xDifferenceInverted = _this.xScale.invert((xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]);
+            var xDifferenceInverted = _this.xScale.invert(
+                (xRangeBounds[1] - xRangeBoundsBumped[1]) * (1 - xScalar) + xRangeBoundsBumped[1]
+            );
 
             xRange[1] = _this.xScale(xDifferenceInverted);
         }
@@ -441,7 +439,9 @@ export default Class.extend({
             var yScaleMax = _this.yScale(maxY);
             var yScaleDifference = yScaleMax - yRangeBounds[1];
             var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[0] - yRangeBounds[1]);
-            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]);
+            var yDifferenceInverted = _this.yScale.invert(
+                (yRangeBounds[0] - yRangeBoundsBumped[0]) * (1 - yScalar) + yRangeBoundsBumped[0]
+            );
 
             yRange[0] = _this.yScale(yDifferenceInverted);
         }
@@ -450,7 +450,9 @@ export default Class.extend({
             var yScaleMin = _this.yScale(minY);
             var yScaleDifference = yRangeBounds[0] - yScaleMin;
             var yScalar = yScaleDifference / Math.abs(yRangeBoundsBumped[1] - yRangeBounds[0]);
-            var yDifferenceInverted = _this.yScale.invert((yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]);
+            var yDifferenceInverted = _this.yScale.invert(
+                (yRangeBounds[1] - yRangeBoundsBumped[1]) * (1 - yScalar) + yRangeBoundsBumped[1]
+            );
 
             yRange[1] = _this.yScale(yDifferenceInverted);
         }
@@ -498,7 +500,7 @@ export default Class.extend({
 
     reset: function(element) {
         var _this = this.context;
-        _this.currentZoomFrameXY = null;
+        _this.isCanvasPreviouslyExpanded = false;
 
         this.zoomer.scale(1);
         this.zoomer.ratioY = 1;
@@ -507,7 +509,7 @@ export default Class.extend({
         this.zoomer.duration = 0;
         this.zoomer.event(element || _this.element);
     },
-    
+
     rerun: function(element) {
         var _this = this.context;
         this.zoomer.event(element || _this.element);

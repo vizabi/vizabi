@@ -198,7 +198,7 @@ var BubbleChartComp = Component.extend({
 
     this.cached = {};
     this.xyMaxMinMean = {};
-    this.currentZoomFrameXY = null;
+    this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
     // default UI settings
