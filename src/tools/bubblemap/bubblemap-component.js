@@ -67,7 +67,7 @@ var BubbleMapComponent = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-          
+
         if(path.indexOf("scaleType") > -1) _this.ready();
       },
       'change:marker.size': function(evt, path) {
@@ -89,7 +89,7 @@ var BubbleMapComponent = Component.extend({
           _this.redrawDataPoints(null, false);
           _this.updateOpacity();
           _this.updateDoubtOpacity();
-          
+
       },
       "change:entities.opacitySelectDim": function (evt) {
           _this.updateOpacity();
@@ -256,25 +256,25 @@ var BubbleMapComponent = Component.extend({
 
     var _this = this;
     this.on("resize", function () {
-      
+
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this.redrawDataPoints();
       //_this._selectlist.redraw();
-      
+
     });
 
     this.KEY = this.model.entities.getDimension();
     this.TIMEDIM = this.model.time.getDimension();
-      
-      
+
+
     this.updateUIStrings();
 
     this.wScale = d3.scale.linear()
         .domain(this.parent.datawarning_content.doubtDomain)
         .range(this.parent.datawarning_content.doubtRange);
-      
-      
+
+
 
   },
 
@@ -300,7 +300,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();
-      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);      
+      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -482,7 +482,7 @@ var BubbleMapComponent = Component.extend({
           return b.sortValue - a.sortValue;
         })
     };
-      
+
     // get array of GEOs, sorted by the size hook
     // that makes larger bubbles go behind the smaller ones
     var endTime = this.model.time.end;
@@ -535,12 +535,12 @@ var BubbleMapComponent = Component.extend({
       })
 
   },
-    
+
   redrawDataPoints: function(duration, reposition){
-    var _this = this;  
+    var _this = this;
     if(!duration) duration = this.duration;
     if(!reposition) reposition = true;
-      
+
     this.entityBubbles.each(function(d, index){
       var view = d3.select(this);
 
@@ -549,30 +549,34 @@ var BubbleMapComponent = Component.extend({
       var valueS = _this.values.size[d[_this.KEY]]||0;
       var valueC = _this.values.color[d[_this.KEY]];
       var valueL = _this.values.label[d[_this.KEY]];
-
       d.hidden_1 = d.hidden;
       d.hidden = !valueS || !valueX || !valueY;
 
       if(d.hidden !== d.hidden_1) view.classed("vzb-hidden", d.hidden);
-        
-      if(!d.hidden){
-          
+
+        if(!d.hidden){
+
+          var oldRadius = d.r;
           d.r = utils.areaToRadius(_this.sScale(valueS));
           d.label = valueL;
-          
+
           view.classed("vzb-hidden", false)
               .attr("fill", _this.cScale(valueC))
-          
+
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX, valueY]));
-              
+
               view.attr("cx", d.cLoc[0])
                   .attr("cy", d.cLoc[1]);
           }
 
           if(duration){
-              view.transition().duration(duration).ease("linear")
-                  .attr("r", d.r);
+              // made radius for previous year without animation if device could not draw all animation in time
+              view
+                .interrupt()
+                .attr("r", oldRadius)
+                .transition().duration(duration).ease("linear")
+                .attr("r", d.r);
           }else{
               view.interrupt()
                   .attr("r", d.r);
@@ -601,14 +605,14 @@ var BubbleMapComponent = Component.extend({
     this.updateTitleNumbers();
   },
 
-    
+
   fitSizeOfTitles: function(){
-      
+
     //reset font sizes first to make the measurement consistent
     var yTitleText = this.yTitleEl.select("text")
       .style("font-size", null);
     var cTitleText = this.cTitleEl.select("text")
-      .style("font-size", null);    
+      .style("font-size", null);
 
     var yTitleText = this.yTitleEl.select("text");
     var cTitleText = this.cTitleEl.select("text");
@@ -616,23 +620,23 @@ var BubbleMapComponent = Component.extend({
     var yTitleBB = yTitleText.node().getBBox();
     var cTitleBB = cTitleText.classed('vzb-hidden') ? yTitleBB : cTitleText.node().getBBox();
 
-    var font = 
-        Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size"))) 
+    var font =
+        Math.max(parseInt(yTitleText.style("font-size")), parseInt(cTitleText.style("font-size")))
         * this.width / Math.max(yTitleBB.width, cTitleBB.width);
-      
+
     if(Math.max(yTitleBB.width, cTitleBB.width) > this.width) {
       yTitleText.style("font-size", font + "px");
       cTitleText.style("font-size", font + "px");
     } else {
-      
+
       // Else - reset the font size to default so it won't get stuck
       yTitleText.style("font-size", null);
       cTitleText.style("font-size", null);
     }
-      
+
   },
-    
-    
+
+
   /**
    * Executes everytime the container or vizabi is resized
    * Ideally,it contains only operations related to size
@@ -911,7 +915,7 @@ var BubbleMapComponent = Component.extend({
             limitedX = limitedX0 + cached.labelX_ * _this.width;
           }
           limitedY = limitedY0 + cached.labelY_ * _this.height;
-          if(limitedY - cached.contentBBox.height <= 0) { // check top 
+          if(limitedY - cached.contentBBox.height <= 0) { // check top
             cached.labelY_ = (cached.scaledS0 * .75 + cached.contentBBox.height) / _this.height;
             limitedY = limitedY0 + cached.labelY_ * _this.height;
           } else if(limitedY + 10 > _this.height) { //check bottom
