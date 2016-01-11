@@ -230,7 +230,7 @@ BubbleMap.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "http://ws.gapminderdev.org:3000/api/graphs/stats/vizabi-tools",  
+    path: "http://waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools", 
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -330,7 +330,7 @@ MountainChart.define('default_options', {
   language: language,
   data: {
     reader: "waffle",
-    path: "http://ws.gapminderdev.org:3000/api/graphs/stats/vizabi-tools",  
+    path: "http://waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools", 
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -497,7 +497,7 @@ BubbleChart.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "http://ws.gapminderdev.org:3000/api/graphs/stats/vizabi-tools", 
+    path: "http://waffle-server.gapminderdev.org/api/graphs/stats/vizabi-tools", 
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
