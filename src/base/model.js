@@ -1347,6 +1347,7 @@ getFrame: function(time){
   _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
+    var formatters = {};
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -1354,8 +1355,10 @@ getFrame: function(time){
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
+      formatters[h.dim] = h.getFormatter();
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
+    filters = utils.mapRows([filters], formatters)[0];
     return filters;
   },
 
