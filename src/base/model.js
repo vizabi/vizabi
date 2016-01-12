@@ -412,7 +412,6 @@ var Model = EventSource.extend({
     var data_hook = this._dataModel;
     var language_hook = this._languageModel;
     var query = this.getQuery(splashScreen);
-    var formatters = this._getAllFormatters();
     var promiseLoad = new Promise();
     var promises = [];
     //useful to check if in the middle of a load call
@@ -425,7 +424,7 @@ var Model = EventSource.extend({
       this.trigger('hook_change');
       //get reader info
       var reader = data_hook.getPlainObject();
-      reader.formatters = formatters;
+      reader.formatters = this._getAllFormatters();
 
       var lang = language_hook ? language_hook.id : 'en';
       var promise = new Promise();
@@ -681,6 +680,14 @@ var Model = EventSource.extend({
    */
   getDimension: function() {
     return this.dim || false; //defaults to dim if it exists
+  },
+
+  /**
+   * Gets the dimension (if entity) or which (if hook) of this model
+   * @returns {String|Boolean} dimension
+   */
+  getDimensionOrWhich: function() {
+    return this.dim || (this.use != 'constant' ? this.which : false); //defaults to dim or which if it exists
   },
 
   /**
@@ -1006,7 +1013,20 @@ getFrame: function(time){
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
-  getFormatter: function() {},
+  getFormatter: function() {
+    // default formatter turns empty strings in null and converts numeric values into number
+    return function (f) {
+      if(f === ""){
+        return null;
+      } else {
+        var new_val = parseFloat(f);
+        if (!isNaN(new_val) && isFinite(f)) {
+          return new_val;
+        }
+      }  
+      return f;
+    }
+  },
 
   /**
    * Gets tick values for this hook
@@ -1349,12 +1369,22 @@ getFrame: function(time){
    */
   _getAllFormatters: function() {
     var formatters = {};
-    utils.forEach(this._space, function(h) {
-      var f = h.getFormatter();
-      if(f) {
-        formatters[h.getDimension()] = f;
+
+    function addFormatter(model) {
+      // get formatters from model
+      var formatter = model.getFormatter();
+      var column = model.getDimensionOrWhich();
+      if (formatter && column) {
+        formatters[column] = formatter;
       }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(entity, entityName) {
+      addFormatter(entity);
     });
+    addFormatter(this);
+
     return formatters;
   },
 

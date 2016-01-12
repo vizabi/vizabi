@@ -76,7 +76,7 @@ var Data = Class.extend({
     // joining multiple queries
     // create a queue which this datamanager writes all queries to
     this.queryQueue = this.queryQueue || [];
-    this.queryQueue.push({ query: query, queryId: queryId, promise: promise });
+    this.queryQueue.push({ query: query, queryId: queryId, promise: promise, reader: reader});
 
     // wait one execution round for the queue to fill up
     utils.defer(function() {
@@ -103,11 +103,13 @@ var Data = Class.extend({
 
             // if so, merge the selects to the base query
             Array.prototype.push.apply(query.select, queueItem.query.select);
+            // merge formatters so the reader can format the newly added columns
+            utils.extend(reader.formatters, queueItem.reader.formatters);
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
 
-            // remove from queue as it's merged in the current query
+            // remove queueItem from queue as it's merged in the current query
             return false;
           }
         } 
@@ -120,7 +122,7 @@ var Data = Class.extend({
       // make the promise a collection of all promises of merged queries
       // promise = promises.length ? Promise.all(promises) : new Promise.resolve();
 
-      // remove double columns from select (resulting from merging)
+      // remove double columns from select and formatter (resulting from merging)
       query.select = utils.unique(query.select);
 
       //create hash for dimensions only query
