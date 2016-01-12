@@ -1269,9 +1269,10 @@ export var interpolateVector = function(){
  * @param {String} dimTime -- a pointer to time dimension, usually "time"
  * @param {Date} time -- reference point for interpolation. here the valus is to be found
  * @param {String} method refers to which formula to use. "linear" or "exp". Falls back to "linear" if undefined
+ * @param {Boolean} extrapolate indicates if we should use zero-order extrapolation outside the range of available data
  * @returns {Number} interpolated value
  */
-export var interpolatePoint = function(items, use, which, next, dimTime, time, method){
+export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
 
     
   if(!items || items.length === 0) {
@@ -1284,12 +1285,18 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // zero-order interpolation for the use of properties
   if(use === 'property') return items[0][which];
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
-
   // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(next === 0) return +items[0][which];    
-  if(next === items.length) return +items[items.length - 1][which];
+    
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+    
+  if (extrapolate){
+    // check if the desired value is out of range. 0-order extrapolation
+    if(next === 0) return +items[0][which];    
+    if(next === items.length) return +items[items.length - 1][which];
+  } else {
+    // no extrapolation according to Ola's request
+    if(next === 0 || next === items.length) return null;
+  }
     
   //return null if data is missing
   if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
