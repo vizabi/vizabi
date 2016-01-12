@@ -492,7 +492,8 @@ var TreeMenu = Component.extend({
 
     this.wrapper = this.element
       .append('div')
-      .classed(css.wrapper, true);
+      .classed(css.wrapper, true)
+      .classed("vzb-dialog-scrollable", true);
 
     this.wrapper.append("div")
       .html(iconClose)
