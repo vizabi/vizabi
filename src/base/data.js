@@ -122,7 +122,8 @@ var Data = Class.extend({
       // make the promise a collection of all promises of merged queries
       // promise = promises.length ? Promise.all(promises) : new Promise.resolve();
 
-      // remove double columns from select and formatter (resulting from merging)
+      // remove double columns from select (resulting from merging)
+      // no double columns in formatter because it's an object, extend would've overwritten doubles
       query.select = utils.unique(query.select);
 
       //create hash for dimensions only query

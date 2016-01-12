@@ -109,6 +109,18 @@ var CSVReader = Reader.extend({
           // grouping
           data = _this.groupData(data, query);
 
+          // sorting
+          // one column, one direction (ascending) for now
+          if(query.orderBy && data[0]) {
+            if (data[0][query.orderBy]) {
+              data.sort(function(a, b) {
+                return a[query.orderBy] - b[query.orderBy];
+              });
+            } else {
+              p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
+            }
+          }
+
           _this._data = data;
           p.resolve();
 
@@ -134,33 +146,16 @@ var CSVReader = Reader.extend({
   format: function(res) {
     var _this = this;
 
-    //make category an array and fix missing regions
+    //make category an array
     res = res.map(function(row) {
       if(row['geo.cat']) {
         row['geo.cat'] = [row['geo.cat']];
-      }
-      if(row['geo.region'] || row['geo']) {
-        row['geo.region'] = row['geo.region'] || row['geo'];
       }
       return row;
     });
 
     //format data
     res = utils.mapRows(res, _this._formatters);
-
-    //TODO: fix this hack with appropriate ORDER BY
-    //      plus do it AFTER parsing so you dont sort unneeded rows
-    //order by formatted
-    //sort records by time
-    var keys = Object.keys(_this._formatters);
-    var order_by = keys[0];
-    //if it has time
-    if(res[0][order_by]) {
-      res.sort(function(a, b) {
-        return a[order_by] - b[order_by];
-      });
-    }
-    //end of hack
 
     return res;
   },

@@ -525,7 +525,7 @@ var Model = EventSource.extend({
    */
   getQuery: function(splashScreen) {
 
-    var dimensions, filters, select, grouping, q;
+    var dimensions, filters, select, grouping, orderBy, q;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -538,19 +538,26 @@ var Model = EventSource.extend({
     var prop = globals.metadata.indicatorsDB[this.which] && globals.metadata.indicatorsDB[this.which].use === "property";
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
+    // select
     dimensions = this._getAllDimensions(exceptions);
-
-    filters = this._getAllFilters(exceptions, splashScreen);
-    grouping = this._getGrouping();
-
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
+
+    // where 
+    filters = this._getAllFilters(exceptions, splashScreen);
+    
+    // grouping
+    grouping = this._getGrouping();
+
+    // order by
+    orderBy = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
       'select': select,
       'where': filters,
       'grouping': grouping,
+      'orderBy': orderBy // should be _space.animatable, but that's time for now
     };
   },
 
@@ -1015,16 +1022,18 @@ getFrame: function(time){
    */
   getFormatter: function() {
     // default formatter turns empty strings in null and converts numeric values into number
-    return function (f) {
-      if(f === ""){
-        return null;
+    return function (val) {
+      var newVal = val;
+      if(val === ""){
+        newVal = null;
       } else {
-        var new_val = parseFloat(f);
-        if (!isNaN(new_val) && isFinite(f)) {
-          return new_val;
+        // check for numberic
+        var numericVal = parseFloat(val);
+        if (!isNaN(numericVal) && isFinite(val)) {
+          newVal = numericVal;
         }
       }  
-      return f;
+      return newVal;
     }
   },
 
@@ -1368,6 +1377,7 @@ getFrame: function(time){
    * @returns {Object} filters
    */
   _getAllFormatters: function() {
+
     var formatters = {};
 
     function addFormatter(model) {
@@ -1380,8 +1390,8 @@ getFrame: function(time){
     }
 
     // loop through all models which can have filters
-    utils.forEach(this._space, function(entity, entityName) {
-      addFormatter(entity);
+    utils.forEach(this._space, function(h) {
+      addFormatter(h);
     });
     addFormatter(this);
 

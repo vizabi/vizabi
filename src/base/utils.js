@@ -83,16 +83,6 @@ export var isNumber = function(arg) {
 };
 
 /*
- * checks whether arg is numeric.
- * @param {*} arg
- * @returns {Boolean}
- * from: http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
- */
-export var isNumeric = function(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-};
-
-/*
  * checks whether obj is a plain object {}
  * @param {Object} obj
  * @returns {Boolean}
@@ -786,14 +776,13 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
-
-  var columns = Object.keys(formatters);
-  var columns_s = columns.length;
+  
   original = original.map(function(row) {
-    for(var i = 0; i < columns_s; i++) {
-      var col = columns[i],
-          new_val;
-      if(row.hasOwnProperty(col)) {
+    var columns = Object.keys(row);
+      
+    for(var i = 0; i < columns.length; i++) {
+      var col = columns[i], new_val;
+      if(formatters.hasOwnProperty(col)) { 
         try {
           new_val = mapRow(row[col], formatters[col]);
         } catch(e) {

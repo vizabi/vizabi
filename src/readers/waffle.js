@@ -80,7 +80,9 @@ var WSReader = Reader.extend({
           return;
         }
 
-        resp = format(uzip(resp.data));
+        //format data
+        resp = utils.mapRows(uzip(resp.data), _this._formatters);
+
         //cache and resolve
         FILE_CACHED[path] = resp;
         FILE_REQUESTED[path].resolve();
@@ -106,23 +108,6 @@ var WSReader = Reader.extend({
           }
         }
         return result;
-      }
-
-      function format(res) {
-        //format data
-        res = utils.mapRows(res, _this._formatters);
-
-        //TODO: fix this hack with appropriate ORDER BY
-        //order by formatted
-        //sort records by time
-        var keys = Object.keys(_this._formatters);
-        var order_by = keys[0];
-        res.sort(function (a, b) {
-          return a[order_by] - b[order_by];
-        });
-        //end of hack
-
-        return res;
       }
 
       function parse(res) {
@@ -161,6 +146,19 @@ var WSReader = Reader.extend({
         data = data.map(function (row) {
           return utils.clone(row, query.select);
         });
+
+        // sorting
+        // one column, one direction (ascending) for now
+        if(query.orderBy && data[0]) {
+          if (data[0][query.orderBy]) {
+            data.sort(function(a, b) {
+              return a[query.orderBy] - b[query.orderBy];
+            });
+          } else {
+            p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
+          }
+        }
+
         _this._data = data;
         p.resolve();
       }
