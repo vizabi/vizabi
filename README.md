@@ -36,7 +36,7 @@ See [contributing guide](CONTRIBUTING.md)
 
 ## License
 
-Copyright (c) 2012-2015, Gapminder Foundation
+Copyright (c) 2012-2016, Gapminder Foundation
 
 All rights reserved.
 
