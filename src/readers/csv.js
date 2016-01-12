@@ -76,9 +76,6 @@ var CSVReader = Reader.extend({
         // once done, continue parsing
         propertiesLoadPromise.then(function() {
 
-          //format values in the dataset and filters
-          where = utils.mapRows([where], _this._formatters)[0];
-
           //make sure conditions don't contain invalid conditions
           var validConditions = [];
           utils.forEach(where, function(v, p) {

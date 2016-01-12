@@ -120,9 +120,6 @@ var WSReader = Reader.extend({
           delete where['geo.category'];
         }
 
-        //format values in the dataset and filters
-        where = utils.mapRows([where], _this._formatters)[0];
-
         //make sure conditions don't contain invalid conditions
         var validConditions = [];
         utils.forEach(where, function (v, p) {
