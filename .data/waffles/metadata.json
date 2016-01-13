@@ -127,7 +127,8 @@
             "allowCharts": ["mountainchart", "bubblechart", "bubblemap", "linechart", "barchart", "barrankchart"],
             "use": "indicator",
             "unit": "tfr",
-            "scales": ["linear", "log"],
+            "scales": ["linear"],
+            "domain": [0, 10],
             "sourceLink": "https://gapminder.org"
         },
         "gini": {
@@ -155,7 +156,7 @@
             "sourceLink": "https://gapminder.org"
         },
         "u5mr": {
-            "allowCharts": ["bubblechart", "bubblemap"],
+            "allowCharts": ["bubblechart", "mountainchart", "bubblemap"],
             "use": "indicator",
             "unit": "u5mr",
             "scales": ["linear", "log"],
