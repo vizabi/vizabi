@@ -474,7 +474,7 @@ var BubbleMapComponent = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = _this.values.size[d[KEY]];
+          pointer.sortValue = _this.values.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })

@@ -528,7 +528,7 @@ var MountainChartComponent = Component.extend({
                 pointer.KEY = function () {
                     return this[_this.KEY];
                 };
-                pointer.sortValue = [_this.values.axis_y[pointer.KEY()], 0];
+                pointer.sortValue = [_this.values.axis_y[pointer.KEY()]||0, 0];
                 pointer.aggrLevel = 0;
                 return pointer;
             });
