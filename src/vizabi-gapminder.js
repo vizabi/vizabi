@@ -56,7 +56,7 @@ BarChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "nor"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -114,7 +114,7 @@ BarRankChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       },
       opacitySelectDim: .3,
@@ -190,7 +190,7 @@ BubbleMap.define('default_options', {
       opacityRegular: 1,
       show: {
         _defs_: {
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       },
     },
@@ -280,7 +280,7 @@ MountainChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["*"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -358,7 +358,7 @@ LineChart.define('default_options', {
       show: {
         _defs_: {
           "geo": ["usa", "swe", "chn"],
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
@@ -440,7 +440,7 @@ BubbleChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country"]
+          "geo.cat": ["country", "unstate"]
         }
       }
     },
