@@ -85,7 +85,7 @@ var TimeSlider = Component.extend({
     this.model_expects = [{
       name: "time",
       type: "time",
-      delay: "delay"  
+      delay: "delay"
     }];
 
     var _this = this;
@@ -167,7 +167,7 @@ var TimeSlider = Component.extend({
       .orient("bottom")
       .tickSize(0);
     //Value
-    this.valueText.attr("text-anchor", "middle").attr("dy", "-0.8em");
+    this.valueText.attr("text-anchor", "middle").attr("dy", "-0.7em");
 
     var brushed = _this._getBrushed(),
       brushedEnd = _this._getBrushedEnd();
@@ -351,7 +351,7 @@ var TimeSlider = Component.extend({
   _getBrushedEnd: function() {
     var _this = this;
     return function() {
-      _this._setTime.recallLast();      
+      _this._setTime.recallLast();
       _this.element.classed(class_dragging, false);
       _this.model.time.dragStop();
       _this.model.time.snap();
