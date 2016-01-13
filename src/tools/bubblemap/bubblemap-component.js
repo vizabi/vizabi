@@ -561,7 +561,7 @@ var BubbleMapComponent = Component.extend({
           d.label = valueL;
           
           view.classed("vzb-hidden", false)
-              .attr("fill", _this.cScale(valueC))
+              .attr("fill", valueC?_this.cScale(valueC):"transparent")
           
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX, valueY]));

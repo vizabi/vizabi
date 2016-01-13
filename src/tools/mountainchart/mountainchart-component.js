@@ -1022,7 +1022,7 @@ var MountainChartComponent = Component.extend({
     redrawDataPointsOnlyColors: function () {
         var _this = this;
         this.mountains.style("fill", function (d) {
-            return _this.cScale(_this.values.color[d.KEY()]);
+            return _this.values.color[d.KEY()]?_this.cScale(_this.values.color[d.KEY()]):"transparent";
         });
     },
 
@@ -1046,7 +1046,7 @@ var MountainChartComponent = Component.extend({
         }
 
         if (this.model.marker.color.use === "indicator") view
-            .style("fill", this.cScale(this.values.color[key]));
+            .style("fill", this.values.color[key] ? _this.cScale(this.values.color[key]) : "transparent");
 
         if (stack !== "none") view
             .transition().duration(Math.random() * 900 + 100).ease("circle")
