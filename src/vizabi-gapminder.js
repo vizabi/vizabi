@@ -229,10 +229,10 @@ BubbleMap.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -329,10 +329,10 @@ MountainChart.define('default_options', {
   },
   language: language,
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
@@ -454,7 +454,7 @@ BubbleChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "fertility_rate",
+        which: "child_mortality_rate_per1000",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -496,10 +496,10 @@ BubbleChart.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
