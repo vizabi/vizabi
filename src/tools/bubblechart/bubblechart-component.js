@@ -84,14 +84,14 @@ var BubbleChartComp = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        
+
         if(path.indexOf("scaleType") > -1) {
           _this.ready();
           return;
         }
-          
+
         if(path.indexOf("marker.size") !== -1) return;
-          
+
         if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
@@ -865,7 +865,7 @@ var BubbleChartComp = Component.extend({
     var remainigHeight = this.height - 30;
     var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
     sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
-    
+
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
@@ -902,27 +902,27 @@ var BubbleChartComp = Component.extend({
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
-    } 
+    }
 
     this._resizeDataWarning();
   },
 
   _resizeDataWarning: function(){
     this.dataWarningEl
-      .attr("transform", "translate(" 
-        + (this.width) + "," 
-        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin) 
+      .attr("transform", "translate("
+        + (this.width) + ","
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin)
         + ")");
 
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
-      
+
     // reduce font size if the caption doesn't fit
     var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
     var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
     var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
     dataWarningText.style("font-size", dataWarningWidth > remainingWidth? font + "px" : null);
-    
+
     // position the warning icon
     var warnBB = dataWarningText.node().getBBox();
     this.dataWarningEl.select("svg")
@@ -965,9 +965,9 @@ var BubbleChartComp = Component.extend({
     this.entityBubbles.style("fill", function(d) {
 
       var cache = _this.cached[d[KEY]];
-      
+
       var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
-   
+
       return valueC?_this.cScale(valueC):"transparent";
     });
   },
@@ -1002,7 +1002,7 @@ var BubbleChartComp = Component.extend({
     this.entityBubbles.each(function(d, index) {
 
       var cache = _this.cached[d[KEY]];
-      
+
       var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
       if(valueS == null) return;
 
@@ -1435,8 +1435,12 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.clearHighlighted();
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", true);
+      })
+      .on("click", function(d) {
+        if (!utils.isTouchDevice()) return;
+        var cross = d3.select(this).selectAll(".vzb-bc-label-x");
+        cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
       });
-
 
   },
 
@@ -1504,7 +1508,7 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
     if(d != null) {
-  
+
       var values = this.model.marker.getFrame(d[TIMEDIM]);
       var valueY = values.axis_y[d[KEY]];
       var valueX = values.axis_x[d[KEY]];
