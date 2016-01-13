@@ -33,28 +33,7 @@ var WSReader = Reader.extend({
     var p = new Promise();
     var path = this._basepath;
 
-    path += '?select=' + encodeURI(query.select);
-
-    if (query.where['geo.cat'] && query.where['geo.cat'].length && query.where['geo.cat'][0] !== '*') {
-      path += '&geo.cat=' + encodeURI(query.where['geo.cat']);
-    }
-
-    if (query.where.time) {
-      var time = query.where.time[0];
-      var t = typeof time.join !== 'undefined' && time.length === 2 ?
-        // {from: time, to: time}
-        JSON.stringify({from: getYear(time[0]), to: getYear(time[1])}) :
-        getYear(time[0]);
-      path += '&time=' + t;
-    }
-
-    function getYear(time) {
-      if (typeof time === 'string') {
-        return time;
-      }
-
-      return time.getFullYear();
-    }
+    path += '?' + _this._encodeQuery(query);
 
     _this._data = [];
 
@@ -81,7 +60,7 @@ var WSReader = Reader.extend({
         }
 
         //format data
-        resp = utils.mapRows(uzip(resp.data), _this._formatters);
+        resp = utils.mapRows(uzip(resp.data || resp), _this._formatters);
 
         //cache and resolve
         FILE_CACHED[path] = resp;
@@ -166,6 +145,46 @@ var WSReader = Reader.extend({
   },
 
   /**
+   * Encode query parameters into readable string
+   * @param {Object} query to be performed
+   * @returns encoded query params
+   * `select=geo,time,population&geo=afr,chn&time=1800,1950:2000,2015&geo.cat=country,region`
+   */
+  _encodeQuery: function (params) {
+    var _params = utils.clone(params.where);
+    _params.select = params.select;
+    _params.gapfilling = params.gapfilling;
+
+    // todo: WS doesn't support value `*` for geo parameter
+    // remove this condition when geo will be removed from params.where (when you need all geo props)
+    if (_params.geo && _params.geo.length === 1 && _params.geo[0] === '*') {
+      delete _params.geo;
+    }
+
+    // todo: deepClone for time value in params.where object
+    // fix utils.deepClone for working with Date type
+    var _time = _params.time;
+    _params.time = [];
+    if (_time) {
+      _params.time[0] = _time[0].map(function (year) {
+        return typeof year === 'object' ? year.getFullYear() : year;
+      });
+    }
+
+    var result = [];
+
+    // create `key=value` pairs for url query string
+    Object.keys(_params).map(function (key) {
+      var value = QueryEncoder.encodeQuery(_params[key]);
+      if (value) {
+        result.push(key + '=' + value);
+      }
+    });
+
+    return result.join('&');
+  },
+
+  /**
    * Gets the data
    * @returns all data
    */
@@ -173,5 +192,64 @@ var WSReader = Reader.extend({
     return this._data;
   }
 });
+
+var QueryEncoder = (function() {
+  return {
+    encodeQuery: encodeQuery
+  };
+
+  function encodeQuery(param) {
+    return mapParams()(param);
+  }
+
+  function mapParams(depth) {
+    if (!depth) {
+      return _map;
+    }
+
+    return _mapRange;
+  }
+
+  function _map(v, i) {
+    // if falsy value
+    if (!v) {
+      return v;
+    }
+
+    // if value is string or number
+    if (v.toString() === v || _isNumber(v)) {
+      return v;
+    }
+
+    // if value is array
+    if (Array.isArray(v)) {
+      return v.map(mapParams(1)).join();
+    }
+
+    if (typeof v === 'object') {
+      return _toArray(v).map(mapParams(1)).join();
+    }
+
+    return v;
+  }
+
+  function _mapRange(v) {
+    return encodeURI(v).replace(/,/g, ':')
+  }
+
+  function _isNumber(value) {
+    return parseInt(value, 10) == value;
+  }
+
+  function _toArray(object) {
+    return Object.keys(object).map(function(key) {
+      if (object[key] === true) {
+        return [key];
+      }
+
+      return [key, object[key]];
+    })
+  }
+})();
 
 export default WSReader;
