@@ -41,7 +41,7 @@ var profiles = {
       bottom: 10,
       left: 15
     },
-    radius: 10,
+    radius: 9,
     label_spacing: 12
   },
   large: {
@@ -84,8 +84,7 @@ var TimeSlider = Component.extend({
     //define expected models/hooks for this component
     this.model_expects = [{
       name: "time",
-      type: "time",
-      delay: "delay"
+      type: "time"
     }];
 
     var _this = this;
@@ -213,7 +212,6 @@ var TimeSlider = Component.extend({
     var pause = this.element.select(".vzb-ts-btn-pause");
     var _this = this;
     var time = this.model.time;
-    var delay = this.model.time.delay;
 
     play.on('click', function () {
 
@@ -416,17 +414,6 @@ var TimeSlider = Component.extend({
     _this.model.time.getModelObject('value').set(time, false, persistent); // non persistent
   },
 
-    /**
-   * Sets the current delay model to delay
-   * @param {number} time The time
-   */
-  _setDelay: function (delay) {
-    //update state
-    var _this = this;
-
-    _this.model.time.delay = delay;
-    _this.model.time.delaySet = true;
-  },
 
   /**
    * Applies some classes to the element according to options
