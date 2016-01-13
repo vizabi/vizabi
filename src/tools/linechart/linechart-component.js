@@ -38,6 +38,10 @@ var LCComponent = Component.extend({
         _this.updateTime();
         _this.redrawDataPoints();
       },
+      'change:time.playing': function() {
+        // hide tooltip on touch devices when playing
+        if (_this.model.time.playing && utils.isTouchDevice() && !_this.tooltip.classed("vzb-hidden")) _this.tooltip.classed("vzb-hidden", true);
+      },
       'change:marker': function(evt, path) {
         if(!_this._readyOnce) return;
         if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
@@ -240,7 +244,7 @@ var LCComponent = Component.extend({
     this.profiles = {
       "small": {
         margin: {
-          top: 30, 
+          top: 30,
           right: 20,
           left: 55,
           bottom: 30
@@ -406,7 +410,7 @@ var LCComponent = Component.extend({
       _this.graph.selectAll(".vzb-lc-entity").each(function() {
         d3.select(this).classed("vzb-dimmed", false).classed("vzb-hovered", false);
       });
-      
+
       _this.hoveringNow = null;
     }
 
@@ -485,7 +489,7 @@ var LCComponent = Component.extend({
         var color = _this.cScale(values.color[d[KEY]]);
         var colorShadow = _this.model.marker.color.which == "geo.region"?
             _this.model.marker.color.getColorShade({
-              colorID: values.color[d[KEY]], 
+              colorID: values.color[d[KEY]],
               shadeID: "shade"
             })
             :
@@ -504,8 +508,8 @@ var LCComponent = Component.extend({
         _this.cached[d[KEY]] = {
           valueY: xy[xy.length - 1][1]
         };
-        
-        
+
+
         // the following fixes the ugly line butts sticking out of the axis line
         //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
 
@@ -567,13 +571,13 @@ var LCComponent = Component.extend({
         var color = _this.cScale(values.color[d[KEY]]);
         var colorShadow = _this.model.marker.color.which == "geo.region"?
             _this.model.marker.color.getColorShade({
-              colorID: values.color[d[KEY]], 
+              colorID: values.color[d[KEY]],
               shadeID: "shade"
             })
             :
             d3.rgb(color).darker(0.5).toString();
 
-        
+
         entity.select(".vzb-lc-circle")
           .style("fill", color)
           .transition()
