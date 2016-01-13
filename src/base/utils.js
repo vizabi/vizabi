@@ -1285,6 +1285,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
     if(next === items.length) return +items[items.length - 1][which];
   } else {
     // no extrapolation according to Ola's request
+    if(next === 0 && items[0][dimTime].getTime() == time.getTime()) return +items[0][which];
     if(next === 0 || next === items.length) return null;
   }
     
