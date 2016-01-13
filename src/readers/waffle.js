@@ -73,8 +73,8 @@ var WSReader = Reader.extend({
       return p;
 
       function uzip(table) {
-        var rows = table.rows;
-        var headers = table.headers;
+        var rows = table.data.rows;
+        var headers = table.data.headers;
         var result = new Array(rows.length);
         // unwrap compact data into json collection
         for (var i = 0; i < rows.length; i++) {
