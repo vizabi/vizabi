@@ -229,10 +229,10 @@ BubbleMap.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,
@@ -322,17 +322,17 @@ MountainChart.define('default_options', {
       group: {
         use: "property",
         which: "geo.region", // set a property of data
-        manualSorting: ["asi", "afr", "ame", "eur"],
+        manualSorting: ["asia", "africa", "americas", "europe"],
         merge: false
       }
     }
   },
   language: language,
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
@@ -474,13 +474,6 @@ BubbleChart.define('default_options', {
         scaleType: "ordinal",
         allow: {
           names: ["!geo.name"]
-        },
-        palette: {
-          "asi": "#FF5872",
-          "eur": "#FFE700",
-          "ame": "#7FEB00",
-          "afr": "#00D5E9",
-          "_default": "#ffb600"
         }
       },
       size: {
@@ -496,10 +489,10 @@ BubbleChart.define('default_options', {
     }
   },
   data: {
-    reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    //reader: "csv",
-    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    //reader: "waffle",
+    //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
+    reader: "csv",
+    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   language: language,

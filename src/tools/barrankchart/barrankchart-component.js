@@ -132,9 +132,9 @@ var BarRankChart = Component.extend({
     // change header titles for new data
     var translator = this.model.language.getTFunction();
     this.header.select('.vzb-br-title')
-      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' in ' + this.timeFormatter(this.model.time.value))
+      .text(translator("indicator/" + this.model.marker.axis_x.which) + ' ' + this.timeFormatter(this.model.time.value))
     this.header.select('.vzb-br-total')
-      .text('Total: ' + this.model.marker.axis_x.tickFormatter(this.total))
+      .text('Σ = ' + this.model.marker.axis_x.tickFormatter(this.total))
 
     // new scales and axes
     this.xScale = this.model.marker.axis_x.getScale(false);

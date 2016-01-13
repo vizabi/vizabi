@@ -3,14 +3,14 @@ world,World,planet,world
 europe,europeope,region,europe
 asia,asiaa,region,asia
 africa,africaica,region,africa
-americas,americasrica,region,americas
+americas,America,region,americas
 _abk,Abkhazia,country,europe
 afg,Afghanistan,country,asia
 and,Andorra,country,europe
 _akr,Akrotiri and Dhekelia,country,
 alb,Albania,country,europe
 dza,Algeria,country,africa
-asm,americasrican Samoa,country,asia
+asm,American Samoa,country,asia
 ago,Angola,country,africa
 aia,Anguilla,country,americas
 atg,Antigua and Barbuda,country,americas
@@ -41,7 +41,7 @@ bgr,Bulgaria,country,europe
 bfa,Burkina Faso,country,africa
 bdi,Burundi,country,africa
 khm,Cambodia,country,asia
-cmr,Camericasroon,country,africa
+cmr,Cameroon,country,africa
 can,Canada,country,americas
 cpv,Cape Verde,country,africa
 cym,Cayman Islands,country,
@@ -218,7 +218,7 @@ ssd,South Sudan,country,africa
 esp,Spain,country,europe
 lka,Sri Lanka,country,asia
 sdn,Sudan,country,africa
-sur,Surinamericas,country,americas
+sur,Suriname,country,americas
 sjm,Svalbard,country,europe
 swz,Swaziland,country,africa
 swe,Sweden,country,europe
