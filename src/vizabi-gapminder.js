@@ -212,11 +212,11 @@ BubbleMap.define('default_options', {
       },
       lat: {
         use: "property",
-        which: "geo.lat"
+        which: "geo.latitude"
       },
       lng: {
         use: "property",
-        which: "geo.lng"
+        which: "geo.longitude"
       },
       color: {
         use: "property",

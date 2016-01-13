@@ -78,14 +78,14 @@
             "scales": ["ordinal"],
             "sourceLink": "https://docs.google.com/spreadsheets/d/1OxmGUNWeADbPJkQxVPupSOK5MbAECdqThnvyPrwG5Os/pub"
         },
-        "geo.lat": {
+        "geo.latitude": {
             "allowCharts": ["*"],
             "use": "property",
             "unit": "",
             "scales": ["linear"],
             "sourceLink": "https://gapminder.org"
         },
-        "geo.lng": {
+        "geo.longitude": {
             "allowCharts": ["*"],
             "use": "property",
             "unit": "",
