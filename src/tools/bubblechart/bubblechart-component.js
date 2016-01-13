@@ -1071,10 +1071,6 @@ var BubbleChartComp = Component.extend({
 
     }); // each bubble
 
-    // Call flush() after any zero-duration transitions to synchronously flush the timer queue
-    // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-    if(_this.duration == 0) d3.timer.flush();
-
     if(_this.ui.labels.autoResolveCollisions) {
       // cancel previously queued simulation if we just ordered a new one
       clearTimeout(_this.collisionTimeout);
@@ -1128,8 +1124,6 @@ var BubbleChartComp = Component.extend({
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
-        // fix for #407 & #408
-        d3.timer.flush();
       }
 
       if(this.model.time.record) _this._export.write({
