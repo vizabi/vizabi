@@ -68,7 +68,7 @@ BarChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -128,7 +128,7 @@ BarRankChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "log",
         allow: {
           scales: [
@@ -202,7 +202,7 @@ BubbleMap.define('default_options', {
       },
       size: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -230,7 +230,7 @@ BubbleMap.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools", 
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -292,12 +292,12 @@ MountainChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: 'linear'
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_pc",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: 'log',
         min: .11, //0
         max: 500 //100
@@ -330,14 +330,14 @@ MountainChart.define('default_options', {
   language: language,
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools", 
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
   },
   ui: {
     buttons: [],
-    dialogs: {popup: [], sidebar: [], moreoptions: []},      
+    dialogs: {popup: [], sidebar: [], moreoptions: []},
     presentation: false
   }
 });
@@ -371,7 +371,7 @@ LineChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "gdp_pc",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log"
       },
       axis_x: {
@@ -454,7 +454,7 @@ BubbleChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "u5mr",
+        which: "fertility_rate",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -462,7 +462,7 @@ BubbleChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_pc",
+        which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: "log",
         allow: {
           scales: ["linear", "log"]
@@ -485,7 +485,7 @@ BubbleChart.define('default_options', {
       },
       size: {
         use: "indicator",
-        which: "pop",
+        which: "population",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -497,7 +497,7 @@ BubbleChart.define('default_options', {
   },
   data: {
     reader: "waffle",
-    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools", 
+    path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
     //reader: "csv",
     //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
     splash: true
@@ -562,7 +562,7 @@ PopByAge.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "pop"
+        which: "population"
       },
       color: {
         use: "constant",
@@ -643,7 +643,7 @@ Tool.define("preload", function(promise) {
       addMinMax("axis_x");
       addMinMax("axis_y");
       addPalettes("color");
-      
+
       promise.resolve();
 
     });
