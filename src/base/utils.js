@@ -1277,18 +1277,19 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
 
   // the rest is for the continuous measurements
     
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
-    
   if (extrapolate){
     // check if the desired value is out of range. 0-order extrapolation
-    if(next === 0) return +items[0][which];    
-    if(next === items.length) return +items[items.length - 1][which];
+    if(time - items[0][dimTime] <= 0) return items[0][which];    
+    if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
   } else {
     // no extrapolation according to Ola's request
-    if(next === 0 && items[0][dimTime].getTime() == time.getTime()) return +items[0][which];
-    if(next === 0 || next === items.length) return null;
+    if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
   }
     
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+    
+  if(next === 0) return items[0][which];
+        
   //return null if data is missing
   if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
     warn('interpolatePoint failed because next/previous points are bad in ' + which);
