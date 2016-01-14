@@ -60,7 +60,7 @@ var WSReader = Reader.extend({
         }
 
         //format data
-        resp = utils.mapRows(uzip(resp), _this._formatters);
+        resp = utils.mapRows(uzip(resp.data || resp), _this._formatters);
 
         //cache and resolve
         FILE_CACHED[path] = resp;
@@ -125,10 +125,13 @@ var WSReader = Reader.extend({
     _params.select = params.select;
     _params.gapfilling = params.gapfilling;
 
+    // todo: WS doesn't support value `*` for geo parameter
+    // remove this condition when geo will be removed from params.where (when you need all geo props)
     if (_params.geo && _params.geo.length === 1 && _params.geo[0] === '*') {
       delete _params.geo;
     }
 
+    // todo: formatting date according to precision (year, month, etc)
     if (_params.time) {
       _params.time[0] = _params.time[0].map(function (year) {
         return typeof year === 'object' ? year.getFullYear() : year;
@@ -137,6 +140,7 @@ var WSReader = Reader.extend({
 
     var result = [];
 
+    // create `key=value` pairs for url query string
     Object.keys(_params).map(function (key) {
       var value = QueryEncoder.encodeQuery(_params[key]);
       if (value) {
