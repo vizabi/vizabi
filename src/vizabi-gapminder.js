@@ -440,11 +440,11 @@ BubbleChart.define('default_options', {
       dim: "geo",
       show: {
         _defs_: {
-          "geo.cat": ["country", "unstate"]
+          "geo.cat": ["country"]
         }
       }
     },
-    marker: {
+    marker: {                   
       space: ["entities", "time"],
       type: "geometry",
       shape: "circle",
@@ -454,7 +454,7 @@ BubbleChart.define('default_options', {
       },
       axis_y: {
         use: "indicator",
-        which: "child_mortality_rate_per1000",
+        which: "fertility_rate",
         scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
@@ -462,8 +462,8 @@ BubbleChart.define('default_options', {
       },
       axis_x: {
         use: "indicator",
-        which: "gdp_p_cap_const_ppp2011_dollar",
-        scaleType: "log",
+        which: "life_expectancy",
+        scaleType: "linear",
         allow: {
           scales: ["linear", "log"]
         }
@@ -489,11 +489,13 @@ BubbleChart.define('default_options', {
     }
   },
   data: {
-    //reader: "waffle",
+    reader: "ddfcsv",
+    path: 'https://raw.githubusercontent.com/buchslava/ddf--gapminder--systema_globalis/master',
+    //reader: 'waffle',
     //path: "http://waffle-server-dev.gapminderdev.org/api/graphs/stats/vizabi-tools",
-    reader: "csv",
-    path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
-    splash: true
+    //reader: "csv",
+    //path: globals.gapminder_paths.baseUrl + "data/waffles/dont-panic-poverty.csv",
+    splash: false
   },
   language: language,
   ui: {
