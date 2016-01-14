@@ -101,6 +101,8 @@ var Dialogs = Component.extend({
     }
     
     this._addDialogs(dialog_popup, dialog_sidebar);
+    
+    this.resize();
 
     if((this.model.ui.dialogs||{}).popup) {
       this.root.findChildByName("gapminder-buttonlist")
@@ -114,12 +116,14 @@ var Dialogs = Component.extend({
           }
         });
 
-      var close_buttons = this.element.selectAll(".vzb-popup").select(".vzb-popup>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
+      var popupDialogs = this.element.selectAll(".vzb-top-dialog").filter(function(d) {return dialog_popup.indexOf(d.id) > -1});
+      
+      var close_buttons = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>.vzb-dialog-buttons>[data-click='closeDialog']");
       close_buttons.on('click', function(d, i) {
         _this.closeDialog(d.id);
       });
 
-      var pinDialog = this.element.selectAll(".vzb-popup").select(".vzb-popup>.vzb-dialog-modal>[data-click='pinDialog']");
+      var pinDialog = popupDialogs.select(".vzb-top-dialog>.vzb-dialog-modal>[data-click='pinDialog']");
       pinDialog.on('click', function(d, i) {
         _this.pinDialog(d.id);
       });
@@ -152,12 +156,34 @@ var Dialogs = Component.extend({
   
   },
   
+  resize: function() {
+    var _this = this;
+    var dialog_popup = (this.model.ui.dialogs||{}).popup || [];
+    var dialog_sidebar = (this.model.ui.dialogs||{}).sidebar || [];
+    var profile = this.getLayoutProfile();
+    
+    this.element.selectAll(".vzb-top-dialog").each(function(d) {
+      var dialogEl = d3.select(this);
+      var cls = dialogEl.attr('class').replace('vzb-popup','').replace('vzb-sidebar','');
+
+      if (profile === 'large' && dialog_sidebar.indexOf(d.id) > -1) {
+        cls += ' vzb-sidebar';
+      } else if(dialog_popup.indexOf(d.id) > -1) {
+        cls += ' vzb-popup';
+      }
+
+      dialogEl.attr('class', cls);
+    });
+
+  },
+  
   /*
    * adds dialogs configuration to the components and template_data
    * @param {Array} dialog_list list of dialogs to be added
    */
   _addDialogs: function(dialog_popup, dialog_sidebar) {
 
+    var profile = this.getLayoutProfile();
     var dialog_list = [];
     
     dialog_list = dialog_popup ? dialog_list.concat(dialog_popup) : dialog_list;
@@ -194,20 +220,10 @@ var Dialogs = Component.extend({
 
     this.element.selectAll('div').data(details_dlgs)
       .enter().append("div")
-      .attr('class', function (d) {
-        var cls = 'vzb-dialogs-dialog';
-        if (dialog_popup && dialog_popup.indexOf(d.id) > -1) {
-            cls += ' vzb-popup';
-        }
-        if (dialog_sidebar && dialog_sidebar.indexOf(d.id) > -1) {
-            cls += ' vzb-sidebar';
-        }
-
-        return cls;
-      })
       .attr('data-dlg', function(d) {
         return d.id;
-      });
+      })
+      .attr('class', 'vzb-top-dialog vzb-dialogs-dialog');
 
     this.loadComponents();
 
@@ -243,8 +259,9 @@ var Dialogs = Component.extend({
    * @param {String} id dialog id
    */
   openDialog: function(id) {
-    
-    this.closeAllDialogs();
+    //close pinned dialogs for small profile
+    var forceClose = this.getLayoutProfile() === 'small' ? true : false; 
+    this.closeAllDialogs(forceClose);
 
     var dialog = this.element.selectAll(".vzb-popup.vzb-dialogs-dialog[data-dlg='" + id + "']");
 

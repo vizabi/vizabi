@@ -277,9 +277,10 @@ export var forEach = function(obj, callback, ctx) {
   if(!obj) {
     return;
   }
-  var i;
+  var i, size;
   if(isArray(obj)) {
-    for(i = 0; i < obj.length; i += 1) {
+    size = obj.length;
+    for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[i],
           i
@@ -289,7 +290,7 @@ export var forEach = function(obj, callback, ctx) {
     }
   } else {
     var keys = Object.keys(obj);
-    var size = keys.length;
+    size = keys.length;
     for(i = 0; i < size; i += 1) {
       if(callback.apply(ctx, [
           obj[keys[i]],
@@ -331,11 +332,7 @@ function isSpecificValue(val) {
 }
 
 function cloneSpecificValue(val) {
-  if (val instanceof Buffer) {
-    var x = new Buffer(val.length);
-    val.copy(x);
-    return x;
-  } else if (val instanceof Date) {
+  if (val instanceof Date) {
     return new Date(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
@@ -775,13 +772,11 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
-
-  
   
   original = original.map(function(row) {
     var columns = Object.keys(row);
       
-    for(var i = columns.length; i >= 0; i--) {
+    for(var i = 0; i < columns.length; i++) {
       var col = columns[i], new_val;
       if(formatters.hasOwnProperty(col)) { 
         try {
@@ -790,14 +785,6 @@ export var mapRows = function(original, formatters) {
           new_val = row[col];
         }
         row[col] = new_val;
-      }else{
-        //if it's a number
-        if(row[col] === ""){
-            row[col] = null;
-        }else{
-            new_val = parseFloat(row[col]);
-            if(new_val || new_val === 0) row[col] = new_val;
-        }
       }
     }
     return row;
@@ -1268,13 +1255,14 @@ export var interpolateVector = function(){
  * @param {String} dimTime -- a pointer to time dimension, usually "time"
  * @param {Date} time -- reference point for interpolation. here the valus is to be found
  * @param {String} method refers to which formula to use. "linear" or "exp". Falls back to "linear" if undefined
+ * @param {Boolean} extrapolate indicates if we should use zero-order extrapolation outside the range of available data
  * @returns {Number} interpolated value
  */
-export var interpolatePoint = function(items, use, which, next, dimTime, time, method){
+export var interpolatePoint = function(items, use, which, next, dimTime, time, method, extrapolate){
 
     
   if(!items || items.length === 0) {
-    warn('interpolatePoint failed because incoming array is empty');
+    warn('interpolatePoint failed because incoming array is empty. It was ' + which);
     return null;
   }
   // return constant for the use of "constant"
@@ -1283,16 +1271,24 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // zero-order interpolation for the use of properties
   if(use === 'property') return items[0][which];
 
-  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
-
   // the rest is for the continuous measurements
-  // check if the desired value is out of range. 0-order extrapolation
-  if(next === 0) return +items[0][which];    
-  if(next === items.length) return +items[items.length - 1][which];
     
+  if (extrapolate){
+    // check if the desired value is out of range. 0-order extrapolation
+    if(time - items[0][dimTime] <= 0) return items[0][which];    
+    if(time - items[items.length - 1][dimTime] >= 0) return items[items.length - 1][which];
+  } else {
+    // no extrapolation according to Ola's request
+    if(time < items[0][dimTime] || time > items[items.length - 1][dimTime]) return null;
+  }
+    
+  if(!next && next !== 0) next = d3.bisectLeft(items.map(function(m){return m[dimTime]}), time);
+    
+  if(next === 0) return items[0][which];
+        
   //return null if data is missing
   if(items[next]===undefined || items[next][which] === null || items[next - 1][which] === null || items[next][which] === "") {
-    warn('interpolatePoint failed because next/previous points are bad');
+    warn('interpolatePoint failed because next/previous points are bad in ' + which);
     return null;
   }
     
@@ -1309,7 +1305,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   // cast to time object if we are interpolating time
   if(which === dimTime) result = new Date(result);
   if(isNaN(result)) {
-      warn('interpolatePoint failed because result is NaN');
+      warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;
   }
     

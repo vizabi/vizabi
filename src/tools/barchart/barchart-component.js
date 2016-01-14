@@ -165,7 +165,8 @@ var BarComponent = Component.extend({
     var filter = {};
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
-    var values = this.model.marker.getValues(filter, [entityDim]);
+    var values = this.model.marker.getFrame(time.value);
+      
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(items);
 

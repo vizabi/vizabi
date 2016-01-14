@@ -474,7 +474,7 @@ var BubbleMapComponent = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = _this.values.size[d[KEY]];
+          pointer.sortValue = _this.values.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -561,7 +561,7 @@ var BubbleMapComponent = Component.extend({
           d.label = valueL;
           
           view.classed("vzb-hidden", false)
-              .attr("fill", _this.cScale(valueC))
+              .attr("fill", valueC?_this.cScale(valueC):"transparent")
           
           if(reposition){
               d.cLoc = _this.skew(_this.projection([valueX, valueY]));
@@ -695,7 +695,8 @@ var BubbleMapComponent = Component.extend({
       .attr('width', width)
       .attr('height', height)
       .attr('viewBox', viewBox.join(' '))
-      .attr('preserveAspectRatio', 'none');
+      .attr('preserveAspectRatio', 'none')
+      .style("transform", "translate3d(" + margin.left + "px," + margin.top + "px,0)");
 
     //update scales to the new range
     //this.updateMarkerSizeLimits();

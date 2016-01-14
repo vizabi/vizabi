@@ -70,7 +70,7 @@ var Component = Events.extend({
         }
       }
     });
-    this.triggerResize = utils.throttle(this.triggerResize);
+    this.triggerResize = utils.throttle(this.triggerResize, 100);
   },
 
   /**
@@ -291,9 +291,6 @@ var Component = Events.extend({
       var subcomp = new comp(config, _this);
       var c_model = c.model || [];
       subcomp.model = _this._modelMapping(subcomp.name, c_model, subcomp.model_expects, subcomp.model_binds);
-      //subcomponent model is initialized in frozen state
-      //unfreeze to dispatch events
-      subcomp.model.unfreeze();
       _this.components.push(subcomp);
     });
   },
@@ -435,7 +432,7 @@ var Component = Events.extend({
       return;
     }
     //return a new model with the defined submodels
-    return new Model(subcomponent, values, null, model_binds, true);
+    return new Model(subcomponent, values, null, model_binds);
     /**
      * Maps one model name to current submodel and returns info
      * @param {String} name Full model path. E.g.: "state.marker.color"

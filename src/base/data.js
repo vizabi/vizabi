@@ -14,7 +14,7 @@ var Data = Class.extend({
    * @param {Array} query Array with queries to be loaded
    * @param {String} language Language
    * @param {Object} reader Which reader to use - data reader info
-   * @param {String} path Where data is located
+   * @param {*} evts ?
    */
   load: function(query, language, reader, evts) {
     var _this = this;
@@ -76,7 +76,7 @@ var Data = Class.extend({
     // joining multiple queries
     // create a queue which this datamanager writes all queries to
     this.queryQueue = this.queryQueue || [];
-    this.queryQueue.push({ query: query, queryId: queryId, promise: promise });
+    this.queryQueue.push({ query: query, queryId: queryId, promise: promise, reader: reader});
 
     // wait one execution round for the queue to fill up
     utils.defer(function() {
@@ -103,11 +103,13 @@ var Data = Class.extend({
 
             // if so, merge the selects to the base query
             Array.prototype.push.apply(query.select, queueItem.query.select);
+            // merge formatters so the reader can format the newly added columns
+            utils.extend(reader.formatters, queueItem.reader.formatters);
 
             // include query's promise to promises for base query
             mergedQueries.push(queueItem);
 
-            // remove from queue as it's merged in the current query
+            // remove queueItem from queue as it's merged in the current query
             return false;
           }
         } 
@@ -121,6 +123,7 @@ var Data = Class.extend({
       // promise = promises.length ? Promise.all(promises) : new Promise.resolve();
 
       // remove double columns from select (resulting from merging)
+      // no double columns in formatter because it's an object, extend would've overwritten doubles
       query.select = utils.unique(query.select);
 
       //create hash for dimensions only query
@@ -271,7 +274,7 @@ var Data = Class.extend({
       var TIME = "time";
       var result = {};
       var filtered = {};
-      var items, method, use, next;
+      var items, itemsIndex, oneFrame, method, use, next;
       
       // We _nest_ the flat dataset in two levels: first by “key” (example: geo), then by “animatable” (example: year)
       // See the _getNested function for more details
@@ -283,6 +286,11 @@ var Data = Class.extend({
       var query = this._collection[queryId].query;
       var columns = query.select.filter(function(f){return f != KEY && f != TIME && f !== "_default"});
       
+      var fLength = framesArray.length;
+      var kLength = keys.length;
+      var cLength = columns.length;
+      var frame, f, key, k, column, c;
+      
       // FramesArray in the input contains the array of keyframes in animatable dimension. 
       // Example: array of years like [1800, 1801 … 2100]
       // these will be the points where we need data 
@@ -292,19 +300,19 @@ var Data = Class.extend({
       if(!query.where.time){          
           // The query.where clause doesn't have time field for properties: 
           // we populate the regular set with a single value (unpack properties into constant time series)
+          var dataset = _this._collection[queryId].data;
           
-          framesArray.forEach(function(t){
-              result[t] = {};
-              columns.forEach(function(column){ result[t][column] = {}; });
+          for(f=0; f<fLength; f++){
+              frame = framesArray[f];
               
-              _this._collection[queryId].data.forEach(function(d){
+              result[frame] = {};
+              for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
               
-                  columns.forEach(function(column){
-                      result[t][column][d[KEY]] = d[column];
-                  });
-              });
-            
-          })
+              for(var i=0; i<dataset.length; i++){   
+                  var d = dataset[i];
+                  for(c=0; c<cLength; c++) result[frame][columns[c]][d[KEY]] = d[columns[c]];
+              };
+          };
           
           
       }else{
@@ -314,23 +322,22 @@ var Data = Class.extend({
           if(query.where.time[0].length === 1) framesArray = query.where.time[0];
           
           // Put together a template for cached filtered sets (see below what's needed)
-          keys.forEach(function(key){
-              filtered[key] = {};
-
-              columns.forEach(function(column){
-                filtered[key][column] = null;
-              });
-          });
+          for(k=0; k<kLength; k++){
+              filtered[keys[k]] = {};
+              for(c=0; c<cLength; c++) filtered[keys[k]][columns[c]] = null;
+          };
 
           // Now we run a 3-level loop: across frames, then across keys, then and across data columns (lex, gdp)
-          framesArray.forEach(function(t){
-            result[t] = {};
-            columns.forEach(function(column){
-                result[t][column] = {};
-            });
+          for(f=0; f<fLength; f++){
+            frame = framesArray[f];
+            result[frame] = {};
+            for(c=0; c<cLength; c++) result[frame][columns[c]] = {};
 
-            keys.forEach(function(key){
-                columns.forEach(function(column){
+            for(k=0; k<kLength; k++){
+                key = keys[k];
+                
+                for(c=0; c<cLength; c++){
+                    column = columns[c];       
                     
                     //If there are some points in the array with valid numbers, then
                     //interpolate the missing point and save it to the “clean regular set” 
@@ -339,11 +346,11 @@ var Data = Class.extend({
                     
 
                     // Inside of this 3-level loop is the following: 
-                    if(nested[key] && nested[key][t] && (nested[key][t][0][column] || nested[key][t][0][column] === 0)){
+                    if(nested[key] && nested[key][frame] && (nested[key][frame][0][column] || nested[key][frame][0][column] === 0)){
 
                         // Check if the piece of data for [this key][this frame][this column] exists 
                         // and is valid. If so, then save it into a “clean regular set”
-                        result[t][column][key] = nested[key][t][0][column];
+                        result[frame][column][key] = nested[key][frame][0][column];
                         
                     }else{
                         // If the piece of data doesn’t exist or is invalid, then we need to inter- or extapolate it
@@ -356,12 +363,18 @@ var Data = Class.extend({
 
                         items = filtered[key][column];
 
-                        if(items == null){
-                            items = [];
+                        if(items == null){                            
+                            var givenFrames = Object.keys(nested[key]);
+                            items = new Array(givenFrames.length);
+                            itemsIndex = 0;
 
-                            utils.forEach(nested[key], function(frame) {
-                                if(frame[0][column] || frame[0][column] === 0) items.push(frame[0]);
-                            });
+                            for(var z = 0, length = givenFrames.length; z<length; z++){
+                                oneFrame = nested[key][givenFrames[z]];
+                                if(oneFrame[0][column] || oneFrame[0][column] === 0) items[itemsIndex++] = oneFrame[0];
+                            };
+                            
+                            //trim the length of the array
+                            items.length = itemsIndex;
                         }
 
 
@@ -370,15 +383,15 @@ var Data = Class.extend({
                         //So we let the key have missing values in this column for all frames
                         if(items.length > 0) {
                             next = null;
-                            result[t][column][key] = utils.interpolatePoint(items, use, column, next, TIME, t, method);
+                            result[frame][column][key] = utils.interpolatePoint(items, use, column, next, TIME, frame, method);
                         }
 
                     }
                         
 
-                });
-            });
-          });
+                }; //loop across columns
+            }; //loop across keys
+          }; //loop across frameArray
       }
       
       return result;

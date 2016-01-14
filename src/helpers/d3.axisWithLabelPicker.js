@@ -103,7 +103,6 @@ export default function axisSmart() {
           rake.exit().remove();
           rake.enter().append("line")
               .attr("class", "vzb-axis-line");
-
           rake
             .attr("x1", orient == VERTICAL ? 0 : d3.min(scale.range()) - options.bump - 1)
             .attr("x2", orient == VERTICAL ? 0 : d3.max(scale.range()) + options.bump)
@@ -384,6 +383,9 @@ export default function axisSmart() {
       var ticksNumber = 5;
 
       function getBaseLog(x, base) {
+        if (x == 0 || base == 0) {
+          return 0;
+        }
         if(base == null) base = options.logBase;
         return Math.log(x) / Math.log(base);
       };
@@ -501,11 +503,6 @@ export default function axisSmart() {
         }
         return false;
       }
-
-
-
-
-
 
       if(options.scaleType == "genericLog" || options.scaleType == "log") {
         var eps = axis.scale().eps ? axis.scale().eps() : 0;

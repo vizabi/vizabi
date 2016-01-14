@@ -84,14 +84,14 @@ var BubbleChartComp = Component.extend({
       "change:marker": function(evt, path) {
         // bubble size change is processed separately
         if(!_this._readyOnce) return;
-        
+
         if(path.indexOf("scaleType") > -1) {
           _this.ready();
           return;
         }
-          
+
         if(path.indexOf("marker.size") !== -1) return;
-          
+
         if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
           _this.updateSize();
           _this.updateMarkerSizeLimits();
@@ -146,7 +146,7 @@ var BubbleChartComp = Component.extend({
       'change:time.adaptMinMaxZoom': function() {
         //console.log("EVENT change:time:adaptMinMaxZoom");
         if(_this.model.time.adaptMinMaxZoom) {
-          _this._panZoom.expandCanvas();
+          _this._panZoom.expandCanvas(500);
         } else {
           _this._panZoom.reset();
         }
@@ -198,7 +198,7 @@ var BubbleChartComp = Component.extend({
 
     this.cached = {};
     this.xyMaxMinMean = {};
-    this.currentZoomFrameXY = null;
+    this.isCanvasPreviouslyExpanded = false;
     this.draggingNow = null;
 
     // default UI settings
@@ -375,7 +375,7 @@ var BubbleChartComp = Component.extend({
       _this.updateSize();
       _this.updateMarkerSizeLimits();
       _this._trails.run("findVisible");
-      _this._panZoom.reset(); // includes redraw data points and trail resize
+      _this._panZoom.rerun(); // includes redraw data points and trail resize
     });
 
     //keyboard listeners
@@ -597,7 +597,7 @@ var BubbleChartComp = Component.extend({
           var pointer = {};
           pointer[KEY] = d[KEY];
           pointer[TIMEDIM] = endTime;
-          pointer.sortValue = values.size[d[KEY]];
+          pointer.sortValue = values.size[d[KEY]]||0;
           pointer[KEY] = prefix + d[KEY];
           return pointer;
         })
@@ -865,7 +865,7 @@ var BubbleChartComp = Component.extend({
     var remainigHeight = this.height - 30;
     var font = parseInt(sTitleText.style("font-size")) * remainigHeight / sTitleWidth;
     sTitleText.style("font-size", sTitleWidth > remainigHeight? font + "px" : null);
-    
+
 
     var yaxisWidth = this.yAxisElContainer.select("g").node().getBBox().width;
     this.yTitleEl
@@ -902,27 +902,27 @@ var BubbleChartComp = Component.extend({
       this.xInfoEl.attr('transform', 'translate('
         + (titleBBox.x + translate[0] + titleBBox.width + infoElHeight * .4) + ','
         + (translate[1] - infoElHeight * 0.8) + ')');
-    } 
+    }
 
     this._resizeDataWarning();
   },
 
   _resizeDataWarning: function(){
     this.dataWarningEl
-      .attr("transform", "translate(" 
-        + (this.width) + "," 
-        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin) 
+      .attr("transform", "translate("
+        + (this.width) + ","
+        + (this.height + this.activeProfile.margin.bottom - this.activeProfile.xAxisTitleBottomMargin)
         + ")");
 
     // reset font size to remove jumpy measurement
     var dataWarningText = this.dataWarningEl.select("text").style("font-size", null);
-      
+
     // reduce font size if the caption doesn't fit
     var dataWarningWidth = dataWarningText.node().getBBox().width + dataWarningText.node().getBBox().height * 3;
     var remainingWidth = this.width - this.xTitleEl.node().getBBox().width - this.activeProfile.infoElHeight;
     var font = parseInt(dataWarningText.style("font-size")) * remainingWidth / dataWarningWidth;
     dataWarningText.style("font-size", dataWarningWidth > remainingWidth? font + "px" : null);
-    
+
     // position the warning icon
     var warnBB = dataWarningText.node().getBBox();
     this.dataWarningEl.select("svg")
@@ -950,21 +950,25 @@ var BubbleChartComp = Component.extend({
 
   redrawDataPointsOnlyColors: function() {
     var _this = this;
-    var values;
+    var values, valuesNow;
     var KEY = this.KEY;
+
+    valuesNow = this.model.marker.getFrame(this.time);
+
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this.model.marker.getFrame(this.time);
+      values = valuesNow;
     }
 
     this.entityBubbles.style("fill", function(d) {
 
-      var valueC = values.color[d[KEY]];
-      if(valueC == null) return;
-   
-      return _this.cScale(valueC);
+      var cache = _this.cached[d[KEY]];
+
+      var valueC = cache && _this.model.time.lockNonSelected ? valuesNow.color[d[KEY]] : values.color[d[KEY]];
+
+      return valueC?_this.cScale(valueC):"transparent";
     });
   },
 
@@ -983,25 +987,29 @@ var BubbleChartComp = Component.extend({
     //     d3.select(this).attr("r", utils.areaToRadius(_this.sScale(valueS)));
     //   });
     // }
-    var values;
+    var values, valuesNow;
     var KEY = this.KEY;
+
+    valuesNow = this.model.marker.getFrame(this.time);
+
     if(this.model.time.lockNonSelected && this.someSelected) {
       var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
-      values = this.model.marker.getFrame(this.time);
+      values = valuesNow;
     }
 
     this.entityBubbles.each(function(d, index) {
 
-      var valueS = values.size[d[KEY]];
+      var cache = _this.cached[d[KEY]];
+
+      var valueS = cache && _this.model.time.lockNonSelected ? valuesNow.size[d[KEY]] : values.size[d[KEY]];
       if(valueS == null) return;
 
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
       d3.select(this).attr("r", scaledS);
 
       //update lines of labels
-      var cache = _this.cached[d[KEY]];
       if(cache) {
 
         var resolvedX = _this.xScale(cache.labelX0) + cache.labelX_ * _this.width;
@@ -1062,10 +1070,6 @@ var BubbleChartComp = Component.extend({
 
     }); // each bubble
 
-    // Call flush() after any zero-duration transitions to synchronously flush the timer queue
-    // and thus make transition instantaneous. See https://github.com/mbostock/d3/issues/1951
-    if(_this.duration == 0) d3.timer.flush();
-
     if(_this.ui.labels.autoResolveCollisions) {
       // cancel previously queued simulation if we just ordered a new one
       clearTimeout(_this.collisionTimeout);
@@ -1106,7 +1110,7 @@ var BubbleChartComp = Component.extend({
       var scaledS = utils.areaToRadius(_this.sScale(valueS));
 
       view.classed("vzb-invisible", false)
-        .style("fill", _this.cScale(valueC));
+        .style("fill", valueC?_this.cScale(valueC):"transparent");
 
 
       if(duration) {
@@ -1119,15 +1123,13 @@ var BubbleChartComp = Component.extend({
           .attr("cy", _this.yScale(valueY))
           .attr("cx", _this.xScale(valueX))
           .attr("r", scaledS);
-        // fix for #407 & #408
-        d3.timer.flush();
       }
 
       if(this.model.time.record) _this._export.write({
         type: "circle",
         id: d[KEY],
         time: this.model.time.value.getFullYear(),
-        fill: _this.cScale(valueC),
+        fill: valueC?_this.cScale(valueC):"transparent",
         cx: _this.xScale(valueX),
         cy: _this.yScale(valueY),
         r: scaledS
@@ -1433,8 +1435,12 @@ var BubbleChartComp = Component.extend({
         _this.model.entities.clearHighlighted();
         d3.select(this).selectAll(".vzb-bc-label-x")
           .classed("vzb-transparent", true);
+      })
+      .on("click", function(d) {
+        if (!utils.isTouchDevice()) return;
+        var cross = d3.select(this).selectAll(".vzb-bc-label-x");
+        cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
       });
-
 
   },
 
@@ -1502,7 +1508,7 @@ var BubbleChartComp = Component.extend({
     var KEY = this.KEY;
 
     if(d != null) {
-  
+
       var values = this.model.marker.getFrame(d[TIMEDIM]);
       var valueY = values.axis_y[d[KEY]];
       var valueX = values.axis_x[d[KEY]];

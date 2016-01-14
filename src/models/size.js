@@ -12,10 +12,10 @@ var SizeModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "constant",
+    use: null,
     min: 0,
     max: 1,
-    which: undefined
+    which: null
   },
 
   /**

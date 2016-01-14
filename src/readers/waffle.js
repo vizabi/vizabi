@@ -33,28 +33,7 @@ var WSReader = Reader.extend({
     var p = new Promise();
     var path = this._basepath;
 
-    path += '?select=' + encodeURI(query.select);
-
-    if (query.where['geo.cat'] && query.where['geo.cat'].length && query.where['geo.cat'][0] !== '*') {
-      path += '&geo.cat=' + encodeURI(query.where['geo.cat']);
-    }
-
-    if (query.where.time) {
-      var time = query.where.time[0];
-      var t = typeof time.join !== 'undefined' && time.length === 2 ?
-        // {from: time, to: time}
-        JSON.stringify({from: getYear(time[0]), to: getYear(time[1])}) :
-        getYear(time[0]);
-      path += '&time=' + t;
-    }
-
-    function getYear(time) {
-      if (typeof time === 'string') {
-        return time;
-      }
-
-      return time.getFullYear();
-    }
+    path += '?' + _this._encodeQuery(query);
 
     _this._data = [];
 
@@ -80,7 +59,9 @@ var WSReader = Reader.extend({
           return;
         }
 
-        resp = format(uzip(resp.data));
+        //format data
+        resp = utils.mapRows(uzip(resp), _this._formatters);
+
         //cache and resolve
         FILE_CACHED[path] = resp;
         FILE_REQUESTED[path].resolve();
@@ -108,59 +89,22 @@ var WSReader = Reader.extend({
         return result;
       }
 
-      function format(res) {
-        //format data
-        res = utils.mapRows(res, _this._formatters);
-
-        //TODO: fix this hack with appropriate ORDER BY
-        //order by formatted
-        //sort records by time
-        var keys = Object.keys(_this._formatters);
-        var order_by = keys[0];
-        res.sort(function (a, b) {
-          return a[order_by] - b[order_by];
-        });
-        //end of hack
-
-        return res;
-      }
-
       function parse(res) {
 
         var data = res;
-        //rename geo.category to geo.cat
-        var where = query.where;
-        if (where['geo.category']) {
-          where['geo.cat'] = utils.clone(where['geo.category']);
-          delete where['geo.category'];
+
+        // sorting
+        // one column, one direction (ascending) for now
+        if(query.orderBy && data[0]) {
+          if (data[0][query.orderBy]) {
+            data.sort(function(a, b) {
+              return a[query.orderBy] - b[query.orderBy];
+            });
+          } else {
+            p.reject("Cannot sort by " + query.orderBy + ". Column does not exist in result.");
+          }
         }
 
-        //format values in the dataset and filters
-        where = utils.mapRows([where], _this._formatters)[0];
-
-        //make sure conditions don't contain invalid conditions
-        var validConditions = [];
-        utils.forEach(where, function (v, p) {
-          for (var i = 0, s = data.length; i < s; i++) {
-            if (data[i].hasOwnProperty(p)) {
-              validConditions.push(p);
-              return true;
-            }
-          }
-        });
-        //only use valid conditions
-        where = utils.clone(where, validConditions);
-
-        //filter any rows that match where condition
-        data = utils.filterAny(data, where);
-
-        //warn if filtering returns empty array
-        if (data.length === 0) utils.warn("data reader returns empty array, that's bad");
-
-        //only selected items get returned
-        data = data.map(function (row) {
-          return utils.clone(row, query.select);
-        });
         _this._data = data;
         p.resolve();
       }
@@ -171,6 +115,39 @@ var WSReader = Reader.extend({
   },
 
   /**
+   * Encode query parameters into readable string
+   * @param {Object} query to be performed
+   * @returns encoded query params
+   * `select=geo,time,population&geo=afr,chn&time=1800,1950:2000,2015&geo.cat=country,region`
+   */
+  _encodeQuery: function (params) {
+    var _params = utils.deepExtend({}, params.where);
+    _params.select = params.select;
+    _params.gapfilling = params.gapfilling;
+
+    if (_params.geo && _params.geo.length === 1 && _params.geo[0] === '*') {
+      delete _params.geo;
+    }
+
+    if (_params.time) {
+      _params.time[0] = _params.time[0].map(function (year) {
+        return typeof year === 'object' ? year.getFullYear() : year;
+      });
+    }
+
+    var result = [];
+
+    Object.keys(_params).map(function (key) {
+      var value = QueryEncoder.encodeQuery(_params[key]);
+      if (value) {
+        result.push(key + '=' + value);
+      }
+    });
+
+    return result.join('&');
+  },
+
+  /**
    * Gets the data
    * @returns all data
    */
@@ -178,5 +155,64 @@ var WSReader = Reader.extend({
     return this._data;
   }
 });
+
+var QueryEncoder = (function() {
+  return {
+    encodeQuery: encodeQuery
+  };
+
+  function encodeQuery(param) {
+    return mapParams()(param);
+  }
+
+  function mapParams(depth) {
+    if (!depth) {
+      return _map;
+    }
+
+    return _mapRange;
+  }
+
+  function _map(v, i) {
+    // if falsy value
+    if (!v) {
+      return v;
+    }
+
+    // if value is string or number
+    if (v.toString() === v || _isNumber(v)) {
+      return v;
+    }
+
+    // if value is array
+    if (Array.isArray(v)) {
+      return v.map(mapParams(1)).join();
+    }
+
+    if (typeof v === 'object') {
+      return _toArray(v).map(mapParams(1)).join();
+    }
+
+    return v;
+  }
+
+  function _mapRange(v) {
+    return encodeURI(v).replace(/,/g, ':')
+  }
+
+  function _isNumber(value) {
+    return parseInt(value, 10) == value;
+  }
+
+  function _toArray(object) {
+    return Object.keys(object).map(function(key) {
+      if (object[key] === true) {
+        return [key];
+      }
+
+      return [key, object[key]];
+    })
+  }
+})();
 
 export default WSReader;

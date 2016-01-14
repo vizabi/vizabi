@@ -10,8 +10,8 @@ var GroupModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "property",
-    which: undefined,
+    use: null,
+    which: null,
     merge: false,
     manualSorting: null
   },
@@ -40,7 +40,7 @@ var GroupModel = Model.extend({
 
     //use must be "property" 
     if(this.use != "property") {
-      utils.warn("group model: use must not be 'property'. Resetting...")
+      utils.warn("group model: use must be 'property'. Resetting...")
       this.use = "property";
     }
   },

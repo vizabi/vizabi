@@ -33,7 +33,7 @@ var ToolModel = Model.extend({
     defaults = defaults || {};
     values = defaultOptions(values, defaults);
     //constructor is similar to model
-    this._super(name, values, null, binds, true);
+    this._super(name, values, null, binds);
     // change language
     if(values.language) {
       var _this = this;
@@ -118,9 +118,6 @@ var Tool = Component.extend({
     delete options.bind;
 
     this.model = new ToolModel(this.name, options, this.default_options, callbacks, validate);
-
-    //ToolModel starts in frozen state. unfreeze;
-    this.model.unfreeze();
 
     this.ui = this.model.ui || {};
 

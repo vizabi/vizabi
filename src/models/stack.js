@@ -16,8 +16,8 @@ var StackModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "constant",
-    which: undefined,
+    use: null,
+    which: null,
     merge: false
   },
   /**

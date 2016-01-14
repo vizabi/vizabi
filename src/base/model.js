@@ -71,14 +71,13 @@ var Model = EventSource.extend({
    * @param {Object} bind Initial events to bind
    * @param {Boolean} freeze block events from being dispatched
    */
-  init: function(name, values, parent, bind, freeze) {
+  init: function(name, values, parent, bind) {
     this._type = this._type || 'model';
     this._id = this._id || utils.uniqueId('m');
     this._data = {};
     //holds attributes of this model
     this._parent = parent;
     this._name = name;
-    this._set = false;
     this._ready = false;
     this._readyOnce = false;
     //has this model ever been ready?
@@ -100,15 +99,12 @@ var Model = EventSource.extend({
     //stores limit values
     this._super();
 
-    if(freeze) {
-      //do not dispatch events
-      this.freeze();
-    }
     //initial values
     if(values) {
       this.set(values);
     }
-    //bind initial events
+    // bind initial events
+    // bind after setting, so no events are fired by setting initial values
     if(bind) {
       this.on(bind);
     }
@@ -140,12 +136,12 @@ var Model = EventSource.extend({
    * @param val property value (object or value)
    * @param {Boolean} force force setting of property to value and triggers set event
    * @param {Boolean} persistent true if the change is a persistent change
-   * @param {Boolean} recursiveCall true if the call is a recursivecall. Undefined for the first call. Used to determine when to trigger events.
    * @returns defer defer that will be resolved when set is done
    */
-  set: function(attr, val, force, persistent, recursiveCall) {
+  set: function(attr, val, force, persistent) {
     var setting = this._setting;
     var attrs;
+    var freezeCall = false; // boolean, indicates if this .set()-call froze the modelTree
     
     //expect object as default
     if(!utils.isPlainObject(attr)) {
@@ -153,7 +149,6 @@ var Model = EventSource.extend({
     } else {
       // move all arguments one place
       attrs = attr;
-      recursiveCall = persistent;
       persistent = force;
       force = val;
     }
@@ -161,8 +156,9 @@ var Model = EventSource.extend({
     //we are currently setting the model
     this._setting = true;
 
-    // Freeze the whole model tree if first call, so no events are fired while setting
-    if (!recursiveCall) {
+    // Freeze the whole model tree if not frozen yet, so no events are fired while setting
+    if (!this._freeze) {
+      freezeCall = true;
       this.setTreeFreezer(true);
     }
 
@@ -176,7 +172,7 @@ var Model = EventSource.extend({
       
       if (this._data[a] && (bothModel || bothModelLeaf)) {
         // data type does not change (model or leaf and can be set through set-function)
-        this._data[a].set(val, force, persistent, true);
+        this._data[a].set(val, force, persistent);
       } else {
         // data type has changed or is new, so initializing the model/leaf
         this._data[a] = initSubmodel(a, val, this);
@@ -184,26 +180,20 @@ var Model = EventSource.extend({
       }
     }
 
-    // Unfreeze the whole model tree if first call, now all set events are fired
+    // only if there's new submodels, we have to set new getters/setters
     if (newSubmodels)
       bindSettersGetters(this);
 
     if(this.validate && !setting) {
       this.validate();
     }
-      
-    if (!recursiveCall) {
+
+    // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
+    if (freezeCall) {
       this.setTreeFreezer(false);
     }
 
-    // only if there's new submodels, we have to set new getters/setters
-      
     if(!setting || force) {
-      //trigger set if not set
-      if(!this._set) {
-        this._set = true;
-        this.trigger('set');
-      } 
       this._setting = false;
       if(!this.isHook()) {
         this.setReady();
@@ -213,7 +203,6 @@ var Model = EventSource.extend({
 
 
   setTreeFreezer: function(freezerStatus) {
-
     // first traverse down
     // this ensures deepest events are triggered first
     utils.forEach(this._data, function(submodel) {
@@ -423,7 +412,6 @@ var Model = EventSource.extend({
     var data_hook = this._dataModel;
     var language_hook = this._languageModel;
     var query = this.getQuery(splashScreen);
-    var formatters = this._getAllFormatters();
     var promiseLoad = new Promise();
     var promises = [];
     //useful to check if in the middle of a load call
@@ -436,7 +424,7 @@ var Model = EventSource.extend({
       this.trigger('hook_change');
       //get reader info
       var reader = data_hook.getPlainObject();
-      reader.formatters = formatters;
+      reader.formatters = this._getAllFormatters();
 
       var lang = language_hook ? language_hook.id : 'en';
       var promise = new Promise();
@@ -537,7 +525,7 @@ var Model = EventSource.extend({
    */
   getQuery: function(splashScreen) {
 
-    var dimensions, filters, select, grouping, q;
+    var dimensions, filters, select, grouping, orderBy, q;
 
     //if it's not a hook, no query is necessary
     if(!this.isHook()) return true;
@@ -550,19 +538,26 @@ var Model = EventSource.extend({
     var prop = globals.metadata.indicatorsDB[this.which] && globals.metadata.indicatorsDB[this.which].use === "property";
     var exceptions = (prop) ? { exceptType: 'time' } : {};
 
+    // select
     dimensions = this._getAllDimensions(exceptions);
-
-    filters = this._getAllFilters(exceptions, splashScreen);
-    grouping = this._getGrouping();
-
     if(this.use !== 'constant') dimensions = dimensions.concat([this.which]);
     select = utils.unique(dimensions);
+
+    // where 
+    filters = this._getAllFilters(exceptions, splashScreen);
+    
+    // grouping
+    grouping = this._getGrouping();
+
+    // order by
+    orderBy = (!prop) ? this._space.time.dim : null;
 
     //return query
     return {
       'select': select,
       'where': filters,
       'grouping': grouping,
+      'orderBy': orderBy // should be _space.animatable, but that's time for now
     };
   },
 
@@ -692,6 +687,14 @@ var Model = EventSource.extend({
    */
   getDimension: function() {
     return this.dim || false; //defaults to dim if it exists
+  },
+
+  /**
+   * Gets the dimension (if entity) or which (if hook) of this model
+   * @returns {String|Boolean} dimension
+   */
+  getDimensionOrWhich: function() {
+    return this.dim || (this.use != 'constant' ? this.which : false); //defaults to dim or which if it exists
   },
 
   /**
@@ -1017,7 +1020,22 @@ getFrame: function(time){
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
-  getFormatter: function() {},
+  getFormatter: function() {
+    // default formatter turns empty strings in null and converts numeric values into number
+    return function (val) {
+      var newVal = val;
+      if(val === ""){
+        newVal = null;
+      } else {
+        // check for numberic
+        var numericVal = parseFloat(val);
+        if (!isNaN(numericVal) && isFinite(val)) {
+          newVal = numericVal;
+        }
+      }  
+      return newVal;
+    }
+  },
 
   /**
    * Gets tick values for this hook
@@ -1329,6 +1347,7 @@ getFrame: function(time){
   _getAllFilters: function(opts, splashScreen) {
     opts = opts || {};
     var filters = {};
+    var formatters = {};
     utils.forEach(this._space, function(h) {
       if(opts.exceptType && h.getType() === opts.exceptType) {
         return true;
@@ -1336,8 +1355,10 @@ getFrame: function(time){
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
+      formatters[h.dim] = h.getFormatter();
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
+    filters = utils.mapRows([filters], formatters)[0];
     return filters;
   },
 
@@ -1359,13 +1380,24 @@ getFrame: function(time){
    * @returns {Object} filters
    */
   _getAllFormatters: function() {
+
     var formatters = {};
-    utils.forEach(this._space, function(h) {
-      var f = h.getFormatter();
-      if(f) {
-        formatters[h.getDimension()] = f;
+
+    function addFormatter(model) {
+      // get formatters from model
+      var formatter = model.getFormatter();
+      var column = model.getDimensionOrWhich();
+      if (formatter && column) {
+        formatters[column] = formatter;
       }
+    }
+
+    // loop through all models which can have filters
+    utils.forEach(this._space, function(h) {
+      addFormatter(h);
     });
+    addFormatter(this);
+
     return formatters;
   },
 
@@ -1465,7 +1497,7 @@ function initSubmodel(attr, val, ctx) {
       // construct model
       var modelType = attr.split('_')[0];
       var Modl = Model.get(modelType, true) || models[modelType] || Model;
-      submodel = new Modl(attr, val, ctx, binds, true);
+      submodel = new Modl(attr, val, ctx, binds);
       // model is still frozen but will be unfrozen at end of original .set()
     }
   }

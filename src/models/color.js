@@ -12,10 +12,10 @@ var ColorModel = Model.extend({
    * Default values for this model
    */
   _defaults: {
-    use: "constant",
+    use: null,
     palette: null,
-    scaleType: '',
-    which: undefined
+    scaleType: null,
+    which: null
   },
 
   /**
