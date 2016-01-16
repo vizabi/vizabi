@@ -210,7 +210,7 @@ var LCComponent = Component.extend({
 
     var time_1 = (this.time === null) ? this.model.time.value : this.time;
     this.time = this.model.time.value;
-    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations * .9 : 0;
+    this.duration = this.model.time.playing && (this.time - time_1 > 0) ? this.model.time.delayAnimations : 0;
 
     var timeDim = this.model.time.getDimension();
     var filter = {};
@@ -512,37 +512,39 @@ var LCComponent = Component.extend({
 
         // the following fixes the ugly line butts sticking out of the axis line
         //if(x[0]!=null && x[1]!=null) xy.splice(1, 0, [(+x[0]*0.99+x[1]*0.01), y[0]]);
+        var path2 = entity.select(".vzb-lc-line");
+        var totalLength = path2.node().getTotalLength();
 
         var path1 = entity.select(".vzb-lc-line-shadow")
+          .attr("stroke-dasharray", totalLength)
           .style("stroke", colorShadow)
           .attr("d", _this.line(xy));
-        var path2 = entity.select(".vzb-lc-line")
+        path2
           //.style("filter", "none")
+          .attr("stroke-dasharray", totalLength)
           .style("stroke", color)
           .attr("d", _this.line(xy));
 
-
         // this section ensures the smooth transition while playing and not needed otherwise
         if(_this.model.time.playing) {
-
-          var totalLength = path2.node().getTotalLength();
 
           if(_this.totalLength_1[d[KEY]] === null) {
             _this.totalLength_1[d[KEY]] = totalLength;
           }
 
           path1
-            .attr("stroke-dasharray", totalLength)
+            .interrupt()
             .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
             .transition()
+            .delay(0)
             .duration(_this.duration)
             .ease("linear")
             .attr("stroke-dashoffset", 0);
-
           path2
-            .attr("stroke-dasharray", totalLength)
+            .interrupt()
             .attr("stroke-dashoffset", totalLength - _this.totalLength_1[d[KEY]])
             .transition()
+            .delay(0)
             .duration(_this.duration)
             .ease("linear")
             .attr("stroke-dashoffset", 0);
