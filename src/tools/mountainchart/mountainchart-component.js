@@ -59,6 +59,13 @@ var MountainChartComponent = Component.extend({
                 _this._probe.redraw();
                 _this.updateDoubtOpacity();
             },
+            "change:time.playing": function (evt) {
+                // this listener is a patch for fixing #1228. time.js doesn't produce the last event
+                // with playing == false when paused softly
+                if(!_this.model.time.playing){
+                    _this.redrawDataPoints();
+                }
+            },
             "change:time.xScaleFactor": function () {
                 _this.ready();
             },
