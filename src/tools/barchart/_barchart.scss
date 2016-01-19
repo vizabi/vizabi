@@ -12,6 +12,11 @@
     .vzb-bc-bar {
       stroke: none;
     }
+    .vzb-bc-year {
+      @extend %vzb-chart-axis-title;
+      fill: $vzb-color-grey;
+      text-anchor: end;
+    }
   }
   &.vzb-large {
     .vzb-bc-axis-x,
@@ -20,6 +25,9 @@
     }
     .vzb-bc-axis-x-title,
     .vzb-bc-axis-y-title {
+      @extend %vzb-chart-axis-title-large;
+    }
+    .vzb-bc-year {
       @extend %vzb-chart-axis-title-large;
     }
   }
@@ -32,6 +40,9 @@
     .vzb-bc-axis-y-title {
       @extend %vzb-chart-axis-title-medium;
     }
+    .vzb-bc-year {
+      @extend %vzb-chart-axis-title-medium;
+    }
   }
   &.vzb-small {
     .vzb-bc-axis-x,
@@ -40,6 +51,9 @@
     }
     .vzb-bc-axis-x-title,
     .vzb-bc-axis-y-title {
+      @extend %vzb-chart-axis-title-small;
+    }
+    .vzb-bc-year {
       @extend %vzb-chart-axis-title-small;
     }
   }
