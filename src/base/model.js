@@ -818,14 +818,24 @@ getFrame: function(time){
     
     if(this.cachedFrames[cachePath][time]) return this.cachedFrames[cachePath][time];
     
+    if(time < steps[0] || time > steps[steps.length-1]){
+        //if the requested time point is out of the known range
+        //then send nulls in the response
+        var pValues = this.cachedFrames[cachePath][steps[0]];
+        var curr = {};
+        utils.forEach(pValues, function(keys, hook) {
+          curr[hook] = {};
+          utils.forEach(keys, function(val, key) {
+            curr[hook][key] = null;
+          });
+        });
+        return curr;
+    }
+    
+    
     var next = d3.bisectLeft(steps, time);
 
-    if(next === 0) {
-      return this.cachedFrames[cachePath][steps[0]];
-    }
-    if(next > steps.length) {
-      return this.cachedFrames[cachePath][steps[steps.length - 1]];
-    }
+    if(next === 0) return this.cachedFrames[cachePath][steps[0]];
 
     var fraction = (time - steps[next - 1]) / (steps[next] - steps[next - 1]);
 
