@@ -235,7 +235,7 @@ export default Class.extend({
                 });
                 _this.model.marker.axis_y.set({
                      fakeMin: formatter(_this.yScale.invert(fakeYRange[0])),
-                     fakeMax: formatter(_this.yScale.invert(fakeYRange[0]))
+                     fakeMax: formatter(_this.yScale.invert(fakeYRange[1]))
                 });                
                 
                 // Keep the min and max size (pixels) constant, when zooming.
