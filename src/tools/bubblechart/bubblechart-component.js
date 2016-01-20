@@ -613,9 +613,8 @@ var BubbleChartComp = Component.extend({
     this.model.entities.setVisible(getKeys.call(this));
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bc-entity')
-      .data(this.model.entities.getVisible(), function(d) {
-        return d[KEY]
-      });
+      .data(this.model.entities.getVisible(), function(d) {return d[KEY]})
+      .order();
 
     //exit selection
     this.entityBubbles.exit().remove();

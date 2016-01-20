@@ -506,7 +506,8 @@ var BubbleMapComponent = Component.extend({
 
 
     this.entityBubbles = this.bubbleContainer.selectAll('.vzb-bmc-bubble')
-      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; });
+      .data(this.model.entities.getVisible(), function(d) { return d[KEY]; })
+      .order();
 
     //exit selection
     this.entityBubbles.exit().remove();
