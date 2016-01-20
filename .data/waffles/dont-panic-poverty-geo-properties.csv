@@ -6,14 +6,17 @@
 "ago","Angola","unstate","africa",-12.5,18.5
 "aia","Anguilla","country","americas",18.21667,-63.05
 "akr_a_dhe","Akrotiri and Dhekelia","country","europe",,
+"ala","�land","country","europe",60.25,20
 "alb","Albania","unstate","europe",41,20
 "americas","The Americas","region",,8.9936,-79.51973
 "and","Andorra","unstate","europe",42.50779,1.52109
 "ant","Netherlands Antilles","country","americas",,
+"are","United Arab Emirates","unstate","asia",23.75,54.5
 "arg","Argentina","unstate","americas",-34,-64
 "arm","Armenia","unstate","europe",40.25,45
 "asia","Asia","region",,16.16667,107.83333
 "asm","American Samoa","country","asia",-11.056,-171.082
+"ata","Antarctica","country","europe",-90,
 "atg","Antigua and Barbuda","unstate","americas",17.05,-61.8
 "aus","Australia","unstate","asia",-25,135
 "aut","Austria","unstate","europe",47.33333,13.33333
@@ -31,6 +34,7 @@
 "blz","Belize","unstate","americas",17.49952,-88.19756
 "bmu","Bermuda","country","americas",32.2949,-64.78303
 "bol","Bolivia","unstate","americas",-17,-65
+"bouisl","Bouvet Island","country","africa",,
 "bra","Brazil","unstate","americas",-10,-55
 "brb","Barbados","unstate","americas",13.16667,-59.53333
 "brn","Brunei","unstate","asia",4.5,114.66667
@@ -40,6 +44,7 @@
 "can","Canada","unstate","americas",60.10867,-113.64258
 "cck","Cocos Island","country","asia",-12.1642,96.87332
 "chanisl","Channel Islands","country","europe",,
+"che","Switzerland","unstate","europe",47.00016,8.01427
 "cheslo","Czechoslovakia","country","europe",,
 "chl","Chile","unstate","americas",-33.45694,-70.64827
 "chn","China","unstate","asia",35,105
@@ -60,6 +65,7 @@
 "cze","Czech Republic","unstate","europe",49.75,15
 "deu","Germany","unstate","europe",51.5,10.5
 "deu_east","East Germany","country","europe",,
+"deu_west","West Germany","country","europe",,
 "dji","Djibouti","unstate","africa",11.58901,43.14503
 "dma","Dominica","unstate","americas",15.5,-61.33333
 "dnk","Denmark","unstate","europe",56,10
@@ -69,6 +75,8 @@
 "egy","Egypt","unstate","africa",27,30
 "eri","Eritrea","unstate","africa",15,39
 "eri_a_eth","Eritrea and Ethiopia","country","africa",,
+"esh","Western Sahara","country","africa",24.49215,-12.65625
+"esp","Spain","unstate","europe",40,-4
 "est","Estonia","unstate","europe",59,26
 "eth","Ethiopia","unstate","africa",9,39.5
 "europe","Europe","region",,50.75,4.5
@@ -76,11 +84,14 @@
 "fji","Fiji","unstate","asia",-18,178
 "flk","Falkland Is (Malvinas)","country","americas",-51.75,-59.16667
 "fra","France","unstate","europe",46,2
+"fra_antarc","French Southern and Antarctic Lands","country",,,
+"fra_clipperton","Clipperton","country",,,
 "fro","Faeroe Islands","country","europe",62,-7
 "fsm","Micronesia, Fed. Sts.","country","asia",6.924,158.162
 "gab","Gabon","unstate","africa",-1,11.75
 "gbg","Guernsey","country","europe",49.45474,-2.57629
 "gbm","Isle of Man","country","europe",54.15,-4.48333
+"gbr","United Kingdom","unstate","europe",54.75844,-2.69531
 "geo","Georgia","unstate","europe",41.99998,43.4999
 "gha","Ghana","unstate","africa",8.1,-1.2
 "gib","Gibraltar","country","europe",36.14474,-5.35257
@@ -96,6 +107,7 @@
 "guf","French Guiana","country","americas",4,-53
 "gum","Guam","country","asia",13.47861,144.81834
 "guy","Guyana","unstate","americas",5,-59
+"heard_a_mcd","Heard and McDonald Islands","country","asia",,
 "hkg","Hong Kong, China","country","asia",22.28552,114.15769
 "hnd","Honduras","unstate","americas",15,-86.5
 "hos","Holy See","unstate","europe",41.90236,12.45332
@@ -104,6 +116,7 @@
 "hun","Hungary","unstate","europe",47,20
 "idn","Indonesia","unstate","asia",-5,120
 "ind","India","unstate","asia",22,79
+"iot","British Indian Ocean Territory","country","asia",-6,72
 "irl","Ireland","unstate","europe",53,-8
 "irn","Iran","unstate","asia",32,53
 "irq","Iraq","unstate","asia",33,44
@@ -130,11 +143,13 @@
 "lby","Libya","unstate","africa",28,17
 "lca","St. Lucia","unstate","americas",13.88333,-60.96667
 "lie","Liechtenstein","unstate","europe",47.16667,9.53333
+"lka","Sri Lanka","unstate","asia",7.75,80.75
 "lso","Lesotho","unstate","africa",-29.5,28.25
 "ltu","Lithuania","unstate","europe",55.41667,24
 "lux","Luxembourg","unstate","europe",49.61167,6.13
 "lva","Latvia","unstate","europe",57,25
 "mac","Macao, China","country","asia",22.20056,113.54611
+"maf","St. Martin (French part)","country","americas",,
 "mar","Morocco","unstate","africa",32,-6
 "mco","Monaco","unstate","europe",43.73333,7.41667
 "mda","Moldova","unstate","europe",47.25,28.58333
@@ -166,7 +181,9 @@
 "nic","Nicaragua","unstate","americas",13,-85
 "niu","Niue","unstate","asia",-19.03333,-169.86667
 "nld","Netherlands","unstate","europe",52.25,5.75
+"nld_curacao","Cura�ao","country","americas",12.16667,-68.96667
 "nor","Norway","unstate","europe",62,10
+"north_mar","Northern Marianas","country","asia",,
 "npl","Nepal","unstate","asia",28,84
 "nru","Nauru","unstate","asia",-0.517,166.933
 "nzl","New Zealand","unstate","asia",-42,174
@@ -183,6 +200,9 @@
 "prk","North Korea","unstate","asia",40,127
 "prt","Portugal","unstate","europe",39.6945,-8.13057
 "pry","Paraguay","unstate","americas",-23.33333,-58
+"pse","West Bank and Gaza","unstate","asia",31.92157,35.20329
+"pse_gaza","Gaza Strip","country","asia",,
+"pse_west_bank","West Bank","country","asia",,
 "pyf","French Polynesia","country","asia",-15,-140
 "qat","Qatar","unstate","asia",25.27932,51.52245
 "reu","Reunion","country","africa",-20.88231,55.4504
@@ -190,13 +210,72 @@
 "rus","Russia","unstate","europe",60,100
 "rwa","Rwanda","unstate","africa",-2,30
 "sau","Saudi Arabia","unstate","asia",25,45
+"scg","Serbia and Montenegro","country","europe",,
+"scg_ex_kos","Serbia excluding Kosovo","country","europe",,
+"sdn","Sudan","unstate","africa",16,30
+"sen","Senegal","unstate","africa",14.5,-14.25
+"sgero_a_ssandw","South Georgia and the South Sandwich Islands","country","americas",,
+"sgp","Singapore","unstate","asia",1.28967,103.85007
 "shn","St. Helena","country","africa",-15.95,-5.7
+"sjm","Svalbard","country","europe",78,20
+"slb","Solomon Islands","unstate","asia",-8,159
+"sle","Sierra Leone","unstate","africa",8.5,-11.5
 "slv","El Salvador","unstate","americas",13.83333,-88.91667
 "smr","San Marino","unstate","europe",43.93667,12.44639
+"som","Somalia","unstate","africa",6,48
+"som_somland","Somaliland","country","africa",,
+"sosset","South Ossetia","country","europe",,
 "spm","St.-Pierre-et-Miquelon","country","americas",46.83333,-56.33333
+"srb","Serbia","unstate","europe",44.81892,20.45998
+"ssd","South Sudan","unstate","africa",7.5,30
+"stbar","St. Barth�lemy","country","americas",,
+"stmar","St. Martin","country","americas",,
 "stp","Sao Tome and Principe","unstate","africa",1,7
+"sur","Suriname","unstate","americas",4,-56
+"svk","Slovak Republic","unstate","europe",48.66667,19.5
+"svn","Slovenia","unstate","europe",46.08333,15
+"swe","Sweden","unstate","europe",62,15
+"swz","Swaziland","unstate","africa",-26.5,31.5
+"sxm","Sint Maarten (Dutch part)","country","americas",18.04167,-63.06667
+"syc","Seychelles","unstate","africa",-4.58333,55.66667
+"syr","Syria","unstate","asia",35,38
+"tca","Turks and Caicos Islands","country","americas",21.73333,-71.58333
 "tcd","Chad","unstate","africa",15,19
+"tgo","Togo","unstate","africa",8.66667,1.08333
+"tha","Thailand","unstate","asia",15.5,101
+"tjk","Tajikistan","unstate","asia",39,71
+"tkl","Tokelau","country","asia",-9.167,-171.83
+"tkm","Turkmenistan","unstate","asia",39.75,59.66667
+"tls","Timor-Leste","unstate","asia",-8.83333,125.75
+"ton","Tonga","unstate","asia",-20,-175
+"transn","Transnistria","country","europe",,
+"tto","Trinidad and Tobago","unstate","americas",11,-61
+"tun","Tunisia","unstate","africa",34,9
+"tur","Turkey","unstate","europe",39,35
+"tuv","Tuvalu","unstate","asia",-8.51719,179.14478
+"twn","Taiwan","country","asia",24,121
+"tza","Tanzania","unstate","africa",-6,35
+"uga","Uganda","unstate","africa",1.25,32.5
+"ukr","Ukraine","unstate","europe",49,32
+"ury","Uruguay","unstate","americas",-33,-56
+"usa","United States","unstate","americas",39.76,-98.5
+"usa_minor_out_isl","US Minor Outlying Islands","country","americas",,
+"ussr","USSR","country","europe",,
+"uzb","Uzbekistan","unstate","asia",41.66667,63.83333
 "vct","St. Vincent and the Grenadines","country","americas",13.08333,-61.2
+"ven","Venezuela","unstate","americas",8,-66
 "vgb","British Virgin Islands","country","americas",18.5,-64.5
+"vir","Virgin Islands (U.S.)","country","americas",18.34829,-64.98348
+"virg_isl","Virgin Islands","country","americas",,
+"vnm","Vietnam","unstate","asia",16.16667,107.83333
+"vut","Vanuatu","unstate","asia",-16,167
+"wlf","Wallis et Futuna","country","asia",-13.3,-176.2
 "world","World","global",,,
 "wsm","Samoa","unstate","asia",-13.8,-172.13333
+"yem","Yemen","unstate","asia",15.5,47.5
+"yem_north","North Yemen (former)","country","asia",,
+"yem_south","South Yemen (former)","country","asia",,
+"yug","Yugoslavia","country","europe",,
+"zaf","South Africa","unstate","africa",-29,24
+"zmb","Zambia","unstate","africa",-14.33333,28.5
+"zwe","Zimbabwe","unstate","africa",-19,29.75
