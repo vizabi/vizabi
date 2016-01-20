@@ -188,17 +188,18 @@ var Model = EventSource.extend({
       this.validate();
     }
 
-    // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
-    if (freezeCall) {
-      this.setTreeFreezer(false);
-    }
-
     if(!setting || force) {
       this._setting = false;
       if(!this.isHook()) {
         this.setReady();
       }
     }
+    
+    // if this set()-call was the one freezing the tree, now the tree can be unfrozen (i.e. all setting is done)
+    if (freezeCall) {
+      this.setTreeFreezer(false);
+    }
+
   },
 
 
