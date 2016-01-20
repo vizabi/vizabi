@@ -1,7 +1,19 @@
 //d3.svg.colorPicker
 
+
+var instance = null;
+
 export default function colorPicker() {
-  return function d3_color_picker() {
+
+
+  return function getInstance() {
+    if (instance == null) {
+      instance = d3_color_picker();
+    }
+    return instance;
+  }();
+
+  function d3_color_picker() {
     // tuning defaults
     var nCellsH = 15;
     // number of cells by hues (angular)
@@ -21,6 +33,8 @@ export default function colorPicker() {
     // exceptional saturation at first angular segment. Set 0 to have shades of grey
     var minRadius = 15;
     //radius of the central hole in color wheel: px
+    var maxWidth = 280;
+    var maxHeight = 323;
     var margin = {
       top: .1,
       bottom: .1,
@@ -132,13 +146,21 @@ export default function colorPicker() {
     // container should be a D3 selection that has a div where we want to render color picker
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
+      svg = container.select('.' + css.COLOR_PICKER);
+      if(!svg.empty()) {
+        return;
+      }
       colorData = _generateColorData();
+
       svg = container.append('svg')
         .style('position', 'absolute')
         .style('top', '0')
         .style('left', '0')
         .style('width', '100%')
+        .style('max-width', maxWidth)
         .style('height', '100%')
+        .style('max-height', maxHeight)
+        .style('z-index', 9999)
         .attr('class', css.COLOR_PICKER)
         .classed(css.INVISIBLE, !showColorPicker);
 
@@ -250,6 +272,7 @@ export default function colorPicker() {
 
       svg.selectAll('.' + css.COLOR_BUTTON)
         .on('click', function() {
+          d3.event.stopPropagation();
           _this.show(TOGGLE);
         });
       _doTheStyling(svg);
@@ -383,6 +406,32 @@ export default function colorPicker() {
       svg.select('.' + css.COLOR_DEFAULT).style('fill', colorDef);
       return colorPicker;
     };
+    /**
+     * @param {ClientRect} screen parent element
+     * @param {int[]} arg [x,y] of color picker position
+     */
+    colorPicker.fitToScreen = function(screen, arg) {
+      var width = parseInt(svg.style('width'));
+      var height = parseInt(svg.style('height'));
+      var styles = {left: ''};
+      if (screen.width * 0.8 <= width) {
+        styles.right = (screen.width - width) * 0.5;
+      } else if (arg[0] + width > screen.width) {
+        styles.right = Math.min(screen.width * 0.1, 20);
+      } else {
+        styles.right = screen.width - arg[0] - width;
+      }
+      if (screen.height * 0.8 <= height) {
+        styles.top = (screen.height - height) * 0.5;
+      } else if (arg[1] + height > screen.height) {
+        styles.top = screen.height - height;
+      } else {
+        styles.top = arg[1];
+      }
+
+      svg.style(styles);
+      return colorPicker;
+    };
     colorPicker.colorOld = function(arg) {
       if(!arguments.length)
         return colorOld;
@@ -411,5 +460,5 @@ export default function colorPicker() {
       return colorPicker;
     };
     return colorPicker;
-  }();
+  };
 };

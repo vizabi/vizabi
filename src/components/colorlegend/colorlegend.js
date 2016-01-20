@@ -58,8 +58,8 @@ var ColorLegend = Component.extend({
     this.worldmapEl = this.listColorsEl.append("div").attr("class", "vzb-cl-worldmap");
 
     this.colorPicker = colorPicker();
-    this.element.call(this.colorPicker);
-
+    //this.element.call(this.colorPicker);
+    d3.select(this.root.element).call(this.colorPicker);
     this.worldMap = worldMap();
     this.worldmapEl.call(this.worldMap);
 
@@ -116,15 +116,17 @@ var ColorLegend = Component.extend({
       .on("click", function(d) {
         //disable interaction if so stated in metadata
         if(!_this.model.color.isUserSelectable(whichPalette)) return;
-
+        var rootEl = _this.root.element.getBoundingClientRect();
         _this.colorPicker
           .colorOld(palette[d])
           .colorDef(paletteDefault[d])
           .callback(function(value) {
+
             _this.model.color.setColor(value, d)
           })
+          .fitToScreen(rootEl, [d3.event.pageX - rootEl.left, d3.event.pageY - rootEl.top])
           .show(true);
-      })
+      });
 
     if(this.model.color.use == "indicator") {
       var gradientHeight;
