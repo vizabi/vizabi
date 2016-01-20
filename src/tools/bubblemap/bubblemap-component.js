@@ -167,40 +167,8 @@ var BubbleMapComponent = Component.extend({
 
 
   afterPreload: function(){
-      if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
-  },
-
-  /**
-   * DOM is ready
-   */
-  readyOnce: function () {
-
-    this.element = d3.select(this.element);
-
-    this.graph = this.element.select('.vzb-bmc-graph');
-    this.mapSvg = this.element.select('.vzb-bmc-map-background');
-
-    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
-    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
-    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
-    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
-    this.linesContainer = this.graph.select('.vzb-bmc-lines');
-    this.dataWarningEl = this.graph.select(".vzb-data-warning");
-
-    this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
-    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
-    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
-
-    this.entityBubbles = null;
-    this.entityLabels = null;
-    this.tooltip = this.element.select('.vzb-bmc-tooltip');
-    this.entityLines = null;
-
-    // year background
-    this.yearEl = this.graph.select('.vzb-bmc-year');
-    this.year = new DynamicBackground(this.yearEl);
-    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
-
+    if(!this.world) utils.warn("bubble map afterPreload: missing country shapes " + this.world);
+      
     // http://bl.ocks.org/mbostock/d4021aa4dccfd65edffd patterson
     // http://bl.ocks.org/mbostock/3710566 robinson
     // map background
@@ -217,7 +185,7 @@ var BubbleMapComponent = Component.extend({
 
     var graticule = d3.geo.graticule();
 
-    var svg = this.mapGraph = d3.select(".vzb-bmc-map-graph")
+    var svg = this.mapGraph = d3.select(this.element).select(".vzb-bmc-map-graph")
         .attr("width", defaultWidth)
         .attr("height", defaultHeight);
     svg.html('');
@@ -251,8 +219,38 @@ var BubbleMapComponent = Component.extend({
         .datum(topojson.mesh(world, world.objects.countries, function(a, b) { return a !== b; }))
         .attr("class", "boundary")
         .attr("d", path);
+  },
 
+  /**
+   * DOM is ready
+   */
+  readyOnce: function () {
 
+    this.element = d3.select(this.element);
+
+    this.graph = this.element.select('.vzb-bmc-graph');
+    this.mapSvg = this.element.select('.vzb-bmc-map-background');
+
+    this.bubbleContainerCrop = this.graph.select('.vzb-bmc-bubbles-crop');
+    this.bubbleContainer = this.graph.select('.vzb-bmc-bubbles');
+    this.labelListContainer = this.graph.select('.vzb-bmc-bubble-labels');
+    this.labelsContainer = this.graph.select('.vzb-bmc-labels');
+    this.linesContainer = this.graph.select('.vzb-bmc-lines');
+    this.dataWarningEl = this.graph.select(".vzb-data-warning");
+
+    this.yTitleEl = this.graph.select(".vzb-bmc-axis-y-title");
+    this.cTitleEl = this.graph.select(".vzb-bmc-axis-c-title");
+    this.infoEl = this.graph.select(".vzb-bmc-axis-info");
+
+    this.entityBubbles = null;
+    this.entityLabels = null;
+    this.tooltip = this.element.select('.vzb-bmc-tooltip');
+    this.entityLines = null;
+
+    // year background
+    this.yearEl = this.graph.select('.vzb-bmc-year');
+    this.year = new DynamicBackground(this.yearEl);
+    this.year.setConditions({xAlign: 'left', yAlign: 'bottom', bottomOffset: 5});
 
     var _this = this;
     this.on("resize", function () {
