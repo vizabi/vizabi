@@ -43,7 +43,7 @@ var BarComponent = Component.extend({
         if(!_this._readyOnce) return;
         if(path.indexOf("color.palette") > -1) return;
         if(path.indexOf("which") > -1 || path.indexOf("use") > -1) return;
-        
+
         _this.ready();
       },
       'change:marker.color.palette': utils.debounce(function(evt) {
@@ -67,6 +67,7 @@ var BarComponent = Component.extend({
    * DOM is ready
    */
   readyOnce: function() {
+    this.timeFormatter = d3.time.format(this.model.time.formatOutput);
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bc-graph');
@@ -75,6 +76,7 @@ var BarComponent = Component.extend({
     this.yTitleEl = this.graph.select('.vzb-bc-axis-y-title');
     this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
     this.bars = this.graph.select('.vzb-bc-bars');
+    this.year = this.element.select('.vzb-bc-year');
 
     var _this = this;
     this.on("resize", function() {
@@ -142,14 +144,14 @@ var BarComponent = Component.extend({
     this.xScale = this.model.marker.axis_x.getScale();
     this.cScale = this.model.marker.color.getScale();
 
-    var xFormatter = this.model.marker.axis_x.which == "geo.region"? 
+    var xFormatter = this.model.marker.axis_x.which == "geo.region"?
         function(x){return _this.translator("region/" + x)}
         :
         _this.model.marker.axis_x.tickFormatter;
-      
+
     this.yAxis.tickFormat(_this.model.marker.axis_y.tickFormatter);
     this.xAxis.tickFormat(xFormatter);
-      
+
   },
 
   /**
@@ -166,7 +168,7 @@ var BarComponent = Component.extend({
     filter[timeDim] = time.value;
     var items = this.model.marker.getKeys(filter);
     var values = this.model.marker.getFrame(time.value);
-      
+
     this.entityBars = this.bars.selectAll('.vzb-bc-bar')
       .data(items);
 
@@ -200,6 +202,7 @@ var BarComponent = Component.extend({
       .attr("height", function(d) {
         return _this.height - _this.yScale(values.axis_y[d[entityDim]]);
       });
+      this.year.text(this.timeFormatter(this.model.time.value));
   },
 
   /**
@@ -302,6 +305,7 @@ var BarComponent = Component.extend({
     var xTitleXPos = xAxisSize.width / 2 - xTitleSize.width / 2;
     var xTitleYPos = this.height + xAxisSize.height + xTitleSize.height;
     this.xTitleEl.attr("transform", "translate(" + xTitleXPos + "," + xTitleYPos + ")");
+    this.year.attr('x', this.width).attr('y', 0);
   }
 });
 
