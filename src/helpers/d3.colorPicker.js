@@ -85,6 +85,7 @@ export default function colorPicker() {
       return 1;
     });
     var svg = null;
+    var container = null;
     var colorPointer = null;
     var showColorPicker = false;
     var sampleRect = null;
@@ -146,10 +147,15 @@ export default function colorPicker() {
     // container should be a D3 selection that has a div where we want to render color picker
     // that div should have !=0 width and height in its style
     function colorPicker(container) {
+      colorPicker.container = container;
       svg = container.select('.' + css.COLOR_PICKER);
       if(!svg.empty()) {
         return;
       }
+      container.on('click.colorpicker', function() {
+        colorPicker.show(false);
+        d3.event.stopPropagation();
+      });
       colorData = _generateColorData();
 
       svg = container.append('svg')
@@ -161,7 +167,7 @@ export default function colorPicker() {
         .style('height', '100%')
         .style('max-height', maxHeight)
         .style('z-index', 9999)
-        .attr('class', css.COLOR_PICKER)
+        .attr('class', css.COLOR_PICKER + " vzb-dialog-shadow")
         .classed(css.INVISIBLE, !showColorPicker);
 
       var width = parseInt(svg.style('width'));
@@ -410,23 +416,36 @@ export default function colorPicker() {
      * @param {ClientRect} screen parent element
      * @param {int[]} arg [x,y] of color picker position
      */
-    colorPicker.fitToScreen = function(screen, arg) {
+    colorPicker.fitToScreen = function(arg) {
+      var screen = colorPicker.container.node().getBoundingClientRect();
+      var xPos, yPos;
+
       var width = parseInt(svg.style('width'));
       var height = parseInt(svg.style('height'));
+
+      if (!arg) {
+        xPos = screen.width - parseInt(svg.style('right')) - width;
+        yPos = parseInt(svg.style('top'));
+        console.log(xPos);
+      } else {
+        xPos = arg[0] - screen.left;
+        yPos = arg[1] - screen.top;
+      }
+
       var styles = {left: ''};
       if (screen.width * 0.8 <= width) {
         styles.right = (screen.width - width) * 0.5;
-      } else if (arg[0] + width > screen.width) {
+      } else if (xPos + width > screen.width) {
         styles.right = Math.min(screen.width * 0.1, 20);
       } else {
-        styles.right = screen.width - arg[0] - width;
+        styles.right = screen.width - xPos - width;
       }
       if (screen.height * 0.8 <= height) {
         styles.top = (screen.height - height) * 0.5;
-      } else if (arg[1] + height > screen.height) {
-        styles.top = screen.height - height;
+      } else if (yPos + height * 1.2 > screen.height) {
+        styles.top = screen.height * 0.9 - height;
       } else {
-        styles.top = arg[1];
+        styles.top = yPos;
       }
 
       svg.style(styles);
@@ -444,6 +463,7 @@ export default function colorPicker() {
     };
 
     colorPicker.resize = function(arg) {
+
       if(!arguments.length)
         return resize;
       if (typeof arg !== 'undefined') {
@@ -457,6 +477,8 @@ export default function colorPicker() {
         defaultLabel.attr('x', width * .1)
                     .attr('y', height * (1 - margin.bottom));
       }
+      colorPicker.fitToScreen();
+
       return colorPicker;
     };
     return colorPicker;
