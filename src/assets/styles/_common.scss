@@ -195,6 +195,7 @@ $vzb-loader-bgcolor: $vzb-color-white;
 }
 
 .vzb-dialog-scrollable {
+  -webkit-overflow-scrolling: touch;
   &::-webkit-scrollbar {
     width: 6px;
     -webkit-appearance: none;
