@@ -152,7 +152,7 @@ export default function colorPicker() {
       if(!svg.empty()) {
         return;
       }
-      container.on('click.colorpicker', function() {
+      container.on('click', function() {
         colorPicker.show(false);
         d3.event.stopPropagation();
       });
@@ -277,9 +277,9 @@ export default function colorPicker() {
         .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
 
       svg.selectAll('.' + css.COLOR_BUTTON)
-        .on('click', function() {
+        .on('mousedown', function() {
           d3.event.stopPropagation();
-          _this.show(TOGGLE);
+          _this.show(false);
         });
       _doTheStyling(svg);
     }
@@ -332,6 +332,9 @@ export default function colorPicker() {
       if(svg == null)
         console.warn('Color picker is missing SVG element. Was init sequence performed?');
       showColorPicker = arg == TOGGLE ? !showColorPicker : arg;
+      if (!showColorPicker) {
+        callback = function() {};
+      }
       svg.classed(css.INVISIBLE, !showColorPicker);
     };
     // getters and setters
