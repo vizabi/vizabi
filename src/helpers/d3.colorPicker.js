@@ -426,7 +426,6 @@ export default function colorPicker() {
       if (!arg) {
         xPos = screen.width - parseInt(svg.style('right')) - width;
         yPos = parseInt(svg.style('top'));
-        console.log(xPos);
       } else {
         xPos = arg[0] - screen.left;
         yPos = arg[1] - screen.top;
