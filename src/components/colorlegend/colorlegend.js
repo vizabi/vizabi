@@ -116,7 +116,6 @@ var ColorLegend = Component.extend({
       .on("click", function(d) {
         //disable interaction if so stated in metadata
         if(!_this.model.color.isUserSelectable(whichPalette)) return;
-        var rootEl = _this.root.element.getBoundingClientRect();
         _this.colorPicker
           .colorOld(palette[d])
           .colorDef(paletteDefault[d])
@@ -124,7 +123,7 @@ var ColorLegend = Component.extend({
 
             _this.model.color.setColor(value, d)
           })
-          .fitToScreen(rootEl, [d3.event.pageX - rootEl.left, d3.event.pageY - rootEl.top])
+          .fitToScreen([d3.event.pageX, d3.event.pageY])
           .show(true);
       });
 
