@@ -100,7 +100,6 @@
 
 //overflow mobile y
 @mixin overflow-mobile() {
-  overflow: scroll;
   -webkit-overflow-scrolling: touch;
 }
 
