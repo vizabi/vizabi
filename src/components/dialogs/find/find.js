@@ -135,10 +135,11 @@ var Find = Dialog.extend({
         return(selected.indexOf(d[KEY]) !== -1);
       })
       .on("change", function(d) {
-        var isSelected = _this.model.state.entities.isSelected(d);
-        _this.model.state.entities.clearHighlighted();
-        _this.model.state.entities.selectEntity(d);
-        if(isSelected) _this.model.state.entities.highlightEntity(d); 
+        //clear highlight so it doesn't get in the way when selecting an entity
+        if(!utils.isTouchDevice()) _this.model.state.entities.clearHighlighted();        
+        _this.model.state.entities.selectEntity(d);        
+        //return to highlighted state
+        if(!utils.isTouchDevice()) _this.model.state.entities.highlightEntity(d); 
       });
 
     items.append("label")
