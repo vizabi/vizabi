@@ -846,12 +846,7 @@ var BubbleChartComp = Component.extend({
     this.projectionX.attr("y1", _this.yScale.range()[0] + this.activeProfile.maxRadius);
     this.projectionY.attr("x2", _this.xScale.range()[0] - this.activeProfile.maxRadius);
 
-    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
-    if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
 
-    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
-
-    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     // reset font size to remove jumpy measurement
     var sTitleText = this.sTitleEl.select("text")
@@ -878,6 +873,12 @@ var BubbleChartComp = Component.extend({
     this.sTitleEl
       .attr("transform", "translate(" + this.width + "," + 20 + ") rotate(-90)");
 
+
+    var yTitleText = this.yTitleEl.select("text").text(this.strings.title.Y + this.strings.unit.Y);
+    if(yTitleText.node().getBBox().width > this.width) yTitleText.text(this.strings.title.Y);
+
+    var xTitleText = this.xTitleEl.select("text").text(this.strings.title.X + this.strings.unit.X);
+    if(xTitleText.node().getBBox().width > this.width - 100) xTitleText.text(this.strings.title.X);
 
     if(this.yInfoEl.select('svg').node()) {
       var titleBBox = this.yTitleEl.node().getBBox();
