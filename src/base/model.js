@@ -1032,20 +1032,8 @@ getFrame: function(time){
    * @returns {Function|Boolean} formatter function
    */
   getFormatter: function() {
-    // default formatter turns empty strings in null and converts numeric values into number
-    return function (val) {
-      var newVal = val;
-      if(val === ""){
-        newVal = null;
-      } else {
-        // check for numberic
-        var numericVal = parseFloat(val);
-        if (!isNaN(numericVal) && isFinite(val)) {
-          newVal = numericVal;
-        }
-      }  
-      return newVal;
-    }
+    //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
+    return null;
   },
 
   /**

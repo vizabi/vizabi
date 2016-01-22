@@ -772,20 +772,29 @@ export var mapRows = function(original, formatters) {
       return res;
     }
   }
+   
+  // default formatter turns empty strings in null and converts numeric values into number
+  //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
+  var defaultFormatter = function (val) {
+      var newVal = val;
+      if(val === ""){
+        newVal = null;
+      } else {
+        // check for numberic
+        var numericVal = parseFloat(val);
+        if (!isNaN(numericVal) && isFinite(val)) {
+          newVal = numericVal;
+        }
+      }  
+      return newVal;
+  }
   
   original = original.map(function(row) {
     var columns = Object.keys(row);
       
     for(var i = 0; i < columns.length; i++) {
-      var col = columns[i], new_val;
-      if(formatters.hasOwnProperty(col)) { 
-        try {
-          new_val = mapRow(row[col], formatters[col]);
-        } catch(e) {
-          new_val = row[col];
-        }
-        row[col] = new_val;
-      }
+      var col = columns[i];
+      row[col] = mapRow(row[col], formatters[col] || defaultFormatter);
     }
     return row;
   });
