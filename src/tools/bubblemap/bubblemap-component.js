@@ -643,34 +643,19 @@ var BubbleMapComponent = Component.extend({
 
     var profiles = {
       small: {
-        margin: { 
-            top: 10, 
-            right: Math.max(10, parseInt(this.element.style("width"))/25),
-            left: Math.max(10, parseInt(this.element.style("width"))/25), 
-            bottom: 0 
-        },
+        margin: { top: 10, right: 10, left: 10, bottom: 0 },
         infoElHeight: 16,
         minRadius: 0.5,
         maxRadius: 30
       },
       medium: {
-        margin: { 
-            top: 20, 
-            right: Math.max(20, parseInt(this.element.style("width"))/25), 
-            left: Math.max(20, parseInt(this.element.style("width"))/25), 
-            bottom: 20 
-        },
+        margin: { top: 20, right: 20, left: 20, bottom: 30 },
         infoElHeight: 20,
         minRadius: 1,
         maxRadius: 55
       },
       large: {
-        margin: { 
-            top: 30, 
-            right: Math.max(30, parseInt(this.element.style("width"))/25), 
-            left: Math.max(30, parseInt(this.element.style("width"))/25), 
-            bottom: 30 
-        },
+        margin: { top: 30, right: 30, left: 30, bottom: 35 },
         infoElHeight: 22,
         minRadius: 1,
         maxRadius: 70
@@ -1093,6 +1078,12 @@ var BubbleMapComponent = Component.extend({
           d3.select(this).selectAll(".vzb-bmc-label-x")
             .classed("vzb-transparent", true);
         })
+        .on("click", function(d) {
+          if (!utils.isTouchDevice()) return;
+          var cross = d3.select(this).selectAll(".vzb-bmc-label-x");
+          cross.classed("vzb-transparent", !cross.classed("vzb-transparent"));
+        })
+      
 
         // hide recent hover tooltip
         if (!_this.hovered || _this.model.entities.isSelected(_this.hovered)) {
