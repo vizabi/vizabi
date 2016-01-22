@@ -21,6 +21,7 @@
     "buttons/opacityNonselect": "Opacity of non-selected",
     "buttons/opacityRegular": "Regular opacity",
     "buttons/presentation": "Present",
+    "buttons/about": "About",
     "buttons/desktop": "Desktop",
     "buttons/speed": "Speed",
     "hints/bubbl/setminsize": "Minimum bubble size:",

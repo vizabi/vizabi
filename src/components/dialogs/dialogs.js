@@ -73,6 +73,9 @@ var Dialogs = Component.extend({
       },
       'presentation': {
         dialog: dialogs.presentation
+      },
+      'about': {
+        dialog: dialogs.about
       }
     };
 

@@ -232,10 +232,12 @@ function resolvePath(id, importer, options) {
 var buildLock = false;
 function buildJS(dev, cb) {
   buildLock = true;
+  var timestamp = new Date();
   getTemplates(function(templates) {
     var banner_str = ['/**',
       ' * ' + pkg.name + ' - ' + pkg.description,
       ' * @version v' + pkg.version,
+      ' * @build timestamp' + timestamp,
       ' * @link ' + pkg.homepage,
       ' * @license ' + pkg.license,
       ' */',
@@ -243,7 +245,7 @@ function buildJS(dev, cb) {
     ].join('\n');
 
     //var version = '; Vizabi._version = "' + pkg.version + '";';
-    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
+    var version = ';(function (Vizabi) {Vizabi._version = "' + pkg.version + '"; Vizabi._build = "' + timestamp.valueOf() + '";})(typeof Vizabi !== "undefined"?Vizabi:{});';
 
     var options = {
       format: 'umd',

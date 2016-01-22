@@ -102,6 +102,12 @@ var ButtonList = Component.extend({
         statebind: "ui.presentation",
         statebindfunc: this.setPresentationMode.bind(this)
       },
+      'about': {
+        title: "buttons/about",
+        icon: "about",
+        required: false,
+        isgraph: false
+      },
       'axes': {
         title: "buttons/axes",
         icon: "axes",
