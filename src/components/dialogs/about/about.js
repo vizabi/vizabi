@@ -25,15 +25,15 @@ readyOnce: function(){
     
   this.element = d3.select(this.element);
   this.element.select(".vzb-about-text0")
-      .text("Vizabi, a project")
+      .html("Vizabi, a project")
   this.element.select(".vzb-about-text1")
       .html("by <a href='http://gapminder.org'>Gapminder Foundation</a>")
   this.element.select(".vzb-about-version")
-      .text("Version: " + version);
+      .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v"+version+"'>Version: "+version+"</a>");  
   this.element.select(".vzb-about-updated")
-      .text("Build: " + d3.time.format("%Y-%m-%d at %H:%M")(updated));    
+      .html("Build: " + d3.time.format("%Y-%m-%d at %H:%M")(updated));    
   this.element.select(".vzb-about-text2")
-      .text("Pre-alpha, don't expect too much!");
+      .html("Pre-alpha, don't expect too much!");
   this.element.select(".vzb-about-credits")
       .html("<a href='https://github.com/Gapminder/vizabi/graphs/contributors'>Contributors</a>");
 }
