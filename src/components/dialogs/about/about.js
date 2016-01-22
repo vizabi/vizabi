@@ -31,7 +31,7 @@ readyOnce: function(){
   this.element.select(".vzb-about-version")
       .text("Version: " + version);
   this.element.select(".vzb-about-updated")
-      .text("Build: " + d3.time.format("%Y-%m-%d %H:%M:%S")(updated));    
+      .text("Build: " + d3.time.format("%Y-%m-%d at %H:%M")(updated));    
   this.element.select(".vzb-about-text2")
       .text("Pre-alpha, don't expect too much!");
   this.element.select(".vzb-about-credits")
