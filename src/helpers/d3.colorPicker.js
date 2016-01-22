@@ -277,7 +277,7 @@ export default function colorPicker() {
         .attr('class', css.COLOR_POINTER + ' ' + css.INVISIBLE);
 
       svg.selectAll('.' + css.COLOR_BUTTON)
-        .on('mousedown', function() {
+        .on('click', function() {
           d3.event.stopPropagation();
           _this.show(false);
         });
