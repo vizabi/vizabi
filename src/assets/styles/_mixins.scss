@@ -100,7 +100,7 @@
 
 //overflow mobile y
 @mixin overflow-mobile() {
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: auto;
 }
 
 // ----------------------------------------------------------------------------
