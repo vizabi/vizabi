@@ -228,7 +228,7 @@ export default Class.extend({
                 fakeXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 fakeYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 fakeYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-        
+
                 _this.model.marker.axis_x.set({
                      fakeMin: formatter(_this.xScale.invert(fakeXRange[0])),
                      fakeMax: formatter(_this.xScale.invert(fakeXRange[1]))
@@ -236,8 +236,8 @@ export default Class.extend({
                 _this.model.marker.axis_y.set({
                      fakeMin: formatter(_this.yScale.invert(fakeYRange[0])),
                      fakeMax: formatter(_this.yScale.invert(fakeYRange[1]))
-                });                
-                
+                });
+
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
