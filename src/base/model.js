@@ -386,6 +386,7 @@ var Model = EventSource.extend({
     //only ready if nothing is loading at all
     var prev_ready = this._ready;
     this._ready = !this.isLoading() && !this._setting && !this._loadCall;
+    // if now ready and wasn't ready yet
     if(this._ready && prev_ready !== this._ready) {
       if(!this._readyOnce) {
         this._readyOnce = true;
