@@ -88,7 +88,7 @@ var Tool = Component.extend({
         if(_this._ready) {
           _this.model.validate();
 
-          if (evt.persistent)
+          if (evt.source.persistent)
             _this.model.trigger(new DefaultEvent(evt.source, 'persistentChange'), _this.getMinState());
         }
       },
@@ -133,7 +133,7 @@ var Tool = Component.extend({
   },
 
   getMinState: function() {
-    var state = this.model.state.getPlainObject();
+    var state = this.model.state.getPlainObject(true); // true = get only persistent model values
     var d_state = this.default_options.state;
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);

@@ -23,6 +23,7 @@ var ModelLeaf = EventSource.extend({
   _name: '',
   _parent: null,
   _val: null,
+  _persistent: true,
 
   init: function(name, value, parent, binds) {
 
@@ -30,6 +31,9 @@ var ModelLeaf = EventSource.extend({
     Object.defineProperty(this, 'value', {
       get: this.get,
       set: this.set
+    });
+    Object.defineProperty(this, 'persistent', {
+      get: function() { return this._persistent; }
     });
 
     this._super();
@@ -41,14 +45,24 @@ var ModelLeaf = EventSource.extend({
     this.on(binds);
   },
 
-  get: function() {
-    return this._val;
+  // if they want a persistent value and the current value is not persistent, return the last persistent value
+  get: function(persistent) {
+    return (persistent && !this._persistent) ? this._persistentVal : this._val;
   },
 
   set: function(val, force, persistent) {
     if (force || (this._val !== val && JSON.stringify(this._val) !== JSON.stringify(val))) {
+
+      // persistent defaults to true
+      persistent = (typeof persistent !== 'undefined') ? persistent : true;
+ 
+      // set leaf properties
+      if (persistent) this._persistentVal = val; // set persistent value if change is persistent.
       this._val = val;
-      this.trigger(new ChangeEvent(this, persistent), this._name);
+      this._persistent = persistent;
+
+      // trigger change event
+      this.trigger(new ChangeEvent(this), this._name);
     }
   },
 
@@ -265,14 +279,16 @@ var Model = EventSource.extend({
    * Gets the current model and submodel values as a JS object
    * @returns {Object} All model as JS object, leafs will return their values
    */
-  getPlainObject: function() {
+  getPlainObject: function(persistent) {
     var obj = {};
     utils.forEach(this._data, function(dataItem, i) {
-      //if it's a submodel
+      // if it's a submodel
       if(dataItem instanceof Model) {
-        obj[i] = dataItem.getPlainObject();
-      } else {
-        obj[i] = dataItem.value;
+        obj[i] = dataItem.getPlainObject(persistent);
+      } 
+      // if it's a modelLeaf
+      else {
+        obj[i] = dataItem.get(persistent);
       }
     });
     return obj;
