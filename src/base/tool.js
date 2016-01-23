@@ -253,8 +253,9 @@ var Tool = Component.extend({
     if(!utils.isDate(dateMin)) utils.warn("tool validation: min date looks wrong: " + dateMin);
     if(!utils.isDate(dateMax)) utils.warn("tool validation: max date looks wrong: " + dateMax);
 
-    if(time.start < dateMin && utils.isDate(dateMin)) time.start = dateMin;
-    if(time.end > dateMax && utils.isDate(dateMax)) time.end = dateMax;
+    // change is not persistent if it's splashscreen change
+    if(time.start < dateMin && utils.isDate(dateMin)) time.getModelObject('start').set(dateMin, false, !time.splash);
+    if(time.end > dateMax && utils.isDate(dateMax)) time.getModelObject('end').set(dateMax, false, !time.splash);
   },
 
   _setUIOptions: function() {
