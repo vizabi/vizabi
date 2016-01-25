@@ -297,12 +297,13 @@ var TimeModel = Model.extend({
         if(_this.postponePause || !_this.playing) {
           _this.playing = false;
           _this.postponePause = false;
+          _this.getModelObject('value').set(_this.value, true, true /*force the change and make it persistent for URL and history*/);
         } else {
           var step = _this.step;
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
           time = d3.time[_this.unit].offset(time, step);
-          _this.value = time;
+          _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           _this.playInterval();
         }
       }
