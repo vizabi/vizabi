@@ -228,7 +228,7 @@ export default Class.extend({
                 fakeXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 fakeYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 fakeYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-        
+
                 _this.model.marker.axis_x.set({
                      fakeMin: formatter(_this.xScale.invert(fakeXRange[0])),
                      fakeMax: formatter(_this.xScale.invert(fakeXRange[1]))
@@ -236,8 +236,8 @@ export default Class.extend({
                 _this.model.marker.axis_y.set({
                      fakeMin: formatter(_this.yScale.invert(fakeYRange[0])),
                      fakeMax: formatter(_this.yScale.invert(fakeYRange[1]))
-                });                
-                
+                });
+
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
                 //                                        utils.radiusToArea(_this.maxRadius) * zoom * zoom * ratioY * ratioX ]);
@@ -471,12 +471,28 @@ export default Class.extend({
 
         if(Math.abs(x1 - x2) < 10 || Math.abs(y1 - y2) < 10) return;
 
+        var maxZoom = zoomer.scaleExtent()[1];
+
         if(Math.abs(x1 - x2) > Math.abs(y1 - y2)) {
             var zoom = _this.height / Math.abs(y1 - y2) * zoomer.scale();
+
+            /*
+             * Clamp the zoom scalar to the maximum zoom allowed before
+             * calculating the next ratioX and ratioY.
+             */
+            if (zoom > maxZoom) zoom = maxZoom;
+
             var ratioX = _this.width / Math.abs(x1 - x2) * zoomer.scale() / zoom * zoomer.ratioX;
             var ratioY = zoomer.ratioY;
         } else {
             var zoom = _this.width / Math.abs(x1 - x2) * zoomer.scale();
+
+            /*
+             * Clamp the zoom scalar to the maximum zoom allowed before
+             * calculating the next ratioX and ratioY.
+             */
+            if (zoom > maxZoom) zoom = maxZoom;
+
             var ratioY = _this.height / Math.abs(y1 - y2) * zoomer.scale() / zoom * zoomer.ratioY;
             var ratioX = zoomer.ratioX;
         }
