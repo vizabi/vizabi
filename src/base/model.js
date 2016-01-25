@@ -22,7 +22,6 @@ var ModelLeaf = EventSource.extend({
 
   _name: '',
   _parent: null,
-  _val: null,
   _persistent: true,
 
   init: function(name, value, parent, binds) {
