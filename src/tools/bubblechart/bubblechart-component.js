@@ -102,6 +102,15 @@ var BubbleChartComp = Component.extend({
         }
         if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
           if(_this.draggingNow)return;
+            
+          //avoid zooming again if values didn't change. 
+          //also prevents infinite loop on forced URL update from zoom.stop()
+          if(_this._zoomFakeDomains.x.fakeMin == _this.model.marker.axis_x.fakeMin
+          && _this._zoomFakeDomains.x.fakeMax == _this.model.marker.axis_x.fakeMax
+          && _this._zoomFakeDomains.y.fakeMin == _this.model.marker.axis_y.fakeMin
+          && _this._zoomFakeDomains.y.fakeMax == _this.model.marker.axis_y.fakeMax
+          ) return;
+            
             _this._panZoom.zoomToMaxMin(
               _this.model.marker.axis_x.fakeMin,
               _this.model.marker.axis_x.fakeMax,

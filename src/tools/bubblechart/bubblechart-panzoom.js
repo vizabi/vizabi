@@ -23,6 +23,8 @@ export default Class.extend({
 
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
+        
+        context._zoomFakeDomains = {x:{fakeMin: null, fakeMax: null}, y:{fakeMin: null, fakeMax: null}};
     },
 
     drag: function(){
@@ -228,15 +230,20 @@ export default Class.extend({
                 fakeXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
                 fakeYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
                 fakeYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
-
-                _this.model.marker.axis_x.set({
+                
+                _this._zoomFakeDomains = {
+                    x: {
                      fakeMin: formatter(_this.xScale.invert(fakeXRange[0])),
-                     fakeMax: formatter(_this.xScale.invert(fakeXRange[1]))
-                }, null, false /*avoid storing it in URL*/);
-                _this.model.marker.axis_y.set({
+                     fakeMax: formatter(_this.xScale.invert(fakeXRange[1]))   
+                    },
+                    y: {
                      fakeMin: formatter(_this.yScale.invert(fakeYRange[0])),
                      fakeMax: formatter(_this.yScale.invert(fakeYRange[1]))
-                }, null, false /*avoid storing it in URL*/);
+                    }
+                }
+
+                _this.model.marker.axis_x.set(_this._zoomFakeDomains.x, null, false /*avoid storing it in URL*/);
+                _this.model.marker.axis_y.set(_this._zoomFakeDomains.y, null, false /*avoid storing it in URL*/);
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
@@ -258,6 +265,10 @@ export default Class.extend({
 
             stop: function(){
                 _this.draggingNow = false;
+                
+                //Force the update of the URL and history, with the same values
+                _this.model.marker.axis_x.set(_this._zoomFakeDomains.x, true, true);
+                _this.model.marker.axis_y.set(_this._zoomFakeDomains.y, true, true);
             }
         };
     },
