@@ -24,7 +24,7 @@ export default Class.extend({
         this.zoomer.ratioX = 1;
         this.zoomer.ratioY = 1;
         
-        context._zoomFakeDomains = {x:{fakeMin: null, fakeMax: null}, y:{fakeMin: null, fakeMax: null}};
+        context._zoomZoomedDomains = {x:{zoomedMin: null, zoomedMax: null}, y:{zoomedMin: null, zoomedMax: null}};
     },
 
     drag: function(){
@@ -219,31 +219,31 @@ export default Class.extend({
 
                 var formatter = function(n) { return d3.round(n, 2); };
 
-                var fakeXRange = xRangeBoundsBumped;
-                var fakeYRange = yRangeBoundsBumped;
+                var zoomedXRange = xRangeBoundsBumped;
+                var zoomedYRange = yRangeBoundsBumped;
 
                 /*
-                 * Set the fake min/max to the correct value depending on if the
+                 * Set the zoomed min/max to the correct value depending on if the
                  * min/max values lie within the range bound regions.
                  */
-                fakeXRange[0] = xRangeBounds[0] > xRange[0] ? xRangeBounds[0] : xRange[0];
-                fakeXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
-                fakeYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
-                fakeYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
+                zoomedXRange[0] = xRangeBounds[0] > xRange[0] ? xRangeBounds[0] : xRange[0];
+                zoomedXRange[1] = xRangeBounds[1] < xRange[1] ? xRangeBounds[1] : xRange[1];
+                zoomedYRange[0] = yRangeBounds[0] < yRange[0] ? yRangeBounds[0] : yRange[0];
+                zoomedYRange[1] = yRangeBounds[1] > yRange[1] ? yRangeBounds[1] : yRange[1];
                 
-                _this._zoomFakeDomains = {
+                _this._zoomZoomedDomains = {
                     x: {
-                     fakeMin: formatter(_this.xScale.invert(fakeXRange[0])),
-                     fakeMax: formatter(_this.xScale.invert(fakeXRange[1]))   
+                     zoomedMin: formatter(_this.xScale.invert(zoomedXRange[0])),
+                     zoomedMax: formatter(_this.xScale.invert(zoomedXRange[1]))   
                     },
                     y: {
-                     fakeMin: formatter(_this.yScale.invert(fakeYRange[0])),
-                     fakeMax: formatter(_this.yScale.invert(fakeYRange[1]))
+                     zoomedMin: formatter(_this.yScale.invert(zoomedYRange[0])),
+                     zoomedMax: formatter(_this.yScale.invert(zoomedYRange[1]))
                     }
                 }
 
-                _this.model.marker.axis_x.set(_this._zoomFakeDomains.x, null, false /*avoid storing it in URL*/);
-                _this.model.marker.axis_y.set(_this._zoomFakeDomains.y, null, false /*avoid storing it in URL*/);
+                _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, null, false /*avoid storing it in URL*/);
+                _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, null, false /*avoid storing it in URL*/);
 
                 // Keep the min and max size (pixels) constant, when zooming.
                 //                    _this.sScale.range([utils.radiusToArea(_this.minRadius) * zoom * zoom * ratioY * ratioX,
@@ -267,8 +267,8 @@ export default Class.extend({
                 _this.draggingNow = false;
                 
                 //Force the update of the URL and history, with the same values
-                _this.model.marker.axis_x.set(_this._zoomFakeDomains.x, true, true);
-                _this.model.marker.axis_y.set(_this._zoomFakeDomains.y, true, true);
+                _this.model.marker.axis_x.set(_this._zoomZoomedDomains.x, true, true);
+                _this.model.marker.axis_y.set(_this._zoomZoomedDomains.y, true, true);
             }
         };
     },
@@ -371,12 +371,12 @@ export default Class.extend({
         }
     },
 
-    zoomToMaxMin: function(fakeMinX, fakeMaxX, fakeMinY, fakeMaxY, duration){
+    zoomToMaxMin: function(zoomedMinX, zoomedMaxX, zoomedMinY, zoomedMaxY, duration){
         var _this = this.context;
-        var minX = fakeMinX;
-        var maxX = fakeMaxX;
-        var minY = fakeMinY;
-        var maxY = fakeMaxY;
+        var minX = zoomedMinX;
+        var maxX = zoomedMaxX;
+        var minY = zoomedMinY;
+        var maxY = zoomedMaxY;
 
         var xRangeBounds = [0, _this.width];
         var yRangeBounds = [_this.height, 0];

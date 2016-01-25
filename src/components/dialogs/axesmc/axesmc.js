@@ -35,7 +35,7 @@ var Axes = Dialog.extend({
       markerID: "axis_x",
       ui: {
         selectMinMax: false,
-        selectFakeMinMax: true 
+        selectZoomedMinMax: true 
       }
     }]
 

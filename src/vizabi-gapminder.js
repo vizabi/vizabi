@@ -661,8 +661,8 @@ Tool.define("preload", function(promise) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
       axis.min = axis.min || domain[0];
       axis.max = axis.max || domain[1];
-      axis.fakeMin = axis.fakeMin || axis.min || domain[0];
-      axis.fakeMax = axis.fakeMax || axis.max || domain[1];
+      axis.zoomedMin = axis.zoomedMin || axis.min || domain[0];
+      axis.zoomedMax = axis.zoomedMax || axis.max || domain[1];
     }
   }
 

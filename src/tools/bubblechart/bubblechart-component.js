@@ -100,22 +100,22 @@ var BubbleChartComp = Component.extend({
           _this._trails.run("resize");
           return;
         }
-        if(path.indexOf("fakeMin") > -1 || path.indexOf("fakeMax") > -1) {
+        if(path.indexOf("zoomedMin") > -1 || path.indexOf("zoomedMax") > -1) {
           if(_this.draggingNow)return;
             
           //avoid zooming again if values didn't change. 
           //also prevents infinite loop on forced URL update from zoom.stop()
-          if(_this._zoomFakeDomains.x.fakeMin == _this.model.marker.axis_x.fakeMin
-          && _this._zoomFakeDomains.x.fakeMax == _this.model.marker.axis_x.fakeMax
-          && _this._zoomFakeDomains.y.fakeMin == _this.model.marker.axis_y.fakeMin
-          && _this._zoomFakeDomains.y.fakeMax == _this.model.marker.axis_y.fakeMax
+          if(_this._zoomZoomedDomains.x.zoomedMin == _this.model.marker.axis_x.zoomedMin
+          && _this._zoomZoomedDomains.x.zoomedMax == _this.model.marker.axis_x.zoomedMax
+          && _this._zoomZoomedDomains.y.zoomedMin == _this.model.marker.axis_y.zoomedMin
+          && _this._zoomZoomedDomains.y.zoomedMax == _this.model.marker.axis_y.zoomedMax
           ) return;
             
             _this._panZoom.zoomToMaxMin(
-              _this.model.marker.axis_x.fakeMin,
-              _this.model.marker.axis_x.fakeMax,
-              _this.model.marker.axis_y.fakeMin,
-              _this.model.marker.axis_y.fakeMax,
+              _this.model.marker.axis_x.zoomedMin,
+              _this.model.marker.axis_x.zoomedMax,
+              _this.model.marker.axis_y.zoomedMin,
+              _this.model.marker.axis_y.zoomedMax,
               500
           )
           return;
@@ -461,10 +461,10 @@ var BubbleChartComp = Component.extend({
     this._trails.run(["recolor", "opacityHandler", "reveal"]);
 
     this._panZoom.zoomToMaxMin(
-       this.model.marker.axis_x.fakeMin,
-       this.model.marker.axis_x.fakeMax,
-       this.model.marker.axis_y.fakeMin,
-       this.model.marker.axis_y.fakeMax
+       this.model.marker.axis_x.zoomedMin,
+       this.model.marker.axis_x.zoomedMax,
+       this.model.marker.axis_y.zoomedMin,
+       this.model.marker.axis_y.zoomedMax
     )
 
   },

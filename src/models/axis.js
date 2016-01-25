@@ -22,8 +22,8 @@ var AxisModel = Model.extend({
     which: null,
     min: null,
     max: null,
-    fakeMin: null,
-    fakeMax: null
+    zoomedMin: null,
+    zoomedMax: null
   },
 
   /**
@@ -62,9 +62,9 @@ var AxisModel = Model.extend({
       if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
       if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
 
-      //fakemin and fakemax nonsense protection    
-      if(this.fakeMin == null || this.fakeMin <= 0 && this.scaleType === "log") this.fakeMin = this.scale.domain()[0];
-      if(this.fakeMax == null || this.fakeMax <= 0 && this.scaleType === "log") this.fakeMax = this.scale.domain()[1];
+      //zoomedmin and zoomedmax nonsense protection    
+      if(this.zoomedMin == null || this.zoomedMin <= 0 && this.scaleType === "log") this.zoomedMin = this.scale.domain()[0];
+      if(this.zoomedMax == null || this.zoomedMax <= 0 && this.scaleType === "log") this.zoomedMax = this.scale.domain()[1];
 
       this.scale.domain([this.min, this.max]);
     }
