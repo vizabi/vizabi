@@ -73,7 +73,7 @@ var BubbleMapComponent = Component.extend({
       'change:marker.size': function(evt, path) {
         //console.log("EVENT change:marker:size:max");
         if(!_this._readyOnce) return;
-        if(path.indexOf("min") > -1 || path.indexOf("max") > -1) {
+        if(path.indexOf("domainMin") > -1 || path.indexOf("domainMax") > -1) {
           _this.updateMarkerSizeLimits();
           _this.redrawDataPoints(null, false);
           return;
@@ -756,8 +756,8 @@ var BubbleMapComponent = Component.extend({
     var minRadius = this.activeProfile.minRadius;
     var maxRadius = this.activeProfile.maxRadius;
 
-    this.minRadius = Math.max(maxRadius * this.model.marker.size.min, minRadius);
-    this.maxRadius = Math.max(maxRadius * this.model.marker.size.max, minRadius);
+    this.minRadius = Math.max(maxRadius * this.model.marker.size.domainMin, minRadius);
+    this.maxRadius = Math.max(maxRadius * this.model.marker.size.domainMax, minRadius);
 
     if(this.model.marker.size.scaleType !== "ordinal") {
       this.sScale.range([utils.radiusToArea(_this.minRadius), utils.radiusToArea(_this.maxRadius)]);

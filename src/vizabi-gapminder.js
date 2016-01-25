@@ -207,8 +207,8 @@ BubbleMap.define('default_options', {
         allow: {
           scales: ["linear", "log"]
         },
-        min: .04,
-        max: .90
+        domainMin: .04,
+        domainMax: .90
       },
       lat: {
         use: "property",
@@ -299,8 +299,8 @@ MountainChart.define('default_options', {
         use: "indicator",
         which: "gdp_p_cap_const_ppp2011_dollar",
         scaleType: 'log',
-        min: .11, //0
-        max: 500 //100
+        domainMin: .11, //0
+        domainMax: 500 //100
       },
       size: {
         use: "indicator",
@@ -483,8 +483,8 @@ BubbleChart.define('default_options', {
         allow: {
           scales: ["linear", "log"]
         },
-        min: .04,
-        max: .90
+        domainMin: .04,
+        domainMax: .90
       }
     }
   },
@@ -659,10 +659,10 @@ Tool.define("preload", function(promise) {
     var axis = _this.default_options.state.marker[hook];
     if(axis.use === "indicator" && globals.metadata.indicatorsDB[axis.which] && globals.metadata.indicatorsDB[axis.which].domain) {
       var domain = globals.metadata.indicatorsDB[axis.which].domain;
-      axis.min = axis.min || domain[0];
-      axis.max = axis.max || domain[1];
-      axis.zoomedMin = axis.zoomedMin || axis.min || domain[0];
-      axis.zoomedMax = axis.zoomedMax || axis.max || domain[1];
+      axis.domainMin = axis.domainMin || domain[0];
+      axis.domainMax = axis.domainMax || domain[1];
+      axis.zoomedMin = axis.zoomedMin || axis.domainMin || domain[0];
+      axis.zoomedMax = axis.zoomedMax || axis.domainMax || domain[1];
     }
   }
 

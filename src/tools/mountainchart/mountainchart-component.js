@@ -246,7 +246,7 @@ var MountainChartComponent = Component.extend({
 
         if (!yMax || !shape || shape.length === 0) return;
 
-        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.min, this.model.marker.axis_x.max]);
+        this.xScale = d3.scale.log().domain([this.model.marker.axis_x.domainMin, this.model.marker.axis_x.domainMax]);
         this.yScale = d3.scale.linear().domain([0, +yMax]);
 
         _this.updateSize(shape.length);

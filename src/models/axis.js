@@ -20,8 +20,8 @@ var AxisModel = Model.extend({
   _defaults: {
     use: null,
     which: null,
-    min: null,
-    max: null,
+    domainMin: null,
+    domainMax: null,
     zoomedMin: null,
     zoomedMax: null
   },
@@ -59,14 +59,14 @@ var AxisModel = Model.extend({
     if(this.scale && this._readyOnce && this.use === "indicator") {
 
       //min and max nonsense protection
-      if(this.min == null || this.min <= 0 && this.scaleType === "log") this.min = this.scale.domain()[0];
-      if(this.max == null || this.max <= 0 && this.scaleType === "log") this.max = this.scale.domain()[1];
+      if(this.domainMin == null || this.domainMin <= 0 && this.scaleType === "log") this.domainMin = this.scale.domain()[0];
+      if(this.domainMax == null || this.domainMax <= 0 && this.scaleType === "log") this.domainMax = this.scale.domain()[1];
 
       //zoomedmin and zoomedmax nonsense protection    
       if(this.zoomedMin == null || this.zoomedMin <= 0 && this.scaleType === "log") this.zoomedMin = this.scale.domain()[0];
       if(this.zoomedMax == null || this.zoomedMax <= 0 && this.scaleType === "log") this.zoomedMax = this.scale.domain()[1];
 
-      this.scale.domain([this.min, this.max]);
+      this.scale.domain([this.domainMin, this.domainMax]);
     }
   },
 
@@ -107,7 +107,7 @@ var AxisModel = Model.extend({
         //domain from metadata can override it if defined
         domain = indicatorsDB[this.which].domain ? indicatorsDB[this.which].domain : domain;
         //min and max can override the domain if defined
-        domain = this.min!=null && this.max!=null ? [+this.min, +this.max] : domain;
+        domain = this.domainMin!=null && this.domainMax!=null ? [+this.domainMin, +this.domainMax] : domain;
         break;
       case "property":
         domain = this.getUnique(this.which);

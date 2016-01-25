@@ -6,8 +6,8 @@ import Component from 'base/component';
  * VIZABI MIN MAX INPUT FIELDS
  */
 
-var MIN = "min";
-var MAX = "max";
+var DOMAINMIN = "domainMin";
+var DOMAINMAX = "domainMax";
 var ZOOMEDMIN = "zoomedMin";
 var ZOOMEDMAX = "zoomedMax";
 
@@ -52,7 +52,7 @@ var MinMaxInputs = Component.extend({
         this._super(config, context);
 
         this.ui = utils.extend({
-            selectMinMax: false,
+            selectDomainMinMax: false,
             selectZoomedMinMax: false
         }, this.ui.getPlainObject());
 
@@ -81,10 +81,10 @@ var MinMaxInputs = Component.extend({
 
 
         _this.el_domain_fieldMin.on("change", function() {
-            _this._setModel(MIN, this.value)
+            _this._setModel(DOMAINMIN, this.value)
         });
         _this.el_domain_fieldMax.on("change", function() {
-            _this._setModel(MAX, this.value)
+            _this._setModel(DOMAINMAX, this.value)
         });
 
         _this.el_zoomed_fieldMin.on("change", function() {
@@ -109,12 +109,12 @@ var MinMaxInputs = Component.extend({
         this.el_zoomed_labelMin.text(this.translator("min") + ":");
         this.el_zoomed_labelMax.text(this.translator("max") + ":");
 
-        this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectMinMax);
-        this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectMinMax);
+        this.el_domain_labelMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_labelMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_fieldMin.classed('vzb-hidden', !this.ui.selectDomainMinMax);
+        this.el_domain_fieldMax.classed('vzb-hidden', !this.ui.selectDomainMinMax);
 
-        this.el_break.classed('vzb-hidden', !(this.ui.selectMinMax && this.ui.selectZoomedMinMax));
+        this.el_break.classed('vzb-hidden', !(this.ui.selectDomainMinMax && this.ui.selectZoomedMinMax));
 
         this.el_zoomed_labelMin.classed('vzb-hidden', !this.ui.selectZoomedMinMax);
         this.el_zoomed_labelMax.classed('vzb-hidden', !this.ui.selectZoomedMinMax);

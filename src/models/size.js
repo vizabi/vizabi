@@ -13,8 +13,8 @@ var SizeModel = Model.extend({
    */
   _defaults: {
     use: null,
-    min: 0,
-    max: 1,
+    domainMin: 0,
+    domainMax: 1,
     which: null
   },
 
@@ -38,14 +38,14 @@ var SizeModel = Model.extend({
    */
   validate: function() {
     //there must be a min and a max
-    if(typeof this.min === 'undefined' || this.min < 0) this.min = 0;
-    if(typeof this.max === 'undefined' || this.max > 1) this.max = 1;
+    if(typeof this.domainMin === 'undefined' || this.domainMin < 0) this.domainMin = 0;
+    if(typeof this.domainMax === 'undefined' || this.domainMax > 1) this.domainMax = 1;
 
-    if(this.max < this.min) this.set('min', this.max, true);
+    if(this.domainMax < this.domainMin) this.set('domainMin', this.domainMax, true);
 
     //value must always be between min and max
-    if(this.use === "constant" && this.which > this.max) this.which = this.max;
-    if(this.use === "constant" && this.which < this.min) this.which = this.min;
+    if(this.use === "constant" && this.which > this.domainMax) this.which = this.domainMax;
+    if(this.use === "constant" && this.which < this.domainMin) this.which = this.domainMin;
     
     if(!this.scaleType) this.scaleType = 'linear';
     if(this.use === "property") this.scaleType = 'ordinal';

@@ -34,9 +34,6 @@ var profiles = {
 };
 
 
-var min = .1,
-  max = 100;
-
 var BubbleSize = Component.extend({
 
   /**
@@ -56,26 +53,22 @@ var BubbleSize = Component.extend({
       type: "size"
     }];
 
-    this.fields = { min: 'min', max: 'max' };
-
     var _this = this;
     this.model_binds = {
-      'change:size.min': changeMinMaxHandler,
-      'change:size.max': changeMinMaxHandler,
+      'change:size.domainMin': changeMinMaxHandler,
+      'change:size.domainMax': changeMinMaxHandler,
       'ready': readyHandler
     };
 
     function changeMinMaxHandler(evt, path) {
-      var min = _this.model.size[_this.fields.min];
-      var max = _this.model.size[_this.fields.max];
       var size = [
-          min,
-          max
+          _this.model.size.domainMin,
+          _this.model.size.domainMax
       ];
       _this._updateArcs(size);
       _this._updateLabels(size);
       _this.sliderEl.call(_this.brush.extent(size));
-      if(min == max){
+      if(size[0] == size[1]){
         _this.sliderEl.selectAll(".resize")
           .style("display", "block");
       }
@@ -96,7 +89,7 @@ var BubbleSize = Component.extend({
    * At this point, this.element and this.placeholder are available as a d3 object
    */
   readyOnce: function () {
-    var values = [this.model.size.min, this.model.size.max],
+    var values = [this.model.size.domainMin, this.model.size.domainMax],
       _this = this;
     this.element = d3.select(this.element);
     this.sliderSvg = this.element.select(".vzb-bs-svg");
@@ -282,8 +275,8 @@ var BubbleSize = Component.extend({
    */
   _setModel: function (value, force, persistent) {
     var _this = this;
-    _this.model.size.getModelObject('min').set(value[0], force, persistent);
-    _this.model.size.getModelObject('max').set(value[1], force, persistent);
+    _this.model.size.getModelObject('domainMin').set(value[0], force, persistent);
+    _this.model.size.getModelObject('domainMax').set(value[1], force, persistent);
   }
 
 });

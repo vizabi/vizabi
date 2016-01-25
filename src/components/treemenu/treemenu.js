@@ -10,8 +10,6 @@ import {close as iconClose} from 'base/iconset';
  */
 
 var INDICATOR = "which";
-var MIN = "min";
-var MAX = "max";
 var SCALETYPE = "scaleType";
 var MODELTYPE_COLOR = "color";
 var MENU_HORIZONTAL = 1;
@@ -836,8 +834,8 @@ var TreeMenu = Component.extend({
     }
 
     if(mdl.getType() == 'axis') {
-      obj.min = null;
-      obj.max = null;
+      obj.domainMin = null;
+      obj.domainMax = null;
       obj.zoomedMin = null;
       obj.zoomedMax = null;
     }
