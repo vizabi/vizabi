@@ -66,7 +66,7 @@ var SizeModel = Model.extend({
 
     if(this.scaleType == "time") {
       var limits = this.getLimits(this.which);
-      this.scale = d3.time.scale().domain([limits.min, limits.max]);
+      this.scale = d3.time.scale.utc().domain([limits.min, limits.max]);
       return;
     }
 

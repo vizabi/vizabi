@@ -211,7 +211,7 @@ var ColorModel = Model.extend({
         range = [range[range.length - 1]];             
       }
       
-      this.scale = d3.time.scale()
+      this.scale = d3.time.scale.utc()
         .domain(domain)
         .range(range)
         .interpolate(d3.interpolateRgb);

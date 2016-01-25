@@ -333,7 +333,7 @@ function isSpecificValue(val) {
 
 function cloneSpecificValue(val) {
   if (val instanceof Date) {
-    return new Date(val.getTime());
+    return new Date.UTC(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
   } else {
@@ -1109,13 +1109,13 @@ export var diffObject = function(obj2, obj1) {
  * Time formats
  */
 export var timeFormats = {
-  "year": d3.time.format("%Y"),
-  "month": d3.time.format("%Y-%m"),
-  "week": d3.time.format("%Y-W%W"),
-  "day": d3.time.format("%Y-%m-%d"),
-  "hour": d3.time.format("%Y-%m-%d %H"),
-  "minute": d3.time.format("%Y-%m-%d %H:%M"),
-  "second": d3.time.format("%Y-%m-%d %H:%M:%S")
+  "year": d3.time.format.utc("%Y"),
+  "month": d3.time.format.utc("%Y-%m"),
+  "week": d3.time.format.utc("%Y-W%W"),
+  "day": d3.time.format.utc("%Y-%m-%d"),
+  "hour": d3.time.format.utc("%Y-%m-%d %H"),
+  "minute": d3.time.format.utc("%Y-%m-%d %H:%M"),
+  "second": d3.time.format.utc("%Y-%m-%d %H:%M:%S")
 };
 
 /*
@@ -1321,7 +1321,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   );
 
   // cast to time object if we are interpolating time
-  if(which === dimTime) result = new Date(result);
+  if(which === dimTime) result = new Date.UTC(result);
   if(isNaN(result)) {
       warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;

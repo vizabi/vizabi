@@ -148,7 +148,7 @@ var TimeSlider = Component.extend({
     this.handle = this.slide.select(".vzb-ts-slider-handle");
     this.valueText = this.slide.select('.vzb-ts-slider-value');
     //Scale
-    this.xScale = d3.time.scale()
+    this.xScale = d3.time.scale.utc()
       .clamp(true);
 
     //Axis

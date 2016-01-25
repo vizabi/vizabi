@@ -230,7 +230,7 @@ export default function axisSmart() {
       if(options.formatter == null) options.formatter = function(d) {
 
         if(options.scaleType == "time") {
-          if(!(d instanceof Date)) d = new Date(d);
+          if(!(d instanceof Date)) d = new Date.UTC(d);
           return options.timeFormat(d);
         }
 

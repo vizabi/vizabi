@@ -163,7 +163,7 @@ var TimeModel = Model.extend({
    * @returns range between start and end
    */
   getRange: function() {
-    return d3.time[this.unit].range(this.start, this.end, this.step);
+    return d3.time[this.unit].utc.range(this.start, this.end, this.step);
   },
 
   /**
@@ -211,7 +211,7 @@ var TimeModel = Model.extend({
     var curr = this.start;
     while(curr <= this.end) {
       this.allSteps[hash].push(curr);
-      curr = d3.time[this.unit].offset(curr, this.step);
+      curr = d3.time[this.unit].utc.offset(curr, this.step);
     }
     return this.allSteps[hash];
   },
@@ -226,7 +226,7 @@ var TimeModel = Model.extend({
     var op = 'round';
     if(this.round === 'ceil') op = 'ceil';
     if(this.round === 'floor') op = 'floor';
-    var time = d3.time[this.unit][op](this[what]);
+    var time = d3.time[this.unit].utc[op](this[what]);
     this.set(what, time, true); //3rd argumennt forces update
   },
 
@@ -282,7 +282,7 @@ var TimeModel = Model.extend({
           var step = _this.step;
           if(_this.delay < _this.delayThresholdX2) step*=2;
           if(_this.delay < _this.delayThresholdX4) step*=2;
-          time = d3.time[_this.unit].offset(time, step);
+          time = d3.time[_this.unit].utc.offset(time, step);
           _this.getModelObject('value').set(time, null, false /*make change non-persistent for URL and history*/);
           _this.playInterval();
         }
