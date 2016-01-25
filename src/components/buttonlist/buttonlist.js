@@ -165,7 +165,7 @@ var ButtonList = Component.extend({
       }
     });
     
-    if(!this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup)) utils.error('Validation of buttons config for popups is failed');
+    this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup);
 
     this._super(config, context);
 
@@ -244,9 +244,11 @@ var ButtonList = Component.extend({
       return (!_this._available_buttons[d].func); 
       });
     for(var i = 0, j = popupButtons.length; i < j; i++) {
-       if(popupDialogs.indexOf(popupButtons[i]) == -1) return false;  
+       if(popupDialogs.indexOf(popupButtons[i]) == -1) {
+           return utils.error('Buttonlist: bad buttons config: "' + popupButtons[i] + '" is missing in popups list');
+       }
     }
-    return true;
+    return false; //all good
   },
 
   /*
