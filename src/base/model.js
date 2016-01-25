@@ -27,11 +27,10 @@ var ModelLeaf = EventSource.extend({
 
     this._super();
 
-    // after super so there is a .events object
     this._name = name;
     this._parent = parent;
     this.value = value;
-    this.on(binds);
+    this.on(binds); // after super so there is an .events object
   },
 
   // if they want a persistent value and the current value is not persistent, return the last persistent value
@@ -431,7 +430,7 @@ var Model = EventSource.extend({
       this.trigger('hook_change');
       //get reader info
       var reader = data_hook.getPlainObject();
-      reader.formatters = this._getAllFormatters();
+      reader.parsers = this._getAllParsers();
 
       var lang = language_hook ? language_hook.id : 'en';
       var promise = new Promise();
@@ -1037,7 +1036,7 @@ getFrame: function(time){
    * Gets formatter for this model
    * @returns {Function|Boolean} formatter function
    */
-  getFormatter: function() {
+  getParser: function() {
     //TODO: default formatter is moved to utils. need to return it to hook prototype class, but retest #1212 #1230 #1253
     return null;
   },
@@ -1360,7 +1359,7 @@ getFrame: function(time){
       if(opts.onlyType && h.getType() !== opts.onlyType) {
         return true;
       }
-      formatters[h.dim] = h.getFormatter();
+      formatters[h.dim] = h.getParser();
       filters = utils.extend(filters, h.getFilter(splashScreen));
     });
     filters = utils.mapRows([filters], formatters)[0];
@@ -1384,26 +1383,26 @@ getFrame: function(time){
    * gets all hook filters
    * @returns {Object} filters
    */
-  _getAllFormatters: function() {
+  _getAllParsers: function() {
 
-    var formatters = {};
+    var parsers = {};
 
-    function addFormatter(model) {
-      // get formatters from model
-      var formatter = model.getFormatter();
+    function addParser(model) {
+      // get parsers from model
+      var parser = model.getParser();
       var column = model.getDimensionOrWhich();
-      if (formatter && column) {
-        formatters[column] = formatter;
+      if (parser && column) {
+        parsers[column] = parser;
       }
     }
 
     // loop through all models which can have filters
     utils.forEach(this._space, function(h) {
-      addFormatter(h);
+      addParser(h);
     });
-    addFormatter(this);
+    addParser(this);
 
-    return formatters;
+    return parsers;
   },
 
   getDefaults: function() {

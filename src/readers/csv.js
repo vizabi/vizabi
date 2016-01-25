@@ -15,7 +15,7 @@ var CSVReader = Reader.extend({
     this._name = 'csv';
     this._data = [];
     this._basepath = reader_info.path;
-    this._formatters = reader_info.formatters;
+    this._parsers = reader_info.parsers;
     if(!this._basepath) {
       utils.error("Missing base path for csv reader");
     }
@@ -152,7 +152,7 @@ var CSVReader = Reader.extend({
     });
 
     //format data
-    res = utils.mapRows(res, _this._formatters);
+    res = utils.mapRows(res, _this._parsers);
 
     return res;
   },

@@ -190,7 +190,7 @@ var TimeModel = Model.extend({
    * Gets formatter for this model
    * @returns {Function} formatter function
    */
-  getFormatter: function() {
+  getParser: function() {
     var timeFormat = utils.getTimeFormat(this.unit);
     return function(d) {
       return timeFormat.parse(d);
