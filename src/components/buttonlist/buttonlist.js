@@ -164,6 +164,8 @@ var ButtonList = Component.extend({
         }
       }
     });
+    
+    if(!this.validatePopupButtons(config.ui.buttons, config.ui.dialogs.popup)) utils.error('Validation of buttons config for popups is failed');
 
     this._super(config, context);
 
@@ -234,6 +236,17 @@ var ButtonList = Component.extend({
     this.setBubbleLock();
     this.setPresentationMode();
 
+  },
+  
+  validatePopupButtons: function (buttons, popupDialogs) {
+    var _this = this;
+    var popupButtons = buttons.filter(function(d) {
+      return (!_this._available_buttons[d].func); 
+      });
+    for(var i = 0, j = popupButtons.length; i < j; i++) {
+       if(popupDialogs.indexOf(popupButtons[i]) == -1) return false;  
+    }
+    return true;
   },
 
   /*
