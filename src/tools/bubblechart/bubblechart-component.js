@@ -690,7 +690,11 @@ var BubbleChartComp = Component.extend({
         if(_this.draggingNow) return;
         var isSelected = _this.model.entities.isSelected(d);
         _this.model.entities.selectEntity(d);
-        if(isSelected) _this.highlightDataPoints();
+        //return to highlighted state
+        if(!utils.isTouchDevice() && isSelected) {
+            _this.model.entities.highlightEntity(d);    
+            _this.highlightDataPoints();
+        }
       }
     }
   },
