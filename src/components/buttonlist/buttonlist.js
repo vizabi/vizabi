@@ -468,9 +468,8 @@ var ButtonList = Component.extend({
   toggleBubbleLock: function(id) {
     if(this.model.state.entities.select.length == 0) return;
 
-    var timeFormatter = d3.time.format(this.model.state.time.formatInput);
     var locked = this.model.state.time.lockNonSelected;
-    locked = locked ? 0 : timeFormatter(this.model.state.time.value);
+    locked = locked ? 0 : utils.formatTime(this.model.state.time.value, this.model.state.time.unit);
     this.model.state.time.lockNonSelected = locked;
 
     this.setBubbleLock();

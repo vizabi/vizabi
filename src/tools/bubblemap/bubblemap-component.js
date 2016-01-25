@@ -298,7 +298,7 @@ var BubbleMapComponent = Component.extend({
       var _this = this;
 
       this.translator = this.model.language.getTFunction();
-      this.timeFormatter = d3.time.format(_this.model.time.formatOutput);      
+      this.timeFormat = utils.getTimeFormat(_this.model.time.unit);      
       var sizeMetadata = globals.metadata.indicatorsDB[this.model.marker.size.which];
 
       this.strings = {
@@ -593,7 +593,7 @@ var BubbleMapComponent = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormat(this.time));
     this.values = this.model.marker.getFrame(this.time);
 
     //possibly update the exact value in size title

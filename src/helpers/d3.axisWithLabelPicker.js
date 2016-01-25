@@ -231,7 +231,7 @@ export default function axisSmart() {
 
         if(options.scaleType == "time") {
           if(!(d instanceof Date)) d = new Date(d);
-          return d3.time.format("%Y")(d);
+          return options.timeFormat(d);
         }
 
         var format = "f";

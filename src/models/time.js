@@ -5,19 +5,7 @@ import Model from 'base/model';
  * VIZABI Time Model
  */
 
-//constant time formats
-var time_formats = {
-  "year": "%Y",
-  "month": "%Y-%m",
-  "week": "%Y-W%W",
-  "day": "%Y-%m-%d",
-  "hour": "%Y-%m-%d %H",
-  "minute": "%Y-%m-%d %H:%M",
-  "second": "%Y-%m-%d %H:%M:%S"
-};
-
-var time_units = Object.keys(time_formats);
-var formatters = utils.values(time_formats);
+var time_units = Object.keys(utils.timeFormats);
 
 var TimeModel = Model.extend({
 
@@ -43,8 +31,6 @@ var TimeModel = Model.extend({
     unit: "year",
     step: 1, //step must be integer
     adaptMinMaxZoom: false, //TODO: remove from here. only for bubble chart
-    formatInput: "%Y", //defaults to year format
-    formatOutput: "%Y", //defaults to year format
     xLogStops: [], //TODO: remove from here. only for mountain chart
     yMaxMethod: "latest", //TODO: remove from here. only for mountain chart
     record: false,
@@ -98,18 +84,11 @@ var TimeModel = Model.extend({
   _formatToDates: function() {
 
     var date_attr = ["value", "start", "end"];
-    var fmts = [this.formatInput].concat(formatters);
     for(var i = 0; i < date_attr.length; i++) {
       var attr = date_attr[i];
       if(!utils.isDate(this[attr])) {
-        for(var j = 0; j < fmts.length; j++) {
-          var formatter = d3.time.format(fmts[j]);
-          var date = formatter.parse(this[attr].toString());
-          if(utils.isDate(date)) {
-            this.set(attr, date);
-            break;
-          }
-        }
+        var date = utils.parseTime(this[attr].toString(), this.unit);
+        this.set(attr, date);
       }
     }
   },
@@ -121,6 +100,7 @@ var TimeModel = Model.extend({
 
     //unit has to be one of the available_time_units
     if(time_units.indexOf(this.unit) === -1) {
+      utils.warn(this.unit + ' is not a valid time unit, using "year" instead.');
       this.unit = "year";
     }
 
@@ -192,9 +172,9 @@ var TimeModel = Model.extend({
    * @returns {Object} time filter
    */
   getFilter: function(firstScreen) {
-    var start = d3.time.format(this.formatInput || "%Y")(this.start);
-    var end = d3.time.format(this.formatInput || "%Y")(this.end);
-    var value = d3.time.format(this.formatInput || "%Y")(this.value);
+    var start = utils.formatTime(this.start, this.unit);
+    var end = utils.formatTime(this.end, this.unit);
+    var value = utils.formatTime(this.value, this.unit);
     var dim = this.getDimension();
     var filter = {};
 
@@ -211,9 +191,9 @@ var TimeModel = Model.extend({
    * @returns {Function} formatter function
    */
   getFormatter: function() {
-    var f = d3.time.format(this.formatInput || "%Y");
+    var timeFormat = utils.getTimeFormat(this.unit);
     return function(d) {
-      return f.parse(d);
+      return timeFormat.parse(d);
     }
   },
 

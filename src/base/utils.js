@@ -1108,7 +1108,7 @@ export var diffObject = function(obj2, obj1) {
 /*
  * Time formats
  */
-var timeFormats = {
+export var timeFormats = {
   "year": d3.time.format("%Y"),
   "month": d3.time.format("%Y-%m"),
   "week": d3.time.format("%Y-W%W"),
@@ -1124,9 +1124,18 @@ var timeFormats = {
  * @param {String} unit
  * @returns {String}
  */
-export var formatDate = function(date, unit) {
-  if(!d3) return date;
-  return timeFormats[unit](date);
+export var formatTime = function(dateObject, unit) {
+  if(!d3) return dateObject;
+  return timeFormats[unit](dateObject);
+};
+
+export var parseTime = function(timeString, unit) {
+  if(!d3) return timeString;
+  return timeFormats[unit].parse(timeString);
+};
+
+export var getTimeFormat = function(unit) {
+  return timeFormats[unit];
 };
 
 /*
@@ -1160,13 +1169,13 @@ export var flattenDates = function(obj) {
     if(key === 'time') {
       var unit = val.unit || "year";
       if(typeof val.value === 'object') {
-        val.value = formatDate(val.value, unit);
+        val.value = formatTime(val.value, unit);
       }
       if(typeof val.start === 'object') {
-        val.start = formatDate(val.start, unit);
+        val.start = formatTime(val.start, unit);
       }
       if(typeof val.end === 'object') {
-        val.end = formatDate(val.end, unit);
+        val.end = formatTime(val.end, unit);
       }
     }
     if(isPlainObject(val)) {

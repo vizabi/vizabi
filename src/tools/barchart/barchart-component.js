@@ -67,7 +67,6 @@ var BarComponent = Component.extend({
    * DOM is ready
    */
   readyOnce: function() {
-    this.timeFormatter = d3.time.format(this.model.time.formatOutput);
     this.element = d3.select(this.element);
 
     this.graph = this.element.select('.vzb-bc-graph');
@@ -77,6 +76,9 @@ var BarComponent = Component.extend({
     this.xTitleEl = this.graph.select('.vzb-bc-axis-x-title');
     this.bars = this.graph.select('.vzb-bc-bars');
     this.year = this.element.select('.vzb-bc-year');
+
+    // set up time format
+    this.timeFormat = utils.getTimeFormat(this.model.time.unit);
 
     var _this = this;
     this.on("resize", function() {
@@ -202,7 +204,7 @@ var BarComponent = Component.extend({
       .attr("height", function(d) {
         return _this.height - _this.yScale(values.axis_y[d[entityDim]]);
       });
-      this.year.text(this.timeFormatter(this.model.time.value));
+      this.year.text(this.timeFormat(this.model.time.value));
   },
 
   /**
@@ -279,6 +281,7 @@ var BarComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: {top: 5, right: margin.right, left: margin.left, bottom: margin.bottom},
         limitMaxTickNumber: 6
       });
@@ -289,6 +292,7 @@ var BarComponent = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: margin
       });
 

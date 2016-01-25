@@ -12,16 +12,6 @@ var class_axis_aligned = "vzb-ts-axis-aligned";
 var class_show_value = "vzb-ts-show-value";
 var class_show_value_when_drag_play = "vzb-ts-show-value-when-drag-play";
 
-var time_formats = {
-  "year": "%Y",
-  "month": "%b",
-  "week": "week %U",
-  "day": "%d/%m/%Y",
-  "hour": "%d/%m/%Y %H",
-  "minute": "%d/%m/%Y %H:%M",
-  "second": "%d/%m/%Y %H:%M:%S"
-};
-
 //margins for slider
 var profiles = {
   small: {
@@ -222,8 +212,8 @@ var TimeSlider = Component.extend({
       _this.model.time.pause("soft");
     });
 
-    var fmt = time.formatOutput || time_formats[time.unit];
-    this.format = d3.time.format(fmt);
+    // set date formatter
+    this.timeFormat = utils.getTimeFormat(time.unit);
 
     this.changeLimits();
     this.changeTime();
@@ -238,7 +228,7 @@ var TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.format);
+      .tickFormat(this.timeFormat);
   },
 
   changeTime: function() {
@@ -332,7 +322,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.format(value));
+        _this.valueText.text(_this.timeFormat(value));
       }
 
       //set time according to dragged position
@@ -364,7 +354,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
-    this.valueText.text(this.format(value));
+    this.valueText.text(this.timeFormat(value));
 
 //    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);

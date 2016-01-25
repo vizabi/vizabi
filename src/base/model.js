@@ -6,16 +6,6 @@ import Intervals from 'intervals';
 import globals from 'globals';
 import * as models from 'models/_index';
 
-var time_formats = {
-  "year": "%Y",
-  "month": "%b",
-  "week": "week %U",
-  "day": "%d/%m/%Y",
-  "hour": "%d/%m/%Y %H",
-  "minute": "%d/%m/%Y %H:%M",
-  "second": "%d/%m/%Y %H:%M:%S"
-};
-
 var _DATAMANAGER = new Data();
 
 var ModelLeaf = EventSource.extend({
@@ -1058,8 +1048,8 @@ getFrame: function(time){
    */
   tickFormatter: function(x, formatterRemovePrefix) {
 
-    //TODO: generalize for any time unit
-    if(utils.isDate(x)) return d3.time.format(time_formats["year"])(x);
+    //TODO: generalize for any time interval subdimension
+    if(utils.isDate(x)) return utils.formatTime(x, "year");
     if(utils.isString(x)) return x;
 
     var format = "f";

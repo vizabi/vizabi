@@ -499,7 +499,7 @@ var BubbleChartComp = Component.extend({
     var _this = this;
 
     this.translator = this.model.language.getTFunction();
-    this.timeFormatter = d3.time.format(_this.model.time.formatOutput);
+    this.timeFormat = utils.getTimeFormat(_this.model.time.unit);
     var indicatorsDB = globals.metadata.indicatorsDB;
 
     this.strings = {
@@ -585,7 +585,7 @@ var BubbleChartComp = Component.extend({
   },
 
   _updateDoubtOpacity: function(opacity) {
-    if(opacity == null) opacity = this.wScale(+this.timeFormatter(this.time));
+    if(opacity == null) opacity = this.wScale(+this.timeFormat(this.time));
     if(this.someSelected) opacity = 1;
     this.dataWarningEl.style("opacity", opacity);
   },
@@ -721,8 +721,8 @@ var BubbleChartComp = Component.extend({
     this.time_1 = this.time == null ? this.model.time.value : this.time;
     this.time = this.model.time.value;
     this.duration = this.model.time.playing && (this.time - this.time_1 > 0) ? this.model.time.delayAnimations : 0;
-    this.year.setText(this.timeFormatter(this.time));
-    //this.yearEl.text(this.timeFormatter(this.time));
+    this.year.setText(this.timeFormat(this.time));
+    //this.yearEl.text(this.timeFormat(this.time));
   },
 
   /*
@@ -818,6 +818,7 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_y.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: margin,
         limitMaxTickNumber: 6,
         bump: this.activeProfile.maxRadius
@@ -829,6 +830,7 @@ var BubbleChartComp = Component.extend({
       .tickSizeMinor(3, 0)
       .labelerOptions({
         scaleType: this.model.marker.axis_x.scaleType,
+        timeFormat: this.timeFormat,
         toolMargin: margin,
         bump: this.activeProfile.maxRadius
       });
@@ -969,7 +971,7 @@ var BubbleChartComp = Component.extend({
     valuesNow = this.model.marker.getFrame(this.time);
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
       values = valuesNow;
@@ -1006,7 +1008,7 @@ var BubbleChartComp = Component.extend({
     valuesNow = this.model.marker.getFrame(this.time);
 
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       values = this.model.marker.getFrame(tLocked);
     } else {
       values = valuesNow;
@@ -1039,7 +1041,7 @@ var BubbleChartComp = Component.extend({
           return f[KEY] == d[KEY]
         });
 
-        var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+        var trailStartTime = _this.timeFormat.parse("" + select.trailStartTime);
 
         if(!_this.model.time.trails || trailStartTime - _this.time == 0) {
           cache.scaledS0 = scaledS;
@@ -1071,7 +1073,7 @@ var BubbleChartComp = Component.extend({
 
     //get values for locked and not locked
     if(this.model.time.lockNonSelected && this.someSelected) {
-      var tLocked = this.timeFormatter.parse("" + this.model.time.lockNonSelected);
+      var tLocked = this.timeFormat.parse("" + this.model.time.lockNonSelected);
       valuesLocked = this.model.marker.getFrame(tLocked);
     }
 
@@ -1171,11 +1173,11 @@ var BubbleChartComp = Component.extend({
       var select = utils.find(_this.model.entities.select, function(f) {
         return f[KEY] == d[KEY]
       });
-      var trailStartTime = _this.timeFormatter.parse("" + select.trailStartTime);
+      var trailStartTime = _this.timeFormat.parse("" + select.trailStartTime);
 
       if(!_this.model.time.trails || trailStartTime - _this.time > 0 || select.trailStartTime == null) {
 
-        select.trailStartTime = _this.timeFormatter(_this.time);
+        select.trailStartTime = _this.timeFormat(_this.time);
         //the events in model are not triggered here. to trigger uncomment the next line
         //_this.model.entities.triggerAll("change:select");
         cached.scaledS0 = scaledS;
@@ -1585,9 +1587,9 @@ var BubbleChartComp = Component.extend({
       var d = utils.clone(this.model.entities.highlight[0]);
 
       if(_this.model.time.lockNonSelected && _this.someSelected && !_this.model.entities.isSelected(d)) {
-        d[TIMEDIM] = _this.timeFormatter.parse("" + _this.model.time.lockNonSelected);
+        d[TIMEDIM] = _this.timeFormat.parse("" + _this.model.time.lockNonSelected);
       } else {
-        d[TIMEDIM] = _this.timeFormatter.parse("" + d.trailStartTime) || _this.time;
+        d[TIMEDIM] = _this.timeFormat.parse("" + d.trailStartTime) || _this.time;
       }
 
       this._axisProjections(d);
@@ -1597,7 +1599,7 @@ var BubbleChartComp = Component.extend({
       //show tooltip
       var text = "";
       if(_this.model.entities.isSelected(d) && _this.model.time.trails) {
-        text = _this.timeFormatter(_this.time);
+        text = _this.timeFormat(_this.time);
         var labelData = _this.entityLabels
           .filter(function(f) {
             return f[KEY] == d[KEY]
