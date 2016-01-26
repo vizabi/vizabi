@@ -3,7 +3,7 @@
   position: relative;
   margin: 0 10px 0 11px;
   padding: 5px 21px 5px 5px;
-  border: 1px solid $vzb-color-primary;
+  border: 1px solid $vzb-color-primary-darkest;
   border-radius: 4px;
   cursor: pointer;
   max-width: 170px;
@@ -17,12 +17,12 @@
     width: 0;
     height: 0;
     border: 6px solid transparent;
-    border-top: 12px solid $vzb-color-primary;
+    border-top: 12px solid $vzb-color-primary-darkest;
     top: .7em;
     right: 5px;
   }
   &:hover {
-    background-color: $vzb-color-primary-lightest;
+    background-color: $vzb-color-grey-light; 
   }
 }
 
