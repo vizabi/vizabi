@@ -212,9 +212,6 @@ var TimeSlider = Component.extend({
       _this.model.time.pause("soft");
     });
 
-    // set date formatter
-    this.timeFormat = utils.getTimeFormat(time.unit);
-
     this.changeLimits();
     this.changeTime();
     this.resize();
@@ -228,7 +225,7 @@ var TimeSlider = Component.extend({
     this.xScale.domain([minValue, maxValue]);
     //axis
     this.xAxis.tickValues([minValue, maxValue])
-      .tickFormat(this.timeFormat);
+      .tickFormat(this.model.time.timeFormat);
   },
 
   changeTime: function() {
@@ -322,7 +319,7 @@ var TimeSlider = Component.extend({
         //set handle position
         _this.handle.attr("cx", posX);
         _this.valueText.attr("transform", "translate(" + posX + "," + (_this.height / 2) + ")");
-        _this.valueText.text(_this.timeFormat(value));
+        _this.valueText.text(_this.model.time.timeFormat(value));
       }
 
       //set time according to dragged position
@@ -354,7 +351,7 @@ var TimeSlider = Component.extend({
     var _this = this;
     var value = this.model.time.value;
     this.slide.call(this.brush.extent([value, value]));
-    this.valueText.text(this.timeFormat(value));
+    this.valueText.text(this.model.time.timeFormat(value));
 
 //    var old_pos = this.handle.attr("cx");
     var new_pos = this.xScale(value);

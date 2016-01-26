@@ -138,7 +138,7 @@ var Tool = Component.extend({
     //flattens _defs_ object
     d_state = utils.flattenDefaults(d_state);
     //compares with chart default options
-    var d = utils.flattenDates(utils.diffObject(state, d_state));
+    var d = utils.flattenDates(utils.diffObject(state, d_state), this.model.state.time.timeFormat);
     //compares with model's defaults
     return utils.diffObject(d, this.model.state.getDefaults());
   },

@@ -277,7 +277,7 @@ export default Class.extend({
         var _this = this.context;
         if (!duration) duration = _this.duration;
 
-        var timeRounded = _this.timeFormat.parse( _this.timeFormat(_this.time) );
+        var timeRounded = _this.time.timeFormat.parse( _this.time.timeFormat(_this.time) );
 
         var mmmX = _this.xyMaxMinMean.x[timeRounded];
         var mmmY = _this.xyMaxMinMean.y[timeRounded];

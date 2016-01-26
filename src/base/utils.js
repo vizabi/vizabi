@@ -1106,43 +1106,6 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Time formats for internal data
- * all in UTC
- */
-export var timeFormats = {
-  "year": d3.time.format.utc("%Y"),
-  "month": d3.time.format.utc("%Y-%m"),
-  "week": d3.time.format.utc("%Y-W%W"),
-  "day": d3.time.format.utc("%Y-%m-%d"),
-  "hour": d3.time.format.utc("%Y-%m-%d %H"),
-  "minute": d3.time.format.utc("%Y-%m-%d %H:%M"),
-  "second": d3.time.format.utc("%Y-%m-%d %H:%M:%S")
-};
-
-// short-cut for developers to get UTC date strings
-Date.prototype.utc = Date.prototype.toUTCString;
-
-/*
- * Formats a Date Object to string format
- * @param {Date} date
- * @param {String} unit
- * @returns {String}
- */
-export var formatTime = function(dateObject, unit) {
-  if(!d3) return dateObject;
-  return timeFormats[unit](dateObject);
-};
-
-export var parseTime = function(timeString, unit) {
-  if(!d3) return timeString;
-  return timeFormats[unit].parse(timeString);
-};
-
-export var getTimeFormat = function(unit) {
-  return timeFormats[unit];
-};
-
-/*
  * Returns the resulting object without _defs_ leveling
  * @param {Object} obj
  * @returns {Object}
@@ -1166,20 +1129,19 @@ export var flattenDefaults = function(obj) {
  * @param {Object} obj
  * @returns {Object}
  */
-export var flattenDates = function(obj) {
+export var flattenDates = function(obj, timeFormat) {
   var flattened = {};
   forEach(obj, function(val, key) {
     //todo: hack to flatten time unit objects to strings
     if(key === 'time') {
-      var unit = val.unit || "year";
       if(typeof val.value === 'object') {
-        val.value = formatTime(val.value, unit);
+        val.value = timeFormat(val.value);
       }
       if(typeof val.start === 'object') {
-        val.start = formatTime(val.start, unit);
+        val.start = timeFormat(val.start);
       }
       if(typeof val.end === 'object') {
-        val.end = formatTime(val.end, unit);
+        val.end = timeFormat(val.end);
       }
     }
     if(isPlainObject(val)) {

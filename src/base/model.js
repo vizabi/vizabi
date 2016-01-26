@@ -1047,8 +1047,8 @@ getFrame: function(time){
    */
   tickFormatter: function(x, formatterRemovePrefix) {
 
-    //TODO: generalize for any time interval subdimension
-    if(utils.isDate(x)) return utils.formatTime(x, "year");
+    // Assumption: a hook has always time in its space
+    if(utils.isDate(x)) return this._space.time.timeFormat(x);
     if(utils.isString(x)) return x;
 
     var format = "f";
@@ -1626,6 +1626,10 @@ function interpolateValue(_filter, use, which, method) {
   if(use === 'constant') {
     return items[0][which];
   }
+  // zero-order interpolation for the use of properties
+  if(use === 'property') {
+    return items[0][which];
+  }
 
   // search where the desired value should fall between the known points
   space_id = this._spaceId || (this._spaceId = Object.keys(this._space).join('-'));
@@ -1641,10 +1645,6 @@ function interpolateValue(_filter, use, which, method) {
     };
   }
 
-  // zero-order interpolation for the use of properties
-  if(use === 'property') {
-    return items[0][which];
-  }
   // the rest is for the continuous measurements
   // check if the desired value is out of range. 0-order extrapolation
   if(indexNext === 0) {

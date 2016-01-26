@@ -28,8 +28,8 @@ export default Class.extend({
     //quit if the function is called accidentally
     if(!_this.model.time.trails || !_this.model.entities.select.length) return;
 
-    var start = +_this.timeFormat(_this.model.time.start);
-    var end = +_this.timeFormat(_this.model.time.end);
+    var start = +_this.model.time.timeFormat(_this.model.time.start);
+    var end = +_this.model.time.timeFormat(_this.model.time.end);
     var step = _this.model.time.step;
     var timePoints = [];
     for(var time = start; time <= end; time += step) timePoints.push(time);
@@ -40,7 +40,7 @@ export default Class.extend({
 
       var trailSegmentData = timePoints.map(function(m) {
         return {
-          t: _this.timeFormat.parse("" + m)
+          t: _this.model.time.timeFormat.parse("" + m)
         }
       });
 
@@ -76,7 +76,7 @@ export default Class.extend({
           pointer.time = segment.t;
 
           _this._axisProjections(pointer);
-          var text = _this.timeFormat(segment.t);
+          var text = _this.model.time.timeFormat(segment.t);
           var labelData = _this.entityLabels
             .filter(function(f) {
               return f[KEY] == pointer[KEY]
@@ -236,14 +236,14 @@ export default Class.extend({
     var KEY = _this.KEY;
 
     var firstVisible = true;
-    var trailStartTime = _this.timeFormat.parse("" + d.trailStartTime);
+    var trailStartTime = _this.model.time.timeFormat.parse("" + d.trailStartTime);
 
     trail.each(function(segment, index) {
 
       // segment is transparent if it is after current time or before trail StartTime
       segment.transparent = (segment.t - _this.time >= 0) || (trailStartTime - segment.t > 0)
         //no trail segment should be visible if leading bubble is shifted backwards
-        || (d.trailStartTime - _this.timeFormat(_this.time) >= 0);
+        || (d.trailStartTime - _this.model.time.timeFormat(_this.time) >= 0);
 
       if(firstVisible && !segment.transparent) {
         _this.cached[d[KEY]].labelX0 = segment.valueX;
