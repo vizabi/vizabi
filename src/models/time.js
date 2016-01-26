@@ -245,7 +245,12 @@ var TimeModel = Model.extend({
       time = this.start;
       _this.value = time;
     } else {
-      this.snap();
+      //the assumption is that the time is already snapped when we start playing
+      //because only dragging the timeslider can un-snap the time, and it snaps on drag.end
+      //so we don't need this line. let's see if we survive without.
+      //as a consequence, the first time update in playing sequence will have this.playing flag up
+      //so the bubble chart will zoom in smoothly. Closes #1213
+      //this.snap();
     }
     this.playing = true;
     this.playInterval();
