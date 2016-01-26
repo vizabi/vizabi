@@ -27,7 +27,7 @@ readyOnce: function(){
   this.element.select(".vzb-about-text0")
       .html("Vizabi, a project")
   this.element.select(".vzb-about-text1")
-      .html("by <a href='http://gapminder.org'>Gapminder Foundation</a>")
+      .html("by <a href='http://gapminder.org'>©→▶︎🏄ãÆčçйцукенё—–-Gapminder Foundation</a>")
   this.element.select(".vzb-about-version")
       .html("<a href='https://github.com/Gapminder/vizabi/releases/tag/v"+version+"'>Version: "+version+"</a>");  
   this.element.select(".vzb-about-updated")
