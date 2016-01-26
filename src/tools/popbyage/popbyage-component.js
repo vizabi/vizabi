@@ -235,7 +235,7 @@ var PopByAge = Component.extend({
           age = age + "-to-" + (age + group_by - 1);
         }
 
-        return age + yearOldsIn + " " + this.timeFormat(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
+        return age + yearOldsIn + " " + _this.timeFormat(time.value) + ": " + formatter(values.axis_x[d[ageDim]]);
       })
       .attr("x", 7)
       .attr("y", function(d, i) {

@@ -731,7 +731,7 @@ var Model = EventSource.extend({
     dimTime = this._getFirstDimension({
       type: 'time'
     });
-    time = new Date.UTC(filter[dimTime]); //clone date
+    time = new Date(filter[dimTime]); //clone date
     filter = utils.clone(filter, null, dimTime);
 
     var response = {};
@@ -923,7 +923,7 @@ getFrame: function(time){
                 steps.forEach(function(t){ 
                     result[t][name] = {};
                     resultKeys.forEach(function(key){
-                        result[t][name][key] = new Date.UTC(t);
+                        result[t][name][key] = new Date(t);
                     });
                 });
                 
@@ -1251,7 +1251,7 @@ getFrame: function(time){
 
     }else if(this.which==="time"){
         steps.forEach(function(t){ 
-            value = new Date.UTC(t);
+            value = new Date(t);
             result[t] = {
                 min: value,
                 max: value
@@ -1612,7 +1612,7 @@ function interpolateValue(_filter, use, which, method) {
   dimTime = this._getFirstDimension({
     type: 'time'
   });
-  time = new Date.UTC(_filter[dimTime]); //clone date
+  time = new Date(_filter[dimTime]); //clone date
   filter = utils.clone(_filter, null, dimTime);
 
 

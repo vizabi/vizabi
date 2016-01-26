@@ -333,7 +333,7 @@ function isSpecificValue(val) {
 
 function cloneSpecificValue(val) {
   if (val instanceof Date) {
-    return new Date.UTC(val.getTime());
+    return new Date(val.getTime());
   } else if (val instanceof RegExp) {
     return new RegExp(val);
   } else {
@@ -1321,7 +1321,7 @@ export var interpolatePoint = function(items, use, which, next, dimTime, time, m
   );
 
   // cast to time object if we are interpolating time
-  if(which === dimTime) result = new Date.UTC(result);
+  if(which === dimTime) result = new Date(result);
   if(isNaN(result)) {
       warn('interpolatePoint failed because result is NaN. It was ' + which);
       result = null;
