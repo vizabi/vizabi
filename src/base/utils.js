@@ -1106,7 +1106,8 @@ export var diffObject = function(obj2, obj1) {
 };
 
 /*
- * Time formats
+ * Time formats for internal data
+ * all in UTC
  */
 export var timeFormats = {
   "year": d3.time.format.utc("%Y"),
@@ -1117,6 +1118,9 @@ export var timeFormats = {
   "minute": d3.time.format.utc("%Y-%m-%d %H:%M"),
   "second": d3.time.format.utc("%Y-%m-%d %H:%M:%S")
 };
+
+// short-cut for developers to get UTC date strings
+Date.prototype.utc = Date.prototype.toUTCString;
 
 /*
  * Formats a Date Object to string format
