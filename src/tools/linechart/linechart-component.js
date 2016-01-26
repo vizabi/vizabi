@@ -772,7 +772,7 @@ var LCComponent = Component.extend({
 
   getValuesForYear: function(year) {
     if(!utils.isDate(year)) {
-      year = new Date('00:00:00 ' + year);
+      year = utils.parseTime(year, 'year');
     }
     return this.model.marker.getValues({
       time: year
